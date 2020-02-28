@@ -65,8 +65,8 @@ protected:
 
 private slots:
     void downloadFilePathChangedHandler(const QJsonObject &payload);
-    void downloadProgressHandler(const QJsonObject &payload);
-    void downloadFinishedHandler(const QJsonObject &payload);
+    void singleDownloadProgressHandler(const QJsonObject &payload);
+    void singleDownloadFinishedHandler(const QJsonObject &payload);
 
 private:
     CoreInterface *coreInterface_;

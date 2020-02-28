@@ -65,9 +65,9 @@ bool HostControllerService::initialize(const QString& config)
 
     storageManager_ = new StorageManager(this);
 
-    connect(storageManager_, &StorageManager::downloadFilePathChanged, this, &HostControllerService::sendDownloadFilePathChangedMessage);
-    connect(storageManager_, &StorageManager::singleDownloadProgress, this, &HostControllerService::sendSingleDownloadProgressMessage);
-    connect(storageManager_, &StorageManager::singleDownloadFinished, this, &HostControllerService::sendSingleDownloadFinishedMessage);
+    connect(storageManager_, &StorageManager::downloadPlatformFilePathChanged, this, &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
+    connect(storageManager_, &StorageManager::downloadPlatformSingleFileProgress, this, &HostControllerService::sendDownloadPlatformSingleFileProgressMessage);
+    connect(storageManager_, &StorageManager::downloadPlatformSingleFileFinished, this, &HostControllerService::sendDownloadPlatformSingleFileFinishedMessage);
     connect(storageManager_, &StorageManager::platformListResponseRequested, this, &HostControllerService::sendPlatformListMessage);
     connect(storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
 
@@ -76,7 +76,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(this, &HostControllerService::platformListRequested, storageManager_, &StorageManager::requestPlatformList, Qt::QueuedConnection);
     connect(this, &HostControllerService::platformDocumentsRequested, storageManager_, &StorageManager::requestPlatformDocuments, Qt::QueuedConnection);
     connect(this, &HostControllerService::downloadPlatformFilesRequested, storageManager_, &StorageManager::requestDownloadPlatformFiles, Qt::QueuedConnection);
-    connect(this, &HostControllerService::cancelPlatformDocumentRequested, storageManager_, &StorageManager::requestCancelPlatformDocument, Qt::QueuedConnection);
+    connect(this, &HostControllerService::cancelPlatformDocumentRequested, storageManager_, &StorageManager::requestCancelAllDownloads, Qt::QueuedConnection);
     connect(this, &HostControllerService::updatePlatformDocRequested, storageManager_, &StorageManager::updatePlatformDoc, Qt::QueuedConnection);
 
 
@@ -122,7 +122,7 @@ void HostControllerService::onAboutToQuit()
     stop();
 }
 
-void HostControllerService::sendDownloadFilePathChangedMessage(
+void HostControllerService::sendDownloadPlatformFilePathChangedMessage(
         const QByteArray &cliendId,
         const QString &originalFilePath,
         const QString &effectiveFilePath)
@@ -131,7 +131,7 @@ void HostControllerService::sendDownloadFilePathChangedMessage(
     QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "download_filepath_changed");
+    payload.insert("type", "download_paltform_filepath_changed");
     payload.insert("original_filepath", originalFilePath);
     payload.insert("effective_filepath", effectiveFilePath);
 
@@ -142,7 +142,7 @@ void HostControllerService::sendDownloadFilePathChangedMessage(
     clients_.sendMessage(cliendId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
 }
 
-void HostControllerService::sendSingleDownloadProgressMessage(
+void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
         const QByteArray &cliendId,
         const QString &filePath,
         qint64 bytesReceived,
@@ -152,7 +152,7 @@ void HostControllerService::sendSingleDownloadProgressMessage(
     QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "single_download_progress");
+    payload.insert("type", "download_platform_single_file_progress");
     payload.insert("filepath", filePath);
     payload.insert("bytes_received", bytesReceived);
     payload.insert("bytes_total", bytesTotal);
@@ -164,7 +164,8 @@ void HostControllerService::sendSingleDownloadProgressMessage(
     clients_.sendMessage(cliendId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
 }
 
-void HostControllerService::sendSingleDownloadFinishedMessage(const QByteArray &cliendId,
+void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
+        const QByteArray &cliendId,
         const QString &filePath,
         const QString &errorString)
 {
@@ -172,7 +173,7 @@ void HostControllerService::sendSingleDownloadFinishedMessage(const QByteArray &
     QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "single_download_finished");
+    payload.insert("type", "download_platform_single_file_finished");
     payload.insert("filepath", filePath);
     payload.insert("error_string", errorString);
 

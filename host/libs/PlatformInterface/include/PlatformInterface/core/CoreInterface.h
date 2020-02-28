@@ -75,9 +75,9 @@ signals:
     bool connectedPlatformListChanged(QString list);
     bool hcsTokenChanged(QString token);
 
-    void downloadFilenameChanged(QJsonObject payload);
-    void singleDownloadProgress(QJsonObject payload);
-    void singleDownloadFinished(QJsonObject payload);
+    void downloadPlatformFilepathChanged(QJsonObject payload);
+    void downloadPlatformSingleFileProgress(QJsonObject payload);
+    void downloadPlatformSingleFileFinished(QJsonObject payload);
 
     // Platform Framework Signals
     void notification(QString payload);

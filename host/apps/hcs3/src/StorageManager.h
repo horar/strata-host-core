@@ -54,10 +54,10 @@ public slots:
     void updatePlatformDoc(const QString &classId);
 
 signals:
-    void downloadFilePathChanged(QByteArray clientId, const QString& originalFilePath, const QString& effectiveFilePath);
+    void downloadPlatformFilePathChanged(QByteArray clientId, const QString& originalFilePath, const QString& effectiveFilePath);
 
-    void singleDownloadProgress(QByteArray clientId, QString filePath, qint64 bytesReceived, qint64 bytesTotal);
-    void singleDownloadFinished(QByteArray clientId, QString filePath, QString errorString);
+    void downloadPlatformSingleFileProgress(QByteArray clientId, QString filePath, qint64 bytesReceived, qint64 bytesTotal);
+    void downloadPlatformSingleFileFinished(QByteArray clientId, QString filePath, QString errorString);
 
     void platformListResponseRequested(QByteArray clientId, QJsonArray documentList);
     void platformDocumentsResponseRequested(QByteArray clientId, QJsonArray documentList, QString error);

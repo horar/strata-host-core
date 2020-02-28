@@ -12,9 +12,9 @@ DownloadDocumentListModel::DownloadDocumentListModel(CoreInterface *coreInterfac
       coreInterface_(coreInterface)
 {
 
-    connect(coreInterface_, &CoreInterface::downloadFilenameChanged, this, &DownloadDocumentListModel::downloadFilePathChangedHandler);
-    connect(coreInterface_, &CoreInterface::singleDownloadProgress, this, &DownloadDocumentListModel::downloadProgressHandler);
-    connect(coreInterface_, &CoreInterface::singleDownloadFinished, this, &DownloadDocumentListModel::downloadFinishedHandler);
+    connect(coreInterface_, &CoreInterface::downloadPlatformFilepathChanged, this, &DownloadDocumentListModel::downloadFilePathChangedHandler);
+    connect(coreInterface_, &CoreInterface::downloadPlatformSingleFileProgress, this, &DownloadDocumentListModel::singleDownloadProgressHandler);
+    connect(coreInterface_, &CoreInterface::downloadPlatformSingleFileFinished, this, &DownloadDocumentListModel::singleDownloadFinishedHandler);
 }
 
 DownloadDocumentListModel::~DownloadDocumentListModel()
@@ -243,7 +243,7 @@ void DownloadDocumentListModel::downloadFilePathChangedHandler(const QJsonObject
 
 }
 
-void DownloadDocumentListModel::downloadProgressHandler(const QJsonObject &payload)
+void DownloadDocumentListModel::singleDownloadProgressHandler(const QJsonObject &payload)
 {
     QJsonDocument doc(payload);
 
@@ -282,7 +282,7 @@ void DownloadDocumentListModel::downloadProgressHandler(const QJsonObject &paylo
                 roles);
 }
 
-void DownloadDocumentListModel::downloadFinishedHandler(const QJsonObject &payload)
+void DownloadDocumentListModel::singleDownloadFinishedHandler(const QJsonObject &payload)
 {
     QString filePath = payload["filepath"].toString();
 

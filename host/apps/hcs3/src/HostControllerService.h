@@ -57,18 +57,18 @@ signals:
 public slots:
     void onAboutToQuit();
 
-    void sendDownloadFilePathChangedMessage(
+    void sendDownloadPlatformFilePathChangedMessage(
             const QByteArray &cliendId,
             const QString &originalFilePath,
             const QString &effectiveFilePath);
 
-    void sendSingleDownloadProgressMessage(
+    void sendDownloadPlatformSingleFileProgressMessage(
             const QByteArray &cliendId,
             const QString &filePath,
             qint64 bytesReceived,
             qint64 bytesTotal);
 
-    void sendSingleDownloadFinishedMessage(
+    void sendDownloadPlatformSingleFileFinishedMessage(
             const QByteArray &cliendId,
             const QString &filePath,
             const QString &errorString);
