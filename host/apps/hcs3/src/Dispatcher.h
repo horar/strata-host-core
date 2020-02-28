@@ -19,11 +19,9 @@ struct PlatformMessage
         eMsgPlatformMessage,
 
         eMsgClientMessage,
-        eMsgDynamicPlatformListResponse,
         eMsgCouchbaseMessage,
 
         eMsgStorageRequest,     //from StorageManager / Downloader
-        eMsgStorageResponse,
     };
 
     // New BoardManager uses int for connection ID.

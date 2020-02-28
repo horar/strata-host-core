@@ -40,7 +40,6 @@ add_library(${PROJECT_NAME}Lib STATIC
     src/DownloadManager.cpp
     src/StorageManager.cpp
     src/PlatformDocument.cpp
-    src/DownloadGroup.cpp
     src/LoggingAdapter.cpp
 
     src/logging/LoggingQtCategories.cpp

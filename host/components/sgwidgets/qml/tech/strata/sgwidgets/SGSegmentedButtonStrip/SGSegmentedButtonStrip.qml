@@ -25,10 +25,11 @@ Item {
     property bool nothingChecked: true
     property bool hoverEnabled: true
     property alias overrideLabelWidth: labelText.width
+    property bool initialized_: false
 
     property int index: 0
     onIndexChanged: {
-        if (exclusive) {
+        if (exclusive && initialized_) {
             segmentedButtons.children[0].children[index].checked = true
         }
     }
@@ -99,5 +100,9 @@ Item {
 
     Component.onCompleted: {
         segmentedButtons.checked()
+        if (exclusive && index !== 0) {
+            segmentedButtons.children[0].children[index].checked = true
+        }
+        initialized_ = true
     }
 }

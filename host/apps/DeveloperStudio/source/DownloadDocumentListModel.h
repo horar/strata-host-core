@@ -25,6 +25,7 @@ public:
     enum {
         UriRole = Qt::UserRole,
         FilenameRole,
+        EffectiveFilePathRole,
         DirnameRole,
         PreviousDirnameRole,
         ProgressRole,
@@ -63,6 +64,7 @@ protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 private slots:
+    void downloadFilePathChangedHandler(const QJsonObject &payload);
     void downloadProgressHandler(const QJsonObject &payload);
     void downloadFinishedHandler(const QJsonObject &payload);
 
@@ -80,16 +82,19 @@ struct DownloadDocumentItem {
     DownloadDocumentItem(
             const QString &uri,
             const QString &filename,
-            const QString &dirname)
+            const QString &dirname,
+            const qint64 &filesize)
         : status(DownloadDocumentListModel::DownloadStatus::NotSelected)
     {
         this->uri = uri;
         this->filename = filename;
         this->dirname = dirname;
+        this->bytesTotal = filesize;
     }
 
     QString uri;
     QString filename;
+    QString effectiveFilePath;
     QString dirname;
     QString errorString;
     float progress;
