@@ -2,10 +2,11 @@
     Automated HCS database testing
 #>
 
-# Define path for Strata Developer Studio executable and HCS Couchbase database file
-Set-Variable -Name "SDS_root_dir" -Value "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
-Set-Variable -Name "HCS_db_file" -Value "$Env:AppData\ON Semiconductor\hcs\db\strata_db\db.sqlite3"
-Set-Variable -Name "HCS_config_file" -Value "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
+# Define paths
+Set-Variable "SDS_root_dir"    "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
+Set-Variable "HCS_db_file"     "$Env:AppData\ON Semiconductor\hcs\db\strata_db\db.sqlite3"
+Set-Variable "HCS_config_file" "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
+Set-Variable "HCS_exec"        "$SDS_root_dir\HCS\hcs.exe"
 
 #####
 ##### Automated section
@@ -23,7 +24,7 @@ function KillAllHCS {
 # Function definition "StartHCSAndWait"
 # Start one instance of HCS and wait (to give time for DB replication)
 function StartHCSAndWait {
-    Start-Process -FilePath "$SDS_root_dir\HCS\hcs.exe" -ArgumentList "-f `"$HCS_config_file`""
+    Start-Process -FilePath $HCS_exec -ArgumentList "-f `"$HCS_config_file`""
     Start-Sleep -Seconds 10
 }
 
@@ -32,7 +33,7 @@ function StartHCSAndWait {
 If (!(Test-Path "$SDS_root_dir\Strata Developer Studio.exe" -PathType Leaf)) {
     ""; "ERROR: Cannot find Strata Developer Studio executable at `"$SDS_root_dir\Strata Developer Studio.exe`".";
     "Correct the 'SDS_root_dir' variable in the script and try again."; "";
-    exit
+    Exit
 }
 
 # Check for PSSQLite
@@ -42,7 +43,7 @@ If (!(Get-Module -ListAvailable -Name PSSQLite)) {
     ""; ""; "PSSQLite Powershell module not found: cannot proceed."
     "Install module PSSQLite by running as administrator:"
     "   Install-Module PSSQLite"; ""; "";
-    exit
+    Exit
 }
 
 # Change directory to location of SDS executable
