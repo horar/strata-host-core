@@ -37,3 +37,28 @@ target_link_libraries(${PROJECT_NAME}Connector
 set_target_properties(${PROJECT_NAME}Connector PROPERTIES
     AUTOMOC ON
 )
+
+
+add_library(${PROJECT_NAME}1
+    src/Flasher1.cpp
+    src/logging/LoggingQtCategories.cpp
+    #AUTOMOC wont find header if it is in different directory
+    include/Flasher1.h
+    src/logging/LoggingQtCategories.h
+)
+
+target_include_directories(${PROJECT_NAME}1
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_link_libraries(${PROJECT_NAME}1
+    PUBLIC Qt5::Core
+    PUBLIC QtLogger
+    PUBLIC SerialDevice
+    PUBLIC DeviceOperations
+)
+
+set_target_properties(${PROJECT_NAME}1 PROPERTIES
+    AUTOMOC ON
+)
+

@@ -26,7 +26,6 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC Qt5::SerialPort
-    PUBLIC rapidjson::rapidjson
     PUBLIC QtLogger
     PUBLIC SerialDevice
     PUBLIC CommandValidator

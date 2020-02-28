@@ -3,7 +3,7 @@
 
 #include <chrono>
 
-namespace spyglass {
+namespace strata {
 
 constexpr unsigned READ_BUFFER_SIZE = 4096;
 constexpr std::chrono::milliseconds RESPONSE_TIMEOUT(1000);
