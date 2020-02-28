@@ -65,6 +65,11 @@ Item {
 
                     SGWidgets09.SGSegmentedButton{
                         text: qsTr("Retry")
+                        property var protectionAction: platformInterface.usb_pd_protection_action.action
+                        onProtectionActionChanged: {
+                            console.log("new protection action:",platformInterface.usb_pd_protection_action.action)
+                        }
+
                         checked: platformInterface.usb_pd_protection_action.action === "retry"
 
                         onClicked: {
@@ -230,7 +235,7 @@ Item {
                 height: 20
                 width: 46
                 grooveFillColor:"green"
-                checked: platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled
+                checked: platformInterface.input_voltage_foldback.enabled
                 onToggled: platformInterface.set_input_voltage_foldback.update(checked, platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage,
                                 platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
@@ -247,7 +252,7 @@ Item {
 
             SGSlider {
                 id: foldbackLimit
-                value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
+                value: platformInterface.input_voltage_foldback.min_voltage
                 anchors {
                     left: parent.left
                     leftMargin: 135
@@ -293,15 +298,15 @@ Item {
                 //when changing the value
                 onActivated: {
                     console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
-                    platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-                                                                        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage,
+                    platformInterface.set_input_voltage_foldback.update(platformInterface.input_voltage_foldback.enabled,
+                                                                        platformInterface.input_voltage_foldback.min_voltage,
                                                                                  limitOutput.comboBox.currentText)
                 }
 
-                property var currentFoldbackOuput: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power
+                property var currentFoldbackOuput: platformInterface.input_voltage_foldback.power
                 onCurrentFoldbackOuputChanged: {
-                    console.log("got a new min power setting",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power);
-                    limitOutput.currentIndex = limitOutput.find( (platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power).toFixed(1))
+                    //console.log("got a new min input power setting",platformInterface.input_voltage_foldback.power);
+                    limitOutput.currentIndex = limitOutput.find( (platformInterface.input_voltage_foldback.power).toFixed(0))
                 }
             }
             Text{
@@ -346,12 +351,12 @@ Item {
                 height: 20
                 width: 46
                 grooveFillColor:"green"
-                checked: platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled
+                checked: platformInterface.temperature_foldback.enabled
                 onToggled:{
                     console.log("sending temp foldback update command from tempFoldbackSwitch");
                     platformInterface.set_temperature_foldback.update(tempFoldbackSwitch.checked,
-                                                                                    platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
-                                                                                    platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power);
+                                      platformInterface.temperature_foldback.max_temperature,
+                                       platformInterface.temperature_foldback.power);
                 }
             }
 
@@ -382,16 +387,15 @@ Item {
                 toText.text: "100°C"
                 fillColor:"dimgrey"
                 handleSize: 20
-                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
-                //value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
+                value: platformInterface.temperature_foldback.max_temperature
                onValueChanged: {
                     console.log("foldback max temp is now:",value)
                }
                 onMoved:{
                     console.log("sending temp foldback update command from foldbackTempSlider");
-                    platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+                    platformInterface.set_temperature_foldback.update(platformInterface.temperature_foldback.enabled,
                                                                                   foldbackTemp.value,
-                                                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
+                                                                                  platformInterface.temperature_foldback.power)
                 }
 
             }
@@ -418,15 +422,16 @@ Item {
                 //when the value is changed by the user
                 onActivated: {
                     console.log("sending temp foldback update command from limitOutputComboBox");
-                    platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
-                                                                                 platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
+                    platformInterface.set_temperature_foldback.update(platformInterface.temperature_foldback.enabled,
+                                                                                 platformInterface.temperature_foldback.max_temperature,
                                                                                  limitOutput2.currentText)
                 }
 
-                property var currentFoldbackOuput: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power
+                property var currentFoldbackOuput: platformInterface.temperature_foldback.power
 
                 onCurrentFoldbackOuputChanged: {
-                    limitOutput2.currentIndex = limitOutput2.find( (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power).toFixed(1))
+                    console.log("new temp foldback wattage", platformInterface.temperature_foldback.power);
+                    limitOutput2.currentIndex = limitOutput2.find( (platformInterface.temperature_foldback.power).toFixed(0))
                 }
             }
 

@@ -40,7 +40,7 @@ Item {
             property var currentMaximumPower: platformInterface.usb_pd_maximum_power.current_max_power
             onCurrentMaximumPowerChanged: {
                 if (platformInterface.usb_pd_maximum_power.port === portNumber){
-                    maxPowerOutput.currentIndex = maxPowerOutput.find( (platformInterface.usb_pd_maximum_power.current_max_power).toFixed(1))
+                    maxPowerOutput.currentIndex = maxPowerOutput.find( (platformInterface.usb_pd_maximum_power.current_max_power).toFixed(0))
                 }
 
             }
