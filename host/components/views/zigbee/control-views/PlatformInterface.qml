@@ -28,6 +28,10 @@ Item {
          "value": "open",     // or "closed"
     }
 
+    property var room_color_notification : {
+         "color": "blue",     // or "green","purple","red"
+    }
+
     property var msg_dbg:{      //debug strings
             "msg":""
     }
@@ -74,6 +78,22 @@ Item {
                                       show: function () { CorePlatformInterface.show(this) }
                                   })
 
+    property var set_room_color : ({
+                                      "cmd" : "set_room_color",
+                                      "payload": {
+                                          "color": "blue",  // or "green","purple","red"
+                                      },
+
+                                      update: function (value) {
+                                          this.set(value)
+                                          this.send(this)
+                                      },
+                                      set: function (inValue) {
+                                          this.payload.value = inValue;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
 
 
     // -------------------------------------------------------------------
