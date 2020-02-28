@@ -55,7 +55,6 @@
         <file>partial-views/platform-selector/images/icons/filter-icons/amplifiers_and_comparators.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/analog_to_digital_converters.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/connectivity.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/dc_dc_controllers_converters_and_regulators.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/discretes_and_drivers.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/isolation_and_protection.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/led.svg</file>
@@ -74,5 +73,9 @@
         <file>partial-views/platform-selector/SegmentFilterDelegate.qml</file>
         <file>js/platform_filters.js</file>
         <file>partial-views/platform-selector/images/icons/placeholder.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/ac_dc.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/battery.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/dc_dc.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/memory.svg</file>
     </qresource>
 </RCC>
