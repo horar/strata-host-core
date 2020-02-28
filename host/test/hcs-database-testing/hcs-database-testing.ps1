@@ -3,8 +3,9 @@
 #>
 
 # Define path for Strata Developer Studio executable and HCS Couchbase database file
-Set-Variable -Name "SDS_exec_directory" -Value "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
-Set-Variable -Name "SDS_db_file" -Value "$Env:AppData\ON Semiconductor\hcs\db\strata_db\db.sqlite3"
+Set-Variable -Name "SDS_root_dir" -Value "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
+Set-Variable -Name "HCS_db_file" -Value "$Env:AppData\ON Semiconductor\hcs\db\strata_db\db.sqlite3"
+Set-Variable -Name "HCS_config_file" -Value "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
 
 #####
 ##### Automated section
@@ -22,15 +23,15 @@ function KillAllHCS {
 # Function definition "StartHCSAndWait"
 # Start one instance of HCS and wait (to give time for DB replication)
 function StartHCSAndWait {
-    Start-Process -FilePath "$SDS_exec_directory\HCS\hcs.exe" -ArgumentList "-f `"C:/ProgramData/ON Semiconductor/Strata Developer Studio/HCS/hcs.config`""
+    Start-Process -FilePath "$SDS_root_dir\HCS\hcs.exe" -ArgumentList "-f `"$HCS_config_file`""
     Start-Sleep -Seconds 10
 }
 
 # Check for SDS executable
 # Notify & exit if not found
-If (!(Test-Path "$SDS_exec_directory\Strata Developer Studio.exe" -PathType Leaf)) {
-    ""; "ERROR: Cannot find Strata Developer Studio executable at `"$SDS_exec_directory\Strata Developer Studio.exe`".";
-    "Correct the 'SDS_exec_directory' variable in the script and try again."; "";
+If (!(Test-Path "$SDS_root_dir\Strata Developer Studio.exe" -PathType Leaf)) {
+    ""; "ERROR: Cannot find Strata Developer Studio executable at `"$SDS_root_dir\Strata Developer Studio.exe`".";
+    "Correct the 'SDS_root_dir' variable in the script and try again."; "";
     exit
 }
 
@@ -45,18 +46,11 @@ If (!(Get-Module -ListAvailable -Name PSSQLite)) {
 }
 
 # Change directory to location of SDS executable
-Set-Location $SDS_exec_directory
+Set-Location $SDS_root_dir
 # Find location of 'strata_db' directory
-Set-Variable -Name "SDS_strata_db_dir" -Value (Split-Path -Path $SDS_db_file)
+Set-Variable -Name "SDS_strata_db_dir" -Value (Split-Path -Path $HCS_db_file)
 # Find location of 'db' directory
 Set-Variable -Name "SDS_db_dir" -Value (Split-Path -Path $SDS_strata_db_dir)
-
-# Check that 'db' directory is found where expected
-If (!(Test-Path $SDS_db_dir -PathType Container)) {
-    ""; "ERROR: Cannot find DB directory at `"$SDS_db_dir`".";
-    "Correct the 'SDS_db_file' variable in the script and try again."; "";
-    exit
-}
 
 # Import "PSSQLite" PS module
 Import-Module PSSQLite
@@ -88,12 +82,12 @@ KillAllHCS
 # Verify if DB folders and files were re-created in the expected locations
 "        Verifying if DB folders and files were re-created in the expected locations";
 
-If (Test-Path $SDS_db_file -PathType Any) {
+If (Test-Path $HCS_db_file -PathType Any) {
     "        PASS (DB files found in expected location)"
 
     # Verify contents of DB
     "        Verifying contents of DB";
-    $query_result = Invoke-SqliteQuery -Query $query -DataSource $SDS_db_file
+    $query_result = Invoke-SqliteQuery -Query $query -DataSource $HCS_db_file
 
     If ($query_result.Length -lt 1) {
         "        FAIL (DB is empty)"
@@ -123,12 +117,12 @@ KillAllHCS
 # Verify if DB folders and files were re-created in the expected locations
 "        Verifying if DB folders and files were re-created in the expected locations";
 
-If (Test-Path $SDS_db_file -PathType Any) {
+If (Test-Path $HCS_db_file -PathType Any) {
     "        PASS (DB files found in expected location)"
 
     # Verify contents of DB
     "        Verifying contents of DB";
-    $query_result = Invoke-SqliteQuery -Query $query -DataSource $SDS_db_file
+    $query_result = Invoke-SqliteQuery -Query $query -DataSource $HCS_db_file
 
     If ($query_result.Length -lt 1) {
         "        FAIL (DB is empty)"
@@ -140,7 +134,7 @@ If (Test-Path $SDS_db_file -PathType Any) {
 }
 
 # Test 3: delete DB file, if it exists
-""; ""; "TEST 3: Deleting DB file ($SDS_db_file)";
+""; ""; "TEST 3: Deleting DB file ($HCS_db_file)";
 
 If (Test-Path $SDS_strata_db_dir -PathType Any) {
     Remove-Item -Path $SDS_strata_db_dir -Recurse
@@ -158,12 +152,12 @@ KillAllHCS
 # Verify if DB folders and files were re-created in the expected locations
 "        Verifying if DB folders and files were re-created in the expected locations";
 
-If (Test-Path $SDS_db_file -PathType Any) {
+If (Test-Path $HCS_db_file -PathType Any) {
     "        PASS (DB files found in expected location)"
 
     # Verify contents of DB
     "        Verifying contents of DB";
-    $query_result = Invoke-SqliteQuery -Query $query -DataSource $SDS_db_file
+    $query_result = Invoke-SqliteQuery -Query $query -DataSource $HCS_db_file
 
     If ($query_result.Length -lt 1) {
         "        FAIL (DB is empty)"
