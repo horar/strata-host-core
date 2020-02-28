@@ -3,8 +3,8 @@
 #>
 
 # Define path for Strata Developer Studio executable and HCS Couchbase database file
-Set-Variable -Name "SDS_exec_directory" -Value "C:\Program Files\ON Semiconductor\Strata Developer Studio"
-Set-Variable -Name "SDS_db_file" -Value "C:\Users\zbh8jv\AppData\Roaming\ON Semiconductor\hcs\db\strata_db\db.sqlite3"
+Set-Variable -Name "SDS_exec_directory" -Value "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
+Set-Variable -Name "SDS_db_file" -Value "$Env:AppData\ON Semiconductor\hcs\db\strata_db\db.sqlite3"
 
 #####
 ##### Automated section
