@@ -41,7 +41,7 @@ Item {
 
 
     property var usb_pd_protection_action:{
-         "action":"shutdown"     // or "nothing" or "retry"
+         "action":"retry"     // or "nothing" or "retry"
     }
 
 
@@ -93,7 +93,7 @@ Item {
 
     property var usb_pd_maximum_power:{
         "port":0,                            // always 1
-        "watts":0                          // 12.5 | 25 | 37.5 | 50 | 62.5 | 75 | 87.5 | 100
+        "max_power":0                          // 12.5 | 25 | 37.5 | 50 | 62.5 | 75 | 87.5 | 100
     }
 
     property var request_over_current_protection_notification:{
@@ -276,9 +276,6 @@ Item {
                        },
                    update: function(enabled,temperature,watts){
                        //update the variables for this action
-//                       foldback_temperature_limiting_event.foldback_maximum_temperature = temperature;
-//                       foldback_temperature_limiting_event.foldback_maximum_temperature_power = watts;
-//                       foldback_temperature_limiting_event.temperature_foldback_enabled = enabled;
                         this.set(enabled,temperature,watts)
                         CorePlatformInterface.send(this)
                         },
