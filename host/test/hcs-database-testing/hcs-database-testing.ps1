@@ -156,9 +156,6 @@ StartHCSAndWait
 KillAllHCS
 
 # Verify if DB folders and files were re-created in the expected locations
-"        Verifying if DB folders and files were re-created in the expected locations"; "";
-
-# Verify if DB folders and files were re-created in the expected locations
 "        Verifying if DB folders and files were re-created in the expected locations";
 
 If (Test-Path $SDS_db_file -PathType Any) {
