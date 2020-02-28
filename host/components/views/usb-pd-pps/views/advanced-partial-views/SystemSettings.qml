@@ -159,7 +159,7 @@ Item {
                 anchors.verticalCenter: hysteresisSlider.verticalCenter
                 anchors.verticalCenterOffset: -8
                 horizontalAlignment: Text.AlignRight
-                text:"Reset when temperature drops:"
+                text:"Retry when temperature drops:"
             }
 
             SGSlider {
@@ -282,7 +282,7 @@ Item {
 
             SGComboBox {
                 id: limitOutput
-                model: ["7.5","15.0","22.5", "30.0", "37.5","45.0","52.5","60.0"]
+                model: ["16","30","45","60"]
                 anchors {
                     left: parent.left
                     leftMargin: 135
@@ -407,7 +407,7 @@ Item {
 
             SGComboBox {
                 id: limitOutput2
-                model: ["7.5","15.0","22.5", "30.0", "37.5","45.0","52.5","60.0"]
+                model: ["16", "30", "45","60"]
                 anchors {
                     left: parent.left
                     leftMargin: 135
