@@ -49,9 +49,9 @@ If (!(Get-Module -ListAvailable -Name PSSQLite)) {
 # Change directory to location of SDS executable
 Set-Location $SDS_root_dir
 # Find location of 'strata_db' directory
-Set-Variable -Name "SDS_strata_db_dir" -Value (Split-Path -Path $HCS_db_file)
+Set-Variable "SDS_strata_db_dir" (Split-Path -Path $HCS_db_file)
 # Find location of 'db' directory
-Set-Variable -Name "SDS_db_dir" -Value (Split-Path -Path $SDS_strata_db_dir)
+Set-Variable "SDS_db_dir" (Split-Path -Path $SDS_strata_db_dir)
 
 # Import "PSSQLite" PS module
 Import-Module PSSQLite
@@ -90,7 +90,7 @@ If (Test-Path $HCS_db_file -PathType Any) {
     "        Verifying contents of DB";
     $query_result = Invoke-SqliteQuery -Query $query -DataSource $HCS_db_file
 
-    If ($query_result.Length -lt 1) {
+    If ($query_result.Length -Lt 1) {
         "        FAIL (DB is empty)"
     } Else {
         "        PASS (non-empty DB with $($query_result.Length) documents)"
@@ -125,7 +125,7 @@ If (Test-Path $HCS_db_file -PathType Any) {
     "        Verifying contents of DB";
     $query_result = Invoke-SqliteQuery -Query $query -DataSource $HCS_db_file
 
-    If ($query_result.Length -lt 1) {
+    If ($query_result.Length -Lt 1) {
         "        FAIL (DB is empty)"
     } Else {
         "        PASS (non-empty DB with $($query_result.Length) documents)"
@@ -160,7 +160,7 @@ If (Test-Path $HCS_db_file -PathType Any) {
     "        Verifying contents of DB";
     $query_result = Invoke-SqliteQuery -Query $query -DataSource $HCS_db_file
 
-    If ($query_result.Length -lt 1) {
+    If ($query_result.Length -Lt 1) {
         "        FAIL (DB is empty)"
     } Else {
         "        PASS (non-empty DB with $($query_result.Length) documents)"
