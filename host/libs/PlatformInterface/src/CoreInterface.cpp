@@ -219,6 +219,8 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
         emit downloadPlatformSingleFileProgress(payload);
     } else if (type == "download_platform_single_file_finished") {
         emit downloadPlatformSingleFileFinished(payload);
+    } else if (type == "download_platform_files_finished") {
+        emit downloadPlatformFilesFinished(payload);
     } else {
         qCWarning(logCategoryCoreInterface) << "unknown message type" << type;
     }

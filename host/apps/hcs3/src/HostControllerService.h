@@ -73,6 +73,10 @@ public slots:
             const QString &filePath,
             const QString &errorString);
 
+    void sendDownloadPlatformFilesFinishedMessage(
+            const QByteArray &cliendId,
+            const QString &errorString);
+
     void sendPlatformListMessage(
             const QByteArray &clientId,
             const QJsonArray &platformList);

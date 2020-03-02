@@ -78,6 +78,7 @@ signals:
     void downloadPlatformFilepathChanged(QJsonObject payload);
     void downloadPlatformSingleFileProgress(QJsonObject payload);
     void downloadPlatformSingleFileFinished(QJsonObject payload);
+    void downloadPlatformFilesFinished(QJsonObject payload);
 
     // Platform Framework Signals
     void notification(QString payload);

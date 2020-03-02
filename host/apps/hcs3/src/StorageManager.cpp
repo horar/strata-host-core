@@ -124,7 +124,7 @@ void StorageManager::groupDownloadFinishedHandler(const QString &groupId, const 
     } else if (request->type == RequestType::PlatformDocuments) {
         handlePlatformDocumentsResponse(request, errorString);
     } else if (request->type == RequestType::FileDownload) {
-        //do nothing
+        emit downloadPlatformFilesFinished(request->clientId, errorString);
     } else {
         qCWarning(logCategoryHcsStorage) << "unknown request type";
     }
@@ -338,6 +338,7 @@ void StorageManager::requestDownloadPlatformFiles(
 {
     if (partialUriList.isEmpty()) {
         qInfo(logCategoryHcsStorage()) << "nothing to download";
+        emit downloadPlatformFilesFinished(clientId, QString());
         return;
     }
 
@@ -345,6 +346,7 @@ void StorageManager::requestDownloadPlatformFiles(
     QStringList splitPath = partialUriList.first().split("/");
     if (splitPath.isEmpty()) {
         qCWarning(logCategoryHcsStorage) << "Failed to resolve classId from request";
+        emit downloadPlatformFilesFinished(clientId, "Failed to resolve classId from request");
         return;
     }
 
@@ -352,6 +354,7 @@ void StorageManager::requestDownloadPlatformFiles(
     PlatformDocument *platDoc = fetchPlatformDoc(classId);
     if (platDoc == nullptr) {
         qCWarning(logCategoryHcsStorage) << "Failed to fetch platform data with classId" << classId;
+        emit downloadPlatformFilesFinished(clientId, "Failed to fetch platform data");
         return;
     }
 

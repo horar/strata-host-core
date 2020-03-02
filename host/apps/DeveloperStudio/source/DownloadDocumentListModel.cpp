@@ -15,6 +15,7 @@ DownloadDocumentListModel::DownloadDocumentListModel(CoreInterface *coreInterfac
     connect(coreInterface_, &CoreInterface::downloadPlatformFilepathChanged, this, &DownloadDocumentListModel::downloadFilePathChangedHandler);
     connect(coreInterface_, &CoreInterface::downloadPlatformSingleFileProgress, this, &DownloadDocumentListModel::singleDownloadProgressHandler);
     connect(coreInterface_, &CoreInterface::downloadPlatformSingleFileFinished, this, &DownloadDocumentListModel::singleDownloadFinishedHandler);
+    connect(coreInterface_, &CoreInterface::downloadPlatformFilesFinished, this, &DownloadDocumentListModel::groupDownloadFinishedHandler);
 }
 
 DownloadDocumentListModel::~DownloadDocumentListModel()
@@ -240,7 +241,6 @@ void DownloadDocumentListModel::downloadFilePathChangedHandler(const QJsonObject
                 createIndex(item->index, 0),
                 createIndex(item->index, 0),
                 roles);
-
 }
 
 void DownloadDocumentListModel::singleDownloadProgressHandler(const QJsonObject &payload)
@@ -319,8 +319,31 @@ void DownloadDocumentListModel::singleDownloadFinishedHandler(const QJsonObject 
                 roles);
 
     downloadingData_.remove(filePath);
+}
 
-    if(downloadingData_.isEmpty()) {
-        emit downloadInProgressChanged();
+void DownloadDocumentListModel::groupDownloadFinishedHandler(const QJsonObject &payload)
+{
+    QString errorString = payload["error_string"].toString();
+
+    if (errorString.isEmpty() == false) {
+        qCWarning(logCategoryDocumentManager) << "downloading finished with error" << errorString;
+        QHashIterator<QString, DownloadDocumentItem*>  iter(downloadingData_);
+        while (iter.hasNext()) {
+            DownloadDocumentItem *item = iter.next().value();
+
+            QVector<int> roles;
+            item->status = DownloadStatus::FinishedWithError;
+            item->errorString = errorString ;
+            roles << StatusRole << ErrorStringRole;
+
+            emit dataChanged(
+                        createIndex(item->index, 0),
+                        createIndex(item->index, 0),
+                        roles);
+        }
     }
+
+    downloadingData_.clear();
+
+    emit downloadInProgressChanged();
 }

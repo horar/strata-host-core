@@ -68,6 +68,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(storageManager_, &StorageManager::downloadPlatformFilePathChanged, this, &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
     connect(storageManager_, &StorageManager::downloadPlatformSingleFileProgress, this, &HostControllerService::sendDownloadPlatformSingleFileProgressMessage);
     connect(storageManager_, &StorageManager::downloadPlatformSingleFileFinished, this, &HostControllerService::sendDownloadPlatformSingleFileFinishedMessage);
+    connect(storageManager_, &StorageManager::downloadPlatformFilesFinished, this, &HostControllerService::sendDownloadPlatformFilesFinishedMessage);
     connect(storageManager_, &StorageManager::platformListResponseRequested, this, &HostControllerService::sendPlatformListMessage);
     connect(storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
 
@@ -78,7 +79,6 @@ bool HostControllerService::initialize(const QString& config)
     connect(this, &HostControllerService::downloadPlatformFilesRequested, storageManager_, &StorageManager::requestDownloadPlatformFiles, Qt::QueuedConnection);
     connect(this, &HostControllerService::cancelPlatformDocumentRequested, storageManager_, &StorageManager::requestCancelAllDownloads, Qt::QueuedConnection);
     connect(this, &HostControllerService::updatePlatformDocRequested, storageManager_, &StorageManager::updatePlatformDoc, Qt::QueuedConnection);
-
 
     QString baseUrl = QString::fromStdString( db_cfg["file_server"].GetString() );
     storageManager_->setBaseUrl(baseUrl);
@@ -176,6 +176,24 @@ void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
     payload.insert("type", "download_platform_single_file_finished");
     payload.insert("filepath", filePath);
     payload.insert("error_string", errorString);
+
+    message.insert("hcs::notification", payload);
+
+    doc.setObject(message);
+
+    clients_.sendMessage(cliendId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
+}
+
+void HostControllerService::sendDownloadPlatformFilesFinishedMessage(const QByteArray &cliendId, const QString &errorString)
+{
+    QJsonDocument doc;
+    QJsonObject message;
+    QJsonObject payload;
+
+    payload.insert("type", "download_platform_files_finished");
+    if (errorString.isEmpty() == false) {
+        payload.insert("error_string", errorString);
+    }
 
     message.insert("hcs::notification", payload);
 
@@ -454,7 +472,7 @@ void HostControllerService::onCmdHostDownloadFiles(const rapidjson::Value* paylo
     QByteArray clientId = QByteArray::fromStdString(getSenderClient()->getClientId());
     QStringList partialUriList;
 
-    QString destinationDir = QString::fromStdString(payload->GetObject()["destination_dir"].GetString());
+    QString destinationDir = QString::fromStdString((*payload)["destination_dir"].GetString());
     if (destinationDir.isEmpty()) {
         qCWarning(logCategoryHcs()) << "destinationDir is empty";
         return;
