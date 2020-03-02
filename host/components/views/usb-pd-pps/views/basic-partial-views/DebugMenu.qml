@@ -163,7 +163,8 @@ Rectangle {
                     var tempFoldbackHysterisis = ((Math.random() *50)+5).toFixed(0);
 
                     //console.log("input power=",inputFoldbackOutputPower);
-                    console.log("maxTemp=",tempFoldbackMaxTemperature);
+                    //console.log("maxTemp=",tempFoldbackMaxTemperature);
+                    console.log("protectionAction=",protectionAction);
 
                     CorePlatformInterface.data_source_handler('{
                                 "value":"usb_pd_maximum_power",

@@ -69,6 +69,7 @@ Button {
     onCheckedChanged: {
         if (checked) {
             indexUpdate(root.index)
+            console.log ("button is sending its index to the buttonstrip")
         }
     }
 }
