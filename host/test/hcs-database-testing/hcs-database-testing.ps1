@@ -38,7 +38,6 @@ If (!(Test-Path "$SDS_root_dir\Strata Developer Studio.exe" -PathType Leaf)) {
 
 # Check for PSSQLite
 # Tell user to manually install it & exit if not found
-# If (!(Get-Module -Name "PSSQLite")) {
 If (!(Get-Module -ListAvailable -Name PSSQLite)) {
     ""; ""; "PSSQLite Powershell module not found: cannot proceed."
     "Install module PSSQLite by running as administrator:"
