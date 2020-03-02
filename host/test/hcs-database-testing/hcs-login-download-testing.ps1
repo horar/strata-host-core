@@ -90,6 +90,6 @@ If ($TEST_request_token) {
     # Delete temporary .ini file and restore original
     Remove-Item -Path "$AppData_OnSemi_dir\Strata Developer Studio.ini"
     If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" -PathType Leaf) {
-        Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP" "$AppData_OnSemi_dir\Strata Developer Studio.ini"
+        Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" "$AppData_OnSemi_dir\Strata Developer Studio.ini"
     }
 }
