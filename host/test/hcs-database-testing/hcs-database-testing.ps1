@@ -6,7 +6,7 @@
 Set-Variable "SDS_root_dir"    "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
 Set-Variable "HCS_db_file"     "$Env:AppData\ON Semiconductor\hcs\db\strata_db\db.sqlite3"
 Set-Variable "HCS_config_file" "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
-Set-Variable "HCS_exec"        "$SDS_root_dir\HCS\hcs.exe"
+Set-Variable "HCS_exec_file"   "$SDS_root_dir\HCS\hcs.exe"
 
 #####
 ##### Automated section
@@ -24,7 +24,7 @@ function KillAllHCS {
 # Function definition "StartHCSAndWait"
 # Start one instance of HCS and wait (to give time for DB replication)
 function StartHCSAndWait {
-    Start-Process -FilePath $HCS_exec -ArgumentList "-f `"$HCS_config_file`""
+    Start-Process -FilePath $HCS_exec_file -ArgumentList "-f `"$HCS_config_file`""
     Start-Sleep -Seconds 10
 }
 
