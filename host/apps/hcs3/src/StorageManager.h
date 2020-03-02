@@ -45,7 +45,7 @@ public slots:
             const QStringList &partialUriList,
             const QString &destinationDir);
 
-    void requestCancelPlatformDocument(const QByteArray &clientId);
+    void requestCancelAllDownloads(const QByteArray &clientId);
 
     /**
      * Notification about the update of the document (from Database)

@@ -386,23 +386,19 @@ void StorageManager::requestDownloadPlatformFiles(
     downloadRequests_.insert(request->groupId, request);
 }
 
-void StorageManager::requestCancelPlatformDocument(const QByteArray &clientId)
+void StorageManager::requestCancelAllDownloads(const QByteArray &clientId)
 {
-    QString groupId;
+    qCInfo(logCategoryHcsStorage) << "clientId" << clientId.toHex();
 
-    for (auto &request : downloadRequests_) {
-        if (clientId == request->clientId
-                && request->type == RequestType::PlatformDocuments) {
-            groupId = request->groupId;
-            break;
+    QMutableHashIterator<QString, DownloadRequest*> iter(downloadRequests_);
+    while (iter.hasNext()) {
+        DownloadRequest *request = iter.next().value();
+        if (clientId == request->clientId) {
+            QString groupId = request->groupId;
+            qCInfo(logCategoryHcsStorage) << "aborting all downloads for groupId" << groupId;
+            downloadRequests_.remove(groupId);
+            downloadManager_->abortAll(groupId);
         }
-    }
-
-    if (groupId.isEmpty() == false ) {
-        qDebug(logCategoryHcsStorage()) << "canceling all downloads" << groupId;
-        downloadRequests_.remove(groupId);
-
-        downloadManager_->abortAll(groupId);
     }
 }
 
