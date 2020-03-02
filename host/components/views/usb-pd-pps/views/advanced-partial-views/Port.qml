@@ -200,7 +200,7 @@ Item {
 //                left: graph2.right
             }
             width: portGraphs.width /  4
-            yAxisTitle: "A"
+            yAxisTitle: "V"
             xAxisTitle: "Seconds"
 
             minYValue: 0                    // Default: 0
