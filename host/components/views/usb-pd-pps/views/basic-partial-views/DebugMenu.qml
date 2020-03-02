@@ -164,7 +164,7 @@ Rectangle {
 
                     //console.log("input power=",inputFoldbackOutputPower);
                     //console.log("maxTemp=",tempFoldbackMaxTemperature);
-                    console.log("protectionAction=",protectionAction);
+                    //console.log("protectionAction=",protectionAction);
 
                     CorePlatformInterface.data_source_handler('{
                                 "value":"usb_pd_maximum_power",

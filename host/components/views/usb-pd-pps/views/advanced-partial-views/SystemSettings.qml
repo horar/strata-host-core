@@ -153,6 +153,7 @@ Item {
                 }
                 from: 20
                 to: 100
+                stepSize:5
                 fillColor:"dimgrey"
                 handleSize:20
                 fromText.fontSizeMultiplier:.75
