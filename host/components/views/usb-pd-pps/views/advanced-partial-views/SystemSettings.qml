@@ -45,7 +45,17 @@ Item {
                 }
             }
 
-            SGWidgets09.SGSegmentedButtonStrip {
+//            SGWidgets.SGButtonStrip {
+//                id: buttonStrip2
+//                model: ["One","Two","Three","Four"]
+//                exclusive: false
+
+//                onClicked: {
+//                    console.info(Logger.wgCategory, "buttonStrip2", index)
+//                }
+//            }
+
+            SGButtonStrip {
                 id: faultProtection
                 anchors {
                     top: faultText.bottom
@@ -55,42 +65,60 @@ Item {
                     right: margins1.right
                     rightMargin: 10
                 }
-                label: "Fault Protection:"
-                textColor: "#222"
-                activeTextColor: "white"
-                radius: 4
-                buttonHeight: 25
-                buttonImplicitWidth:0
-                hoverEnabled: false
-                exclusive: false    //needs to be set false to avoid a bug in the .9 version of segmented buttons
+                height:30
+                //label: "Fault Protection:"
+                //textColor: "#222"
+                //activeTextColor: "white"
+                //radius: 4
+                //buttonHeight: 25
+                //buttonImplicitWidth:0
+                //hoverEnabled: false
+                //exclusive: false
+                model: ["Retry","None"]
 
-                segmentedButtons: GridLayout {
-                    columnSpacing: 2
+                onClicked: {
+                    console.log("button with index",index,"clicked")
+                    if (isChecked(0))
+                        platformInterface.set_protection_action.update("retry");
+                    else if (isChecked(1))
+                        platformInterface.set_protection_action.update("nothing")
+                  }
 
-
-                    SGWidgets09.SGSegmentedButton{
-                        text: qsTr("Retry")
-                        property var protectionAction: platformInterface.usb_pd_protection_action.action
-
-                        checked: protectionAction === "retry"
-
-                        onClicked: {
-                            platformInterface.set_protection_action.update("retry");
-                        }
-                    }
-
-                    SGWidgets09.SGSegmentedButton{
-                        text: qsTr("None")
-
-                        property var protectionAction: platformInterface.usb_pd_protection_action.action
-
-                        checked: protectionAction === "nothing"
-
-                        onClicked: {
-                            platformInterface.set_protection_action.update("nothing");
-                        }
-                    }
+                property var protectionAction: platformInterface.usb_pd_protection_action.action
+                onProtectionActionChanged: {
+                     if (protectionAction === "retry")
+                         checkedIndices = 1
+                     if (protectionAction === "nothing")
+                         checkedIndices = 2
                 }
+
+//                segmentedButtons: GridLayout {
+//                    columnSpacing: 2
+
+
+//                    SGWidgets09.SGSegmentedButton{
+//                        text: qsTr("Retry")
+//                        property var protectionAction: platformInterface.usb_pd_protection_action.action
+
+//                        checked: protectionAction === "retry"
+
+//                        onClicked: {
+//                            platformInterface.set_protection_action.update("retry");
+//                        }
+//                    }
+
+//                    SGWidgets09.SGSegmentedButton{
+//                        text: qsTr("None")
+
+//                        property var protectionAction: platformInterface.usb_pd_protection_action.action
+
+//                        checked: protectionAction === "nothing"
+
+//                        onClicked: {
+//                            platformInterface.set_protection_action.update("nothing");
+//                        }
+//                    }
+//                }
             }
 
 
