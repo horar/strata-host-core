@@ -17,7 +17,7 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
-    property var ext_load_checked: platformInterface.int_status.ext_load_conn
+    property var ext_load_checked: platformInterface.ext_load_status.value
     onExt_load_checkedChanged: {
         if (ext_load_checked === true) extLoadCheckbox.checked = true
         else extLoadCheckbox.checked = false
@@ -68,13 +68,14 @@ Item {
 
     property var control_states: platformInterface.control_states
     onControl_statesChanged: {
-        if(control_states.vin_sel === "USB 5V")  baordInputComboBox.currentIndex = 0
-        else if(control_states.vin_sel === "External") baordInputComboBox.currentIndex = 1
-        else if (control_states.vin_sel === "Off") baordInputComboBox.currentIndex = 2
+        if(control_states.vin_sel === "USB 5V")  boardInputComboBox.currentIndex = 0
+        else if(control_states.vin_sel === "External") boardInputComboBox.currentIndex = 1
+        else if (control_states.vin_sel === "Off") boardInputComboBox.currentIndex = 2
 
         if(control_states.vin_ldo_sel === "Bypass") ldoInputComboBox.currentIndex = 0
         else if (control_states.vin_ldo_sel === "Buck Regulator") ldoInputComboBox.currentIndex = 1
         else if (control_states.vin_ldo_sel === "Off") ldoInputComboBox.currentIndex = 2
+        else if (control_states.vin_ldo_sel === "Isolated") ldoInputComboBox.currentIndex = 3
 
         ldoInputVolSlider.value = control_states.vin_ldo_set
         setLDOOutputVoltage.value = control_states.vout_ldo_set
@@ -94,150 +95,93 @@ Item {
 
     }
 
-
-
-    property var variant_name: platformInterface.variant_name
+    property var variant_name: platformInterface.variant_name.value
     onVariant_nameChanged: {
         if(variant_name === "NCP164C_TSOP5") {
-            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            warningTextIs = "DO NOT exceed LDO input voltage of 5V"
             //"Set LDO Output Voltage" PlaceHolder
-            setLDOOutputVoltage.fromText.text ="1.1V"
+            setLDOOutputVoltage.fromText.text = "1.1V"
             setLDOOutputVoltage.toText.text =  "4.7V"
             setLDOOutputVoltage.from = 1.1
             setLDOOutputVoltage.to = 4.7
-            setLDOOutputVoltage.stepSize = 1
-
-            //"Set Load Current" Placeholder
-            setLoadCurrent.fromText.text ="10V"
-            setLoadCurrent.toText.text =  "20V"
-            setLoadCurrent.from = 10
-            setLoadCurrent.to = 20
-            setLoadCurrent.stepSize = 1.5
 
             //"Set LDO Input Voltage" Placeholder
-            ldoInputVolSlider.fromText.text ="10V"
-            ldoInputVolSlider.toText.text =  "20V"
-            ldoInputVolSlider.from = 10
-            ldoInputVolSlider.to = 20
-            ldoInputVolSlider.stepSize = 1.5
+            ldoInputVolSlider.fromText.text ="1.5V"
+            ldoInputVolSlider.toText.text =  "5V"
+            ldoInputVolSlider.from = 1.5
+            ldoInputVolSlider.to = 5
 
         }
         else if (variant_name === "NCP164A_DFN6") {
-            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
             //"Set LDO Output Voltage" PlaceHolder
             setLDOOutputVoltage.fromText.text ="1.1V"
-            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.toText.text =  "5.2V"
             setLDOOutputVoltage.from = 1.1
-            setLDOOutputVoltage.to = 4.7
-            setLDOOutputVoltage.stepSize = 1
-
-            //"Set Load Current" Placeholder
-            setLoadCurrent.fromText.text ="10V"
-            setLoadCurrent.toText.text =  "20V"
-            setLoadCurrent.from = 10
-            setLoadCurrent.to = 20
-            setLoadCurrent.stepSize = 1.5
+            setLDOOutputVoltage.to = 5.2
 
             //"Set LDO Input Voltage" Placeholder
-            ldoInputVolSlider.fromText.text ="10V"
-            ldoInputVolSlider.toText.text =  "20V"
-            ldoInputVolSlider.from = 10
-            ldoInputVolSlider.to = 20
-            ldoInputVolSlider.stepSize = 1.5
+            ldoInputVolSlider.fromText.text ="1.5V"
+            ldoInputVolSlider.toText.text =  "5.5V"
+            ldoInputVolSlider.from = 1.5
+            ldoInputVolSlider.to = 5.5
         }
         else if (variant_name === "NCP164C_DFN8") {
-            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            warningTextIs = "DO NOT exceed LDO input voltage of 5V"
             //"Set LDO Output Voltage" PlaceHolder
             setLDOOutputVoltage.fromText.text ="1.1V"
             setLDOOutputVoltage.toText.text =  "4.7V"
             setLDOOutputVoltage.from = 1.1
             setLDOOutputVoltage.to = 4.7
-            setLDOOutputVoltage.stepSize = 1
-
-            //"Set Load Current" Placeholder
-            setLoadCurrent.fromText.text ="10V"
-            setLoadCurrent.toText.text =  "20V"
-            setLoadCurrent.from = 10
-            setLoadCurrent.to = 20
-            setLoadCurrent.stepSize = 1.5
 
             //"Set LDO Input Voltage" Placeholder
-            ldoInputVolSlider.fromText.text ="10V"
-            ldoInputVolSlider.toText.text =  "20V"
-            ldoInputVolSlider.from = 10
-            ldoInputVolSlider.to = 20
-            ldoInputVolSlider.stepSize = 1.5
+            ldoInputVolSlider.fromText.text ="1.5V"
+            ldoInputVolSlider.toText.text =  "5V"
+            ldoInputVolSlider.from = 1.5
+            ldoInputVolSlider.to = 5
         }
         else if (variant_name === "NCV8164A_TSOP5") {
-            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
             //"Set LDO Output Voltage" PlaceHolder
-            setLDOOutputVoltage.fromText.text ="1.1V"
-            setLDOOutputVoltage.toText.text =  "4.7V"
-            setLDOOutputVoltage.from = 1.1
-            setLDOOutputVoltage.to = 4.7
-            setLDOOutputVoltage.stepSize = 1
-
-            //"Set Load Current" Placeholder
-            setLoadCurrent.fromText.text ="10V"
-            setLoadCurrent.toText.text =  "20V"
-            setLoadCurrent.from = 10
-            setLoadCurrent.to = 20
-            setLoadCurrent.stepSize = 1.5
+            setLDOOutputVoltage.fromText.text ="1.2V"
+            setLDOOutputVoltage.toText.text =  "5.2V"
+            setLDOOutputVoltage.from = 1.2
+            setLDOOutputVoltage.to = 5.2
 
             //"Set LDO Input Voltage" Placeholder
-            ldoInputVolSlider.fromText.text ="10V"
-            ldoInputVolSlider.toText.text =  "20V"
-            ldoInputVolSlider.from = 10
-            ldoInputVolSlider.to = 20
-            ldoInputVolSlider.stepSize = 1.5
+            ldoInputVolSlider.fromText.text ="1.5V"
+            ldoInputVolSlider.toText.text =  "5.5V"
+            ldoInputVolSlider.from = 1.5
+            ldoInputVolSlider.to = 5.5
         }
         else if (variant_name === "NCV8164C_DFN6") {
-            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            warningTextIs = "DO NOT exceed LDO input voltage of 5V"
             //"Set LDO Output Voltage" PlaceHolder
-            setLDOOutputVoltage.fromText.text ="1.1V"
+            setLDOOutputVoltage.fromText.text ="1.2V"
             setLDOOutputVoltage.toText.text =  "4.7V"
-            setLDOOutputVoltage.from = 1.1
+            setLDOOutputVoltage.from = 1.2
             setLDOOutputVoltage.to = 4.7
-            setLDOOutputVoltage.stepSize = 1
-
-            //"Set Load Current" Placeholder
-            setLoadCurrent.fromText.text ="10V"
-            setLoadCurrent.toText.text =  "20V"
-            setLoadCurrent.from = 10
-            setLoadCurrent.to = 20
-            setLoadCurrent.stepSize = 1.5
 
             //"Set LDO Input Voltage" Placeholder
-            ldoInputVolSlider.fromText.text ="10V"
-            ldoInputVolSlider.toText.text =  "20V"
-            ldoInputVolSlider.from = 10
-            ldoInputVolSlider.to = 20
-            ldoInputVolSlider.stepSize = 1.5
+            ldoInputVolSlider.fromText.text ="1.5V"
+            ldoInputVolSlider.toText.text =  "5V"
+            ldoInputVolSlider.from = 1.5
+            ldoInputVolSlider.to = 5
         }
         else if (variant_name === "NCV8164A_DFN8") {
-            warningTextIs = "DO NOT exceed LDO input voltage of 123V"
+            warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
             //"Set LDO Output Voltage" PlaceHolder
-            setLDOOutputVoltage.fromText.text ="1.1V"
-            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.fromText.text ="1.2V"
+            setLDOOutputVoltage.toText.text =  "5.2V"
             setLDOOutputVoltage.from = 1.1
-            setLDOOutputVoltage.to = 4.7
-            setLDOOutputVoltage.stepSize = 1
-
-            //"Set Load Current" Placeholder
-            setLoadCurrent.fromText.text ="10V"
-            setLoadCurrent.toText.text =  "20V"
-            setLoadCurrent.from = 10
-            setLoadCurrent.to = 20
-            setLoadCurrent.stepSize = 1.5
+            setLDOOutputVoltage.to = 5.2
 
             //"Set LDO Input Voltage" Placeholder
-            ldoInputVolSlider.fromText.text ="10V"
-            ldoInputVolSlider.toText.text =  "20V"
-            ldoInputVolSlider.from = 10
-            ldoInputVolSlider.to = 20
-            ldoInputVolSlider.stepSize = 1.5
+            ldoInputVolSlider.fromText.text ="1.5V"
+            ldoInputVolSlider.toText.text =  "5.5V"
+            ldoInputVolSlider.from = 1.5
+            ldoInputVolSlider.to = 5.5
         }
-
     }
 
     ColumnLayout {
@@ -553,7 +497,7 @@ Item {
 
                                     SGAlignedLabel {
                                         id: boardInputLabel
-                                        target: baordInputComboBox
+                                        target: boardInputComboBox
                                         text: "Board Input \nVoltage Selection"
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors.centerIn: parent
@@ -561,7 +505,7 @@ Item {
                                         font.bold : true
 
                                         SGComboBox {
-                                            id: baordInputComboBox
+                                            id: boardInputComboBox
                                             fontSizeMultiplier: ratioCalc
                                             model: ["USB 5V", "External", "Off"]
                                             onActivated: {
@@ -590,7 +534,7 @@ Item {
                                         SGComboBox {
                                             id: ldoInputComboBox
                                             fontSizeMultiplier: ratioCalc
-                                            model: ["Bypass", "Buck Regulator", "Off"]
+                                            model: ["Bypass", "Buck Regulator", "Off", "Isolated"]
                                             onActivated: {
                                                 platformInterface.select_vin_ldo.update(currentText)
 

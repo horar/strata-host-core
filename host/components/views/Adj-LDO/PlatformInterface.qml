@@ -49,25 +49,16 @@ Item {
         "dropout":false,		//LDO dropout threshold notification
         "ocp":false,			//LDO short-circuit protection notification
         "tsd":false,		   //LDO TSD notification
-        "ext_load_conn":false   //External load connection status
     }
 
     property var variant_name: {
         "value":"NCP164C_TSOP"
     }
 
+    property var ext_load_status: {
+        "value":false
+    }
 
-    //    property var vin_ldo_good: {
-    //        "value" : false
-    //    }
-
-    //    property var int_pg_ldo: {
-    //        "value" : false
-    //    }
-
-    //    property var int_ldo_temp: {
-    //        "value" : false
-    //    }
 
     // -------------------------------------------------------------------
     // Outgoing Commands
