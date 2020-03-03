@@ -10,5 +10,3 @@ void QtestTemplateTest::testFunction2() {
      templateLib myTemplateLib;
      QCOMPARE(myTemplateLib.returnBool(false), true);
 }
-
-// QTEST_APPLESS_MAIN(QtestTemplateTest)

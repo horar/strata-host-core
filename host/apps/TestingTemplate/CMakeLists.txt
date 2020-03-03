@@ -21,11 +21,11 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-# target_link_libraries(${PROJECT_NAME}
-#     PRIVATE rapidjson::rapidjson
-# )
-
 if(BUILD_TESTING)
     add_subdirectory(Gtest)
     add_subdirectory(QtestTemplate)
 endif()
+
+set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}-qtest
+    PROPERTIES AUTOMOC ON
+)

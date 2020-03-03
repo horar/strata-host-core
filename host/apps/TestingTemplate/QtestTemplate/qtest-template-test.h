@@ -1,9 +1,7 @@
-#pragma once
+#ifndef QTEST_TEMPLATE_TEST_H
+#define QTEST_TEMPLATE_TEST_H
 
 #include "templateLib.h"
-
-// #include <QtTest/QtTest>
-// #include <QtCore>
 #include <QObject>
 
 class QtestTemplateTest: public QObject
@@ -13,3 +11,5 @@ private slots:
     void testFunction1();
     void testFunction2();
 };
+
+#endif // QTEST_TEMPLATE_TEST_H
