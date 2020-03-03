@@ -45,7 +45,7 @@ DocumentListModel *DocumentManager::pdfListModel()
     return &pdfModel_;
 }
 
-QString DocumentManager::errorString()
+QString DocumentManager::errorString() const
 {
     return errorString_;
 }

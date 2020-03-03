@@ -40,7 +40,7 @@ public:
     DocumentListModel* datasheetListModel();
     DocumentListModel* pdfListModel();
 
-    QString errorString();
+    QString errorString() const;
 
     Q_INVOKABLE void clearPdfRevisionCount();
     Q_INVOKABLE void clearDownloadRevisionCount();
