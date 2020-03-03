@@ -342,7 +342,7 @@ void StorageManager::requestDownloadPlatformFiles(
         const QString &destinationDir)
 {
     if (partialUriList.isEmpty()) {
-        qInfo(logCategoryHcsStorage()) << "nothing to download";
+        qCInfo(logCategoryHcsStorage()) << "nothing to download";
         emit downloadPlatformFilesFinished(clientId, QString());
         return;
     }
