@@ -260,7 +260,6 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
             continue;
         }
 
-        QString imageFile = platDoc->platformSelector().partialUri;
         QString filePath = createFilePathFromItem(platDoc->platformSelector().partialUri, pathPrefix);
 
         DownloadManager::DownloadRequestItem item;
