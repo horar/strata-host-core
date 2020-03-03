@@ -53,6 +53,7 @@ Item {
             text: "Select All"
             checkState: downloadButtonGroup.checkState
             enabled: repeater.model.downloadInProgress === false
+            leftPadding: 0
         }
 
         Column {
@@ -164,7 +165,15 @@ Item {
                                 rightMargin: 4
                             }
 
-                            text: model.filename
+                            text: {
+                                if (model.status === DownloadDocumentListModel.Selected
+                                        || model.status === DownloadDocumentListModel.NotSelected)
+                                {
+                                    return model.filename
+                                }
+
+                                return model.effectiveFilePath
+                            }
                             alternativeColorEnabled: true
                             fontSizeMultiplier: delegate.enlarge ? 1.1 : 1.0
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
@@ -239,7 +248,7 @@ Item {
                                     var total = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesTotal)
                                     return "Done " + total
                                 } else if (model.status === DownloadDocumentListModel.FinishedWithError) {
-                                    return "Error: " + model.errorString
+                                    return model.errorString
                                 }
                                 return ""
                             }
@@ -360,13 +369,11 @@ Item {
             }
 
             onClicked: {
-                //url must be valid path !! otherwise downlaodmanager throws errors
                 var url = CommonCpp.SGUtilsCpp.pathToUrl(savePath)
                 repeater.model.downloadSelectedFiles(url)
             }
         }
     }
-
 
     FolderDialog {
         id: fileDialog

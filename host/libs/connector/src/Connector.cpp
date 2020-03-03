@@ -1,5 +1,6 @@
 
-#include "SerialConnector.h"
+//#include "SerialConnector.h"
+#include <assert.h>
 #include "ZmqDealerConnector.h"
 #include "ZmqPublisherConnector.h"
 #include "ZmqRequestConnector.h"
@@ -65,9 +66,9 @@ Connector* getConnector(const CONNECTOR_TYPE type)
 {
     CONNECTOR_DEBUG_LOG("ConnectorFactory::getConnector type: %d", type);
     switch (type) {
-        case CONNECTOR_TYPE::SERIAL:
-            return static_cast<Connector*>(new SerialConnector);
-            break;
+//        case CONNECTOR_TYPE::SERIAL:
+//            return static_cast<Connector*>(new SerialConnector);
+//            break;
         case CONNECTOR_TYPE::ROUTER:
             return static_cast<Connector*>(new ZmqRouterConnector());
             break;

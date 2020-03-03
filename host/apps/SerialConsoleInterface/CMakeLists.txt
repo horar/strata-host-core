@@ -44,9 +44,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Quick
     Qt5::WebEngine
     BoardManager
-    StrataSerialPort
     strata::CouchbaseLiteCPP
-
     QtLogger
 )
 
@@ -59,7 +57,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
-    QT_DEPRECATED_WARNINGS
     QT_DISABLE_DEPRECATED_BEFORE=0x060000
     $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )

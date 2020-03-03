@@ -20,5 +20,11 @@
         <file>images/office_doorOpen.png</file>
         <file>images/interiorDark.png</file>
         <file>images/interiorLight.png</file>
+        <file>images/room.png</file>
+        <file>images/room_blue.png</file>
+        <file>images/room_door_open.png</file>
+        <file>images/room_green.png</file>
+        <file>images/room_purple.png</file>
+        <file>images/room_red.png</file>
     </qresource>
 </RCC>

@@ -12,10 +12,10 @@ endif()
 cmake_host_system_information(RESULT hostName QUERY HOSTNAME)
 
 message(STATUS "Processing build timestamp info...")
-file(READ ${INPUT_DIR}/timestamp.cpp.in tstamp_tmp)
-string(CONFIGURE "${tstamp_tmp}" tstamp_updated @ONLY)
-file(WRITE ${OUTPUT_DIR}/timestamp.cpp.tmp "${tstamp_updated}")
+file(READ ${INPUT_DIR}/Timestamp.cpp.in tsFile_temporary)
+string(CONFIGURE "${tsFile_temporary}" tsFile_updated @ONLY)
+file(WRITE ${OUTPUT_DIR}/${PROJECT_NAME}Timestamp.cpp.tmp "${tsFile_updated}")
 execute_process(
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${OUTPUT_DIR}/timestamp.cpp.tmp ${OUTPUT_DIR}/timestamp.cpp
+    ${OUTPUT_DIR}/${PROJECT_NAME}Timestamp.cpp.tmp ${OUTPUT_DIR}/${PROJECT_NAME}Timestamp.cpp
 )

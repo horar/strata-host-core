@@ -28,6 +28,7 @@ Rectangle {
         onErrorStateChanged: {
             if (documentManager.errorState.length > 0) {
                 pdfViewer.url = ""
+                loadingImage.currentFrame = 0
             }
         }
     }
