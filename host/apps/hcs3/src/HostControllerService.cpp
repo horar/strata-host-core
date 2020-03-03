@@ -474,12 +474,13 @@ void HostControllerService::onCmdHostDownloadFiles(const rapidjson::Value* paylo
 
     QString destinationDir = QString::fromStdString((*payload)["destination_dir"].GetString());
     if (destinationDir.isEmpty()) {
-        qCWarning(logCategoryHcs()) << "destinationDir is empty";
+        qCWarning(logCategoryHcs()) << "destinationDir attribute is empty";
         return;
     }
 
     const rapidjson::Value& files = (*payload)["files"];
     if (files.IsArray() == false) {
+        qCWarning(logCategoryHcs()) << "files attribute is not an array";
         return;
     }
 
