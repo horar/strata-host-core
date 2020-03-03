@@ -120,7 +120,7 @@ void DocumentManager::populateModels(QJsonObject data)
             DownloadDocumentItem *ddi = new DownloadDocumentItem(uri, prettyName, name, filesize);
             downloadList.append(ddi);
         } else {
-            qCWarning(logCategoryDocumentManager) << "unknown category";
+            qCWarning(logCategoryDocumentManager) << "unknown category" << category;
         }
     }
 
