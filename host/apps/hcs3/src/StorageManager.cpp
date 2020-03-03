@@ -84,7 +84,9 @@ void StorageManager::filePathChangedHandler(QString groupId, QString originalFil
         return;
     }
 
-    emit downloadPlatformFilePathChanged(request->clientId, originalFilePath, effectiveFilePath);
+    if (request->type == RequestType::FileDownload) {
+        emit downloadPlatformFilePathChanged(request->clientId, originalFilePath, effectiveFilePath);
+    }
 }
 
 void StorageManager::singleDownloadProgressHandler(const QString &groupId, const QString &filePath, const qint64 &bytesReceived, const qint64 &bytesTotal)
@@ -94,7 +96,9 @@ void StorageManager::singleDownloadProgressHandler(const QString &groupId, const
         return;
     }
 
-    emit downloadPlatformSingleFileProgress(request->clientId, filePath, bytesReceived, bytesTotal);
+    if (request->type == RequestType::FileDownload) {
+        emit downloadPlatformSingleFileProgress(request->clientId, filePath, bytesReceived, bytesTotal);
+    }
 }
 
 void StorageManager::singleDownloadFinishedHandler(const QString &groupId, const QString &filePath, const QString &error)
@@ -104,7 +108,9 @@ void StorageManager::singleDownloadFinishedHandler(const QString &groupId, const
         return;
     }
 
-    emit downloadPlatformSingleFileFinished(request->clientId, filePath, error);
+    if (request->type == RequestType::FileDownload) {
+        emit downloadPlatformSingleFileFinished(request->clientId, filePath, error);
+    }
 }
 
 void StorageManager::groupDownloadProgressHandler(const QString &groupId, int filesCompleted, int filesTotal)
