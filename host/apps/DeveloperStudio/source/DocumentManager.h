@@ -82,7 +82,7 @@ private:
 
     void init();
 
-    void populateDatasheedList(const QString &path, QList<DocumentItem* > &list);
+    void populateDatasheetList(const QString &path, QList<DocumentItem* > &list);
 };
 
 #endif // DOCUMENT_MANAGER_H

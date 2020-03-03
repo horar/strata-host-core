@@ -105,7 +105,7 @@ void DocumentManager::populateModels(QJsonObject data)
         if (category == "view") {
             if (name == "datasheet") {
                 //for datasheets, parse csv file
-                populateDatasheedList(uri, datasheetList);
+                populateDatasheetList(uri, datasheetList);
             } else {
                 DocumentItem *di = new DocumentItem(uri, prettyName, name);
                 pdfList.append(di);
@@ -159,13 +159,13 @@ void DocumentManager::setErrorString(QString errorString) {
     }
 }
 
-void DocumentManager::populateDatasheedList(const QString &path, QList<DocumentItem *> &list)
+void DocumentManager::populateDatasheetList(const QString &path, QList<DocumentItem *> &list)
 {
     list.clear();
 
     QFile file(path);
     if (file.open(QIODevice::ReadOnly) == false) {
-        qCDebug(logCategoryDocumentManager) << file.errorString();
+        qCWarning(logCategoryDocumentManager) << file.errorString();
         return;
     }
 
