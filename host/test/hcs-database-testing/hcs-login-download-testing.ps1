@@ -22,18 +22,19 @@ Set-Variable "SDS_login_info"   '{"username":"test@test.com","password":"Strata1
 
 If ($TEST_request_token) {
     # Attempt to acquire token information from server
-    "Attempting to acquire token information from server..."; "";
+    "        Token/authentication server testing (using endpoint $SDS_login_server)"
+    "        Attempting to acquire token information from server..."; "";
     Try {
         $server_response = Invoke-WebRequest -URI $SDS_login_server -Body $SDS_login_info -Method 'POST' -ContentType 'application/json' -ErrorAction 'Stop'
     } Catch {
-        "FAILED: Unable to connect to server '$SDS_login_server' to obtain login token, try again."; "";
+        "        FAILED: Unable to connect to server '$SDS_login_server' to obtain login token, try again."; "";
         Exit
     }
 
-    "HTTP $($server_response.StatusCode): $($server_response.StatusDescription)"
+    "        HTTP $($server_response.StatusCode): $($server_response.StatusDescription)"
 
     If (!($server_response.Content) -Or $server_response.StatusCode -Ne 200) {
-        "FAILED: Invalid server token response, try again."; "";
+        "        FAILED: Invalid server token response, try again."; "";
         Exit
     }
 
@@ -48,20 +49,21 @@ If ($TEST_request_token) {
 
     # Write to "Strata Developer Studio.ini"
     Set-Content "$AppData_OnSemi_dir\Strata Developer Studio.ini" $token_string
+    ""; "";
 }
 
 # Delete AppData/Roaming/hcs/documents/platform_selector directory if it exists
 If (Test-Path $PlatformSelector_dir -PathType Any) {
-    "Deleting directory $PlatformSelector_dir"
+    "        Deleting directory $PlatformSelector_dir"
     Remove-Item -Path $PlatformSelector_dir -Recurse -Force
-    "Deleted"
+    "        OK"
 }
 
 # Change directory to location of SDS executable
 Set-Location $SDS_root_dir
 
 # Run Strata Developer Studio and wait 10 s
-"Running Strata Developer Studio"
+"        Running Strata Developer Studio and waiting for 10 seconds..."
 Start-Process -FilePath "$SDS_root_dir\Strata Developer Studio.exe"
 Start-Sleep -Seconds 10
 
@@ -78,12 +80,12 @@ If (Get-Process -Name "hcs" -ErrorAction SilentlyContinue) {
 # Check whether AppData/Roaming/hcs/documents/platform_selector directory was re-populated by HCS
 If (Test-Path $PlatformSelector_dir -PathType Any) {
     If (@(Get-ChildItem $PlatformSelector_dir).Count -Gt 0) {
-        "PASS: directory with $(@(Get-ChildItem $PlatformSelector_dir).Count) elements."
+        "        PASS: directory with $(@(Get-ChildItem $PlatformSelector_dir).Count) elements."
     } Else {
-        "FAIL: empty directory created."
+        "        FAIL: empty directory created."
     }
 } Else {
-    "FAIL: directory not created."
+    "        FAIL: directory not created."
 }
 
 If ($TEST_request_token) {
@@ -93,3 +95,5 @@ If ($TEST_request_token) {
         Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" "$AppData_OnSemi_dir\Strata Developer Studio.ini"
     }
 }
+
+""; "Testing complete."; ""; "";
