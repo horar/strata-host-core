@@ -9,6 +9,13 @@ var jwt = '';
 var session = '';
 var cachedState
 
+// Attempt to read authentication server endpoint from INI file, use it if exists
+var get_auth_server = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings { id: settings; category: \"Login\";}", Qt.application)
+if(get_auth_server.value("authentication_server")) {
+    console.log(LoggerModule.Logger.devStudioRestClientCategory, "Found 'authentication_server' field in INI file (" + get_auth_server.value("authentication_server") + ")")
+    url = get_auth_server.value("authentication_server")
+}
+
 var xhr = function(method, endpoint, data, callback, errorCallback, signals, headers) {
     cachedState = {
         "status": -1,
