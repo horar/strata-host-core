@@ -83,7 +83,7 @@ public slots:
             const QString &error);
 
 private:
-    void handleMesages(const PlatformMessage& msg);
+    void handleMessage(const PlatformMessage& msg);
 
     void handleClientMsg(const PlatformMessage& msg);
     void handleCouchbaseMsg(const PlatformMessage& msg);
@@ -96,17 +96,10 @@ private:
     ///////
     //handlers for client (UI)
     void onCmdHCSStatus(const rapidjson::Value* );
-    void onCmdRegisterClient(const rapidjson::Value* );
     void onCmdUnregisterClient(const rapidjson::Value* );
     void onCmdPlatformSelect(const rapidjson::Value* );
-    void onCmdRequestAvaibilePlatforms(const rapidjson::Value* );
 
     //handlers for hcs::cmd
-    void onCmdHostJwtToken(const rapidjson::Value* );
-    void onCmdHostAdvertisePlatforms(const rapidjson::Value* );
-    void onCmdHostGetPlatforms(const rapidjson::Value* );
-    void onCmdHostRemoteDisconnect(const rapidjson::Value* );
-    void onCmdHostDisconnectRemoteUser(const rapidjson::Value* );
     void onCmdHostDisconnectPlatform(const rapidjson::Value* );
     void onCmdHostUnregister(const rapidjson::Value* );
     void onCmdHostDownloadFiles(const rapidjson::Value* );      //from UI

@@ -25,21 +25,13 @@ HostControllerService::HostControllerService(QObject* parent) : QObject(parent)
 {
     //handlers for 'cmd'
     clientCmdHandler_.insert( { std::string("request_hcs_status"), std::bind(&HostControllerService::onCmdHCSStatus, this, std::placeholders::_1) });
-    clientCmdHandler_.insert( { std::string("register_client"), std::bind(&HostControllerService::onCmdRegisterClient, this, std::placeholders::_1) } );
     clientCmdHandler_.insert( { std::string("unregister"), std::bind(&HostControllerService::onCmdUnregisterClient, this, std::placeholders::_1) } );
     clientCmdHandler_.insert( { std::string("platform_select"), std::bind(&HostControllerService::onCmdPlatformSelect, this, std::placeholders::_1) } );
-    clientCmdHandler_.insert( { std::string("request_available_platforms"), std::bind(&HostControllerService::onCmdRequestAvaibilePlatforms, this, std::placeholders::_1) } );
 
-    hostCmdHandler_.insert( { std::string("jwt_token"), std::bind(&HostControllerService::onCmdHostJwtToken, this, std::placeholders::_1) });
-    hostCmdHandler_.insert( { std::string("advertise_platforms"), std::bind(&HostControllerService::onCmdHostAdvertisePlatforms, this, std::placeholders::_1) });
-    hostCmdHandler_.insert( { std::string("get_platforms"), std::bind(&HostControllerService::onCmdHostGetPlatforms, this, std::placeholders::_1) });
-    hostCmdHandler_.insert( { std::string("remote_disconnect"), std::bind(&HostControllerService::onCmdHostRemoteDisconnect, this, std::placeholders::_1) });
-    hostCmdHandler_.insert( { std::string("disconnect_remote_user"), std::bind(&HostControllerService::onCmdHostDisconnectRemoteUser, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("disconnect_platform"), std::bind(&HostControllerService::onCmdHostDisconnectPlatform, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("unregister"), std::bind(&HostControllerService::onCmdHostUnregister, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("download_files"), std::bind(&HostControllerService::onCmdHostDownloadFiles, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
-
 }
 
 HostControllerService::~HostControllerService()
@@ -57,7 +49,7 @@ bool HostControllerService::initialize(const QString& config)
     db_.setLogAdapter(&dbLogAdapter_);
     clients_.setLogAdapter(&clientsLogAdapter_);
 
-    dispatcher_.setMsgHandler(std::bind(&HostControllerService::handleMesages, this, std::placeholders::_1) );
+    dispatcher_.setMsgHandler(std::bind(&HostControllerService::handleMessage, this, std::placeholders::_1) );
 
     rapidjson::Value& db_cfg = config_["database"];
 
@@ -265,7 +257,7 @@ bool HostControllerService::parseConfig(const QString& config)
     return true;
 }
 
-void HostControllerService::handleMesages(const PlatformMessage& msg)
+void HostControllerService::handleMessage(const PlatformMessage& msg)
 {
     switch(msg.msg_type)
     {
@@ -366,13 +358,6 @@ void HostControllerService::onCmdHCSStatus(const rapidjson::Value* )
     clients_.sendMessage(client->getClientId(), strbuf.GetString() );
 }
 
-void HostControllerService::onCmdRegisterClient(const rapidjson::Value* )
-{
-    // TODO - this function does nothing?
-    std::string platformList;
-    boards_.createPlatformsList(platformList);
-}
-
 void HostControllerService::onCmdDynamicPlatformList(const rapidjson::Value * )
 {
     std::string clientId = getSenderClient()->getClientId();
@@ -390,7 +375,6 @@ void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
     }
 
     client->resetPlatformId();
-    client->clearUsernameAndToken();
 }
 
 void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
@@ -410,10 +394,6 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
     QString clientId = QByteArray::fromRawData(client->getClientId().data(), static_cast<int>(client->getClientId().size()) ).toHex();
 //    QString clientId = QString::fromStdString(client->getClientId());
     qCInfo(logCategoryHcs) << "Client:" << clientId <<  " Selected platform:" << QString::fromStdString(classId);
-
-    //TODO: download all necessary documents from db/cloud  (asynchronous)
-    //      and send message to client
-    //
 
     rapidjson::Document* request = new rapidjson::Document();
     request->SetObject();
@@ -458,59 +438,6 @@ void HostControllerService::onCmdHostDisconnectPlatform(const rapidjson::Value* 
     client->resetPlatformId();
 }
 
-void HostControllerService::onCmdRequestAvaibilePlatforms(const rapidjson::Value* )
-{
-}
-
-void HostControllerService::onCmdHostJwtToken(const rapidjson::Value* payload)
-{
-    HCS_Client* client = getSenderClient();
-
-    if (payload->HasMember("jwt") == false ||
-        payload->HasMember("user_name") == false) {
-        qCWarning(logCategoryHcs) << "CmdHostJwtToken() invalid payload.";
-        return;
-    }
-
-    client->setJWT( (*payload)["jwt"].GetString() );
-    client->setUsername( (*payload)["user_name"].GetString() );
-
-//TODO:
-//    if (!discovery_service_)
-//        return;
-
-    //TODO: do something with discovery service...
-    // unfinished
-    //
-    // discovery_service_->setJWT(jwt);
-    //
-}
-
-void HostControllerService::onCmdHostAdvertisePlatforms(const rapidjson::Value* payload)
-{
-    if (payload) {
-//TODO:        bool remote_advertise = (*payload)["advertise_platforms"].GetBool();
-//        PDEBUG(PRINT_DEBUG,"is remote session ON? %d",remote_advertise);
-
-//TODO:        handleRemotePlatformRegistration(remote_advertise);
-    }
-}
-
-void HostControllerService::onCmdHostGetPlatforms(const rapidjson::Value* )
-{
-
-}
-
-void HostControllerService::onCmdHostRemoteDisconnect(const rapidjson::Value* )
-{
-
-}
-
-void HostControllerService::onCmdHostDisconnectRemoteUser(const rapidjson::Value* )
-{
-
-}
-
 void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
 {
     HCS_Client* client = getSenderClient();
@@ -519,8 +446,6 @@ void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
     if (int conn_id; boards_.getConnectionIdByClientId(client->getClientId(), conn_id)) {
         boards_.clearClientId(conn_id);
     }
-
-    client->clearUsernameAndToken();
 }
 
 void HostControllerService::onCmdHostDownloadFiles(const rapidjson::Value* payload)
