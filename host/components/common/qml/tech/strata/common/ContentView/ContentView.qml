@@ -25,9 +25,10 @@ Rectangle {
     Connections {
         target: documentManager
 
-        onErrorStateChanged: {
-            if (documentManager.errorState.length > 0) {
+        onErrorStringChanged: {
+            if (documentManager.errorString.length > 0) {
                 pdfViewer.url = ""
+                loadingImage.currentFrame = 0
             }
         }
     }
@@ -221,7 +222,7 @@ Rectangle {
                 centerIn: loading
                 verticalCenterOffset: -height/4
             }
-            playing: totalDocuments === 0 && documentManager.errorState.length === 0
+            playing: totalDocuments === 0 && documentManager.errorString.length === 0
             height: 200
             width: 200
         }
@@ -238,8 +239,8 @@ Rectangle {
                 family:  Fonts.franklinGothicBold
             }
             text: {
-                if (documentManager.errorState.length > 0) {
-                    return "Error: " + documentManager.errorState
+                if (documentManager.errorString.length > 0) {
+                    return "Error: " + documentManager.errorString
                 }
 
                 if (totalDocuments === 0) {

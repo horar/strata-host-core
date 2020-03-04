@@ -40,6 +40,10 @@ Item {
          }
      }
 
+     function restoreFocus(){
+        toolTipPopup.contentItem.forceActiveFocus()
+     }
+
      property alias index: toolTipPopup.index
      property alias description: toolTipPopup.description
      property alias fontSizeMultiplier: toolTipPopup.fontSizeMultiplier

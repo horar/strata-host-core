@@ -2,136 +2,131 @@
 #include "PlatformDocument.h"
 #include "logging/LoggingQtCategories.h"
 
-#include <rapidjson/document.h>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/writer.h>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
 
-#include <vector>
+QDebug operator<<(QDebug dbg, const PlatformFileItem &item) {
 
-PlatformDocument::PlatformDocument(const std::string& classId, const std::string& revision)
-        : classId_(classId), revision_(revision)
+    dbg.nospace() << "PlatformFileItem("
+                  << "name=" << item.name
+                  << ", partialUri="<< item.partialUri
+                  << ", timestamp=" << item.timestamp
+                  << ", md5=" << item.md5
+                  << ")";
+
+    return dbg.maybeSpace();
+};
+
+PlatformDocument::PlatformDocument(const QString &classId)
+    : classId_(classId)
 {
 }
 
-bool PlatformDocument::parseDocument(const std::string& document)
+bool PlatformDocument::parseDocument(const QString &document)
 {
-    rapidjson::Document class_doc;
-    if (class_doc.Parse(document.c_str()).HasParseError()) {
+    QJsonParseError parseError;
+    QJsonDocument jsonRoot = QJsonDocument::fromJson(document.toUtf8(), &parseError);
+
+    if (parseError.error != QJsonParseError::NoError ) {
         return false;
     }
-    //TODO: check for validity
 
-    document_.CopyFrom(class_doc, document_.GetAllocator());
-
-    std::string name;
-
-    // Documents
-    if(class_doc.HasMember("documents") == false){
-        qCWarning(logCategoryHcsPlatformDocument) << "documents key does not exist in the platform document";
+    QJsonObject jsonDocument = jsonRoot.object().value("documents").toObject();
+    if (jsonDocument.isEmpty()) {
+        qCWarning(logCategoryHcsPlatformDocument) << "documents object does not exist in the platform document";
         return false;
     }
-    rapidjson::Value& documents = class_doc["documents"];
-    for(auto it = documents.MemberBegin(); it != documents.MemberEnd(); ++it) {
-        name = it->name.GetString();
-        rapidjson::Value& jsonFileList = documents[name.c_str()];
-        if(jsonFileList.IsArray() == false){
-            qCWarning(logCategoryHcsPlatformDocument) << "Encounter a non-array field under documents object";
-            continue;
-        }
-        nameValueMapList list;
-        createFilesList(jsonFileList, list);
-        document_files_.insert( { name, list } );
-    }
 
-    // Platform selector
-    if(class_doc.HasMember("platform_selector") == false){
-        qCWarning(logCategoryHcsPlatformDocument) << "platform_selector does not exist in the platform document";
+    //downloads
+    QJsonArray jsonDownloadList = jsonDocument.value("downloads").toArray();
+    if (jsonDownloadList.isEmpty()) {
+        qCWarning(logCategoryHcsPlatformDocument) << "downloads object is missing";
         return false;
     }
-    rapidjson::Value& platform_selector = class_doc["platform_selector"];
-    nameValueMap platform_image;
-    if(createFileObject(platform_selector, platform_image)){
-        // Although, platform_selector is an object we need to add it to list to be consistent
-        nameValueMapList platform_image_list;
-        platform_image_list.push_back(platform_image);
-        document_files_.insert( { "platform_selector", platform_image_list } );
+
+    populateFileList(jsonDownloadList, downloadList_);
+
+    //views
+    QJsonArray jsonViewList = jsonDocument.value("views").toArray();
+    if (jsonViewList.isEmpty()) {
+        qCWarning(logCategoryHcsPlatformDocument) << "views object is missing";
+        return false;
     }
+
+    populateFileList(jsonViewList, viewList_);
+
+    //platform selector
+    QJsonObject jsonPlatformSelector = jsonRoot.object().value("platform_selector").toObject();
+    if (jsonPlatformSelector.isEmpty()) {
+        qCWarning(logCategoryHcsPlatformDocument) << "platform_selector object does not exist in the platform document";
+        return false;
+    }
+
+    bool isValid = populateFileObject(jsonPlatformSelector, platformSelector_);
+    if (isValid == false) {
+        qCWarning(logCategoryHcsPlatformDocument) << "platform_selector object is not valid";
+        return false;
+    }
+
+    //name
+    name_ = jsonRoot.object().value("name").toString();
 
     return true;
 }
 
-bool PlatformDocument::createFileObject(const rapidjson::Value& jsonObject, nameValueMap& file)
+QString PlatformDocument::classId()
 {
-    if(jsonObject.IsObject() == false){
-        return false;
-    }
-
-    if (jsonObject.HasMember("file") == false ||
-        jsonObject.HasMember("md5") == false  ||
-        jsonObject.HasMember("name") == false ||
-        jsonObject.HasMember("timestamp") == false){
-        return false;
-    }
-
-    std::string value;
-    value = jsonObject["file"].GetString();
-    file.insert({ "file", value});
-
-    value = jsonObject["md5"].GetString();
-    file.insert({"md5", value});
-
-    value = jsonObject["name"].GetString();
-    file.insert({"name", value});
-
-    value = jsonObject["timestamp"].GetString();
-    file.insert({"timestamp", value});
-
-    return true;
+    return classId_;
 }
 
-void PlatformDocument::createFilesList(const rapidjson::Value& jsonFileList, std::vector<nameValueMap>& filesList)
+const QList<PlatformFileItem>& PlatformDocument::getViewList()
 {
-    for(auto it = jsonFileList.Begin(); it != jsonFileList.End(); ++it)
+    return viewList_;
+}
+
+const QList<PlatformFileItem> &PlatformDocument::getDownloadList()
+{
+    return downloadList_;
+}
+
+const PlatformFileItem &PlatformDocument::platformSelector()
+{
+    return platformSelector_;
+}
+
+bool PlatformDocument::populateFileObject(const QJsonObject &jsonObject, PlatformFileItem &file)
+{
+    if (jsonObject.contains("file") == false
+            || jsonObject.contains("md5") == false
+            || jsonObject.contains("name") == false
+            || jsonObject.contains("timestamp") == false
+            || jsonObject.contains("filesize") == false
+            || jsonObject.contains("prettyName") == false)
     {
-        nameValueMap valuesMap;
-        if(createFileObject(*it, valuesMap) == false){
-            continue;
-        }
-        filesList.push_back(valuesMap);
-    }
-}
-
-bool PlatformDocument::getDocumentFilesList(const std::string& groupName, stringVector& filesList)
-{
-    auto groupIt = document_files_.find(groupName);
-    if (groupIt == document_files_.end()) {
         return false;
     }
 
-    filesList.reserve(groupIt->second.size() );
-    for(const auto& item : groupIt->second) {
-        auto findIt = item.find("file");
-        if (findIt != item.end()) {
-            filesList.push_back( findIt->second );
-        }
-    }
+    file.partialUri = jsonObject.value("file").toString();
+    file.md5 = jsonObject.value("md5").toString();
+    file.name = jsonObject.value("name").toString();
+    file.timestamp = jsonObject.value("timestamp").toString();
+    file.filesize = jsonObject.value("filesize").toVariant().toLongLong();
+    file.prettyName = jsonObject.value("prettyName").toString();
+
     return true;
 }
 
-PlatformDocument::nameValueMap PlatformDocument::findElementByFile(const std::string& file, const std::string& groupName)
+void PlatformDocument::populateFileList(const QJsonArray &jsonList, QList<PlatformFileItem> &fileList)
 {
-    auto groupIt = document_files_.find(groupName);
-    if (groupIt == document_files_.end()) {
-        return nameValueMap();
-    }
-
-    for(const auto& item : groupIt->second) {
-        auto findIt = item.find("file");
-        if (findIt != item.end() && findIt->second == file) {
-            return item;
+    foreach (const QJsonValue &value, jsonList) {
+        PlatformFileItem fileItem;
+        if (populateFileObject(value.toObject() , fileItem) == false) {
+            qCWarning(logCategoryHcsPlatformDocument) << "object not valid";
+            continue;
         }
+
+        fileList.append(fileItem);
     }
-
-    return nameValueMap();
 }
-

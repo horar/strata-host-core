@@ -29,6 +29,12 @@ RowLayout {
     property alias boxFont: infoText.font
     property alias unitFont: unit.font
 
+    property alias boxObject: box
+    property alias infoTextObject: infoText
+    property alias mouseAreaObject: mouseArea
+    property alias placeholderObject: placeholder
+    property alias unitObject: unit
+
     signal accepted(string text)
     signal editingFinished(string text)
 
@@ -77,6 +83,7 @@ RowLayout {
             onEditingFinished: root.editingFinished(infoText.text)
 
             MouseArea {
+                id: mouseArea
                 anchors {
                     fill: infoText
                 }
@@ -116,4 +123,9 @@ RowLayout {
     function forceActiveFocus() {
         infoText.forceActiveFocus()
     }
+
+    function selectAll() {
+        infoText.selectAll()
+    }
+
 }

@@ -1,6 +1,12 @@
-import QtQuick 2.9
-import QtQuick.Controls 2.2
-import "qrc:/views/usb-pd/sgwidgets"
+
+import QtQuick 2.12
+//import QtQuick.Window 2.12
+import QtQuick.Controls 2.12
+
+//import QtQuick 2.9
+//import QtQuick.Controls 2.2
+import "qrc:/views/usb-pd-pps/sgwidgets"
+import tech.strata.sgwidgets 1.0 as SGWidgets10
 
 Drawer {
     id:root
@@ -136,7 +142,7 @@ Drawer {
 
 
 
-        SGGraph{
+        SGWidgets10.SGGraph{
             id:voltageGraph
             anchors.left: menuContainer.left
             anchors.right:menuContainer.right
@@ -147,117 +153,238 @@ Drawer {
             property real count: 0
             property real interval: 10 // 10 Hz?
 
-            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
+            property var powerInfo: platformInterface.usb_power_notification.output_voltage
             onPowerInfoChanged:{
                 //console.log("new power notification for port ",portNumber);
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
+                if (platformInterface.usb_power_notification.port === portNumber){
+                    //console.log("voltage=",platformInterface.usb_power_notification.output_voltage," count=",count);
                     count += interval;
-                    stream = platformInterface.request_usb_power_notification.output_voltage
+                    stream = platformInterface.usb_power_notification.output_voltage
                 }
             }
 
-            inputData: stream          // Set the graph's data source here
+            Timer {
+                id: graphTimerPoints
+                interval: 60
+                running: false
+                repeat: true
+
+                property real lastTime
+
+                onRunningChanged: {
+                    if (running){
+                        timedGraphPoints.curve(0).clear()
+                        lastTime = Date.now()
+                    }
+                }
+
+                onTriggered: {
+                    let currentTime = Date.now()
+                    let curve = timedGraphPoints.curve(0)
+                    curve.shiftPoints((currentTime - lastTime)/1000, 0)
+                    curve.append(0, platformInterface.usb_power_notification.output_voltage)
+                    removeOutOfViewPoints()
+                    timedGraphPoints.update()
+                    lastTime = currentTime
+                }
+
+                function removeOutOfViewPoints() {
+                    // recursively clean up points that have moved out of view
+                    if (timedGraphPoints.curve(0).at(0).x > timedGraphPoints.xMin) {
+                        timedGraphPoints.curve(0).remove(0)
+                        removeOutOfViewPoints()
+                    }
+                }
+            }
+
 
             // Optional graph settings:
             title: "Port "+portNumber+ " Voltage" // Default: empty
-            xAxisTitle: "Seconds"           // Default: empty
-            yAxisTitle: "V"                 // Default: empty
-            textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
-            dataLineColor: "white"          // Default: #000000 (black)
-            axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
-            gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
-            underDataColor: "transparent"   // Default: Qt.rgba(.5, .5, .5, .3) (transparent gray)
+            xTitle: "Seconds"           // Default: empty
+            yTitle: "V"                 // Default: empty
+            //textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
+            //dataLineColor: "white"          // Default: #000000 (black)
+            //axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
+            //gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
+            //underDataColor: "transparent"   // Default: Qt.rgba(.5, .5, .5, .3) (transparent gray)
             backgroundColor: "black"        // Default: #ffffff (white)
-            minYValue: 0                    // Default: 0
-            maxYValue: 22                   // Default: 10
-            minXValue: 0                    // Default: 0
-            maxXValue: 5                    // Default: 10
-            showXGrids: false               // Default: false
-            showYGrids: true                // Default: false
+            yMin: 0                    // Default: 0
+            yMax: 25                   // Default: 10
+            xMin: 0                    // Default: 0
+            xMax: 5                    // Default: 10
+            //showXGrids: false               // Default: false
+            //showYGrids: true                // Default: false
+            //xValueAxis.tickCount: 5
+            panXEnabled: false
+            panYEnabled: false
+            zoomXEnabled: false
+            zoomYEnabled: false
+            autoUpdate: false
+            foregroundColor: "white"
+
+            Component.onCompleted: {
+                let movingCurve = createCurve("movingCurve")
+                movingCurve.color = "white"
+                movingCurve.autoUpdate = false
+            }
         }
 
-        SGGraph{
+        SGWidgets10.SGGraph{
             id:powerGraph
             anchors.left: menuContainer.left
             anchors.right:menuContainer.right
             anchors.top: voltageGraph.bottom
             height: root.graphHeight
 
-            property real stream: 0
-            property real count: 0
-            property real interval: 10 // 10 Hz?
+//            property real stream: 0
+//            property real count: 0
+//            property real interval: 10 // 10 Hz?
 
-            property var powerInfo: platformInterface.request_usb_power_notification.output_voltage
-            onPowerInfoChanged:{
-                //console.log("new power notification for port ",portNumber);
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    //console.log("voltage=",platformInterface.request_usb_power_notification.output_voltage," count=",count);
-                    count += interval;
-                    stream = platformInterface.request_usb_power_notification.output_voltage *
-                            platformInterface.request_usb_power_notification.output_current;
+//            property var powerInfo: platformInterface.usb_power_notification.output_voltage
+//            onPowerInfoChanged:{
+//                //console.log("new power notification for port ",portNumber);
+//                if (platformInterface.usb_power_notification.port === portNumber){
+//                    //console.log("voltage=",platformInterface.usb_power_notification.output_voltage," count=",count);
+//                    count += interval;
+//                    stream = platformInterface.usb_power_notification.output_voltage *
+//                            platformInterface.usb_power_notification.output_current;
+//                }
+//            }
+
+            Timer {
+                id: graphTimerPoints2
+                interval: 60
+                running: false
+                repeat: true
+
+                property real lastTime
+
+                onRunningChanged: {
+                    if (running){
+                        timedGraphPoints.curve(0).clear()
+                        lastTime = Date.now()
+                    }
+                }
+
+                onTriggered: {
+                    let currentTime = Date.now()
+                    let curve = timedGraphPoints.curve(0)
+                    curve.shiftPoints((currentTime - lastTime)/1000, 0)
+                    curve.append(0, platformInterface.usb_power_notification.output_current)
+                    removeOutOfViewPoints()
+                    timedGraphPoints.update()
+                    lastTime = currentTime
+                }
+
+                function removeOutOfViewPoints() {
+                    // recursively clean up points that have moved out of view
+                    if (timedGraphPoints.curve(0).at(0).x > timedGraphPoints.xMin) {
+                        timedGraphPoints.curve(0).remove(0)
+                        removeOutOfViewPoints()
+                    }
                 }
             }
 
-            inputData: stream          // Set the graph's data source here
-
             // Optional graph settings:
             title: "Port "+portNumber+ " Power" // Default: empty
-            xAxisTitle: "Seconds"           // Default: empty
-            yAxisTitle: "W"                 // Default: empty
-            textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
-            dataLineColor: "white"          // Default: #000000 (black)
-            axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
-            gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
-            underDataColor: "transparent"   // Default: Qt.rgba(.5, .5, .5, .3) (transparent gray)
+            xTitle: "Seconds"           // Default: empty
+            yTitle: "W"                 // Default: empty
             backgroundColor: "black"        // Default: #ffffff (white)
-            minYValue: 0                    // Default: 0
-            maxYValue: 110                   // Default: 10
-            minXValue: 0                    // Default: 0
-            maxXValue: 5                    // Default: 10
-            showXGrids: false               // Default: false
-            showYGrids: true                // Default: false
+            yMin: 0                    // Default: 0
+            yMax: 60                   // Default: 10
+            xMin: 0                    // Default: 0
+            xMax: 5                    // Default: 10
+            panXEnabled: false
+            panYEnabled: false
+            zoomXEnabled: false
+            zoomYEnabled: false
+            autoUpdate: false
+            foregroundColor: "white"
+
+            Component.onCompleted: {
+                let movingCurve = createCurve("movingCurve")
+                movingCurve.color = "white"
+                movingCurve.autoUpdate = false
+            }
         }
 
-        SGGraph{
+        SGWidgets10.SGGraph{
             id:temperatureGraph
             anchors.left: menuContainer.left
             anchors.right:menuContainer.right
             anchors.top: powerGraph.bottom
             height: root.graphHeight
 
-            property real stream: 0
-            property real count: 0
-            property real interval: 10 // 10 Hz?
+//            property real stream: 0
+//            property real count: 0
+//            property real interval: 10 // 10 Hz?
 
-            property var powerInfo: platformInterface.request_usb_power_notification
-            onPowerInfoChanged:{
-                //console.log("new power notification for port ",portNumber);
-                if (platformInterface.request_usb_power_notification.port === portNumber){
-                    //console.log("temp=",platformInterface.request_usb_power_notification.temperature);
-                    count += interval;
-                    stream = platformInterface.request_usb_power_notification.temperature;
+//            property var powerInfo: platformInterface.usb_power_notification
+//            onPowerInfoChanged:{
+//                //console.log("new power notification for port ",portNumber);
+//                if (platformInterface.usb_power_notification.port === portNumber){
+//                    //console.log("temp=",platformInterface.usb_power_notification.temperature);
+//                    count += interval;
+//                    stream = platformInterface.usb_power_notification.temperature;
+//                }
+//            }
+            Timer {
+                id: graphTimerPoints3
+                interval: 60
+                running: false
+                repeat: true
+
+                property real lastTime
+
+                onRunningChanged: {
+                    if (running){
+                        timedGraphPoints.curve(0).clear()
+                        lastTime = Date.now()
+                    }
+                }
+
+                onTriggered: {
+                    let currentTime = Date.now()
+                    let curve = timedGraphPoints.curve(0)
+                    curve.shiftPoints((currentTime - lastTime)/1000, 0)
+                    curve.append(0, platformInterface.usb_power_notification.temperature)
+                    removeOutOfViewPoints()
+                    timedGraphPoints.update()
+                    lastTime = currentTime
+                }
+
+                function removeOutOfViewPoints() {
+                    // recursively clean up points that have moved out of view
+                    if (timedGraphPoints.curve(0).at(0).x > timedGraphPoints.xMin) {
+                        timedGraphPoints.curve(0).remove(0)
+                        removeOutOfViewPoints()
+                    }
                 }
             }
 
-            inputData: stream          // Set the graph's data source here
+            //inputData: stream          // Set the graph's data source here
 
             // Optional graph settings:
             title: "Port "+portNumber+ " Temperature" // Default: empty
-            xAxisTitle: "Seconds"           // Default: empty
-            yAxisTitle: "°C"                 // Default: empty
-            textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
-            dataLineColor: "white"          // Default: #000000 (black)
-            axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
-            gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
-            underDataColor: "transparent"   // Default: Qt.rgba(.5, .5, .5, .3) (transparent gray)
+            xTitle: "Seconds"           // Default: empty
+            yTitle: "°C"                 // Default: empty
             backgroundColor: "black"        // Default: #ffffff (white)
-            minYValue: 0                    // Default: 0
-            maxYValue: 120                   // Default: 10
-            minXValue: 0                    // Default: 0
-            maxXValue: 5                   // Default: 10
-            showXGrids: false               // Default: false
-            showYGrids: true                // Default: false
+            yMin: 0                    // Default: 0
+            yMax: 100                   // Default: 10
+            xMin: 0                    // Default: 0
+            xMax: 5                   // Default: 10
+            panXEnabled: false
+            panYEnabled: false
+            zoomXEnabled: false
+            zoomYEnabled: false
+            autoUpdate: false
+            foregroundColor: "white"
+
+            Component.onCompleted: {
+                let movingCurve = createCurve("movingCurve")
+                movingCurve.color = "white"
+                movingCurve.autoUpdate = false
+            }
         }
     }
 

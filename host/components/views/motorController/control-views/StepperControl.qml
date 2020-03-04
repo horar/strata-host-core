@@ -21,6 +21,7 @@ Widget09.SGResponsiveScrollView {
             fill: parent
         }
 
+        property bool inOverCurrentProtection: platformInterface.step_ocp_notification.ocp_set === "on"
 
         Rectangle {
             id: container2
@@ -28,9 +29,9 @@ Widget09.SGResponsiveScrollView {
             anchors {
                 fill: parent
             }
-            color: motorControllerGrey
+            color: "white"
 
-            property int leftMargin: 100
+            property int leftMargin: width/12
             property int statBoxHeight:100
             property int motorColumnTopMargin: 100
 
@@ -40,39 +41,34 @@ Widget09.SGResponsiveScrollView {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom:parent.bottom
                 width: parent.width
-                color:motorControllerGrey
+                color:"white"
                 opacity:.9
             }
 
 
-            Column{
-                id:stepColumn
+            RowLayout{
+                id:portInfoRow
+                height:container2.statBoxHeight
+                width: parent.width*.50
+                anchors.left:parent.left
+                anchors.leftMargin: parent.width*.22
+                anchors.top: parent.top
+                anchors.topMargin: 134
 
-                anchors.top:parent.top
-                anchors.topMargin: container2.motorColumnTopMargin *1.35
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom:parent.bottom
-                width: parent.width/3
-                spacing: 20
+                spacing: parent.width*.1
 
-
-
-
-                Row{
-                    id:portInfoRow
-                    height:container2.statBoxHeight
-                    width: parent.width*2
-                    anchors.left:parent.left
-                    anchors.leftMargin: -130
-
-                    spacing: 100
+                Rectangle{
+                   Layout.fillWidth: true
+                   Layout.fillHeight: true
+                   color: "transparent"
+                   //color:"pink"
 
                     PortStatBox{
                         id:motor1InputVoltage
-
                         height:container2.statBoxHeight
-                        width:parent.width*.35
+                        width:250
                         label: "INPUT VOLTAGE"
+                        labelSize:12
                         unit:"V"
                         unitColor: motorControllerDimGrey
                         color:"transparent"
@@ -86,12 +82,20 @@ Widget09.SGResponsiveScrollView {
                         bottomMargin: 10
                         value: platformInterface.step_notification.voltage.toFixed(1)
                     }
+                }
+
+                Rectangle{
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    color: "transparent"
+                    //color:"lightblue"
+
                     PortStatBox{
                         id:motor1InputCurrent
-
                         height:container2.statBoxHeight
-                        width:parent.width*.35
-                        label: "INPUT CURRENT"
+                        width:250
+                        label: "HOLDING CURRENT"
+                        labelSize:12
                         unit:"mA"
                         unitColor:motorControllerDimGrey
                         color:"transparent"
@@ -105,7 +109,126 @@ Widget09.SGResponsiveScrollView {
                         bottomMargin: 10
                         value: platformInterface.step_notification.current.toFixed(0)
                     }
+
+                    Rectangle{
+                        id: overCurrentProtectionRectangle
+                        anchors.left: motor1InputCurrent.right
+                        anchors.leftMargin: 110
+                        anchors.top: motor1InputCurrent.top
+                        anchors.topMargin: 0
+                        width: 150
+                        //border.color:"black"
+                        height:100
+
+                        Text{
+                            id:overCurrentProtectionText
+                            anchors.top: overCurrentProtectionRectangle.top
+                            anchors.topMargin: 0
+                            anchors.left:overCurrentProtectionRectangle.left
+                            anchors.leftMargin: 5
+                            text:"OCP"
+                            font.pixelSize: 24
+
+                        }
+
+                        SGSwitch{
+                            id:ocpSwitch
+                            anchors.top: lightContainer.bottom
+                            anchors.topMargin:5
+                            anchors.horizontalCenter: lightContainer.horizontalCenter
+                            width:50
+                            grooveFillColor: motorControllerPurple
+                            checked: (platformInterface.ocp_enable_notification.enable === "on") ? true : false
+                            enabled: !container.inOverCurrentProtection
+
+                            onToggled:{
+                                var value = "off";
+                                if (checked)
+                                    value = "on"
+
+                                platformInterface.ocp_enable.update(value);
+                            }
+                        }
+
+
+                        Rectangle {
+                            id: lightContainer
+                            width: 50
+                            height: width
+                            radius: width/2
+                            anchors.top: overCurrentProtectionText.bottom
+                            anchors.topMargin:  0
+                            anchors.horizontalCenter:overCurrentProtectionText.horizontalCenter
+                            color: "transparent"
+                            border.color: "grey"
+                            border.width: 3
+                            property alias lightcolor: lightColorLayer.color
+                            Rectangle {
+                                id: lightColorLayer
+                                anchors.centerIn: lightContainer
+                                width: lightContainer.width * .6
+                                height: width
+                                radius: width/2
+                                color: "green"
+
+                                property var stepOverCurrentProtection: platformInterface.step_ocp_notification.ocp_set
+                                onStepOverCurrentProtectionChanged: {
+                                    if (platformInterface.step_ocp_notification.ocp_set === "on")
+                                        color = "red"
+                                    else
+                                        color = "green"
+                                }
+
+                                property var overCurrentProtectionEnabled: platformInterface.ocp_enable_notification
+                                onOverCurrentProtectionEnabledChanged: {
+                                    if (platformInterface.ocp_enable_notification.enable === "off")
+                                        color = "grey"
+                                    else{   //ocp protection is on
+                                        if (platformInterface.dc_ocp_notification.ocp_set === "on")
+                                            color = "red"
+                                        else
+                                            color = "green"
+                                    }
+                                }
+                            }
+                        }
+
+                        SGButton{
+                            id:ocpResetButton
+                            width:100
+                            height:40
+                            anchors.left: lightContainer.right
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: lightContainer.verticalCenter
+                            text: "reset"
+                            fontSizeMultiplier:2
+
+                            visible: platformInterface.step_ocp_notification.ocp_set === "on" ? true : false
+
+                            onClicked:{
+                                platformInterface.step_ocp_reset.update()
+                            }
+                        }
+                    }
                 }
+
+
+            }
+
+            Column{
+                id:stepColumn
+
+                anchors.top:portInfoRow.bottom
+                anchors.topMargin: 60
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom:parent.bottom
+                width: parent.width/3
+                spacing: 20
+
+
+
+
+
 
                 Row{
                     spacing: 10
@@ -121,12 +244,16 @@ Widget09.SGResponsiveScrollView {
                         anchors.verticalCenter: excitationRow.verticalCenter
                         anchors.verticalCenterOffset: -10
                         width:50
+                        color: container.inOverCurrentProtection ? "grey" : "black"
                     }
                     Text{
                         id:halfStepLabel
                         color:motorControllerDimGrey
                         text: "1/2 step"
                         horizontalAlignment: Text.AlignRight
+                        anchors.verticalCenter: excitationRow.verticalCenter
+                        anchors.verticalCenterOffset: -8
+                        font.pixelSize: 15
                     }
                     SGSwitch{
                         id:excitationSwitch
@@ -136,6 +263,7 @@ Widget09.SGResponsiveScrollView {
                         textColor:"white"
                         grooveFillColor: motorControllerPurple
                         checked: (platformInterface.step_excitation_notification.excitation === "full_step") ? true : false
+                        enabled: ! container.inOverCurrentProtection
                         onToggled: {
                             if (checked){
                                 platformInterface.step_excitation.update("full_step")
@@ -151,6 +279,9 @@ Widget09.SGResponsiveScrollView {
                         color:motorControllerDimGrey
                         text: "full step"
                         horizontalAlignment: Text.AlignLeft
+                        anchors.verticalCenter: excitationRow.verticalCenter
+                        anchors.verticalCenterOffset: -8
+                        font.pixelSize: 15
                     }
                 }
 
@@ -169,6 +300,7 @@ Widget09.SGResponsiveScrollView {
                         anchors.verticalCenter: directionRow.verticalCenter
                         anchors.verticalCenterOffset: -5
                         width:50
+                         color: container.inOverCurrentProtection ? "grey" : "black"
                     }
 
                     Image {
@@ -187,20 +319,15 @@ Widget09.SGResponsiveScrollView {
                         width:50
                         anchors.bottom: directionRow.bottom
                         anchors.bottomMargin: 5
-                        //checked value flipped as part of a kludge
-                        //checked: (platformInterface.step_direction_notification.direction === "counterclockwise") ? true : false
-                        checked: (platformInterface.step_direction_notification.direction === "counterclockwise") ? false : true
+                        checked: (platformInterface.step_direction_notification.direction === "counterclockwise") ? true : false
+                        enabled: ! container.inOverCurrentProtection
 
                         onToggled: {
                             if (checked){
-                                //platformInterface.step_direction.update("counterclockwise")
-                                //temporary kludge
-                                platformInterface.step_direction.update("clockwise")
+                                platformInterface.step_direction.update("counterclockwise")
                             }
                             else{
-                                //platformInterface.step_direction.update("clockwise")
-                                //temporary kludge
-                                platformInterface.step_direction.update("counterclockwise")
+                                platformInterface.step_direction.update("clockwise")
                             }
                         }
                     }
@@ -226,15 +353,16 @@ Widget09.SGResponsiveScrollView {
                         font.pixelSize: 24
                         horizontalAlignment: Text.AlignRight
                         width:50
+                         color: container.inOverCurrentProtection ? "grey" : "black"
                     }
 
                     SGComboBox {
                         id: stepCombo
 
-                        property variant stepOptions: [".9", "1.8", "3.6", "3.75", "7.5", "15", "18"]
-
+                        property variant stepOptions: ["0.9", "1.8", "3.6", "3.75", "7.5", "15", "18"]
+                        enabled: ! container.inOverCurrentProtection
                         model: stepOptions
-                        //textColor:"white"
+                        textColor: enabled ? "black" : "grey"
 
                         boxColor:"white"
                         //comboBoxHeight: 25
@@ -243,11 +371,11 @@ Widget09.SGResponsiveScrollView {
 
                         property var currentValue: platformInterface.step_angle_notification.angle
                         onCurrentValueChanged: {
-                            //console.log("Current step angle is ",currentValue);
+                            console.log("Current step angle is ",currentValue);
                             var currentIndex = stepCombo.find(currentValue);
-                            //console.log("Current step index is ",currentIndex);
-                            //console.log("Current step text is ",stepCombo.currentText);
-                            //console.log("Current item count is ",stepCombo.count);
+                            console.log("Current step index is ",currentIndex);
+                            console.log("Current step text is ",stepCombo.currentText);
+                            console.log("Current item count is ",stepCombo.count);
                             stepCombo.currentIndex = currentIndex;
                         }
 
@@ -262,6 +390,7 @@ Widget09.SGResponsiveScrollView {
                     Text{
                         id: stepUnits
                         text: "degrees"
+                        font.pixelSize: 15
                         color: motorControllerDimGrey
                         anchors.verticalCenter: stepCombo.verticalCenter
                         horizontalAlignment: Text.AlignRight
@@ -277,7 +406,7 @@ Widget09.SGResponsiveScrollView {
 
                     Text{
                         id:motorSpeedLabel
-                        //color:"white"
+                        color: container.inOverCurrentProtection ? "grey" : "black"
                         text: "Motor speed:"
                         font.pixelSize: 24
                         horizontalAlignment: Text.AlignRight
@@ -286,17 +415,18 @@ Widget09.SGResponsiveScrollView {
                         width:50
                     }
 
-                    MCSlider{
+                    SGSlider{
                         id:stepMotorSpeedSlider
                         width:parent.width -60
 
                         from: 0
                         to: 500
+                        stepSize: 1
                         textColor:"black"
-                        toolTipTextColor:"black"
                         grooveColor: "lightgrey"
                         fillColor: motorControllerPurple
                         live:false
+                        enabled: ! container.inOverCurrentProtection
 
                         property var speed: platformInterface.step_speed_notification.speed
 
@@ -325,6 +455,7 @@ Widget09.SGResponsiveScrollView {
                         exclusive: true
                         buttonImplicitWidth: 50
                         hoverEnabled:false
+                        enabled: ! container.inOverCurrentProtection
 
                         property var stepUnit:  platformInterface.step_speed_notification.unit
 
@@ -347,7 +478,7 @@ Widget09.SGResponsiveScrollView {
                                 text: qsTr("steps/second")
                                 activeColor: "dimgrey"
                                 inactiveColor: "gainsboro"
-                                textColor: "#b3b3b3"
+                                textColor: motorControllerInactiveButtonText
                                 textActiveColor: "white"
                                 checked: true
                                 onClicked: {
@@ -361,7 +492,7 @@ Widget09.SGResponsiveScrollView {
                                 text: qsTr("rpm")
                                 activeColor: "dimgrey"
                                 inactiveColor: "gainsboro"
-                                textColor: "#b3b3b3"
+                                textColor: motorControllerInactiveButtonText
                                 textActiveColor: "white"
                                 onClicked: {
                                     platformInterface.step_speed.update(stepMotorSpeedSlider.value,"rpm");
@@ -386,7 +517,7 @@ Widget09.SGResponsiveScrollView {
                     Text{
                         id:runForLabel
                         text:"Transfer time:"
-                        //color:"white"
+                        color: container.inOverCurrentProtection ? "grey" : "black"
                         font.pixelSize: 24
                         horizontalAlignment: Text.AlignRight
                         anchors.verticalCenter: transferTimeRow.verticalCenter
@@ -394,7 +525,7 @@ Widget09.SGResponsiveScrollView {
                         width:50
                     }
 
-                    MCSlider{
+                    SGSlider{
                         id:runForSlider
                         width:60
                         slider.visible: false
@@ -404,13 +535,14 @@ Widget09.SGResponsiveScrollView {
                         showLabels:false
                         grooveColor: "lightgrey"
                         fillColor: motorControllerTeal
-                        textColor:"white"
+                        textColor:enabled ? "black" : "grey"
                         live:false
+                        enabled: ! container.inOverCurrentProtection
 
                         property var duration: platformInterface.step_duration_notification.duration
-
                         onDurationChanged: {
-                            runForSlider.value =duration
+                            console.log("Got new duration. setting duration to",duration);
+                            runForSlider.value = duration
                         }
 
                         onUserSet: {
@@ -429,6 +561,7 @@ Widget09.SGResponsiveScrollView {
                         exclusive: true
                         buttonImplicitWidth: 50
                         hoverEnabled:false
+                        enabled: ! container.inOverCurrentProtection
 
                         property var stepUnit:  platformInterface.step_duration_notification.unit
 
@@ -454,7 +587,7 @@ Widget09.SGResponsiveScrollView {
                                 text: qsTr("seconds")
                                 activeColor: "dimgrey"
                                 inactiveColor: "gainsboro"
-                                textColor: "#b3b3b3"
+                                textColor: motorControllerInactiveButtonText
                                 textActiveColor: "white"
                                 checked: true
                                 onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "seconds")
@@ -465,7 +598,7 @@ Widget09.SGResponsiveScrollView {
                                 text: qsTr("steps")
                                 activeColor: "dimgrey"
                                 inactiveColor: "gainsboro"
-                                textColor: "#b3b3b3"
+                                textColor: motorControllerInactiveButtonText
                                 textActiveColor: "white"
                                 onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "steps")
                             }
@@ -474,13 +607,14 @@ Widget09.SGResponsiveScrollView {
                                 text: qsTr("degrees")
                                 activeColor: "dimgrey"
                                 inactiveColor: "gainsboro"
-                                textColor: "#b3b3b3"
+                                textColor: motorControllerInactiveButtonText
                                 textActiveColor: "white"
                                 onClicked: platformInterface.step_duration.update(platformInterface.step_duration_notification.duration, "degrees")
                             }
                         }
                     }
                 }
+
 
 
                 Widget09.SGSegmentedButtonStrip {
@@ -494,6 +628,7 @@ Widget09.SGResponsiveScrollView {
                     exclusive: true
                     buttonImplicitWidth: 100
                     hoverEnabled:false
+                    enabled: ! container.inOverCurrentProtection
 
 
                     property var stepRunMode : platformInterface.step_run_notification
@@ -514,35 +649,51 @@ Widget09.SGResponsiveScrollView {
                         rowSpacing: 2
 
                         MCSegmentedButton{
+                            id:startButton
                             text: qsTr("start")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
-                            textColor: "#b3b3b3"
+                            textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
                             checked: false
                             textSize:24
-                            onClicked: platformInterface.step_run.update(1);
+                            onClicked:{
+                                platformInterface.step_run.update(1);
+                                startButton.enabled = false
+                            }
                         }
 
                         MCSegmentedButton{
                             text: qsTr("hold")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
-                            textColor: "#b3b3b3"
+                            textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
                             textSize:24
-                            onClicked: platformInterface.step_run.update(2);
+                            onClicked:{
+                               platformInterface.step_run.update(2);
+                            }
+                            onCheckedChanged:{
+                                startButton.enabled = true
+                            }
+
                         }
 
                         MCSegmentedButton{
                             text: qsTr("free")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
-                            textColor: "#b3b3b3"
+                            textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
                             textSize:24
                             checked: true
-                            onClicked: platformInterface.step_run.update(3);
+                            onClicked:{
+                              platformInterface.step_run.update(3);
+                            }
+                            onCheckedChanged:{
+                                startButton.enabled = true
+                            }
+
                         }
                     }
                 }

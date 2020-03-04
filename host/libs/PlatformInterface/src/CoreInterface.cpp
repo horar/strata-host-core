@@ -22,10 +22,6 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
 
     hcc = new HostControllerClient(HOST_CONTROLLER_SERVICE_IN_ADDRESS);
 
-    // [TODO] [prasanth] : need to be added in a better place
-    // json command to ask the list of available platforms from hcs
-    registerClient();
-
     // --------------------
     // Core Framework
     // install main notification notification handlers
@@ -43,26 +39,12 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
                                 bind(&CoreInterface::hcsNotificationHandler,
                                      this, placeholders::_1));
 
-    registerNotificationHandler("remote::notification",
-                                bind(&CoreInterface::remoteSetupHandler,
-                                     this, placeholders::_1));
-
     registerNotificationHandler("cloud::notification",
                                 bind(&CoreInterface::cloudNotificationHandler,
                                      this, placeholders::_1));
 
-    registerNotificationHandler("platform_id",
-                                bind(&CoreInterface::platformIDNotificationHandler,
-                                     this, placeholders::_1));
-
-    registerNotificationHandler("platform_connection_change_notification",
-                                bind(&CoreInterface::connectionChangeNotificationHandler,
-                                     this, placeholders::_1));
-
-    platform_state_ = false;
     notification_thread_running_ = false;
     notification_thread_= std::thread(&CoreInterface::notificationsThread,this);
-
 }
 
 CoreInterface::~CoreInterface()
@@ -115,10 +97,8 @@ void CoreInterface::notificationsThread()
         // Debug; Some messages are too long to print (ex: cloud images)
         if (n.length() < 500) {
           qCDebug(logCategoryCoreInterface) <<"[recv]" << n;
-          emit pretendMetrics(n); // TODO: remove this (see pretendMetrics in CoreInterface.H)
         } else {
           qCDebug(logCategoryCoreInterface) <<"[recv]" << n.left(500) << "... (message over 500 chars truncated)";
-          emit pretendMetrics("Cloud file download, over 500 chars"); // TODO: remove this (see pretendMetrics in CoreInterface.H)
         }
 
         QJsonDocument doc = QJsonDocument::fromJson(n.toUtf8());
@@ -161,38 +141,6 @@ void CoreInterface::notificationsThread()
 // ---
 // Core Framework Infrastructure Notification Handlers
 //
-void CoreInterface::platformIDNotificationHandler(QJsonObject payload)
-{
-    if (payload.contains("platform_id")) {
-        QString platform_id = payload["platform_id"].toString();
-        //qCDebug(logCategoryCoreInterface) << "Received platform_id = " << platform_id;
-
-        if(platform_id_ != platform_id ) {
-            platform_id_ = platform_id;
-            emit platformIDChanged(platform_id_);
-
-            // also update platform connected state
-            platform_state_ = true;
-            emit platformStateChanged(platform_state_);
-        }
-    }
-}
-
-void CoreInterface::connectionChangeNotificationHandler(QJsonObject payload)
-{
-    QString state = payload["status"].toString();
-    //qCDebug(logCategoryCoreInterface) << "platform_state = " << state;
-
-    if( state == "connected" ) {
-        platform_state_ = true;
-        emit platformStateChanged(platform_state_);
-    }
-    else {
-        platform_state_ = false;
-        platform_list_ = "{ \"list\":[]}";
-        emit platformStateChanged(platform_state_);
-    }
-}
 
 // @f platformNotificationHandler
 // @b handle platform notifications
@@ -265,85 +213,26 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
             platform_list_ = strJson_payload;
         }
         emit platformListChanged(platform_list_);
-    } else if (type == "single_download_progress") {
-        emit singleDownloadProgress(payload);
-    } else if (type == "single_download_finished") {
-        emit singleDownloadFinished(payload);
+    } else if (type == "download_paltform_filepath_changed") {
+        emit downloadPlatformFilepathChanged(payload);
+    } else if (type == "download_platform_single_file_progress") {
+        emit downloadPlatformSingleFileProgress(payload);
+    } else if (type == "download_platform_single_file_finished") {
+        emit downloadPlatformSingleFileFinished(payload);
+    } else if (type == "download_platform_files_finished") {
+        emit downloadPlatformFilesFinished(payload);
     } else {
         qCWarning(logCategoryCoreInterface) << "unknown message type" << type;
     }
 }
 
-// @f remoteSetupHandler
-// @b handles the messages required for remote connection
-// advertise_platforms - gets the hcs token required for connection
-// get_platforms - TO indicate if the hcs token entered is valid
-void CoreInterface::remoteSetupHandler(QJsonObject payload)
-{
-    if( payload.contains("value") == false ) {
-        qCritical("CoreInterface::platformNotificationHandler()"
-                  " ERROR: no name for notification!!");
-        return;
-    }
-
-    if( payload.contains("payload") == false ) {
-        qCritical("CoreInterface::platformNotificationHandler()"
-                  " ERROR: no payload for notification!!");
-        return;
-    }
-    if(payload["value"].toString()=="advertise_platforms") {
-        //qDebug("Parse success");
-        bool status = payload["payload"].toObject()["status"].toBool();
-        if(status) {
-            hcs_token_ = payload["payload"].toObject()["hcs_id"].toString();
-            //qDebug()<<hcs_token_;
-        }
-        else {
-            hcs_token_ = "";
-        }
-        emit hcsTokenChanged(hcs_token_);
-    }
-    else if(payload["value"].toString()=="get_platforms") {
-        //qDebug("Parse success");
-        bool status = payload["payload"].toObject()["status"].toBool();
-        if(status) {
-            //qDebug("Remote response: token valid");
-        }
-        else {
-            //qDebug("Remote response: token invalid");
-        }
-        emit remoteConnectionChanged(status);
-    }
-    else if(payload["value"].toString()=="remote_activity") {
-        //qDebug("parse success");
-        remote_user_activity_ = payload["payload"].toObject()["user_name"].toString();
-        emit remoteActivityChanged(remote_user_activity_);
-        //qDebug()<<remote_user_activity_;
-    }
-    else if(payload["value"].toString()=="remote_user_added") {
-        //qDebug("parse success");
-        remote_user_ = payload["payload"].toObject()["user_name"].toString();
-        emit remoteUserAdded(remote_user_);
-        //qDebug()<<remote_user_;
-    }
-    else if(payload["value"].toString()=="remote_user_removed") {
-        //qDebug("parse success");
-        remote_user_ = payload["payload"].toObject()["user_name"].toString();
-        emit remoteUserRemoved(remote_user_);
-        //qDebug()<<remote_user_;
-    }
-    //qDebug()<< payload;
-}
-
-// @f sendSelectedPlatform
+// @f connectToPlatform
 // @b send the user selected platform to HCS to create the mapping
 //
-// TOOD connect is a better name
-void CoreInterface::sendSelectedPlatform(QString verbose, QString connection_status)
+void CoreInterface::connectToPlatform(QString class_id)
 {
     QJsonObject cmdPayloadObject;
-    cmdPayloadObject.insert("platform_uuid",verbose);
-    cmdPayloadObject.insert("remote",connection_status);
+    cmdPayloadObject.insert("platform_uuid",class_id);
 
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("cmd", "platform_select");
@@ -370,21 +259,6 @@ void CoreInterface::disconnectPlatform()
 {
     std::string cmd= "{\"hcs::cmd\":\"disconnect_platform\",\"payload\":{}}";
     hcc->sendCmd(cmd);
-}
-
-// @f registerClient
-// @b send initial handshake to receive platform list
-//
-void CoreInterface::registerClient()
-{
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("cmd", "register_client");
-    cmdMessageObject.insert("payload", QJsonObject());
-
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-    //qDebug()<<"parse to send"<<strJson;
-    hcc->sendCmd(strJson.toStdString());
 }
 
 // @f unregisterClient

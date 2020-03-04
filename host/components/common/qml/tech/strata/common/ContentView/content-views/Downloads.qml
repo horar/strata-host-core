@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
-import QtQuick.Dialogs 1.3
+import Qt.labs.platform 1.1
+
 import Qt.labs.settings 1.0 as QtLabsSettings
 import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.sgwidgets 1.0 as SGWidgets
@@ -52,6 +53,7 @@ Item {
             text: "Select All"
             checkState: downloadButtonGroup.checkState
             enabled: repeater.model.downloadInProgress === false
+            leftPadding: 0
         }
 
         Column {
@@ -163,7 +165,15 @@ Item {
                                 rightMargin: 4
                             }
 
-                            text: model.filename
+                            text: {
+                                if (model.status === DownloadDocumentListModel.Selected
+                                        || model.status === DownloadDocumentListModel.NotSelected)
+                                {
+                                    return model.prettyName
+                                }
+
+                                return model.downloadFilename
+                            }
                             alternativeColorEnabled: true
                             fontSizeMultiplier: delegate.enlarge ? 1.1 : 1.0
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
@@ -238,7 +248,7 @@ Item {
                                     var total = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesTotal)
                                     return "Done " + total
                                 } else if (model.status === DownloadDocumentListModel.FinishedWithError) {
-                                    return "Error: " + model.errorString
+                                    return model.errorString
                                 }
                                 return ""
                             }
@@ -359,20 +369,17 @@ Item {
             }
 
             onClicked: {
-                //url must be valid path !! otherwise downlaodmanager throws errors
                 var url = CommonCpp.SGUtilsCpp.pathToUrl(savePath)
                 repeater.model.downloadSelectedFiles(url)
             }
         }
     }
 
-    FileDialog {
+    FolderDialog {
         id: fileDialog
         title: qsTr("Please choose a file")
-        selectFolder: true
-        selectMultiple: false
         onAccepted: {
-            savePath =  CommonCpp.SGUtilsCpp.urlToLocalFile(fileDialog.fileUrl)
+            savePath = CommonCpp.SGUtilsCpp.urlToLocalFile(fileDialog.folder)
         }
     }
 }

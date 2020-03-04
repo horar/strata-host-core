@@ -37,15 +37,10 @@
         <file>partial-views/login/LoginComboBox.qml</file>
         <file>partial-views/status-bar/SGConfirmationPopup.qml</file>
         <file>partial-views/status-bar/SGFeedbackPopup.qml</file>
-        <file>partial-views/status-bar/SGGreenButton.qml</file>
         <file>partial-views/status-bar/SGMenuItem.qml</file>
-        <file>partial-views/status-bar/SGProfilePopup.qml</file>
-        <file>partial-views/status-bar/SGProfileUpdate.qml</file>
         <file>partial-views/status-bar/SGSubmitInfoBox.qml</file>
-        <file>partial-views/status-bar/SGSwitch.qml</file>
         <file>partial-views/status-bar/SGTabButton.qml</file>
         <file>partial-views/status-bar/SGToolButton.qml</file>
-        <file>partial-views/status-bar/SGRemoteSupportPopup.qml</file>
         <file>partial-views/login/registration/PasswordRequirements.qml</file>
         <file>partial-views/login/SGLoginControls.qml</file>
         <file>partial-views/login/SelectionButton.qml</file>
@@ -55,7 +50,6 @@
         <file>partial-views/platform-selector/images/icons/filter-icons/amplifiers_and_comparators.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/analog_to_digital_converters.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/connectivity.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/dc_dc_controllers_converters_and_regulators.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/discretes_and_drivers.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/isolation_and_protection.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/led.svg</file>
@@ -73,5 +67,10 @@
         <file>partial-views/platform-selector/images/icons/segment-icons/segment-iot.svg</file>
         <file>partial-views/platform-selector/SegmentFilterDelegate.qml</file>
         <file>js/platform_filters.js</file>
+        <file>partial-views/platform-selector/images/icons/placeholder.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/ac_dc.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/battery.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/dc_dc.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/memory.svg</file>
     </qresource>
 </RCC>
