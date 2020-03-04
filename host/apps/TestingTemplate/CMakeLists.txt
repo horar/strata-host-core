@@ -14,7 +14,10 @@ add_library(${PROJECT_NAME}
 
 find_package(Qt5 ${VERSION_QT5}
         COMPONENTS Core
-        # REQUIRED
+)
+
+target_link_libraries(${PROJECT_NAME}
+    Qt5::Core
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -22,7 +25,7 @@ target_include_directories(${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)
-    add_subdirectory(Gtest)
+    add_subdirectory(GtestTemplate)
     add_subdirectory(QtestTemplate)
 endif()
 
