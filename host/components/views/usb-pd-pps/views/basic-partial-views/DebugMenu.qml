@@ -151,18 +151,20 @@ Rectangle {
 
                 onClicked: {
                     var protectionAction = ((Math.random() * 2) >= 1 ? "nothing" : "retry");
-                    var currentMaxPower = ((Math.random() *7)+1).toFixed(0)* 7.5;
+                    var currentMaxPower = ((Math.random() *4)+1).toFixed(0)* 15;
                     var minimumVoltage = ((Math.random() *15) +5).toFixed(0) ;
                     var maximumTemperature = ((Math.random() *80) +20).toFixed(0);
                     var inputFoldbackOnOff = ((Math.random() * 2) >= 1 ? true : false);
                     var inputFoldbackMinVoltage = ((Math.random() *15) +5).toFixed(0);
-                    var inputFoldbackOutputPower  = ((Math.random() *7)+1).toFixed(0)* 7.5;
+                    var inputFoldbackOutputPower  = ((Math.random() *4)+1).toFixed(0)* 15;
                     var tempFoldbackOnOff = ((Math.random() * 2) >= 1 ? true : false);
                     var tempFoldbackMaxTemperature = ((Math.random() *80) +20).toFixed(0);
-                    var tempFoldbackOutputPower = ((Math.random() *7)+1).toFixed(0)* 7.5;
+                    var tempFoldbackOutputPower = ((Math.random() *4)+1).toFixed(0)* 15;
+                    var tempFoldbackHysterisis = ((Math.random() *50)+5).toFixed(0);
 
                     //console.log("input power=",inputFoldbackOutputPower);
-                    console.log("maxTemp=",tempFoldbackMaxTemperature);
+                    //console.log("maxTemp=",tempFoldbackMaxTemperature);
+                    //console.log("protectionAction=",protectionAction);
 
                     CorePlatformInterface.data_source_handler('{
                                 "value":"usb_pd_maximum_power",
@@ -202,28 +204,33 @@ Rectangle {
                                 }
                         }')
                     CorePlatformInterface.data_source_handler('{
-                                "value":"foldback_input_voltage_limiting_event",
+                                "value":"temperature_hysteresis",
                                 "payload":{
-                                    "input_voltage":0,
-                                    "foldback_minimum_voltage":'+inputFoldbackMinVoltage+',
-                                    "foldback_minimum_voltage_power":'+inputFoldbackOutputPower+',
-                                    "input_voltage_foldback_enabled":'+inputFoldbackOnOff+',
-                                    "input_voltage_foldback_active":false
+                                    "value":'+tempFoldbackHysterisis+'
                                 }
                         }')
                     CorePlatformInterface.data_source_handler('{
-                                "value":"foldback_temperature_limiting_event",
+                                "value":"input_voltage_foldback",
                                 "payload":{
-                                    "port":1,
-                                    "current_temperature":0,
-                                    "foldback_maximum_temperature":'+tempFoldbackMaxTemperature+',
-                                    "foldback_maximum_temperature_power":'+tempFoldbackOutputPower+',
-                                    "temperature_foldback_enabled":'+tempFoldbackOnOff+',
-                                    "temperature_foldback_active":true,
-                                    "maximum_power":0
+                                    "voltage":0,
+                                    "min_voltage":'+inputFoldbackMinVoltage+',
+                                    "power":'+inputFoldbackOutputPower+',
+                                    "enabled":'+inputFoldbackOnOff+',
+                                    "active":false
                                 }
                         }')
-                    console.log("debug",platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature);
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"temperature_foldback",
+                                "payload":{
+                                    "port":1,
+                                    "temperature":0,
+                                    "max_temperature":'+tempFoldbackMaxTemperature+',
+                                    "power":'+tempFoldbackOutputPower+',
+                                    "enabled":'+tempFoldbackOnOff+',
+                                    "active":true
+                                }
+                        }')
+                    console.log("debug",platformInterface.temperature_foldback.max_temperature);
                 }
             }
         }

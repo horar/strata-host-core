@@ -33,9 +33,6 @@ public:
      */
     void setBaseUrl(const QString& url);
 
-
-
-
 public slots:
     void requestPlatformList(const QByteArray &clientId);
 
@@ -43,12 +40,12 @@ public slots:
             const QByteArray &clientId,
             const QString &classId);
 
-    void requestDownloadFiles(
+    void requestDownloadPlatformFiles(
             const QByteArray &clientId,
-            const QStringList &fileList,
+            const QStringList &partialUriList,
             const QString &destinationDir);
 
-    void requestCancelPlatformDocument(const QByteArray &clientId);
+    void requestCancelAllDownloads(const QByteArray &clientId);
 
     /**
      * Notification about the update of the document (from Database)
@@ -57,10 +54,11 @@ public slots:
     void updatePlatformDoc(const QString &classId);
 
 signals:
-    void downloadFilePathChanged(QByteArray clientId, const QString& originalFilePath, const QString& effectiveFilePath);
+    void downloadPlatformFilePathChanged(QByteArray clientId, const QString& originalFilePath, const QString& effectiveFilePath);
 
-    void singleDownloadProgress(QByteArray clientId, QString filePath, qint64 bytesReceived, qint64 bytesTotal);
-    void singleDownloadFinished(QByteArray clientId, QString filePath, QString errorString);
+    void downloadPlatformSingleFileProgress(QByteArray clientId, QString filePath, qint64 bytesReceived, qint64 bytesTotal);
+    void downloadPlatformSingleFileFinished(QByteArray clientId, QString filePath, QString errorString);
+    void downloadPlatformFilesFinished(QByteArray clientId, QString errorString);
 
     void platformListResponseRequested(QByteArray clientId, QJsonArray documentList);
     void platformDocumentsResponseRequested(QByteArray clientId, QJsonArray documentList, QString error);

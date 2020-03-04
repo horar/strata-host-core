@@ -84,7 +84,9 @@ void StorageManager::filePathChangedHandler(QString groupId, QString originalFil
         return;
     }
 
-    emit downloadFilePathChanged(request->clientId, originalFilePath, effectiveFilePath);
+    if (request->type == RequestType::FileDownload) {
+        emit downloadPlatformFilePathChanged(request->clientId, originalFilePath, effectiveFilePath);
+    }
 }
 
 void StorageManager::singleDownloadProgressHandler(const QString &groupId, const QString &filePath, const qint64 &bytesReceived, const qint64 &bytesTotal)
@@ -94,7 +96,9 @@ void StorageManager::singleDownloadProgressHandler(const QString &groupId, const
         return;
     }
 
-    emit singleDownloadProgress(request->clientId, filePath, bytesReceived, bytesTotal);
+    if (request->type == RequestType::FileDownload) {
+        emit downloadPlatformSingleFileProgress(request->clientId, filePath, bytesReceived, bytesTotal);
+    }
 }
 
 void StorageManager::singleDownloadFinishedHandler(const QString &groupId, const QString &filePath, const QString &error)
@@ -104,7 +108,9 @@ void StorageManager::singleDownloadFinishedHandler(const QString &groupId, const
         return;
     }
 
-    emit singleDownloadFinished(request->clientId, filePath, error);
+    if (request->type == RequestType::FileDownload) {
+        emit downloadPlatformSingleFileFinished(request->clientId, filePath, error);
+    }
 }
 
 void StorageManager::groupDownloadProgressHandler(const QString &groupId, int filesCompleted, int filesTotal)
@@ -124,7 +130,7 @@ void StorageManager::groupDownloadFinishedHandler(const QString &groupId, const 
     } else if (request->type == RequestType::PlatformDocuments) {
         handlePlatformDocumentsResponse(request, errorString);
     } else if (request->type == RequestType::FileDownload) {
-        //do nothing
+        emit downloadPlatformFilesFinished(request->clientId, errorString);
     } else {
         qCWarning(logCategoryHcsStorage) << "unknown request type";
     }
@@ -153,8 +159,9 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
 
         for (const auto &item : viewList) {
             QJsonObject object;
+            object.insert("category", "view");
             object.insert("name", item.name);
-            object.insert("filesize", item.filesize);
+            object.insert("prettyname", item.prettyName);
 
             //lets find filePath
             for (const auto &response : downloadedFilesList) {
@@ -171,9 +178,11 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
         QList<PlatformFileItem> downloadList = platDoc->getDownloadList();
         for (const auto &item : downloadList) {
             QJsonObject object;
-            object.insert("name", "download");
+            object.insert("category", "download");
+            object.insert("name", item.name);
             object.insert("uri", item.partialUri);
             object.insert("filesize", item.filesize);
+            object.insert("prettyname", item.prettyName);
 
             documentList.append(object);
         }
@@ -257,7 +266,6 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
             continue;
         }
 
-        QString imageFile = platDoc->platformSelector().partialUri;
         QString filePath = createFilePathFromItem(platDoc->platformSelector().partialUri, pathPrefix);
 
         DownloadManager::DownloadRequestItem item;
@@ -328,20 +336,45 @@ void StorageManager::requestPlatformDocuments(
     downloadRequests_.insert(request->groupId, request);
 }
 
-void StorageManager::requestDownloadFiles(
+void StorageManager::requestDownloadPlatformFiles(
         const QByteArray &clientId,
-        const QStringList &fileList,
+        const QStringList &partialUriList,
         const QString &destinationDir)
 {
+    if (partialUriList.isEmpty()) {
+        qCInfo(logCategoryHcsStorage()) << "nothing to download";
+        emit downloadPlatformFilesFinished(clientId, QString());
+        return;
+    }
+
+    //suplement info from db
+    QStringList splitPath = partialUriList.first().split("/");
+    if (splitPath.isEmpty()) {
+        qCWarning(logCategoryHcsStorage) << "Failed to resolve classId from request";
+        emit downloadPlatformFilesFinished(clientId, "Failed to resolve classId from request");
+        return;
+    }
+
+    QString classId = splitPath.first();
+    PlatformDocument *platDoc = fetchPlatformDoc(classId);
+    if (platDoc == nullptr) {
+        qCWarning(logCategoryHcsStorage) << "Failed to fetch platform data with classId" << classId;
+        emit downloadPlatformFilesFinished(clientId, "Failed to fetch platform data");
+        return;
+    }
+
     QList<DownloadManager::DownloadRequestItem> downloadList;
     QDir dir(destinationDir);
-
-    for (const auto &file : fileList) {
-        QFileInfo fi(file);
+    QList<PlatformFileItem> downloadableFileList = platDoc->getDownloadList();
+    for (const auto &fileItem : downloadableFileList) {
+        if (partialUriList.indexOf(fileItem.partialUri) < 0) {
+            continue;
+        }
 
         DownloadManager::DownloadRequestItem item;
-        item.partialUrl = file;
-        item.filePath = dir.filePath(fi.fileName());
+        item.partialUrl = fileItem.partialUri;
+        item.filePath = dir.filePath(fileItem.prettyName);
+        item.md5 = fileItem.md5;
 
         downloadList << item;
     }
@@ -361,23 +394,19 @@ void StorageManager::requestDownloadFiles(
     downloadRequests_.insert(request->groupId, request);
 }
 
-void StorageManager::requestCancelPlatformDocument(const QByteArray &clientId)
+void StorageManager::requestCancelAllDownloads(const QByteArray &clientId)
 {
-    QString groupId;
+    qCInfo(logCategoryHcsStorage) << "clientId" << clientId.toHex();
 
-    for (auto &request : downloadRequests_) {
-        if (clientId == request->clientId
-                && request->type == RequestType::PlatformDocuments) {
-            groupId = request->groupId;
-            break;
+    QMutableHashIterator<QString, DownloadRequest*> iter(downloadRequests_);
+    while (iter.hasNext()) {
+        DownloadRequest *request = iter.next().value();
+        if (clientId == request->clientId) {
+            QString groupId = request->groupId;
+            qCInfo(logCategoryHcsStorage) << "aborting all downloads for groupId" << groupId;
+            downloadRequests_.remove(groupId);
+            downloadManager_->abortAll(groupId);
         }
-    }
-
-    if (groupId.isEmpty() == false ) {
-        qDebug(logCategoryHcsStorage()) << "canceling all downloads" << groupId;
-        downloadRequests_.remove(groupId);
-
-        downloadManager_->abortAll(groupId);
     }
 }
 

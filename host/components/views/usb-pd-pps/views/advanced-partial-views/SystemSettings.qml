@@ -11,6 +11,10 @@ Item {
         left: parent.left
     }
 
+    property bool faultProtectionIsOn : platformInterface.usb_pd_protection_action.action !== "nothing"
+    property bool inputFoldbackOn : platformInterface.input_voltage_foldback.enabled
+    property bool temperatureFoldbackOn: platformInterface.temperature_foldback.enabled
+
     Item {
         id: leftColumn
         anchors {
@@ -41,7 +45,17 @@ Item {
                 }
             }
 
-            SGWidgets09.SGSegmentedButtonStrip {
+//            SGWidgets.SGButtonStrip {
+//                id: buttonStrip2
+//                model: ["One","Two","Three","Four"]
+//                exclusive: false
+
+//                onClicked: {
+//                    console.info(Logger.wgCategory, "buttonStrip2", index)
+//                }
+//            }
+
+            SGButtonStrip {
                 id: faultProtection
                 anchors {
                     top: faultText.bottom
@@ -51,36 +65,60 @@ Item {
                     right: margins1.right
                     rightMargin: 10
                 }
-                label: "Fault Protection:"
-                textColor: "#222"
-                activeTextColor: "white"
-                radius: 4
-                buttonHeight: 25
-                buttonImplicitWidth:0
-                hoverEnabled: false
+                height:30
+                //label: "Fault Protection:"
+                //textColor: "#222"
+                //activeTextColor: "white"
+                //radius: 4
+                //buttonHeight: 25
+                //buttonImplicitWidth:0
+                //hoverEnabled: false
+                //exclusive: false
+                model: ["Retry","None"]
 
-                segmentedButtons: GridLayout {
-                    columnSpacing: 2
+                onClicked: {
+                    console.log("button with index",index,"clicked")
+                    if (isChecked(0))
+                        platformInterface.set_protection_action.update("retry");
+                    else if (isChecked(1))
+                        platformInterface.set_protection_action.update("nothing")
+                  }
 
-
-                    SGWidgets09.SGSegmentedButton{
-                        text: qsTr("Retry")
-                        checked: platformInterface.usb_pd_protection_action.action === "retry"
-
-                        onClicked: {
-                            platformInterface.set_protection_action.update("retry");
-                        }
-                    }
-
-                    SGWidgets09.SGSegmentedButton{
-                        text: qsTr("None")
-                        checked: platformInterface.usb_pd_protection_action.action === "nothing"
-
-                        onClicked: {
-                            platformInterface.set_protection_action.update("nothing");
-                        }
-                    }
+                property var protectionAction: platformInterface.usb_pd_protection_action.action
+                onProtectionActionChanged: {
+                     if (protectionAction === "retry")
+                         checkedIndices = 1
+                     if (protectionAction === "nothing")
+                         checkedIndices = 2
                 }
+
+//                segmentedButtons: GridLayout {
+//                    columnSpacing: 2
+
+
+//                    SGWidgets09.SGSegmentedButton{
+//                        text: qsTr("Retry")
+//                        property var protectionAction: platformInterface.usb_pd_protection_action.action
+
+//                        checked: protectionAction === "retry"
+
+//                        onClicked: {
+//                            platformInterface.set_protection_action.update("retry");
+//                        }
+//                    }
+
+//                    SGWidgets09.SGSegmentedButton{
+//                        text: qsTr("None")
+
+//                        property var protectionAction: platformInterface.usb_pd_protection_action.action
+
+//                        checked: protectionAction === "nothing"
+
+//                        onClicked: {
+//                            platformInterface.set_protection_action.update("nothing");
+//                        }
+//                    }
+//                }
             }
 
 
@@ -92,6 +130,7 @@ Item {
                 anchors.verticalCenterOffset: -8
                 horizontalAlignment: Text.AlignRight
                 text: "Fault when input below:"
+                color: faultProtectionIsOn ? "black" : "grey"
             }
 
             SGSlider {
@@ -112,6 +151,7 @@ Item {
                 toText.text: "20V"
                 handleSize:20
                 fillColor:"dimgrey"
+                enabled: faultProtectionIsOn
                 value: platformInterface.input_under_voltage_notification.minimum_voltage
                 onMoved: {
                     platformInterface.set_minimum_input_voltage.update(value);
@@ -126,6 +166,7 @@ Item {
                 anchors.verticalCenterOffset: -8
                 horizontalAlignment: Text.AlignRight
                 text:"Fault when temperature above:"
+                color: faultProtectionIsOn ? "black" : "grey"
             }
 
             SGSlider {
@@ -140,12 +181,14 @@ Item {
                 }
                 from: 20
                 to: 100
+                stepSize:5
                 fillColor:"dimgrey"
                 handleSize:20
                 fromText.fontSizeMultiplier:.75
                 toText.fontSizeMultiplier: .75
                 fromText.text: "20 °C"
                 toText.text: "100 °C"
+                enabled: faultProtectionIsOn
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
                 onMoved: {
                     platformInterface.set_maximum_temperature.update(value);
@@ -159,7 +202,8 @@ Item {
                 anchors.verticalCenter: hysteresisSlider.verticalCenter
                 anchors.verticalCenterOffset: -8
                 horizontalAlignment: Text.AlignRight
-                text:"Reset when temperature drops:"
+                text:"Retry when temperature drops:"
+                color: faultProtectionIsOn ? "black" : "grey"
             }
 
             SGSlider {
@@ -181,6 +225,7 @@ Item {
                 toText.fontSizeMultiplier: .75
                 fromText.text: "5 °C"
                 toText.text: "50 °C"
+                enabled: faultProtectionIsOn
                 value: platformInterface.temperature_hysteresis.value
                 onMoved: {
                     platformInterface.set_temperature_hysteresis.update(value);
@@ -230,7 +275,7 @@ Item {
                 height: 20
                 width: 46
                 grooveFillColor:"green"
-                checked: platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled
+                checked: platformInterface.input_voltage_foldback.enabled
                 onToggled: platformInterface.set_input_voltage_foldback.update(checked, platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage,
                                 platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
             }
@@ -243,11 +288,12 @@ Item {
                 anchors.verticalCenterOffset: -8
                 horizontalAlignment: Text.AlignRight
                 text:"Limit below:"
+                color: inputFoldbackOn ? "black" : "grey"
             }
 
             SGSlider {
                 id: foldbackLimit
-                value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
+                value: platformInterface.input_voltage_foldback.min_voltage
                 anchors {
                     left: parent.left
                     leftMargin: 135
@@ -264,6 +310,7 @@ Item {
                 toText.text: "20V"
                 handleSize:20
                 fillColor:"dimgrey"
+                enabled: inputFoldbackOn
                 //copy the current values for other stuff, and add the new slider value for the limit.
                 onMoved: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
                                  value,
@@ -278,11 +325,12 @@ Item {
                 anchors.verticalCenter: limitOutput.verticalCenter
                 horizontalAlignment: Text.AlignRight
                 text:"Limit output power to:"
+                color: inputFoldbackOn ? "black" : "grey"
             }
 
             SGComboBox {
                 id: limitOutput
-                model: ["7.5","15.0","22.5", "30.0", "37.5","45.0","52.5","60.0"]
+                model: ["16","30","45","60"]
                 anchors {
                     left: parent.left
                     leftMargin: 135
@@ -290,18 +338,20 @@ Item {
                     topMargin: 10
                 }
                 width: 70
+                enabled: inputFoldbackOn
+                textColor: enabled ? "black" : "grey"
                 //when changing the value
                 onActivated: {
                     console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
-                    platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
-                                                                        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage,
+                    platformInterface.set_input_voltage_foldback.update(platformInterface.input_voltage_foldback.enabled,
+                                                                        platformInterface.input_voltage_foldback.min_voltage,
                                                                                  limitOutput.comboBox.currentText)
                 }
 
-                property var currentFoldbackOuput: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power
+                property var currentFoldbackOuput: platformInterface.input_voltage_foldback.power
                 onCurrentFoldbackOuputChanged: {
-                    console.log("got a new min power setting",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power);
-                    limitOutput.currentIndex = limitOutput.find( (platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power).toFixed(1))
+                    //console.log("got a new min input power setting",platformInterface.input_voltage_foldback.power);
+                    limitOutput.currentIndex = limitOutput.find( (platformInterface.input_voltage_foldback.power).toFixed(0))
                 }
             }
             Text{
@@ -313,6 +363,7 @@ Item {
                     verticalCenter: limitOutput.verticalCenter
                     verticalCenterOffset: 0
                 }
+                color: inputFoldbackOn ? "black" : "grey"
             }
 
             SGWidgets09.SGDivider {
@@ -346,12 +397,12 @@ Item {
                 height: 20
                 width: 46
                 grooveFillColor:"green"
-                checked: platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled
+                checked: platformInterface.temperature_foldback.enabled
                 onToggled:{
                     console.log("sending temp foldback update command from tempFoldbackSwitch");
                     platformInterface.set_temperature_foldback.update(tempFoldbackSwitch.checked,
-                                                                                    platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
-                                                                                    platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power);
+                                      platformInterface.temperature_foldback.max_temperature,
+                                       platformInterface.temperature_foldback.power);
                 }
             }
 
@@ -362,6 +413,7 @@ Item {
                 anchors.verticalCenter: foldbackTemp.verticalCenter
                 anchors.verticalCenterOffset: -8
                 text:"Limit above:"
+                color: temperatureFoldbackOn ? "black" : "grey"
             }
 
             SGSlider {
@@ -382,16 +434,16 @@ Item {
                 toText.text: "100°C"
                 fillColor:"dimgrey"
                 handleSize: 20
-                value: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature
-                //value: platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage
+                enabled: temperatureFoldbackOn
+                value: platformInterface.temperature_foldback.max_temperature
                onValueChanged: {
                     console.log("foldback max temp is now:",value)
                }
                 onMoved:{
                     console.log("sending temp foldback update command from foldbackTempSlider");
-                    platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
+                    platformInterface.set_temperature_foldback.update(platformInterface.temperature_foldback.enabled,
                                                                                   foldbackTemp.value,
-                                                                                  platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power)
+                                                                                  platformInterface.temperature_foldback.power)
                 }
 
             }
@@ -403,11 +455,12 @@ Item {
                 anchors.rightMargin: 5
                 anchors.verticalCenter: limitOutput2.verticalCenter
                 text:"Limit output power to:"
+                color: temperatureFoldbackOn ? "black" : "grey"
             }
 
             SGComboBox {
                 id: limitOutput2
-                model: ["7.5","15.0","22.5", "30.0", "37.5","45.0","52.5","60.0"]
+                model: ["16", "30", "45","60"]
                 anchors {
                     left: parent.left
                     leftMargin: 135
@@ -415,18 +468,21 @@ Item {
                     topMargin: 10
                 }
                 width: 70
+                enabled: temperatureFoldbackOn
+                textColor: enabled ? "black" : "grey"
                 //when the value is changed by the user
                 onActivated: {
                     console.log("sending temp foldback update command from limitOutputComboBox");
-                    platformInterface.set_temperature_foldback.update(platformInterface.foldback_temperature_limiting_event.temperature_foldback_enabled,
-                                                                                 platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature,
+                    platformInterface.set_temperature_foldback.update(platformInterface.temperature_foldback.enabled,
+                                                                                 platformInterface.temperature_foldback.max_temperature,
                                                                                  limitOutput2.currentText)
                 }
 
-                property var currentFoldbackOuput: platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power
+                property var currentFoldbackOuput: platformInterface.temperature_foldback.power
 
                 onCurrentFoldbackOuputChanged: {
-                    limitOutput2.currentIndex = limitOutput2.find( (platformInterface.foldback_temperature_limiting_event.foldback_maximum_temperature_power).toFixed(1))
+                    console.log("new temp foldback wattage", platformInterface.temperature_foldback.power);
+                    limitOutput2.currentIndex = limitOutput2.find( (platformInterface.temperature_foldback.power).toFixed(0))
                 }
             }
 
@@ -438,6 +494,7 @@ Item {
                     leftMargin: 5
                     verticalCenter: limitOutput2.verticalCenter
                 }
+                color: temperatureFoldbackOn ? "black" : "grey"
             }
         }
 }

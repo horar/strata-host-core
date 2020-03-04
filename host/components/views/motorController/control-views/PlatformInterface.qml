@@ -34,11 +34,11 @@ Item {
     }
 
     property var dc_pwm_mode_1_notification : {
-            "mode" : "on_brake"     //or "on_off"
+            "mode" : "on_off"     //or "on_brake"
     }
 
     property var dc_pwm_mode_2_notification : {
-            "mode" : "on_brake"     //or "on_off"
+            "mode" : "on_off"     //or "on_brake"
     }
 
     property var dc_direction_1_notification : {
@@ -58,15 +58,15 @@ Item {
     }
 
     property var motor_run_1_notification : {
-        "mode" : "1"     // 1 = "run", 2="brake", 3="open"
+        "mode" : 1     // 1 = "run", 2="brake", 3="open"
     }
 
     property var motor_run_2_notification : {
-        "mode" : "1"     // 1 = "run", 2="brake", 3="open"
+        "mode" : 1     // 1 = "run", 2="brake", 3="open"
     }
 
     property var dc_ocp_notification : {
-        "ocp_set" : "off"     // or "off"
+        "ocp_set" : "off"     // or "on"
     }
 
     property var step_excitation_notification : {
@@ -96,7 +96,11 @@ Item {
     }
 
     property var step_ocp_notification : {
-        "ocp_set" : "off"     // or "off"
+        "ocp_set" : "off"     // or "on"
+    }
+
+    property var ocp_enable_notification : {
+        "enable" : "off"     // or "on"         //enables OCP for both DC and stepper motors
     }
 
     // --------------------------------------------------------------------------------------------
@@ -417,6 +421,22 @@ Item {
                   }
      })
 
+    property var ocp_enable:({
+                 "cmd":"ocp_enable",
+                 "payload":{
+                    "enable":"on"
+                    },
+                 update: function(enabled){
+                   this.set(enabled);
+                   CorePlatformInterface.send(this);
+                 },
+                 set: function(inEnabled){
+                     this.payload.enable = inEnabled;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this);
+                  }
+     })
 
 
     // -------------------------------------------------------------------

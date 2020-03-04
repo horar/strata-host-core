@@ -54,10 +54,9 @@ function populatePlatforms(platform_list_json) {
 
         PlatformFilters.initialize()
 
+        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Processing platform list");
         for (var platform of platform_list.list){
             var platform_info
-
-            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Getting platform information for:", platform.class_id);
 
             // Extract platform information
             platform_info = {
@@ -248,7 +247,7 @@ function sendSelection () {
 
     } else {
         var data = { class_id: platformListModel.selectedClass_id }
-        coreInterface.sendSelectedPlatform(platformListModel.selectedClass_id, platformListModel.selectedConnection)
+        coreInterface.connectToPlatform(platformListModel.selectedClass_id)
 
         if (platformListModel.selectedConnection === "view") {
             NavigationControl.updateState(NavigationControl.events.OFFLINE_MODE_EVENT, data)
