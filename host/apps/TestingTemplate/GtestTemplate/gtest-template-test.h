@@ -3,7 +3,7 @@
 
 #include "templateLib.h"
 #include <gtest/gtest.h>
-#include <QtTest>>
+#include <QtTest>
 #include <QSignalSpy>
 
 class GtestTemplateTest : public testing::Test

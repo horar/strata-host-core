@@ -3,7 +3,7 @@
 
 #include "templateLib.h"
 #include <QObject>
-#include <QtTest>>
+#include <QtTest>
 #include <QSignalSpy>
 #include <iostream>
 

@@ -1,5 +1,4 @@
 // Qt test main
-#include <QtTest>
 #include "qtest-template-test.h"
 
 // no Qt application: no GUI and no events
