@@ -3,7 +3,7 @@
 #>
 
 # Define tests to be executed
-Set-Variable "TEST_request_token" $false
+Set-Variable "TEST_request_token" $true
 
 # Define paths
 Set-Variable "SDS_root_dir"         "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
@@ -11,6 +11,7 @@ Set-Variable "AppData_OnSemi_dir"   "$Env:AppData\ON Semiconductor"
 Set-Variable "PlatformSelector_dir" "$AppData_OnSemi_dir\hcs\documents\platform_selector"
 
 # Define URI of server to be used - only applicable if TEST_request_token is enabled
+Set-Variable "SDS_server"       "http://18.191.165.117/" # "https://strata.onsemi.com/"
 Set-Variable "SDS_login_server" "http://18.191.165.117/login" # "https://strata.onsemi.com/login"
 Set-Variable "SDS_login_info"   '{"username":"test@test.com","password":"Strata12345"}'
 
@@ -45,7 +46,8 @@ If ($TEST_request_token) {
 
     # Format new token string using obtained token
     $server_response_Json = ConvertFrom-Json $server_response.Content
-    $token_string = "[Login]`ntoken=$($server_response_Json.token)`nfirst_name=$($server_response_Json.firstname)`nlast_name=$($server_response_Json.lastname)`nuser=$($server_response_Json.user)"
+    $token_string = "[Login]`ntoken=$($server_response_Json.token)`nfirst_name=$($server_response_Json.firstname)`nlast_name=$($server_response_Json.lastname)`n`
+        user=$($server_response_Json.user)`nauthentication_server=$SDS_server"
 
     # Write to "Strata Developer Studio.ini"
     Set-Content "$AppData_OnSemi_dir\Strata Developer Studio.ini" $token_string
@@ -70,11 +72,9 @@ Start-Sleep -Seconds 10
 # Kill Strata Developer Studio and HCS processes
 If (Get-Process -Name "Strata Developer Studio" -ErrorAction SilentlyContinue) {
     Stop-Process -Name "Strata Developer Studio" -Force
-    Start-Sleep -Seconds 2
 }
 If (Get-Process -Name "hcs" -ErrorAction SilentlyContinue) {
     Stop-Process -Name "hcs" -Force
-    Start-Sleep -Seconds 2
 }
 
 # Check whether AppData/Roaming/hcs/documents/platform_selector directory was re-populated by HCS
