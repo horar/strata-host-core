@@ -9,7 +9,8 @@ var jwt = '';
 var session = '';
 var cachedState
 
-// Attempt to read authentication server endpoint from INI file, use it if exists
+// Attempt to read authentication server endpoint from QtSettings/INI file
+// Use default (production) endpoint if variable 'authentication_server' is undefined/empty
 var get_auth_server = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings { id: settings; category: \"Login\";}", Qt.application)
 if(get_auth_server.value("authentication_server")) {
     console.log(LoggerModule.Logger.devStudioRestClientCategory, "Found 'authentication_server' field in INI file (" + get_auth_server.value("authentication_server") + ")")

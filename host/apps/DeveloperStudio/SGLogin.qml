@@ -239,7 +239,7 @@ Item {
             anchors {
                 centerIn: parent
             }
-            text: "NON-HTTPS AUTHENTICATION TESTING SERVER ENABLED, ONLY USE TEST CREDENTIALS"
+            text: "NON-DEFAULT / TEST AUTHENTICATION SERVER ENABLED, POTENTIALLY UNSECURED, ONLY USE TEST CREDENTIALS"
         }
 
         SGIcon {
