@@ -9,23 +9,23 @@ Item {
     // UI Control States
     //
     property var telemetry: {
-        "vin_ext":"5.50",	//External input voltage
-        "vin_sb":"5.50",	//Sync buck regulator input voltage
-        "vin_ldo":"5.00",	//LDO input voltage
-        "vout_ldo":"3.30",	//LDO output voltage
-        "usb_5v":"5.00",	//USB 5V voltage
-        "iin":"85.0",		//Board input current
-        "iout":"100.0",		//LDO output current
-        "vdiff":"2.70",		//LDO differential voltage
-        "pin_sb":"0.340",	//Sync buck regulator input power
-        "pin_ldo":"0.500",	//LDO input power
-        "pout_ldo":"0.330",	//LDO output power
-        "ploss":"0.170",	//LDO power loss
-        "eff_sb": "95.0",	//Sync buck regulator efficiency
-        "eff_ldo":"66.0",	//LDO efficiency
-        "eff_tot":"62.7", //Total system efficiency
+        "vin_ext":"5.50",       //External input voltage
+        "vin_sb":"5.50",        //Sync buck regulator input voltage
+        "vin_ldo":"5.00",       //LDO input voltage
+        "vout_ldo":"3.30",      //LDO output voltage
+        "usb_5v":"5.00",        //USB 5V voltage
+        "iin":"85.0",           //Board input current
+        "iout":"100.0",         //LDO output current
+        "vdiff":"2.70",         //LDO differential voltage
+        "pin_sb":"0.340",       //Sync buck regulator input power
+        "pin_ldo":"0.500",      //LDO input power
+        "pout_ldo":"0.330",     //LDO output power
+        "ploss":"0.170",        //LDO power loss
+        "eff_sb": "95.0",       //Sync buck regulator efficiency
+        "eff_ldo":"66.0",       //LDO efficiency
+        "eff_tot":"62.7",       //Total system efficiency
         "board_temp":"24.2",	//Board temperature
-        "ldo_temp":"23.0",	//LDO temperature
+        "ldo_temp":"23.0",      //LDO temperature
         "ldo_clim_thresh":"580.0" //LDO current limit threshold
     }
 

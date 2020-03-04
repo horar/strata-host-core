@@ -13,6 +13,8 @@ Item {
     property real initialAspectRatio: 1200/820
     // anchors.fill: parent
     anchors.centerIn: parent
+
+    property string titleText: "NCP164C \n Low-noise, High PSRR Linear Regulator"
     property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
 
     onWidthChanged: {
@@ -39,9 +41,9 @@ Item {
         Help.registerTarget(ldoSystemOutputCurrentLabel, "aaa", 9, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(systemOutputPowerLabel, "aaa", 10, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(ldoLabel, "aaa", 11, "AdjLDOSystemEfficiencyHelp")
-        //Help.registerTarget(ldoInputVoltageLabel, "aaa", 12, "AdjLDOSystemEfficiencyHelp")
-        //Help.registerTarget(seOutputVoltageLabel, "aaa", 13, "AdjLDOSystemEfficiencyHelp")
-        //Help.registerTarget(seOutputCurrentLabel, "aaa", 14, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(setLDOInputVoltageLabel, "aaa", 12, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(setLDOOutputVoltageLabel, "aaa", 13, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(setOutputCurrentLabel, "aaa", 14, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(boardInputLabel, "aaa", 15, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(ldoInputLabel, "aaa", 16, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(ldoPackageLabel, "aaa", 17, "AdjLDOSystemEfficiencyHelp")
@@ -175,9 +177,9 @@ Item {
 
     property var control_states: platformInterface.control_states
     onControl_statesChanged: {
-        if(control_states.vin_sel === "USB 5V")  baordInputComboBox.currentIndex = 0
-        else if(control_states.vin_sel === "External") baordInputComboBox.currentIndex = 1
-        else if (control_states.vin_sel === "Off") baordInputComboBox.currentIndex = 2
+        if(control_states.vin_sel === "USB 5V")  boardInputComboBox.currentIndex = 0
+        else if(control_states.vin_sel === "External") boardInputComboBox.currentIndex = 1
+        else if (control_states.vin_sel === "Off") boardInputComboBox.currentIndex = 2
 
         if(control_states.vin_ldo_sel === "Bypass") ldoInputComboBox.currentIndex = 0
         else if (control_states.vin_ldo_sel === "Buck Regulator") ldoInputComboBox.currentIndex = 1
@@ -192,11 +194,18 @@ Item {
         ldoInputVolSlider.value = control_states.vin_ldo_set
         setLDOOutputVoltage.value = control_states.vout_ldo_set
 
+        if(control_states.ldo_en === "on")
+            ldoEnableSwitch.checked = true
+        else ldoEnableSwitch.checked = false
+
+        if(control_states.load_en === "on")
+            loadEnableSwitch.checked = true
+        else loadEnableSwitch.checked = false
+
         //if(control_states.sb_mode === "pwm") forcedPWM.checked = true
         //else if (control_states.sb_mode === "auto") pfmLightLoad.checked = true
 
     }
-
 
     RowLayout {
         anchors.fill: parent
@@ -300,8 +309,10 @@ Item {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         color: "transparent"
+
                         RowLayout {
                             anchors.fill: parent
+
                             Rectangle {
                                 id: powerOutputgaugeContainer
                                 Layout.fillWidth: true
@@ -373,7 +384,8 @@ Item {
                     color: "transparent"
 
                     ColumnLayout {
-                        anchors.fill:parent
+                        anchors.fill: parent
+
                         Text {
                             id: buckLDOOutputInputText
                             font.bold: true
@@ -403,7 +415,8 @@ Item {
                                 color: "transparent"
 
                                 ColumnLayout {
-                                    anchors.fill:parent
+                                    anchors.fill: parent
+
                                     Rectangle {
                                         id: buckLDOOutputInputContainer
                                         Layout.fillWidth: true
@@ -427,7 +440,6 @@ Item {
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 unitFont.bold: true
-
                                             }
                                         }
                                     }
@@ -437,6 +449,7 @@ Item {
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
                                         Layout.leftMargin: 12
+
                                         SGAlignedLabel {
                                             id: buckLDOOutputInputCurrentLabel
                                             target: buckLDOOutputCurrent
@@ -458,7 +471,6 @@ Item {
                                             }
                                         }
                                     }
-
                                 }
                             }
 
@@ -466,12 +478,15 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 color: "transparent"
+
                                 RowLayout {
                                     anchors.fill: parent
+
                                     Rectangle {
                                         id: ldoInputPowergaugeContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
+
                                         SGAlignedLabel {
                                             id: inputPowerLabel
                                             target:inputPowerGauge
@@ -482,6 +497,7 @@ Item {
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
+
                                             SGCircularGauge {
                                                 id: inputPowerGauge
                                                 minimumValue: 0
@@ -513,6 +529,7 @@ Item {
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
+
                                             SGCircularGauge {
                                                 id: syncBuckEfficiencyGauge
                                                 minimumValue: 0
@@ -537,8 +554,10 @@ Item {
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+
                     ColumnLayout {
                         anchors.fill:parent
+
                         Text {
                             id: ldoSystemOutputText
                             font.bold: true
@@ -567,7 +586,8 @@ Item {
                                 Layout.fillHeight: true
 
                                 ColumnLayout {
-                                    anchors.fill:parent
+                                    anchors.fill: parent
+
                                     Rectangle {
                                         id: ldoSystemOutputVoltageContainer
                                         Layout.fillWidth: true
@@ -600,6 +620,7 @@ Item {
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
                                         Layout.leftMargin: 12
+
                                         SGAlignedLabel {
                                             id: ldoSystemOutputCurrentLabel
                                             target: ldoSystemInputCurrent
@@ -628,8 +649,10 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 color: "transparent"
+
                                 RowLayout {
                                     anchors.fill:parent
+
                                     Rectangle {
                                         id:systemOutputPowerContainer
                                         Layout.fillWidth: true
@@ -645,6 +668,7 @@ Item {
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
+
                                             SGCircularGauge {
                                                 id: systemPowerOutputGauge
                                                 minimumValue: 0
@@ -664,6 +688,7 @@ Item {
                                         id: ldogaugeContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
+
                                         SGAlignedLabel {
                                             id: ldoLabel
                                             target:ldoEfficiencyGauge
@@ -674,6 +699,7 @@ Item {
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
+
                                             SGCircularGauge {
                                                 id: ldoEfficiencyGauge
                                                 minimumValue: 0
@@ -708,6 +734,7 @@ Item {
         }
 
         Rectangle {
+            id: column2Container
             Layout.fillHeight: true
             Layout.fillWidth: true
             color: "transparent"
@@ -715,6 +742,7 @@ Item {
             ColumnLayout {
                 anchors.fill: parent
                 spacing: 0
+
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
@@ -724,7 +752,6 @@ Item {
                         source: "SystemEfficiencyBlockDiagram.png"
                         fillMode: Image.PreserveAspectFit
                         anchors.fill: parent
-
                     }
                 }
 
@@ -744,21 +771,23 @@ Item {
                             font.pixelSize: ratioCalc * 20
                             color: "#696969"
                             Layout.leftMargin: 20
-
                         }
 
                         Rectangle {
                             id: line4
                             Layout.preferredHeight: 1.5
-                            Layout.alignment: Qt.AlignCenter
-                            Layout.preferredWidth: setBoardConfigContainer.width
+                            //Layout.fillWidth: true
+                            //Layout.alignment: Qt.AlignCenter
+                            Layout.preferredWidth: column2Container.width
                             border.color: "lightgray"
                             radius: 2
                         }
+
                         Rectangle {
                             id:setLDOInputVoltageContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+                            Layout.leftMargin: 20
                             color: "transparent"
 
                             SGAlignedLabel {
@@ -792,6 +821,7 @@ Item {
                             id:setLDOOutputVoltageContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+                            Layout.leftMargin: 20
                             color: "transparent"
 
                             SGAlignedLabel {
@@ -825,6 +855,7 @@ Item {
                             id: setOutputCurrentContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+                            Layout.leftMargin: 20
                             color: "transparent"
 
                             SGAlignedLabel {
@@ -856,6 +887,7 @@ Item {
                             //id: totalSystemEfficiencyContainer
                             Layout.preferredHeight: parent.height/2
                             Layout.fillWidth: true
+                            Layout.leftMargin: 20
                             color: "white"
 
                             ColumnLayout {
@@ -871,10 +903,9 @@ Item {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
 
-
                                             SGAlignedLabel {
                                                 id: boardInputLabel
-                                                target: baordInputComboBox
+                                                target: boardInputComboBox
                                                 text: "Board Input Voltage\nSelection"
                                                 alignment: SGAlignedLabel.SideTopLeft
                                                 anchors.verticalCenter: parent.verticalCenter
@@ -882,7 +913,7 @@ Item {
                                                 font.bold : true
 
                                                 SGComboBox {
-                                                    id: baordInputComboBox
+                                                    id: boardInputComboBox
                                                     fontSizeMultiplier: ratioCalc * 0.9
                                                     model: ["USB 5V", "External", "Off"]
                                                     onActivated: {
@@ -923,8 +954,10 @@ Item {
                                 Rectangle {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
+
                                     RowLayout {
                                         anchors.fill: parent
+
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
@@ -951,14 +984,15 @@ Item {
                                                         else if(currentIndex === 2)
                                                             platformInterface.select_ldo.update("DFN8")
 
-
                                                     }
                                                 }
                                             }
                                         }
+
                                         Rectangle {
                                             Layout.preferredWidth: parent.width/1.5
                                             Layout.fillHeight: true
+
                                             RowLayout {
                                                 anchors.fill: parent
 
@@ -989,11 +1023,10 @@ Item {
                                                                     platformInterface.set_load_enable.update("on")
                                                                 else  platformInterface.set_load_enable.update("off")
                                                             }
-
                                                         }
                                                     }
-
                                                 }
+
                                                 Rectangle {
                                                     id:extLoadCheckboxContainer
                                                     Layout.fillWidth: true
@@ -1010,8 +1043,6 @@ Item {
                                                         alignment: SGAlignedLabel.SideTopCenter
                                                         fontSizeMultiplier: ratioCalc
                                                         anchors.centerIn: parent
-
-
 
                                                         Rectangle {
                                                             color: "transparent"
@@ -1033,54 +1064,84 @@ Item {
                                                                 } else {
                                                                     platformInterface.ext_load_conn.update(false)
                                                                 }
-
                                                             }
                                                         }
                                                     }
                                                 }
                                             }
-
                                         }
-
                                     }
-
                                 }
 
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
 
-                                    Rectangle {
-                                        width: parent.width/2
-                                        height: parent.height
-                                        anchors.centerIn: parent
-                                        SGAlignedLabel {
-                                            id:vinReadyLabel
-                                            target: vinReadyLight
-                                            alignment: SGAlignedLabel.SideTopCenter
-                                            anchors.centerIn: parent
-                                            fontSizeMultiplier: ratioCalc
-                                            text: "VIN_LDO Ready \n (Above 1.6V)"
-                                            font.bold: true
+                                    RowLayout{
+                                        anchors.fill:parent
 
-                                            SGStatusLight {
-                                                id: vinReadyLight
-                                                property var vin_ldo_good: platformInterface.int_status.vin_ldo_good
-                                                onVin_ldo_goodChanged: {
-                                                    if(vin_ldo_good === true)
-                                                        vinReadyLight.status  = SGStatusLight.Green
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            color: "transparent"
+                                            SGAlignedLabel {
+                                                id:vinReadyLabel
+                                                target: vinReadyLight
+                                                alignment: SGAlignedLabel.SideTopCenter
+                                                anchors.centerIn: parent
+                                                fontSizeMultiplier: ratioCalc
+                                                text: "VIN_LDO Ready \n (Above 1.6V)"
+                                                font.bold: true
 
-                                                    else vinReadyLight.status  = SGStatusLight.Off
+                                                SGStatusLight {
+                                                    id: vinReadyLight
+                                                    property var vin_ldo_good: platformInterface.int_status.vin_ldo_good
+                                                    onVin_ldo_goodChanged: {
+                                                        if(vin_ldo_good === true)
+                                                            vinReadyLight.status  = SGStatusLight.Green
+
+                                                        else vinReadyLight.status  = SGStatusLight.Off
+                                                    }
                                                 }
                                             }
                                         }
 
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            color: "transparent"
+
+                                            SGAlignedLabel {
+                                                id: ldoEnableSwitchLabel
+                                                target: ldoEnableSwitch
+                                                text: "Enable LDO"
+                                                alignment: SGAlignedLabel.SideTopCenter
+                                                anchors.centerIn: parent
+                                                fontSizeMultiplier: ratioCalc
+                                                font.bold : true
+                                                SGSwitch {
+                                                    id: ldoEnableSwitch
+                                                    labelsInside: true
+                                                    checkedLabel: "On"
+                                                    uncheckedLabel:   "Off"
+                                                    textColor: "black"              // Default: "black"
+                                                    handleColor: "white"            // Default: "white"
+                                                    grooveColor: "#ccc"             // Default: "#ccc"
+                                                    grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                    onToggled: {
+                                                        if(checked)
+                                                            platformInterface.set_ldo_enable.update("on")
+                                                        else  platformInterface.set_ldo_enable.update("off")
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                } // end
+                }
             }
         }
     }

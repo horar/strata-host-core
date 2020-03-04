@@ -5,6 +5,7 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 0.9 as Widget09
 import tech.strata.fonts 1.0
 import "qrc:/js/help_layout_manager.js" as Help
+import "../custom"
 
 Item {
     id: root
@@ -12,6 +13,8 @@ Item {
 
     property real initialAspectRatio: 1200/820
     property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
+    property string titleText: "NCP164C \n Low-noise, High PSRR Linear Regulator"
+    property string vinGoodThreshText: "1.5V"
 
     anchors.centerIn: parent
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
@@ -41,28 +44,28 @@ Item {
 
     Component.onCompleted: {
         platformInterface.get_all_states.send()
-        Help.registerTarget(tempLabel, "aaa", 0, "AdjLDOBasicHelp")
-        Help.registerTarget(efficiencyLabel, "aaa", 1, "AdjLDOBasicHelp")
-        Help.registerTarget(powerDissipatedLabel, "aaa", 2, "AdjLDOBasicHelp")
-        Help.registerTarget(outputPowerContainer, "aaa", 3, "AdjLDOBasicHelp")
-        Help.registerTarget(vinReadyLabel, "aaa", 4, "AdjLDOBasicHelp")
-        Help.registerTarget(pgoodLabel, "aaa", 5, "AdjLDOBasicHelp")
-        Help.registerTarget(intLdoTempLabel, "aaa", 6, "AdjLDOBasicHelp")
-        Help.registerTarget(boardInputLabel, "aaa", 7, "AdjLDOBasicHelp")
-        Help.registerTarget(ldoInputLabel, "aaa", 8, "AdjLDOBasicHelp")
-        Help.registerTarget(ldoPackageLabel, "aaa", 9, "AdjLDOBasicHelp")
-        Help.registerTarget(ldoEnableSwitchLabel, "aaa", 10, "AdjLDOBasicHelp")
-        Help.registerTarget(ldoInputVolSliderLabel, "aaa", 11, "AdjLDOBasicHelp")
-        Help.registerTarget(externalInputVoltageLabel, "aaa", 12, "AdjLDOBasicHelp")
-        Help.registerTarget(usb5VVoltageLabel, "aaa", 13, "AdjLDOBasicHelp")
-        Help.registerTarget(ldoInputVoltageLabel, "aaa", 14, "AdjLDOBasicHelp")
-        Help.registerTarget(ldoOutputVoltageLabel, "aaa", 15, "AdjLDOBasicHelp")
-        Help.registerTarget(boardInputCurrentLabel, "aaa", 16, "AdjLDOBasicHelp")
-        Help.registerTarget(ldoOutputCurrentLabel, "aaa", 17, "AdjLDOBasicHelp")
-        Help.registerTarget(setLDOOutputVoltageLabel, "aaa", 18, "AdjLDOBasicHelp")
-        Help.registerTarget(loadEnableSwitchLabel, "aaa", 19 , "AdjLDOBasicHelp")
-        Help.registerTarget(extLoadCheckboxLabel, "aaa", 20, "AdjLDOBasicHelp")
-        Help.registerTarget(setLoadCurrentLabel, "aaa", 21, "AdjLDOBasicHelp")
+        Help.registerTarget(tempLabel, "This gauge shows the board temperature near the ground pad of the selected LDO package.", 0, "AdjLDOBasicHelp")
+        Help.registerTarget(efficiencyLabel, "This gauge shows the efficiency of the LDO when it is enabled.", 1, "AdjLDOBasicHelp")
+        Help.registerTarget(powerDissipatedLabel, "This gauge shows the power loss in the LDO when it is enabled.", 2, "AdjLDOBasicHelp")
+        Help.registerTarget(outputPowerContainer, "This gauge shows the output power of the LDO when it is enabled.", 3, "AdjLDOBasicHelp")
+        Help.registerTarget(vinReadyLabel, "This indicator will be green when VIN is greater than 2.5V when the input buck regulator is enabled or greater than 1.5V when it is disabled.", 4, "AdjLDOBasicHelp")
+        Help.registerTarget(pgoodLabel, "This indicator will be green when the LDO power good signal is high.", 5, "AdjLDOBasicHelp")
+        Help.registerTarget(intLdoTempLabel, "This indicator will be red when the LDO temp sensor detects an approximate LDO temperature over the maximum allowed operating temperature of the LDO.", 6, "AdjLDOBasicHelp")
+        Help.registerTarget(boardInputLabel, "This combo box allows you to choose the main input option to the board. 'External' option uses the input voltage from the input banana plugs (VIN_EXT). 'USB 5V' option uses the 5V supply from the Strata USB connector. 'Option 'Off' option disconnects both inputs from VIN and pulls VIN low.", 7, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage of the LDO. 'Bypass' option connects the LDO input directly to VIN through a load switch. 'Buck Regulator' allows adjustment of the input voltage to the LDO through an adjustable output voltage buck regulator. 'Off' option disables both the buck regulator and bypass load switch, disconnecting the LDO from the input power supply, and pulls VIN_LDO low. 'Isolated' option allows for directly supplying input power to the LDO through the VIN_LDO solder pad on the board, bypassing the input stage entirely. When using this option, ensure no voltage is applied to VIN_LDO through the solder pad when switching to the other LDO input voltage options. See the Platform Content page for more information about the options for supplying the LDO input votlage.", 8, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the actual LDO package on the board if different from the stock LDO package included on the board. See the Platform Content page for more information about using alternate LDO packages on the board.", 9, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoEnableSwitchLabel, "This switch enables the LDO.", 10, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoInputVolSliderLabel, "This slider allows you to set the desired input voltage of the LDO when being supplied by the input buck regulator. The value can be set while the input buck regulator is not being used and the voltage will automatically be adjusted as needed when the input buck regulator is activated.", 11, "AdjLDOBasicHelp")
+        Help.registerTarget(externalInputVoltageLabel, "This info box shows the external input voltage applied to the input banana plugs (VIN_EXT).", 12, "AdjLDOBasicHelp")
+        Help.registerTarget(usb5VVoltageLabel, "This info box shows the voltage of the 5V supply from the Strata USB connector.", 13, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoInputVoltageLabel, "This info box shows the input voltage of the LDO.", 14, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoOutputVoltageLabel, "This info box shows the output voltage of the LDO.", 15, "AdjLDOBasicHelp")
+        Help.registerTarget(boardInputCurrentLabel, "This info box shows the input current to the board (current flowing from VIN to VIN_SB).", 16, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoOutputCurrentLabel, "This info box shows the output current of the LDO when pulled by either the onboard electronic load or through an external load connected to the output banana plugs (VOUT). Current pulled by the onboard short-circuit load is not measured and thus will not be shown in this box.", 17, "AdjLDOBasicHelp")
+        Help.registerTarget(setLDOOutputVoltageLabel, "This slider allows you to set the desired output voltage of the LDO. The value can be set while the LDO is disabled - the voltage will automatically be adjusted as needed when the LDO is enabled.", 18, "AdjLDOBasicHelp")
+        Help.registerTarget(loadEnableSwitchLabel, "This switch enables the onboard load.", 19 , "AdjLDOBasicHelp")
+        Help.registerTarget(extLoadCheckboxLabel, "Check this box if an external load is connected to the output banana plugs (VOUT).", 20, "AdjLDOBasicHelp")
+        Help.registerTarget(setLoadCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value can be set while the load is disabled and the load current will automatically be adjusted as needed when the load is enabled. The value may need to be reset to the desired level after recovery from an LDO UVLO event.", 21, "AdjLDOBasicHelp")
 
     }
 
@@ -72,10 +75,24 @@ Item {
         else if(control_states.vin_sel === "External") boardInputComboBox.currentIndex = 1
         else if (control_states.vin_sel === "Off") boardInputComboBox.currentIndex = 2
 
-        if(control_states.vin_ldo_sel === "Bypass") ldoInputComboBox.currentIndex = 0
-        else if (control_states.vin_ldo_sel === "Buck Regulator") ldoInputComboBox.currentIndex = 1
-        else if (control_states.vin_ldo_sel === "Off") ldoInputComboBox.currentIndex = 2
-        else if (control_states.vin_ldo_sel === "Isolated") ldoInputComboBox.currentIndex = 3
+        if(control_states.vin_ldo_sel === "Bypass") {
+            vinGoodThreshText = "\n (Above 1.5V)"
+            ldoInputComboBox.currentIndex = 0
+        }
+        else if (control_states.vin_ldo_sel === "Buck Regulator") {
+            vinGoodThreshText = "\n (Above 2.5V)"
+            ldoInputComboBox.currentIndex = 1
+        }
+        else if (control_states.vin_ldo_sel === "Off") {
+            vinGood.status = SGStatusLight.Off
+            vinGoodThreshText = "\n (Above 1.5V)"
+            ldoInputComboBox.currentIndex = 2
+        }
+        else if (control_states.vin_ldo_sel === "Isolated") {
+            vinGood.status = SGStatusLight.Off
+            vinGoodThreshText = "\n (Above 1.5V)"
+            ldoInputComboBox.currentIndex = 3
+        }
 
         ldoInputVolSlider.value = control_states.vin_ldo_set
         setLDOOutputVoltage.value = control_states.vout_ldo_set
@@ -98,6 +115,7 @@ Item {
     property var variant_name: platformInterface.variant_name.value
     onVariant_nameChanged: {
         if(variant_name === "NCP164C_TSOP5") {
+            titleText: "NCP164C \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
             //"Set LDO Output Voltage" PlaceHolder
             setLDOOutputVoltage.fromText.text = "1.1V"
@@ -113,6 +131,7 @@ Item {
 
         }
         else if (variant_name === "NCP164A_DFN6") {
+            titleText: "NCP164A \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
             //"Set LDO Output Voltage" PlaceHolder
             setLDOOutputVoltage.fromText.text ="1.1V"
@@ -127,6 +146,7 @@ Item {
             ldoInputVolSlider.to = 5.5
         }
         else if (variant_name === "NCP164C_DFN8") {
+            titleText: "NCP164C \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
             //"Set LDO Output Voltage" PlaceHolder
             setLDOOutputVoltage.fromText.text ="1.1V"
@@ -141,6 +161,7 @@ Item {
             ldoInputVolSlider.to = 5
         }
         else if (variant_name === "NCV8164A_TSOP5") {
+            titleText: "NCV8164A \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
             //"Set LDO Output Voltage" PlaceHolder
             setLDOOutputVoltage.fromText.text ="1.2V"
@@ -155,6 +176,7 @@ Item {
             ldoInputVolSlider.to = 5.5
         }
         else if (variant_name === "NCV8164C_DFN6") {
+            titleText: "NCV8164C \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
             //"Set LDO Output Voltage" PlaceHolder
             setLDOOutputVoltage.fromText.text ="1.2V"
@@ -169,6 +191,7 @@ Item {
             ldoInputVolSlider.to = 5
         }
         else if (variant_name === "NCV8164A_DFN8") {
+            titleText: "NCV8164A \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
             //"Set LDO Output Voltage" PlaceHolder
             setLDOOutputVoltage.fromText.text ="1.2V"
@@ -186,26 +209,34 @@ Item {
 
     ColumnLayout {
         anchors.fill :parent
-        Text {
-            text:  " NCP164/NCV8164 \n Low-noise, High PSRR Linear Regulator"
-            font.bold: true
-            horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: ratioCalc * 20
-            color: "black"
-            Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: 10
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: (parent.height - 10) * (1/12)
+            color: "transparent"
+            Text {
+                text:  titleText
+                font.bold: true
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: ratioCalc * 20
+                color: "black"
+                anchors.centerIn: parent
+                //Layout.preferredHeight: (parent.height - 10) * (1/12)
+                //Layout.alignment: Qt.AlignHCenter
+                //Layout.topMargin: 10
+            }
         }
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: root.height/2.8
+            //Layout.fillHeight: true
+            Layout.preferredHeight: (root.height - 10) * (1/3)
             color: "transparent"
 
             RowLayout {
                 anchors.fill: parent
 
                 Rectangle {
-                    Layout.fillWidth: true
+                    Layout.preferredWidth: parent.width * (2/3)
                     Layout.fillHeight: true
                     RowLayout {
                         anchors.fill: parent
@@ -218,7 +249,7 @@ Item {
                                 id: tempLabel
                                 target: tempGauge
                                 text: "Board \n Temperature"
-                                margin: 0
+                                margin: -10
 
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier:  ratioCalc
@@ -266,7 +297,7 @@ Item {
                                 id: efficiencyLabel
                                 target: efficiencyGauge
                                 text: "Efficiency"
-                                margin: 0
+                                margin: -10
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier:  ratioCalc
@@ -301,7 +332,7 @@ Item {
                                 id: powerDissipatedLabel
                                 target: powerDissipatedGauge
                                 text: "Power Loss"
-                                margin: 0
+                                margin: -10
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier:   ratioCalc
@@ -337,7 +368,7 @@ Item {
                                 id: outputPowerLabel
                                 target: powerOutputGauge
                                 text: "Output Power"
-                                margin: 0
+                                margin: -10
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier: ratioCalc
@@ -367,7 +398,7 @@ Item {
 
                 Rectangle {
                     Layout.fillHeight: true
-                    Layout.fillWidth: true
+                    Layout.preferredWidth: parent.width * (1/3)
 
                     RowLayout {
                         anchors.fill:parent
@@ -431,7 +462,7 @@ Item {
                                 alignment: SGAlignedLabel.SideTopCenter
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc
-                                text: "LDO Temp Alert \n (LDO_Temp#)"
+                                text: "Temperature Alert \n (LDO_TEMP#)"
                                 font.bold: true
 
                                 SGStatusLight {
@@ -454,6 +485,7 @@ Item {
         Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.preferredHeight: (root.height - 10) * (7/12)
             color: "transparent"
 
             RowLayout {
@@ -486,6 +518,7 @@ Item {
 
 
                         Rectangle {
+                            id: comboBoxContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             Layout.leftMargin: 20
@@ -579,31 +612,66 @@ Item {
                         }
 
                         Rectangle {
+                            id: ldoEnableSwitchContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             Layout.leftMargin: 20
+                            RowLayout {
+                                anchors.fill:parent
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "transparent"
 
-                            SGAlignedLabel {
-                                id: ldoEnableSwitchLabel
-                                target: ldoEnableSwitch
-                                text: "Enable LDO"
-                                alignment: SGAlignedLabel.SideTopCenter
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc
-                                font.bold : true
-                                SGSwitch {
-                                    id: ldoEnableSwitch
-                                    labelsInside: true
-                                    checkedLabel: "On"
-                                    uncheckedLabel:   "Off"
-                                    textColor: "black"              // Default: "black"
-                                    handleColor: "white"            // Default: "white"
-                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                    onToggled: {
-                                        if(checked)
-                                            platformInterface.set_ldo_enable.update("on")
-                                        else  platformInterface.set_ldo_enable.update("off")
+                                    SGAlignedLabel {
+                                        id:vinGoodLabel
+                                        target: vinGood
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc
+                                        text: "VIN Good" + vinGoodThreshText
+                                        font.bold: true
+
+                                        SGStatusLight {
+                                            id: vinGood
+                                            property var vin_good: platformInterface.int_status.vin_good
+                                            onVin_goodChanged: {
+                                                if(vin_good === true)
+                                                    vinGood.status  = SGStatusLight.Green
+
+                                                else vinGood.status  = SGStatusLight.Off
+                                            }
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    color: "transparent"
+
+                                    SGAlignedLabel {
+                                        id: ldoEnableSwitchLabel
+                                        target: ldoEnableSwitch
+                                        text: "Enable LDO"
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc
+                                        font.bold : true
+                                        SGSwitch {
+                                            id: ldoEnableSwitch
+                                            labelsInside: true
+                                            checkedLabel: "On"
+                                            uncheckedLabel:   "Off"
+                                            textColor: "black"              // Default: "black"
+                                            handleColor: "white"            // Default: "white"
+                                            grooveColor: "#ccc"             // Default: "#ccc"
+                                            grooveFillColor: "#0cf"         // Default: "#0cf"
+                                            onToggled: {
+                                                if(checked)
+                                                    platformInterface.set_ldo_enable.update("on")
+                                                else  platformInterface.set_ldo_enable.update("off")
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -639,6 +707,7 @@ Item {
                                 }
                             }
                         }
+
                     }
                 }
 

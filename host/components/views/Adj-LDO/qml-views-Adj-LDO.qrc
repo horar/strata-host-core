@@ -9,5 +9,6 @@
         <file>PlatformInterface.qml</file>
         <file>control-views/SystemEfficiency.qml</file>
         <file>control-views/SystemEfficiencyBlockDiagram.png</file>
+        <file>custom/CustomSGCircularGauge.qml</file>
     </qresource>
 </RCC>

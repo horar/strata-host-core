@@ -122,21 +122,19 @@ Item {
     }
 
     Component.onCompleted: {
-
-       // platformInterface.get_all_states.send()
-        Help.registerTarget(cptestButton, "aaa", 0, "AdjLDOAdvanceHelp")
-        Help.registerTarget(currentLimitThresholdLabel, "aaa", 1, "AdjLDOAdvanceHelp")
-        Help.registerTarget(pgldoLabel, "aaa", 2, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ocpTriggeredLabel, "aaa", 3, "AdjLDOAdvanceHelp")
-        Help.registerTarget(currentLimitReachLabel, "aaa", 4, "AdjLDOAdvanceHelp")
-        Help.registerTarget(tsdTriggeredLabel, "aaa", 5, "AdjLDOAdvanceHelp")
-        Help.registerTarget(estTSDThresLabel, "aaa", 6, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoPowerDissipationLabel, "aaa", 7, "AdjLDOAdvanceHelp")
-        Help.registerTarget(boardTempLabel, "aaa", 8, "AdjLDOAdvanceHelp")
-        Help.registerTarget(appxLDoTempLabel, "aaa", 9, "AdjLDOAdvanceHelp")
+        Help.registerTarget(shortCircuitButton, "This button enables the onboard short-circuit load used to emulate a short to ground on the LDO output for approximately 2 ms. The short-circuit load cannot be enabled when powering the LDO via the 5V from the Strata USB connector and/or the input buck regulator is enabled. The current pulled by the short-circuit load will vary with LDO output voltage. See the Platform Content page for more information about the short-circuit load and LDO behavior during a short-circuit event.", 0, "AdjLDOAdvanceHelp")
+        Help.registerTarget(currentLimitThresholdLabel, "This info box will show the approximate output current threshold at which the LDO's output current limit protection was triggered. This info box does not show the current limit threshold during a short-circuit event triggered via the onboard short-circuit load.", 1, "AdjLDOAdvanceHelp")
+        Help.registerTarget(pgldoLabel, "This indicator will be green when the LDO power good signal is high.", 2, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ocpTriggeredLabel, "aaa", 3, "This indicator will light up green momentarily if the LDO's short-circuit current protection is enabled when the onboard short-circuit load is enabled with the 'Trigger Short Circuit' button above.")
+        Help.registerTarget(currentLimitReachLabel, "This indicator will turn green when the LDO's current limit protection is triggered. See the Platform Content for more information on the current limit behavior of the LDO.", 4, "AdjLDOAdvanceHelp")
+        Help.registerTarget(tsdTriggeredLabel, "This indicator will turn red when the LDO's thermal shutdown (TSD) protection is triggered.", 5, "AdjLDOAdvanceHelp")
+        Help.registerTarget(estTSDThresLabel, "This info box will show the estimated LDO junction temperature at the threshold at which the LDO's TSD protection was triggered.", 6, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoPowerDissipationLabel, "This gauge shows the power loss in the LDO when it is enabled.", 7, "AdjLDOAdvanceHelp")
+        Help.registerTarget(boardTempLabel, "This gauge shows the board temperature near the ground pad of the selected LDO package.", 8, "AdjLDOAdvanceHelp")
+        Help.registerTarget(appxLDoTempLabel, "This gauge shows the approximate LDO junction temperature. Do not rely on this value for an accurate measurement. See the Platform Content page for more information on how the approximate LDO junction temperature is calculated.", 9, "AdjLDOAdvanceHelp")
         Help.registerTarget(ldoInputVolLabel, "aaa", 10, "AdjLDOAdvanceHelp")
         Help.registerTarget(boardInputLabel, "aaa", 11, "AdjLDOAdvanceHelp")
-        Help.registerTarget(isolateLDOLabel, "aaa", 12, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoEnableSwitchLabel, "aaa", 12, "AdjLDOAdvanceHelp")
         Help.registerTarget(setLDOOutputVoltageContainer, "aaa", 13, "AdjLDOAdvanceHelp")
         Help.registerTarget(ldoInputLabel, "aaa", 14, "AdjLDOAdvanceHelp")
         Help.registerTarget(ldoDisableLabel, "aaa", 15, "AdjLDOAdvanceHelp")
@@ -146,12 +144,9 @@ Item {
         Help.registerTarget(extLoadCheckboxLabel, "aaa", 19 , "AdjLDOAdvanceHelp")
         Help.registerTarget(vinReadyLabel, "aaa", 20, "AdjLDOAdvanceHelp")
         Help.registerTarget(ldoInputVoltageLabel, "aaa", 21, "AdjLDOAdvanceHelp")
-
         Help.registerTarget(ldoOutputVoltageLabel, "aaa", 22, "AdjLDOAdvanceHelp")
-        Help.registerTarget(diffVolatgeLabel, "aaa", 23 , "AdjLDOAdvanceHelp")
+        Help.registerTarget(diffVoltageLabel, "aaa", 23 , "AdjLDOAdvanceHelp")
         Help.registerTarget(dropReachedLabel, "aaa", 24, "AdjLDOAdvanceHelp")
-
-
     }
 
     property var telemetry_notification: platformInterface.telemetry
@@ -162,7 +157,8 @@ Item {
 
         ldoInputVoltage.text = telemetry_notification.vin_ldo
         ldoOutputVoltage.text = telemetry_notification.vout_ldo
-        diffVolatge.text = telemetry_notification.vdiff
+        ldoOutputCurrent.text = telemetry_notification.iout
+        diffVoltage.text = telemetry_notification.vdiff
         currentLimitThreshold.text = telemetry_notification.ldo_clim_thresh
 
     }
@@ -328,7 +324,7 @@ Item {
                                         Layout.fillHeight: true
 
                                         SGButton {
-                                            id: cptestButton
+                                            id: shortCircuitButton
                                             height: (preferredContentHeight * 2)
                                             width: preferredContentWidth * 1.25
                                             text: "Trigger Short \n Circuit"
@@ -748,40 +744,28 @@ Item {
                                         color: "transparent"
 
                                         SGAlignedLabel {
-                                            id: isolateLDOLabel
-                                            target: isolateLDO
-                                            text: "Isolate LDO"
-                                            //horizontalAlignment: Text.AlignHCenter
-                                            font.bold : true
-                                            font.italic: true
+                                            id: ldoEnableSwitchLabel
+                                            target: ldoEnableSwitch
+                                            text: "Enable LDO"
                                             alignment: SGAlignedLabel.SideTopCenter
-                                            fontSizeMultiplier: ratioCalc
                                             anchors.centerIn: parent
-
-                                            Rectangle {
-                                                color: "transparent"
-                                                anchors { fill: isolateLDOLabel }
-                                                MouseArea {
-                                                    id: hoverArea1
-                                                    anchors { fill: parent }
-                                                    hoverEnabled: true
+                                            fontSizeMultiplier: ratioCalc
+                                            font.bold : true
+                                            SGSwitch {
+                                                id: ldoEnableSwitch
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel:   "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                onToggled: {
+                                                    if(checked)
+                                                        platformInterface.set_ldo_enable.update("on")
+                                                    else  platformInterface.set_ldo_enable.update("off")
                                                 }
                                             }
-
-                                            CheckBox {
-                                                id: isolateLDO
-                                                checked: false
-                                                onClicked: {
-                                                    if(checked) {
-                                                        platformInterface.set_isolate_ldo.update(true)
-                                                    } else {
-                                                        platformInterface.set_isolate_ldo.update(false)
-                                                    }
-
-
-                                                }
-                                            }
-
                                         }
                                     }
                                 }
@@ -859,7 +843,7 @@ Item {
                                         SGAlignedLabel {
                                             id: ldoDisableLabel
                                             target: ldoDisable
-                                            text: "Disable LDO \n Output Volatge \n Adjust"
+                                            text: "Disable LDO \n Output Voltage \n Adjustment"
                                             //horizontalAlignment: Text.AlignHCenter
                                             font.bold : true
                                             font.italic: true
@@ -883,8 +867,12 @@ Item {
                                                 onClicked: {
                                                     if(checked) {
                                                         platformInterface.disable_vout_set.update(true)
+                                                        setLDOOutputVoltageLabel.opacity = 0.5
+                                                        setLDOOutputVoltageLabel.enabled = false
                                                     } else {
                                                         platformInterface.disable_vout_set.update(false)
+                                                        setLDOOutputVoltageLabel.opacity = 1
+                                                        setLDOOutputVoltageLabel.enabled = true
                                                     }
 
 
@@ -1100,8 +1088,6 @@ Item {
                                                 }
                                             }
                                         }
-
-
                                     }
 
                                     Rectangle {
@@ -1109,14 +1095,8 @@ Item {
                                         Layout.fillWidth: true
                                     }
                                 }
-
                             }
-
-
-
                         }
-
-
                     }
 
                     Rectangle {
@@ -1236,16 +1216,16 @@ Item {
                                                         Layout.fillHeight: true
 
                                                         SGAlignedLabel {
-                                                            id: diffVolatgeLabel
-                                                            target: diffVolatge
-                                                            text: "Differential Voltage \n (Vdiff)"
+                                                            id: diffVoltageLabel
+                                                            target: diffVoltage
+                                                            text: "LDO Voltage Drop"
                                                             alignment: SGAlignedLabel.SideTopLeft
                                                             anchors.verticalCenter: parent.verticalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             font.bold : true
 
                                                             SGInfoBox {
-                                                                id: diffVolatge
+                                                                id: diffVoltage
                                                                 unit: "V"
                                                                 width: 100* ratioCalc
                                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
@@ -1258,39 +1238,68 @@ Item {
                                                     }
 
                                                     Rectangle {
+                                                        id: ldoOutputCurrentContainer
                                                         Layout.fillWidth: true
                                                         Layout.fillHeight: true
 
                                                         SGAlignedLabel {
-                                                            id: dropReachedLabel
-                                                            target: dropReached
-                                                            alignment: SGAlignedLabel.SideTopCenter
+                                                            id: ldoOutputCurrentLabel
+                                                            target: ldoOutputCurrent
+                                                            text: "LDO Output Current \n(IOUT)"
+                                                            alignment: SGAlignedLabel.SideTopLeft
                                                             anchors.verticalCenter: parent.verticalCenter
                                                             fontSizeMultiplier: ratioCalc
-                                                            text: "Dropout Reached"
-                                                            font.bold: true
+                                                            font.bold : true
 
-                                                            SGStatusLight {
-                                                                id: dropReached
+                                                            SGInfoBox {
+                                                                id: ldoOutputCurrent
+                                                                unit: "mA"
+                                                                width: 110* ratioCalc
+                                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                                boxColor: "lightgrey"
+                                                                boxFont.family: Fonts.digitalseven
+                                                                unitFont.bold: true
 
                                                             }
                                                         }
                                                     }
-
                                                 }
-
-                                                Rectangle {
-                                                    Layout.fillWidth: true
-                                                    Layout.fillHeight: true
-                                                }
-
-                                                Rectangle {
-                                                    Layout.fillWidth: true
-                                                    Layout.fillHeight: true
-                                                }
-
-
                                             }
+
+                                            Rectangle {
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+
+                                                SGAlignedLabel {
+                                                    id: dropReachedLabel
+                                                    target: dropReached
+                                                    alignment: SGAlignedLabel.SideTopCenter
+                                                    anchors.centerIn: parent
+//                                                    anchors.horizontalCenter: parent.horizontalCenter
+//                                                    anchors.horizontalCenterOffset: 20
+                                                    fontSizeMultiplier: ratioCalc
+                                                    text: "Dropout Reached"
+                                                    font.bold: true
+
+                                                    SGStatusLight {
+                                                        id: dropReached
+
+                                                    }
+                                                }
+                                            }
+
+//                                                Rectangle {
+//                                                    Layout.fillWidth: true
+//                                                    Layout.fillHeight: true
+//                                                }
+
+//                                                Rectangle {
+//                                                    Layout.fillWidth: true
+//                                                    Layout.fillHeight: true
+//                                                }
+
+
+
                                         }
                                     }
                                 }
