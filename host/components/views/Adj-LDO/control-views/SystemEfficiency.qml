@@ -11,11 +11,7 @@ Item {
     id: root
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
-    // anchors.fill: parent
     anchors.centerIn: parent
-
-    property string titleText: "NCP164C \n Low-noise, High PSRR Linear Regulator"
-    property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
 
     onWidthChanged: {
         console.log("width",width)
@@ -29,27 +25,27 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
     Component.onCompleted: {
-        Help.registerTarget(systemVoltageLabel, "aaa", 0, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(systemCurrentLabel, "aaa", 1, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(systemInputPowerLabel, "aaa", 2, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(totalSystemEfficiencyLabel, "aaa", 3, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(buckLDOOutputInputLabel, "aaa", 4, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(buckLDOOutputInputCurrentLabel, "aaa", 5, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(inputPowerLabel, "aaa", 6, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(syncBuckEfficiencyLabel, "aaa", 7, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(ldoSystemOutputVoltageLabel, "aaa", 8, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(ldoSystemOutputCurrentLabel, "aaa", 9, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(systemOutputPowerLabel, "aaa", 10, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(ldoLabel, "aaa", 11, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(setLDOInputVoltageLabel, "aaa", 12, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(setLDOOutputVoltageLabel, "aaa", 13, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(setOutputCurrentLabel, "aaa", 14, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(boardInputLabel, "aaa", 15, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(ldoInputLabel, "aaa", 16, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(ldoPackageLabel, "aaa", 17, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(loadEnableSwitchLabel, "aaa", 18, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(extLoadCheckboxLabel, "aaa", 19 , "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(vinReadyLabel, "aaa", 20, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(systemVoltageLabel, "This info box shows the voltage at the input of the buck regulator and bypass load switch (VIN_SB).", 0, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(systemInputCurrentLabel, "This info box shows the input current to the board (current flowing from VIN to VIN_SB).", 1, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(systemInputPowerLabel, "This gauge shows the input power to the system consisting of the input buck regulator and LDO. This input power measurement excludes the losses in the input load switches and input current sense resistor.", 2, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(totalSystemEfficiencyLabel, "This gauge shows the total efficiency of the system.", 3, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(buckLDOOutputInputLabel, "This info box shows the output voltage of the buck regulator (LDO input voltage).", 4, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(buckLDOOutputInputCurrentLabel, "This info box shows the output current of the buck regulator (LDO input current).", 5, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(inputPowerLabel, "This gauge shows the output power of the buck regulator (LDO input power).", 6, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(syncBuckEfficiencyLabel, "This gauge shows the efficiency of the buck regulator", 7, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoSystemOutputVoltageLabel, "This info box shows the output voltage of the LDO (system output voltage).", 8, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoSystemOutputCurrentLabel, "This info box shows the output current of the LDO (system output current).", 9, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoOutputPowerLabel, "This gauge shows the output power of the LDO (system output power)", 10, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoEfficiencyLabel, "This gauge shows the efficiency of the LDO.", 11, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(setLDOInputVoltageLabel, "This slider allows you to set the desired input voltage of the LDO when being supplied by the input buck regulator. The value can be set while the input buck regulator is not being used and the voltage will automatically be adjusted as needed whenever the input buck regulator is activated again.", 12, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(setLDOOutputVoltageLabel, "This slider allows you to set the desired output voltage of the LDO. The value can be set while the LDO is disabled. The voltage will automatically be adjusted as needed whenever the LDO is enabled again.", 13, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(setOutputCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value can be set while the load is disabled and the load current will automatically be adjusted as needed when the load is enabled. The value may need to be reset to the desired level after recovery from an LDO UVLO event.", 14, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(boardInputLabel, "This combo box allows you to choose the main input option to the board. 'External' option uses the input voltage from the input banana plugs (VIN_EXT). 'USB 5V' option uses the 5V supply from the Strata USB connector. 'Option 'Off' option disconnects both inputs from VIN and pulls VIN low.", 15, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. The 'Bypass' option connects the LDO input directly to VIN_SB through a load switch. The 'Buck Regulator' option allows adjustment of the input voltage to the LDO through an adjustable output voltage buck regulator. The 'Off' option disables both the input buck regulator and bypass load switch, disconnecting the LDO from the input power supply, and pulls VIN_LDO low. The 'Isolated' option allows you to power the LDO directly through the VIN_LDO solder pad on the board, bypassing the input stage entirely. WARNING! - when using this option, ensure you do not use the other LDO input voltage options while an external power supply is supplying power to the LDO through the VIN_LDO solder pad. See the Platform Content page for more information about the options for supplying the LDO input voltage.", 16, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the LDO package actually populated on the board if different from the stock LDO package option. See the Platform Content page for more information about using alternate LDO packages with this board.", 17, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(loadEnableSwitchLabel, "This switch enables the onboard load.", 18, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(extLoadCheckboxLabel, "Check this box if an external load is connected to the output banana plugs (VOUT).", 19 , "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(vinReadyLabel, "This indicator will be green when the LDO input voltage (VIN_LDO) is greater than the LDO input UVLO threshold of 1.6V.", 20, "AdjLDOSystemEfficiencyHelp")
     }
 
     property var variant_name: platformInterface.variant_name.value
@@ -166,10 +162,10 @@ Item {
         ldoEfficiencyGauge.value = telemetry_notification.eff_ldo ////LDO efficiency
         totalSystemEfficiencyGauge.value = telemetry_notification.eff_tot
         systemInputPowerGauge.value = telemetry_notification.pin_sb
-        systemPowerOutputGauge.value  = telemetry_notification.pout_ldo
+        ldoOutputPowerGauge.value  = telemetry_notification.pout_ldo
         buckLDOInputVoltage.text = telemetry_notification.vin_ldo
         systemInputVoltage.text = telemetry_notification.vin_sb
-        systemCurrent.text = telemetry_notification.iin
+        systemInputCurrent.text = telemetry_notification.iin
         buckLDOOutputCurrent.text = telemetry_notification.iout
         ldoSystemInputVoltage.text = telemetry_notification.vout_ldo
         ldoSystemInputCurrent.text = telemetry_notification.iout
@@ -214,7 +210,7 @@ Item {
 
         Rectangle {
             Layout.fillHeight: true
-            Layout.preferredWidth: parent.width/1.5
+            Layout.preferredWidth: (parent.width - middleLine.width) * (7/12)
 
             ColumnLayout {
                 anchors.fill: parent
@@ -275,14 +271,14 @@ Item {
                             }
 
                             Rectangle {
-                                id:systemCurrentContainer
+                                id:systemInputCurrentContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 Layout.leftMargin: 12
 
                                 SGAlignedLabel {
-                                    id: systemCurrentLabel
-                                    target: systemCurrent
+                                    id: systemInputCurrentLabel
+                                    target: systemInputCurrent
                                     text: "Current"
                                     alignment: SGAlignedLabel.SideLeftCenter
                                     anchors.centerIn: parent
@@ -290,7 +286,7 @@ Item {
                                     font.bold : true
 
                                     SGInfoBox {
-                                        id: systemCurrent
+                                        id: systemInputCurrent
                                         unit: "mA"
                                         width: 120
                                         height: 40
@@ -654,14 +650,14 @@ Item {
                                     anchors.fill:parent
 
                                     Rectangle {
-                                        id:systemOutputPowerContainer
+                                        id:ldoOutputPowerContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
 
                                         SGAlignedLabel {
-                                            id: systemOutputPowerLabel
-                                            target:systemPowerOutputGauge
-                                            text: "System \n Output Power"
+                                            id: ldoOutputPowerLabel
+                                            target:ldoOutputPowerGauge
+                                            text: "LDO \n Output Power"
                                             margin: 0
                                             anchors.centerIn: parent
                                             alignment: SGAlignedLabel.SideBottomCenter
@@ -670,12 +666,12 @@ Item {
                                             horizontalAlignment: Text.AlignHCenter
 
                                             SGCircularGauge {
-                                                id: systemPowerOutputGauge
+                                                id: ldoOutputPowerGauge
                                                 minimumValue: 0
                                                 maximumValue:  3.01
                                                 tickmarkStepSize: 0.2
                                                 gaugeFillColor1:"green"
-                                                height: systemOutputPowerContainer.height - systemOutputPowerLabel.contentHeight
+                                                height: ldoOutputPowerContainer.height - ldoOutputPowerLabel.contentHeight
                                                 gaugeFillColor2:"red"
                                                 unitText: "W"
                                                 valueDecimalPlaces: 3
@@ -685,12 +681,12 @@ Item {
                                     }
 
                                     Rectangle {
-                                        id: ldogaugeContainer
+                                        id: ldoEfficiencyGaugeContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
 
                                         SGAlignedLabel {
-                                            id: ldoLabel
+                                            id: ldoEfficiencyLabel
                                             target:ldoEfficiencyGauge
                                             text: "LDO \n Efficiency"
                                             margin: 0
@@ -706,7 +702,7 @@ Item {
                                                 maximumValue:  100
                                                 tickmarkStepSize: 10
                                                 gaugeFillColor1:"green"
-                                                height: ldogaugeContainer.height - ldoLabel.contentHeight
+                                                height: ldoEfficiencyGaugeContainer.height - ldoEfficiencyLabel.contentHeight
                                                 gaugeFillColor2:"red"
                                                 unitText: "%"
                                                 valueDecimalPlaces: 1
@@ -736,12 +732,11 @@ Item {
         Rectangle {
             id: column2Container
             Layout.fillHeight: true
-            Layout.fillWidth: true
+            Layout.preferredWidth: (parent.width - middleLine.width) * (5/12)
             color: "transparent"
 
             ColumnLayout {
                 anchors.fill: parent
-                spacing: 0
 
                 Rectangle {
                     Layout.fillHeight: true
@@ -763,6 +758,7 @@ Item {
                     ColumnLayout {
                         id: setBoardConfigContainer
                         anchors.fill: parent
+                        spacing: 10
 
                         Text {
                             id: setBoardConfigurationText
@@ -806,6 +802,8 @@ Item {
                                     to:  5
                                     fromText.text: "0.6V"
                                     toText.text: "5V"
+                                    fromText.fontSizeMultiplier: 0.9
+                                    toText.fontSizeMultiplier: 0.9
                                     stepSize: 0.01
                                     live: false
                                     // fontSizeMultiplier: ratioCalc * 1.1
@@ -841,6 +839,8 @@ Item {
                                     to:  5
                                     fromText.text: "1.1V"
                                     toText.text: "5V"
+                                    fromText.fontSizeMultiplier: 0.9
+                                    toText.fontSizeMultiplier: 0.9
                                     stepSize: 0.01
                                     live: false
                                     inputBoxWidth: setLDOOutputVoltageContainer.width/6
@@ -875,6 +875,8 @@ Item {
                                     live: false
                                     fromText.text: "0mA"
                                     toText.text: "650mA"
+                                    fromText.fontSizeMultiplier: 0.9
+                                    toText.fontSizeMultiplier: 0.9
                                     stepSize: 0.1
                                     inputBoxWidth: setOutputCurrentContainer.width/6
                                     onUserSet: platformInterface.set_load.update(parseInt(value))

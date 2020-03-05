@@ -48,24 +48,25 @@ Item {
         Help.registerTarget(efficiencyLabel, "This gauge shows the efficiency of the LDO when it is enabled.", 1, "AdjLDOBasicHelp")
         Help.registerTarget(powerDissipatedLabel, "This gauge shows the power loss in the LDO when it is enabled.", 2, "AdjLDOBasicHelp")
         Help.registerTarget(outputPowerContainer, "This gauge shows the output power of the LDO when it is enabled.", 3, "AdjLDOBasicHelp")
-        Help.registerTarget(vinReadyLabel, "This indicator will be green when VIN is greater than 2.5V when the input buck regulator is enabled or greater than 1.5V when it is disabled.", 4, "AdjLDOBasicHelp")
+        Help.registerTarget(vinReadyLabel, "This indicator will be green when the LDO input voltage (VIN_LDO) is greater than the LDO input UVLO threshold of 1.6V.", 4, "AdjLDOBasicHelp")
         Help.registerTarget(pgoodLabel, "This indicator will be green when the LDO power good signal is high.", 5, "AdjLDOBasicHelp")
         Help.registerTarget(intLdoTempLabel, "This indicator will be red when the LDO temp sensor detects an approximate LDO temperature over the maximum allowed operating temperature of the LDO.", 6, "AdjLDOBasicHelp")
-        Help.registerTarget(boardInputLabel, "This combo box allows you to choose the main input option to the board. 'External' option uses the input voltage from the input banana plugs (VIN_EXT). 'USB 5V' option uses the 5V supply from the Strata USB connector. 'Option 'Off' option disconnects both inputs from VIN and pulls VIN low.", 7, "AdjLDOBasicHelp")
-        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage of the LDO. 'Bypass' option connects the LDO input directly to VIN through a load switch. 'Buck Regulator' allows adjustment of the input voltage to the LDO through an adjustable output voltage buck regulator. 'Off' option disables both the buck regulator and bypass load switch, disconnecting the LDO from the input power supply, and pulls VIN_LDO low. 'Isolated' option allows for directly supplying input power to the LDO through the VIN_LDO solder pad on the board, bypassing the input stage entirely. When using this option, ensure no voltage is applied to VIN_LDO through the solder pad when switching to the other LDO input voltage options. See the Platform Content page for more information about the options for supplying the LDO input votlage.", 8, "AdjLDOBasicHelp")
-        Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the actual LDO package on the board if different from the stock LDO package included on the board. See the Platform Content page for more information about using alternate LDO packages on the board.", 9, "AdjLDOBasicHelp")
-        Help.registerTarget(ldoEnableSwitchLabel, "This switch enables the LDO.", 10, "AdjLDOBasicHelp")
-        Help.registerTarget(ldoInputVolSliderLabel, "This slider allows you to set the desired input voltage of the LDO when being supplied by the input buck regulator. The value can be set while the input buck regulator is not being used and the voltage will automatically be adjusted as needed when the input buck regulator is activated.", 11, "AdjLDOBasicHelp")
-        Help.registerTarget(externalInputVoltageLabel, "This info box shows the external input voltage applied to the input banana plugs (VIN_EXT).", 12, "AdjLDOBasicHelp")
-        Help.registerTarget(usb5VVoltageLabel, "This info box shows the voltage of the 5V supply from the Strata USB connector.", 13, "AdjLDOBasicHelp")
-        Help.registerTarget(ldoInputVoltageLabel, "This info box shows the input voltage of the LDO.", 14, "AdjLDOBasicHelp")
-        Help.registerTarget(ldoOutputVoltageLabel, "This info box shows the output voltage of the LDO.", 15, "AdjLDOBasicHelp")
-        Help.registerTarget(boardInputCurrentLabel, "This info box shows the input current to the board (current flowing from VIN to VIN_SB).", 16, "AdjLDOBasicHelp")
-        Help.registerTarget(ldoOutputCurrentLabel, "This info box shows the output current of the LDO when pulled by either the onboard electronic load or through an external load connected to the output banana plugs (VOUT). Current pulled by the onboard short-circuit load is not measured and thus will not be shown in this box.", 17, "AdjLDOBasicHelp")
-        Help.registerTarget(setLDOOutputVoltageLabel, "This slider allows you to set the desired output voltage of the LDO. The value can be set while the LDO is disabled - the voltage will automatically be adjusted as needed when the LDO is enabled.", 18, "AdjLDOBasicHelp")
-        Help.registerTarget(loadEnableSwitchLabel, "This switch enables the onboard load.", 19 , "AdjLDOBasicHelp")
-        Help.registerTarget(extLoadCheckboxLabel, "Check this box if an external load is connected to the output banana plugs (VOUT).", 20, "AdjLDOBasicHelp")
-        Help.registerTarget(setLoadCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value can be set while the load is disabled and the load current will automatically be adjusted as needed when the load is enabled. The value may need to be reset to the desired level after recovery from an LDO UVLO event.", 21, "AdjLDOBasicHelp")
+        Help.registerTarget(boardInputLabel, "This combo box allows you to choose the main input voltage option (upstream power supply) for the board. The 'External' option uses the input voltage from the input banana plugs (VIN_EXT). The 'USB 5V' option uses the 5V supply from the Strata USB connector. The 'Off' option disconnects both inputs from VIN and pulls VIN low.", 7, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. The 'Bypass' option connects the LDO input directly to VIN_SB through a load switch. The 'Buck Regulator' option allows adjustment of the input voltage to the LDO through an adjustable output voltage buck regulator. The 'Off' option disables both the input buck regulator and bypass load switch, disconnecting the LDO from the input power supply, and pulls VIN_LDO low. The 'Isolated' option allows you to power the LDO directly through the VIN_LDO solder pad on the board, bypassing the input stage entirely. WARNING! - when using this option, ensure you do not use the other LDO input voltage options while an external power supply is supplying power to the LDO through the VIN_LDO solder pad. See the Platform Content page for more information about the options for supplying the LDO input voltage.", 8, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the LDO package actually populated on the board if different from the stock LDO package option. See the Platform Content page for more information about using alternate LDO packages with this board.", 9, "AdjLDOBasicHelp")
+        Help.registerTarget(vinGoodLabel, "This indicator will be green when: \n \t a.) VIN is greater than 2.5V when the input buck regulator is enabled \n \t b.) VIN is greater than 1.5V when it is disabled.", 10, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoEnableSwitchLabel, "This switch enables the LDO.", 11, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoInputVolSliderLabel, "This slider allows you to set the desired input voltage of the LDO when being supplied by the input buck regulator. The value can be set while the input buck regulator is not being used and the voltage will automatically be adjusted as needed whenever the input buck regulator is activated again.", 12, "AdjLDOBasicHelp")
+        Help.registerTarget(externalInputVoltageLabel, "This info box shows the external input voltage applied to the input banana plugs (VIN_EXT).", 13, "AdjLDOBasicHelp")
+        Help.registerTarget(usb5VVoltageLabel, "This info box shows the voltage of the 5V supply from the Strata USB connector.", 14, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoInputVoltageLabel, "This info box shows the input voltage of the LDO.", 15, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoOutputVoltageLabel, "This info box shows the output voltage of the LDO.", 16, "AdjLDOBasicHelp")
+        Help.registerTarget(boardInputCurrentLabel, "This info box shows the input current to the board (current flowing from VIN to VIN_SB).", 17, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoOutputCurrentLabel, "This info box shows the output current of the LDO when pulled by either the onboard electronic load or through an external load connected to the output banana plugs (VOUT). Current pulled by the onboard short-circuit load is not measured and thus will not be shown in this box.", 18, "AdjLDOBasicHelp")
+        Help.registerTarget(setLDOOutputVoltageLabel, "This slider allows you to set the desired output voltage of the LDO. The value can be set while the LDO is disabled, and the voltage will automatically be adjusted as needed whenever the LDO is enabled again.", 19, "AdjLDOBasicHelp")
+        Help.registerTarget(loadEnableSwitchLabel, "This switch enables the onboard load.", 20, "AdjLDOBasicHelp")
+        Help.registerTarget(extLoadCheckboxLabel, "Check this box if an external load is connected to the output banana plugs (VOUT).", 21, "AdjLDOBasicHelp")
+        Help.registerTarget(setLoadCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value can be set while the load is disabled and the load current will automatically be adjusted as needed when the load is enabled. The value may need to be reset to the desired level after recovery from an LDO UVLO event.", 22, "AdjLDOBasicHelp")
 
     }
 
@@ -209,6 +210,7 @@ Item {
 
     ColumnLayout {
         anchors.fill :parent
+
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: (parent.height - 10) * (1/12)
@@ -238,19 +240,21 @@ Item {
                 Rectangle {
                     Layout.preferredWidth: parent.width * (2/3)
                     Layout.fillHeight: true
+
                     RowLayout {
                         anchors.fill: parent
+
                         Rectangle {
                             id: tempGaugeContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             color: "transparent"
+
                             SGAlignedLabel {
                                 id: tempLabel
                                 target: tempGauge
                                 text: "Board \n Temperature"
                                 margin: -10
-
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier:  ratioCalc
                                 font.bold : true
@@ -293,6 +297,7 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             color: "transparent"
+
                             SGAlignedLabel {
                                 id: efficiencyLabel
                                 target: efficiencyGauge
@@ -303,6 +308,7 @@ Item {
                                 fontSizeMultiplier:  ratioCalc
                                 font.bold : true
                                 horizontalAlignment: Text.AlignHCenter
+
                                 SGCircularGauge {
                                     id: efficiencyGauge
                                     minimumValue: 0
@@ -318,7 +324,6 @@ Item {
                                     //value: platformInterface.status_voltage_current.efficiency
                                     valueDecimalPlaces: 1
                                     // Behavior on value { NumberAnimation { duration: 300 } }
-
                                 }
                             }
                         }
@@ -328,6 +333,7 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             color: "transparent"
+
                             SGAlignedLabel {
                                 id: powerDissipatedLabel
                                 target: powerDissipatedGauge
@@ -389,7 +395,6 @@ Item {
                                     valueDecimalPlaces: 3
                                     unitTextFontSizeMultiplier: ratioCalc * 2.5
                                     //Behavior on value { NumberAnimation { duration: 300 } }
-
                                 }
                             }
                         }
@@ -406,6 +411,7 @@ Item {
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+
                             SGAlignedLabel {
                                 id:vinReadyLabel
                                 target: vinReadyLight
@@ -427,9 +433,11 @@ Item {
                                 }
                             }
                         }
+
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+
                             SGAlignedLabel {
                                 id:pgoodLabel
                                 target: pgoodLight
@@ -451,6 +459,7 @@ Item {
                                 }
                             }
                         }
+
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
@@ -495,8 +504,10 @@ Item {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     color: "transparent"
+
                     ColumnLayout {
                         anchors.fill: parent
+
                         Text {
                             id: inputConfigurationText
                             font.bold: true
@@ -507,6 +518,7 @@ Item {
                             Layout.leftMargin: 20
 
                         }
+
                         Rectangle {
                             id: line
                             Layout.preferredHeight: 2
@@ -516,14 +528,15 @@ Item {
                             radius: 2
                         }
 
-
                         Rectangle {
                             id: comboBoxContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             Layout.leftMargin: 20
+
                             RowLayout{
                                 anchors.fill:parent
+
                                 Rectangle {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
@@ -542,9 +555,7 @@ Item {
                                             fontSizeMultiplier: ratioCalc
                                             model: ["USB 5V", "External", "Off"]
                                             onActivated: {
-
                                                 platformInterface.select_vin.update(currentText)
-
                                             }
                                         }
                                     }
@@ -570,7 +581,6 @@ Item {
                                             model: ["Bypass", "Buck Regulator", "Off", "Isolated"]
                                             onActivated: {
                                                 platformInterface.select_vin_ldo.update(currentText)
-
                                             }
                                         }
                                     }
@@ -602,8 +612,6 @@ Item {
                                                 else if(currentIndex === 2)
                                                     platformInterface.select_ldo.update("DFN8")
                                                 else console.log("Unknown State")
-
-
                                             }
                                         }
                                     }
@@ -616,8 +624,10 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             Layout.leftMargin: 20
+
                             RowLayout {
                                 anchors.fill:parent
+
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
@@ -638,12 +648,12 @@ Item {
                                             onVin_goodChanged: {
                                                 if(vin_good === true)
                                                     vinGood.status  = SGStatusLight.Green
-
                                                 else vinGood.status  = SGStatusLight.Off
                                             }
                                         }
                                     }
                                 }
+
                                 Rectangle {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
@@ -657,6 +667,7 @@ Item {
                                         anchors.centerIn: parent
                                         fontSizeMultiplier: ratioCalc
                                         font.bold : true
+
                                         SGSwitch {
                                             id: ldoEnableSwitch
                                             labelsInside: true
@@ -682,6 +693,7 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             Layout.leftMargin: 20
+
                             SGAlignedLabel {
                                 id: ldoInputVolSliderLabel
                                 target: ldoInputVolSlider
@@ -690,6 +702,7 @@ Item {
                                 anchors.centerIn: parent
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
+
                                 SGSlider {
                                     id:ldoInputVolSlider
                                     width: ldoInputVolSliderContainer.width/1.1
@@ -700,6 +713,8 @@ Item {
                                     live: false
                                     fromText.text: "0.6V"
                                     toText.text: "5V"
+                                    fromText.fontSizeMultiplier: 0.9
+                                    toText.fontSizeMultiplier: 0.9
                                     inputBoxWidth: ldoInputVolSliderContainer.width/6
                                     onUserSet: {
                                         platformInterface.set_vin_ldo.update(value.toFixed(2))
@@ -707,7 +722,6 @@ Item {
                                 }
                             }
                         }
-
                     }
                 }
 
@@ -730,12 +744,12 @@ Item {
                             left: parent.left
                             leftMargin: -5
                         }
-
                         color: "transparent"
 
                         ColumnLayout {
                             id: inputReadingContainer
                             anchors.fill: parent
+
                             Text {
                                 id: inputReadingText
                                 font.bold: true
@@ -746,6 +760,7 @@ Item {
                                 Layout.leftMargin: 20
 
                             }
+
                             Rectangle {
                                 id: line2
                                 Layout.preferredHeight: 2
@@ -754,10 +769,12 @@ Item {
                                 border.color: "lightgray"
                                 radius: 2
                             }
+
                             Rectangle {
                                 Layout.preferredWidth: parent.width/1.1
                                 Layout.preferredHeight: 40
                                 Layout.alignment: Qt.AlignCenter
+
                                 Rectangle {
                                     id: warningBox
                                     color: "red"
@@ -799,8 +816,6 @@ Item {
                                         color: "white"
                                     }
                                 }
-
-
                             }
 
                             Rectangle {
@@ -811,16 +826,15 @@ Item {
                                 RowLayout {
                                     anchors.fill: parent
                                     anchors {
-
                                         left: parent.left
                                         leftMargin: 15
-
                                     }
 
                                     Rectangle {
                                         id : externalInputVoltageContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
+
                                         SGAlignedLabel {
                                             id: externalInputVoltageLabel
                                             target: externalInputVoltage
@@ -839,17 +853,15 @@ Item {
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 unitFont.bold: true
-
-
                                             }
                                         }
-
                                     }
 
                                     Rectangle {
                                         id: usb5VVoltageContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
+
                                         SGAlignedLabel {
                                             id: usb5VVoltageLabel
                                             target: usb5VVoltage
@@ -868,7 +880,6 @@ Item {
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 unitFont.bold: true
-
                                             }
                                         }
                                     }
@@ -887,10 +898,12 @@ Item {
                                         leftMargin: 15
 
                                     }
+
                                     Rectangle {
                                         id: ldoInputVoltageContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
+
                                         SGAlignedLabel {
                                             id: ldoInputVoltageLabel
                                             target: ldoInputVoltage
@@ -908,7 +921,6 @@ Item {
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 unitFont.bold: true
-
                                             }
                                         }
                                     }
@@ -917,6 +929,7 @@ Item {
                                         id: ldoOutputVoltageContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
+
                                         SGAlignedLabel {
                                             id: ldoOutputVoltageLabel
                                             target: ldoOutputVoltage
@@ -949,10 +962,8 @@ Item {
                                 RowLayout {
                                     anchors.fill:parent
                                     anchors {
-
                                         left: parent.left
                                         leftMargin: 15
-
                                     }
 
                                     Rectangle {
@@ -977,7 +988,6 @@ Item {
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 unitFont.bold: true
-
                                             }
                                         }
                                     }
@@ -1004,7 +1014,6 @@ Item {
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 unitFont.bold: true
-
                                             }
                                         }
                                     }
@@ -1026,9 +1035,11 @@ Item {
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+
                     ColumnLayout {
                         id: outputConfigurationContainer
                         anchors.fill: parent
+
                         Text {
                             id: outputConfigurationText
                             font.bold: true
@@ -1037,8 +1048,8 @@ Item {
                             Layout.topMargin: 20
                             color: "#696969"
                             Layout.leftMargin: 20
-
                         }
+
                         Rectangle {
                             id: line4
                             Layout.preferredHeight: 2
@@ -1048,10 +1059,12 @@ Item {
                             Layout.leftMargin: -10
                             radius: 2
                         }
+
                         Rectangle {
                             id: setLDOOutputVoltageContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
+
                             SGAlignedLabel {
                                 id: setLDOOutputVoltageLabel
                                 target: setLDOOutputVoltage
@@ -1073,8 +1086,9 @@ Item {
                                     live: false
                                     fromText.text: "1.1V"
                                     toText.text: "4.7V"
+                                    fromText.fontSizeMultiplier: 0.9
+                                    toText.fontSizeMultiplier: 0.9
                                     inputBoxWidth: setLDOOutputVoltageContainer.width/6
-
                                     onUserSet: {
                                         platformInterface.set_vout_ldo.update(value.toFixed(2))
                                     }
@@ -1089,6 +1103,7 @@ Item {
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
+
                                 SGAlignedLabel {
                                     id: loadEnableSwitchLabel
                                     target: loadEnableSwitch
@@ -1097,6 +1112,7 @@ Item {
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc
                                     font.bold : true
+
                                     SGSwitch {
                                         id: loadEnableSwitch
                                         labelsInside: true
@@ -1111,11 +1127,10 @@ Item {
                                                 platformInterface.set_load_enable.update("on")
                                             else  platformInterface.set_load_enable.update("off")
                                         }
-
                                     }
                                 }
-
                             }
+
                             Rectangle {
                                 id:extLoadCheckboxContainer
                                 Layout.fillWidth: true
@@ -1134,7 +1149,6 @@ Item {
                                     anchors.left: parent.left
                                     anchors.verticalCenter: parent.verticalCenter
 
-
                                     Rectangle {
                                         color: "transparent"
                                         anchors { fill: extLoadCheckboxLabel }
@@ -1148,14 +1162,12 @@ Item {
                                     CheckBox {
                                         id: extLoadCheckbox
                                         checked: false
-
                                         onClicked: {
                                             if(checked) {
                                                 platformInterface.ext_load_conn.update(true)
                                             } else {
                                                 platformInterface.ext_load_conn.update(false)
                                             }
-
                                         }
                                     }
                                 }
@@ -1166,6 +1178,7 @@ Item {
                             id:setLoadCurrentContainer
                             Layout.fillWidth: true
                             Layout.fillHeight: true
+
                             SGAlignedLabel {
                                 id: setLoadCurrentLabel
                                 target: setLoadCurrent
@@ -1176,6 +1189,7 @@ Item {
                                 anchors.leftMargin: 10
                                 fontSizeMultiplier: ratioCalc
                                 font.bold : true
+
                                 SGSlider {
                                     id:setLoadCurrent
                                     width: setLoadCurrentContainer.width/1.1
@@ -1186,6 +1200,8 @@ Item {
                                     live: false
                                     fromText.text: "0mA"
                                     toText.text: "650mA"
+                                    fromText.fontSizeMultiplier: 0.9
+                                    toText.fontSizeMultiplier: 0.9
                                     inputBoxWidth: setLoadCurrentContainer.width/6
                                     onUserSet: {
                                         platformInterface.set_load.update(value.toFixed(1))
@@ -1199,5 +1215,3 @@ Item {
         }
     }
 }
-
-
