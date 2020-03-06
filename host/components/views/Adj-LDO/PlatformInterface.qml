@@ -38,6 +38,7 @@ Item {
         "load_set":"0.0",       //Load current set value
         "ldo_sel":"TSOP5",      //LDO package selection
         "ldo_en":"off",         //LDO enable
+        "vout_set_disabled":false //LDO output voltage adjustment disable state
     }
 
     property var int_status: {
@@ -56,6 +57,10 @@ Item {
     }
 
     property var ext_load_status: {
+        "value":false
+    }
+
+    property var config_running: {
         "value":false
     }
 

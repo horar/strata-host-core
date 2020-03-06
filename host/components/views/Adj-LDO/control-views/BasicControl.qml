@@ -85,13 +85,9 @@ Item {
             ldoInputComboBox.currentIndex = 1
         }
         else if (control_states.vin_ldo_sel === "Off") {
-            vinGood.status = SGStatusLight.Off
-            vinGoodThreshText = "\n (Above 1.5V)"
             ldoInputComboBox.currentIndex = 2
         }
         else if (control_states.vin_ldo_sel === "Isolated") {
-            vinGood.status = SGStatusLight.Off
-            vinGoodThreshText = "\n (Above 1.5V)"
             ldoInputComboBox.currentIndex = 3
         }
 
@@ -111,11 +107,23 @@ Item {
             ldoEnableSwitch.checked = true
         else ldoEnableSwitch.checked = false
 
+        if (control_states.vout_set_disabled === true) {
+            setLDOOutputVoltageLabel.opacity = 0.5
+            setLDOOutputVoltageLabel.enabled = false
+            ldoDisable.checked = true
+        } else {
+            setLDOOutputVoltageLabel.opacity = 1
+            setLDOOutputVoltageLabel.enabled = true
+            ldoDisable.checked = false
+        }
     }
 
     property var variant_name: platformInterface.variant_name.value
     onVariant_nameChanged: {
         if(variant_name === "NCP164C_TSOP5") {
+            ldoPackageComboBox.currentIndex = 0
+            pgoodLabel.opacity = 0.5
+            pgoodLabel.enabled = false
             titleText: "NCP164C \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
             //"Set LDO Output Voltage" PlaceHolder
@@ -132,6 +140,7 @@ Item {
 
         }
         else if (variant_name === "NCP164A_DFN6") {
+            ldoPackageComboBox.currentIndex = 1
             titleText: "NCP164A \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
             //"Set LDO Output Voltage" PlaceHolder
@@ -147,6 +156,7 @@ Item {
             ldoInputVolSlider.to = 5.5
         }
         else if (variant_name === "NCP164C_DFN8") {
+            ldoPackageComboBox.currentIndex = 2
             titleText: "NCP164C \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
             //"Set LDO Output Voltage" PlaceHolder
@@ -162,6 +172,7 @@ Item {
             ldoInputVolSlider.to = 5
         }
         else if (variant_name === "NCV8164A_TSOP5") {
+            ldoPackageComboBox.currentIndex = 0
             titleText: "NCV8164A \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
             //"Set LDO Output Voltage" PlaceHolder
@@ -177,6 +188,7 @@ Item {
             ldoInputVolSlider.to = 5.5
         }
         else if (variant_name === "NCV8164C_DFN6") {
+            ldoPackageComboBox.currentIndex = 1
             titleText: "NCV8164C \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
             //"Set LDO Output Voltage" PlaceHolder
@@ -192,6 +204,7 @@ Item {
             ldoInputVolSlider.to = 5
         }
         else if (variant_name === "NCV8164A_DFN8") {
+            ldoPackageComboBox.currentIndex = 2
             titleText: "NCV8164A \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
             //"Set LDO Output Voltage" PlaceHolder
@@ -205,6 +218,113 @@ Item {
             ldoInputVolSlider.toText.text =  "5.5V"
             ldoInputVolSlider.from = 1.5
             ldoInputVolSlider.to = 5.5
+        }
+    }
+
+    property string popup_message: ""
+    property var config_running: platformInterface.config_running.value
+    onConfig_runningChanged: {
+        if(config_running === true) {
+            popup_message = "A function to configure the previously selected board settings is already running. Please wait and try applying the settings again."
+            if (root.visible && !warningPopup.opened) {
+                warningPopup.open()
+            }
+        }
+    }
+
+    Popup{
+        id: warningPopup
+        width: root.width/2
+        height: root.height/4
+        anchors.centerIn: parent
+        modal: true
+        focus: true
+        closePolicy: Popup.NoAutoClose
+        background: Rectangle{
+            id: warningPopupContainer
+            width: warningPopup.width
+            height: warningPopup.height
+            color: "#dcdcdc"
+            border.color: "grey"
+            border.width: 2
+            radius: 10
+            Rectangle {
+                id:topBorder
+                width: parent.width
+                height: parent.height/7
+                anchors{
+                    top: parent.top
+                    topMargin: 2
+                    right: parent.right
+                    rightMargin: 2
+                    left: parent.left
+                    leftMargin: 2
+                }
+                radius: 5
+                color: "#c0c0c0"
+                border.color: "#c0c0c0"
+                border.width: 2
+            }
+        }
+
+        Rectangle {
+            id: warningPopupBox
+            color: "transparent"
+            anchors {
+                top: parent.top
+                topMargin: 5
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: warningPopupContainer.width - 50
+            height: warningPopupContainer.height - 50
+
+            Rectangle {
+                id: messageContainerForPopup
+                anchors {
+                    top: parent.top
+                    topMargin: 10
+                    centerIn:  parent.Center
+                }
+                color: "transparent"
+                width: parent.width
+                height:  parent.height - selectionContainerForPopup.height
+                Text {
+                    id: warningTextForPopup
+                    anchors.fill:parent
+                    text: popup_message
+                    verticalAlignment:  Text.AlignVCenter
+                    wrapMode: Text.WordWrap
+                    fontSizeMode: Text.Fit
+                    width: parent.width
+                    font.family: "Helvetica Neue"
+                    font.pixelSize: ratioCalc * 15
+                }
+            }
+
+            Rectangle {
+                id: selectionContainerForPopup
+                width: parent.width/2
+                height: parent.height/4.5
+                anchors{
+                    top: messageContainerForPopup.bottom
+                    topMargin: 10
+                    right: parent.right
+                }
+                color: "transparent"
+                SGButton {
+                    width: parent.width/3
+                    height:parent.height
+                    anchors.centerIn: parent
+                    text: "OK"
+                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                    roundedLeft: true
+                    roundedRight: true
+
+                    onClicked: {
+                        warningPopup.close()
+                    }
+                }
+            }
         }
     }
 
@@ -451,9 +571,8 @@ Item {
                                     id: pgoodLight
                                     property var int_pg_ldo:  platformInterface.int_status.int_pg_ldo
                                     onInt_pg_ldoChanged: {
-                                        if(int_pg_ldo === true)
+                                        if(int_pg_ldo === true && pgoodLabel.enabled)
                                             pgoodLight.status  = SGStatusLight.Green
-
                                         else pgoodLight.status  = SGStatusLight.Off
                                     }
                                 }
@@ -567,6 +686,57 @@ Item {
                                     color: "transparent"
 
                                     SGAlignedLabel {
+                                        id: ldoPackageLabel
+                                        target: ldoPackageComboBox
+                                        text: "LDO Package \nSelection"
+                                        alignment: SGAlignedLabel.SideTopLeft
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc
+                                        font.bold : true
+
+                                        SGComboBox {
+                                            id: ldoPackageComboBox
+                                            fontSizeMultiplier: ratioCalc
+                                            model: ["TSOP5", "WDFN6", "DFNW8"]
+                                            onActivated: {
+                                                if(currentIndex === 0) {
+                                                    platformInterface.select_ldo.update("TSOP5")
+                                                    pgoodLabel.opacity = 0.5
+                                                    pgoodLabel.enabled = false
+                                                }
+                                                else if(currentIndex === 1) {
+                                                    pgoodLabel.opacity = 1
+                                                    pgoodLabel.enabled = true
+                                                    platformInterface.select_ldo.update("DFN6")
+                                                }
+                                                else if(currentIndex === 2) {
+                                                    pgoodLabel.opacity = 1
+                                                    pgoodLabel.enabled = true
+                                                    platformInterface.select_ldo.update("DFN8")
+                                                }
+                                                else console.log("Unknown State")
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            id: ldoEnableSwitchContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.leftMargin: 20
+
+                            RowLayout {
+                                anchors.fill:parent
+
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    color: "transparent"
+
+                                    SGAlignedLabel {
                                         id: ldoInputLabel
                                         target: ldoInputComboBox
                                         text: "LDO Input \nVoltage Selection"
@@ -587,48 +757,6 @@ Item {
                                 }
 
                                 Rectangle {
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    color: "transparent"
-
-                                    SGAlignedLabel {
-                                        id: ldoPackageLabel
-                                        target: ldoPackageComboBox
-                                        text: "LDO Package \nSelection"
-                                        alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc
-                                        font.bold : true
-
-                                        SGComboBox {
-                                            id: ldoPackageComboBox
-                                            fontSizeMultiplier: ratioCalc
-                                            model: ["TSOP5", "WDFN6", "DFNW8"]
-                                            onActivated: {
-                                                if(currentIndex === 0)
-                                                    platformInterface.select_ldo.update("TSOP5")
-                                                else if(currentIndex === 1)
-                                                    platformInterface.select_ldo.update("DFN6")
-                                                else if(currentIndex === 2)
-                                                    platformInterface.select_ldo.update("DFN8")
-                                                else console.log("Unknown State")
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            id: ldoEnableSwitchContainer
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            Layout.leftMargin: 20
-
-                            RowLayout {
-                                anchors.fill:parent
-
-                                Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
                                     color: "transparent"
@@ -639,14 +767,14 @@ Item {
                                         alignment: SGAlignedLabel.SideTopCenter
                                         anchors.centerIn: parent
                                         fontSizeMultiplier: ratioCalc
-                                        text: "VIN Good" + vinGoodThreshText
+                                        text: "VIN Ready" + vinGoodThreshText
                                         font.bold: true
 
                                         SGStatusLight {
                                             id: vinGood
                                             property var vin_good: platformInterface.int_status.vin_good
                                             onVin_goodChanged: {
-                                                if(vin_good === true)
+                                                if(vin_good === true && vinGoodLabel.enabled)
                                                     vinGood.status  = SGStatusLight.Green
                                                 else vinGood.status  = SGStatusLight.Off
                                             }
@@ -654,37 +782,7 @@ Item {
                                     }
                                 }
 
-                                Rectangle {
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    color: "transparent"
 
-                                    SGAlignedLabel {
-                                        id: ldoEnableSwitchLabel
-                                        target: ldoEnableSwitch
-                                        text: "Enable LDO"
-                                        alignment: SGAlignedLabel.SideTopCenter
-                                        anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc
-                                        font.bold : true
-
-                                        SGSwitch {
-                                            id: ldoEnableSwitch
-                                            labelsInside: true
-                                            checkedLabel: "On"
-                                            uncheckedLabel:   "Off"
-                                            textColor: "black"              // Default: "black"
-                                            handleColor: "white"            // Default: "white"
-                                            grooveColor: "#ccc"             // Default: "#ccc"
-                                            grooveFillColor: "#0cf"         // Default: "#0cf"
-                                            onToggled: {
-                                                if(checked)
-                                                    platformInterface.set_ldo_enable.update("on")
-                                                else  platformInterface.set_ldo_enable.update("off")
-                                            }
-                                        }
-                                    }
-                                }
                             }
                         }
 
@@ -1097,6 +1195,124 @@ Item {
                         }
 
                         RowLayout {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                color: "transparent"
+
+                                SGAlignedLabel {
+                                    id: ldoEnableSwitchLabel
+                                    target: ldoEnableSwitch
+                                    text: "Enable LDO"
+                                    alignment: SGAlignedLabel.SideTopCenter
+                                    anchors.centerIn: parent
+                                    fontSizeMultiplier: ratioCalc
+                                    font.bold : true
+
+                                    SGSwitch {
+                                        id: ldoEnableSwitch
+                                        labelsInside: true
+                                        checkedLabel: "On"
+                                        uncheckedLabel:   "Off"
+                                        textColor: "black"              // Default: "black"
+                                        handleColor: "white"            // Default: "white"
+                                        grooveColor: "#ccc"             // Default: "#ccc"
+                                        grooveFillColor: "#0cf"         // Default: "#0cf"
+                                        onToggled: {
+                                            if(checked)
+                                                platformInterface.set_ldo_enable.update("on")
+                                            else  platformInterface.set_ldo_enable.update("off")
+                                        }
+                                    }
+                                }
+                            }
+
+                            Rectangle {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                color: "transparent"
+
+                                SGAlignedLabel {
+                                    id: ldoDisableLabel
+                                    target: ldoDisable
+                                    text: "Disable LDO Output\nVoltage Adjustment"
+                                    //horizontalAlignment: Text.AlignHCenter
+                                    font.bold : true
+                                    font.italic: true
+                                    alignment: SGAlignedLabel.SideTopCenter
+                                    fontSizeMultiplier: ratioCalc
+                                    anchors.centerIn: parent
+
+                                    Rectangle {
+                                        color: "transparent"
+                                        anchors { fill: ldoDisableLabel }
+                                        MouseArea {
+                                            id: hoverArea2
+                                            anchors { fill: parent }
+                                            hoverEnabled: true
+                                        }
+                                    }
+
+                                    CheckBox {
+                                        id: ldoDisable
+                                        checked: false
+                                        onClicked: {
+                                            if(checked) {
+                                                platformInterface.disable_vout_set.update(true)
+                                                //setLDOOutputVoltageLabel.opacity = 0.5
+                                                //setLDOOutputVoltageLabel.enabled = false
+                                            } else {
+                                                platformInterface.disable_vout_set.update(false)
+                                                //setLDOOutputVoltageLabel.opacity = 1
+                                               // setLDOOutputVoltageLabel.enabled = true
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+
+                        Rectangle {
+                            id:setLoadCurrentContainer
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            SGAlignedLabel {
+                                id: setLoadCurrentLabel
+                                target: setLoadCurrent
+                                text:"Set Load Current"
+                                alignment: SGAlignedLabel.SideTopLeft
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                anchors.leftMargin: 10
+                                fontSizeMultiplier: ratioCalc
+                                font.bold : true
+
+                                SGSlider {
+                                    id:setLoadCurrent
+                                    width: setLoadCurrentContainer.width/1.1
+                                    textColor: "black"
+                                    stepSize: 0.1
+                                    from: 0
+                                    to: 650
+                                    live: false
+                                    fromText.text: "0mA"
+                                    toText.text: "650mA"
+                                    fromText.fontSizeMultiplier: 0.9
+                                    toText.fontSizeMultiplier: 0.9
+                                    inputBoxWidth: setLoadCurrentContainer.width/6
+                                    onUserSet: {
+                                        platformInterface.set_load.update(value.toFixed(1))
+                                    }
+                                }
+                            }
+                        }
+
+                        RowLayout {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
 
@@ -1108,7 +1324,7 @@ Item {
                                     id: loadEnableSwitchLabel
                                     target: loadEnableSwitch
                                     text: "Enable Onboard \nLoad"
-                                    alignment: SGAlignedLabel.SideTopLeft
+                                    alignment: SGAlignedLabel.SideTopCenter
                                     anchors.centerIn: parent
                                     fontSizeMultiplier: ratioCalc
                                     font.bold : true
@@ -1146,8 +1362,9 @@ Item {
                                     font.italic: true
                                     alignment: SGAlignedLabel.SideTopCenter
                                     fontSizeMultiplier: ratioCalc
-                                    anchors.left: parent.left
-                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.centerIn: parent
+                                    //anchors.left: parent.left
+                                    //anchors.verticalCenter: parent.verticalCenter
 
                                     Rectangle {
                                         color: "transparent"
@@ -1169,42 +1386,6 @@ Item {
                                                 platformInterface.ext_load_conn.update(false)
                                             }
                                         }
-                                    }
-                                }
-                            }
-                        }
-
-                        Rectangle {
-                            id:setLoadCurrentContainer
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-
-                            SGAlignedLabel {
-                                id: setLoadCurrentLabel
-                                target: setLoadCurrent
-                                text:"Set Load Current"
-                                alignment: SGAlignedLabel.SideTopLeft
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.left: parent.left
-                                anchors.leftMargin: 10
-                                fontSizeMultiplier: ratioCalc
-                                font.bold : true
-
-                                SGSlider {
-                                    id:setLoadCurrent
-                                    width: setLoadCurrentContainer.width/1.1
-                                    textColor: "black"
-                                    stepSize: 0.1
-                                    from: 0
-                                    to: 650
-                                    live: false
-                                    fromText.text: "0mA"
-                                    toText.text: "650mA"
-                                    fromText.fontSizeMultiplier: 0.9
-                                    toText.fontSizeMultiplier: 0.9
-                                    inputBoxWidth: setLoadCurrentContainer.width/6
-                                    onUserSet: {
-                                        platformInterface.set_load.update(value.toFixed(1))
                                     }
                                 }
                             }
