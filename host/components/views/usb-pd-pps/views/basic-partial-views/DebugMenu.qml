@@ -120,7 +120,7 @@ Rectangle {
                     CorePlatformInterface.data_source_handler('{
                                 "value":"usb_pd_port_connect",
                                 "payload":{
-                                    "port_id": "USB_C_port_1",
+                                    "port": "USB_C_port_1",
                                     "connection_state": "connected"
                                 }
                         }')
@@ -133,12 +133,13 @@ Rectangle {
                     CorePlatformInterface.data_source_handler('{
                                 "value":"usb_pd_port_connect",
                                 "payload":{
-                                    "port_id": "USB_C_port_1",
+                                    "port": "USB_C_port_1",
                                     "connection_state": "disconnected"
                                 }
                         }')
                 }
             }
+
 
             //max power output
             //over temperature fault hysterisis
@@ -160,7 +161,7 @@ Rectangle {
                     var tempFoldbackOnOff = ((Math.random() * 2) >= 1 ? true : false);
                     var tempFoldbackMaxTemperature = ((Math.random() *80) +20).toFixed(0);
                     var tempFoldbackOutputPower = ((Math.random() *4)+1).toFixed(0)* 15;
-                    var tempFoldbackHysterisis = ((Math.random() *50)+5).toFixed(0);
+                    var tempFoldbackHysterisis = ((Math.random() *45)+5).toFixed(0);
 
                     //console.log("input power=",inputFoldbackOutputPower);
                     //console.log("maxTemp=",tempFoldbackMaxTemperature);
@@ -170,9 +171,7 @@ Rectangle {
                                 "value":"usb_pd_maximum_power",
                                 "payload":{
                                     "port":1,
-                                    "current_max_power":'+currentMaxPower+',
-                                    "default_max_power":0,
-                                    "commanded_max_power":0
+                                    "watts":'+currentMaxPower+'
                                 }
                         }')
 

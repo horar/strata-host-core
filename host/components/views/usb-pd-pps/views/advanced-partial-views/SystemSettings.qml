@@ -78,17 +78,17 @@ Item {
 
                 onClicked: {
                     console.log("button with index",index,"clicked")
-                    if (isChecked(0))
+                    if (index == 0)
                         platformInterface.set_protection_action.update("retry");
-                    else if (isChecked(1))
-                        platformInterface.set_protection_action.update("nothing")
+                    else if (index == 1)
+                        platformInterface.set_protection_action.update("none")
                   }
 
                 property var protectionAction: platformInterface.usb_pd_protection_action.action
                 onProtectionActionChanged: {
                      if (protectionAction === "retry")
                          checkedIndices = 1
-                     if (protectionAction === "nothing")
+                     if (protectionAction === "none")
                          checkedIndices = 2
                 }
 
@@ -226,7 +226,16 @@ Item {
                 fromText.text: "5 °C"
                 toText.text: "50 °C"
                 enabled: faultProtectionIsOn
-                value: platformInterface.temperature_hysteresis.value
+
+                property var theHysteresis: platformInterface.temperature_hysteresis.value
+                onTheHysteresisChanged: {
+                    console.log("new hysteresis value:", theHysteresis)
+                }
+
+                value:{
+                    console.log("new hysteresis value2:", platformInterface.temperature_hysteresis.value)
+                    return platformInterface.temperature_hysteresis.value
+                }
                 onMoved: {
                     platformInterface.set_temperature_hysteresis.update(value);
                 }
@@ -270,14 +279,19 @@ Item {
                     right: parent.right
                     verticalCenter: inputFoldback.verticalCenter
                 }
-                checkedLabel: "On"
-                uncheckedLabel: "Off"
+//                checkedLabel: "On"
+//                uncheckedLabel: "Off"
                 height: 20
                 width: 46
                 grooveFillColor:"green"
                 checked: platformInterface.input_voltage_foldback.enabled
-                onToggled: platformInterface.set_input_voltage_foldback.update(checked, platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage,
-                                platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
+                onToggled: platformInterface.set_input_voltage_foldback.update(checked, platformInterface.input_voltage_foldback.min_voltage,
+                                platformInterface.input_voltage_foldback.power)
+
+                property var theFoldback: platformInterface.input_voltage_foldback
+                onTheFoldbackChanged: {
+                    console.log("new input_voltage_foldback values:",platformInterface.input_voltage_foldback.enabled)
+                }
             }
 
             Text{
@@ -312,9 +326,9 @@ Item {
                 fillColor:"dimgrey"
                 enabled: inputFoldbackOn
                 //copy the current values for other stuff, and add the new slider value for the limit.
-                onMoved: platformInterface.set_input_voltage_foldback.update(platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled,
+                onMoved: platformInterface.set_input_voltage_foldback.update(platformInterface.input_voltage_foldback.enabled,
                                  value,
-                                platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power)
+                                platformInterface.input_voltage_foldback.power)
             }
 
 
@@ -342,16 +356,18 @@ Item {
                 textColor: enabled ? "black" : "grey"
                 //when changing the value
                 onActivated: {
-                    console.log("setting input power foldback to ",limitOutput.comboBox.currentText);
+                    console.log("setting input power foldback to ",limitOutput.currentText);
                     platformInterface.set_input_voltage_foldback.update(platformInterface.input_voltage_foldback.enabled,
                                                                         platformInterface.input_voltage_foldback.min_voltage,
-                                                                                 limitOutput.comboBox.currentText)
+                                                                                 limitOutput.currentText)
                 }
 
                 property var currentFoldbackOuput: platformInterface.input_voltage_foldback.power
                 onCurrentFoldbackOuputChanged: {
-                    //console.log("got a new min input power setting",platformInterface.input_voltage_foldback.power);
-                    limitOutput.currentIndex = limitOutput.find( (platformInterface.input_voltage_foldback.power).toFixed(0))
+                    var theFoldbackPower = Math.trunc(platformInterface.input_voltage_foldback.power);
+
+                    console.log("got a new min input power setting", theFoldbackPower);
+                    limitOutput.currentIndex = limitOutput.find( theFoldbackPower);
                 }
             }
             Text{
@@ -392,8 +408,8 @@ Item {
                     right: parent.right
                     verticalCenter: tempFoldback.verticalCenter
                 }
-                checkedLabel: "On"
-                uncheckedLabel: "Off"
+//                checkedLabel: "On"
+//                uncheckedLabel: "Off"
                 height: 20
                 width: 46
                 grooveFillColor:"green"
@@ -481,8 +497,10 @@ Item {
                 property var currentFoldbackOuput: platformInterface.temperature_foldback.power
 
                 onCurrentFoldbackOuputChanged: {
-                    console.log("new temp foldback wattage", platformInterface.temperature_foldback.power);
-                    limitOutput2.currentIndex = limitOutput2.find( (platformInterface.temperature_foldback.power).toFixed(0))
+                    var theFoldbackPower = Math.trunc(platformInterface.temperature_foldback.power);
+
+                    console.log("new temp foldback wattage",theFoldbackPower);
+                    limitOutput2.currentIndex = limitOutput2.find(theFoldbackPower)
                 }
             }
 
