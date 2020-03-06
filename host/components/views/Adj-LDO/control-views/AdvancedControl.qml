@@ -13,7 +13,7 @@ Item {
 
     property real initialAspectRatio: 1209/820
     property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
-    property string vinGoodThreshText: "1.5V"
+    property string vinGoodThreshText: ""
 
     anchors.centerIn: parent
 
@@ -24,8 +24,8 @@ Item {
     onVariant_nameChanged: {
         if(variant_name === "NCP164C_TSOP5") {
             ldoPackageComboBox.currentIndex = 0
-            pgldoLabel.opacity = 0.5
-            pgldoLabel.enabled = false
+            //pgldoLabel.opacity = 0.5
+            //pgldoLabel.enabled = false
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
             //"Set LDO Output Voltage" PlaceHolder
             setLDOOutputVoltage.fromText.text = "1.1V"
@@ -187,11 +187,9 @@ Item {
             ldoInputComboBox.currentIndex = 1
         }
         else if (control_states.vin_ldo_sel === "Off") {
-            vinGoodThreshText = "\n (Above 1.5V)"
             ldoInputComboBox.currentIndex = 2
         }
         else if (control_states.vin_ldo_sel === "Isolated") {
-            vinGoodThreshText = "\n (Above 1.5V)"
             ldoInputComboBox.currentIndex = 3
         }
 
@@ -203,9 +201,21 @@ Item {
         setLDOOutputVoltage.value = control_states.vout_ldo_set
         setOutputCurrent.value = control_states.load_set
 
-        if(control_states.ldo_sel === "TSOP5")  ldoPackageComboBox.currentIndex = 0
-        else if(control_states.ldo_sel === "DFN6") ldoPackageComboBox.currentIndex = 1
-        else if (control_states.ldo_sel === "DFN8") ldoPackageComboBox.currentIndex = 2
+        if(control_states.ldo_sel === "TSOP5")  {
+            pgldoLabel.opacity = 0.5
+            pgldoLabel.enabled = false
+            ldoPackageComboBox.currentIndex = 0
+        }
+        else if(control_states.ldo_sel === "DFN6") {
+            pgldoLabel.opacity = 1
+            pgldoLabel.enabled = true
+            ldoPackageComboBox.currentIndex = 1
+        }
+        else if (control_states.ldo_sel === "DFN8") {
+            pgldoLabel.opacity = 1
+            pgldoLabel.enabled = true
+            ldoPackageComboBox.currentIndex = 2
+        }
 
         if (control_states.vout_set_disabled === true) {
             setLDOOutputVoltageLabel.opacity = 0.5
@@ -688,8 +698,8 @@ Item {
                                             SGCircularGauge {
                                                 id: ldoPowerDissipation
                                                 minimumValue: 0
-                                                maximumValue: 2.01
-                                                tickmarkStepSize:0.2
+                                                maximumValue: 3.01
+                                                tickmarkStepSize:0.5
                                                 gaugeFillColor1:"green"
                                                 gaugeFillColor2:"red"
                                                 width: ldoPowerDissipationContiner.width
@@ -984,7 +994,7 @@ Item {
                                         SGAlignedLabel {
                                             id: ldoDisableLabel
                                             target: ldoDisable
-                                            text: "Disable LDO \n Output Voltage \n Adjustment"
+                                            text: "Disable LDO Output\nVoltage Adjustment"
                                             //horizontalAlignment: Text.AlignHCenter
                                             font.bold : true
                                             font.italic: true
@@ -1307,6 +1317,7 @@ Item {
                                                             text: "LDO Input Voltage \n(VIN_LDO)"
                                                             alignment: SGAlignedLabel.SideTopLeft
                                                             anchors.verticalCenter: parent.verticalCenter
+                                                            anchors.horizontalCenter: parent.horizontalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             font.bold : true
 
@@ -1332,6 +1343,7 @@ Item {
                                                             text: "LDO Output Voltage \n(VOUT_LDO)"
                                                             alignment: SGAlignedLabel.SideTopLeft
                                                             anchors.verticalCenter: parent.verticalCenter
+                                                            anchors.horizontalCenter: parent.horizontalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             font.bold : true
 
@@ -1366,6 +1378,7 @@ Item {
                                                             text: "LDO Voltage Drop"
                                                             alignment: SGAlignedLabel.SideTopLeft
                                                             anchors.verticalCenter: parent.verticalCenter
+                                                            anchors.horizontalCenter: parent.horizontalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             font.bold : true
 
@@ -1392,6 +1405,7 @@ Item {
                                                             text: "LDO Output Current \n(IOUT)"
                                                             alignment: SGAlignedLabel.SideTopLeft
                                                             anchors.verticalCenter: parent.verticalCenter
+                                                            anchors.horizontalCenter: parent.horizontalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             font.bold : true
 

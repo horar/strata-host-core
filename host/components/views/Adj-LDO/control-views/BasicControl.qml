@@ -14,7 +14,7 @@ Item {
     property real initialAspectRatio: 1200/820
     property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
     property string titleText: "NCP164C \n Low-noise, High PSRR Linear Regulator"
-    property string vinGoodThreshText: "1.5V"
+    property string vinGoodThreshText: ""
 
     anchors.centerIn: parent
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
@@ -99,9 +99,21 @@ Item {
             loadEnableSwitch.checked = true
         else loadEnableSwitch.checked = false
 
-        if(control_states.ldo_sel === "TSOP5")  ldoPackageComboBox.currentIndex = 0
-        else if(control_states.ldo_sel === "DFN6") ldoPackageComboBox.currentIndex = 1
-        else if (control_states.ldo_sel === "DFN8") ldoPackageComboBox.currentIndex = 2
+        if(control_states.ldo_sel === "TSOP5")  {
+            pgoodLabel.opacity = 0.5
+            pgoodLabel.enabled = false
+            ldoPackageComboBox.currentIndex = 0
+        }
+        else if(control_states.ldo_sel === "DFN6") {
+            pgoodLabel.opacity = 1
+            pgoodLabel.enabled = true
+            ldoPackageComboBox.currentIndex = 1
+        }
+        else if (control_states.ldo_sel === "DFN8") {
+            pgoodLabel.opacity = 1
+            pgoodLabel.enabled = true
+            ldoPackageComboBox.currentIndex = 2
+        }
 
         if(control_states.ldo_en === "on")
             ldoEnableSwitch.checked = true
@@ -122,8 +134,8 @@ Item {
     onVariant_nameChanged: {
         if(variant_name === "NCP164C_TSOP5") {
             ldoPackageComboBox.currentIndex = 0
-            pgoodLabel.opacity = 0.5
-            pgoodLabel.enabled = false
+            //pgoodLabel.opacity = 0.5
+            //pgoodLabel.enabled = false
             titleText: "NCP164C \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
             //"Set LDO Output Voltage" PlaceHolder
@@ -468,8 +480,8 @@ Item {
                                 SGCircularGauge {
                                     id: powerDissipatedGauge
                                     minimumValue: 0
-                                    maximumValue: 2.01
-                                    tickmarkStepSize: 0.2
+                                    maximumValue: 3.01
+                                    tickmarkStepSize: 0.5
                                     gaugeFillColor1:"green"
                                     gaugeFillColor2:"red"
                                     width: powerDissipatedContainer.width
@@ -504,8 +516,8 @@ Item {
                                 SGCircularGauge {
                                     id: powerOutputGauge
                                     minimumValue: 0
-                                    maximumValue:  3.01
-                                    tickmarkStepSize: 0.2
+                                    maximumValue:  3.5
+                                    tickmarkStepSize: 0.5
                                     gaugeFillColor1:"green"
                                     gaugeFillColor2:"red"
                                     width: outputPowerContainer.width
@@ -925,20 +937,22 @@ Item {
                                     anchors.fill: parent
                                     anchors {
                                         left: parent.left
-                                        leftMargin: 15
+                                        //leftMargin: 15
                                     }
 
                                     Rectangle {
                                         id : externalInputVoltageContainer
-                                        Layout.fillWidth: true
+                                        Layout.preferredWidth: parent.width/2
                                         Layout.fillHeight: true
 
                                         SGAlignedLabel {
                                             id: externalInputVoltageLabel
                                             target: externalInputVoltage
                                             text: "External Input Voltage \n(VIN_EXT)"
-                                            alignment: SGAlignedLabel.SideTopLeft
-                                            anchors.verticalCenter: parent.verticalCenter
+                                            alignment: SGAlignedLabel.SideTopCenter
+                                            anchors.centerIn: parent
+//                                            anchors.verticalCenter: parent.verticalCenter
+//                                            anchors.horizontalCenter: parent.horizontalCenter
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
@@ -948,6 +962,7 @@ Item {
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 //  height: externalInputVoltageContainer.height/1.3
                                                 width: 100 * ratioCalc
+                                                anchors.horizontalCenter: externalInputVoltageContainer.horizontalCenter
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 unitFont.bold: true
@@ -957,15 +972,17 @@ Item {
 
                                     Rectangle {
                                         id: usb5VVoltageContainer
-                                        Layout.fillWidth: true
+                                        Layout.preferredWidth: parent.width/2
                                         Layout.fillHeight: true
 
                                         SGAlignedLabel {
                                             id: usb5VVoltageLabel
                                             target: usb5VVoltage
-                                            text: "USB 5V Voltage \n(5V_USB)"
-                                            alignment: SGAlignedLabel.SideTopLeft
-                                            anchors.verticalCenter: parent.verticalCenter
+                                            text: "  USB 5V Voltage  \n(5V_USB)"
+                                            alignment: SGAlignedLabel.SideTopCenter
+                                            anchors.centerIn: parent
+//                                            anchors.verticalCenter: parent.verticalCenter
+//                                            anchors.horizontalCenter: parent.horizontalCenter
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
@@ -975,6 +992,7 @@ Item {
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 //  height: usb5VVoltageContainer.height/1.3
                                                 width: 100 * ratioCalc
+                                                anchors.horizontalCenter: usb5VVoltageContainer.horizontalCenter
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 unitFont.bold: true
@@ -993,7 +1011,7 @@ Item {
                                     anchors {
 
                                         left: parent.left
-                                        leftMargin: 15
+                                        ////leftMargin: 15
 
                                     }
 
@@ -1006,8 +1024,10 @@ Item {
                                             id: ldoInputVoltageLabel
                                             target: ldoInputVoltage
                                             text: "LDO Input Voltage \n(VIN_LDO)"
-                                            alignment: SGAlignedLabel.SideTopLeft
-                                            anchors.verticalCenter: parent.verticalCenter
+                                            alignment: SGAlignedLabel.SideTopCenter
+                                            anchors.centerIn: parent
+//                                            anchors.verticalCenter: parent.verticalCenter
+//                                            anchors.horizontalCenter: parent.horizontalCenter
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
@@ -1015,6 +1035,7 @@ Item {
                                                 id: ldoInputVoltage
                                                 unit: "V"
                                                 width: 100* ratioCalc
+                                                anchors.horizontalCenter: ldoInputVoltageContainer.horizontalCenter
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
@@ -1032,8 +1053,10 @@ Item {
                                             id: ldoOutputVoltageLabel
                                             target: ldoOutputVoltage
                                             text: "LDO Output Voltage \n(VOUT_LDO)"
-                                            alignment: SGAlignedLabel.SideTopLeft
-                                            anchors.verticalCenter: parent.verticalCenter
+                                            alignment: SGAlignedLabel.SideTopCenter
+                                            anchors.centerIn: parent
+//                                            anchors.verticalCenter: parent.verticalCenter
+//                                            anchors.horizontalCenter: usb5VVoltageContainer.horizontalCenter
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
@@ -1041,6 +1064,7 @@ Item {
                                                 id: ldoOutputVoltage
                                                 unit: "V"
                                                 width: 100* ratioCalc
+                                                anchors.horizontalCenter: ldoOutputVoltageContainer.horizontalCenter
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
@@ -1061,7 +1085,7 @@ Item {
                                     anchors.fill:parent
                                     anchors {
                                         left: parent.left
-                                        leftMargin: 15
+                                        //leftMargin: 15
                                     }
 
                                     Rectangle {
@@ -1073,15 +1097,18 @@ Item {
                                             id: boardInputCurrentLabel
                                             target: boardInputCurrent
                                             text: "Board Input Current \n(IIN)"
-                                            alignment: SGAlignedLabel.SideTopLeft
-                                            anchors.verticalCenter: parent.verticalCenter
+                                            alignment: SGAlignedLabel.SideTopCenter
+                                            anchors.centerIn: parent
+//                                            anchors.verticalCenter: parent.verticalCenter
+//                                            anchors.horizontalCenter: parent.horizontalCenter
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
                                             SGInfoBox {
                                                 id: boardInputCurrent
                                                 unit: "mA"
-                                                width: 110* ratioCalc
+                                                width: 100* ratioCalc
+                                                anchors.horizontalCenter: boardInputCurrentContainer.horizontalCenter
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
@@ -1099,15 +1126,18 @@ Item {
                                             id: ldoOutputCurrentLabel
                                             target: ldoOutputCurrent
                                             text: "LDO Output Current \n(IOUT)"
-                                            alignment: SGAlignedLabel.SideTopLeft
-                                            anchors.verticalCenter: parent.verticalCenter
+                                            alignment: SGAlignedLabel.SideTopCenter
+                                            anchors.centerIn: parent
+//                                            anchors.verticalCenter: parent.verticalCenter
+//                                            anchors.horizontalCenter: parent.horizontalCenter
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
                                             SGInfoBox {
                                                 id: ldoOutputCurrent
                                                 unit: "mA"
-                                                width: 110* ratioCalc
+                                                width: 100* ratioCalc
+                                                anchors.horizontalCenter: ldoOutputCurrentContainer.horizontalCenter
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
@@ -1284,7 +1314,7 @@ Item {
                             SGAlignedLabel {
                                 id: setLoadCurrentLabel
                                 target: setLoadCurrent
-                                text:"Set Load Current"
+                                text:"Set Onboard Load Current"
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left

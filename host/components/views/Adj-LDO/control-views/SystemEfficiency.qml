@@ -25,7 +25,7 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
     Component.onCompleted: {
-        Help.registerTarget(systemVoltageLabel, "This info box shows the voltage at the input of the buck regulator and bypass load switch (VIN_SB).", 0, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(systemInputVoltageLabel, "This info box shows the voltage at the input of the buck regulator and bypass load switch (VIN_SB).", 0, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(systemInputCurrentLabel, "This info box shows the input current to the board (current flowing from VIN to VIN_SB).", 1, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(systemInputPowerLabel, "This gauge shows the input power to the system consisting of the input buck regulator and LDO. This input power measurement excludes the losses in the input load switches and input current sense resistor.", 2, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(totalSystemEfficiencyLabel, "This gauge shows the total efficiency of the system.", 3, "AdjLDOSystemEfficiencyHelp")
@@ -51,6 +51,7 @@ Item {
     property var variant_name: platformInterface.variant_name.value
     onVariant_nameChanged: {
         if(variant_name === "NCP164C_TSOP5") {
+            blockDiagram.source = "SystemEfficiencyBlockDiagram.png"
             //"Set LDO Output Voltage" PlaceHolder
             setLDOOutputVoltage.fromText.text = "1.1V"
             setLDOOutputVoltage.toText.text =  "4.7V"
@@ -67,6 +68,7 @@ Item {
 
         }
         else if (variant_name === "NCP164A_DFN6") {
+            blockDiagram.source = "SystemEfficiencyBlockDiagram.png"
             //"Set LDO Output Voltage" PlaceHolder
             setLDOOutputVoltage.fromText.text ="1.1V"
             setLDOOutputVoltage.toText.text =  "5.2V"
@@ -143,6 +145,8 @@ Item {
         }
     }
 
+    property string vinGoodThreshText: ""
+
     property var ext_load_checked: platformInterface.ext_load_status.value
     onExt_load_checkedChanged: {
         if (ext_load_checked === true) extLoadCheckbox.checked = true
@@ -173,10 +177,10 @@ Item {
 
         if(control_states.vin_ldo_sel === "Bypass") {
             vinGoodThreshText = "\n (Above 1.5V)"
-            systemVoltageLabel.opacity = 0.5
-            systemVoltageLabel.enabled = false
-            systemInputCurrentLabel.opacity = 0.5
-            systemInputCurrentLabel.enabled = false
+//            systemInputVoltageLabel.opacity = 0.5
+//            systemInputVoltageLabel.enabled = false
+//            systemInputCurrentLabel.opacity = 0.5
+//            systemInputCurrentLabel.enabled = false
             systemInputPowerLabel.opacity = 0.5
             systemInputPowerLabel.enabled = false
             totalSystemEfficiencyLabel.opacity = 0.5
@@ -187,10 +191,10 @@ Item {
         }
         else if (control_states.vin_ldo_sel === "Buck Regulator") {
             vinGoodThreshText = "\n (Above 2.5V)"
-            systemVoltageLabel.opacity = 1
-            systemVoltageLabel.enabled = true
-            systemInputCurrentLabel.opacity = 1
-            systemInputCurrentLabel.enabled = true
+//            systemInputVoltageLabel.opacity = 1
+//            systemInputVoltageLabel.enabled = true
+//            systemInputCurrentLabel.opacity = 1
+//            systemInputCurrentLabel.enabled = true
             systemInputPowerLabel.opacity = 1
             systemInputPowerLabel.enabled = true
             totalSystemEfficiencyLabel.opacity = 1
@@ -200,10 +204,10 @@ Item {
             ldoInputComboBox.currentIndex = 1
         }
         else if (control_states.vin_ldo_sel === "Off") {
-            systemVoltageLabel.opacity = 1
-            systemVoltageLabel.enabled = true
-            systemInputCurrentLabel.opacity = 1
-            systemInputCurrentLabel.enabled = true
+//            systemInputVoltageLabel.opacity = 1
+//            systemInputVoltageLabel.enabled = true
+//            systemInputCurrentLabel.opacity = 1
+//            systemInputCurrentLabel.enabled = true
             systemInputPowerLabel.opacity = 1
             systemInputPowerLabel.enabled = true
             totalSystemEfficiencyLabel.opacity = 1
@@ -213,10 +217,10 @@ Item {
             ldoInputComboBox.currentIndex = 2
         }
         else if (control_states.vin_ldo_sel === "Isolated") {
-            systemVoltageLabel.opacity = 0.5
-            systemVoltageLabel.enabled = false
-            systemInputCurrentLabel.opacity = 0.5
-            systemInputCurrentLabel.enabled = false
+//            systemInputVoltageLabel.opacity = 0.5
+//            systemInputVoltageLabel.enabled = false
+//            systemInputCurrentLabel.opacity = 0.5
+//            systemInputCurrentLabel.enabled = false
             systemInputPowerLabel.opacity = 0.5
             systemInputPowerLabel.enabled = false
             totalSystemEfficiencyLabel.opacity = 0.5
@@ -226,9 +230,15 @@ Item {
             ldoInputComboBox.currentIndex = 3
         }
 
-        if(control_states.ldo_sel === "TSOP5")  ldoPackageComboBox.currentIndex = 0
-        else if(control_states.ldo_sel === "DFN6") ldoPackageComboBox.currentIndex = 1
-        else if (control_states.ldo_sel === "DFN8") ldoPackageComboBox.currentIndex = 2
+        if(control_states.ldo_sel === "TSOP5")  {
+            ldoPackageComboBox.currentIndex = 0
+        }
+        else if(control_states.ldo_sel === "DFN6") {
+            ldoPackageComboBox.currentIndex = 1
+        }
+        else if (control_states.ldo_sel === "DFN8") {
+            ldoPackageComboBox.currentIndex = 2
+        }
 
         ldoInputVolSlider.value = control_states.vin_ldo_set
         setLDOOutputVoltage.value = control_states.vout_ldo_set
@@ -245,17 +255,17 @@ Item {
         if (control_states.vout_set_disabled === true) {
             setLDOOutputVoltageLabel.opacity = 0.5
             setLDOOutputVoltageLabel.enabled = false
+            ldoDisable.checked = true
         } else {
             setLDOOutputVoltageLabel.opacity = 1
             setLDOOutputVoltageLabel.enabled = true
+            ldoDisable.checked = false
         }
 
         //if(control_states.sb_mode === "pwm") forcedPWM.checked = true
         //else if (control_states.sb_mode === "auto") pfmLightLoad.checked = true
 
     }
-
-    property string vinGoodThreshText: "1.5V"
 
     property string popup_message: ""
     property var config_running: platformInterface.config_running.value
@@ -415,12 +425,13 @@ Item {
                                     anchors.fill: parent
 
                                     Rectangle {
-                                        id: systemVoltageContainer
+                                        id: systemInputVoltageContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
 
+
                                         SGAlignedLabel {
-                                            id: systemVoltageLabel
+                                            id: systemInputVoltageLabel
                                             target: systemInputVoltage
                                             text: "Voltage"
                                             alignment: SGAlignedLabel.SideLeftCenter
@@ -445,7 +456,7 @@ Item {
                                         id:systemInputCurrentContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-                                        Layout.leftMargin: 12
+                                        //Layout.leftMargin: 12
 
                                         SGAlignedLabel {
                                             id: systemInputCurrentLabel
@@ -459,7 +470,7 @@ Item {
                                             SGInfoBox {
                                                 id: systemInputCurrent
                                                 unit: "mA"
-                                                width: 120
+                                                width: 100
                                                 height: 40
                                                 fontSizeMultiplier:  ratioCalc * 1.2
                                                 boxColor: "lightgrey"
@@ -498,7 +509,7 @@ Item {
                                             SGCircularGauge {
                                                 id: systemInputPowerGauge
                                                 minimumValue: 0
-                                                maximumValue:  4.01
+                                                maximumValue:  3.5
                                                 tickmarkStepSize: 0.5
                                                 gaugeFillColor1:"green"
                                                 height: powerOutputgaugeContainer.height - systemInputPowerLabel.contentHeight
@@ -519,7 +530,7 @@ Item {
                                         SGAlignedLabel {
                                             id: totalSystemEfficiencyLabel
                                             target:totalSystemEfficiencyGauge
-                                            text: "Total \n System Efficiency"
+                                            text: "Total System\nEfficiency"
                                             margin: 0
                                             anchors.centerIn: parent
                                             alignment: SGAlignedLabel.SideBottomCenter
@@ -571,7 +582,7 @@ Item {
                             id: line2
                             Layout.preferredHeight: 1.5
                             Layout.alignment: Qt.AlignCenter
-                            Layout.preferredWidth: parent.width
+                            Layout.preferredWidth: parent.width + 10
                             border.color: "lightgray"
                             radius: 2
                         }
@@ -619,7 +630,7 @@ Item {
                                         id:buckLDOOutputInputCurrentContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-                                        Layout.leftMargin: 12
+                                        //Layout.leftMargin: 12
 
                                         SGAlignedLabel {
                                             id: buckLDOOutputInputCurrentLabel
@@ -633,7 +644,7 @@ Item {
                                             SGInfoBox {
                                                 id: buckLDOOutputCurrent
                                                 unit: "mA"
-                                                width: 120
+                                                width: 100
                                                 height: 40
                                                 fontSizeMultiplier:  ratioCalc * 1.2
                                                 boxColor: "lightgrey"
@@ -672,8 +683,8 @@ Item {
                                             SGCircularGauge {
                                                 id: inputPowerGauge
                                                 minimumValue: 0
-                                                maximumValue:  3.01
-                                                tickmarkStepSize: 0.2
+                                                maximumValue:  3.5
+                                                tickmarkStepSize: 0.5
                                                 gaugeFillColor1:"green"
                                                 height: ldoInputPowergaugeContainer.height - inputPowerLabel.contentHeight
                                                 gaugeFillColor2:"red"
@@ -743,7 +754,7 @@ Item {
                             id: line3
                             Layout.preferredHeight: 1.5
                             Layout.alignment: Qt.AlignCenter
-                            Layout.preferredWidth: parent.width + 2
+                            Layout.preferredWidth: parent.width + 10
                             border.color: "lightgray"
                             radius: 2
                         }
@@ -790,7 +801,7 @@ Item {
                                         id:ldoSystemOutputCurrentContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-                                        Layout.leftMargin: 12
+                                        //Layout.leftMargin: 12
 
                                         SGAlignedLabel {
                                             id: ldoSystemOutputCurrentLabel
@@ -804,7 +815,7 @@ Item {
                                             SGInfoBox {
                                                 id: ldoSystemInputCurrent
                                                 unit: "mA"
-                                                width: 120
+                                                width: 100
                                                 height: 40
                                                 fontSizeMultiplier:  ratioCalc * 1.2
                                                 boxColor: "lightgrey"
@@ -843,8 +854,8 @@ Item {
                                             SGCircularGauge {
                                                 id: ldoOutputPowerGauge
                                                 minimumValue: 0
-                                                maximumValue:  3.01
-                                                tickmarkStepSize: 0.2
+                                                maximumValue:  3.5
+                                                tickmarkStepSize: 0.5
                                                 gaugeFillColor1:"green"
                                                 height: ldoOutputPowerContainer.height - ldoOutputPowerLabel.contentHeight
                                                 gaugeFillColor2:"red"
@@ -913,7 +924,43 @@ Item {
                 anchors.fill: parent
 
                 Rectangle {
-                    Layout.fillHeight: true
+                    id: noteMessage
+                    Layout.preferredWidth: parent.width
+                    Layout.preferredHeight: parent.height * (1/12)
+                    //height: 40
+//                    anchors{
+//                        top: root.top
+//                        topMargin: 20
+//                          bottomMargin: 20
+//                        horizontalCenter: parent.horizontalCenter
+//                    }
+
+                    Rectangle {
+                        id: noteBox
+                        color: "white"
+                        anchors.fill: parent
+
+                        Text {
+                            id: noteText
+                            anchors.centerIn: noteBox
+                            text: "This page allows you to evaluate the overall efficiency of an\n" +
+                                  "input buck regulator power stage post-regulated by an LDO\n" +
+                                  "using the NCV6324 buck regulator included on this evaluation board."
+                            font.bold: true
+                            font.pixelSize:  ratioCalc * 15
+                            color: "black"
+                            horizontalAlignment: Text.AlignJustify
+                            anchors {
+                                fill: parent
+                                topMargin: 5
+                                bottomMargin: 5
+                            }
+                        }
+                    }
+                }
+
+                Rectangle {
+                    Layout.preferredHeight: parent.height * (1/6)
                     Layout.fillWidth: true
                     //color: "red"
                     Image {
@@ -925,7 +972,7 @@ Item {
                 }
 
                 Rectangle {
-                    Layout.preferredHeight: parent.height/1.3
+                    Layout.preferredHeight: parent.height * 0.75
                     Layout.fillWidth: true
                     color: "transparent"
 
@@ -948,7 +995,7 @@ Item {
                             Layout.preferredHeight: 1.5
                             //Layout.fillWidth: true
                             //Layout.alignment: Qt.AlignCenter
-                            Layout.preferredWidth: column2Container.width
+                            Layout.preferredWidth: column2Container.width + 10
                             border.color: "lightgray"
                             radius: 2
                         }
@@ -957,13 +1004,14 @@ Item {
                             id:setLDOInputVoltageContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            Layout.leftMargin: 20
+                            Layout.leftMargin: 10
+                            Layout.rightMargin: 10
                             color: "transparent"
 
                             SGAlignedLabel {
                                 id: setLDOInputVoltageLabel
                                 target: ldoInputVolSlider
-                                text: "Set LDO Input\nVoltage"
+                                text: "Set LDO Input Voltage"
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
@@ -993,13 +1041,14 @@ Item {
                             id:setLDOOutputVoltageContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            Layout.leftMargin: 20
+                            Layout.leftMargin: 10
+                            Layout.rightMargin: 10
                             color: "transparent"
 
                             SGAlignedLabel {
                                 id: setLDOOutputVoltageLabel
                                 target: setLDOOutputVoltage
-                                text: "Set LDO Output\nVoltage"
+                                text: "Set LDO Output Voltage"
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
@@ -1029,13 +1078,14 @@ Item {
                             id: setOutputCurrentContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            Layout.leftMargin: 20
+                            Layout.leftMargin: 10
+                            Layout.rightMargin: 10
                             color: "transparent"
 
                             SGAlignedLabel {
                                 id: setOutputCurrentLabel
                                 target: setOutputCurrentSlider
-                                text: "Set LDO Output\nCurrent"
+                                text: "Set Onboard Load Current"
                                 font.bold: true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 fontSizeMultiplier: ratioCalc
@@ -1063,7 +1113,8 @@ Item {
                             //id: totalSystemEfficiencyContainer
                             Layout.preferredHeight: parent.height/2
                             Layout.fillWidth: true
-                            Layout.leftMargin: 20
+                            Layout.leftMargin: 10
+                            Layout.rightMargin: 10
                             color: "white"
 
                             ColumnLayout {

@@ -10,5 +10,6 @@
         <file>control-views/SystemEfficiency.qml</file>
         <file>control-views/SystemEfficiencyBlockDiagram.png</file>
         <file>custom/CustomSGCircularGauge.qml</file>
+        <file>control-views/SystemEfficiencyBD.png</file>
     </qresource>
 </RCC>
