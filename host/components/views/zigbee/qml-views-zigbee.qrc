@@ -26,5 +26,6 @@
         <file>images/room_green.png</file>
         <file>images/room_purple.png</file>
         <file>images/room_red.png</file>
+        <file>images/room_lightsOff.png</file>
     </qresource>
 </RCC>

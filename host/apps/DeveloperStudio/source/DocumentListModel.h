@@ -11,12 +11,12 @@ struct DocumentItem {
             const QString &dirname)
     {
         this->uri = uri;
-        this->filename = filename;
+        this->prettyName = filename;
         this->dirname = dirname;
     }
 
     QString uri;
-    QString filename;
+    QString prettyName;
     QString dirname;
 };
 
@@ -33,7 +33,7 @@ public:
 
     enum {
         UriRole = Qt::UserRole,
-        FilenameRole,
+        PrettyNameRole,
         DirnameRole,
         PreviousDirnameRole,
     };

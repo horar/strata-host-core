@@ -21,11 +21,7 @@ SGWidgets.SGMainWindow {
     minimumHeight: 768-40 // -40 for Win10 taskbar height
     minimumWidth: 1024
     title: Qt.application.displayName
-    property variant versionNumberList: Qt.application.version.split(".") // For About Strata Popup
-    property string versionNumber: "Strata %1.%2.%3 Build %4".arg(versionNumberList[0]).arg(versionNumberList[1]).arg(versionNumberList[2]).arg(versionNumberList[3])  // For About Strata Popup
 
-    // Debug option(s)
-    property bool is_remote_connected: false
     signal initialized()
 
     Component.onCompleted: {
@@ -39,25 +35,6 @@ SGWidgets.SGMainWindow {
     onClosing: {
         SessionUtils.close_session()
 
-        if(is_remote_connected) {
-            // sending remote disconnect message to hcs
-            var remote_disconnect_json = {
-                "hcs::cmd":"remote_disconnect",
-                "payload": {}
-            }
-            coreInterface.sendCommand(JSON.stringify(remote_disconnect_json))
-
-            console.log(Logger.devStudioCategory, "UI -> HCS ", JSON.stringify(remote_disconnect_json))
-        }
-
-        var remote_json = {
-            "hcs::cmd":"advertise",
-            "payload": {
-                "advertise_platforms":false
-            }
-        }
-        console.log(Logger.devStudioCategory, "asking hcs to advertise the platforms",JSON.stringify(remote_json))
-        coreInterface.sendCommand(JSON.stringify(remote_json))
         // End session with HCS
         coreInterface.unregisterClient();
 
@@ -79,7 +56,6 @@ SGWidgets.SGMainWindow {
 
             property real windowHeight: mainWindow.height  // for centering popups spawned from the statusbar
             property bool showDebug: false;  // for linking debug in status bar to the debug bar
-            property alias versionNumber: mainWindow.versionNumber
         }
 
         Flipable {
@@ -123,31 +99,6 @@ SGWidgets.SGMainWindow {
     Connections {
         id: coreInterfaceConnection
         target: coreInterface
-
-        onPlatformIDChanged: {
-            console.log(Logger.devStudioCategory, "Main: PlatformIDChanged to ", id)
-
-            // Send update to NavigationControl
-//            if (UuidMap.uuid_map.hasOwnProperty(id)){
-//                console.log(Logger.devStudioCategory, "identified new platform as ", UuidMap.uuid_map[id])
-//                var data = { class_id : id }
-//                NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT, data)
-//            }
-        }
-
-        onPlatformStateChanged: {
-            console.log(Logger.devStudioCategory, "Main: PlatformStateChanged: ", platform_connected_state)
-        }
-
-        onRemoteConnectionChanged:{
-            // Successful remote connection
-            if (result === true){
-                is_remote_connected = true
-            }
-            else {
-                is_remote_connected = false
-            }
-        }
 
         onPlatformListChanged: {
 //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)

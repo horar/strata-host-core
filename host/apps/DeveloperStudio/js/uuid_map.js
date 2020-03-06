@@ -29,7 +29,7 @@ var uuid_map = {
 
 
     /*****
-        CES HACK (class_id)
+        CES HACK or temporary Class ID for development purposes(class_id)
     *****/
     "101": "logic-gate",
     "201": "logic-gate",
@@ -69,5 +69,10 @@ var uuid_map = {
     "244": "motorController",
     "245": "bldcMotorControl",
     "246": "meshNetwork",
-    "265": "zigbee"
+    "265": "zigbee",
+
+    /*****
+        Real UUID generated from interaction with Deployment Portal (class_id)
+    *****/
+    "72ddcc10-2d18-4316-8170-5223162e54cf": "sensor"
 }

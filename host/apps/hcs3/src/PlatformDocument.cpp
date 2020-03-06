@@ -102,7 +102,8 @@ bool PlatformDocument::populateFileObject(const QJsonObject &jsonObject, Platfor
             || jsonObject.contains("md5") == false
             || jsonObject.contains("name") == false
             || jsonObject.contains("timestamp") == false
-            || jsonObject.contains("filesize") == false)
+            || jsonObject.contains("filesize") == false
+            || jsonObject.contains("prettyName") == false)
     {
         return false;
     }
@@ -112,6 +113,7 @@ bool PlatformDocument::populateFileObject(const QJsonObject &jsonObject, Platfor
     file.name = jsonObject.value("name").toString();
     file.timestamp = jsonObject.value("timestamp").toString();
     file.filesize = jsonObject.value("filesize").toVariant().toLongLong();
+    file.prettyName = jsonObject.value("prettyName").toString();
 
     return true;
 }

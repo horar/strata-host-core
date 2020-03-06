@@ -50,27 +50,31 @@ public:
 signals:
     void platformListRequested(QByteArray clientId);
     void platformDocumentsRequested(QByteArray clientId, QString classId);
-    void downloadFilesRequested(QByteArray clientId, QStringList files, QString savePath);
+    void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
     void updatePlatformDocRequested(QString classId);
 
 public slots:
     void onAboutToQuit();
 
-    void sendDownloadFilePathChangedMessage(
+    void sendDownloadPlatformFilePathChangedMessage(
             const QByteArray &cliendId,
             const QString &originalFilePath,
             const QString &effectiveFilePath);
 
-    void sendSingleDownloadProgressMessage(
+    void sendDownloadPlatformSingleFileProgressMessage(
             const QByteArray &cliendId,
             const QString &filePath,
             qint64 bytesReceived,
             qint64 bytesTotal);
 
-    void sendSingleDownloadFinishedMessage(
+    void sendDownloadPlatformSingleFileFinishedMessage(
             const QByteArray &cliendId,
             const QString &filePath,
+            const QString &errorString);
+
+    void sendDownloadPlatformFilesFinishedMessage(
+            const QByteArray &cliendId,
             const QString &errorString);
 
     void sendPlatformListMessage(
@@ -83,7 +87,7 @@ public slots:
             const QString &error);
 
 private:
-    void handleMesages(const PlatformMessage& msg);
+    void handleMessage(const PlatformMessage& msg);
 
     void handleClientMsg(const PlatformMessage& msg);
     void handleCouchbaseMsg(const PlatformMessage& msg);
@@ -96,17 +100,10 @@ private:
     ///////
     //handlers for client (UI)
     void onCmdHCSStatus(const rapidjson::Value* );
-    void onCmdRegisterClient(const rapidjson::Value* );
     void onCmdUnregisterClient(const rapidjson::Value* );
     void onCmdPlatformSelect(const rapidjson::Value* );
-    void onCmdRequestAvaibilePlatforms(const rapidjson::Value* );
 
     //handlers for hcs::cmd
-    void onCmdHostJwtToken(const rapidjson::Value* );
-    void onCmdHostAdvertisePlatforms(const rapidjson::Value* );
-    void onCmdHostGetPlatforms(const rapidjson::Value* );
-    void onCmdHostRemoteDisconnect(const rapidjson::Value* );
-    void onCmdHostDisconnectRemoteUser(const rapidjson::Value* );
     void onCmdHostDisconnectPlatform(const rapidjson::Value* );
     void onCmdHostUnregister(const rapidjson::Value* );
     void onCmdHostDownloadFiles(const rapidjson::Value* );      //from UI
