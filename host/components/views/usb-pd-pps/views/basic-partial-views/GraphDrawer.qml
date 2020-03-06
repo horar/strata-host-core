@@ -149,78 +149,57 @@ Drawer {
             anchors.top: menuContainer.top
             height: root.graphHeight
 
-            property real stream: 0
-            property real count: 0
-            property real interval: 10 // 10 Hz?
-
-            property var powerInfo: platformInterface.usb_power_notification.output_voltage
-            onPowerInfoChanged:{
-                //console.log("new power notification for port ",portNumber);
-                if (platformInterface.usb_power_notification.port === portNumber){
-                    //console.log("voltage=",platformInterface.usb_power_notification.output_voltage," count=",count);
-                    count += interval;
-                    stream = platformInterface.usb_power_notification.output_voltage
-                }
-            }
-
-            Timer {
-                id: graphTimerPoints
-                interval: 60
-                running: false
-                repeat: true
-
-                property real lastTime
-
-                onRunningChanged: {
-                    if (running){
-                        timedGraphPoints.curve(0).clear()
-                        lastTime = Date.now()
-                    }
-                }
-
-                onTriggered: {
-                    let currentTime = Date.now()
-                    let curve = timedGraphPoints.curve(0)
-                    curve.shiftPoints((currentTime - lastTime)/1000, 0)
-                    curve.append(0, platformInterface.usb_power_notification.output_voltage)
-                    removeOutOfViewPoints()
-                    timedGraphPoints.update()
-                    lastTime = currentTime
-                }
-
-                function removeOutOfViewPoints() {
-                    // recursively clean up points that have moved out of view
-                    if (timedGraphPoints.curve(0).at(0).x > timedGraphPoints.xMin) {
-                        timedGraphPoints.curve(0).remove(0)
-                        removeOutOfViewPoints()
-                    }
-                }
-            }
-
-
-            // Optional graph settings:
-            title: "Port "+portNumber+ " Voltage" // Default: empty
-            xTitle: "Seconds"           // Default: empty
-            yTitle: "V"                 // Default: empty
-            //textColor: "#ffffff"            // Default: #000000 (black) - Must use hex colors for this property
-            //dataLineColor: "white"          // Default: #000000 (black)
-            //axesColor: "#cccccc"            // Default: Qt.rgba(.2, .2, .2, 1) (dark gray)
-            //gridLineColor: "#666666"        // Default: Qt.rgba(.8, .8, .8, 1) (light gray)
-            //underDataColor: "transparent"   // Default: Qt.rgba(.5, .5, .5, .3) (transparent gray)
-            backgroundColor: "black"        // Default: #ffffff (white)
-            yMin: 0                    // Default: 0
-            yMax: 25                   // Default: 10
-            xMin: 0                    // Default: 0
-            xMax: 5                    // Default: 10
-            //showXGrids: false               // Default: false
-            //showYGrids: true                // Default: false
-            //xValueAxis.tickCount: 5
+            title: "Port "+portNumber+ " Voltage"
+            xTitle: "Seconds"
+            yTitle: "V"
+            yMin: 0
+            yMax: 25
+            xMin: -5
+            xMax: 0
             panXEnabled: false
             panYEnabled: false
             zoomXEnabled: false
             zoomYEnabled: false
             autoUpdate: false
             foregroundColor: "white"
+            backgroundColor: "black"
+
+
+            Timer {
+                id: graphTimerPoints
+                interval: 60
+                running: voltageGraph.visible
+                repeat: true
+
+                property real lastTime
+
+                onRunningChanged: {
+                    if (running){
+                        voltageGraph.curve(0).clear()
+                        lastTime = Date.now()
+                    }
+                }
+
+                onTriggered: {
+                    let currentTime = Date.now()
+                    let curve = voltageGraph.curve(0)
+                    curve.shiftPoints(-(currentTime - lastTime)/1000, 0)
+                    curve.append(0, platformInterface.usb_power_notification.output_voltage)
+                    removeOutOfViewPoints()
+                    voltageGraph.update()
+                    lastTime = currentTime
+                }
+
+                function removeOutOfViewPoints() {
+                    // recursively clean up points that have moved out of view
+                    if (voltageGraph.curve(0).at(0).x < voltageGraph.xMin) {
+                        voltageGraph.curve(0).remove(0)
+                        removeOutOfViewPoints()
+                    }
+                }
+            }
+
+
 
             Component.onCompleted: {
                 let movingCurve = createCurve("movingCurve")
@@ -236,70 +215,56 @@ Drawer {
             anchors.top: voltageGraph.bottom
             height: root.graphHeight
 
-//            property real stream: 0
-//            property real count: 0
-//            property real interval: 10 // 10 Hz?
-
-//            property var powerInfo: platformInterface.usb_power_notification.output_voltage
-//            onPowerInfoChanged:{
-//                //console.log("new power notification for port ",portNumber);
-//                if (platformInterface.usb_power_notification.port === portNumber){
-//                    //console.log("voltage=",platformInterface.usb_power_notification.output_voltage," count=",count);
-//                    count += interval;
-//                    stream = platformInterface.usb_power_notification.output_voltage *
-//                            platformInterface.usb_power_notification.output_current;
-//                }
-//            }
+            // Optional graph settings:
+            title: "Port "+portNumber+ " Power"
+            xTitle: "Seconds"
+            yTitle: "W"
+            yMin: 0
+            yMax: 60
+            xMin: -5
+            xMax: 0
+            panXEnabled: false
+            panYEnabled: false
+            zoomXEnabled: false
+            zoomYEnabled: false
+            autoUpdate: false
+            backgroundColor: "black"
+            foregroundColor: "white"
 
             Timer {
                 id: graphTimerPoints2
                 interval: 60
-                running: false
+                running: powerGraph.visible
                 repeat: true
 
                 property real lastTime
 
                 onRunningChanged: {
                     if (running){
-                        timedGraphPoints.curve(0).clear()
+                        powerGraph.curve(0).clear()
                         lastTime = Date.now()
                     }
                 }
 
                 onTriggered: {
                     let currentTime = Date.now()
-                    let curve = timedGraphPoints.curve(0)
-                    curve.shiftPoints((currentTime - lastTime)/1000, 0)
+                    let curve = powerGraph.curve(0)
+                    curve.shiftPoints(-(currentTime - lastTime)/1000, 0)
                     curve.append(0, platformInterface.usb_power_notification.output_current)
                     removeOutOfViewPoints()
-                    timedGraphPoints.update()
+                    powerGraph.update()
                     lastTime = currentTime
                 }
 
                 function removeOutOfViewPoints() {
                     // recursively clean up points that have moved out of view
-                    if (timedGraphPoints.curve(0).at(0).x > timedGraphPoints.xMin) {
-                        timedGraphPoints.curve(0).remove(0)
+                    if (powerGraph.curve(0).at(0).x < powerGraph.xMin) {
+                        powerGraph.curve(0).remove(0)
                         removeOutOfViewPoints()
                     }
                 }
             }
 
-            // Optional graph settings:
-            title: "Port "+portNumber+ " Power" // Default: empty
-            xTitle: "Seconds"           // Default: empty
-            yTitle: "W"                 // Default: empty
-            backgroundColor: "black"        // Default: #ffffff (white)
-            yMin: 0                    // Default: 0
-            yMax: 60                   // Default: 10
-            xMin: 0                    // Default: 0
-            xMax: 5                    // Default: 10
-            panXEnabled: false
-            panYEnabled: false
-            zoomXEnabled: false
-            zoomYEnabled: false
-            autoUpdate: false
-            foregroundColor: "white"
 
             Component.onCompleted: {
                 let movingCurve = createCurve("movingCurve")
@@ -315,70 +280,57 @@ Drawer {
             anchors.top: powerGraph.bottom
             height: root.graphHeight
 
-//            property real stream: 0
-//            property real count: 0
-//            property real interval: 10 // 10 Hz?
+            // Optional graph settings:
+            title: "Port "+portNumber+ " Temperature" // Default: empty
+            xTitle: "Seconds"
+            yTitle: "°C"
+            yMin: 0
+            yMax: 100
+            xMin: -5
+            xMax: 0
+            panXEnabled: false
+            panYEnabled: false
+            zoomXEnabled: false
+            zoomYEnabled: false
+            autoUpdate: false
+            backgroundColor: "black"
+            foregroundColor: "white"
 
-//            property var powerInfo: platformInterface.usb_power_notification
-//            onPowerInfoChanged:{
-//                //console.log("new power notification for port ",portNumber);
-//                if (platformInterface.usb_power_notification.port === portNumber){
-//                    //console.log("temp=",platformInterface.usb_power_notification.temperature);
-//                    count += interval;
-//                    stream = platformInterface.usb_power_notification.temperature;
-//                }
-//            }
             Timer {
                 id: graphTimerPoints3
                 interval: 60
-                running: false
+                running: temperatureGraph.visible
                 repeat: true
 
                 property real lastTime
 
                 onRunningChanged: {
                     if (running){
-                        timedGraphPoints.curve(0).clear()
+                        temperatureGraph.curve(0).clear()
                         lastTime = Date.now()
                     }
                 }
 
                 onTriggered: {
                     let currentTime = Date.now()
-                    let curve = timedGraphPoints.curve(0)
-                    curve.shiftPoints((currentTime - lastTime)/1000, 0)
+                    let curve = temperatureGraph.curve(0)
+                    curve.shiftPoints(-(currentTime - lastTime)/1000, 0)
                     curve.append(0, platformInterface.usb_power_notification.temperature)
                     removeOutOfViewPoints()
-                    timedGraphPoints.update()
+                    temperatureGraph.update()
                     lastTime = currentTime
                 }
 
                 function removeOutOfViewPoints() {
                     // recursively clean up points that have moved out of view
-                    if (timedGraphPoints.curve(0).at(0).x > timedGraphPoints.xMin) {
-                        timedGraphPoints.curve(0).remove(0)
+                    if (temperatureGraph.curve(0).at(0).x < temperatureGraph.xMin) {
+                        temperatureGraph.curve(0).remove(0)
                         removeOutOfViewPoints()
                     }
                 }
             }
 
-            //inputData: stream          // Set the graph's data source here
 
-            // Optional graph settings:
-            title: "Port "+portNumber+ " Temperature" // Default: empty
-            xTitle: "Seconds"           // Default: empty
-            yTitle: "°C"                 // Default: empty
-            backgroundColor: "black"        // Default: #ffffff (white)
-            yMin: 0                    // Default: 0
-            yMax: 100                   // Default: 10
-            xMin: 0                    // Default: 0
-            xMax: 5                   // Default: 10
-            panXEnabled: false
-            panYEnabled: false
-            zoomXEnabled: false
-            zoomYEnabled: false
-            autoUpdate: false
-            foregroundColor: "white"
 
             Component.onCompleted: {
                 let movingCurve = createCurve("movingCurve")
