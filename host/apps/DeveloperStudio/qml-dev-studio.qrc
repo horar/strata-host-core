@@ -72,5 +72,6 @@
         <file>partial-views/platform-selector/images/icons/filter-icons/battery.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/dc_dc.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/memory.svg</file>
+        <file>partial-views/SGLoadError.qml</file>
     </qresource>
 </RCC>
