@@ -1,10 +1,8 @@
-#
-#   Hello World client in Python
-#   Connects REQ socket to tcp://localhost:5555
-#   Sends "Hello" to server, expects "World" back
-#
-
-import zmq
+import sys
+try:
+    import zmq
+except ImportError:
+    sys.exit(-1)
 
 context = zmq.Context()
 
@@ -13,24 +11,26 @@ socket = context.socket(zmq.DEALER)
 
 socket.connect("tcp://127.0.0.1:5563")
 
-print("\nSending 1st notif (Register_Client)\n")
+print("\nSending 1st notification (REGISTER CLIENT))")
 socket.send(b'{"cmd":"register_client"}')
 
 ################################################################################
 
-print("\nSending 2nd notif (Connect data source)\n")
+print("\nSending 2nd notification (CONNECT DATA SOURCE)")
 socket.send(b'{"db::cmd":"connect_data_source","db::payload":{"type":"document"}}')
 
 ################################################################################
 
-print("\nSending 3rd notif (Dyn plat list)\n")
+print("\nSending 3rd notification (DYNAMIC PLATFORM LIST)")
 socket.send(b'{"hcs::cmd":"dynamic_platform_list","payload":{}}')
 message = socket.recv()
-print("Received reply [ %s ]" % (message))
+if not message:
+    print("\nPossible error: received empty response.")
 
 ################################################################################
 
-print("\nSending 4th notif (201 connected)\n")
+print("\nSending 4th notification (201 connected)")
 socket.send(b'{"cmd":"platform_select","payload":{"platform_uuid":"201","remote":"connected"}}')
 message = socket.recv()
-print("Received reply [ %s ]" % (message))
+if not message:
+    print("\nPossible error: received empty response.")
