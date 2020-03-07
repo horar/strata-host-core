@@ -78,12 +78,10 @@ Item {
             "min_voltage":15,
             "power":60,
             "enabled":true,
-            "active":true
+            "active":false
     }
 
-    onInput_voltage_foldbackChanged: {
-        console.log("PI input_voltage_foldback values. Enabled=:",input_voltage_foldback.enabled)
-    }
+
 
     property var temperature_foldback:{
             "port":1,
@@ -91,7 +89,7 @@ Item {
             "max_temperature":150,
             "power":60,      // 2-port = absolute power in watts, others = percentage of full port power
             "enabled":true,
-            "active":true
+            "active":false
     }
 
 

@@ -187,7 +187,7 @@ Item {
             xTitle: "Seconds"
             yTitle: "A"
             yMin: 0
-            yMax: 25
+            yMax: 6
             xMin: -5
             xMax: 0
             panXEnabled: false
@@ -286,7 +286,6 @@ Item {
                     let curve = graph3.curve(0)
                     curve.shiftPoints(-(currentTime - lastTime)/1000, 0)
                     curve.append(0, platformInterface.usb_power_notification.input_voltage)
-                    console.log("appending new point:",platformInterface.usb_power_notification.input_voltage)
                     removeOutOfViewPoints()
                     graph3.update()
                     lastTime = currentTime
@@ -322,7 +321,7 @@ Item {
             xTitle: "Seconds"
             yTitle: "W"
             yMin: 0
-            yMax: 25
+            yMax: 60
             xMin: -5
             xMax: 0
             panXEnabled: false
@@ -377,44 +376,6 @@ Item {
                 movingCurve.autoUpdate = false
             }
         }
-
-
-//        SGWidgets09.SGGraphTimed {
-//            id: graph4
-//            title: "Power Out"
-//            visible: true
-//            anchors {
-//                top: portGraphs.top
-//                bottom: portGraphs.bottom
-////                left: graph3.right
-//            }
-//            width: portGraphs.width /  4
-//            yAxisTitle: "W"
-//            xAxisTitle: "Seconds"
-//            minYValue: 0                    // Default: 0
-//            maxYValue: 60                   // Default: 10
-//            minXValue: 0                    // Default: 0
-//            maxXValue: 5                    // Default: 10
-
-//            property real stream: 0
-//            property real count: 0
-//            property real interval: 10 // 10 Hz?
-
-//            property var powerInfo: platformInterface.usb_power_notification.output_voltage
-//            onPowerInfoChanged:{
-//                //console.log("new power notification for port ",portNumber);
-//                if (platformInterface.usb_power_notification.port == portNumber){
-//                    //console.log("voltage=",platformInterface.usb_power_notification.output_voltage," count=",count);
-//                    count += interval;
-//                    stream = platformInterface.usb_power_notification.output_voltage *
-//                            platformInterface.usb_power_notification.output_current;
-//                }
-//            }
-
-//            inputData: stream          // Set the graph's data source here
-//        }
-
-
 
 
     }

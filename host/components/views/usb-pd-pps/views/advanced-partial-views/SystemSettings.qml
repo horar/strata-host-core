@@ -279,18 +279,14 @@ Item {
                     right: parent.right
                     verticalCenter: inputFoldback.verticalCenter
                 }
-//                checkedLabel: "On"
-//                uncheckedLabel: "Off"
                 height: 20
                 width: 46
                 grooveFillColor:"green"
                 checked: platformInterface.input_voltage_foldback.enabled
-                onToggled: platformInterface.set_input_voltage_foldback.update(checked, platformInterface.input_voltage_foldback.min_voltage,
+                onToggled:{
+                    //console.log("input foldback switch toggled to ",checked)
+                    return platformInterface.set_input_voltage_foldback.update(checked, platformInterface.input_voltage_foldback.min_voltage,
                                 platformInterface.input_voltage_foldback.power)
-
-                property var theFoldback: platformInterface.input_voltage_foldback
-                onTheFoldbackChanged: {
-                    console.log("new input_voltage_foldback values:",platformInterface.input_voltage_foldback.enabled)
                 }
             }
 
@@ -325,9 +321,10 @@ Item {
                 handleSize:20
                 fillColor:"dimgrey"
                 enabled: inputFoldbackOn
+                live:false
                 //copy the current values for other stuff, and add the new slider value for the limit.
-                onMoved: platformInterface.set_input_voltage_foldback.update(platformInterface.input_voltage_foldback.enabled,
-                                 value,
+                onUserSet: platformInterface.set_input_voltage_foldback.update(platformInterface.input_voltage_foldback.enabled,
+                                 value.toString(),
                                 platformInterface.input_voltage_foldback.power)
             }
 
@@ -366,7 +363,7 @@ Item {
                 onCurrentFoldbackOuputChanged: {
                     var theFoldbackPower = Math.trunc(platformInterface.input_voltage_foldback.power);
 
-                    console.log("got a new min input power setting", theFoldbackPower);
+                    //console.log("got a new min input power setting", theFoldbackPower);
                     limitOutput.currentIndex = limitOutput.find( theFoldbackPower);
                 }
             }
@@ -408,14 +405,12 @@ Item {
                     right: parent.right
                     verticalCenter: tempFoldback.verticalCenter
                 }
-//                checkedLabel: "On"
-//                uncheckedLabel: "Off"
                 height: 20
                 width: 46
                 grooveFillColor:"green"
                 checked: platformInterface.temperature_foldback.enabled
                 onToggled:{
-                    console.log("sending temp foldback update command from tempFoldbackSwitch");
+                    //console.log("sending temp foldback update command from tempFoldbackSwitch");
                     platformInterface.set_temperature_foldback.update(tempFoldbackSwitch.checked,
                                       platformInterface.temperature_foldback.max_temperature,
                                        platformInterface.temperature_foldback.power);
@@ -451,14 +446,12 @@ Item {
                 fillColor:"dimgrey"
                 handleSize: 20
                 enabled: temperatureFoldbackOn
+                live:false
                 value: platformInterface.temperature_foldback.max_temperature
-               onValueChanged: {
-                    console.log("foldback max temp is now:",value)
-               }
-                onMoved:{
-                    console.log("sending temp foldback update command from foldbackTempSlider");
+
+                onUserSet:{
                     platformInterface.set_temperature_foldback.update(platformInterface.temperature_foldback.enabled,
-                                                                                  foldbackTemp.value,
+                                                                                  foldbackTemp.value.toString(),
                                                                                   platformInterface.temperature_foldback.power)
                 }
 
@@ -488,7 +481,7 @@ Item {
                 textColor: enabled ? "black" : "grey"
                 //when the value is changed by the user
                 onActivated: {
-                    console.log("sending temp foldback update command from limitOutputComboBox");
+                    //console.log("sending temp foldback update command from limitOutputComboBox");
                     platformInterface.set_temperature_foldback.update(platformInterface.temperature_foldback.enabled,
                                                                                  platformInterface.temperature_foldback.max_temperature,
                                                                                  limitOutput2.currentText)
@@ -498,8 +491,6 @@ Item {
 
                 onCurrentFoldbackOuputChanged: {
                     var theFoldbackPower = Math.trunc(platformInterface.temperature_foldback.power);
-
-                    console.log("new temp foldback wattage",theFoldbackPower);
                     limitOutput2.currentIndex = limitOutput2.find(theFoldbackPower)
                 }
             }
