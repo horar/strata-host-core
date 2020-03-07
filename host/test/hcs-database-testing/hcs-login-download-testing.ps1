@@ -1,5 +1,5 @@
 <#
-    Automated HCS token / login / automated download testing
+    Automated HCS token / login / automated platform thumbnail download testing
 #>
 
 # Define tests to be executed
