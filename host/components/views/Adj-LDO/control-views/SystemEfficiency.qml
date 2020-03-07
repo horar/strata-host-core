@@ -41,11 +41,14 @@ Item {
         Help.registerTarget(setLDOOutputVoltageLabel, "This slider allows you to set the desired output voltage of the LDO. The value can be set while the LDO is disabled. The voltage will automatically be adjusted as needed whenever the LDO is enabled again.", 13, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(setOutputCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value can be set while the load is disabled and the load current will automatically be adjusted as needed when the load is enabled. The value may need to be reset to the desired level after recovery from an LDO UVLO event.", 14, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(boardInputLabel, "This combo box allows you to choose the main input option to the board. 'External' option uses the input voltage from the input banana plugs (VIN_EXT). 'USB 5V' option uses the 5V supply from the Strata USB connector. 'Option 'Off' option disconnects both inputs from VIN and pulls VIN low.", 15, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. The 'Bypass' option connects the LDO input directly to VIN_SB through a load switch. The 'Buck Regulator' option allows adjustment of the input voltage to the LDO through an adjustable output voltage buck regulator. The 'Off' option disables both the input buck regulator and bypass load switch, disconnecting the LDO from the input power supply, and pulls VIN_LDO low. The 'Isolated' option allows you to power the LDO directly through the VIN_LDO solder pad on the board, bypassing the input stage entirely. WARNING! - when using this option, ensure you do not use the other LDO input voltage options while an external power supply is supplying power to the LDO through the VIN_LDO solder pad. See the Platform Content page for more information about the options for supplying the LDO input voltage.", 16, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the LDO package actually populated on the board if different from the stock LDO package option. See the Platform Content page for more information about using alternate LDO packages with this board.", 17, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(loadEnableSwitchLabel, "This switch enables the onboard load.", 18, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(extLoadCheckboxLabel, "Check this box if an external load is connected to the output banana plugs (VOUT).", 19 , "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(vinReadyLabel, "This indicator will be green when the LDO input voltage (VIN_LDO) is greater than the LDO input UVLO threshold of 1.6V.", 20, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the LDO package actually populated on the board if different from the stock LDO package option. See the Platform Content page for more information about using alternate LDO packages with this board.", 16, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoDisableLabel, "This switch disables the LDO output voltage adjustment circuit included on this board. This feature is intended to be used to evaluate the LDO as it would be used in an actual application with fixed resistors in the LDO feedback network and to reduce LDO output voltage noise contribution from the Strata interface circuitry. See the Platform Content page for more information on using this feature.", 17, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. The 'Bypass' option connects the LDO input directly to VIN_SB through a load switch. The 'Buck Regulator' option allows adjustment of the input voltage to the LDO through an adjustable output voltage buck regulator. The 'Off' option disables both the input buck regulator and bypass load switch, disconnecting the LDO from the input power supply, and pulls VIN_LDO low. The 'Isolated' option allows you to power the LDO directly through the VIN_LDO solder pad on the board, bypassing the input stage entirely. WARNING! - when using this option, ensure you do not use the other LDO input voltage options while an external power supply is supplying power to the LDO through the VIN_LDO solder pad. See the Platform Content page for more information about the options for supplying the LDO input voltage.", 18, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(loadEnableSwitchLabel, "This switch enables the onboard load.", 19, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(extLoadCheckboxLabel, "During normal onboard load operation, a loop is run when the current level is set to minimize the load current error, and this loop should not be run if an external load is attached in parallel to the onboard load. Checking this box will stop the loop from running, but note that this will decrease the accuracy of the load current.", 20, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoEnableSwitchLabel, "This switch enables the LDO.", 21, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(vinGoodLabel, "This indicator will be green when:\na.) VIN is greater than 2.5V when the input buck regulator is enabled\nb.) VIN is greater than 1.5V when it is disabled.", 22, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(vinReadyLabel, "This indicator will be green when the LDO input voltage (VIN_LDO) is greater than the LDO input UVLO threshold of 1.6V.", 23, "AdjLDOSystemEfficiencyHelp")
     }
 
     property var variant_name: platformInterface.variant_name.value
@@ -185,6 +188,8 @@ Item {
             systemInputPowerLabel.enabled = false
             totalSystemEfficiencyLabel.opacity = 0.5
             totalSystemEfficiencyLabel.enabled = false
+            inputPowerLabel.opacity = 1
+            inputPowerLabel.enabled = true
             syncBuckEfficiencyLabel.opacity = 0.5
             syncBuckEfficiencyLabel.enabled = false
             ldoInputComboBox.currentIndex = 0
@@ -199,6 +204,8 @@ Item {
             systemInputPowerLabel.enabled = true
             totalSystemEfficiencyLabel.opacity = 1
             totalSystemEfficiencyLabel.enabled = true
+            inputPowerLabel.opacity = 1
+            inputPowerLabel.enabled = true
             syncBuckEfficiencyLabel.opacity = 1
             syncBuckEfficiencyLabel.enabled = true
             ldoInputComboBox.currentIndex = 1
@@ -212,6 +219,8 @@ Item {
             systemInputPowerLabel.enabled = true
             totalSystemEfficiencyLabel.opacity = 1
             totalSystemEfficiencyLabel.enabled = true
+            inputPowerLabel.opacity = 1
+            inputPowerLabel.enabled = true
             syncBuckEfficiencyLabel.opacity = 1
             syncBuckEfficiencyLabel.enabled = true
             ldoInputComboBox.currentIndex = 2
@@ -225,6 +234,8 @@ Item {
             systemInputPowerLabel.enabled = false
             totalSystemEfficiencyLabel.opacity = 0.5
             totalSystemEfficiencyLabel.enabled = false
+            inputPowerLabel.opacity = 0.5
+            inputPowerLabel.enabled = false
             syncBuckEfficiencyLabel.opacity = 0.5
             syncBuckEfficiencyLabel.enabled = false
             ldoInputComboBox.currentIndex = 3
@@ -503,7 +514,7 @@ Item {
                                             margin: 0
                                             anchors.centerIn: parent
                                             alignment: SGAlignedLabel.SideBottomCenter
-                                            fontSizeMultiplier: ratioCalc
+                                            fontSizeMultiplier: ratioCalc * 0.95
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
                                             SGCircularGauge {
@@ -534,7 +545,7 @@ Item {
                                             margin: 0
                                             anchors.centerIn: parent
                                             alignment: SGAlignedLabel.SideBottomCenter
-                                            fontSizeMultiplier: ratioCalc
+                                            fontSizeMultiplier: ratioCalc * 0.95
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
 
@@ -676,7 +687,7 @@ Item {
                                             margin: 0
                                             anchors.centerIn: parent
                                             alignment: SGAlignedLabel.SideBottomCenter
-                                            fontSizeMultiplier: ratioCalc
+                                            fontSizeMultiplier: ratioCalc * 0.95
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
 
@@ -708,7 +719,7 @@ Item {
                                             margin: 0
                                             anchors.centerIn: parent
                                             alignment: SGAlignedLabel.SideBottomCenter
-                                            fontSizeMultiplier: ratioCalc
+                                            fontSizeMultiplier: ratioCalc * 0.95
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
 
@@ -847,7 +858,7 @@ Item {
                                             margin: 0
                                             anchors.centerIn: parent
                                             alignment: SGAlignedLabel.SideBottomCenter
-                                            fontSizeMultiplier: ratioCalc
+                                            fontSizeMultiplier: ratioCalc * 0.95
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
 
@@ -878,7 +889,7 @@ Item {
                                             margin: 0
                                             anchors.centerIn: parent
                                             alignment: SGAlignedLabel.SideBottomCenter
-                                            fontSizeMultiplier: ratioCalc
+                                            fontSizeMultiplier: ratioCalc * 0.95
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
 
@@ -1191,36 +1202,24 @@ Item {
                                                 id: ldoDisableLabel
                                                 target: ldoDisable
                                                 text: "Disable LDO Output\nVoltage Adjustment"
-                                                //horizontalAlignment: Text.AlignHCenter
-                                                font.bold : true
-                                                font.italic: true
                                                 alignment: SGAlignedLabel.SideTopCenter
-                                                fontSizeMultiplier: ratioCalc
                                                 anchors.centerIn: parent
+                                                fontSizeMultiplier: ratioCalc
+                                                font.bold : true
 
-                                                Rectangle {
-                                                    color: "transparent"
-                                                    anchors { fill: ldoDisableLabel }
-                                                    MouseArea {
-                                                        id: hoverArea2
-                                                        anchors { fill: parent }
-                                                        hoverEnabled: true
-                                                    }
-                                                }
-
-                                                CheckBox {
+                                                SGSwitch {
                                                     id: ldoDisable
-                                                    checked: false
-                                                    onClicked: {
-                                                        if(checked) {
+                                                    labelsInside: true
+                                                    checkedLabel: "Yes"
+                                                    uncheckedLabel:   "No"
+                                                    textColor: "black"              // Default: "black"
+                                                    handleColor: "white"            // Default: "white"
+                                                    grooveColor: "#ccc"             // Default: "#ccc"
+                                                    grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                    onToggled: {
+                                                        if(checked)
                                                             platformInterface.disable_vout_set.update(true)
-                                                            //setLDOOutputVoltageLabel.opacity = 0.5
-                                                            //setLDOOutputVoltageLabel.enabled = false
-                                                        } else {
-                                                            platformInterface.disable_vout_set.update(false)
-                                                            //setLDOOutputVoltageLabel.opacity = 1
-                                                           // setLDOOutputVoltageLabel.enabled = true
-                                                        }
+                                                        else  platformInterface.disable_vout_set.update(false)
                                                     }
                                                 }
                                             }
@@ -1352,6 +1351,37 @@ Item {
                                         anchors.fill:parent
 
                                         Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            color: "transparent"
+
+                                            SGAlignedLabel {
+                                                id: ldoEnableSwitchLabel
+                                                target: ldoEnableSwitch
+                                                text: "Enable LDO"
+                                                alignment: SGAlignedLabel.SideTopCenter
+                                                anchors.centerIn: parent
+                                                fontSizeMultiplier: ratioCalc
+                                                font.bold : true
+                                                SGSwitch {
+                                                    id: ldoEnableSwitch
+                                                    labelsInside: true
+                                                    checkedLabel: "On"
+                                                    uncheckedLabel:   "Off"
+                                                    textColor: "black"              // Default: "black"
+                                                    handleColor: "white"            // Default: "white"
+                                                    grooveColor: "#ccc"             // Default: "#ccc"
+                                                    grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                    onToggled: {
+                                                        if(checked)
+                                                            platformInterface.set_ldo_enable.update("on")
+                                                        else  platformInterface.set_ldo_enable.update("off")
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle {
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
                                             color: "transparent"
@@ -1398,37 +1428,6 @@ Item {
                                                             vinReadyLight.status  = SGStatusLight.Green
 
                                                         else vinReadyLight.status  = SGStatusLight.Off
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        Rectangle {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            color: "transparent"
-
-                                            SGAlignedLabel {
-                                                id: ldoEnableSwitchLabel
-                                                target: ldoEnableSwitch
-                                                text: "Enable LDO"
-                                                alignment: SGAlignedLabel.SideTopCenter
-                                                anchors.centerIn: parent
-                                                fontSizeMultiplier: ratioCalc
-                                                font.bold : true
-                                                SGSwitch {
-                                                    id: ldoEnableSwitch
-                                                    labelsInside: true
-                                                    checkedLabel: "On"
-                                                    uncheckedLabel:   "Off"
-                                                    textColor: "black"              // Default: "black"
-                                                    handleColor: "white"            // Default: "white"
-                                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                    onToggled: {
-                                                        if(checked)
-                                                            platformInterface.set_ldo_enable.update("on")
-                                                        else  platformInterface.set_ldo_enable.update("off")
                                                     }
                                                 }
                                             }
