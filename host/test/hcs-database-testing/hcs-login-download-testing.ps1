@@ -28,7 +28,7 @@ If ($TEST_request_token) {
     Try {
         $server_response = Invoke-WebRequest -URI $SDS_login_server -Body $SDS_login_info -Method 'POST' -ContentType 'application/json' -ErrorAction 'Stop'
     } Catch {
-        "        FAILED: Unable to connect to server '$SDS_login_server' to obtain login token, try again."; "";
+        "        FAILED: Unable to obtain login token from server '$SDS_login_server' with provided account, try again."; "";
         Exit
     }
 
@@ -46,8 +46,7 @@ If ($TEST_request_token) {
 
     # Format new token string using obtained token
     $server_response_Json = ConvertFrom-Json $server_response.Content
-    $token_string = "[Login]`ntoken=$($server_response_Json.token)`nfirst_name=$($server_response_Json.firstname)`nlast_name=$($server_response_Json.lastname)`n`
-        user=$($server_response_Json.user)`nauthentication_server=$SDS_server"
+    $token_string = "[Login]`ntoken=$($server_response_Json.token)`nfirst_name=$($server_response_Json.firstname)`nlast_name=$($server_response_Json.lastname)`nuser=$($server_response_Json.user)`nauthentication_server=$SDS_server"
 
     # Write to "Strata Developer Studio.ini"
     Set-Content "$AppData_OnSemi_dir\Strata Developer Studio.ini" $token_string
