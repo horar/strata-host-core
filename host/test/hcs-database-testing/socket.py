@@ -1,4 +1,4 @@
-# Automated collateral download server
+# Automated collateral download testing
 #
 # Python 3
 

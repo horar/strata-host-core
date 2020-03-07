@@ -11,8 +11,8 @@ Set-Variable "AppData_OnSemi_dir"   "$Env:AppData\ON Semiconductor"
 Set-Variable "PlatformSelector_dir" "$AppData_OnSemi_dir\hcs\documents\platform_selector"
 
 # Define URI of server to be used - only applicable if TEST_request_token is enabled
-Set-Variable "SDS_server"       "http://18.191.165.117/" # "https://strata.onsemi.com/"
-Set-Variable "SDS_login_server" "http://18.191.165.117/login" # "https://strata.onsemi.com/login"
+Set-Variable "SDS_server"       "http://18.191.108.5" # "https://strata.onsemi.com/"
+Set-Variable "SDS_login_server" "$SDS_server/login"   # "https://strata.onsemi.com/login"
 Set-Variable "SDS_login_info"   '{"username":"test@test.com","password":"Strata12345"}'
 
 #####
