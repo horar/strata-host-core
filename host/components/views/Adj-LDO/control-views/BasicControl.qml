@@ -871,6 +871,12 @@ Item {
                                                     fontSizeMultiplier: ratioCalc
                                                     model: ["USB 5V", "External", "Off"]
                                                     onActivated: {
+                                                        if ((ldoInputComboBox.currentIndex === 3) && (currentText !== "Off")) {
+                                                            if (root.visible && !warningPopup.opened) {
+                                                                popup_message = "The upstream supply voltage option cannot be changed while the LDO input voltage option is set to 'Direct'"
+                                                                warningPopup.open()
+                                                            }
+                                                        }
                                                         platformInterface.select_vin.update(currentText)
                                                     }
                                                 }
@@ -955,6 +961,9 @@ Item {
                                                             if (!warningPopupLDOInput.opened & !((newVinLDOSel === prevVinLDOSel) || (newVinLDOSel === "Off"))) {
                                                                 warningPopupLDOInput.open()
                                                             } else {
+                                                                if (newVinLDOSel === "Off") {
+                                                                    platformInterface.select_vin_ldo.update(newVinLDOSel)
+                                                                }
                                                                 prevVinLDOSel = newVinLDOSel
                                                             }
                                                             console.log("prevVinLDOSel = " + prevVinLDOSel)

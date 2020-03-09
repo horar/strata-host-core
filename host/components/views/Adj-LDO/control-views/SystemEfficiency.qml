@@ -5,7 +5,6 @@ import QtQuick.Window 2.3
 import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as Widget09
 import tech.strata.fonts 1.0
-
 import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
@@ -24,6 +23,9 @@ Item {
 //    onHeightChanged: {
 //        console.log("height",height)
 //    }
+
+    property string prevVinLDOSel: ""
+    property string newVinLDOSel: ""
 
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
@@ -58,7 +60,7 @@ Item {
     property var variant_name: platformInterface.variant_name.value
     onVariant_nameChanged: {
         if(variant_name === "NCP164C_TSOP5") {
-            blockDiagram.source = "SystemEfficiencyBlockDiagram.png"
+            blockDiagram.source = "images/SystemEfficiencyBD.png"
             //"Set LDO Output Voltage" PlaceHolder
             setLDOOutputVoltage.fromText.text = "1.1V"
             setLDOOutputVoltage.toText.text =  "4.7V"
@@ -398,6 +400,133 @@ Item {
 
                     onClicked: {
                         warningPopup.close()
+                    }
+                }
+            }
+        }
+    }
+
+    Popup{
+        id: warningPopupLDOInput
+        width: root.width/2
+        height: root.height/4
+        anchors.centerIn: parent
+        modal: true
+        focus: true
+        //activeFocus: true
+        closePolicy: Popup.NoAutoClose
+        background: Rectangle{
+            id: warningPopupLDOInputContainer
+            width: warningPopupLDOInput.width
+            height: warningPopupLDOInput.height
+            color: "#dcdcdc"
+            border.color: "grey"
+            border.width: 2
+            radius: 10
+            Rectangle {
+                id:topBorderLDOInput
+                width: parent.width
+                height: parent.height/7
+                anchors{
+                    top: parent.top
+                    topMargin: 2
+                    right: parent.right
+                    rightMargin: 2
+                    left: parent.left
+                    leftMargin: 2
+                }
+                radius: 5
+                color: "#c0c0c0"
+                border.color: "#c0c0c0"
+                border.width: 2
+            }
+        }
+
+        Rectangle {
+            id: warningPopupLDOInputBox
+            color: "transparent"
+            anchors {
+                top: parent.top
+                topMargin: 5
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: warningPopupLDOInputContainer.width - 50
+            height: warningPopupLDOInputContainer.height - 50
+
+            Rectangle {
+                id: messageContainerForWarningPopupLDOInput
+                anchors {
+                    top: parent.top
+                    topMargin: 10
+                    centerIn:  parent.Center
+                }
+                color: "transparent"
+                width: parent.width
+                height:  parent.height - selectionContainerForWarningPopupLDOInput.height
+                Text {
+                    id: warningTextForWarningPopupLDOInput
+                    anchors.fill:parent
+                    text: "Damage to the board and/or external supply may result from applying power from the input power stage" +
+                          " of the board to the LDO while simultaneously directly applying external power to the LDO through the solder pads." +
+                          " Click OK to acknowledge and proceed with changing the LDO input voltage option or Cancel to abort."
+                    verticalAlignment:  Text.AlignVCenter
+                    wrapMode: Text.WordWrap
+                    fontSizeMode: Text.Fit
+                    width: parent.width
+                    font.family: "Helvetica Neue"
+                    font.pixelSize: ratioCalc * 15
+                }
+            }
+
+            Rectangle {
+                id: selectionContainerForWarningPopupLDOInput
+                width: parent.width
+                height: parent.height/4.5
+                anchors{
+                    top: messageContainerForWarningPopupLDOInput.bottom
+                    topMargin: 10
+                    right: parent.right
+                }
+                color: "transparent"
+                Rectangle {
+                    id: okButtonForLDOInput
+                    width: parent.width/2
+                    height:parent.height
+                    color: "transparent"
+
+
+                    SGButton {
+                        anchors.centerIn: parent
+                        text: "OK"
+                        color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                        roundedLeft: true
+                        roundedRight: true
+                        onClicked: {
+                            platformInterface.select_vin_ldo.update(newVinLDOSel)
+                            prevVinLDOSel = newVinLDOSel
+                            warningPopupLDOInput.close()
+                        }
+                    }
+                }
+
+                Rectangle {
+                    id: cancelButtonForLDOInput
+                    width: parent.width/2
+                    height:parent.height
+                    anchors.left: okButtonForLDOInput.right
+                    color: "transparent"
+
+                    SGButton {
+                        anchors.centerIn: parent
+                        text: "Cancel"
+                        roundedLeft: true
+                        roundedRight: true
+                        color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                        onClicked: {
+                            ldoInputComboBox.currentIndex = 3
+                            warningPopupLDOInput.close()
+
+                        }
                     }
                 }
             }
@@ -1177,8 +1306,13 @@ Item {
                                                     fontSizeMultiplier: ratioCalc * 0.9
                                                     model: ["USB 5V", "External", "Off"]
                                                     onActivated: {
+                                                        if ((ldoInputComboBox.currentIndex === 3) && (currentText !== "Off")) {
+                                                            if (root.visible && !warningPopup.opened) {
+                                                                popup_message = "The upstream supply voltage option cannot be changed while the LDO input voltage option is set to 'Direct'"
+                                                                warningPopup.open()
+                                                            }
+                                                        }
                                                         platformInterface.select_vin.update(currentText)
-
                                                     }
                                                 }
                                             }
@@ -1271,11 +1405,27 @@ Item {
 
                                                 SGComboBox {
                                                     id: ldoInputComboBox
-                                                    fontSizeMultiplier: ratioCalc * 0.9
+                                                    fontSizeMultiplier: ratioCalc
                                                     model: ["Bypass", "Buck Regulator", "Off", "Direct"]
                                                     onActivated: {
-                                                        platformInterface.select_vin_ldo.update(currentText)
-
+                                                        if (prevVinLDOSel === "Direct") {
+                                                            newVinLDOSel = currentText
+                                                            if (!warningPopupLDOInput.opened & !((newVinLDOSel === prevVinLDOSel) || (newVinLDOSel === "Off"))) {
+                                                                warningPopupLDOInput.open()
+                                                            } else {
+                                                                if (newVinLDOSel === "Off") {
+                                                                    platformInterface.select_vin_ldo.update(newVinLDOSel)
+                                                                }
+                                                                prevVinLDOSel = newVinLDOSel
+                                                            }
+                                                            console.log("prevVinLDOSel = " + prevVinLDOSel)
+                                                            console.log("newVinLDOSel = " + newVinLDOSel)
+                                                        } else {
+                                                            prevVinLDOSel = currentText
+                                                            platformInterface.select_vin_ldo.update(currentText)
+                                                            console.log("prevVinLDOSel = " + prevVinLDOSel)
+                                                            console.log("newVinLDOSel = " + newVinLDOSel)
+                                                        }
                                                     }
                                                 }
                                             }
@@ -1330,6 +1480,7 @@ Item {
                                                         target: extLoadCheckbox
                                                         text: "External Load \nConnected?"
                                                         //horizontalAlignment: Text.AlignHCenter
+                                                        margin: -5
                                                         font.bold : true
                                                         font.italic: true
                                                         alignment: SGAlignedLabel.SideTopCenter
