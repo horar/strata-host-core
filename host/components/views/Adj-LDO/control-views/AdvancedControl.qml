@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
+import QtQuick.Window 2.3
 import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as Widget09
 import tech.strata.fonts 1.0
@@ -9,9 +10,11 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: root
-    property real ratioCalc: root.width / 1200
+    property real ratioCalc: root.width/Screen.width//(root.width / 1600) / (root.height / 900)
+    property real initialAspectRatio: Screen.width/Screen.height// 1.78//1200/820
+    //property real ratioCalc: root.width / 1200
+    //property real initialAspectRatio: 1209/820
 
-    property real initialAspectRatio: 1209/820
     property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
     property string vinGoodThreshText: ""
 
@@ -139,12 +142,12 @@ Item {
         Help.registerTarget(estTSDThresLabel, "This info box will show the estimated LDO junction temperature threshold at which the LDO's TSD protection was triggered.", 6, "AdjLDOAdvanceHelp")
         Help.registerTarget(ldoPowerDissipationLabel, "This gauge shows the power loss in the LDO when it is enabled.", 7, "AdjLDOAdvanceHelp")
         Help.registerTarget(boardTempLabel, "This gauge shows the board temperature near the ground pad of the selected LDO package.", 8, "AdjLDOAdvanceHelp")
-        Help.registerTarget(appxLDoTempLabel, "This gauge shows the approximate LDO junction temperature. Do not rely on this value for an accurate measurement. See the Platform Content page for more information on how the approximate LDO junction temperature is calculated.", 9, "AdjLDOAdvanceHelp")
+        Help.registerTarget(appxLDoTempLabel, "This gauge shows the approximate LDO junction temperature. See the Platform Content page for more information on how it is calculated.", 9, "AdjLDOAdvanceHelp")
         Help.registerTarget(ldoInputVolLabel, "This slider allows you to set the desired input voltage of the LDO when being supplied by the input buck regulator. The value can be set while the input buck regulator is not being used and the voltage will automatically be adjusted as needed when the input buck regulator is activated.", 10, "AdjLDOAdvanceHelp")
         Help.registerTarget(boardInputLabel, "This combo box allows you to choose the main input voltage option (upstream power supply) for the board. The 'External' option uses the input voltage from the input banana plugs (VIN_EXT). The 'USB 5V' option uses the 5V supply from the Strata USB connector. The 'Off' option disconnects both inputs from VIN and pulls VIN low.", 11, "AdjLDOAdvanceHelp")
         Help.registerTarget(ldoEnableSwitchLabel, "This switch enables the LDO.", 12, "AdjLDOAdvanceHelp")
         Help.registerTarget(setLDOOutputVoltageContainer, "This slider allows you to set the desired output voltage of the LDO. The value can be set while the LDO is disabled, and the voltage will automatically be adjusted as needed whenever the LDO is enabled again.", 13, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. The 'Bypass' option connects the LDO input directly to VIN_SB through a load switch. The 'Buck Regulator' option allows adjustment of the input voltage to the LDO through an adjustable output voltage buck regulator. The 'Off' option disables both the input buck regulator and bypass load switch, disconnecting the LDO from the input power supply, and pulls VIN_LDO low. The 'Isolated' option allows you to power the LDO directly through the VIN_LDO solder pad on the board, bypassing the input stage entirely. WARNING! - when using this option, ensure you do not use the other LDO input voltage options while an external power supply is supplying power to the LDO through the VIN_LDO solder pad. See the Platform Content page for more information about the options for supplying the LDO input voltage.", 14, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. The 'Bypass' option connects the LDO input directly to VIN_SB through a load switch. The 'Buck Regulator' option allows adjustment of the input voltage to the LDO through an adjustable output voltage buck regulator. The 'Off' option disables both the input buck regulator and bypass load switch, disconnecting the LDO from the input power supply, and pulls VIN_LDO low. The 'Direct' option allows you to power the LDO directly through the VIN_LDO solder pad on the board, bypassing the input stage entirely. WARNING! - when using this option, ensure you do not use the other LDO input voltage options while an external power supply is supplying power to the LDO through the VIN_LDO solder pad. See the Platform Content page for more information about the options for supplying the LDO input voltage.", 14, "AdjLDOAdvanceHelp")
         Help.registerTarget(ldoDisableLabel, "This switch disables the LDO output voltage adjustment circuit included on this board. This feature is intended to be used to evaluate the LDO as it would be used in an actual application with fixed resistors in the LDO feedback network and to reduce LDO output voltage noise contribution from the Strata interface circuitry. See the Platform Content page for more information on using this feature.", 15, "AdjLDOAdvanceHelp")
         Help.registerTarget(setOutputCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value can be set while the load is disabled and the load current will automatically be adjusted as needed when the load is enabled. The value may need to be reset to the desired level after recovery from an LDO UVLO event.", 16, "AdjLDOAdvanceHelp")
         Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the LDO package actually populated on the board if different from the stock LDO package option. See the Platform Content page for more information about using alternate LDO packages with this board.", 17, "AdjLDOAdvanceHelp")
@@ -169,14 +172,31 @@ Item {
         ldoOutputCurrent.text = telemetry_notification.iout
         diffVoltage.text = telemetry_notification.vdiff
         currentLimitThreshold.text = telemetry_notification.ldo_clim_thresh
+        estTSDThres.text = telemetry_notification.tsd_thresh
 
     }
 
     property var control_states: platformInterface.control_states
     onControl_statesChanged: {
-        if(control_states.vin_sel === "USB 5V")  boardInputComboBox.currentIndex = 0
-        else if(control_states.vin_sel === "External") boardInputComboBox.currentIndex = 1
-        else if (control_states.vin_sel === "Off") boardInputComboBox.currentIndex = 2
+
+        if(control_states.vin_sel === "USB 5V")  {
+            if (setOutputCurrent.value > 300) {
+                setOutputCurrent.value = 300
+            }
+            setOutputCurrent.to = 300
+            setOutputCurrent.toText.text = "300mA"
+            boardInputComboBox.currentIndex = 0
+        }
+        else if(control_states.vin_sel === "External") {
+            setOutputCurrent.to = 650
+            setOutputCurrent.toText.text = "650mA"
+            boardInputComboBox.currentIndex = 1
+        }
+        else if (control_states.vin_sel === "Off") {
+            setOutputCurrent.to = 650
+            setOutputCurrent.toText.text = "650mA"
+            boardInputComboBox.currentIndex = 2
+        }
 
         if(control_states.vin_ldo_sel === "Bypass") {
             vinGoodThreshText = "\n (Above 1.5V)"
@@ -187,9 +207,11 @@ Item {
             ldoInputComboBox.currentIndex = 1
         }
         else if (control_states.vin_ldo_sel === "Off") {
+            vinGoodThreshText = "\n (Above 1.5V)"
             ldoInputComboBox.currentIndex = 2
         }
-        else if (control_states.vin_ldo_sel === "Isolated") {
+        else if (control_states.vin_ldo_sel === "Direct") {
+            vinGoodThreshText = "\n (Above 1.5V)"
             ldoInputComboBox.currentIndex = 3
         }
 
@@ -385,9 +407,9 @@ Item {
             Text {
                 id: noteText
                 anchors.centerIn: noteBox
-                text: "Note: External Input Required For OCP/TSD Tests"
+                text: "Note: External Input Required For OCP Testing"
                 font.bold: true
-                font.pixelSize:  ratioCalc * 15
+                font.pixelSize:  ratioCalc * 20
                 color: "white"
             }
 
@@ -400,7 +422,7 @@ Item {
                 }
                 text: "\ue80e"
                 font.family: Fonts.sgicons
-                font.pixelSize:  ratioCalc * 14
+                font.pixelSize:  ratioCalc * 20
                 color: "white"
             }
 
@@ -413,7 +435,7 @@ Item {
                 }
                 text: "\ue80e"
                 font.family: Fonts.sgicons
-                font.pixelSize:  ratioCalc * 14
+                font.pixelSize:  ratioCalc * 20
                 color: "white"
             }
         }
@@ -425,6 +447,12 @@ Item {
         anchors {
             top: noteMessage.bottom
             topMargin: 5
+            left: parent.left
+            leftMargin: 10
+            right: parent.right
+            rightMargin: 10
+            bottom: parent.bottom
+            bottomMargin: 10
         }
 
         ColumnLayout {
@@ -432,7 +460,8 @@ Item {
 
             Rectangle {
                 Layout.fillWidth: true
-                Layout.fillHeight: true
+                Layout.preferredHeight: parent.height * (5/12)
+                //Layout.fillHeight: true
 
                 RowLayout {
                     anchors.fill: parent
@@ -450,8 +479,8 @@ Item {
                                 id: outputShortCircuitText
                                 font.bold: true
                                 text: "Output Current Limiting/Short-Circuit Protection"
-                                font.pixelSize: ratioCalc * 15
-                                Layout.topMargin: 20
+                                font.pixelSize: ratioCalc * 20
+                                Layout.topMargin: 10
                                 color: "#696969"
                                 Layout.leftMargin: 20
 
@@ -492,7 +521,14 @@ Item {
                                                 anchors.fill: parent
                                                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                                 onClicked: {
-                                                    platformInterface.enable_sc.update()
+                                                    if (platformInterface.sc_allowed.value === true) {
+                                                        platformInterface.enable_sc.update()
+                                                    } else {
+                                                        if (root.visible && !warningPopup.opened) {
+                                                            popup_message = "The short-circuit load cannot be activated unless the LDO input voltage option is set to 'Direct'"
+                                                            warningPopup.open()
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -546,6 +582,8 @@ Item {
                                             font.bold: true
 
                                             SGStatusLight {
+                                                height: 40
+                                                width: 40
                                                 id: pgldo
                                             }
                                         }
@@ -561,10 +599,12 @@ Item {
                                             alignment: SGAlignedLabel.SideTopCenter
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
-                                            text: "OCP Triggered"
+                                            text: "Short-Circuit\nOCP Triggered"
                                             font.bold: true
 
                                             SGStatusLight {
+                                                height: 40
+                                                width: 40
                                                 id: ocpTriggered
                                             }
                                         }
@@ -584,6 +624,8 @@ Item {
                                             font.bold: true
 
                                             SGStatusLight {
+                                                height: 40
+                                                width: 40
                                                 id: currentLimitReach
                                             }
                                         }
@@ -600,13 +642,14 @@ Item {
                         ColumnLayout {
                             id: thermalShutdownContainer
                             anchors.fill: parent
+                            anchors.bottomMargin: 10
 
                             Text {
                                 id: thermalShutdownText
                                 font.bold: true
                                 text: "Thermal Shutdown"
-                                font.pixelSize: ratioCalc * 15
-                                Layout.topMargin: 20
+                                font.pixelSize: ratioCalc * 20
+                                Layout.topMargin: 10
                                 color: "#696969"
                                 Layout.leftMargin: 20
 
@@ -623,13 +666,15 @@ Item {
 
                             Rectangle {
                                 Layout.fillWidth: true
-                                Layout.preferredHeight: parent.height/4
+                                Layout.preferredHeight: (parent.height - thermalShutdownText.height - line2.height)/4
 
                                 RowLayout {
                                     anchors.fill: parent
+                                    anchors.topMargin: 10
                                     spacing: 10
 
                                     Rectangle {
+                                        id: tsdTriggeredContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
 
@@ -643,6 +688,8 @@ Item {
                                             font.bold: true
 
                                             SGStatusLight {
+                                                height: tsdTriggeredContainer.height - tsdTriggeredLabel.contentHeight
+                                                //width: 40
                                                 id: tsdTriggered
                                             }
                                         }
@@ -677,7 +724,8 @@ Item {
 
                             Rectangle {
                                 Layout.fillWidth: true
-                                Layout.fillHeight: true
+                                Layout.preferredHeight: (parent.height - thermalShutdownText.height - line2.height) * (3/4)
+                                //Layout.fillHeight: true
 
                                 RowLayout {
                                     anchors.fill: parent
@@ -692,8 +740,9 @@ Item {
                                             id:  ldoPowerDissipationLabel
                                             target: ldoPowerDissipation
                                             text: "LDO Power \n Loss"
-                                            margin: 0
+                                            margin: -5
                                             anchors.centerIn: parent
+                                            anchors.verticalCenterOffset: -(contentHeight*0.25)
                                             alignment: SGAlignedLabel.SideBottomCenter
                                             fontSizeMultiplier:   ratioCalc
                                             font.bold : true
@@ -708,7 +757,7 @@ Item {
                                                 gaugeFillColor2:"red"
                                                 width: ldoPowerDissipationContiner.width
                                                 height: ldoPowerDissipationContiner.height - ldoPowerDissipationLabel.contentHeight
-                                                unitTextFontSizeMultiplier: ratioCalc * 2.5
+                                                unitTextFontSizeMultiplier: ratioCalc * 2.1
                                                 unitText: "W"
                                                 valueDecimalPlaces: 3
                                                 //value: platformInterface.status_voltage_current.power_dissipated
@@ -726,8 +775,9 @@ Item {
                                             id:  boardTempLabel
                                             target: boardTemp
                                             text: "Board \n Temperature"
-                                            margin: 0
+                                            margin: -5
                                             anchors.centerIn: parent
+                                            anchors.verticalCenterOffset: -(contentHeight*0.25)
                                             alignment: SGAlignedLabel.SideBottomCenter
                                             fontSizeMultiplier:   ratioCalc
                                             font.bold : true
@@ -742,7 +792,7 @@ Item {
                                                 gaugeFillColor2:"red"
                                                 width: boardTempContainer.width
                                                 height: boardTempContainer.height - boardTempLabel.contentHeight
-                                                unitTextFontSizeMultiplier: ratioCalc * 2.5
+                                                unitTextFontSizeMultiplier: ratioCalc * 2.1
                                                 unitText: "˚C"
                                                 valueDecimalPlaces: 1
                                                 // value: platformInterface.telemetry.temperature
@@ -760,8 +810,9 @@ Item {
                                             id:  appxLDoTempLabel
                                             target: appxLDoTemp
                                             text: "Approximate LDO \n Temperature"
-                                            margin: 0
+                                            margin: -5
                                             anchors.centerIn: parent
+                                            anchors.verticalCenterOffset: -(contentHeight*0.25)
                                             alignment: SGAlignedLabel.SideBottomCenter
                                             fontSizeMultiplier:   ratioCalc
                                             font.bold : true
@@ -775,7 +826,7 @@ Item {
                                                 gaugeFillColor2:"red"
                                                 width: appxLDoTempContainer.width
                                                 height: appxLDoTempContainer.height - appxLDoTempLabel.contentHeight
-                                                unitTextFontSizeMultiplier: ratioCalc * 2.5
+                                                unitTextFontSizeMultiplier: ratioCalc * 2.1
                                                 unitText: "˚C"
                                                 valueDecimalPlaces: 1
                                                 //value: platformInterface.status_voltage_current.power_dissipated
@@ -792,10 +843,12 @@ Item {
 
             Rectangle {
                 Layout.fillWidth: true
-                Layout.preferredHeight: parent.height/1.9
+                //Layout.fillHeight: true
+                Layout.preferredHeight: parent.height * (7/12)
 
                 RowLayout {
                     anchors.fill: parent
+                    anchors.bottomMargin: 10
                     spacing: 20
 
                     Rectangle {
@@ -810,8 +863,8 @@ Item {
                                 id: bordConfigText
                                 font.bold: true
                                 text: "Set Board Configuration"
-                                font.pixelSize: ratioCalc * 15
-                                Layout.topMargin: 20
+                                font.pixelSize: ratioCalc * 20
+                                Layout.topMargin: 10
                                 color: "#696969"
                                 Layout.leftMargin: 20
 
@@ -874,7 +927,7 @@ Item {
                                         SGAlignedLabel {
                                             id: boardInputLabel
                                             target: boardInputComboBox
-                                            text: "Board Input Voltage Selection"
+                                            text: "Upstream Supply Voltage Selection"
                                             alignment: SGAlignedLabel.SideTopLeft
                                             anchors.verticalCenter: parent.verticalCenter
                                             fontSizeMultiplier: ratioCalc
@@ -982,7 +1035,7 @@ Item {
                                             SGComboBox {
                                                 id: ldoInputComboBox
                                                 fontSizeMultiplier: ratioCalc * 0.9
-                                                model: ["Bypass", "Buck Regulator", "Off", "Isolated"]
+                                                model: ["Bypass", "Buck Regulator", "Off", "Direct"]
                                                 onActivated: {
                                                     platformInterface.select_vin_ldo.update(currentText)
                                                 }
@@ -1071,7 +1124,7 @@ Item {
                                         SGAlignedLabel {
                                             id: ldoPackageLabel
                                             target: ldoPackageComboBox
-                                            text: "LDO Package Selection"
+                                            text: "Populated LDO Package"
                                             alignment: SGAlignedLabel.SideTopLeft
                                             anchors.verticalCenter: parent.verticalCenter
                                             fontSizeMultiplier: ratioCalc
@@ -1165,6 +1218,7 @@ Item {
                                                     anchors.verticalCenter: parent.verticalCenter
                                                     anchors.horizontalCenter: parent.horizontalCenter
                                                     anchors.top: parent.top
+                                                    margin: -5
 
                                                     Rectangle {
                                                         color: "transparent"
@@ -1209,6 +1263,8 @@ Item {
                                             SGStatusLight {
                                                 id: vinGood
                                                 property var vin_good: platformInterface.int_status.vin_good
+                                                height: 40
+                                                width: 40
                                                 onVin_goodChanged: {
                                                     if(vin_good === true && vinGoodLabel.enabled)
                                                         vinGood.status  = SGStatusLight.Green
@@ -1235,6 +1291,8 @@ Item {
 
                                             SGStatusLight {
                                                 id: vinReadyLight
+                                                height: 40
+                                                width: 40
                                                 property var vin_ldo_good: platformInterface.int_status.vin_ldo_good
                                                 onVin_ldo_goodChanged: {
                                                     if(vin_ldo_good === true)
@@ -1269,8 +1327,8 @@ Item {
                                         id: dropoutText
                                         font.bold: true
                                         text: "Dropout"
-                                        font.pixelSize: ratioCalc * 15
-                                        Layout.topMargin: 20
+                                        font.pixelSize: ratioCalc * 20
+                                        Layout.topMargin: 10
                                         color: "#696969"
                                         Layout.leftMargin: 20
 
@@ -1432,6 +1490,8 @@ Item {
                                                     font.bold: true
 
                                                     SGStatusLight {
+                                                        height: 40
+                                                        width: 40
                                                         id: dropReached
                                                     }
                                                 }

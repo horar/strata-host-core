@@ -8,9 +8,8 @@
         <file>control-views/question-circle-solid.svg</file>
         <file>PlatformInterface.qml</file>
         <file>control-views/SystemEfficiency.qml</file>
-        <file>control-views/SystemEfficiencyBlockDiagram.png</file>
         <file>custom/CustomSGCircularGauge.qml</file>
-        <file>control-views/SystemEfficiencyBD.png</file>
-        <file>control-views/PowerFlowDiagram.png</file>
+        <file>control-views/images/SystemEfficiencyBD.png</file>
+        <file>control-views/images/PowerFlowDiagram.png</file>
     </qresource>
 </RCC>

@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
 import QtQuick.Controls 2.12
+import QtQuick.Window 2.3
 import tech.strata.sgwidgets 0.9 as Widget09
 import tech.strata.fonts 1.0
 import "qrc:/js/help_layout_manager.js" as Help
@@ -9,9 +10,9 @@ import "../custom"
 
 Item {
     id: root
-    property real ratioCalc: root.width / 1200
+    property real ratioCalc: (root.width/Screen.width)// / (root.height/Screen.height)//(root.width / 1600) / (root.height / 900)
+    property real initialAspectRatio: Screen.width/Screen.height// 1.78//1200/820
 
-    property real initialAspectRatio: 1200/820
     property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
     property string titleText: "NCP164C \n Low-noise, High PSRR Linear Regulator"
     property string vinGoodThreshText: ""
@@ -55,7 +56,7 @@ Item {
         Help.registerTarget(intLdoTempLabel, "This indicator will be red when the LDO temp sensor detects an approximate LDO temperature over the maximum allowed operating temperature of the LDO.", 6, "AdjLDOBasicHelp")
         Help.registerTarget(boardInputLabel, "This combo box allows you to choose the main input voltage option (upstream power supply) for the board. The 'External' option uses the input voltage from the input banana plugs (VIN_EXT). The 'USB 5V' option uses the 5V supply from the Strata USB connector. The 'Off' option disconnects both inputs from VIN and pulls VIN low.", 7, "AdjLDOBasicHelp")
         Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the LDO package actually populated on the board if different from the stock LDO package option. See the Platform Content page for more information about using alternate LDO packages with this board.", 8, "AdjLDOBasicHelp")
-        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. The 'Bypass' option connects the LDO input directly to VIN_SB through a load switch. The 'Buck Regulator' option allows adjustment of the input voltage to the LDO through an adjustable output voltage buck regulator. The 'Off' option disables both the input buck regulator and bypass load switch, disconnecting the LDO from the input power supply, and pulls VIN_LDO low. The 'Isolated' option allows you to power the LDO directly through the VIN_LDO solder pad on the board, bypassing the input stage entirely. WARNING! - when using this option, ensure you do not use the other LDO input voltage options while an external power supply is supplying power to the LDO through the VIN_LDO solder pad. See the Platform Content page for more information about the options for supplying the LDO input voltage.", 9, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. The 'Bypass' option connects the LDO input directly to VIN_SB through a load switch. The 'Buck Regulator' option allows adjustment of the input voltage to the LDO through an adjustable output voltage buck regulator. The 'Off' option disables both the input buck regulator and bypass load switch, disconnecting the LDO from the input power supply, and pulls VIN_LDO low. The 'Direct' option allows you to power the LDO directly through the VIN_LDO solder pad on the board, bypassing the input stage entirely. WARNING! - when using this option, ensure you do not use the other LDO input voltage options while an external power supply is supplying power to the LDO through the VIN_LDO solder pad. See the Platform Content page for more information about the options for supplying the LDO input voltage.", 9, "AdjLDOBasicHelp")
         Help.registerTarget(vinGoodLabel, "This indicator will be green when:\na.) VIN is greater than 2.5V when the input buck regulator is enabled\nb.) VIN is greater than 1.5V when it is disabled.", 10, "AdjLDOBasicHelp")
         Help.registerTarget(ldoInputVolSliderLabel, "This slider allows you to set the desired input voltage of the LDO when being supplied by the input buck regulator. The value can be set while the input buck regulator is not being used and the voltage will automatically be adjusted as needed whenever the input buck regulator is activated again.", 11, "AdjLDOBasicHelp")
         Help.registerTarget(externalInputVoltageLabel, "This info box shows the external input voltage applied to the input banana plugs (VIN_EXT).", 12, "AdjLDOBasicHelp")
@@ -75,9 +76,25 @@ Item {
 
     property var control_states: platformInterface.control_states
     onControl_statesChanged: {
-        if(control_states.vin_sel === "USB 5V")  boardInputComboBox.currentIndex = 0
-        else if(control_states.vin_sel === "External") boardInputComboBox.currentIndex = 1
-        else if (control_states.vin_sel === "Off") boardInputComboBox.currentIndex = 2
+
+        if(control_states.vin_sel === "USB 5V")  {
+            if (setLoadCurrent.value > 300) {
+                setLoadCurrent.value = 300
+            }
+            setLoadCurrent.to = 300
+            setLoadCurrent.toText.text = "300mA"
+            boardInputComboBox.currentIndex = 0
+        }
+        else if(control_states.vin_sel === "External") {
+            setLoadCurrent.to = 650
+            setLoadCurrent.toText.text = "650mA"
+            boardInputComboBox.currentIndex = 1
+        }
+        else if (control_states.vin_sel === "Off") {
+            setLoadCurrent.to = 650
+            setLoadCurrent.toText.text = "650mA"
+            boardInputComboBox.currentIndex = 2
+        }
 
         if(control_states.vin_ldo_sel === "Bypass") {
             vinGoodThreshText = "\n (Above 1.5V)"
@@ -88,9 +105,11 @@ Item {
             ldoInputComboBox.currentIndex = 1
         }
         else if (control_states.vin_ldo_sel === "Off") {
+            vinGoodThreshText = "\n (Above 1.5V)"
             ldoInputComboBox.currentIndex = 2
         }
-        else if (control_states.vin_ldo_sel === "Isolated") {
+        else if (control_states.vin_ldo_sel === "Direct") {
+            vinGoodThreshText = "\n (Above 1.5V)"
             ldoInputComboBox.currentIndex = 3
         }
 
@@ -406,8 +425,7 @@ Item {
                     anchors.fill:parent
                     text: "Damage to the board and/or external supply may result from applying power from the input power stage" +
                           " of the board to the LDO while simultaneously directly applying external power to the LDO through the solder pads." +
-                          " Click OK to acknowledge and proceed with changing the LDO input voltage option or Cancel to keep the LDO isolated from" +
-                          " the input power stage."
+                          " Click OK to acknowledge and proceed with changing the LDO input voltage option or Cancel to abort."
                     verticalAlignment:  Text.AlignVCenter
                     wrapMode: Text.WordWrap
                     fontSizeMode: Text.Fit
@@ -474,6 +492,7 @@ Item {
 
     ColumnLayout {
         anchors.fill :parent
+        anchors.margins: 10
 
         Rectangle {
             Layout.fillWidth: true
@@ -495,7 +514,7 @@ Item {
         Rectangle {
             Layout.fillWidth: true
             //Layout.fillHeight: true
-            Layout.preferredHeight: (root.height - 10) * (1/3)
+            Layout.preferredHeight: (root.height - 10) * (1/4)
             color: "transparent"
 
             RowLayout {
@@ -517,8 +536,8 @@ Item {
                             SGAlignedLabel {
                                 id: tempLabel
                                 target: tempGauge
-                                text: "Board \n Temperature"
-                                margin: -10
+                                text: "Board Temperature"
+                                margin: -5
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier:  ratioCalc
                                 font.bold : true
@@ -530,7 +549,7 @@ Item {
                                     minimumValue: -55
                                     maximumValue: 125
                                     width: tempGaugeContainer.width
-                                    height: tempGaugeContainer.height/1.6
+                                    height: tempGaugeContainer.height - tempLabel.contentHeight
                                     anchors.centerIn: parent
                                     gaugeFillColor1: "blue"
                                     gaugeFillColor2: "red"
@@ -566,7 +585,7 @@ Item {
                                 id: efficiencyLabel
                                 target: efficiencyGauge
                                 text: "Efficiency"
-                                margin: -10
+                                margin: -5
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier:  ratioCalc
@@ -581,7 +600,7 @@ Item {
                                     gaugeFillColor1: "red"
                                     gaugeFillColor2:  "green"
                                     width: efficiencyGaugeContainer.width
-                                    height: efficiencyGaugeContainer.height/1.6
+                                    height: efficiencyGaugeContainer.height - efficiencyLabel.contentHeight
                                     anchors.centerIn: parent
                                     unitText: "%"
                                     unitTextFontSizeMultiplier: ratioCalc * 2.5
@@ -602,7 +621,7 @@ Item {
                                 id: powerDissipatedLabel
                                 target: powerDissipatedGauge
                                 text: "Power Loss"
-                                margin: -10
+                                margin: -5
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier:   ratioCalc
@@ -617,7 +636,7 @@ Item {
                                     gaugeFillColor1:"green"
                                     gaugeFillColor2:"red"
                                     width: powerDissipatedContainer.width
-                                    height: powerDissipatedContainer.height/1.6
+                                    height: powerDissipatedContainer.height - powerDissipatedLabel.contentHeight
                                     anchors.centerIn: parent
                                     unitTextFontSizeMultiplier: ratioCalc * 2.5
                                     unitText: "W"
@@ -638,7 +657,7 @@ Item {
                                 id: outputPowerLabel
                                 target: powerOutputGauge
                                 text: "Output Power"
-                                margin: -10
+                                margin: -5
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier: ratioCalc
@@ -653,7 +672,7 @@ Item {
                                     gaugeFillColor1:"green"
                                     gaugeFillColor2:"red"
                                     width: outputPowerContainer.width
-                                    height: outputPowerContainer.height/1.6
+                                    height: outputPowerContainer.height - outputPowerLabel.contentHeight
                                     anchors.centerIn: parent
                                     unitText: "W"
                                     valueDecimalPlaces: 3
@@ -687,6 +706,8 @@ Item {
 
                                 SGStatusLight {
                                     id: vinReadyLight
+                                    height: 40
+                                    width: 40
                                     property var vin_ldo_good: platformInterface.int_status.vin_ldo_good
                                     onVin_ldo_goodChanged: {
                                         if(vin_ldo_good === true)
@@ -713,6 +734,8 @@ Item {
 
                                 SGStatusLight {
                                     id: pgoodLight
+                                    height: 40
+                                    width: 40
                                     property var int_pg_ldo:  platformInterface.int_status.int_pg_ldo
                                     onInt_pg_ldoChanged: {
                                         if(int_pg_ldo === true && pgoodLabel.enabled)
@@ -739,6 +762,8 @@ Item {
 
                                 SGStatusLight {
                                     id: intLdoTemp
+                                    height: 40
+                                    width: 40
                                     property var int_ldo_temp: platformInterface.int_status.int_ldo_temp
                                     onInt_ldo_tempChanged: {
                                         if(int_ldo_temp === true)
@@ -757,7 +782,7 @@ Item {
         Rectangle {
             Layout.fillWidth: true
             //Layout.fillHeight: true
-            Layout.preferredHeight: (root.height - 10) * (7/12)
+            Layout.preferredHeight: (root.height - 10) * (2/3)//(7/12)
             color: "transparent"
 
             RowLayout {
@@ -765,7 +790,9 @@ Item {
                 anchors.bottomMargin: 20
 
                 Rectangle {
-                    Layout.fillWidth: true
+                    id: inputConfigurationContainer
+                    //Layout.fillWidth: true
+                    Layout.preferredWidth: (parent.width - middleLine.width - middleLine2.width) * (1/3)
                     Layout.fillHeight: true
                     color: "transparent"
 
@@ -777,7 +804,7 @@ Item {
                             font.bold: true
                             text: "Input Configuration"
                             font.pixelSize: ratioCalc * 20
-                            Layout.topMargin: 20
+                            Layout.topMargin: 10
                             color: "#696969"
                             Layout.leftMargin: 20
 
@@ -787,7 +814,7 @@ Item {
                             id: line
                             Layout.preferredHeight: 2
                             Layout.alignment: Qt.AlignCenter
-                            Layout.preferredWidth: parent.width + 10
+                            Layout.preferredWidth: parent.width
                             border.color: "lightgray"
                             radius: 2
                         }
@@ -798,6 +825,7 @@ Item {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 anchors.fill: parent
+                                anchors.rightMargin: 10
 
                                 Rectangle {
                                     Layout.preferredHeight: parent.height  * (5/12)
@@ -805,9 +833,10 @@ Item {
                                     //color: "red"
                                     Image {
                                         id: blockDiagram
-                                        source: "PowerFlowDiagram.png"
-                                        fillMode: Image.Stretch//Image.PreserveAspectFit
+                                        source: "images/PowerFlowDiagram.png"
+                                        fillMode: Image.PreserveAspectFit//Stretch//PreserveAspectFit
                                         anchors.fill: parent
+                                        anchors.margins: 5
                                     }
                                 }
 
@@ -828,9 +857,12 @@ Item {
                                             SGAlignedLabel {
                                                 id: boardInputLabel
                                                 target: boardInputComboBox
-                                                text: "Board Input \nVoltage Selection"
+                                                text: "Upstream Supply\nVoltage Selection"
                                                 alignment: SGAlignedLabel.SideTopLeft
-                                                anchors.centerIn: parent
+                                                //anchors.centerIn: parent
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 20
+                                                anchors.verticalCenter: parent.verticalCenter
                                                 fontSizeMultiplier: ratioCalc
                                                 font.bold : true
 
@@ -853,7 +885,7 @@ Item {
                                             SGAlignedLabel {
                                                 id: ldoPackageLabel
                                                 target: ldoPackageComboBox
-                                                text: "LDO Package \nSelection"
+                                                text: "Populated LDO\nPackage"
                                                 alignment: SGAlignedLabel.SideTopLeft
                                                 anchors.centerIn: parent
                                                 fontSizeMultiplier: ratioCalc
@@ -906,16 +938,19 @@ Item {
                                                 target: ldoInputComboBox
                                                 text: "LDO Input \nVoltage Selection"
                                                 alignment: SGAlignedLabel.SideTopLeft
-                                                anchors.centerIn: parent
+                                                //anchors.centerIn: parent
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 20
+                                                anchors.verticalCenter: parent.verticalCenter
                                                 fontSizeMultiplier: ratioCalc
                                                 font.bold : true
 
                                                 SGComboBox {
                                                     id: ldoInputComboBox
                                                     fontSizeMultiplier: ratioCalc
-                                                    model: ["Bypass", "Buck Regulator", "Off", "Isolated"]
+                                                    model: ["Bypass", "Buck Regulator", "Off", "Direct"]
                                                     onActivated: {
-                                                        if (prevVinLDOSel === "Isolated") {
+                                                        if (prevVinLDOSel === "Direct") {
                                                             newVinLDOSel = currentText
                                                             if (!warningPopupLDOInput.opened & !((newVinLDOSel === prevVinLDOSel) || (newVinLDOSel === "Off"))) {
                                                                 warningPopupLDOInput.open()
@@ -951,6 +986,8 @@ Item {
 
                                                 SGStatusLight {
                                                     id: vinGood
+                                                    height: 40
+                                                    width: 40
                                                     property var vin_good: platformInterface.int_status.vin_good
                                                     onVin_goodChanged: {
                                                         if(vin_good === true && vinGoodLabel.enabled)
@@ -976,7 +1013,7 @@ Item {
                                         text:"Set LDO Input Voltage"
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors.centerIn: parent
-                                        anchors.verticalCenterOffset: -(parent.height * 0.15)
+                                        anchors.verticalCenterOffset: -(parent.height * 0.1)
                                         fontSizeMultiplier: ratioCalc
                                         font.bold : true
 
@@ -1014,27 +1051,22 @@ Item {
                 }
 
                 Rectangle {
-                    Layout.fillWidth: true
+                    id: telemetryContainer
+                    //Layout.fillWidth: true
+                    Layout.preferredWidth: (parent.width - middleLine.width - middleLine2.width) * (1/3)
                     Layout.fillHeight: true
-
-                    Rectangle {
-                        anchors {
-                            fill:parent
-                            left: parent.left
-                            leftMargin: -5
-                        }
-                        color: "transparent"
 
                         ColumnLayout {
                             id: inputReadingContainer
                             anchors.fill: parent
+                            //anchors.margins: 10
 
                             Text {
                                 id: inputReadingText
                                 font.bold: true
                                 text: "Telemetry"
                                 font.pixelSize: ratioCalc * 20
-                                Layout.topMargin: 20
+                                Layout.topMargin: 10
                                 color: "#696969"
                                 Layout.leftMargin: 20
 
@@ -1044,7 +1076,7 @@ Item {
                                 id: line2
                                 Layout.preferredHeight: 2
                                 Layout.alignment: Qt.AlignCenter
-                                Layout.preferredWidth: inputReadingContainer.width + 10
+                                Layout.preferredWidth: parent.width
                                 border.color: "lightgray"
                                 radius: 2
                             }
@@ -1064,8 +1096,8 @@ Item {
                                         anchors.centerIn: warningBox
                                         font.bold: true
                                         text : warningTextIs
-                                        // text: "<b>DO NOT exceed LDO input voltage of 5.5V</b>"
-                                        font.pixelSize:  ratioCalc * 12
+                                        // text: "<b>DO NOT exceed LDO input voltage of 5V</b>"
+                                        font.pixelSize:  ratioCalc * 15
                                         color: "white"
                                     }
 
@@ -1078,7 +1110,7 @@ Item {
                                         }
                                         text: "\ue80e"
                                         font.family: Fonts.sgicons
-                                        font.pixelSize:  ratioCalc * 14
+                                        font.pixelSize:  ratioCalc * 15
                                         color: "white"
                                     }
 
@@ -1091,7 +1123,7 @@ Item {
                                         }
                                         text: "\ue80e"
                                         font.family: Fonts.sgicons
-                                        font.pixelSize:  ratioCalc * 14
+                                        font.pixelSize:  ratioCalc * 15
                                         color: "white"
                                     }
                                 }
@@ -1118,9 +1150,11 @@ Item {
                                             id: externalInputVoltageLabel
                                             target: externalInputVoltage
                                             text: "External Input Voltage \n(VIN_EXT)"
-                                            alignment: SGAlignedLabel.SideTopCenter
-                                            anchors.centerIn: parent
-//                                            anchors.verticalCenter: parent.verticalCenter
+                                            alignment: SGAlignedLabel.SideTopLeft//SideTopCenter
+                                            //anchors.centerIn: parent
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 20
+                                            anchors.verticalCenter: parent.verticalCenter
 //                                            anchors.horizontalCenter: parent.horizontalCenter
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
@@ -1147,11 +1181,12 @@ Item {
                                         SGAlignedLabel {
                                             id: usb5VVoltageLabel
                                             target: usb5VVoltage
-                                            text: "  USB 5V Voltage  \n(5V_USB)"
-                                            alignment: SGAlignedLabel.SideTopCenter
-                                            anchors.centerIn: parent
-//                                            anchors.verticalCenter: parent.verticalCenter
-//                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            text: "USB 5V Voltage  \n(5V_USB)"
+                                            alignment: SGAlignedLabel.SideTopLeft//SideTopCenter
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 20
+                                            anchors.verticalCenter: parent.verticalCenter
+//                                            anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
@@ -1193,10 +1228,11 @@ Item {
                                             id: ldoInputVoltageLabel
                                             target: ldoInputVoltage
                                             text: "LDO Input Voltage \n(VIN_LDO)"
-                                            alignment: SGAlignedLabel.SideTopCenter
-                                            anchors.centerIn: parent
-//                                            anchors.verticalCenter: parent.verticalCenter
-//                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            alignment: SGAlignedLabel.SideTopLeft//SideTopCenter
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 20
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            //anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
@@ -1222,10 +1258,11 @@ Item {
                                             id: ldoOutputVoltageLabel
                                             target: ldoOutputVoltage
                                             text: "LDO Output Voltage \n(VOUT_LDO)"
-                                            alignment: SGAlignedLabel.SideTopCenter
-                                            anchors.centerIn: parent
-//                                            anchors.verticalCenter: parent.verticalCenter
-//                                            anchors.horizontalCenter: usb5VVoltageContainer.horizontalCenter
+                                            alignment: SGAlignedLabel.SideTopLeft//SideTopCenter
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 20
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            //anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
@@ -1265,11 +1302,12 @@ Item {
                                         SGAlignedLabel {
                                             id: boardInputCurrentLabel
                                             target: boardInputCurrent
-                                            text: "Board Input Current \n(IIN)"
-                                            alignment: SGAlignedLabel.SideTopCenter
-                                            anchors.centerIn: parent
-//                                            anchors.verticalCenter: parent.verticalCenter
-//                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            text: "Upstream Supply Current \n(IIN)"
+                                            alignment: SGAlignedLabel.SideTopLeft//SideTopCenter
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 20
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            //anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
@@ -1295,10 +1333,11 @@ Item {
                                             id: ldoOutputCurrentLabel
                                             target: ldoOutputCurrent
                                             text: "LDO Output Current \n(IOUT)"
-                                            alignment: SGAlignedLabel.SideTopCenter
-                                            anchors.centerIn: parent
-//                                            anchors.verticalCenter: parent.verticalCenter
-//                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            alignment: SGAlignedLabel.SideTopLeft//SideTopCenter
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 20
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            //anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
 
@@ -1317,7 +1356,6 @@ Item {
                                 }
                             }
                         }
-                    }
                 }
 
                 Rectangle {
@@ -1330,7 +1368,9 @@ Item {
                 }
 
                 Rectangle {
-                    Layout.fillWidth: true
+                    id:outputConfigurationContainerBox
+                    //Layout.fillWidth: true
+                    Layout.preferredWidth: (parent.width - middleLine.width - middleLine2.width) * (1/3)
                     Layout.fillHeight: true
 
                     ColumnLayout {
@@ -1342,7 +1382,7 @@ Item {
                             font.bold: true
                             text: "Output Configuration"
                             font.pixelSize: ratioCalc * 20
-                            Layout.topMargin: 20
+                            Layout.topMargin: 10
                             color: "#696969"
                             Layout.leftMargin: 20
                         }
@@ -1351,9 +1391,9 @@ Item {
                             id: line4
                             Layout.preferredHeight: 2
                             Layout.alignment: Qt.AlignCenter
-                            Layout.preferredWidth: inputReadingContainer.width
+                            Layout.preferredWidth: parent.width
                             border.color: "lightgray"
-                            Layout.leftMargin: -10
+                            //Layout.leftMargin: 10
                             radius: 2
                         }
 
@@ -1398,6 +1438,7 @@ Item {
                             Layout.fillWidth: true
 
                             Rectangle {
+                                id: ldoEnableContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 color: "transparent"
@@ -1413,6 +1454,7 @@ Item {
 
                                     SGSwitch {
                                         id: ldoEnableSwitch
+                                        anchors.verticalCenter: parent.verticalCenter
                                         labelsInside: true
                                         checkedLabel: "On"
                                         uncheckedLabel:   "Off"
@@ -1430,6 +1472,7 @@ Item {
                             }
 
                             Rectangle {
+                                id:ldoDisableContainer
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 color: "transparent"
@@ -1445,6 +1488,7 @@ Item {
 
                                     SGSwitch {
                                         id: ldoDisable
+                                        anchors.verticalCenter: parent.verticalCenter
                                         labelsInside: true
                                         checkedLabel: "Yes"
                                         uncheckedLabel:   "No"
@@ -1544,6 +1588,7 @@ Item {
                                     target: extLoadCheckbox
                                     text: "External Load \n Connected?"
                                     horizontalAlignment: Text.AlignHCenter
+                                    margin: -5
                                     font.bold : true
                                     font.italic: true
                                     alignment: SGAlignedLabel.SideTopCenter

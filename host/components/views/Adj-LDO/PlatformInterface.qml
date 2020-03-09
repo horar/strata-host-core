@@ -26,7 +26,8 @@ Item {
         "eff_tot":"62.7",       //Total system efficiency
         "board_temp":"24.2",	//Board temperature
         "ldo_temp":"23.0",      //LDO temperature
-        "ldo_clim_thresh":"580.0" //LDO current limit threshold
+        "ldo_clim_thresh":"580.0", //LDO current limit threshold
+        "tsd_thresh":"125"      //LDO TSD threshold
     }
 
     property var control_states: {
@@ -49,7 +50,7 @@ Item {
         "ldo_clim":false,		//LDO current limit reached flag
         "dropout":false,		//LDO dropout threshold notification
         "ocp":false,			//LDO short-circuit protection notification
-        "tsd":false,		   //LDO TSD notification
+        "tsd":false,            //LDO TSD notification
     }
 
     property var variant_name: {
@@ -61,6 +62,10 @@ Item {
     }
 
     property var config_running: {
+        "value":false
+    }
+
+    property var sc_allowed: {
         "value":false
     }
 
@@ -269,23 +274,6 @@ Item {
                                  send: function () { CorePlatformInterface.send(this) },
                                  show: function () { CorePlatformInterface.show(this) }
                              })
-
-    property var set_sb_mode : ({
-                                    "cmd" : "set_sb_mode",
-                                    "payload": {
-                                        "value" : "pwm"
-                                    },
-
-                                    update: function (value) {
-                                        this.set(value)
-                                        this.send(this)
-                                    },
-                                    set: function (value) {
-                                        this.payload.value = value
-                                    },
-                                    send: function () { CorePlatformInterface.send(this) },
-                                    show: function () { CorePlatformInterface.show(this) }
-                                })
 
     property var enable_sc: ({
                                  "cmd" : "enable_sc",
