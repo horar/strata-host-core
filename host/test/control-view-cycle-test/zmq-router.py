@@ -1,0 +1,108 @@
+import json
+import time
+
+import zmq
+
+# Default zmq address
+defZmqURL = "tcp://127.0.0.1:5563"
+
+# Hardcoded uuid list from ---> spyglass/host/apps/DeveloperStudio/js/uuid_map.js
+uuidList = ["101", "201", "202", "203", "204", "206", "207", "208", "209", "210", "211", "212", "213", "214", "215", "216", "217", "218", "219",
+            "220", "221", "222", "225", "226", "227", "228", "229", "230", "231", "232", "233", "238", "239", "240", "243", "244", "245", "246", "265"]
+
+# Sample commands
+returnToPlatListRes = b'{"hcs::notification":{"list":[],"type":"connected_platforms"}}'
+emptyDynamicPlatformList = b'{"hcs::notification":{"list":[],"type":"all_platforms"}}'
+
+# Open and parse dynamic platform list json file, the file was modified to not have hardcoded img paths
+with open('./DynamicPlatformList.json') as f:
+    dynamicPlatformList = json.load(f)
+
+# function to print line seperator, to make the code more neat :)
+def printLineSep(charSym='='):
+    for i in range(150):
+        print(charSym, end='')
+    print()
+
+# function to get the dynamic platform list from hcs, keep it for future refrence
+def getRealHcsRes():
+    tempContext = zmq.Context()
+    printLineSep()
+    print("Connecting to hcs...")
+    tempSocket = tempContext.socket(zmq.DEALER)
+    tempSocket.setsockopt(zmq.IDENTITY, b'pyscript')
+    tempSocket.connect(defZmqURL)
+    print("Connected to hcs...")
+
+    tempSocket.send(b'{"cmd":"register_client"}')  # no response..
+    print("Register client message sent...")
+
+    tempSocket.send(b'{"hcs::cmd":"dynamic_platform_list","payload":{}}')
+    print("Waiting for the dynamic platform list...")
+    message = tempSocket.recv()
+    print("Received reply [ %s ]" % (message))
+    printLineSep()
+
+# Utility function to send commands to the ui
+def sendOpenPlatformCtrlView(classID):
+    myEncodedStr = bytes(
+        "{\"hcs::notification\":{\"list\":[{\"class_id\":\"%s\",\"connection\":\"connected\",\"verbose_name\":\"\"}],\"type\":\"connected_platforms\"}}" % classID, 'utf-8')
+    
+    print("sending:", myEncodedStr, "...")
+    client.send_multipart([strata_id, myEncodedStr])
+    print("Sent.")
+    time.sleep(3)
+    print("Returning to platform selector page...")
+    client.send_multipart([strata_id, returnToPlatListRes])
+    printLineSep()
+    time.sleep(1)
+
+# send commands to open the control views of the platforms from the hardcoded UUID list
+def useHardcoddedUUIDList():
+    for platform in uuidList:
+        sendOpenPlatformCtrlView(platform)
+
+# send commands to open the control views of the platforms from the dynamic platform list
+def useDynamicPlatformList():
+    # parse the dynamic platform list
+    data = json.loads(dynamicPlatformList)
+    for platform in data["hcs::notification"]["list"]:
+        sendOpenPlatformCtrlView(platform["class_id"])
+
+# Create zmq router to connect to the UI
+context = zmq.Context.instance()
+client = context.socket(zmq.ROUTER)
+client.setsockopt(zmq.IDENTITY, b'zmqRouterTest')
+client.bind(defZmqURL)
+
+# get client id of starta UI
+printLineSep()
+printLineSep()
+print("Waiting for Strata Developer Studio to connect...")
+strata_id = client.recv()
+print("Strata id is [ %s ]" % (strata_id))
+printLineSep()
+printLineSep()
+
+# While loop until we close Strata..
+while True:
+    print("waiting for response..")
+    message = client.recv()
+    print("Received reply [ %s ]" % (message))
+    printLineSep()
+
+    if (message == b'{"hcs::cmd":"dynamic_platform_list","payload":{}}'):
+
+        # send the platform list and wait
+        # client.send_multipart([strata_id, emptyDynamicPlatformList])
+        client.send_multipart(
+            [strata_id, bytes(json.dumps(dynamicPlatformList), 'utf-8')])
+        time.sleep(1)
+        # useDynamicPlatformList()
+        useHardcoddedUUIDList()
+        print("Done.")
+    elif (message == b'{"cmd":"unregister","payload":{}}'):
+        printLineSep()
+        print("Strata UI was closed. Exitting...")
+        printLineSep()
+        quit()
