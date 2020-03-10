@@ -35,7 +35,7 @@ Rectangle {
                 height: 40
 
                 Text {
-                    text: "Debug (inject fake platform notifications):"
+                    text: "Debug"
                     anchors {
                         verticalCenter: header.verticalCenter
                         left: header.left
@@ -54,65 +54,71 @@ Rectangle {
                 }
             }
 
-            Button {
-                id: lightsOn
-                text: "light on"
-                onClicked: {
-                    CorePlatformInterface.data_source_handler('{
-                                "value":"motor_running_notification",
+            Row{
+                Button {
+                    id: lightsOn
+                    text: "light on"
+                    onClicked: {
+                        CorePlatformInterface.data_source_handler('{
+                                "value":"toggle_light_notification",
                                 "payload":{
-                                         "running": true
+                                         "value": "on"
                                 }
                         }')
+                    }
+                }
+
+                Button {
+                    id: lightsOff
+                    text: "light off"
+                    onClicked: {
+                        CorePlatformInterface.data_source_handler('{
+                                "value":"toggle_light_notification",
+                                "payload":{
+                                         "value": "off"
+                                }
+                        }')
+                    }
                 }
             }
 
-            Button {
-                id: lightsOff
-                text: "light off"
-                onClicked: {
-                    CorePlatformInterface.data_source_handler('{
-                                "value":"motor_running_notification",
+            Row{
+                Button {
+                    id: doorOpen
+                    text: "door open"
+                    onClicked: {
+                        CorePlatformInterface.data_source_handler('{
+                                "value":"toggle_door_notification",
                                 "payload":{
-                                         "running": false
+                                         "value": "open"
                                 }
                         }')
+                    }
                 }
-            }
 
-            Button {
-                id: doorOpen
-                text: "door open"
-                onClicked: {
-                    CorePlatformInterface.data_source_handler('{
-                                "value":"motor_speed_notification",
+                Button {
+                    id: doorClosed
+                    text: "door closed"
+                    onClicked: {
+                        CorePlatformInterface.data_source_handler('{
+                                "value":"toggle_door_notification",
                                 "payload":{
-                                         "speed": ' + (Math.random()*100).toFixed(2) + '
+                                         "value": "closed"
                                 }
                         }')
+                    }
                 }
             }
-
-            Button {
-                id: doorClosed
-                text: "door closed"
-                onClicked: {
-                    CorePlatformInterface.data_source_handler('{
-                                "value":"motor_speed_notification",
-                                "payload":{
-                                         "speed": ' + (Math.random()*100).toFixed(2) + '
-                                }
-                        }')
-                }
-            }
+            Row{
             Button {
                 id: blueColor
                 text: "blue"
+                width:75
                 onClicked: {
                     CorePlatformInterface.data_source_handler('{
-                                "value":"motor_speed_notification",
+                                "value":"room_color_notification",
                                 "payload":{
-                                         "speed": ' + (Math.random()*100).toFixed(2) + '
+                                         "color": "blue"
                                 }
                         }')
                 }
@@ -120,11 +126,12 @@ Rectangle {
             Button {
                 id: greenColor
                 text: "green"
+                width:75
                 onClicked: {
                     CorePlatformInterface.data_source_handler('{
-                                "value":"motor_speed_notification",
+                                "value":"room_color_notification",
                                 "payload":{
-                                         "speed": ' + (Math.random()*100).toFixed(2) + '
+                                         "color": "green"
                                 }
                         }')
                 }
@@ -132,11 +139,12 @@ Rectangle {
             Button {
                 id: purpleColor
                 text: "purple"
+                width:75
                 onClicked: {
                     CorePlatformInterface.data_source_handler('{
-                                "value":"motor_speed_notification",
+                                "value":"room_color_notification",
                                 "payload":{
-                                         "speed": ' + (Math.random()*100).toFixed(2) + '
+                                         "color": "purple"
                                 }
                         }')
                 }
@@ -144,15 +152,17 @@ Rectangle {
             Button {
                 id: redColor
                 text: "red"
+                width:75
                 onClicked: {
                     CorePlatformInterface.data_source_handler('{
-                                "value":"motor_speed_notification",
+                                "value":"room_color_notification",
                                 "payload":{
-                                         "speed": ' + (Math.random()*100).toFixed(2) + '
+                                         "color": "red"
                                 }
                         }')
                 }
             }
+            }//row
         }
     }
 
