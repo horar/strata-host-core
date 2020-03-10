@@ -131,6 +131,7 @@ SGWidgets.SGDialog {
                         width: contentRow.width
                         height: contentRow.height
 
+                        enabled: disableAllFiltering === false
                         onActiveFocusChanged: {
                             if (delegate.activeFocus) {
                                 conditionView.currentIndex =  index
@@ -263,6 +264,7 @@ SGWidgets.SGDialog {
                     id: addButton
                     iconColor: "green"
                     icon.source: "qrc:/sgimages/plus.svg"
+                    enabled: disableAllFiltering === false
 
                     onClicked: {
                         if(filterConditionModel.count > 10) {

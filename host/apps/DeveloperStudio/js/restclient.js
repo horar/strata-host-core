@@ -9,6 +9,14 @@ var jwt = '';
 var session = '';
 var cachedState
 
+// Attempt to read authentication server endpoint from QtSettings/INI file ("Login" category)
+// Use default (production) endpoint if variable 'authentication_server' is undefined/empty
+var get_auth_server = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"Login\";}", Qt.application)
+if (get_auth_server.value("authentication_server")) {
+    console.log(LoggerModule.Logger.devStudioLoginCategory, "Found 'authentication_server' field in INI file (" + get_auth_server.value("authentication_server") + ")")
+    url = get_auth_server.value("authentication_server")
+}
+
 var xhr = function(method, endpoint, data, callback, errorCallback, signals, headers) {
     cachedState = {
         "status": -1,
