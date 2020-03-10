@@ -95,7 +95,7 @@ Item {
                     else
                         return "0.00"
                 }
-                valueSize: 32
+                valueSize: 48
                 icon: "../images/icon-voltage.svg"
                 unit: "V"
                 anchors.top: combinedStatsBackgroundRect.bottom

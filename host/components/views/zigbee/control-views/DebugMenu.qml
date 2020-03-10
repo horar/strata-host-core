@@ -55,8 +55,8 @@ Rectangle {
             }
 
             Button {
-                id: motorRunningTrue
-                text: "Send motor_running_notification, 'running': true"
+                id: lightsOn
+                text: "light on"
                 onClicked: {
                     CorePlatformInterface.data_source_handler('{
                                 "value":"motor_running_notification",
@@ -68,8 +68,8 @@ Rectangle {
             }
 
             Button {
-                id: motorRunningFalse
-                text: "Send motor_running_notification, 'running': false"
+                id: lightsOff
+                text: "light off"
                 onClicked: {
                     CorePlatformInterface.data_source_handler('{
                                 "value":"motor_running_notification",
@@ -81,8 +81,69 @@ Rectangle {
             }
 
             Button {
-                id: motorSpeed
-                text: "Send motor_speed_notification, 'speed': random"
+                id: doorOpen
+                text: "door open"
+                onClicked: {
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"motor_speed_notification",
+                                "payload":{
+                                         "speed": ' + (Math.random()*100).toFixed(2) + '
+                                }
+                        }')
+                }
+            }
+
+            Button {
+                id: doorClosed
+                text: "door closed"
+                onClicked: {
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"motor_speed_notification",
+                                "payload":{
+                                         "speed": ' + (Math.random()*100).toFixed(2) + '
+                                }
+                        }')
+                }
+            }
+            Button {
+                id: blueColor
+                text: "blue"
+                onClicked: {
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"motor_speed_notification",
+                                "payload":{
+                                         "speed": ' + (Math.random()*100).toFixed(2) + '
+                                }
+                        }')
+                }
+            }
+            Button {
+                id: greenColor
+                text: "green"
+                onClicked: {
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"motor_speed_notification",
+                                "payload":{
+                                         "speed": ' + (Math.random()*100).toFixed(2) + '
+                                }
+                        }')
+                }
+            }
+            Button {
+                id: purpleColor
+                text: "purple"
+                onClicked: {
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"motor_speed_notification",
+                                "payload":{
+                                         "speed": ' + (Math.random()*100).toFixed(2) + '
+                                }
+                        }')
+                }
+            }
+            Button {
+                id: redColor
+                text: "red"
                 onClicked: {
                     CorePlatformInterface.data_source_handler('{
                                 "value":"motor_speed_notification",

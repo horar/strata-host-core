@@ -120,7 +120,7 @@ Rectangle {
                     CorePlatformInterface.data_source_handler('{
                                 "value":"usb_pd_port_connect",
                                 "payload":{
-                                    "port": "USB_C_port_1",
+                                    "port": "1",
                                     "connection_state": "connected"
                                 }
                         }')
@@ -133,7 +133,7 @@ Rectangle {
                     CorePlatformInterface.data_source_handler('{
                                 "value":"usb_pd_port_connect",
                                 "payload":{
-                                    "port": "USB_C_port_1",
+                                    "port": "1",
                                     "connection_state": "disconnected"
                                 }
                         }')

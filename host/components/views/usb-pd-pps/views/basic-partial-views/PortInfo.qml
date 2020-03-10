@@ -213,6 +213,7 @@ Rectangle {
                         portColor: root.portColor
                         unit: "V"
                         height: (root.height - 10)/4
+                        valueSize: 48
                     }
 
                     PortStatBox {
@@ -223,6 +224,7 @@ Rectangle {
                         portColor: root.portColor
                         unit: "°C"
                         height: (root.height - 10)/4
+                        valueSize: 48
                     }
 
                     PortStatBox {
@@ -233,17 +235,10 @@ Rectangle {
                         portColor: root.portColor
                         unit: "W"
                         height: (root.height - 10)/4
+                        valueSize: 48
                     }
 
-//                    PortStatBox {
-//                        id:efficencyBox
-//                        label: "EFFICIENCY"
-//                        //value: "92"
-//                        icon: "../images/icon-efficiency.svg"
-//                        portColor: root.portColor
-//                        unit: "%"
-//                        height: (root.height - 10)/4
-//                    }
+
                 }
             }
         }
