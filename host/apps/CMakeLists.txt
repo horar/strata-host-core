@@ -26,8 +26,6 @@ option(APPS_LV "Build 'LogViewer'" ON)
 add_feature_info(APPS_LV APPS_LV "LogViewer")
 option(APPS_WG "Build 'Widget Gallery'" ON)
 add_feature_info(APPS_WG APPS_WG "Widget Gallery")
-option(APPS_TEST_TEMPLATE "Build 'Test Template'" OFF)
-add_feature_info(APPS_TEST_TEMPLATE APPS_TEST_TEMPLATE "Test Template")
 
 if(APPS_HCS)
     if(APPS_HCS_V3)
@@ -67,8 +65,4 @@ endif()
 
 if (APPS_WG)
     add_subdirectory(WidgetGallery)
-endif()
-
-if (APPS_TEST_TEMPLATE)
-   add_subdirectory(TestingTemplate)
 endif()
