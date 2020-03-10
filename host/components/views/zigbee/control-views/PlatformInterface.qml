@@ -29,7 +29,7 @@ Item {
     }
 
     property var room_color_notification : {
-         "color": "blue",     // or "green","purple","red"
+         "color": "",     // or "green","purple","red"
     }
 
     property var msg_dbg:{      //debug strings
