@@ -157,7 +157,8 @@ Rectangle {
                     anchors {
                         verticalCenter: stats.verticalCenter
                     }
-                    width: stats.width/2-1
+                    //width: stats.width/2-1
+                    width: stats.width/4
                     spacing: 3
 
                     PortStatBox {
@@ -203,7 +204,7 @@ Rectangle {
                         verticalCenter: column1.verticalCenter
                     }
                     spacing: column1.spacing
-                    width: stats.width/2 - 2
+                    width: stats.width*.75
 
                     PortStatBox {
                         id:outputVoltageBox

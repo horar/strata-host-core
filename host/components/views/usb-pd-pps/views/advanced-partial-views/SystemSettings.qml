@@ -145,6 +145,7 @@ Item {
                 }
                 from: 5
                 to: 20
+                live:false
                 fromText.fontSizeMultiplier:.75
                 toText.fontSizeMultiplier: .75
                 fromText.text: "5V"
@@ -153,7 +154,7 @@ Item {
                 fillColor:"dimgrey"
                 enabled: faultProtectionIsOn
                 value: platformInterface.input_under_voltage_notification.minimum_voltage
-                onMoved: {
+                onUserSet: {
                     platformInterface.set_minimum_input_voltage.update(value);
                 }
             }
@@ -182,15 +183,16 @@ Item {
                 from: 20
                 to: 100
                 stepSize:5
+                fromText.text: "20 °C"
+                toText.text: "100 °C"
+                enabled: faultProtectionIsOn
+                live: false
                 fillColor:"dimgrey"
                 handleSize:20
                 fromText.fontSizeMultiplier:.75
                 toText.fontSizeMultiplier: .75
-                fromText.text: "20 °C"
-                toText.text: "100 °C"
-                enabled: faultProtectionIsOn
                 value: platformInterface.set_maximum_temperature_notification.maximum_temperature
-                onMoved: {
+                onUserSet: {
                     platformInterface.set_maximum_temperature.update(value);
                 }
             }
