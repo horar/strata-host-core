@@ -27,6 +27,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules")
 
+option(BUILD_TESTING "Build the testing tree." ON)
+enable_testing()
+
+include(SetupConfigurations)
 include(FeatureSummary)
 include(CMakeDependentOption)
 include(SetupCompileOptions)
