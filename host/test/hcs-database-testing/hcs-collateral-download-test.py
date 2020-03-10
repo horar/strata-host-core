@@ -8,11 +8,16 @@ try:
 except ImportError:
     print("\nZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions.\nExiting.\n")
     sys.exit(-1)
+if len(sys.argv) < 2:
+    print("\nError: no argument provided.\nInvoke as:\n'python hcs-collateral-download-test.py <HCS ENDPOINT>'.")
+    print("Example:\n'python hcs-collateral-download-test.py tcp://127.0.0.1:5563'.\nExiting.\n")
+    sys.exit(-1)
+hcs_endpoint = sys.argv[1]    
 
 # Open socket and connect it to HCS
 context = zmq.Context()
 socket = context.socket(zmq.DEALER)
-socket.connect("tcp://127.0.0.1:5563")
+socket.connect(hcs_endpoint)
 socket.RCVTIMEO = 10000 # HCS reply timeout (in milliseconds)
 
 # Send register_client command to HCS
@@ -61,4 +66,4 @@ for platform in platform_list:
     print(", received reply with " + str(len(file_list)) + " files to be automatically downloaded.")
     for file in file_list:
         print("\nChecking for file " + file["uri"])
-        print("OK, FILE FOUND") if True else print("FAILED, FILE NOT FOUND")
+        print("OK, FILE FOUND") if os.path.isfile(file["uri"]) else print("FAILED, FILE NOT FOUND")

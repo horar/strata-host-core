@@ -2,6 +2,9 @@
     Automated collateral download testing
 #>
 
+# Define HCS TCP endpoint to be used
+Set-Variable "HCS_TCP_endpoint" "tcp://127.0.0.1:5563"
+
 # Search for Python in local host machine
 Try {
     $python_ver = python -V
@@ -12,10 +15,12 @@ Try {
 }
 
 #  Search for Python script
-If (!(Test-Path socket.py)) {
-    ""; 'Error: Python script "socket.py" not found in current directory.'; "";
+If (!(Test-Path hcs-collateral-download-test.py)) {
+    ""; 'Error: Python script "hcs-collateral-download-test.py" not found in current directory.'; "";
     Exit
 }
 
 ""; "Running Python script...";
-python socket.py
+python hcs-collateral-download-test.py $HCS_TCP_endpoint
+
+""; "Testing complete."; ""; "";
