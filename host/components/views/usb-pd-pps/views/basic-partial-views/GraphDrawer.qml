@@ -149,7 +149,7 @@ Drawer {
             anchors.top: menuContainer.top
             height: root.graphHeight
 
-            title: "Port "+portNumber+ " Voltage"
+            title: " Voltage"
             xTitle: "Seconds"
             yTitle: "V"
             yMin: 0
@@ -216,7 +216,7 @@ Drawer {
             height: root.graphHeight
 
             // Optional graph settings:
-            title: "Port "+portNumber+ " Power"
+            title: "Power"
             xTitle: "Seconds"
             yTitle: "W"
             yMin: 0
@@ -281,7 +281,7 @@ Drawer {
             height: root.graphHeight
 
             // Optional graph settings:
-            title: "Port "+portNumber+ " Temperature" // Default: empty
+            title: " Temperature"
             xTitle: "Seconds"
             yTitle: "°C"
             yMin: 0
