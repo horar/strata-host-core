@@ -8,9 +8,13 @@ Set-Variable "HCS_TCP_endpoint" "tcp://127.0.0.1:5563"
 # Search for Python in local host machine
 Try {
     $python_ver = python -V
+    If ($null -Eq $python_ver) {
+        ""; "Error: Python not found."; "";
+        Exit
+    }
     ""; "Found $python_ver installed."
 } Catch [System.Management.Automation.CommandNotFoundException] {
-    ""; "Error: Python not found."
+    ""; "Error: Python not found."; "";
     Exit
 }
 
