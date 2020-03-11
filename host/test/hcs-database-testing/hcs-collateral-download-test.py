@@ -46,7 +46,7 @@ print(", received reply with " + str(len(platform_list)) + " platforms.")
 # Start main loop over each platform
 for platform in platform_list:
     print("\n" + 80 * "#" + "\n\nSending HCS notification for platform " + str(platform["class_id"]), end = '')
-    msg_to_HCS = '{"cmd":"platform_select","payload":{"platform_uuid":"' + str(platform["class_id"]) + '","remote":"connected"}}'
+    msg_to_HCS = '{"cmd":"platform_select","payload":{"platform_uuid":"' + str(platform["class_id"]) + '"}}'
     socket.send_string(msg_to_HCS)
     try:
         message = socket.recv()
