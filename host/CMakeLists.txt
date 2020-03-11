@@ -10,6 +10,8 @@ project(host
     LANGUAGES CXX
 )
 
+set(VERSION_QT5 5.12)
+
 # defaults; override in sub-projects if necessary
 set(PROJECT_COMPANY "ON Semiconductor")
 set(PROJECT_WIN32_ICO ${PROJECT_SOURCE_DIR}/resources/icons/app/on.ico)
@@ -18,7 +20,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(VERSION_QT5 5.12)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules")
 
@@ -32,6 +33,8 @@ include(GitVersionMacro)
 include(Timestamp)  # TODO: update the name of macro
 include(AddQmlImportPathMacro)
 
+# common for 'apps' and 'components' that use resource files
+add_qml_import_path(PATH ":/")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
