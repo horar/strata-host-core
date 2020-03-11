@@ -1,4 +1,5 @@
 project(rcc-util
+    DESCRIPTION "RCC files utility"
     LANGUAGES CXX
 )
 
@@ -18,16 +19,16 @@ add_executable(${PROJECT_NAME}
 
 generate_app_version(GITTAG_PREFIX "rccutil_" MACBUNDLE OFF)
 
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    AUTOMOC ON
 
+    OUTPUT_NAME ${PROJECT_NAME}
+)
 
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    AUTOMOC ON
-    #AUTORCC ON
-    #AUTORCC_OPTIONS "--compress;9"
-
-    OUTPUT_NAME ${PROJECT_NAME}
+target_include_directories(${PROJECT_NAME}
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
