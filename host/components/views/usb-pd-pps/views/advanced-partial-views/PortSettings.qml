@@ -32,15 +32,15 @@ Item {
 
             //when changing the value
             onActivated: {
-                console.log("setting max power to ",maxPowerOutput.comboBox.currentText);
-                platformInterface.set_usb_pd_maximum_power.update(portNumber,maxPowerOutput.comboBox.currentText)
+                console.log("setting max power to ",maxPowerOutput.currentText);
+                platformInterface.set_usb_pd_maximum_power.update(portNumber,maxPowerOutput.currentText)
             }
 
             //notification of a change from elsewhere
-            property var currentMaximumPower: platformInterface.usb_pd_maximum_power.current_max_power
+            property var currentMaximumPower: platformInterface.usb_pd_maximum_power.watts
             onCurrentMaximumPowerChanged: {
-                if (platformInterface.usb_pd_maximum_power.port === portNumber){
-                    maxPowerOutput.currentIndex = maxPowerOutput.find( (platformInterface.usb_pd_maximum_power.current_max_power).toFixed(0))
+                if (platformInterface.usb_pd_maximum_power.port == portNumber){
+                    maxPowerOutput.currentIndex = maxPowerOutput.find( (Math.trunc(platformInterface.usb_pd_maximum_power.watts)))
                 }
 
             }
