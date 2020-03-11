@@ -162,6 +162,7 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
             object.insert("category", "view");
             object.insert("name", item.name);
             object.insert("prettyname", item.prettyName);
+            object.insert("md5", item.md5);
 
             //lets find filePath
             for (const auto &response : downloadedFilesList) {
@@ -183,6 +184,7 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
             object.insert("uri", item.partialUri);
             object.insert("filesize", item.filesize);
             object.insert("prettyname", item.prettyName);
+            object.insert("md5", item.md5);
 
             documentList.append(object);
         }
