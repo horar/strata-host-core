@@ -14,6 +14,8 @@ Item {
         id: platformInterface
     }
 
+    property var maxBoardPower: 60  //in Watts
+
     TabBar {
         id: navTabs
         anchors {

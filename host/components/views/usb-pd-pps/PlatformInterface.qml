@@ -22,17 +22,13 @@ Item {
     // @description: sent when a device is connected or disconnected
     //
     property var usb_pd_port_connect : {
-        "port_id": "",
-        "connection_state":"unknown"
+        "port": "",
+        "connection_state":"unknown"        //or "connected" or "disconnected"
     }
 //    onUsb_pd_port_connectChanged: {
-//        console.log("usb_pd_port_connect changed. port_id=",usb_pd_port_connect.port_id," connection_state=",usb_pd_port_connect.connection_state);
+//        console.log("usb_pd_port_connect changed. port=",usb_pd_port_connect.port," connection_state=",usb_pd_port_connect.connection_state);
 //    }
 
-    property var usb_pd_port_disconnect:{
-        "port_id": "unknown",
-        "connection_state": "unknown"
-    }
 
     property var set_minimum_voltage_notification : {
         "minimum_voltage":10
@@ -64,6 +60,10 @@ Item {
              "value":5                                       // degrees C
             }
 
+    onTemperature_hysteresisChanged: {
+        console.log("in PI. Temp hysteresis changed to",temperature_hysteresis.value)
+    }
+
 
    property var over_temperature_notification:{
            "port":"USB_C_port_1",                                // or any USB C port
@@ -76,24 +76,26 @@ Item {
     property var input_voltage_foldback:{
             "voltage":14.99487305,
             "min_voltage":15,
-            "power":36,
+            "power":60,
             "enabled":true,
-            "active":true
+            "active":false
     }
+
+
 
     property var temperature_foldback:{
             "port":1,
             "temperature":33,
             "max_temperature":150,
-            "power":45,      // 2-port = absolute power in watts, others = percentage of full port power
+            "power":60,      // 2-port = absolute power in watts, others = percentage of full port power
             "enabled":true,
-            "active":true
+            "active":false
     }
 
 
     property var usb_pd_maximum_power:{
-        "port":0,                            // always 1
-        "max_power":0                          // 12.5 | 25 | 37.5 | 50 | 62.5 | 75 | 87.5 | 100
+        "port":1,                            // always 1
+        "watts":60                           // 15, 30, 45, or 60
     }
 
     property var request_over_current_protection_notification:{
@@ -138,7 +140,7 @@ Item {
         "input_current":0.22,                   // amps
         "output_current":0.50,                  // amps
         "temperature":50,                       // degrees C
-        "maximum_power":36                      // in watts
+        "maximum_power":60                      // in watts
     }
 
     property var system_fault:{
@@ -245,12 +247,6 @@ Item {
                          "power":45      // in Watts
                        },
                    update: function(enabled,voltage,watts){
-                       //console.log("input voltage foldback update: enabled=",enabled,"voltage=",voltage,"watts=",watts);
-                       //set the notification property values, as the platform won't send a notification in response to this
-                       //command, and those properties are used by controls to see what the value of other controls should be.
-                       foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = enabled;
-                       foldback_input_voltage_limiting_event.foldback_minimum_voltage = voltage;
-                       foldback_input_voltage_limiting_event.foldback_minimum_voltage_power = watts;
                         this.set(enabled,voltage,watts)
                         CorePlatformInterface.send(this)
                         },
@@ -319,7 +315,7 @@ Item {
                     "cmd":"set_usb_pd_maximum_power",
                     "payload":{
                          "port":0,       // always 1
-                         "watts":0       // 12.5 | 25 | 37.5 | 50 | 62.5 | 75 | 87.5 | 100
+                         "watts":0       // any value 0-60 will give 15w, 30w, 45w, or 60w
                          },
                     update: function (port, watts){
                         this.set(port,watts);
