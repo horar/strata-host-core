@@ -238,7 +238,7 @@ Item {
                     console.log("new hysteresis value2:", platformInterface.temperature_hysteresis.value)
                     return platformInterface.temperature_hysteresis.value
                 }
-                onMoved: {
+                onUserSet: {
                     platformInterface.set_temperature_hysteresis.update(value);
                 }
             }
@@ -441,6 +441,7 @@ Item {
                 }
                 from: 20
                 to: 100
+                stepSize:5
                 fromText.fontSizeMultiplier:.75
                 toText.fontSizeMultiplier: .75
                 fromText.text: "20°C"
