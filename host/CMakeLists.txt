@@ -10,7 +10,9 @@ project(host
     LANGUAGES CXX
 )
 
+# defaults; override in sub-projects if necessary
 set(PROJECT_COMPANY "ON Semiconductor")
+set(PROJECT_WIN32_ICO ${PROJECT_SOURCE_DIR}/resources/icons/app/on.ico)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

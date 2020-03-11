@@ -3,7 +3,6 @@ project(rcc-util
     LANGUAGES CXX
 )
 
-set(PROJECT_COMPANY "ON Semiconductor")
 set(PROJECT_COPYRIGHT "Copyright (C) 2019-2020 ${PROJECT_COMPANY}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
