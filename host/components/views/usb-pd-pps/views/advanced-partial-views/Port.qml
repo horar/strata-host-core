@@ -116,11 +116,11 @@ Item {
             }
             width: portGraphs.width /  4
 
-            title: "Voltage Bus"
+            title: "Bus Voltage"
             xTitle: "Seconds"
             yTitle: "V"
             yMin: 0
-            yMax: 25
+            yMax: 21
             xMin: -5
             xMax: 0
             panXEnabled: false
@@ -254,7 +254,7 @@ Item {
             xTitle: "Seconds"
             yTitle: "V"
             yMin: 0
-            yMax: 25
+            yMax: 32
             xMin: -5
             xMax: 0
             panXEnabled: false
