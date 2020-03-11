@@ -293,12 +293,14 @@ Rectangle {
             top: root.top
             right: root.right
         }
+
         color: "#eee"
         border {
             width: 1
             color: "#ccc"
         }
-        visible: popout.state !== "popped"
+        //visible: popout.state !== "popped"
+        visible:false
 
         Text {
             id: popper2text

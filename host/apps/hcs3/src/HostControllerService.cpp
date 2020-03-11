@@ -25,21 +25,13 @@ HostControllerService::HostControllerService(QObject* parent) : QObject(parent)
 {
     //handlers for 'cmd'
     clientCmdHandler_.insert( { std::string("request_hcs_status"), std::bind(&HostControllerService::onCmdHCSStatus, this, std::placeholders::_1) });
-    clientCmdHandler_.insert( { std::string("register_client"), std::bind(&HostControllerService::onCmdRegisterClient, this, std::placeholders::_1) } );
     clientCmdHandler_.insert( { std::string("unregister"), std::bind(&HostControllerService::onCmdUnregisterClient, this, std::placeholders::_1) } );
     clientCmdHandler_.insert( { std::string("platform_select"), std::bind(&HostControllerService::onCmdPlatformSelect, this, std::placeholders::_1) } );
-    clientCmdHandler_.insert( { std::string("request_available_platforms"), std::bind(&HostControllerService::onCmdRequestAvaibilePlatforms, this, std::placeholders::_1) } );
 
-    hostCmdHandler_.insert( { std::string("jwt_token"), std::bind(&HostControllerService::onCmdHostJwtToken, this, std::placeholders::_1) });
-    hostCmdHandler_.insert( { std::string("advertise_platforms"), std::bind(&HostControllerService::onCmdHostAdvertisePlatforms, this, std::placeholders::_1) });
-    hostCmdHandler_.insert( { std::string("get_platforms"), std::bind(&HostControllerService::onCmdHostGetPlatforms, this, std::placeholders::_1) });
-    hostCmdHandler_.insert( { std::string("remote_disconnect"), std::bind(&HostControllerService::onCmdHostRemoteDisconnect, this, std::placeholders::_1) });
-    hostCmdHandler_.insert( { std::string("disconnect_remote_user"), std::bind(&HostControllerService::onCmdHostDisconnectRemoteUser, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("disconnect_platform"), std::bind(&HostControllerService::onCmdHostDisconnectPlatform, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("unregister"), std::bind(&HostControllerService::onCmdHostUnregister, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("download_files"), std::bind(&HostControllerService::onCmdHostDownloadFiles, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
-
 }
 
 HostControllerService::~HostControllerService()
@@ -57,7 +49,7 @@ bool HostControllerService::initialize(const QString& config)
     db_.setLogAdapter(&dbLogAdapter_);
     clients_.setLogAdapter(&clientsLogAdapter_);
 
-    dispatcher_.setMsgHandler(std::bind(&HostControllerService::handleMesages, this, std::placeholders::_1) );
+    dispatcher_.setMsgHandler(std::bind(&HostControllerService::handleMessage, this, std::placeholders::_1) );
 
     rapidjson::Value& db_cfg = config_["database"];
 
@@ -73,9 +65,10 @@ bool HostControllerService::initialize(const QString& config)
 
     storageManager_ = new StorageManager(this);
 
-    connect(storageManager_, &StorageManager::downloadFilePathChanged, this, &HostControllerService::sendDownloadFilePathChangedMessage);
-    connect(storageManager_, &StorageManager::singleDownloadProgress, this, &HostControllerService::sendSingleDownloadProgressMessage);
-    connect(storageManager_, &StorageManager::singleDownloadFinished, this, &HostControllerService::sendSingleDownloadFinishedMessage);
+    connect(storageManager_, &StorageManager::downloadPlatformFilePathChanged, this, &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
+    connect(storageManager_, &StorageManager::downloadPlatformSingleFileProgress, this, &HostControllerService::sendDownloadPlatformSingleFileProgressMessage);
+    connect(storageManager_, &StorageManager::downloadPlatformSingleFileFinished, this, &HostControllerService::sendDownloadPlatformSingleFileFinishedMessage);
+    connect(storageManager_, &StorageManager::downloadPlatformFilesFinished, this, &HostControllerService::sendDownloadPlatformFilesFinishedMessage);
     connect(storageManager_, &StorageManager::platformListResponseRequested, this, &HostControllerService::sendPlatformListMessage);
     connect(storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
 
@@ -83,10 +76,9 @@ bool HostControllerService::initialize(const QString& config)
      * as they should be executed in the main thread. Not in dispatcher's thread. */
     connect(this, &HostControllerService::platformListRequested, storageManager_, &StorageManager::requestPlatformList, Qt::QueuedConnection);
     connect(this, &HostControllerService::platformDocumentsRequested, storageManager_, &StorageManager::requestPlatformDocuments, Qt::QueuedConnection);
-    connect(this, &HostControllerService::downloadFilesRequested, storageManager_, &StorageManager::requestDownloadFiles, Qt::QueuedConnection);
-    connect(this, &HostControllerService::cancelPlatformDocumentRequested, storageManager_, &StorageManager::requestCancelPlatformDocument, Qt::QueuedConnection);
+    connect(this, &HostControllerService::downloadPlatformFilesRequested, storageManager_, &StorageManager::requestDownloadPlatformFiles, Qt::QueuedConnection);
+    connect(this, &HostControllerService::cancelPlatformDocumentRequested, storageManager_, &StorageManager::requestCancelAllDownloads, Qt::QueuedConnection);
     connect(this, &HostControllerService::updatePlatformDocRequested, storageManager_, &StorageManager::updatePlatformDoc, Qt::QueuedConnection);
-
 
     QString baseUrl = QString::fromStdString( db_cfg["file_server"].GetString() );
     storageManager_->setBaseUrl(baseUrl);
@@ -130,7 +122,7 @@ void HostControllerService::onAboutToQuit()
     stop();
 }
 
-void HostControllerService::sendDownloadFilePathChangedMessage(
+void HostControllerService::sendDownloadPlatformFilePathChangedMessage(
         const QByteArray &cliendId,
         const QString &originalFilePath,
         const QString &effectiveFilePath)
@@ -139,7 +131,7 @@ void HostControllerService::sendDownloadFilePathChangedMessage(
     QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "download_filepath_changed");
+    payload.insert("type", "download_paltform_filepath_changed");
     payload.insert("original_filepath", originalFilePath);
     payload.insert("effective_filepath", effectiveFilePath);
 
@@ -150,7 +142,7 @@ void HostControllerService::sendDownloadFilePathChangedMessage(
     clients_.sendMessage(cliendId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
 }
 
-void HostControllerService::sendSingleDownloadProgressMessage(
+void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
         const QByteArray &cliendId,
         const QString &filePath,
         qint64 bytesReceived,
@@ -160,7 +152,7 @@ void HostControllerService::sendSingleDownloadProgressMessage(
     QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "single_download_progress");
+    payload.insert("type", "download_platform_single_file_progress");
     payload.insert("filepath", filePath);
     payload.insert("bytes_received", bytesReceived);
     payload.insert("bytes_total", bytesTotal);
@@ -172,7 +164,8 @@ void HostControllerService::sendSingleDownloadProgressMessage(
     clients_.sendMessage(cliendId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
 }
 
-void HostControllerService::sendSingleDownloadFinishedMessage(const QByteArray &cliendId,
+void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
+        const QByteArray &cliendId,
         const QString &filePath,
         const QString &errorString)
 {
@@ -180,9 +173,27 @@ void HostControllerService::sendSingleDownloadFinishedMessage(const QByteArray &
     QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "single_download_finished");
+    payload.insert("type", "download_platform_single_file_finished");
     payload.insert("filepath", filePath);
     payload.insert("error_string", errorString);
+
+    message.insert("hcs::notification", payload);
+
+    doc.setObject(message);
+
+    clients_.sendMessage(cliendId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
+}
+
+void HostControllerService::sendDownloadPlatformFilesFinishedMessage(const QByteArray &cliendId, const QString &errorString)
+{
+    QJsonDocument doc;
+    QJsonObject message;
+    QJsonObject payload;
+
+    payload.insert("type", "download_platform_files_finished");
+    if (errorString.isEmpty() == false) {
+        payload.insert("error_string", errorString);
+    }
 
     message.insert("hcs::notification", payload);
 
@@ -265,7 +276,7 @@ bool HostControllerService::parseConfig(const QString& config)
     return true;
 }
 
-void HostControllerService::handleMesages(const PlatformMessage& msg)
+void HostControllerService::handleMessage(const PlatformMessage& msg)
 {
     switch(msg.msg_type)
     {
@@ -366,13 +377,6 @@ void HostControllerService::onCmdHCSStatus(const rapidjson::Value* )
     clients_.sendMessage(client->getClientId(), strbuf.GetString() );
 }
 
-void HostControllerService::onCmdRegisterClient(const rapidjson::Value* )
-{
-    // TODO - this function does nothing?
-    std::string platformList;
-    boards_.createPlatformsList(platformList);
-}
-
 void HostControllerService::onCmdDynamicPlatformList(const rapidjson::Value * )
 {
     std::string clientId = getSenderClient()->getClientId();
@@ -390,7 +394,6 @@ void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
     }
 
     client->resetPlatformId();
-    client->clearUsernameAndToken();
 }
 
 void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
@@ -410,10 +413,6 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
     QString clientId = QByteArray::fromRawData(client->getClientId().data(), static_cast<int>(client->getClientId().size()) ).toHex();
 //    QString clientId = QString::fromStdString(client->getClientId());
     qCInfo(logCategoryHcs) << "Client:" << clientId <<  " Selected platform:" << QString::fromStdString(classId);
-
-    //TODO: download all necessary documents from db/cloud  (asynchronous)
-    //      and send message to client
-    //
 
     rapidjson::Document* request = new rapidjson::Document();
     request->SetObject();
@@ -458,59 +457,6 @@ void HostControllerService::onCmdHostDisconnectPlatform(const rapidjson::Value* 
     client->resetPlatformId();
 }
 
-void HostControllerService::onCmdRequestAvaibilePlatforms(const rapidjson::Value* )
-{
-}
-
-void HostControllerService::onCmdHostJwtToken(const rapidjson::Value* payload)
-{
-    HCS_Client* client = getSenderClient();
-
-    if (payload->HasMember("jwt") == false ||
-        payload->HasMember("user_name") == false) {
-        qCWarning(logCategoryHcs) << "CmdHostJwtToken() invalid payload.";
-        return;
-    }
-
-    client->setJWT( (*payload)["jwt"].GetString() );
-    client->setUsername( (*payload)["user_name"].GetString() );
-
-//TODO:
-//    if (!discovery_service_)
-//        return;
-
-    //TODO: do something with discovery service...
-    // unfinished
-    //
-    // discovery_service_->setJWT(jwt);
-    //
-}
-
-void HostControllerService::onCmdHostAdvertisePlatforms(const rapidjson::Value* payload)
-{
-    if (payload) {
-//TODO:        bool remote_advertise = (*payload)["advertise_platforms"].GetBool();
-//        PDEBUG(PRINT_DEBUG,"is remote session ON? %d",remote_advertise);
-
-//TODO:        handleRemotePlatformRegistration(remote_advertise);
-    }
-}
-
-void HostControllerService::onCmdHostGetPlatforms(const rapidjson::Value* )
-{
-
-}
-
-void HostControllerService::onCmdHostRemoteDisconnect(const rapidjson::Value* )
-{
-
-}
-
-void HostControllerService::onCmdHostDisconnectRemoteUser(const rapidjson::Value* )
-{
-
-}
-
 void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
 {
     HCS_Client* client = getSenderClient();
@@ -519,32 +465,30 @@ void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
     if (int conn_id; boards_.getConnectionIdByClientId(client->getClientId(), conn_id)) {
         boards_.clearClientId(conn_id);
     }
-
-    client->clearUsernameAndToken();
 }
 
 void HostControllerService::onCmdHostDownloadFiles(const rapidjson::Value* payload)
 {
     QByteArray clientId = QByteArray::fromStdString(getSenderClient()->getClientId());
-    QStringList fileList;
-    QString destinationDir;
+    QStringList partialUriList;
 
-    if (payload->IsArray()) {
-        for (auto it = payload->Begin(); it != payload->End(); ++it) {
-            if (it->HasMember("file") == false || it->HasMember("path") == false) {
-                continue;
-            }
-
-            //There is only one path selected in UI, so only one destination folder
-            if (destinationDir.isEmpty()) {
-                destinationDir = QString::fromStdString((*it)["path"].GetString());
-            }
-
-            fileList << QString::fromStdString((*it)["file"].GetString());
-        }
+    QString destinationDir = QString::fromStdString((*payload)["destination_dir"].GetString());
+    if (destinationDir.isEmpty()) {
+        qCWarning(logCategoryHcs()) << "destinationDir attribute is empty";
+        return;
     }
 
-    emit downloadFilesRequested(clientId, fileList, destinationDir);
+    const rapidjson::Value& files = (*payload)["files"];
+    if (files.IsArray() == false) {
+        qCWarning(logCategoryHcs()) << "files attribute is not an array";
+        return;
+    }
+
+    for (auto it = files.Begin(); it != files.End(); ++it) {
+        partialUriList << QString::fromStdString((*it).GetString());
+    }
+
+    emit downloadPlatformFilesRequested(clientId, partialUriList, destinationDir);
 }
 
 HCS_Client* HostControllerService::getClientById(const std::string& client_id)

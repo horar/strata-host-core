@@ -44,7 +44,7 @@ Button {
         radius: root.radius
         implicitHeight: masterHeight
         implicitWidth: masterButtonImplicitWidth
-        opacity: root.enabled ? 1.0 : 0.3
+        //opacity: root.enabled ? 1.0 : 0.3
         layer.enabled: true
 
         Rectangle{
@@ -58,7 +58,7 @@ Button {
     contentItem: Text {
         id:buttonText
         text: root.text
-        opacity: root.enabled ? 1.0 : 0.3
+        //opacity: root.enabled ? 1.0 : 0.3
         color: root.checked ? root.textActiveColor : root.textColor
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter

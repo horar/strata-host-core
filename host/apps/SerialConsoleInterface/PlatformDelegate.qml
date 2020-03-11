@@ -167,6 +167,7 @@ FocusScope {
                 height: divider.y + divider.height
 
                 property color helperTextColor: "#333333"
+                property bool jsonIsValid
 
                 Rectangle {
                     anchors {
@@ -175,8 +176,15 @@ FocusScope {
                         right: parent.right
                         bottom: divider.top
                     }
-                    color: Qt.lighter(SGWidgets.SGColorsJS.STRATA_GREEN, 2.3)
-                    visible: model.type === "query"
+                    color: {
+                        if (model.type === "query") {
+                            return Qt.lighter(SGWidgets.SGColorsJS.STRATA_GREEN, 2.3)
+                        } else if (cmdDelegate.jsonIsValid === false) {
+                            return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 2.3)
+                        }
+
+                        return "transparent"
+                    }
                 }
 
                 SGWidgets.SGText {
@@ -267,7 +275,18 @@ FocusScope {
                     selectByKeyboard: true
                     selectByMouse: true
                     readOnly: true
-                    text: prettifyJson(model.message, model.condensed)
+
+                    text: {
+                        var prettyText = prettifyJson(model.message, model.condensed)
+                        if (prettyText.length > 0) {
+                            cmdDelegate.jsonIsValid = true
+                            return prettyText
+                        }
+
+                        cmdDelegate.jsonIsValid = false
+                        return model.message
+                    }
+
 
                     MouseArea {
                         anchors.fill: parent
@@ -490,6 +509,7 @@ FocusScope {
         try {
             var cmd = JSON.parse(command["message"])
         } catch(error) {
+            console.warn(Logger.sciCategory, "json not valid", command["message"])
             return
         }
 
@@ -581,7 +601,7 @@ FocusScope {
         try {
             var messageObj =  JSON.parse(message)
         } catch(error) {
-            return message
+            return ""
         }
 
         if (condensed) {
@@ -602,7 +622,10 @@ FocusScope {
             var typeStr = item.type === "query" ? "request" : "response"
 
             text += timeStr + " " + typeStr + "\n"
-            text += prettifyJson(item.message, false)
+
+            var prettyText = prettifyJson(item.message, false)
+            text += prettyText.length > 0 ? prettyText : item.message
+
             text += "\n\n"
         }
 

@@ -46,7 +46,7 @@ Item {
                             right: chevronImage.left
                         }
 
-                        text: model.filename
+                        text: model.prettyName
                         alternativeColorEnabled: delegate.checked === false
                         wrapMode: Text.Wrap
                         font.bold: delegate.checked ? false : true
