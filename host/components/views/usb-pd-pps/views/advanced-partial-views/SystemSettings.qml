@@ -559,12 +559,17 @@ Item {
 
             onOverTempEventChanged: {
                 if (overTempEvent.state === "above"){   //add temp  message to list
-                    stateMessage = platformInterface.over_temperature_notification.port
-                    stateMessage += " temperature is above ";
+                    stateMessage = "Temperature is above ";
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
                     stateMessage += " °C";
-                    //console.log("over temp event:",stateMessage)
-                    faultListModel.append({"type":"temperature", "portName":platformInterface.over_temperature_notification.port, "message":stateMessage});
+                    //if there's already a temperature fault in the list, remove it (there can only be one at a time)
+                    for(var i = 0; i < faultListModel.count; ++i){
+                        var theItem = faultListModel.get(i);
+                        if (theItem.type === "temperature"){
+                            faultListModel.remove(i);
+                        }
+                    }
+                    faultListModel.append({"type":"temperature", "message":stateMessage});
                 }
                 else{                                       //remove temp message for the correct port from list
                     for(var i = 0; i < faultListModel.count; ++i){
