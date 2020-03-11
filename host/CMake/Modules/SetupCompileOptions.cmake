@@ -45,3 +45,7 @@ add_feature_info(COMPILER_QTMSGCTX COMPILER_QTMSGCTX "Provides additional inform
 if(COMPILER_QTMSGCTX)
     add_compile_definitions($<$<CONFIG:Release>:QT_MESSAGELOGCONTEXT>)
 endif()
+
+if(WIN32)
+    add_compile_definitions(WIN32_LEAN_AND_MEAN)
+endif()
