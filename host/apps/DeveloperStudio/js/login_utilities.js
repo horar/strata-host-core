@@ -227,7 +227,7 @@ function createObject(name, parent) {
     var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
 
     if (component.status === QtQuickModule.Component.Error) {
-        console.error(LoggerModule.Logger.devStudioLoginCategory, "Cannot createComponent:", name);
+        console.error(LoggerModule.Logger.devStudioLoginCategory, "Cannot createComponent:", name, "; err=", component.errorString());
     }
 
     var object = component.createObject(parent)
