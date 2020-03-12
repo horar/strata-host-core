@@ -62,10 +62,10 @@ Rectangle {
                     var advertisedMinimumCurrent = ((Math.random() *3) +1).toFixed(0) ;
                     var negotiatedCurrent = ((Math.random() *3) +1).toFixed(0) ;
                     var negotiated_voltage = ((Math.random() *20) +1).toFixed(0) ;
-                    var input_voltage = (Math.random()*20).toFixed(2);
-                    var output_voltage = (Math.random()*20).toFixed(2);
+                    var input_voltage = (Math.random()*50).toFixed(2);
+                    var output_voltage = (Math.random()*50).toFixed(2);
                     var input_current = (Math.random()*3).toFixed(2);
-                    var output_current = (Math.random()*3).toFixed(2);
+                    var output_current = (Math.random()*12).toFixed(2);
                      var temperature = (Math.random()*100).toFixed(1);
                      var maxPower = ((Math.random() *7)+1).toFixed(0)* 7.5;
 
