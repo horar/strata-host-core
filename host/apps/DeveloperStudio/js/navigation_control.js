@@ -135,7 +135,7 @@ function createView(name, parent)
         removeView(parent)
     }
     catch(err){
-        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "ERROR: Could not destroy child")
+        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Could not destroy child")
     }
 
     var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
