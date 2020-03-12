@@ -20,7 +20,8 @@ Drawer {
     property real hintWidth: 0 //20
     property alias state: menuContainer.state
     property int portNumber: 1
-    property int graphHeight: 310
+    //property int graphHeight: 310
+    property int graphHeight: root.height/3
 
     onAboutToShow:{
         openAnimation.start()
