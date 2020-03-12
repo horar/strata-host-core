@@ -19,8 +19,8 @@ with open('./DynamicPlatformList.json') as f:
     dynamicPlatformList = json.load(f)
 
 # function to print line seperator, to make the code more neat :)
-def printLineSep(charSym='='):
-    for i in range(150):
+def printLineSep(charSym='-'):
+    for i in range(140):
         print(charSym, end='')
     print()
 
@@ -51,7 +51,7 @@ def sendOpenPlatformCtrlView(classID):
     print("sending:", myEncodedStr, "...")
     client.send_multipart([strata_id, myEncodedStr])
     print("Sent.")
-    time.sleep(3)
+    time.sleep(8)
     print("Returning to platform selector page...")
     client.send_multipart([strata_id, returnToPlatListRes])
     printLineSep()
@@ -65,8 +65,7 @@ def useHardcoddedUUIDList():
 # send commands to open the control views of the platforms from the dynamic platform list
 def useDynamicPlatformList():
     # parse the dynamic platform list
-    data = json.loads(dynamicPlatformList)
-    for platform in data["hcs::notification"]["list"]:
+    for platform in dynamicPlatformList["hcs::notification"]["list"]:
         sendOpenPlatformCtrlView(platform["class_id"])
 
 # Create zmq router to connect to the UI
@@ -92,15 +91,15 @@ while True:
     printLineSep()
 
     if (message == b'{"hcs::cmd":"dynamic_platform_list","payload":{}}'):
-
         # send the platform list and wait
         # client.send_multipart([strata_id, emptyDynamicPlatformList])
         client.send_multipart(
             [strata_id, bytes(json.dumps(dynamicPlatformList), 'utf-8')])
         time.sleep(1)
-        # useDynamicPlatformList()
-        useHardcoddedUUIDList()
+        useDynamicPlatformList()
+        # useHardcoddedUUIDList()
         print("Done.")
+        quit(0)              # Exit as soon as you finish the control views
     elif (message == b'{"cmd":"unregister","payload":{}}'):
         printLineSep()
         print("Strata UI was closed. Exitting...")

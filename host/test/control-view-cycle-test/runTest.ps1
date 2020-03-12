@@ -11,5 +11,13 @@
 # start Strata
 # bring the script back to the foreground again
 # wait until everything is done...
+$PATH_TO_STRATA="C:\Users\zbjmpd\spyglass\host\Debug\bin\Strata Developer Studio.exe"
 
-python .\zmq-router.py 
+$strataDev = Start-Process $PATH_TO_STRATA -PassThru
+$pythonScript = Start-Process python .\zmq-router.py -NoNewWindow -PassThru -wait
+
+echo $pythonScript.ExitCode
+echo "Test is done."
+echo "Killing Strata Developer Studio..."
+stop-process $strataDev.id
+echo "Exitting..."
