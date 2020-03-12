@@ -3,7 +3,7 @@
 #include <QSerialPortInfo>
 
 #include <SerialDevice.h>
-#include <Flasher1.h>
+#include <Flasher.h>
 #include "flasher_cli.h"
 
 #include "logging/LoggingQtCategories.h"
