@@ -10,7 +10,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 Item {
     id: root
 
-    property real ratioCalc: root.width/Screen.width//(root.width / 1600) / (root.height / 900)
+    property real ratioCalc: (Screen.width <= 1200) ? (root.width/Screen.width) : root.width/1200//(root.width / 1600) / (root.height / 900)
     property real initialAspectRatio: Screen.width/Screen.height// 1.78//1200/820
     //property real ratioCalc: root.width / 1200
     //property real initialAspectRatio: 1200/820
@@ -601,7 +601,7 @@ Item {
                                                 id: systemInputVoltage
                                                 unit: "V"
                                                 fontSizeMultiplier: ratioCalc * 1.2
-                                                width: 100
+                                                width: 120
                                                 height: 40
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
@@ -628,7 +628,7 @@ Item {
                                             SGInfoBox {
                                                 id: systemInputCurrent
                                                 unit: "mA"
-                                                width: 100
+                                                width: 120
                                                 height: 40
                                                 fontSizeMultiplier:  ratioCalc * 1.2
                                                 boxColor: "lightgrey"
@@ -775,7 +775,7 @@ Item {
                                                 id: buckLDOInputVoltage
                                                 unit: "V"
                                                 fontSizeMultiplier: ratioCalc * 1.2
-                                                width: 100
+                                                width: 120
                                                 height: 40
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
@@ -802,7 +802,7 @@ Item {
                                             SGInfoBox {
                                                 id: buckLDOOutputCurrent
                                                 unit: "mA"
-                                                width: 100
+                                                width: 120
                                                 height: 40
                                                 fontSizeMultiplier:  ratioCalc * 1.2
                                                 boxColor: "lightgrey"
@@ -946,7 +946,7 @@ Item {
                                                 id: ldoSystemInputVoltage
                                                 unit: "V"
                                                 fontSizeMultiplier: ratioCalc * 1.2
-                                                width: 100
+                                                width: 120
                                                 height: 40
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
@@ -973,7 +973,7 @@ Item {
                                             SGInfoBox {
                                                 id: ldoSystemInputCurrent
                                                 unit: "mA"
-                                                width: 100
+                                                width: 120
                                                 height: 40
                                                 fontSizeMultiplier:  ratioCalc * 1.2
                                                 boxColor: "lightgrey"

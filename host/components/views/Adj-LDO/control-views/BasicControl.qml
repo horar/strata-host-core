@@ -10,7 +10,7 @@ import "../custom"
 
 Item {
     id: root
-    property real ratioCalc: (root.width/Screen.width)// / (root.height/Screen.height)//(root.width / 1600) / (root.height / 900)
+    property real ratioCalc: (Screen.width <= 1200) ? (root.width/Screen.width) : root.width/1200/// (root.height/Screen.height)// / (root.height/Screen.height)//(root.width / 1600) / (root.height / 900)
     property real initialAspectRatio: Screen.width/Screen.height// 1.78//1200/820
 
     property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
@@ -332,7 +332,7 @@ Item {
                     fontSizeMode: Text.Fit
                     width: parent.width
                     font.family: "Helvetica Neue"
-                    font.pixelSize: ratioCalc * 15
+                    font.pixelSize: ratioCalc * 12
                 }
             }
 

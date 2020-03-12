@@ -10,7 +10,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: root
-    property real ratioCalc: root.width/Screen.width//(root.width / 1600) / (root.height / 900)
+    property real ratioCalc: (Screen.width <= 1200) ? (root.width/Screen.width) : root.width/1200//(root.width / 1600) / (root.height / 900)
     property real initialAspectRatio: Screen.width/Screen.height// 1.78//1200/820
     //property real ratioCalc: root.width / 1200
     //property real initialAspectRatio: 1209/820
@@ -538,7 +538,7 @@ Item {
                 anchors.centerIn: noteBox
                 text: "Note: External Input Required For OCP Testing"
                 font.bold: true
-                font.pixelSize:  ratioCalc * 20
+                font.pixelSize:  ratioCalc * 16
                 color: "white"
             }
 
@@ -551,7 +551,7 @@ Item {
                 }
                 text: "\ue80e"
                 font.family: Fonts.sgicons
-                font.pixelSize:  ratioCalc * 20
+                font.pixelSize:  ratioCalc * 16
                 color: "white"
             }
 
@@ -564,7 +564,7 @@ Item {
                 }
                 text: "\ue80e"
                 font.family: Fonts.sgicons
-                font.pixelSize:  ratioCalc * 20
+                font.pixelSize:  ratioCalc * 16
                 color: "white"
             }
         }
@@ -638,7 +638,7 @@ Item {
 
                                         SGButton {
                                             id: shortCircuitButton
-                                            height: (preferredContentHeight * 2)
+                                            height: preferredContentHeight * 1.5
                                             width: preferredContentWidth * 1.25
                                             text: "Trigger Short \n Circuit"
                                             anchors.centerIn: parent
@@ -654,7 +654,7 @@ Item {
                                                         platformInterface.enable_sc.update()
                                                     } else {
                                                         if (root.visible && !warningPopup.opened) {
-                                                            popup_message = "The short-circuit load cannot be activated unless the LDO input voltage option is set to 'Direct'"
+                                                            popup_message = "The short-circuit load cannot be activated unless the LDO input voltage option is set to 'Direct'."
                                                             warningPopup.open()
                                                         }
                                                     }
@@ -670,7 +670,7 @@ Item {
                                         SGAlignedLabel {
                                             id: currentLimitThresholdLabel
                                             target: currentLimitThreshold
-                                            text:  "Current Limit \nThreshold"
+                                            text:  "Approximate Current\nLimit Threshold"
                                             font.bold: true
                                             alignment: SGAlignedLabel.SideTopLeft
                                             fontSizeMultiplier: ratioCalc
