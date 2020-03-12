@@ -7,6 +7,7 @@ import tech.strata.commoncpp 1.0 as CommonCpp
 import tech.strata.common 1.0 as Common
 import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.logger 1.0
+import tech.strata.sci 1.0 as Sci
 
 Item {
     id: sciMain
@@ -14,80 +15,32 @@ Item {
         fill: parent
     }
 
-    property bool programDeviceDialogOpened: false
     property variant platformInfoWindow: null
 
-    property variant boardStorageContent: []
-    property int maxBoardStorageLength: 20
-    property string boardStoragePath: CommonCpp.SGUtilsCpp.urlToLocalFile(
-                                          CommonCpp.SGUtilsCpp.joinFilePath(
-                                              QtLabsPlatform.StandardPaths.writableLocation(
-                                                  QtLabsPlatform.StandardPaths.AppDataLocation),
-                                              "boardStorage.data"))
-    ListModel {
-        id: tabModel
-    }
-
-    Component.onCompleted: {
-        loadBoardStorage()
-    }
-
     Connections {
-        target:  sciModel.boardManager
+        target: sciModel.platformModel
 
-        onBoardReady: {
-            if (recognized === false) {
-                return
-            }
-
-            if (programDeviceDialogOpened) {
-                return
-            }
-
-            var connectionInfo = sciModel.boardManager.getConnectionInfo(connectionId)
-            var effectiveVerboseName = connectionInfo.verboseName
-
-            if (connectionInfo.verboseName.length === 0) {
-                if (connectionInfo.applicationVersion.lenght > 0) {
-                    effectiveVerboseName = "Application v"+connectionInfo.applicationVersion
-                } else if (connectionInfo.bootloaderVersion.length > 0) {
-                    effectiveVerboseName = "Bootloader v"+connectionInfo.bootloaderVersion
-                } else {
-                    effectiveVerboseName = "Unknown"
-                }
-            }
-
-            var platformItem = {
-                "connectionId": connectionInfo.connectionId,
-                "platformId": connectionInfo.platformId,
-                "verboseName": effectiveVerboseName,
-                "bootloaderVersion": connectionInfo.bootloaderVersion,
-                "applicationVersion": connectionInfo.applicationVersion,
-                "status": "connected"
-            }
-
-            for (var i = 0; i < tabModel.count; ++i) {
-                var item = tabModel.get(i)
-                if (item.connectionId === connectionId) {
-                    tabModel.set(i, platformItem)
-                    return
-                }
-            }
-
-            tabModel.append(platformItem)
-
-            tabBar.currentIndex = tabModel.count - 1
+        onPlatformReady: {
+            tabBar.currentIndex = index
         }
+    }
 
-        onBoardDisconnected: {
-            for (var i = 0; i < tabModel.count; ++i) {
-                var item = tabModel.get(i)
-                if (item.connectionId === connectionId) {
-                    tabModel.setProperty(i, "status","disconnected")
-                    return
-                }
+    Binding {
+        target: sciModel.platformModel
+        property: "maxScrollbackCount"
+        value: {
+            if (Sci.Settings.commandsInScrollbackUnlimited) {
+                return 200000
             }
+
+            return Sci.Settings.maxCommandsInScrollback
         }
+    }
+
+    Binding {
+        target: sciModel.platformModel
+        property: "maxCmdInHistoryCount"
+        value: Sci.Settings.maxCommandsInHistory
     }
 
     Item {
@@ -125,11 +78,10 @@ Item {
             contentWidth: tabRow.width
 
             property int currentIndex: -1
-
             property int statusLightHeight: dummyText.contentHeight + 10
             property int minTabWidth: 100
             property int preferredTabWidth: 2*statusLightHeight + dummyText.contentWidth + 20
-            property int availableTabWidth: Math.floor((width - (tabRow.spacing * (tabModel.count-1))) / tabModel.count)
+            property int availableTabWidth: Math.floor((width - (tabRow.spacing * (sciModel.platformModel.count-1))) / sciModel.platformModel.count)
             property int tabWidth: Math.max(Math.min(preferredTabWidth, availableTabWidth), minTabWidth)
 
             Rectangle {
@@ -143,7 +95,7 @@ Item {
                 spacing: 1
 
                 Repeater {
-                    model: tabModel
+                    model: sciModel.platformModel
 
                     delegate: Item {
                         id: delegate
@@ -175,13 +127,15 @@ Item {
                             width: tabBar.statusLightHeight
 
                             status: {
-                                if (model.status === "connected") {
+                                if (model.status === Sci.SciPlatformModel.Ready) {
                                     return SGWidgets.SGStatusLight.Green
-                                } if (model.status === "disconnected") {
-                                    return SGWidgets.SGStatusLight.Off
+                                } else if (model.status === Sci.SciPlatformModel.NotRecognized) {
+                                    return SGWidgets.SGStatusLight.Red
+                                } else if (model.status === Sci.SciPlatformModel.Connected) {
+                                    return SGWidgets.SGStatusLight.Orange
                                 }
 
-                                return SGWidgets.SGStatusLight.Orange
+                                return SGWidgets.SGStatusLight.Off
                             }
                         }
 
@@ -217,22 +171,21 @@ Item {
                             property bool shown: bgMouseArea.containsMouse || hovered
 
                             onClicked: {
-                                if (model.status === "connected") {
+                                if (model.status === Sci.SciPlatformModel.Ready
+                                        || model.status === Sci.SciPlatformModel.Connected
+                                        || model.status === Sci.SciPlatformModel.NotRecognized) {
                                     SGWidgets.SGDialogJS.showConfirmationDialog(
                                                 root,
                                                 "Device is active",
                                                 "Do you really want to disconnect " + model.verboseName + " ?",
                                                 "Disconnect",
                                                 function () {
-                                                    var ret = sciModel.boardManager.disconnect(connectionId)
-                                                    if (ret) {
-                                                        removeBoard(model.connectionId)
-                                                    }
+                                                    removeBoard(model.index)
                                                 },
                                                 "Keep Connected"
                                                 )
                                 } else {
-                                    removeBoard(model.connectionId)
+                                    removeBoard(model.index)
                                 }
                             }
                         }
@@ -251,7 +204,7 @@ Item {
             bottom: parent.bottom
         }
 
-        visible: tabModel.count > 0
+        visible: sciModel.platformModel.count > 0
         currentIndex: tabBar.currentIndex
         onCurrentIndexChanged: {
             if (currentIndex >= 0) {
@@ -261,82 +214,22 @@ Item {
 
         Repeater {
             id: tabRepeater
-            model: tabModel
+            model: sciModel.platformModel
+
             delegate: PlatformDelegate {
                 id: platformDelegate
                 width: platformContentContainer.width
                 height: platformContentContainer.height
                 rootItem: sciMain
-
-                onSendCommandRequested: {
-                    sendCommand(connectionId, message)
-                }
+                scrollbackModel: model.scrollbackModel
+                commandHistoryModel: model.commandHistoryModel
 
                 onProgramDeviceRequested: {
-                    if (model.status === "connected") {
+                    if (model.status === Sci.SciPlatformModel.Ready
+                            || model.status === Sci.SciPlatformModel.Connected
+                            || model.status === Sci.SciPlatformModel.NotRecognized) {
                         showProgramDeviceDialogDialog(model.connectionId)
                     }
-                }
-
-                Connections {
-                    target:  sciModel.boardManager
-                    onNewMessage: {
-                        if (programDeviceDialogOpened) {
-                            return
-                        }
-
-                        if (model.connectionId === connectionId) {
-                            var timestamp = Date.now()
-                            appendCommand(createCommand(timestamp, message, "response"))
-                        }
-                    }
-                }
-
-                Component.onCompleted: {
-                    loadCommandHistoryList()
-                    sanitizeCommandHistory()
-                }
-
-                function loadCommandHistoryList() {
-                    for (var i = 0; i < index; ++i) {
-                        if(tabModel.get(i)["verboseName"] === model.verboseName) {
-                            var list = tabRepeater.itemAt(i).getCommandHistoryList()
-                            setCommandHistoryList(list)
-                            return
-                        }
-                    }
-
-                    for (var i = 0; i < boardStorageContent.length; ++i) {
-                        if (boardStorageContent[i]["verboseName"] === model.verboseName) {
-                            setCommandHistoryList(boardStorageContent[i]["commandHistoryList"])
-                            break
-                        }
-                    }
-                }
-
-                function saveCommandHistoryList() {
-                    if (model.verboseName.length === 0) {
-                        return
-                    }
-
-                    var list = getCommandHistoryList()
-                    if (list.length === 0) {
-                        return
-                    }
-
-                    var newItem = {
-                        "verboseName": model.verboseName,
-                        "commandHistoryList": list
-                    }
-
-                    for (var i = 0; i < boardStorageContent.length; ++i) {
-                        if (boardStorageContent[i]["verboseName"] === model.verboseName) {
-                            boardStorageContent.splice(i, 1)
-                            break
-                        }
-                    }
-
-                    boardStorageContent.unshift(newItem)
                 }
             }
         }
@@ -344,7 +237,7 @@ Item {
 
     Item {
         anchors.fill: platformContentContainer
-        visible: tabModel.count === 0
+        visible: platformContentContainer.visible === false
         SGWidgets.SGText {
             anchors.fill: parent
 
@@ -388,10 +281,10 @@ Item {
                     currentConnectionId: connectionId
 
                     onCancelRequested: {
-                        if (programDeviceDialogOpened) {
+                        if (sciModel.platformModel.ignoreNewConnections) {
                             dialog.close()
-                            programDeviceDialogOpened = false
-                            refrestDeviceInfo()
+                            sciModel.platformModel.ignoreNewConnections = false
+                            sciModel.platformModel.reconectAll()
                         }
                     }
                 }
@@ -399,36 +292,14 @@ Item {
         }
     }
 
-    function removeBoard(connectionId) {
-        for (var i = 0; i < tabModel.count; ++i) {
-            var item = tabModel.get(i)
-            if (item.connectionId === connectionId) {
-                tabRepeater.itemAt(i).saveCommandHistoryList()
-                tabModel.remove(i)
-
-                if (tabBar.currentIndex < 0 && tabModel.count > 0) {
-                    tabBar.currentIndex = 0;
-                }
-
-                return
-            }
+    function removeBoard(index) {
+        if (index <= tabBar.currentIndex) {
+            //shift currentIndex
+            tabBar.currentIndex--
         }
-    }
 
-    function sendCommand(connectionId, message) {
-        var timestamp = Date.now()
-        platformContentContainer.itemAt(tabBar.currentIndex).appendCommand(createCommand(timestamp, message, "query"))
-
-        sciModel.boardManager.sendMessage(connectionId, message)
-    }
-
-    function createCommand(timestamp, message, type) {
-        return {
-            "timestamp" : timestamp,
-            "message": message,
-            "type": type,
-            "condensed": false,
-        }
+        sciModel.platformModel.disconnectPlatformFromSci(index);
+        sciModel.platformModel.removePlatform(index)
     }
 
     function showProgramDeviceDialogDialog(connectionId) {
@@ -439,17 +310,8 @@ Item {
                         "connectionId": connectionId
                     })
 
-        programDeviceDialogOpened = true
+        sciModel.platformModel.ignoreNewConnections = true
         dialog.open()
-    }
-
-    function refrestDeviceInfo() {
-        //we need deep copy
-        var connectionIds = JSON.parse(JSON.stringify(sciModel.boardManager.readyConnectionIds))
-
-        for (var i = 0; i < connectionIds.length; ++i) {
-            sciModel.boardManager.reconnect(connectionIds[i])
-        }
     }
 
     function showPlatformInfoWindow(classId, className) {
@@ -467,49 +329,5 @@ Item {
 
 
         platformInfoWindow.visible = true
-    }
-
-    function saveBoardStorage() {
-        var data = ""
-        if (boardStorageContent.length > 0) {
-            if(boardStorageContent.length > maxBoardStorageLength) {
-                boardStorageContent.splice(maxBoardStorageLength, boardStorageContent.length - maxBoardStorageLength)
-            }
-            data = JSON.stringify(boardStorageContent)
-        }
-
-        var dataStored = CommonCpp.SGUtilsCpp.atomicWrite(boardStoragePath, data)
-        if(dataStored === false) {
-            console.error(Logger.sciCategory,"data store failed")
-        }
-    }
-
-    function loadBoardStorage() {
-        if (CommonCpp.SGUtilsCpp.isFile(boardStoragePath) === false) {
-            console.log(Logger.sciCategory,"file does not exist")
-            return
-        }
-
-        var content = CommonCpp.SGUtilsCpp.readTextFileContent(boardStoragePath)
-        if (Object.keys(content).length === 0) {
-            return
-        }
-
-        try {
-            boardStorageContent = JSON.parse(CommonCpp.SGUtilsCpp.readTextFileContent(boardStoragePath))
-            console.log("loaded content:", JSON.stringify(boardStorageContent))
-        }
-        catch(error) {
-            console.warning(Logger.sciCategory, "loading board storage failed: ", error)
-            boardStorageContent = []
-        }
-    }
-
-    function saveState() {
-        for (var i = 0; i < tabRepeater.count; ++i) {
-            tabRepeater.itemAt(i).saveCommandHistoryList()
-        }
-
-        saveBoardStorage()
     }
 }

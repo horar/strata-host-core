@@ -15,10 +15,6 @@ SGWidgets.SGMainWindow {
 
     property variant settingsDialog: null
 
-    onClosing: {
-        sciMain.saveState()
-    }
-
     QtLabsPlatform.MenuBar {
         QtLabsPlatform.Menu {
             title: "File"
