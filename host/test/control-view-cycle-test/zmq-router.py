@@ -96,8 +96,8 @@ while True:
         client.send_multipart(
             [strata_id, bytes(json.dumps(dynamicPlatformList), 'utf-8')])
         time.sleep(1)
-        useDynamicPlatformList()
-        # useHardcoddedUUIDList()
+        # useDynamicPlatformList()
+        useHardcoddedUUIDList()
         print("Done.")
         quit(0)              # Exit as soon as you finish the control views
     elif (message == b'{"cmd":"unregister","payload":{}}'):
