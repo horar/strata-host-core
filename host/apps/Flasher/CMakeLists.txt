@@ -10,8 +10,8 @@ find_package(Qt5 ${VERSION_QT5}
 
 add_executable(${PROJECT_NAME}
     src/main.cpp
-    src/flasher_cli.cpp
-    src/flasher_cli.h
+    src/FlasherCli.cpp
+    src/FlasherCli.h
     src/logging/LoggingQtCategories.cpp
     src/logging/LoggingQtCategories.h
 )

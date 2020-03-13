@@ -44,7 +44,7 @@ void Flasher::flash(bool startApplication) {
             finish(false);
         }
     } else {
-        qCWarning(logCategoryFlasher).noquote() << this << "Cannot open file " << fw_file_.fileName();
+        qCWarning(logCategoryFlasher).noquote() << this << "Cannot open file '" << fw_file_.fileName() << "'.";
         finish(false);
     }
 }
