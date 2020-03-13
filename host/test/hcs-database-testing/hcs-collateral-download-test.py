@@ -2,7 +2,7 @@
 #
 # Python 3
 
-import os, sys, json, hashlib, time, shutil
+import sys, os.path, json, hashlib, time, shutil
 try:
     import zmq
 except ImportError:
