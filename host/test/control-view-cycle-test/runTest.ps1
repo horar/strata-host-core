@@ -80,9 +80,18 @@ function ExecuteTheTest {
         $pythonScript = Start-Process python "$($PSScriptRoot)\zmq-router.py" -NoNewWindow -PassThru -wait
         write-host "############################################################################################################################################"
         
-        Write-Host "Test is done."
-        Write-Host "Killing Strata Developer Studio..."
-        stop-process $strataDev.id
+        Write-Host "Python test script is done."
+
+        Write-Host "Checking if Strata Developer Studio is still running."
+        if ($strataDev.HasExited -eq $false) {
+            Write-Host "Strata Developer Studio is running. Killing Strata Developer Studio..."
+            stop-process $strataDev.id
+        }
+        else {  # Strta is not running. it could bea crash!
+            Write-Host "Strata developer Studio is not running. It might crashed during the test. Aborting..." -ForegroundColor Yellow
+            return $false
+        }
+        
 
         if($pythonScript.ExitCode -eq 0) { # Test Successful
             Write-Host "Test Successful." -ForegroundColor Green
