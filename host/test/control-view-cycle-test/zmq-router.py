@@ -1,5 +1,6 @@
 import json
 import time
+import os
 
 import zmq
 
@@ -15,7 +16,11 @@ returnToPlatListRes = b'{"hcs::notification":{"list":[],"type":"connected_platfo
 emptyDynamicPlatformList = b'{"hcs::notification":{"list":[],"type":"all_platforms"}}'
 
 # Open and parse dynamic platform list json file, the file was modified to not have hardcoded img paths
-with open('./DynamicPlatformList.json') as f:
+# The file should be next to the script.
+# get the location of the script 
+scriptPath = os.path.dirname(os.path.realpath(__file__))
+# Open the file.
+with open("%s/DynamicPlatformList.json" % scriptPath) as f:
     dynamicPlatformList = json.load(f)
 
 # function to print line seperator, to make the code more neat :)
