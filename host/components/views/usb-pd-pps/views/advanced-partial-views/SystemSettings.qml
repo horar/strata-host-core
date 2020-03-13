@@ -563,10 +563,11 @@ Item {
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
                     stateMessage += " °C";
                     //if there's already a temperature fault in the list, remove it (there can only be one at a time)
-                    for(var i = 0; i < faultListModel.count; ++i){
-                        var theItem = faultListModel.get(i);
-                        if (theItem.type === "temperature"){
-                            faultListModel.remove(i);
+                    for(var a = 0; a < faultListModel.count; ++a){
+                        var theListItem = faultListModel.get(a);
+                        if (theListItem.type === "temperature"){
+                            console.log("removing old over-temp fault",a)
+                            faultListModel.remove(a);
                         }
                     }
                     faultListModel.append({"type":"temperature", "message":stateMessage});
@@ -574,7 +575,7 @@ Item {
                 else{                                       //remove temp message for the correct port from list
                     for(var i = 0; i < faultListModel.count; ++i){
                         var theItem = faultListModel.get(i);
-                        if (theItem.type === "temperature" && theItem.portName === platformInterface.over_temperature_notification.port){
+                        if (theItem.type === "temperature"){
                             faultListModel.remove(i);
                         }
                     }
