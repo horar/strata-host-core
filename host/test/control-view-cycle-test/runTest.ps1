@@ -2,23 +2,17 @@
 # prober rendering.
 
 # squence of test:
-#   1. Start the python script `zmq-client.py` 
-#   2. Run Strata Dev Studio.
+#   1. Run Strata Dev Studio.
+#   2. Start the python script `zmq-client.py`. 
 #   3. Close every thing.
 
-# Script outline:
-# start the script in the background
-# start Strata
-# bring the script back to the foreground again
-# wait until everything is done...
+# TODO: create exit function that will print the error number and end of script line.
 
-# verify that the tools exits:
-    # python, pyzmq         -------> Done
-    # correct Strata path
-    # script exists
-
-
-$PATH_TO_STRATA="C:\Users\zbjmpd\spyglass\host\Debug\bin\Strata Developer Studio.exe"
+# Optional -StrataPath command line argument
+[CmdletBinding()]
+param (
+    [string]$StrataPath = "C:\Users\zbjmpd\spyglass\host\Debug\bin\Strata Developer Studio.exe"
+)
 
 # function to check if python and pyzmq are installed, if both were found it will return True,
 function CheckPythonExist {
@@ -51,8 +45,8 @@ function CheckPythonExist {
 
 # This functin is to check if Strata Develoiper studio Exist
 function CheckStrataExist {
-    Write-Host "Looking for Strata Developer Studio in" $PATH_TO_STRATA
-    if(Test-Path -Path $PATH_TO_STRATA) {
+    Write-Host "Looking for Strata Developer Studio in" $StrataPath
+    if(Test-Path -Path $StrataPath) {
         Write-Host "Strata Developer Studio found."
         Return $true
     }
@@ -68,7 +62,7 @@ function ExecuteTheTest {
     Write-Host "Looking for the test script in" $PSScriptRoot
     if(Test-Path -Path "$($PSScriptRoot)\zmq-router.py") {
         write-host "Script Found"
-        $strataDev = Start-Process $PATH_TO_STRATA -PassThru
+        $strataDev = Start-Process $StrataPath -PassThru
         $pythonScript = Start-Process python "$($PSScriptRoot)\zmq-router.py" -NoNewWindow -PassThru -wait
         Write-Host "Test is done."
         Write-Host "Killing Strata Developer Studio..."
@@ -109,7 +103,7 @@ write-host "====================================================================
 exit 0
 
 
-# $strataDev = Start-Process $PATH_TO_STRATA -PassThru
+# $strataDev = Start-Process $StrataPath -PassThru
 # $pythonScript = Start-Process python .\zmq-router.py -NoNewWindow -PassThru -wait
 
 # Write-Host $pythonScript.ExitCode
