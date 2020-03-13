@@ -2,7 +2,7 @@
 #
 # Python 3
 
-import sys, json, os.path, hashlib, time
+import os, sys, json, hashlib, time, shutil
 try:
     import zmq
 except ImportError:
@@ -59,8 +59,8 @@ def generateDownloadFilesCommand(class_id, download_list):
 def getFileMD5Hash(file_abspath):
     "Calculate the MD5 hash of the given file"
     # Assumes given file exists (previously checked)
-    with open(filepath, 'rb') as file_md5_check:
-        return hashlib.md5(file_md5_check.read()).hexdigest()
+    with open(file_abspath, 'rb') as file:
+        return hashlib.md5(file.read()).hexdigest()
 
 hcs_directory = sys.argv[1]
 hcs_endpoint = sys.argv[2]
@@ -85,6 +85,11 @@ message = sendToHcsAndWait('{"hcs::cmd":"dynamic_platform_list","payload":{}}')
 platform_list = message["hcs::notification"]["list"]
 print(", received reply with " + str(len(platform_list)) + " platforms.")
 
+# If we've made it this far, delete the HCS documents 'views' folder if exists
+if os.path.exists(os.path.join(hcs_directory, "documents", "views")):
+    print("\nDeleting local directory for testing: " + os.path.join(hcs_directory, "documents", "views"))
+    shutil.rmtree(os.path.join(hcs_directory, "documents", "views"))
+
 # Start main loop over each platform
 total_failed_tests = 0
 for platform in platform_list:
@@ -107,12 +112,11 @@ for platform in platform_list:
     for file in file_list:
         filepath = file["uri"] if os.path.isabs(file["uri"]) else os.path.join(hcs_directory, "documents", "views", str(platform["class_id"]), file["prettyname"])
         if os.path.isfile(filepath): # File found where expected - perform MD5 check
-            with open(filepath, 'rb') as file_md5_check:
-                calculated_md5 = hashlib.md5(file_md5_check.read()).hexdigest()
-                if calculated_md5 != file["md5"]: # MD5 check failed
-                    print("\nTest failed, MD5 check unsuccessful for file:\n" + filepath)
-                    platform_failed_tests += 1
-                    total_failed_tests += 1
+            calculated_md5 = getFileMD5Hash(filepath)
+            if calculated_md5 != file["md5"]: # MD5 check failed
+                print("\nTest failed, MD5 check unsuccessful for file:\n" + filepath)
+                platform_failed_tests += 1
+                total_failed_tests += 1
         else: # File not found where expected
             print("\nTest failed, file not found:\n" + filepath)
             platform_failed_tests += 1
