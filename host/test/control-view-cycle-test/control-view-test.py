@@ -17,7 +17,7 @@ emptyDynamicPlatformList = b'{"hcs::notification":{"list":[],"type":"all_platfor
 
 # Open and parse dynamic platform list json file, the file was modified to not have hardcoded img paths
 # The file should be next to the script.
-# get the location of the script 
+# get the location of the script
 scriptPath = os.path.dirname(os.path.realpath(__file__))
 # Open the file.
 with open("%s/DynamicPlatformList.json" % scriptPath) as f:
@@ -52,7 +52,7 @@ def getRealHcsRes():
 def sendOpenPlatformCtrlView(classID):
     myEncodedStr = bytes(
         "{\"hcs::notification\":{\"list\":[{\"class_id\":\"%s\",\"connection\":\"connected\",\"verbose_name\":\"\"}],\"type\":\"connected_platforms\"}}" % classID, 'utf-8')
-    
+
     print("sending:", myEncodedStr, "...")
     client.send_multipart([strataId, myEncodedStr])
     print("Sent.")
@@ -76,7 +76,7 @@ def useDynamicPlatformList():
 # Create zmq router to connect to the UI
 context = zmq.Context.instance()
 client = context.socket(zmq.ROUTER)
-client.RCVTIMEO = 10000 # 10s timeout.
+client.RCVTIMEO = 10000  # 10s timeout.
 client.setsockopt(zmq.IDENTITY, b'zmqRouterTest')
 client.bind(defZmqURL)
 
@@ -102,7 +102,7 @@ printLineSep()
 # While loop until we close Strata..
 while True:
     print("waiting for response..")
-    
+
     # 10s timeout.
     try:
         message = client.recv()

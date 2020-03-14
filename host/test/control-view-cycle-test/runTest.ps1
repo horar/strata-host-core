@@ -14,9 +14,9 @@ param (
 
 function Exit-TestScript {
     param (
-        [Parameter(Mandatory=$true)][int]$ScriptExitCode
+        [Parameter(Mandatory = $true)][int]$ScriptExitCode
     )
-    if($ScriptExitCode -eq 0) {
+    if ($ScriptExitCode -eq 0) {
         write-host "Test finished Successfully. Existting..." -ForegroundColor Green
     }
     else {
@@ -34,7 +34,7 @@ function Test-PythonExist {
         If ((Start-Process python --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
             Write-Host "Python found." -ForegroundColor Green
             Write-Host "Looking for pyzmq..."
-            If((Start-Process python '-c "import zmq"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
+            If ((Start-Process python '-c "import zmq"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
                 Write-Host "pyzmq found." -ForegroundColor Green
             }
             Else {
@@ -46,7 +46,8 @@ function Test-PythonExist {
             Write-Host "Python not found. aborting..." -ForegroundColor red
             Return $false
         }  
-    } Catch [System.InvalidOperationException] {
+    }
+    Catch [System.InvalidOperationException] {
         Write-Host "Python not found. aborting..." -ForegroundColor red
         Return $false
     }
@@ -56,7 +57,7 @@ function Test-PythonExist {
 # This functin is to check if Strata Develoiper studio Exist
 function Test-StrataExist {
     Write-Host "Looking for Strata Developer Studio in" $StrataPath
-    if(Test-Path -Path $StrataPath) {
+    if (Test-Path -Path $StrataPath) {
         Write-Host "Strata Developer Studio found." -ForegroundColor Green
         Return $true
     }
@@ -70,7 +71,7 @@ function Test-StrataExist {
 function Test-StrataControlView {
     # check if the python script exesit.
     Write-Host "Looking for the test script " $PythonScriptPath
-    if(Test-Path -Path $PythonScriptPath) {
+    if (Test-Path -Path $PythonScriptPath) {
         write-host "Script Found" -ForegroundColor Green
         
         write-host "Starting Strata Developer Studio..."
@@ -88,13 +89,15 @@ function Test-StrataControlView {
             Write-Host "Strata Developer Studio is running. Killing Strata Developer Studio..."
             stop-process $strataDev.id
         }
-        else {  # Strta is not running. it could bea crash!
+        else {
+            # Strta is not running. it could bea crash!
             Write-Host "Strata developer Studio is not running. It might crashed during the test. Aborting..." -ForegroundColor Yellow
             return $false
         }
         
 
-        if($pythonScript.ExitCode -eq 0) { # Test Successful
+        if ($pythonScript.ExitCode -eq 0) {
+            # Test Successful
             Write-Host "Test Successful." -ForegroundColor Green
             return $true
         }
@@ -110,17 +113,17 @@ function Test-StrataControlView {
 }
 
 # check python tools.
-if( (Test-PythonExist) -eq $false ) {
+if ( (Test-PythonExist) -eq $false ) {
     Exit-TestScript -ScriptExitCode -1
 }
 
 # verify Strata path.
-if( (Test-StrataExist) -Eq $false) {
+if ( (Test-StrataExist) -Eq $false) {
     Exit-TestScript -ScriptExitCode -1
 }
 
 # verify Strata path.
-if( (Test-StrataControlView) -Eq $false) {
+if ( (Test-StrataControlView) -Eq $false) {
     Exit-TestScript -ScriptExitCode -1
 }
 
