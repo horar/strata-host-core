@@ -54,11 +54,11 @@ def sendOpenPlatformCtrlView(classID):
         "{\"hcs::notification\":{\"list\":[{\"class_id\":\"%s\",\"connection\":\"connected\",\"verbose_name\":\"\"}],\"type\":\"connected_platforms\"}}" % classID, 'utf-8')
     
     print("sending:", myEncodedStr, "...")
-    client.send_multipart([strata_id, myEncodedStr])
+    client.send_multipart([strataId, myEncodedStr])
     print("Sent.")
     time.sleep(8)
     print("Returning to platform selector page...")
-    client.send_multipart([strata_id, returnToPlatListRes])
+    client.send_multipart([strataId, returnToPlatListRes])
     printLineSep()
     time.sleep(1)
 
@@ -76,6 +76,7 @@ def useDynamicPlatformList():
 # Create zmq router to connect to the UI
 context = zmq.Context.instance()
 client = context.socket(zmq.ROUTER)
+client.RCVTIMEO = 10000 # 10s timeout.
 client.setsockopt(zmq.IDENTITY, b'zmqRouterTest')
 client.bind(defZmqURL)
 
@@ -83,23 +84,43 @@ client.bind(defZmqURL)
 printLineSep()
 printLineSep()
 print("Waiting for Strata Developer Studio to connect...")
-strata_id = client.recv()
-print("Strata id is [ %s ]" % (strata_id))
+
+# Wait for 10s to get a message from Strata, otherwise fail.
+try:
+    strataId = client.recv()
+except zmq.Again:
+    print("No Response recived from Strata. Exiting...")
+    quit(-1)
+if not strataId:
+    print("Recived an empty response. Exiting...")
+    quit(-1)
+
+print("Strata id is [ %s ]" % (strataId))
 printLineSep()
 printLineSep()
 
 # While loop until we close Strata..
 while True:
     print("waiting for response..")
-    message = client.recv()
+    
+    # 10s timeout.
+    try:
+        message = client.recv()
+    except zmq.Again:
+        print("Response Timeout. Exiting...")
+        quit(-1)
+    if not message:
+        print("Recived an empty response. Exiting...")
+        quit(-1)
+
     print("Received reply [ %s ]" % (message))
     printLineSep()
 
     if (message == b'{"hcs::cmd":"dynamic_platform_list","payload":{}}'):
         # send the platform list and wait
-        # client.send_multipart([strata_id, emptyDynamicPlatformList])
+        # client.send_multipart([strataId, emptyDynamicPlatformList])
         client.send_multipart(
-            [strata_id, bytes(json.dumps(dynamicPlatformList), 'utf-8')])
+            [strataId, bytes(json.dumps(dynamicPlatformList), 'utf-8')])
         time.sleep(1)
         # useDynamicPlatformList()
         useHardcoddedUUIDList()
