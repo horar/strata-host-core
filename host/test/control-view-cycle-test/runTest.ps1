@@ -8,7 +8,8 @@
 # Optional -StrataPath command line argument, otherwise use the default intallation path.
 [CmdletBinding()]
 param (
-    [string]$StrataPath = "$($Env:Programfiles)\ON Semiconductor\Strata Developer Studio\Strata Developer Studio.exe"
+    [string]$StrataPath = "$($Env:Programfiles)\ON Semiconductor\Strata Developer Studio\Strata Developer Studio.exe",
+    [string]$PythonScriptPath = "$($PSScriptRoot)\control-view-test.py"
 )
 
 function Exit-TestScript {
@@ -68,8 +69,8 @@ function Test-StrataExist {
 # Function to run the test, it will return True if the test was successful 
 function Test-StrataControlView {
     # check if the python script exesit.
-    Write-Host "Looking for the test script in" $PSScriptRoot
-    if(Test-Path -Path "$($PSScriptRoot)\zmq-router.py") {
+    Write-Host "Looking for the test script " $PythonScriptPath
+    if(Test-Path -Path $PythonScriptPath) {
         write-host "Script Found" -ForegroundColor Green
         
         write-host "Starting Strata Developer Studio..."
@@ -77,7 +78,7 @@ function Test-StrataControlView {
         
         write-host "Starting python test script..."
         write-host "############################################################################################################################################"
-        $pythonScript = Start-Process python "$($PSScriptRoot)\zmq-router.py" -NoNewWindow -PassThru -wait
+        $pythonScript = Start-Process python $PythonScriptPath -NoNewWindow -PassThru -wait
         write-host "############################################################################################################################################"
         
         Write-Host "Python test script is done."
