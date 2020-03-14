@@ -12,6 +12,10 @@ param (
     [string]$PythonScriptPath = "$($PSScriptRoot)\control-view-test.py"
 )
 
+# update the path so they are formatted based on host OS, (win vs. unix)
+$StrataPath = Convert-path $StrataPath
+$PythonScriptPath = Convert-path $PythonScriptPath
+
 function Exit-TestScript {
     param (
         [Parameter(Mandatory = $true)][int]$ScriptExitCode
