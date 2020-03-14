@@ -5,13 +5,13 @@
 #   2. Start the python script `zmq-client.py`. 
 #   3. Close every thing.
 
-# Optional -StrataPath command line argument
+# Optional -StrataPath command line argument, otherwise use the default intallation path.
 [CmdletBinding()]
 param (
-    [string]$StrataPath = "C:\Users\zbjmpd\spyglass\host\Debug\bin\Strata Developer Studio.exe"
+    [string]$StrataPath = "$($Env:Programfiles)\ON Semiconductor\Strata Developer Studio\Strata Developer Studio.exe"
 )
 
-function ExitTheScript {
+function Exit-TestScript {
     param (
         [Parameter(Mandatory=$true)][int]$ScriptExitCode
     )
@@ -27,7 +27,7 @@ function ExitTheScript {
 }
 
 # function to check if python and pyzmq are installed, if both were found it will return True,
-function CheckPythonExist {
+function Test-PythonExist {
     Try {
         Write-Host "Looking for python..."
         If ((Start-Process python --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
@@ -53,7 +53,7 @@ function CheckPythonExist {
 }
 
 # This functin is to check if Strata Develoiper studio Exist
-function CheckStrataExist {
+function Test-StrataExist {
     Write-Host "Looking for Strata Developer Studio in" $StrataPath
     if(Test-Path -Path $StrataPath) {
         Write-Host "Strata Developer Studio found." -ForegroundColor Green
@@ -66,7 +66,7 @@ function CheckStrataExist {
 }
 
 # Function to run the test, it will return True if the test was successful 
-function ExecuteTheTest {
+function Test-StrataControlView {
     # check if the python script exesit.
     Write-Host "Looking for the test script in" $PSScriptRoot
     if(Test-Path -Path "$($PSScriptRoot)\zmq-router.py") {
@@ -109,19 +109,19 @@ function ExecuteTheTest {
 }
 
 # check python tools.
-if( (CheckPythonExist) -eq $false ) {
-    ExitTheScript -ScriptExitCode -1
+if( (Test-PythonExist) -eq $false ) {
+    Exit-TestScript -ScriptExitCode -1
 }
 
 # verify Strata path.
-if( (CheckStrataExist) -Eq $false) {
-    ExitTheScript -ScriptExitCode -1
+if( (Test-StrataExist) -Eq $false) {
+    Exit-TestScript -ScriptExitCode -1
 }
 
 # verify Strata path.
-if( (ExecuteTheTest) -Eq $false) {
-    ExitTheScript -ScriptExitCode -1
+if( (Test-StrataControlView) -Eq $false) {
+    Exit-TestScript -ScriptExitCode -1
 }
 
 # Test successfull!
-ExitTheScript -ScriptExitCode 0
+Exit-TestScript -ScriptExitCode 0
