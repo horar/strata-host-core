@@ -621,15 +621,13 @@ Item {
 
             onOverTempEventChanged: {
                 if (overTempEvent.state === "above"){   //add temp  message to list
-                    stateMessage = platformInterface.over_temperature_notification.port
-                    stateMessage += " temperature is above ";
+                    stateMessage = "Temperature is above ";
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
                     stateMessage += " °C";
                     faultHistory.append(stateMessage);
                 }
                 else{
-//                    stateMessage = platformInterface.over_temperature_notification.port
-//                    stateMessage += " temperature went below ";
+//                    stateMessage += "Temperature went below ";
 //                    stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
 //                    stateMessage += " °C";
 //                    faultHistory.input = stateMessage;

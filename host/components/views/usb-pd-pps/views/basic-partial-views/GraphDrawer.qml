@@ -150,7 +150,7 @@ Drawer {
             anchors.top: menuContainer.top
             height: root.graphHeight
 
-            title: " Voltage"
+            title: " Bus Voltage"
             xTitle: "Seconds"
             yTitle: "V"
             yMin: 0
@@ -217,7 +217,7 @@ Drawer {
             height: root.graphHeight
 
             // Optional graph settings:
-            title: "Power"
+            title: "Power Out"
             xTitle: "Seconds"
             yTitle: "W"
             yMin: 0
@@ -251,7 +251,7 @@ Drawer {
                     let currentTime = Date.now()
                     let curve = powerGraph.curve(0)
                     curve.shiftPoints(-(currentTime - lastTime)/1000, 0)
-                    curve.append(0, platformInterface.usb_power_notification.output_current)
+                    curve.append(0, platformInterface.usb_power_notification.output_current * platformInterface.usb_power_notification.output_voltage)
                     removeOutOfViewPoints()
                     powerGraph.update()
                     lastTime = currentTime
