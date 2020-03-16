@@ -12,7 +12,8 @@ BoardManager::BoardManager() {
     connect(&timer_, &QTimer::timeout, this, &BoardManager::checkNewSerialDevices);
 }
 
-void BoardManager::init() {
+void BoardManager::init(bool getFwInfo) {
+    getFwInfo_ = getFwInfo;
     timer_.start(DEVICE_CHECK_INTERVAL);
 }
 
@@ -202,7 +203,7 @@ bool BoardManager::addedSerialPort(const int connectionId) {
         connect(device.get(), &SerialDevice::serialDeviceError, this, &BoardManager::boardError);
         connect(device.get(), &SerialDevice::msgFromDevice, this, &BoardManager::newMessage);
 
-        device->launchDevice();
+        device->launchDevice(getFwInfo_);
 
         return true;
     }

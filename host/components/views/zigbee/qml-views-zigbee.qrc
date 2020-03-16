@@ -13,19 +13,14 @@
         <file>control-views/SensorRow.qml</file>
         <file>control-views/MeshObject.qml</file>
         <file>control-views/DragTarget.qml</file>
-        <file>images/office.png</file>
         <file>images/plusIcon.svg</file>
         <file>images/switchIcon.svg</file>
-        <file>images/office_alarmOn.png</file>
-        <file>images/office_doorOpen.png</file>
-        <file>images/interiorDark.png</file>
-        <file>images/interiorLight.png</file>
-        <file>images/room.png</file>
         <file>images/room_blue.png</file>
-        <file>images/room_door_open.png</file>
         <file>images/room_green.png</file>
         <file>images/room_purple.png</file>
         <file>images/room_red.png</file>
         <file>images/room_lightsOff.png</file>
+        <file>images/room_doorOpen.png</file>
+        <file>images/room_lightsOn.png</file>
     </qresource>
 </RCC>
