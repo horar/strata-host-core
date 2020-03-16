@@ -12,10 +12,6 @@ param (
     [string]$PythonScriptPath = "$($PSScriptRoot)\control-view-test.py"
 )
 
-# update the path so they are formatted based on host OS, (win vs. unix)
-$StrataPath = Convert-path $StrataPath
-$PythonScriptPath = Convert-path $PythonScriptPath
-
 # Determine the python command based on OS. osx will execute python 2 by default and here we need to use python3.
 # on win, python3 is not in the path by default, as a result we'll need to use python3 for osx and python for win
 # If ($IsWindows -eq $true) {
@@ -71,12 +67,18 @@ function Test-PythonExist {
 
 # This functin is to check if Strata Develoiper studio Exist
 function Test-StrataExist {
+
+    # Convert the path if using unix env.
+    If ( $Env:OS -ne "Windows_NT" -and (( $StrataPath = Convert-path $StrataPath) -eq $false )) {
+        return $false
+    }
+    
     Write-Host "Looking for Strata Developer Studio in" $StrataPath
-    if (Test-Path -Path $StrataPath) {
+    If (Test-Path -Path $StrataPath) {
         Write-Host "Strata Developer Studio found." -ForegroundColor Green
         Return $true
     }
-    else {
+    Else {
         Write-Host "Strta Developer Studio not found. aborting..." -ForegroundColor red
         Return $false 
     }
@@ -85,6 +87,14 @@ function Test-StrataExist {
 # Function to run the test, it will return True if the test was successful 
 function Test-StrataControlView {
     # check if the python script exesit.
+    
+    # Convert the path if using unix env.
+    If ( $Env:OS -ne "Windows_NT" -and (( $PythonScriptPath = Convert-path $PythonScriptPath) -eq $false )) {
+        If ( ($PythonScriptPath = Convert-path $PythonScriptPath) -eq $false ) {
+            return $false
+        }
+    }
+
     Write-Host "Looking for the test script " $PythonScriptPath
     if (Test-Path -Path $PythonScriptPath) {
         write-host "Script Found" -ForegroundColor Green
