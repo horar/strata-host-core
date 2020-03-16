@@ -42,9 +42,10 @@ namespace spyglass {
 
         /**
          * Start device identification - send initial JSON commands and parse responses.
+         * @param getFwInfo if true send also get_firmware_info command
          * @return true if device identification has start, otherwise false
          */
-        bool launchDevice();
+        bool launchDevice(bool getFwInfo = true);
 
         /**
          * Write data to serial device.

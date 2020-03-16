@@ -213,7 +213,7 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
             platform_list_ = strJson_payload;
         }
         emit platformListChanged(platform_list_);
-    } else if (type == "download_paltform_filepath_changed") {
+    } else if (type == "download_platform_filepath_changed") {
         emit downloadPlatformFilepathChanged(payload);
     } else if (type == "download_platform_single_file_progress") {
         emit downloadPlatformSingleFileProgress(payload);

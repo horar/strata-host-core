@@ -27,7 +27,7 @@ Rectangle {
 
     Image{
         id:officeImage
-        source:"../images/interiorDark.png"
+        source:"../images/room_lightsOn.png"
         height:parent.height*.65
         anchors.centerIn: parent
         fillMode: Image.PreserveAspectFit
@@ -39,23 +39,41 @@ Rectangle {
             console.log("light toggled=",platformInterface.toggle_light_notification.value)
             if (platformInterface.toggle_light_notification.value === "on"){
                 //switch to image with light on
-                officeImage.source = "../images/interiorLight.png"
+                officeImage.source = "../images/room_lightsOn.png"
             }
             else{
-                officeImage.source = "../images/interiorDark.png"
+                officeImage.source = "../images/room_lightsOff.png"
             }
         }
 
         property var doorToggled: platformInterface.toggle_door_notification
         onDoorToggledChanged: {
-            if (platformInterface.toggle_door_notification.value === "on"){
+            if (platformInterface.toggle_door_notification.value === "open"){
                 //switch to image with light on
-                officeImage.source = "../images/interiorLight.png"
+                officeImage.source = "../images/room_doorOpen.png"
             }
             else{
-                officeImage.source = "../images/interiorDark.png"
+                officeImage.source = "../images/room_lightsOn.png"
             }
         }
+
+        property var color: platformInterface.room_color_notification
+        onColorChanged: {
+            if (platformInterface.room_color_notification.color === "blue"){
+                officeImage.source = "../images/room_blue.png"
+            }
+            else if (platformInterface.room_color_notification.color === "green"){
+                officeImage.source = "../images/room_green.png"
+            }
+            else if (platformInterface.room_color_notification.color === "purple"){
+                officeImage.source = "../images/room_purple.png"
+            }
+            else if (platformInterface.room_color_notification.color === "red"){
+                officeImage.source = "../images/room_red.png"
+            }
+
+        }
+
 
 
     }
