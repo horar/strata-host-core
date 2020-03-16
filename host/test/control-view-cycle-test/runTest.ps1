@@ -16,6 +16,17 @@ param (
 $StrataPath = Convert-path $StrataPath
 $PythonScriptPath = Convert-path $PythonScriptPath
 
+# Determine the python command based on OS. osx will execute python 2 by default and here we need to use python3.
+# on win, python3 is not in the path by default, as a result we'll need to use python3 for osx and python for win
+# If ($IsWindows -eq $true) {
+If ($Env:OS -eq "Windows_NT") {
+    $PythonExec = 'python'
+}
+Else {
+    $PythonExec = 'python3'
+}
+
+# Utility function to print the exit code an a pattern for the end of the script.
 function Exit-TestScript {
     param (
         [Parameter(Mandatory = $true)][int]$ScriptExitCode
@@ -35,10 +46,10 @@ function Exit-TestScript {
 function Test-PythonExist {
     Try {
         Write-Host "Looking for python..."
-        If ((Start-Process python --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
+        If ((Start-Process $PythonExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
             Write-Host "Python found." -ForegroundColor Green
             Write-Host "Looking for pyzmq..."
-            If ((Start-Process python '-c "import zmq"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
+            If ((Start-Process $PythonExec '-c "import zmq"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
                 Write-Host "pyzmq found." -ForegroundColor Green
             }
             Else {
@@ -79,11 +90,11 @@ function Test-StrataControlView {
         write-host "Script Found" -ForegroundColor Green
         
         write-host "Starting Strata Developer Studio..."
-        $strataDev = Start-Process $StrataPath -PassThru
+        $strataDev = Start-Process $StrataPath -PassThru | Out-Null     # Hide output.
         
         write-host "Starting python test script..."
         write-host "############################################################################################################################################"
-        $pythonScript = Start-Process python $PythonScriptPath -NoNewWindow -PassThru -wait
+        $pythonScript = Start-Process $PythonExec $PythonScriptPath -NoNewWindow -PassThru -wait
         write-host "############################################################################################################################################"
         
         Write-Host "Python test script is done."
