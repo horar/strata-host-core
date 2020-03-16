@@ -58,23 +58,23 @@ public slots:
     void onAboutToQuit();
 
     void sendDownloadPlatformFilePathChangedMessage(
-            const QByteArray &cliendId,
+            const QByteArray &clientId,
             const QString &originalFilePath,
             const QString &effectiveFilePath);
 
     void sendDownloadPlatformSingleFileProgressMessage(
-            const QByteArray &cliendId,
+            const QByteArray &clientId,
             const QString &filePath,
             qint64 bytesReceived,
             qint64 bytesTotal);
 
     void sendDownloadPlatformSingleFileFinishedMessage(
-            const QByteArray &cliendId,
+            const QByteArray &clientId,
             const QString &filePath,
             const QString &errorString);
 
     void sendDownloadPlatformFilesFinishedMessage(
-            const QByteArray &cliendId,
+            const QByteArray &clientId,
             const QString &errorString);
 
     void sendPlatformListMessage(
