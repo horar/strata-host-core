@@ -114,10 +114,10 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
     }
 }
 
-bool SerialDevice::launchDevice() {
+bool SerialDevice::launchDevice(bool getFwInfo) {
     if (serial_port_.isOpen()) {
         device_busy_ = true;  // Start of device identification.
-        state_ = State::GetFirmwareInfo;
+        state_ = getFwInfo ? State::GetFirmwareInfo : State::GetPlatformInfo;
         // some boards need time for booting, so wait before sending JSON messages
         QTimer::singleShot(LAUNCH_DELAY, [this](){ emit identifyDevice(QPrivateSignal()); });
         return true;
@@ -138,6 +138,7 @@ void SerialDevice::deviceIdentification() {
             break;
         case State::GetPlatformInfo :
             qCDebug(logCategorySerialDevice) << this << ": Sending 'request_platform_id' command.";
+            connect(this, &SerialDevice::msgFromDevice, this, &SerialDevice::handleDeviceResponse, Qt::UniqueConnection);
             serial_port_.write(CMD_REQUEST_PLATFORM_ID);
             action_ = Action::WaitingForPlatformInfo;
             response_timer_.start();

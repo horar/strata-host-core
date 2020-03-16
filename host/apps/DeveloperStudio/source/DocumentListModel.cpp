@@ -26,8 +26,8 @@ QVariant DocumentListModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case UriRole:
         return item->uri;
-    case FilenameRole:
-        return item->filename;
+    case PrettyNameRole:
+        return item->prettyName;
     case DirnameRole:
         return item->dirname;
     case PreviousDirnameRole:
@@ -91,7 +91,7 @@ QHash<int, QByteArray> DocumentListModel::roleNames() const
 {
     QHash<int, QByteArray> names;
     names[UriRole] = "uri";
-    names[FilenameRole] = "filename";
+    names[PrettyNameRole] = "prettyName";
     names[DirnameRole] = "dirname";
     names[PreviousDirnameRole] = "previousDirname";
 

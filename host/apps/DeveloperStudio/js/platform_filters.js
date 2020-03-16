@@ -40,21 +40,21 @@ var mapping = [
                 inUse: false
             },
             {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/placeholder.svg",
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/battery.svg",
                 text: "Power Management",
                 filterMapping: "category-power-management",
                 type: "category",
                 inUse: false
             },
             {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/placeholder.svg",
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/battery.svg",
                 text: "Power Modules",
                 filterMapping: "category-power-module",
                 type: "category",
                 inUse: false
             },
             {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/placeholder.svg",
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/analog_to_digital_converters.svg",
                 text: "Interfaces",
                 filterMapping: "category-interface",
                 type: "category",
@@ -75,7 +75,7 @@ var mapping = [
                 inUse: false
             },
             {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/placeholder.svg",
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/memory.svg",
                 text: "Memory",
                 filterMapping: "category-memory",
                 type: "category",
@@ -103,6 +103,43 @@ var mapping = [
                 inUse: false
             },
             {
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/dc_dc.svg",
+                text: "DC-DC Controllers, Converters, & Regulators",
+                filterMapping: "subcategory-powerman-dcdc",
+                type: "category",
+                inUse: false
+            },
+            {
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/ac_dc.svg",
+                text: "AC-DC Controllers & Regulators",
+                filterMapping: "subcategory-powerman-acdc",
+                type: "category",
+                inUse: false
+            },
+            {
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/led.svg",
+                text: "LED Drivers",
+                filterMapping: "category-powerman-led",
+                type: "category",
+                inUse: false
+            },
+            {
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/motor_drivers.svg",
+                text: "Motor Drivers",
+                filterMapping: "subcategory-powerman-motor-drive",
+                type: "category",
+                inUse: false
+            },
+            {
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/usb.svg",
+                text: "USB Type-C",
+                filterMapping: "subcategory-usb",
+                type: "category",
+                inUse: false
+            },
+
+            // Segments
+            {
                 iconSource: "qrc:/partial-views/platform-selector/images/icons/segment-icons/segment-automotive.svg",
                 text: "Automotive",
                 filterMapping: "segment-automotive",
@@ -125,7 +162,7 @@ var mapping = [
             },
 
             // TODO [Faller] - remove when Deployment Portal API is updated to use filters key - see also note in oldNewMap
-            // The following 4 categories are just for interim compatibility for release 2.0.0 along with placeholder icons above
+            // The following 2 categories are just for interim compatibility for release 2.0.0 along with placeholder icons above
             {
                 iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/analog_to_digital_converters.svg",
                 text: "Analog-to-Digital Converters (ADC)",
@@ -134,23 +171,9 @@ var mapping = [
                 inUse: false
             },
             {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/discretes_and_drivers.svg",
-                text: "Discretes & Drivers",
-                filterMapping: "category-discretes-drivers",
-                type: "category",
-                inUse: false
-            },
-            {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/dc_dc_controllers_converters_and_regulators.svg",
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/battery.svg",
                 text: "DC-DC Converters",
                 filterMapping: "category-dc-dc",
-                type: "category",
-                inUse: false
-            },
-            {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/led.svg",
-                text: "LED Drivers",
-                filterMapping: "category-led-drivers",
                 type: "category",
                 inUse: false
             },
@@ -203,7 +226,7 @@ var oldNewMap = {
     "analog": "category-adc",
     "connectivity": "category-connectivity",
     "dc": "category-dc-dc",
-    "discrete": "category-discretes-drivers",
-    "led": "category-led-drivers",
+    "discrete": "category-discrete-driver",
+    "led": "category-powerman-led",
     "sensor": "category-sensor",
 }
