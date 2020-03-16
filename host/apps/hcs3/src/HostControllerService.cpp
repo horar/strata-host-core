@@ -123,7 +123,7 @@ void HostControllerService::onAboutToQuit()
 }
 
 void HostControllerService::sendDownloadPlatformFilePathChangedMessage(
-        const QByteArray &cliendId,
+        const QByteArray &clientId,
         const QString &originalFilePath,
         const QString &effectiveFilePath)
 {
@@ -131,7 +131,7 @@ void HostControllerService::sendDownloadPlatformFilePathChangedMessage(
     QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "download_paltform_filepath_changed");
+    payload.insert("type", "download_platform_filepath_changed");
     payload.insert("original_filepath", originalFilePath);
     payload.insert("effective_filepath", effectiveFilePath);
 
@@ -139,11 +139,11 @@ void HostControllerService::sendDownloadPlatformFilePathChangedMessage(
 
     doc.setObject(message);
 
-    clients_.sendMessage(cliendId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
+    clients_.sendMessage(clientId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
 }
 
 void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
-        const QByteArray &cliendId,
+        const QByteArray &clientId,
         const QString &filePath,
         qint64 bytesReceived,
         qint64 bytesTotal)
@@ -161,11 +161,11 @@ void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
 
     doc.setObject(message);
 
-    clients_.sendMessage(cliendId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
+    clients_.sendMessage(clientId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
 }
 
 void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
-        const QByteArray &cliendId,
+        const QByteArray &clientId,
         const QString &filePath,
         const QString &errorString)
 {
@@ -181,10 +181,10 @@ void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
 
     doc.setObject(message);
 
-    clients_.sendMessage(cliendId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
+    clients_.sendMessage(clientId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
 }
 
-void HostControllerService::sendDownloadPlatformFilesFinishedMessage(const QByteArray &cliendId, const QString &errorString)
+void HostControllerService::sendDownloadPlatformFilesFinishedMessage(const QByteArray &clientId, const QString &errorString)
 {
     QJsonDocument doc;
     QJsonObject message;
@@ -199,7 +199,7 @@ void HostControllerService::sendDownloadPlatformFilesFinishedMessage(const QByte
 
     doc.setObject(message);
 
-    clients_.sendMessage(cliendId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
+    clients_.sendMessage(clientId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
 }
 
 void HostControllerService::sendPlatformListMessage(

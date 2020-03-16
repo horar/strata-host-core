@@ -40,22 +40,20 @@ bool PlatformDocument::parseDocument(const QString &document)
     }
 
     //downloads
-    QJsonArray jsonDownloadList = jsonDocument.value("downloads").toArray();
-    if (jsonDownloadList.isEmpty()) {
+    if (jsonDocument.contains("downloads") == false) {
         qCWarning(logCategoryHcsPlatformDocument) << "downloads object is missing";
         return false;
     }
 
-    populateFileList(jsonDownloadList, downloadList_);
+    populateFileList(jsonDocument.value("downloads").toArray(), downloadList_);
 
     //views
-    QJsonArray jsonViewList = jsonDocument.value("views").toArray();
-    if (jsonViewList.isEmpty()) {
+    if (jsonDocument.contains("views") == false) {
         qCWarning(logCategoryHcsPlatformDocument) << "views object is missing";
         return false;
     }
 
-    populateFileList(jsonViewList, viewList_);
+    populateFileList(jsonDocument.value("views").toArray(), viewList_);
 
     //platform selector
     QJsonObject jsonPlatformSelector = jsonRoot.object().value("platform_selector").toObject();

@@ -15,7 +15,7 @@ BoardManagerWrapper::BoardManagerWrapper() {
 
 void BoardManagerWrapper::initialize(HCS_Dispatcher* dispatcher) {
     dispatcher_ = dispatcher;
-    boardManager_.init();
+    boardManager_.init(false);
 }
 
 void BoardManagerWrapper::sendMessage(const int connectionId, const std::string& message) {
