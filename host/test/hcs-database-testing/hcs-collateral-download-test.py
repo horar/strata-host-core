@@ -16,6 +16,9 @@ if len(sys.argv) != 3:
 
 def messageHCS(message_to_HCS, expected_reply_pattern = None):
     "Send notification to HCS through ZMQ and wait for response"
+    # This function will quit the script if it fails
+    # Response is converted to JSON object
+    # Function returns when expected pattern is found in "hcs::notification" or "cloud::notification" field of reply
     socket.send_string(message_to_HCS)
     if expected_reply_pattern is None:
         return
@@ -23,9 +26,13 @@ def messageHCS(message_to_HCS, expected_reply_pattern = None):
         while True:
             try:
                 message_from_HCS = socket.recv()
-                message_from_HCS = json.loads(message_from_HCS)
             except zmq.Again:
-                print("\nNo response received, is HCS running?\nExiting.\n")
+                print("\nTest fail: HCS reply timed out.\nExiting.\n")
+                sys.exit(-1)
+            try:
+                message_from_HCS = json.loads(message_from_HCS)
+            except ValueError:
+                print("\nTest fail: received empty or invalid response from HCS, exiting.")
                 sys.exit(-1)
             if "hcs::notification" in message_from_HCS and message_from_HCS["hcs::notification"]["type"] == expected_reply_pattern:
                 break
