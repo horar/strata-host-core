@@ -4,8 +4,8 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 Item {
     id: control
 
-    width: (sizeByMask ? metrics.boundingRect.width: tagText.contentWidth) + 8
-    height: (sizeByMask ? metrics.boundingRect.height : tagText.contentHeight) + 8
+    width: (sizeByMask ? metrics.boundingRect.width: tagText.contentWidth) + 2*horizontalPadding
+    height: (sizeByMask ? metrics.boundingRect.height : tagText.contentHeight) + 2*verticalPadding
 
     property alias text: tagText.text
     property alias radius: tagBackground.radius
@@ -13,6 +13,9 @@ Item {
 
     property bool sizeByMask: false
     property alias mask: metrics.text
+
+    property int horizontalPadding: 4
+    property int verticalPadding: 4
 
     TextMetrics {
         id: metrics
@@ -31,7 +34,7 @@ Item {
         anchors {
             verticalCenter: parent.verticalCenter
             left: parent.left
-            leftMargin: 4
+            leftMargin: horizontalPadding
         }
     }
 }
