@@ -13,7 +13,7 @@ add_library(${PROJECT_NAME}
 )
 
 find_package(Qt5 ${VERSION_QT5}
-        COMPONENTS Core
+    COMPONENTS Core
 )
 
 target_link_libraries(${PROJECT_NAME}
