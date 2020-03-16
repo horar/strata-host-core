@@ -106,16 +106,11 @@ Item {
                 property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
                 onDeviceConnectedChanged: {
-                    if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_1"){
+                    if (platformInterface.usb_pd_port_connect.port === "1"){
                         if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
                             miniInfo1.portConnected = true;
                         }
-                    }
-                }
-
-                onDeviceDisconnectedChanged: {
-                    if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_1"){
-                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                        else if (platformInterface.usb_pd_port_connect.connection_state === "disconnected"){
                             miniInfo1.portConnected = false;
                         }
 
@@ -204,19 +199,13 @@ Item {
                 portColor: "#69db67"
 
                 property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-                property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
                 onDeviceConnectedChanged: {
-                    if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_2"){
+                    if (platformInterface.usb_pd_port_connect.port === "USB_C_port_2"){
                         if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
                             miniInfo2.portConnected = true;
                         }
-                    }
-                }
-
-                onDeviceDisconnectedChanged: {
-                    if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_2"){
-                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                        else if (platformInterface.usb_pd_port_connect.connection_state === "disconnected"){
                             miniInfo2.portConnected = false;
                         }
 
@@ -307,16 +296,11 @@ Item {
                 property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
                 onDeviceConnectedChanged: {
-                    if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_3"){
+                    if (platformInterface.usb_pd_port_connect.port === "USB_C_port_3"){
                         if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
                             miniInfo3.portConnected = true;
                         }
-                    }
-                }
-
-                onDeviceDisconnectedChanged: {
-                    if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_3"){
-                        if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+                        else if (platformInterface.usb_pd_port_connect.connection_state === "disconnected"){
                             miniInfo3.portConnected = false;
                         }
 
@@ -407,7 +391,7 @@ Item {
                 property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
 
                 onDeviceConnectedChanged: {
-                    if (platformInterface.usb_pd_port_connect.port_id === "USB_C_port_4"){
+                    if (platformInterface.usb_pd_port_connect.port === "USB_C_port_4"){
                         if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
                             miniInfo4.portConnected = true;
                         }
@@ -415,7 +399,7 @@ Item {
                 }
 
                 onDeviceDisconnectedChanged: {
-                    if (platformInterface.usb_pd_port_disconnect.port_id === "USB_C_port_4"){
+                    if (platformInterface.usb_pd_port_disconnect.port === "USB_C_port_4"){
                         if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
                             miniInfo4.portConnected = false;
                         }

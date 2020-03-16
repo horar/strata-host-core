@@ -16,8 +16,6 @@ SGStrataPopup {
     glowColor: "#666"
     closePolicy: Popup.CloseOnEscape
 
-    property string versionNumber
-
     onVisibleChanged: {
         if (visible) {
             nameField.forceActiveFocus()

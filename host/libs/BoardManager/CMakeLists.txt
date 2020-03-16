@@ -15,6 +15,7 @@ add_library(${PROJECT_NAME}
 
     #AUTOMOC wont find header if it is in different directory
     include/BoardManager.h
+    include/DeviceProperties.h
     src/BoardManagerConstants.h
     src/SerialDevice.h
     src/SerialDeviceConstants.h

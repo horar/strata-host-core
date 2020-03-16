@@ -17,7 +17,18 @@ var signals = createObject("qrc:/partial-views/login/LoginSignals.qml", null)
 */
 function login(login_info){
     var data = {"username":login_info.user, "password":login_info.password, "timezone": login_info.timezone};
-    var headers = {"app": "strata"}
+
+    let versionNumberList = Qt.application.version.split(".")
+    if (versionNumberList[0].startsWith("v")) {
+        versionNumberList[0] = versionNumberList[0].substring(1)
+    }
+    let versionNumber = "%1.%2.%3".arg(versionNumberList[0]).arg(versionNumberList[1]).arg(versionNumberList[2])
+
+    let headers = {
+        "app": "strata",
+        "version": versionNumber,
+    }
+
     Rest.xhr("post", "login", data, login_result, login_error, signals, headers)
 }
 

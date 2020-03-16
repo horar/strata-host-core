@@ -10,6 +10,8 @@
 #include <QVariantMap>
 #include <QVector>
 
+#include <DeviceProperties.h>
+
 
 namespace spyglass {
 
@@ -29,8 +31,9 @@ namespace spyglass {
 
         /**
          * Initialize BoardManager (start managing connected devices).
+         * @param getFwInfo if true send also get_firmware_info command during device identification
          */
-        void init();
+        void init(bool getFwInfo = true);
 
         /**
          * Send a message to the device.
@@ -60,9 +63,17 @@ namespace spyglass {
 
         /**
          * Get list of available connection IDs.
-         * @return list of available connection IDs (connection IDs which have opened serial port)
+         * @return list of available connection IDs (those, which have serial port opened)
          */
         QVector<int> readyConnectionIds();
+
+        /**
+         * Get device property.
+         * @param connectionId device connection ID
+         * @param property value from enum DeviceProperties
+         * @return QString filled with value of required property
+         */
+        QString getDeviceProperty(const int connectionId, const DeviceProperties property);
 
     signals:
         /**
@@ -117,6 +128,8 @@ namespace spyglass {
         bool addedSerialPort(const int connectionId);
         void removedSerialPort(const int connectionId);
 
+        void logInvalidConnectionId(const QString& message, const int connectionId) const;
+
         QTimer timer_;
 
         // There is no need to use lock now because there is only one event loop in application. But if this library
@@ -128,6 +141,9 @@ namespace spyglass {
         std::set<int> serialPortsList_;
         QHash<int, QString> serialIdToName_;
         QHash<int, SerialDeviceShPtr> openedSerialPorts_;
+
+        // flag if send get_firmware_info command
+        bool getFwInfo_;
     };
 
 }

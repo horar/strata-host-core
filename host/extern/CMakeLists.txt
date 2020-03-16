@@ -343,6 +343,13 @@ else()
     )
 endif()
 
+if(APPLE)
+    target_link_libraries(strata::CouchbaseLiteCPP INTERFACE
+        ${IOKIT_LIBRARY}
+        ${FOUNDATION_LIBRARY}
+    )
+endif()
+
 #
 # QWT
 #
