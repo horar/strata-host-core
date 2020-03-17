@@ -325,6 +325,9 @@ FocusScope {
                 checkable: true
                 onClicked: {
                     automaticScroll = !automaticScroll
+                    if (automaticScroll) {
+                        scrollbackView.positionViewAtEnd()
+                    }
                 }
 
                 Binding {
