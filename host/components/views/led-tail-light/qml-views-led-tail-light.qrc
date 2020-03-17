@@ -2,8 +2,8 @@
     <qresource prefix="/views/led-tail-light">
         <file>Content.qml</file>
         <file>Control.qml</file>
-        <file>control-views/AdvancedControl.qml</file>
-        <file>control-views/BasicControl.qml</file>
+        <file>control-views/LEDControl.qml</file>
+        <file>control-views/CarDemoControl.qml</file>
         <file>control-views/PlatformInterface.qml</file>
         <file>control-views/question-circle-solid.svg</file>
     </qresource>

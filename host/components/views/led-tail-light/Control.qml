@@ -31,16 +31,16 @@ Item {
         }
 
         TabButton {
-            id: basicButton
-            text: qsTr("Basic")
+            id: carDemoButton
+            text: qsTr("Car Demo Mode")
             onClicked: {
                 controlContainer.currentIndex = 0
             }
         }
 
         TabButton {
-            id: advancedButton
-            text: qsTr("Advanced")
+            id: ledControlButton
+            text: qsTr("LED Control Button")
             onClicked: {
                 controlContainer.currentIndex = 1
             }
@@ -56,13 +56,21 @@ Item {
             left: controlNavigation.left
         }
 
-        BasicControl {
-            id: basic
+        CarDemoControl{
+            id: carDemoMode
         }
 
-        AdvancedControl {
-            id: advanced
+        LEDControl {
+            id: ledControl
         }
+
+//        BasicControl {
+//            id: basic
+//        }
+
+//        AdvancedControl {
+//            id: advanced
+//        }
     }
 
     SGIcon {
@@ -85,7 +93,7 @@ Item {
             onClicked: {
                 // Make sure view is set to Basic before starting tour
                 controlContainer.currentIndex = 0
-                basicButton.clicked()
+                carDemoMode.clicked()
                 Help.startHelpTour("controlHelp")
             }
             hoverEnabled: true
