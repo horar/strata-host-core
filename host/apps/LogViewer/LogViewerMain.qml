@@ -79,6 +79,10 @@ Item {
             selectMultiple: false
             selectFolder: false
             nameFilters: ["Log files (*.log)","All files (*)"]
+
+            onAccepted: {
+                scrollbackViewAtEndTimer.restart()
+            }
         }
     }
 
