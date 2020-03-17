@@ -8,6 +8,7 @@ Item {
     height: (sizeByMask ? metrics.boundingRect.height : tagText.contentHeight) + 2*verticalPadding
 
     property alias text: tagText.text
+    property alias textColor: tagText.color
     property alias radius: tagBackground.radius
     property alias color: tagBackground.color
 
