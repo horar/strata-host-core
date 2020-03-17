@@ -15,13 +15,25 @@ uuidList = ["101", "201", "202", "203", "204", "206", "207", "208", "209", "210"
 returnToPlatListRes = b'{"hcs::notification":{"list":[],"type":"connected_platforms"}}'
 emptyDynamicPlatformList = b'{"hcs::notification":{"list":[],"type":"all_platforms"}}'
 
-# Open and parse dynamic platform list json file, the file was modified to not have hardcoded img paths
-# The file should be next to the script.
 # get the location of the script
 scriptPath = os.path.dirname(os.path.realpath(__file__))
-# Open the file.
-with open("%s/DynamicPlatformList.json" % scriptPath) as f:
-    dynamicPlatformList = json.load(f)
+
+# Flag to to check if the json file exist or not.
+DynamicPlatformListJsonFound = False
+
+# Check if DynamicPlatformList.json then use it, otherwise send an empty list to SDS and use the hardcoded uuidList to cycle through the views.
+print("Checking if DynamicPlatformList.json exist...")
+if os.path.exists("%s/DynamicPlatformList.json" % scriptPath):
+    print("DynamicPlatformList.json found.")
+    # Open and parse dynamic platform list json file, the file was modified to not have hardcoded img paths
+    # The file should be next to the script.
+    # Open the file.
+    with open("%s/DynamicPlatformList.json" % scriptPath) as f:
+        dynamicPlatformList = json.load(f)
+    DynamicPlatformListJsonFound = True
+else:
+    print("DynamicPlatformList.json is missing. Using hardcoded uuidList.")
+    DynamicPlatformListJsonFound = False
 
 # function to print line seperator, to make the code more neat :)
 def printLineSep(charSym='-'):
@@ -117,13 +129,17 @@ while True:
     printLineSep()
 
     if (message == b'{"hcs::cmd":"dynamic_platform_list","payload":{}}'):
-        # send the platform list and wait
-        # client.send_multipart([strataId, emptyDynamicPlatformList])
-        client.send_multipart(
-            [strataId, bytes(json.dumps(dynamicPlatformList), 'utf-8')])
+        # If the daynamicPlatformList.json file exist use it, otherwise, send the empty list and use
+        # the hardcoded uuidList.
+        # Send the platform list and wait
+        if DynamicPlatformListJsonFound:
+            client.send_multipart(
+                [strataId, bytes(json.dumps(dynamicPlatformList), 'utf-8')])
+            useDynamicPlatformList()
+        else:
+            client.send_multipart([strataId, emptyDynamicPlatformList])
+            useHardcoddedUUIDList()
         time.sleep(1)
-        # useDynamicPlatformList()
-        useHardcoddedUUIDList()
         print("Done.")
         quit(0)              # Exit as soon as you finish the control views
     elif (message == b'{"cmd":"unregister","payload":{}}'):
