@@ -13,11 +13,11 @@
 namespace strata {
 
 QDebug operator<<(QDebug dbg, const SerialDevice* d) {
-    return dbg.nospace() << "Serial device 0x" << hex << d->ucid_;
+    return dbg.nospace() << "Serial device 0x" << hex << d->u_device_id_;
 }
 
 SerialDevice::SerialDevice(const int connectionID, const QString& name) :
-    connection_id_(connectionID), ucid_(static_cast<uint>(connectionID)), port_name_(name),
+    device_id_(connectionID), u_device_id_(static_cast<uint>(connectionID)), port_name_(name),
     device_busy_(false), state_(State::None), action_(Action::None)
 {
     read_buffer_.reserve(READ_BUFFER_SIZE);
@@ -30,12 +30,12 @@ SerialDevice::SerialDevice(const int connectionID, const QString& name) :
     connect(this, &SerialDevice::identifyDevice, this, &SerialDevice::deviceIdentification);
     connect(this, &SerialDevice::writeToPort, this, &SerialDevice::writeData);
 
-    qCDebug(logCategorySerialDevice).nospace() << "Created new serial device. ID: 0x" << hex << ucid_ << ", name: " << port_name_;
+    qCDebug(logCategorySerialDevice).nospace() << "Created new serial device. ID: 0x" << hex << u_device_id_ << ", name: " << port_name_;
 }
 
 SerialDevice::~SerialDevice() {
     close();
-    qCDebug(logCategorySerialDevice).nospace() << "Deleted serial device 0x" << hex << ucid_;
+    qCDebug(logCategorySerialDevice).nospace() << "Deleted serial device 0x" << hex << u_device_id_;
 }
 
 bool SerialDevice::open() {
@@ -75,7 +75,7 @@ void SerialDevice::readMessage() {
         from = end + 1;  // +1 due to skip '\n'
 
         // qCDebug(logCategorySerialDevice).nospace().noquote() << "Serial device 0x" << hex << ucid_ << ": received message: " << QString::fromStdString(read_buffer_);
-        emit msgFromDevice(connection_id_, QByteArray::fromStdString(read_buffer_));
+        emit msgFromDevice(device_id_, QByteArray::fromStdString(read_buffer_));
         read_buffer_.clear();
         // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
     }
@@ -92,14 +92,14 @@ void SerialDevice::write(const QByteArray& data) {
 void SerialDevice::writeData(const QByteArray& data) {
     if (device_busy_) {  // Device is busy -> device identification is still running.
         qCDebug(logCategorySerialDevice) << this << ": Cannot write to device because device is busy.";
-        emit serialDeviceError(connection_id_, QStringLiteral("Cannot write to device because device is busy."));
+        emit serialDeviceError(device_id_, QStringLiteral("Cannot write to device because device is busy."));
     }
     else {
         qint64 written_bytes = serial_port_.write(data);
         written_bytes += serial_port_.write("\n");
         if (written_bytes != (data.size() + 1)) {
             qCCritical(logCategorySerialDevice) << this << ": Cannot write whole data to device.";
-            emit serialDeviceError(connection_id_, QStringLiteral("Cannot write whole data to device."));
+            emit serialDeviceError(device_id_, QStringLiteral("Cannot write whole data to device."));
         }
     }
 }
@@ -114,14 +114,14 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
         }
         else {
             qCCritical(logCategorySerialDevice).noquote() << this << ": " << err_msg;
-            emit serialDeviceError(connection_id_, err_msg);
+            emit serialDeviceError(device_id_, err_msg);
         }
     }
 }
 
 QVariantMap SerialDevice::getDeviceInfo() const {
     QVariantMap result;
-    result.insert(QStringLiteral("connectionId"), connection_id_);
+    result.insert(QStringLiteral("connectionId"), device_id_);
     if (device_busy_ == false) {
         result.insert(QStringLiteral("platformId"), platform_id_);
         result.insert(QStringLiteral("classId"), class_id_);
@@ -158,8 +158,8 @@ QString SerialDevice::getProperty(DeviceProperties property) const {
     return QString();
 }
 
-int SerialDevice::getConnectionId() const {
-    return connection_id_;
+int SerialDevice::getDeviceId() const {
+    return device_id_;
 }
 
 void SerialDevice::setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer) {
@@ -210,7 +210,7 @@ void SerialDevice::deviceIdentification() {
             disconnect(this, &SerialDevice::msgFromDevice, this, &SerialDevice::handleDeviceResponse);
             action_ = Action::Done;
             device_busy_ = false;  // Device identification has ended.
-            emit deviceReady(connection_id_, (state_ == State::DeviceReady) ? true : false);
+            emit deviceReady(device_id_, (state_ == State::DeviceReady) ? true : false);
             break;
         case State::None :
             break;

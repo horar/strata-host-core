@@ -8,9 +8,9 @@
 #include "JsonStrings.h"
 
 BoardManagerWrapper::BoardManagerWrapper() {
-    connect(&boardManager_, &spyglass::BoardManager::boardReady, this, &BoardManagerWrapper::newConnection);
-    connect(&boardManager_, &spyglass::BoardManager::boardDisconnected, this, &BoardManagerWrapper::closeConnection);
-    connect(&boardManager_, &spyglass::BoardManager::newMessage, this, &BoardManagerWrapper::messageFromConnection);
+    connect(&boardManager_, &strata::BoardManager::boardReady, this, &BoardManagerWrapper::newConnection);
+    connect(&boardManager_, &strata::BoardManager::boardDisconnected, this, &BoardManagerWrapper::closeConnection);
+    connect(&boardManager_, &strata::BoardManager::newMessage, this, &BoardManagerWrapper::messageFromConnection);
 }
 
 void BoardManagerWrapper::initialize(HCS_Dispatcher* dispatcher) {

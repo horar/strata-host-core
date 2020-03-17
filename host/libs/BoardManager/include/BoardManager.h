@@ -14,7 +14,7 @@
 #include <DeviceProperties.h>
 
 
-namespace spyglass {
+namespace strata {
 
     class SerialDevice;
 
@@ -43,15 +43,21 @@ namespace spyglass {
 
         /**
          * Disconnect from the device.
-         * @param connectionId device connection ID
+         * @param deviceId device ID
          */
-        Q_INVOKABLE void disconnect(const int connectionId);
+        Q_INVOKABLE void disconnect(const int deviceId);
 
         /**
          * Reconnect the device.
-         * @param connectionId device connection ID
+         * @param deviceId device ID
          */
-        Q_INVOKABLE void reconnect(const int connectionId);
+        Q_INVOKABLE void reconnect(const int deviceId);
+
+        /**
+         * Get smart pointer to the device.
+         * @param deviceId device ID
+         */
+        SerialDeviceShPtr getDevice(const int deviceId) const;
 
         /**
          * Get information about connected device (platform ID, bootloader version, ...).
@@ -77,22 +83,22 @@ namespace spyglass {
     signals:
         /**
          * Emitted when new board is connected to computer.
-         * @param connectionId device connection ID
+         * @param deviceId device ID
          */
-        void boardConnected(int connectionId);
+        void boardConnected(int deviceId);
 
         /**
          * Emitted when board is disconnected.
-         * @param connectionId device connection ID
+         * @param deviceId device ID
          */
-        void boardDisconnected(int connectionId);
+        void boardDisconnected(int deviceId);
 
         /**
          * Emitted when board is ready for communication.
-         * @param connectionId device connection ID
+         * @param deviceId device ID
          * @param recognized true when board was recognized (identified), otherwise false
          */
-        void boardReady(int connectionId, bool recognized);
+        void boardReady(int deviceId, bool recognized);
 
         /**
          * Emitted when error occured during communication with the board.
@@ -110,12 +116,12 @@ namespace spyglass {
 
         /**
          * Emitted when required operation cannot be fulfilled (e.g. connection ID does not exist).
-         * @param connectionId device connection ID
+         * @param deviceId device ID
          */
-        void invalidOperation(int connectionId);
+        void invalidOperation(int deviceId);
 
         /**
-         * Emitted when connection IDs has changed (available connection ID list has changed).
+         * Emitted when device IDs has changed (available device ID list has changed).
          */
         void readyConnectionIdsChanged();
 
@@ -124,10 +130,10 @@ namespace spyglass {
 
     private:
         void computeListDiff(std::set<int>& list, std::set<int>& added_ports, std::set<int>& removed_ports);
-        bool addedSerialPort(const int connectionId);
-        void removedSerialPort(const int connectionId);
+        bool addedSerialPort(const int deviceId);
+        void removedSerialPort(const int deviceId);
 
-        void logInvalidConnectionId(const QString& message, const int connectionId) const;
+        void logInvalidDeviceId(const QString& message, const int deviceId) const;
 
         QTimer timer_;
 

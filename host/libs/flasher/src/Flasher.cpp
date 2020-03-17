@@ -16,7 +16,7 @@ QDebug operator<<(QDebug dbg, const Flasher* f) {
 Flasher::Flasher(std::shared_ptr<strata::SerialDevice> device, const QString& firmwareFilename) :
     device_(device), fwFile_(firmwareFilename)
 {
-    deviceId_ = static_cast<uint>(device_->getConnectionId());
+    deviceId_ = static_cast<uint>(device_->getDeviceId());
     operation_ = std::make_unique<DeviceOperations>(device_);
 
     connect(operation_.get(), &DeviceOperations::readyForFlashFw, [this](){this->handleFlashFirmware(-1);});

@@ -25,7 +25,7 @@ QDebug operator<<(QDebug dbg, const DeviceOperations* dev_op) {
 DeviceOperations::DeviceOperations(SerialDeviceShPtr device) :
     device_(device), operation_(Operation::None), state_(State::None), activity_(Activity::None)
 {
-    device_id_ = static_cast<uint>(device_->getConnectionId());
+    device_id_ = static_cast<uint>(device_->getDeviceId());
 
     response_timer_.setSingleShot(true);
     response_timer_.setInterval(RESPONSE_TIMEOUT);

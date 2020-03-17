@@ -129,7 +129,7 @@ private:
         std::string clientId;
     };
 
-    spyglass::BoardManager boardManager_;
+    strata::BoardManager boardManager_;
 
     HCS_Dispatcher* dispatcher_{nullptr};
 

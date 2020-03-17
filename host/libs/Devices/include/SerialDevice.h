@@ -26,7 +26,7 @@ namespace strata {
          * @param connectionId device connection ID
          * @param name device name
          */
-        SerialDevice(const int connectionId, const QString& name);
+        SerialDevice(const int deviceId, const QString& name);
 
         /**
          * SerialDevice destructor
@@ -75,7 +75,7 @@ namespace strata {
          * Get device ID.
          * @return Device ID
          */
-        int getConnectionId() const;
+        int getDeviceId() const;
 
         void setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer);
 
@@ -119,8 +119,8 @@ namespace strata {
     private:
         bool parseDeviceResponse(const QByteArray& data, bool& isAck);
 
-        const int connection_id_;
-        const uint ucid_;  // unsigned connection ID - auxiliary variable for logging
+        const int device_id_;
+        const uint u_device_id_;  // unsigned device ID - auxiliary variable for logging
         QString port_name_;
         QSerialPort serial_port_;
         std::string read_buffer_;  // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
