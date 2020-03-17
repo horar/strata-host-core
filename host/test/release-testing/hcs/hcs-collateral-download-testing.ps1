@@ -5,12 +5,22 @@
 # Define HCS TCP endpoint to be used
 Set-Variable "HCS_TCP_endpoint" "tcp://127.0.0.1:5563"
 
-# Define path to AppData/Roaming/ON Semiconductor
+# Define paths
+Set-Variable "SDS_root_dir"    "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
 Set-Variable "AppData_HCS_dir" "$Env:AppData\ON Semiconductor\hcs"
+Set-Variable "HCS_config_file" "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
+Set-Variable "HCS_exec_file"   "$SDS_root_dir\HCS\hcs.exe"
 
 #####
 ##### Automated section
 #####
+
+# Function definition "StartHCSAndWait"
+# Start one instance of HCS and wait (to give time for DB replication)
+function StartHCS {
+    Start-Process -FilePath $HCS_exec_file -ArgumentList "-f `"$HCS_config_file`""
+    Start-Sleep -Seconds 1
+}
 
 # Search for Python in local host machine
 Try {
@@ -37,6 +47,15 @@ If (!(Test-Path $AppData_HCS_dir -PathType Any)) {
     Exit
 }
 
+# Change directory to location of SDS executable
+Set-Location $SDS_root_dir
+
+# Run HCS standalone
+""; "Running HCS...";
+StartHCS
+
+# Run Python script
+Set-Location $PSScriptRoot
 ""; "Running Python script...";
 python hcs-collateral-download-test.py $AppData_HCS_dir $HCS_TCP_endpoint
 
