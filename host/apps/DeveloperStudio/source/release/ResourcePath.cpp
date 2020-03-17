@@ -33,8 +33,9 @@ QString &ResourcePath::coreResourcePath()
 QString &ResourcePath::viewsResourcePath()
 {
     if (viewsResourcePath_.isEmpty()) {
-        viewsResourcePath_ =
-            QStandardPaths::standardLocations(QStandardPaths::AppDataLocation).at(0);
+        QDir applicationDir(QCoreApplication::applicationDirPath());
+        applicationDir.cd(QStringLiteral("views"));
+        viewsResourcePath_ = applicationDir.path();
         qCDebug(logCategoryStrataDevStudio(), "app views resources path: '%s'",
                 qUtf8Printable(viewsResourcePath_));
     }
