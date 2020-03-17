@@ -18,9 +18,9 @@ Item {
         id: platformInterface
     }
 
-    Component.onCompleted: {
-        Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
-    }
+//    Component.onCompleted: {
+//        Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
+//    }
 
     TabBar {
         id: navTabs
@@ -64,39 +64,32 @@ Item {
             id: ledControl
         }
 
-//        BasicControl {
-//            id: basic
-//        }
-
-//        AdvancedControl {
-//            id: advanced
-//        }
     }
 
-    SGIcon {
-        id: helpIcon
-        anchors {
-            right: controlContainer.right
-            top: controlContainer.top
-            margins: 20
-        }
-        source: "control-views/question-circle-solid.svg"
-        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-        height: 40
-        width: 40
+//    SGIcon {
+//        id: helpIcon
+//        anchors {
+//            right: controlContainer.right
+//            top: controlContainer.top
+//            margins: 20
+//        }
+//        source: "control-views/question-circle-solid.svg"
+//        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+//        height: 40
+//        width: 40
 
-        MouseArea {
-            id: helpMouse
-            anchors {
-                fill: helpIcon
-            }
-            onClicked: {
-                // Make sure view is set to Basic before starting tour
-                controlContainer.currentIndex = 0
-                carDemoMode.clicked()
-                Help.startHelpTour("controlHelp")
-            }
-            hoverEnabled: true
-        }
-    }
+//        MouseArea {
+//            id: helpMouse
+//            anchors {
+//                fill: helpIcon
+//            }
+//            onClicked: {
+//                // Make sure view is set to Basic before starting tour
+//                controlContainer.currentIndex = 0
+//                carDemoMode.clicked()
+//                Help.startHelpTour("controlHelp")
+//            }
+//            hoverEnabled: true
+//        }
+//    }
 }

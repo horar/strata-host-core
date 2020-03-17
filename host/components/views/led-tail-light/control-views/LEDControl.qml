@@ -356,7 +356,7 @@ Item {
                         }
 
                         Rectangle {
-                            Layout.preferredHeight: parent.height/6
+                            Layout.preferredHeight: parent.height/10
                             Layout.fillWidth: true
                             color: "pink"
                         }
@@ -365,9 +365,196 @@ Item {
 
 
                 Rectangle {
+                    id: i2cStatusSettingContainer
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    color: "red"
+                    //color: "red"
+
+                    SGText{
+                        id: i2cStatusLable
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        text: "I2C Status Registers"
+                        font.bold: true
+                        anchors.top: parent. top
+                        anchors.left: parent.left
+                        //anchors.leftMargin: 20
+                    }
+
+                    Rectangle {
+                        id: i2cLEDS
+                        anchors.top: i2cStatusLable.bottom
+                       // anchors.topMargin: 10
+                        width: parent.width - 100
+                        height: parent.height - i2cStatusLable.contentHeight
+                        RowLayout{
+                            anchors.fill: parent
+                            Rectangle {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+
+                                SGAlignedLabel {
+                                    id: scIsetLabel
+                                    target: scIset
+                                    text:  "SC_Iset"
+                                    alignment: SGAlignedLabel.SideTopCenter
+                                    fontSizeMultiplier: ratioCalc
+                                    anchors.centerIn: parent
+
+                                    SGStatusLight {
+                                        id: scIset
+                                        width: 30
+                                    }
+                                }
+
+                            }
+                            Rectangle {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                SGAlignedLabel {
+                                    id: i2CerrLabel
+                                    target: i2Cerr
+                                    text:  "I2Cerr"
+                                    alignment: SGAlignedLabel.SideTopCenter
+                                    fontSizeMultiplier: ratioCalc
+                                    anchors.centerIn: parent
+
+                                    SGStatusLight {
+                                        id: i2Cerr
+                                        width: 30
+                                    }
+                                }
+                            }
+                            Rectangle {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                SGAlignedLabel {
+                                    id: uvLabel
+                                    target: uv
+                                    text:  "UV"
+                                    alignment: SGAlignedLabel.SideTopCenter
+                                    fontSizeMultiplier: ratioCalc
+                                    anchors.centerIn: parent
+
+                                    SGStatusLight {
+                                        id: uv
+                                        width: 30
+                                    }
+                                }
+                            }
+                            Rectangle {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+
+                                SGAlignedLabel {
+                                    id: diagRangeLabel
+                                    target: diagRange
+                                    text:  "diagRange"
+                                    alignment: SGAlignedLabel.SideTopCenter
+                                    fontSizeMultiplier: ratioCalc
+                                    anchors.centerIn: parent
+
+                                    SGStatusLight {
+                                        id: diagRange
+                                        width: 30
+                                    }
+                                }
+                            }
+                            Rectangle {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                SGAlignedLabel {
+                                    id: twLabel
+                                    target: tw
+                                    text:  "TW"
+                                    alignment: SGAlignedLabel.SideTopCenter
+                                    fontSizeMultiplier: ratioCalc
+                                    anchors.centerIn: parent
+
+                                    SGStatusLight {
+                                        id: tw
+                                        width: 30
+                                    }
+                                }
+                            }
+                            Rectangle {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                SGAlignedLabel {
+                                    id: tsdLabel
+                                    target: tsd
+                                    text:  "TSD"
+                                    alignment: SGAlignedLabel.SideTopCenter
+                                    fontSizeMultiplier: ratioCalc
+                                    anchors.centerIn: parent
+
+                                    SGStatusLight {
+                                        id: tsd
+                                        width: 30
+                                    }
+                                }
+                            }
+                            Rectangle {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                SGAlignedLabel {
+                                    id: diagreeLabel
+                                    target: diagree
+                                    text:  "DIAGERR"
+                                    alignment: SGAlignedLabel.SideTopCenter
+                                    fontSizeMultiplier: ratioCalc
+                                    anchors.centerIn: parent
+
+                                    SGStatusLight {
+                                        id: diagree
+                                        width: 30
+                                    }
+                                }
+                            }
+                            Rectangle {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                SGAlignedLabel {
+                                    id: olLabel
+                                    target: ol
+                                    text:  "OL"
+                                    alignment: SGAlignedLabel.SideTopCenter
+                                    fontSizeMultiplier: ratioCalc
+                                    anchors.centerIn: parent
+
+                                    SGStatusLight {
+                                        id: ol
+                                        width: 30
+                                    }
+                                }
+                            }
+
+                            Rectangle {
+                                Layout.fillHeight: true
+                                Layout.preferredWidth: parent.width/8
+                                SGButton {
+                                    id:  exportButton
+                                    text: qsTr("Export Registers")
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    fontSizeMultiplier: ratioCalc
+                                    color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                                    hoverEnabled: true
+                                    MouseArea {
+                                        hoverEnabled: true
+                                        anchors.fill: parent
+                                        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+
+                                    }
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+
+
+
                 }
             }
 
