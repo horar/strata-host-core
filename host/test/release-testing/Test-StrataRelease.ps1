@@ -37,23 +37,23 @@ function Test-PythonAndPyzmqExist {
     # Determine the python command based on OS. OSX will execute Python 2 by default and here we need to use Python 3.
     # on Win, Python 3 is not in the path by default, as a result we'll need to use 'python3' for OSX and 'python' for Win
     If ($Env:OS -Eq "Windows_NT") {
-        $PythonExec = 'python'
+        $global:PythonExec = 'python'
     } Else {
-        $PythonExec = 'python3'
+        $global:PythonExec = 'python3'
     }
 
     Try {
         If ((Start-Process $PythonExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
             If (!(Start-Process $PythonExec '-c "import zmq"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
-                Write-Host "Error: ZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions. Aborting." -ForegroundColor red
+                Write-Host "Error: ZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions. Aborting." -ForegroundColor Red
                 Return $false
             }
-        } Else {           
-            Write-Host "Error: Python not found. Aborting." -ForegroundColor red
+        } Else {
+            Write-Host "Error: Python not found. Aborting." -ForegroundColor Red
             Return $false
-        }  
+        }
     } Catch [System.Management.Automation.CommandNotFoundException] {
-        Write-Host "Error: Python not found. Aborting." -ForegroundColor red
+        Write-Host "Error: Python not found. Aborting." -ForegroundColor Red
         Return $false
     }
     Return $true
@@ -96,15 +96,15 @@ function Exit-TestScript {
     Param (
         [Parameter(Mandatory = $true)][int]$ScriptExitCode
     )
-    
+
     If ($ScriptExitCode -eq 0) {
         Write-Host "Test finished successfully. Exiting..." -ForegroundColor Green
     } Else {
-        Write-Host "Test failed. Terminating..." $ScriptExitCode -ForegroundColor red
+        Write-Host "Test failed. Terminating..." $ScriptExitCode -ForegroundColor Red
     }
     Write-Host "================================================================================"
     Write-Host "================================================================================"
-    exit $ScriptExitCode
+    Exit $ScriptExitCode
 }
 
 # Function to run the test for automated collateral download, it will return True if the test was successful
@@ -116,64 +116,63 @@ function Test-CollateralDownload {
     Write-Host "Running HCS...";
     Start-HCS
 
+    # Return to previous directory
     Set-Location $PSScriptRoot
-    python $Python_CollateralDownloadTest $AppData_HCS_dir $HCS_TCP_endpoint
+
+    # Run Python script
+    & $PythonExec $Python_CollateralDownloadTest $AppData_HCS_dir $HCS_TCP_endpoint
 }
 
 # Function to run the test for Strata Control View, it will return True if the test was successful
 function Test-StrataControlView {
-    # check if the python script exesit.
-    
-    # Convert the path if using unix env.
-    If ( $Env:OS -ne "Windows_NT" -and (( $PythonScriptPath = Convert-path $PythonScriptPath) -eq $false )) {
-        If ( ($PythonScriptPath = Convert-path $PythonScriptPath) -eq $false ) {
-            return $false
+    # Convert the path if using Unix env
+    If ($Env:OS -Ne "Windows_NT" -And (($Python_ControlViewTest = Convert-Path $Python_ControlViewTest) -Eq $false)) {
+        If (($Python_ControlViewTest = Convert-Path $Python_ControlViewTest) -Eq $false ) {
+            Return $false
         }
     }
-    if (Test-Path -Path $PythonScriptPath) {
-        write-host "Script Found" -ForegroundColor Green
-        
-        write-host "Starting Strata Developer Studio..."
-        ($strataDev = Start-Process $StrataPath -PassThru) | Out-Null     # Hide output.
-        
-        write-host "Starting python test script..."
-        write-host "############################################################################################################################################"
-        $pythonScript = Start-Process $PythonExec $PythonScriptPath -NoNewWindow -PassThru -wait
-        write-host "############################################################################################################################################"
-        
-        Write-Host "Python test script is done."
 
-        Write-Host "Checking if Strata Developer Studio is still running."
-        if ($strataDev.HasExited -eq $false) {
-            Write-Host "Strata Developer Studio is running. Killing Strata Developer Studio..."
-            stop-process $strataDev.id
-        }
-        else {
-            # Strta is not running. it could bea crash!
-            Write-Host "Strata developer Studio is not running. It might crashed during the test. Aborting..." -ForegroundColor Yellow
-            return $false
-        }
-        
+    write-host "Script Found" -ForegroundColor Green
 
-        if ($pythonScript.ExitCode -eq 0) {
-            # Test Successful
-            Write-Host "Test Successful." -ForegroundColor Green
-            return $true
-        }
-        else {
-            Write-Host "Test failed." -ForegroundColor red
-            Write-Host "Exit Code =" $pythonScript.ExitCode -ForegroundColor red
-            return $false
-        }
+    write-host "Starting Strata Developer Studio..."
+    ($strataDev = Start-Process $StrataPath -PassThru) | Out-Null     # Hide output.
+
+    write-host "Starting python test script..."
+    Write-Host "================================================================================"
+    $pythonScript = Start-Process $PythonExec $PythonScriptPath -NoNewWindow -PassThru -wait
+    Write-Host "================================================================================"
+
+    Write-Host "Python test script is done."
+
+    Write-Host "Checking if Strata Developer Studio is still running."
+    if ($strataDev.HasExited -eq $false) {
+        Write-Host "Strata Developer Studio is running. Killing Strata Developer Studio..."
+        stop-process $strataDev.id
     }
     else {
+        # Strta is not running. it could bea crash!
+        Write-Host "Strata developer Studio is not running. It might crashed during the test. Aborting..." -ForegroundColor Yellow
+        return $false
+    }
+
+
+    if ($pythonScript.ExitCode -eq 0) {
+        # Test Successful
+        Write-Host "Test Successful." -ForegroundColor Green
+        return $true
+    }
+    else {
+        Write-Host "Test failed." -ForegroundColor Red
+        Write-Host "Exit Code =" $pythonScript.ExitCode -ForegroundColor Red
         return $false
     }
 }
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
-# Search for python tools
+Write-Host "`n`nStarting tests...`n"
+
+# Search for Python tools
 If ((Test-PythonAndPyzmqExist) -Eq $false) {
     Exit-TestScript -ScriptExitCode -1
 }
@@ -189,13 +188,11 @@ If ((Test-PythonScriptsExist) -Eq $false) {
 }
 
 # Run first Python script (HCS collateral download testing)
-If ((Test-CollateralDownload) -Eq $false) {
-    Exit-TestScript -ScriptExitCode -1
-}
+Test-CollateralDownload
 
 # Run second Python script (SDS control view testing)
 If ((Test-StrataControlView) -Eq $false) {
     Exit-TestScript -ScriptExitCode -1
 }
 
-""; "Testing complete."; ""; "";
+Write-Host "`n`nTesting complete.`n`n"

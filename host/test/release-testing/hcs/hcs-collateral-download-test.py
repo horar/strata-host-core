@@ -91,7 +91,8 @@ except KeyError:
 print(", received reply with " + str(len(platform_list)) + " platforms.")
 
 # Create a "DynamicPlatformList.json" file to be used down the testing pipeline
-dyn_plat_list_file = open("DynamicPlatformList.json", 'w')
+dyn_plat_list_filename = os.path.join(os.path.dirname(os.path.realpath('__file__')), "strataDev/DynamicPlatformList.json")
+dyn_plat_list_file = open(dyn_plat_list_filename, 'w')
 print(json.dumps(message, indent=4), file=dyn_plat_list_file)
 
 # If we've made it this far, delete the HCS documents 'views' folder if exists
@@ -103,7 +104,7 @@ if os.path.exists(os.path.join(hcs_directory, "documents", "views")):
 total_failed_tests = 0
 for platform in platform_list:
     platform_failed_tests = 0
-    print("\n" + 80 * "#" + "\n\nSending HCS notification for platform " + str(platform["class_id"]), end = '')
+    print("\n" + 80 * "=" + "\n\nSending HCS notification for platform " + str(platform["class_id"]), end = '')
     message_to_HCS = '{"cmd":"platform_select","payload":{"platform_uuid":"' + str(platform["class_id"]) + '"}}'
     message_from_HCS = messageHCS(message_to_HCS, "document")
 
