@@ -2,12 +2,8 @@
 #
 # Python 3
 
-import sys, os.path, json, hashlib, shutil
-try:
-    import zmq
-except ImportError:
-    print("\nZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions.\nExiting.\n")
-    sys.exit(-1)
+import sys, os.path, json, hashlib, shutil, zmq
+
 if len(sys.argv) != 3:
     print("\nError: incorrect number of arguments provided.\nInvoke from Powershell script 'hcs-collateral-download-testing.ps1',")
     print("or directly as:\n'python hcs-collateral-download-test.py <APPDATA\HCS DIRECTORY> <HCS ENDPOINT>'.")
