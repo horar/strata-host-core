@@ -271,23 +271,106 @@ Item {
             Layout.fillWidth: true
             color: "transparent"
 
-            ColumnLayout {
+            ColumnLayout{
                 anchors.fill: parent
 
                 Rectangle {
-                    Layout.preferredHeight: parent.height/1.5
+                    Layout.preferredHeight: parent.height/1.2
                     Layout.fillWidth: true
-                    color: "green"
+                    color: "red"
+                    ColumnLayout {
+                        anchors.fill: parent
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "grey"
+                            RowLayout {
+                                anchors.fill: parent
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "blue"
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "blue"
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "blue"
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "blue"
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "blue"
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "blue"
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "blue"
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "blue"
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "blue"
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "blue"
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "blue"
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "blue"
+                                }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "blue"
+                                }
+
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.preferredHeight: parent.height/6
+                            Layout.fillWidth: true
+                            color: "pink"
+                        }
+                    }
                 }
+
 
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "red"
                 }
-
-
             }
+
         }
     }
 }
