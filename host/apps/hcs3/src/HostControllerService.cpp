@@ -389,8 +389,8 @@ void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
     HCS_Client* client = getSenderClient();
     Q_ASSERT(client);
 
-    if (int conn_id; boards_.getConnectionIdByClientId(client->getClientId(), conn_id)) {
-        boards_.clearClientId(conn_id);
+    if (int device_id; boards_.getDeviceIdByClientId(client->getClientId(), device_id)) {
+        boards_.clearClientId(device_id);
     }
 
     client->resetPlatformId();
@@ -428,13 +428,13 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
 
     dispatcher_.addMessage(msg);
 
-    if (int connId; boards_.getFirstConnectionIdByClassId(classId, connId) ) {
-        std::string platformId = boards_.getPlatformId(connId);
+    if (int device_id; boards_.getFirstDeviceIdByClassId(classId, device_id) ) {
+        std::string platformId = boards_.getPlatformId(device_id);
         if (platformId.empty()) {
             qCWarning(logCategoryHcs) << "Board doesn't have platfomId!";
             return;
         }
-        if (boards_.setClientId(client->getClientId(), connId) == false) {
+        if (boards_.setClientId(client->getClientId(), device_id) == false) {
             qCWarning(logCategoryHcs) << "Board is allready assigned to some client!";
             return;
         }
@@ -447,8 +447,8 @@ void HostControllerService::onCmdHostDisconnectPlatform(const rapidjson::Value* 
     HCS_Client* client = getSenderClient();
     Q_ASSERT(client);
 
-    if (int conn_id; boards_.getConnectionIdByClientId(client->getClientId(), conn_id)) {
-        boards_.clearClientId(conn_id);
+    if (int device_id; boards_.getDeviceIdByClientId(client->getClientId(), device_id)) {
+        boards_.clearClientId(device_id);
     }
 
     emit cancelPlatformDocumentRequested(QByteArray::fromStdString(client->getClientId()));
@@ -461,8 +461,8 @@ void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
     HCS_Client* client = getSenderClient();
     Q_ASSERT(client);
 
-    if (int conn_id; boards_.getConnectionIdByClientId(client->getClientId(), conn_id)) {
-        boards_.clearClientId(conn_id);
+    if (int device_id; boards_.getDeviceIdByClientId(client->getClientId(), device_id)) {
+        boards_.clearClientId(device_id);
     }
 }
 
@@ -574,13 +574,13 @@ void HostControllerService::handleStorageRequest(const PlatformMessage& msg)
 
 bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer_id, const std::string& message )
 {
-    int connectionId;
-    if (boards_.getConnectionIdByClientId(dealer_id, connectionId) == false) {
+    int device_id;
+    if (boards_.getDeviceIdByClientId(dealer_id, device_id) == false) {
         qCWarning(logCategoryHcs) << "No board attached to client.";
         return false;
     }
 
-    boards_.sendMessage(connectionId, message);
+    boards_.sendMessage(device_id, message);
     return true;
 }
 

@@ -22,11 +22,11 @@ BoardsController managed PlatformBoard objects (one PlatformBoard object for one
 
 PlatformBoard class held information about board and also shared pointer to PlatformConnection object
 which managed communication with serial device. Properties which was held by PlatformBoard class are
-now in BoardInfo struct.
+now in Board struct.
 
-All (serial port) devices are now managed by BoardManager where devices are identified by connection ID.
+All (serial port) devices are now managed by BoardManager where devices are identified by device ID.
 To be compatible with rest rest of current HCS implementation we need to have some information about connected
-devices. This information are stored in boardInfo_ map.
+devices. This information are stored in boards_ map.
 */
 class BoardManagerWrapper final : public QObject {
     Q_OBJECT
@@ -45,11 +45,11 @@ public:
     void initialize(HCS_Dispatcher* dispatcher);
 
     /**
-     * Sends message to specified connection Id
-     * @param connectionId
+     * Sends message to board specified by device Id
+     * @param deviceId
      * @param message
      */
-    void sendMessage(const int connectionId, const std::string& message);
+    void sendMessage(const int deviceId, const std::string& message);
 
     /**
      * Creates JSON with list of platforms
@@ -58,74 +58,76 @@ public:
     void createPlatformsList(std::string& result);
 
     /**
-     * Gets client ID of board specified by connection ID
-     * @param connectionId
+     * Gets client ID of board specified by device ID
+     * @param deviceId
      * @return client ID
      */
-    std::string getClientId(const int connectionId) const;
+    std::string getClientId(const int deviceId) const;
 
     /**
-     * Gets class ID of board specified by connection ID
-     * @param connectionId
+     * Gets class ID of board specified by device ID
+     * @param deviceId
      * @return class ID
      */
-    std::string getClassId(const int connectionId) const;
+    std::string getClassId(const int deviceId) const;
 
     /**
-     * Gets platform ID of board specified by connection ID
-     * @param connectionId
+     * Gets platform ID of board specified by device ID
+     * @param deviceId
      * @return platform ID
      */
-    std::string getPlatformId(const int connectionId) const;
+    std::string getPlatformId(const int deviceId) const;
 
     /**
-     * Gets connection ID for board with specified client ID
+     * Gets device ID for board with specified client ID
      * @param[in] clientId
-     * @param[out] connectionId
-     * @return true if operation was successful, otherwise false (invalid connectionId)
+     * @param[out] deviceId
+     * @return true if operation was successful, otherwise false (invalid clientId)
      */
-    bool getConnectionIdByClientId(const std::string& clientId, int& connectionId) const;
+    bool getDeviceIdByClientId(const std::string& clientId, int& deviceId) const;
 
     /**
-     * Gets connection ID for board with specified class ID
+     * Gets device ID for board with specified class ID
      * @param[in] classId
-     * @param[out] connectionId
-     * @return true if operation was successful, otherwise false (invalid connectionId)
+     * @param[out] deviceId
+     * @return true if operation was successful, otherwise false (invalid deviceId)
      */
-    bool getFirstConnectionIdByClassId(const std::string& classId, int& connectionId) const;
+    bool getFirstDeviceIdByClassId(const std::string& classId, int& deviceId) const;
 
     /**
-     * Sets client ID for board specified by connection ID
+     * Sets client ID for board specified by device ID
      * @param clientId
-     * @param connectionId
+     * @param deviceId
      * @return true if operation was successful, otherwise false
      */
-    bool setClientId(const std::string& clientId, const int connectionId);
+    bool setClientId(const std::string& clientId, const int deviceId);
 
     /**
-     * Clears client ID for board specified by connection ID
+     * Clears client ID for board specified by device ID
      * @param connectionId
-     * @return true if operation was successful, otherwise false (invalid connectionId)
+     * @return true if operation was successful, otherwise false (invalid deviceId)
      */
-    bool clearClientId(const int connectionId);
+    bool clearClientId(const int deviceId);
 
 private slots:  // slots for signals from BoardManager
 
-    void newConnection(int connectionId, bool recognized);
+    void newConnection(int deviceId, bool recognized);
 
-    void closeConnection(int connectionId);
+    void closeConnection(int deviceId);
 
-    void messageFromConnection(int connectionId, QString message);
+    void messageFromBoard(int deviceId, QString message);
 
 private:
     // Auxiliary function for writing log messages.
-    inline QString logConnectionId(const int connectionId) const;
+    inline QString logDeviceId(const int deviceId) const;
 
-    struct BoardInfo {
-        BoardInfo(QString clssId, QString pltfId, QString vName);
-        std::string classId;
-        std::string platformId;
-        std::string verboseName;
+    struct Board {
+//        Board(QString clssId, QString pltfId, QString vName);
+        Board(strata::SerialDeviceShPtr& devPtr);
+//        std::string classId;
+//        std::string platformId;
+//        std::string verboseName;
+        strata::SerialDeviceShPtr device;
         std::string clientId;
     };
 
@@ -133,9 +135,9 @@ private:
 
     HCS_Dispatcher* dispatcher_{nullptr};
 
-    // map: board (connection ID) <-> BoardInfo
-    std::map<int, BoardInfo> boardInfo_;
-    // access to boardInfo_ should be protected by mutex in case of multithread usage
+    // map: deviceID <-> Board
+    std::map<int, Board> boards_;
+    // access to boards_ should be protected by mutex in case of multithread usage
 };
 
 #endif // HCS_BOARDMANAGERWRAPPER_H__

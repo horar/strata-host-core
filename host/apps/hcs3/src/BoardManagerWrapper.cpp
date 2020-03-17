@@ -10,7 +10,6 @@
 BoardManagerWrapper::BoardManagerWrapper() {
     connect(&boardManager_, &strata::BoardManager::boardReady, this, &BoardManagerWrapper::newConnection);
     connect(&boardManager_, &strata::BoardManager::boardDisconnected, this, &BoardManagerWrapper::closeConnection);
-    connect(&boardManager_, &strata::BoardManager::newMessage, this, &BoardManagerWrapper::messageFromConnection);
 }
 
 void BoardManagerWrapper::initialize(HCS_Dispatcher* dispatcher) {
@@ -18,81 +17,86 @@ void BoardManagerWrapper::initialize(HCS_Dispatcher* dispatcher) {
     boardManager_.init(false);
 }
 
-void BoardManagerWrapper::sendMessage(const int connectionId, const std::string& message) {
-    qCDebug(logCategoryHcsBoard).noquote() << "Sending msg to board." << logConnectionId(connectionId);
-
-    boardManager_.sendMessage(connectionId, QString::fromStdString(message));
+void BoardManagerWrapper::sendMessage(const int deviceId, const std::string& message) {
+    auto const it = boards_.find(deviceId);
+    if (it == boards_.end()) {
+        qCWarning(logCategoryHcsBoard).noquote() << "Cannot send message, board was not found." << logDeviceId(deviceId);
+        return;
+    }
+    qCDebug(logCategoryHcsBoard).noquote() << "Sending message to board." << logDeviceId(deviceId);
+    it->second.device->write(QByteArray::fromStdString(message));
 }
 
-void BoardManagerWrapper::newConnection(int connectionId, bool recognized) {
+void BoardManagerWrapper::newConnection(int deviceId, bool recognized) {
     if (recognized) {
-        boardInfo_.emplace(connectionId, BoardInfo(
-            boardManager_.getDeviceProperty(connectionId, strata::DeviceProperties::classId),
-            boardManager_.getDeviceProperty(connectionId, strata::DeviceProperties::platformId),
-            boardManager_.getDeviceProperty(connectionId, strata::DeviceProperties::verboseName)
-        ));
+        strata::SerialDeviceShPtr device = boardManager_.getDevice(deviceId);
+        if (device == nullptr) {
+            return;
+        }
+        connect(device.get(), &strata::SerialDevice::msgFromDevice, this, &BoardManagerWrapper::messageFromBoard);
+        boards_.emplace(deviceId, Board(device));
         PlatformMessage item;
         item.msg_type = PlatformMessage::eMsgPlatformConnected;
-        item.from_connectionId.conn_id = connectionId;
+        item.from_connectionId.conn_id = deviceId;
         item.from_connectionId.is_set = true;
         item.msg_document = nullptr;
 
         dispatcher_->addMessage(item);
 
-        qCInfo(logCategoryHcsBoard).noquote() << "Connected new board." << logConnectionId(connectionId);
+        qCInfo(logCategoryHcsBoard).noquote() << "Connected new board." << logDeviceId(deviceId);
     }
     else {
-        qCInfo(logCategoryHcsBoard).noquote() << "Connected unknown (unrecognized) board." << logConnectionId(connectionId);
+        qCWarning(logCategoryHcsBoard).noquote() << "Connected unknown (unrecognized) board." << logDeviceId(deviceId);
     }
 }
 
-void BoardManagerWrapper::closeConnection(int connectionId) {
-    auto const it = boardInfo_.find(connectionId);
-    if (it == boardInfo_.end()) {
+void BoardManagerWrapper::closeConnection(int deviceId) {
+    auto const it = boards_.find(deviceId);
+    if (it == boards_.end()) {
         // This situation can occur if unrecognized board is disconnected.
-        qCInfo(logCategoryHcsBoard).noquote() << "Disconnected unknown board." << logConnectionId(connectionId);
+        qCInfo(logCategoryHcsBoard).noquote() << "Disconnected unknown board." << logDeviceId(deviceId);
         return;
     }
 
     QJsonObject msg {
-        { JSON_PLATFORM_ID, QString::fromStdString((*it).second.platformId) },
-        { JSON_CLASS_ID, QString::fromStdString((*it).second.classId) }
+        { JSON_PLATFORM_ID, it->second.device->getProperty(strata::DeviceProperties::platformId) },
+        { JSON_CLASS_ID, it->second.device->getProperty(strata::DeviceProperties::classId) }
     };
     QJsonDocument doc(msg);
 
-    boardInfo_.erase(connectionId);
+    boards_.erase(deviceId);
 
     PlatformMessage item;
     item.msg_type = PlatformMessage::eMsgPlatformDisconnected;
-    item.from_connectionId.conn_id = connectionId;
+    item.from_connectionId.conn_id = deviceId;
     item.from_connectionId.is_set = true;
     item.message = doc.toJson(QJsonDocument::Compact).toStdString();
     item.msg_document = nullptr;
 
     dispatcher_->addMessage(item);
 
-    qCInfo(logCategoryHcsBoard).noquote() << "Disconnected board." << logConnectionId(connectionId);
+    qCInfo(logCategoryHcsBoard).noquote() << "Disconnected board." << logDeviceId(deviceId);
 }
 
-void BoardManagerWrapper::messageFromConnection(int connectionId, QString message) {
+void BoardManagerWrapper::messageFromBoard(int deviceId, QString message) {
     PlatformMessage item;
     item.msg_type = PlatformMessage::eMsgPlatformMessage;
-    item.from_connectionId.conn_id = connectionId;
+    item.from_connectionId.conn_id = deviceId;
     item.from_connectionId.is_set = true;
     item.message = message.toStdString();
     item.msg_document = nullptr;
 
     dispatcher_->addMessage(item);
 
-    qCDebug(logCategoryHcsBoard).noquote() << "New board message." << logConnectionId(connectionId);
+    qCDebug(logCategoryHcsBoard).noquote() << "New board message." << logDeviceId(deviceId);
 }
 
 void BoardManagerWrapper::createPlatformsList(std::string& result) {
     QJsonArray arr;
-    for (auto const& it : boardInfo_) {
+    for (auto const& it : boards_) {
         QJsonObject item {
-            { JSON_VERBOSE_NAME, QString::fromStdString(it.second.verboseName) },
-            { JSON_CLASS_ID, QString::fromStdString(it.second.classId) },
+            { JSON_VERBOSE_NAME, it.second.device->getProperty(strata::DeviceProperties::verboseName) },
+            { JSON_CLASS_ID, it.second.device->getProperty(strata::DeviceProperties::classId) },
             { JSON_CONNECTION, JSON_CONNECTED }
         };
         arr.append(item);
@@ -109,57 +113,58 @@ void BoardManagerWrapper::createPlatformsList(std::string& result) {
     result = doc.toJson(QJsonDocument::Compact).toStdString();
 }
 
-std::string BoardManagerWrapper::getClientId(const int connectionId) const {
-    auto it = boardInfo_.find(connectionId);
-    if (it != boardInfo_.end()) {
+std::string BoardManagerWrapper::getClientId(const int deviceId) const {
+    auto it = boards_.find(deviceId);
+    if (it != boards_.end()) {
         return (*it).second.clientId;
     }
     return std::string();
 }
 
-std::string BoardManagerWrapper::getClassId(const int connectionId) const {
-    auto it = boardInfo_.find(connectionId);
-    if (it != boardInfo_.end()) {
-        return (*it).second.classId;
+std::string BoardManagerWrapper::getClassId(const int deviceId) const {
+    auto it = boards_.find(deviceId);
+    if (it != boards_.end()) {
+        return it->second.device->getProperty(strata::DeviceProperties::classId).toStdString();
     }
     return std::string();
 }
 
-std::string BoardManagerWrapper::getPlatformId(const int connectionId) const {
-    auto it = boardInfo_.find(connectionId);
-    if (it != boardInfo_.end()) {
-        return (*it).second.platformId;
+std::string BoardManagerWrapper::getPlatformId(const int deviceId) const {
+    auto it = boards_.find(deviceId);
+    if (it != boards_.end()) {
+        return it->second.device->getProperty(strata::DeviceProperties::platformId).toStdString();
     }
     return std::string();
 }
 
-bool BoardManagerWrapper::getConnectionIdByClientId(const std::string& clientId, int& connectionId) const {
+bool BoardManagerWrapper::getDeviceIdByClientId(const std::string& clientId, int& deviceId) const {
 // Original implementation in BoardsController class iterated through boards (PlatformBoard objects)
 // and returned first board which had desired client ID.
-    for (auto const& it : boardInfo_) {
+    for (auto const& it : boards_) {
         if (clientId == it.second.clientId) {
-            connectionId = it.first;
+            deviceId = it.first;
             return true;
         }
     }
     return false;
 }
 
-bool BoardManagerWrapper::getFirstConnectionIdByClassId(const std::string& classId, int& connectionId) const {
+bool BoardManagerWrapper::getFirstDeviceIdByClassId(const std::string& classId, int& deviceId) const {
 // Original implementation in BoardsController class iterated through boards (PlatformBoard objects)
 // and returned first board which had desired class ID.
-    for (auto const& it : boardInfo_) {
-        if (classId == it.second.classId) {
-            connectionId = it.first;
+    QString class_id = QString::fromStdString(classId);
+    for (auto const& it : boards_) {
+        if (class_id == it.second.device->getProperty(strata::DeviceProperties::classId)) {
+            deviceId = it.first;
             return true;
         }
     }
     return false;
 }
 
-bool BoardManagerWrapper::setClientId(const std::string& clientId, const int connectionId) {
-   auto it = boardInfo_.find(connectionId);
-   if (it != boardInfo_.end()) {
+bool BoardManagerWrapper::setClientId(const std::string& clientId, const int deviceId) {
+   auto it = boards_.find(deviceId);
+   if (it != boards_.end()) {
        if ((*it).second.clientId.empty()) {
            (*it).second.clientId = clientId;
            return true;
@@ -168,18 +173,17 @@ bool BoardManagerWrapper::setClientId(const std::string& clientId, const int con
    return false;
 }
 
-bool BoardManagerWrapper::clearClientId(const int connectionId) {
-    auto it = boardInfo_.find(connectionId);
-    if (it != boardInfo_.end()) {
+bool BoardManagerWrapper::clearClientId(const int deviceId) {
+    auto it = boards_.find(deviceId);
+    if (it != boards_.end()) {
         (*it).second.clientId.clear();
         return true;
     }
     return false;
 }
 
-QString BoardManagerWrapper::logConnectionId(const int connectionId) const {
-    return "Connection Id: 0x" + QString::number(static_cast<uint>(connectionId), 16);
+QString BoardManagerWrapper::logDeviceId(const int deviceId) const {
+    return "Device Id: 0x" + QString::number(static_cast<uint>(deviceId), 16);
 }
 
-BoardManagerWrapper::BoardInfo::BoardInfo(QString clssId, QString pltfId, QString vName)
-    : classId(clssId.toStdString()), platformId(pltfId.toStdString()), verboseName(vName.toStdString()) { }
+BoardManagerWrapper::Board::Board(strata::SerialDeviceShPtr& devPtr) : device(devPtr) { }

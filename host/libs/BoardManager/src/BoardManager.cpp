@@ -228,9 +228,7 @@ void BoardManager::removedSerialPort(const int deviceId) {
     auto it = openedSerialPorts_.find(deviceId);
     if (it != openedSerialPorts_.end()) {
         it.value()->close();
-        it.value().reset();
         openedSerialPorts_.erase(it);
-
         qCInfo(logCategoryBoardManager).nospace() << "Removed serial device 0x" << hex << static_cast<uint>(deviceId);
     }
 }

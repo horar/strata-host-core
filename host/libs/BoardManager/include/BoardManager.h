@@ -78,7 +78,7 @@ namespace strata {
          * @param property value from enum DeviceProperties
          * @return QString filled with value of required property
          */
-        QString getDeviceProperty(const int connectionId, const strata::DeviceProperties property);
+        QString getDeviceProperty(const int connectionId, const DeviceProperties property);
 
     signals:
         /**
@@ -145,7 +145,7 @@ namespace strata {
         // and deadlock can occur if from QML is called another function which uses same mutex).
         std::set<int> serialPortsList_;
         QHash<int, QString> serialIdToName_;
-        QHash<int,strata::SerialDeviceShPtr> openedSerialPorts_;
+        QHash<int, SerialDeviceShPtr> openedSerialPorts_;
 
         // flag if send get_firmware_info command
         bool getFwInfo_;
