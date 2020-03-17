@@ -11,6 +11,7 @@ Item {
     property alias textColor: tagText.color
     property alias radius: tagBackground.radius
     property alias color: tagBackground.color
+    property alias font: tagText.font
 
     property bool sizeByMask: false
     property alias mask: metrics.text
