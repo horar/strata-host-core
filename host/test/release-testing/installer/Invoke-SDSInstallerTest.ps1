@@ -41,6 +41,7 @@ param(
 $SDSRootDir = "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
 $SDSInstallerLogFile = "$env:Temp\SDSInstallerLog.log"
 $SDSExecFile = "$SDSRootDir\Strata Developer Studio.exe"
+$SDSUninstallFile = "$SDSRootDir\unins000.exe"
 $SDSIniFile = "$env:AppData\ON Semiconductor\Strata Developer Studio.ini"
 $SDSControlViewsDir = "$env:APPDATA\On Semiconductor\Strata Developer Studio"
 
@@ -63,7 +64,7 @@ function Uninstall-SDSAndItsComponents {
     try {
         $SDSUninstallerPath =  Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" | ForEach-Object { get-ItemProperty $_.PSPath } `
                                 | where-Object { $_ -match "strata*" } | Select-Object UninstallString
-        if ($SDSUninstallerPath) {
+        if ($SDSUninstallerPath -eq $SDSUninstallFile) {
             $FTDIUininstallerPath =  Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" | ForEach-Object { get-ItemProperty $_.PSPath } `
                                     | where-Object { $_ -match "ftdi*" } | Select-Object UninstallString
             $VisualRedistUninstallerPath = Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" | ForEach-Object { get-ItemProperty $_.PSPath } `
@@ -197,14 +198,14 @@ function Invoke-SDSInstallationTest {
 }
 
 function Invoke-SDSCleanUninstallationTest {
-    Write-Host "" ; "Starting Clean Installation Test"; ""
+    Write-Host "`nStarting Clean Installation Test`n"
     Uninstall-SDSAndItsComponents
     Install-SDS
     Invoke-SDSInstallationTest
-    Write-Host "" ; "End of Clean Installation Test"; ""
+    Write-Host "`nEnd of Clean Installation Test`n"
 }
 function Invoke-SDSDirtyInstallationWithoutUninstallation {
-    Write-Host "" ; "Starting Dirty Installation Test Rejecting Uninstall Prompt"; ""
+    Write-Host "`nStarting Dirty Installation Test Rejecting Uninstall Prompt`n"
     # necessary to generate hcs database
     Start-HCSAndWait
     Stop-AllHCS
@@ -221,20 +222,19 @@ function Invoke-SDSDirtyInstallationWithoutUninstallation {
         Write-Error "Ditry installation without uninstallation failed. `n       $_"
         Exit
     }
-    Write-Host "" ; "End of Dirty Installation Test Rejecting Uninstall Prompt"; ""
+    Write-Host "`nEnd of Dirty Installation Test Rejecting Uninstall Prompt`n"
 }
 
 function Invoke-SDSDirtyInstallationWithUninstallation {
-    Write-Host "" ; "Starting Dirty Installation Test Accepting Uninstall Prompt"; ""
-    Uninstall-SDS
+    Write-Host "`nStarting Dirty Installation Test Accepting Uninstall Prompt`n"
     Invoke-SDSUninstallationTest
     Install-SDS
     Invoke-SDSInstallationTest
-    Write-Host "" ; "End of Dirty Installation Test Accepting Uninstall Prompt"; ""
+    Write-Host "`nEnd of Dirty Installation Test Accepting Uninstall Prompt`n"
 }
 
 function Invoke-SDSUninstallationTest {
-    Write-Host "" ; "Starting Uninstallation Test"; ""
+    Write-Host "`nStarting Uninstallation Test`n"
     # necessary to generate Strata Developer Studio.ini file
     Start-SDSAndWait
     Stop-SDS
@@ -270,7 +270,7 @@ function Invoke-SDSUninstallationTest {
         Write-Error "Uninstallation test failed. `n       $_"
         Exit
     }
-    Write-Host "" ; "End of Uninstallation Test"; ""
+    Write-Host "`nEnd of Uninstallation Test`n"
 }
 
 # Function definition "Start-HCSAndWait"
@@ -304,10 +304,10 @@ function Stop-SDS {
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
-Write-Host ""; "Starting Strata Installer test script"; ""
+Write-Host "`nStarting Strata Installer test script`n"
 
 Invoke-SDSCleanUninstallationTest
 Invoke-SDSDirtyInstallationWithoutUninstallation
 Invoke-SDSDirtyInstallationWithUninstallation
 
-Write-Host "";""; "Strata installer test completed."; ""; "";
+Write-Host "`nStrata installer test completed.`n`n"
