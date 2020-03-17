@@ -29,6 +29,7 @@ Item {
         anchors.fill: parent
         radius: 2
         color: SGWidgets.SGColorsJS.TANGO_BUTTER1
+        visible: tagText.text.length > 0
     }
 
     SGWidgets.SGText {
