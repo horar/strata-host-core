@@ -83,8 +83,16 @@ socket.send_string('{"db::cmd":"connect_data_source","db::payload":{"type":"docu
 print("\nSending 3rd command to HCS (DYNAMIC PLATFORM LIST)", end = '')
 message = messageHCS('{"hcs::cmd":"dynamic_platform_list","payload":{}}', "all_platforms")
 
-platform_list = message["hcs::notification"]["list"]
+# Extract platform list from notification
+try:
+    platform_list = message["hcs::notification"]["list"]
+except KeyError:
+    print("\nError: received empty or invalid response from HCS.\n\nExiting.")
 print(", received reply with " + str(len(platform_list)) + " platforms.")
+
+# Create a "DynamicPlatformList.json" file to be used down the testing pipeline
+dyn_plat_list_file = open("DynamicPlatformList.json", 'w')
+print(json.dumps(message, indent=4), file=dyn_plat_list_file)
 
 # If we've made it this far, delete the HCS documents 'views' folder if exists
 if os.path.exists(os.path.join(hcs_directory, "documents", "views")):
