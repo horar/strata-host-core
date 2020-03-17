@@ -200,11 +200,25 @@ void SciPlatformModel::removePlatform(int index)
     emit countChanged();
 }
 
-bool SciPlatformModel::sendMessage(int index, QString message)
+QVariantMap SciPlatformModel::sendMessage(int index, QString message)
 {
+    QVariantMap errorMap;
+    errorMap["errorString"] = "";
+    errorMap["offset"] = -1;
+
     if (index < 0 || index >= platformList_.count()) {
         qCCritical(logCategorySci) << "index out of range";
-        return false;
+        errorMap["errorString"] = "index out of range";
+        return errorMap;
+    }
+
+    SciPlatformModelItem *item = platformList_.at(index);
+
+    if (item->status != PlatformStatus::Ready
+            && item->status != PlatformStatus::NotRecognized) {
+
+        errorMap["errorString"] = "platform not connected";
+        return errorMap;
     }
 
     QJsonParseError parseError;
@@ -215,22 +229,21 @@ bool SciPlatformModel::sendMessage(int index, QString message)
                    << "offset=" << parseError.offset
                    << "error=" << parseError.error
                    << parseError.errorString();
-        return false;
+
+        errorMap["errorString"] = parseError.errorString();
+        errorMap["offset"] = parseError.offset;
+        return errorMap;
     }
 
-    SciPlatformModelItem *item = platformList_.at(index);
     QString compactMessage = doc.toJson(QJsonDocument::Compact);
 
     item->scrollbackModel->append(compactMessage, SciScrollbackModel::MessageType::Request);
     item->commandHistoryModel->add(compactMessage);
-
-    if (item->status != PlatformStatus::NotRecognized) {
-        sciSettings_.setCommandHistory(item->verboseName, item->commandHistoryModel->getCommandList());
-    }
+    sciSettings_.setCommandHistory(item->verboseName, item->commandHistoryModel->getCommandList());
 
     boardManager_->sendMessage(item->connectionId, compactMessage);
 
-    return true;
+    return errorMap;
 }
 
 void SciPlatformModel::reconectAll()

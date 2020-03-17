@@ -72,7 +72,7 @@ public:
 
     Q_INVOKABLE void disconnectPlatformFromSci(int connectionId);
     Q_INVOKABLE void removePlatform(int index);
-    Q_INVOKABLE bool sendMessage(int index, QString message);
+    Q_INVOKABLE QVariantMap sendMessage(int index, QString message);
     Q_INVOKABLE void reconectAll();
     Q_INVOKABLE bool exportScrollback(int index, QString filePath) const;
 
