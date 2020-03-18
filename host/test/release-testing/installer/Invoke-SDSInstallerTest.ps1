@@ -15,7 +15,6 @@ Result of the installer test
 
 .NOTES
 Version:        1.0
-Author:         Mustafa Alshehab
 Creation Date:  03/10/2020
 Purpose/Change: Initial script development
 
@@ -39,7 +38,7 @@ param(
 )
 
 $SDSRootDir = "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
-$SDSInstallerLogFile = "$env:Temp\SDSInstallerLog.log"
+$SDSInstallerLogFile = ".\SDSInstallerLog.log"
 $SDSExecFile = "$SDSRootDir\Strata Developer Studio.exe"
 $SDSUninstallFile = "$SDSRootDir\unins"
 $SDSIniFile = "$env:AppData\ON Semiconductor\Strata Developer Studio.ini"
@@ -136,7 +135,7 @@ function Uninstall-SDS {
     }
 }
 function Install-SDS {
-    Write-Host "Installing Strata Developer Studio Installation"
+    Write-Host "Installing Strata Developer Studio"
     Try {
         Start-Process -FilePath "`"$SDSInstallerPath`"" -ArgumentList "/SP- /SUPPRESSMSGBOXES /LOG=$SDSInstallerLogFile /VERYSILENT /NORESTART /CLOSEAPPLICATIONS" -Wait
     }
@@ -147,7 +146,7 @@ function Install-SDS {
     Write-Host "Done"
 }
 
-function Invoke-SDSInstallationTest {
+function Test-SDSInstallation {
     try {
         $VisualRedistInstalledDisplayName = Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" | ForEach-Object { get-ItemProperty $_.PSPath } `
                                             | Where-Object { $_ -match [regex]::Escape("Microsoft Visual C++ 2017 X64 Additional Runtime") } | Select-Object DisplayName
@@ -158,8 +157,9 @@ function Invoke-SDSInstallationTest {
         $SDSVersion = Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" | ForEach-Object { get-ItemProperty $_.PSPath } `
                     | Where-Object { $_ -match ("Strata*") } | Select-Object DisplayName
         $SDSVersion = $SDSVersion.DisplayName -replace "/I",""
-        $SDSInstallerVersion = Select-String -Path $SDSInstallerLogFile -Pattern "Strata Developer Studio version (\d+)\.(\d+)\.(\d+)\.(\d+)" | ForEach-Object {$_.Matches } `
+        $SDSInstallerVersion = Select-String -Path $SDSInstallerLogFile -Pattern "Installing Strata Developer Studio v(\d+)\.(\d+)\.(\d+)(.*)" | ForEach-Object {$_.Matches } `
                             | ForEach-Object {$_.Value}
+        $SDSInstallerVersion = $SDSInstallerVersion -replace "Installing ",""
 
         if ( $VisualRedistInstalledDisplayName -eq $VisualRedistDisplayName ) {
             Write-Host -ForegroundColor Green "Pass: Microsoft Visual C++ 2017 X64 is installed"
@@ -184,9 +184,8 @@ function Invoke-SDSInstallationTest {
         } else {
             Write-Host -ForegroundColor Red "Fail: Control Views are not located in $SDSControlViewsDir" 
         }
-        "SDSVersion: $SDSVersion"
-        "SDSInstallerVersion: $SDSInstallerVersion"
-        if ($SDSVersion -eq $SDSInstallerVersion) {
+
+        if ($SDSVersion -match $SDSInstallerVersion) {
             Write-Host -ForegroundColor Green  "Pass: Strata Developer Studio Version matches Strata Developer Stduio installer version"
         } else {
             Write-Host -ForegroundColor Red  "Fail: Strata Developer Studio Version does not matches Strata Developer Studio installer version"
@@ -198,20 +197,20 @@ function Invoke-SDSInstallationTest {
     }
 }
 
-function Invoke-SDSCleanUninstallationTest {
+function Test-SDSCleanUninstallation {
     Write-Host "`nStarting Clean Installation Test`n"
     Uninstall-SDSAndItsComponents
     Install-SDS
-    Invoke-SDSInstallationTest
+    Test-SDSInstallation
     Write-Host "`nEnd of Clean Installation Test`n"
 }
-function Invoke-SDSDirtyInstallationWithoutUninstallation {
+function Test-SDSDirtyInstallationWithoutUninstallation {
     Write-Host "`nStarting Dirty Installation Test Rejecting Uninstall Prompt`n"
     # necessary to generate hcs database
     Start-HCSAndWait
     Stop-AllHCS
     Install-SDS
-    Invoke-SDSInstallationTest
+    Test-SDSInstallation
     try {
         if (! (Test-Path "$HCSDbDir") ) {
             Write-Host -ForegroundColor Green  "Pass: HSC database has been deleted"
@@ -226,15 +225,15 @@ function Invoke-SDSDirtyInstallationWithoutUninstallation {
     Write-Host "`nEnd of Dirty Installation Test Rejecting Uninstall Prompt`n"
 }
 
-function Invoke-SDSDirtyInstallationWithUninstallation {
+function Test-SDSDirtyInstallationWithUninstallation {
     Write-Host "`nStarting Dirty Installation Test Accepting Uninstall Prompt`n"
-    Invoke-SDSUninstallationTest
+    Test-SDSUninstallation
     Install-SDS
-    Invoke-SDSInstallationTest
+    Test-SDSInstallation
     Write-Host "`nEnd of Dirty Installation Test Accepting Uninstall Prompt`n"
 }
 
-function Invoke-SDSUninstallationTest {
+function Test-SDSUninstallation {
     Write-Host "`nStarting Uninstallation Test`n"
     # necessary to generate Strata Developer Studio.ini file
     Start-SDSAndWait
@@ -302,13 +301,15 @@ function Stop-SDS {
     Stop-AllHCS
 }
 
+function Invoke-SDSInstallerTest {
+    Write-Host "`nStarting Strata Installer test script`n"
+
+    Test-SDSCleanUninstallation
+    Test-SDSDirtyInstallationWithoutUninstallation
+    Test-SDSDirtyInstallationWithUninstallation
+
+    Write-Host "`nStrata installer test completed.`n`n"
+}
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
-
-Write-Host "`nStarting Strata Installer test script`n"
-
-Invoke-SDSCleanUninstallationTest
-Invoke-SDSDirtyInstallationWithoutUninstallation
-Invoke-SDSDirtyInstallationWithUninstallation
-
-Write-Host "`nStrata installer test completed.`n`n"
+Invoke-SDSInstallerTest
