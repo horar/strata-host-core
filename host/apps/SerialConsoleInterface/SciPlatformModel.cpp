@@ -10,16 +10,16 @@
 #include <QSaveFile>
 
 
-SciPlatformModel::SciPlatformModel(spyglass::BoardManager *boardManager, QObject *parent)
+SciPlatformModel::SciPlatformModel(strata::BoardManager *boardManager, QObject *parent)
     : QAbstractListModel(parent),
       boardManager_(boardManager)
 {
     setModelRoles();
 
-    connect(boardManager_, &spyglass::BoardManager::boardConnected, this, &SciPlatformModel::boardConnectedHandler);
-    connect(boardManager_, &spyglass::BoardManager::boardReady, this, &SciPlatformModel::boardReadyHandler);
-    connect(boardManager_, &spyglass::BoardManager::boardDisconnected, this, &SciPlatformModel::boardDisconnectedHandler);
-    connect(boardManager_, &spyglass::BoardManager::newMessage, this, &SciPlatformModel::newMessageHandler);
+    connect(boardManager_, &strata::BoardManager::boardConnected, this, &SciPlatformModel::boardConnectedHandler);
+    connect(boardManager_, &strata::BoardManager::boardReady, this, &SciPlatformModel::boardReadyHandler);
+    connect(boardManager_, &strata::BoardManager::boardDisconnected, this, &SciPlatformModel::boardDisconnectedHandler);
+    connect(boardManager_, &strata::BoardManager::newMessage, this, &SciPlatformModel::newMessageHandler);
 }
 
 SciPlatformModel::~SciPlatformModel()

@@ -33,7 +33,7 @@ class SciPlatformModel: public QAbstractListModel
                NOTIFY ignoreNewConnectionsChanged)
 
 public:
-    SciPlatformModel(spyglass::BoardManager *boardManager, QObject *parent = nullptr);
+    SciPlatformModel(strata::BoardManager *boardManager, QObject *parent = nullptr);
     virtual ~SciPlatformModel() override;
 
     enum ModelRole {
@@ -96,7 +96,7 @@ private:
     QHash<int, QByteArray> roleByEnumHash_;
     QHash<QByteArray, int> roleByNameHash_;
 
-    spyglass::BoardManager *boardManager_ = nullptr;
+    strata::BoardManager *boardManager_ = nullptr;
     QList<SciPlatformModelItem*> platformList_;
     SciPlatformSettings sciSettings_;
 
