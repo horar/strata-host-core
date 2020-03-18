@@ -1,5 +1,4 @@
 project(flasher-cli
-    VERSION 1.0.0
     LANGUAGES CXX
 )
 
@@ -8,6 +7,8 @@ find_package(Qt5 ${VERSION_QT5}
     REQUIRED
 )
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 add_executable(${PROJECT_NAME}
     src/main.cpp
     src/FlasherCli.cpp
@@ -15,6 +16,8 @@ add_executable(${PROJECT_NAME}
     src/logging/LoggingQtCategories.cpp
     src/logging/LoggingQtCategories.h
 )
+
+generate_app_version(GITTAG_PREFIX "${PROJECT_NAME}_" MACBUNDLE OFF)
 
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core

@@ -1,5 +1,4 @@
 #include <cstdlib>
-#include <iostream>
 
 #include <QSerialPortInfo>
 
@@ -63,12 +62,12 @@ void FlasherCli::run() {
 
     if (options_.option == CliOptions::Option::list) {
         auto const list = portList.getPortList();
+        qCInfo(logCategoryFlasherCli) << "List of available boards (serial devices):";
         if (list.isEmpty()) {
-            std::cout << "No board is conected." << std::endl;
+            qCInfo(logCategoryFlasherCli) << "No board is conected.";
         } else {
-            std::cout << "List of available boards (serial devices):" << std::endl;
             for (int i = 0; i < list.size(); ++i) {
-                std::cout << i+1 << ". " << list.at(i).toStdString() << std::endl;
+                qCInfo(logCategoryFlasherCli).noquote().nospace() << i+1 << ". " << list.at(i);
             }
         }
         emit finished(EXIT_SUCCESS);

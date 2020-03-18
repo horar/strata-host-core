@@ -25,10 +25,13 @@ Flasher::Flasher(std::shared_ptr<strata::SerialDevice> device, const QString& fi
     connect(operation_.get(), &DeviceOperations::timeout, this, &Flasher::handleTimeout);
     connect(operation_.get(), &DeviceOperations::error, this, &Flasher::handleError);
     connect(operation_.get(), &DeviceOperations::cancelled, this, &Flasher::handleCancel);
+
+    qCDebug(logCategoryFlasher) << this << "Flasher created.";
 }
 
 Flasher::~Flasher() {
     // Destructor must be defined due to unique pointer to incomplete type.
+    qCDebug(logCategoryFlasher) << this << "Flasher deleted.";
 }
 
 void Flasher::flash(bool startApplication) {

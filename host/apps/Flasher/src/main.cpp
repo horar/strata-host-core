@@ -1,4 +1,3 @@
-#include <iostream>
 #include <cstdlib>
 
 #include <QCoreApplication>
@@ -6,17 +5,21 @@
 #include <QCommandLineParser>
 #include <QTimer>
 #include <QtLoggerSetup.h>
+
 #include "logging/LoggingQtCategories.h"
 #include "FlasherCli.h"
+
+#include "flasher-cliVersion.h"  // CMake generated file
 
 int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
 
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QCoreApplication::setApplicationVersion(AppInfo::version.data());
 
     const QtLoggerSetup loggerInitialization(app);
-    qCInfo(logCategoryFlasherCli) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(logCategoryFlasherCli) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     QCommandLineOption listOption(QStringList() << QStringLiteral("l") << QStringLiteral("list"),
                                   QStringLiteral("List of connected boards (serial devices)."));
@@ -32,12 +35,12 @@ int main(int argc, char *argv[]) {
     parser.addOption(deviceOption);
 
     if (parser.parse(QCoreApplication::arguments()) == false) {
-        std::cout << parser.errorText().toStdString() << std::endl;
+        qCWarning(logCategoryFlasherCli).noquote() << parser.errorText();
         return EXIT_FAILURE;
     }
 
     if (parser.isSet(QStringLiteral("h"))) {
-        std::cout << parser.helpText().toStdString() << std::endl;
+        qCInfo(logCategoryFlasherCli).noquote() << parser.helpText();
         return EXIT_SUCCESS;
     }
 
@@ -55,14 +58,14 @@ int main(int argc, char *argv[]) {
         bool ok;
         options.device_number = number.toInt(&ok);
         if (ok == false) {
-            std::cout << '\'' << number.toStdString() << "' is not a valid device number." << std::endl;
+            qCWarning(logCategoryFlasherCli).noquote().nospace() << '\'' << number << "' is not a valid device number.";
             return EXIT_FAILURE;
         }
     }
 
     if (options.option == strata::CliOptions::Option::none) {
-        std::cout << "Missing command line options!" << std::endl;
-        std::cout << parser.helpText().toStdString() << std::endl;
+        qCWarning(logCategoryFlasherCli) << "Missing command line options!";
+        qCInfo(logCategoryFlasherCli).noquote() << parser.helpText();
         return EXIT_FAILURE;
     }
 
