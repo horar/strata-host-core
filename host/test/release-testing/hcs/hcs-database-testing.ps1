@@ -12,15 +12,6 @@ Set-Variable "HCS_exec_file"   "$SDS_root_dir\HCS\hcs.exe"
 ##### Automated section
 #####
 
-# Function definition "KillAllHCS"
-# Kills all processes by the name of "hcs" running in the local machine
-function KillAllHCS {
-    If (Get-Process -Name "hcs" -ErrorAction SilentlyContinue) {
-        Stop-Process -Name "hcs" -Force
-        Start-Sleep -Seconds 2
-    }
-}
-
 # Function definition "StartHCSAndWait"
 # Start one instance of HCS and wait (to give time for DB replication)
 function StartHCSAndWait {
@@ -56,7 +47,7 @@ Set-Variable "SDS_db_dir" (Split-Path -Path $SDS_strata_db_dir)
 Import-Module PSSQLite
 
 # Stop any previously running HCS processes
-KillAllHCS
+Stop-HCS
 
 # Define query variable for PSSQLite
 $query = "SELECT * FROM kv_default"
@@ -77,7 +68,7 @@ If (Test-Path $SDS_db_dir -PathType Any) {
 ""; "        Running HCS and waiting for 10 seconds...";
 StartHCSAndWait
 ""; "        Killing HCS process"
-KillAllHCS
+Stop-HCS
 
 # Verify if DB folders and files were re-created in the expected locations
 "        Verifying if DB folders and files were re-created in the expected locations";
@@ -112,7 +103,7 @@ If (Test-Path $SDS_strata_db_dir -PathType Any) {
 ""; "        Running HCS and waiting for 10 seconds...";
 StartHCSAndWait
 ""; "        Killing HCS process"
-KillAllHCS
+Stop-HCS
 
 # Verify if DB folders and files were re-created in the expected locations
 "        Verifying if DB folders and files were re-created in the expected locations";
@@ -147,7 +138,7 @@ If (Test-Path $SDS_strata_db_dir -PathType Any) {
 ""; "        Running HCS and waiting for 10 seconds...";
 StartHCSAndWait
 ""; "        Killing HCS process"
-KillAllHCS
+Stop-HCS
 
 # Verify if DB folders and files were re-created in the expected locations
 "        Verifying if DB folders and files were re-created in the expected locations";

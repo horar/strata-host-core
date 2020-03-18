@@ -6,15 +6,12 @@ function Test-StrataControlView {
             Return $false
         }
     }
-
-    write-host "Script Found" -ForegroundColor Green
-
     write-host "Starting Strata Developer Studio..."
-    ($strataDev = Start-Process $StrataPath -PassThru) | Out-Null     # Hide output.
+    ($strataDev = Start-Process $SDS_exec_file -PassThru) | Out-Null     # Hide output.
 
     write-host "Starting python test script..."
     Write-Host "================================================================================"
-    $pythonScript = Start-Process $PythonExec $PythonScriptPath -NoNewWindow -PassThru -wait
+    $pythonScript = Start-Process $PythonExec $Python_ControlViewTest -NoNewWindow -PassThru -wait
     Write-Host "================================================================================"
 
     Write-Host "Python test script is done."

@@ -74,3 +74,11 @@ function Exit-TestScript {
     Write-Host "================================================================================"
     Exit $ScriptExitCode
 }
+
+# Stops all processes by the name of "hcs" running in the local machine
+function Stop-HCS {
+    If (Get-Process -Name "hcs" -ErrorAction SilentlyContinue) {
+        Stop-Process -Name "hcs" -Force
+        Start-Sleep -Seconds 1
+    }
+}

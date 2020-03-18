@@ -38,7 +38,7 @@ Set-Variable "Python_ControlViewTest"        "strataDev/control-view-test.py"
 . "$PSScriptRoot\hcs\Test-CollateralDownload.ps1"
 
 # Import functions for test "Test-StrataControlView"
-. "$PSScriptRoot\strataDev\Test-StrataControlView.ps1"
+. "$PSScriptRoot\strataDev\Test-SDSControlViews.ps1"
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
@@ -63,8 +63,8 @@ If ((Test-PythonScriptsExist) -Eq $false) {
 Test-CollateralDownload
 
 # Run second Python script (SDS control view testing)
-# If ((Test-StrataControlView) -Eq $false) {
-#     Exit-TestScript -ScriptExitCode -1
-# }
+If ((Test-StrataControlViews -PythonScriptPath $Python_ControlViewTest -StrataPath $SDS_exec_file) -Eq $false) {
+    Exit-TestScript -ScriptExitCode -1
+}
 
 Write-Host "`n`nTesting complete.`n`n"
