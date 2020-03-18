@@ -94,7 +94,7 @@ bool SciPlatformModel::setData(const QModelIndex &index, const QVariant &value, 
     case ScrollbackModelRole:
     case ConnectionIdRole:
     case CommandHistoryModelRole:
-        qCWarning(logCategorySci) << "this role cannot be changed" << role;
+        qCCritical(logCategorySci) << "this role cannot be changed" << role;
         return false;
     }
 
@@ -172,7 +172,7 @@ void SciPlatformModel::setIgnoreNewConnections(bool ignoreNewConnections)
 void SciPlatformModel::disconnectPlatformFromSci(int index)
 {
     if (index < 0 || index >= platformList_.count()) {
-        qCWarning(logCategorySci) << "index out of range";
+        qCCritical(logCategorySci) << "index out of range";
         return;
     }
 
@@ -184,7 +184,7 @@ void SciPlatformModel::disconnectPlatformFromSci(int index)
 void SciPlatformModel::removePlatform(int index)
 {
     if (index < 0 || index >= platformList_.count()) {
-        qCWarning(logCategorySci) << "index out of range";
+        qCCritical(logCategorySci) << "index out of range";
         return;
     }
 
@@ -203,7 +203,7 @@ void SciPlatformModel::removePlatform(int index)
 bool SciPlatformModel::sendMessage(int index, QString message)
 {
     if (index < 0 || index >= platformList_.count()) {
-        qCWarning(logCategorySci) << "index out of range";
+        qCCritical(logCategorySci) << "index out of range";
         return false;
     }
 
@@ -249,14 +249,14 @@ void SciPlatformModel::reconectAll()
 bool SciPlatformModel::exportScrollback(int index, QString filePath) const
 {
     if (index < 0 || index >= platformList_.count()) {
-        qCWarning(logCategorySci) << "index out of range";
+        qCCritical(logCategorySci) << "index out of range";
         return false;
     }
 
     QSaveFile file(filePath);
     bool ret = file.open(QIODevice::WriteOnly | QIODevice::Text);
     if (ret == false) {
-        qCWarning(logCategorySci) << "cannot open file" << filePath << file.errorString();
+        qCCritical(logCategorySci) << "cannot open file" << filePath << file.errorString();
         return false;
     }
 
@@ -294,7 +294,7 @@ void SciPlatformModel::boardReadyHandler(int connectionId, bool recognized)
 
     int index = findPlatfrom(connectionId);
     if (index < 0) {
-        qCWarning(logCategorySci) << "unknown board" << connectionId;
+        qCCritical(logCategorySci) << "unknown board" << connectionId;
         return;
     }
 
@@ -333,7 +333,7 @@ void SciPlatformModel::boardDisconnectedHandler(int connectionId)
 {
     int index = findPlatfrom(connectionId);
     if (index < 0) {
-        qCWarning(logCategorySci) << "unknown board" << connectionId;
+        qCCritical(logCategorySci) << "unknown board" << connectionId;
         return;
     }
 
@@ -344,7 +344,7 @@ void SciPlatformModel::newMessageHandler(int connectionId, QString message)
 {
     int index = findPlatfrom(connectionId);
     if (index < 0) {
-        qCWarning(logCategorySci) << "message from unknown platfrom" << connectionId;
+        qCCritical(logCategorySci) << "message from unknown platfrom" << connectionId;
         return;
     }
 

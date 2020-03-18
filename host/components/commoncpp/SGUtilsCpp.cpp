@@ -63,7 +63,7 @@ bool SGUtilsCpp::atomicWrite(const QString &path, const QString &content)
 
     bool ret = file.open(QIODevice::WriteOnly | QIODevice::Text);
     if (ret == false) {
-        qCWarning(logCategoryUtils) << "cannot open file" << path << file.errorString();
+        qCCritical(logCategoryUtils) << "cannot open file" << path << file.errorString();
         return false;
     }
 
@@ -78,7 +78,7 @@ QString SGUtilsCpp::readTextFileContent(const QString &path)
 {
     QFile file(path);
     if (file.open(QFile::ReadOnly | QFile::Text) == false) {
-        qCWarning(logCategoryUtils) << "cannot open file" << path << file.errorString();
+        qCCritical(logCategoryUtils) << "cannot open file" << path << file.errorString();
         return QString();
     }
 
