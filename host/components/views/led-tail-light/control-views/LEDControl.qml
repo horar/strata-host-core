@@ -23,7 +23,7 @@ Item {
 
             ColumnLayout {
                 anchors.fill: parent
-                spacing: 20
+                spacing: 10
 
                 Rectangle {
                     Layout.fillHeight: true
@@ -273,92 +273,959 @@ Item {
 
             ColumnLayout{
                 anchors.fill: parent
+                anchors.right: parent.right
+                anchors.rightMargin: 15
+
 
                 Rectangle {
                     Layout.preferredHeight: parent.height/1.2
                     Layout.fillWidth: true
-                    color: "red"
+                    //color: "red"
                     ColumnLayout {
                         anchors.fill: parent
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            color: "grey"
+                            //color: "grey"
                             RowLayout {
                                 anchors.fill: parent
                                 Rectangle {
                                     Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    color: "blue"
+                                    Layout.preferredWidth: parent.width/6
+                                    //color: "blue"
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT EN") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.right: parent.right
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGText {
+                                                text: "<b>" + qsTr("Internal/External LED") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.right: parent.right
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGText {
+                                                text: "<b>" + qsTr("PWM Enable") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.right: parent.right
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGText {
+                                                text: "<b>" + qsTr("Fault Status") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.right: parent.right
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                            // color: "red"
+                                            SGText {
+                                                text: "<b>" + qsTr("PWM Duty (%)") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.right: parent.right
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                    }
                                 }
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-                                    color: "blue"
+                                    //color: "blue"
+
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            //color: "red"
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT0") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            //color: "blue"
+                                            SGStatusLight {
+                                                id: out0ENLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out0interExterLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out0pwmEnableLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out0faultStatusLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                        }
+
+                                    }
                                 }
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-                                    color: "blue"
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            //color: "red"
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT1") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out1ENLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out1interExterLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out1pwmEnableLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out1faultStatusLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                        }
+
+                                    }
                                 }
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-                                    color: "blue"
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            //color: "red"
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT2") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out2ENLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out2interExterLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out2pwmEnableLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out2faultStatusLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                        }
+
+                                    }
                                 }
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-                                    color: "blue"
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            //color: "red"
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT3") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out3ENLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out3interExterLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out3pwmEnableLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out3faultStatusLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                        }
+
+                                    }
                                 }
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-                                    color: "blue"
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT4") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out4ENLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out4interExterLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out4pwmEnableLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out4faultStatusLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                        }
+
+                                    }
                                 }
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-                                    color: "blue"
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            //color: "red"
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT5") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out5ENLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out5interExterLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out5pwmEnableLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out5faultStatusLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                        }
+
+                                    }
                                 }
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-                                    color: "blue"
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT6") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out6ENLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out6interExterLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out6pwmEnableLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out6faultStatusLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                        }
+
+                                    }
                                 }
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-                                    color: "blue"
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            //color: "red"
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT7") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out7ENLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out7interExterLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out7pwmEnableLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out7faultStatusLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                        }
+
+                                    }
                                 }
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-                                    color: "blue"
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT8") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out8ENLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out8interExterLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out8pwmEnableLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out8faultStatusLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                        }
+
+                                    }
                                 }
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-                                    color: "blue"
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            //color: "red"
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT9") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out9ENLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out9interExterLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out9pwmEnableLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out9faultStatusLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                        }
+
+                                    }
                                 }
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-                                    color: "blue"
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT10") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out10ENLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out10interExterLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out10pwmEnableLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out10faultStatusLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                        }
+
+                                    }
                                 }
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-                                    color: "blue"
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/10
+                                            //color: "red"
+                                            SGText {
+                                                text: "<b>" + qsTr("OUT11") + "</b>"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                anchors.centerIn: parent
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out11ENLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out11interExterLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out11pwmEnableLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGStatusLight {
+                                                id: out11faultStatusLED
+                                                width: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: parent.height/3
+                                        }
+
+                                    }
                                 }
+
+
 
                             }
                         }
 
                         Rectangle {
+                            id: gobalCurrentSetContainer
                             Layout.preferredHeight: parent.height/10
                             Layout.fillWidth: true
-                            color: "pink"
+                            SGAlignedLabel {
+                                id: gobalCurrentSetLabel
+                                target: gobalCurrentSetSlider
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                text: "Gobal Current Set (ISET)"
+                                SGSlider {
+                                    id: gobalCurrentSetSlider
+                                    width: gobalCurrentSetContainer.width/1.5
+                                    live: false
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    to: 60
+                                    from: 0
+                                    stepSize: 1
+                                    toText.text: "60mA"
+                                    fromText.text: "0mA"
+
+                                }
+
+                            }
                         }
                     }
                 }
@@ -383,7 +1250,7 @@ Item {
                     Rectangle {
                         id: i2cLEDS
                         anchors.top: i2cStatusLable.bottom
-                       // anchors.topMargin: 10
+                        // anchors.topMargin: 10
                         width: parent.width - 100
                         height: parent.height - i2cStatusLable.contentHeight
                         RowLayout{
