@@ -37,9 +37,7 @@ else:
 
 # function to print line seperator, to make the code more neat :)
 def printLineSep(charSym='-'):
-    for i in range(140):
-        print(charSym, end='')
-    print()
+    print((80 * charSym) + '\n', end='')
 
 # function to get the dynamic platform list from hcs, keep it for future refrence
 def getRealHcsRes():
@@ -65,7 +63,7 @@ def sendOpenPlatformCtrlView(classID):
     myEncodedStr = bytes(
         "{\"hcs::notification\":{\"list\":[{\"class_id\":\"%s\",\"connection\":\"connected\",\"verbose_name\":\"\"}],\"type\":\"connected_platforms\"}}" % classID, 'utf-8')
 
-    print("sending:", myEncodedStr, "...")
+    print("sending:", myEncodedStr)
     client.send_multipart([strataId, myEncodedStr])
     print("Sent.")
     time.sleep(8)
