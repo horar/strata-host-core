@@ -423,6 +423,15 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+
+                                            }
                                         }
 
                                     }
@@ -493,6 +502,15 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+
+                                            }
                                         }
 
                                     }
@@ -563,6 +581,17 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
+                                           // color: "red"
+
+                                            CustomizeRGBSlider {
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+
+                                            }
                                         }
 
                                     }
@@ -633,6 +662,15 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+
+                                            }
                                         }
 
                                     }
@@ -702,6 +740,15 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+
+                                            }
                                         }
 
                                     }
@@ -772,6 +819,15 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+
+                                            }
                                         }
 
                                     }
@@ -841,6 +897,15 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+
+                                            }
                                         }
 
                                     }
@@ -911,6 +976,15 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+
+                                            }
                                         }
 
                                     }
@@ -980,6 +1054,15 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+
+                                            }
                                         }
 
                                     }
@@ -1050,6 +1133,15 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+
+                                            }
                                         }
 
                                     }
@@ -1119,6 +1211,15 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+
+                                            }
                                         }
 
                                     }
@@ -1189,6 +1290,16 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
+                                            CustomizeRGBSlider {
+                                                width: 30
+                                                height: parent.height
+                                                orientation: Qt.Vertical
+                                                value: 50
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 5
+                                                anchors.verticalCenter: parent.verticalCenter
+
+                                            }
                                         }
 
                                     }
