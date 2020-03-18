@@ -2,13 +2,13 @@
 #define SCI_PLATFORM_MODEL_H
 
 #include <BoardManager.h>
-#include "SciScrollbackModel.h"
-#include "SciCommandHistoryModel.h"
-#include "SciPlatformSettings.h"
+
+#include <SciPlatform.h>
+
 
 #include <QAbstractListModel>
 
-class SciPlatformModelItem;
+class SciPlatform;
 
 class SciPlatformModel: public QAbstractListModel
 {
@@ -37,27 +37,10 @@ public:
     virtual ~SciPlatformModel() override;
 
     enum ModelRole {
-        VerboseNameRole = Qt::UserRole,
-        AppVersionRole,
-        BootloaderVersionRole,
-        StatusRole,
-        ScrollbackModelRole,
-        ConnectionIdRole,
-        CommandHistoryModelRole,
+        PlatformRole = Qt::UserRole,
     };
-
-    enum PlatformStatus {
-        Disconnected,
-        Connected,
-        Ready,
-        NotRecognized,
-    };
-    Q_ENUM(PlatformStatus)
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    Q_INVOKABLE QVariant data(int row, const QByteArray &role) const;
-    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
-    bool setData(int row, const QVariant &value, int role);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int count() const;
 
@@ -70,11 +53,9 @@ public:
     bool ignoreNewConnections() const;
     void setIgnoreNewConnections(bool ignoreNewConnections);
 
-    Q_INVOKABLE void disconnectPlatformFromSci(int connectionId);
+    Q_INVOKABLE void disconnectPlatformFromSci(int index);
     Q_INVOKABLE void removePlatform(int index);
-    Q_INVOKABLE QVariantMap sendMessage(int index, QString message);
     Q_INVOKABLE void reconectAll();
-    Q_INVOKABLE bool exportScrollback(int index, QString filePath) const;
 
 signals:
     void countChanged();
@@ -87,17 +68,16 @@ protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 private slots:
-    void boardConnectedHandler(int connectionId);
-    void boardReadyHandler(int connectionId, bool recognized);
-    void boardDisconnectedHandler(int connectionId);
-    void newMessageHandler(int connectionId, QString message);
+    void boardConnectedHandler(int deviceId);
+    void boardReadyHandler(int deviceId, bool recognized);
+    void boardDisconnectedHandler(int deviceId);
 
 private:
     QHash<int, QByteArray> roleByEnumHash_;
     QHash<QByteArray, int> roleByNameHash_;
 
     strata::BoardManager *boardManager_ = nullptr;
-    QList<SciPlatformModelItem*> platformList_;
+    QList<SciPlatform*> platformList_;
     SciPlatformSettings sciSettings_;
 
     int maxScrollbackCount_;
@@ -105,25 +85,11 @@ private:
     bool ignoreNewConnections_ = false;
 
     void setModelRoles();
-    int findPlatfrom(int connectionId) const;
-    void appendNewPlatform(int connectionId);
+    int findPlatform(int deviceId) const;
+
+    void appendNewPlatform(int deviceId);
 };
 
-class SciPlatformModelItem: public QObject {
-    Q_OBJECT
-    Q_DISABLE_COPY(SciPlatformModelItem)
 
-public:
-    SciPlatformModelItem(int maxScrollbackCount, int maxCmdInHistoryCount, QObject *parent = nullptr);
-    virtual ~SciPlatformModelItem();
-
-    QString verboseName;
-    int connectionId;
-    QString appVersion;
-    QString bootloaderVersion;
-    SciPlatformModel::PlatformStatus status;
-    SciScrollbackModel *scrollbackModel;
-    SciCommandHistoryModel *commandHistoryModel;
-};
 
 #endif //SCI_PLATFORM_MODEL_H
