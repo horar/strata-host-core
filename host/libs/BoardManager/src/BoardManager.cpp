@@ -210,8 +210,8 @@ bool BoardManager::addedSerialPort(const int deviceId) {
         qCInfo(logCategoryBoardManager).nospace() << "Added new serial device: ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " << name;
 
         connect(device.get(), &SerialDevice::deviceReady, this, &BoardManager::boardReady);
-        connect(device.get(), &SerialDevice::serialDeviceError, this, &BoardManager::boardError);
-        connect(device.get(), &SerialDevice::msgFromDevice, this, &BoardManager::newMessage);
+        connect(device.get(), &SerialDevice::serialDeviceError, this, &BoardManager::handleBoardError);
+        connect(device.get(), &SerialDevice::msgFromDevice, this, &BoardManager::handleNewMessage);
 
         device->identify(getFwInfo_);
 
@@ -235,6 +235,22 @@ void BoardManager::removedSerialPort(const int deviceId) {
 
 void BoardManager::logInvalidDeviceId(const QString& message, const int deviceId) const {
     qCWarning(logCategoryBoardManager).nospace() << message << ", invalid connection ID: 0x" << hex << static_cast<uint>(deviceId);
+}
+
+void BoardManager::handleNewMessage(QString message) {
+    SerialDevice *device = qobject_cast<SerialDevice*>(QObject::sender());
+    if (device == nullptr) {
+        return;
+    }
+    emit newMessage(device->getDeviceId(), message);
+}
+
+void BoardManager::handleBoardError(QString errMsg) {
+    SerialDevice *device = qobject_cast<SerialDevice*>(QObject::sender());
+    if (device == nullptr) {
+        return;
+    }
+    emit boardError(device->getDeviceId(), errMsg);
 }
 
 }  // namespace

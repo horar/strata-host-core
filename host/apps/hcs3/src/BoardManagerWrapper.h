@@ -115,18 +115,14 @@ private slots:  // slots for signals from BoardManager
 
     void closeConnection(int deviceId);
 
-    void messageFromBoard(int deviceId, QString message);
+    void messageFromBoard(QString message);
 
 private:
     // Auxiliary function for writing log messages.
     inline QString logDeviceId(const int deviceId) const;
 
     struct Board {
-//        Board(QString clssId, QString pltfId, QString vName);
         Board(strata::SerialDeviceShPtr& devPtr);
-//        std::string classId;
-//        std::string platformId;
-//        std::string verboseName;
         strata::SerialDeviceShPtr device;
         std::string clientId;
     };

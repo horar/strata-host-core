@@ -79,9 +79,9 @@ private:
 
     void handleResponseTimeout();
 
-    void handleDeviceError(int deviceId, QString msg);
+    void handleDeviceError(QString msg);
 
-    void handleDeviceResponse(const int /* device_id */, const QByteArray& data);
+    void handleDeviceResponse(const QByteArray& data);
 
     bool parseDeviceResponse(const QByteArray& data, bool& is_ack);
 

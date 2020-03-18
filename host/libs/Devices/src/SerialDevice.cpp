@@ -75,7 +75,7 @@ void SerialDevice::readMessage() {
         from = end + 1;  // +1 due to skip '\n'
 
         // qCDebug(logCategorySerialDevice).nospace().noquote() << "Serial device 0x" << hex << ucid_ << ": received message: " << QString::fromStdString(read_buffer_);
-        emit msgFromDevice(device_id_, QByteArray::fromStdString(read_buffer_));
+        emit msgFromDevice(QByteArray::fromStdString(read_buffer_));
         read_buffer_.clear();
         // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
     }
@@ -92,14 +92,14 @@ void SerialDevice::write(const QByteArray& data) {
 void SerialDevice::writeData(const QByteArray& data) {
     if (device_busy_) {  // Device is busy -> device identification is still running.
         qCDebug(logCategorySerialDevice) << this << ": Cannot write to device because device is busy.";
-        emit serialDeviceError(device_id_, QStringLiteral("Cannot write to device because device is busy."));
+        emit serialDeviceError(QStringLiteral("Cannot write to device because device is busy."));
     }
     else {
         qint64 written_bytes = serial_port_.write(data);
         written_bytes += serial_port_.write("\n");
         if (written_bytes != (data.size() + 1)) {
             qCCritical(logCategorySerialDevice) << this << ": Cannot write whole data to device.";
-            emit serialDeviceError(device_id_, QStringLiteral("Cannot write whole data to device."));
+            emit serialDeviceError(QStringLiteral("Cannot write whole data to device."));
         }
     }
 }
@@ -114,7 +114,7 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
         }
         else {
             qCCritical(logCategorySerialDevice).noquote() << this << ": " << err_msg;
-            emit serialDeviceError(device_id_, err_msg);
+            emit serialDeviceError(err_msg);
         }
     }
 }
@@ -217,7 +217,7 @@ void SerialDevice::deviceIdentification() {
     }
 }
 
-void SerialDevice::handleDeviceResponse(const int /* connectionId */, const QByteArray& data) {
+void SerialDevice::handleDeviceResponse(const QByteArray& data) {
     bool is_ack = false;
     if (parseDeviceResponse(data, is_ack)) {
         switch (action_) {

@@ -84,10 +84,9 @@ namespace strata {
     signals:
         /**
          * Emitted when there is available new message from serial port.
-         * @param connectionId device connection ID
          * @param msg message from serial port
          */
-        void msgFromDevice(int connectionId, QByteArray msg);
+        void msgFromDevice(QByteArray msg);
 
         /**
          * Emitted when serial device is ready for communication.
@@ -98,10 +97,9 @@ namespace strata {
 
         /**
          * Emitted when error occured during communication on the serial port.
-         * @param connectionId device connection ID
          * @param msg error description
          */
-        void serialDeviceError(int connectionId, QString msg);
+        void serialDeviceError(QString msg);
 
     // signals only for internal use:
         // Qt5 private signals: https://woboq.com/blog/how-qt-signals-slots-work-part2-qt5.html
@@ -111,7 +109,7 @@ namespace strata {
     private slots:
         void readMessage();
         void handleError(QSerialPort::SerialPortError error);
-        void handleDeviceResponse(const int connectionId, const QByteArray& data);
+        void handleDeviceResponse(const QByteArray& data);
         void handleResponseTimeout();
         void deviceIdentification();
         void writeData(const QByteArray& data);

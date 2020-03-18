@@ -161,13 +161,13 @@ void DeviceOperations::handleResponseTimeout() {
     emit nextStep(QPrivateSignal());
 }
 
-void DeviceOperations::handleDeviceError(int /* deviceId */, QString msg) {
+void DeviceOperations::handleDeviceError(QString msg) {
     response_timer_.stop();
     resetInternalStates();
     emit error(msg);
 }
 
-void DeviceOperations::handleDeviceResponse(const int /* connectionId */, const QByteArray& data) {
+void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
     if (operation_ == Operation::None) {  // In this case we do not care about messages from device.
         qCDebug(logCategoryDeviceActions) << this << "No operation is running, message from device is ignored.";
         return;

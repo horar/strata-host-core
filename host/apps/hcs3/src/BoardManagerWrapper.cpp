@@ -78,7 +78,12 @@ void BoardManagerWrapper::closeConnection(int deviceId) {
     qCInfo(logCategoryHcsBoard).noquote() << "Disconnected board." << logDeviceId(deviceId);
 }
 
-void BoardManagerWrapper::messageFromBoard(int deviceId, QString message) {
+void BoardManagerWrapper::messageFromBoard(QString message) {
+    strata::SerialDevice *device = qobject_cast<strata::SerialDevice*>(QObject::sender());
+    if (device == nullptr) {
+        return;
+    }
+    int deviceId = device->getDeviceId();
     PlatformMessage item;
     item.msg_type = PlatformMessage::eMsgPlatformMessage;
     item.from_connectionId.conn_id = deviceId;

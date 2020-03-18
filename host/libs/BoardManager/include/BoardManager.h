@@ -127,6 +127,8 @@ namespace strata {
 
     private slots:
         void checkNewSerialDevices();
+        void handleNewMessage(QString message);
+        void handleBoardError(QString message);
 
     private:
         void computeListDiff(std::set<int>& list, std::set<int>& added_ports, std::set<int>& removed_ports);
