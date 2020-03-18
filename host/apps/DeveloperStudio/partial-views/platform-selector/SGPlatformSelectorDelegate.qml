@@ -40,19 +40,22 @@ Item {
             sourceSize.height: imageContainer.height
             sourceSize.width: imageContainer.width
             anchors.fill: imageContainer
-            source: {
-                if (model.image === "file:/") {
-                    console.error(Logger.devStudioCategory, "Platform Selector Delegate: No image source supplied by platform list")
-                    return "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
-                } else {
-                    return model.image
-                }
-            }
             visible: model.image !== undefined && status == Image.Ready
 
             onStatusChanged: {
                 if (image.status == Image.Error){
-                    source = ""
+                    console.error(Logger.devStudioCategory, "Platform Selector Delegate: Image failed to load - corrupt or does not exist:", model.image)
+                    source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
+                }
+            }
+
+            Component.onCompleted: {
+                if (model.image === "file:/") {
+                    console.error(Logger.devStudioCategory, "Platform Selector Delegate: No image source supplied by platform list")
+                    source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
+                } else if (SGUtilsCpp.isFile(model.image.replace("file:/",""))) {
+                    source = model.image
+                } else {
                     imageCheck.start()
                 }
             }
@@ -62,17 +65,21 @@ Item {
                 interval: 1000
                 running: false
                 repeat: false
+
                 onTriggered: {
-                    if (count < 30) {
-                        image.source = model.image
-                        count++;
+                    interval += interval
+                    if (interval < 32000) {
+                        if (SGUtilsCpp.isFile(model.image.replace("file:/",""))){
+                            image.source = model.image
+                            return
+                        }
+                        imageCheck.start()
                     } else {
-                        // stop trying to load after 30 seconds
+                        // stop trying to load after 31 seconds (interval doubles every triggered)
+                        console.error(Logger.devStudioCategory, "Platform Selector Delegate: Image loading timed out:", model.image)
                         image.source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
                     }
                 }
-
-                property int count: 0
             }
 
             Image {
