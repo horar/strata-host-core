@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-Modular file that export Test-StrataControlView function to test the cycle through the control views
+Modular file that export Test-SDSControlViews function to test the cycle through the control views
 of Strata Developer Studio.
 
 .DESCRIPTION
-Modular file that export Test-StrataControlView function to test the cycle through the control views
+Modular file that export Test-SDSControlViews function to test the cycle through the control views
 of Strata Developer Studio. This is part of the automated test script for the master test plan
 https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist#Installer
 
@@ -21,8 +21,8 @@ Creation Date:  03/17/2020
 #>
 
 # Function to run the test, it will return True if the test was successful
-# Usage: Test-StrataControlView -PythonScriptPath <Path to Strata executable> -StrataPath <Path to control-view-test.py>
-function Test-StrataControlView {
+# Usage: Test-SDSControlViews -PythonScriptPath <Path to Strata executable> -StrataPath <Path to control-view-test.py>
+function Test-SDSControlViews {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)][string]$PythonScriptPath,    # Path to Strata executable
