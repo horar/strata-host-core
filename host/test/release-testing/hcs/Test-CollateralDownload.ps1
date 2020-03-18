@@ -14,5 +14,6 @@ function Test-CollateralDownload {
     # Run Python script
     & $PythonExec $Python_CollateralDownloadTest $AppData_HCS_dir $HCS_TCP_endpoint
 
+    # Stop HCS process after test is done
     Stop-HCS
 }
