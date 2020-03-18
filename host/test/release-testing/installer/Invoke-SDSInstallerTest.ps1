@@ -25,7 +25,7 @@ Purpose/Change: Initial script development
 .EXAMPLE
 SDSInstallerTest.ps1 -SDSInstallerPath "PAHT_TO_STRATA_INSTALLER"
 Description:
-Will test the installer passed 
+Will test the Strata installer that got passed to this script
 
 .EXAMPLE 
 SDSInstallerTest.ps1
@@ -41,9 +41,9 @@ param(
 $SDSRootDir = "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
 $SDSInstallerLogFile = "$env:Temp\SDSInstallerLog.log"
 $SDSExecFile = "$SDSRootDir\Strata Developer Studio.exe"
-$SDSUninstallFile = "$SDSRootDir\unins000.exe"
+$SDSUninstallFile = "$SDSRootDir\unins"
 $SDSIniFile = "$env:AppData\ON Semiconductor\Strata Developer Studio.ini"
-$SDSControlViewsDir = "$env:APPDATA\On Semiconductor\Strata Developer Studio"
+$SDSControlViewsDir = "$SDSRootDir\views"
 
 $HCSExecFile = "$SDSRootDir\HCS\hcs.exe"
 $HCSAppDataDir = "$env:AppData\ON Semiconductor\hcs\"
@@ -64,7 +64,7 @@ function Uninstall-SDSAndItsComponents {
     try {
         $SDSUninstallerPath =  Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" | ForEach-Object { get-ItemProperty $_.PSPath } `
                                 | where-Object { $_ -match "strata*" } | Select-Object UninstallString
-        if ($SDSUninstallerPath -eq $SDSUninstallFile) {
+        if ($SDSUninstallerPath -match [regex]::Escape($SDSUninstallFile)) {
             $FTDIUininstallerPath =  Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" | ForEach-Object { get-ItemProperty $_.PSPath } `
                                     | where-Object { $_ -match "ftdi*" } | Select-Object UninstallString
             $VisualRedistUninstallerPath = Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" | ForEach-Object { get-ItemProperty $_.PSPath } `
@@ -164,7 +164,7 @@ function Invoke-SDSInstallationTest {
         if ( $VisualRedistInstalledDisplayName -eq $VisualRedistDisplayName ) {
             Write-Host -ForegroundColor Green "Pass: Microsoft Visual C++ 2017 X64 is installed"
         } else {
-            Write-Host -ForegroundColor Red "Failed: Microsoft Visual C++ 2017 X64 is not installed" 
+            Write-Host -ForegroundColor Red "Fail: Microsoft Visual C++ 2017 X64 is not installed" 
         }
 
         if ( $FTDIDriverInstalledDisplayName -eq $FTDIDriverDisplayName ) {
@@ -176,15 +176,16 @@ function Invoke-SDSInstallationTest {
         if ( Test-path $SDSExecFile ) {
             Write-Host -ForegroundColor Green "Pass: Strata Developer Studio executables is under the specified location by the installer"
         } else {
-            Write-Host -ForegroundColor Red "Failed: Strata Developer Studio executables is not under the specified location by the installer." 
+            Write-Host -ForegroundColor Red "Fail: Strata Developer Studio executables is not under the specified location by the installer." 
         }
 
         if ( Test-Path $SDSControlViewsDir -PathType Container ) {
             Write-Host -ForegroundColor Green "Pass: Control Views are located in $SDSControlViewsDir"
         } else {
-            Write-Host -ForegroundColor Red "Failed: Control Views are not located in $SDSControlViewsDir" 
+            Write-Host -ForegroundColor Red "Fail: Control Views are not located in $SDSControlViewsDir" 
         }
-
+        "SDSVersion: $SDSVersion"
+        "SDSInstallerVersion: $SDSInstallerVersion"
         if ($SDSVersion -eq $SDSInstallerVersion) {
             Write-Host -ForegroundColor Green  "Pass: Strata Developer Studio Version matches Strata Developer Stduio installer version"
         } else {
