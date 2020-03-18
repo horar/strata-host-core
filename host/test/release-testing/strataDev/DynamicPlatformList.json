@@ -14,9 +14,9 @@
                 "class_id": "209",
                 "connection": "view",
                 "description": "Four solution LED Evaluation Board providing high-power buck, boost, and RGB solutions.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/209/platform_selector/thumb.jpeg",
                 "opn": "STR-4LED-SOL-EVAL-EVK",
                 "product_icons": [
-                    "dc",
                     "led"
                 ],
                 "verbose_name": "Multi-solution LED board with GUI Control",
@@ -34,6 +34,7 @@
                 "class_id": "227",
                 "connection": "view",
                 "description": "NIS5XXX 12V eFuse evaluation board for currents from 3.6 to 6.6 A within the Strata Development Environment.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/227/platform_selector/thumb.jpeg",
                 "opn": "STR-NIS5020-GEVB",
                 "product_icons": [
                     "dc"
@@ -53,6 +54,7 @@
                 "class_id": "228",
                 "connection": "view",
                 "description": "NIS5XXX 12V eFuse evaluation board for currents from 3.6 to 6.6 A within the Strata Development Environment.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/228/platform_selector/thumb.jpeg",
                 "opn": "STR-NIS5820-GEVB",
                 "product_icons": [
                     "dc"
@@ -72,6 +74,7 @@
                 "class_id": "230",
                 "connection": "view",
                 "description": "NIS5XXX 12V eFuse evaluation board for currents from 3.6 to 6.6 A within the Strata Development Environment.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/230/platform_selector/thumb.jpeg",
                 "opn": "STR-NIS5232-GEVB",
                 "product_icons": [
                     "dc"
@@ -91,6 +94,7 @@
                 "class_id": "229",
                 "connection": "view",
                 "description": "NIS5XXX 12V eFuse evaluation board for currents from 3.6 to 6.6 A within the Strata Development Environment.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/229/platform_selector/thumb.jpeg",
                 "opn": "STR-NIS5132-GEVB",
                 "product_icons": [
                     "dc"
@@ -110,6 +114,7 @@
                 "class_id": "220",
                 "connection": "view",
                 "description": "Voltage mode, synchronous buck converter, operates from 4.5V to 18, 21, or 23V input voltage and generates output as lows as 0.6V at 15 or 25A of continuous current.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/220/platform_selector/thumb.jpeg",
                 "opn": "STR-NCP3231-EVK",
                 "product_icons": [
                     "dc"
@@ -129,6 +134,7 @@
                 "class_id": "207",
                 "connection": "view",
                 "description": "Voltage mode, synchronous buck converter, operates from 4.5V to 18, 21, or 23V input voltage and generates output as lows as 0.6V at 15 or 25A of continuous current.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/207/platform_selector/thumb.jpeg",
                 "opn": "STR-NCP3235-EVK",
                 "product_icons": [
                     "dc"
@@ -148,6 +154,7 @@
                 "class_id": "219",
                 "connection": "view",
                 "description": "Voltage mode, synchronous buck converter, operates from 4.5V to 18, 21, or 23V input voltage and generates output as lows as 0.6V at 15 or 25A of continuous current.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/219/platform_selector/thumb.jpeg",
                 "opn": "STR-NCP3232N-EVK",
                 "product_icons": [
                     "dc"
@@ -168,6 +175,7 @@
                 "class_id": "243",
                 "connection": "view",
                 "description": "Evaluation board for the NCV6357 configurable Adaptive-On-Time (AOT) step down converter with I2C programmable output voltage and for the NCV881930 Synch Buck Controller.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/243/platform_selector/thumb.jpeg",
                 "opn": "STR-ADAS-PREREGULATOR-GEVB",
                 "product_icons": [
                     "dc"
@@ -189,6 +197,7 @@
                 "class_id": "226",
                 "connection": "view",
                 "description": "The Hello Strata design provides a gateway into developing hardware, firmware, and user interfaces in the Strata ecosystem.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/226/platform_selector/thumb.jpeg",
                 "opn": "STR-HELLO-STRATA-GEVB",
                 "product_icons": [
                     "analog",
@@ -213,9 +222,9 @@
                 "class_id": "239",
                 "connection": "view",
                 "description": "The STR-NCL30160-1A-LED-GEVB provides an evaluation board for the NCL30160 1A LED driver using Strata Developer Studio.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/239/platform_selector/thumb.jpeg",
                 "opn": "STR-NCL30160-1A-LED-GEVB",
                 "product_icons": [
-                    "dc",
                     "led"
                 ],
                 "verbose_name": "NCL30160 1A LED Driver",
@@ -233,6 +242,7 @@
                 "class_id": "217",
                 "connection": "view",
                 "description": "The STR-NCP171-EVK provides an evaluation kit for the NCP171 series of 80 mA dual mode XDFN4 package LDOs.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/217/platform_selector/thumb.jpeg",
                 "opn": "STR-NCP171-EVK",
                 "product_icons": [
                     "dc"
@@ -252,6 +262,7 @@
                 "class_id": "238",
                 "connection": "view",
                 "description": "The STR-NCP45560-ECOSWITCH-GEVB provides an evaluation board for the NCP45560 ecoSWITCH load switch using Strata Developer Studio.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/238/platform_selector/thumb.jpeg",
                 "opn": "STR-NCP45560-ECOSWITCH-GEVB",
                 "product_icons": [
                     "dc"
@@ -271,6 +282,7 @@
                 "class_id": "208",
                 "connection": "view",
                 "description": "The STR-NCV6356-EVK provides an evaluation kit for the NCV6356 configurable 5.0 A Adaptive-On-Time (AOT) step down converter a with I2C programmable output voltage.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/208/platform_selector/thumb.jpeg",
                 "opn": "STR-NCV6356-EVK",
                 "product_icons": [
                     "dc"
@@ -291,6 +303,7 @@
                 "class_id": "216",
                 "connection": "view",
                 "description": "The Strata Enabled NCV6357 EVB provides an easy to use evaluation board within the Strata Development Environment for the NCV6357 configurable 5A step down converter.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/216/platform_selector/thumb.jpeg",
                 "opn": "STR-NCV6357-GEVB",
                 "product_icons": [
                     "dc"
@@ -309,11 +322,11 @@
                 },
                 "class_id": "202",
                 "connection": "view",
-                "description":"The 2-Port USB-PD Source showcases ON Semiconductor's broad portfolio of USB-PD power solutions.",
+                "description": "The 2-Port USB-PD Source showcases ON Semiconductor's broad portfolio of USB-PD power solutions.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/202/platform_selector/thumb.jpeg",
                 "opn": "STR-USBC-2PORT-100W-EVK",
                 "product_icons": [
-                    "connectivity",
-                    "dc"
+                    "connectivity"
                 ],
                 "verbose_name": "USB Automotive 2-Port 100W Source",
                 "version": "1"
@@ -329,11 +342,11 @@
                 },
                 "class_id": "203",
                 "connection": "view",
-                "description":"The 4-port USB-PD source showcases ON Semiconductor's portfolio of USB-PD solutions: FUSB307 PD Port Controller, FUSB252 HW Protection Switch, and NCP81231 buck controller.",
+                "description": "The 4-port USB-PD source showcases ON Semiconductor's portfolio of USB-PD solutions: FUSB307 PD Port Controller, FUSB252 HW Protection Switch, and NCP81231 buck controller.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/203/platform_selector/thumb.jpeg",
                 "opn": "STR-USBC-4PORT-200W-EVK",
                 "product_icons": [
-                    "analog",
-                    "dc"
+                    "connectivity"
                 ],
                 "verbose_name": "USB AC-DC 4-Port 200W Source",
                 "version": "1"
@@ -351,6 +364,7 @@
                 "class_id": "211",
                 "connection": "view",
                 "description": "An evaluation kit for low noise, high PSRR XDFN-4 package LDOs. Currents from 50 to 300 mA, fixed output from 0.6 to 5.3 V, and input from 1.1 to 5.5 V.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/211/platform_selector/thumb.jpeg",
                 "opn": "STR-NCP115-EVK",
                 "product_icons": [
                     "dc"
@@ -371,6 +385,7 @@
                 "class_id": "206",
                 "connection": "view",
                 "description": "An evaluation kit for low noise, high PSRR XDFN-4 package LDOs. Currents from 50 to 300 mA, fixed output from 0.6 to 5.3 V, and input from 1.1 to 5.5 V.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/206/platform_selector/thumb.jpeg",
                 "opn": "STR-NCV8163-NCP163-EVK",
                 "product_icons": [
                     "dc"
@@ -391,6 +406,7 @@
                 "class_id": "212",
                 "connection": "view",
                 "description": "An evaluation kit for low noise, high PSRR XDFN-4 package LDOs. Currents from 50 to 300 mA, fixed output from 0.6 to 5.3 V, and input from 1.1 to 5.5 V.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/212/platform_selector/thumb.jpeg",
                 "opn": "STR-NCV8170-NCP170-EVK",
                 "product_icons": [
                     "dc"
@@ -411,6 +427,7 @@
                 "class_id": "210",
                 "connection": "view",
                 "description": "An evaluation kit for low noise, high PSRR XDFN-4 package LDOs. Currents from 50 to 300 mA, fixed output from 0.6 to 5.3 V, and input from 1.1 to 5.5 V.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/210/platform_selector/thumb.jpeg",
                 "opn": "STR-NCP110-EVK",
                 "product_icons": [
                     "dc"
@@ -430,6 +447,7 @@
                 "class_id": "240",
                 "connection": "view",
                 "description": "The STR-NCV48220-LDO-CP-GEVB provides an evaluation board for the NCV48220 LDO charge pump using Strata Developer Studio.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/240/platform_selector/thumb.jpeg",
                 "opn": "STR-NCV48220-LDO-CP-GEVB",
                 "product_icons": [
                     "dc"
@@ -449,6 +467,7 @@
                 "class_id": "231",
                 "connection": "view",
                 "description": "High performance AC/DC Power supply solution using NCP1622, NCP1568, NCP4306 and NCP431.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/231/platform_selector/thumb.jpeg",
                 "opn": "STR-ACF-12V100WPSU-GEVB",
                 "product_icons": [
                     "analog"
@@ -465,9 +484,30 @@
                     "documents": true,
                     "order": false
                 },
+                "class_id": "72ddcc10-2d18-4316-8170-5223162e54cf",
+                "connection": "view",
+                "description": "An evaluation board for the LC717A10AR touch/proximity, LV0104CS light, and the NCT72 temperature sensors within the Strata Developer Studio.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/72ddcc10-2d18-4316-8170-5223162e54cf/platform_selector/thumb.jpeg",
+                "opn": "STR-SENSORS-GEVK",
+                "product_icons": [
+                    "sensor"
+                ],
+                "verbose_name": "Touch, Proximity, Light, and Temperature Sensors",
+                "version": "1"
+            },
+            {
+                "application_icons": [
+                    "wirelessiot"
+                ],
+                "available": {
+                    "control": false,
+                    "documents": true,
+                    "order": false
+                },
                 "class_id": "201",
                 "connection": "view",
                 "description": "Two individual 7-in-1 logic gates with simple GUI input and output state control/indication.",
+                "image": "C:/Users/zbh8jv/AppData/Roaming/ON Semiconductor/hcs/documents/platform_selector/201/platform_selector/thumb.jpeg",
                 "opn": "STR-LOGIC-GATES-EVK",
                 "product_icons": [
                     "connectivity"
