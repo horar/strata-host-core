@@ -31,8 +31,9 @@ namespace spyglass {
 
         /**
          * Initialize BoardManager (start managing connected devices).
+         * @param getFwInfo if true send also get_firmware_info command during device identification
          */
-        void init();
+        void init(bool getFwInfo = true);
 
         /**
          * Send a message to the device.
@@ -140,6 +141,9 @@ namespace spyglass {
         std::set<int> serialPortsList_;
         QHash<int, QString> serialIdToName_;
         QHash<int, SerialDeviceShPtr> openedSerialPorts_;
+
+        // flag if send get_firmware_info command
+        bool getFwInfo_;
     };
 
 }

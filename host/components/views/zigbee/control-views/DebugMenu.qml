@@ -35,7 +35,7 @@ Rectangle {
                 height: 40
 
                 Text {
-                    text: "Debug (inject fake platform notifications):"
+                    text: "Debug"
                     anchors {
                         verticalCenter: header.verticalCenter
                         left: header.left
@@ -54,44 +54,115 @@ Rectangle {
                 }
             }
 
-            Button {
-                id: motorRunningTrue
-                text: "Send motor_running_notification, 'running': true"
-                onClicked: {
-                    CorePlatformInterface.data_source_handler('{
-                                "value":"motor_running_notification",
+            Row{
+                Button {
+                    id: lightsOn
+                    text: "light on"
+                    onClicked: {
+                        CorePlatformInterface.data_source_handler('{
+                                "value":"toggle_light_notification",
                                 "payload":{
-                                         "running": true
+                                         "value": "on"
                                 }
                         }')
+                    }
+                }
+
+                Button {
+                    id: lightsOff
+                    text: "light off"
+                    onClicked: {
+                        CorePlatformInterface.data_source_handler('{
+                                "value":"toggle_light_notification",
+                                "payload":{
+                                         "value": "off"
+                                }
+                        }')
+                    }
                 }
             }
 
-            Button {
-                id: motorRunningFalse
-                text: "Send motor_running_notification, 'running': false"
-                onClicked: {
-                    CorePlatformInterface.data_source_handler('{
-                                "value":"motor_running_notification",
+            Row{
+                Button {
+                    id: doorOpen
+                    text: "door open"
+                    onClicked: {
+                        CorePlatformInterface.data_source_handler('{
+                                "value":"toggle_door_notification",
                                 "payload":{
-                                         "running": false
+                                         "value": "open"
                                 }
                         }')
+                    }
                 }
-            }
 
+                Button {
+                    id: doorClosed
+                    text: "door closed"
+                    onClicked: {
+                        CorePlatformInterface.data_source_handler('{
+                                "value":"toggle_door_notification",
+                                "payload":{
+                                         "value": "closed"
+                                }
+                        }')
+                    }
+                }
+            }
+            Row{
             Button {
-                id: motorSpeed
-                text: "Send motor_speed_notification, 'speed': random"
+                id: blueColor
+                text: "blue"
+                width:75
                 onClicked: {
                     CorePlatformInterface.data_source_handler('{
-                                "value":"motor_speed_notification",
+                                "value":"room_color_notification",
                                 "payload":{
-                                         "speed": ' + (Math.random()*100).toFixed(2) + '
+                                         "color": "blue"
                                 }
                         }')
                 }
             }
+            Button {
+                id: greenColor
+                text: "green"
+                width:75
+                onClicked: {
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"room_color_notification",
+                                "payload":{
+                                         "color": "green"
+                                }
+                        }')
+                }
+            }
+            Button {
+                id: purpleColor
+                text: "purple"
+                width:75
+                onClicked: {
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"room_color_notification",
+                                "payload":{
+                                         "color": "purple"
+                                }
+                        }')
+                }
+            }
+            Button {
+                id: redColor
+                text: "red"
+                width:75
+                onClicked: {
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"room_color_notification",
+                                "payload":{
+                                         "color": "red"
+                                }
+                        }')
+                }
+            }
+            }//row
         }
     }
 
