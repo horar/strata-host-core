@@ -1,7 +1,26 @@
 <#
-    Automated HCS database testing
+.SYNOPSIS
+Modular file that exports the Test-Database function to test automated database replication performed by HCS
+
+.DESCRIPTION
+Modular file that exports the Test-Database function to test automated database replication performed by HCS
+This is part of the automated test script for the master test plan
+https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist#Installer
+
+.INPUTS
+-PythonScriptPath   <Path to Strata executable>
+-StrataPath         <Path to control-view-test.py>
+
+.OUTPUTS
+Bolean result of the test
+
+.NOTES
+Version:        1.0
+Creation Date:  03/17/2020
 #>
 
+# Function to run the test, it will return True if the test was successful
+# Usage: Test-SDSControlViews -PythonScriptPath <Path to Strata executable> -StrataPath <Path to control-view-test.py>
 function Test-Database {
     # Change directory to location of SDS executable
     Set-Location $SDS_root_dir
@@ -29,9 +48,9 @@ function Test-Database {
         Write-Host "        OK (directory did not exist)"
     }
 
-    # Run HCS standalone and wait 10 s
-    Write-Host "`n        Running HCS and waiting for 10 seconds..."
-    Start-HCSAndWait
+    # Run HCS standalone and wait 5 s
+    Write-Host "`n        Running HCS and waiting for 5 seconds..."
+    Start-HCSAndWait 5
     Write-Host "`n        Killing HCS process"
     Stop-HCS
 
@@ -64,9 +83,9 @@ function Test-Database {
         Write-Host "        OK (directory did not exist)"
     }
 
-    # Run HCS standalone and wait 10 s
-    Write-Host "`n        Running HCS and waiting for 10 seconds..."
-    Start-HCSAndWait
+    # Run HCS standalone and wait 5 s
+    Write-Host "`n        Running HCS and waiting for 5 seconds..."
+    Start-HCSAndWait 5
     Write-Host "`n        Killing HCS process"
     Stop-HCS
 
@@ -99,9 +118,9 @@ function Test-Database {
         Write-Host "        OK (file did not exist)"
     }
 
-    # Run HCS standalone and wait 10 s
-    Write-Host "`n        Running HCS and waiting for 10 seconds..."
-    Start-HCSAndWait
+    # Run HCS standalone and wait 5 s
+    Write-Host "`n        Running HCS and waiting for 5 seconds..."
+    Start-HCSAndWait 5
     Write-Host "`n        Killing HCS process"
     Stop-HCS
 

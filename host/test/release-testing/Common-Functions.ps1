@@ -1,5 +1,14 @@
+<#
+.SYNOPSIS
+Modular file that exports several common functions used by the testing scripts in this directory
+
+.NOTES
+Version:        1.0
+Creation Date:  03/17/2020
+#>
+
 # Check if python and pyzmq are installed
-function Test-PythonAndPyzmqExist {
+function Assert-PythonAndPyzmq {
     # Determine the python command based on OS. OSX will execute Python 2 by default and here we need to use Python 3.
     # on Win, Python 3 is not in the path by default, as a result we'll need to use 'python3' for OSX and 'python' for Win
     If ($Env:OS -Eq "Windows_NT") {
@@ -11,22 +20,22 @@ function Test-PythonAndPyzmqExist {
     Try {
         If ((Start-Process $PythonExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
             If (!(Start-Process $PythonExec '-c "import zmq"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
-                Write-Host "Error: ZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions. Aborting." -ForegroundColor Red
+                Write-Error "Error: ZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions.`nAborting."
                 Return $false
             }
         } Else {
-            Write-Host "Error: Python not found. Aborting." -ForegroundColor Red
+            Write-Error "Error: Python not found.`nAborting."
             Return $false
         }
     } Catch [System.Management.Automation.CommandNotFoundException] {
-        Write-Host "Error: Python not found. Aborting." -ForegroundColor Red
+        Write-Error "Error: Python not found.`nAborting."
         Return $false
     }
     Return $true
 }
 
 # Check if both SDS and HCS are found where expected
-function Test-StrataAndHCSExist {
+function Assert-StrataAndHCS {
     # Convert the path if using Unix env
     If ($Env:OS -Ne "Windows_NT" -And (($SDS_exec_file = Convert-Path $SDS_exec_file) -Eq $false)) {
         Return $false
@@ -43,11 +52,22 @@ function Test-StrataAndHCSExist {
 }
 
 # Check if both Python scripts are found where expected
-function Test-PythonScriptsExist {
+function Assert-PythonScripts {
     If (!(Test-Path $Python_CollateralDownloadTest)) {
         Return $false
     }
     If (!(Test-Path $Python_ControlViewTest)) {
+        Return $false
+    }
+    Return $true
+}
+
+# Check if PS module 'PSSQLite' is installed
+# Tell user to manually install it if not found & exit
+function Assert-PSSQLite {
+    If (!(Get-Module -ListAvailable -Name PSSQLite)) {
+        Write-Warning "`n`nPSSQLite Powershell module not found: cannot proceed.`nInstall module PSSQLite by running as administrator:"
+        Write-Warning "   Install-Module PSSQLite`nAborting.`n"
         Return $false
     }
     Return $true
@@ -68,7 +88,7 @@ function Exit-TestScript {
     If ($ScriptExitCode -eq 0) {
         Write-Host "Test finished successfully. Exiting..." -ForegroundColor Green
     } Else {
-        Write-Host "Test failed. Terminating..." $ScriptExitCode -ForegroundColor Red
+        Write-Error "Test failed. Terminating..." $ScriptExitCode
     }
     Write-Host "================================================================================"
     Write-Host "================================================================================"
@@ -83,8 +103,28 @@ function Stop-HCS {
     }
 }
 
+# Stops all processes by the name of "Strata Developer Studio" running in the local machine
+function Stop-SDS {
+    If (Get-Process -Name "Strata Developer Studio" -ErrorAction SilentlyContinue) {
+        Stop-Process -Name "Strata Developer Studio" -Force
+        Start-Sleep -Seconds 1
+    }
+}
+
 # Start one instance of HCS and wait (to give time for DB replication)
 function Start-HCSAndWait {
+    param($seconds)
     Start-Process -FilePath $HCS_exec_file -ArgumentList "-f `"$HCS_config_file`""
-    Start-Sleep -Seconds 10
+    If ($seconds) {
+        Start-Sleep -Seconds $seconds
+    }
+}
+
+function Restore-Strata_INI {
+    # Delete temporary .ini file and restore original
+    Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $AppData_HCS_dir)
+    If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" -PathType Leaf) {
+        Remove-Item -Path "$AppData_OnSemi_dir\Strata Developer Studio.ini"
+        Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" "$AppData_OnSemi_dir\Strata Developer Studio.ini"
+    }
 }

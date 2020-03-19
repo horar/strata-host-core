@@ -28,6 +28,12 @@ Set-Variable "SDS_exec_file"   "$SDS_root_dir\Strata Developer Studio.exe"
 Set-Variable "HCS_db_file"     "$AppData_HCS_dir\db\strata_db\db.sqlite3"
 Set-Variable "Test_Root"       $PSScriptRoot
 
+# Define variables for server/token credentials (only applicable if TEST_request_token is $true)
+Set-Variable "TEST_request_token" $true
+Set-Variable "SDS_server"         "http://18.191.108.5/"      # "https://strata.onsemi.com"
+Set-Variable "SDS_login_server"   "http://18.191.108.5/login" # "https://strata.onsemi.com/login"
+Set-Variable "SDS_login_info"     '{"username":"test@test.com","password":"Strata12345"}'
+
 # Define paths for Python scripts ran by this script
 Set-Variable "Python_CollateralDownloadTest" "hcs/hcs-collateral-download-test.py"
 Set-Variable "Python_ControlViewTest"        "strataDev/control-view-test.py"
@@ -38,48 +44,59 @@ Set-Variable "Python_ControlViewTest"        "strataDev/control-view-test.py"
 # Import functions for test "Test-Database" 
 . "$PSScriptRoot\hcs\Test-Database.ps1"
 
+# Import functions for test "Test-TokenAndViewsDownload"
+. "$PSScriptRoot\hcs\Test-TokenAndViewsDownload.ps1"
+
 # Import functions for test "Test-CollateralDownload"
 . "$PSScriptRoot\hcs\Test-CollateralDownload.ps1"
 
 # Import functions for test "Test-SDSControlViews"
 . "$PSScriptRoot\strataDev\Test-SDSControlViews.ps1"
 
-#-----------------------------------------------------------[Execution]------------------------------------------------------------
+#------------------------------------------------------[Pre-requisite checks]------------------------------------------------------
 
-Write-Host "`n`nStarting tests...`n"
+Write-Host "`n`nPerforming initial checks...`n"
 
-# Search for Python tools
-If ((Test-PythonAndPyzmqExist) -Eq $false) {
+# Search for Python tools 
+If ((Assert-PythonAndPyzmq) -Eq $false) {
     Exit-TestScript -ScriptExitCode -1
 }
 
 # Search for SDS and HCS
-If ((Test-StrataAndHCSExist) -Eq $false) {
+If ((Assert-StrataAndHCS) -Eq $false) {
     Exit-TestScript -ScriptExitCode -1
 }
 
 # Search for Python scripts
-If ((Test-PythonScriptsExist) -Eq $false) {
+If ((Assert-PythonScripts) -Eq $false) {
     Exit-TestScript -ScriptExitCode -1
 }
 
-# Check for PSSQLite
-# Tell user to manually install it & exit if not found
-If (!(Get-Module -ListAvailable -Name PSSQLite)) {
-    Write-Host "`n`nPSSQLite Powershell module not found: cannot proceed.`nInstall module PSSQLite by running as administrator:"
-    Write-Host "   Install-Module PSSQLite`n`n"
+# Search for PSSQLite
+If ((Assert-PSSQLite) -Eq $false) {
     Exit-TestScript -ScriptExitCode -1
 }
+
+#-----------------------------------------------------------[Execution]------------------------------------------------------------
+
+Write-Host "Starting tests...`n"
 
 # Run Test-Database (HCS database testing)
 Test-Database
 
-# # Run Test-CollateralDownload (HCS collateral download testing)
+# Run Test-TokenAndViewsDownload
+Test-TokenAndViewsDownload
+
+# Run Test-CollateralDownload (HCS collateral download testing)
 Test-CollateralDownload
 
-# # Run Test-SDSControlViews (SDS control view testing)
+# Run Test-SDSControlViews (SDS control view testing)
 If ((Test-SDSControlViews -PythonScriptPath $Python_ControlViewTest -StrataPath $SDS_exec_file) -Eq $false) {
     Exit-TestScript -ScriptExitCode -1
 }
 
-Write-Host "`n`nTesting complete.`n`n"
+#------------------------------------------------------------[Clean up]-------------------------------------------------------------
+
+Restore-Strata_INI
+
+Write-Host "`n`nTesting complete!`n`n"

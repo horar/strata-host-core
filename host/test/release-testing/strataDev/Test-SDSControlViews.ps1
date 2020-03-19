@@ -29,15 +29,6 @@ function Test-SDSControlViews {
         [Parameter(Mandatory = $true)][string]$StrataPath           # Path to control-view-test.py
     )
     
-    # Determine the python command based on OS. osx will execute python 2 by default and here we need to use python3.
-    # on win, python3 is not in the path by default, as a result we'll need to use python3 for osx and python for win
-    If ($Env:OS -eq "Windows_NT") {
-        $PythonExec = 'python'
-    }
-    Else {
-        $PythonExec = 'python3'
-    }
-
     Write-Host "Looking for the test script " $PythonScriptPath
     if (Test-Path -Path $PythonScriptPath) {
         write-host "Script Found" -ForegroundColor Green
@@ -59,7 +50,7 @@ function Test-SDSControlViews {
         }
         else {
             # Strata is not running. it could be crash!
-            Write-Error -Message "Strata developer Studio is not running. It might crashed during the test. Aborting..."
+            Write-Error "Strata developer Studio is not running. It might have crashed during the test. Aborting..."
             return $false
         }
         
@@ -70,8 +61,8 @@ function Test-SDSControlViews {
             return $true
         }
         else {
-            Write-Error -Message "Test failed."
-            Write-Error -Message "Exit Code = $($pythonScript.ExitCode)"
+            Write-Error "Test failed."
+            Write-Error "Exit Code = $($pythonScript.ExitCode)"
             return $false
         }
     }
