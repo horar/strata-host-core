@@ -12,7 +12,7 @@ uuidList = ["101", "201", "202", "203", "204", "206", "207", "208", "209", "210"
             "220", "221", "222", "225", "226", "227", "228", "229", "230", "231", "232", "233", "238", "239", "240", "243", "244", "245", "246", "265"]
 
 # Sample commands
-returnToPlatListRes = b'{"hcs::notification":{"list":[],"type":"connected_platforms"}}'
+returnToPlatListResponse = b'{"hcs::notification":{"list":[],"type":"connected_platforms"}}'
 emptyDynamicPlatformList = b'{"hcs::notification":{"list":[],"type":"all_platforms"}}'
 
 # get the location of the script
@@ -35,14 +35,14 @@ else:
     print("DynamicPlatformList.json is missing. Using hardcoded uuidList.")
     DynamicPlatformListJsonFound = False
 
-# function to print line seperator, to make the code more neat :)
-def printLineSep(charSym='-'):
+# function to print line separator, to make the code more neat :)
+def printLineSeparator(charSym='-'):
     print((80 * charSym) + '\n', end='')
 
 # function to get the dynamic platform list from hcs, keep it for future refrence
-def getRealHcsRes():
+def getRealHcsResponse():
     tempContext = zmq.Context()
-    printLineSep()
+    printLineSeparator()
     print("Connecting to hcs...")
     tempSocket = tempContext.socket(zmq.DEALER)
     tempSocket.setsockopt(zmq.IDENTITY, b'pyscript')
@@ -56,7 +56,7 @@ def getRealHcsRes():
     print("Waiting for the dynamic platform list...")
     message = tempSocket.recv()
     print("Received reply [ %s ]" % (message))
-    printLineSep()
+    printLineSeparator()
 
 # Utility function to send commands to the ui
 def sendOpenPlatformCtrlView(classID):
@@ -68,8 +68,8 @@ def sendOpenPlatformCtrlView(classID):
     print("Sent.")
     time.sleep(8)
     print("Returning to platform selector page...")
-    client.send_multipart([strataId, returnToPlatListRes])
-    printLineSep()
+    client.send_multipart([strataId, returnToPlatListResponse])
+    printLineSeparator()
     time.sleep(1)
 
 # send commands to open the control views of the platforms from the hardcoded UUID list
@@ -91,8 +91,8 @@ client.setsockopt(zmq.IDENTITY, b'zmqRouterTest')
 client.bind(defZmqURL)
 
 # get client id of starta UI
-printLineSep()
-printLineSep()
+printLineSeparator()
+printLineSeparator()
 print("Waiting for Strata Developer Studio to connect...")
 
 # Wait for 10s to get a message from Strata, otherwise fail.
@@ -106,8 +106,8 @@ if not strataId:
     quit(-1)
 
 print("Strata id is [ %s ]" % (strataId))
-printLineSep()
-printLineSep()
+printLineSeparator()
+printLineSeparator()
 
 # While loop until we close Strata..
 while True:
@@ -124,7 +124,7 @@ while True:
         quit(-1)
 
     print("Received reply [ %s ]" % (message))
-    printLineSep()
+    printLineSeparator()
 
     if (message == b'{"hcs::cmd":"dynamic_platform_list","payload":{}}'):
         # If the daynamicPlatformList.json file exist use it, otherwise, send the empty list and use
@@ -141,7 +141,7 @@ while True:
         print("Done.")
         quit(0)              # Exit as soon as you finish the control views
     elif (message == b'{"cmd":"unregister","payload":{}}'):
-        printLineSep()
+        printLineSeparator()
         print("Strata UI was closed. Exitting...")
-        printLineSep()
+        printLineSeparator()
         quit()
