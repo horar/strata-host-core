@@ -17,6 +17,7 @@ class DeviceOperations : public QObject
 
 public:
     DeviceOperations(SerialDeviceShPtr device);
+    ~DeviceOperations();
 
     void identify();
 
@@ -26,18 +27,25 @@ public:
 
     void startApplication();
 
-    // TODO
     void cancelOperation();
+
+    int getDeviceId();
 
     friend QDebug operator<<(QDebug dbg, const DeviceOperations* dev_op);
 
+    enum class Operation {
+        None,
+        Identify,
+        PrepareForFlash,
+        FlashFirmwareChunk,
+        StartApplication,
+        // special values for finished signal:
+        Cancel,
+        Timeout
+    };
+
 signals:
-    void identified();
-    void readyForFlashFw();
-    void fwChunkFlashed(int chunk_number);
-    void applicationStarted();
-    void timeout();
-    void cancelled();
+    void finished(int operation, int data = -1);
     void error(QString msg);
 
     // signals only for internal use:
@@ -45,35 +53,29 @@ signals:
     void nextStep(QPrivateSignal);
 
 private:
-    enum class Operation {
-        None,
-        Identify,
-        PrepareForFlash,
-        FlashFirmwareChunk,
-        StartApplication
-    };
-
     enum class State {
         None,
+        GetFirmwareInfo,
         GetPlatformId,
         UpdateFirmware,
         ReadyForFlashFw,
         FlashFwChunk,
-        FwChunkFlashed,
         StartApplication,
-        ApplicationStarted,
         Timeout
     };
 
     enum class Activity {
         None,
+        WaitingForFirmwareInfo,
         WaitingForPlatformId,
         WaitingForUpdateFw,
         WaitingForFlashFwChunk,
         WaitingForStartApp
     };
 
-    void startOperation(Operation oper);
+    void startOperation(Operation operation);
+
+    void finishOperation(Operation operation);
 
     void process();
 
@@ -83,7 +85,7 @@ private:
 
     void handleDeviceResponse(const QByteArray& data);
 
-    bool parseDeviceResponse(const QByteArray& data, bool& is_ack);
+    bool parseDeviceResponse(const QByteArray& data, bool& isAck);
 
     void resetInternalStates();
 
@@ -91,12 +93,12 @@ private:
 
     SerialDeviceShPtr device_;
 
-    QTimer response_timer_;
+    QTimer responseTimer_;
 
     QVector<quint8> chunk_;
-    int chunk_number_;
+    int chunkNumber_;
 
-    uint device_id_;
+    uint deviceId_;
 
     Operation operation_;
 
@@ -104,7 +106,7 @@ private:
 
     Activity activity_;
 
-    bool ack_received_;
+    bool ackReceived_;
 };
 
 }  // namespace

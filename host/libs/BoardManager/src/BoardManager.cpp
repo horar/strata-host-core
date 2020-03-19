@@ -2,6 +2,7 @@
 #include "BoardManagerConstants.h"
 #include "logging/LoggingQtCategories.h"
 #include <SerialDevice.h>
+#include <DeviceOperations.h>
 
 #include <QSerialPortInfo>
 
@@ -12,20 +13,22 @@ BoardManager::BoardManager() {
     connect(&timer_, &QTimer::timeout, this, &BoardManager::checkNewSerialDevices);
 }
 
+BoardManager::~BoardManager() { }
+
 void BoardManager::init(bool getFwInfo) {
     getFwInfo_ = getFwInfo;
     timer_.start(DEVICE_CHECK_INTERVAL);
 }
 
-void BoardManager::sendMessage(const int connectionId, const QString &message) {
+void BoardManager::sendMessage(const int deviceId, const QString &message) {
     // in case of multithread usage lock access to openedSerialPorts_
-    auto it = openedSerialPorts_.constFind(connectionId);
+    auto it = openedSerialPorts_.constFind(deviceId);
     if (it != openedSerialPorts_.constEnd()) {
         it.value()->write(message.toUtf8());
     }
     else {
-        logInvalidDeviceId(QStringLiteral("Cannot send message"), connectionId);
-        emit invalidOperation(connectionId);
+        logInvalidDeviceId(QStringLiteral("Cannot send message"), deviceId);
+        emit invalidOperation(deviceId);
     }
 }
 
@@ -82,15 +85,15 @@ SerialDeviceShPtr BoardManager::getDevice(const int deviceId) const {
     }
 }
 
-QVariantMap BoardManager::getConnectionInfo(const int connectionId) {
+QVariantMap BoardManager::getConnectionInfo(const int deviceId) {
     // in case of multithread usage lock access to openedSerialPorts_
-    auto it = openedSerialPorts_.constFind(connectionId);
+    auto it = openedSerialPorts_.constFind(deviceId);
     if (it != openedSerialPorts_.constEnd()) {
         return it.value()->getDeviceInfo();
     }
     else {
-        logInvalidDeviceId(QStringLiteral("Cannot get connection info"), connectionId);
-        emit invalidOperation(connectionId);
+        logInvalidDeviceId(QStringLiteral("Cannot get connection info"), deviceId);
+        emit invalidOperation(deviceId);
         return QVariantMap();
     }
 }
@@ -100,33 +103,33 @@ QVector<int> BoardManager::readyDeviceIds() {
     return QVector<int>::fromList(openedSerialPorts_.keys());
 }
 
-QString BoardManager::getDeviceProperty(const int connectionId, const DeviceProperties property) {
+QString BoardManager::getDeviceProperty(const int deviceId, const DeviceProperties property) {
     // in case of multithread usage lock access to openedSerialPorts_
-    auto it = openedSerialPorts_.constFind(connectionId);
+    auto it = openedSerialPorts_.constFind(deviceId);
     if (it != openedSerialPorts_.constEnd()) {
         return it.value()->getProperty(property);
     }
     else {
-        logInvalidDeviceId(QStringLiteral("Cannot get required device property"), connectionId);
-        emit invalidOperation(connectionId);
+        logInvalidDeviceId(QStringLiteral("Cannot get required device property"), deviceId);
+        emit invalidOperation(deviceId);
         return QString();
     }
 }
 
 void BoardManager::checkNewSerialDevices() {
 #if defined(Q_OS_MACOS)
-    const QString usb_keyword("usb");
-    const QString cu_keyword("cu");
+    const QString usbKeyword("usb");
+    const QString cuKeyword("cu");
 #elif defined(Q_OS_LINUX)
     // TODO: this code was not tested on Linux, test it
-    const QString usb_keyword("USB");
+    const QString usbKeyword("USB");
 #elif defined(Q_OS_WIN)
-    const QString usb_keyword("COM");
+    const QString usbKeyword("COM");
 #endif
 
     const auto serialPortInfos = QSerialPortInfo::availablePorts();
     std::set<int> ports;
-    QHash<int, QString> id_to_name;
+    std::map<int, QString> idToName;
 
     for (const QSerialPortInfo& serialPortInfo : serialPortInfos) {
         const QString& name = serialPortInfo.portName();
@@ -134,25 +137,25 @@ void BoardManager::checkNewSerialDevices() {
         if (serialPortInfo.isNull()) {
             continue;
         }
-        if (name.contains(usb_keyword) == false) {
+        if (name.contains(usbKeyword) == false) {
             continue;
         }
 #ifdef Q_OS_MACOS
-        if (name.startsWith(cu_keyword) == false) {
+        if (name.startsWith(cuKeyword) == false) {
             continue;
         }
 #endif
         // conection ID must be int because of integration with QML
-        int device_id = static_cast<int>(qHash(name));
-        auto [iter, success] = ports.emplace(device_id);
+        int deviceId = static_cast<int>(qHash(name));
+        auto [iter, success] = ports.emplace(deviceId);
         if (success == false) {
             // Error: hash already exists!
-            qCCritical(logCategoryBoardManager).nospace() << "Cannot add device (hash conflict: 0x" << hex << static_cast<uint>(device_id) << "): " << name;
+            qCCritical(logCategoryBoardManager).nospace() << "Cannot add device (hash conflict: 0x" << hex << static_cast<uint>(deviceId) << "): " << name;
             continue;
         }
-        id_to_name.insert(device_id, name);
+        idToName.emplace(deviceId, name);
 
-        // qCDebug(logCategoryBoardManager).nospace() << "Found serial device, ID: 0x" << hex << static_cast<uint>(connectionId) << ", name: " << name;
+        // qCDebug(logCategoryBoardManager).nospace() << "Found serial device, ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " << name;
     }
 
     std::set<int> added, removed;
@@ -162,19 +165,19 @@ void BoardManager::checkNewSerialDevices() {
     // in case of multithread usage lock this block of code (see comment in *.h file)
     {  // this block of code modifies serialPortsList_, openedSerialPorts_, serialIdToName_
 
-        serialIdToName_ = std::move(id_to_name);
+        serialIdToName_ = std::move(idToName);
 
         computeListDiff(ports, added, removed);  // uses serialPortsList_ (needs old value from previous run)
 
-        for (auto device_id : removed) {
-            removedSerialPort(device_id);  // modifies openedSerialPorts_
-            emit boardDisconnected(device_id);  // if this block of code is locked emit this after end of the block
+        for (auto deviceId : removed) {
+            removedSerialPort(deviceId);  // modifies openedSerialPorts_
+            emit boardDisconnected(deviceId);  // if this block of code is locked emit this after end of the block
         }
 
-        for (auto device_id : added) {
-            if (addedSerialPort(device_id)) {  // modifies openedSerialPorts_, uses serialIdToName_
-                opened.emplace_back(device_id);
-                emit boardConnected(device_id);  // if this block of code is locked emit this after end of the block
+        for (auto deviceId : added) {
+            if (addedSerialPort(deviceId)) {  // modifies openedSerialPorts_, uses serialIdToName_
+                opened.emplace_back(deviceId);
+                emit boardConnected(deviceId);  // if this block of code is locked emit this after end of the block
             }
         }
 
@@ -202,7 +205,7 @@ void BoardManager::computeListDiff(std::set<int>& list, std::set<int>& added_por
 
 // in case of multithread usage mutex must be locked before calling this function (due to modification openedSerialPorts_)
 bool BoardManager::addedSerialPort(const int deviceId) {
-    const QString name = serialIdToName_.value(deviceId);
+    const QString name = serialIdToName_[deviceId];
 
     SerialDeviceShPtr device = std::make_shared<SerialDevice>(deviceId, name);
 
@@ -211,11 +214,17 @@ bool BoardManager::addedSerialPort(const int deviceId) {
 
         qCInfo(logCategoryBoardManager).nospace() << "Added new serial device: ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " << name;
 
-        connect(device.get(), &SerialDevice::deviceReady, this, &BoardManager::boardReady);
-        connect(device.get(), &SerialDevice::serialDeviceError, this, &BoardManager::handleBoardError);
-        connect(device.get(), &SerialDevice::msgFromDevice, this, &BoardManager::handleNewMessage);
+        connect(device.get(), &SerialDevice::msgFromDevice, this, &BoardManager::handleNewMessage);  // DEPRECATED
 
-        device->identify(getFwInfo_);
+        auto operation = std::make_unique<DeviceOperations>(device);
+
+        connect(operation.get(), &DeviceOperations::finished, this, &BoardManager::handleOperationFinished);
+        connect(operation.get(), &DeviceOperations::error, this, &BoardManager::handleBoardError);
+
+        operation->identify();
+
+        serialDeviceOprations_.erase(deviceId);  // to be sure
+        serialDeviceOprations_.emplace(deviceId, std::move(operation));
 
         return true;
     }
@@ -227,6 +236,7 @@ bool BoardManager::addedSerialPort(const int deviceId) {
 
 // in case of multithread usage mutex must be locked before calling this function (due to modification openedSerialPorts_)
 void BoardManager::removedSerialPort(const int deviceId) {
+    serialDeviceOprations_.erase(deviceId);
     auto it = openedSerialPorts_.find(deviceId);
     if (it != openedSerialPorts_.end()) {
         it.value()->close();
@@ -236,7 +246,37 @@ void BoardManager::removedSerialPort(const int deviceId) {
 }
 
 void BoardManager::logInvalidDeviceId(const QString& message, const int deviceId) const {
-    qCWarning(logCategoryBoardManager).nospace() << message << ", invalid connection ID: 0x" << hex << static_cast<uint>(deviceId);
+    qCWarning(logCategoryBoardManager).nospace() << message << ", invalid device ID: 0x" << hex << static_cast<uint>(deviceId);
+}
+
+void BoardManager::handleOperationFinished(int operation, int) {
+    DeviceOperations *devOp = qobject_cast<DeviceOperations*>(QObject::sender());
+    if (devOp == nullptr) {
+        return;
+    }
+
+    int deviceId = devOp->getDeviceId();
+    bool boardRecognized = false;
+    if (operation == static_cast<int>(DeviceOperations::Operation::Identify)) {
+        boardRecognized = true;
+    }
+
+    // operation has finished, we do not need DeviceOperations object anymore
+    serialDeviceOprations_.erase(deviceId);
+
+    emit boardReady(deviceId, boardRecognized);
+}
+
+void BoardManager::handleBoardError(QString errMsg) {
+    DeviceOperations *devOp = qobject_cast<DeviceOperations*>(QObject::sender());
+    if (devOp == nullptr) {
+        return;
+    }
+    int deviceId = devOp->getDeviceId();
+    // operation has finished with error, we do not need DeviceOperations object anymore
+    serialDeviceOprations_.erase(deviceId);
+
+    emit boardError(deviceId, errMsg);
 }
 
 void BoardManager::handleNewMessage(QString message) {
@@ -245,14 +285,6 @@ void BoardManager::handleNewMessage(QString message) {
         return;
     }
     emit newMessage(device->getDeviceId(), message);
-}
-
-void BoardManager::handleBoardError(QString errMsg) {
-    SerialDevice *device = qobject_cast<SerialDevice*>(QObject::sender());
-    if (device == nullptr) {
-        return;
-    }
-    emit boardError(device->getDeviceId(), errMsg);
 }
 
 }  // namespace

@@ -18,26 +18,32 @@
 
 namespace strata {
 
-QDebug operator<<(QDebug dbg, const DeviceOperations* dev_op) {
-    return dbg.nospace() << "Device 0x" << hex << dev_op->device_id_ << ": ";
+QDebug operator<<(QDebug dbg, const DeviceOperations* devOp) {
+    return dbg.nospace().noquote() << "Device 0x" << hex << devOp->deviceId_ << ": ";
 }
 
 DeviceOperations::DeviceOperations(SerialDeviceShPtr device) :
     device_(device), operation_(Operation::None), state_(State::None), activity_(Activity::None)
 {
-    device_id_ = static_cast<uint>(device_->getDeviceId());
+    deviceId_ = static_cast<uint>(device_->getDeviceId());
 
-    response_timer_.setSingleShot(true);
-    response_timer_.setInterval(RESPONSE_TIMEOUT);
+    responseTimer_.setSingleShot(true);
+    responseTimer_.setInterval(RESPONSE_TIMEOUT);
 
-    connect(this, &DeviceOperations::nextStep, this, &DeviceOperations::process);
+    connect(this, &DeviceOperations::nextStep, this, &DeviceOperations::process, Qt::QueuedConnection);
     connect(device_.get(), &SerialDevice::msgFromDevice, this, &DeviceOperations::handleDeviceResponse);
     connect(device_.get(), &SerialDevice::serialDeviceError, this, &DeviceOperations::handleDeviceError);
-    connect(&response_timer_, &QTimer::timeout, this, &DeviceOperations::handleResponseTimeout);
+    connect(&responseTimer_, &QTimer::timeout, this, &DeviceOperations::handleResponseTimeout);
+
+    qCDebug(logCategoryDeviceOperations) << this << "Created object for device operations.";
+}
+
+DeviceOperations::~DeviceOperations() {
+    qCDebug(logCategoryDeviceOperations) << this << "Finished operations.";
 }
 
 void DeviceOperations::identify() {
-    startOperation(Operation::PrepareForFlash);
+    startOperation(Operation::Identify);
 }
 
 void DeviceOperations::prepareForFlash() {
@@ -46,7 +52,7 @@ void DeviceOperations::prepareForFlash() {
 
 void DeviceOperations::flashFirmwareChunk(QVector<quint8> chunk, int chunk_number) {
     chunk_ = chunk;
-    chunk_number_ = chunk_number;
+    chunkNumber_ = chunk_number;
     startOperation(Operation::FlashFirmwareChunk);
 }
 
@@ -54,25 +60,32 @@ void DeviceOperations::startApplication() {
     startOperation(Operation::StartApplication);
 }
 
-void DeviceOperations::startOperation(Operation oper) {
+int DeviceOperations::getDeviceId() {
+    return static_cast<int>(deviceId_);
+}
+
+void DeviceOperations::startOperation(Operation operation) {
     if (operation_ != Operation::None) {  // another operation is runing
         // flash firmware chunk is a special case
-        if (operation_ != Operation::FlashFirmwareChunk || oper != Operation::FlashFirmwareChunk) {
+        if (operation_ != Operation::FlashFirmwareChunk || operation != Operation::FlashFirmwareChunk) {
             QString err_msg("Cannot start operation, because another operation is running.");
-            qCWarning(logCategoryDeviceActions) << this << err_msg;
+            qCWarning(logCategoryDeviceOperations) << this << err_msg;
             emit error(err_msg);
             return;
         }
     }
-    operation_ = oper;
+    operation_ = operation;
 
     // Some boards need time for booting,
     // wait before sending JSON messages for certain operations.
     std::chrono::milliseconds delay(0);
     switch (operation_) {
+    case Operation::Identify :
+        state_ = State::GetFirmwareInfo;
+        delay = LAUNCH_DELAY;
+        break;
     case Operation::PrepareForFlash :
         state_ = State::GetPlatformId;
-        delay = LAUNCH_DELAY;
         break;
     case Operation::FlashFirmwareChunk :
         state_ = State::FlashFwChunk;
@@ -81,19 +94,26 @@ void DeviceOperations::startOperation(Operation oper) {
         state_ = State::StartApplication;
         break;
     default:
-        QString err_msg("Unsupported operation.");
-        qCWarning(logCategoryDeviceActions) << this << err_msg;
-        emit error(err_msg);
+        {
+            QString err_msg("Unsupported operation.");
+            qCWarning(logCategoryDeviceOperations) << this << err_msg;
+            emit error(err_msg);
+        }
         return;
     }
 
     QTimer::singleShot(delay, [this](){ emit nextStep(QPrivateSignal()); });
 }
 
-void DeviceOperations::cancelOperation() {
-    response_timer_.stop();
+void DeviceOperations::finishOperation(Operation operation) {
     resetInternalStates();
-    emit cancelled();
+    emit finished(static_cast<int>(operation));
+}
+
+void DeviceOperations::cancelOperation() {
+    responseTimer_.stop();
+    resetInternalStates();
+    emit finished(static_cast<int>(Operation::Cancel));
 }
 
 void DeviceOperations::resetInternalStates() {
@@ -103,67 +123,60 @@ void DeviceOperations::resetInternalStates() {
 }
 
 void DeviceOperations::process() {
-    ack_received_ = false;  // Flag if we have received ACK for sent command.
+    ackReceived_ = false;  // Flag if we have received ACK for sent command.
     switch (state_) {
+    case State::GetFirmwareInfo :
+        qCDebug(logCategoryDeviceOperations) << this << "Sending 'get_firmware_info' command.";
+        device_->write(CMD_GET_FIRMWARE_INFO);
+        activity_ = Activity::WaitingForFirmwareInfo;
+        responseTimer_.start();
+        break;
     case State::GetPlatformId :
-        qCDebug(logCategoryDeviceActions) << this << "Sending 'request_platform_id' command.";
+        qCDebug(logCategoryDeviceOperations) << this << "Sending 'request_platform_id' command.";
         device_->write(CMD_REQUEST_PLATFORM_ID);
         activity_ = Activity::WaitingForPlatformId;
-        response_timer_.start();
+        responseTimer_.start();
         break;
     case State::UpdateFirmware :
-        qCDebug(logCategoryDeviceActions) << this << "Sending 'update_firmware' command.";
+        qCDebug(logCategoryDeviceOperations) << this << "Sending 'update_firmware' command.";
         device_->write(CMD_UPDATE_FIRMWARE);
         activity_ = Activity::WaitingForUpdateFw;
-        response_timer_.start();
+        responseTimer_.start();
         break;
     case State::ReadyForFlashFw :
-        qCInfo(logCategoryDeviceActions) << this << "Platform in bootloader mode. Ready for flashing firmware.";
-        resetInternalStates();
-        QTimer::singleShot(0, [this](){ emit readyForFlashFw(); });
+        qCInfo(logCategoryDeviceOperations) << this << "Platform in bootloader mode. Ready for flashing firmware.";
+        finishOperation(Operation::PrepareForFlash);
         break;
     case State::FlashFwChunk :
-        qCDebug(logCategoryDeviceActions) << this << "Sending 'flash_firmware' command.";
+        qCDebug(logCategoryDeviceOperations) << this << "Sending 'flash_firmware' command.";
         device_->write(createFlashFwJson());
         activity_ = Activity::WaitingForFlashFwChunk;
-        response_timer_.start();
-        break;
-    case State::FwChunkFlashed :
-        if (chunk_number_ == 0 ) {  // the last chunk
-            resetInternalStates();
-        }
-        QTimer::singleShot(0, [this](){ emit fwChunkFlashed(chunk_number_); });
+        responseTimer_.start();
         break;
     case State::StartApplication :
-        qCDebug(logCategoryDeviceActions) << this << "Sending 'start_application' command.";
+        qCDebug(logCategoryDeviceOperations) << this << "Sending 'start_application' command.";
         device_->write(CMD_START_APPLICATION);
         activity_ = Activity::WaitingForStartApp;
-        response_timer_.start();
-        break;
-    case State::ApplicationStarted :
-        resetInternalStates();
-        QTimer::singleShot(0, [this](){ emit applicationStarted(); });
+        responseTimer_.start();
         break;
     case State::Timeout :
-        qCWarning(logCategoryDeviceActions) << this << "Response timeout (no valid response to the sent command).";
-        resetInternalStates();
-        QTimer::singleShot(0, [this](){ emit timeout(); });
-        break;    
+        qCWarning(logCategoryDeviceOperations) << this << "Response timeout (no valid response to the sent command).";
+        emit finished(static_cast<int>(Operation::Timeout));
+        break;
     default :
-        resetInternalStates();
         break;
     }
 }
 
 void DeviceOperations::handleResponseTimeout() {
-    activity_ = Activity::None;
     state_ = State::Timeout;
     emit nextStep(QPrivateSignal());
 }
 
 void DeviceOperations::handleDeviceError(QString msg) {
-    response_timer_.stop();
+    responseTimer_.stop();
     resetInternalStates();
+    qCWarning(logCategoryDeviceOperations) << this << "Error: " << msg;
     emit error(msg);
 }
 
@@ -172,65 +185,76 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
         qCDebug(logCategoryDeviceActions) << this << "No operation is running, message from device is ignored.";
         return;
     }
-    bool is_ack = false;
-    if (parseDeviceResponse(data, is_ack)) {
+    bool isAck = false;
+    if (parseDeviceResponse(data, isAck)) {
         // If ACK was received ACK do nothing and wait for notification.
-        if (is_ack == false) {
-            if (ack_received_ == false) {
-                qCWarning(logCategoryDeviceActions) << this << "Received notification without ACK.";
+        if (isAck == false) {
+            if (ackReceived_ == false) {
+                qCWarning(logCategoryDeviceOperations) << this << "Received notification without ACK.";
             }
             switch (activity_) {
+            case Activity::WaitingForFirmwareInfo :
+                responseTimer_.stop();
+                state_ = State::GetPlatformId;
+                emit nextStep(QPrivateSignal());
+                break;
             case Activity::WaitingForPlatformId :
-                response_timer_.stop();
-                if (device_->getProperty(strata::DeviceProperties::verboseName) == BOOTLOADER_STR) {
-                    state_ = State::ReadyForFlashFw;
-                } else {
-                    state_ = State::UpdateFirmware;
+                responseTimer_.stop();
+                if (operation_ == Operation::Identify) {
+                    finishOperation(Operation::Identify);
+                } else {  // Operation::PrepareForFlash
+                    if (device_->getProperty(DeviceProperties::verboseName) == BOOTLOADER_STR) {
+                        qCInfo(logCategoryDeviceOperations) << this << "Platform in bootloader mode. Ready for flashing firmware.";
+                        state_ = State::ReadyForFlashFw;
+                    } else {
+                        state_ = State::UpdateFirmware;
+                    }
+                    emit nextStep(QPrivateSignal());
                 }
-                QTimer::singleShot(0, [this](){ emit nextStep(QPrivateSignal()); });
                 break;
             case Activity::WaitingForUpdateFw :
-                response_timer_.stop();
+                responseTimer_.stop();
                 state_ = State::ReadyForFlashFw;
                 // Bootloader takes 5 seconds to start (known issue related to clock source).
                 // Platform and bootloader uses the same setting for clock source.
                 // Clock source for bootloader and application must match. Otherwise when application jumps to bootloader,
                 // it will have a hardware fault which requires board to be reset.
-                qCInfo(logCategoryDeviceActions) << this << "Waiting 5 seconds for bootloader to start.";
+                qCInfo(logCategoryDeviceOperations) << this << "Waiting 5 seconds for bootloader to start.";
                 QTimer::singleShot(BOOTLOADER_START_DELAY, [this](){ emit nextStep(QPrivateSignal()); });
                 break;
             case Activity::WaitingForFlashFwChunk :
-                response_timer_.stop();
-                state_ = State::FwChunkFlashed;
-                emit nextStep(QPrivateSignal());
+                responseTimer_.stop();
+                if (chunkNumber_ == 0 ) {  // the last chunk
+                    resetInternalStates();
+                }
+                emit finished(static_cast<int>(Operation::FlashFirmwareChunk), chunkNumber_);
                 break;
             case Activity::WaitingForStartApp :
-                response_timer_.stop();
-                state_ = State::ApplicationStarted;
-                emit nextStep(QPrivateSignal());
+                responseTimer_.stop();
+                finishOperation(Operation::StartApplication);
                 break;
             default :
                 break;
             }
         }
     }
-    else {  // unknown or malformed device response
+    else {
         qCWarning(logCategoryDeviceActions) << this << "Received unknown or malformed response.";
     }
 }
 
-bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& is_ack) {
+bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) {
     rapidjson::Document doc;
 
     if (CommandValidator::parseJson(data.toStdString(), doc) == false) {
-        qCWarning(logCategoryDeviceActions).noquote() << this << "Cannot parse JSON: '" << data << "'.";
+        qCWarning(logCategoryDeviceOperations).noquote() << this << "Cannot parse JSON: '" << data << "'.";
         return false;
     }
 
     if (doc.IsObject() == false) {
         // JSON can contain only a value (e.g. "abc").
         // We require object as a JSON content (JSON starts with '{' and ends with '}')
-        qCWarning(logCategoryDeviceActions).noquote() << this << "Content of JSON response is not an object: '" << data << "'.";
+        qCWarning(logCategoryDeviceOperations).noquote() << this << "Content of JSON response is not an object: '" << data << "'.";
         return false;
     }
 
@@ -238,40 +262,42 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& is_ack)
 
     // *** response is ACK ***
     if (doc.HasMember(JSON_ACK)) {
-        is_ack = true;
+        isAck = true;
         if (CommandValidator::validate(CommandValidator::JsonType::ack, doc)) {
-            const char *ack_str = doc[JSON_ACK].GetString();
-            const char *cmp_str = nullptr;
-            qCDebug(logCategoryDeviceActions) << this << "Received '" << ack_str << "' ACK.";
+            const char *ackStr = doc[JSON_ACK].GetString();
+            const char *cmpStr = nullptr;
+            qCDebug(logCategoryDeviceOperations) << this << "Received '" << ackStr << "' ACK.";
 
             switch (activity_) {
+            case Activity::WaitingForFirmwareInfo :
+                cmpStr = JSON_GET_FW_INFO;
+                break;
             case Activity::WaitingForPlatformId :
-                cmp_str = JSON_REQ_PLATFORM_ID;
+                cmpStr = JSON_REQ_PLATFORM_ID;
                 break;
             case Activity::WaitingForUpdateFw :
-                cmp_str = JSON_UPDATE_FIRMWARE;
+                cmpStr = JSON_UPDATE_FIRMWARE;
                 break;
             case Activity::WaitingForFlashFwChunk :
-                cmp_str = JSON_FLASH_FIRMWARE;
+                cmpStr = JSON_FLASH_FIRMWARE;
                 break;
             case Activity::WaitingForStartApp :
-                cmp_str = JSON_START_APP;
+                cmpStr = JSON_START_APP;
                 break;
             case Activity::None :
                 break;
             }
 
-            if (cmp_str && (std::strcmp(ack_str, cmp_str) == 0)) {
-                ack_received_ = true;
+            if (cmpStr && (std::strcmp(ackStr, cmpStr) == 0)) {
+                ackReceived_ = true;
                 ok = doc[JSON_PAYLOAD][JSON_RETURN_VALUE].GetBool();
             } else {
-                qCWarning(logCategoryDeviceActions) << this << "Received ACK '" << ack_str << "' is for another command than expected.";
+                qCWarning(logCategoryDeviceOperations) << this << "Received ACK '" << ackStr << "' is for another command than expected.";
             }
         }
-
     }
     else {
-        is_ack = false;
+        isAck = false;
     }
 
     // *** response is notification ***
@@ -279,12 +305,28 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& is_ack)
         if (CommandValidator::validate(CommandValidator::JsonType::notification, doc)) {
             const rapidjson::Value& value = doc[JSON_NOTIFICATION][JSON_VALUE];
             const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
-            const char *notification_str = nullptr;
-            bool standard_notification = true;
-            qCDebug(logCategoryDeviceActions) << this << "Received '" << value.GetString() << "' notification.";
+            const char *notificationStr = nullptr;
+            bool standardNotification = true;
+            qCDebug(logCategoryDeviceOperations) << this << "Received '" << value.GetString() << "' notification.";
             switch (activity_) {
+            case Activity::WaitingForFirmwareInfo :
+                standardNotification = false;
+                if (CommandValidator::validate(CommandValidator::JsonType::getFwInfoRes, doc)) {
+                    const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
+                    const rapidjson::Value& btldr = payload[JSON_BOOTLOADER];
+                    const rapidjson::Value& appl = payload[JSON_APPLICATION];
+                    if (btldr.MemberCount()) {  // JSON_BOOTLOADER object has some members -> it is not empty
+                        device_->setProperties(nullptr, nullptr, nullptr, btldr[JSON_VERSION].GetString(), nullptr);
+                        ok = true;
+                    }
+                    if (appl.MemberCount()) {  // JSON_APPLICATION object has some members -> it is not empty
+                        device_->setProperties(nullptr, nullptr, nullptr, nullptr, appl[JSON_VERSION].GetString());
+                        ok = true;
+                    }
+                }
+                break;
             case Activity::WaitingForPlatformId :
-                standard_notification = false;
+                standardNotification = false;
                 if (CommandValidator::validate(CommandValidator::JsonType::reqPlatIdRes, doc)) {
                     const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
                     if (payload.HasMember(JSON_NAME)) {
@@ -300,22 +342,22 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& is_ack)
                 }
                 break;
             case Activity::WaitingForUpdateFw :
-                notification_str = JSON_UPDATE_FIRMWARE;
+                notificationStr = JSON_UPDATE_FIRMWARE;
                 break;
             case Activity::WaitingForFlashFwChunk :
-                notification_str = JSON_FLASH_FIRMWARE;
+                notificationStr = JSON_FLASH_FIRMWARE;
                 break;
             case Activity::WaitingForStartApp :
-                notification_str = JSON_START_APP;
+                notificationStr = JSON_START_APP;
                 break;
             default:
                 break;
             }
 
-            if (standard_notification && notification_str) {
+            if (standardNotification && notificationStr) {
                 if (payload.HasMember(JSON_STATUS)) {
                     const rapidjson::Value& status = payload[JSON_STATUS];
-                    if (value == notification_str && status.IsString() && status == JSON_OK) {
+                    if (value == notificationStr && status.IsString() && status == JSON_OK) {
                         ok = true;
                     }
                 }
@@ -324,7 +366,7 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& is_ack)
     }
 
     if (ok == false) {
-        qCWarning(logCategoryDeviceActions).noquote() << this << "Content of JSON response is wrong: '" << data << "'.";
+        qCWarning(logCategoryDeviceOperations).noquote() << this << "Content of JSON response is wrong: '" << data << "'.";
     }
 
     return ok;
@@ -346,7 +388,7 @@ QByteArray DeviceOperations::createFlashFwJson() {
         writer.StartObject();
 
         writer.Key(JSON_NUMBER);
-        writer.Int(chunk_number_);
+        writer.Int(chunkNumber_);
 
         writer.Key(JSON_SIZE);
         writer.Int(chunk_.size());

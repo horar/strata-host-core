@@ -20,6 +20,8 @@ namespace strata {
         Q_OBJECT
         Q_DISABLE_COPY(SerialDevice)
 
+    friend class DeviceOperations;
+
     public:
         /**
          * SerialDevice constructor
@@ -43,14 +45,6 @@ namespace strata {
          * Close serial port.
          */
         void close();
-
-        /**
-         * Start device identification - send initial JSON commands and parse responses.
-         * @param getFwInfo if true send also get_firmware_info command
-         * @return true if device identification has start, otherwise false
-         */
-        bool identify(bool getFwInfo = true);
-
 
         /**
          * Write data to serial device.
@@ -77,8 +71,6 @@ namespace strata {
          */
         int getDeviceId() const;
 
-        void setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer);
-
         friend QDebug operator<<(QDebug dbg, const SerialDevice* d);
 
     signals:
@@ -89,13 +81,6 @@ namespace strata {
         void msgFromDevice(QByteArray msg);
 
         /**
-         * Emitted when serial device is ready for communication.
-         * @param connectionId device connection ID
-         * @param recognized true when device was recognized (identified), otherwise false
-         */
-        void deviceReady(int connectionId, bool recognized);
-
-        /**
          * Emitted when error occured during communication on the serial port.
          * @param msg error description
          */
@@ -103,53 +88,30 @@ namespace strata {
 
     // signals only for internal use:
         // Qt5 private signals: https://woboq.com/blog/how-qt-signals-slots-work-part2-qt5.html
-        void identifyDevice(QPrivateSignal);
         void writeToPort(const QByteArray& data, QPrivateSignal);
 
     private slots:
         void readMessage();
         void handleError(QSerialPort::SerialPortError error);
-        void handleDeviceResponse(const QByteArray& data);
-        void handleResponseTimeout();
-        void deviceIdentification();
         void writeData(const QByteArray& data);
 
     private:
-        bool parseDeviceResponse(const QByteArray& data, bool& isAck);
+        // function used by friend class DeviceOperations
+        void setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer);
 
-        const int device_id_;
-        const uint u_device_id_;  // unsigned device ID - auxiliary variable for logging
-        QString port_name_;
-        QSerialPort serial_port_;
-        std::string read_buffer_;  // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
-        QTimer response_timer_;
+        const int deviceId_;
+        QString portName_;
+        QSerialPort serialPort_;
+        std::string readBuffer_;  // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
 
-        bool device_busy_;
+        bool deviceBusy_;
 
-        enum class State {
-            None,
-            GetFirmwareInfo,
-            GetPlatformInfo,
-            DeviceReady,
-            UnrecognizedDevice
-        };
-        State state_;
-
-        enum class Action {
-            None,
-            WaitingForFirmwareInfo,
-            WaitingForPlatformInfo,
-            Done
-        };
-        Action action_;
-
-        QString platform_id_;
-        QString class_id_;
-        QString verbose_name_;
-        QString bootloader_ver_;
-        QString application_ver_;
+        QString platformId_;
+        QString classId_;
+        QString verboseName_;
+        QString bootloaderVer_;
+        QString applicationVer_;
     };
-
 
     typedef std::shared_ptr<SerialDevice> SerialDeviceShPtr;
 }

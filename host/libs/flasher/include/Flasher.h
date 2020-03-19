@@ -23,7 +23,7 @@ class Flasher : public QObject
          * \param device device which will be used by Flasher
          * \param firmwareFilename path to firmware file
          */
-        Flasher(std::shared_ptr<strata::SerialDevice> device, const QString& firmwareFilename);
+        Flasher(SerialDeviceShPtr device, const QString& firmwareFilename);
 
         ~Flasher();
 
@@ -43,13 +43,11 @@ class Flasher : public QObject
         void finished(bool success);
 
     private slots:
-        void handleFlashFirmware(int lastFlashedChunk);
-        void handleStartApp();
-        void handleTimeout();
-        void handleError(QString msg);
-        void handleCancel();
+        void handleOperationFinished(int operation, int data);
+        void handleOperationError(QString msg);
 
     private:
+        void handleFlashFirmware(int lastFlashedChunk);
         void finish(bool success);
 
         SerialDeviceShPtr device_;
