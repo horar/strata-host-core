@@ -82,3 +82,9 @@ function Stop-HCS {
         Start-Sleep -Seconds 1
     }
 }
+
+# Start one instance of HCS and wait (to give time for DB replication)
+function Start-HCSAndWait {
+    Start-Process -FilePath $HCS_exec_file -ArgumentList "-f `"$HCS_config_file`""
+    Start-Sleep -Seconds 10
+}
