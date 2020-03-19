@@ -34,7 +34,6 @@ void BoardManager::disconnect(const int deviceId) {
     auto it = openedSerialPorts_.find(deviceId);
     if (it != openedSerialPorts_.end()) {
         it.value()->close();
-        it.value().reset();
         openedSerialPorts_.erase(it);
 
         emit boardDisconnected(deviceId);
@@ -51,20 +50,23 @@ void BoardManager::reconnect(const int deviceId) {
     auto it = openedSerialPorts_.find(deviceId);
     if (it != openedSerialPorts_.end()) {
         it.value()->close();
-        it.value().reset();
         openedSerialPorts_.erase(it);
         ok = true;
-    }
-    else {
+        emit boardDisconnected(deviceId);
+    } else {
         // desired port is not opened, check if it is connected
         if (serialPortsList_.find(deviceId) != serialPortsList_.end()) {
             ok = true;
         }
     }
+
     if (ok) {
-        addedSerialPort(deviceId);
+        ok = addedSerialPort(deviceId);
     }
-    else {
+
+    if (ok) {
+        emit boardConnected(deviceId);
+    } else {
         logInvalidDeviceId(QStringLiteral("Cannot reconnect"), deviceId);
         emit invalidOperation(deviceId);
     }
@@ -93,7 +95,7 @@ QVariantMap BoardManager::getConnectionInfo(const int connectionId) {
     }
 }
 
-QVector<int> BoardManager::readyConnectionIds() {
+QVector<int> BoardManager::readyDeviceIds() {
     // in case of multithread usage lock access to openedSerialPorts_
     return QVector<int>::fromList(openedSerialPorts_.keys());
 }
@@ -182,7 +184,7 @@ void BoardManager::checkNewSerialDevices() {
     if (opened.empty() == false || removed.empty() == false) {
         // in case of multithread usage emit signals here (iterate over 'removed' and 'opened' containers)
 
-        emit readyConnectionIdsChanged();
+        emit readyDeviceIdsChanged();
     }
 }
 

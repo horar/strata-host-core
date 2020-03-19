@@ -248,7 +248,7 @@ QVariantMap SciPlatformModel::sendMessage(int index, QString message)
 
 void SciPlatformModel::reconectAll()
 {
-    QVector<int> ids = boardManager_->readyConnectionIds();
+    QVector<int> ids = boardManager_->readyDeviceIds();
     for (int id : ids) {
         int index = findPlatfrom(id);
         if (index >= 0) {

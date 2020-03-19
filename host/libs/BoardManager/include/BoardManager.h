@@ -23,7 +23,7 @@ namespace strata {
         Q_OBJECT
         Q_DISABLE_COPY(BoardManager)
 
-        Q_PROPERTY(QVector<int> readyConnectionIds READ readyConnectionIds NOTIFY readyConnectionIdsChanged)
+        Q_PROPERTY(QVector<int> readyDeviceIds READ readyDeviceIds NOTIFY readyDeviceIdsChanged)
 
     public:
         BoardManager();
@@ -39,6 +39,7 @@ namespace strata {
          * @param connectionId device connection ID
          * @param message message to send to the device
          */
+        [[deprecated("Do not use this function anymore, it will be deleted soon.")]]
         Q_INVOKABLE void sendMessage(const int connectionId, const QString& message);
 
         /**
@@ -64,13 +65,14 @@ namespace strata {
          * @param connectionId device connection ID
          * @return QVariantMap filled with information about device
          */
+        [[deprecated("Do not use this function anymore, it will be deleted soon.")]]
         Q_INVOKABLE QVariantMap getConnectionInfo(const int connectionId);
 
         /**
          * Get list of available connection IDs.
          * @return list of available connection IDs (those, which have serial port opened)
          */
-        QVector<int> readyConnectionIds();
+        QVector<int> readyDeviceIds();
 
         /**
          * Get device property.
@@ -78,6 +80,7 @@ namespace strata {
          * @param property value from enum DeviceProperties
          * @return QString filled with value of required property
          */
+        [[deprecated("Do not use this function anymore, it will be deleted soon.")]]
         QString getDeviceProperty(const int connectionId, const DeviceProperties property);
 
     signals:
@@ -123,7 +126,7 @@ namespace strata {
         /**
          * Emitted when device IDs has changed (available device ID list has changed).
          */
-        void readyConnectionIdsChanged();
+        void readyDeviceIdsChanged();
 
     private slots:
         void checkNewSerialDevices();

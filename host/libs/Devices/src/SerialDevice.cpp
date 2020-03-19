@@ -30,12 +30,14 @@ SerialDevice::SerialDevice(const int connectionID, const QString& name) :
     connect(this, &SerialDevice::identifyDevice, this, &SerialDevice::deviceIdentification);
     connect(this, &SerialDevice::writeToPort, this, &SerialDevice::writeData);
 
-    qCDebug(logCategorySerialDevice).nospace() << "Created new serial device. ID: 0x" << hex << u_device_id_ << ", name: " << port_name_;
+    qCDebug(logCategorySerialDevice).nospace() << "Created new serial device 0x" << hex << u_device_id_
+                                               << ", name: " << port_name_ << ", unique ID: 0x" << reinterpret_cast<quintptr>(this);
 }
 
 SerialDevice::~SerialDevice() {
     close();
-    qCDebug(logCategorySerialDevice).nospace() << "Deleted serial device 0x" << hex << u_device_id_;
+    qCDebug(logCategorySerialDevice).nospace() << "Deleted serial device 0x" << hex << u_device_id_
+                                               << ", unique ID: 0x" << reinterpret_cast<quintptr>(this);
 }
 
 bool SerialDevice::open() {
