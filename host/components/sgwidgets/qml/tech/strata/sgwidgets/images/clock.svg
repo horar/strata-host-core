@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   aria-hidden="true"
+   focusable="false"
+   data-prefix="fas"
+   data-icon="file-import"
+   class="svg-inline--fa fa-file-import fa-w-16"
+   role="img"
+   viewBox="0 0 500 500"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="clock.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   width="500"
+   height="500">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="3360"
+     inkscape:window-height="1975"
+     id="namedview6"
+     showgrid="true"
+     inkscape:zoom="2.682"
+     inkscape:cx="250"
+     inkscape:cy="289.16065"
+     inkscape:window-x="-13"
+     inkscape:window-y="-13"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4">
+    <inkscape:grid
+       type="xygrid"
+       id="grid15" />
+  </sodipodi:namedview>
+  <path
+     style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:11.2042408;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.19130435"
+     d="m 236.38944,474.82083 c -0.82167,-0.0667 -3.67882,-0.29647 -6.34922,-0.51061 -22.39048,-1.7954 -47.58041,-8.15609 -69.09439,-17.44696 C 89.314162,425.92901 38.846034,360.55082 27.247847,283.66618 25.29667,270.73179 25.002214,266.35322 25.000017,250.24095 24.997817,234.36942 25.213398,230.79814 26.901372,218.73802 35.200379,159.4438 67.082534,105.52478 115.0074,69.733344 149.63565,43.872139 190.77487,28.561941 234.14854,25.394277 c 7.27308,-0.531167 24.60579,-0.52432 31.74607,0.01254 44.47599,3.344057 86.34542,19.270559 121.19373,46.100264 14.60584,11.245045 30.05616,26.694677 41.30175,41.299879 39.88561,51.80149 55.20223,118.58289 41.94612,182.8873 -12.65414,61.38408 -50.71129,115.02079 -104.53485,147.32857 -30.44128,18.27247 -65.05764,29.18052 -100.46698,31.65843 -4.88457,0.3418 -25.24316,0.43998 -28.94494,0.13957 z m 31.97386,-35.05377 c 53.24086,-5.263 102.03546,-32.63964 133.78048,-75.05871 7.51358,-10.03998 13.19363,-19.31308 18.75819,-30.62423 14.06467,-28.58952 20.41235,-58.32805 19.4109,-90.93902 -1.26429,-41.16749 -16.34008,-81.05404 -43.08616,-113.99427 -5.09116,-6.27022 -18.59046,-19.92527 -24.70265,-24.98764 -40.66625,-33.681517 -91.72502,-49.147273 -143.41755,-43.441328 -37.4776,4.136867 -73.94894,19.797111 -102.14765,43.860648 -5.1444,4.39001 -18.06393,17.27224 -22.29222,22.22786 -20.553867,24.08944 -35.04777,53.96729 -41.380398,85.30189 -3.02033,14.94496 -3.911399,25.15078 -3.635961,41.64436 0.250824,15.01971 1.499537,25.59045 4.614061,39.05948 15.03312,65.012 62.753278,117.31328 126.139758,138.24916 13.15856,4.34614 28.43389,7.54633 42.2505,8.85152 6.07664,0.57402 29.37541,0.47632 35.7087,-0.14972 z"
+     id="path836"
+     inkscape:connector-curvature="0" />
+  <circle
+     style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:46.29100418;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.19130435"
+     id="path838"
+     cx="250"
+     cy="250"
+     r="25" />
+  <rect
+     style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:33.16624832;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.19130435"
+     id="rect840"
+     width="20"
+     height="165"
+     x="240"
+     y="75"
+     rx="10"
+     ry="10" />
+  <rect
+     style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:28.28427124;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.19130435"
+     id="rect840-3"
+     width="20"
+     height="120"
+     x="-10.606602"
+     y="357.08893"
+     rx="10"
+     ry="10"
+     transform="rotate(-45)" />
+</svg>
