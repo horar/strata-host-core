@@ -20,13 +20,13 @@ Creation Date:  03/17/2020
 Set-Variable "HCS_TCP_endpoint" "tcp://127.0.0.1:5563"
 
 # Define paths
-Set-Variable "SDS_root_dir"    "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
-Set-Variable "AppData_HCS_dir" "$Env:AppData\ON Semiconductor\hcs"
-Set-Variable "HCS_config_file" "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
-Set-Variable "HCS_exec_file"   "$SDS_root_dir\HCS\hcs.exe"
-Set-Variable "SDS_exec_file"   "$SDS_root_dir\Strata Developer Studio.exe"
-Set-Variable "HCS_db_file"     "$AppData_HCS_dir\db\strata_db\db.sqlite3"
-Set-Variable "Test_Root"       $PSScriptRoot
+Set-Variable "SDSRootDir"    "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
+Set-Variable "AppDataHCSDir" "$Env:AppData\ON Semiconductor\hcs"
+Set-Variable "HCSConfigFile" "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
+Set-Variable "HCSExecFile"   "$SDSRootDir\HCS\hcs.exe"
+Set-Variable "SDSExecFile"   "$SDSRootDir\Strata Developer Studio.exe"
+Set-Variable "HCSDbFile"     "$AppDataHCSDir\db\strata_db\db.sqlite3"
+Set-Variable "TestRoot"     $PSScriptRoot
 
 # Define variables for server/token credentials (only applicable if TEST_request_token is $true)
 Set-Variable "TEST_request_token" $true
@@ -91,7 +91,7 @@ Test-TokenAndViewsDownload
 Test-CollateralDownload
 
 # Run Test-SDSControlViews (SDS control view testing)
-If ((Test-SDSControlViews -PythonScriptPath $Python_ControlViewTest -StrataPath $SDS_exec_file) -Eq $false) {
+If ((Test-SDSControlViews -PythonScriptPath $Python_ControlViewTest -StrataPath $SDSExecFile) -Eq $false) {
     Exit-TestScript -ScriptExitCode -1
 }
 

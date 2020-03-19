@@ -21,8 +21,8 @@ Creation Date:  03/17/2020
 
 function Test-TokenAndViewsDownload {
     # Define some derived paths used in this script
-    Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $AppData_HCS_dir)
-    Set-Variable "PlatformSelector_dir" "$AppData_HCS_dir\documents\platform_selector"
+    Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $AppDataHCSDir)
+    Set-Variable "PlatformSelector_dir" "$AppDataHCSDir\documents\platform_selector"
 
     If ($TEST_request_token) {
         # Attempt to acquire token information from server
@@ -73,11 +73,11 @@ function Test-TokenAndViewsDownload {
     }
 
     # Change directory to location of SDS executable
-    Set-Location $SDS_root_dir
+    Set-Location $SDSRootDir
 
     # Run Strata Developer Studio and wait 10 s
     Write-Host "        Running Strata Developer Studio and waiting for 10 seconds..."
-    Start-Process -FilePath "$SDS_root_dir\Strata Developer Studio.exe"
+    Start-Process -FilePath "$SDSRootDir\Strata Developer Studio.exe"
     Start-Sleep -Seconds 10
 
     # Kill Strata Developer Studio and HCS processes
@@ -96,5 +96,5 @@ function Test-TokenAndViewsDownload {
     }
 
     # Return to previous directory
-    Set-Location $Test_Root
+    Set-Location $TestRoot
 }

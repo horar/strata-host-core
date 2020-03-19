@@ -37,15 +37,15 @@ function Assert-PythonAndPyzmq {
 # Check if both SDS and HCS are found where expected
 function Assert-StrataAndHCS {
     # Convert the path if using Unix env
-    If ($Env:OS -Ne "Windows_NT" -And (($SDS_exec_file = Convert-Path $SDS_exec_file) -Eq $false)) {
+    If ($Env:OS -Ne "Windows_NT" -And (($SDSExecFile = Convert-Path $SDSExecFile) -Eq $false)) {
         Return $false
     }
     # Check for SDS executable
-    If (!(Test-Path $SDS_exec_file)) {
+    If (!(Test-Path $SDSExecFile)) {
         Return $false
     }
     # Check for HCS directory
-    If (!(Test-Path $AppData_HCS_dir)) {
+    If (!(Test-Path $AppDataHCSDir)) {
         Return $false
     }
     Return $true
@@ -75,7 +75,7 @@ function Assert-PSSQLite {
 
 # Start one instance of HCS
 function Start-HCS {
-    Start-Process -FilePath $HCS_exec_file -ArgumentList "-f `"$HCS_config_file`""
+    Start-Process -FilePath $HCSExecFile -ArgumentList "-f `"$HCSConfigFile`""
     Start-Sleep -Seconds 1
 }
 
@@ -114,7 +114,7 @@ function Stop-SDS {
 # Start one instance of HCS and wait (to give time for DB replication)
 function Start-HCSAndWait {
     param($seconds)
-    Start-Process -FilePath $HCS_exec_file -ArgumentList "-f `"$HCS_config_file`""
+    Start-Process -FilePath $HCSExecFile -ArgumentList "-f `"$HCSConfigFile`""
     If ($seconds) {
         Start-Sleep -Seconds $seconds
     }
@@ -122,7 +122,7 @@ function Start-HCSAndWait {
 
 function Restore-Strata_INI {
     # Delete temporary .ini file and restore original
-    Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $AppData_HCS_dir)
+    Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $AppDataHCSDir)
     If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" -PathType Leaf) {
         Remove-Item -Path "$AppData_OnSemi_dir\Strata Developer Studio.ini"
         Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" "$AppData_OnSemi_dir\Strata Developer Studio.ini"

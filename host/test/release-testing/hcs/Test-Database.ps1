@@ -23,9 +23,9 @@ Creation Date:  03/17/2020
 # Usage: Test-SDSControlViews -PythonScriptPath <Path to Strata executable> -StrataPath <Path to control-view-test.py>
 function Test-Database {
     # Change directory to location of SDS executable
-    Set-Location $SDS_root_dir
+    Set-Location $SDSRootDir
     # Find location of 'strata_db' directory
-    Set-Variable "SDS_strata_db_dir" (Split-Path -Path $HCS_db_file)
+    Set-Variable "SDS_strata_db_dir" (Split-Path -Path $HCSDbFile)
     # Find location of 'db' directory
     Set-Variable "SDS_db_dir" (Split-Path -Path $SDS_strata_db_dir)
 
@@ -57,12 +57,12 @@ function Test-Database {
     # Verify if DB folders and files were re-created in the expected locations
     Write-Host "        Verifying if DB folders and files were re-created in the expected locations"
 
-    If (Test-Path $HCS_db_file -PathType Any) {
+    If (Test-Path $HCSDbFile -PathType Any) {
         Write-Host "        PASS (DB files found in expected location)"
 
         # Verify contents of DB
         Write-Host "        Verifying contents of DB";
-        $query_result = Invoke-SqliteQuery -Query $query -DataSource $HCS_db_file
+        $query_result = Invoke-SqliteQuery -Query $query -DataSource $HCSDbFile
 
         If ($query_result.Length -Lt 1) {
             Write-Host "        FAIL (DB is empty)"
@@ -92,12 +92,12 @@ function Test-Database {
     # Verify if DB folders and files were re-created in the expected locations
     Write-Host "        Verifying if DB folders and files were re-created in the expected locations"
 
-    If (Test-Path $HCS_db_file -PathType Any) {
+    If (Test-Path $HCSDbFile -PathType Any) {
         Write-Host "        PASS (DB files found in expected location)"
 
         # Verify contents of DB
         Write-Host "        Verifying contents of DB"
-        $query_result = Invoke-SqliteQuery -Query $query -DataSource $HCS_db_file
+        $query_result = Invoke-SqliteQuery -Query $query -DataSource $HCSDbFile
 
         If ($query_result.Length -Lt 1) {
             Write-Host "        FAIL (DB is empty)"
@@ -109,7 +109,7 @@ function Test-Database {
     }
 
     # Test 3: delete DB file, if it exists
-    Write-Host "`n`nTEST 3: Deleting DB file ($HCS_db_file)"
+    Write-Host "`n`nTEST 3: Deleting DB file ($HCSDbFile)"
 
     If (Test-Path $SDS_strata_db_dir -PathType Any) {
         Remove-Item -Path $SDS_strata_db_dir -Recurse
@@ -127,12 +127,12 @@ function Test-Database {
     # Verify if DB folders and files were re-created in the expected locations
     Write-Host "        Verifying if DB folders and files were re-created in the expected locations";
 
-    If (Test-Path $HCS_db_file -PathType Any) {
+    If (Test-Path $HCSDbFile -PathType Any) {
         Write-Host "        PASS (DB files found in expected location)"
 
         # Verify contents of DB
         Write-Host "        Verifying contents of DB";
-        $query_result = Invoke-SqliteQuery -Query $query -DataSource $HCS_db_file
+        $query_result = Invoke-SqliteQuery -Query $query -DataSource $HCSDbFile
 
         If ($query_result.Length -Lt 1) {
             Write-Host "        FAIL (DB is empty)"
@@ -144,5 +144,5 @@ function Test-Database {
     }
 
     # Return to previous directory
-    Set-Location $Test_Root
+    Set-Location $TestRoot
 }
