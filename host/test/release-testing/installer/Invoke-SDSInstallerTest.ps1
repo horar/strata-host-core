@@ -50,7 +50,7 @@ $HCSIniFile = "$env:AppData\ON Semiconductor\hcs.ini"
 $HCSDbDir = "$HCSAppDataDir\db\strata_db\*"
 $HCSConfigFile = "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
 
-$VisualRedistDisplayName = "Microsoft Visual C++ 2017 X64 Additional Runtime - 14.16.27033"
+$VisualRedistDisplayName = "Microsoft Visual C++ 2017 X64 Additional Runtime - 14.16"
 $FTDIDriverDisplayName = "Windows Driver Package - FTDI CDM Driver Package - VCP Driver (08/16/2017 2.12.28)"
 
 
@@ -161,7 +161,7 @@ function Test-SDSInstallation {
                             | ForEach-Object {$_.Value}
         $SDSInstallerVersion = $SDSInstallerVersion -replace "Installing ",""
 
-        if ( $VisualRedistInstalledDisplayName -eq $VisualRedistDisplayName ) {
+        if ( $VisualRedistInstalledDisplayName -match [regex]::Escape($VisualRedistDisplayName) ) {
             Write-Host -ForegroundColor Green "Pass: Microsoft Visual C++ 2017 X64 is installed"
         } else {
             Write-Host -ForegroundColor Red "Fail: Microsoft Visual C++ 2017 X64 is not installed" 
@@ -186,9 +186,9 @@ function Test-SDSInstallation {
         }
 
         if ($SDSVersion -match $SDSInstallerVersion) {
-            Write-Host -ForegroundColor Green  "Pass: Strata Developer Studio Version matches Strata Developer Stduio installer version"
+            Write-Host -ForegroundColor Green  "Pass: $SDSVersion UI Version matches $SDSInstallerVersion the installer version"
         } else {
-            Write-Host -ForegroundColor Red  "Fail: Strata Developer Studio Version does not matches Strata Developer Studio installer version"
+            Write-Host -ForegroundColor Red  "Fail: $SDSVersion Version doesn't matches $SDSInstallerVersion the installer version"
         }
     }
     catch {
