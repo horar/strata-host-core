@@ -59,7 +59,7 @@ function Test-SDSControlViews {
         }
         else {
             # Strata is not running. it could be crash!
-            Write-Host "Strata developer Studio is not running. It might crashed during the test. Aborting..." -ForegroundColor Yellow
+            Write-Error -Message "Strata developer Studio is not running. It might crashed during the test. Aborting..."
             return $false
         }
         
@@ -70,8 +70,8 @@ function Test-SDSControlViews {
             return $true
         }
         else {
-            Write-Host "Test failed." -ForegroundColor red
-            Write-Host "Exit Code =" $pythonScript.ExitCode -ForegroundColor red
+            Write-Error -Message "Test failed."
+            Write-Error -Message "Exit Code = $($pythonScript.ExitCode)"
             return $false
         }
     }
