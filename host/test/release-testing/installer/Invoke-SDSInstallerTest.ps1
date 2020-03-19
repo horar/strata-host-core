@@ -185,7 +185,7 @@ function Test-SDSInstallation {
             Write-Host -ForegroundColor Red "Fail: Control Views are not located in $SDSControlViewsDir" 
         }
 
-        if ($SDSVersion -match $SDSInstallerVersion) {
+        if ($SDSVersion -eq $SDSInstallerVersion) {
             Write-Host -ForegroundColor Green  "Pass: $SDSVersion UI Version matches $SDSInstallerVersion the installer version"
         } else {
             Write-Host -ForegroundColor Red  "Fail: $SDSVersion Version doesn't matches $SDSInstallerVersion the installer version"
