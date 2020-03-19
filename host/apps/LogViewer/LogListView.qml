@@ -30,6 +30,7 @@ Item {
     property alias contentX: logListView.contentX
     property int animationDuration: 500
     property bool automaticScroll: true
+    property bool timestampSimpleFormat: false
 
     signal newWidthRequested()
     signal currentItemChanged(int index)
@@ -50,7 +51,13 @@ Item {
     TextMetrics {
         id: textMetricsTs
         font: timestampHeaderText.font
-        text: "9999-99-99 99:99.99.999 XXX+99:99"
+        text: "9999-99-99 99:99.99.999 MMMM"
+    }
+
+    TextMetrics {
+        id: textMetricsTsTime
+        font: timestampHeaderText.font
+        text: "99:99.99.999"
     }
 
     TextMetrics {
@@ -135,7 +142,7 @@ Item {
                 id: tsHeader
                 anchors.verticalCenter: parent.verticalCenter
                 height: timestampHeaderText.contentHeight + cellHeightSpacer
-                width: textMetricsTs.boundingRect.width + cellWidthSpacer
+                width: timestampSimpleFormat ? textMetricsTsTime.boundingRect.width + cellWidthSpacer : textMetricsTs.boundingRect.width + cellWidthSpacer
                 visible: timestampColumnVisible
 
                 SGWidgets.SGText {
@@ -146,6 +153,16 @@ Item {
                     }
                     font.family: StrataFonts.Fonts.inconsolata
                     text: qsTr("Timestamp")
+                }
+
+                SGWidgets.SGIcon {
+                    id: timeIcon
+                    anchors.right: tsHeader.right
+                    anchors.verticalCenter: tsHeader.verticalCenter
+                    height: textMetricsTsTime.boundingRect.height
+                    width: height
+                    visible: timestampSimpleFormat ? true : false
+                    source: "qrc:/sgimages/clock.svg"
                 }
             }
 
@@ -442,7 +459,17 @@ Item {
                     width: tsHeader.width
                     color: delegate.ListView.isCurrentItem ? "white" : "black"
                     font.family: StrataFonts.Fonts.inconsolata
-                    text: visible ? model.timestamp : ""
+                    text: {
+                        if (visible) {
+                            if (timestampSimpleFormat == false) {
+                                return Qt.formatDateTime(model.timestamp, "yyyy-MM-dd hh:mm:ss.zzz t")
+                            } else {
+                                return Qt.formatDateTime(model.timestamp, "hh:mm:ss.zzz")
+                            }
+                        } else {
+                            return ""
+                        }
+                    }
                     visible: timestampColumnVisible
                 }
 

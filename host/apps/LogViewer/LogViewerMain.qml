@@ -34,6 +34,8 @@ Item {
     property bool searchTagShown: false
     property bool automaticScroll: true
 
+    property bool timestampSimpleFormat: false
+
     property int searchResultCount: logFilesModelProxy.count
     property int statusBarHeight: statusBar.height
 
@@ -73,6 +75,7 @@ Item {
         property alias sidePanelShown: logViewerMain.sidePanelShown
         property alias sidePanelWidth: logViewerMain.sidePanelWidth
         property alias automaticScroll: logViewerMain.automaticScroll
+        property alias timestampSimpleFormat: logViewerMain.timestampSimpleFormat
     }
 
     Component {
@@ -240,6 +243,21 @@ Item {
                     target: automaticScrollButton
                     property: "checked"
                     value: automaticScroll
+                }
+            }
+
+            SGWidgets.SGIconButton {
+                id: timestampSimpleFormatButton
+                hintText: qsTr("Toggle simple format")
+                icon.source: "qrc:/sgimages/clock.svg"
+                iconSize: defaultIconSize
+                backgroundOnlyOnHovered: false
+                enabled: fileLoaded
+                padding: buttonPadding
+                checkable: true
+
+                onClicked: {
+                    timestampSimpleFormat = !timestampSimpleFormat
                 }
             }
         }
@@ -461,6 +479,7 @@ Item {
                     highlightColor: searchInput.palette.highlight
                     startAnimation: secondaryLogView.activeFocus
                     automaticScroll: automaticScrollButton.checked
+                    timestampSimpleFormat: timestampSimpleFormatButton.checked
                 }
 
                 Rectangle {
@@ -492,6 +511,7 @@ Item {
                         searchTagShown: true
                         highlightColor: searchInput.palette.highlight
                         automaticScroll: automaticScrollButton.checked
+                        timestampSimpleFormat: timestampSimpleFormatButton.checked
 
                         onCurrentItemChanged: {
                             var sourceIndex = logFilesModelProxy.mapIndexToSource(index)

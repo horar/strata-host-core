@@ -5,7 +5,6 @@
 #include <QDateTime>
 
 
-/*forward declarations*/
 struct LogItem;
 class QTimer;
 
@@ -38,20 +37,14 @@ public:
         LevelError
     };
     Q_ENUM(LogLevel)
-
     Q_INVOKABLE QString followFile(const QString &path);
 
     void updateModel(const QString &path);
-
     QString getRotatedFilePath(const QString &path) const;
-
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-
     void clear(bool emitSignals);
-
     QDateTime oldestTimestamp() const;
     QDateTime newestTimestamp() const;
-
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
@@ -76,13 +69,9 @@ private:
     QList<LogItem*>data_;
     QDateTime oldestTimestamp_;
     QDateTime newestTimestamp_;
-
     static LogItem* parseLine(const QString &line);
-
     void updateTimestamps();
-
     QString populateModel(const QString &path, bool logRotated);
-
     void setOldestTimestamp(const QDateTime &timestamp);
     void setNewestTimestamp(const QDateTime &timestamp);
 };
