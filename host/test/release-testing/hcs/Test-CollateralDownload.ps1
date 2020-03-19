@@ -12,7 +12,7 @@ function Test-CollateralDownload {
     Set-Location $TestRoot
 
     # Run Python script
-    & $PythonExec $Python_CollateralDownloadTest $AppDataHCSDir $HCS_TCP_endpoint
+    & $PythonExec $PythonCollateralDownloadTest $AppDataHCSDir $HCSTCPEndpoint
 
     # Stop HCS process after test is done
     Stop-HCS

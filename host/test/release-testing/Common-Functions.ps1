@@ -53,10 +53,10 @@ function Assert-StrataAndHCS {
 
 # Check if both Python scripts are found where expected
 function Assert-PythonScripts {
-    If (!(Test-Path $Python_CollateralDownloadTest)) {
+    If (!(Test-Path $PythonCollateralDownloadTest)) {
         Return $false
     }
-    If (!(Test-Path $Python_ControlViewTest)) {
+    If (!(Test-Path $PythonControlViewTest)) {
         Return $false
     }
     Return $true
@@ -88,7 +88,7 @@ function Exit-TestScript {
     If ($ScriptExitCode -eq 0) {
         Write-Host "Test finished successfully. Exiting..." -ForegroundColor Green
     } Else {
-        Write-Error "Test failed. Terminating..." $ScriptExitCode
+        Write-Error "Test failed. Terminating... $($ScriptExitCode)"
     }
     Write-Host "================================================================================"
     Write-Host "================================================================================"

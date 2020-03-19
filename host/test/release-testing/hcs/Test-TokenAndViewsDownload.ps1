@@ -24,14 +24,14 @@ function Test-TokenAndViewsDownload {
     Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $AppDataHCSDir)
     Set-Variable "PlatformSelector_dir" "$AppDataHCSDir\documents\platform_selector"
 
-    If ($TEST_request_token) {
+    If ($TestRequestToken) {
         # Attempt to acquire token information from server
-        Write-Host "        Token/authentication server testing (using endpoint $SDS_login_server)"
+        Write-Host "        Token/authentication server testing (using endpoint $SDSLoginServer)"
         Write-Host "        Attempting to acquire token information from server...`n"
         Try {
-            $server_response = Invoke-WebRequest -URI $SDS_login_server -Body $SDS_login_info -Method 'POST' -ContentType 'application/json' -ErrorAction 'Stop' -UseBasicParsing
+            $server_response = Invoke-WebRequest -URI $SDSLoginServer -Body $SDSLoginInfo -Method 'POST' -ContentType 'application/json' -ErrorAction 'Stop' -UseBasicParsing
         } Catch {
-            Write-Host "        FAILED: Unable to obtain login token from server '$SDS_login_server' with provided account, try again.`n"
+            Write-Host "        FAILED: Unable to obtain login token from server '$SDSLoginServer' with provided account, try again.`n"
             Exit
         }
 
@@ -56,7 +56,7 @@ function Test-TokenAndViewsDownload {
 
         # Format new token string using obtained token
         $server_response_Json = ConvertFrom-Json $server_response.Content
-        $token_string = "[Login]`ntoken=$($server_response_Json.token)`nfirst_name=$($server_response_Json.firstname)`nlast_name=$($server_response_Json.lastname)`nuser=$($server_response_Json.user)`nauthentication_server=$SDS_server"
+        $token_string = "[Login]`ntoken=$($server_response_Json.token)`nfirst_name=$($server_response_Json.firstname)`nlast_name=$($server_response_Json.lastname)`nuser=$($server_response_Json.user)`nauthentication_server=$SDSServer"
 
         # Write to "Strata Developer Studio.ini"
         Set-Content "$AppData_OnSemi_dir\Strata Developer Studio.ini" $token_string
