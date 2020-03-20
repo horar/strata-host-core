@@ -92,5 +92,6 @@ If ((Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $
 #------------------------------------------------------------[Clean up]-------------------------------------------------------------
 
 Restore-Strata_INI
+Remove-TemporaryFiles
 
 Write-Host "`n`nTesting complete!`n`n"

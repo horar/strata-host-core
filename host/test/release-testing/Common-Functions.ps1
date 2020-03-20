@@ -129,3 +129,15 @@ function Restore-Strata_INI {
         Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" "$AppData_OnSemi_dir\Strata Developer Studio.ini"
     }
 }
+
+function Remove-TemporaryFiles {
+    # Delete DynamicPlatformList.json
+    Write-Host "Checking if DynamicPlatformList.json file exist..."
+    If (Test-Path "$TestRoot/strataDev/DynamicPlatformList.json") {
+        Write-Host "Removing DynamicPlatformList.json..."
+        Remove-Item "$TestRoot/strataDev/DynamicPlatformList.json"
+    }
+    Else {
+        Write-Host "DynamicPlatformList.json not found."
+    }
+}
