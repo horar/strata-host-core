@@ -10,7 +10,7 @@ import zmq
 # Default zmq address
 defZmqURL = "tcp://127.0.0.1:5563"
 
-# Check commandline argumnents
+# Check commandline arguments
 if len(sys.argv) != 2:
     print("Zmq client address was not provided. using the default address:" + defZmqURL)
     zmqClientURL = defZmqURL
@@ -49,7 +49,7 @@ else:
 def printLineSeparator(charSym='-'):
     print(80 * charSym)
 
-# function to get the dynamic platform list from hcs, keep it for future refrence
+# function to get the dynamic platform list from hcs, keep it for future reference
 def getRealHcsResponse():
     tempContext = zmq.Context()
     printLineSeparator()
@@ -100,7 +100,7 @@ client.RCVTIMEO = 10000  # 10s timeout.
 client.setsockopt(zmq.IDENTITY, b'zmqRouterTest')
 client.bind(zmqClientURL)
 
-# get client id of starta UI
+# get client id of strata UI
 printLineSeparator()
 printLineSeparator()
 print("Waiting for Strata Developer Studio to connect...")
@@ -137,7 +137,7 @@ while True:
     printLineSeparator()
 
     if (message == b'{"hcs::cmd":"dynamic_platform_list","payload":{}}'):
-        # If the daynamicPlatformList.json file exist use it, otherwise, send the empty list and use
+        # If the dynamicPlatformList.json file exist use it, otherwise, send the empty list and use
         # the hardcoded uuidList.
         # Send the platform list and wait
         if DynamicPlatformListJsonFound:

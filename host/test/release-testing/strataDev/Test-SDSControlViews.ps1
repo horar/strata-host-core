@@ -12,7 +12,7 @@ https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+
 -StrataPath         <Path to control-view-test.py>
 
 .OUTPUTS
-Bolean result of the test
+Boolean result of the test
 
 .NOTES
 Version:        1.0
