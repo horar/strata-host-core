@@ -144,6 +144,6 @@ else:
     print("\nWARNING:\nA total of " + str(total_failed_tests) + " unsuccessful test cases were found between all platforms.")
 
 # Generate result file
-results_file = os.path.join(os.path.dirname(os.path.realpath('__file__')), "hcs/collateral-download-results.txt")
+results_file = os.path.join(os.path.dirname(os.path.realpath('__file__')), "hcs/CollateralDownloadResults.txt")
 results_file = open(results_file, 'w')
 print(str(total_passed_platforms) + " " + str(len(platform_list)), file=results_file)

@@ -12,15 +12,16 @@ function Assert-PythonAndPyzmq {
     # Determine the python command based on OS. OSX will execute Python 2 by default and here we need to use Python 3.
     # on Win, Python 3 is not in the path by default, as a result we'll need to use 'python3' for OSX and 'python' for Win
     If ($Env:OS -Eq "Windows_NT") {
-        $global:PythonExec = 'python'
+        $Global:PythonExec = 'python'
     } Else {
-        $global:PythonExec = 'python3'
+        $Global:PythonExec = 'python3'
     }
 
     Try {
         If ((Start-Process $PythonExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
             If (!(Start-Process $PythonExec '-c "import zmq"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
-                Exit-TestScript -1 "Error: ZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions.`nAborting."
+                Write-Host -ForegroundColor Red "Error: ZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions.`nAborting."
+                Exit-TestScript -1
             }
         } Else {
             Exit-TestScript -1 "Error: Python not found.`nAborting."
@@ -60,8 +61,7 @@ function Assert-PythonScripts {
 # Tell user to manually install it if not found & exit
 function Assert-PSSQLite {
     If (!(Get-Module -ListAvailable -Name PSSQLite)) {
-        Write-Warning "`n`nPSSQLite Powershell module not found: cannot proceed.`nInstall module PSSQLite by running as administrator:"
-        Write-Warning "   Install-Module PSSQLite`nAborting.`n"
+        Write-Host -ForegroundColor Red "`nPSSQLite Powershell module not found.`nInstall PSSQLite by running as administrator:`n   Install-Module PSSQLite`nAborting.`n"
         Exit-TestScript -1
     }
 }
@@ -124,14 +124,14 @@ function Start-HCSAndWait {
 function Restore-Strata_INI {
     # Delete temporary .ini file and restore original
     Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $AppDataHCSDir)
-    If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" -PathType Leaf) {
+    If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini") {
         Remove-Item -Path "$AppData_OnSemi_dir\Strata Developer Studio.ini"
         Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" "$AppData_OnSemi_dir\Strata Developer Studio.ini"
     }
 }
 
 function Remove-TemporaryFiles {
-    # Delete DynamicPlatformList.json
+    # Delete strataDev/DynamicPlatformList.json
     Write-Host "Checking if DynamicPlatformList.json file exist..."
     If (Test-Path "$TestRoot/strataDev/DynamicPlatformList.json") {
         Write-Host "Removing DynamicPlatformList.json..."
@@ -140,4 +140,21 @@ function Remove-TemporaryFiles {
     Else {
         Write-Host "DynamicPlatformList.json not found."
     }
+
+    # Delete hcs/CollateralDownloadResults.txt
+    Write-Host "Checking if CollateralDownloadResults.txt file exist..."
+    If (Test-Path "$TestRoot/hcs/CollateralDownloadResults.txt") {
+        Write-Host "Removing CollateralDownloadResults.txt..."
+        Remove-Item "$TestRoot/hcs/CollateralDownloadResults.txt"
+    }
+    Else {
+        Write-Host "CollateralDownloadResults.txt not found."
+    }
+}
+
+function Show-TestResults {
+    Write-Host "`n`n### Test Summary ###`n"
+    Write-Host "`nResults for Test-Database: $($DatabaseResults[0]) passed out of $($DatabaseResults[1])."
+
+
 }

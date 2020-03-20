@@ -43,7 +43,7 @@ Set-Variable "PythonControlViewTest"        "$TestRoot/strataDev/control-view-te
 # Import common functions
 . "$PSScriptRoot\Common-Functions.ps1"
 
-# Import functions for test "Test-Database" 
+# Import functions for test "Test-Database"
 . "$PSScriptRoot\hcs\Test-Database.ps1"
 
 # Import functions for test "Test-TokenAndViewsDownload"
@@ -59,7 +59,7 @@ Set-Variable "PythonControlViewTest"        "$TestRoot/strataDev/control-view-te
 
 Write-Host "`n`nPerforming initial checks...`n"
 
-# Search for Python tools 
+# Search for Python tools
 Assert-PythonAndPyzmq
 
 # Search for SDS and HCS
@@ -76,18 +76,21 @@ Assert-PSSQLite
 Write-Host "Starting tests...`n"
 
 # Run Test-Database (HCS database testing)
-Test-Database
+$DatabaseResults = Test-Database
 
 # Run Test-TokenAndViewsDownload
-Test-TokenAndViewsDownload
+$TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
 
 # Run Test-CollateralDownload (HCS collateral download testing)
+# $CollateralDownloadResults =
 Test-CollateralDownload
 
 # Run Test-SDSControlViews (SDS control view testing)
 If ((Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint) -Eq $false) {
     Exit-TestScript -ScriptExitCode -1
 }
+
+# Show-TestResults
 
 #------------------------------------------------------------[Clean up]-------------------------------------------------------------
 

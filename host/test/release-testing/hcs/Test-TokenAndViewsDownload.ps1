@@ -24,6 +24,11 @@ Creation Date:  03/17/2020
 #>
 
 function Test-TokenAndViewsDownload {
+
+    # Keep track of tests
+    Set-Variable "TestPass"  0
+    Set-Variable "TestTotal" 2
+
     # Define some derived paths used in this script
     Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $AppDataHCSDir)
     Set-Variable "PlatformSelector_dir" "$AppDataHCSDir\documents\platform_selector"
@@ -44,7 +49,8 @@ function Test-TokenAndViewsDownload {
         Write-Host "        FAILED: Invalid server token response, try again.`n"
         Exit
     } Else {
-        Write-Host "        Successfully acquired token information from server."
+        Write-Host "        PASS: Successfully acquired token information from server."
+        $TestPass++
     }
 
     # If it exists, delete "Strata Developer Studio_BACKUP.ini"
@@ -87,6 +93,7 @@ function Test-TokenAndViewsDownload {
     If (Test-Path $PlatformSelector_dir -PathType Any) {
         If (@(Get-ChildItem $PlatformSelector_dir).Count -Gt 0) {
             Write-Host "        PASS: directory with $(@(Get-ChildItem $PlatformSelector_dir).Count) elements."
+            $TestPass++
         } Else {
             Write-Host "        FAIL: empty directory created."
         }
@@ -96,4 +103,7 @@ function Test-TokenAndViewsDownload {
 
     # Return to previous directory
     Set-Location $TestRoot
+
+    # Return number of tests passed, number of tests existing
+    return $TestPass, $TestTotal
 }
