@@ -523,64 +523,88 @@ Item {
 
 
 
-    /*    // DEBUG - TODO: Faller - Remove before merging back to Dev
+ /*       // DEBUG - TODO: Faller - Remove before merging back to Dev
     Window {
         id: debug
         visible: true
         width: 200
         height: 200
 
-        // This button sends 2 notifications in 1 JSON, future possible implementation
-        Button {
-            id: button1
-            text: "send pi_stats and voltage"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                                        "input_voltage_notification": {
-                                            "vin": '+ (Math.random()*5+10).toFixed(2) +'
-                                        },
-                                        "pi_stats": {
-                                            "speed_target": 3216,
-                                            "current_speed": '+ (Math.random()*2000+3000).toFixed(0) +',
-                                            "error": -1104,
-                                            "sum": -0.01,
-                                            "duty_now": 0.67,
-                                            "mode": "manual"
-                                        }
-                                    }')
-            }
-        }
+        Column {
+            width: parent.width
 
-        Button {
-            id: button2
-            anchors { top: button1.bottom }
-            text: "send vin"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                    "value":"pi_stats",
-                    "payload":{
-                                "speed_target":3216,
-                                "current_speed": '+ (Math.random()*2000+3000).toFixed(0) +',
-                                "error":-1104,
-                                "sum":-0.01,
-                                "duty_now":0.67,
-                                "mode":"manual"
-                               }
-                             }')
+            Button {
+                id: port1connect
+                text: "connect"
+                height:40
+                width:150
+                onClicked: {
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"usb_pd_port_connect",
+                                "payload":{
+                                    "port_id": "USB_C_port_1",
+                                    "connection_state": "connected"
+                                }
+                        }')
+                }
             }
-        }
-        Button {
-            anchors { top: button2.bottom }
-            text: "send"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                            "value":"input_voltage_notification",
-                            "payload":{
-                                     "vin":'+ (Math.random()*5+10).toFixed(2) +'
-                            }
-                    }
-            ')
+            Button {
+                id: port1Disconnect
+                text: "disconnect"
+                height:40
+                width:150
+                onClicked: {
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"usb_pd_port_disconnect",
+                                "payload":{
+                                    "port_id": "USB_C_port_1",
+                                    "connection_state": "disconnected"
+                                }
+                        }')
+                }
             }
-        }
-    }*/
-}
+
+
+            Button {
+                id: periodicMessages
+                text: "update periodic values"
+                height:40
+                width:150
+                onClicked: {
+
+                    var advertisedMinimumCurrent = ((Math.random() *3) +1).toFixed(0) ;
+                    var negotiatedCurrent = ((Math.random() *3) +1).toFixed(0) ;
+                    var negotiated_voltage = ((Math.random() *20) +1).toFixed(0) ;
+                    var input_voltage = (Math.random()*50).toFixed(2);
+                    var output_voltage = (Math.random()*50).toFixed(2);
+                    var input_current = (Math.random()*3).toFixed(2);
+                    var output_current = (Math.random()*12).toFixed(2);
+                     var temperature = (Math.random()*100).toFixed(1);
+                     var maxPower = ((Math.random() *7)+1).toFixed(0)* 7.5;
+
+
+//                    console.log("current=",current);
+//                    console.log("voltage=",voltage);
+
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"request_usb_power_notification",
+                                "payload":{
+                                    "port": "1",
+                                    "device": "PD",
+                                    "advertised_maximum_current": '+advertisedMinimumCurrent+',
+                                    "negotiated_current": '+negotiatedCurrent+',
+                                    "negotiated_voltage": '+negotiated_voltage+',
+                                    "input_voltage": '+input_voltage+',
+                                    "output_voltage":'+output_voltage+',
+                                    "input_current": '+input_current+',
+                                    "output_current":'+output_current+',
+                                    "temperature": '+temperature+',
+                                    "maximum_power":'+maxPower+'
+                                }
+                        }')
+
+                }
+            }
+        }//column
+    }
+}*/
