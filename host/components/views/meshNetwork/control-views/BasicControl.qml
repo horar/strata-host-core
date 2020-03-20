@@ -196,7 +196,7 @@ Rectangle {
 
     Image{
         id:officeImage
-        source:"../images/office.png"
+        source:"../images/office.jpg"
         //anchors.left:parent.left
         height:parent.height*.65
         anchors.centerIn: parent
@@ -212,7 +212,7 @@ Rectangle {
             }
             else{
                 alarmTimer.stop()
-                officeImage.source = "../images/office.png"
+                officeImage.source = "../images/office.jpg"
             }
         }
 
@@ -228,10 +228,10 @@ Rectangle {
 
             onTriggered:{
                 if (redLightOn){
-                    officeImage.source = "../images/office_doorOpen.png"
+                    officeImage.source = "../images/office_doorOpen.jpg"
                 }
                 else{
-                    officeImage.source = "../images/office_alarmOn.png"
+                    officeImage.source = "../images/office_alarmOn.jpg"
                 }
                 redLightOn = !redLightOn;
             }

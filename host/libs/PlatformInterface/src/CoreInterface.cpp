@@ -222,7 +222,7 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
     } else if (type == "download_platform_files_finished") {
         emit downloadPlatformFilesFinished(payload);
     } else {
-        qCWarning(logCategoryCoreInterface) << "unknown message type" << type;
+        qCCritical(logCategoryCoreInterface) << "unknown message type" << type;
     }
 }
 
