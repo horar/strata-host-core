@@ -80,7 +80,7 @@ Widget09.SGResponsiveScrollView {
                         //underlineWidth: 0
                         imageHeightPercentage: .5
                         bottomMargin: 10
-                        value: platformInterface.step_notification.voltage.toFixed(1)
+                        value: Math.trunc(platformInterface.step_notification.voltage *10)/10
                     }
                 }
 
@@ -107,7 +107,7 @@ Widget09.SGResponsiveScrollView {
                         //underlineWidth: 0
                         imageHeightPercentage: .5
                         bottomMargin: 10
-                        value: platformInterface.step_notification.current.toFixed(0)
+                        value: Math.trunc(platformInterface.step_notification.current*10)/10
                     }
 
                     Rectangle{
