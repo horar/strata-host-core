@@ -7,12 +7,16 @@ automated HCS token / login / automated platform thumbnail download
 This is part of the automated test script for the master test plan
 https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist
 
+This tests consists of:
+1. Connect to the given server and obtain token for login with provided credentials
+2. Use obtained token to login
+3. Verify that the platform views are downloaded by HCS
+
 .INPUTS
--PythonScriptPath   <Path to Strata executable>
--StrataPath         <Path to control-view-test.py>
+None
 
 .OUTPUTS
-Bolean result of the test
+Numerical test result (TODO)
 
 .NOTES
 Version:        1.0
@@ -24,46 +28,41 @@ function Test-TokenAndViewsDownload {
     Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $AppDataHCSDir)
     Set-Variable "PlatformSelector_dir" "$AppDataHCSDir\documents\platform_selector"
 
-    If ($TestRequestToken) {
-        # Attempt to acquire token information from server
-        Write-Host "        Token/authentication server testing (using endpoint $SDSLoginServer)"
-        Write-Host "        Attempting to acquire token information from server...`n"
-        Try {
-            $server_response = Invoke-WebRequest -URI $SDSLoginServer -Body $SDSLoginInfo -Method 'POST' -ContentType 'application/json' -ErrorAction 'Stop' -UseBasicParsing
-        } Catch {
-            Write-Host "        FAILED: Unable to obtain login token from server '$SDSLoginServer' with provided account, try again.`n"
-            Exit
-        }
-
-        Write-Host "        HTTP $($server_response.StatusCode): $($server_response.StatusDescription)"
-
-        If (!($server_response.Content) -Or $server_response.StatusCode -Ne 200) {
-            Write-Host "        FAILED: Invalid server token response, try again.`n"
-            Exit
-        } Else {
-            Write-Host "        Successfully acquired token information from server."
-        }
-
-        # If it exists, delete "Strata Developer Studio_BACKUP.ini"
-        If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" -PathType Leaf) {
-            Remove-Item -Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" -Force
-        }
-
-        # If it exists, rename current "Strata Developer Studio.ini"
-        If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio.ini" -PathType Leaf) {
-            Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio.ini" "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini"
-        }
-
-        # Format new token string using obtained token
-        $server_response_Json = ConvertFrom-Json $server_response.Content
-        $token_string = "[Login]`ntoken=$($server_response_Json.token)`nfirst_name=$($server_response_Json.firstname)`nlast_name=$($server_response_Json.lastname)`nuser=$($server_response_Json.user)`nauthentication_server=$SDSServer"
-
-        # Write to "Strata Developer Studio.ini"
-        Set-Content "$AppData_OnSemi_dir\Strata Developer Studio.ini" $token_string
-
-        # Mark for clean up
-        $global:NeedCleanUp = $true
+    # Attempt to acquire token information from server
+    Write-Host "        Token/authentication server testing (using endpoint $SDSLoginServer)"
+    Write-Host "        Attempting to acquire token information from server...`n"
+    Try {
+        $server_response = Invoke-WebRequest -URI $SDSLoginServer -Body $SDSLoginInfo -Method 'POST' -ContentType 'application/json' -ErrorAction 'Stop' -UseBasicParsing
+    } Catch {
+        Write-Host "        FAILED: Unable to obtain login token from server '$SDSLoginServer' with provided account, try again.`n"
+        Exit
     }
+
+    Write-Host "        HTTP $($server_response.StatusCode): $($server_response.StatusDescription)"
+
+    If (!($server_response.Content) -Or $server_response.StatusCode -Ne 200) {
+        Write-Host "        FAILED: Invalid server token response, try again.`n"
+        Exit
+    } Else {
+        Write-Host "        Successfully acquired token information from server."
+    }
+
+    # If it exists, delete "Strata Developer Studio_BACKUP.ini"
+    If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" -PathType Leaf) {
+        Remove-Item -Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" -Force
+    }
+
+    # If it exists, rename current "Strata Developer Studio.ini"
+    If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio.ini" -PathType Leaf) {
+        Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio.ini" "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini"
+    }
+
+    # Format new token string using obtained token
+    $server_response_Json = ConvertFrom-Json $server_response.Content
+    $token_string = "[Login]`ntoken=$($server_response_Json.token)`nfirst_name=$($server_response_Json.firstname)`nlast_name=$($server_response_Json.lastname)`nuser=$($server_response_Json.user)`nauthentication_server=$SDSServer"
+
+    # Write to "Strata Developer Studio.ini"
+    Set-Content "$AppData_OnSemi_dir\Strata Developer Studio.ini" $token_string
 
     # Delete AppData/Roaming/hcs/documents/platform_selector directory if it exists
     If (Test-Path $PlatformSelector_dir -PathType Any) {

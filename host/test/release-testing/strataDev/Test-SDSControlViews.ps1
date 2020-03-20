@@ -4,9 +4,8 @@ Modular file that export Test-SDSControlViews function to test the cycle through
 of Strata Developer Studio.
 
 .DESCRIPTION
-Modular file that export Test-SDSControlViews function to test the cycle through the control views
-of Strata Developer Studio. This is part of the automated test script for the master test plan
-https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist#Installer
+This is part of the automated test script for the master test plan
+https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist
 
 .INPUTS
 -PythonScriptPath   <Path to Strata executable>

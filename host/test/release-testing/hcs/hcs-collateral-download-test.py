@@ -1,6 +1,8 @@
 # Automated collateral download testing
 #
 # Python 3
+#
+# Triggers download of all available collateral by HCS, verifies files were properly downloaded by a MD5 hash check
 
 import sys, os.path, json, hashlib, shutil, zmq
 

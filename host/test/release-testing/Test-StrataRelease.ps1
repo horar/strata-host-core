@@ -4,9 +4,10 @@ Main Strata Developer Studio / Host Controller Service / Installer script driver
 
 .DESCRIPTION
 This is the main driver for the automated test script for the master test plan
-https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist#Installer
+https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist
 
 .INPUTS
+None
 
 .OUTPUTS
 Result of the test
@@ -28,8 +29,7 @@ Set-Variable "SDSExecFile"   "$SDSRootDir\Strata Developer Studio.exe"
 Set-Variable "HCSDbFile"     "$AppDataHCSDir\db\strata_db\db.sqlite3"
 Set-Variable "TestRoot"      $PSScriptRoot
 
-# Define variables for server/token credentials (only applicable if TestRequestToken is $true)
-Set-Variable "TestRequestToken" $true
+# Define variables for server authentication credentials needed to acquire login token
 Set-Variable "SDSServer"      "http://18.191.108.5/"      # "https://strata.onsemi.com"
 Set-Variable "SDSLoginServer" "http://18.191.108.5/login" # "https://strata.onsemi.com/login"
 Set-Variable "SDSLoginInfo"   '{"username":"test@test.com","password":"Strata12345"}'

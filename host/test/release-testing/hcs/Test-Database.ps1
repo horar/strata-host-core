@@ -3,24 +3,25 @@
 Modular file that exports the Test-Database function to test automated database replication performed by HCS
 
 .DESCRIPTION
-Modular file that exports the Test-Database function to test automated database replication performed by HCS
 This is part of the automated test script for the master test plan
-https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist#Installer
+https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist#Database
+
+This test consists of deleting the HCS Couchbase database from the local machine (if it exists), running HCS,
+and checking whether the DB file was properly downloaded and placed in the expected directory.
+
+PSSQLite is used to partially read in the contents of DB and count how many documents exist in the DB.
 
 .INPUTS
--PythonScriptPath   <Path to Strata executable>
--StrataPath         <Path to control-view-test.py>
+None
 
 .OUTPUTS
-Bolean result of the test
+Numerical test result (TODO)
 
 .NOTES
 Version:        1.0
 Creation Date:  03/17/2020
 #>
 
-# Function to run the test, it will return True if the test was successful
-# Usage: Test-SDSControlViews -PythonScriptPath <Path to Strata executable> -StrataPath <Path to control-view-test.py>
 function Test-Database {
     # Change directory to location of SDS executable
     Set-Location $SDSRootDir
