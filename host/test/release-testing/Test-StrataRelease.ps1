@@ -15,6 +15,8 @@ Result of the test
 .NOTES
 Version:        1.0
 Creation Date:  03/17/2020
+
+Powershell 5, Python 3
 #>
 
 # Define HCS TCP endpoint to be used
@@ -35,8 +37,8 @@ Set-Variable "SDSLoginServer" "http://18.191.108.5/login" # "https://strata.onse
 Set-Variable "SDSLoginInfo"   '{"username":"test@test.com","password":"Strata12345"}'
 
 # Define paths for Python scripts ran by this script
-Set-Variable "PythonCollateralDownloadTest" "hcs/hcs-collateral-download-test.py"
-Set-Variable "PythonControlViewTest"        "strataDev/control-view-test.py"
+Set-Variable "PythonCollateralDownloadTest" "$TestRoot/hcs/hcs-collateral-download-test.py"
+Set-Variable "PythonControlViewTest"        "$TestRoot/strataDev/control-view-test.py"
 
 # Import common functions
 . "$PSScriptRoot\Common-Functions.ps1"

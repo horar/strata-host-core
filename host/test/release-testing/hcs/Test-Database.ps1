@@ -35,6 +35,8 @@ function Test-Database {
 
     # Stop any previously running HCS processes
     Stop-HCS
+    # Stop any previously running SDS processes
+    Stop-SDS
 
     # Define query variable for PSSQLite
     $query = "SELECT * FROM kv_default"
