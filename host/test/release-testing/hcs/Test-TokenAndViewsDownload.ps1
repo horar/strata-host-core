@@ -21,17 +21,17 @@ Creation Date:  03/17/2020
 
 function Test-TokenAndViewsDownload {
     # Define some derived paths used in this script
-    Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $AppData_HCS_dir)
-    Set-Variable "PlatformSelector_dir" "$AppData_HCS_dir\documents\platform_selector"
+    Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $AppDataHCSDir)
+    Set-Variable "PlatformSelector_dir" "$AppDataHCSDir\documents\platform_selector"
 
-    If ($TEST_request_token) {
+    If ($TestRequestToken) {
         # Attempt to acquire token information from server
-        Write-Host "        Token/authentication server testing (using endpoint $SDS_login_server)"
+        Write-Host "        Token/authentication server testing (using endpoint $SDSLoginServer)"
         Write-Host "        Attempting to acquire token information from server...`n"
         Try {
-            $server_response = Invoke-WebRequest -URI $SDS_login_server -Body $SDS_login_info -Method 'POST' -ContentType 'application/json' -ErrorAction 'Stop' -UseBasicParsing
+            $server_response = Invoke-WebRequest -URI $SDSLoginServer -Body $SDSLoginInfo -Method 'POST' -ContentType 'application/json' -ErrorAction 'Stop' -UseBasicParsing
         } Catch {
-            Write-Host "        FAILED: Unable to obtain login token from server '$SDS_login_server' with provided account, try again.`n"
+            Write-Host "        FAILED: Unable to obtain login token from server '$SDSLoginServer' with provided account, try again.`n"
             Exit
         }
 
@@ -56,7 +56,7 @@ function Test-TokenAndViewsDownload {
 
         # Format new token string using obtained token
         $server_response_Json = ConvertFrom-Json $server_response.Content
-        $token_string = "[Login]`ntoken=$($server_response_Json.token)`nfirst_name=$($server_response_Json.firstname)`nlast_name=$($server_response_Json.lastname)`nuser=$($server_response_Json.user)`nauthentication_server=$SDS_server"
+        $token_string = "[Login]`ntoken=$($server_response_Json.token)`nfirst_name=$($server_response_Json.firstname)`nlast_name=$($server_response_Json.lastname)`nuser=$($server_response_Json.user)`nauthentication_server=$SDSServer"
 
         # Write to "Strata Developer Studio.ini"
         Set-Content "$AppData_OnSemi_dir\Strata Developer Studio.ini" $token_string
@@ -73,11 +73,11 @@ function Test-TokenAndViewsDownload {
     }
 
     # Change directory to location of SDS executable
-    Set-Location $SDS_root_dir
+    Set-Location $SDSRootDir
 
     # Run Strata Developer Studio and wait 10 s
     Write-Host "        Running Strata Developer Studio and waiting for 10 seconds..."
-    Start-Process -FilePath "$SDS_root_dir\Strata Developer Studio.exe"
+    Start-Process -FilePath "$SDSRootDir\Strata Developer Studio.exe"
     Start-Sleep -Seconds 10
 
     # Kill Strata Developer Studio and HCS processes
@@ -96,5 +96,5 @@ function Test-TokenAndViewsDownload {
     }
 
     # Return to previous directory
-    Set-Location $Test_Root
+    Set-Location $TestRoot
 }
