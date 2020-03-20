@@ -75,6 +75,7 @@ Rectangle {
             anchors.centerIn: parent
             text:meshObject.nodeNumber
             font.pixelSize: 14
+            visible:false
         }
 
         MouseArea {
