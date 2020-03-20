@@ -83,7 +83,7 @@ Test-TokenAndViewsDownload
 Test-CollateralDownload
 
 # Run Test-SDSControlViews (SDS control view testing)
-If ((Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile) -Eq $false) {
+If ((Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint) -Eq $false) {
     Exit-TestScript -ScriptExitCode -1
 }
 
