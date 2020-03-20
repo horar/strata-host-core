@@ -1,11 +1,21 @@
 import json
 import time
 import os
+import sys
 
 import zmq
 
+# Usage: control-view-test.py <zmq client address>
+
 # Default zmq address
 defZmqURL = "tcp://127.0.0.1:5563"
+
+# Check commandline argumnents
+if len(sys.argv) != 2:
+    print("Zmq client address was not provided. using the default address:" + defZmqURL)
+    zmqClientURL = defZmqURL
+else:
+    zmqClientURL = sys.argv[1]
 
 # Hardcoded uuid list from ---> spyglass/host/apps/DeveloperStudio/js/uuid_map.js
 uuidList = ["101", "201", "202", "203", "204", "206", "207", "208", "209", "210", "211", "212", "213", "214", "215", "216", "217", "218", "219",
@@ -37,7 +47,7 @@ else:
 
 # function to print line separator, to make the code more neat :)
 def printLineSeparator(charSym='-'):
-    print((80 * charSym) + '\n', end='')
+    print(80 * charSym)
 
 # function to get the dynamic platform list from hcs, keep it for future refrence
 def getRealHcsResponse():
@@ -88,7 +98,7 @@ context = zmq.Context.instance()
 client = context.socket(zmq.ROUTER)
 client.RCVTIMEO = 10000  # 10s timeout.
 client.setsockopt(zmq.IDENTITY, b'zmqRouterTest')
-client.bind(defZmqURL)
+client.bind(zmqClientURL)
 
 # get client id of starta UI
 printLineSeparator()
@@ -99,10 +109,10 @@ print("Waiting for Strata Developer Studio to connect...")
 try:
     strataId = client.recv()
 except zmq.Again:
-    print("No Response recived from Strata. Exiting...")
+    print("No Response received from Strata. Exiting...")
     quit(-1)
 if not strataId:
-    print("Recived an empty response. Exiting...")
+    print("received an empty response. Exiting...")
     quit(-1)
 
 print("Strata id is [ %s ]" % (strataId))
@@ -120,7 +130,7 @@ while True:
         print("Response Timeout. Exiting...")
         quit(-1)
     if not message:
-        print("Recived an empty response. Exiting...")
+        print("received an empty response. Exiting...")
         quit(-1)
 
     print("Received reply [ %s ]" % (message))

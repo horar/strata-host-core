@@ -25,9 +25,10 @@ function Test-SDSControlViews {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)][string]$PythonScriptPath,    # Path to Strata executable
-        [Parameter(Mandatory = $true)][string]$StrataPath           # Path to control-view-test.py
+        [Parameter(Mandatory = $true)][string]$StrataPath,          # Path to control-view-test.py
+        [Parameter(Mandatory = $true)][string]$ZmqEndpoint          # The address of zmq client 
     )
-    
+
     Write-Host "Looking for the test script " $PythonScriptPath
     if (Test-Path -Path $PythonScriptPath) {
         write-host "Script Found" -ForegroundColor Green
@@ -37,7 +38,7 @@ function Test-SDSControlViews {
         
         write-host "Starting python test script..."
         write-host "################################################################################"
-        $pythonScript = Start-Process $PythonExec $PythonScriptPath -NoNewWindow -PassThru -wait
+        $pythonScript = Start-Process $PythonExec -ArgumentList "$PythonScriptPath $ZmqEndpoint" -NoNewWindow -PassThru -wait
         write-host "################################################################################"
         
         Write-Host "Python test script is done."
