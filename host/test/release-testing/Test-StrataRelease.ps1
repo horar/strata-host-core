@@ -58,24 +58,16 @@ Set-Variable "PythonControlViewTest"        "strataDev/control-view-test.py"
 Write-Host "`n`nPerforming initial checks...`n"
 
 # Search for Python tools 
-If ((Assert-PythonAndPyzmq) -Eq $false) {
-    Exit-TestScript -ScriptExitCode -1
-}
+Assert-PythonAndPyzmq
 
 # Search for SDS and HCS
-If ((Assert-StrataAndHCS) -Eq $false) {
-    Exit-TestScript -ScriptExitCode -1
-}
+Assert-StrataAndHCS
 
 # Search for Python scripts
-If ((Assert-PythonScripts) -Eq $false) {
-    Exit-TestScript -ScriptExitCode -1
-}
+Assert-PythonScripts
 
 # Search for PSSQLite
-If ((Assert-PSSQLite) -Eq $false) {
-    Exit-TestScript -ScriptExitCode -1
-}
+Assert-PSSQLite
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 

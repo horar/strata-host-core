@@ -20,46 +20,40 @@ function Assert-PythonAndPyzmq {
     Try {
         If ((Start-Process $PythonExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
             If (!(Start-Process $PythonExec '-c "import zmq"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
-                Write-Error "Error: ZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions.`nAborting."
-                Return $false
+                Exit-TestScript -1 "Error: ZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions.`nAborting."
             }
         } Else {
-            Write-Error "Error: Python not found.`nAborting."
-            Return $false
+            Exit-TestScript -1 "Error: Python not found.`nAborting."
         }
     } Catch [System.Management.Automation.CommandNotFoundException] {
-        Write-Error "Error: Python not found.`nAborting."
-        Return $false
+        Exit-TestScript -1 "Error: Python not found.`nAborting."
     }
-    Return $true
 }
 
 # Check if both SDS and HCS are found where expected
 function Assert-StrataAndHCS {
-    # Convert the path if using Unix env
+    # Convert the path if using Unix env, then check for SDS executable
     If ($Env:OS -Ne "Windows_NT" -And (($SDSExecFile = Convert-Path $SDSExecFile) -Eq $false)) {
-        Return $false
+        Exit-TestScript -1 "Error: cannot find Strata Developer Studio executable at $SDSExecFile.`nAborting."
     }
     # Check for SDS executable
     If (!(Test-Path $SDSExecFile)) {
-        Return $false
+        Exit-TestScript -1 "Error: cannot find Strata Developer Studio executable at $SDSExecFile.`nAborting."
     }
     # Check for HCS directory
     If (!(Test-Path $AppDataHCSDir)) {
-        Return $false
+        Exit-TestScript -1 "Error: cannot find Host Controller Service directory at $AppDataHCSDir.`nAborting."
     }
-    Return $true
 }
 
 # Check if both Python scripts are found where expected
 function Assert-PythonScripts {
     If (!(Test-Path $PythonCollateralDownloadTest)) {
-        Return $false
+        Exit-TestScript -1 "Error: cannot find Python script at $PythonCollateralDownloadTest.`nAborting."
     }
     If (!(Test-Path $PythonControlViewTest)) {
-        Return $false
+        Exit-TestScript -1 "Error: cannot find Python script at $PythonControlViewTest.`nAborting."
     }
-    Return $true
 }
 
 # Check if PS module 'PSSQLite' is installed
@@ -68,9 +62,8 @@ function Assert-PSSQLite {
     If (!(Get-Module -ListAvailable -Name PSSQLite)) {
         Write-Warning "`n`nPSSQLite Powershell module not found: cannot proceed.`nInstall module PSSQLite by running as administrator:"
         Write-Warning "   Install-Module PSSQLite`nAborting.`n"
-        Return $false
+        Exit-TestScript -1
     }
-    Return $true
 }
 
 # Start one instance of HCS
@@ -82,13 +75,18 @@ function Start-HCS {
 # Utility function to print the exit code and a pattern for the end of the script
 function Exit-TestScript {
     Param (
-        [Parameter(Mandatory = $true)][int]$ScriptExitCode
+        [Parameter(Mandatory = $true)][int]$ScriptExitCode,
+        [Parameter(Mandatory = $false)][string]$ScriptExitText
     )
 
-    If ($ScriptExitCode -eq 0) {
+    If ($ScriptExitCode -Eq 0) {
         Write-Host "Test finished successfully. Exiting..." -ForegroundColor Green
     } Else {
-        Write-Error "Test failed. Terminating... $($ScriptExitCode)"
+        If ($ScriptExitText) {
+            Write-Error "Test failed: $($ScriptExitText) Terminating... $($ScriptExitCode)"
+        } Else {
+            Write-Error "Test failed. Terminating... $($ScriptExitCode)"
+        }
     }
     Write-Host "================================================================================"
     Write-Host "================================================================================"
@@ -113,7 +111,10 @@ function Stop-SDS {
 
 # Start one instance of HCS and wait (to give time for DB replication)
 function Start-HCSAndWait {
-    param($seconds)
+    Param (
+        [Parameter(Mandatory = $false)][int]$seconds
+    )
+
     Start-Process -FilePath $HCSExecFile -ArgumentList "-f `"$HCSConfigFile`""
     If ($seconds) {
         Start-Sleep -Seconds $seconds
