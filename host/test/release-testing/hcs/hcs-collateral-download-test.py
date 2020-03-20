@@ -67,7 +67,7 @@ hcs_endpoint = sys.argv[2]
 context = zmq.Context()
 socket = context.socket(zmq.DEALER)
 socket.connect(hcs_endpoint)
-socket.RCVTIMEO = 10000 # HCS reply timeout (in milliseconds)
+socket.RCVTIMEO = 30000 # 30 second HCS reply timeout (in milliseconds)
 
 # Send register_client command to HCS
 print("\nSending 1st command to HCS (REGISTER CLIENT)")
@@ -100,6 +100,7 @@ if os.path.exists(os.path.join(hcs_directory, "documents", "views")):
 
 # Start main loop over each platform
 total_failed_tests = 0
+total_passed_platforms = 0
 for platform in platform_list:
     platform_failed_tests = 0
     print("\n" + 80 * "=" + "\n\nSending HCS notification for platform " + str(platform["class_id"]), end = '')
@@ -133,6 +134,7 @@ for platform in platform_list:
             total_failed_tests += 1
     if platform_failed_tests < 1:
         print("\nAll tests PASSED for platform " + str(platform["class_id"]) + ".")
+        total_passed_platforms += 1
     else:
         print("\nWARNING:\nA total of " + str(platform_failed_tests) + " unsuccessful test cases were found for this platform.")
 
@@ -140,3 +142,8 @@ if total_failed_tests < 1:
     print("\nAll tests PASSED for all platforms.\n")
 else:
     print("\nWARNING:\nA total of " + str(total_failed_tests) + " unsuccessful test cases were found between all platforms.")
+
+# Generate result file
+results_file = os.path.join(os.path.dirname(os.path.realpath('__file__')), "hcs/collateral-download-results.txt")
+results_file = open(results_file, 'w')
+print(str(total_passed_platforms) + " " + str(len(platform_list)), file=results_file)
