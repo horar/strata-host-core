@@ -35,13 +35,13 @@ bool PlatformDocument::parseDocument(const QString &document)
 
     QJsonObject jsonDocument = jsonRoot.object().value("documents").toObject();
     if (jsonDocument.isEmpty()) {
-        qCWarning(logCategoryHcsPlatformDocument) << "documents object does not exist in the platform document";
+        qCCritical(logCategoryHcsPlatformDocument) << "documents object does not exist in the platform document";
         return false;
     }
 
     //downloads
     if (jsonDocument.contains("downloads") == false) {
-        qCWarning(logCategoryHcsPlatformDocument) << "downloads object is missing";
+        qCCritical(logCategoryHcsPlatformDocument) << "downloads object is missing";
         return false;
     }
 
@@ -49,7 +49,7 @@ bool PlatformDocument::parseDocument(const QString &document)
 
     //views
     if (jsonDocument.contains("views") == false) {
-        qCWarning(logCategoryHcsPlatformDocument) << "views object is missing";
+        qCCritical(logCategoryHcsPlatformDocument) << "views object is missing";
         return false;
     }
 
@@ -58,13 +58,13 @@ bool PlatformDocument::parseDocument(const QString &document)
     //platform selector
     QJsonObject jsonPlatformSelector = jsonRoot.object().value("platform_selector").toObject();
     if (jsonPlatformSelector.isEmpty()) {
-        qCWarning(logCategoryHcsPlatformDocument) << "platform_selector object does not exist in the platform document";
+        qCCritical(logCategoryHcsPlatformDocument) << "platform_selector object does not exist in the platform document";
         return false;
     }
 
     bool isValid = populateFileObject(jsonPlatformSelector, platformSelector_);
     if (isValid == false) {
-        qCWarning(logCategoryHcsPlatformDocument) << "platform_selector object is not valid";
+        qCCritical(logCategoryHcsPlatformDocument) << "platform_selector object is not valid";
         return false;
     }
 
@@ -121,7 +121,7 @@ void PlatformDocument::populateFileList(const QJsonArray &jsonList, QList<Platfo
     foreach (const QJsonValue &value, jsonList) {
         PlatformFileItem fileItem;
         if (populateFileObject(value.toObject() , fileItem) == false) {
-            qCWarning(logCategoryHcsPlatformDocument) << "object not valid";
+            qCCritical(logCategoryHcsPlatformDocument) << "object not valid";
             continue;
         }
 

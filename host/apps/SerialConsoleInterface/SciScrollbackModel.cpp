@@ -84,7 +84,7 @@ void SciScrollbackModel::setAllCondensed(bool condensed)
 void SciScrollbackModel::setCondensed(int index, bool condensed)
 {
     if (index < 0 || index >= data_.count()) {
-        qCWarning(logCategorySci) << "index out of range";
+        qCCritical(logCategorySci) << "index out of range";
         return;
     }
 
