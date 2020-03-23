@@ -40,9 +40,33 @@ Item {
 
         TabButton {
             id: ledControlButton
-            text: qsTr("LED Control Button")
+            text: qsTr("LED Control")
             onClicked: {
                 controlContainer.currentIndex = 1
+            }
+        }
+
+        TabButton {
+            id: powerControlButton
+            text: qsTr("Power")
+            onClicked: {
+                controlContainer.currentIndex = 2
+            }
+        }
+
+        TabButton {
+            id: samOptControlButton
+            text: qsTr("SAM And OTP")
+            onClicked: {
+                controlContainer.currentIndex = 3
+            }
+        }
+
+        TabButton {
+            id: miscControlButton
+            text: qsTr("Miscellaneous")
+            onClicked: {
+                controlContainer.currentIndex = 3
             }
         }
     }
@@ -63,6 +87,12 @@ Item {
         LEDControl {
             id: ledControl
         }
+
+        PowerControl {
+            id: powerControl
+        }
+
+
 
     }
 
