@@ -33,9 +33,7 @@ Item {
     property bool searchingMode: false
     property bool searchTagShown: false
     property bool automaticScroll: true
-
     property bool timestampSimpleFormat: false
-
     property int searchResultCount: logFilesModelProxy.count
     property int statusBarHeight: statusBar.height
 
@@ -222,6 +220,22 @@ Item {
             }
 
             SGWidgets.SGIconButton {
+                id: timestampSimpleFormatButton
+                hintText: qsTr("Simple time format")
+                icon.source: "qrc:/sgimages/clock.svg"
+                iconSize: defaultIconSize
+                backgroundOnlyOnHovered: false
+                enabled: fileLoaded
+                padding: buttonPadding
+                checkable: true
+                checked: timestampSimpleFormat
+
+                onClicked: {
+                    timestampSimpleFormat = !timestampSimpleFormat
+                }
+            }
+
+            SGWidgets.SGIconButton {
                 id: automaticScrollButton
                 hintText: qsTr("Automatically scroll to the last log")
                 icon.source: "qrc:/sgimages/arrow-list-bottom.svg"
@@ -243,21 +257,6 @@ Item {
                     target: automaticScrollButton
                     property: "checked"
                     value: automaticScroll
-                }
-            }
-
-            SGWidgets.SGIconButton {
-                id: timestampSimpleFormatButton
-                hintText: qsTr("Toggle simple format")
-                icon.source: "qrc:/sgimages/clock.svg"
-                iconSize: defaultIconSize
-                backgroundOnlyOnHovered: false
-                enabled: fileLoaded
-                padding: buttonPadding
-                checkable: true
-
-                onClicked: {
-                    timestampSimpleFormat = !timestampSimpleFormat
                 }
             }
         }
@@ -479,7 +478,7 @@ Item {
                     highlightColor: searchInput.palette.highlight
                     startAnimation: secondaryLogView.activeFocus
                     automaticScroll: automaticScrollButton.checked
-                    timestampSimpleFormat: timestampSimpleFormatButton.checked
+                    timestampSimpleFormat: logViewerMain.timestampSimpleFormat
                 }
 
                 Rectangle {
