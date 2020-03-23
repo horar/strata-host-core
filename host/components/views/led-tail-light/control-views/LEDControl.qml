@@ -377,7 +377,7 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                           // color: "blue"
+                                            // color: "blue"
                                             SGStatusLight {
                                                 id: out0ENLED
                                                 width: 30
@@ -421,9 +421,7 @@ Item {
                                                 width: 30
                                                 height: parent.height
                                                 orientation: Qt.Vertical
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 5
-                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.centerIn: parent
 
                                             }
                                         }
@@ -493,9 +491,7 @@ Item {
                                                 width: 30
                                                 height: parent.height
                                                 orientation: Qt.Vertical
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 5
-                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.centerIn: parent
 
                                             }
                                         }
@@ -567,9 +563,7 @@ Item {
                                                 width: 30
                                                 height: parent.height
                                                 orientation: Qt.Vertical
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 5
-                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.centerIn: parent
 
                                             }
                                         }
@@ -639,9 +633,7 @@ Item {
                                                 width: 30
                                                 height: parent.height
                                                 orientation: Qt.Vertical
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 5
-                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.centerIn: parent
 
                                             }
                                         }
@@ -710,9 +702,7 @@ Item {
                                                 width: 30
                                                 height: parent.height
                                                 orientation: Qt.Vertical
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 5
-                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.centerIn: parent
 
                                             }
                                         }
@@ -782,9 +772,7 @@ Item {
                                                 width: 30
                                                 height: parent.height
                                                 orientation: Qt.Vertical
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 5
-                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.centerIn: parent
 
                                             }
                                         }
@@ -853,9 +841,7 @@ Item {
                                                 width: 30
                                                 height: parent.height
                                                 orientation: Qt.Vertical
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 5
-                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.centerIn: parent
 
                                             }
                                         }
@@ -925,9 +911,7 @@ Item {
                                                 width: 30
                                                 height: parent.height
                                                 orientation: Qt.Vertical
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 5
-                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.centerIn: parent
 
                                             }
                                         }
@@ -996,9 +980,7 @@ Item {
                                                 width: 30
                                                 height: parent.height
                                                 orientation: Qt.Vertical
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 5
-                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.centerIn: parent
 
                                             }
                                         }
@@ -1068,9 +1050,7 @@ Item {
                                                 width: 30
                                                 height: parent.height
                                                 orientation: Qt.Vertical
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 5
-                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.centerIn: parent
 
                                             }
                                         }
@@ -1141,9 +1121,7 @@ Item {
                                                 width: 30
                                                 height: parent.height
                                                 orientation: Qt.Vertical
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 5
-                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.centerIn: parent
 
                                             }
                                         }
@@ -1161,7 +1139,7 @@ Item {
                                             //color: "red"
                                             SGText {
                                                 text: "<b>" + qsTr("OUT11") + "</b>"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                             }
@@ -1214,9 +1192,7 @@ Item {
                                                 height: parent.height
                                                 orientation: Qt.Vertical
                                                 value: 50
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 5
-                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.centerIn: parent
 
                                             }
                                         }
