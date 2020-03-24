@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     QCoreApplication::setApplicationVersion(AppInfo::version.data());
 
     const QtLoggerSetup loggerInitialization(app);
-    qCInfo(logCategoryFlasherCli) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCDebug(logCategoryFlasherCli).noquote() << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     QCommandLineOption listOption(QStringList() << QStringLiteral("l") << QStringLiteral("list"),
                                   QStringLiteral("List of connected boards (serial devices)."));
@@ -30,6 +30,7 @@ int main(int argc, char *argv[]) {
     QCommandLineParser parser;
     parser.setApplicationDescription(QStringLiteral("Flasher CLI"));
     parser.addHelpOption();
+    parser.addVersionOption();
     parser.addOption(listOption);
     parser.addOption(flashOption);
     parser.addOption(deviceOption);
@@ -39,8 +40,14 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    if (parser.isSet(QStringLiteral("h"))) {
+    if (parser.isSet(QStringLiteral("h"))) {  // help option
         qCInfo(logCategoryFlasherCli).noquote() << parser.helpText();
+        return EXIT_SUCCESS;
+    }
+
+    if (parser.isSet(QStringLiteral("v"))) {  // version option
+        qCInfo(logCategoryFlasherCli).noquote().nospace() << QCoreApplication::applicationName()
+            << " (" << parser.applicationDescription() << ") " << QCoreApplication::applicationVersion();
         return EXIT_SUCCESS;
     }
 
