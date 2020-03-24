@@ -61,7 +61,7 @@ function Assert-PythonScripts {
 # Tell user to manually install it if not found & exit
 function Assert-PSSQLite {
     If (!(Get-Module -ListAvailable -Name PSSQLite)) {
-        Write-Host -ForegroundColor Red "`nPSSQLite Powershell module not found.`nInstall PSSQLite by running as administrator:`n   Install-Module PSSQLite`nAborting.`n"
+        Write-Host -ForegroundColor Red "`nError: PSSQLite module for Powershell not found.`nInstall PSSQLite by running as administrator:`n   Install-Module PSSQLite`nAborting.`n"
         Exit-TestScript -1
     }
 }
