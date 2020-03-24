@@ -45,6 +45,10 @@ Item {
                 scrollbackViewAtEndTimer.restart()
             }
         }
+
+        onModelReset: {
+            scrollbackViewAtEndTimer.restart()
+        }
     }
 
     Timer {
@@ -79,10 +83,6 @@ Item {
             selectMultiple: false
             selectFolder: false
             nameFilters: ["Log files (*.log)","All files (*)"]
-
-            onAccepted: {
-                scrollbackViewAtEndTimer.restart()
-            }
         }
     }
 
