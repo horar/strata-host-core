@@ -57,13 +57,13 @@ int main(int argc, char *argv[]) {
         options.option = strata::CliOptions::Option::list;
     } else if (parser.isSet(flashOption)) {
         options.option = strata::CliOptions::Option::flash;
-        options.file_name = parser.value(flashOption);
+        options.fileName = parser.value(flashOption);
     }
 
     if (parser.isSet(deviceOption)) {
         QString number = parser.value(deviceOption);
         bool ok;
-        options.device_number = number.toInt(&ok);
+        options.deviceNumber = number.toInt(&ok);
         if (ok == false) {
             qCWarning(logCategoryFlasherCli).noquote().nospace() << '\'' << number << "' is not a valid device number.";
             return EXIT_FAILURE;

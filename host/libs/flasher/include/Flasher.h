@@ -18,14 +18,28 @@ class Flasher : public QObject
     Q_DISABLE_COPY(Flasher)
 
     public:
+        /*!
+         * Flasher constructor.
+         * \param device device which will be used by Flasher
+         * \param firmwareFilename path to firmware file
+         */
         Flasher(std::shared_ptr<strata::SerialDevice> device, const QString& firmwareFilename);
+
         ~Flasher();
 
+        /*!
+         * Flash firmware.
+         * \param startApplication if set to true start application after flashing
+         */
         void flash(bool startApplication = true);
 
         friend QDebug operator<<(QDebug dbg, const Flasher* f);
 
     signals:
+        /*!
+         * This signal is emitted when Flasher finishes.
+         * \param success true if firmware was flashed successfully, otherwise false
+         */
         void finished(bool success);
 
     private slots:
@@ -40,16 +54,16 @@ class Flasher : public QObject
 
         SerialDeviceShPtr device_;
 
-        QFile fw_file_;
+        QFile fwFile_;
 
         std::unique_ptr<DeviceOperations> operation_;
 
-        uint device_id_;
+        uint deviceId_;
 
-        int chunk_number_;
-        int chunk_count_;
+        int chunkNumber_;
+        int chunkCount_;
 
-        bool start_app_;
+        bool startApp_;
 };
 
 }  // namespace

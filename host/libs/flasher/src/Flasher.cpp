@@ -10,13 +10,13 @@
 namespace strata {
 
 QDebug operator<<(QDebug dbg, const Flasher* f) {
-    return dbg.nospace() << "Flasher for device 0x" << hex << f->device_id_ << ": ";
+    return dbg.nospace() << "Flasher for device 0x" << hex << f->deviceId_ << ": ";
 }
 
 Flasher::Flasher(std::shared_ptr<strata::SerialDevice> device, const QString& firmwareFilename) :
-    device_(device), fw_file_(firmwareFilename)
+    device_(device), fwFile_(firmwareFilename)
 {
-    device_id_ = static_cast<uint>(device_->getConnectionId());
+    deviceId_ = static_cast<uint>(device_->getConnectionId());
     operation_ = std::make_unique<DeviceOperations>(device_);
 
     connect(operation_.get(), &DeviceOperations::readyForFlashFw, [this](){this->handleFlashFirmware(-1);});
@@ -35,50 +35,50 @@ Flasher::~Flasher() {
 }
 
 void Flasher::flash(bool startApplication) {
-    start_app_ = startApplication;
-    if (fw_file_.open(QIODevice::ReadOnly)) {
-        if (fw_file_.size() > 0) {
-            chunk_number_ = 0;
-            chunk_count_ = static_cast<int>((fw_file_.size() - 1 + CHUNK_SIZE) / CHUNK_SIZE);
-            qCInfo(logCategoryFlasher) << this << "Preparing for flashing " << dec << chunk_count_ << " chunks of firmware.";
+    startApp_ = startApplication;
+    if (fwFile_.open(QIODevice::ReadOnly)) {
+        if (fwFile_.size() > 0) {
+            chunkNumber_ = 0;
+            chunkCount_ = static_cast<int>((fwFile_.size() - 1 + CHUNK_SIZE) / CHUNK_SIZE);
+            qCInfo(logCategoryFlasher) << this << "Preparing for flashing " << dec << chunkCount_ << " chunks of firmware.";
             operation_->prepareForFlash();
         } else {
-            qCWarning(logCategoryFlasher).noquote() << this << "File '" << fw_file_.fileName() << "' is empty.";
+            qCWarning(logCategoryFlasher).noquote() << this << "File '" << fwFile_.fileName() << "' is empty.";
             finish(false);
         }
     } else {
-        qCWarning(logCategoryFlasher).noquote() << this << "Cannot open file '" << fw_file_.fileName() << "'.";
+        qCWarning(logCategoryFlasher).noquote() << this << "Cannot open file '" << fwFile_.fileName() << "'.";
         finish(false);
     }
 }
 
 void Flasher::handleFlashFirmware(int lastFlashedChunk) {
     if (lastFlashedChunk == 0) {
-        fw_file_.close();
+        fwFile_.close();
         qCInfo(logCategoryFlasher) << this << "Firmware is flashed.";
-        if (start_app_) {
+        if (startApp_) {
             operation_->startApplication();
         } else {
             finish(true);
         }
         return;
     }
-    chunk_number_++;
-    int chunk_num_log = chunk_number_;  // chunk number for log
-    int chunk_size = CHUNK_SIZE;
-    qint64 remaining_file_size = fw_file_.size() - fw_file_.pos();
-    if (remaining_file_size <= CHUNK_SIZE) {
-        chunk_number_ = 0;  // the last chunk
-        chunk_size = static_cast<int>(remaining_file_size);
+    chunkNumber_++;
+    int chunkNumLog = chunkNumber_;  // chunk number for log
+    int chunkSize = CHUNK_SIZE;
+    qint64 remainingFileSize = fwFile_.size() - fwFile_.pos();
+    if (remainingFileSize <= CHUNK_SIZE) {
+        chunkNumber_ = 0;  // the last chunk
+        chunkSize = static_cast<int>(remainingFileSize);
     }
-    QVector<quint8> chunk(chunk_size);
+    QVector<quint8> chunk(chunkSize);
 
-    qint64 bytes_read = fw_file_.read(reinterpret_cast<char*>(chunk.data()), chunk_size);
-    if (bytes_read == chunk_size) {
-        qCInfo(logCategoryFlasher) << this << "Going to flash chunk " << dec << chunk_num_log << " of " << chunk_count_;
-        operation_->flashFirmwareChunk(chunk, chunk_number_);
+    qint64 bytesRead = fwFile_.read(reinterpret_cast<char*>(chunk.data()), chunkSize);
+    if (bytesRead == chunkSize) {
+        qCInfo(logCategoryFlasher) << this << "Going to flash chunk " << dec << chunkNumLog << " of " << chunkCount_;
+        operation_->flashFirmwareChunk(chunk, chunkNumber_);
     } else {
-        qCWarning(logCategoryFlasher).noquote() << this << "Cannot read from file " << fw_file_.fileName() ;
+        qCWarning(logCategoryFlasher).noquote() << this << "Cannot read from file " << fwFile_.fileName() ;
         finish(false);
     }
 }
@@ -104,8 +104,8 @@ void Flasher::handleCancel() {
 }
 
 void Flasher::finish(bool success) {
-    if (fw_file_.isOpen()) {
-        fw_file_.close();
+    if (fwFile_.isOpen()) {
+        fwFile_.close();
     }
     emit finished(success);
 }

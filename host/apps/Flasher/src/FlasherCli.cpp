@@ -35,23 +35,23 @@ SerialPortList::SerialPortList() {
             continue;
         }
 #endif
-        port_names_.append(name);
+        portNames_.append(name);
     }
 }
 
 QString SerialPortList::getPortName(int index) const {
-    return port_names_.value(index);
+    return portNames_.value(index);
 }
 
 QList<QString> SerialPortList::getPortList() const {
-    return port_names_;
+    return portNames_;
 }
 
 int SerialPortList::getPortCount() const {
-    return port_names_.count();
+    return portNames_.count();
 }
 
-CliOptions::CliOptions() : option(Option::none), device_number(1) { }
+CliOptions::CliOptions() : option(Option::none), deviceNumber(1) { }
 
 FlasherCli::FlasherCli(const CliOptions& options) : options_(options) { }
 
@@ -81,9 +81,9 @@ void FlasherCli::run() {
             return;
         }
 
-        QString name = portList.getPortName(options_.device_number - 1);
+        QString name = portList.getPortName(options_.deviceNumber - 1);
         if (name.isEmpty()) {
-            qCWarning(logCategoryFlasherCli) << "Board number" << options_.device_number << "is not available.";
+            qCWarning(logCategoryFlasherCli) << "Board number" << options_.deviceNumber << "is not available.";
             emit finished(EXIT_FAILURE);
             return;
         }
@@ -95,7 +95,7 @@ void FlasherCli::run() {
             return;
         }
 
-        flasher_ = std::make_unique<Flasher>(device, options_.file_name);
+        flasher_ = std::make_unique<Flasher>(device, options_.fileName);
 
         connect(flasher_.get(), &Flasher::finished, this, &FlasherCli::handleFinish);
 
