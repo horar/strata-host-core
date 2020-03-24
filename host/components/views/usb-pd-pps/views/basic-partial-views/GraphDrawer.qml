@@ -20,7 +20,8 @@ Drawer {
     property real hintWidth: 0 //20
     property alias state: menuContainer.state
     property int portNumber: 1
-    property int graphHeight: 310
+    //property int graphHeight: 310
+    property int graphHeight: root.height/3
 
     onAboutToShow:{
         openAnimation.start()
@@ -149,7 +150,7 @@ Drawer {
             anchors.top: menuContainer.top
             height: root.graphHeight
 
-            title: "Port "+portNumber+ " Voltage"
+            title: " Bus Voltage"
             xTitle: "Seconds"
             yTitle: "V"
             yMin: 0
@@ -216,7 +217,7 @@ Drawer {
             height: root.graphHeight
 
             // Optional graph settings:
-            title: "Port "+portNumber+ " Power"
+            title: "Power Out"
             xTitle: "Seconds"
             yTitle: "W"
             yMin: 0
@@ -250,7 +251,7 @@ Drawer {
                     let currentTime = Date.now()
                     let curve = powerGraph.curve(0)
                     curve.shiftPoints(-(currentTime - lastTime)/1000, 0)
-                    curve.append(0, platformInterface.usb_power_notification.output_current)
+                    curve.append(0, platformInterface.usb_power_notification.output_current * platformInterface.usb_power_notification.output_voltage)
                     removeOutOfViewPoints()
                     powerGraph.update()
                     lastTime = currentTime
@@ -281,7 +282,7 @@ Drawer {
             height: root.graphHeight
 
             // Optional graph settings:
-            title: "Port "+portNumber+ " Temperature" // Default: empty
+            title: " Temperature"
             xTitle: "Seconds"
             yTitle: "°C"
             yMin: 0
