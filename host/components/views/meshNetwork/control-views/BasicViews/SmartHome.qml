@@ -181,7 +181,9 @@ Rectangle {
         property var nodeRemoved: platformInterface.node_removed
         onNodeRemovedChanged: {
             var theNodeNumber = platformInterface.node_removed.node_id
-            meshArray[theNodeNumber].opacity = 0
+            if(meshArray[theNodeNumber] !== undefined ){
+                meshArray[theNodeNumber].opacity = 0
+            }
         }
 
 

@@ -181,7 +181,9 @@ Rectangle {
         property var nodeRemoved: platformInterface.node_removed
         onNodeRemovedChanged: {
             var theNodeNumber = platformInterface.node_removed.node_id
-            meshArray[theNodeNumber].opacity = 0
+            if(meshArray[theNodeNumber] !== undefined ){
+                meshArray[theNodeNumber].opacity = 0
+            }
         }
 
 
@@ -199,7 +201,7 @@ Rectangle {
 
     Image{
         id:mainImage
-        source:"qrc:/views/meshNetwork/images/office.png"
+        source:"qrc:/views/meshNetwork/images/office.jpg"
         //anchors.left:parent.left
         height:parent.height*.65
         anchors.centerIn: parent
@@ -215,7 +217,7 @@ Rectangle {
             }
             else{
                 alarmTimer.stop()
-                mainImage.source = "qrc:/views/meshNetwork/images/office.png"
+                mainImage.source = "qrc:/views/meshNetwork/images/office.jpg"
             }
         }
 
