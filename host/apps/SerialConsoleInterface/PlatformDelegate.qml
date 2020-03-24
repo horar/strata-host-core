@@ -11,23 +11,14 @@ FocusScope {
     id: platformDelegate
 
     property variant rootItem
-    property bool condensedMode: false
+    property variant scrollbackModel
+    property variant commandHistoryModel
+
     property bool disableAllFiltering: false
     property var filterList: []
     property bool automaticScroll: true
 
-    signal sendCommandRequested(string message)
     signal programDeviceRequested()
-
-    ListModel {
-        id: scrollbackModel
-
-        function setCondensedToAll(condensed) {
-            for(var i = 0; i < count; ++i) {
-                setProperty(i, "condensed", condensed)
-            }
-        }
-    }
 
     CommonCpp.SGSortFilterProxyModel {
         id: scrollbackFilterModel
@@ -51,13 +42,20 @@ FocusScope {
                 return true
             }
 
-            var item = sourceModel.get(row)
+            var type = sourceModel.data(row, "type")
 
-            if (item.type === "query") {
+            if (type === Sci.SciScrollbackModel.Request) {
                 return true
             }
 
-            var notificationItem = JSON.parse(item["message"])["notification"]
+            var message = sourceModel.data(row, "message")
+
+            try {
+                var notificationItem = JSON.parse(message)["notification"]
+            } catch(error) {
+                return true
+            }
+
             if (notificationItem === undefined) {
                return true
             }
@@ -93,32 +91,12 @@ FocusScope {
         }
     }
 
-    ListModel {
-        id: commandHistoryModel
-    }
-
     Timer {
         id: scrollbackViewAtEndTimer
         interval: 1
 
         onTriggered: {
             scrollbackView.positionViewAtEnd()
-        }
-    }
-
-    Connections {
-        target: Sci.Settings
-
-        onMaxCommandsInScrollbackChanged: {
-            sanitizeScrollback()
-        }
-
-        onCommandsInScrollbackUnlimitedChanged: {
-            sanitizeScrollback()
-        }
-
-        onMaxCommandsInHistoryChanged: {
-            sanitizeCommandHistory()
         }
     }
 
@@ -177,7 +155,7 @@ FocusScope {
                         bottom: divider.top
                     }
                     color: {
-                        if (model.type === "query") {
+                        if (model.type === Sci.SciScrollbackModel.Request) {
                             return Qt.lighter(SGWidgets.SGColorsJS.STRATA_GREEN, 2.3)
                         } else if (cmdDelegate.jsonIsValid === false) {
                             return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 2.3)
@@ -221,7 +199,7 @@ FocusScope {
                         width: condenseButtonWrapper.width
 
                         Loader {
-                            sourceComponent: model.type === "query" ? resendButtonComponent : undefined
+                            sourceComponent: model.type === Sci.SciScrollbackModel.Request ? resendButtonComponent : undefined
                         }
 
                         Component {
@@ -253,8 +231,7 @@ FocusScope {
 
                             onClicked: {
                                 var sourceIndex = scrollbackFilterModel.mapIndexToSource(index)
-                                var item = scrollbackModel.get(sourceIndex)
-                                scrollbackModel.setProperty(sourceIndex, "condensed", !item.condensed)
+                                var item = scrollbackModel.setCondensed(sourceIndex, !model.condensed)
                             }
                         }
                     }
@@ -348,6 +325,9 @@ FocusScope {
                 checkable: true
                 onClicked: {
                     automaticScroll = !automaticScroll
+                    if (automaticScroll) {
+                        scrollbackView.positionViewAtEnd()
+                    }
                 }
 
                 Binding {
@@ -358,12 +338,12 @@ FocusScope {
             }
 
             SGWidgets.SGIconButton {
-                hintText: condensedMode ? qsTr("Expand all commands") : qsTr("Collapse all commands")
-                icon.source: condensedMode ? "qrc:/images/list-expand.svg" : "qrc:/images/list-collapse.svg"
+                hintText: scrollbackModel.condensedMode ? qsTr("Expand all commands") : qsTr("Collapse all commands")
+                icon.source: scrollbackModel.condensedMode ? "qrc:/images/list-expand.svg" : "qrc:/images/list-collapse.svg"
                 iconSize: toolButtonRow.iconHeight
                 onClicked: {
-                    condensedMode = ! condensedMode
-                    scrollbackModel.setCondensedToAll(condensedMode)
+                    scrollbackModel.condensedMode = ! scrollbackModel.condensedMode
+                    scrollbackModel.setAllCondensed(scrollbackModel.condensedMode)
                 }
             }
 
@@ -425,15 +405,33 @@ FocusScope {
             property int filteredCount: scrollbackModel.count - scrollbackFilterModel.count
         }
 
+        SGWidgets.SGTag {
+            id: inputStatusTag
+            anchors {
+                top: toolButtonRow.bottom
+                left: parent.left
+                topMargin: 2
+                margins: 6
+            }
+
+            verticalPadding: 1
+            color: SGWidgets.SGColorsJS.TANGO_SCARLETRED1
+            textColor: "white"
+            font.bold: true
+        }
+
         SGWidgets.SGTextField {
             id: cmdInput
             anchors {
-                top: toolButtonRow.bottom
+                top: inputStatusTag.bottom
                 left: parent.left
                 right: btnSend.left
                 topMargin: 2
                 margins: 6
             }
+
+            enabled: model.status === Sci.SciPlatformModel.Ready
+                     || model.status === Sci.SciPlatformModel.NotRecognized
 
             focus: true
             font.family: StrataFonts.Fonts.inconsolata
@@ -448,9 +446,13 @@ FocusScope {
             suggestionOpenWithAnyKey: false
             suggestionMaxHeight: 250
             suggestionCloseOnDown: true
+            showCursorPosition: true
+
+            onTextChanged: {
+                inputStatusTag.text = ""
+            }
 
             Keys.onPressed: {
-                isValid = true
                 if (event.key === Qt.Key_Up) {
                     if (!suggestionPopup.opened) {
                         suggestionPopup.open()
@@ -485,7 +487,7 @@ FocusScope {
                 sendTextInputTextAsComand()
             }
 
-            enabled: model.status === "connected"
+            enabled: cmdInput.enabled
         }
     }
 
@@ -499,79 +501,27 @@ FocusScope {
         }
     }
 
-    function appendCommand(command) {
-        //add it to scrollback
-        command["condensed"] = condensedMode
-        scrollbackModel.append(command)
-        sanitizeScrollback()
-
-        //add it to command history
-        try {
-            var cmd = JSON.parse(command["message"])
-        } catch(error) {
-            console.warn(Logger.sciCategory, "json not valid", command["message"])
-            return
-        }
-
-        if (cmd.hasOwnProperty("cmd")) {
-            var newCommand = JSON.stringify(cmd)
-            for (var i = 0; i < commandHistoryModel.count; ++i) {
-                var item = commandHistoryModel.get(i)
-                if (item["message"] === newCommand) {
-                    commandHistoryModel.move(i, commandHistoryModel.count - 1, 1)
-                    return
-                }
-            }
-
-            commandHistoryModel.append({"message": JSON.stringify(cmd)})
-            sanitizeCommandHistory();
-        }
-    }
-
-    function sanitizeScrollback() {
-        if (Sci.Settings.commandsInScrollbackUnlimited) {
-            var limit = 200000
-        } else {
-            limit = Sci.Settings.maxCommandsInScrollback
-        }
-
-        var removeCount = scrollbackModel.count - limit
-
-        if (removeCount > 0) {
-            scrollbackModel.remove(0, removeCount)
-        }
-    }
-
-    function sanitizeCommandHistory() {
-        var removeCount = commandHistoryModel.count - Sci.Settings.maxCommandsInHistory
-        if (removeCount > 0) {
-            commandHistoryModel.remove(0, removeCount)
-        }
-    }
-
     function sendTextInputTextAsComand() {
-        if (model.status !== "connected") {
-            return
-        }
+        var result = sciModel.platformModel.sendMessage(model.index, cmdInput.text)
+        var errorString = result["errorString"]
 
-        try {
-            var obj =  JSON.parse(cmdInput.text)
-        } catch(error) {
-            cmdInput.isValid = false
-            return
+        if (result["errorString"].length === 0) {
+            cmdInput.clear()
+        } else {
+            if (result["offset"] < 0) {
+                inputStatusTag.text = "Cannot send message - " + result["errorString"]
+            } else {
+                inputStatusTag.text = "JSON error at position " + result["offset"] + " - " + result["errorString"]
+            }
         }
-
-        sendCommandRequested(JSON.stringify(obj))
-        cmdInput.clear()
     }
 
     function showFileExportDialog() {
         var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(platformDelegate, fileDialogComponent)
         dialog.accepted.connect(function() {
-            var result = CommonCpp.SGUtilsCpp.atomicWrite(
-                        CommonCpp.SGUtilsCpp.urlToLocalFile(dialog.fileUrl),
-                        getTextForExport())
-
+            var result = sciModel.platformModel.exportScrollback(
+                        model.index,
+                        CommonCpp.SGUtilsCpp.urlToLocalFile(dialog.fileUrl))
             if (result === false) {
                 console.error(Logger.sciCategory, "failed to export content into", dialog.fileUrl)
 
@@ -609,42 +559,6 @@ FocusScope {
         }
 
         return JSON.stringify(messageObj, undefined, 4)
-    }
-
-    function getTextForExport() {
-        var text = ""
-
-        for (var i = 0; i < scrollbackModel.count; ++i) {
-            var item = scrollbackModel.get(i)
-
-            var date = new Date(item.timestamp)
-            var timeStr = date.toLocaleDateString(Qt.locale(), "yyyy.MM.dd") + " " + date.toLocaleTimeString(Qt.locale(), "hh:mm:ss.zzz")
-            var typeStr = item.type === "query" ? "request" : "response"
-
-            text += timeStr + " " + typeStr + "\n"
-
-            var prettyText = prettifyJson(item.message, false)
-            text += prettyText.length > 0 ? prettyText : item.message
-
-            text += "\n\n"
-        }
-
-        return text
-    }
-
-    function getCommandHistoryList() {
-        var list = []
-        for (var i = 0; i < commandHistoryModel.count; ++i) {
-            list.push(commandHistoryModel.get(i)["message"]);
-        }
-
-        return list
-    }
-
-    function setCommandHistoryList(list) {
-        for (var i = 0; i < list.length; ++i) {
-            commandHistoryModel.append({"message": list[i]})
-        }
     }
 
     function openFilterDialog() {

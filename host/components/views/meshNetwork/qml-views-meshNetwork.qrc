@@ -14,7 +14,7 @@
         <file>images/clearIcon.svg</file>
         <file>images/doorbellIcon.svg</file>
         <file>images/meshIcon.svg</file>
-        <file>images/office.png</file>
+        <file>images/office.jpg</file>
         <file>images/plusIcon.svg</file>
         <file>images/safetyIcon.svg</file>
         <file>images/switchIcon.svg</file>
@@ -24,9 +24,9 @@
         <file>images/wifiIcon_oneBar.svg</file>
         <file>images/wifiIcon_twoBars.svg</file>
         <file>images/wifiIcon.svg</file>
-        <file>images/spreadsheet.png</file>
-        <file>images/office_alarmOn.png</file>
-        <file>images/office_doorOpen.png</file>
+        <file>images/spredsheet.png</file>
+        <file>images/office_alarmOn.jpg</file>
+        <file>images/office_doorOpen.jpg</file>
         <file>images/chargingIcon.svg</file>
         <file>images/chargedIcon.svg</file>
         <file>images/dimmerIcon.svg</file>
