@@ -19,7 +19,7 @@ public:
     DeviceOperations(SerialDeviceShPtr device);
     ~DeviceOperations();
 
-    void identify();
+    void identify(bool requireFwInfoResponse = true);
 
     void prepareForFlash();
 
@@ -107,6 +107,8 @@ private:
     Activity activity_;
 
     bool ackReceived_;
+
+    bool reqFwInfoResp_;
 };
 
 }  // namespace

@@ -33,9 +33,9 @@ namespace strata {
 
         /**
          * Initialize BoardManager (start managing connected devices).
-         * @param getFwInfo if true send also get_firmware_info command during device identification
+         * @param requireFwInfoResponse if true require response to get_firmware_info command during device identification
          */
-        void init(bool getFwInfo = true);
+        void init(bool requireFwInfoResponse = true);
 
         /**
          * Send a message to the device.
@@ -159,8 +159,8 @@ namespace strata {
         QHash<int, SerialDeviceShPtr> openedSerialPorts_;
         std::map<int, std::unique_ptr<DeviceOperations>> serialDeviceOprations_;
 
-        // flag if send get_firmware_info command
-        bool getFwInfo_;
+        // flag if require response to get_firmware_info command
+        bool reqFwInfoResp_;
     };
 
 }

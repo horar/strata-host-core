@@ -23,7 +23,7 @@ QDebug operator<<(QDebug dbg, const DeviceOperations* devOp) {
 }
 
 DeviceOperations::DeviceOperations(SerialDeviceShPtr device) :
-    device_(device), operation_(Operation::None), state_(State::None), activity_(Activity::None)
+    device_(device), operation_(Operation::None), state_(State::None), activity_(Activity::None), reqFwInfoResp_(true)
 {
     deviceId_ = static_cast<uint>(device_->getDeviceId());
 
@@ -42,7 +42,8 @@ DeviceOperations::~DeviceOperations() {
     qCDebug(logCategoryDeviceOperations) << this << "Finished operations.";
 }
 
-void DeviceOperations::identify() {
+void DeviceOperations::identify(bool requireFwInfoResponse) {
+    reqFwInfoResp_ = requireFwInfoResponse;
     startOperation(Operation::Identify);
 }
 
@@ -169,7 +170,12 @@ void DeviceOperations::process() {
 }
 
 void DeviceOperations::handleResponseTimeout() {
-    state_ = State::Timeout;
+    if (reqFwInfoResp_ == false && operation_ == Operation::Identify && activity_ == Activity::WaitingForFirmwareInfo) {
+        qCDebug(logCategoryDeviceOperations) << this << "No response to 'get_firmware_info' command.";
+        state_ = State::GetPlatformId;
+    } else {
+        state_ = State::Timeout;
+    }
     emit nextStep(QPrivateSignal());
 }
 

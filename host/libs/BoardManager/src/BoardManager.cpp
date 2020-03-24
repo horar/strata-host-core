@@ -15,8 +15,8 @@ BoardManager::BoardManager() {
 
 BoardManager::~BoardManager() { }
 
-void BoardManager::init(bool getFwInfo) {
-    getFwInfo_ = getFwInfo;
+void BoardManager::init(bool requireFwInfoResponse) {
+    reqFwInfoResp_ = requireFwInfoResponse;
     timer_.start(DEVICE_CHECK_INTERVAL);
 }
 
@@ -221,7 +221,7 @@ bool BoardManager::addedSerialPort(const int deviceId) {
         connect(operation.get(), &DeviceOperations::finished, this, &BoardManager::handleOperationFinished);
         connect(operation.get(), &DeviceOperations::error, this, &BoardManager::handleBoardError);
 
-        operation->identify();
+        operation->identify(reqFwInfoResp_);
 
         serialDeviceOprations_.erase(deviceId);  // to be sure
         serialDeviceOprations_.emplace(deviceId, std::move(operation));
