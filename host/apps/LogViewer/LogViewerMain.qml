@@ -404,42 +404,42 @@ Item {
                 SGWidgets.SGCheckBox {
                     id: checkBoxIndex
                     text: qsTr("Row")
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     checked: indexColumnVisible
                 }
 
                 SGWidgets.SGCheckBox {
                     id: checkBoxTs
                     text: qsTr("Timestamp")
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     checked: timestampColumnVisible
                 }
 
                 SGWidgets.SGCheckBox {
                     id: checkBoxPid
                     text: qsTr("PID")
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     checked: pidColumnVisible
                 }
 
                 SGWidgets.SGCheckBox {
                     id: checkBoxTid
                     text: qsTr("TID")
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     checked: tidColumnVisible
                 }
 
                 SGWidgets.SGCheckBox {
                     id: checkBoxLevel
                     text: qsTr("Level")
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     checked: levelColumnVisible
                 }
 
                 SGWidgets.SGCheckBox {
                     id: checkBoxMessage
                     text: qsTr("Message")
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     checked: true
                     enabled: !checked
                 }
@@ -539,7 +539,7 @@ Item {
             anchors.leftMargin: 5
             anchors.verticalCenter: statusBar.verticalCenter
             width: statusBar.width - statusBarText.x
-            font.family: StrataFonts.Fonts.inconsolata
+            font.family: "monospace"
             text: {
                 if (logViewerMain.linesCount == 1) {
                     qsTr("Range: %1 - %2 | %3 log").arg(Qt.formatDateTime(logFilesModel.oldestTimestamp,

@@ -51,7 +51,7 @@ Item {
     TextMetrics {
         id: textMetricsTs
         font: timestampHeaderText.font
-        text: "9999-99-99 99:99.99.999 MMMM"
+        text: Qt.platform.os === "windows" ? "9999-99-99 99:99.99.999 Central Europe Standard Time" : "9999-99-99 99:99.99.999 CEST"
     }
 
     TextMetrics {
@@ -73,9 +73,9 @@ Item {
     }
 
     TextMetrics {
-        id: textMetricsLevel
+        id: textMetricsLevelTag
         font: timestampHeaderText.font
-        text: "Level"
+        text: "DEBUG"
     }
 
     TextMetrics {
@@ -87,7 +87,7 @@ Item {
     TextMetrics {
         id: textMetricsIndex
         font: timestampHeaderText.font
-        text: "Row"
+        text: "99999"
     }
 
     Item {
@@ -129,7 +129,7 @@ Item {
                         left: indexHeader.left
                         verticalCenter: parent.verticalCenter
                     }
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: qsTr("Row")
                 }
             }
@@ -151,7 +151,7 @@ Item {
                         left: tsHeader.left
                         verticalCenter: parent.verticalCenter
                     }
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: qsTr("Timestamp")
                 }
 
@@ -183,7 +183,7 @@ Item {
                         left: pidHeader.left
                         verticalCenter: parent.verticalCenter
                     }
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: qsTr("PID")
                 }
             }
@@ -205,7 +205,7 @@ Item {
                         left: tidHeader.left
                         verticalCenter: parent.verticalCenter
                     }
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: qsTr("TID")
                 }
             }
@@ -218,16 +218,17 @@ Item {
                 id: levelHeader
                 anchors.verticalCenter: parent.verticalCenter
                 height: levelHeaderText.contentHeight + cellHeightSpacer
-                width: textMetricsLevel.boundingRect.width + cellWidthSpacer
+                width: textMetricsLevelTag.boundingRect.width + cellWidthSpacer
                 visible: levelColumnVisible
 
                 SGWidgets.SGText {
                     id: levelHeaderText
                     anchors {
                         left: levelHeader.left
-                        verticalCenter: parent.verticalCenter
+                        centerIn: parent
+                        //verticalCenter: parent.verticalCenter
                     }
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: qsTr("Level")
                 }
             }
@@ -249,14 +250,11 @@ Item {
                         left: msgHeader.left
                         verticalCenter: parent.verticalCenter
                     }
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: qsTr("Message")
 
-                    onFontChanged: {
+                    onFontInfoChanged: {
                         logViewWrapper.contentX = 0
-                        if(visible === false) {
-                            return
-                        }
                         requestNewWidthTimer.start()
                     }
                 }
@@ -449,7 +447,7 @@ Item {
                     id: indexColumn
                     width: indexHeader.width
                     color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: visible ? model.rowIndex : ""
                     visible: indexColumnVisible
                 }
@@ -458,7 +456,7 @@ Item {
                     id: ts
                     width: tsHeader.width
                     color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: {
                         if (visible) {
                             if (timestampSimpleFormat == false) {
@@ -477,7 +475,7 @@ Item {
                     id: pid
                     width: pidHeader.width
                     color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: visible ? model.pid : ""
                     visible: pidColumnVisible
                 }
@@ -486,7 +484,7 @@ Item {
                     id: tid
                     width: tidHeader.width
                     color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: visible ? model.tid : ""
                     visible: tidColumnVisible
                 }
@@ -523,7 +521,7 @@ Item {
                                 return "black"
                             }
                         }
-                        font.family: StrataFonts.Fonts.inconsolata
+                        font.family: "monospace"
                         text: {
                             if (visible) {
                                 switch (model.level) {
@@ -548,7 +546,7 @@ Item {
                     id: msg
                     width: messageWrapEnabled ? (logListView.width - msg.x) : msg.contentWidth
                     color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: visible ? model.message : ""
                     visible: messageColumnVisible
                     wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
