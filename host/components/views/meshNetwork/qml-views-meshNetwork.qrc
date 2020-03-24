@@ -24,7 +24,6 @@
         <file>images/wifiIcon_oneBar.svg</file>
         <file>images/wifiIcon_twoBars.svg</file>
         <file>images/wifiIcon.svg</file>
-        <file>images/spredsheet.png</file>
         <file>images/office_alarmOn.jpg</file>
         <file>images/office_doorOpen.jpg</file>
         <file>images/chargingIcon.svg</file>
@@ -56,5 +55,6 @@
         <file>control-views/AdvancedViews/OneToManyDemo.qml</file>
         <file>control-views/AdvancedViews/RelayDemo.qml</file>
         <file>control-views/AdvancedViews/SensorDemo.qml</file>
+        <file>images/spreadsheet.png</file>
     </qresource>
 </RCC>
