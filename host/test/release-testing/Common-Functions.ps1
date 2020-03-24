@@ -88,8 +88,6 @@ function Exit-TestScript {
             Write-Error "Test failed. Terminating... $($ScriptExitCode)"
         }
     }
-    Write-Host "================================================================================"
-    Write-Host "================================================================================"
     Exit $ScriptExitCode
 }
 
@@ -132,29 +130,70 @@ function Restore-Strata_INI {
 
 function Remove-TemporaryFiles {
     # Delete strataDev/DynamicPlatformList.json
-    Write-Host "Checking if DynamicPlatformList.json file exist..."
-    If (Test-Path "$TestRoot/strataDev/DynamicPlatformList.json") {
-        Write-Host "Removing DynamicPlatformList.json..."
-        Remove-Item "$TestRoot/strataDev/DynamicPlatformList.json"
+    If (Test-Path "$TestRoot\strataDev\DynamicPlatformList.json") {
+        Remove-Item "$TestRoot\strataDev\DynamicPlatformList.json"
     }
     Else {
-        Write-Host "DynamicPlatformList.json not found."
+        Write-Host "$TestRoot\strataDev\DynamicPlatformList.json not found."
     }
 
     # Delete hcs/CollateralDownloadResults.txt
-    Write-Host "Checking if CollateralDownloadResults.txt file exist..."
-    If (Test-Path "$TestRoot/hcs/CollateralDownloadResults.txt") {
-        Write-Host "Removing CollateralDownloadResults.txt..."
-        Remove-Item "$TestRoot/hcs/CollateralDownloadResults.txt"
+    If (Test-Path "$TestRoot\hcs\CollateralDownloadResults.txt") {
+        Remove-Item "$TestRoot\hcs\CollateralDownloadResults.txt"
     }
     Else {
-        Write-Host "CollateralDownloadResults.txt not found."
+        Write-Host "$TestRoot\hcs\CollateralDownloadResults.txt not found."
     }
 }
 
-function Show-TestResults {
-    Write-Host "`n`n### Test Summary ###`n"
-    Write-Host "`nResults for Test-Database: $($DatabaseResults[0]) passed out of $($DatabaseResults[1])."
+# Show a summary of the test results
+function Show-TestSummary {
+    Write-Separator
+    Write-Host "Test Summary"
+    Write-Separator
 
+    Show-TestResult -TestName "Test-Database" -TestResults $DatabaseResults
 
+    Show-TestResult -TestName "Test-TokenAndViewsDownload" -TestResults $TokenAndViewsDownloadResults
+
+    Show-TestResult -TestName "Test-CollateralDownload" -TestResults $CollateralDownloadResults
+
+    If ($SDSControlViewsResults) {
+        If ($SDSControlViewsResults -Eq $true) {
+            Write-Host -ForegroundColor Green "`nResult for Test-SDSControlViews: No errors found during execution, test requires visual inspection."
+        } Else {
+            Write-Host -ForegroundColor Red "`nResult for Test-SDSControlViews: One or more errors found during execution."
+        }
+    }
+}
+
+function Show-TestResult {
+    Param (
+        [Parameter(Mandatory = $true)][string]$TestName,
+        [Parameter(Mandatory = $true)]$TestResults
+    )
+
+    If ($TestResults) {
+        If ($TestResults[0] -Eq -1) {
+            Write-Host -ForegroundColor Red "`nError found with test $TestName."
+        } Elseif ($TestResults[0] -Eq $TestResults[1]) {
+            Write-Host -ForegroundColor Green "`nResult for ${TestName}: $($TestResults[0]) passed out of $($TestResults[1])."
+        } Else {
+            Write-Host -ForegroundColor Red "`nResult for ${TestName}: $($TestResults[0]) passed out of $($TestResults[1])."
+        }
+    }
+}
+
+# Print a ***** the width of the console
+function Write-Separator {
+    $Line = "*" * $Host.UI.RawUI.WindowSize.Width
+    Write-Host `n$Line`n
+}
+
+# Print indented string
+function Write-Indented {
+    Param (
+        [Parameter(Mandatory = $true)][string]$string
+    )
+    Write-Host "        $string"
 }

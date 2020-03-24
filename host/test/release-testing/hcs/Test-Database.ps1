@@ -28,6 +28,10 @@ function Test-Database {
     Set-Variable "TestPass"  0
     Set-Variable "TestTotal" 3
 
+    Write-Separator
+    Write-Host "Database testing"
+    Write-Separator
+
     # Change directory to location of SDS executable
     Set-Location $SDSRootDir
     # Find location of 'strata_db' directory
@@ -51,35 +55,35 @@ function Test-Database {
 
     If (Test-Path $SDSDbDir -PathType Any) {
         Remove-Item -Path $SDSDbDir -Recurse -Force
-        Write-Host "        OK"
+        Write-Indented "OK"
     } Else {
-        Write-Host "        OK (directory did not exist)"
+        Write-Indented "OK (directory did not exist)"
     }
 
     # Run HCS standalone and wait 5 s
-    Write-Host "`n        Running HCS and waiting for 5 seconds..."
+    Write-Indented "Running HCS and waiting for 5 seconds..."
     Start-HCSAndWait 5
-    Write-Host "`n        Killing HCS process"
+    Write-Indented "Killing HCS process"
     Stop-HCS
 
     # Verify if DB folders and files were re-created in the expected locations
-    Write-Host "        Verifying if DB folders and files were re-created in the expected locations"
+    Write-Indented "Verifying if DB folders and files were re-created in the expected locations"
 
     If (Test-Path $HCSDbFile -PathType Any) {
-        Write-Host "        OK (DB files found in expected location)"
+        Write-Indented "OK (DB files found in expected location)"
 
         # Verify contents of DB
-        Write-Host "        Verifying contents of DB";
+        Write-Indented "Verifying contents of DB";
         $query_result = Invoke-SqliteQuery -Query $query -DataSource $HCSDbFile
 
         If ($query_result.Length -Lt 1) {
-            Write-Host "        FAIL (DB is empty)"
+            Write-Indented "FAIL (DB is empty)"
         } Else {
-            Write-Host "        PASS (non-empty DB with $($query_result.Length) documents)"
+            Write-Indented "PASS (non-empty DB with $($query_result.Length) documents)"
             $TestPass++
         }
     } Else {
-        Write-Host "        FAIL (DB files not found in expected location)"
+        Write-Indented "FAIL (DB files not found in expected location)"
     }
 
     # Test 2: delete directory 'strata_db', if it exists
@@ -87,35 +91,35 @@ function Test-Database {
 
     If (Test-Path $SDSStrataDbDir -PathType Any) {
         Remove-Item -Path $SDSStrataDbDir -Recurse -Force
-        Write-Host "        OK"
+        Write-Indented "OK"
     } Else {
-        Write-Host "        OK (directory did not exist)"
+        Write-Indented "OK (directory did not exist)"
     }
 
     # Run HCS standalone and wait 5 s
-    Write-Host "`n        Running HCS and waiting for 5 seconds..."
+    Write-Indented "Running HCS and waiting for 5 seconds..."
     Start-HCSAndWait 5
-    Write-Host "`n        Killing HCS process"
+    Write-Indented "Killing HCS process"
     Stop-HCS
 
     # Verify if DB folders and files were re-created in the expected locations
-    Write-Host "        Verifying if DB folders and files were re-created in the expected locations"
+    Write-Indented "Verifying if DB folders and files were re-created in the expected locations"
 
     If (Test-Path $HCSDbFile -PathType Any) {
-        Write-Host "        OK (DB files found in expected location)"
+        Write-Indented "OK (DB files found in expected location)"
 
         # Verify contents of DB
-        Write-Host "        Verifying contents of DB"
+        Write-Indented "Verifying contents of DB"
         $query_result = Invoke-SqliteQuery -Query $query -DataSource $HCSDbFile
 
         If ($query_result.Length -Lt 1) {
-            Write-Host "        FAIL (DB is empty)"
+            Write-Indented "FAIL (DB is empty)"
         } Else {
-            Write-Host "        PASS (non-empty DB with $($query_result.Length) documents)"
+            Write-Indented "PASS (non-empty DB with $($query_result.Length) documents)"
             $TestPass++
         }
     } Else {
-        Write-Host "        FAIL (DB files not found in expected location)"
+        Write-Indented "FAIL (DB files not found in expected location)"
     }
 
     # Test 3: delete DB file, if it exists
@@ -123,9 +127,9 @@ function Test-Database {
 
     If (Test-Path $SDSStrataDbDir -PathType Any) {
         Remove-Item -Path $SDSStrataDbDir -Recurse
-        Write-Host "        OK"
+        Write-Indented "OK"
     } Else {
-        Write-Host "        OK (file did not exist)"
+        Write-Indented "OK (file did not exist)"
     }
 
     # Run HCS standalone and wait 5 s
@@ -135,28 +139,28 @@ function Test-Database {
     Stop-HCS
 
     # Verify if DB folders and files were re-created in the expected locations
-    Write-Host "        Verifying if DB folders and files were re-created in the expected locations";
+    Write-Indented "Verifying if DB folders and files were re-created in the expected locations";
 
     If (Test-Path $HCSDbFile -PathType Any) {
-        Write-Host "        OK (DB files found in expected location)"
+        Write-Indented "OK (DB files found in expected location)"
 
         # Verify contents of DB
-        Write-Host "        Verifying contents of DB";
+        Write-Indented "Verifying contents of DB";
         $query_result = Invoke-SqliteQuery -Query $query -DataSource $HCSDbFile
 
         If ($query_result.Length -Lt 1) {
-            Write-Host "        FAIL (DB is empty)"
+            Write-Indented "FAIL (DB is empty)"
         } Else {
-            Write-Host "        PASS (non-empty DB with $($query_result.Length) documents)"
+            Write-Indented "PASS (non-empty DB with $($query_result.Length) documents)"
             $TestPass++
         }
     } Else {
-        Write-Host "        FAIL (DB files not found in expected location)"
+        Write-Indented "FAIL (DB files not found in expected location)"
     }
 
     # Return to previous directory
     Set-Location $TestRoot
 
     # Return number of tests passed, number of tests existing
-    return $TestPass, $TestTotal
+    Return $TestPass, $TestTotal
 }

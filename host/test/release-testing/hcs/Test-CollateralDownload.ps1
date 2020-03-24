@@ -24,6 +24,10 @@ function Test-CollateralDownload {
     # Change directory to location of SDS executable
     Set-Location $SDSRootDir
 
+    Write-Separator
+    Write-Host "Collateral download testing"
+    Write-Separator
+
     # Run HCS standalone
     Write-Host "Running HCS...";
     Start-HCS
@@ -32,8 +36,18 @@ function Test-CollateralDownload {
     Set-Location $TestRoot
 
     # Run Python script
-    & $PythonExec $PythonCollateralDownloadTest $AppDataHCSDir $HCSTCPEndpoint
+    $PythonScript = Start-Process $PythonExec -ArgumentList "$PythonCollateralDownloadTest `"$AppDataHCSDir`" $HCSTCPEndpoint" -NoNewWindow -PassThru -Wait
 
     # Stop HCS process after test is done
     Stop-HCS
+
+    # Read test results from generated text file
+    If (Test-Path "$TestRoot\hcs\CollateralDownloadResults.txt") {
+        $results = (Get-Content "$TestRoot\hcs\CollateralDownloadResults.txt") -split ' '
+        Return $results
+    }
+    Else {
+        Write-Host -ForegroundColor Red "Error: Collateral download test failed, no result text file found."
+        Return -1, -1
+    }
 }

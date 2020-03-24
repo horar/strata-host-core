@@ -82,15 +82,12 @@ $DatabaseResults = Test-Database
 $TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
 
 # Run Test-CollateralDownload (HCS collateral download testing)
-# $CollateralDownloadResults =
-Test-CollateralDownload
+$CollateralDownloadResults = Test-CollateralDownload
 
 # Run Test-SDSControlViews (SDS control view testing)
-If ((Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint) -Eq $false) {
-    Exit-TestScript -ScriptExitCode -1
-}
+$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
 
-# Show-TestResults
+Show-TestSummary
 
 #------------------------------------------------------------[Clean up]-------------------------------------------------------------
 
