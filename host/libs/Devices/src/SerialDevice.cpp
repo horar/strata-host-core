@@ -99,7 +99,9 @@ void SerialDevice::writeData(const QByteArray& data) {
             writtenBytes += serialPort_.write("\n", 1);
             ++dataSize;
         }
-        if (writtenBytes != dataSize) {
+        if (writtenBytes == dataSize) {
+            emit messageSent(data);
+        } else {
             qCCritical(logCategorySerialDevice) << this << ": Cannot write whole data to device.";
             emit serialDeviceError(QStringLiteral("Cannot write whole data to device."));
         }

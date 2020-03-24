@@ -81,6 +81,12 @@ namespace strata {
         void msgFromDevice(QByteArray msg);
 
         /**
+         * Emitted when message was written to serial port.
+         * @param msg writen message to serial port
+         */
+        void messageSent(QByteArray msg);
+
+        /**
          * Emitted when error occured during communication on the serial port.
          * @param msg error description
          */
