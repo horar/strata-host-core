@@ -45,10 +45,12 @@ Rectangle {
            left: parent.left
        }
 
+       //office view
        Office {
            id: officeView
        }
 
+       //smart home view
        SmartHome {
            id: smartHomeView
        }
