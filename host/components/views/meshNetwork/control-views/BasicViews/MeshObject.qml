@@ -269,7 +269,7 @@ Rectangle {
             anchors.horizontalCenterOffset: 2
             anchors.bottom: parent.bottom
             anchors.bottomMargin: -18
-            source:"../images/chargingIcon.svg"
+            source:"qrc:/views/meshNetwork/images/chargingIcon.svg"
             fillMode: Image.PreserveAspectFit
             height:parent.height*.3
             mipmap:true
@@ -306,7 +306,7 @@ Rectangle {
             id:wifiImage
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            source:"../images/wifiIcon.svg"
+            source:"qrc:/views/meshNetwork/images/wifiIcon.svg"
             fillMode: Image.PreserveAspectFit
             height:parent.height/2
             mipmap:true

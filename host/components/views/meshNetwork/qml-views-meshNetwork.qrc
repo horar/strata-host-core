@@ -2,17 +2,10 @@
     <qresource prefix="/views/meshNetwork">
         <file>Content.qml</file>
         <file>Control.qml</file>
-        <file>control-views/AdvancedControl.qml</file>
         <file>control-views/BasicControl.qml</file>
         <file>control-views/DebugMenu.qml</file>
         <file>control-views/PlatformInterface.qml</file>
         <file>control-views/CircularNetwork.qml</file>
-        <file>control-views/InfoPopover.qml</file>
-        <file>control-views/NodeConnector.qml</file>
-        <file>control-views/ProvisionerObject.qml</file>
-        <file>control-views/SensorRow.qml</file>
-        <file>control-views/MeshObject.qml</file>
-        <file>control-views/DragTarget.qml</file>
         <file>images/alarmIcon.svg</file>
         <file>images/ambientLightIcon.svg</file>
         <file>images/ambientLightIcon2.svg</file>
@@ -31,11 +24,37 @@
         <file>images/wifiIcon_oneBar.svg</file>
         <file>images/wifiIcon_twoBars.svg</file>
         <file>images/wifiIcon.svg</file>
-        <file>images/spredsheet.png</file>
+        <file>images/spreadsheet.png</file>
         <file>images/office_alarmOn.png</file>
         <file>images/office_doorOpen.png</file>
         <file>images/chargingIcon.svg</file>
         <file>images/chargedIcon.svg</file>
         <file>images/dimmerIcon.svg</file>
+        <file>images/smartHome_blue.png</file>
+        <file>images/smartHome_doorOpen.png</file>
+        <file>images/smartHome_lightsOff.png</file>
+        <file>images/smartHome_lightsOn.png</file>
+        <file>images/smartHome_purple.png</file>
+        <file>images/smartHome_red.png</file>
+        <file>control-views/BasicViews/Office.qml</file>
+        <file>control-views/AdvancedControl.qml</file>
+        <file>control-views/BasicViews/SmartHome.qml</file>
+        <file>control-views/BasicViews/MeshObject.qml</file>
+        <file>control-views/BasicViews/ProvisionerObject.qml</file>
+        <file>control-views/BasicViews/DragTarget.qml</file>
+        <file>control-views/BasicViews/NodeConnector.qml</file>
+        <file>control-views/BasicViews/InfoPopover.qml</file>
+        <file>control-views/BasicViews/SensorRow.qml</file>
+        <file>images/multipleModelsDemo.png</file>
+        <file>images/one-to-many_demo.png</file>
+        <file>images/oneToOneDemo.png</file>
+        <file>images/relayDemo.png</file>
+        <file>images/sensorDemo.png</file>
+        <file>control-views/AdvancedViews/OneToOneDemo.qml</file>
+        <file>control-views/AdvancedViews/CloudDemo.qml</file>
+        <file>control-views/AdvancedViews/MultipleModelDemo.qml</file>
+        <file>control-views/AdvancedViews/OneToManyDemo.qml</file>
+        <file>control-views/AdvancedViews/RelayDemo.qml</file>
+        <file>control-views/AdvancedViews/SensorDemo.qml</file>
     </qresource>
 </RCC>
