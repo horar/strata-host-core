@@ -42,8 +42,8 @@ function Assert-StrataAndHCS {
         Exit-TestScript -1 "Error: cannot find Strata Developer Studio executable at $SDSExecFile.`nAborting."
     }
     # Check for HCS directory
-    If (!(Test-Path $AppDataHCSDir)) {
-        Exit-TestScript -1 "Error: cannot find Host Controller Service directory at $AppDataHCSDir.`nAborting."
+    If (!(Test-Path $HCSAppDataDir)) {
+        Exit-TestScript -1 "Error: cannot find Host Controller Service directory at $HCSAppDataDir.`nAborting."
     }
 }
 
@@ -106,6 +106,17 @@ function Stop-SDS {
         Start-Sleep -Seconds 1
     }
 }
+# Start one instance of Strata and wait (to give time for DB replication)
+# waiting time parameter is optional
+function Start-SDSAndWait {
+    Param (
+        [Parameter(Mandatory = $false)][int]$seconds
+    )
+    Start-Process -FilePath $SDSExecFile
+    if ($seconds) {
+        Start-Sleep -Seconds 5
+    }
+}
 
 # Start one instance of HCS and wait (to give time for DB replication)
 function Start-HCSAndWait {
@@ -121,7 +132,7 @@ function Start-HCSAndWait {
 
 function Restore-Strata_INI {
     # Delete temporary .ini file and restore original
-    Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $AppDataHCSDir)
+    Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $HCSAppDataDir)
     If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini") {
         Remove-Item -Path "$AppData_OnSemi_dir\Strata Developer Studio.ini"
         Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" "$AppData_OnSemi_dir\Strata Developer Studio.ini"

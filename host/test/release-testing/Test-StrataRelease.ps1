@@ -24,12 +24,11 @@ Set-Variable "HCSTCPEndpoint" "tcp://127.0.0.1:5563"
 
 # Define paths
 Set-Variable "SDSRootDir"    "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
-Set-Variable "AppDataHCSDir" "$Env:AppData\ON Semiconductor\hcs"
+Set-Variable "HCSAppDataDir" "$Env:AppData\ON Semiconductor\hcs"
 Set-Variable "HCSConfigFile" "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
 Set-Variable "HCSExecFile"   "$SDSRootDir\HCS\hcs.exe"
 Set-Variable "SDSExecFile"   "$SDSRootDir\Strata Developer Studio.exe"
-Set-Variable "HCSDbFile"     "$AppDataHCSDir\db\strata_db\db.sqlite3"
-Set-Variable "TestRoot"      $PSScriptRoot
+Set-Variable "HCSDbFile"     "$HCSAppDataDir\db\strata_db\db.sqlite3"
 
 # Define variables for server authentication credentials needed to acquire login token
 Set-Variable "SDSServer"      "http://18.191.108.5/"      # "https://strata.onsemi.com"
@@ -37,8 +36,8 @@ Set-Variable "SDSLoginServer" "http://18.191.108.5/login" # "https://strata.onse
 Set-Variable "SDSLoginInfo"   '{"username":"test@test.com","password":"Strata12345"}'
 
 # Define paths for Python scripts ran by this script
-Set-Variable "PythonCollateralDownloadTest" "$TestRoot/hcs/hcs-collateral-download-test.py"
-Set-Variable "PythonControlViewTest"        "$TestRoot/strataDev/control-view-test.py"
+Set-Variable "PythonCollateralDownloadTest" "$PSScriptRoot/hcs/hcs-collateral-download-test.py"
+Set-Variable "PythonControlViewTest"        "$PSScriptRoot/strataDev/control-view-test.py"
 
 # Import common functions
 . "$PSScriptRoot\Common-Functions.ps1"
@@ -55,43 +54,49 @@ Set-Variable "PythonControlViewTest"        "$TestRoot/strataDev/control-view-te
 # Import functions for test "Test-SDSControlViews"
 . "$PSScriptRoot\strataDev\Test-SDSControlViews.ps1"
 
+# Import functions for test "Test-SDSnstaller"
+. "$PSScriptRoot\installer\Test-SDSInstaller.ps1"
+
 #------------------------------------------------------[Pre-requisite checks]------------------------------------------------------
 
 Write-Host "`n`nPerforming initial checks...`n"
+
+# Search for PSSQLite
+Assert-PSSQLite
 
 # Search for Python tools
 Assert-PythonAndPyzmq
 
 # Search for SDS and HCS
-Assert-StrataAndHCS
+#Assert-StrataAndHCS
 
 # Search for Python scripts
 Assert-PythonScripts
-
-# Search for PSSQLite
-Assert-PSSQLite
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
 Write-Host "Starting tests...`n"
 
+# Run Test-SDSInstaller
+$SDSInstallerResults = Test-SDSInstaller
+
 # Run Test-Database (HCS database testing)
-$DatabaseResults = Test-Database
+#$DatabaseResults = Test-Database
 
 # Run Test-TokenAndViewsDownload
-$TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
+#$TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
 
 # Run Test-CollateralDownload (HCS collateral download testing)
-$CollateralDownloadResults = Test-CollateralDownload
+#$CollateralDownloadResults = Test-CollateralDownload
 
 # Run Test-SDSControlViews (SDS control view testing)
-$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
+#$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
 
 Show-TestSummary
 
 #------------------------------------------------------------[Clean up]-------------------------------------------------------------
 
-Restore-Strata_INI
-Remove-TemporaryFiles
+#Restore-Strata_INI
+#Remove-TemporaryFiles
 
 Write-Host "`n`nTesting complete!`n`n"
