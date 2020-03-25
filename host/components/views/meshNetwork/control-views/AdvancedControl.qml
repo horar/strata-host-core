@@ -209,6 +209,8 @@ Rectangle{
 
     }
 
+
+
     Widget09.SGResponsiveScrollView {
         id: consoleScrollView
 
@@ -324,6 +326,36 @@ Rectangle{
                 }
             }
         }
+    }
+
+    Button{
+        id:resetButton
+
+        anchors.right: parent.right
+        anchors.rightMargin: 20
+        anchors.top:parent.top
+        anchors.topMargin: 50
+
+        text:"clear"
+
+        contentItem: Text {
+                text: resetButton.text
+                font.pixelSize: 20
+                opacity: enabled ? 1.0 : 0.3
+                color: "grey"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
+
+            background: Rectangle {
+                implicitWidth: 100
+                implicitHeight: 40
+                color: resetButton.down ? "lightgrey" : "transparent"
+                border.color: "grey"
+                border.width: 2
+                radius: 10
+            }
     }
 
     Rectangle{
