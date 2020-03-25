@@ -16,20 +16,9 @@ Result of the installer test
 .NOTES
 Version:        1.0
 Creation Date:  03/10/2020
-Purpose/Change: Initial script development
 
 .PARAMETER SDSInstallerPath
  The path of Strata Developer Studio installer that will be tested
-
-.EXAMPLE
-SDSInstallerTest.ps1 -SDSInstallerPath "PAHT_TO_STRATA_INSTALLER"
-Description:
-Will test the Strata installer that got passed to this script
-
-.EXAMPLE 
-SDSInstallerTest.ps1
-Description:
-Will prompte you to specify an installer first, then run the test
 #>
 function Test-SDSInstaller {
     [CmdletBinding()]

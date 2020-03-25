@@ -29,6 +29,7 @@ Set-Variable "HCSConfigFile" "$Env:ProgramData\ON Semiconductor\Strata Developer
 Set-Variable "HCSExecFile"   "$SDSRootDir\HCS\hcs.exe"
 Set-Variable "SDSExecFile"   "$SDSRootDir\Strata Developer Studio.exe"
 Set-Variable "HCSDbFile"     "$HCSAppDataDir\db\strata_db\db.sqlite3"
+Set-Variable "TestRoot"      $PSScriptRoot
 
 # Define variables for server authentication credentials needed to acquire login token
 Set-Variable "SDSServer"      "http://18.191.108.5/"      # "https://strata.onsemi.com"
@@ -81,16 +82,16 @@ Write-Host "Starting tests...`n"
 $SDSInstallerResults = Test-SDSInstaller
 
 # Run Test-Database (HCS database testing)
-#$DatabaseResults = Test-Database
+$DatabaseResults = Test-Database
 
 # Run Test-TokenAndViewsDownload
-#$TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
+$TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
 
 # Run Test-CollateralDownload (HCS collateral download testing)
-#$CollateralDownloadResults = Test-CollateralDownload
+$CollateralDownloadResults = Test-CollateralDownload
 
 # Run Test-SDSControlViews (SDS control view testing)
-#$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
+$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
 
 Show-TestSummary
 

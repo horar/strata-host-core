@@ -34,8 +34,8 @@ function Test-TokenAndViewsDownload {
     Write-Separator
 
     # Define some derived paths used in this script
-    Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $AppDataHCSDir)
-    Set-Variable "PlatformSelector_dir" "$AppDataHCSDir\documents\platform_selector"
+    Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $HCSAppDataDir)
+    Set-Variable "PlatformSelector_dir" "$HCSAppDataDir\documents\platform_selector"
 
     # Attempt to acquire token information from server
     Write-Host "TEST 1: Token/authentication server testing (using endpoint $SDSLoginServer)"
