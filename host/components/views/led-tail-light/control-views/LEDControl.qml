@@ -1228,7 +1228,6 @@ Item {
                                     stepSize: 1
                                     toText.text: "60mA"
                                     fromText.text: "0mA"
-
                                 }
 
                             }
