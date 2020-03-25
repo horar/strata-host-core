@@ -11,8 +11,10 @@ Slider {
     live: false
 
     property var rgbArray: hToRgb(value)
-    property string color: "red"
+    property string color: "yellow"
     property int color_value: 0
+    property real slider_start_color: 0
+    property real slider_start_color2 : 1
 
     background: Rectangle {
         y: 4
@@ -25,7 +27,7 @@ Slider {
             start: Qt.point(0, 0)
             end: Qt.point(0, height)
             gradient: Gradient {
-                GradientStop { position: 0.0; color: Qt.hsva(0.0,1,1,1) }
+                GradientStop { position: 0.0; color: Qt.hsva(slider_start_color,slider_start_color2,1,1) }
                 GradientStop { position: 1.0; color: Qt.hsva(0.0,1,0,1) }
             }
         }

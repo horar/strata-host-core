@@ -35,9 +35,10 @@ Item {
                         text: "Output Enable (OEN)"
                         alignment: SGAlignedLabel.SideLeftCenter
                         anchors {
-                            left: parent.left
+                            right: parent.right
                             verticalCenter: parent.verticalCenter
-                            leftMargin: 20
+                            rightMargin: 60
+
                         }
                         fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
@@ -66,9 +67,10 @@ Item {
                         text: "Lock PWM Duty Together"
                         alignment: SGAlignedLabel.SideLeftCenter
                         anchors {
-                            left: parent.left
+                            right: parent.right
                             verticalCenter: parent.verticalCenter
-                            leftMargin: 20
+                            rightMargin: 60
+
                         }
 
                         fontSizeMultiplier: ratioCalc * 1.2
@@ -97,9 +99,10 @@ Item {
                         text: "Lock PWM EN Together"
                         alignment: SGAlignedLabel.SideLeftCenter
                         anchors {
-                            left: parent.left
+                            right: parent.right
                             verticalCenter: parent.verticalCenter
-                            leftMargin: 20
+                            rightMargin: 60
+
                         }
                         fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
@@ -128,9 +131,10 @@ Item {
                         text: "PWM Linear/Log"
                         alignment: SGAlignedLabel.SideLeftCenter
                         anchors {
-                            left: parent.left
+                            right: parent.right
                             verticalCenter: parent.verticalCenter
-                            leftMargin: 20
+                            rightMargin: 60
+
                         }
                         fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
@@ -161,9 +165,10 @@ Item {
                         text: "Auto Fault Recovery"
                         alignment: SGAlignedLabel.SideLeftCenter
                         anchors {
-                            left: parent.left
+                            right: parent.right
                             verticalCenter: parent.verticalCenter
-                            leftMargin: 20
+                            rightMargin: 60
+
                         }
 
                         fontSizeMultiplier: ratioCalc * 1.2
@@ -192,9 +197,10 @@ Item {
                         text: "?"
                         alignment: SGAlignedLabel.SideLeftCenter
                         anchors {
-                            left: parent.left
+                            right: parent.right
                             verticalCenter: parent.verticalCenter
-                            leftMargin: 20
+                            rightMargin: 60
+
                         }
 
                         fontSizeMultiplier: ratioCalc * 1.2
@@ -223,9 +229,10 @@ Item {
                         text: "PWM Frequency (Hz)"
                         alignment: SGAlignedLabel.SideLeftCenter
                         anchors {
-                            left: parent.left
+                            right: parent.right
                             verticalCenter: parent.verticalCenter
-                            leftMargin: 20
+                            rightMargin: 60
+
                         }
                         fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
@@ -246,18 +253,19 @@ Item {
                         target: openLoadDiagnostic
                         text: "I2C Open Load Diagnostic"
                         alignment: SGAlignedLabel.SideLeftCenter
+
                         anchors {
-                            left: parent.left
+                            right: parent.right
                             verticalCenter: parent.verticalCenter
-                            leftMargin: 20
+                            rightMargin: 60
                         }
+
                         fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
 
                         SGComboBox {
                             id: openLoadDiagnostic
                             fontSizeMultiplier: ratioCalc
-
                             model: ["No Diagnostic", "Auto Retry", "Detect Only", "No Regulations\nChange"]
                         }
                     }
@@ -422,6 +430,8 @@ Item {
                                                 height: parent.height
                                                 orientation: Qt.Vertical
                                                 anchors.centerIn: parent
+                                                slider_start_color: 0.1666
+
 
                                             }
                                         }
@@ -492,6 +502,8 @@ Item {
                                                 height: parent.height
                                                 orientation: Qt.Vertical
                                                 anchors.centerIn: parent
+                                                slider_start_color: 0.1666
+
 
                                             }
                                         }
@@ -564,6 +576,8 @@ Item {
                                                 height: parent.height
                                                 orientation: Qt.Vertical
                                                 anchors.centerIn: parent
+                                                slider_start_color: 0.1666
+
 
                                             }
                                         }
@@ -634,6 +648,8 @@ Item {
                                                 height: parent.height
                                                 orientation: Qt.Vertical
                                                 anchors.centerIn: parent
+                                                slider_start_color: 0.1666
+
 
                                             }
                                         }
@@ -653,6 +669,7 @@ Item {
                                                 fontSizeMultiplier: ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
+
                                             }
                                         }
 
@@ -703,6 +720,8 @@ Item {
                                                 height: parent.height
                                                 orientation: Qt.Vertical
                                                 anchors.centerIn: parent
+                                                slider_start_color: 0.0
+                                                slider_start_color2: 0
 
                                             }
                                         }
@@ -773,6 +792,8 @@ Item {
                                                 height: parent.height
                                                 orientation: Qt.Vertical
                                                 anchors.centerIn: parent
+                                                slider_start_color: 0.0
+                                                slider_start_color2: 0
 
                                             }
                                         }
@@ -842,6 +863,8 @@ Item {
                                                 height: parent.height
                                                 orientation: Qt.Vertical
                                                 anchors.centerIn: parent
+                                                slider_start_color: 0.0
+                                                slider_start_color2: 0
 
                                             }
                                         }
@@ -912,6 +935,8 @@ Item {
                                                 height: parent.height
                                                 orientation: Qt.Vertical
                                                 anchors.centerIn: parent
+                                                slider_start_color: 0.0
+                                                slider_start_color2: 0
 
                                             }
                                         }
