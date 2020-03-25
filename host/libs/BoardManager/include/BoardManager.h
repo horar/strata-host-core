@@ -11,6 +11,7 @@
 #include <QHash>
 #include <QVariantMap>
 #include <QVector>
+#include <QSharedPointer>
 
 #include <SerialDevice.h>
 #include <DeviceProperties.h>
@@ -72,8 +73,8 @@ namespace strata {
         Q_INVOKABLE QVariantMap getConnectionInfo(const int connectionId);
 
         /**
-         * Get list of available connection IDs.
-         * @return list of available connection IDs (those, which have serial port opened)
+         * Get list of available device IDs.
+         * @return list of available device IDs (those, which have serial port opened)
          */
         QVector<int> readyDeviceIds();
 
@@ -122,7 +123,7 @@ namespace strata {
         void newMessage(int deviceId, QString message);
 
         /**
-         * Emitted when required operation cannot be fulfilled (e.g. connection ID does not exist).
+         * Emitted when required operation cannot be fulfilled (e.g. device ID does not exist).
          * @param deviceId device ID
          */
         // DEPRECATED
@@ -151,13 +152,13 @@ namespace strata {
         // There is no need to use lock now because there is only one event loop in application. But if this library
         // will be used across QThreads (more event loops in application) in future, mutex will be necessary.
 
-        // Access to these 3 members should be protected by mutex (one mutex for all) in case of multithread usage.
+        // Access to next 3 members should be protected by mutex (one mutex for all) in case of multithread usage.
         // Do not emit signals in block of locked code (because their slots are executed immediately in QML
         // and deadlock can occur if from QML is called another function which uses same mutex).
         std::set<int> serialPortsList_;
-        std::map<int, QString> serialIdToName_;
+        QHash<int, QString> serialIdToName_;
         QHash<int, SerialDeviceShPtr> openedSerialPorts_;
-        std::map<int, std::unique_ptr<DeviceOperations>> serialDeviceOprations_;
+        QHash<int, QSharedPointer<DeviceOperations>> serialDeviceOprations_;
 
         // flag if require response to get_firmware_info command
         bool reqFwInfoResp_;

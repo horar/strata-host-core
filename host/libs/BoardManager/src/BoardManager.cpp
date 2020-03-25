@@ -6,7 +6,6 @@
 
 #include <QSerialPortInfo>
 
-
 namespace strata {
 
 BoardManager::BoardManager() {
@@ -24,7 +23,7 @@ void BoardManager::sendMessage(const int deviceId, const QString &message) {
     // in case of multithread usage lock access to openedSerialPorts_
     auto it = openedSerialPorts_.constFind(deviceId);
     if (it != openedSerialPorts_.constEnd()) {
-        it.value()->write(message.toUtf8());
+        it.value()->sendMessage(message.toUtf8());
     }
     else {
         logInvalidDeviceId(QStringLiteral("Cannot send message"), deviceId);
@@ -129,7 +128,7 @@ void BoardManager::checkNewSerialDevices() {
 
     const auto serialPortInfos = QSerialPortInfo::availablePorts();
     std::set<int> ports;
-    std::map<int, QString> idToName;
+    QHash<int, QString> idToName;
 
     for (const QSerialPortInfo& serialPortInfo : serialPortInfos) {
         const QString& name = serialPortInfo.portName();
@@ -145,7 +144,7 @@ void BoardManager::checkNewSerialDevices() {
             continue;
         }
 #endif
-        // conection ID must be int because of integration with QML
+        // device ID must be int because of integration with QML
         int deviceId = static_cast<int>(qHash(name));
         auto [iter, success] = ports.emplace(deviceId);
         if (success == false) {
@@ -153,7 +152,7 @@ void BoardManager::checkNewSerialDevices() {
             qCCritical(logCategoryBoardManager).nospace() << "Cannot add device (hash conflict: 0x" << hex << static_cast<uint>(deviceId) << "): " << name;
             continue;
         }
-        idToName.emplace(deviceId, name);
+        idToName.insert(deviceId, name);
 
         // qCDebug(logCategoryBoardManager).nospace() << "Found serial device, ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " << name;
     }
@@ -205,7 +204,7 @@ void BoardManager::computeListDiff(std::set<int>& list, std::set<int>& added_por
 
 // in case of multithread usage mutex must be locked before calling this function (due to modification openedSerialPorts_)
 bool BoardManager::addedSerialPort(const int deviceId) {
-    const QString name = serialIdToName_[deviceId];
+    const QString name = serialIdToName_.value(deviceId);
 
     SerialDeviceShPtr device = std::make_shared<SerialDevice>(deviceId, name);
 
@@ -216,15 +215,16 @@ bool BoardManager::addedSerialPort(const int deviceId) {
 
         connect(device.get(), &SerialDevice::msgFromDevice, this, &BoardManager::handleNewMessage);  // DEPRECATED
 
-        auto operation = std::make_unique<DeviceOperations>(device);
+        // QSharedPointer because QScopedPointer does not have custom deleter.
+        // We need deleteLater() because DeviceOperations object is deleted in slot connected to signal from it.
+        auto operation = QSharedPointer<DeviceOperations>(new DeviceOperations(device), &QObject::deleteLater);
 
         connect(operation.get(), &DeviceOperations::finished, this, &BoardManager::handleOperationFinished);
         connect(operation.get(), &DeviceOperations::error, this, &BoardManager::handleBoardError);
 
         operation->identify(reqFwInfoResp_);
 
-        serialDeviceOprations_.erase(deviceId);  // to be sure
-        serialDeviceOprations_.emplace(deviceId, std::move(operation));
+        serialDeviceOprations_.insert(deviceId, operation);
 
         return true;
     }
@@ -236,7 +236,7 @@ bool BoardManager::addedSerialPort(const int deviceId) {
 
 // in case of multithread usage mutex must be locked before calling this function (due to modification openedSerialPorts_)
 void BoardManager::removedSerialPort(const int deviceId) {
-    serialDeviceOprations_.erase(deviceId);
+    serialDeviceOprations_.remove(deviceId);
     auto it = openedSerialPorts_.find(deviceId);
     if (it != openedSerialPorts_.end()) {
         it.value()->close();
@@ -262,7 +262,7 @@ void BoardManager::handleOperationFinished(int operation, int) {
     }
 
     // operation has finished, we do not need DeviceOperations object anymore
-    serialDeviceOprations_.erase(deviceId);
+    serialDeviceOprations_.remove(deviceId);
 
     emit boardReady(deviceId, boardRecognized);
 }
@@ -274,7 +274,7 @@ void BoardManager::handleBoardError(QString errMsg) {
     }
     int deviceId = devOp->getDeviceId();
     // operation has finished with error, we do not need DeviceOperations object anymore
-    serialDeviceOprations_.erase(deviceId);
+    serialDeviceOprations_.remove(deviceId);
 
     emit boardError(deviceId, errMsg);
 }

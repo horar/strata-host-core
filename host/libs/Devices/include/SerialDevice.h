@@ -25,7 +25,7 @@ namespace strata {
     public:
         /**
          * SerialDevice constructor
-         * @param connectionId device connection ID
+         * @param deviceId device ID
          * @param name device name
          */
         SerialDevice(const int deviceId, const QString& name);
@@ -47,10 +47,11 @@ namespace strata {
         void close();
 
         /**
-         * Write data to serial device.
-         * @param data message to be written to device
+         * Send message to serial device. Emits serialDeviceError in case of failure.
+         * @param msg message to be written to device
+         * @return true if message was sent, otherwise false
          */
-        void write(const QByteArray& data);
+        bool sendMessage(const QByteArray msg);
 
         /**
          * Get information about serial device (platform ID, bootloader version, ...).
@@ -88,29 +89,32 @@ namespace strata {
 
         /**
          * Emitted when error occured during communication on the serial port.
+         * @param errCode error code (value < 0 is custom error code, other values are from QSerialPort::SerialPortError)
          * @param msg error description
          */
-        void serialDeviceError(QString msg);
-
-    // signals only for internal use:
-        // Qt5 private signals: https://woboq.com/blog/how-qt-signals-slots-work-part2-qt5.html
-        void writeToPort(const QByteArray& data, QPrivateSignal);
+        void serialDeviceError(int errCode, QString msg);
 
     private slots:
         void readMessage();
         void handleError(QSerialPort::SerialPortError error);
-        void writeData(const QByteArray& data);
 
     private:
-        // function used by friend class DeviceOperations
+        bool writeData(const QByteArray& data, quintptr lockId);
+        // functions used by friend class DeviceOperations
         void setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer);
+        bool lockDevice(quintptr lockId);
+        void unlockDevice(quintptr lockId);
+        bool sendMessage(const QByteArray msg, quintptr lockId);
 
         const int deviceId_;
         QString portName_;
         QSerialPort serialPort_;
         std::string readBuffer_;  // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
 
-        bool deviceBusy_;
+        // If some operation (identification, flashing firmware, ...) is running, device should be locked
+        // for other operations or sending messages. Device can be locked only by DeviceOperations class.
+        // Address of DeviceOperations class instance is used as value of deviceLock_. 0 means unlocked.
+        quintptr deviceLock_;
 
         QString platformId_;
         QString classId_;

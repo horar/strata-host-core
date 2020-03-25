@@ -23,7 +23,8 @@ QDebug operator<<(QDebug dbg, const DeviceOperations* devOp) {
 }
 
 DeviceOperations::DeviceOperations(SerialDeviceShPtr device) :
-    device_(device), operation_(Operation::None), state_(State::None), activity_(Activity::None), reqFwInfoResp_(true)
+    device_(device), responseTimer_(this), operation_(Operation::None),
+    state_(State::None), activity_(Activity::None), reqFwInfoResp_(true)
 {
     deviceId_ = static_cast<uint>(device_->getDeviceId());
 
@@ -39,6 +40,7 @@ DeviceOperations::DeviceOperations(SerialDeviceShPtr device) :
 }
 
 DeviceOperations::~DeviceOperations() {
+    device_->unlockDevice(reinterpret_cast<quintptr>(this));
     qCDebug(logCategoryDeviceOperations) << this << "Finished operations.";
 }
 
@@ -69,13 +71,20 @@ void DeviceOperations::startOperation(Operation operation) {
     if (operation_ != Operation::None) {  // another operation is runing
         // flash firmware chunk is a special case
         if (operation_ != Operation::FlashFirmwareChunk || operation != Operation::FlashFirmwareChunk) {
-            QString err_msg("Cannot start operation, because another operation is running.");
+            QString err_msg(QStringLiteral("Cannot start operation, because another operation is running."));
             qCWarning(logCategoryDeviceOperations) << this << err_msg;
             emit error(err_msg);
             return;
         }
     }
     operation_ = operation;
+
+    if (device_->lockDevice(reinterpret_cast<quintptr>(this)) == false) {
+        QString err_msg(QStringLiteral("Cannot start operation, because cannot get access to device."));
+        qCWarning(logCategoryDeviceOperations) << this << err_msg;
+        emit error(err_msg);
+        return;
+    }
 
     // Some boards need time for booting,
     // wait before sending JSON messages for certain operations.
@@ -106,14 +115,16 @@ void DeviceOperations::startOperation(Operation operation) {
     QTimer::singleShot(delay, [this](){ emit nextStep(QPrivateSignal()); });
 }
 
-void DeviceOperations::finishOperation(Operation operation) {
+void DeviceOperations::finishOperation(Operation operation, int data) {
     resetInternalStates();
-    emit finished(static_cast<int>(operation));
+    device_->unlockDevice(reinterpret_cast<quintptr>(this));
+    emit finished(static_cast<int>(operation), data);
 }
 
 void DeviceOperations::cancelOperation() {
     responseTimer_.stop();
     resetInternalStates();
+    device_->unlockDevice(reinterpret_cast<quintptr>(this));
     emit finished(static_cast<int>(Operation::Cancel));
 }
 
@@ -128,21 +139,24 @@ void DeviceOperations::process() {
     switch (state_) {
     case State::GetFirmwareInfo :
         qCDebug(logCategoryDeviceOperations) << this << "Sending 'get_firmware_info' command.";
-        device_->write(CMD_GET_FIRMWARE_INFO);
-        activity_ = Activity::WaitingForFirmwareInfo;
-        responseTimer_.start();
+        if (device_->sendMessage(CMD_GET_FIRMWARE_INFO, reinterpret_cast<quintptr>(this))) {
+            activity_ = Activity::WaitingForFirmwareInfo;
+            responseTimer_.start();
+        }
         break;
     case State::GetPlatformId :
         qCDebug(logCategoryDeviceOperations) << this << "Sending 'request_platform_id' command.";
-        device_->write(CMD_REQUEST_PLATFORM_ID);
-        activity_ = Activity::WaitingForPlatformId;
-        responseTimer_.start();
+        if (device_->sendMessage(CMD_REQUEST_PLATFORM_ID, reinterpret_cast<quintptr>(this))) {
+            activity_ = Activity::WaitingForPlatformId;
+            responseTimer_.start();
+        }
         break;
     case State::UpdateFirmware :
         qCDebug(logCategoryDeviceOperations) << this << "Sending 'update_firmware' command.";
-        device_->write(CMD_UPDATE_FIRMWARE);
-        activity_ = Activity::WaitingForUpdateFw;
-        responseTimer_.start();
+        if (device_->sendMessage(CMD_UPDATE_FIRMWARE, reinterpret_cast<quintptr>(this))) {
+            activity_ = Activity::WaitingForUpdateFw;
+            responseTimer_.start();
+        }
         break;
     case State::ReadyForFlashFw :
         qCInfo(logCategoryDeviceOperations) << this << "Platform in bootloader mode. Ready for flashing firmware.";
@@ -150,19 +164,21 @@ void DeviceOperations::process() {
         break;
     case State::FlashFwChunk :
         qCDebug(logCategoryDeviceOperations) << this << "Sending 'flash_firmware' command.";
-        device_->write(createFlashFwJson());
-        activity_ = Activity::WaitingForFlashFwChunk;
-        responseTimer_.start();
+        if (device_->sendMessage(createFlashFwJson(), reinterpret_cast<quintptr>(this))) {
+            activity_ = Activity::WaitingForFlashFwChunk;
+            responseTimer_.start();
+        }
         break;
     case State::StartApplication :
         qCDebug(logCategoryDeviceOperations) << this << "Sending 'start_application' command.";
-        device_->write(CMD_START_APPLICATION);
-        activity_ = Activity::WaitingForStartApp;
-        responseTimer_.start();
+        if (device_->sendMessage(CMD_START_APPLICATION, reinterpret_cast<quintptr>(this))) {
+            activity_ = Activity::WaitingForStartApp;
+            responseTimer_.start();
+        }
         break;
     case State::Timeout :
         qCWarning(logCategoryDeviceOperations) << this << "Response timeout (no valid response to the sent command).";
-        emit finished(static_cast<int>(Operation::Timeout));
+        finishOperation(Operation::Timeout);
         break;
     default :
         break;
@@ -179,7 +195,8 @@ void DeviceOperations::handleResponseTimeout() {
     emit nextStep(QPrivateSignal());
 }
 
-void DeviceOperations::handleDeviceError(QString msg) {
+void DeviceOperations::handleDeviceError(int errCode, QString msg) {
+    Q_UNUSED(errCode)
     responseTimer_.stop();
     resetInternalStates();
     qCWarning(logCategoryDeviceOperations) << this << "Error: " << msg;
@@ -231,9 +248,12 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
             case Activity::WaitingForFlashFwChunk :
                 responseTimer_.stop();
                 if (chunkNumber_ == 0 ) {  // the last chunk
-                    resetInternalStates();
+                    finishOperation(Operation::FlashFirmwareChunk, chunkNumber_);
+                } else {
+                    // Chunk was flashed but flashing operation is not finished yet,
+                    // so emit only signal and do not call function finishOperation().
+                    emit finished(static_cast<int>(Operation::FlashFirmwareChunk), chunkNumber_);
                 }
-                emit finished(static_cast<int>(Operation::FlashFirmwareChunk), chunkNumber_);
                 break;
             case Activity::WaitingForStartApp :
                 responseTimer_.stop();

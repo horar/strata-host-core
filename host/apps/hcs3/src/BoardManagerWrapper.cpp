@@ -24,7 +24,7 @@ void BoardManagerWrapper::sendMessage(const int deviceId, const std::string& mes
         return;
     }
     qCDebug(logCategoryHcsBoard).noquote() << "Sending message to board." << logDeviceId(deviceId);
-    it->second.device->write(QByteArray::fromStdString(message));
+    it->second.device->sendMessage(QByteArray::fromStdString(message));
 }
 
 void BoardManagerWrapper::newConnection(int deviceId, bool recognized) {

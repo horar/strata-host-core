@@ -75,13 +75,13 @@ private:
 
     void startOperation(Operation operation);
 
-    void finishOperation(Operation operation);
+    void finishOperation(Operation operation, int data = -1);
 
     void process();
 
     void handleResponseTimeout();
 
-    void handleDeviceError(QString msg);
+    void handleDeviceError(int errCode, QString msg);
 
     void handleDeviceResponse(const QByteArray& data);
 
