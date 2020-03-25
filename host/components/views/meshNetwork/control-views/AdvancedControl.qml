@@ -1,115 +1,348 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as Widget09
+import "AdvancedViews"
 
 import "qrc:/js/help_layout_manager.js" as Help
-
-Widget09.SGResponsiveScrollView {
+Rectangle{
     id: root
 
-    minimumHeight: 800
-    minimumWidth: 1000
+    Widget09.SGResponsiveScrollView {
+        id: demoButonScrollView
 
-    property var message_array : []
-    property var message_log: platformInterface.msg_dbg.msg
-    onMessage_logChanged: {
-        console.log("debug:",message_log)
-        if(message_log !== "") {
-            for(var j = 0; j < messageList.model.count; j++){
-                messageList.model.get(j).color = "black"
+        anchors.left:parent.left
+        anchors.top:parent.top
+        anchors.bottom:parent.bottom
+        width:parent.width*.15
+
+
+        minimumHeight: 800
+        minimumWidth: parent.width * .15
+
+        Rectangle{
+            id:tabSelectorView
+            color:"black"
+            anchors.fill:parent
+            border.color:"black"
+
+            Text {
+                id: demoTabTitle
+                text: "demos"
+                font {
+                    pixelSize: 24
+                }
+                color:"white"
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    top:parent.top
+                }
             }
 
-            messageList.append(message_log,"white")
+            ButtonGroup {
+                buttons: buttonColumn.children
+            }
 
+            Column{
+                id: buttonColumn
+                anchors.top: demoTabTitle.bottom
+                anchors.left:parent.left
+                anchors.right:parent.right
+                anchors.bottom:parent.bottom
+                spacing:1
+
+
+                SGButton{
+                    id:demo1Button
+                    width: parent.width
+                    height: width*.75
+                    text:"one-to-one"
+                    fontSizeMultiplier:1.5
+                    color:"white"
+                    icon.source: "qrc:/views/meshNetwork/images/oneToOneDemo.png"
+                    iconSize:100
+                    display: Button.TextUnderIcon
+                    checkable:true
+                    checked:true
+
+                    onCheckedChanged: {
+                        if (checked)
+                            demoStackLayout.currentIndex = 0
+                    }
+                }
+                SGButton{
+                    id:demo2Button
+                    width: parent.width
+                    height: width*.75
+                    text:"one-to-many"
+                    fontSizeMultiplier:1.5
+                    color:"white"
+                    icon.source: "qrc:/views/meshNetwork/images/one-to-many_demo.png"
+                    iconSize:100
+                    display: Button.TextUnderIcon
+                    checkable:true
+
+                    onCheckedChanged: {
+                        if (checked)
+                            demoStackLayout.currentIndex = 1
+                    }
+                }
+                SGButton{
+                    id:demo3Button
+                    width: parent.width
+                    height: width*.75
+                    text:"relay"
+                    fontSizeMultiplier:1.5
+                    color:"white"
+                    icon.source: "qrc:/views/meshNetwork/images/relayDemo.png"
+                    iconSize:100
+                    display: Button.TextUnderIcon
+                    checkable:true
+
+                    onCheckedChanged: {
+                        if (checked)
+                            demoStackLayout.currentIndex = 2
+                    }
+                }
+                SGButton{
+                    id:demo4Button
+                    width: parent.width
+                    height: width*.75
+                    text:"multiple model"
+                    fontSizeMultiplier:1.5
+                    color:"white"
+                    icon.source: "qrc:/views/meshNetwork/images/multipleModelsDemo.png"
+                    iconSize:100
+                    display: Button.TextUnderIcon
+                    checkable:true
+
+                    onCheckedChanged: {
+                        if (checked)
+                            demoStackLayout.currentIndex = 3
+                    }
+                }
+                SGButton{
+                    id:demo5Button
+                    width: parent.width
+                    height: width*.75
+                    text:"sensor"
+                    fontSizeMultiplier:1.5
+                    color:"white"
+                    icon.source: "qrc:/views/meshNetwork/images/sensorDemo.png"
+                    iconSize:100
+                    display: Button.TextUnderIcon
+                    checkable:true
+
+                    onCheckedChanged: {
+                        if (checked)
+                            demoStackLayout.currentIndex = 4
+                    }
+                }
+                SGButton{
+                    id:demo6Button
+                    width: parent.width
+                    height: width*.75
+                    text:"cloud"
+                    fontSizeMultiplier:1.5
+                    color:"white"
+                    icon.source: "qrc:/views/meshNetwork/images/oneToOneDemo.png"
+                    iconSize:100
+                    display: Button.TextUnderIcon
+                    checkable:true
+
+                    onCheckedChanged: {
+                        if (checked)
+                            demoStackLayout.currentIndex = 5
+                    }
+                }
+
+            }
         }
     }
 
-    Rectangle {
-        id: container
-        parent: root.contentItem
-        anchors {
-            fill: parent
-        }
-        color: "dimgrey"//"white"
+    Rectangle{
+        id:demoContentView
+        color:"white"
+        anchors.left:demoButonScrollView.right
+        anchors.top:parent.top
+        anchors.bottom:parent.bottom
+        width:parent.width*.6
+        border.color:"blue"
 
 
-        Text {
-            id: name
-            text: "Node Communications"
-            font {
-                pixelSize: 60
-            }
-            color:"white"
+
+        StackLayout {
+            id: demoStackLayout
             anchors {
-                horizontalCenter: parent.horizontalCenter
-                top:parent.top
+                top: parent.top
+                bottom: parent.bottom
+                right: parent.right
+                left: parent.left
+            }
+
+            OneToOneDemo {
+                id: rectangleOne
+            }
+
+            OneToManyDemo {
+                id: rectangleTwo
+            }
+
+            RelayDemo {
+                id: rectangleThree
+            }
+
+            MultipleModelDemo {
+                id: rectangleFour
+            }
+
+            SensorDemo {
+                id: rectangleFive
+            }
+
+            CloudDemo {
+                id: rectangleSix
+            }
+        }
+
+    }
+
+    Widget09.SGResponsiveScrollView {
+        id: consoleScrollView
+
+        anchors.left: parent.left
+        anchors.leftMargin: parent.width * .75
+        anchors.top:parent.top
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 100
+        anchors.right:parent.right
+
+
+        minimumHeight: 800
+        minimumWidth: parent.width * .25
+
+        property var message_array : []
+        property var message_log: platformInterface.msg_dbg.msg
+        onMessage_logChanged: {
+            console.log("debug:",message_log)
+            if(message_log !== "") {
+                for(var j = 0; j < messageList.model.count; j++){
+                    messageList.model.get(j).color = "black"
+                }
+
+                messageList.append(message_log,"white")
+
             }
         }
 
         Rectangle {
-            width: parent.width
-            height: (parent.height - name.contentHeight)
-            anchors.left:parent.left
-            anchors.leftMargin: 20
-            anchors.right:parent.right
-            anchors.rightMargin: 20
-            anchors.top:name.bottom
-            anchors.topMargin: 50
-            anchors.bottom:parent.bottom
-            anchors.bottomMargin: 50
-            color: "transparent"
-            SGStatusLogBox{
-                id: messageList
-                anchors.fill: parent
-                //model: messageModel
-                //showMessageIds: true
-                color: "dimgrey"
-                //statusTextColor: "white"
-                //statusBoxColor: "black"
-                statusBoxBorderColor: "dimgrey"
-                fontSizeMultiplier: 2
+            id: container
+            parent: consoleScrollView.contentItem
+            anchors {
+                fill: parent
+            }
+            color: "dimgrey"
 
-                listElementTemplate : {
-                    "message": "",
-                    "id": 0,
-                    "color": "black"
+
+            Text {
+                id: name
+                text: "Node Communications"
+                font {
+                    pixelSize: 24
                 }
-                scrollToEnd: true
-                delegate: Rectangle {
-                    id: delegatecontainer
-                    height: delegateText.height
-                    width: ListView.view.width
-                    color:"dimgrey"
+                color:"white"
+                anchors {
+                    horizontalCenter: parent.horizontalCenter
+                    top:parent.top
+                }
+            }
 
-                    SGText {
-                        id: delegateText
-                        text: { return (
-                                    messageList.showMessageIds ?
-                                        model.id + ": " + model.message :
-                                        model.message
-                                    )}
+            Rectangle {
+                width: parent.width
+                height: (parent.height - name.contentHeight)
+                anchors.left:parent.left
+                anchors.leftMargin: 20
+                anchors.right:parent.right
+                anchors.rightMargin: 20
+                anchors.top:name.bottom
+                anchors.topMargin: 50
+                anchors.bottom:parent.bottom
+                anchors.bottomMargin: 50
+                color: "transparent"
+                SGStatusLogBox{
+                    id: messageList
+                    anchors.fill: parent
+                    //model: messageModel
+                    //showMessageIds: true
+                    color: "dimgrey"
+                    //statusTextColor: "white"
+                    //statusBoxColor: "black"
+                    statusBoxBorderColor: "dimgrey"
+                    fontSizeMultiplier: 2
 
-                        fontSizeMultiplier: messageList.fontSizeMultiplier
-                        color: model.color
-                        wrapMode: Text.WrapAnywhere
-                        width: parent.width
+                    listElementTemplate : {
+                        "message": "",
+                        "id": 0,
+                        "color": "black"
+                    }
+                    scrollToEnd: true
+                    delegate: Rectangle {
+                        id: delegatecontainer
+                        height: delegateText.height
+                        width: ListView.view.width
+                        color:"dimgrey"
+
+                        SGText {
+                            id: delegateText
+                            text: { return (
+                                        messageList.showMessageIds ?
+                                            model.id + ": " + model.message :
+                                            model.message
+                                        )}
+
+                            fontSizeMultiplier: messageList.fontSizeMultiplier
+                            color: model.color
+                            wrapMode: Text.WrapAnywhere
+                            width: parent.width
+                        }
+                    }
+
+                    function append(message,color) {
+                        listElementTemplate.message = message
+                        listElementTemplate.color = color
+                        model.append( listElementTemplate )
+                        return (listElementTemplate.id++)
+                    }
+                    function insert(message,index,color){
+                        listElementTemplate.message = message
+                        listElementTemplate.color = color
+                        model.insert(index, listElementTemplate )
+                        return (listElementTemplate.id++)
                     }
                 }
+            }
+        }
+    }
 
-                function append(message,color) {
-                    listElementTemplate.message = message
-                    listElementTemplate.color = color
-                    model.append( listElementTemplate )
-                    return (listElementTemplate.id++)
-                }
-                function insert(message,index,color){
-                    listElementTemplate.message = message
-                    listElementTemplate.color = color
-                    model.insert(index, listElementTemplate )
-                    return (listElementTemplate.id++)
-                }
+    Rectangle{
+        id:consoleSendView
+        anchors.left: consoleScrollView.left
+        anchors.top:consoleScrollView.bottom
+        anchors.bottom: parent.bottom
+        anchors.right:parent.right
+
+        Text {
+            id: consoleSendName
+            text: "Command View"
+            font {
+                pixelSize: 24
+            }
+            color:"black"
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                verticalCenter:parent.verticalCenter
             }
         }
     }

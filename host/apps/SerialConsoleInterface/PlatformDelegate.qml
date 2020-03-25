@@ -325,6 +325,9 @@ FocusScope {
                 checkable: true
                 onClicked: {
                     automaticScroll = !automaticScroll
+                    if (automaticScroll) {
+                        scrollbackView.positionViewAtEnd()
+                    }
                 }
 
                 Binding {
@@ -402,10 +405,25 @@ FocusScope {
             property int filteredCount: scrollbackModel.count - scrollbackFilterModel.count
         }
 
+        SGWidgets.SGTag {
+            id: inputStatusTag
+            anchors {
+                top: toolButtonRow.bottom
+                left: parent.left
+                topMargin: 2
+                margins: 6
+            }
+
+            verticalPadding: 1
+            color: SGWidgets.SGColorsJS.TANGO_SCARLETRED1
+            textColor: "white"
+            font.bold: true
+        }
+
         SGWidgets.SGTextField {
             id: cmdInput
             anchors {
-                top: toolButtonRow.bottom
+                top: inputStatusTag.bottom
                 left: parent.left
                 right: btnSend.left
                 topMargin: 2
@@ -428,9 +446,13 @@ FocusScope {
             suggestionOpenWithAnyKey: false
             suggestionMaxHeight: 250
             suggestionCloseOnDown: true
+            showCursorPosition: true
+
+            onTextChanged: {
+                inputStatusTag.text = ""
+            }
 
             Keys.onPressed: {
-                isValid = true
                 if (event.key === Qt.Key_Up) {
                     if (!suggestionPopup.opened) {
                         suggestionPopup.open()
@@ -480,16 +502,17 @@ FocusScope {
     }
 
     function sendTextInputTextAsComand() {
-        if (model.status !== Sci.SciPlatformModel.Ready
-                && model.status !== Sci.SciPlatformModel.NotRecognized) {
-            return
-        }
+        var result = sciModel.platformModel.sendMessage(model.index, cmdInput.text)
+        var errorString = result["errorString"]
 
-        var successful = sciModel.platformModel.sendMessage(model.index, cmdInput.text)
-        if (successful) {
+        if (result["errorString"].length === 0) {
             cmdInput.clear()
         } else {
-            cmdInput.isValid = false
+            if (result["offset"] < 0) {
+                inputStatusTag.text = "Cannot send message - " + result["errorString"]
+            } else {
+                inputStatusTag.text = "JSON error at position " + result["offset"] + " - " + result["errorString"]
+            }
         }
     }
 
