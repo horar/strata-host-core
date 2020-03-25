@@ -25,9 +25,11 @@ TextField {
     property bool suggestionOpenWithAnyKey: true
     property int suggestionMaxHeight: 120
     property bool suggestionDelegateNumbering: false
+    property bool suggestionDelegateRemovable: false
     property alias suggestionPopup: suggestionPopupLoader.item
 
     signal suggestionDelegateSelected(int index)
+    signal suggestionDelegateRemoveRequested(int index)
 
     placeholderText: "Input..."
     selectByMouse: true
@@ -124,9 +126,14 @@ TextField {
             closeOnDown: suggestionCloseOnDown
             maxHeight: suggestionMaxHeight
             delegateNumbering: suggestionDelegateNumbering
+            delegateRemovable: suggestionDelegateRemovable
 
             onDelegateSelected: {
                 control.suggestionDelegateSelected(index)
+            }
+
+            onRemoveRequested: {
+                suggestionDelegateRemoveRequested(index)
             }
         }
     }
