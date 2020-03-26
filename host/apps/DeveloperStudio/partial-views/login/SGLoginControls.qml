@@ -301,18 +301,6 @@ Item {
                 var data = { "user_id": resultObject.user_id, "first_name":resultObject.first_name, "last_name": resultObject.last_name }
                 NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT,data)
                 usernameField.updateModel()
-
-                // [TODO][prasanth]: jwt will be created/received in the hcs
-                // for now, jwt will be received in the UI and then sent to HCS
-                var jwt_json = {
-                    "hcs::cmd":"jwt_token",
-                    "payload": {
-                        "jwt":resultObject.jwt,
-                        "user_name":resultObject.user_id
-                    }
-                }
-                console.log(Logger.devStudioCategory, "sending the jwt json to hcs")
-                coreInterface.sendCommand(JSON.stringify(jwt_json))
             } else {
                 loginControls.visible = true
                 connectionStatus.text = ""

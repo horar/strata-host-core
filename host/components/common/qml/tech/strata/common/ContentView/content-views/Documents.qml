@@ -1,40 +1,97 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
-import "qrc:/include/Modules/"      // On Semi QML Modules
-import "content-widgets"
-
-import tech.strata.sgwidgets 0.9
-import tech.strata.fonts 1.0
+import tech.strata.sgwidgets 1.0 as SGWidgets
 
 Item {
     id: root
     width: parent.width
-    height: pdfListView.height + 20
-    property alias model: pdfListView.model
+    height: wrapper.height + 20
 
-    ListView {
-        id: pdfListView
-        anchors {
-            centerIn: parent
-        }
-        height: contentItem.height
+    property alias model: repeater.model
+
+    Column {
+        id: wrapper
         width: parent.width - 20
-        clip: true
-
-        ButtonGroup {
-            id: buttonGroup
-            exclusive: true
+        anchors {
+            top: parent.top
+            topMargin: 10
+            horizontalCenter: parent.horizontalCenter
         }
 
-        delegate: SGSelectorButton {
-            title: model.dirname.replace(/_/g, ' ');
-            uri: "file://localhost/" + model.uri
-            width: pdfListView.width
-            bottomMargin: 2
-            centerText: true
-            capitalize: true
-            height: 40 + bottomMargin
-            underline: true
+        Repeater {
+            id: repeater
+
+            delegate: BaseDocDelegate {
+                id: delegate
+                width: wrapper.width
+
+                bottomPadding: 2
+
+                property string effectiveUri: "file://localhost/" + model.uri
+
+                Binding {
+                    target: delegate
+                    property: "checked"
+                    value: pdfViewer.url.toString() === effectiveUri
+                }
+
+                onCheckedChanged: {
+                    if (checked) {
+                        pdfViewer.url = effectiveUri
+                    }
+                }
+
+                contentSourceComponent: Item {
+                     height: textItem.contentHeight + 20
+
+                     SGWidgets.SGText {
+                         id: textItem
+
+                         anchors {
+                             verticalCenter: parent.verticalCenter
+                             left: parent.left
+                             leftMargin: chevronImage.width + chevronImage.anchors.rightMargin
+                             right: parent.right
+                             rightMargin: textItem.anchors.leftMargin
+                         }
+
+                         font.bold: delegate.checked ? false : true
+                         horizontalAlignment: Text.AlignHCenter
+                         text: model.dirname
+                         alternativeColorEnabled: delegate.checked === false
+                         fontSizeMultiplier: 1.1
+                         wrapMode: Text.Wrap
+                     }
+
+                     Rectangle {
+                         id: underline
+                         width: textItem.contentWidth
+                         height: 1
+                         anchors {
+                             top: textItem.bottom
+                             topMargin: 2
+                             horizontalCenter: textItem.horizontalCenter
+                         }
+
+                         color: "#33b13b"
+                         visible: delegate.checked
+                     }
+
+                     SGWidgets.SGIcon {
+                         id: chevronImage
+                         height: 20
+                         width: height
+                         anchors {
+                             right: parent.right
+                             rightMargin: 2
+                             verticalCenter: parent.verticalCenter
+                         }
+
+                         source: "qrc:/sgimages/chevron-right.svg"
+                         visible: delegate.checked
+                     }
+                }
+            }
         }
     }
 }

@@ -12,6 +12,8 @@ TextField {
     property bool isValidAffectsBackground: false
     property alias leftIconColor: leftIconItem.iconColor
     property alias leftIconSource: leftIconItem.source
+    property bool darkMode: false
+    property bool showCursorPosition: false
 
     /* properties for suggestion list */
     property variant suggestionListModel
@@ -34,6 +36,9 @@ TextField {
     Keys.priority: Keys.BeforeItem
     font.pixelSize: SGWidgets.SGSettings.fontPixelSize
     leftPadding: leftIconSource.toString() ? leftIconItem.height + 16 : 10
+    rightPadding: cursorInfoLoader.status === Loader.Ready ? cursorInfoLoader.width + 16 : 10
+    color: darkMode ? "white" : control.palette.text
+    opacity: control.darkMode && control.enabled === false ? 0.5 : 1
 
     Keys.onPressed: {
         if (suggestionOpenWithAnyKey && suggestionPopupLoader.status === Loader.Ready) {
@@ -65,14 +70,14 @@ TextField {
                 return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 1.9)
             }
 
-            return control.palette.base
+            return darkMode ? "#5e5e5e" : control.palette.base
         }
         border.width: control.activeFocus ? 2 : 1
         border.color: {
             if (control.activeFocus) {
                 return control.palette.highlight
             } else if (isValid) {
-                return control.palette.mid
+                return darkMode ? "black" : control.palette.mid
             } else {
                 return SGWidgets.SGColorsJS.ERROR_COLOR
             }
@@ -86,6 +91,17 @@ TextField {
             width: height
             height: parent.height - 2*10
             iconColor: "darkgray"
+        }
+
+        Loader {
+            id: cursorInfoLoader
+            anchors {
+                right: parent.right
+                rightMargin: 10
+                verticalCenter: parent.verticalCenter
+            }
+
+            sourceComponent: showCursorPosition ? cursorInfoComponent : undefined
         }
     }
 
@@ -112,6 +128,18 @@ TextField {
             onDelegateSelected: {
                 control.suggestionDelegateSelected(index)
             }
+        }
+    }
+
+    Component {
+        id: cursorInfoComponent
+
+        SGWidgets.SGTag {
+            text: control.cursorPosition
+            color: Qt.rgba(0, 0, 0, 0.3)
+            textColor: "white"
+            horizontalPadding: 2
+            verticalPadding: 2
         }
     }
 }

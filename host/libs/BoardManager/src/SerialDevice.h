@@ -10,6 +10,8 @@
 #include <QTimer>
 #include <QVariantMap>
 
+#include <DeviceProperties.h>
+
 namespace spyglass {
 
     class SerialDevice : public QObject
@@ -40,9 +42,10 @@ namespace spyglass {
 
         /**
          * Start device identification - send initial JSON commands and parse responses.
+         * @param getFwInfo if true send also get_firmware_info command
          * @return true if device identification has start, otherwise false
          */
-        bool launchDevice();
+        bool launchDevice(bool getFwInfo = true);
 
         /**
          * Write data to serial device.
@@ -55,6 +58,14 @@ namespace spyglass {
          * @return QVariantMap filled with information about device
          */
         QVariantMap getDeviceInfo() const;
+
+        /**
+         * Get property.
+         * @param property value from enum DeviceProperties
+         * @return QString filled with value of required property
+         */
+        QString getProperty(DeviceProperties property) const;
+
 
         friend QDebug operator<<(QDebug dbg, const SerialDevice* d);
 
@@ -98,7 +109,7 @@ namespace spyglass {
 
         int connection_id_;
         uint ucid_;  // unsigned connection ID - auxiliary variable for logging
-        QString name_;
+        QString port_name_;
         QSerialPort serial_port_;
         std::string read_buffer_;
         QTimer response_timer_;

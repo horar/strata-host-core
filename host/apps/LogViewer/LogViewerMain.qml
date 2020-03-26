@@ -32,12 +32,32 @@ Item {
     property int sidePanelWidth: 150
     property bool searchingMode: false
     property bool searchTagShown: false
+    property bool automaticScroll: true
 
     property int searchResultCount: logFilesModelProxy.count
     property int statusBarHeight: statusBar.height
 
     LogViewModels.LogModel {
         id: logFilesModel
+
+        onRowsInserted: {
+            if (automaticScroll) {
+                scrollbackViewAtEndTimer.restart()
+            }
+        }
+
+        onModelReset: {
+            scrollbackViewAtEndTimer.restart()
+        }
+    }
+
+    Timer {
+        id: scrollbackViewAtEndTimer
+        interval: 1
+
+        onTriggered: {
+            primaryLogView.positionViewAtEnd()
+        }
     }
 
     QtLabsSettings.Settings {
@@ -52,6 +72,7 @@ Item {
         property alias levelColumnVisible: checkBoxLevel.checked
         property alias sidePanelShown: logViewerMain.sidePanelShown
         property alias sidePanelWidth: logViewerMain.sidePanelWidth
+        property alias automaticScroll: logViewerMain.automaticScroll
     }
 
     Component {
@@ -129,7 +150,7 @@ Item {
                     filePath = path
                     primaryLogView.resetRequestedWith()
                     secondaryLogView.resetRequestedWith()
-                    var errorString = logFilesModel.populateModel(CommonCPP.SGUtilsCpp.urlToLocalFile(filePath))
+                    var errorString = logFilesModel.followFile(CommonCPP.SGUtilsCpp.urlToLocalFile(filePath))
                     fileLoaded = true
                     if (errorString.length > 0) {
                         fileLoaded = false
@@ -178,19 +199,48 @@ Item {
             }
         }
 
-        SGWidgets.SGIconButton {
-            id: wrapButton
-            icon.source: "qrc:/images/text-wrap.svg"
-            iconSize: defaultIconSize
-            backgroundOnlyOnHovered: false
-            checkable: true
-            enabled: fileLoaded
-            padding: buttonPadding
-            checked: messageWrapEnabled
-            hintText: "Message wrap"
+        Row {
+            spacing: 2
 
-            onCheckedChanged: {
-                messageWrapEnabled = checked
+            SGWidgets.SGIconButton {
+                id: wrapButton
+                icon.source: "qrc:/images/text-wrap.svg"
+                iconSize: defaultIconSize
+                backgroundOnlyOnHovered: false
+                checkable: true
+                enabled: fileLoaded
+                padding: buttonPadding
+                checked: messageWrapEnabled
+                hintText: "Message wrap"
+
+                onCheckedChanged: {
+                    messageWrapEnabled = checked
+                }
+            }
+
+            SGWidgets.SGIconButton {
+                id: automaticScrollButton
+                hintText: qsTr("Automatically scroll to the last log")
+                icon.source: "qrc:/sgimages/arrow-list-bottom.svg"
+                iconSize: defaultIconSize
+                backgroundOnlyOnHovered: false
+                enabled: fileLoaded
+                padding: buttonPadding
+                checkable: true
+
+                onClicked: {
+                    automaticScroll = !automaticScroll
+
+                    if (automaticScroll) {
+                        primaryLogView.positionViewAtEnd()
+                    }
+                }
+
+                Binding {
+                    target: automaticScrollButton
+                    property: "checked"
+                    value: automaticScroll
+                }
             }
         }
     }
@@ -336,7 +386,7 @@ Item {
 
                 SGWidgets.SGCheckBox {
                     id: checkBoxIndex
-                    text: qsTr("Row ID")
+                    text: qsTr("Row")
                     font.family: StrataFonts.Fonts.inconsolata
                     checked: indexColumnVisible
                 }
@@ -410,6 +460,7 @@ Item {
                     searchTagShown: false
                     highlightColor: searchInput.palette.highlight
                     startAnimation: secondaryLogView.activeFocus
+                    automaticScroll: automaticScrollButton.checked
                 }
 
                 Rectangle {
@@ -440,6 +491,7 @@ Item {
                         sidePanelWidth: logViewerMain.sidePanelWidth
                         searchTagShown: true
                         highlightColor: searchInput.palette.highlight
+                        automaticScroll: automaticScrollButton.checked
 
                         onCurrentItemChanged: {
                             var sourceIndex = logFilesModelProxy.mapIndexToSource(index)
@@ -474,8 +526,7 @@ Item {
                     qsTr("Range: %1 - %2 | %3 log").arg(Qt.formatDateTime(logFilesModel.oldestTimestamp,
                                                                           "yyyy-MM-dd hh:mm:ss.zzz t")).arg(Qt.formatDateTime(logFilesModel.newestTimestamp,
                                                                                                                               "yyyy-MM-dd hh:mm:ss.zzz t")).arg(logViewerMain.linesCount)
-                }
-                else {
+                } else {
                     qsTr("Range: %1 - %2 | %3 logs").arg(Qt.formatDateTime(logFilesModel.oldestTimestamp,
                                                                            "yyyy-MM-dd hh:mm:ss.zzz t")).arg(Qt.formatDateTime(logFilesModel.newestTimestamp,
                                                                                                                                "yyyy-MM-dd hh:mm:ss.zzz t")).arg(logViewerMain.linesCount)

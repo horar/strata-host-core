@@ -109,7 +109,7 @@ void SGJLinkConnector::errorOccurredHandler(QProcess::ProcessError error)
 bool SGJLinkConnector::processRequest(const QString &cmd, ProcessType type)
 {
     if (exePath_.isEmpty()) {
-        qCWarning(logCategoryJLink) << "exePath is empty";
+        qCCritical(logCategoryJLink) << "exePath is empty";
         activeProcessType_ = PROCESS_NO_PROCESS;
         return false;
     }
@@ -123,7 +123,7 @@ bool SGJLinkConnector::processRequest(const QString &cmd, ProcessType type)
     configFile_ = new QFile(QDir(QDir::tempPath()).filePath("jlinkconnector.jlink"));
 
     if (configFile_->open(QIODevice::ReadWrite) == false) {
-        qCWarning(logCategoryJLink) << "cannot open config file" << configFile_->fileName() << configFile_->errorString();
+        qCCritical(logCategoryJLink) << "cannot open config file" << configFile_->fileName() << configFile_->errorString();
         delete configFile_;
         activeProcessType_ = PROCESS_NO_PROCESS;
         return false;

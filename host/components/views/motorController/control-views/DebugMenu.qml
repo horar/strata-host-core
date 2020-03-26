@@ -10,7 +10,7 @@ import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 
 Rectangle {
     id: root
-    height: 150
+    height: 300
     width: 150
     border {
         width: 1
@@ -182,6 +182,68 @@ Rectangle {
 
 
                 }
+            }
+
+            Button {
+                id: dcPWMMode
+                text: "dc mode"
+
+                onClicked: {
+
+                     var binary = ((Math.random() * 2) > 1 ? true : false);
+
+                    console.log("setting dc pwm mode to",binary);
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"dc_pwm_mode_1_notification",
+                                "payload":{
+                                         "mode": '+(binary ? '"on_off"' : '"on_brake"') +'
+                                }
+                        }');
+
+
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"dc_pwm_mode_2_notification",
+                                "payload":{
+                                         "mode": '+(binary ? '"on_off"' : '"on_brake"') +'
+                                }
+                        }');
+                    }
+            }
+
+            Button {
+                id: dcMotorState
+                text: "dc motor"
+
+                onClicked: {
+
+                    var ternary = ((Math.random() * 2)+1).toFixed(0);
+
+                    console.log("setting dc motors to",ternary);
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"motor_run_1_notification",
+                                "payload":{
+                                         "mode": '+ternary+'
+                                }
+                        }');
+
+
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"motor_run_2_notification",
+                                "payload":{
+                                         "mode": '+ternary+'
+                                }
+                        }');
+                    }
+            }
+
+            Button {
+                id: refresh
+                text: "refresh"
+
+                onClicked: {
+                    console.log("sending refresh request");
+                    platformInterface.refresh.send();
+                    }
             }
 
 

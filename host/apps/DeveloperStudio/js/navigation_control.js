@@ -13,7 +13,8 @@ var context = {
     "last_name" : "",
     "class_id" : "",
     "is_logged_in" : false,
-    "platform_state" : ""
+    "platform_state" : "",
+    "error_message": ""
 }
 
 /*
@@ -23,7 +24,8 @@ var screens = {
     LOGIN_SCREEN: "qrc:/SGLogin.qml",
     WELCOME_SCREEN : "qrc:/SGWelcome.qml",
     CONTENT_SCREEN : "qrc:/Content.qml",
-    STATUS_BAR: "qrc:/SGStatusBar.qml"
+    STATUS_BAR: "qrc:/SGStatusBar.qml",
+    LOAD_ERROR: "qrc:/partial-views/SGLoadError.qml"
 }
 
 /*
@@ -128,20 +130,6 @@ function createView(name, parent)
 {
     //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "createView: name =", name, ", parameters =", JSON.stringify(context))
 
-    var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
-
-    if (component.status === QtQuickModule.Component.Error) {
-        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "cannot createComponent(", name, "), parameters=", JSON.stringify(context));
-        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "errString:", component.errorString())
-    }
-
-    /*
-        In some cases we have 'indestructible' children.
-        This seems to occur when a qml is being loaded and while executing tries to destroy itself.
-        Having auto selection enabled on the WelcomeScreen will cause this scenario. Catch the error here
-        output an error. When it errors the child will eventually get destroyed on subsequent view creation
-        TODO: Modify autoselect so it doesn't try to destroy itself on load.
-    */
     try {
         // Remove children from container before creating another instance
         removeView(parent)
@@ -150,11 +138,17 @@ function createView(name, parent)
         console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "ERROR: Could not destroy child")
     }
 
+    var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
+    if (component.status === QtQuickModule.Component.Error) {
+        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Cannot createComponent():", component.errorString(), "parameters:", JSON.stringify(context));
+        context.error_message = component.errorString()
+        return null
+    }
+
     var object = component.createObject(parent,context)
     if (object === null) {
         console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Error creating object: name=", name, ", parameters=", JSON.stringify(context));
     }
-
     return object;
 }
 
@@ -301,7 +295,11 @@ function updateState(event, data)
                 if (context.platform_state){
                     // Show control when connected
                     var qml_control = getQMLFile(context.class_id, "Control")
-                    createView(qml_control, control_container_)
+                    let control = createView(qml_control, control_container_)
+                    if (control === null) {
+                        createView(screens.LOAD_ERROR, control_container_)
+                        context.error_message = ""
+                    }
                 }
                 else {
                     // Disconnected; Show detection page
@@ -311,7 +309,11 @@ function updateState(event, data)
                 // Show content when we have a platform clasS_id; doesn't have to be actively connected
                 if(context.class_id !== ""){
                     var qml_content = getQMLFile(context.class_id, "Content")
-                    createView(qml_content, content_container_)
+                    let content = createView(qml_content, content_container_)
+                    if (content === null) {
+                        createView(screens.LOAD_ERROR, content_container_)
+                        context.error_message = ""
+                    }
                 }
                 else {
                     // Otherwise; no platform has been connected or chosen

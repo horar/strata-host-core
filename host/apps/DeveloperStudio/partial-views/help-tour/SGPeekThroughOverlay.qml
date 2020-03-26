@@ -40,8 +40,13 @@ Item {
          }
      }
 
+     function restoreFocus(){
+        toolTipPopup.contentItem.forceActiveFocus()
+     }
+
      property alias index: toolTipPopup.index
      property alias description: toolTipPopup.description
+     property alias fontSizeMultiplier: toolTipPopup.fontSizeMultiplier
 
      property real globalOpacity: .5
 
@@ -214,11 +219,13 @@ Item {
          color: "white"
          property int index
          property string description
+         property real fontSizeMultiplier: 1
 
          content: SGTourControl {
              id: tourControl
              index: toolTipPopup.index
              description: toolTipPopup.description
+             fontSizeMultiplier: toolTipPopup.fontSizeMultiplier
          }
      }
  }

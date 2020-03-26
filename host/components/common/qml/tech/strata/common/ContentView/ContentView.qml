@@ -7,27 +7,51 @@ import tech.strata.sgwidgets 0.9
 
 Rectangle {
     id: view
-    anchors { fill: parent }
+    anchors {
+        fill: parent
+    }
+
+    property int totalDocuments: documentManager.pdfListModel.count + documentManager.datasheetListModel.count + documentManager.downloadDocumentListModel.count
+    onTotalDocumentsChanged: {
+        if (documentManager.pdfListModel.count > 0) {
+             pdfViewer.url = "file://localhost/" + documentManager.pdfListModel.getFirstUri();
+        } else if (documentManager.datasheetListModel.count > 0) {
+            pdfViewer.url = documentManager.datasheetListModel.getFirstUri();
+        } else {
+            pdfViewer.url = ""
+        }
+    }
+
+    Connections {
+        target: documentManager
+
+        onErrorStringChanged: {
+            if (documentManager.errorString.length > 0) {
+                pdfViewer.url = ""
+                loadingImage.currentFrame = 0
+            }
+        }
+    }
 
     Rectangle {
         id: divider
-        color: "#888"
+        height: 1
         anchors {
             bottom: contentContainer.top
             left: contentContainer.left
             right: contentContainer.right
         }
-        height: contentContainer.anchors.topMargin
+
+        color: "#888"
     }
 
     Item {
         id: contentContainer
         anchors {
-            top: view.top
+            top: divider.bottom
             right: view.right
             left: view.left
             bottom: view.bottom
-            topMargin: 1
         }
 
         Rectangle {
@@ -75,69 +99,30 @@ Rectangle {
                     SGAccordionItem {
                         id: pdfAccordion
                         title: "Platform Documents"
-                        contents: Documents { }
+                        contents: Documents {
+                            model: documentManager.pdfListModel
+                        }
                         open: true
-                        visible: false
+                        visible: documentManager.pdfListModel.count > 0
                     }
 
                     SGAccordionItem {
                         id: datasheetAccordion
                         title: "Part Datasheets"
-                        contents: Datasheets { }
-                        visible: false
+                        contents: Datasheets {
+                            model: documentManager.datasheetListModel
+                        }
+                        visible: documentManager.datasheetListModel.count > 0
                     }
 
                     SGAccordionItem {
                         id: downloadAccordion
                         title: "Downloads"
-                        contents: Downloads { }
-                        visible: false
-                    }
+                        contents: Downloads {
+                            model: documentManager.downloadDocumentListModel
 
-                    Connections {
-                        target: documentManager
-                        onDocumentsUpdated: {
-                            updateDocState()
                         }
-                    }
-
-                    Component.onCompleted: {
-                        updateDocState()
-                    }
-
-                    function updateDocState() {
-                        if (documentManager.errorState === ""){
-                            if (documentManager.pdfDocuments.length > 0 ||
-                                    documentManager.datasheetDocuments.length > 0 ||
-                                    documentManager.downloadDocuments.length > 0) {
-                                loading.visible = false
-                            }
-
-                            // set initially visible document to first pdf or first datasheet if no pdfs
-                            if (documentManager.pdfDocuments.length > 0) {
-                                pdfViewer.url = "file://localhost/" + documentManager.pdfDocuments[0].uri
-                            } else if (documentManager.datasheetDocuments.length > 0) {
-                                pdfViewer.url = documentManager.datasheetDocuments[0].uri
-                            } else {
-                                pdfViewer.url = ""
-                            }
-
-                            // update accordion section visibility
-                            pdfAccordion.visible = documentManager.pdfDocuments.length > 0
-                            datasheetAccordion.visible = documentManager.datasheetDocuments.length > 0
-                            downloadAccordion.visible = documentManager.downloadDocuments.length > 0
-
-                            // update list models
-                            pdfAccordion.contentItem.model = documentManager.pdfDocuments
-                            datasheetAccordion.contentItem.model = documentManager.datasheetDocuments
-                            downloadAccordion.contentItem.resetModel(documentManager.downloadDocuments)
-                        } else {
-                            pdfViewer.url = ""
-                            loading.visible = true
-                            loadingText.text = "Error: " + documentManager.errorState
-                            loadingImage.playing = false
-                            loadingImage.currentFrame = 0
-                        }
+                        visible: documentManager.downloadDocumentListModel.count > 0
                     }
                 }
             }
@@ -170,7 +155,7 @@ Rectangle {
                     centerIn: sidebarControl
                 }
                 iconColor: "white"
-                source: "content-views/content-widgets/angle-right-solid.svg"
+                source: "images/angle-right-solid.svg"
                 height: 30
                 width: 30
                 rotation: navigationSidebar.visible ? 180 : 0
@@ -188,6 +173,7 @@ Rectangle {
                         navigationSidebar.state = "open"
                     }
                 }
+
                 hoverEnabled: true
             }
         }
@@ -200,6 +186,8 @@ Rectangle {
                 top: contentContainer.top
                 bottom: contentContainer.bottom
             }
+
+            url: ""
         }
     }
 
@@ -209,10 +197,11 @@ Rectangle {
             fill: view
         }
 
+        visible: loadingText.text.length
+
         onVisibleChanged: {
             if (!visible) {
                 navigationSidebar.state = "open"
-                loadingText.text = "Downloading Documents..."
             } else {
                 navigationSidebar.state = "" // "" is default closed state
             }
@@ -226,14 +215,14 @@ Rectangle {
             }
         }
 
-         AnimatedImage {
+        AnimatedImage {
             id: loadingImage
-            source: "content-views/content-widgets/docLoading.gif"
+            source: "images/docLoading.gif"
             anchors {
                 centerIn: loading
                 verticalCenterOffset: -height/4
             }
-            playing: loading.visible
+            playing: totalDocuments === 0 && documentManager.errorString.length === 0
             height: 200
             width: 200
         }
@@ -249,7 +238,18 @@ Rectangle {
                 pixelSize: 30
                 family:  Fonts.franklinGothicBold
             }
-            text: "Downloading Documents..."
+            text: {
+                if (documentManager.errorString.length > 0) {
+                    return "Error: " + documentManager.errorString
+                }
+
+                if (totalDocuments === 0) {
+                    return "Downloading Documents..."
+                }
+
+                return ""
+            }
+
             width: 500
             wrapMode: Text.Wrap
             horizontalAlignment: Text.AlignHCenter

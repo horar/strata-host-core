@@ -15,6 +15,7 @@ add_library(${PROJECT_NAME}
 
     #AUTOMOC wont find header if it is in different directory
     include/BoardManager.h
+    include/DeviceProperties.h
     src/BoardManagerConstants.h
     src/SerialDevice.h
     src/SerialDeviceConstants.h
@@ -29,8 +30,9 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC Qt5::SerialPort
-    rapidjson::rapidjson
+    PUBLIC rapidjson::rapidjson
     PUBLIC QtLogger
+    PUBLIC CommandValidator
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

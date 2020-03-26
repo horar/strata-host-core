@@ -396,6 +396,7 @@ Item {
                 top: listviewContainer.top
             }
             model: filteredPlatformListModel
+            maximumFlickVelocity: 1200 // Limit scroll speed on Windows trackpads: https://bugreports.qt.io/browse/QTBUG-56075
 
             property real delegateHeight: 160
             property real delegateWidth: 950

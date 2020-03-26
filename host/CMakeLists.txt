@@ -27,6 +27,7 @@ include(FeatureSummary)
 include(SetupCompileOptions)
 
 include(GitVersionMacro)
+include(Timestamp)  # TODO: update the name of macro
 include(AddQmlImportPathMacro)
 
 if(APPLE)
@@ -57,6 +58,7 @@ add_subdirectory(libs)
 add_subdirectory(apps)
 #add_subdirectory(test)
 add_subdirectory(extern)
+add_subdirectory(samples)
 option(BUILD_EXAMPLES "Build project examples" OFF)
 add_feature_info(BUILD_EXAMPLES BUILD_EXAMPLES "Build project examples")
 option(BUILD_UTILS "Build project suplementary utils" ON)

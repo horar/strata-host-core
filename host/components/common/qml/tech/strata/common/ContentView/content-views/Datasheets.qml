@@ -1,93 +1,90 @@
-import QtQuick 2.9
-import QtQuick.Controls 2.3
-import "qrc:/include/Modules/"      // On Semi QML Modules
-import "content-widgets"
-
-import tech.strata.sgwidgets 0.9
-import tech.strata.fonts 1.0
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import tech.strata.sgwidgets 1.0 as SGWidgets
 
 Item {
-    height: listViewContainer.height + 20
+    height: wrapper.height + 20
     width: parent.width
-    property alias model: pdfListView.model
 
-    Rectangle {
-        id: listViewContainer
-        border {
-            width: 1
-            color: "#ccc"
-        }
+    property alias model: repeater.model
+
+    Column {
+        id: wrapper
         width: parent.width - 20
-        height: pdfListView.height + 20
         anchors {
-            centerIn: parent
+            horizontalCenter: parent.horizontalCenter
         }
-        color: "transparent"
-        clip: true
 
-        ListView {
-            id: pdfListView
-            anchors {
-                centerIn: listViewContainer
-            }
-            ScrollBar.vertical: ScrollBar {
-                policy: ScrollBar.AlwaysOn
-            }
-            height: Math.min(600, contentItem.childrenRect.height)
-            width: listViewContainer.width - 20
+        Repeater {
+            id: repeater
 
-            section {
-                property: "dirname"
-                delegate: Item {
-                    id: sectionContainer
-                    width: pdfListView.width - 20
-                    height: delegateText.height + 10
+            delegate: BaseDocDelegate {
+                id: delegate
+                width: wrapper.width
 
-                    Item {
-                        id: sectionBackground
-                        anchors {
-                            topMargin: 5
-                            fill: parent
-                            bottomMargin: 1
-                        }
+                Binding {
+                    target: delegate
+                    property: "checked"
+                    value: pdfViewer.url.toString() === model.uri
+                }
 
-                        Rectangle {
-                            id: underline
-                            color: "#33b13b"
-                            height: 1
-                            width: sectionBackground.width
-                            anchors {
-                                bottom: sectionBackground.bottom
-                            }
-                        }
-                    }
-
-                    Text {
-                        id: delegateText
-                        text: "<b>" + section + "</b>"
-                        color: "white"
-                        anchors {
-                            verticalCenter: sectionContainer.verticalCenter
-                            right: sectionContainer.right
-                        }
-                        width: sectionContainer.width - 5
-                        wrapMode: Text.Wrap
+                onCheckedChanged: {
+                    if (checked) {
+                        pdfViewer.url = model.uri
                     }
                 }
-            }
 
-            ButtonGroup {
-                id: buttonGroup
-                exclusive: true
-            }
+                contentSourceComponent: Item {
+                    height: textItem.contentHeight + 8
 
-            delegate: SGSelectorButton {
-                title: model.filename
-                uri: model.uri
-                width: pdfListView.width - 20
-                leftMargin: 20
+                    SGWidgets.SGText {
+                        id: textItem
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            left:  parent.left
+                            leftMargin: 6
+                            right: chevronImage.left
+                        }
+
+                        text: model.prettyName
+                        alternativeColorEnabled: delegate.checked === false
+                        wrapMode: Text.Wrap
+                        font.bold: delegate.checked ? false : true
+                    }
+
+                    SGWidgets.SGIcon {
+                        id: chevronImage
+                        height: 12
+                        width: height
+                        anchors {
+                            right: parent.right
+                            rightMargin: 2
+                            verticalCenter: parent.verticalCenter
+                        }
+
+                        source: "qrc:/sgimages/chevron-right.svg"
+                        visible: delegate.checked
+                    }
+                }
+
+                headerSourceComponent: {
+                    if (model.dirname !== model.previousDirname) {
+
+                        return sectionDelegateComponent
+                    }
+
+                    return undefined
+                }
+
+                Component {
+                    id: sectionDelegateComponent
+
+                    SectionDelegate {
+                        text: model.dirname
+                        isFirst: model.index === 0
+                    }
+                }
             }
         }
     }
 }
-
