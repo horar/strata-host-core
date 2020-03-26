@@ -61,7 +61,7 @@ private:
     QHash<int, QByteArray> roleByEnumHash_;
     QHash<QByteArray, int> roleByNameHash_;
     QList<ScrollbackModelItem> data_;
-    bool condensedMode_ = false;
+    bool condensedMode_ = true;
     int maximumCount_ = 1;
 
     void setModelRoles();
