@@ -437,7 +437,6 @@ FocusScope {
             font.family: StrataFonts.Fonts.inconsolata
             placeholderText: "Enter Command..."
             isValidAffectsBackground: true
-            maximumLength: 500
             suggestionListModel: commandHistoryModel
             suggestionModelTextRole: "message"
             suggestionPosition: Item.Top
