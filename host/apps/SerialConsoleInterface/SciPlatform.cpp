@@ -45,6 +45,7 @@ void SciPlatform::setDevice(strata::SerialDevicePtr device)
         deviceId_ = device_->deviceId();
 
         connect(device_.get(), &strata::SerialDevice::msgFromDevice, this, &SciPlatform::messageFromDeviceHandler);
+        connect(device_.get(), &strata::SerialDevice::messageSent, this, &SciPlatform::messageToDeviceHandler);
         connect(device_.get(), &strata::SerialDevice::serialDeviceError, this, &SciPlatform::deviceErrorHandler);
 
         setStatus(PlatformStatus::Connected);
@@ -176,7 +177,6 @@ bool SciPlatform::sendMessage(const QByteArray &message)
 
     bool result = device_->sendMessage(compactMessage);
     if (result) {
-        scrollbackModel_->append(compactMessage, SciScrollbackModel::MessageType::Request);
         commandHistoryModel_->add(compactMessage);
         settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
     }
@@ -203,6 +203,11 @@ bool SciPlatform::exportScrollback(QString filePath) const
 void SciPlatform::messageFromDeviceHandler(QByteArray message)
 {
     scrollbackModel_->append(message, SciScrollbackModel::MessageType::Response);
+}
+
+void SciPlatform::messageToDeviceHandler(QByteArray message)
+{
+    scrollbackModel_->append(message, SciScrollbackModel::MessageType::Request);
 }
 
 void SciPlatform::deviceErrorHandler(QString message)

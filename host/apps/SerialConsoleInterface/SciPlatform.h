@@ -62,6 +62,7 @@ signals:
 
 private slots:
     void messageFromDeviceHandler(QByteArray message);
+    void messageToDeviceHandler(QByteArray message);
     void deviceErrorHandler(QString message);
 
 private:
