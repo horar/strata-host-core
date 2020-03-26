@@ -208,10 +208,20 @@ function Write-Separator {
     Write-Host `n$Line`n
 }
 
-# Print indented string
+# Print indent string with different colors for fail and pass massages
+# Checking for FAIL and PASS is not case sensitive
 function Write-Indented {
     Param (
         [Parameter(Mandatory = $true)][string]$string
     )
-    Write-Host "        $string"
+    $FirstWord = ($string -split ' ')[0]
+    if (($FirstWord -eq "FAIL") -OR ($FirstWord -eq "FAIL:")) {
+        Write-Host -ForegroundColor Red "        $string"
+    } elseif (($FirstWord -eq "PASS") -OR ($FirstWord -eq "PASS:")) {
+        Write-Host -ForegroundColor Green "        $string"
+    } elseif (($FirstWord -eq "WARNING") -OR ($FirstWord -eq "WARNING:")) {
+        Write-Host -ForegroundColor Yellow "        $string"
+    } else {
+        Write-Host "        $string"  
+    }
 }

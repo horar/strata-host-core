@@ -62,7 +62,7 @@ function Test-SDSInstaller {
                 ## C:\PROGRA~1\DIFX\4A7292F75FEBBD3C\dpinst-amd64.exe /u C:\WINDOWS\System32\DriverStore\FileRepository\ftdibus.inf_amd64_49b3e24305b20ada\ftdibus.inf
                 ## and we need to remove both in oreder to remove ftdi driver compeletly
                 if($FTDIUininstallerPath) {
-                    Write-Host "Uninstalling Windows Driver Package - FTDI CDM Driver Package"
+                    Write-Indented "Uninstalling Windows Driver Package - FTDI CDM Driver Package"
                     $FTDIUininstallerPath = $FTDIUininstallerPath.split()
                     if ($FTDIUininstallerPath.Length -gt 3) {
                         $counter = 2
@@ -71,28 +71,28 @@ function Test-SDSInstaller {
                                     "$($FTDIUininstallerPath[$counter])", "/q" -Wait
                         $counter = $counter + 3 
                         }
-                        Write-Host "Done"
+                        Write-Indented "Done"
                     } else {
-                        Write-Host "Uninstalling Windows Driver Package - FTDI CDM Driver Package"
+                        Write-Indented "Uninstalling Windows Driver Package - FTDI CDM Driver Package"
                         Start-Process -FilePath "$($FTDIUininstallerPath[0])" -ArgumentList "$($FTDIUininstallerPath[1])", "$($FTDIUininstallerPath[2])", "/q" -Wait
-                        Write-Host "Done"
+                        Write-Indented "Done"
                     }
                 } else {
-                    Write-Host "FTDI has not been installed using Strata installer"
+                    Write-Indented "FTDI has not been installed using Strata installer"
                 }
                 if($VisualRedistUninstallerPath) {
-                    Write-Host "Uninstalling Microsoft Visual C++ 2017 X64"
+                    Write-Indented "Uninstalling Microsoft Visual C++ 2017 X64"
                     Start-Process -FilePath "`"$VisualRedistUninstallerPath`"" -ArgumentList "/uninstall", "/quiet" -Wait
-                    Write-Host "Done"
+                    Write-Indented "Done"
                 } else {
-                    Write-Host "Microsoft Visual C++ 2017 X64 is not installed"
+                    Write-Indented "Microsoft Visual C++ 2017 X64 is not installed"
                 }
-                Write-Host "Uninstalling Strata Developer Studio"
+                Write-Indented "Uninstalling Strata Developer Studio"
                 Start-Process -FilePath "`"$SDSUninstallerPath`"" -ArgumentList "/VERYSILENT" -Wait
-                Write-Host "Done"
+                Write-Indented "Done"
 
             } else {
-                Write-Host "Strata Developer Studio is not installed"
+                Write-Indented "Strata Developer Studio is not installed`n"
             }
         }
         catch {
@@ -101,16 +101,16 @@ function Test-SDSInstaller {
     }
 
     function Uninstall-SDS {
-        Write-Host "Uninstalling Strata Developer Studio"
+        Write-Indented "Uninstalling Strata Developer Studio"
             try {
             $SDSUninstallerPath =  Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" | ForEach-Object { get-ItemProperty $_.PSPath } `
                                 | where-Object { $_ -match "strata*" } | Select-Object UninstallString
             if ($SDSUninstallerPath) {
                 $SDSUninstallerPath = $SDSUninstallerPath.UninstallString -replace "/I","" -replace "`"",""
                 Start-Process -FilePath "`"$SDSUninstallerPath`"" -ArgumentList "/VERYSILENT" -Wait
-                Write-Host "Done"
+                Write-Indented "Done"
             } else {
-                Write-Host "Strata Developer Studio is not installed"
+                Write-Indented "Strata Developer Studio is not installed`n"
             }
         }
         catch {
@@ -118,14 +118,14 @@ function Test-SDSInstaller {
         }
     }
     function Install-SDS {
-        Write-Host "Installing Strata Developer Studio"
+        Write-Indented "Installing Strata Developer Studio"
         Try {
             Start-Process -FilePath "`"$SDSInstallerPath`"" -ArgumentList "/SP- /SUPPRESSMSGBOXES /LOG=$SDSInstallerLogFile /VERYSILENT /NORESTART /CLOSEAPPLICATIONS" -Wait
         }
         Catch {
             Exit-TestScript -1 "Error installing Strata Developer Studio. `n       $_"
         }
-        Write-Host "Done"
+        Write-Indented "Done"
     }
 
     function Test-SDSInstallation {
@@ -144,33 +144,33 @@ function Test-SDSInstaller {
             $SDSInstallerVersion = $SDSInstallerVersion -replace "Installing ",""
 
             if ( $VisualRedistInstalledDisplayName -match [regex]::Escape($VisualRedistDisplayName) ) {
-                Write-Host -ForegroundColor Green "Pass: Microsoft Visual C++ 2017 X64 is installed"
+                Write-Indented "Pass: Microsoft Visual C++ 2017 X64 is installed"
             } else {
-                Write-Host -ForegroundColor Red "Fail: Microsoft Visual C++ 2017 X64 is not installed" 
+                Write-Indented "Fail: Microsoft Visual C++ 2017 X64 is not installed" 
             }
 
             if ( $FTDIDriverInstalledDisplayName -eq $FTDIDriverDisplayName ) {
-                Write-Host -ForegroundColor Green "Pass: FTDI Driver is installed"
+                Write-Indented "Pass: FTDI Driver is installed"
             } else {
-                Write-Host -ForegroundColor Yellow "Warning: FTDI Driver is not installed by Strata installer, it probably got installed by Windows" 
+                Write-Indented "Warning: FTDI Driver is not installed by Strata installer, it probably got installed by Windows" 
             }
 
             if ( Test-path $SDSExecFile ) {
-                Write-Host -ForegroundColor Green "Pass: Strata Developer Studio executables is under the specified location by the installer"
+                Write-Indented "Pass: Strata Developer Studio executables is under the specified location by the installer"
             } else {
-                Write-Host -ForegroundColor Red "Fail: Strata Developer Studio executables is not under the specified location by the installer." 
+                Write-Indented "Fail: Strata Developer Studio executables is not under the specified location by the installer." 
             }
 
             if ( Test-Path $SDSControlViewsDir -PathType Container ) {
-                Write-Host -ForegroundColor Green "Pass: Control Views are located in $SDSControlViewsDir"
+                Write-Indented "Pass: Control Views are located in $SDSControlViewsDir"
             } else {
-                Write-Host -ForegroundColor Red "Fail: Control Views are not located in $SDSControlViewsDir" 
+                Write-Indented "Fail: Control Views are not located in $SDSControlViewsDir" 
             }
 
             if ($SDSVersion -eq $SDSInstallerVersion) {
-                Write-Host -ForegroundColor Green  "Pass: $SDSVersion UI Version matches $SDSInstallerVersion the installer version"
+                Write-Indented  "Pass: $SDSVersion UI Version matches $SDSInstallerVersion the installer version"
             } else {
-                Write-Host -ForegroundColor Red  "Fail: $SDSVersion Version doesn't matches $SDSInstallerVersion the installer version"
+                Write-Indented  "Fail: $SDSVersion Version doesn't matches $SDSInstallerVersion the installer version"
             }
         }
         catch {
@@ -179,14 +179,13 @@ function Test-SDSInstaller {
     }
 
     function Test-SDSCleanUninstallation {
-        Write-Host "`nStarting Clean Installation Test`n"
+        Write-Host "`nStarting Clean Installation Test:"
         Uninstall-SDSAndItsComponents
         Install-SDS
         Test-SDSInstallation
-        Write-Host "`nEnd of Clean Installation Test`n"
     }
     function Test-SDSDirtyInstallationWithoutUninstallation {
-        Write-Host "`nStarting Dirty Installation Test Rejecting Uninstall Prompt`n"
+        Write-Host "`nStarting Dirty Installation Test Rejecting Uninstall Prompt:"
         # necessary to generate hcs database
         Start-HCSAndWait(5)
         Stop-HCS
@@ -194,27 +193,24 @@ function Test-SDSInstaller {
         Test-SDSInstallation
         try {
             if (! (Test-Path "$HCSDbDir") ) {
-                Write-Host -ForegroundColor Green  "Pass: HSC database has been deleted"
+                Write-Indented  "Pass: HSC database has been deleted"
             } else {
-                Write-Host -ForegroundColor Red  "Fail: HSC database has not been deleted"
+                Write-Indented  "Fail: HSC database has not been deleted"
             }
         }
         catch {
             Exit-TestScript -1 "Ditry installation without uninstallation failed. `n       $_"
         }
-        Write-Host "`nEnd of Dirty Installation Test Rejecting Uninstall Prompt`n"
     }
 
     function Test-SDSDirtyInstallationWithUninstallation {
-        Write-Host "`nStarting Dirty Installation Test Accepting Uninstall Prompt`n"
-        Test-SDSUninstallation
+        Write-Host "`nStarting Dirty Installation Test Accepting Uninstall Prompt:"
         Install-SDS
         Test-SDSInstallation
-        Write-Host "`nEnd of Dirty Installation Test Accepting Uninstall Prompt`n"
     }
 
     function Test-SDSUninstallation {
-        Write-Host "`nStarting Uninstallation Test`n"
+        Write-Host "`nStarting Uninstallation Test:"
         # necessary to generate Strata Developer Studio.ini file
         Start-SDSAndWait(5)
         Stop-SDS
@@ -222,42 +218,43 @@ function Test-SDSInstaller {
         Uninstall-SDS
         try {
             if (! (Test-Path $SDSExecFile) ) {
-                Write-Host -ForegroundColor Green  "Pass: Strata Developer Studio executables has been successfuly removed"
+                Write-Indented  "Pass: Strata Developer Studio executables has been successfuly removed"
             } else {
-                Write-Host -ForegroundColor Red  "Fail: Strata Developer Studio executables has not been successfuly removed"
+                Write-Indented  "Fail: Strata Developer Studio executables has not been successfuly removed"
             }  
             if (! (Test-Path $SDSControlViewsDir) ) {
-                Write-Host -ForegroundColor Green  "Pass: $SDSControlViewsDir has been successfuly removed"
+                Write-Indented  "Pass: $SDSControlViewsDir has been successfuly removed"
             } else {
-                Write-Host -ForegroundColor Red  "Fail: $SDSControlViewsDir has not been successfuly removed"
+                Write-Indented  "Fail: $SDSControlViewsDir has not been successfuly removed"
             }
             if (! (Test-Path $HCSAppDataDir) ) {
-                Write-Host -ForegroundColor Green  "Pass: $HCSAppDataDir has been successfuly removed"
+                Write-Indented  "Pass: $HCSAppDataDir has been successfuly removed"
             } else {
-                Write-Host -ForegroundColor Red  "Fail: $HCSAppDataDir has not been successfuly removed"
+                Write-Indented  "Fail: $HCSAppDataDir has not been successfuly removed"
             }
             if (! (Test-Path $HCSIniFile) ) {
-                Write-Host -ForegroundColor Green  "Pass: $HCSIniFile has been successfuly removed"
+                Write-Indented  "Pass: $HCSIniFile has been successfuly removed"
             } else {
-                Write-Host -ForegroundColor Red  "Fail: $HCSIniFile has not been successfuly removed"
+                Write-Indented  "Fail: $HCSIniFile has not been successfuly removed"
             }
             if (! (Test-Path $SDSIniFile) ) {
-                Write-Host -ForegroundColor Green  "Pass: $SDSIniFile has been successfuly removed"
+                Write-Indented  "Pass: $SDSIniFile has been successfuly removed"
             } else {
-                Write-Host -ForegroundColor Red  "Fail: $SDSIniFile has not been successfuly removed"
+                Write-Indented  "Fail: $SDSIniFile has not been successfuly removed"
             }
         }
         catch {
             Exit-TestScript -1 "Uninstallation test failed. `n       $_"
         }
-        Write-Host "`nEnd of Uninstallation Test`n"
     }
 
-    Write-Host "`nStarting Strata Installer test script`n"
+    Write-Separator
+    Write-Indented "Strata installer testing"
+    Write-Separator
 
     Test-SDSCleanUninstallation
     Test-SDSDirtyInstallationWithoutUninstallation
+    Test-SDSUninstallation
     Test-SDSDirtyInstallationWithUninstallation
 
-    Write-Host "`nStrata installer test completed.`n`n"
 }

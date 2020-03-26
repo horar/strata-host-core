@@ -66,7 +66,7 @@ Write-Host "`n`nPerforming initial checks...`n"
 Assert-PSSQLite
 
 # Search for Python tools
-Assert-PythonAndPyzmq
+#Assert-PythonAndPyzmq
 
 # Search for SDS and HCS
 #Assert-StrataAndHCS
@@ -82,6 +82,7 @@ Write-Host "Starting tests...`n"
 $SDSInstallerResults = Test-SDSInstaller
 
 # Run Test-Database (HCS database testing)
+
 $DatabaseResults = Test-Database
 
 # Run Test-TokenAndViewsDownload
@@ -91,7 +92,7 @@ $TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
 $CollateralDownloadResults = Test-CollateralDownload
 
 # Run Test-SDSControlViews (SDS control view testing)
-$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
+#$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
 
 Show-TestSummary
 
