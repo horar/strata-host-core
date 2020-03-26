@@ -8,5 +8,7 @@
         <file>control-views/question-circle-solid.svg</file>
         <file>control-views/CustomizeRGBSlider.qml</file>
         <file>control-views/PowerControl.qml</file>
+        <file>control-views/MiscControl.qml</file>
+        <file>control-views/SAMOPTControl.qml</file>
     </qresource>
 </RCC>

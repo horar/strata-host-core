@@ -66,7 +66,7 @@ Item {
             id: miscControlButton
             text: qsTr("Miscellaneous")
             onClicked: {
-                controlContainer.currentIndex = 3
+                controlContainer.currentIndex = 4
             }
         }
     }
@@ -92,7 +92,13 @@ Item {
             id: powerControl
         }
 
+        SAMOPTControl {
+            id: sAMOPTControl
+        }
 
+        MiscControl {
+            id: miscControl
+        }
 
     }
 

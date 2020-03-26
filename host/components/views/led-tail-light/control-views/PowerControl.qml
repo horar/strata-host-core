@@ -226,7 +226,7 @@ Item {
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                           // color: "gray"
+                            // color: "gray"
 
                             RowLayout {
                                 anchors.fill: parent
@@ -238,7 +238,12 @@ Item {
                                         text: "LED Voltage\n(VLED)"
                                         target: vLED
                                         alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.centerIn: parent
+                                        anchors {
+                                            top:parent.top
+                                            left: parent.left
+                                            verticalCenter: parent.verticalCenter
+                                            leftMargin: 20
+                                        }
                                         fontSizeMultiplier: ratioCalc * 1.2
                                         font.bold : true
                                         SGInfoBox {
@@ -260,7 +265,12 @@ Item {
                                         text: "Supply Voltage\n(VS)"
                                         target: supplyVoltage
                                         alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.centerIn: parent
+                                        anchors {
+                                            top:parent.top
+                                            left: parent.left
+                                            verticalCenter: parent.verticalCenter
+                                            leftMargin: 20
+                                        }
                                         fontSizeMultiplier: ratioCalc * 1.2
                                         font.bold : true
                                         SGInfoBox {
@@ -282,7 +292,12 @@ Item {
                                         text: "Digital Voltage\n(VDD)"
                                         target: digitalVoltage
                                         alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.centerIn: parent
+                                        anchors {
+                                            top:parent.top
+                                            left: parent.left
+                                            verticalCenter: parent.verticalCenter
+                                            leftMargin: 20
+                                        }
                                         fontSizeMultiplier: ratioCalc * 1.2
                                         font.bold : true
                                         SGInfoBox {
@@ -304,7 +319,12 @@ Item {
                                         text: "Battery Voltage\n(VBAT)"
                                         target: batteryVoltage
                                         alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.centerIn: parent
+                                        anchors {
+                                            top:parent.top
+                                            left: parent.left
+                                            verticalCenter: parent.verticalCenter
+                                            leftMargin: 20
+                                        }
                                         fontSizeMultiplier: ratioCalc * 1.2
                                         font.bold : true
                                         SGInfoBox {
