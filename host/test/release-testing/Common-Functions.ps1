@@ -17,6 +17,7 @@ function Assert-PythonAndPyzmq {
         $Global:PythonExec = 'python3'
     }
 
+    # Attempt to run Python and import PyZMQ, display error if operation fails
     Try {
         If ((Start-Process $PythonExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
             If (!(Start-Process $PythonExec '-c "import zmq"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
@@ -28,6 +29,12 @@ function Assert-PythonAndPyzmq {
         }
     } Catch [System.Management.Automation.CommandNotFoundException] {
         Exit-TestScript -1 "Error: Python not found.`nAborting."
+    }
+
+    # Verify Python being run is Python 3
+    $PythonVersion = Invoke-Expression "${PythonExec} -c 'import sys; print(sys.version_info[0])'"
+    If ($PythonVersion -Ne 3) {
+        Exit-TestScript -1 "Error: Python 3 is required.`nAborting."
     }
 }
 

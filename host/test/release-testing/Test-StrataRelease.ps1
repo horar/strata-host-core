@@ -100,4 +100,6 @@ Show-TestSummary
 #Restore-Strata_INI
 #Remove-TemporaryFiles
 
+Set-Location $PSScriptRoot
+
 Write-Host "`n`nTesting complete!`n`n"
