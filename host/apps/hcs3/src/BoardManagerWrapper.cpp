@@ -18,13 +18,13 @@ void BoardManagerWrapper::initialize(HCS_Dispatcher* dispatcher) {
 }
 
 void BoardManagerWrapper::sendMessage(const int deviceId, const std::string& message) {
-    auto const it = boards_.find(deviceId);
-    if (it == boards_.end()) {
+    auto it = boards_.constFind(deviceId);
+    if (it == boards_.constEnd()) {
         qCWarning(logCategoryHcsBoard).noquote() << "Cannot send message, board was not found." << logDeviceId(deviceId);
         return;
     }
     qCDebug(logCategoryHcsBoard).noquote() << "Sending message to board." << logDeviceId(deviceId);
-    it->second.device->sendMessage(QByteArray::fromStdString(message));
+    it.value().device->sendMessage(QByteArray::fromStdString(message));
 }
 
 void BoardManagerWrapper::newConnection(int deviceId, bool recognized) {
@@ -34,7 +34,7 @@ void BoardManagerWrapper::newConnection(int deviceId, bool recognized) {
             return;
         }
         connect(device.get(), &strata::SerialDevice::msgFromDevice, this, &BoardManagerWrapper::messageFromBoard);
-        boards_.emplace(deviceId, Board(device));
+        boards_.insert(deviceId, Board(device));
         PlatformMessage item;
         item.msg_type = PlatformMessage::eMsgPlatformConnected;
         item.from_connectionId.conn_id = deviceId;
@@ -51,20 +51,20 @@ void BoardManagerWrapper::newConnection(int deviceId, bool recognized) {
 }
 
 void BoardManagerWrapper::closeConnection(int deviceId) {
-    auto const it = boards_.find(deviceId);
-    if (it == boards_.end()) {
+    auto it = boards_.constFind(deviceId);
+    if (it == boards_.constEnd()) {
         // This situation can occur if unrecognized board is disconnected.
         qCInfo(logCategoryHcsBoard).noquote() << "Disconnected unknown board." << logDeviceId(deviceId);
         return;
     }
 
     QJsonObject msg {
-        { JSON_PLATFORM_ID, it->second.device->getProperty(strata::DeviceProperties::platformId) },
-        { JSON_CLASS_ID, it->second.device->getProperty(strata::DeviceProperties::classId) }
+        { JSON_PLATFORM_ID, it.value().device->getProperty(strata::DeviceProperties::platformId) },
+        { JSON_CLASS_ID, it.value().device->getProperty(strata::DeviceProperties::classId) }
     };
     QJsonDocument doc(msg);
 
-    boards_.erase(deviceId);
+    boards_.remove(deviceId);
 
     PlatformMessage item;
     item.msg_type = PlatformMessage::eMsgPlatformDisconnected;
@@ -98,10 +98,10 @@ void BoardManagerWrapper::messageFromBoard(QString message) {
 
 void BoardManagerWrapper::createPlatformsList(std::string& result) {
     QJsonArray arr;
-    for (auto const& it : boards_) {
+    for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
         QJsonObject item {
-            { JSON_VERBOSE_NAME, it.second.device->getProperty(strata::DeviceProperties::verboseName) },
-            { JSON_CLASS_ID, it.second.device->getProperty(strata::DeviceProperties::classId) },
+            { JSON_VERBOSE_NAME, it.value().device->getProperty(strata::DeviceProperties::verboseName) },
+            { JSON_CLASS_ID, it.value().device->getProperty(strata::DeviceProperties::classId) },
             { JSON_CONNECTION, JSON_CONNECTED }
         };
         arr.append(item);
@@ -119,25 +119,25 @@ void BoardManagerWrapper::createPlatformsList(std::string& result) {
 }
 
 std::string BoardManagerWrapper::getClientId(const int deviceId) const {
-    auto it = boards_.find(deviceId);
-    if (it != boards_.end()) {
-        return (*it).second.clientId;
+    auto it = boards_.constFind(deviceId);
+    if (it != boards_.constEnd()) {
+        return it.value().clientId;
     }
     return std::string();
 }
 
 std::string BoardManagerWrapper::getClassId(const int deviceId) const {
-    auto it = boards_.find(deviceId);
-    if (it != boards_.end()) {
-        return it->second.device->getProperty(strata::DeviceProperties::classId).toStdString();
+    auto it = boards_.constFind(deviceId);
+    if (it != boards_.constEnd()) {
+        return it.value().device->getProperty(strata::DeviceProperties::classId).toStdString();
     }
     return std::string();
 }
 
 std::string BoardManagerWrapper::getPlatformId(const int deviceId) const {
-    auto it = boards_.find(deviceId);
-    if (it != boards_.end()) {
-        return it->second.device->getProperty(strata::DeviceProperties::platformId).toStdString();
+    auto it = boards_.constFind(deviceId);
+    if (it != boards_.constEnd()) {
+        return it.value().device->getProperty(strata::DeviceProperties::platformId).toStdString();
     }
     return std::string();
 }
@@ -145,9 +145,9 @@ std::string BoardManagerWrapper::getPlatformId(const int deviceId) const {
 bool BoardManagerWrapper::getDeviceIdByClientId(const std::string& clientId, int& deviceId) const {
 // Original implementation in BoardsController class iterated through boards (PlatformBoard objects)
 // and returned first board which had desired client ID.
-    for (auto const& it : boards_) {
-        if (clientId == it.second.clientId) {
-            deviceId = it.first;
+    for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
+        if (clientId == it.value().clientId) {
+            deviceId = it.key();
             return true;
         }
     }
@@ -158,9 +158,9 @@ bool BoardManagerWrapper::getFirstDeviceIdByClassId(const std::string& classId, 
 // Original implementation in BoardsController class iterated through boards (PlatformBoard objects)
 // and returned first board which had desired class ID.
     QString class_id = QString::fromStdString(classId);
-    for (auto const& it : boards_) {
-        if (class_id == it.second.device->getProperty(strata::DeviceProperties::classId)) {
-            deviceId = it.first;
+    for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
+        if (class_id == it.value().device->getProperty(strata::DeviceProperties::classId)) {
+            deviceId = it.key();
             return true;
         }
     }
@@ -170,8 +170,8 @@ bool BoardManagerWrapper::getFirstDeviceIdByClassId(const std::string& classId, 
 bool BoardManagerWrapper::setClientId(const std::string& clientId, const int deviceId) {
    auto it = boards_.find(deviceId);
    if (it != boards_.end()) {
-       if ((*it).second.clientId.empty()) {
-           (*it).second.clientId = clientId;
+       if (it.value().clientId.empty()) {
+           it.value().clientId = clientId;
            return true;
        }
    }
@@ -181,7 +181,7 @@ bool BoardManagerWrapper::setClientId(const std::string& clientId, const int dev
 bool BoardManagerWrapper::clearClientId(const int deviceId) {
     auto it = boards_.find(deviceId);
     if (it != boards_.end()) {
-        (*it).second.clientId.clear();
+        it.value().clientId.clear();
         return true;
     }
     return false;

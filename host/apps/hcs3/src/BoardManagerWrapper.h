@@ -2,8 +2,7 @@
 #define HCS_BOARDMANAGERWRAPPER_H__
 
 #include <QObject>
-
-#include <map>
+#include <QHash>
 
 #include <BoardManager.h>
 
@@ -132,7 +131,7 @@ private:
     HCS_Dispatcher* dispatcher_{nullptr};
 
     // map: deviceID <-> Board
-    std::map<int, Board> boards_;
+    QHash<int, Board> boards_;
     // access to boards_ should be protected by mutex in case of multithread usage
 };
 
