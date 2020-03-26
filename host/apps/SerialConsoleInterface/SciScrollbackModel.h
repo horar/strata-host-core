@@ -38,7 +38,7 @@ public:
     Q_INVOKABLE QVariant data(int row, const QByteArray &role) const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int count() const;
-    void append(const QString &message, MessageType type);
+    void append(const QByteArray &message, MessageType type);
 
     Q_INVOKABLE void setAllCondensed(bool condensed);
     Q_INVOKABLE void setCondensed(int index, bool condensed);
@@ -69,7 +69,7 @@ private:
 };
 
 struct ScrollbackModelItem {
-    QString message;
+    QByteArray message;
     SciScrollbackModel::MessageType type;
     QDateTime timestamp;
     bool condensed;
