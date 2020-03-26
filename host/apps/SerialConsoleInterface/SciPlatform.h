@@ -19,6 +19,7 @@ class SciPlatform: public QObject {
     Q_PROPERTY(PlatformStatus status READ status NOTIFY statusChanged)
     Q_PROPERTY(SciScrollbackModel* scrollbackModel READ scrollbackModel CONSTANT)
     Q_PROPERTY(SciCommandHistoryModel* commandHistoryModel READ commandHistoryModel CONSTANT)
+    Q_PROPERTY(QString errorString READ errorString WRITE setErrorString NOTIFY errorStringChanged)
 
 public:
     SciPlatform(SciPlatformSettings *settings, QObject *parent = nullptr);
@@ -45,9 +46,11 @@ public:
     void setStatus(SciPlatform::PlatformStatus status);
     SciScrollbackModel* scrollbackModel();
     SciCommandHistoryModel* commandHistoryModel();
+    QString errorString();
+    void setErrorString(const QString &errorString);
 
     void resetPropertiesFromDevice();
-    Q_INVOKABLE QVariantMap sendMessage(const QByteArray &message);
+    Q_INVOKABLE bool sendMessage(const QByteArray &message);
     Q_INVOKABLE bool exportScrollback(QString filePath) const;
 
 signals:
@@ -55,6 +58,7 @@ signals:
     void appVersionChanged();
     void bootloaderVersionChanged();
     void statusChanged();
+    void errorStringChanged();
 
 private slots:
     void messageFromDeviceHandler(QByteArray message);
@@ -67,6 +71,7 @@ private:
     QString appVersion_;
     QString bootloaderVersion_;
     PlatformStatus status_;
+    QString errorString_;
 
     SciScrollbackModel *scrollbackModel_;
     SciCommandHistoryModel *commandHistoryModel_;

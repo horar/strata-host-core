@@ -113,6 +113,19 @@ SciCommandHistoryModel *SciPlatform::commandHistoryModel()
     return commandHistoryModel_;
 }
 
+QString SciPlatform::errorString()
+{
+    return errorString_;
+}
+
+void SciPlatform::setErrorString(const QString &errorString)
+{
+    if (errorString_ != errorString) {
+        errorString_ = errorString;
+        emit errorStringChanged();
+    }
+}
+
 void SciPlatform::resetPropertiesFromDevice()
 {
     if (device_ == nullptr) {
@@ -138,42 +151,37 @@ void SciPlatform::resetPropertiesFromDevice()
     setBootloaderVersion(bootloaderVersion);
 }
 
-QVariantMap SciPlatform::sendMessage(const QByteArray &message)
+bool SciPlatform::sendMessage(const QByteArray &message)
 {
-    QVariantMap errorMap;
-    errorMap["errorString"] = "";
-    errorMap["offset"] = -1;
-
     if (status_ != PlatformStatus::Ready
             && status_ != PlatformStatus::NotRecognized) {
 
-        errorMap["errorString"] = "platform not connected";
-        return errorMap;
+        setErrorString("Platform not connected");
+        return false;
     }
 
     QJsonParseError parseError;
     QJsonDocument doc = QJsonDocument::fromJson(message, &parseError);
 
     if (parseError.error != QJsonParseError::NoError) {
-        qCWarning(logCategorySci) << "cannot parse JSON"
-                   << "offset=" << parseError.offset
-                   << "error=" << parseError.error
-                   << parseError.errorString();
+        QString error = QString("JSON error at position %1 - %2")
+                .arg(parseError.offset)
+                .arg(parseError.errorString());
 
-        errorMap["errorString"] = parseError.errorString();
-        errorMap["offset"] = parseError.offset;
-        return errorMap;
+        setErrorString(error);
+        return false;
     }
 
     QByteArray compactMessage = doc.toJson(QJsonDocument::Compact);
 
-    scrollbackModel_->append(compactMessage, SciScrollbackModel::MessageType::Request);
-    commandHistoryModel_->add(compactMessage);
-    settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
+    bool result = device_->sendMessage(compactMessage);
+    if (result) {
+        scrollbackModel_->append(compactMessage, SciScrollbackModel::MessageType::Request);
+        commandHistoryModel_->add(compactMessage);
+        settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
+    }
 
-    device_->sendMessage(compactMessage);
-
-    return errorMap;
+    return result;
 }
 
 bool SciPlatform::exportScrollback(QString filePath) const
@@ -199,6 +207,5 @@ void SciPlatform::messageFromDeviceHandler(QByteArray message)
 
 void SciPlatform::deviceErrorHandler(QString message)
 {
-    Q_UNUSED(message)
-
+    setErrorString(message);
 }

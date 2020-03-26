@@ -414,6 +414,7 @@ FocusScope {
                 margins: 6
             }
 
+            text: model.platform.errorString
             verticalPadding: 1
             color: SGWidgets.SGColorsJS.TANGO_SCARLETRED1
             textColor: "white"
@@ -448,7 +449,7 @@ FocusScope {
             showCursorPosition: true
 
             onTextChanged: {
-                inputStatusTag.text = ""
+                model.platform.errorString = "";
             }
 
             Keys.onPressed: {
@@ -502,16 +503,8 @@ FocusScope {
 
     function sendTextInputTextAsComand() {
         var result = model.platform.sendMessage(cmdInput.text)
-        var errorString = result["errorString"]
-
-        if (result["errorString"].length === 0) {
+        if (result) {
             cmdInput.clear()
-        } else {
-            if (result["offset"] < 0) {
-                inputStatusTag.text = "Cannot send message - " + result["errorString"]
-            } else {
-                inputStatusTag.text = "JSON error at position " + result["offset"] + " - " + result["errorString"]
-            }
         }
     }
 
