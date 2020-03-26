@@ -36,7 +36,7 @@ function Test-CollateralDownload {
     Set-Location $TestRoot
 
     # Run Python script
-    $PythonScript = Start-Process $PythonExec -ArgumentList "$PythonCollateralDownloadTest `"$AppDataHCSDir`" $HCSTCPEndpoint" -NoNewWindow -PassThru -Wait
+    $PythonScript = Start-Process $PythonExec -ArgumentList "$PythonCollateralDownloadTest `"$HCSAppDataDir`" $HCSTCPEndpoint" -NoNewWindow -PassThru -Wait
 
     # Stop HCS process after test is done
     Stop-HCS
