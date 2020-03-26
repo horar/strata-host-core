@@ -32,7 +32,7 @@ function Assert-PythonAndPyzmq {
     }
 
     # Verify Python being run is Python 3
-    $PythonVersion = python -c 'import sys; print(sys.version_info[0])'
+    $PythonVersion = Invoke-Expression "${PythonExec} -c 'import sys; print(sys.version_info[0])'"
     If ($PythonVersion -Ne 3) {
         Exit-TestScript -1 "Error: Python 3 is required.`nAborting."
     }

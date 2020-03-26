@@ -33,6 +33,9 @@ function Test-SDSControlViews {
     Write-Host "SDS Control view testing"
     Write-Separator
 
+    # Change directory to location of SDS executable
+    Set-Location $SDSRootDir
+
     Write-Host "Starting Strata Developer Studio..."
     ($StrataDev = Start-Process $StrataPath -PassThru) | Out-Null     # Hide output.
 
