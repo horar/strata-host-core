@@ -56,7 +56,7 @@ Item {
 
         TabButton {
             id: samOptControlButton
-            text: qsTr("SAM And OTP")
+            text: qsTr("SAM,OTP,And CRC")
             onClicked: {
                 controlContainer.currentIndex = 3
             }

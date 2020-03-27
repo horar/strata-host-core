@@ -251,7 +251,7 @@ Item {
                     SGAlignedLabel {
                         id: openLoadLabel
                         target: openLoadDiagnostic
-                        text: "I2C Open Load Diagnostic"
+                        text: "I2C Open Load\nDiagnostic"
                         alignment: SGAlignedLabel.SideLeftCenter
 
                         anchors {
@@ -576,7 +576,7 @@ Item {
                                                 height: parent.height
                                                 orientation: Qt.Vertical
                                                 anchors.centerIn: parent
-                                                slider_start_color: 0.1666
+                                               // slider_start_color: 0.1666
 
 
                                             }
@@ -648,7 +648,7 @@ Item {
                                                 height: parent.height
                                                 orientation: Qt.Vertical
                                                 anchors.centerIn: parent
-                                                slider_start_color: 0.1666
+                                                //slider_start_color: 0.1666
 
 
                                             }
@@ -1147,6 +1147,7 @@ Item {
                                                 height: parent.height
                                                 orientation: Qt.Vertical
                                                 anchors.centerIn: parent
+                                                slider_start_color: 0.1666
 
                                             }
                                         }
@@ -1218,15 +1219,11 @@ Item {
                                                 orientation: Qt.Vertical
                                                 value: 50
                                                 anchors.centerIn: parent
-
+                                                slider_start_color: 0.1666
                                             }
                                         }
-
                                     }
                                 }
-
-
-
                             }
                         }
 
