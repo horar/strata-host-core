@@ -43,11 +43,11 @@ void Flasher::flash(bool startApplication) {
             qCInfo(logCategoryFlasher) << this << "Preparing for flashing " << dec << chunkCount_ << " chunks of firmware.";
             operation_->prepareForFlash();
         } else {
-            qCWarning(logCategoryFlasher).noquote() << this << "File '" << fwFile_.fileName() << "' is empty.";
+            qCCritical(logCategoryFlasher).noquote() << this << "File '" << fwFile_.fileName() << "' is empty.";
             finish(false);
         }
     } else {
-        qCWarning(logCategoryFlasher).noquote() << this << "Cannot open file '" << fwFile_.fileName() << "'.";
+        qCCritical(logCategoryFlasher).noquote() << this << "Cannot open file '" << fwFile_.fileName() << "'.";
         finish(false);
     }
 }
@@ -78,7 +78,7 @@ void Flasher::handleFlashFirmware(int lastFlashedChunk) {
         qCInfo(logCategoryFlasher) << this << "Going to flash chunk " << dec << chunkNumLog << " of " << chunkCount_;
         operation_->flashFirmwareChunk(chunk, chunkNumber_);
     } else {
-        qCWarning(logCategoryFlasher).noquote() << this << "Cannot read from file " << fwFile_.fileName() ;
+        qCCritical(logCategoryFlasher).noquote() << this << "Cannot read from file " << fwFile_.fileName() ;
         finish(false);
     }
 }
@@ -89,12 +89,12 @@ void Flasher::handleStartApp() {
 }
 
 void Flasher::handleTimeout() {
-    qCWarning(logCategoryFlasher) << this << "Timeout during flashing.";
+    qCCritical(logCategoryFlasher) << this << "Timeout during flashing.";
     finish(false);
 }
 
 void Flasher::handleError(QString msg) {
-    qCWarning(logCategoryFlasher).noquote() << this << "Error during flashing: " << msg;
+    qCCritical(logCategoryFlasher).noquote() << this << "Error during flashing: " << msg;
     finish(false);
 }
 

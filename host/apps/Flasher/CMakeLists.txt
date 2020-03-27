@@ -16,8 +16,12 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_executable(${PROJECT_NAME}
     src/main.cpp
-    src/FlasherCli.cpp
-    src/FlasherCli.h
+    src/Commands.cpp
+    src/Commands.h
+    src/CliParser.cpp
+    src/CliParser.h
+    src/SerialPortList.cpp
+    src/SerialPortList.h
     src/logging/LoggingQtCategories.cpp
     src/logging/LoggingQtCategories.h
 )
