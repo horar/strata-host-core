@@ -112,13 +112,13 @@ Item {
                 }
 
                 SGButton {
-                    id: okButton
+                    id: cancelButton
                     width: parent.width/3
                     height:parent.height
                     anchors.left: continueButton.right
                     anchors.leftMargin: 20
                     //anchors.centerIn: parent
-                    text: "Ok"
+                    text: "Cancel"
                     color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
                     roundedLeft: true
                     roundedRight: true
@@ -680,7 +680,7 @@ Item {
                 }
 
                 Rectangle {
-                    Layout.preferredWidth: parent.width/3
+                    Layout.preferredWidth: parent.width/2.6
                     Layout.fillHeight: true
                     RowLayout {
                         anchors.fill: parent
