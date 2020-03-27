@@ -73,6 +73,13 @@ function Assert-PSSQLite {
     }
 }
 
+function Assert-SDSInstallerPath {
+    if (!($SDSInstallerPath -match "Strata Developer Studio" -and $SDSInstallerPath.Substring($SDSInstallerPath.Length -3) -eq "exe")) {
+        Write-Host -ForegroundColor Red "Error: Invalid Strata installer path.`nPlease make sure that you have the correct path and you have included .exe at the end"
+        Exit-TestScript -1
+    }
+}
+
 # Start one instance of HCS
 function Start-HCS {
     Start-Process -FilePath $HCSExecFile -ArgumentList "-f `"$HCSConfigFile`""

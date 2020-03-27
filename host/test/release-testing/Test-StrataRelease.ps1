@@ -19,6 +19,12 @@ Creation Date:  03/17/2020
 Powershell 5, Python 3
 #>
 
+[CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$True, Position=0, HelpMessage="Please enter a path for Strata Installer")]
+        [string]$SDSInstallerPath
+    )
+
 # Define HCS TCP endpoint to be used
 Set-Variable "HCSTCPEndpoint" "tcp://127.0.0.1:5563"
 
@@ -62,6 +68,9 @@ Set-Variable "PythonControlViewTest"        "$PSScriptRoot/strataDev/control-vie
 
 Write-Host "`n`nPerforming initial checks...`n"
 
+# Validate Strata installer path
+Assert-SDSInstallerPath
+
 # Search for PSSQLite
 Assert-PSSQLite
 
@@ -79,17 +88,17 @@ Assert-PythonScripts
 Write-Host "Starting tests...`n"
 
 # Run Test-SDSInstaller
-$SDSInstallerResults = Test-SDSInstaller
+$SDSInstallerResults = Test-SDSInstaller -SDSInstallerPath
 
 # Run Test-Database (HCS database testing)
 
-$DatabaseResults = Test-Database
+#$DatabaseResults = Test-Database
 
 # Run Test-TokenAndViewsDownload
-$TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
+#$TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
 
 # Run Test-CollateralDownload (HCS collateral download testing)
-$CollateralDownloadResults = Test-CollateralDownload
+#$CollateralDownloadResults = Test-CollateralDownload
 
 # Run Test-SDSControlViews (SDS control view testing)
 #$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
