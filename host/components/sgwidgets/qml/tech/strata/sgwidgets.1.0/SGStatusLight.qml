@@ -10,9 +10,11 @@ Item {
     id: root
     width: 50
     height: width
+    layer.enabled: true
 
     property int status: 6
     property color customColor: "white"
+    property bool flatStyle: false
 
     enum IconStatus {
         Blue,
@@ -27,7 +29,7 @@ Item {
     Rectangle {
         id: lightColorLayer
         anchors.centerIn: statusLight
-        width: Math.min(statusLight.width, statusLight.height) * 0.8
+        width: Math.min(statusLight.width, statusLight.height) * (root.flatStyle ? 0.6 : 0.8)
         height: width
         radius: width/2
         color: {
@@ -43,12 +45,24 @@ Item {
         }
     }
 
+    Rectangle {
+        id: flatStyleBorder
+        width: Math.min(statusLight.width, statusLight.height)
+        height: width
+        radius: width/2
+        color: "transparent"
+        border.color: "grey"
+        border.width: .06 * width
+        visible: root.flatStyle
+    }
+
     Image {
         id: statusLight
         fillMode: Image.PreserveAspectFit
         mipmap: true
         height: root.height
         width: root.width
+        visible: !root.flatStyle
 
         source: {
             switch (root.status) {
