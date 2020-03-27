@@ -93,12 +93,32 @@ Item {
                     right: parent.right
                 }
                 color: "transparent"
+
                 SGButton {
                     id: continueButton
                     width: parent.width/3
                     height:parent.height
-                    anchors.centerIn: parent
+                    anchors.left: parent.left
+                    //anchors.leftMargin: 20
+                    //anchors.centerIn: parent
                     text: "Continue"
+                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                    roundedLeft: true
+                    roundedRight: true
+
+                    onClicked: {
+                        warningPopup.close()
+                    }
+                }
+
+                SGButton {
+                    id: okButton
+                    width: parent.width/3
+                    height:parent.height
+                    anchors.left: continueButton.right
+                    anchors.leftMargin: 20
+                    //anchors.centerIn: parent
+                    text: "Ok"
                     color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
                     roundedLeft: true
                     roundedRight: true
@@ -134,9 +154,10 @@ Item {
                         alignment: SGAlignedLabel.SideTopCenter
                         anchors {
                             top:parent.top
-                            left: parent.left
+                            topMargin: 10
+                            //left: parent.left
                             verticalCenter: parent.verticalCenter
-                            leftMargin: 20
+                            //leftMargin: 20
                         }
 
                         fontSizeMultiplier: ratioCalc * 1.2
@@ -145,6 +166,7 @@ Item {
 
                         SGStatusLight {
                             id: diag
+                            //width : 30
 
                         }
                     }
@@ -746,8 +768,9 @@ Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
             RowLayout {
-
-                anchors.fill: parent
+                width:parent.width/2
+                height: parent.height
+                anchors.left:parent.left
 
                 Rectangle {
                     Layout.fillHeight: true
@@ -785,13 +808,13 @@ Item {
                     Layout.fillWidth: true
                     SGButton {
                         id:  zapButton
-                        text: qsTr("One Time \n Program")
-                        anchors.centerIn: parent
+                        text: qsTr("One Time \n Program (zap)")
+                        anchors.verticalCenter: parent.verticalCenter
                         fontSizeMultiplier: ratioCalc
                         color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                         hoverEnabled: true
-                        height: parent.height/3
-                        width: parent.width/3
+                        height: parent.height/2
+                        width: parent.width/1.5
                         MouseArea {
                             hoverEnabled: true
                             anchors.fill: parent
@@ -806,5 +829,4 @@ Item {
         }
 
     }
-
 }
