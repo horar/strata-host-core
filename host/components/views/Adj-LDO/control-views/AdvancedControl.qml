@@ -10,37 +10,61 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: root
-    property real ratioCalc: (Screen.width <= 1200) ? (root.width/Screen.width) : root.width/1200//(root.width / 1600) / (root.height / 900)
-    property real initialAspectRatio: Screen.width/Screen.height// 1.78//1200/820
-    //property real ratioCalc: root.width / 1200
-    //property real initialAspectRatio: 1209/820
+
+    property real ratioCalc: (Screen.width <= 1200) ? (root.width/Screen.width) : root.width/1200//root.width/1200
+    property real initialAspectRatio: Screen.width/Screen.height//1200/820
+
+    anchors.centerIn: parent
+    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
+
+    Component.onCompleted: {
+        Help.registerTarget(shortCircuitButton, "This button enables the onboard short-circuit load used to emulate a short to ground on the LDO output for approximately 2 ms. The short-circuit load cannot be enabled when powering the LDO via the 5V from the Strata USB connector and/or when the input buck regulator is enabled. The current pulled by the short-circuit load will vary with LDO output voltage. See the Platform Content page for more information about the short-circuit load and LDO behavior during a short-circuit event.", 0, "AdjLDOAdvanceHelp")
+        Help.registerTarget(currentLimitThresholdLabel, "This info box will show the approximate output current threshold at which the LDO's output current limit protection was triggered. This info box does not show the current limit threshold during a short-circuit event caused by enabling the onboard short-circuit load.", 1, "AdjLDOAdvanceHelp")
+        Help.registerTarget(pgldoLabel, "This indicator will be green when the LDO power good signal is high. If the TSOP-5 LDO package is being used, the indicator will be grayed out.", 2, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ocpTriggeredLabel, "This indicator will turn red momentarily if the LDO's power good signal or the PG_308 signal goes low while the short-circuit load is enabled.", 3, "AdjLDOAdvanceHelp")
+        Help.registerTarget(currentLimitReachLabel, "This indicator will turn red when the LDO's current limit protection is triggered. See the Platform Content for more information on the current limit behavior of the LDO and how this is detected.", 4, "AdjLDOAdvanceHelp")
+        Help.registerTarget(tsdTriggeredLabel, "This indicator will turn red when the LDO's thermal shutdown (TSD) protection is triggered.  See the Platform Content for more information on the TSD behavior of the LDO and how this is detected.", 5, "AdjLDOAdvanceHelp")
+        Help.registerTarget(estTSDThresLabel, "This info box will show the estimated LDO junction temperature threshold at which the LDO's TSD protection was triggered.", 6, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoPowerDissipationLabel, "This gauge shows the power loss in the LDO when it is enabled.", 7, "AdjLDOAdvanceHelp")
+        Help.registerTarget(boardTempLabel, "This gauge shows the board temperature near the ground pad of the selected LDO package.", 8, "AdjLDOAdvanceHelp")
+        Help.registerTarget(appxLDoTempLabel, "This gauge shows the approximate LDO junction temperature. See the Platform Content page for more information on how it is calculated.", 9, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoInputVolLabel, "This slider allows you to set the desired input voltage of the LDO when being supplied by the input buck regulator. The value can be set while the input buck regulator is not being used and the voltage will automatically be adjusted as needed when the input buck regulator is activated.", 10, "AdjLDOAdvanceHelp")
+        Help.registerTarget(boardInputLabel, "This combo box allows you to choose the main input voltage option (upstream power supply) for the board. The 'External' option uses the input voltage from the input banana plugs. The 'USB 5V' option uses the 5V supply from the Strata USB connector. The 'Off' option disconnects both inputs from VIN and pulls VIN low.", 11, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoEnableSwitchLabel, "This switch enables the LDO.", 12, "AdjLDOAdvanceHelp")
+        Help.registerTarget(setLDOOutputVoltageContainer, "This slider allows you to set the desired output voltage of the LDO. The value can be set while the LDO is disabled, and the voltage will automatically be adjusted as needed whenever the LDO is enabled again.", 13, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. The 'Bypass' option connects the LDO input directly to VIN_SB through a load switch. The 'Buck Regulator' option allows adjustment of the input voltage to the LDO through an adjustable output voltage buck regulator. The 'Off' option disables both the input buck regulator and bypass load switch, disconnecting the LDO from the input power supply, and pulls VIN_LDO low. The 'Direct' option allows you to power the LDO directly through the VIN_LDO solder pad on the board, bypassing the input stage entirely. WARNING! - when using this option, ensure you do not use the other LDO input voltage options while an external power supply is supplying power to the LDO through the VIN_LDO solder pad. See the Platform Content page for more information about the options for supplying the LDO input voltage.", 14, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoDisableLabel, "This switch disables the LDO output voltage adjustment circuit included on this board. See the Platform Content page for more information on using this feature.", 15, "AdjLDOAdvanceHelp")
+        Help.registerTarget(setOutputCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value can be set while the load is disabled and the load current will automatically be adjusted as needed when the load is enabled. The value may need to be reset to the desired level after recovery from an LDO UVLO event.", 16, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the LDO package actually populated on the board if different from the stock LDO package option. See the Platform Content page for more information about using alternate LDO packages with this board.", 17, "AdjLDOAdvanceHelp")
+        Help.registerTarget(loadEnableSwitchLabel, "This switch enables the onboard load.", 18, "AdjLDOAdvanceHelp")
+        Help.registerTarget(extLoadCheckboxLabel, "Check this box if an external load is connected to the output banana plugs. During normal onboard load operation, a loop is run when the current level is set within the LDO's nominal output current range to minimize the load current error, and this loop should not be run if an external load is attached.", 19 , "AdjLDOAdvanceHelp")
+        Help.registerTarget(vinGoodLabel, "This indicator will be green when:\na.) VIN is greater than 2.5V when the input buck regulator is enabled\nb.) VIN is greater than 1.5V when it is disabled.", 20, "AdjLDOAdvanceHelp")
+        Help.registerTarget(vinReadyLabel, "This indicator will be green when the LDO input voltage is greater than the LDO input UVLO threshold of 1.6V.", 21, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoInputVoltageLabel, "This info box shows the input voltage of the LDO.", 22, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoOutputVoltageLabel, "This info box shows the output voltage of the LDO.", 23, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoOutputCurrentLabel, "This info box shows the output current of the LDO when pulled by either the onboard electronic load or through an external load connected to the output banana plugs. Current pulled by the onboard short-circuit load is not measured and thus will not be shown in this box.", 24, "AdjLDOAdvanceHelp")
+        Help.registerTarget(diffVoltageLabel, "This info box shows the voltage drop across the LDO.", 25, "AdjLDOAdvanceHelp")
+        Help.registerTarget(dropReachedLabel, "This indicator will turn red when the LDO is in dropout.", 26, "AdjLDOAdvanceHelp")
+    }
 
     property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
     property string vinGoodThreshText: ""
     property string prevVinLDOSel: ""
     property string newVinLDOSel: ""
 
-    anchors.centerIn: parent
-
-    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
-    height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
-
     property var variant_name: platformInterface.variant_name.value
     onVariant_nameChanged: {
         if(variant_name === "NCP164C_TSOP5") {
             ldoPackageComboBox.currentIndex = 0
-            //pgldoLabel.opacity = 0.5
-            //pgldoLabel.enabled = false
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
-            //"Set LDO Output Voltage" PlaceHolder
+
             setLDOOutputVoltage.fromText.text = "1.1V"
             setLDOOutputVoltage.toText.text =  "4.7V"
             setLDOOutputVoltage.from = 1.1
             setLDOOutputVoltage.to = 4.7
             setLDOOutputVoltage.stepSize = 0.01
 
-            //"Set LDO Input Voltage" Placeholder
-            ldoInputVolSlider.fromText.text ="1.5V"
             ldoInputVolSlider.toText.text =  "5V"
             ldoInputVolSlider.from = 1.5
             ldoInputVolSlider.to = 5
@@ -50,15 +74,13 @@ Item {
         else if (variant_name === "NCP164A_DFN6") {
             ldoPackageComboBox.currentIndex = 1
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
-            //"Set LDO Output Voltage" PlaceHolder
+
             setLDOOutputVoltage.fromText.text ="1.1V"
             setLDOOutputVoltage.toText.text =  "5.2V"
             setLDOOutputVoltage.from = 1.1
             setLDOOutputVoltage.to = 5.2
             setLDOOutputVoltage.stepSize = 0.01
 
-            //"Set LDO Input Voltage" Placeholder
-            ldoInputVolSlider.fromText.text ="1.5V"
             ldoInputVolSlider.toText.text =  "5.5V"
             ldoInputVolSlider.from = 1.5
             ldoInputVolSlider.to = 5.5
@@ -67,15 +89,13 @@ Item {
         else if (variant_name === "NCP164C_DFN8") {
             ldoPackageComboBox.currentIndex = 2
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
-            //"Set LDO Output Voltage" PlaceHolder
+
             setLDOOutputVoltage.fromText.text ="1.1V"
             setLDOOutputVoltage.toText.text =  "4.7V"
             setLDOOutputVoltage.from = 1.1
             setLDOOutputVoltage.to = 4.7
             setLDOOutputVoltage.stepSize = 0.01
 
-            //"Set LDO Input Voltage" Placeholder
-            ldoInputVolSlider.fromText.text ="1.5V"
             ldoInputVolSlider.toText.text =  "5V"
             ldoInputVolSlider.from = 1.5
             ldoInputVolSlider.to = 5
@@ -84,15 +104,13 @@ Item {
         else if (variant_name === "NCV8164A_TSOP5") {
             ldoPackageComboBox.currentIndex = 0
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
-            //"Set LDO Output Voltage" PlaceHolder
+
             setLDOOutputVoltage.fromText.text ="1.2V"
             setLDOOutputVoltage.toText.text =  "5.2V"
             setLDOOutputVoltage.from = 1.2
             setLDOOutputVoltage.to = 5.2
             setLDOOutputVoltage.stepSize = 0.01
 
-            //"Set LDO Input Voltage" Placeholder
-            ldoInputVolSlider.fromText.text ="1.5V"
             ldoInputVolSlider.toText.text =  "5.5V"
             ldoInputVolSlider.from = 1.5
             ldoInputVolSlider.to = 5.5
@@ -101,15 +119,13 @@ Item {
         else if (variant_name === "NCV8164C_DFN6") {
             ldoPackageComboBox.currentIndex = 1
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
-            //"Set LDO Output Voltage" PlaceHolder
+
             setLDOOutputVoltage.fromText.text ="1.2V"
             setLDOOutputVoltage.toText.text =  "4.7V"
             setLDOOutputVoltage.from = 1.2
             setLDOOutputVoltage.to = 4.7
             setLDOOutputVoltage.stepSize = 0.01
 
-            //"Set LDO Input Voltage" Placeholder
-            ldoInputVolSlider.fromText.text ="1.5V"
             ldoInputVolSlider.toText.text =  "5V"
             ldoInputVolSlider.from = 1.5
             ldoInputVolSlider.to = 5
@@ -118,50 +134,18 @@ Item {
         else if (variant_name === "NCV8164A_DFN8") {
             ldoPackageComboBox.currentIndex = 2
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
-            //"Set LDO Output Voltage" PlaceHolder
+
             setLDOOutputVoltage.fromText.text ="1.2V"
             setLDOOutputVoltage.toText.text =  "5.2V"
             setLDOOutputVoltage.from = 1.1
             setLDOOutputVoltage.to = 5.2
             setLDOOutputVoltage.stepSize = 0.01
 
-            //"Set LDO Input Voltage" Placeholder
-            ldoInputVolSlider.fromText.text ="1.5V"
             ldoInputVolSlider.toText.text =  "5.5V"
             ldoInputVolSlider.from = 1.5
             ldoInputVolSlider.to = 5.5
             ldoInputVolSlider.stepSize = 0.01
         }
-    }
-
-    Component.onCompleted: {
-        Help.registerTarget(shortCircuitButton, "This button enables the onboard short-circuit load used to emulate a short to ground on the LDO output for approximately 2 ms. The short-circuit load cannot be enabled when powering the LDO via the 5V from the Strata USB connector and/or when the input buck regulator is enabled. The current pulled by the short-circuit load will vary with LDO output voltage. See the Platform Content page for more information about the short-circuit load and LDO behavior during a short-circuit event.", 0, "AdjLDOAdvanceHelp")
-        Help.registerTarget(currentLimitThresholdLabel, "This info box will show the approximate output current threshold at which the LDO's output current limit protection was triggered. This info box does not show the current limit threshold during a short-circuit event caused by enabling the onboard short-circuit load.", 1, "AdjLDOAdvanceHelp")
-        Help.registerTarget(pgldoLabel, "This indicator will be green when the LDO power good signal is high.", 2, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ocpTriggeredLabel, "This indicator will turn red momentarily if the LDO's power good signal goes low while the short-circuit load is enabled.", 3, "AdjLDOAdvanceHelp")
-        Help.registerTarget(currentLimitReachLabel, "This indicator will turn red when the LDO's current limit protection is triggered. See the Platform Content for more information on the current limit behavior of the LDO.", 4, "AdjLDOAdvanceHelp")
-        Help.registerTarget(tsdTriggeredLabel, "This indicator will turn red when the LDO's thermal shutdown (TSD) protection is triggered.", 5, "AdjLDOAdvanceHelp")
-        Help.registerTarget(estTSDThresLabel, "This info box will show the estimated LDO junction temperature threshold at which the LDO's TSD protection was triggered.", 6, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoPowerDissipationLabel, "This gauge shows the power loss in the LDO when it is enabled.", 7, "AdjLDOAdvanceHelp")
-        Help.registerTarget(boardTempLabel, "This gauge shows the board temperature near the ground pad of the selected LDO package.", 8, "AdjLDOAdvanceHelp")
-        Help.registerTarget(appxLDoTempLabel, "This gauge shows the approximate LDO junction temperature. See the Platform Content page for more information on how it is calculated.", 9, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoInputVolLabel, "This slider allows you to set the desired input voltage of the LDO when being supplied by the input buck regulator. The value can be set while the input buck regulator is not being used and the voltage will automatically be adjusted as needed when the input buck regulator is activated.", 10, "AdjLDOAdvanceHelp")
-        Help.registerTarget(boardInputLabel, "This combo box allows you to choose the main input voltage option (upstream power supply) for the board. The 'External' option uses the input voltage from the input banana plugs (VIN_EXT). The 'USB 5V' option uses the 5V supply from the Strata USB connector. The 'Off' option disconnects both inputs from VIN and pulls VIN low.", 11, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoEnableSwitchLabel, "This switch enables the LDO.", 12, "AdjLDOAdvanceHelp")
-        Help.registerTarget(setLDOOutputVoltageContainer, "This slider allows you to set the desired output voltage of the LDO. The value can be set while the LDO is disabled, and the voltage will automatically be adjusted as needed whenever the LDO is enabled again.", 13, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. The 'Bypass' option connects the LDO input directly to VIN_SB through a load switch. The 'Buck Regulator' option allows adjustment of the input voltage to the LDO through an adjustable output voltage buck regulator. The 'Off' option disables both the input buck regulator and bypass load switch, disconnecting the LDO from the input power supply, and pulls VIN_LDO low. The 'Direct' option allows you to power the LDO directly through the VIN_LDO solder pad on the board, bypassing the input stage entirely. WARNING! - when using this option, ensure you do not use the other LDO input voltage options while an external power supply is supplying power to the LDO through the VIN_LDO solder pad. See the Platform Content page for more information about the options for supplying the LDO input voltage.", 14, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoDisableLabel, "This switch disables the LDO output voltage adjustment circuit included on this board. This feature is intended to be used to evaluate the LDO as it would be used in an actual application with fixed resistors in the LDO feedback network and to reduce LDO output voltage noise contribution from the Strata interface circuitry. See the Platform Content page for more information on using this feature.", 15, "AdjLDOAdvanceHelp")
-        Help.registerTarget(setOutputCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value can be set while the load is disabled and the load current will automatically be adjusted as needed when the load is enabled. The value may need to be reset to the desired level after recovery from an LDO UVLO event.", 16, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the LDO package actually populated on the board if different from the stock LDO package option. See the Platform Content page for more information about using alternate LDO packages with this board.", 17, "AdjLDOAdvanceHelp")
-        Help.registerTarget(loadEnableSwitchLabel, "This switch enables the onboard load.", 18, "AdjLDOAdvanceHelp")
-        Help.registerTarget(extLoadCheckboxLabel, "Check this box if an external load is connected to the output banana plugs (VOUT). During normal onboard load operation, a loop is run when the current level is set to minimize the load current error, and this loop should not be run if an external load is attached.", 19 , "AdjLDOAdvanceHelp")
-        Help.registerTarget(vinGoodLabel, "This indicator will be green when:\na.) VIN is greater than 2.5V when the input buck regulator is enabled\nb.) VIN is greater than 1.5V when it is disabled.", 20, "AdjLDOAdvanceHelp")
-        Help.registerTarget(vinReadyLabel, "This indicator will be green when the LDO input voltage (VIN_LDO) is greater than the LDO input UVLO threshold of 1.6V.", 21, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoInputVoltageLabel, "This info box shows the input voltage of the LDO.", 22, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoOutputVoltageLabel, "This info box shows the output voltage of the LDO.", 23, "AdjLDOAdvanceHelp")
-        Help.registerTarget(diffVoltageLabel, "This info box shows the voltage drop across the LDO.", 24, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoOutputCurrentLabel, "This info box shows the output current of the LDO when pulled by either the onboard electronic load or through an external load connected to the output banana plugs (VOUT). Current pulled by the onboard short-circuit load is not measured and thus will not be shown in this box.", 25, "AdjLDOAdvanceHelp")
-        Help.registerTarget(dropReachedLabel, "This indicator will turn red when the LDO is in dropout.", 26, "AdjLDOAdvanceHelp")
     }
 
     property var telemetry_notification: platformInterface.telemetry
@@ -398,7 +382,6 @@ Item {
         anchors.centerIn: parent
         modal: true
         focus: true
-        //activeFocus: true
         closePolicy: Popup.NoAutoClose
         background: Rectangle{
             id: warningPopupLDOInputContainer
@@ -571,7 +554,7 @@ Item {
     }
 
     Rectangle {
-        width: parent.width// - 10
+        width: parent.width
         height: parent.height - noteMessage.height - 50
         anchors {
             top: noteMessage.bottom
@@ -590,7 +573,6 @@ Item {
             Rectangle {
                 Layout.fillWidth: true
                 Layout.preferredHeight: parent.height * (5/12)
-                //Layout.fillHeight: true
 
                 RowLayout {
                     anchors.fill: parent
@@ -844,7 +826,6 @@ Item {
                                                 unit: "<b>˚C</b>"
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
-                                                ///text: platformInterface.telemetry.vin
                                             }
                                         }
                                     }
@@ -854,11 +835,9 @@ Item {
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: (parent.height - thermalShutdownText.height - line2.height) * (3/4)
-                                //Layout.fillHeight: true
 
                                 RowLayout {
                                     anchors.fill: parent
-                                    // spacing: 10
 
                                     Rectangle {
                                         id: ldoPowerDissipationContiner
@@ -889,8 +868,6 @@ Item {
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.1
                                                 unitText: "W"
                                                 valueDecimalPlaces: 3
-                                                //value: platformInterface.status_voltage_current.power_dissipated
-                                                //Behavior on value { NumberAnimation { duration: 300 } }
                                             }
                                         }
                                     }
@@ -924,8 +901,6 @@ Item {
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.1
                                                 unitText: "˚C"
                                                 valueDecimalPlaces: 1
-                                                // value: platformInterface.telemetry.temperature
-                                                //Behavior on value { NumberAnimation { duration: 300 } }
                                             }
                                         }
                                     }
@@ -958,8 +933,6 @@ Item {
                                                 unitTextFontSizeMultiplier: ratioCalc * 2.1
                                                 unitText: "˚C"
                                                 valueDecimalPlaces: 1
-                                                //value: platformInterface.status_voltage_current.power_dissipated
-                                                //Behavior on value { NumberAnimation { duration: 300 } }
                                             }
                                         }
                                     }
@@ -972,7 +945,6 @@ Item {
 
             Rectangle {
                 Layout.fillWidth: true
-                //Layout.fillHeight: true
                 Layout.preferredHeight: parent.height * (7/12)
 
                 RowLayout {
@@ -1037,7 +1009,7 @@ Item {
                                                 from: 0.6
                                                 to: 5
                                                 live: false
-                                                fromText.text: "0.6V"
+                                                fromText.text: "1.5V"
                                                 fromText.fontSizeMultiplier: 0.9
                                                 toText.text: "5V"
                                                 toText.fontSizeMultiplier: 0.9
@@ -1362,14 +1334,15 @@ Item {
                                                     id: extLoadCheckboxLabel
                                                     target: extLoadCheckbox
                                                     text: "External Load \nConnected?"
-                                                    //horizontalAlignment: Text.AlignHCenter
                                                     font.bold : true
                                                     font.italic: true
                                                     alignment: SGAlignedLabel.SideTopCenter
                                                     fontSizeMultiplier: ratioCalc
-                                                    anchors.verticalCenter: parent.verticalCenter
-                                                    anchors.horizontalCenter: parent.horizontalCenter
-                                                    anchors.top: parent.top
+                                                    anchors {
+                                                        horizontalCenter: parent.horizontalCenter
+                                                        verticalCenter: parent.verticalCenter
+                                                        top: parent.top
+                                                    }
                                                     margin: -5
 
                                                     Rectangle {
@@ -1518,8 +1491,13 @@ Item {
                                                             target: ldoInputVoltage
                                                             text: "LDO Input Voltage \n(VIN_LDO)"
                                                             alignment: SGAlignedLabel.SideTopLeft
-                                                            anchors.verticalCenter: parent.verticalCenter
-                                                            anchors.horizontalCenter: parent.horizontalCenter
+                                                            anchors {
+                                                                left: parent.left
+                                                                leftMargin: 20
+                                                                verticalCenter: parent.verticalCenter
+                                                            }
+//                                                            anchors.verticalCenter: parent.verticalCenter
+//                                                            anchors.horizontalCenter: parent.horizontalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             font.bold : true
 
@@ -1544,8 +1522,13 @@ Item {
                                                             target: ldoOutputVoltage
                                                             text: "LDO Output Voltage \n(VOUT_LDO)"
                                                             alignment: SGAlignedLabel.SideTopLeft
-                                                            anchors.verticalCenter: parent.verticalCenter
-                                                            anchors.horizontalCenter: parent.horizontalCenter
+                                                            anchors {
+                                                                left: parent.left
+                                                                leftMargin: 20
+                                                                verticalCenter: parent.verticalCenter
+                                                            }
+//                                                            anchors.verticalCenter: parent.verticalCenter
+//                                                            anchors.horizontalCenter: parent.horizontalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             font.bold : true
 
@@ -1571,16 +1554,54 @@ Item {
                                                     anchors.fill: parent
 
                                                     Rectangle {
+                                                        id: ldoOutputCurrentContainer
+                                                        Layout.fillWidth: true
+                                                        Layout.fillHeight: true
+
+                                                        SGAlignedLabel {
+                                                            id: ldoOutputCurrentLabel
+                                                            target: ldoOutputCurrent
+                                                            text: "LDO Output Current \n(IOUT)"
+                                                            alignment: SGAlignedLabel.SideTopLeft
+                                                            anchors {
+                                                                left: parent.left
+                                                                leftMargin: 20
+                                                                verticalCenter: parent.verticalCenter
+                                                            }
+//                                                            anchors.verticalCenter: parent.verticalCenter
+//                                                            anchors.horizontalCenter: parent.horizontalCenter
+                                                            fontSizeMultiplier: ratioCalc
+                                                            font.bold : true
+
+                                                            SGInfoBox {
+                                                                id: ldoOutputCurrent
+                                                                unit: "mA"
+                                                                width: 100* ratioCalc
+                                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                                boxColor: "lightgrey"
+                                                                boxFont.family: Fonts.digitalseven
+                                                                unitFont.bold: true
+
+                                                            }
+                                                        }
+                                                    }
+
+                                                    Rectangle {
                                                         Layout.fillWidth: true
                                                         Layout.fillHeight: true
 
                                                         SGAlignedLabel {
                                                             id: diffVoltageLabel
                                                             target: diffVoltage
-                                                            text: "LDO Voltage Drop"
+                                                            text: "LDO Voltage\nDrop"
                                                             alignment: SGAlignedLabel.SideTopLeft
-                                                            anchors.verticalCenter: parent.verticalCenter
-                                                            anchors.horizontalCenter: parent.horizontalCenter
+                                                            anchors {
+                                                                left: parent.left
+                                                                leftMargin: 20
+                                                                verticalCenter: parent.verticalCenter
+                                                            }
+//                                                            anchors.verticalCenter: parent.verticalCenter
+//                                                            anchors.horizontalCenter: parent.horizontalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             font.bold : true
 
@@ -1592,34 +1613,6 @@ Item {
                                                                 boxColor: "lightgrey"
                                                                 boxFont.family: Fonts.digitalseven
                                                                 unitFont.bold: true
-                                                            }
-                                                        }
-                                                    }
-
-                                                    Rectangle {
-                                                        id: ldoOutputCurrentContainer
-                                                        Layout.fillWidth: true
-                                                        Layout.fillHeight: true
-
-                                                        SGAlignedLabel {
-                                                            id: ldoOutputCurrentLabel
-                                                            target: ldoOutputCurrent
-                                                            text: "LDO Output Current \n(IOUT)"
-                                                            alignment: SGAlignedLabel.SideTopLeft
-                                                            anchors.verticalCenter: parent.verticalCenter
-                                                            anchors.horizontalCenter: parent.horizontalCenter
-                                                            fontSizeMultiplier: ratioCalc
-                                                            font.bold : true
-
-                                                            SGInfoBox {
-                                                                id: ldoOutputCurrent
-                                                                unit: "mA"
-                                                                width: 110* ratioCalc
-                                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                                boxColor: "lightgrey"
-                                                                boxFont.family: Fonts.digitalseven
-                                                                unitFont.bold: true
-
                                                             }
                                                         }
                                                     }
@@ -1635,8 +1628,6 @@ Item {
                                                     target: dropReached
                                                     alignment: SGAlignedLabel.SideTopCenter
                                                     anchors.centerIn: parent
-//                                                    anchors.horizontalCenter: parent.horizontalCenter
-//                                                    anchors.horizontalCenterOffset: 20
                                                     fontSizeMultiplier: ratioCalc
                                                     text: "Dropout Reached"
                                                     font.bold: true
@@ -1648,15 +1639,6 @@ Item {
                                                     }
                                                 }
                                             }
-//                                            Rectangle {
-//                                                Layout.fillWidth: true
-//                                                Layout.fillHeight: true
-//                                            }
-
-//                                            Rectangle {
-//                                                Layout.fillWidth: true
-//                                                Layout.fillHeight: true
-//                                            }
                                         }
                                     }
                                 }
@@ -1668,7 +1650,3 @@ Item {
         }
     }
 }
-
-
-
-
