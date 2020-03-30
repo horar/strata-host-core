@@ -74,7 +74,7 @@ void BoardManager::reconnect(const int deviceId) {
     }
 }
 
-SerialDeviceShPtr BoardManager::getDevice(const int deviceId) const {
+SerialDevicePtr BoardManager::device(const int deviceId) const {
     // in case of multithread usage lock access to openedSerialPorts_
     auto it = openedSerialPorts_.constFind(deviceId);
     if (it != openedSerialPorts_.constEnd()) {
@@ -106,7 +106,7 @@ QString BoardManager::getDeviceProperty(const int deviceId, const DeviceProperti
     // in case of multithread usage lock access to openedSerialPorts_
     auto it = openedSerialPorts_.constFind(deviceId);
     if (it != openedSerialPorts_.constEnd()) {
-        return it.value()->getProperty(property);
+        return it.value()->property(property);
     }
     else {
         logInvalidDeviceId(QStringLiteral("Cannot get required device property"), deviceId);
@@ -206,7 +206,7 @@ void BoardManager::computeListDiff(std::set<int>& list, std::set<int>& added_por
 bool BoardManager::addedSerialPort(const int deviceId) {
     const QString name = serialIdToName_.value(deviceId);
 
-    SerialDeviceShPtr device = std::make_shared<SerialDevice>(deviceId, name);
+    SerialDevicePtr device = std::make_shared<SerialDevice>(deviceId, name);
 
     if (device->open()) {
         openedSerialPorts_.insert(deviceId, device);
@@ -255,7 +255,7 @@ void BoardManager::handleOperationFinished(int operation, int) {
         return;
     }
 
-    int deviceId = devOp->getDeviceId();
+    int deviceId = devOp->deviceId();
     bool boardRecognized = false;
     if (operation == static_cast<int>(DeviceOperations::Operation::Identify)) {
         boardRecognized = true;
@@ -272,7 +272,7 @@ void BoardManager::handleBoardError(QString errMsg) {
     if (devOp == nullptr) {
         return;
     }
-    int deviceId = devOp->getDeviceId();
+    int deviceId = devOp->deviceId();
     // operation has finished with error, we do not need DeviceOperations object anymore
     serialDeviceOprations_.remove(deviceId);
 
@@ -284,7 +284,7 @@ void BoardManager::handleNewMessage(QString message) {
     if (device == nullptr) {
         return;
     }
-    emit newMessage(device->getDeviceId(), message);
+    emit newMessage(device->deviceId(), message);
 }
 
 }  // namespace

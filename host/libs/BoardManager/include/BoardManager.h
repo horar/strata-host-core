@@ -2,7 +2,6 @@
 #define BOARD_MANAGER_H
 
 #include <set>
-#include <map>
 #include <memory>
 
 #include <QObject>
@@ -62,7 +61,7 @@ namespace strata {
          * Get smart pointer to the device.
          * @param deviceId device ID
          */
-        SerialDeviceShPtr getDevice(const int deviceId) const;
+        SerialDevicePtr device(const int deviceId) const;
 
         /**
          * Get information about connected device (platform ID, bootloader version, ...).
@@ -157,7 +156,7 @@ namespace strata {
         // and deadlock can occur if from QML is called another function which uses same mutex).
         std::set<int> serialPortsList_;
         QHash<int, QString> serialIdToName_;
-        QHash<int, SerialDeviceShPtr> openedSerialPorts_;
+        QHash<int, SerialDevicePtr> openedSerialPorts_;
         QHash<int, QSharedPointer<DeviceOperations>> serialDeviceOprations_;
 
         // flag if require response to get_firmware_info command

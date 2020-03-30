@@ -13,10 +13,10 @@ QDebug operator<<(QDebug dbg, const Flasher* f) {
     return dbg.nospace() << "Device 0x" << hex << f->deviceId_ << ": ";
 }
 
-Flasher::Flasher(SerialDeviceShPtr device, const QString& firmwareFilename) :
+Flasher::Flasher(SerialDevicePtr device, const QString& firmwareFilename) :
     device_(device), fwFile_(firmwareFilename)
 {
-    deviceId_ = static_cast<uint>(device_->getDeviceId());
+    deviceId_ = static_cast<uint>(device_->deviceId());
     operation_ = std::make_unique<DeviceOperations>(device_);
 
     connect(operation_.get(), &DeviceOperations::finished, this, &Flasher::handleOperationFinished);

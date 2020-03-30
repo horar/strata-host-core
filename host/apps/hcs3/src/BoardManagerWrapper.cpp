@@ -29,7 +29,7 @@ void BoardManagerWrapper::sendMessage(const int deviceId, const std::string& mes
 
 void BoardManagerWrapper::newConnection(int deviceId, bool recognized) {
     if (recognized) {
-        strata::SerialDeviceShPtr device = boardManager_.getDevice(deviceId);
+        strata::SerialDevicePtr device = boardManager_.device(deviceId);
         if (device == nullptr) {
             return;
         }
@@ -59,8 +59,8 @@ void BoardManagerWrapper::closeConnection(int deviceId) {
     }
 
     QJsonObject msg {
-        { JSON_PLATFORM_ID, it.value().device->getProperty(strata::DeviceProperties::platformId) },
-        { JSON_CLASS_ID, it.value().device->getProperty(strata::DeviceProperties::classId) }
+        { JSON_PLATFORM_ID, it.value().device->property(strata::DeviceProperties::platformId) },
+        { JSON_CLASS_ID, it.value().device->property(strata::DeviceProperties::classId) }
     };
     QJsonDocument doc(msg);
 
@@ -83,7 +83,7 @@ void BoardManagerWrapper::messageFromBoard(QString message) {
     if (device == nullptr) {
         return;
     }
-    int deviceId = device->getDeviceId();
+    int deviceId = device->deviceId();
     PlatformMessage item;
     item.msg_type = PlatformMessage::eMsgPlatformMessage;
     item.from_connectionId.conn_id = deviceId;
@@ -100,8 +100,8 @@ void BoardManagerWrapper::createPlatformsList(std::string& result) {
     QJsonArray arr;
     for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
         QJsonObject item {
-            { JSON_VERBOSE_NAME, it.value().device->getProperty(strata::DeviceProperties::verboseName) },
-            { JSON_CLASS_ID, it.value().device->getProperty(strata::DeviceProperties::classId) },
+            { JSON_VERBOSE_NAME, it.value().device->property(strata::DeviceProperties::verboseName) },
+            { JSON_CLASS_ID, it.value().device->property(strata::DeviceProperties::classId) },
             { JSON_CONNECTION, JSON_CONNECTED }
         };
         arr.append(item);
@@ -129,7 +129,7 @@ std::string BoardManagerWrapper::getClientId(const int deviceId) const {
 std::string BoardManagerWrapper::getClassId(const int deviceId) const {
     auto it = boards_.constFind(deviceId);
     if (it != boards_.constEnd()) {
-        return it.value().device->getProperty(strata::DeviceProperties::classId).toStdString();
+        return it.value().device->property(strata::DeviceProperties::classId).toStdString();
     }
     return std::string();
 }
@@ -137,7 +137,7 @@ std::string BoardManagerWrapper::getClassId(const int deviceId) const {
 std::string BoardManagerWrapper::getPlatformId(const int deviceId) const {
     auto it = boards_.constFind(deviceId);
     if (it != boards_.constEnd()) {
-        return it.value().device->getProperty(strata::DeviceProperties::platformId).toStdString();
+        return it.value().device->property(strata::DeviceProperties::platformId).toStdString();
     }
     return std::string();
 }
@@ -159,7 +159,7 @@ bool BoardManagerWrapper::getFirstDeviceIdByClassId(const std::string& classId, 
 // and returned first board which had desired class ID.
     QString class_id = QString::fromStdString(classId);
     for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
-        if (class_id == it.value().device->getProperty(strata::DeviceProperties::classId)) {
+        if (class_id == it.value().device->property(strata::DeviceProperties::classId)) {
             deviceId = it.key();
             return true;
         }
@@ -191,4 +191,4 @@ QString BoardManagerWrapper::logDeviceId(const int deviceId) const {
     return "Device Id: 0x" + QString::number(static_cast<uint>(deviceId), 16);
 }
 
-BoardManagerWrapper::Board::Board(strata::SerialDeviceShPtr& devPtr) : device(devPtr) { }
+BoardManagerWrapper::Board::Board(strata::SerialDevicePtr& devPtr) : device(devPtr) { }

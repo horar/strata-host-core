@@ -3,8 +3,6 @@
 
 #include "logging/LoggingQtCategories.h"
 
-#include <CommandValidator.h>
-
 #include <rapidjson/document.h>
 #include <rapidjson/error/en.h>
 #include <rapidjson/writer.h>
@@ -144,7 +142,7 @@ QVariantMap SerialDevice::getDeviceInfo() const {
     return result;
 }
 
-QString SerialDevice::getProperty(DeviceProperties property) const {
+QString SerialDevice::property(DeviceProperties property) const {
     switch (property) {
         case DeviceProperties::deviceName:
             return portName_;
@@ -162,7 +160,7 @@ QString SerialDevice::getProperty(DeviceProperties property) const {
     return QString();
 }
 
-int SerialDevice::getDeviceId() const {
+int SerialDevice::deviceId() const {
     return deviceId_;
 }
 

@@ -22,11 +22,11 @@ QDebug operator<<(QDebug dbg, const DeviceOperations* devOp) {
     return dbg.nospace().noquote() << "Device 0x" << hex << devOp->deviceId_ << ": ";
 }
 
-DeviceOperations::DeviceOperations(SerialDeviceShPtr device) :
+DeviceOperations::DeviceOperations(SerialDevicePtr device) :
     device_(device), responseTimer_(this), operation_(Operation::None),
     state_(State::None), activity_(Activity::None), reqFwInfoResp_(true)
 {
-    deviceId_ = static_cast<uint>(device_->getDeviceId());
+    deviceId_ = static_cast<uint>(device_->deviceId());
 
     responseTimer_.setSingleShot(true);
     responseTimer_.setInterval(RESPONSE_TIMEOUT);
@@ -63,7 +63,7 @@ void DeviceOperations::startApplication() {
     startOperation(Operation::StartApplication);
 }
 
-int DeviceOperations::getDeviceId() {
+int DeviceOperations::deviceId() const {
     return static_cast<int>(deviceId_);
 }
 
@@ -180,7 +180,7 @@ void DeviceOperations::process() {
         qCWarning(logCategoryDeviceOperations) << this << "Response timeout (no valid response to the sent command).";
         finishOperation(Operation::Timeout);
         break;
-    default :
+    case State::None :
         break;
     }
 }
@@ -226,7 +226,7 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
                 if (operation_ == Operation::Identify) {
                     finishOperation(Operation::Identify);
                 } else {  // Operation::PrepareForFlash
-                    if (device_->getProperty(DeviceProperties::verboseName) == BOOTLOADER_STR) {
+                    if (device_->property(DeviceProperties::verboseName) == BOOTLOADER_STR) {
                         qCInfo(logCategoryDeviceOperations) << this << "Platform in bootloader mode. Ready for flashing firmware.";
                         state_ = State::ReadyForFlashFw;
                     } else {
@@ -259,7 +259,7 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
                 responseTimer_.stop();
                 finishOperation(Operation::StartApplication);
                 break;
-            default :
+            case Activity::None :
                 break;
             }
         }
@@ -376,7 +376,7 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) 
             case Activity::WaitingForStartApp :
                 notificationStr = JSON_START_APP;
                 break;
-            default:
+            case Activity::None :
                 break;
             }
 

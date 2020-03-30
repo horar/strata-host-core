@@ -23,7 +23,7 @@ class Flasher : public QObject
          * \param device device which will be used by Flasher
          * \param firmwareFilename path to firmware file
          */
-        Flasher(SerialDeviceShPtr device, const QString& firmwareFilename);
+        Flasher(SerialDevicePtr device, const QString& firmwareFilename);
 
         ~Flasher();
 
@@ -50,7 +50,7 @@ class Flasher : public QObject
         void handleFlashFirmware(int lastFlashedChunk);
         void finish(bool success);
 
-        SerialDeviceShPtr device_;
+        SerialDevicePtr device_;
 
         QFile fwFile_;
 

@@ -86,7 +86,7 @@ void FlashCommand::process() {
         return;
     }
 
-    SerialDeviceShPtr device = std::make_shared<SerialDevice>(static_cast<int>(qHash(name)), name);
+    SerialDevicePtr device = std::make_shared<SerialDevice>(static_cast<int>(qHash(name)), name);
     if (device->open() == false) {
         qCCritical(logCategoryFlasherCli) << "Cannot open board (serial device)" << name;
         emit finished(EXIT_FAILURE);

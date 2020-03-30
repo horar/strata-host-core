@@ -57,6 +57,7 @@ namespace strata {
          * Get information about serial device (platform ID, bootloader version, ...).
          * @return QVariantMap filled with information about device
          */
+        [[deprecated("Use deviceId() and property() instead.")]]
         QVariantMap getDeviceInfo() const;
 
         /**
@@ -64,13 +65,13 @@ namespace strata {
          * @param property value from enum DeviceProperties
          * @return QString filled with value of required property
          */
-        QString getProperty(DeviceProperties property) const;
+        QString property(DeviceProperties property) const;
 
         /**
          * Get device ID.
          * @return Device ID
          */
-        int getDeviceId() const;
+        int deviceId() const;
 
         friend QDebug operator<<(QDebug dbg, const SerialDevice* d);
 
@@ -100,11 +101,12 @@ namespace strata {
 
     private:
         bool writeData(const QByteArray& data, quintptr lockId);
-        // functions used by friend class DeviceOperations
+        // *** functions used by friend class DeviceOperations:
         void setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer);
         bool lockDevice(quintptr lockId);
         void unlockDevice(quintptr lockId);
         bool sendMessage(const QByteArray msg, quintptr lockId);
+        // ***
 
         const int deviceId_;
         QString portName_;
@@ -123,7 +125,7 @@ namespace strata {
         QString applicationVer_;
     };
 
-    typedef std::shared_ptr<SerialDevice> SerialDeviceShPtr;
+    typedef std::shared_ptr<SerialDevice> SerialDevicePtr;
 }
 
 #endif

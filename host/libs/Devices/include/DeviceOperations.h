@@ -16,7 +16,7 @@ class DeviceOperations : public QObject
     Q_DISABLE_COPY(DeviceOperations)
 
 public:
-    DeviceOperations(SerialDeviceShPtr device);
+    DeviceOperations(SerialDevicePtr device);
     ~DeviceOperations();
 
     void identify(bool requireFwInfoResponse = true);
@@ -29,7 +29,7 @@ public:
 
     void cancelOperation();
 
-    int getDeviceId();
+    int deviceId() const;
 
     friend QDebug operator<<(QDebug dbg, const DeviceOperations* dev_op);
 
@@ -91,7 +91,7 @@ private:
 
     QByteArray createFlashFwJson();
 
-    SerialDeviceShPtr device_;
+    SerialDevicePtr device_;
 
     QTimer responseTimer_;
 

@@ -14,8 +14,6 @@ add_library(${PROJECT_NAME}
 
     #AUTOMOC wont find header if it is in different directory
     include/BoardManager.h
-    src/BoardManagerConstants.h
-    src/logging/LoggingQtCategories.h
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -28,8 +26,7 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::SerialPort
     PUBLIC QtLogger
     PUBLIC SerialDevice
-    PUBLIC DeviceOperations
-    PUBLIC CommandValidator
+    PRIVATE DeviceOperations
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
