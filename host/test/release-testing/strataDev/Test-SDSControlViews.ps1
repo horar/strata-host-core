@@ -33,10 +33,13 @@ function Test-SDSControlViews {
     Write-Host "SDS Control view testing"
     Write-Separator
 
+    Write-Host "Control View test requires visual inspection.`nPress any key to continue...";
+    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+
     # Change directory to location of SDS executable
     Set-Location $SDSRootDir
 
-    Write-Host "Starting Strata Developer Studio..."
+    Write-Host "`nStarting Strata Developer Studio..."
     ($StrataDev = Start-Process $StrataPath -PassThru) | Out-Null     # Hide output.
 
     Write-Host "Starting Python test script..."

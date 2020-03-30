@@ -38,6 +38,8 @@ function Test-SDSInstaller {
     $VisualRedistDisplayName = "Microsoft Visual C++ 2017 X64 Additional Runtime - 14.16"
     $FTDIDriverDisplayName = "Windows Driver Package - FTDI CDM Driver Package - VCP Driver (08/16/2017 2.12.28)"
 
+    $TestTotal = 21
+    $global:SDSTestPass = 0
 
     #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
@@ -92,11 +94,12 @@ function Test-SDSInstaller {
                 Write-Indented "Done"
 
             } else {
-                Write-Indented "Strata Developer Studio is not installed`n"
+                Write-Indented "Strata Developer Studio is not installed"
             }
         }
         catch {
-            Exit-TestScript -1 "Error uninstalling Strata Developer Studio and its components. `n       $_"
+            Write-Indented "Error uninstalling Strata Developer Studio and its components failed. `n       $_"
+            Return $global:SDSTestPass, $TestTotal
         }
     }
 
@@ -114,7 +117,8 @@ function Test-SDSInstaller {
             }
         }
         catch {
-            Exit-TestScript -1 "Error Uninstalling Strata Developer Studio. `n       $_"
+            Write-Indented "Error: Uninstalling Strata Developer Studio failed. `n       $_"
+            Return $global:SDSTestPass, $TestTotal
         }
     }
     function Install-SDS {
@@ -123,7 +127,8 @@ function Test-SDSInstaller {
             Start-Process -FilePath "`"$SDSInstallerPath`"" -ArgumentList "/SP- /SUPPRESSMSGBOXES /LOG=$SDSInstallerLogFile /VERYSILENT /NORESTART /CLOSEAPPLICATIONS" -Wait
         }
         Catch {
-            Exit-TestScript -1 "Error installing Strata Developer Studio. `n       $_"
+            Write-Indented "Error: installing Strata Developer Studio failed. `n       $_"
+            Return $global:SDSTestPass, $TestTotal
         }
         Write-Indented "Done"
     }
@@ -145,36 +150,42 @@ function Test-SDSInstaller {
 
             if ( $VisualRedistInstalledDisplayName -match [regex]::Escape($VisualRedistDisplayName) ) {
                 Write-Indented "Pass: Microsoft Visual C++ 2017 X64 is installed"
+                $global:SDSTestPass++
             } else {
                 Write-Indented "Fail: Microsoft Visual C++ 2017 X64 is not installed" 
             }
 
             if ( $FTDIDriverInstalledDisplayName -eq $FTDIDriverDisplayName ) {
                 Write-Indented "Pass: FTDI Driver is installed"
+                $global:SDSTestPass++
             } else {
                 Write-Indented "Warning: FTDI Driver is not installed by Strata installer, it probably got installed by Windows" 
             }
 
             if ( Test-path $SDSExecFile ) {
                 Write-Indented "Pass: Strata Developer Studio executables is under the specified location by the installer"
+                $global:SDSTestPass++
             } else {
                 Write-Indented "Fail: Strata Developer Studio executables is not under the specified location by the installer." 
             }
 
             if ( Test-Path $SDSControlViewsDir -PathType Container ) {
                 Write-Indented "Pass: Control Views are located in $SDSControlViewsDir"
+                $global:SDSTestPass++
             } else {
                 Write-Indented "Fail: Control Views are not located in $SDSControlViewsDir" 
             }
 
             if ($SDSVersion -eq $SDSInstallerVersion) {
                 Write-Indented  "Pass: $SDSVersion UI Version matches $SDSInstallerVersion the installer version"
+                $global:SDSTestPass++
             } else {
                 Write-Indented  "Fail: $SDSVersion Version doesn't matches $SDSInstallerVersion the installer version"
             }
         }
         catch {
-            Exit-TestScript -1 "Installation test failed. `n       $_"
+            Write-Indented "Error: Installation test failed. `n       $_"
+            Return $global:SDSTestPass, $TestTotal
         }
     }
 
@@ -194,12 +205,14 @@ function Test-SDSInstaller {
         try {
             if (! (Test-Path "$HCSDbDir") ) {
                 Write-Indented  "Pass: HSC database has been deleted"
+                $global:SDSTestPass++
             } else {
                 Write-Indented  "Fail: HSC database has not been deleted"
             }
         }
         catch {
-            Exit-TestScript -1 "Ditry installation without uninstallation failed. `n       $_"
+            Write-Indented "Error: Ditry installation without uninstallation failed. `n       $_"
+            Return $global:SDSTestPass, $TestTotal
         }
     }
 
@@ -219,32 +232,38 @@ function Test-SDSInstaller {
         try {
             if (! (Test-Path $SDSExecFile) ) {
                 Write-Indented  "Pass: Strata Developer Studio executables has been successfuly removed"
+                $global:SDSTestPass++
             } else {
                 Write-Indented  "Fail: Strata Developer Studio executables has not been successfuly removed"
             }  
             if (! (Test-Path $SDSControlViewsDir) ) {
                 Write-Indented  "Pass: $SDSControlViewsDir has been successfuly removed"
+                $global:SDSTestPass++
             } else {
                 Write-Indented  "Fail: $SDSControlViewsDir has not been successfuly removed"
             }
             if (! (Test-Path $HCSAppDataDir) ) {
                 Write-Indented  "Pass: $HCSAppDataDir has been successfuly removed"
+                $global:SDSTestPass++
             } else {
                 Write-Indented  "Fail: $HCSAppDataDir has not been successfuly removed"
             }
             if (! (Test-Path $HCSIniFile) ) {
                 Write-Indented  "Pass: $HCSIniFile has been successfuly removed"
+                $global:SDSTestPass++
             } else {
                 Write-Indented  "Fail: $HCSIniFile has not been successfuly removed"
             }
             if (! (Test-Path $SDSIniFile) ) {
                 Write-Indented  "Pass: $SDSIniFile has been successfuly removed"
+                $global:SDSTestPass++
             } else {
                 Write-Indented  "Fail: $SDSIniFile has not been successfuly removed"
             }
         }
         catch {
-            Exit-TestScript -1 "Uninstallation test failed. `n       $_"
+            Write-Indented "Error: Uninstallation test failed. `n       $_"
+            Return $global:SDSTestPass, $TestTotal
         }
     }
 
@@ -257,4 +276,7 @@ function Test-SDSInstaller {
     Test-SDSUninstallation
     Test-SDSDirtyInstallationWithUninstallation
 
+
+    # Return number of tests passed, number of tests existing
+    Return $global:SDSTestPass, $TestTotal
 }

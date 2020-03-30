@@ -15,8 +15,7 @@ Result of the test
 .NOTES
 Version:        1.0
 Creation Date:  03/17/2020
-
-Powershell 5, Python 3
+works best with Powershell version 5 and Python 3
 #>
 
 [CmdletBinding()]
@@ -75,10 +74,7 @@ Assert-SDSInstallerPath
 Assert-PSSQLite
 
 # Search for Python tools
-#Assert-PythonAndPyzmq
-
-# Search for SDS and HCS
-#Assert-StrataAndHCS
+Assert-PythonAndPyzmq
 
 # Search for Python scripts
 Assert-PythonScripts
@@ -88,27 +84,30 @@ Assert-PythonScripts
 Write-Host "Starting tests...`n"
 
 # Run Test-SDSInstaller
-$SDSInstallerResults = Test-SDSInstaller -SDSInstallerPath
+$SDSInstallerResults = Test-SDSInstaller -SDSInstallerPath $SDSInstallerPath
+
+# Search for SDS and HCS
+Assert-StrataAndHCS
 
 # Run Test-Database (HCS database testing)
 
-#$DatabaseResults = Test-Database
+$DatabaseResults = Test-Database
 
 # Run Test-TokenAndViewsDownload
-#$TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
+$TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
 
 # Run Test-CollateralDownload (HCS collateral download testing)
-#$CollateralDownloadResults = Test-CollateralDownload
+$CollateralDownloadResults = Test-CollateralDownload
 
 # Run Test-SDSControlViews (SDS control view testing)
-#$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
+$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
 
 Show-TestSummary
 
 #------------------------------------------------------------[Clean up]-------------------------------------------------------------
 
-#Restore-Strata_INI
-#Remove-TemporaryFiles
+Restore-Strata_INI
+Remove-TemporaryFiles
 
 Set-Location $PSScriptRoot
 

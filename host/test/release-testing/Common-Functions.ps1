@@ -48,6 +48,7 @@ function Assert-StrataAndHCS {
     If (!(Test-Path $SDSExecFile)) {
         Exit-TestScript -1 "Error: cannot find Strata Developer Studio executable at $SDSExecFile.`nAborting."
     }
+    Start-HCSAndWait(5)
     # Check for HCS directory
     If (!(Test-Path $HCSAppDataDir)) {
         Exit-TestScript -1 "Error: cannot find Host Controller Service directory at $HCSAppDataDir.`nAborting."
@@ -68,14 +69,14 @@ function Assert-PythonScripts {
 # Tell user to manually install it if not found & exit
 function Assert-PSSQLite {
     If (!(Get-Module -ListAvailable -Name PSSQLite)) {
-        Write-Host -ForegroundColor Red "`nError: PSSQLite module for Powershell not found.`nInstall PSSQLite by running as administrator:`n   Install-Module PSSQLite`nAborting.`n"
+        Write-Host -ForegroundColor Red "`nError: PSSQLite module for Powershell not found.`nInstall PSSQLite by running the following command on PowerShell as an administrator:`n   Install-Module PSSQLite`nAborting.`n"
         Exit-TestScript -1
     }
 }
 
 function Assert-SDSInstallerPath {
-    if (!($SDSInstallerPath -match "Strata Developer Studio" -and $SDSInstallerPath.Substring($SDSInstallerPath.Length -3) -eq "exe")) {
-        Write-Host -ForegroundColor Red "Error: Invalid Strata installer path.`nPlease make sure that you have the correct path and you have included .exe at the end"
+    if (!($SDSInstallerPath -match "Strata Developer Studio" -and $SDSInstallerPath.Substring($SDSInstallerPath.Length -3) -eq "exe" -and $SDSInstallerPath[0] -ne " ")) {
+        Write-Host -ForegroundColor Red "Error: Invalid Strata installer path.`nPlease make sure that you have the correct path, included .exe at the end,`nand no space at the beginning of the path"
         Exit-TestScript -1
     }
 }
@@ -177,6 +178,8 @@ function Show-TestSummary {
     Write-Host "Test Summary"
     Write-Separator
 
+    Show-TestResult -TestName "Test-SDSInstaller" -TestResults $SDSInstallerResults
+
     Show-TestResult -TestName "Test-Database" -TestResults $DatabaseResults
 
     Show-TestResult -TestName "Test-TokenAndViewsDownload" -TestResults $TokenAndViewsDownloadResults
@@ -222,7 +225,8 @@ function Write-Indented {
         [Parameter(Mandatory = $true)][string]$string
     )
     $FirstWord = ($string -split ' ')[0]
-    if (($FirstWord -eq "FAIL") -OR ($FirstWord -eq "FAIL:")) {
+    if (($FirstWord -eq "FAIL") -OR ($FirstWord -eq "FAIL:") `
+        -OR ($FirstWord -eq "ERROR") -OR ($FirstWord -eq "ERROR:")) {
         Write-Host -ForegroundColor Red "        $string"
     } elseif (($FirstWord -eq "PASS") -OR ($FirstWord -eq "PASS:")) {
         Write-Host -ForegroundColor Green "        $string"
