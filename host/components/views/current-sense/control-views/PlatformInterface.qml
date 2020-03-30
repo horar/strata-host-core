@@ -16,7 +16,7 @@ Item {
     }
 
     property var switch_enable_status: {
-        "en_210": "on",        //on or off
+        "en_210": "off",        //on or off
         "en_211": "off",       //on or off
         "en_213": "off",       //on or off
         "en_214": "off",       //on or off

@@ -23,6 +23,11 @@ Item {
 
     }
 
+    Component.onCompleted: {
+        console.log("in component")
+        //platformInterface.set_initial_state_UI.update()
+    }
+
     SGIcon {
         id: helpIcon
         anchors {

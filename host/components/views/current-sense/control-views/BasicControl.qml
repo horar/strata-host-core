@@ -22,9 +22,7 @@ Item {
             forceActiveFocus()
         }
     }
-    Component.onCompleted: {
-        platformInterface.set_initial_state_UI.update()
-    }
+
 
     property var initial_status: platformInterface.initial_status
     onInitial_statusChanged: {
@@ -34,24 +32,24 @@ Item {
         else enable3.checked = false
 
         if (initial_status.en_211 === "on") {
-            enable2.checked = true
-        }
-        else  enable2.checked = false
-
-        if(initial_status.en_213 === "on") {
-            enable5.checked = true
-        }
-        else enable5.checked = false
-
-        if(initial_status.en_214 === "on") {
             enable4.checked = true
         }
-        else enable4.checked = false
+        else  enable4.checked = false
 
-        if(initial_status.en_333 === "on") {
+        if(initial_status.en_213 === "on") {
             enable1.checked = true
         }
         else enable1.checked = false
+
+        if(initial_status.en_214 === "on") {
+            enable2.checked = true
+        }
+        else enable2.checked = false
+
+        if(initial_status.en_333 === "on") {
+            enable5.checked = true
+        }
+        else enable5.checked = false
 
         if(initial_status.manual_mode === "Manual") {
             enableModeSet.checked = true
@@ -87,12 +85,12 @@ Item {
         }
         else highCurrentEnable.checked = false
 
-        loadSetting.fromText.text = initial_status.load_setting_min
-        loadSetting.toText.text =initial_status.load_setting_max
-        loadSetting.from = initial_status.load_setting_from
-        loadSetting.to = initial_status.load_setting_to
-        loadSetting.stepSize = initial_status.load_setting_step
-        loadSetting.value = initial_status.load_setting_state
+        //        loadSetting.fromText.text = initial_status.load_setting_min
+        //        loadSetting.toText.text =initial_status.load_setting_max
+        //        loadSetting.from = initial_status.load_setting_from
+        //        loadSetting.to = initial_status.load_setting_to
+        //        loadSetting.stepSize = initial_status.load_setting_step
+        //        loadSetting.value = initial_status.load_setting_state
 
 
 
@@ -109,34 +107,36 @@ Item {
     property  var switch_enable_status_en_211: platformInterface.switch_enable_status.en_211
     onSwitch_enable_status_en_211Changed: {
         if(switch_enable_status_en_211 === "on") {
-            enable2.checked = true
-        }
-        else enable2.checked = false
-    }
-
-    property  var switch_enable_status_en_214: platformInterface.switch_enable_status.en_214
-    onSwitch_enable_status_en_214Changed: {
-        if(switch_enable_status_en_214 === "on") {
             enable4.checked = true
         }
         else enable4.checked = false
     }
 
+    property  var switch_enable_status_en_214: platformInterface.switch_enable_status.en_214
+    onSwitch_enable_status_en_214Changed: {
+          console.log(switch_enable_status_en_214)
+        if(switch_enable_status_en_214 === "on") {
+            enable2.checked = true
+        }
+        else enable2.checked = false
+    }
+
     property  var switch_enable_status_en_213: platformInterface.switch_enable_status.en_213
     onSwitch_enable_status_en_213Changed: {
+
         if(switch_enable_status_en_213 === "on") {
-            enable5.checked = true
+            enable1.checked = true
         }
-        else enable5.checked = false
+        else enable1.checked = false
     }
 
 
     property  var switch_enable_status_en_333: platformInterface.switch_enable_status.en_333
     onSwitch_enable_status_en_333Changed: {
         if(switch_enable_status_en_333 === "on") {
-            enable1.checked = true
+            enable5.checked = true
         }
-        else enable1.checked = false
+        else enable5.checked = false
     }
 
 
@@ -147,11 +147,11 @@ Item {
 
         property var periodic_status: platformInterface.periodic_status
         onPeriodic_statusChanged: {
-            setting1Reading.text = periodic_status.ADC_333
-            setting2Reading.text = periodic_status.ADC_211
+            setting1Reading.text = periodic_status.ADC_213
+            setting2Reading.text = periodic_status.ADC_214
             setting3Reading.text = periodic_status.ADC_210
-            setting4Reading.text = periodic_status.ADC_214
-            setting5Reading.text = periodic_status.ADC_213
+            setting4Reading.text = periodic_status.ADC_211
+            setting5Reading.text = periodic_status.ADC_333
             vinReading.text = periodic_status.ADC_VIN
 
         }
@@ -259,7 +259,8 @@ Item {
                                                         anchors.bottom: parent.bottom
                                                         anchors.horizontalCenter: parent.horizontalCenter
                                                         // anchors.centerIn: parent
-                                                        text: "NCS333 "
+
+                                                        text: "NCS213R"
                                                         font.bold: true
                                                         fontSizeMultiplier: ratioCalc * 1.2
                                                     }
@@ -272,7 +273,8 @@ Item {
                                                     SGText {
                                                         anchors.top:parent.top
                                                         anchors.horizontalCenter: parent.horizontalCenter
-                                                        text: "100uA Max"
+
+                                                        text: "30A Max"
                                                         font.bold: true
                                                         fontSizeMultiplier: ratioCalc
                                                         color: "red"
@@ -287,18 +289,17 @@ Item {
 
                                             SGSwitch {
                                                 id: enable1
-                                                //                                            height: 35 * ratioCalc
-                                                //                                            width: 95 * ratioCalc
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
                                                 fontSizeMultiplier: ratioCalc
                                                 anchors.centerIn: parent
 
-                                                onToggled:  {
-                                                    if(checked)
-                                                        platformInterface.switch_enables.update("333_on")
-                                                    else platformInterface.switch_enables.update("off")
 
+
+                                                onToggled: {
+                                                    if(checked)
+                                                        platformInterface.switch_enables.update("213_on")
+                                                    else platformInterface.switch_enables.update("off")
                                                 }
 
                                             }
@@ -312,13 +313,14 @@ Item {
                                             SGInfoBox {
                                                 id: setting1Reading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                width: (110 * ratioCalc)
-                                                unit: "<b>µA</b>"
+                                                width: 100
+                                                unit: "<b>A</b>"
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
-                                                anchors.centerIn: parent
-                                                anchors.horizontalCenter: parent.horizontalCenter
-                                                anchors.horizontalCenterOffset: 5
+                                                anchors.left: parent.left
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                //                                                anchors.horizontalCenter: parent.horizontalCenter
+                                                //                                                anchors.horizontalCenterOffset: 5
                                             }
                                         }
 
@@ -341,7 +343,7 @@ Item {
                                                     SGText {
                                                         anchors.bottom: parent.bottom
                                                         anchors.horizontalCenter: parent.horizontalCenter
-                                                        text: "NCS211R"
+                                                        text: "NCS214R"
                                                         font.bold: true
                                                         fontSizeMultiplier: ratioCalc * 1.2
                                                     }
@@ -352,7 +354,7 @@ Item {
                                                     SGText {
                                                         anchors.top:parent.top
                                                         anchors.horizontalCenter: parent.horizontalCenter
-                                                        text: "2mA Max"
+                                                        text: "1A Max"
                                                         font.bold: true
                                                         fontSizeMultiplier: ratioCalc
                                                         color: "red"
@@ -375,11 +377,15 @@ Item {
                                                 fontSizeMultiplier: ratioCalc
 
                                                 anchors.centerIn: parent
-                                                onToggled:  {
+
+
+                                                onToggled: {
+
                                                     if(checked)
-                                                        platformInterface.switch_enables.update("211_on")
+                                                        platformInterface.switch_enables.update("214_on")
                                                     else platformInterface.switch_enables.update("off")
                                                 }
+
 
                                             }
 
@@ -391,13 +397,14 @@ Item {
                                             SGInfoBox {
                                                 id: setting2Reading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                width: 110 * ratioCalc
-                                                unit: "<b>mA</b>"
+                                                width: 100
+                                                unit: "<b>A</b>"
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
-                                                anchors.centerIn: parent
-                                                anchors.horizontalCenter: parent.horizontalCenter
-                                                anchors.horizontalCenterOffset: 5
+                                                anchors.left: parent.left
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                //                                                anchors.horizontalCenter: parent.horizontalCenter
+                                                //                                                anchors.horizontalCenterOffset: 5
                                             }
                                         }
 
@@ -471,13 +478,14 @@ Item {
                                             SGInfoBox {
                                                 id: setting3Reading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                width: 110 * ratioCalc
+                                                width: 110
                                                 unit: "<b>mA</b>"
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
-                                                anchors.centerIn: parent
-                                                anchors.horizontalCenter: parent.horizontalCenter
-                                                anchors.horizontalCenterOffset: 5
+                                                anchors.left: parent.left
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                //                                                anchors.horizontalCenter: parent.horizontalCenter
+                                                //                                                anchors.horizontalCenterOffset: 5
                                             }
                                         }
 
@@ -501,7 +509,7 @@ Item {
                                                     SGText {
                                                         anchors.bottom: parent.bottom
                                                         anchors.horizontalCenter: parent.horizontalCenter
-                                                        text: "NCS214R"
+                                                        text: "NCS211R"
                                                         font.bold: true
                                                         fontSizeMultiplier:ratioCalc * 1.2
                                                     }
@@ -513,7 +521,7 @@ Item {
                                                     SGText {
                                                         anchors.top:parent.top
                                                         anchors.horizontalCenter: parent.horizontalCenter
-                                                        text: "1A Max"
+                                                        text: "2mA Max"
                                                         font.bold: true
                                                         fontSizeMultiplier: ratioCalc
                                                         color: "red"
@@ -537,12 +545,11 @@ Item {
 
                                                 anchors.centerIn: parent
 
-                                                onToggled: {
+                                                onToggled:  {
                                                     if(checked)
-                                                        platformInterface.switch_enables.update("214_on")
+                                                        platformInterface.switch_enables.update("211_on")
                                                     else platformInterface.switch_enables.update("off")
                                                 }
-
 
                                             }
 
@@ -554,11 +561,12 @@ Item {
                                             SGInfoBox {
                                                 id: setting4Reading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                width: 100 * ratioCalc
-                                                unit: "<b>A</b>"
+                                                width: 110
+                                                unit: "<b>mA</b>"
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
-                                                anchors.centerIn: parent
+                                                anchors.left: parent.left
+                                                anchors.verticalCenter: parent.verticalCenter
                                             }
                                         }
 
@@ -578,7 +586,7 @@ Item {
                                                 SGText {
                                                     anchors.bottom: parent.bottom
                                                     anchors.horizontalCenter: parent.horizontalCenter
-                                                    text: "NCS213R"
+                                                    text: "NCS333A"
                                                     fontSizeMultiplier: ratioCalc * 1.2
                                                     font.bold: true
                                                 }
@@ -590,7 +598,7 @@ Item {
                                                 SGText {
                                                     anchors.top:parent.top
                                                     anchors.horizontalCenter: parent.horizontalCenter
-                                                    text: "30A Max"
+                                                    text: "100uA Max"
                                                     font.bold: true
                                                     fontSizeMultiplier: ratioCalc
                                                     color: "red"
@@ -605,23 +613,20 @@ Item {
 
                                             SGSwitch {
                                                 id: enable5
-                                                //                                            height: 35 * ratioCalc
-                                                //                                            width: 95 * ratioCalc
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
                                                 fontSizeMultiplier: ratioCalc
 
                                                 anchors.centerIn: parent
 
-                                                onToggled: {
+
+                                                onToggled:  {
                                                     if(checked)
-                                                        platformInterface.switch_enables.update("213_on")
+                                                        platformInterface.switch_enables.update("333_on")
                                                     else platformInterface.switch_enables.update("off")
+
                                                 }
-
                                             }
-
-
                                         }
 
                                         Rectangle{
@@ -630,11 +635,13 @@ Item {
                                             SGInfoBox {
                                                 id: setting5Reading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                width: 100 * ratioCalc
-                                                unit: "<b>A</b>"
+                                                width: 110
+                                                unit: "<b>µA</b>"
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
-                                                anchors.centerIn: parent
+                                                anchors.left: parent.left
+                                                anchors.verticalCenter: parent.verticalCenter
+
                                             }
                                         }
                                     }
@@ -670,16 +677,14 @@ Item {
                                             SGInfoBox {
                                                 id: vinReading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                width: 100 * ratioCalc
+                                                width: 100
                                                 unit: "<b>V</b>"
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
-                                                anchors.centerIn: parent
+                                                anchors.left: parent.left
+                                                anchors.verticalCenter: parent.verticalCenter
                                             }
                                         }
-
-
-
                                     }
 
 
@@ -967,37 +972,164 @@ Item {
                                     bottom: parent.bottom
                                 }
 
-                                RowLayout {
+                                ColumnLayout {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
                                     Rectangle {
                                         Layout.fillHeight: true
                                         Layout.fillWidth: true
 
-                                        SGAlignedLabel {
-                                            id: lowCurrentLabel
-                                            target: lowLoadEnable
-                                            text: "<b>" + qsTr("Low Current") + "</b>"
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                            alignment: SGAlignedLabel.SideTopCenter
-                                            anchors.centerIn: parent
-                                            SGSwitch {
-                                                id: lowLoadEnable
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                fontSizeMultiplier: ratioCalc
+                                        RowLayout {
+                                            anchors.fill: parent
 
-                                                onToggled:  {
-                                                    if(checked)
-                                                        platformInterface.load_enables.update("low_load_on")
-                                                    else  platformInterface.load_enables.update("off")
+                                            Rectangle {
+                                                Layout.preferredWidth: parent.width/6
+                                                Layout.fillHeight: true
+                                                SGAlignedLabel {
+                                                    id: lowCurrentLabel
+                                                    target: lowLoadEnable
+                                                    text: "<b>" + qsTr("Low Current") + "</b>"
+                                                    fontSizeMultiplier: ratioCalc * 1.2
+                                                    alignment: SGAlignedLabel.SideTopCenter
+                                                    anchors.centerIn: parent
+                                                    SGSwitch {
+                                                        id: lowLoadEnable
+                                                        checkedLabel: "On"
+                                                        uncheckedLabel: "Off"
+                                                        fontSizeMultiplier: ratioCalc
+
+                                                        onToggled:  {
+                                                            if(checked)
+                                                                platformInterface.load_enables.update("low_load_on")
+                                                            else  platformInterface.load_enables.update("off")
+                                                        }
+
+                                                        property var load_enable_status_low_load: platformInterface.load_enable_status.low_load_en
+                                                        onLoad_enable_status_low_loadChanged: {
+                                                            if(load_enable_status_low_load === "on")
+                                                                lowLoadEnable.checked = true
+                                                            else lowLoadEnable.checked = false
+                                                        }
+
+                                                    }
+                                                }
+                                            }
+
+                                            Rectangle {
+                                                id: lowLoadSettingContainer
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                //color: "red"
+
+                                                SGAlignedLabel {
+                                                    id:  lowloadSettingLabel
+                                                    target: lowloadSetting
+                                                    text: ""
+                                                    fontSizeMultiplier: ratioCalc * 1.2
+                                                    font.bold : true
+                                                    alignment: SGAlignedLabel.SideTopLeft
+                                                    anchors.left: parent.left
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    anchors.verticalCenterOffset:  -10
+
+                                                    SGSlider {
+                                                        id: lowloadSetting
+                                                        width: lowLoadSettingContainer.width - 50
+                                                        live: false
+                                                        from: 1
+                                                        to:  100
+                                                        stepSize: 1
+                                                        fromText.text: "1µA"
+                                                        toText.text: "100µA"
+                                                        value: 0
+                                                        inputBoxWidth: lowLoadSettingContainer.width/9
+                                                        inputBox.enabled: false
+                                                        fontSizeMultiplier: ratioCalc * 1.2
+                                                        inputBox.validator: DoubleValidator { }
+
+                                                    }
                                                 }
 
-                                                property var load_enable_status_low_load: platformInterface.load_enable_status.low_load_en
-                                                onLoad_enable_status_low_loadChanged: {
-                                                    if(load_enable_status_low_load === "on")
-                                                        lowLoadEnable.checked = true
-                                                    else lowLoadEnable.checked = false
+                                            }
+
+
+                                        }
+                                    }
+                                    Rectangle {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+
+                                        RowLayout{
+                                            anchors.fill: parent
+                                            Rectangle {
+                                                Layout.preferredWidth: parent.width/6
+                                                Layout.fillHeight: true
+                                                //color: "red"
+                                                SGAlignedLabel {
+                                                    id: midCurrentLabel
+                                                    target: midCurrentEnable
+                                                    text: "<b>" + qsTr("Mid Current") + "</b>"
+                                                    fontSizeMultiplier: ratioCalc * 1.2
+                                                    anchors.centerIn: parent
+                                                    alignment: SGAlignedLabel.SideTopCenter
+                                                    SGSwitch {
+                                                        id: midCurrentEnable
+
+                                                        checkedLabel: "On"
+                                                        uncheckedLabel: "Off"
+                                                        fontSizeMultiplier: ratioCalc
+
+                                                        onToggled:  {
+                                                            if(checked)
+                                                                platformInterface.load_enables.update("mid_load_on")
+                                                            else  platformInterface.load_enables.update("off")
+                                                        }
+
+                                                        property var load_enable_status_mid_load: platformInterface.load_enable_status.mid_load_en
+                                                        onLoad_enable_status_mid_loadChanged: {
+                                                            if(load_enable_status_mid_load === "on") {
+                                                                midCurrentEnable.checked = true
+                                                            }
+                                                            else  midCurrentEnable.checked = false
+                                                        }
+
+                                                    }
+                                                }
+                                            }
+
+                                            Rectangle {
+                                                id: midLoadSettingContainer
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                // color: "red"
+
+                                                SGAlignedLabel {
+                                                    id:  midloadSettingLabel
+                                                    target: lowloadSetting
+                                                    text: ""
+                                                    fontSizeMultiplier: ratioCalc * 1.2
+                                                    font.bold : true
+                                                    alignment: SGAlignedLabel.SideTopLeft
+                                                    anchors.left: parent.left
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    anchors.verticalCenterOffset:  -10
+
+                                                    SGSlider {
+                                                        id: midloadSetting
+                                                        width: midLoadSettingContainer.width - 50
+                                                        live: false
+                                                        from: 0.1
+                                                        to:  100
+                                                        stepSize: 0.1
+                                                        fromText.text: "0.1mA"
+                                                        toText.text: "100mA"
+                                                        value: 0
+                                                        inputBoxWidth: midLoadSettingContainer.width/9
+                                                        inputBox.enabled: false
+                                                        fontSizeMultiplier: ratioCalc * 1.2
+                                                        inputBox.validator: DoubleValidator { }
+
+                                                    }
                                                 }
 
                                             }
@@ -1006,188 +1138,187 @@ Item {
                                     Rectangle {
                                         Layout.fillHeight: true
                                         Layout.fillWidth: true
-                                        SGAlignedLabel {
-                                            id: midCurrentLabel
-                                            target: midCurrentEnable
-                                            text: "<b>" + qsTr("Mid Current") + "</b>"
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                            anchors.centerIn: parent
-                                            alignment: SGAlignedLabel.SideTopCenter
-                                            SGSwitch {
-                                                id: midCurrentEnable
-                                                //                                            height: 35 * ratioCalc
-                                                //                                            width: 95 * ratioCalc
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                fontSizeMultiplier: ratioCalc
 
-                                                onToggled:  {
-                                                    if(checked)
-                                                        platformInterface.load_enables.update("mid_load_on")
-                                                    else  platformInterface.load_enables.update("off")
-                                                }
+                                        RowLayout {
+                                            anchors.fill: parent
+                                            Rectangle {
+                                                Layout.preferredWidth: parent.width/6
+                                                Layout.fillHeight: true
+                                                SGAlignedLabel {
+                                                    id: highCurrentLabel
+                                                    target: highCurrentEnable
+                                                    text: "<b>" + qsTr("High Current") + "</b>"
+                                                    fontSizeMultiplier: ratioCalc * 1.2
+                                                    anchors.centerIn: parent
+                                                    alignment: SGAlignedLabel.SideTopCenter
+                                                    SGSwitch {
+                                                        id: highCurrentEnable
+                                                        checkedLabel: "On"
+                                                        uncheckedLabel: "Off"
+                                                        fontSizeMultiplier: ratioCalc
 
-                                                property var load_enable_status_mid_load: platformInterface.load_enable_status.mid_load_en
-                                                onLoad_enable_status_mid_loadChanged: {
-                                                    if(load_enable_status_mid_load === "on") {
-                                                        midCurrentEnable.checked = true
+                                                        onToggled:  {
+                                                            if(checked)
+                                                                platformInterface.load_enables.update("high_load_on")
+                                                            else  platformInterface.load_enables.update("off")
+                                                        }
+
+                                                        property var load_enable_status_high_load: platformInterface.load_enable_status.high_load_en
+                                                        onLoad_enable_status_high_loadChanged: {
+                                                            if(load_enable_status_high_load === "on") {
+                                                                highCurrentEnable.checked = true
+                                                            }
+                                                            else  highCurrentEnable.checked = false
+                                                        }
                                                     }
-                                                    else  midCurrentEnable.checked = false
                                                 }
-
                                             }
-                                        }
-                                    }
-                                    Rectangle {
-                                        Layout.fillHeight: true
-                                        Layout.fillWidth: true
-                                        SGAlignedLabel {
-                                            id: highCurrentLabel
-                                            target: highCurrentEnable
-                                            text: "<b>" + qsTr("High Current") + "</b>"
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                            anchors.centerIn: parent
-                                            alignment: SGAlignedLabel.SideTopCenter
-                                            SGSwitch {
-                                                id: highCurrentEnable
-                                                checkedLabel: "On"
-                                                uncheckedLabel: "Off"
-                                                fontSizeMultiplier: ratioCalc
 
-                                                onToggled:  {
-                                                    if(checked)
-                                                        platformInterface.load_enables.update("high_load_on")
-                                                    else  platformInterface.load_enables.update("off")
-                                                }
+                                            Rectangle {
+                                                id: highLoadSettingContainer
+                                                Layout.fillHeight: true
+                                                Layout.fillWidth: true
+                                                // color: "red"
 
-                                                property var load_enable_status_high_load: platformInterface.load_enable_status.high_load_en
-                                                onLoad_enable_status_high_loadChanged: {
-                                                    if(load_enable_status_high_load === "on") {
-                                                        highCurrentEnable.checked = true
+                                                SGAlignedLabel {
+                                                    id:  highloadSettingLabel
+                                                    target: lowloadSetting
+                                                    text: ""
+                                                    fontSizeMultiplier: ratioCalc * 1.2
+                                                    font.bold : true
+                                                    alignment: SGAlignedLabel.SideTopLeft
+                                                    anchors.left: parent.left
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    anchors.verticalCenterOffset:  -10
+
+                                                    SGSlider {
+                                                        id: highloadSetting
+                                                        width: highLoadSettingContainer.width - 50
+                                                        live: false
+                                                        from: 0.01
+                                                        to:  20
+                                                        stepSize: 0.01
+                                                        fromText.text: "0.01A"
+                                                        toText.text: "20A"
+                                                        value: 0
+                                                        inputBoxWidth: highLoadSettingContainer.width/9
+                                                        inputBox.enabled: false
+                                                        fontSizeMultiplier: ratioCalc * 1.2
+                                                        inputBox.validator: DoubleValidator { }
+
                                                     }
-                                                    else  highCurrentEnable.checked = false
                                                 }
+
                                             }
                                         }
 
                                     }
                                 }
 
-                                Rectangle{
-                                    id: loadSettingContainer
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
+                                //                                Rectangle{
+                                //                                    id: loadSettingContainer
+                                //                                    Layout.fillHeight: true
+                                //                                    Layout.fillWidth: true
 
 
-                                    SGAlignedLabel {
-                                        id:  loadSettingLabel
-                                        target: loadSetting
-                                        text: "Load Setting"
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        font.bold : true
-                                        alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.centerIn: parent
+                                //                                    SGAlignedLabel {
+                                //                                        id:  loadSettingLabel
+                                //                                        target: loadSetting
+                                //                                        text: "Load Setting"
+                                //                                        fontSizeMultiplier: ratioCalc * 1.2
+                                //                                        font.bold : true
+                                //                                        alignment: SGAlignedLabel.SideTopLeft
+                                //                                        anchors.centerIn: parent
 
-                                        SGSlider {
-                                            id: loadSetting
-                                            width: loadSettingContainer.width/1.3
-                                            live: false
-                                            from: 0.000001
-                                            to:  0.0001
-                                            stepSize: 0.000001
-                                            fromText.text: "0"
-                                            toText.text: "1"
-                                            value: 0
-                                            inputBoxWidth: loadSettingContainer/9
-                                            inputBox.enabled: false
-                                            fontSizeMultiplier: ratioCalc * 0.9
-                                            inputBox.validator: DoubleValidator { }
-                                            //                                        inputBox.validator: DoubleValidator {
-                                            //                                            top: loadSetting.to
-                                            //                                            bottom: loadSetting.from
-                                            //                                        }
+                                //                                        SGSlider {
+                                //                                            id: loadSetting
+                                //                                            width: loadSettingContainer.width/1.3
+                                //                                            live: false
+                                //                                            from: 0.000001
+                                //                                            to:  0.0001
+                                //                                            stepSize: 0.000001
+                                //                                            fromText.text: "0"
+                                //                                            toText.text: "1"
+                                //                                            value: 0
+                                //                                            inputBoxWidth: loadSettingContainer/9
+                                //                                            inputBox.enabled: false
+                                //                                            fontSizeMultiplier: ratioCalc * 0.9
+                                //                                            inputBox.validator: DoubleValidator { }
+                                //                                            //                                        inputBox.validator: DoubleValidator {
+                                //                                            //                                            top: loadSetting.to
+                                //                                            //                                            bottom: loadSetting.from
+                                //                                            //                                        }
 
-                                            property string min: ""
-                                            property string max: ""
-                                            property real state: 0
-                                            property real stepSizevalue: 0
-                                            property real fromValue: 0
-                                            property real toValue: 0
-                                            toolTipText.text: inputBox.text
+                                //                                            property string min: ""
+                                //                                            property string max: ""
+                                //                                            property real state: 0
+                                //                                            property real stepSizevalue: 0
+                                //                                            property real fromValue: 0
+                                //                                            property real toValue: 0
+                                //                                            toolTipText.text: inputBox.text
 
-                                            property var load_enable_status: platformInterface.load_enable_status
-                                            onLoad_enable_statusChanged:  {
-                                                if(load_enable_status.load_setting_min !== "0") {
+                                //                                            property var load_enable_status: platformInterface.load_enable_status
+                                //                                            onLoad_enable_statusChanged:  {
+                                //                                                if(load_enable_status.load_setting_min !== "0") {
+                                //                                                    min = load_enable_status.load_setting_min
+                                //                                                    console.log("min",min)
+                                //                                                    fromText.text = min
+                                //                                                }
 
-                                                    min = load_enable_status.load_setting_min
-                                                    console.log("min",min)
-                                                    fromText.text = min
-                                                }
-                                                if(load_enable_status.load_setting_max !== "0") {
-                                                    max = load_enable_status.load_setting_max
-                                                    toText.text = max
-                                                }
+                                //                                                if(load_enable_status.load_setting_max !== "0") {
+                                //                                                    max = load_enable_status.load_setting_max
+                                //                                                    toText.text = max
+                                //                                                }
 
-                                                state = load_enable_status.load_setting_state
-                                                stepSizevalue = load_enable_status.load_setting_step
-                                                fromValue = load_enable_status.load_setting_from
-                                                toValue = load_enable_status.load_setting_to
+                                //                                                state = load_enable_status.load_setting_state
+                                //                                                stepSizevalue = load_enable_status.load_setting_step
+                                //                                                fromValue = load_enable_status.load_setting_from
+                                //                                                toValue = load_enable_status.load_setting_to
 
-                                                stepSize = stepSizevalue
-                                                from = fromValue
-                                                to = toValue
-                                                loadSetting.value = state
+                                //                                                stepSize = stepSizevalue
+                                //                                                from = fromValue
+                                //                                                to = toValue
+                                //                                                loadSetting.value = state
 
-                                                inputBox.text = value/stepSizevalue
-                                                console.log(value * stepSizevalue)
-                                            }
-
-
-                                            onUserSet: {
+                                //                                                inputBox.text = value/stepSizevalue
+                                //                                                console.log(value * stepSizevalue)
+                                //                                            }
 
 
+                                //                                            onUserSet: {
 
 
-                                                //                                                        var valueSet = parseInt(value)
-                                                //                                                        if (valueSet > loadSetting.to) {
-                                                //                                                            value = loadSetting.to
-                                                //                                                        }
-                                                //                                                        if (valueSet < loadSetting.from) {
-                                                //                                                            value = loadSetting.from
-                                                //                                                        }
+                                //                                                function countDecimals  (value) {
+                                //                                                    if(Math.floor(value) === value) return 0;
+                                //                                                    return value.toString().split(".")[1].length || 0;
+                                //                                                }
+                                //                                                var decimalPlaces = countDecimals(stepSizevalue)
+
+                                //                                                console.log(value)
+                                //                                                if(lowLoadEnable.checked){
+                                //                                                    inputBox.text = (value * 1000000).toFixed(0)
+                                //                                                    console.log(inputBox.text)
+                                //                                                    platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
+                                //                                                }
+                                //                                                else if (midCurrentEnable.checked) {
+                                //                                                    inputBox.text = (value * 1000).toFixed(1)
+                                //                                                    platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
+                                //                                                }
+                                //                                                else if (highCurrentEnable.checked) {
+                                //                                                    inputBox.text = (value).toFixed(2)
+                                //                                                    platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
+                                //                                                }
+                                //                                                else {
+                                //                                                    inputBox.text = (value * 1000000).toFixed(0)
+                                //                                                    platformInterface.set_load_dac.update(value.toFixed(6))
+                                //                                                }
+
+                                //                                            }
 
 
-                                                function countDecimals  (value) {
-                                                    if(Math.floor(value) === value) return 0;
-                                                    return value.toString().split(".")[1].length || 0;
-                                                }
-                                                var decimalPlaces = countDecimals(stepSizevalue)
-
-                                                console.log(value)
-                                                if(lowLoadEnable.checked){
-                                                    inputBox.text = (value * 1000000).toFixed(0)
-                                                    console.log(inputBox.text)
-                                                    platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
-                                                }
-                                                else if (midCurrentEnable.checked) {
-                                                    inputBox.text = (value * 1000).toFixed(1)
-                                                    platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
-                                                }
-                                                else if (highCurrentEnable.checked) {
-                                                    inputBox.text = (value).toFixed(2)
-                                                    platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
-                                                }
-                                                else {
-                                                    inputBox.text = (value * 1000000).toFixed(0)
-                                                    platformInterface.set_load_dac.update(value.toFixed(6))
-                                                }
-
-                                            }
-
-
-                                        }
-                                    }
-                                }
+                                //                                        }
+                                //                                    }
+                                //                                }
 
                             }
                         }
@@ -1302,12 +1433,14 @@ Item {
 
                                         SGInfoBox {
                                             id: maxLoadCurrent
-                                            width: 120 * ratioCalc
+                                            width: 100
                                             //height: 40 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                             boxColor: "lightgrey"
                                             boxFont.family: Fonts.digitalseven
                                             unit: "<b>A</b>"
+                                            anchors.left: parent.left
+                                            anchors.verticalCenter: parent.verticalCenter
 
                                         }
                                     }
