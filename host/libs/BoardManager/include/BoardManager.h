@@ -10,14 +10,13 @@
 #include <QVariantMap>
 #include <QVector>
 
+#include <SerialDevice.h>
 #include <DeviceProperties.h>
 
 
 namespace spyglass {
 
     class SerialDevice;
-
-    typedef std::shared_ptr<SerialDevice> SerialDeviceShPtr;
 
     class BoardManager : public QObject
     {
@@ -73,7 +72,7 @@ namespace spyglass {
          * @param property value from enum DeviceProperties
          * @return QString filled with value of required property
          */
-        QString getDeviceProperty(const int connectionId, const DeviceProperties property);
+        QString getDeviceProperty(const int connectionId, const strata::DeviceProperties property);
 
     signals:
         /**
@@ -140,7 +139,7 @@ namespace spyglass {
         // and deadlock can occur if from QML is called another function which uses same mutex).
         std::set<int> serialPortsList_;
         QHash<int, QString> serialIdToName_;
-        QHash<int, SerialDeviceShPtr> openedSerialPorts_;
+        QHash<int,strata::SerialDeviceShPtr> openedSerialPorts_;
 
         // flag if send get_firmware_info command
         bool getFwInfo_;

@@ -1,7 +1,7 @@
 #include "BoardManager.h"
-#include "SerialDevice.h"
 #include "BoardManagerConstants.h"
 #include "logging/LoggingQtCategories.h"
+#include <SerialDevice.h>
 
 #include <QSerialPortInfo>
 
@@ -24,7 +24,7 @@ void BoardManager::sendMessage(const int connectionId, const QString &message) {
         it.value()->write(message.toUtf8());
     }
     else {
-        logInvalidConnectionId("Cannot send message", connectionId);
+        logInvalidConnectionId(QStringLiteral("Cannot send message"), connectionId);
         emit invalidOperation(connectionId);
     }
 }
@@ -40,7 +40,7 @@ void BoardManager::disconnect(const int connectionId) {
         emit boardDisconnected(connectionId);
     }
     else {
-        logInvalidConnectionId("Cannot disconnect", connectionId);
+        logInvalidConnectionId(QStringLiteral("Cannot disconnect"), connectionId);
         emit invalidOperation(connectionId);
     }
 }
@@ -65,7 +65,7 @@ void BoardManager::reconnect(const int connectionId) {
         addedSerialPort(connectionId);
     }
     else {
-        logInvalidConnectionId("Cannot reconnect", connectionId);
+        logInvalidConnectionId(QStringLiteral("Cannot reconnect"), connectionId);
         emit invalidOperation(connectionId);
     }
 }
@@ -77,7 +77,7 @@ QVariantMap BoardManager::getConnectionInfo(const int connectionId) {
         return it.value()->getDeviceInfo();
     }
     else {
-        logInvalidConnectionId("Cannot get connection info", connectionId);
+        logInvalidConnectionId(QStringLiteral("Cannot get connection info"), connectionId);
         emit invalidOperation(connectionId);
         return QVariantMap();
     }
@@ -88,14 +88,14 @@ QVector<int> BoardManager::readyConnectionIds() {
     return QVector<int>::fromList(openedSerialPorts_.keys());
 }
 
-QString BoardManager::getDeviceProperty(const int connectionId, const DeviceProperties property) {
+QString BoardManager::getDeviceProperty(const int connectionId, const strata::DeviceProperties property) {
     // in case of multithread usage lock access to openedSerialPorts_
     auto it = openedSerialPorts_.constFind(connectionId);
     if (it != openedSerialPorts_.constEnd()) {
         return it.value()->getProperty(property);
     }
     else {
-        logInvalidConnectionId("Cannot get required device property", connectionId);
+        logInvalidConnectionId(QStringLiteral("Cannot get required device property"), connectionId);
         emit invalidOperation(connectionId);
         return QString();
     }
@@ -116,7 +116,7 @@ void BoardManager::checkNewSerialDevices() {
     std::set<int> ports;
     QHash<int, QString> id_to_name;
 
-    for (const QSerialPortInfo &serialPortInfo : serialPortInfos) {
+    for (const QSerialPortInfo& serialPortInfo : serialPortInfos) {
         const QString& name = serialPortInfo.portName();
 
         if (serialPortInfo.isNull()) {
@@ -192,18 +192,18 @@ void BoardManager::computeListDiff(std::set<int>& list, std::set<int>& added_por
 bool BoardManager::addedSerialPort(const int connectionId) {
     const QString name = serialIdToName_.value(connectionId);
 
-    SerialDeviceShPtr device = std::make_shared<SerialDevice>(connectionId, name);
+    strata::SerialDeviceShPtr device = std::make_shared<strata::SerialDevice>(connectionId, name);
 
     if (device->open()) {
         openedSerialPorts_.insert(connectionId, device);
 
         qCInfo(logCategoryBoardManager).nospace() << "Added new serial device: ID: 0x" << hex << static_cast<uint>(connectionId) << ", name: " << name;
 
-        connect(device.get(), &SerialDevice::deviceReady, this, &BoardManager::boardReady);
-        connect(device.get(), &SerialDevice::serialDeviceError, this, &BoardManager::boardError);
-        connect(device.get(), &SerialDevice::msgFromDevice, this, &BoardManager::newMessage);
+        connect(device.get(), &strata::SerialDevice::deviceReady, this, &BoardManager::boardReady);
+        connect(device.get(), &strata::SerialDevice::serialDeviceError, this, &BoardManager::boardError);
+        connect(device.get(), &strata::SerialDevice::msgFromDevice, this, &BoardManager::newMessage);
 
-        device->launchDevice(getFwInfo_);
+        device->identify(getFwInfo_);
 
         return true;
     }

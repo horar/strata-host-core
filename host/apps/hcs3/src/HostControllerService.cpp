@@ -411,7 +411,6 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
     }
 
     QString clientId = QByteArray::fromRawData(client->getClientId().data(), static_cast<int>(client->getClientId().size()) ).toHex();
-//    QString clientId = QString::fromStdString(client->getClientId());
     qCInfo(logCategoryHcs) << "Client:" << clientId <<  " Selected platform:" << QString::fromStdString(classId);
 
     rapidjson::Document* request = new rapidjson::Document();

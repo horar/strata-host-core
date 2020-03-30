@@ -312,9 +312,9 @@ void SciPlatformModel::boardReadyHandler(int connectionId, bool recognized)
     }
 
     if (recognized) {
-        QString verboseName = boardManager_->getDeviceProperty(connectionId, spyglass::DeviceProperties::verboseName);
-        QString appVersion = boardManager_->getDeviceProperty(connectionId, spyglass::DeviceProperties::applicationVer);
-        QString bootloaderVersion = boardManager_->getDeviceProperty(connectionId, spyglass::DeviceProperties::applicationVer);
+        QString verboseName = boardManager_->getDeviceProperty(connectionId, strata::DeviceProperties::verboseName);
+        QString appVersion = boardManager_->getDeviceProperty(connectionId, strata::DeviceProperties::applicationVer);
+        QString bootloaderVersion = boardManager_->getDeviceProperty(connectionId, strata::DeviceProperties::applicationVer);
 
         if (verboseName.isEmpty()) {
             if (appVersion.isEmpty() == false) {
