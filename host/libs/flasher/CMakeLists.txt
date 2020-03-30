@@ -13,8 +13,6 @@ add_library(${PROJECT_NAME}
     src/logging/LoggingQtCategories.cpp
     #AUTOMOC wont find header if it is in different directory
     include/Flasher.h
-    src/FlasherConstants.h
-    src/logging/LoggingQtCategories.h
 )
 
 target_include_directories(${PROJECT_NAME}
