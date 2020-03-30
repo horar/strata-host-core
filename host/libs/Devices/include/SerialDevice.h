@@ -2,6 +2,7 @@
 #define SERIAL_DEVICE_H
 
 #include <string>
+#include <memory>
 
 #include <QString>
 #include <QByteArray>
@@ -12,7 +13,7 @@
 
 #include <DeviceProperties.h>
 
-namespace spyglass {
+namespace strata {
 
     class SerialDevice : public QObject
     {
@@ -27,6 +28,9 @@ namespace spyglass {
          */
         SerialDevice(const int connectionId, const QString& name);
 
+        /**
+         * SerialDevice destructor
+         */
         ~SerialDevice();
 
         /**
@@ -45,7 +49,8 @@ namespace spyglass {
          * @param getFwInfo if true send also get_firmware_info command
          * @return true if device identification has start, otherwise false
          */
-        bool launchDevice(bool getFwInfo = true);
+        bool identify(bool getFwInfo = true);
+
 
         /**
          * Write data to serial device.
@@ -66,6 +71,13 @@ namespace spyglass {
          */
         QString getProperty(DeviceProperties property) const;
 
+        /**
+         * Get device ID.
+         * @return Device ID
+         */
+        int getConnectionId() const;
+
+        void setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer);
 
         friend QDebug operator<<(QDebug dbg, const SerialDevice* d);
 
@@ -107,17 +119,16 @@ namespace spyglass {
     private:
         bool parseDeviceResponse(const QByteArray& data, bool& isAck);
 
-        int connection_id_;
-        uint ucid_;  // unsigned connection ID - auxiliary variable for logging
+        const int connection_id_;
+        const uint ucid_;  // unsigned connection ID - auxiliary variable for logging
         QString port_name_;
         QSerialPort serial_port_;
-        std::string read_buffer_;
+        std::string read_buffer_;  // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
         QTimer response_timer_;
 
         bool device_busy_;
 
-        enum class State
-        {
+        enum class State {
             None,
             GetFirmwareInfo,
             GetPlatformInfo,
@@ -126,8 +137,7 @@ namespace spyglass {
         };
         State state_;
 
-        enum class Action
-        {
+        enum class Action {
             None,
             WaitingForFirmwareInfo,
             WaitingForPlatformInfo,
@@ -142,6 +152,8 @@ namespace spyglass {
         QString application_ver_;
     };
 
+
+    typedef std::shared_ptr<SerialDevice> SerialDeviceShPtr;
 }
 
 #endif

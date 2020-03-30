@@ -405,7 +405,7 @@ void DownloadManager::prepareResponse(DownloadItem *downloadItem, const QString 
 
     DownloadGroup *group = groupHash_.value(downloadItem->groupId, nullptr);
     if (group == nullptr) {
-        qWarning(logCategoryHcsDownloader) << "cannot find groupId" << downloadItem->groupId;
+        qCCritical(logCategoryHcsDownloader) << "cannot find groupId" << downloadItem->groupId;
         return;
     }
 

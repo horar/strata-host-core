@@ -27,9 +27,9 @@ void BoardManagerWrapper::sendMessage(const int connectionId, const std::string&
 void BoardManagerWrapper::newConnection(int connectionId, bool recognized) {
     if (recognized) {
         boardInfo_.emplace(connectionId, BoardInfo(
-            boardManager_.getDeviceProperty(connectionId, spyglass::DeviceProperties::classId),
-            boardManager_.getDeviceProperty(connectionId, spyglass::DeviceProperties::platformId),
-            boardManager_.getDeviceProperty(connectionId, spyglass::DeviceProperties::verboseName)
+            boardManager_.getDeviceProperty(connectionId, strata::DeviceProperties::classId),
+            boardManager_.getDeviceProperty(connectionId, strata::DeviceProperties::platformId),
+            boardManager_.getDeviceProperty(connectionId, strata::DeviceProperties::verboseName)
         ));
         PlatformMessage item;
         item.msg_type = PlatformMessage::eMsgPlatformConnected;
@@ -178,7 +178,7 @@ bool BoardManagerWrapper::clearClientId(const int connectionId) {
 }
 
 QString BoardManagerWrapper::logConnectionId(const int connectionId) const {
-    return "Connection Id: 0x" + QString::number(static_cast<unsigned>(connectionId), 16);
+    return "Connection Id: 0x" + QString::number(static_cast<uint>(connectionId), 16);
 }
 
 BoardManagerWrapper::BoardInfo::BoardInfo(QString clssId, QString pltfId, QString vName)

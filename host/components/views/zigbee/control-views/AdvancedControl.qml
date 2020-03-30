@@ -13,7 +13,7 @@ Widget09.SGResponsiveScrollView {
     minimumWidth: 1000
 
     property var message_array : []
-    property var message_log: platformInterface.msg_dbg.msg
+    property var message_log: platformInterface.debug_notification.message
     onMessage_logChanged: {
         console.log("debug:",message_log)
         if(message_log !== "") {

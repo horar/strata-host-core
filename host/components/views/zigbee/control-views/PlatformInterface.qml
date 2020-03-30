@@ -32,8 +32,8 @@ Item {
          "color": "",     // or "green","purple","red"
     }
 
-    property var msg_dbg:{      //debug strings
-            "msg":""
+    property var debug_notification:{      //debug strings
+            "message":""
     }
 
     //----------------------------------------------------------------------

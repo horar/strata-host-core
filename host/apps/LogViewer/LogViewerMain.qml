@@ -45,6 +45,10 @@ Item {
                 scrollbackViewAtEndTimer.restart()
             }
         }
+
+        onModelReset: {
+            scrollbackViewAtEndTimer.restart()
+        }
     }
 
     Timer {

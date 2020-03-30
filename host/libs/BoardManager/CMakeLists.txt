@@ -10,15 +10,11 @@ find_package(Qt5 ${VERSION_QT5}
 
 add_library(${PROJECT_NAME}
     src/BoardManager.cpp
-    src/SerialDevice.cpp
     src/logging/LoggingQtCategories.cpp
 
     #AUTOMOC wont find header if it is in different directory
     include/BoardManager.h
-    include/DeviceProperties.h
     src/BoardManagerConstants.h
-    src/SerialDevice.h
-    src/SerialDeviceConstants.h
     src/logging/LoggingQtCategories.h
 )
 
@@ -30,8 +26,8 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC Qt5::SerialPort
-    PUBLIC rapidjson::rapidjson
     PUBLIC QtLogger
+    PUBLIC SerialDevice
     PUBLIC CommandValidator
 )
 
