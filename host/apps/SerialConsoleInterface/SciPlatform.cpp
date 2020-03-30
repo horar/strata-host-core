@@ -200,6 +200,14 @@ bool SciPlatform::exportScrollback(QString filePath) const
     return file.commit();
 }
 
+void SciPlatform::removeCommandFromHistoryAt(int index)
+{
+    bool isRemoved = commandHistoryModel_->removeAt(index);
+    if (isRemoved) {
+        settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
+    }
+}
+
 void SciPlatform::messageFromDeviceHandler(QByteArray message)
 {
     scrollbackModel_->append(message, SciScrollbackModel::MessageType::Response);

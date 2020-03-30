@@ -52,6 +52,7 @@ public:
     void resetPropertiesFromDevice();
     Q_INVOKABLE bool sendMessage(const QByteArray &message);
     Q_INVOKABLE bool exportScrollback(QString filePath) const;
+    Q_INVOKABLE void removeCommandFromHistoryAt(int index);
 
 signals:
     void verboseNameChanged();

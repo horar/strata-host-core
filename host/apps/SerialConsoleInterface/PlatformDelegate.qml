@@ -446,6 +446,7 @@ FocusScope {
             suggestionOpenWithAnyKey: false
             suggestionMaxHeight: 250
             suggestionCloseOnDown: true
+            suggestionDelegateRemovable: true
             showCursorPosition: true
 
             onTextChanged: {
@@ -470,6 +471,10 @@ FocusScope {
                 }
 
                 cmdInput.text = commandHistoryModel.get(index).message
+            }
+
+            onSuggestionDelegateRemoveRequested: {
+                model.platform.removeCommandFromHistoryAt(index)
             }
         }
 
