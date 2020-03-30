@@ -63,9 +63,9 @@ target_link_libraries(${DEVICE_OPERATIONS}
     PUBLIC SerialDevice
     PUBLIC rapidjson::rapidjson
     PUBLIC QtLogger
-    PUBLIC CommandValidator
-    PUBLIC base64
-    PUBLIC crc16
+    PRIVATE CommandValidator
+    PRIVATE base64
+    PRIVATE crc16
 )
 
 set_target_properties(${DEVICE_OPERATIONS} PROPERTIES

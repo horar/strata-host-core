@@ -3,6 +3,8 @@
 
 #include <chrono>
 
+namespace strata {
+
 constexpr std::chrono::milliseconds RESPONSE_TIMEOUT(1000);
 constexpr std::chrono::milliseconds LAUNCH_DELAY(500);
 constexpr std::chrono::milliseconds BOOTLOADER_START_DELAY(5500);
@@ -34,5 +36,6 @@ constexpr const char* const JSON_VERBOSE_NAME = "verbose_name";
 constexpr const char* const JSON_PLATFORM_ID = "platform_id";
 constexpr const char* const JSON_CLASS_ID = "class_id";
 
+}
 
 #endif // FLASHER_CONSTANTS_H_

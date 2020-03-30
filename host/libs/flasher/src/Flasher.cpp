@@ -10,7 +10,7 @@
 namespace strata {
 
 QDebug operator<<(QDebug dbg, const Flasher* f) {
-    return dbg.nospace() << "Flasher for device 0x" << hex << f->deviceId_ << ": ";
+    return dbg.nospace() << "Device 0x" << hex << f->deviceId_ << ": ";
 }
 
 Flasher::Flasher(std::shared_ptr<strata::SerialDevice> device, const QString& firmwareFilename) :

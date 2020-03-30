@@ -4,6 +4,8 @@
 #include <chrono>
 #include <QString>
 
+namespace strata {
+
 constexpr std::chrono::milliseconds RESPONSE_TIMEOUT(1000);
 constexpr std::chrono::milliseconds LAUNCH_DELAY(500);
 constexpr std::chrono::milliseconds BOOTLOADER_START_DELAY(5500);
@@ -43,5 +45,7 @@ constexpr const char* const JSON_STATUS = "status";
 constexpr const char* const JSON_OK = "ok";
 
 const QString BOOTLOADER_STR("Bootloader");
+
+}  // namespace
 
 #endif // FLASHER_CONSTANTS_H_

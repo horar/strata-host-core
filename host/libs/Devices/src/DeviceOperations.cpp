@@ -169,6 +169,7 @@ void DeviceOperations::handleDeviceError(int /* deviceId */, QString msg) {
 
 void DeviceOperations::handleDeviceResponse(const int /* connectionId */, const QByteArray& data) {
     if (operation_ == Operation::None) {  // In this case we do not care about messages from device.
+        qCDebug(logCategoryDeviceActions) << this << "No operation is running, message from device is ignored.";
         return;
     }
     bool is_ack = false;
@@ -214,7 +215,7 @@ void DeviceOperations::handleDeviceResponse(const int /* connectionId */, const 
         }
     }
     else {  // unknown or malformed device response
-        qCInfo(logCategoryDeviceActions) << this << "Received unknown or malformed response.";
+        qCWarning(logCategoryDeviceActions) << this << "Received unknown or malformed response.";
     }
 }
 
@@ -256,7 +257,7 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& is_ack)
             case Activity::WaitingForStartApp :
                 cmp_str = JSON_START_APP;
                 break;
-            default :
+            case Activity::None :
                 break;
             }
 

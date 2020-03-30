@@ -28,6 +28,9 @@ namespace strata {
          */
         SerialDevice(const int connectionId, const QString& name);
 
+        /**
+         * SerialDevice destructor
+         */
         ~SerialDevice();
 
         /**

@@ -40,6 +40,7 @@ SerialDevice::~SerialDevice() {
 
 bool SerialDevice::open() {
     if (serial_port_.isOpen()) {
+        qCDebug(logCategorySerialDevice).nospace() << this << "Attempt to open already opened serial port.";
         return true;
     }
 
@@ -109,7 +110,7 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
         QString err_msg = "Serial port error (" + QString::number(error) + "): " + serial_port_.errorString();
         if (error == QSerialPort::ResourceError) {
             // board was unconnected from computer (cable was unplugged)
-            qCInfo(logCategorySerialDevice).noquote() << this << ": " << err_msg << " (Probably unexpectedly disconnected device.)";
+            qCWarning(logCategorySerialDevice).noquote() << this << ": " << err_msg << " (Probably unexpectedly disconnected device.)";
         }
         else {
             qCCritical(logCategorySerialDevice).noquote() << this << ": " << err_msg;
