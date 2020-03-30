@@ -53,9 +53,21 @@ Item {
         }
         else enable1.checked = false
 
-        if(initial_status.manual_mode === "Manual")
+        if(initial_status.manual_mode === "Manual") {
             enableModeSet.checked = true
-        else  enableModeSet.checked = false
+            maxInputCurrentContainer.enabled = true
+            maxInputCurrentContainer.opacity = 1.0
+            maxInputVoltageContainer.enabled = true
+            maxInputVoltageContainer.opacity = 1.0
+        }
+        else {
+            enableModeSet.checked = false
+            maxInputCurrentContainer.enabled = false
+            maxInputCurrentContainer.opacity = 0.5
+            maxInputVoltageContainer.enabled = false
+            maxInputVoltageContainer.opacity = 0.5
+
+        }
 
         maxInputCurrent.value = initial_status.max_input_current
         maxInputVoltage.value = initial_status.max_input_voltage
@@ -105,7 +117,7 @@ Item {
     property  var switch_enable_status_en_214: platformInterface.switch_enable_status.en_214
     onSwitch_enable_status_en_214Changed: {
         if(switch_enable_status_en_214 === "on") {
-            enable4checked = true
+            enable4.checked = true
         }
         else enable4.checked = false
     }
@@ -113,7 +125,7 @@ Item {
     property  var switch_enable_status_en_213: platformInterface.switch_enable_status.en_213
     onSwitch_enable_status_en_213Changed: {
         if(switch_enable_status_en_213 === "on") {
-            enable5checked = true
+            enable5.checked = true
         }
         else enable5.checked = false
     }
@@ -122,7 +134,7 @@ Item {
     property  var switch_enable_status_en_333: platformInterface.switch_enable_status.en_333
     onSwitch_enable_status_en_333Changed: {
         if(switch_enable_status_en_333 === "on") {
-            enable1checked = true
+            enable1.checked = true
         }
         else enable1.checked = false
     }
@@ -525,10 +537,10 @@ Item {
 
                                                 anchors.centerIn: parent
 
-                                                onCheckedChanged: {
+                                                onToggled: {
                                                     if(checked)
                                                         platformInterface.switch_enables.update("214_on")
-                                                    else  platformInterface.switch_enables.update("off")
+                                                    else platformInterface.switch_enables.update("off")
                                                 }
 
 
@@ -601,7 +613,7 @@ Item {
 
                                                 anchors.centerIn: parent
 
-                                                onCheckedChanged: {
+                                                onToggled: {
                                                     if(checked)
                                                         platformInterface.switch_enables.update("213_on")
                                                     else platformInterface.switch_enables.update("off")
@@ -708,7 +720,21 @@ Item {
                                                 hoverEnabled: true
                                                 height: parent.height/1.5
                                                 width: parent.width/1.5
-                                                onClicked: platformInterface.reset_board.send()
+                                                onClicked: {
+                                                    platformInterface.reset_board.send()
+                                                    platformInterface.switch_enables.update("off")
+                                                    platformInterface.load_enables.update("off")
+                                                    enable1.checked = false
+                                                    enable2.checked = false
+                                                    enable3.checked = false
+                                                    enable4.checked = false
+                                                    enable5.checked = false
+
+                                                    lowLoadEnable.checked = false
+                                                    midCurrentEnable.checked = false
+                                                    highCurrentEnable.checked = false
+
+                                                }
                                             }
                                         }
                                     }
@@ -1092,10 +1118,14 @@ Item {
                                             property var load_enable_status: platformInterface.load_enable_status
                                             onLoad_enable_statusChanged:  {
                                                 if(load_enable_status.load_setting_min !== "0") {
+
                                                     min = load_enable_status.load_setting_min
+                                                    console.log("min",min)
+                                                    fromText.text = min
                                                 }
                                                 if(load_enable_status.load_setting_max !== "0") {
                                                     max = load_enable_status.load_setting_max
+                                                    toText.text = max
                                                 }
 
                                                 state = load_enable_status.load_setting_state
@@ -1103,9 +1133,6 @@ Item {
                                                 fromValue = load_enable_status.load_setting_from
                                                 toValue = load_enable_status.load_setting_to
 
-
-                                                fromText.text = min
-                                                toText.text = max
                                                 stepSize = stepSizevalue
                                                 from = fromValue
                                                 to = toValue
