@@ -11,7 +11,7 @@ Item {
     id: root
 
     property real ratioCalc: (Screen.width <= 1200) ? (root.width/Screen.width) : root.width/1200//root.width/1200)
-    property real initialAspectRatio: Screen.width/Screen.height//1200/820
+    property real initialAspectRatio: Screen.width/Screen.height//1200/800
 
     anchors.centerIn: parent
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
@@ -483,13 +483,15 @@ Item {
     }
 
     RowLayout {
+        id: systemEfficiencyView
         anchors.fill: parent
         anchors.margins: 10
 
         Rectangle {
             id: column1Container
             Layout.fillHeight: true
-            Layout.preferredWidth: (parent.width - middleLine.width) * (7/12)
+            Layout.preferredWidth: (parent.width - middleLine.width) * (7/12) - 10
+            Layout.leftMargin: 10
 
             ColumnLayout {
                 anchors.fill: parent
@@ -1010,7 +1012,7 @@ Item {
             Layout.preferredHeight: parent.height
             Layout.alignment: Qt.AlignCenter
             Layout.preferredWidth: 1.5
-            Layout.leftMargin: 5
+            //Layout.leftMargin: 5
             border.color: "lightgray"
             radius: 2
         }
@@ -1018,7 +1020,8 @@ Item {
         Rectangle {
             id: column2Container
             Layout.fillHeight: true
-            Layout.preferredWidth: (parent.width - middleLine.width) * (5/12)
+            Layout.preferredWidth: (parent.width - middleLine.width) * (5/12) - 10 - systemEfficiencyView.anchors.margins/2
+            Layout.rightMargin: 10
             color: "transparent"
 
             ColumnLayout {
@@ -1041,7 +1044,7 @@ Item {
                                   "input buck regulator power stage post-regulated by an LDO\n" +
                                   "using the NCV6324 buck regulator included on this evaluation board."
                             font.bold: true
-                            font.pixelSize:  ratioCalc * 15
+                            font.pixelSize:  ratioCalc * 12
                             color: "black"
                             horizontalAlignment: Text.AlignJustify
                             anchors {
@@ -1075,7 +1078,7 @@ Item {
                         anchors.fill: parent
                         anchors.rightMargin: 10
                         anchors.bottomMargin: 10
-                        spacing: 10
+                        //spacing: 10
 
                         Text {
                             id: setBoardConfigurationText
