@@ -13,18 +13,14 @@ QDebug operator<<(QDebug dbg, const Flasher* f) {
     return dbg.nospace() << "Device 0x" << hex << f->deviceId_ << ": ";
 }
 
-Flasher::Flasher(std::shared_ptr<strata::SerialDevice> device, const QString& firmwareFilename) :
+Flasher::Flasher(SerialDevicePtr device, const QString& firmwareFilename) :
     device_(device), fwFile_(firmwareFilename)
 {
-    deviceId_ = static_cast<uint>(device_->getConnectionId());
+    deviceId_ = static_cast<uint>(device_->deviceId());
     operation_ = std::make_unique<DeviceOperations>(device_);
 
-    connect(operation_.get(), &DeviceOperations::readyForFlashFw, [this](){this->handleFlashFirmware(-1);});
-    connect(operation_.get(), &DeviceOperations::fwChunkFlashed, this, &Flasher::handleFlashFirmware);
-    connect(operation_.get(), &DeviceOperations::applicationStarted, this, &Flasher::handleStartApp);
-    connect(operation_.get(), &DeviceOperations::timeout, this, &Flasher::handleTimeout);
-    connect(operation_.get(), &DeviceOperations::error, this, &Flasher::handleError);
-    connect(operation_.get(), &DeviceOperations::cancelled, this, &Flasher::handleCancel);
+    connect(operation_.get(), &DeviceOperations::finished, this, &Flasher::handleOperationFinished);
+    connect(operation_.get(), &DeviceOperations::error, this, &Flasher::handleOperationError);
 
     qCDebug(logCategoryFlasher) << this << "Flasher created.";
 }
@@ -51,6 +47,32 @@ void Flasher::flash(bool startApplication) {
         finish(false);
     }
 }
+
+void Flasher::handleOperationFinished(int operation, int data) {
+    DeviceOperations::Operation op = static_cast<DeviceOperations::Operation>(operation);
+    switch (op) {
+    case DeviceOperations::Operation::PrepareForFlash :
+    case DeviceOperations::Operation::FlashFirmwareChunk :
+        handleFlashFirmware(data);
+        break;
+    case DeviceOperations::Operation::StartApplication :
+        qCInfo(logCategoryFlasher) << this << "Flashed firmware is ready for use.";
+        finish(true);
+        break;
+    case DeviceOperations::Operation::Timeout :
+        qCWarning(logCategoryFlasher) << this << "Timeout during flashing.";
+        finish(false);
+        break;
+    case DeviceOperations::Operation::Cancel :
+        qCInfo(logCategoryFlasher) << this << "Flashing was cancelled.";
+        finish(false);
+        break;
+    default :
+        qCWarning(logCategoryFlasher) << this << "Unsupported operation.";
+        finish(false);
+    }
+}
+
 
 void Flasher::handleFlashFirmware(int lastFlashedChunk) {
     if (lastFlashedChunk == 0) {
@@ -83,23 +105,8 @@ void Flasher::handleFlashFirmware(int lastFlashedChunk) {
     }
 }
 
-void Flasher::handleStartApp() {
-    qCInfo(logCategoryFlasher) << this << "Flashed firmware is ready for use.";
-    finish(true);
-}
-
-void Flasher::handleTimeout() {
-    qCCritical(logCategoryFlasher) << this << "Timeout during flashing.";
-    finish(false);
-}
-
-void Flasher::handleError(QString msg) {
-    qCCritical(logCategoryFlasher).noquote() << this << "Error during flashing: " << msg;
-    finish(false);
-}
-
-void Flasher::handleCancel() {
-    qCInfo(logCategoryFlasher) << this << "Flashing was cancelled.";
+void Flasher::handleOperationError(QString msg) {
+    qCWarning(logCategoryFlasher).noquote() << this << "Error during flashing: " << msg;
     finish(false);
 }
 

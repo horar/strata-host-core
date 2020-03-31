@@ -4,7 +4,7 @@
 namespace strata {
 
 enum class DeviceProperties {
-    connectionName,
+    deviceName,
     verboseName,
     platformId,
     classId,

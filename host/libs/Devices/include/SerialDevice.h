@@ -20,13 +20,15 @@ namespace strata {
         Q_OBJECT
         Q_DISABLE_COPY(SerialDevice)
 
+    friend class DeviceOperations;
+
     public:
         /**
          * SerialDevice constructor
-         * @param connectionId device connection ID
+         * @param deviceId device ID
          * @param name device name
          */
-        SerialDevice(const int connectionId, const QString& name);
+        SerialDevice(const int deviceId, const QString& name);
 
         /**
          * SerialDevice destructor
@@ -45,23 +47,17 @@ namespace strata {
         void close();
 
         /**
-         * Start device identification - send initial JSON commands and parse responses.
-         * @param getFwInfo if true send also get_firmware_info command
-         * @return true if device identification has start, otherwise false
+         * Send message to serial device. Emits serialDeviceError in case of failure.
+         * @param msg message to be written to device
+         * @return true if message was sent, otherwise false
          */
-        bool identify(bool getFwInfo = true);
-
-
-        /**
-         * Write data to serial device.
-         * @param data message to be written to device
-         */
-        void write(const QByteArray& data);
+        bool sendMessage(const QByteArray msg);
 
         /**
          * Get information about serial device (platform ID, bootloader version, ...).
          * @return QVariantMap filled with information about device
          */
+        [[deprecated("Use deviceId() and property() instead.")]]
         QVariantMap getDeviceInfo() const;
 
         /**
@@ -69,91 +65,67 @@ namespace strata {
          * @param property value from enum DeviceProperties
          * @return QString filled with value of required property
          */
-        QString getProperty(DeviceProperties property) const;
+        QString property(DeviceProperties property) const;
 
         /**
          * Get device ID.
          * @return Device ID
          */
-        int getConnectionId() const;
-
-        void setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer);
+        int deviceId() const;
 
         friend QDebug operator<<(QDebug dbg, const SerialDevice* d);
 
     signals:
         /**
          * Emitted when there is available new message from serial port.
-         * @param connectionId device connection ID
          * @param msg message from serial port
          */
-        void msgFromDevice(int connectionId, QByteArray msg);
+        void msgFromDevice(QByteArray msg);
 
         /**
-         * Emitted when serial device is ready for communication.
-         * @param connectionId device connection ID
-         * @param recognized true when device was recognized (identified), otherwise false
+         * Emitted when message was written to serial port.
+         * @param msg writen message to serial port
          */
-        void deviceReady(int connectionId, bool recognized);
+        void messageSent(QByteArray msg);
 
         /**
          * Emitted when error occured during communication on the serial port.
-         * @param connectionId device connection ID
+         * @param errCode error code (value < 0 is custom error code, other values are from QSerialPort::SerialPortError)
          * @param msg error description
          */
-        void serialDeviceError(int connectionId, QString msg);
-
-    // signals only for internal use:
-        // Qt5 private signals: https://woboq.com/blog/how-qt-signals-slots-work-part2-qt5.html
-        void identifyDevice(QPrivateSignal);
-        void writeToPort(const QByteArray& data, QPrivateSignal);
+        void serialDeviceError(int errCode, QString msg);
 
     private slots:
         void readMessage();
         void handleError(QSerialPort::SerialPortError error);
-        void handleDeviceResponse(const int connectionId, const QByteArray& data);
-        void handleResponseTimeout();
-        void deviceIdentification();
-        void writeData(const QByteArray& data);
 
     private:
-        bool parseDeviceResponse(const QByteArray& data, bool& isAck);
+        bool writeData(const QByteArray& data, quintptr lockId);
+        // *** functions used by friend class DeviceOperations:
+        void setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer);
+        bool lockDevice(quintptr lockId);
+        void unlockDevice(quintptr lockId);
+        bool sendMessage(const QByteArray msg, quintptr lockId);
+        // ***
 
-        const int connection_id_;
-        const uint ucid_;  // unsigned connection ID - auxiliary variable for logging
-        QString port_name_;
-        QSerialPort serial_port_;
-        std::string read_buffer_;  // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
-        QTimer response_timer_;
+        const int deviceId_;
+        QString portName_;
+        QSerialPort serialPort_;
+        std::string readBuffer_;  // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
 
-        bool device_busy_;
+        // If some operation (identification, flashing firmware, ...) is running, device should be locked
+        // for other operations or sending messages. Device can be locked only by DeviceOperations class.
+        // Address of DeviceOperations class instance is used as value of deviceLock_. 0 means unlocked.
+        quintptr deviceLock_;
 
-        enum class State {
-            None,
-            GetFirmwareInfo,
-            GetPlatformInfo,
-            DeviceReady,
-            UnrecognizedDevice
-        };
-        State state_;
-
-        enum class Action {
-            None,
-            WaitingForFirmwareInfo,
-            WaitingForPlatformInfo,
-            Done
-        };
-        Action action_;
-
-        QString platform_id_;
-        QString class_id_;
-        QString verbose_name_;
-        QString bootloader_ver_;
-        QString application_ver_;
+        QString platformId_;
+        QString classId_;
+        QString verboseName_;
+        QString bootloaderVer_;
+        QString applicationVer_;
     };
 
-
-    typedef std::shared_ptr<SerialDevice> SerialDeviceShPtr;
+    typedef std::shared_ptr<SerialDevice> SerialDevicePtr;
 }
 
 #endif
