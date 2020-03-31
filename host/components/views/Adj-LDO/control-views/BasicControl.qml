@@ -787,7 +787,7 @@ Item {
                             id: line
                             Layout.preferredHeight: 2
                             Layout.alignment: Qt.AlignCenter
-                            Layout.preferredWidth: parent.width
+                            Layout.preferredWidth: parent.width + 15
                             border.color: "lightgray"
                             radius: 2
                         }
@@ -1053,7 +1053,7 @@ Item {
                             id: line2
                             Layout.preferredHeight: 2
                             Layout.alignment: Qt.AlignCenter
-                            Layout.preferredWidth: parent.width
+                            Layout.preferredWidth: parent.width + 15
                             border.color: "lightgray"
                             radius: 2
                         }
@@ -1073,7 +1073,7 @@ Item {
                                     anchors.centerIn: warningBox
                                     font.bold: true
                                     text : warningTextIs
-                                    font.pixelSize:  ratioCalc * 15
+                                    font.pixelSize:  ratioCalc * 13
                                     color: "white"
                                 }
 

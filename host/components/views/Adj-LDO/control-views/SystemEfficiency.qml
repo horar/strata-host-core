@@ -17,13 +17,13 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
-//    onWidthChanged: {
-//        console.log("width",width)
-//    }
+    //    onWidthChanged: {
+    //        console.log("width",width)
+    //    }
 
-//    onHeightChanged: {
-//        console.log("height",height)
-//    }
+    //    onHeightChanged: {
+    //        console.log("height",height)
+    //    }
 
     Component.onCompleted: {
         Help.registerTarget(systemInputVoltageLabel, "This info box shows the voltage at the input of the buck regulator and bypass load switch (VIN_SB).", 0, "AdjLDOSystemEfficiencyHelp")
@@ -516,7 +516,7 @@ Item {
                             id: line
                             Layout.preferredHeight: 1.5
                             Layout.alignment: Qt.AlignCenter
-                            Layout.preferredWidth: parent.width
+                            Layout.preferredWidth: parent.width + 7
                             border.color: "lightgray"
                             radius: 2
                         }
@@ -689,7 +689,7 @@ Item {
                             id: line2
                             Layout.preferredHeight: 1.5
                             Layout.alignment: Qt.AlignCenter
-                            Layout.preferredWidth: parent.width
+                            Layout.preferredWidth: parent.width + 7
                             border.color: "lightgray"
                             radius: 2
                         }
@@ -858,7 +858,7 @@ Item {
                             id: line3
                             Layout.preferredHeight: 1.5
                             Layout.alignment: Qt.AlignCenter
-                            Layout.preferredWidth: parent.width
+                            Layout.preferredWidth: parent.width + 7
                             border.color: "lightgray"
                             radius: 2
                         }
@@ -1092,7 +1092,7 @@ Item {
                         Rectangle {
                             id: line4
                             Layout.preferredHeight: 1.5
-                            Layout.preferredWidth: column2Container.width + 10
+                            Layout.preferredWidth: column2Container.width
                             border.color: "lightgray"
                             radius: 2
                         }
