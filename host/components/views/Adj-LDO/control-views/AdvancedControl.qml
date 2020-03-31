@@ -269,11 +269,21 @@ Item {
     }
 
     property string popup_message: ""
+    property var sc_allowed: platformInterface.sc_allowed.value
+    onSc_allowedChanged: {
+        if (sc_allowed === false) {
+            if (root.visible && !warningPopup.opened) {
+                popup_message = "The short-circuit load cannot be enabled when using USB 5V as the upstream supply voltage or when using the input buck regulator to supply the LDO input voltage."
+                warningPopup.open()
+            }
+        }
+    }
+
     property var config_running: platformInterface.config_running.value
     onConfig_runningChanged: {
         if(config_running === true) {
-            popup_message = "A function to configure the previously selected board settings is already running. Please wait and try applying the settings again."
             if (root.visible && !warningPopup.opened) {
+                popup_message = "A function to configure the hardware on the board is already running. Please wait and try applying the settings again."
                 warningPopup.open()
             }
         }
@@ -632,14 +642,7 @@ Item {
                                                 anchors.fill: parent
                                                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                                 onClicked: {
-                                                    if (platformInterface.sc_allowed.value === true) {
-                                                        platformInterface.enable_sc.update()
-                                                    } else {
-                                                        if (root.visible && !warningPopup.opened) {
-                                                            popup_message = "The short-circuit load cannot be activated unless the LDO input voltage option is set to 'Direct'."
-                                                            warningPopup.open()
-                                                        }
-                                                    }
+                                                    platformInterface.enable_sc.update()
                                                 }
                                             }
                                         }
