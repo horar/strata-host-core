@@ -72,18 +72,32 @@ Item {
 
         if(initial_status.low_load_en === "on") {
             lowLoadEnable.checked = true
+            lowloadSetting.enabled = true
         }
-        else  lowLoadEnable.checked = false
+        else {
+
+            lowLoadEnable.checked = false
+            lowloadSetting.enabled = false
+
+        }
 
         if(initial_status.mid_load_en === "on") {
             midCurrentEnable.checked = true
+            midloadSetting.enabled = true
         }
-        else midCurrentEnable.checked = false
+        else{
+            midCurrentEnable.checked = false
+            midloadSetting.enabled = false
+        }
 
         if(initial_status.high_load_en === "on") {
             highCurrentEnable.checked = true
+            highloadSetting.enabled = true
         }
-        else highCurrentEnable.checked = false
+        else {
+            highCurrentEnable.checked = false
+            highloadSetting.enabled = false
+        }
 
         //        loadSetting.fromText.text = initial_status.load_setting_min
         //        loadSetting.toText.text =initial_status.load_setting_max
@@ -114,7 +128,7 @@ Item {
 
     property  var switch_enable_status_en_214: platformInterface.switch_enable_status.en_214
     onSwitch_enable_status_en_214Changed: {
-          console.log(switch_enable_status_en_214)
+        console.log(switch_enable_status_en_214)
         if(switch_enable_status_en_214 === "on") {
             enable2.checked = true
         }
@@ -997,18 +1011,33 @@ Item {
                                                         checkedLabel: "On"
                                                         uncheckedLabel: "Off"
                                                         fontSizeMultiplier: ratioCalc
-
                                                         onToggled:  {
-                                                            if(checked)
+                                                            if(checked) {
+                                                                lowloadSetting.enabled = true
                                                                 platformInterface.load_enables.update("low_load_on")
-                                                            else  platformInterface.load_enables.update("off")
+                                                            }
+                                                            else  {
+                                                                lowloadSetting.enabled = false
+                                                                platformInterface.load_enables.update("off")
+
+                                                            }
                                                         }
 
                                                         property var load_enable_status_low_load: platformInterface.load_enable_status.low_load_en
                                                         onLoad_enable_status_low_loadChanged: {
-                                                            if(load_enable_status_low_load === "on")
+
+
+                                                            if(load_enable_status_low_load === "on") {
                                                                 lowLoadEnable.checked = true
-                                                            else lowLoadEnable.checked = false
+
+                                                                console.log( lowLoadEnable.checked)
+                                                                lowloadSetting.enabled = true
+
+                                                            }
+                                                            else {
+                                                                lowloadSetting.enabled = false
+                                                                lowLoadEnable.checked = false
+                                                            }
                                                         }
 
                                                     }
@@ -1047,6 +1076,39 @@ Item {
                                                         fontSizeMultiplier: ratioCalc * 1.2
                                                         inputBox.validator: DoubleValidator { }
 
+                                                        onUserSet: {
+
+
+                                                            //                                                            function countDecimals  (value) {
+                                                            //                                                                if(Math.floor(value) === value) return 0;
+                                                            //                                                                return value.toString().split(".")[1].length || 0;
+                                                            //                                                            }
+                                                            //                                                            var decimalPlaces = countDecimals(stepSizevalue)
+
+                                                            console.log(value)
+                                                            if(lowLoadEnable.checked){
+                                                                //inputBox.text = (value * 1000000).toFixed(0)
+                                                                platformInterface.set_load_dac.update(value)
+                                                                //platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
+                                                            }
+                                                            else if (midCurrentEnable.checked) {
+                                                                platformInterface.set_load_dac.update(value)
+                                                                // inputBox.text = (value * 1000).toFixed(1)
+                                                                // platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
+                                                            }
+                                                            else if (highCurrentEnable.checked) {
+                                                                platformInterface.set_load_dac.update(value)
+                                                                //inputBox.text = (value).toFixed(2)
+                                                                //platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
+                                                            }
+                                                            else {
+                                                                platformInterface.set_load_dac.update(value)
+                                                                //                                                                inputBox.text = (value * 1000000).toFixed(0)
+                                                                //                                                                platformInterface.set_load_dac.update(value.toFixed(6))
+                                                            }
+
+                                                        }
+
                                                     }
                                                 }
 
@@ -1080,17 +1142,27 @@ Item {
                                                         fontSizeMultiplier: ratioCalc
 
                                                         onToggled:  {
-                                                            if(checked)
+                                                            if(checked) {
+                                                                midloadSetting.enabled = true
                                                                 platformInterface.load_enables.update("mid_load_on")
-                                                            else  platformInterface.load_enables.update("off")
+                                                            }
+                                                            else {
+                                                                midloadSetting.enabled = false
+                                                                platformInterface.load_enables.update("off")
+                                                            }
                                                         }
 
                                                         property var load_enable_status_mid_load: platformInterface.load_enable_status.mid_load_en
                                                         onLoad_enable_status_mid_loadChanged: {
                                                             if(load_enable_status_mid_load === "on") {
+                                                                midloadSetting.enabled = true
                                                                 midCurrentEnable.checked = true
                                                             }
-                                                            else  midCurrentEnable.checked = false
+                                                            else {
+                                                                midloadSetting.enabled = false
+                                                                midCurrentEnable.checked = false
+
+                                                            }
                                                         }
 
                                                     }
@@ -1105,7 +1177,7 @@ Item {
 
                                                 SGAlignedLabel {
                                                     id:  midloadSettingLabel
-                                                    target: lowloadSetting
+                                                    target: midloadSetting
                                                     text: ""
                                                     fontSizeMultiplier: ratioCalc * 1.2
                                                     font.bold : true
@@ -1128,6 +1200,38 @@ Item {
                                                         inputBox.enabled: false
                                                         fontSizeMultiplier: ratioCalc * 1.2
                                                         inputBox.validator: DoubleValidator { }
+
+                                                        onUserSet: {
+                                                            //                                                            function countDecimals(value) {
+                                                            //                                                                if(Math.floor(value) === value) return 0;
+                                                            //                                                                return value.toString().split(".")[1].length || 0;
+                                                            //                                                            }
+                                                            //                                                            var decimalPlaces = countDecimals(stepSizevalue)
+
+                                                            //                                                            console.log(value)
+                                                            if(lowLoadEnable.checked){
+                                                                platformInterface.set_load_dac.update(value)
+                                                                //                                                                inputBox.text = (value * 1000000).toFixed(0)
+                                                                //                                                                console.log(inputBox.text)
+                                                                //                                                                platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
+                                                            }
+                                                            else if (midCurrentEnable.checked) {
+                                                                platformInterface.set_load_dac.update(value)
+                                                                //                                                                inputBox.text = (value * 1000).toFixed(1)
+                                                                //                                                                platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
+                                                            }
+                                                            else if (highCurrentEnable.checked) {
+                                                                platformInterface.set_load_dac.update(value)
+                                                                //                                                                inputBox.text = (value).toFixed(2)
+                                                                //                                                                platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
+                                                            }
+                                                            else {
+                                                                platformInterface.set_load_dac.update(value)
+                                                                //                                                                inputBox.text = (value * 1000000).toFixed(0)
+                                                                //                                                                platformInterface.set_load_dac.update(value.toFixed(6))
+                                                            }
+
+                                                        }
 
                                                     }
                                                 }
@@ -1158,17 +1262,27 @@ Item {
                                                         fontSizeMultiplier: ratioCalc
 
                                                         onToggled:  {
-                                                            if(checked)
+                                                            if(checked) {
+                                                                highloadSetting.enabled = true
                                                                 platformInterface.load_enables.update("high_load_on")
-                                                            else  platformInterface.load_enables.update("off")
+                                                            }
+                                                            else {
+                                                                highloadSetting.enabled = false
+
+                                                                platformInterface.load_enables.update("off")
+                                                            }
                                                         }
 
                                                         property var load_enable_status_high_load: platformInterface.load_enable_status.high_load_en
                                                         onLoad_enable_status_high_loadChanged: {
                                                             if(load_enable_status_high_load === "on") {
+                                                                ighloadSetting.enabled = true
                                                                 highCurrentEnable.checked = true
                                                             }
-                                                            else  highCurrentEnable.checked = false
+                                                            else {
+                                                                highloadSetting.enabled = false
+                                                                highCurrentEnable.checked = false
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -1205,6 +1319,40 @@ Item {
                                                         inputBox.enabled: false
                                                         fontSizeMultiplier: ratioCalc * 1.2
                                                         inputBox.validator: DoubleValidator { }
+
+                                                        onUserSet: {
+
+
+                                                            //                                                            function countDecimals  (value) {
+                                                            //                                                                if(Math.floor(value) === value) return 0;
+                                                            //                                                                return value.toString().split(".")[1].length || 0;
+                                                            //                                                            }
+                                                            //                                                            var decimalPlaces = countDecimals(stepSizevalue)
+
+                                                            console.log(value)
+                                                            if(lowLoadEnable.checked){
+                                                                platformInterface.set_load_dac.update(value)
+                                                                //                                                                inputBox.text = (value * 1000000).toFixed(0)
+                                                                //                                                                console.log(inputBox.text)
+                                                                //                                                                platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
+                                                            }
+                                                            else if (midCurrentEnable.checked) {
+                                                                platformInterface.set_load_dac.update(value)
+                                                                //                                                                inputBox.text = (value * 1000).toFixed(1)
+                                                                //                                                                platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
+                                                            }
+                                                            else if (highCurrentEnable.checked) {
+                                                                platformInterface.set_load_dac.update(value)
+                                                                //                                                                inputBox.text = (value).toFixed(2)
+                                                                //                                                                platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
+                                                            }
+                                                            else {
+                                                                platformInterface.set_load_dac.update(value)
+                                                                //                                                                inputBox.text = (value * 1000000).toFixed(0)
+                                                                //                                                                platformInterface.set_load_dac.update(value.toFixed(6))
+                                                            }
+
+                                                        }
 
                                                     }
                                                 }
