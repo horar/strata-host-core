@@ -287,6 +287,32 @@ Item {
 
 
                              })
+
+    property var reset_clim: ({
+                                 "cmd" : "reset_clim",
+                                 "payload": {  },
+
+                                 update: function () {
+                                     CorePlatformInterface.send(this)
+                                 },
+                                 send: function () { CorePlatformInterface.send(this) },
+                                 show: function () { CorePlatformInterface.show(this) }
+
+
+                             })
+
+    property var reset_tsd: ({
+                                 "cmd" : "reset_tsd",
+                                 "payload": {  },
+
+                                 update: function () {
+                                     CorePlatformInterface.send(this)
+                                 },
+                                 send: function () { CorePlatformInterface.send(this) },
+                                 show: function () { CorePlatformInterface.show(this) }
+
+
+                             })
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process

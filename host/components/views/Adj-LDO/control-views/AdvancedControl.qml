@@ -570,7 +570,7 @@ Item {
             top: noteMessage.bottom
             topMargin: 5
             left: parent.left
-            leftMargin: 10
+            //leftMargin: 5
             right: parent.right
             rightMargin: 10
             bottom: parent.bottom
@@ -624,29 +624,6 @@ Item {
                                     anchors.fill: parent
                                     spacing: 10
 
-                                    Rectangle {
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
-
-                                        SGButton {
-                                            id: shortCircuitButton
-                                            height: preferredContentHeight * 1.5
-                                            width: preferredContentWidth * 1.25
-                                            text: "Trigger Short \n Circuit"
-                                            anchors.centerIn: parent
-                                            fontSizeMultiplier: ratioCalc
-                                            color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
-                                            hoverEnabled: true
-                                            MouseArea {
-                                                hoverEnabled: true
-                                                anchors.fill: parent
-                                                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                                onClicked: {
-                                                    platformInterface.enable_sc.update()
-                                                }
-                                            }
-                                        }
-                                    }
 
                                     Rectangle {
                                         Layout.fillWidth: true
@@ -671,6 +648,58 @@ Item {
                                             }
                                         }
                                     }
+
+                                    Rectangle {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+
+                                        SGButton {
+                                            id: shortCircuitButton
+                                            height: preferredContentHeight * 1.5
+                                            width: preferredContentWidth * 1.25
+                                            text: "Trigger Short \n Circuit"
+                                            anchors.centerIn: parent
+                                            fontSizeMultiplier: ratioCalc
+                                            color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                                            hoverEnabled: true
+                                            MouseArea {
+                                                hoverEnabled: true
+                                                anchors.fill: parent
+                                                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                                onClicked: {
+                                                    platformInterface.enable_sc.update()
+                                                }
+                                            }
+                                        }
+                                    }
+
+
+
+
+                                    Rectangle {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+
+                                        SGButton {
+                                            id: resetCurrLimitutton
+                                            height: preferredContentHeight * 1.5
+                                            width: preferredContentWidth * 1.25
+                                            text: "Reset Current \n Limit Trigger"
+                                            anchors.centerIn: parent
+                                            fontSizeMultiplier: ratioCalc
+                                            color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                                            hoverEnabled: true
+                                            MouseArea {
+                                                hoverEnabled: true
+                                                anchors.fill: parent
+                                                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                                onClicked: {
+                                                    platformInterface.reset_clim.update()
+                                                }
+                                            }
+                                        }
+                                    }
+
                                 }
                             }
 
@@ -832,6 +861,31 @@ Item {
                                             }
                                         }
                                     }
+
+                                    Rectangle {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+
+                                        SGButton {
+                                            id: resetTSDtutton
+                                            height: preferredContentHeight * 1.5
+                                            width: preferredContentWidth * 1.25
+                                            text: "Reset TSD \n Trigger"
+                                            anchors.centerIn: parent
+                                            fontSizeMultiplier: ratioCalc
+                                            color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                                            hoverEnabled: true
+                                            MouseArea {
+                                                hoverEnabled: true
+                                                anchors.fill: parent
+                                                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                                onClicked: {
+                                                    platformInterface.reset_tsd.update()
+                                                }
+                                            }
+                                        }
+                                    }
+
                                 }
                             }
 
@@ -1500,8 +1554,8 @@ Item {
                                                                 leftMargin: 20
                                                                 verticalCenter: parent.verticalCenter
                                                             }
-//                                                            anchors.verticalCenter: parent.verticalCenter
-//                                                            anchors.horizontalCenter: parent.horizontalCenter
+                                                            //                                                            anchors.verticalCenter: parent.verticalCenter
+                                                            //                                                            anchors.horizontalCenter: parent.horizontalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             font.bold : true
 
@@ -1531,8 +1585,8 @@ Item {
                                                                 leftMargin: 20
                                                                 verticalCenter: parent.verticalCenter
                                                             }
-//                                                            anchors.verticalCenter: parent.verticalCenter
-//                                                            anchors.horizontalCenter: parent.horizontalCenter
+                                                            //                                                            anchors.verticalCenter: parent.verticalCenter
+                                                            //                                                            anchors.horizontalCenter: parent.horizontalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             font.bold : true
 
@@ -1572,8 +1626,8 @@ Item {
                                                                 leftMargin: 20
                                                                 verticalCenter: parent.verticalCenter
                                                             }
-//                                                            anchors.verticalCenter: parent.verticalCenter
-//                                                            anchors.horizontalCenter: parent.horizontalCenter
+                                                            //                                                            anchors.verticalCenter: parent.verticalCenter
+                                                            //                                                            anchors.horizontalCenter: parent.horizontalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             font.bold : true
 
@@ -1604,8 +1658,8 @@ Item {
                                                                 leftMargin: 20
                                                                 verticalCenter: parent.verticalCenter
                                                             }
-//                                                            anchors.verticalCenter: parent.verticalCenter
-//                                                            anchors.horizontalCenter: parent.horizontalCenter
+                                                            //                                                            anchors.verticalCenter: parent.verticalCenter
+                                                            //                                                            anchors.horizontalCenter: parent.horizontalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             font.bold : true
 

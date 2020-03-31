@@ -42,7 +42,7 @@ Item {
 
         TabButton {
             id: advancedButton
-            text: qsTr("Protection & Dropout")
+            text: qsTr("Protection/Dropout")
             onClicked: {
                 basic.visible = false
                 advanced.visible = true

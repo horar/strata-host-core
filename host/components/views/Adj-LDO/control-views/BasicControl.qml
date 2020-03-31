@@ -476,7 +476,7 @@ Item {
 
     ColumnLayout {
         anchors.fill :parent
-        anchors.margins: 10
+        //anchors.margins: 5
 
         Rectangle {
             Layout.fillWidth: true
@@ -505,246 +505,319 @@ Item {
                 Rectangle {
                     Layout.preferredWidth: parent.width * (2/3)
                     Layout.fillHeight: true
+                    // color: "red"
 
-                    RowLayout {
+                    ColumnLayout {
                         anchors.fill: parent
 
+                        Text {
+                            id: gaugeText
+                            font.bold: true
+                            text: "Gauges"
+                            font.pixelSize: ratioCalc * 20
+                            //Layout.topMargin: 2
+                            color: "#696969"
+                            Layout.leftMargin: 20
+
+                        }
+
                         Rectangle {
-                            id: tempGaugeContainer
+                            id: line3
+                            Layout.preferredHeight: 2
+                            Layout.alignment: Qt.AlignCenter
+                            Layout.preferredWidth: parent.width + 7
+                            border.color: "lightgray"
+                            radius: 2
+                        }
+
+                        Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            color: "transparent"
 
-                            SGAlignedLabel {
-                                id: tempLabel
-                                target: tempGauge
-                                text: "Board Temperature"
-                                margin: -5
-                                alignment: SGAlignedLabel.SideBottomCenter
-                                fontSizeMultiplier:  ratioCalc
-                                font.bold : true
-                                anchors.centerIn: parent
-                                horizontalAlignment: Text.AlignHCenter
 
-                                SGCircularGauge {
-                                    id: tempGauge
-                                    minimumValue: -55
-                                    maximumValue: 125
-                                    width: tempGaugeContainer.width
-                                    height: tempGaugeContainer.height - tempLabel.contentHeight
-                                    anchors.centerIn: parent
-                                    gaugeFillColor1: "blue"
-                                    gaugeFillColor2: "red"
-                                    tickmarkStepSize: 20
-                                    unitText: "˚C"
+                            RowLayout {
+                                anchors.fill: parent
 
-                                    unitTextFontSizeMultiplier: ratioCalc * 2.5
-                                    valueDecimalPlaces: 1
-                                    function lerpColor (color1, color2, x){
-                                        if (Qt.colorEqual(color1, color2)){
-                                            return color1;
-                                        } else {
-                                            return Qt.rgba(
-                                                        color1.r * (1 - x) + color2.r * x,
-                                                        color1.g * (1 - x) + color2.g * x,
-                                                        color1.b * (1 - x) + color2.b * x, 1
-                                                        );
+                                Rectangle {
+                                    id: tempGaugeContainer
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "transparent"
+
+                                    SGAlignedLabel {
+                                        id: tempLabel
+                                        target: tempGauge
+                                        text: "Board Temperature"
+                                        margin: -5
+                                        alignment: SGAlignedLabel.SideBottomCenter
+                                        fontSizeMultiplier:  ratioCalc
+                                        font.bold : true
+                                        anchors.centerIn: parent
+                                        horizontalAlignment: Text.AlignHCenter
+
+                                        SGCircularGauge {
+                                            id: tempGauge
+                                            minimumValue: -55
+                                            maximumValue: 125
+                                            width: tempGaugeContainer.width
+                                            height: tempGaugeContainer.height - tempLabel.contentHeight
+                                            anchors.centerIn: parent
+                                            gaugeFillColor1: "blue"
+                                            gaugeFillColor2: "red"
+                                            tickmarkStepSize: 20
+                                            unitText: "˚C"
+
+                                            unitTextFontSizeMultiplier: ratioCalc * 2.5
+                                            valueDecimalPlaces: 1
+                                            function lerpColor (color1, color2, x){
+                                                if (Qt.colorEqual(color1, color2)){
+                                                    return color1;
+                                                } else {
+                                                    return Qt.rgba(
+                                                                color1.r * (1 - x) + color2.r * x,
+                                                                color1.g * (1 - x) + color2.g * x,
+                                                                color1.b * (1 - x) + color2.b * x, 1
+                                                                );
+                                                }
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        }
 
-                        Rectangle {
-                            id: efficiencyGaugeContainer
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
+                                Rectangle {
+                                    id: efficiencyGaugeContainer
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "transparent"
 
-                            SGAlignedLabel {
-                                id: efficiencyLabel
-                                target: efficiencyGauge
-                                text: "Efficiency"
-                                margin: -5
-                                anchors.centerIn: parent
-                                alignment: SGAlignedLabel.SideBottomCenter
-                                fontSizeMultiplier:  ratioCalc
-                                font.bold : true
-                                horizontalAlignment: Text.AlignHCenter
+                                    SGAlignedLabel {
+                                        id: efficiencyLabel
+                                        target: efficiencyGauge
+                                        text: "Efficiency"
+                                        margin: -5
+                                        anchors.centerIn: parent
+                                        alignment: SGAlignedLabel.SideBottomCenter
+                                        fontSizeMultiplier:  ratioCalc
+                                        font.bold : true
+                                        horizontalAlignment: Text.AlignHCenter
 
-                                SGCircularGauge {
-                                    id: efficiencyGauge
-                                    minimumValue: 0
-                                    maximumValue: 100
-                                    tickmarkStepSize: 10
-                                    gaugeFillColor1: "red"
-                                    gaugeFillColor2:  "green"
-                                    width: efficiencyGaugeContainer.width
-                                    height: efficiencyGaugeContainer.height - efficiencyLabel.contentHeight
-                                    anchors.centerIn: parent
-                                    unitText: "%"
-                                    unitTextFontSizeMultiplier: ratioCalc * 2.5
-                                    valueDecimalPlaces: 1
+                                        SGCircularGauge {
+                                            id: efficiencyGauge
+                                            minimumValue: 0
+                                            maximumValue: 100
+                                            tickmarkStepSize: 10
+                                            gaugeFillColor1: "red"
+                                            gaugeFillColor2:  "green"
+                                            width: efficiencyGaugeContainer.width
+                                            height: efficiencyGaugeContainer.height - efficiencyLabel.contentHeight
+                                            anchors.centerIn: parent
+                                            unitText: "%"
+                                            unitTextFontSizeMultiplier: ratioCalc * 2.5
+                                            valueDecimalPlaces: 1
+                                        }
+                                    }
                                 }
-                            }
-                        }
 
-                        Rectangle {
-                            id: powerDissipatedContainer
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
+                                Rectangle {
+                                    id: powerDissipatedContainer
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "transparent"
 
-                            SGAlignedLabel {
-                                id: powerDissipatedLabel
-                                target: powerDissipatedGauge
-                                text: "Power Loss"
-                                margin: -5
-                                anchors.centerIn: parent
-                                alignment: SGAlignedLabel.SideBottomCenter
-                                fontSizeMultiplier:   ratioCalc
-                                font.bold : true
-                                horizontalAlignment: Text.AlignHCenter
+                                    SGAlignedLabel {
+                                        id: powerDissipatedLabel
+                                        target: powerDissipatedGauge
+                                        text: "Power Loss"
+                                        margin: -5
+                                        anchors.centerIn: parent
+                                        alignment: SGAlignedLabel.SideBottomCenter
+                                        fontSizeMultiplier:   ratioCalc
+                                        font.bold : true
+                                        horizontalAlignment: Text.AlignHCenter
 
-                                SGCircularGauge {
-                                    id: powerDissipatedGauge
-                                    minimumValue: 0
-                                    maximumValue: 3.01
-                                    tickmarkStepSize: 0.5
-                                    gaugeFillColor1:"green"
-                                    gaugeFillColor2:"red"
-                                    width: powerDissipatedContainer.width
-                                    height: powerDissipatedContainer.height - powerDissipatedLabel.contentHeight
-                                    anchors.centerIn: parent
-                                    unitTextFontSizeMultiplier: ratioCalc * 2.5
-                                    unitText: "W"
-                                    valueDecimalPlaces: 3
+                                        SGCircularGauge {
+                                            id: powerDissipatedGauge
+                                            minimumValue: 0
+                                            maximumValue: 3.01
+                                            tickmarkStepSize: 0.5
+                                            gaugeFillColor1:"green"
+                                            gaugeFillColor2:"red"
+                                            width: powerDissipatedContainer.width
+                                            height: powerDissipatedContainer.height - powerDissipatedLabel.contentHeight
+                                            anchors.centerIn: parent
+                                            unitTextFontSizeMultiplier: ratioCalc * 2.5
+                                            unitText: "W"
+                                            valueDecimalPlaces: 3
+                                        }
+                                    }
                                 }
-                            }
-                        }
 
-                        Rectangle {
-                            id: outputPowerContainer
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
+                                Rectangle {
+                                    id: outputPowerContainer
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "transparent"
 
-                            SGAlignedLabel {
-                                id: outputPowerLabel
-                                target: powerOutputGauge
-                                text: "Output Power"
-                                margin: -5
-                                anchors.centerIn: parent
-                                alignment: SGAlignedLabel.SideBottomCenter
-                                fontSizeMultiplier: ratioCalc
-                                font.bold : true
-                                horizontalAlignment: Text.AlignHCenter
+                                    SGAlignedLabel {
+                                        id: outputPowerLabel
+                                        target: powerOutputGauge
+                                        text: "Output Power"
+                                        margin: -5
+                                        anchors.centerIn: parent
+                                        alignment: SGAlignedLabel.SideBottomCenter
+                                        fontSizeMultiplier: ratioCalc
+                                        font.bold : true
+                                        horizontalAlignment: Text.AlignHCenter
 
-                                SGCircularGauge {
-                                    id: powerOutputGauge
-                                    minimumValue: 0
-                                    maximumValue:  3.5
-                                    tickmarkStepSize: 0.5
-                                    gaugeFillColor1:"green"
-                                    gaugeFillColor2:"red"
-                                    width: outputPowerContainer.width
-                                    height: outputPowerContainer.height - outputPowerLabel.contentHeight
-                                    anchors.centerIn: parent
-                                    unitText: "W"
-                                    valueDecimalPlaces: 3
-                                    unitTextFontSizeMultiplier: ratioCalc * 2.5
+                                        SGCircularGauge {
+                                            id: powerOutputGauge
+                                            minimumValue: 0
+                                            maximumValue:  3.5
+                                            tickmarkStepSize: 0.5
+                                            gaugeFillColor1:"green"
+                                            gaugeFillColor2:"red"
+                                            width: outputPowerContainer.width
+                                            height: outputPowerContainer.height - outputPowerLabel.contentHeight
+                                            anchors.centerIn: parent
+                                            unitText: "W"
+                                            valueDecimalPlaces: 3
+                                            unitTextFontSizeMultiplier: ratioCalc * 2.5
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
+//                Rectangle {
+//                    id: middleLine3
+//                    Layout.preferredHeight: parent.height + 5
+//                    Layout.alignment: Qt.AlignCenter
+//                    Layout.preferredWidth: 2
+//                    border.color: "lightgray"
+//                    radius: 2
+//                    //Layout.leftMargin: 10
+//                }
+
+
                 Rectangle {
                     Layout.fillHeight: true
-                    Layout.preferredWidth: parent.width * (1/3)
+                    Layout.preferredWidth: parent.width * 0.30
 
-                    RowLayout {
-                        anchors.fill:parent
+
+                    ColumnLayout {
+                        anchors.fill: parent
+
+                        Text {
+                            id: interruptText
+                            font.bold: true
+                            text: "Interrupt"
+                            font.pixelSize: ratioCalc * 20
+                            //Layout.topMargin: 10
+                            color: "#696969"
+                            Layout.leftMargin: 20
+
+                        }
 
                         Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-
-                            SGAlignedLabel {
-                                id:vinReadyLabel
-                                target: vinReadyLight
-                                alignment: SGAlignedLabel.SideTopCenter
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc
-                                text: "VIN_LDO Ready \n (Above 1.6V)"
-                                font.bold: true
-
-                                SGStatusLight {
-                                    id: vinReadyLight
-                                    height: 40
-                                    width: 40
-                                    property var vin_ldo_good: platformInterface.int_status.vin_ldo_good
-                                    onVin_ldo_goodChanged: {
-                                        if(vin_ldo_good === true)
-                                            vinReadyLight.status  = SGStatusLight.Green
-
-                                        else vinReadyLight.status  = SGStatusLight.Off
-                                    }
-                                }
-                            }
+                            id: line4
+                            Layout.preferredHeight: 2
+                            Layout.alignment: Qt.AlignCenter
+                            Layout.preferredWidth: parent.width + 7
+                            border.color: "lightgray"
+                            radius: 2
                         }
 
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
 
-                            SGAlignedLabel {
-                                id:pgoodLabel
-                                target: pgoodLight
-                                alignment: SGAlignedLabel.SideTopCenter
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc
-                                text: "Power Good \n (PG_LDO)"
-                                font.bold: true
 
-                                SGStatusLight {
-                                    id: pgoodLight
-                                    height: 40
-                                    width: 40
-                                    property var int_pg_ldo:  platformInterface.int_status.int_pg_ldo
-                                    onInt_pg_ldoChanged: {
-                                        if(int_pg_ldo === true && pgoodLabel.enabled)
-                                            pgoodLight.status  = SGStatusLight.Green
-                                        else pgoodLight.status  = SGStatusLight.Off
+                            RowLayout {
+                                anchors.fill:parent
+
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+
+                                    SGAlignedLabel {
+                                        id:vinReadyLabel
+                                        target: vinReadyLight
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc
+                                        text: "VIN_LDO Ready \n (Above 1.6V)"
+                                        font.bold: true
+
+                                        SGStatusLight {
+                                            id: vinReadyLight
+                                            height: 40
+                                            width: 40
+                                            property var vin_ldo_good: platformInterface.int_status.vin_ldo_good
+                                            onVin_ldo_goodChanged: {
+                                                if(vin_ldo_good === true)
+                                                    vinReadyLight.status  = SGStatusLight.Green
+
+                                                else vinReadyLight.status  = SGStatusLight.Off
+                                            }
+                                        }
                                     }
                                 }
-                            }
-                        }
 
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            color: "transparent"
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
 
-                            SGAlignedLabel {
-                                id:intLdoTempLabel
-                                target: intLdoTemp
-                                alignment: SGAlignedLabel.SideTopCenter
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc
-                                text: "Temperature Alert \n (LDO_TEMP#)"
-                                font.bold: true
+                                    SGAlignedLabel {
+                                        id:pgoodLabel
+                                        target: pgoodLight
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc
+                                        text: "Power Good \n (PG_LDO)"
+                                        font.bold: true
 
-                                SGStatusLight {
-                                    id: intLdoTemp
-                                    height: 40
-                                    width: 40
-                                    property var int_ldo_temp: platformInterface.int_status.int_ldo_temp
-                                    onInt_ldo_tempChanged: {
-                                        if(int_ldo_temp === true)
-                                            intLdoTemp.status  = SGStatusLight.Red
+                                        SGStatusLight {
+                                            id: pgoodLight
+                                            height: 40
+                                            width: 40
+                                            property var int_pg_ldo:  platformInterface.int_status.int_pg_ldo
+                                            onInt_pg_ldoChanged: {
+                                                if(int_pg_ldo === true && pgoodLabel.enabled)
+                                                    pgoodLight.status  = SGStatusLight.Green
+                                                else pgoodLight.status  = SGStatusLight.Off
+                                            }
+                                        }
+                                    }
+                                }
 
-                                        else intLdoTemp.status  = SGStatusLight.Off
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "transparent"
+
+                                    SGAlignedLabel {
+                                        id:intLdoTempLabel
+                                        target: intLdoTemp
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc
+                                        text: "Temperature Alert \n (LDO_TEMP#)"
+                                        font.bold: true
+
+                                        SGStatusLight {
+                                            id: intLdoTemp
+                                            height: 40
+                                            width: 40
+                                            property var int_ldo_temp: platformInterface.int_status.int_ldo_temp
+                                            onInt_ldo_tempChanged: {
+                                                if(int_ldo_temp === true)
+                                                    intLdoTemp.status  = SGStatusLight.Red
+
+                                                else intLdoTemp.status  = SGStatusLight.Off
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -765,7 +838,7 @@ Item {
 
                 Rectangle {
                     id: inputConfigurationContainer
-                    Layout.preferredWidth: (parent.width - middleLine.width - middleLine2.width) * (1/3)
+                    Layout.preferredWidth: (parent.width /*- middleLine.width - middleLine2.width*/) * (1/3)
                     Layout.fillHeight: true
                     color: "transparent"
 
@@ -787,7 +860,7 @@ Item {
                             id: line
                             Layout.preferredHeight: 2
                             Layout.alignment: Qt.AlignCenter
-                            Layout.preferredWidth: parent.width + 15
+                            Layout.preferredWidth: parent.width
                             border.color: "lightgray"
                             radius: 2
                         }
@@ -1020,18 +1093,18 @@ Item {
                     }
                 }
 
-                Rectangle {
-                    id: middleLine
-                    Layout.preferredHeight: parent.height
-                    Layout.alignment: Qt.AlignCenter
-                    Layout.preferredWidth: 2
-                    border.color: "lightgray"
-                    radius: 2
-                }
+//                Rectangle {
+//                    id: middleLine
+//                    Layout.preferredHeight: parent.height
+//                    Layout.alignment: Qt.AlignCenter
+//                    Layout.preferredWidth: 2
+//                    border.color: "lightgray"
+//                    radius: 2
+//                }
 
                 Rectangle {
                     id: telemetryContainer
-                    Layout.preferredWidth: (parent.width - middleLine.width - middleLine2.width) * (1/3)
+                    Layout.preferredWidth: (parent.width/* - middleLine.width - middleLine2.width*/) * (1/3)
                     Layout.fillHeight: true
 
                     ColumnLayout {
@@ -1053,7 +1126,7 @@ Item {
                             id: line2
                             Layout.preferredHeight: 2
                             Layout.alignment: Qt.AlignCenter
-                            Layout.preferredWidth: parent.width + 15
+                            Layout.preferredWidth: parent.width
                             border.color: "lightgray"
                             radius: 2
                         }
@@ -1316,18 +1389,18 @@ Item {
                     }
                 }
 
-                Rectangle {
-                    id: middleLine2
-                    Layout.preferredHeight: parent.height
-                    Layout.alignment: Qt.AlignCenter
-                    Layout.preferredWidth: 2
-                    border.color: "lightgray"
-                    radius: 2
-                }
+//                Rectangle {
+//                    id: middleLine2
+//                    Layout.preferredHeight: parent.height
+//                    Layout.alignment: Qt.AlignCenter
+//                    Layout.preferredWidth: 2
+//                    border.color: "lightgray"
+//                    radius: 2
+//                }
 
                 Rectangle {
                     id:outputConfigurationContainerBox
-                    Layout.preferredWidth: (parent.width - middleLine.width - middleLine2.width) * (1/3)
+                    Layout.preferredWidth: (parent.width) * (1/3)
                     Layout.fillHeight: true
 
                     ColumnLayout {
@@ -1345,7 +1418,7 @@ Item {
                         }
 
                         Rectangle {
-                            id: line4
+                            id: line6
                             Layout.preferredHeight: 2
                             Layout.alignment: Qt.AlignCenter
                             Layout.preferredWidth: parent.width
