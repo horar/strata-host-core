@@ -1,6 +1,7 @@
 #include <BoardManager.h>
 #include "SciModel.h"
 #include "SciDatabaseConnector.h"
+#include "SerialConsoleInterfaceVersion.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -62,6 +63,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QGuiApplication::setApplicationVersion(AppInfo::version.data());
 
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/images/sci-logo.svg"));
@@ -69,7 +71,7 @@ int main(int argc, char *argv[])
     QtWebEngine::initialize();
 
     const QtLoggerSetup loggerInitialization(app);
-    qCInfo(logCategorySci) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(logCategorySci) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     qmlRegisterUncreatableType<SciModel>("tech.strata.sci", 1, 0, "SciModel", "cannot instantiate SciModel in qml");
     qmlRegisterUncreatableType<SciPlatformModel>("tech.strata.sci", 1, 0, "SciPlatformModel", "cannot instantiate SciPlatformModel in qml");
