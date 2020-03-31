@@ -72,31 +72,31 @@ Item {
 
         if(initial_status.low_load_en === "on") {
             lowLoadEnable.checked = true
-            lowloadSetting.enabled = true
+            //lowloadSetting.enabled = true
         }
         else {
 
             lowLoadEnable.checked = false
-            lowloadSetting.enabled = false
+           // lowloadSetting.enabled = false
 
         }
 
         if(initial_status.mid_load_en === "on") {
             midCurrentEnable.checked = true
-            midloadSetting.enabled = true
+           // midloadSetting.enabled = true
         }
         else{
             midCurrentEnable.checked = false
-            midloadSetting.enabled = false
+            //midloadSetting.enabled = false
         }
 
         if(initial_status.high_load_en === "on") {
             highCurrentEnable.checked = true
-            highloadSetting.enabled = true
+            //highloadSetting.enabled = true
         }
         else {
             highCurrentEnable.checked = false
-            highloadSetting.enabled = false
+           // highloadSetting.enabled = false
         }
 
         //        loadSetting.fromText.text = initial_status.load_setting_min
@@ -860,7 +860,7 @@ Item {
 
                                                 SGSlider {
                                                     id: maxInputCurrent
-                                                    width: maxInputCurrentContainer.width/1.3
+                                                    width: maxInputCurrentContainer.width - 50
                                                     live: false
                                                     from: 0
                                                     to: 30
@@ -868,8 +868,8 @@ Item {
                                                     fromText.text: "0A"
                                                     toText.text: "30A"
 
-                                                    inputBoxWidth: maxInputCurrentContainer/7
-                                                    fontSizeMultiplier: ratioCalc * 0.9
+                                                    inputBoxWidth: maxInputCurrentContainer/9
+                                                    fontSizeMultiplier: ratioCalc * 1.2
                                                     inputBox.validator: DoubleValidator { }
                                                     onUserSet: {
                                                         var valueSet = parseInt(value)
@@ -902,7 +902,7 @@ Item {
 
                                                 SGSlider {
                                                     id: maxInputVoltage
-                                                    width: maxInputVoltageContainer.width/1.3
+                                                    width: maxInputVoltageContainer.width - 50
                                                     live: false
                                                     from: 0
                                                     to: 26
@@ -910,8 +910,8 @@ Item {
                                                     fromText.text: "0V"
                                                     toText.text: "26V"
 
-                                                    inputBoxWidth: maxInputVoltageContainer/7
-                                                    fontSizeMultiplier: ratioCalc * 0.9
+                                                    inputBoxWidth: maxInputVoltageContainer/9
+                                                    fontSizeMultiplier: ratioCalc * 1.2
                                                     inputBox.validator: DoubleValidator { }
 
 
@@ -1013,11 +1013,11 @@ Item {
                                                         fontSizeMultiplier: ratioCalc
                                                         onToggled:  {
                                                             if(checked) {
-                                                                lowloadSetting.enabled = true
+                                                                //lowloadSetting.enabled = true
                                                                 platformInterface.load_enables.update("low_load_on")
                                                             }
                                                             else  {
-                                                                lowloadSetting.enabled = false
+                                                               // lowloadSetting.enabled = false
                                                                 platformInterface.load_enables.update("off")
 
                                                             }
@@ -1030,12 +1030,10 @@ Item {
                                                             if(load_enable_status_low_load === "on") {
                                                                 lowLoadEnable.checked = true
 
-                                                                console.log( lowLoadEnable.checked)
-                                                                lowloadSetting.enabled = true
 
                                                             }
                                                             else {
-                                                                lowloadSetting.enabled = false
+                                                               // lowloadSetting.enabled = false
                                                                 lowLoadEnable.checked = false
                                                             }
                                                         }
@@ -1143,11 +1141,11 @@ Item {
 
                                                         onToggled:  {
                                                             if(checked) {
-                                                                midloadSetting.enabled = true
+                                                                //midloadSetting.enabled = true
                                                                 platformInterface.load_enables.update("mid_load_on")
                                                             }
                                                             else {
-                                                                midloadSetting.enabled = false
+                                                               // midloadSetting.enabled = false
                                                                 platformInterface.load_enables.update("off")
                                                             }
                                                         }
@@ -1155,11 +1153,11 @@ Item {
                                                         property var load_enable_status_mid_load: platformInterface.load_enable_status.mid_load_en
                                                         onLoad_enable_status_mid_loadChanged: {
                                                             if(load_enable_status_mid_load === "on") {
-                                                                midloadSetting.enabled = true
+                                                               // midloadSetting.enabled = true
                                                                 midCurrentEnable.checked = true
                                                             }
                                                             else {
-                                                                midloadSetting.enabled = false
+                                                              //  midloadSetting.enabled = false
                                                                 midCurrentEnable.checked = false
 
                                                             }
@@ -1263,11 +1261,11 @@ Item {
 
                                                         onToggled:  {
                                                             if(checked) {
-                                                                highloadSetting.enabled = true
+                                                                //highloadSetting.enabled = true
                                                                 platformInterface.load_enables.update("high_load_on")
                                                             }
                                                             else {
-                                                                highloadSetting.enabled = false
+                                                                //highloadSetting.enabled = false
 
                                                                 platformInterface.load_enables.update("off")
                                                             }
@@ -1276,11 +1274,11 @@ Item {
                                                         property var load_enable_status_high_load: platformInterface.load_enable_status.high_load_en
                                                         onLoad_enable_status_high_loadChanged: {
                                                             if(load_enable_status_high_load === "on") {
-                                                                ighloadSetting.enabled = true
+                                                                //ighloadSetting.enabled = true
                                                                 highCurrentEnable.checked = true
                                                             }
                                                             else {
-                                                                highloadSetting.enabled = false
+                                                                //highloadSetting.enabled = false
                                                                 highCurrentEnable.checked = false
                                                             }
                                                         }
