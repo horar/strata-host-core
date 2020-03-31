@@ -628,6 +628,7 @@ Item {
                                     Rectangle {
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
+                                       // color: "red"
 
                                         SGAlignedLabel {
                                             id: currentLimitThresholdLabel
@@ -645,6 +646,30 @@ Item {
                                                 unit: "<b>mA</b>"
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
+                                            }
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+
+                                        SGButton {
+                                            id: resetCurrLimitutton
+                                            height: preferredContentHeight * 1.5
+                                            width: preferredContentWidth * 1.25
+                                            text: "Reset Current \n Limit Trigger"
+                                            anchors.centerIn: parent
+                                            fontSizeMultiplier: ratioCalc
+                                            color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                                            hoverEnabled: true
+                                            MouseArea {
+                                                hoverEnabled: true
+                                                anchors.fill: parent
+                                                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                                onClicked: {
+                                                    platformInterface.reset_clim.update()
+                                                }
                                             }
                                         }
                                     }
@@ -676,29 +701,7 @@ Item {
 
 
 
-                                    Rectangle {
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
 
-                                        SGButton {
-                                            id: resetCurrLimitutton
-                                            height: preferredContentHeight * 1.5
-                                            width: preferredContentWidth * 1.25
-                                            text: "Reset Current \n Limit Trigger"
-                                            anchors.centerIn: parent
-                                            fontSizeMultiplier: ratioCalc
-                                            color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
-                                            hoverEnabled: true
-                                            MouseArea {
-                                                hoverEnabled: true
-                                                anchors.fill: parent
-                                                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                                                onClicked: {
-                                                    platformInterface.reset_clim.update()
-                                                }
-                                            }
-                                        }
-                                    }
 
                                 }
                             }
@@ -710,6 +713,28 @@ Item {
                                 RowLayout {
                                     anchors.fill: parent
                                     spacing: 10
+
+                                    Rectangle {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                        //color: "red"
+
+                                        SGAlignedLabel {
+                                            id: currentLimitReachLabel
+                                            target: currentLimitReach
+                                            alignment: SGAlignedLabel.SideTopCenter
+                                            anchors.centerIn: parent
+                                            fontSizeMultiplier: ratioCalc
+                                            text: "Current Limit \n Reached"
+                                            font.bold: true
+
+                                            SGStatusLight {
+                                                height: 40
+                                                width: 40
+                                                id: currentLimitReach
+                                            }
+                                        }
+                                    }
 
                                     Rectangle {
                                         Layout.fillWidth: true
@@ -753,26 +778,7 @@ Item {
                                         }
                                     }
 
-                                    Rectangle {
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
 
-                                        SGAlignedLabel {
-                                            id: currentLimitReachLabel
-                                            target: currentLimitReach
-                                            alignment: SGAlignedLabel.SideTopCenter
-                                            anchors.centerIn: parent
-                                            fontSizeMultiplier: ratioCalc
-                                            text: "Current Limit \n Reached"
-                                            font.bold: true
-
-                                            SGStatusLight {
-                                                height: 40
-                                                width: 40
-                                                id: currentLimitReach
-                                            }
-                                        }
-                                    }
                                 }
                             }
                         }

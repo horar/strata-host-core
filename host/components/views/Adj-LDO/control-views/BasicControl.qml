@@ -496,7 +496,7 @@ Item {
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: (root.height - 10) * (1/4)
+            Layout.preferredHeight: (root.height - 5) * (1/4)
             color: "transparent"
 
             RowLayout {
@@ -513,7 +513,7 @@ Item {
                         Text {
                             id: gaugeText
                             font.bold: true
-                            text: "Gauges"
+                            text: "Power/Temperature"
                             font.pixelSize: ratioCalc * 20
                             //Layout.topMargin: 2
                             color: "#696969"
@@ -550,7 +550,7 @@ Item {
                                         text: "Board Temperature"
                                         margin: -5
                                         alignment: SGAlignedLabel.SideBottomCenter
-                                        fontSizeMultiplier:  ratioCalc
+                                        fontSizeMultiplier:  ratioCalc * 1.2
                                         font.bold : true
                                         anchors.centerIn: parent
                                         horizontalAlignment: Text.AlignHCenter
@@ -597,7 +597,7 @@ Item {
                                         margin: -5
                                         anchors.centerIn: parent
                                         alignment: SGAlignedLabel.SideBottomCenter
-                                        fontSizeMultiplier:  ratioCalc
+                                        fontSizeMultiplier:  ratioCalc * 1.2
                                         font.bold : true
                                         horizontalAlignment: Text.AlignHCenter
 
@@ -631,7 +631,7 @@ Item {
                                         margin: -5
                                         anchors.centerIn: parent
                                         alignment: SGAlignedLabel.SideBottomCenter
-                                        fontSizeMultiplier:   ratioCalc
+                                        fontSizeMultiplier: ratioCalc * 1.2
                                         font.bold : true
                                         horizontalAlignment: Text.AlignHCenter
 
@@ -665,7 +665,7 @@ Item {
                                         margin: -5
                                         anchors.centerIn: parent
                                         alignment: SGAlignedLabel.SideBottomCenter
-                                        fontSizeMultiplier: ratioCalc
+                                        fontSizeMultiplier:ratioCalc * 1.2
                                         font.bold : true
                                         horizontalAlignment: Text.AlignHCenter
 
@@ -712,7 +712,7 @@ Item {
                         Text {
                             id: interruptText
                             font.bold: true
-                            text: "Interrupt"
+                            text: "Status Indicators"
                             font.pixelSize: ratioCalc * 20
                             //Layout.topMargin: 10
                             color: "#696969"
