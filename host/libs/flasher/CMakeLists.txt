@@ -23,7 +23,7 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC QtLogger
     PUBLIC SerialDevice
-    PUBLIC DeviceOperations
+    PRIVATE DeviceOperations
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

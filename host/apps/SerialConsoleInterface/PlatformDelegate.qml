@@ -383,7 +383,7 @@ FocusScope {
                 icon.source: "qrc:/sgimages/info-circle.svg"
                 iconSize: toolButtonRow.iconHeight
                 onClicked: {
-                    showPlatformInfoWindow("201", model.verboseName)
+                    showPlatformInfoWindow("201", model.platform.verboseName)
                 }
                 //hiden until remote db is ready
                 visible: false
@@ -414,6 +414,7 @@ FocusScope {
                 margins: 6
             }
 
+            text: model.platform.errorString
             verticalPadding: 1
             color: SGWidgets.SGColorsJS.TANGO_SCARLETRED1
             textColor: "white"
@@ -430,14 +431,13 @@ FocusScope {
                 margins: 6
             }
 
-            enabled: model.status === Sci.SciPlatformModel.Ready
-                     || model.status === Sci.SciPlatformModel.NotRecognized
+            enabled: model.platform.status === Sci.SciPlatform.Ready
+                     || model.platform.status === Sci.SciPlatform.NotRecognized
 
             focus: true
             font.family: StrataFonts.Fonts.inconsolata
             placeholderText: "Enter Command..."
             isValidAffectsBackground: true
-            maximumLength: 500
             suggestionListModel: commandHistoryModel
             suggestionModelTextRole: "message"
             suggestionPosition: Item.Top
@@ -449,7 +449,7 @@ FocusScope {
             showCursorPosition: true
 
             onTextChanged: {
-                inputStatusTag.text = ""
+                model.platform.errorString = "";
             }
 
             Keys.onPressed: {
@@ -502,26 +502,16 @@ FocusScope {
     }
 
     function sendTextInputTextAsComand() {
-        var result = sciModel.platformModel.sendMessage(model.index, cmdInput.text)
-        var errorString = result["errorString"]
-
-        if (result["errorString"].length === 0) {
+        var result = model.platform.sendMessage(cmdInput.text)
+        if (result) {
             cmdInput.clear()
-        } else {
-            if (result["offset"] < 0) {
-                inputStatusTag.text = "Cannot send message - " + result["errorString"]
-            } else {
-                inputStatusTag.text = "JSON error at position " + result["offset"] + " - " + result["errorString"]
-            }
         }
     }
 
     function showFileExportDialog() {
         var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(platformDelegate, fileDialogComponent)
         dialog.accepted.connect(function() {
-            var result = sciModel.platformModel.exportScrollback(
-                        model.index,
-                        CommonCpp.SGUtilsCpp.urlToLocalFile(dialog.fileUrl))
+            var result = model.platform.exportScrollback(CommonCpp.SGUtilsCpp.urlToLocalFile(dialog.fileUrl))
             if (result === false) {
                 console.error(Logger.sciCategory, "failed to export content into", dialog.fileUrl)
 

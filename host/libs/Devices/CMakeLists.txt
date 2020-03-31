@@ -21,8 +21,6 @@ add_library(${SERIAL_DEVICE}
     #AUTOMOC wont find header if it is in different directory
     include/DeviceProperties.h
     include/SerialDevice.h
-    src/SerialDeviceConstants.h
-    src/logging/LoggingQtCategories.h
 )
 
 target_include_directories(${SERIAL_DEVICE}
@@ -35,7 +33,6 @@ target_link_libraries(${SERIAL_DEVICE}
     PUBLIC Qt5::SerialPort
     PUBLIC rapidjson::rapidjson
     PUBLIC QtLogger
-    PUBLIC CommandValidator
 )
 
 set_target_properties(${SERIAL_DEVICE} PROPERTIES
@@ -49,8 +46,6 @@ add_library(${DEVICE_OPERATIONS}
 
     #AUTOMOC wont find header if it is in different directory
     include/DeviceOperations.h
-    src/DeviceOperationsConstants.h
-    src/logging/LoggingQtCategories.h
 )
 
 target_include_directories(${DEVICE_OPERATIONS}

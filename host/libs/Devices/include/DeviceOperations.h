@@ -16,9 +16,10 @@ class DeviceOperations : public QObject
     Q_DISABLE_COPY(DeviceOperations)
 
 public:
-    DeviceOperations(SerialDeviceShPtr device);
+    DeviceOperations(SerialDevicePtr device);
+    ~DeviceOperations();
 
-    void identify();
+    void identify(bool requireFwInfoResponse = true);
 
     void prepareForFlash();
 
@@ -26,18 +27,25 @@ public:
 
     void startApplication();
 
-    // TODO
     void cancelOperation();
+
+    int deviceId() const;
 
     friend QDebug operator<<(QDebug dbg, const DeviceOperations* dev_op);
 
+    enum class Operation {
+        None,
+        Identify,
+        PrepareForFlash,
+        FlashFirmwareChunk,
+        StartApplication,
+        // special values for finished signal:
+        Cancel,
+        Timeout
+    };
+
 signals:
-    void identified();
-    void readyForFlashFw();
-    void fwChunkFlashed(int chunk_number);
-    void applicationStarted();
-    void timeout();
-    void cancelled();
+    void finished(int operation, int data = -1);
     void error(QString msg);
 
     // signals only for internal use:
@@ -45,58 +53,52 @@ signals:
     void nextStep(QPrivateSignal);
 
 private:
-    enum class Operation {
-        None,
-        Identify,
-        PrepareForFlash,
-        FlashFirmwareChunk,
-        StartApplication
-    };
-
     enum class State {
         None,
+        GetFirmwareInfo,
         GetPlatformId,
         UpdateFirmware,
         ReadyForFlashFw,
         FlashFwChunk,
-        FwChunkFlashed,
         StartApplication,
-        ApplicationStarted,
         Timeout
     };
 
     enum class Activity {
         None,
+        WaitingForFirmwareInfo,
         WaitingForPlatformId,
         WaitingForUpdateFw,
         WaitingForFlashFwChunk,
         WaitingForStartApp
     };
 
-    void startOperation(Operation oper);
+    void startOperation(Operation operation);
+
+    void finishOperation(Operation operation, int data = -1);
 
     void process();
 
     void handleResponseTimeout();
 
-    void handleDeviceError(int deviceId, QString msg);
+    void handleDeviceError(int errCode, QString msg);
 
-    void handleDeviceResponse(const int /* device_id */, const QByteArray& data);
+    void handleDeviceResponse(const QByteArray& data);
 
-    bool parseDeviceResponse(const QByteArray& data, bool& is_ack);
+    bool parseDeviceResponse(const QByteArray& data, bool& isAck);
 
     void resetInternalStates();
 
     QByteArray createFlashFwJson();
 
-    SerialDeviceShPtr device_;
+    SerialDevicePtr device_;
 
-    QTimer response_timer_;
+    QTimer responseTimer_;
 
     QVector<quint8> chunk_;
-    int chunk_number_;
+    int chunkNumber_;
 
-    uint device_id_;
+    uint deviceId_;
 
     Operation operation_;
 
@@ -104,7 +106,9 @@ private:
 
     Activity activity_;
 
-    bool ack_received_;
+    bool ackReceived_;
+
+    bool reqFwInfoResp_;
 };
 
 }  // namespace

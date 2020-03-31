@@ -140,6 +140,7 @@ TextField {
             textColor: "white"
             horizontalPadding: 2
             verticalPadding: 2
+            font: control.font
         }
     }
 }
