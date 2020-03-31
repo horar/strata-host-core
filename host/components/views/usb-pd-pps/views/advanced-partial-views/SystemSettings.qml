@@ -343,7 +343,7 @@ Item {
 
             SGComboBox {
                 id: limitOutput
-                model: ["16","30","45","60"]
+                model: ["30","60"]
                 anchors {
                     left: parent.left
                     leftMargin: 135
@@ -472,7 +472,7 @@ Item {
 
             SGComboBox {
                 id: limitOutput2
-                model: ["16", "30", "45","60"]
+                model: [ "30","60"]
                 anchors {
                     left: parent.left
                     leftMargin: 135

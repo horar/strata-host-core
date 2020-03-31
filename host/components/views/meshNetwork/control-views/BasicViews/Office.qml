@@ -186,16 +186,16 @@ Rectangle {
             }
         }
 
-
-        MeshObject{ id: mesh7; objectName: "one"; pairingModel:"HVAC"; subName:"(Remote)";nodeNumber: "8"}
-        MeshObject{ id: mesh6; objectName: "two"; pairingModel:"Robotic Arm" ;nodeNumber: "6"}
-        MeshObject{ id: mesh4; objectName: "three"; pairingModel:"Doorbell";nodeNumber: "4"}
+        MeshObject{ id: mesh7; objectName: "one"; pairingModel:"Security Camera";nodeNumber: "8"}
+        MeshObject{ id: mesh6; objectName: "two"; pairingModel:"Doorbell";nodeNumber: "6"}
+        MeshObject{ id: mesh4; objectName: "three" ; pairingModel:"Door";nodeNumber: "4"}
         MeshObject{ id: mesh2; objectName: "four"; pairingModel:"Dimmer";nodeNumber: "2" }
         ProvisionerObject{ id: provisioner; nodeNumber:"1" }
-        MeshObject{ id: mesh1; objectName: "five"; pairingModel:"Security Camera";nodeNumber: "3"}
-        MeshObject{ id: mesh3; objectName: "six" ; pairingModel:"Door";nodeNumber: "5"}
-        MeshObject{ id: mesh5; objectName: "seven"; pairingModel:"Solar Panel"; subName:"(Relay)"; nodeNumber: "7"}
-        MeshObject{ id: mesh8; objectName: "eight"; pairingModel:"Spare";nodeNumber: "9"}
+        //
+        MeshObject{ id: mesh1; objectName: "five"; pairingModel:"Robotic Arm" ;nodeNumber: "6"}
+        MeshObject{ id: mesh3; objectName: "six"; pairingModel:"Solar Panel"; subName:"(Relay)"; nodeNumber: "7"}
+        MeshObject{ id: mesh5; objectName: "seven"; pairingModel:"HVAC"; subName:"(Remote)";nodeNumber: "7"}
+        MeshObject{ id: mesh8; objectName: "eight"; pairingModel:"";nodeNumber: "9"}
     }
 
 
@@ -203,7 +203,7 @@ Rectangle {
         id:mainImage
         source:"qrc:/views/meshNetwork/images/office.jpg"
         //anchors.left:parent.left
-        height:parent.height*.65
+        height:parent.height*.70
         anchors.centerIn: parent
         fillMode: Image.PreserveAspectFit
         mipmap:true

@@ -17,15 +17,21 @@ Rectangle{
         anchors.top:parent.top
         anchors.bottom:parent.bottom
         width:parent.width*.15
+        scrollBarColor:"lightgrey"
 
 
-        minimumHeight: 800
+        minimumHeight: 850
         minimumWidth: parent.width * .15
+
+        onHeightChanged: {
+            console.log("button column is now",height)
+        }
 
         Rectangle{
             id:tabSelectorView
             color:"black"
             anchors.fill:parent
+            parent: demoButonScrollView.contentItem
             border.color:"black"
 
             Text {
@@ -53,11 +59,10 @@ Rectangle{
                 anchors.bottom:parent.bottom
                 spacing:1
 
-
                 SGButton{
                     id:demo1Button
                     width: parent.width
-                    height: width*.75
+                    height: 130
                     text:"one-to-one"
                     fontSizeMultiplier:1.5
                     color:"white"
@@ -75,7 +80,7 @@ Rectangle{
                 SGButton{
                     id:demo2Button
                     width: parent.width
-                    height: width*.75
+                    height: 130
                     text:"one-to-many"
                     fontSizeMultiplier:1.5
                     color:"white"
@@ -92,7 +97,7 @@ Rectangle{
                 SGButton{
                     id:demo3Button
                     width: parent.width
-                    height: width*.75
+                    height: 130
                     text:"relay"
                     fontSizeMultiplier:1.5
                     color:"white"
@@ -109,7 +114,7 @@ Rectangle{
                 SGButton{
                     id:demo4Button
                     width: parent.width
-                    height: width*.75
+                    height: 130
                     text:"multiple model"
                     fontSizeMultiplier:1.5
                     color:"white"
@@ -126,7 +131,7 @@ Rectangle{
                 SGButton{
                     id:demo5Button
                     width: parent.width
-                    height: width*.75
+                    height: 130
                     text:"sensor"
                     fontSizeMultiplier:1.5
                     color:"white"
@@ -143,7 +148,7 @@ Rectangle{
                 SGButton{
                     id:demo6Button
                     width: parent.width
-                    height: width*.75
+                    height: 130
                     text:"cloud"
                     fontSizeMultiplier:1.5
                     color:"white"

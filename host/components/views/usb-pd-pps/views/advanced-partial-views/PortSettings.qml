@@ -22,7 +22,7 @@ Item {
 
         SGComboBox {
             id: maxPowerOutput
-            model: ["16","30", "45", "60"]
+            model: ["30","60"]
             anchors {
                 left: parent.left
                 leftMargin: 140

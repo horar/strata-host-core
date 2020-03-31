@@ -56,5 +56,6 @@
         <file>control-views/AdvancedViews/RelayDemo.qml</file>
         <file>control-views/AdvancedViews/SensorDemo.qml</file>
         <file>images/spreadsheet.png</file>
+        <file>images/smartHome_green.png</file>
     </qresource>
 </RCC>
