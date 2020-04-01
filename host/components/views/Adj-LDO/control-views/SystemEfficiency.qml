@@ -50,6 +50,7 @@ Item {
         Help.registerTarget(ldoEnableSwitchLabel, "This switch enables the LDO.", 21, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(vinGoodLabel, "This indicator will be green when:\na.) VIN is greater than 2.5V when the input buck regulator is enabled\nb.) VIN is greater than 1.5V when it is disabled.", 22, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(vinReadyLabel, "This indicator will be green when the LDO input voltage is greater than the LDO input UVLO threshold of 1.6V.", 23, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(pgldoLabel, "This indicator will be green when the LDO power good signal is high. If the TSOP-5 LDO package is being used, the indicator will be grayed out.", 24, "AdjLDOSystemEfficiencyHelp")
     }
 
     property string prevVinLDOSel: ""
@@ -216,12 +217,18 @@ Item {
         }
 
         if(control_states.ldo_sel === "TSOP5")  {
+            //            pgldoLabel.opacity = 0.5
+            //            pgldoLabel.enabled = false
             ldoPackageComboBox.currentIndex = 0
         }
         else if(control_states.ldo_sel === "DFN6") {
+            //            pgldoLabel.opacity = 1
+            //            pgldoLabel.enabled = true
             ldoPackageComboBox.currentIndex = 1
         }
         else if (control_states.ldo_sel === "DFN8") {
+            //            pgldoLabel.opacity = 1
+            //            pgldoLabel.enabled = true
             ldoPackageComboBox.currentIndex = 2
         }
 
@@ -1570,6 +1577,33 @@ Item {
                                                             vinReadyLight.status  = SGStatusLight.Green
 
                                                         else vinReadyLight.status  = SGStatusLight.Off
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Rectangle {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGAlignedLabel {
+                                                id:pgldoLabel
+                                                target: pgldo
+                                                alignment: SGAlignedLabel.SideTopCenter
+                                                anchors.centerIn: parent
+                                                fontSizeMultiplier: ratioCalc
+                                                text: "Power Good\n(PG_LDO)"
+                                                font.bold: true
+
+                                                SGStatusLight {
+                                                    height: 40
+                                                    width: 40
+                                                    id: pgldo
+
+                                                    property var int_pg_ldo: platformInterface.int_status.int_pg_ldo
+                                                    onInt_pg_ldoChanged: {
+                                                        if(int_pg_ldo === true && pgldoLabel.enabled)
+                                                            pgldo.status =  SGStatusLight.Green
+                                                        else pgldo.status =  SGStatusLight.Off
                                                     }
                                                 }
                                             }
