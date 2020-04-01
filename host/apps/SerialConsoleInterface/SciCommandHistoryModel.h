@@ -34,6 +34,7 @@ public:
     void add(const QString &message);
     void populate(const QStringList &list);
     QStringList getCommandList() const;
+    bool removeAt(int row);
 
 signals:
     void countChanged();

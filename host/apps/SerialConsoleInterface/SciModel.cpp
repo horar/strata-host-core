@@ -25,7 +25,7 @@ SciModel::~SciModel()
 {
 }
 
-spyglass::BoardManager *SciModel::boardManager()
+strata::BoardManager *SciModel::boardManager()
 {
     return &boardManager_;
 }

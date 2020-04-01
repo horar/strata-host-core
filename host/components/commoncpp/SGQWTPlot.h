@@ -105,7 +105,7 @@ private:
     bool xLogarithmic_ = false;
     bool yLogarithmic_ = false;
     QColor backgroundColor_;
-    QColor foregroundColor_ = "black";
+    QColor foregroundColor_;
     bool autoUpdate_ = true;
 
 private slots:
