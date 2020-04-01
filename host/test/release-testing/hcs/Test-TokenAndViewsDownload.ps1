@@ -81,13 +81,9 @@ function Test-TokenAndViewsDownload {
         Write-Indented "OK"
     }
 
-    # Change directory to location of SDS executable
-    Set-Location $SDSRootDir
-
     # Run Strata Developer Studio and wait 10 s
     Write-Host "`nTEST 2: Running Strata Developer Studio and waiting for 10 seconds..."
-    Start-Process -FilePath "$SDSRootDir\Strata Developer Studio.exe"
-    Start-Sleep -Seconds 10
+    Start-SDSAndWait(10)
 
     # Kill Strata Developer Studio and HCS processes
     Stop-SDS
@@ -105,8 +101,6 @@ function Test-TokenAndViewsDownload {
         Write-Indented "FAIL: directory not created."
     }
 
-    # Return to previous directory
-    Set-Location $TestRoot
 
     # Return number of tests passed, number of tests existing
     Return $TestPass, $TestTotal

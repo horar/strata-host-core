@@ -32,8 +32,6 @@ function Test-Database {
     Write-Host "Database testing"
     Write-Separator
 
-    # Change directory to location of SDS executable
-    Set-Location $SDSRootDir
     # Find location of 'strata_db' directory
     Set-Variable "SDSStrataDbDir" (Split-Path -Path $HCSDbFile)
     # Find location of 'db' directory
@@ -157,9 +155,6 @@ function Test-Database {
     } Else {
         Write-Indented "FAIL (DB files not found in expected location)"
     }
-
-    # Return to previous directory
-    Set-Location $TestRoot
 
     # Return number of tests passed, number of tests existing
     Return $TestPass, $TestTotal

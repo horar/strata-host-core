@@ -6,8 +6,8 @@ Main Strata Developer Studio / Host Controller Service / Installer script driver
 This is the main driver for the automated test script for the master test plan
 https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist
 
-.INPUTS
-None
+.INPUTS  SDSInstallerPath
+Mandatory. If not being passed as an arugment to the secript you will be prompted to choose the path
 
 .OUTPUTS
 Result of the test
@@ -15,7 +15,13 @@ Result of the test
 .NOTES
 Version:        1.0
 Creation Date:  03/17/2020
-works best with Powershell version 5 and Python 3
+Requires: Powershell version 5, and Python 3
+
+.Example
+Test-StrataRelease.ps1 -SDSInstallerPath "<PATH_TO_STRATA_INSTALLER>"
+
+.Example
+Test-StrataRelease.ps1
 #>
 
 [CmdletBinding()]
@@ -90,7 +96,6 @@ $SDSInstallerResults = Test-SDSInstaller -SDSInstallerPath $SDSInstallerPath
 Assert-StrataAndHCS
 
 # Run Test-Database (HCS database testing)
-
 $DatabaseResults = Test-Database
 
 # Run Test-TokenAndViewsDownload
@@ -108,7 +113,5 @@ Show-TestSummary
 
 Restore-Strata_INI
 Remove-TemporaryFiles
-
-Set-Location $PSScriptRoot
 
 Write-Host "`n`nTesting complete!`n`n"

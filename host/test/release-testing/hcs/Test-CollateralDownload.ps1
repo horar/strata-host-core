@@ -21,8 +21,6 @@ Creation Date:  03/17/2020
 #>
 
 function Test-CollateralDownload {
-    # Change directory to location of SDS executable
-    Set-Location $SDSRootDir
 
     Write-Separator
     Write-Host "Collateral download testing"
@@ -31,9 +29,6 @@ function Test-CollateralDownload {
     # Run HCS standalone
     Write-Host "Running HCS...";
     Start-HCS
-
-    # Return to previous directory
-    Set-Location $TestRoot
 
     # Run Python script
     $PythonScript = Start-Process $PythonExec -ArgumentList "$PythonCollateralDownloadTest `"$HCSAppDataDir`" $HCSTCPEndpoint" -NoNewWindow -PassThru -Wait

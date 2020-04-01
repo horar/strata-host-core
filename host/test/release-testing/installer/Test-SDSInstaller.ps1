@@ -27,7 +27,7 @@ function Test-SDSInstaller {
         [string]$SDSInstallerPath
     )
 
-    $SDSInstallerLogFile = ".\SDSInstallerLog.log"
+    $SDSInstallerLogFile = "$PSScriptRoot\SDSInstallerLog.log"
     $SDSUninstallFile = "$SDSRootDir\unins"
     $SDSIniFile = "$env:AppData\ON Semiconductor\Strata Developer Studio.ini"
     $SDSControlViewsDir = "$SDSRootDir\views"
@@ -204,10 +204,10 @@ function Test-SDSInstaller {
         Test-SDSInstallation
         try {
             if (! (Test-Path "$HCSDbDir") ) {
-                Write-Indented  "Pass: HSC database has been deleted"
+                Write-Indented  "Pass: HCS database has been deleted"
                 $global:SDSTestPass++
             } else {
-                Write-Indented  "Fail: HSC database has not been deleted"
+                Write-Indented  "Fail: HCS database has not been deleted"
             }
         }
         catch {

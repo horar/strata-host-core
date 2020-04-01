@@ -83,8 +83,12 @@ function Assert-SDSInstallerPath {
 
 # Start one instance of HCS
 function Start-HCS {
+    # Set-Location $SDSRootDir is needed to resolve the ddl issue when running 
+    # HCS seperetly so that Windows will look into this directory for dlls
+    Set-Location $SDSRootDir
     Start-Process -FilePath $HCSExecFile -ArgumentList "-f `"$HCSConfigFile`""
     Start-Sleep -Seconds 1
+    Set-Location $TestRoot
 }
 
 # Utility function to print the exit code and a pattern for the end of the script
@@ -138,11 +142,14 @@ function Start-HCSAndWait {
     Param (
         [Parameter(Mandatory = $false)][int]$seconds
     )
-
+    # This is needed to resolve the ddl issue when running HCS seperetly
+    # so that Windows will look into this directory for dlls
+    Set-Location $SDSRootDir
     Start-Process -FilePath $HCSExecFile -ArgumentList "-f `"$HCSConfigFile`""
     If ($seconds) {
         Start-Sleep -Seconds $seconds
     }
+    Set-Location $TestRoot
 }
 
 function Restore-Strata_INI {
@@ -218,7 +225,7 @@ function Write-Separator {
     Write-Host `n$Line`n
 }
 
-# Print indent string with different colors for fail and pass massages
+# Print indented string with different colors for fail and pass messages
 # Checking for FAIL and PASS is not case sensitive
 function Write-Indented {
     Param (
