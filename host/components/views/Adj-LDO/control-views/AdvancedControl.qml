@@ -1428,7 +1428,7 @@ Item {
                                                     color: "#0bd"   // Default: "#00ccee"
 
                                                     content: Text {
-                                                        text: qsTr("Check this box if an external load is \n connected to the output banana plugs.\n Access the Help tour for \n more information.")
+                                                        text: qsTr("Check this box if an external load is \nconnected to the output banana plugs.\nAccess the Help tour for \nmore information.")
                                                         color: "white"
                                                     }
                                                 }
