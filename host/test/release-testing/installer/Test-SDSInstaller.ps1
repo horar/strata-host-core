@@ -159,7 +159,8 @@ function Test-SDSInstaller {
                 Write-Indented "Pass: FTDI Driver is installed"
                 $global:SDSTestPass++
             } else {
-                Write-Indented "Warning: FTDI Driver is not installed by Strata installer, it probably got installed by Windows" 
+                Write-Indented "Warning: FTDI Driver is not installed by Strata installer, it probably got installed by Windows"
+                $global:SDSTestPass++
             }
 
             if ( Test-path $SDSExecFile ) {

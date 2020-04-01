@@ -36,9 +36,13 @@ function Test-SDSControlViews {
     Write-Host "Control View test requires visual inspection.`nPress any key to continue...";
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
 
+    # Set-Location $SDSRootDir isneeded to resolve the ddl issue when running
+    # HCS seperetly so that Windows will look into this directory for dlls
+    Set-Location $SDSRootDir
     Write-Host "`nStarting Strata Developer Studio..."
     ($StrataDev = Start-Process $StrataPath -PassThru) | Out-Null     # Hide output.
-
+    Set-Location $TestRoot
+    
     Write-Host "Starting Python test script..."
     Write-Host "################################################################################"
     $pythonScript = Start-Process $PythonExec -ArgumentList "$PythonScriptPath $ZmqEndpoint" -NoNewWindow -PassThru -Wait

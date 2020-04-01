@@ -131,10 +131,14 @@ function Start-SDSAndWait {
     Param (
         [Parameter(Mandatory = $false)][int]$seconds
     )
+    # Set-Location $SDSRootDir isneeded to resolve the ddl issue when running
+    # HCS seperetly so that Windows will look into this directory for dlls
+    Set-Location $SDSRootDir
     Start-Process -FilePath $SDSExecFile
     if ($seconds) {
         Start-Sleep -Seconds 5
     }
+    Set-Location $TestRoot
 }
 
 # Start one instance of HCS and wait (to give time for DB replication)
@@ -142,8 +146,8 @@ function Start-HCSAndWait {
     Param (
         [Parameter(Mandatory = $false)][int]$seconds
     )
-    # This is needed to resolve the ddl issue when running HCS seperetly
-    # so that Windows will look into this directory for dlls
+    # Set-Location $SDSRootDir isneeded to resolve the ddl issue when running
+    # HCS seperetly so that Windows will look into this directory for dlls
     Set-Location $SDSRootDir
     Start-Process -FilePath $HCSExecFile -ArgumentList "-f `"$HCSConfigFile`""
     If ($seconds) {

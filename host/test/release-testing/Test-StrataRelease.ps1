@@ -24,6 +24,9 @@ Test-StrataRelease.ps1 -SDSInstallerPath "<PATH_TO_STRATA_INSTALLER>"
 Test-StrataRelease.ps1
 #>
 
+# in case of a problem with executing the script run:
+# Set-ExecutionPolicy -Scope CurrentUser Unrestricted
+# Install-Module PSSQLite -Scope CurrentUser
 [CmdletBinding()]
     param(
         [Parameter(Mandatory=$True, Position=0, HelpMessage="Please enter a path for Strata Installer")]
