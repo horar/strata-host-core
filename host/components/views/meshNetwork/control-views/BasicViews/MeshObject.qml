@@ -9,7 +9,7 @@ Rectangle {
 
     property string objectNumber: ""
     property string pairingModel:""
-    property string nodeNumber:""
+    property alias nodeNumber: nodeNumber.text
     property alias objectColor: objectCircle.color
     property string subName:""
 
@@ -43,8 +43,8 @@ Rectangle {
         opacity: 0.5
 
         onColorChanged: {
-            console.log("color changed for node",meshObject.nodeNumber)
-            if (color != "lightgrey"){
+            console.log("changing objectCircle node",nodeName.text, "to",color,"drag object color is",dragObject.color)
+            if (color != "#d3d3d3"){    //light grey
                 nodeNumber.visible = true;
             }
             else{
@@ -55,7 +55,7 @@ Rectangle {
         Text{
             id:nodeNumber
             anchors.centerIn: parent
-            text:meshObject.nodeNumber
+            text:""
             font.pixelSize: 14
             visible:false
         }
@@ -69,11 +69,27 @@ Rectangle {
             opacity: Drag.active ? 1: 0
             radius: height/2
 
+            property string number: nodeNumber.text
+
+            onNumberChanged: {
+                nodeNumber.text = number
+            }
+
+            onColorChanged: {
+                console.log("changing dragObject",nodeName.text,"color to",color)
+                parent.color = color    //allows the drop area to change the color of the source
+            }
+
             Drag.active: dragArea.drag.active
             Drag.hotSpot.x: width/2
             Drag.hotSpot.y: height/2
 
             property alias model:meshObject.pairingModel
+
+            function resetLocation(){
+                x = 0;
+                y = 0;
+            }
 
             MouseArea {
                 id: dragArea
@@ -84,28 +100,20 @@ Rectangle {
                 drag.target: parent
 
                 onPressed:{
-                    console.log("drag object pressed")
+                    //console.log("drag object pressed")
+                    console.log("drag area for node",nodeName.text,"and color",dragObject.color,"pressed")
                 }
-
-//                    onReleased:{
-//                        console.log("mouse area release called")
-//                        dragObject.Drag.drop()
-//                        //reset the dragged object's position
-//                        parent.x = 0;
-//                        parent.y = 0;
-//                    }
 
                 onEntered: {
-                    meshObject.z = window.highestZLevel;     //bring object to the fore
-                    //console.log("elevating z level to ",window.highestZLevel)
-                    window.highestZLevel++;
+                    //console.log("drag area entered")
                 }
                 onReleased: {
-                    meshObject.Drag.drop()
+                    //console.log("drag area release called")
+                    var theDropAction = dragObject.Drag.drop()
                 }
-                onHoveredChanged: {
-                    infoBox.visible = true
-            }
+//                onHoveredChanged: {
+//                    infoBox.visible = true
+//            }
 
 //                    property int mouseButtonClicked: Qt.NoButton
 //                    onPressed: {
@@ -130,6 +138,60 @@ Rectangle {
    }    //mouse area
 }       //drag object
 
+        DropArea{
+            id:targetDropArea
+            //x: 10; y: 10
+            width: 1.5*objectWidth;
+            height: 2*objectHeight
+
+            property color savedColor: "transparent"        //what is this used for now?
+
+            property bool acceptsDrops: {
+                if (objectCircle.color == "#d3d3d3")    //light grey color
+                    return true;
+                  else
+                    return false;
+            }
+
+            signal clearTargetsOfColor(color inColor, string name)
+
+            onEntered:{
+                //onsole.log("entered drop area")
+                if (acceptsDrops){
+                    objectCircle.border.color = "darkGrey"
+                    objectCircle.border.width = 5
+                }
+                //savedColor = objectCircle.color
+//                if (acceptsDrops){
+//                    objectCircle.color = drag.source.color;
+//                }
+            }
+
+            onExited: {
+                //console.log("exited drop area")
+                objectCircle.border.color = "transparent"
+                objectCircle.border.width = 1
+//                dropAreaRectangle.color = savedColor
+//                infoTextRect.visible = false;
+            }
+
+            onDropped: {
+                console.log("item dropped with color",drag.source.color,"and number",drag.source.number)
+                if (acceptsDrops){
+                    dragObject.color = drag.source.color;   //set this object's color to the dropped one
+                    drag.source.color = "lightgrey"         //reset the dropped object's color to grey
+                    dragObject.number = drag.source.number
+                    drag.source.resetLocation()             ///send the drag object back to where it was before being dragged
+                    savedColor = objectCircle.color
+                }
+
+                objectCircle.border.color = "transparent"
+                objectCircle.border.width = 1
+
+                //signal to tell other drop targets using the same color to clearConnectionsButton
+                //clearTargetsOfColor(dropAreaRectangle.color, objectName);
+            }
+        }
 //        MouseArea {
 //            id: clickArea
 //            anchors.fill: parent
