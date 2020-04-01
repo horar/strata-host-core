@@ -1630,6 +1630,7 @@ Item {
                                     arrowOnTop: false
                                     anchors {
                                         bottom: extLoadCheckboxContainer.top
+                                        bottomMargin: -10
                                         horizontalCenter: extLoadCheckboxContainer.horizontalCenter
                                         horizontalCenterOffset: -10
                                     }
