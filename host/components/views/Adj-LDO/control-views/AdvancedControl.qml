@@ -157,9 +157,19 @@ Item {
         ldoOutputVoltage.text = telemetry_notification.vout_ldo
         ldoOutputCurrent.text = telemetry_notification.iout
         diffVoltage.text = telemetry_notification.vdiff
-        currentLimitThreshold.text = telemetry_notification.ldo_clim_thresh
-        estTSDThres.text = telemetry_notification.tsd_thresh
 
+
+    }
+
+    property var ldo_clim_thresh_notification: platformInterface.ldo_clim_thresh.value
+    onLdo_clim_thresh_notificationChanged: {
+        currentLimitThreshold.text  = ldo_clim_thresh_notification
+    }
+
+
+    property var  tsd_thresh_notification: platformInterface.tsd_thresh.value
+    onTsd_thresh_notificationChanged: {
+        estTSDThres.text =  tsd_thresh_notification
     }
 
     property var control_states: platformInterface.control_states
@@ -251,7 +261,7 @@ Item {
 
         if(int_status.ldo_clim === true) {
             currentLimitReach.status = SGStatusLight.Red
-            currentLimitThreshold.text = platformInterface.telemetry.ldo_clim_thresh
+            currentLimitThreshold.text = platformInterface.ldo_clim_thresh.value
         }
         else currentLimitReach.status = SGStatusLight.Off
 
