@@ -10,7 +10,7 @@ ApplicationWindow {
     minimumWidth: 640
     minimumHeight: 480
 
-    title: qsTr("ON Semiconductor: %1").arg(Qt.application.displayName)
+    title: qsTr("%1").arg(Qt.application.displayName)
 
     Label {
         anchors.fill: parent
