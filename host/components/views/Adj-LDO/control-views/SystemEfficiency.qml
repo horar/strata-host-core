@@ -1409,6 +1409,36 @@ Item {
                                                     Layout.fillHeight: true
                                                     color: "transparent"
 
+                                                    Rectangle {
+                                                        id: checkBoxContainer
+                                                        anchors.fill: extLoadCheckboxContainer
+                                                        color: "transparent"
+                                                        z: 2
+                                                        MouseArea {
+                                                            id: hoverArea2
+                                                            anchors { fill: parent }
+                                                            hoverEnabled: true
+                                                        }
+                                                    }
+
+                                                    Widget09.SGToolTipPopup {
+                                                        id: sgToolTipPopup
+                                                        showOn: hoverArea2.containsMouse
+                                                        arrowOnTop: false
+                                                        anchors {
+                                                            bottom: extLoadCheckboxContainer.top
+                                                            horizontalCenter: extLoadCheckboxContainer.horizontalCenter
+                                                            //horizontalCenterOffset: - 40
+                                                        }
+
+                                                        color: "#0bd"   // Default: "#00ccee"
+
+                                                        content: Text {
+                                                            text: qsTr("Check this box\nif an external load\nis connected to the\noutput banana plugs.")
+                                                            color: "white"
+                                                        }
+                                                    }
+
                                                     SGAlignedLabel {
                                                         id: extLoadCheckboxLabel
                                                         target: extLoadCheckbox
@@ -1419,6 +1449,8 @@ Item {
                                                         alignment: SGAlignedLabel.SideTopCenter
                                                         fontSizeMultiplier: ratioCalc
                                                         anchors.centerIn: parent
+
+
 
                                                         Rectangle {
                                                             color: "transparent"
