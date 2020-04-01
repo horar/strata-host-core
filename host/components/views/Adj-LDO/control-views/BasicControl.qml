@@ -513,7 +513,7 @@ Item {
                         Text {
                             id: gaugeText
                             font.bold: true
-                            text: "Power/Temperature"
+                            text: "Temperature/Efficiency/Power"
                             font.pixelSize: ratioCalc * 20
                             //Layout.topMargin: 2
                             color: "#696969"
@@ -550,21 +550,21 @@ Item {
                                         text: "Board Temperature"
                                         margin: -5
                                         alignment: SGAlignedLabel.SideBottomCenter
-                                        fontSizeMultiplier:  ratioCalc * 1.2
+                                        fontSizeMultiplier:  ratioCalc
                                         font.bold : true
                                         anchors.centerIn: parent
                                         horizontalAlignment: Text.AlignHCenter
 
                                         SGCircularGauge {
                                             id: tempGauge
-                                            minimumValue: -55
+                                            minimumValue: 0
                                             maximumValue: 125
                                             width: tempGaugeContainer.width
                                             height: tempGaugeContainer.height - tempLabel.contentHeight
                                             anchors.centerIn: parent
                                             gaugeFillColor1: "blue"
                                             gaugeFillColor2: "red"
-                                            tickmarkStepSize: 20
+                                            tickmarkStepSize: 25
                                             unitText: "˚C"
 
                                             unitTextFontSizeMultiplier: ratioCalc * 2.5
@@ -597,7 +597,7 @@ Item {
                                         margin: -5
                                         anchors.centerIn: parent
                                         alignment: SGAlignedLabel.SideBottomCenter
-                                        fontSizeMultiplier:  ratioCalc * 1.2
+                                        fontSizeMultiplier:  ratioCalc
                                         font.bold : true
                                         horizontalAlignment: Text.AlignHCenter
 
@@ -631,15 +631,15 @@ Item {
                                         margin: -5
                                         anchors.centerIn: parent
                                         alignment: SGAlignedLabel.SideBottomCenter
-                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        fontSizeMultiplier: ratioCalc
                                         font.bold : true
                                         horizontalAlignment: Text.AlignHCenter
 
                                         SGCircularGauge {
                                             id: powerDissipatedGauge
                                             minimumValue: 0
-                                            maximumValue: 3.01
-                                            tickmarkStepSize: 0.5
+                                            maximumValue: 2.75
+                                            tickmarkStepSize: 0.25
                                             gaugeFillColor1:"green"
                                             gaugeFillColor2:"red"
                                             width: powerDissipatedContainer.width
@@ -665,7 +665,7 @@ Item {
                                         margin: -5
                                         anchors.centerIn: parent
                                         alignment: SGAlignedLabel.SideBottomCenter
-                                        fontSizeMultiplier:ratioCalc * 1.2
+                                        fontSizeMultiplier:ratioCalc
                                         font.bold : true
                                         horizontalAlignment: Text.AlignHCenter
 
@@ -1114,7 +1114,7 @@ Item {
                         Text {
                             id: inputReadingText
                             font.bold: true
-                            text: "Telemetry"
+                            text: "Voltage/Current Readings"
                             font.pixelSize: ratioCalc * 20
                             Layout.topMargin: 10
                             color: "#696969"

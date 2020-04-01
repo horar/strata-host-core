@@ -628,7 +628,7 @@ Item {
                                     Rectangle {
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-                                       // color: "red"
+                                        // color: "red"
 
                                         SGAlignedLabel {
                                             id: currentLimitThresholdLabel
@@ -669,6 +669,9 @@ Item {
                                                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                                 onClicked: {
                                                     platformInterface.reset_clim.update()
+                                                    currentLimitThreshold.text = 0
+                                                    estTSDThres.text = 0
+
                                                 }
                                             }
                                         }
@@ -887,6 +890,8 @@ Item {
                                                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                                 onClicked: {
                                                     platformInterface.reset_tsd.update()
+                                                    currentLimitThreshold.text = 0
+                                                    estTSDThres.text = 0
                                                 }
                                             }
                                         }
@@ -922,8 +927,8 @@ Item {
                                             SGCircularGauge {
                                                 id: ldoPowerDissipation
                                                 minimumValue: 0
-                                                maximumValue: 3.01
-                                                tickmarkStepSize:0.5
+                                                maximumValue: 2.75
+                                                tickmarkStepSize:0.25
                                                 gaugeFillColor1:"green"
                                                 gaugeFillColor2:"red"
                                                 width: ldoPowerDissipationContiner.width
@@ -954,9 +959,9 @@ Item {
 
                                             SGCircularGauge {
                                                 id: boardTemp
-                                                minimumValue: -55
+                                                minimumValue: 0
                                                 maximumValue: 125
-                                                tickmarkStepSize: 20
+                                                tickmarkStepSize: 25
                                                 gaugeFillColor1:"green"
                                                 gaugeFillColor2:"red"
                                                 width: boardTempContainer.width
@@ -987,9 +992,9 @@ Item {
 
                                             SGCircularGauge {
                                                 id: appxLDoTemp
-                                                minimumValue: -55
-                                                maximumValue: 125
-                                                tickmarkStepSize:20
+                                                minimumValue: 0
+                                                maximumValue: 175
+                                                tickmarkStepSize:25
                                                 gaugeFillColor2:"red"
                                                 width: appxLDoTempContainer.width
                                                 height: appxLDoTempContainer.height - appxLDoTempLabel.contentHeight
@@ -1389,10 +1394,44 @@ Item {
                                                 }
                                             }
 
+
+
+
+
+
                                             Rectangle {
                                                 id:extLoadCheckboxContainer
                                                 Layout.fillWidth: true
                                                 Layout.fillHeight: true
+
+                                                Rectangle {
+                                                    id: checkBoxContainer
+                                                    anchors.fill: extLoadCheckboxContainer
+                                                    color: "transparent"
+                                                    z: 2
+                                                    MouseArea {
+                                                        id: hoverArea2
+                                                        anchors { fill: parent }
+                                                        hoverEnabled: true
+                                                    }
+                                                }
+
+                                                Widget09.SGToolTipPopup {
+                                                    id: sgToolTipPopup
+                                                    showOn: hoverArea2.containsMouse
+                                                    arrowOnTop: false
+                                                    anchors {
+                                                        bottom: extLoadCheckboxContainer.top
+                                                        horizontalCenter: extLoadCheckboxContainer.horizontalCenter
+                                                    }
+
+                                                    color: "#0bd"   // Default: "#00ccee"
+
+                                                    content: Text {
+                                                        text: qsTr("Check this box if an external load is \n connected to the output banana plugs.\n Access the Help tour for \n more information.")
+                                                        color: "white"
+                                                    }
+                                                }
 
                                                 SGAlignedLabel {
                                                     id: extLoadCheckboxLabel
@@ -1409,7 +1448,12 @@ Item {
                                                     }
                                                     margin: -5
 
+
+
+
+
                                                     Rectangle {
+                                                        id: extLoadCheckboxHover
                                                         color: "transparent"
                                                         anchors { fill: extLoadCheckboxLabel }
                                                         MouseArea {
@@ -1419,9 +1463,11 @@ Item {
                                                         }
                                                     }
 
+
                                                     CheckBox {
                                                         id: extLoadCheckbox
                                                         checked: false
+
                                                         onClicked: {
                                                             if(checked) {
                                                                 platformInterface.ext_load_conn.update(true)
