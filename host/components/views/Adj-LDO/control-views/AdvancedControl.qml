@@ -670,7 +670,6 @@ Item {
                                                 onClicked: {
                                                     platformInterface.reset_clim.update()
                                                     currentLimitThreshold.text = 0
-                                                    estTSDThres.text = 0
 
                                                 }
                                             }
@@ -890,7 +889,6 @@ Item {
                                                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                                 onClicked: {
                                                     platformInterface.reset_tsd.update()
-                                                    currentLimitThreshold.text = 0
                                                     estTSDThres.text = 0
                                                 }
                                             }
