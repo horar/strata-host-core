@@ -1,8 +1,6 @@
 add_subdirectory(qml)
 
 if(BUILD_EXAMPLES)
-    add_subdirectory(src)
-
     find_package(Qt5 ${VERSION_QT5}
         COMPONENTS Quick
         REQUIRED

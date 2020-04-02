@@ -26,6 +26,8 @@ SGWidgets09.SGResponsiveScrollView {
         property int statBoxHeight:100
         property int motorColumnTopMargin: 50
 
+        property bool inOverCurrentProtection: platformInterface.dc_ocp_notification.ocp_set === "on"
+
         Text{
             id:pwmSliderLabel
             text: "PWM frequency:"
@@ -51,13 +53,13 @@ SGWidgets09.SGResponsiveScrollView {
             stepSize:100
             grooveColor: enabled ? "lightgrey" : "grey"
             fillColor: enabled ? motorControllerPurple : "grey"
-            enabled: !motor1IsRunning && !motor2IsRunning
+            enabled: !motor1IsRunning && !motor2IsRunning //&& !container.inOverCurrentProtection
             live:false
             fromText.color: enabled ? "black" : "grey"
             toText.color: enabled ? "black" : "grey"
             textColor: enabled ? "black" : "grey"
             inputBox.boxColor : enabled ? "white" : "grey"
-            //handle.color: enabled? "white" : grey         //not yet available
+            handleObject.color: enabled? "white" : "grey "
 
             property var frequency: platformInterface.pwm_frequency_notification.frequency
             onFrequencyChanged: {
@@ -105,170 +107,179 @@ SGWidgets09.SGResponsiveScrollView {
 
 
 
-        Row{
+        RowLayout{
             id:portInfoRow
             height:container.statBoxHeight
-            width: parent.width
+            width: parent.width*.50
             anchors.left:parent.left
-            anchors.leftMargin: parent.width*.10
+            anchors.leftMargin: parent.width*.22
             anchors.top: pwmSliderLabel.bottom
-            anchors.topMargin: 75
+            anchors.topMargin: 60
 
             spacing: parent.width*.1
 
 
+            Rectangle{
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                color: "transparent"
+                //color:"pink"
 
-            PortStatBox{
-                id:motor1InputVoltage
+                PortStatBox{
+                    id:motor1InputVoltage
+                    height:container.statBoxHeight
+                    width:250
+                    label: "INPUT VOLTAGE"
+                    labelSize:12
+                    unit:"V"
+                    unitColor: motorControllerDimGrey
+                    color:"transparent"
+                    valueSize: 64
+                    unitSize:20
+                    textColor: "black"
+                    portColor: "#2eb457"
+                    labelColor:"black"
+                    //underlineWidth: 0
+                    imageHeightPercentage: .5
+                    bottomMargin: 10
+                    value: platformInterface.dc_notification.voltage.toFixed(1)
 
-                height:container.statBoxHeight
-                width:parent.width*.30
-
-
-                label: "INPUT VOLTAGE"
-                labelSize:12
-                unit:"V"
-                unitColor: motorControllerDimGrey
-                color:"transparent"
-                valueSize: 64
-                unitSize:20
-                textColor: "black"
-                portColor: "#2eb457"
-                labelColor:"black"
-                //underlineWidth: 0
-                imageHeightPercentage: .5
-                bottomMargin: 10
-                value: platformInterface.dc_notification.voltage.toFixed(1)
-
-            }
-            PortStatBox{
-                id:motor1InputCurrent
-
-                height:container.statBoxHeight
-                width:parent.width*.2
-
-                label: "INPUT CURRENT"
-                labelSize:12
-                unit:"mA"
-                unitColor: motorControllerDimGrey
-                color:"transparent"
-                valueSize: 64
-                unitSize:20
-                textColor: "black"
-                portColor: "#2eb457"
-                labelColor:"black"
-                //underlineWidth: 0
-                imageHeightPercentage: .5
-                bottomMargin: 10
-                value: platformInterface.dc_notification.current.toFixed(0)
+                }
             }
 
             Rectangle{
-                id: overCurrentProtectionRectangle
-                height:container.statBoxHeight
-                width:parent.width*.20
-                //border.color:"black"
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                color: "transparent"
+                //color:"lightblue"
 
-                Text{
-                    id:overCurrentProtectionText
-                    anchors.top: overCurrentProtectionRectangle.top
-                    anchors.topMargin: 0
-                    anchors.left:overCurrentProtectionRectangle.left
-                    anchors.leftMargin: 5
-                    text:"OCP"
-                    font.pixelSize: 24
-
+                PortStatBox{
+                    id:motor1InputCurrent
+                    height:container.statBoxHeight
+                    width:250
+                    label: "INPUT CURRENT"
+                    labelSize:12
+                    unit:"mA"
+                    unitColor: motorControllerDimGrey
+                    color:"transparent"
+                    valueSize: 64
+                    unitSize:20
+                    textColor: "black"
+                    portColor: "#2eb457"
+                    labelColor:"black"
+                    //underlineWidth: 0
+                    imageHeightPercentage: .5
+                    bottomMargin: 10
+                    value: platformInterface.dc_notification.current.toFixed(0)
                 }
 
-                Rectangle {
-                    id: lightContainer
-                    width: 50
-                    height: width
-                    radius: width/2
-                    anchors.top: overCurrentProtectionText.bottom
-                    anchors.topMargin:  0
-                    anchors.horizontalCenter:overCurrentProtectionText.horizontalCenter
-                    color: "transparent"
-                    border.color: "grey"
-                    border.width: 3
-                    property alias lightcolor: lightColorLayer.color
+
+                Rectangle{
+                    id: overCurrentProtectionRectangle
+                    //border.color:"black"
+                    //opacity:.5
+                    anchors.left: motor1InputCurrent.right
+                    anchors.leftMargin: 110
+                    anchors.top: motor1InputCurrent.top
+                    anchors.topMargin: 0
+                    width: 150
+                    height:100
+
+                    Text{
+                        id:overCurrentProtectionText
+                        anchors.top: overCurrentProtectionRectangle.top
+                        anchors.topMargin: 0
+                        anchors.left:overCurrentProtectionRectangle.left
+                        anchors.leftMargin: 5
+                        text:"OCP"
+                        font.pixelSize: 24
+
+                    }
+
+                    SGSwitch{
+                        id:ocpSwitch
+                        anchors.top: ocpIndicatorLight.bottom
+                        anchors.topMargin: 5
+                        anchors.horizontalCenter: ocpIndicatorLight.horizontalCenter
+                        width:50
+                        grooveFillColor: motorControllerPurple
+                        checked: (platformInterface.ocp_enable_notification.enable === "on") ? true : false
+                        enabled: !container.inOverCurrentProtection
+
+                        onToggled:{
+                            var value = "off";
+                            if (checked)
+                                value = "on"
+                            platformInterface.ocp_enable.update(value);
+                        }
+
+                    }
+
                     Rectangle {
-                        id: lightColorLayer
-                        anchors.centerIn: lightContainer
-                        width: lightContainer.width * .6
+                        id: ocpIndicatorLight
+                        width: 50
                         height: width
                         radius: width/2
-                        color: "green"
+                        anchors.top: overCurrentProtectionText.bottom
+                        anchors.topMargin:  0
+                        anchors.horizontalCenter:overCurrentProtectionText.horizontalCenter
+                        color: "transparent"
+                        border.color: "grey"
+                        border.width: 3
+                        property alias lightcolor: lightColorLayer.color
+                        Rectangle {
+                            id: lightColorLayer
+                            anchors.centerIn: ocpIndicatorLight
+                            width: ocpIndicatorLight.width * .6
+                            height: width
+                            radius: width/2
+                            color: "green"
 
-                        property var stepOverCurrentProtection: platformInterface.dc_ocp_notification.ocp_set
-                        onStepOverCurrentProtectionChanged: {
-                            if (platformInterface.dc_ocp_notification.ocp_set === "on")
-                                color = "red"
-                            else
-                                color = "green"
+                            property var stepOverCurrentProtection: platformInterface.dc_ocp_notification.ocp_set
+                            onStepOverCurrentProtectionChanged: {
+                                if (platformInterface.dc_ocp_notification.ocp_set === "on")
+                                    color = "red"
+                                else
+                                    color = "green"
+                            }
+
+                            property var overCurrentProtectionEnabled: platformInterface.ocp_enable_notification
+                            onOverCurrentProtectionEnabledChanged: {
+                                if (platformInterface.ocp_enable_notification.enable === "off")
+                                    color = "grey"
+                                else{   //ocp protection is on
+                                    if (platformInterface.dc_ocp_notification.ocp_set === "on")
+                                        color = "red"
+                                    else
+                                        color = "green"
+                                }
+                            }
+
                         }
                     }
-                }
 
-                SGButton{
-                    id:ocpResetButton
-                    width:100
-                    height:40
-                    anchors.left: lightContainer.right
-                    anchors.leftMargin: 10
-                    anchors.verticalCenter: lightContainer.verticalCenter
-                    text: "reset"
-                    fontSizeMultiplier:2
+                    SGButton{
+                        id:ocpResetButton
+                        width:100
+                        height:40
+                        anchors.left: ocpIndicatorLight.right
+                        anchors.leftMargin: 10
+                        anchors.verticalCenter: ocpIndicatorLight.verticalCenter
+                        text: "reset"
+                        fontSizeMultiplier:2
 
-                    visible: platformInterface.dc_ocp_notification.ocp_set === "on" ? true : false
+                        visible: platformInterface.dc_ocp_notification.ocp_set === "on" ? true : false
 
-                    onClicked:{
-                        platformInterface.dc_ocp_reset.update()
+                        onClicked:{
+                            platformInterface.dc_ocp_reset.update()
+                        }
                     }
                 }
             }
 
-
-
-
-
-
-
-
         }   //row
 
-//        LinearGradient{
-//            id:column1background
-//            anchors.top:portInfoRow.bottom
-//            anchors.topMargin: container.motorColumnTopMargin/2
-//            anchors.left:parent.left
-//            //anchors.leftMargin: container.leftMargin
-//            anchors.bottom:parent.bottom
-//            width: parent.width/2
-//            start: Qt.point(0, 0)
-//            end: Qt.point(0, height)
-//            opacity:.2
-//            gradient: Gradient {
-//                GradientStop { position: 0.0; color: motorControllerGrey }
-//                GradientStop { position: .75; color: motorControllerBlue }
-//            }
-//        }
 
-//        LinearGradient{
-//            id:column2background
-//            anchors.top:portInfoRow.bottom
-//            anchors.topMargin: container.motorColumnTopMargin/2
-//            anchors.left:column1background.right
-//            anchors.bottom:parent.bottom
-//            width: parent.width/2
-//            start: Qt.point(0, 0)
-//            end: Qt.point(0, height)
-//            opacity:.2
-//            gradient: Gradient {
-//                GradientStop { position: 0.0; color: motorControllerGrey }
-//                GradientStop { position: .75; color: motorControllerBlue }
-//            }
-//        }
 
         Column{
             id:motor1Column
@@ -323,7 +334,7 @@ SGWidgets09.SGResponsiveScrollView {
 
                 Text{
                     id:directionLabel
-                    color:"black"
+                    color: !container.inOverCurrentProtection ? "black" : "grey"
                     text: "Direction:"
                     font.pixelSize: 24
                     horizontalAlignment: Text.AlignRight
@@ -346,6 +357,7 @@ SGWidgets09.SGResponsiveScrollView {
                     width:50
                     grooveFillColor: motorControllerPurple
                     checked: (platformInterface.dc_direction_1_notification.direction === "counterclockwise") ? true : false
+                    enabled: !container.inOverCurrentProtection
 
                     onToggled:{
                         var value = "clockwise";
@@ -380,6 +392,7 @@ SGWidgets09.SGResponsiveScrollView {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -5
                     width:65
+                    color: !container.inOverCurrentProtection ? "black" : "grey"
                 }
 
                 SGWidgets09.SGSegmentedButtonStrip {
@@ -392,17 +405,19 @@ SGWidgets09.SGResponsiveScrollView {
                     exclusive: true
                     buttonImplicitWidth: 50
                     hoverEnabled:false
+                    enabled: !container.inOverCurrentProtection
 
-                    property var pwmMode1:  platformInterface.pwm_mode_1_notification.mode
+                    property var pwmMode1:  platformInterface.dc_pwm_mode_1_notification.mode
 
                     onPwmMode1Changed: {
-                        console.log("received a new pwm mode notification. Units are",platformInterface.pwm_mode_1_notification.mode)
+                        console.log("received a new pwm mode notification. Units are",platformInterface.dc_pwm_mode_1_notification.mode)
                         if (pwmMode1 === "on_off"){
                             index = 0;
                         }
                         else if (pwmMode1 === "on_brake"){
                             index = 1;
                         }
+                        console.log("index is now",index)
 
                     }
 
@@ -411,7 +426,7 @@ SGWidgets09.SGResponsiveScrollView {
                         rowSpacing: 2
 
                         SGWidgets09.SGSegmentedButton{
-                            id:secondsSegmentedButton
+                            id:onOffSegmentedButton
                             text: qsTr("on \u2194 off")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
@@ -422,7 +437,7 @@ SGWidgets09.SGResponsiveScrollView {
                         }
 
                         SGWidgets09.SGSegmentedButton{
-                            id:stepsSegmentedButton
+                            id:onBrakeSegmentedButton
                             text: qsTr("on \u2194 brake")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
@@ -446,6 +461,7 @@ SGWidgets09.SGResponsiveScrollView {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -10
                     width:65
+                    color: !container.inOverCurrentProtection ? "black" : "grey"
                 }
 
                 SGSlider{
@@ -458,6 +474,7 @@ SGWidgets09.SGResponsiveScrollView {
                     fillColor: motorControllerPurple
                     value: (platformInterface.dc_duty_1_notification.duty * 100)
                     live: false
+                    enabled: !container.inOverCurrentProtection
 
                     onUserSet: {
                         platformInterface.set_dc_duty_1.update((value/100));
@@ -485,6 +502,17 @@ SGWidgets09.SGResponsiveScrollView {
                 exclusive: true
                 buttonImplicitWidth: 100
                 hoverEnabled: false
+                enabled: !container.inOverCurrentProtection
+
+                property int motor1State: platformInterface.motor_run_1_notification.mode
+                onMotor1StateChanged:{
+                    if (motor1State == 1)
+                        index = 0
+                    else if (motor1State == 2)
+                        index = 1
+                    else
+                        index = 2
+                }
 
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
@@ -497,8 +525,8 @@ SGWidgets09.SGResponsiveScrollView {
                         textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         textSize:24
-                        onCheckedChanged:{
-                            if (checked)
+                        onClicked:{
+                            if (platformInterface.motor_run_1_notification.mode !== 1)
                                 platformInterface.motor_run_1.update(1);
                         }
                     }
@@ -510,8 +538,8 @@ SGWidgets09.SGResponsiveScrollView {
                         textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         textSize:24
-                        onCheckedChanged:{
-                            if (checked)
+                        onClicked:{
+                            if (platformInterface.motor_run_1_notification.mode !== 2)
                                 platformInterface.motor_run_1.update(2);
                         }
                     }
@@ -524,8 +552,8 @@ SGWidgets09.SGResponsiveScrollView {
                         textActiveColor: "white"
                         checked:true
                         textSize:24
-                        onCheckedChanged:{
-                            if (checked)
+                        onClicked:{
+                            if (platformInterface.motor_run_1_notification.mode !== 3)
                                 platformInterface.motor_run_1.update(3);
                         }
                     }
@@ -593,7 +621,7 @@ SGWidgets09.SGResponsiveScrollView {
                     font {
                         pixelSize: 54
                     }
-                    color:"black"
+                    color: "black"
                     opacity:.8
                     anchors {
                         verticalCenter: parent.verticalCenter
@@ -611,7 +639,7 @@ SGWidgets09.SGResponsiveScrollView {
 
                 Text{
                     id:directionLabel2
-                    color:"black"
+                    color: !container.inOverCurrentProtection ? "black" : "grey"
                     text: "Direction:"
                     font.pixelSize: 24
                     horizontalAlignment: Text.AlignRight
@@ -634,6 +662,7 @@ SGWidgets09.SGResponsiveScrollView {
                     width:50
                     grooveFillColor: motorControllerPurple
                     checked: (platformInterface.dc_direction_2_notification.direction === "counterclockwise") ? true: false
+                    enabled: !container.inOverCurrentProtection
 
                     onToggled: {
                         var value = "clockwise";
@@ -666,6 +695,7 @@ SGWidgets09.SGResponsiveScrollView {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -5
                     width:65
+                    color: !container.inOverCurrentProtection ? "black" : "grey"
                 }
 
                 SGWidgets09.SGSegmentedButtonStrip {
@@ -678,18 +708,23 @@ SGWidgets09.SGResponsiveScrollView {
                     exclusive: true
                     buttonImplicitWidth: 50
                     hoverEnabled:false
+                    enabled: !container.inOverCurrentProtection
 
-                    property var pwmMode2:  platformInterface.pwm_mode_2_notification.mode
+                    property var pwmMode2:  platformInterface.dc_pwm_mode_2_notification.mode
 
                     onPwmMode2Changed: {
-                        console.log("received a new pwm mode notification. Units are",platformInterface.pwm_mode_2_notification.mode)
+                        console.log("received a new pwm mode notification. Units are",platformInterface.dc_pwm_mode_2_notification.mode, index)
                         if (pwmMode2 === "on_off"){
                             index = 0;
                         }
                         else if (pwmMode2 === "on_brake"){
                             index = 1;
                         }
+                        console.log("index is now",index)
 
+                    }
+                    onIndexChanged: {
+                        console.log("index changed called. index is now",index)
                     }
 
                     segmentedButtons: GridLayout {
@@ -697,7 +732,7 @@ SGWidgets09.SGResponsiveScrollView {
                         rowSpacing: 2
 
                         SGWidgets09.SGSegmentedButton{
-                            id:secondsSegmentedButton2
+                            id:onOffSegmentedButton2
                             text: qsTr("on \u2194 off")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
@@ -705,16 +740,18 @@ SGWidgets09.SGResponsiveScrollView {
                             textActiveColor: "white"
                             checked: true
                             onClicked: platformInterface.set_pwm_mode_2.update("on_off")
+                            onCheckedChanged: console.log("on off button now checked")
                         }
 
                         SGWidgets09.SGSegmentedButton{
-                            id:stepsSegmentedButton2
+                            id:onBrakeSegmentedButton2
                             text: qsTr("on \u2194 brake")
                             activeColor: "dimgrey"
                             inactiveColor: "gainsboro"
                             textColor: motorControllerInactiveButtonText
                             textActiveColor: "white"
                             onClicked: platformInterface.set_pwm_mode_2.update("on_brake")
+                            onCheckedChanged: console.log("on brake button now checked")
                         }
 
                     }
@@ -733,6 +770,7 @@ SGWidgets09.SGResponsiveScrollView {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -10
                     width:65
+                    color: !container.inOverCurrentProtection ? "black" : "grey"
                 }
 
                 SGSlider{
@@ -746,6 +784,7 @@ SGWidgets09.SGResponsiveScrollView {
                     fillColor: motorControllerPurple
                     value: platformInterface.dc_duty_2_notification.duty *100
                     live: false
+                    enabled:!container.inOverCurrentProtection
 
                     onUserSet: {
                         platformInterface.set_dc_duty_2.update(value/100);
@@ -773,6 +812,17 @@ SGWidgets09.SGResponsiveScrollView {
                 exclusive: true
                 buttonImplicitWidth: 100
                 hoverEnabled:false
+                enabled:!container.inOverCurrentProtection
+
+                property int motor2State: platformInterface.motor_run_2_notification.mode
+                onMotor2StateChanged:{
+                    if (motor2State == 1)
+                        index = 0
+                    else if (motor2State == 2)
+                        index = 1
+                    else
+                        index = 2
+                }
 
                 segmentedButtons: GridLayout {
                     columnSpacing: 2
@@ -785,8 +835,8 @@ SGWidgets09.SGResponsiveScrollView {
                         textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         textSize:24
-                        onCheckedChanged: {
-                            if (checked)
+                        onClicked: {
+                            if (platformInterface.motor_run_2_notification.mode !== 1)
                                 platformInterface.motor_run_2.update(1);
                         }
                     }
@@ -798,8 +848,8 @@ SGWidgets09.SGResponsiveScrollView {
                         textColor: motorControllerInactiveButtonText
                         textActiveColor: "white"
                         textSize:24
-                        onCheckedChanged: {
-                            if (checked)
+                        onClicked: {
+                            if (platformInterface.motor_run_2_notification.mode !== 2)
                                 platformInterface.motor_run_2.update(2);
                         }
                     }
@@ -812,8 +862,8 @@ SGWidgets09.SGResponsiveScrollView {
                         textActiveColor: "white"
                         checked: true
                         textSize:24
-                        onCheckedChanged:{
-                            if (checked)
+                        onClicked:{
+                            if (platformInterface.motor_run_2_notification.mode !== 3)
                                 platformInterface.motor_run_2.update(3);
                         }
                     }

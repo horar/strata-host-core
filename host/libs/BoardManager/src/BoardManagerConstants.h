@@ -3,7 +3,7 @@
 
 #include <chrono>
 
-namespace spyglass {
+namespace strata {
 
 constexpr std::chrono::milliseconds DEVICE_CHECK_INTERVAL(1000);
 

@@ -20,6 +20,11 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     main.cpp
     SciModel.cpp
     SciDatabaseConnector.cpp
+    SciPlatformModel.cpp
+    SciPlatform.cpp
+    SciScrollbackModel.cpp
+    SciCommandHistoryModel.cpp
+    SciPlatformSettings.cpp
     qml.qrc
     images/images.qrc
 

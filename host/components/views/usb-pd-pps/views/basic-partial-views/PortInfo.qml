@@ -157,7 +157,8 @@ Rectangle {
                     anchors {
                         verticalCenter: stats.verticalCenter
                     }
-                    width: stats.width/2-1
+                    //width: stats.width/2-1
+                    width: stats.width *.1
                     spacing: 3
 
                     PortStatBox {
@@ -203,7 +204,7 @@ Rectangle {
                         verticalCenter: column1.verticalCenter
                     }
                     spacing: column1.spacing
-                    width: stats.width/2 - 2
+                    width: stats.width*.9
 
                     PortStatBox {
                         id:outputVoltageBox
@@ -213,6 +214,7 @@ Rectangle {
                         portColor: root.portColor
                         unit: "V"
                         height: (root.height - 10)/4
+                        valueSize: 48
                     }
 
                     PortStatBox {
@@ -223,6 +225,7 @@ Rectangle {
                         portColor: root.portColor
                         unit: "°C"
                         height: (root.height - 10)/4
+                        valueSize: 48
                     }
 
                     PortStatBox {
@@ -233,17 +236,10 @@ Rectangle {
                         portColor: root.portColor
                         unit: "W"
                         height: (root.height - 10)/4
+                        valueSize: 48
                     }
 
-//                    PortStatBox {
-//                        id:efficencyBox
-//                        label: "EFFICIENCY"
-//                        //value: "92"
-//                        icon: "../images/icon-efficiency.svg"
-//                        portColor: root.portColor
-//                        unit: "%"
-//                        height: (root.height - 10)/4
-//                    }
+
                 }
             }
         }

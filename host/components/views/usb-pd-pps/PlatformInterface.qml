@@ -22,17 +22,13 @@ Item {
     // @description: sent when a device is connected or disconnected
     //
     property var usb_pd_port_connect : {
-        "port_id": "",
-        "connection_state":"unknown"
+        "port": "",
+        "connection_state":"unknown"        //or "connected" or "disconnected"
     }
 //    onUsb_pd_port_connectChanged: {
-//        console.log("usb_pd_port_connect changed. port_id=",usb_pd_port_connect.port_id," connection_state=",usb_pd_port_connect.connection_state);
+//        console.log("usb_pd_port_connect changed. port=",usb_pd_port_connect.port," connection_state=",usb_pd_port_connect.connection_state);
 //    }
 
-    property var usb_pd_port_disconnect:{
-        "port_id": "unknown",
-        "connection_state": "unknown"
-    }
 
     property var set_minimum_voltage_notification : {
         "minimum_voltage":10
@@ -41,12 +37,12 @@ Item {
 
 
     property var usb_pd_protection_action:{
-         "action":"shutdown"     // or "nothing" or "retry"
+         "action":"retry"     // or "nothing" or "retry"
     }
 
 
    property var input_under_voltage_notification:{
-          "state":"below",                                        // if the input voltage decreases to below the voltage limit, "above" otherwise.
+          "state":"above",                                        // if the input voltage decreases to below the voltage limit, "above" otherwise.
           "minimum_voltage":10                                     // Voltage limit in volts
     }
 
@@ -64,6 +60,10 @@ Item {
              "value":5                                       // degrees C
             }
 
+    onTemperature_hysteresisChanged: {
+        console.log("in PI. Temp hysteresis changed to",temperature_hysteresis.value)
+    }
+
 
    property var over_temperature_notification:{
            "port":"USB_C_port_1",                                // or any USB C port
@@ -72,63 +72,30 @@ Item {
            "maximum_temperature":200                             // Temperature limit in degrees C
     }
 
-        //consider the values held by this property to be the master ones, which will be current when needed for calling
-        //the API to set the input voltage foldback
-    property var foldback_input_voltage_limiting_event:{
-            "input_voltage":0,
-            "foldback_minimum_voltage":10,
-            "foldback_minimum_voltage_power":15,
-            "input_voltage_foldback_enabled":false,
-            "input_voltage_foldback_active":false
+
+    property var input_voltage_foldback:{
+            "voltage":14.99487305,
+            "min_voltage":15,
+            "power":60,
+            "enabled":true,
+            "active":false
     }
 
-//  onFoldback_input_voltage_limiting_eventChanged: {
-//        console.log("input voltage foldback values updated");
-//        console.log("input voltage event notification. values are ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage,
-//                                                                    foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power,
-//                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled,
-//                                                                    foldback_input_voltage_limiting_refresh.input_voltage_foldback_active);
-//        }
 
-    property var foldback_input_voltage_limiting_refresh:{
-            "input_voltage":0,
-            "foldback_minimum_voltage":0,
-            "foldback_minimum_voltage_power":15,
-            "input_voltage_foldback_enabled":false,
-            "input_voltage_foldback_active":false
+
+    property var temperature_foldback:{
+            "port":1,
+            "temperature":33,
+            "max_temperature":150,
+            "power":60,      // 2-port = absolute power in watts, others = percentage of full port power
+            "enabled":true,
+            "active":false
     }
-
-    //keep the refresh and event notification properties in synch
-    onFoldback_input_voltage_limiting_refreshChanged: {
-        //console.log("input voltage refresh notification. minimum voltage = ",foldback_input_voltage_limiting_refresh.foldback_minimum_voltage);
-
-            //update the variables for foldback limiting
-        platformInterface.foldback_input_voltage_limiting_event.input_voltage = foldback_input_voltage_limiting_refresh.input_voltage;
-
-        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage;
-        platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power = foldback_input_voltage_limiting_refresh.foldback_minimum_voltage_power;
-        console.log(" foldback minimum power = ",platformInterface.foldback_input_voltage_limiting_event.foldback_minimum_voltage_power);
-        platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = foldback_input_voltage_limiting_refresh.input_voltage_foldback_enabled;
-        platformInterface.foldback_input_voltage_limiting_event.input_voltage_foldback_active = foldback_input_voltage_limiting_refresh.input_voltage_foldback_active;
-    }
-
-    //consider the values held by this property to be the master ones, which will be current when needed for calling
-    //the API to set the input temperature foldback
-    property var foldback_temperature_limiting_event:{
-            "port":0,
-            "current_temperature":0,
-            "foldback_maximum_temperature":50,
-            "foldback_maximum_temperature_power":15,
-            "temperature_foldback_enabled":true,
-            "temperature_foldback_active":true,
-            "maximum_power":0
-    }
-
 
 
     property var usb_pd_maximum_power:{
-        "port":0,                            // always 1
-        "watts":0                          // 12.5 | 25 | 37.5 | 50 | 62.5 | 75 | 87.5 | 100
+        "port":1,                            // always 1
+        "watts":60                           // 15, 30, 45, or 60
     }
 
     property var request_over_current_protection_notification:{
@@ -173,7 +140,7 @@ Item {
         "input_current":0.22,                   // amps
         "output_current":0.50,                  // amps
         "temperature":50,                       // degrees C
-        "maximum_power":36                      // in watts
+        "maximum_power":60                      // in watts
     }
 
     property var system_fault:{
@@ -202,6 +169,15 @@ Item {
                      CorePlatformInterface.send(this)
                 }
     })
+
+    property var platform_reset:({
+                 "cmd":"platform_reset",
+                 "payload":{
+                  },
+                 send: function(){
+                      CorePlatformInterface.send(this)
+                 }
+     })
 
     property var set_protection_action:({
                 "cmd":"set_protection_action",
@@ -271,12 +247,6 @@ Item {
                          "power":45      // in Watts
                        },
                    update: function(enabled,voltage,watts){
-                       //console.log("input voltage foldback update: enabled=",enabled,"voltage=",voltage,"watts=",watts);
-                       //set the notification property values, as the platform won't send a notification in response to this
-                       //command, and those properties are used by controls to see what the value of other controls should be.
-                       foldback_input_voltage_limiting_event.input_voltage_foldback_enabled = enabled;
-                       foldback_input_voltage_limiting_event.foldback_minimum_voltage = voltage;
-                       foldback_input_voltage_limiting_event.foldback_minimum_voltage_power = watts;
                         this.set(enabled,voltage,watts)
                         CorePlatformInterface.send(this)
                         },
@@ -298,13 +268,10 @@ Item {
                   "payload":{
                         "enabled":false,  // or true
                         "temperature":0,    // in °C
-                        "power":45      // in Watts
+                        "power":45      // percentage of full power
                        },
                    update: function(enabled,temperature,watts){
                        //update the variables for this action
-//                       foldback_temperature_limiting_event.foldback_maximum_temperature = temperature;
-//                       foldback_temperature_limiting_event.foldback_maximum_temperature_power = watts;
-//                       foldback_temperature_limiting_event.temperature_foldback_enabled = enabled;
                         this.set(enabled,temperature,watts)
                         CorePlatformInterface.send(this)
                         },
@@ -348,7 +315,7 @@ Item {
                     "cmd":"set_usb_pd_maximum_power",
                     "payload":{
                          "port":0,       // always 1
-                         "watts":0       // 12.5 | 25 | 37.5 | 50 | 62.5 | 75 | 87.5 | 100
+                         "watts":0       // any value 0-60 will give 15w, 30w, 45w, or 60w
                          },
                     update: function (port, watts){
                         this.set(port,watts);

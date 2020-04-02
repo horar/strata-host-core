@@ -20,21 +20,15 @@ Item {
     //property alias efficency: efficencyBox.value
 
     property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
     property string portName: "USB_C_port_" + portNumber
 
     onDeviceConnectedChanged: {
 
-        if (platformInterface.usb_pd_port_connect.port_id === portName){
+        if (platformInterface.usb_pd_port_connect.port == portNumber){
             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
                 root.portConnected = true;
             }
-        }
-    }
-
-    onDeviceDisconnectedChanged: {
-        if (platformInterface.usb_pd_port_disconnect.port_id === portName){
-            if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+            else if (platformInterface.usb_pd_port_connect.connection_state === "disconnected"){
                 root.portConnected = false;
             }
 
@@ -193,7 +187,7 @@ Item {
 
                     PortStatBox {
                         id:outputVoltageBox
-                        label: "VOLTAGE OUT"
+                        label: "BUS VOLTAGE"
                         value: ""
                         icon: "../images/icon-voltage.svg"
                         portColor: root.portColor

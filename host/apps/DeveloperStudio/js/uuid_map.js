@@ -29,7 +29,7 @@ var uuid_map = {
 
 
     /*****
-        CES HACK (class_id)
+        CES HACK or temporary Class ID for development purposes(class_id)
     *****/
     "101": "logic-gate",
     "201": "logic-gate",
@@ -43,7 +43,7 @@ var uuid_map = {
     "210": "XDFN-LDO",
     "211": "XDFN-LDO",
     "212": "XDFN-LDO",
-    "213": "",             // empty listing for sensors platform, hack for proper display in static platform list
+    "213": "sensor",
     "214": "XDFN-LDO",
     "215": "5A-switcher",
     "216": "5A-switcher-NCV6357",
@@ -69,5 +69,11 @@ var uuid_map = {
     "244": "motorController",
     "245": "bldcMotorControl",
     "246": "meshNetwork",
-    "265": "zigbee"
+    "265": "zigbee",
+
+    /*****
+        Real UUID generated from interaction with Deployment Portal (class_id)
+    *****/
+    "72ddcc10-2d18-4316-8170-5223162e54cf": "sensor",
+    "87054646-955d-42ed-aa82-8927b6a70286": "motorController"
 }

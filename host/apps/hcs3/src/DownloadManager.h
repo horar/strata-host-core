@@ -1,133 +1,152 @@
-
-#ifndef HOST_HCS_DOWNLOADER_H__
-#define HOST_HCS_DOWNLOADER_H__
+#ifndef DOWNLOAD_MANAGER_H
+#define DOWNLOAD_MANAGER_H
 
 #include <QObject>
 #include <QString>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QVector>
 #include <QList>
 #include <QMap>
-#include <QMutex>
-#include <QScopedPointer>
 
 #include <QBasicTimer>
 #include <QTimerEvent>
+#include <QCryptographicHash>
 
 class DownloadManager : public QObject
 {
     Q_OBJECT
-
-private:
-    enum class EDownloadState {
-        eUnknown = 0,
-        eIdle,
-        ePending,
-        eDone,
-        eCanceled,
-    };
-
-    struct DownloadItem {
-        QString url;        //parital URL
-        QString filename;
-        EDownloadState state;
-    };
+    Q_DISABLE_COPY(DownloadManager)
 
 public:
     DownloadManager(QObject* parent = nullptr);
     ~DownloadManager() override;
 
-    /**
-     * Sets the base part of the URL to download files
-     * @param baseUrl base part of URL
-     */
-    void setBaseUrl(const QString& baseUrl);
+    struct DownloadRequestItem {
+        QString partialUrl;
+        QString filePath;
+        QString md5;
+    };
 
-    /**
-     * Sets number of concurrent downloads, the default value is 4
-     * @param count number
-     */
-    void setMaxDownloadCount(uint count);
+    struct DownloadResponseItem {
+        QString originalFilePath;
+        QString effectiveFilePath;
+        QString errorString;
+    };
 
-    /**
-     * Adds file to download.
-     * @param url parital url to download
-     * @param filename filename to store content
-     */
-    void download(const QString& url, const QString& filename);
+    struct Settings {
+        Settings()
+            : notifySingleDownloadProgress(false),
+              notifySingleDownloadFinished(false),
+              notifyGroupDownloadProgress(false),
+              keepOriginalName(false),
+              oneFailsAllFail(true)
+        {
+        };
 
-    /**
-     * @return returns number of downloads in progress
-     */
-    uint downloadCount() const { return currentDownloads_.size(); }
+        QString id;
 
-    /**
-     * Stops download given by filename.
-     * @param filename
-     * @return returns true when succeeded otherwise false
-     */
-    bool stopDownloadByFilename(const QString& filename);
+        bool notifySingleDownloadProgress;
+        bool notifySingleDownloadFinished;
+        bool notifyGroupDownloadProgress;
 
-    /**
-     * Removes download given by filename from downloadList_.
-     * @param filename
-     * @return returns true when succeeded otherwise false
-     */
-    bool removeDownloadByFilename(const QString& filename);
+        /* When true and filePath alredy exists, file is saved
+         * under different name. */
+        bool keepOriginalName;
 
-    /**
-     * Stops all downloads
-     */
-    void stopAllDownloads();
+        /* When true and one of downloaded items fails,
+         * all remaining are aborted. */
+        bool oneFailsAllFail;
+    };
+
+    //we still need a string error, so this is mostly useless
+    enum class CustomError {
+        NoError,
+        OpenFileError,
+        WriteToFileError,
+    };
+
+    void setBaseUrl(const QString &baseUrl);
+    void setMaxDownloadCount(int maxDownloadCount);
+
+    QString download(const QList<DownloadRequestItem> &items,
+                     const Settings &settings=Settings());
+
+    bool verifyFileChecksum(
+            const QString &filePath,
+            const QString &checksum,
+            const QCryptographicHash::Algorithm &method=QCryptographicHash::Md5);
+
+    QString resolveUniqueFilePath(const QString &filePath);
+
+    QList<DownloadResponseItem> getResponseList(const QString &groupId);
+
+    void abortAll(const QString &groupId);
 
 signals:
-    void downloadFinished(QString filename);
-    void downloadFinishedError(QString filename, QString error);
-
-    void downloadAbort(QNetworkReply* reply);
-
-    void downloadProgress(QString filename, qint64 bytesReceived, qint64 bytesTotal);
+    void filePathChanged(QString groupId, QString originalFilePath, QString effectiveFilePath);
+    void singleDownloadProgress(QString groupId, QString filePath, qint64 bytesReceived, qint64 bytesTotal);
+    void singleDownloadFinished(QString groupId, QString filePath, QString error);
+    void groupDownloadProgress(QString groupId, int filesCompleted, int filesTotal);
+    void groupDownloadFinished(QString groupId, QString errorString);
 
 private slots:
-    void readyRead();
-    void onDownloadFinished(QNetworkReply *reply);
-
-    void slotError(QNetworkReply::NetworkError err);
-    void sslErrors(const QList<QSslError>& errors);
-
-    void onDownloadAbort(QNetworkReply* reply);
-    void onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+    void readyReadHandler();
+    void downloadProgressHandler(qint64 bytesReceived, qint64 bytesTotal);
+    void finishedHandler();
 
 private:
-    bool isHttpRedirect(QNetworkReply *reply);
+    enum class DownloadState {
+        Pending,
+        Running,
+        Finished,
+        FinishedWithError,
+    };
 
-    void beginDownload(DownloadItem& item);
-    QNetworkReply* downloadFile(const QString& url);
+    struct DownloadGroup {
+        QString id;
+        Settings settings;
+        QString errorString;
+    };
 
-    bool writeToFile(QNetworkReply* reply, const QByteArray& buffer);
+    struct DownloadItem {
+        QString url;
+        QString originalFilePath;
+        QString effectiveFilePath;
+        QString md5;
+        DownloadState state;
+        QString groupId;
+        QString errorString;
+    };
 
-    QList<DownloadItem>::iterator findNextDownload();
-    QList<DownloadItem>::iterator findItemByFilename(const QString& filename);
-
-    QNetworkReply* findReplyByFilename(const QString& filename);
-    QString findFilenameForReply(QNetworkReply* reply);
-
-private:
-    QScopedPointer<QNetworkAccessManager> manager_;
-    QVector<QNetworkReply*>  currentDownloads_;
-
-    QMutex mapReplyFileMutex_;
-    QMap<QNetworkReply*, QString> mapReplyToFile_;
-
-    uint numberOfDownloads_;
+    QNetworkAccessManager *accessManager_;
+    QList<QNetworkReply*> currentDownloads_;
 
     QString baseUrl_;
+    int maxDownloadCount_ = 4;
 
-    QMutex downloadListMutex_;
-    QList<DownloadItem> downloadList_;
+    QList<DownloadItem> itemList_;
+    QHash<QString /*url*/, DownloadItem*> itemHash_;
+
+    QHash<QString /*groupId*/, DownloadGroup*> groupHash_;
+
+    void startNextDownload();
+    DownloadItem* findNextDownload();
+    void createFolderForFile(const QString &filePath);
+    QNetworkReply* postRequest(const QString &url);
+    bool isHttpRedirect(QNetworkReply *reply);
+    QString writeToFile(const QString &filePath, const QByteArray &buffer);
+
+    void prepareResponse(DownloadItem *downloadItem, const QString &errorString=QString());
+
+    void resolveGroupProgress(
+            const QString &groupId,
+            int &filesFailed,
+            int &filesCompleted,
+            int &filesTotal);
+
+
+    void clearData(const QString groupId);
 };
-
 
 /**
  * Timed timeout trigger since QNetworkReply does not inherently timeout
@@ -135,6 +154,7 @@ private:
 class ReplyTimeout : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(ReplyTimeout)
 
 public:
     ReplyTimeout(QNetworkReply* reply, const int timeout) : QObject(reply) {
@@ -154,4 +174,4 @@ private:
     void timerEvent(QTimerEvent * ev);
 };
 
-#endif //HOST_HCS_DOWNLOADER_H__
+#endif //DOWNLOAD_MANAGER_H

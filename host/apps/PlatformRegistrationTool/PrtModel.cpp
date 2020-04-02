@@ -11,7 +11,7 @@ PrtModel::~PrtModel()
 {
 }
 
-spyglass::BoardManager *PrtModel::boardManager()
+strata::BoardManager *PrtModel::boardManager()
 {
     return &boardManager_;
 }

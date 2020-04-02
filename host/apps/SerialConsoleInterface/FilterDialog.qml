@@ -131,6 +131,7 @@ SGWidgets.SGDialog {
                         width: contentRow.width
                         height: contentRow.height
 
+                        enabled: disableAllFiltering === false
                         onActiveFocusChanged: {
                             if (delegate.activeFocus) {
                                 conditionView.currentIndex =  index
@@ -256,37 +257,49 @@ SGWidgets.SGDialog {
                 }
             }
 
-            SGWidgets.SGButton {
-                id: addButton
-                iconColor: "green"
-                icon.source: "qrc:/sgimages/plus.svg"
+            Row {
+                spacing: 16
 
-                onClicked: {
-                    if(filterConditionModel.count > 10) {
-                        return
+                SGWidgets.SGButton {
+                    id: addButton
+                    iconColor: "green"
+                    icon.source: "qrc:/sgimages/plus.svg"
+                    enabled: disableAllFiltering === false
+
+                    onClicked: {
+                        if(filterConditionModel.count > 10) {
+                            return
+                        }
+
+                        filterConditionModel.addNew()
+                        conditionView.currentIndex = filterConditionModel.count - 1
                     }
-
-                    filterConditionModel.addNew()
-                    conditionView.currentIndex = filterConditionModel.count - 1
                 }
-            }
 
-            SGWidgets.SGCheckBox {
-                id: disableCheck
-                text: "Disable All Filtering"
-                leftPadding: 0
+                SGWidgets.SGCheckBox {
+                    id: disableCheck
+                    text: "Disable All Filtering"
+                    leftPadding: 0
 
-                checked: disableAllFiltering
-                onCheckedChanged: {
-                    disableAllFiltering = checked
+                    checked: disableAllFiltering
+                    onCheckedChanged: {
+                        disableAllFiltering = checked
+                    }
                 }
             }
 
             SGWidgets.SGText {
                 id: noteText
                 width: conditionView.width
-                text: "Note: only first-level attribute-value pairs of notification element are checked."
                 wrapMode: Text.Wrap
+                text: "Example:"
+                      + "<pre><b>{<br>"
+                      + "    \"notification\": {<br>"
+                      + "        <font color='green'>\"attribute-1\"</font>:<font color='green'>\"value-1\"</font>,<br>"
+                      + "        <font color='green'>\"attribute-2\"</font>:<font color='green'>\"value-2\"</font><br>"
+                      + "    }<br>"
+                      + "}</pre></b>"
+                      + "Note: only first-level attribute-value pairs of notification element are checked."
             }
         }
     }
