@@ -912,7 +912,7 @@ Item {
 
                                                     inputBoxWidth: maxInputVoltageContainer/9
                                                     fontSizeMultiplier: ratioCalc * 1.2
-                                                    inputBox.validator: DoubleValidator { }
+                                                    inputBox.validator: IntValidator { top: 26; bottom: 0}
 
 
 
@@ -1157,7 +1157,7 @@ Item {
                                                         toText.text: "100mA"
                                                         value: 0
                                                         inputBoxWidth: midLoadSettingContainer.width/9
-                                                        inputBox.enabled: false
+                                                        inputBox.enabled: true
                                                         fontSizeMultiplier: ratioCalc * 1.2
                                                         inputBox.validator: DoubleValidator { top: 100; bottom: 0.1}
 
@@ -1242,7 +1242,7 @@ Item {
                                                         toText.text: "20A"
                                                         value: 0
                                                         inputBoxWidth: highLoadSettingContainer.width/9
-                                                        inputBox.enabled: false
+                                                        inputBox.enabled: true
                                                         fontSizeMultiplier: ratioCalc * 1.2
                                                         inputBox.validator: DoubleValidator { }
 
