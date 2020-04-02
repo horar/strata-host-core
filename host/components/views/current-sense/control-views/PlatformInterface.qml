@@ -256,7 +256,7 @@ Item {
     //                                             show: function () { CorePlatformInterface.show(this) }
     //                                         })
 
-    property var set_load_dac : ({
+    property var set_load_dac_load : ({
                                      "cmd" : "set_load_dac",
                                      "payload": {
                                          "load": "0"	// default value

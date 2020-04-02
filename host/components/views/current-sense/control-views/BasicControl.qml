@@ -1014,7 +1014,7 @@ Item {
                                                         onToggled:  {
                                                             if(checked) {
                                                                 platformInterface.load_enables.update("low_load_on")
-                                                                platformInterface.set_load_dac.update(lowloadSetting.value)
+                                                                platformInterface.set_load_dac_load.update(lowloadSetting.value)
                                                             }
                                                             else  {
                                                                 platformInterface.load_enables.update("off")
@@ -1025,7 +1025,7 @@ Item {
                                                         onLoad_enable_status_low_loadChanged: {
                                                             if(load_enable_status_low_load === "on") {
                                                                 lowLoadEnable.checked = true
-                                                                platformInterface.set_load_dac.update(lowloadSetting.value)
+                                                               // platformInterface.set_load_dac_load.update(lowloadSetting.value)
                                                             }
                                                             else {
                                                                 lowLoadEnable.checked = false
@@ -1069,7 +1069,7 @@ Item {
                                                         inputBox.validator: IntValidator { top: 100; bottom: 1 }
                                                         onUserSet: {
                                                             if(lowLoadEnable.checked)
-                                                              platformInterface.set_load_dac.update(lowloadSetting.value)
+                                                              platformInterface.set_load_dac_load.update(lowloadSetting.value)
                                                         }
 
 
@@ -1109,10 +1109,9 @@ Item {
                                                         onToggled:  {
                                                             if(checked) {
                                                                 platformInterface.load_enables.update("mid_load_on")
-                                                                platformInterface.set_load_dac.update(midloadSetting.value.toFixed(2))
+                                                                platformInterface.set_load_dac_load.update(midloadSetting.value.toFixed(2))
                                                             }
                                                             else {
-                                                                // midloadSetting.enabled = false
                                                                 platformInterface.load_enables.update("off")
 
                                                             }
@@ -1122,7 +1121,7 @@ Item {
                                                         onLoad_enable_status_mid_loadChanged: {
                                                             if(load_enable_status_mid_load === "on") {
                                                                 midCurrentEnable.checked = true
-                                                                platformInterface.set_load_dac.update(midloadSetting.value.toFixed(2))
+                                                                //platformInterface.set_load_dac_load.update(midloadSetting.value.toFixed(2))
                                                             }
                                                             else {
                                                                 midCurrentEnable.checked = false
@@ -1165,11 +1164,12 @@ Item {
                                                         inputBox.validator: DoubleValidator { top: 100; bottom: 0.1}
                                                         onUserSet: {
                                                             if(midCurrentEnable.checked)
-                                                                 platformInterface.set_load_dac.update(midloadSetting.value.toFixed(2))
+                                                                 platformInterface.set_load_dac_load.update(midloadSetting.value.toFixed(2))
                                                         }
 
 
                                                     }
+
                                                 }
 
                                             }
@@ -1200,7 +1200,7 @@ Item {
                                                         onToggled:  {
                                                             if(checked) {
                                                                 platformInterface.load_enables.update("high_load_on")
-                                                                platformInterface.set_load_dac.update(highloadSetting.value.toFixed(2))
+                                                                platformInterface.set_load_dac_load.update(highloadSetting.value.toFixed(2))
                                                             }
                                                             else {
                                                                 platformInterface.load_enables.update("off")
@@ -1210,7 +1210,7 @@ Item {
                                                         property var load_enable_status_high_load: platformInterface.load_enable_status.high_load_en
                                                         onLoad_enable_status_high_loadChanged: {
                                                             if(load_enable_status_high_load === "on") {
-                                                                platformInterface.set_load_dac.update(highloadSetting.value.toFixed(2))
+                                                               // platformInterface.set_load_dac_load.update(highloadSetting.value.toFixed(2))
                                                                 highCurrentEnable.checked = true
                                                             }
                                                             else {
@@ -1254,7 +1254,7 @@ Item {
                                                         inputBox.validator: DoubleValidator { top: 20; bottom: 0.01 }
                                                         onUserSet: {
                                                             if(highCurrentEnable.checked)
-                                                            platformInterface.set_load_dac.update(highloadSetting.value.toFixed(2))
+                                                            platformInterface.set_load_dac_load.update(highloadSetting.value.toFixed(2))
                                                         }
 
 
@@ -1351,19 +1351,19 @@ Item {
                                 //                                                if(lowLoadEnable.checked){
                                 //                                                    inputBox.text = (value * 1000000).toFixed(0)
                                 //                                                    console.log(inputBox.text)
-                                //                                                    platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
+                                //                                                    platformInterface.set_load_dac_load.update(value.toFixed(decimalPlaces))
                                 //                                                }
                                 //                                                else if (midCurrentEnable.checked) {
                                 //                                                    inputBox.text = (value * 1000).toFixed(1)
-                                //                                                    platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
+                                //                                                    platformInterface.set_load_dac_load.update(value.toFixed(decimalPlaces))
                                 //                                                }
                                 //                                                else if (highCurrentEnable.checked) {
                                 //                                                    inputBox.text = (value).toFixed(2)
-                                //                                                    platformInterface.set_load_dac.update(value.toFixed(decimalPlaces))
+                                //                                                    platformInterface.set_load_dac_load.update(value.toFixed(decimalPlaces))
                                 //                                                }
                                 //                                                else {
                                 //                                                    inputBox.text = (value * 1000000).toFixed(0)
-                                //                                                    platformInterface.set_load_dac.update(value.toFixed(6))
+                                //                                                    platformInterface.set_load_dac_load.update(value.toFixed(6))
                                 //                                                }
 
                                 //                                            }
