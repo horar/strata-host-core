@@ -154,16 +154,6 @@ Item {
                     font.family: "monospace"
                     text: qsTr("Timestamp")
                 }
-
-                SGWidgets.SGIcon {
-                    id: timeIcon
-                    anchors.right: tsHeader.right
-                    anchors.verticalCenter: tsHeader.verticalCenter
-                    height: textMetricsTsTime.boundingRect.height
-                    width: height
-                    visible: timestampSimpleFormat ? true : false
-                    source: "qrc:/sgimages/clock.svg"
-                }
             }
 
             Divider {
