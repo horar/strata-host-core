@@ -181,7 +181,7 @@ function Show-TestResult {
     )
 
     If ($TestResults) {
-        If ($TestResults[0] -Eq -1) {
+        If ($TestResults[0] -Lt 0 -Or $TestResults[1] -Lt 1) {
             Write-Host -ForegroundColor Red "`nError found with test $TestName."
         } Elseif ($TestResults[0] -Eq $TestResults[1]) {
             Write-Host -ForegroundColor Green "`nResult for ${TestName}: $($TestResults[0]) passed out of $($TestResults[1])."
