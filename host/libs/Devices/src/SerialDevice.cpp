@@ -21,6 +21,7 @@ SerialDevice::SerialDevice(const int deviceId, const QString& name) :
 
     connect(&serialPort_, &QSerialPort::errorOccurred, this, &SerialDevice::handleError);
     connect(&serialPort_, &QSerialPort::readyRead, this, &SerialDevice::readMessage);
+    connect(this, &SerialDevice::writeToPort, this, &SerialDevice::handleWriteToPort);
 
     qCDebug(logCategorySerialDevice).nospace() << "Created new serial device 0x" << hex << static_cast<uint>(deviceId_)
                                                << ", name: " << portName_ << ", unique ID: 0x" << reinterpret_cast<quintptr>(this);
@@ -89,30 +90,38 @@ bool SerialDevice::sendMessage(const QByteArray msg, quintptr lockId) {
     return writeData(msg, lockId);
 }
 
-bool SerialDevice::writeData(const QByteArray& data, quintptr lockId) {
+bool SerialDevice::writeData(const QByteArray data, quintptr lockId) {
     if (deviceLock_ == lockId) {
-        qint64 writtenBytes = serialPort_.write(data);
-        qint64 dataSize = data.size();
-        // Strata commands must end with '\n'
-        if (data.endsWith('\n') == false) {
-            writtenBytes += serialPort_.write("\n", 1);
-            ++dataSize;
-        }
-        if (writtenBytes == dataSize) {
-            emit messageSent(data);
-            return true;
-        } else {
-            QString errMsg(QStringLiteral("Cannot write whole data to device."));
-            qCCritical(logCategorySerialDevice).noquote() << this << errMsg;
-            emit serialDeviceError(-1, errMsg);
-        }
+        // Signal must be emitted because of calling this function from another
+        // thread as in which this SerialDevice object was created. Slot connected
+        // to this signal will be executed in correct thread.
+        // Data cannot be written to serial port from another thread (otherwise error
+        // "QSocketNotifier: Socket notifiers cannot be enabled or disabled from another thread" occures).
+        emit writeToPort(data, QPrivateSignal());
+        return true;
     } else {
         QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
-        qCInfo(logCategorySerialDevice).noquote() << this << errMsg;
+        qCWarning(logCategorySerialDevice).noquote() << this << errMsg;
+        emit serialDeviceError(-1, errMsg);
+        return false;
+    }
+}
+
+void SerialDevice::handleWriteToPort(const QByteArray data) {
+    qint64 writtenBytes = serialPort_.write(data);
+    qint64 dataSize = data.size();
+    // Strata commands must end with '\n'
+    if (data.endsWith('\n') == false) {
+        writtenBytes += serialPort_.write("\n", 1);
+        ++dataSize;
+    }
+    if (writtenBytes == dataSize) {
+        emit messageSent(data);
+    } else {
+        QString errMsg(QStringLiteral("Cannot write whole data to device."));
+        qCCritical(logCategorySerialDevice).noquote() << this << errMsg;
         emit serialDeviceError(-1, errMsg);
     }
-
-    return false;
 }
 
 void SerialDevice::handleError(QSerialPort::SerialPortError error) {
