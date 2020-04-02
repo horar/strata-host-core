@@ -19,33 +19,35 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
     Component.onCompleted: {
-        Help.registerTarget(shortCircuitButton, "This button enables the onboard short-circuit load used to emulate a short to ground on the LDO output for approximately 2 ms. The short-circuit load cannot be enabled when powering the LDO via the 5V from the Strata USB connector and/or when the input buck regulator is enabled. The current pulled by the short-circuit load will vary with LDO output voltage. See the Platform Content page for more information about the short-circuit load and LDO behavior during a short-circuit event.", 0, "AdjLDOAdvanceHelp")
-        Help.registerTarget(currentLimitThresholdLabel, "This info box will show the approximate output current threshold at which the LDO's output current limit protection was triggered. This info box does not show the current limit threshold during a short-circuit event caused by enabling the onboard short-circuit load.", 1, "AdjLDOAdvanceHelp")
-        Help.registerTarget(pgldoLabel, "This indicator will be green when the LDO power good signal is high. If the TSOP-5 LDO package is being used, the indicator will be grayed out.", 2, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ocpTriggeredLabel, "This indicator will turn red momentarily if the LDO's power good signal or the PG_308 signal goes low while the short-circuit load is enabled.", 3, "AdjLDOAdvanceHelp")
-        Help.registerTarget(currentLimitReachLabel, "This indicator will turn red when the LDO's current limit protection is triggered. The indicator status may be sporadic in some cases. See the Platform Content for more information on the current limit behavior of the LDO and how this is detected.", 4, "AdjLDOAdvanceHelp")
-        Help.registerTarget(tsdTriggeredLabel, "This indicator will turn red when the LDO's thermal shutdown (TSD) protection is triggered. The indicator status may be sporadic in some cases. See the Platform Content for more information on the TSD behavior of the LDO and how this is detected.", 5, "AdjLDOAdvanceHelp")
-        Help.registerTarget(estTSDThresLabel, "This info box will show the estimated LDO junction temperature threshold at which the LDO's TSD protection was triggered.", 6, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoPowerDissipationLabel, "This gauge shows the power loss in the LDO when it is enabled.", 7, "AdjLDOAdvanceHelp")
-        Help.registerTarget(boardTempLabel, "This gauge shows the board temperature near the ground pad of the selected LDO package.", 8, "AdjLDOAdvanceHelp")
-        Help.registerTarget(appxLDoTempLabel, "This gauge shows the approximate LDO junction temperature. See the Platform Content page for more information on how it is calculated.", 9, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoInputVolLabel, "This slider allows you to set the desired input voltage of the LDO when being supplied by the input buck regulator. The value can be set while the input buck regulator is not being used and the voltage will automatically be adjusted as needed when the input buck regulator is activated.", 10, "AdjLDOAdvanceHelp")
-        Help.registerTarget(boardInputLabel, "This combo box allows you to choose the main input voltage option (upstream power supply) for the board. The 'External' option uses the input voltage from the input banana plugs. The 'USB 5V' option uses the 5V supply from the Strata USB connector. The 'Off' option disconnects both inputs from VIN and pulls VIN low.", 11, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoEnableSwitchLabel, "This switch enables the LDO.", 12, "AdjLDOAdvanceHelp")
-        Help.registerTarget(setLDOOutputVoltageContainer, "This slider allows you to set the desired output voltage of the LDO. The value can be set while the LDO is disabled, and the voltage will automatically be adjusted as needed whenever the LDO is enabled again.", 13, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. The 'Bypass' option connects the LDO input directly to VIN_SB through a load switch. The 'Buck Regulator' option allows adjustment of the input voltage to the LDO through an adjustable output voltage buck regulator. The 'Off' option disables both the input buck regulator and bypass load switch, disconnecting the LDO from the input power supply, and pulls VIN_LDO low. The 'Direct' option allows you to power the LDO directly through the VIN_LDO solder pad on the board, bypassing the input stage entirely. WARNING! - when using this option, ensure you do not use the other LDO input voltage options while an external power supply is supplying power to the LDO through the VIN_LDO solder pad. See the Platform Content page for more information about the options for supplying the LDO input voltage.", 14, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoDisableLabel, "This switch disables the LDO output voltage adjustment circuit included on this board. See the Platform Content page for more information on using this feature.", 15, "AdjLDOAdvanceHelp")
-        Help.registerTarget(setOutputCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value can be set while the load is disabled and the load current will automatically be adjusted as needed when the load is enabled. The value may need to be reset to the desired level after recovery from an LDO UVLO event.", 16, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the LDO package actually populated on the board if different from the stock LDO package option. See the Platform Content page for more information about using alternate LDO packages with this board.", 17, "AdjLDOAdvanceHelp")
-        Help.registerTarget(loadEnableSwitchLabel, "This switch enables the onboard load.", 18, "AdjLDOAdvanceHelp")
-        Help.registerTarget(extLoadCheckboxLabel, "Check this box if an external load is connected to the output banana plugs. During normal onboard load operation, a loop is run when the current level is set within the LDO's nominal output current range to minimize the load current error, and this loop should not be run if an external load is attached.", 19 , "AdjLDOAdvanceHelp")
-        Help.registerTarget(vinGoodLabel, "This indicator will be green when:\na.) VIN is greater than 2.5V when the input buck regulator is enabled\nb.) VIN is greater than 1.5V when it is disabled.", 20, "AdjLDOAdvanceHelp")
-        Help.registerTarget(vinReadyLabel, "This indicator will be green when the LDO input voltage is greater than the LDO input UVLO threshold of 1.6V.", 21, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoInputVoltageLabel, "This info box shows the input voltage of the LDO.", 22, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoOutputVoltageLabel, "This info box shows the output voltage of the LDO.", 23, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoOutputCurrentLabel, "This info box shows the output current of the LDO when pulled by either the onboard electronic load or through an external load connected to the output banana plugs. Current pulled by the onboard short-circuit load is not measured and thus will not be shown in this box.", 24, "AdjLDOAdvanceHelp")
-        Help.registerTarget(diffVoltageLabel, "This info box shows the voltage drop across the LDO.", 25, "AdjLDOAdvanceHelp")
-        Help.registerTarget(dropReachedLabel, "This indicator will turn red when the LDO is in dropout.", 26, "AdjLDOAdvanceHelp")
+        Help.registerTarget(currentLimitThresholdLabel, "This info box will show the approximate output current threshold at which the LDO's output current limit protection was triggered. This info box does not show the current limit threshold during a short-circuit event caused by enabling the onboard short-circuit load or if a load is attached directly at the LDO output via the solder pad.", 0, "AdjLDOAdvanceHelp")
+        Help.registerTarget(resetCurrLimitButton, "This button resets the previous detected current limit threshold value and re-enables the logic for detecting a current limit event. The current limit threshold may immediately update after resetting if the output current remains above the current limit threshold.", 1, "AdjLDOAdvanceHelp")
+        Help.registerTarget(shortCircuitButton, "This button enables the onboard short-circuit load used to emulate a short to ground on the LDO output for approximately 2 ms. The short-circuit load cannot be enabled when powering the LDO via the 5V from the Strata USB connector and/or when the input buck regulator is enabled. The current pulled by the short-circuit load will vary with LDO output voltage. See the Platform Content page for more information about the short-circuit load and LDO behavior during a short-circuit event.", 2, "AdjLDOAdvanceHelp")
+        Help.registerTarget(currentLimitReachLabel, "This indicator will turn red when the LDO's current limit protection is triggered. The indicator state will need to be cleared manually when triggered using the \"Reset Current Limit Trigger\" button. See the Platform Content for more information on the current limit behavior of the LDO and how this is detected.", 3, "AdjLDOAdvanceHelp")
+        Help.registerTarget(pgldoLabel, "This indicator will be green when the LDO power good signal is high. If the TSOP-5 LDO package is being used, the indicator will be green when the PG_308 signal from the NCP308 used to monitor the LDO output voltage is high.", 4, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ocpTriggeredLabel, "This indicator will turn red momentarily if the LDO's power good signal or the PG_308 signal goes low while the short-circuit load is enabled.", 5, "AdjLDOAdvanceHelp")
+        Help.registerTarget(tsdTriggeredLabel, "This indicator will turn red when the LDO's thermal shutdown (TSD) protection is triggered. The indicator state will need to be cleared manually when triggered using the \"Reset TSD Trigger\" button. See the Platform Content for more information on the TSD behavior of the LDO and how this is detected.", 6, "AdjLDOAdvanceHelp")
+        Help.registerTarget(estTSDThresLabel, "This info box will show the estimated LDO junction temperature threshold at which the LDO's TSD protection was triggered.", 7, "AdjLDOAdvanceHelp")
+        Help.registerTarget(resetTSDButton, "This button resets the previous detected TSD threshold value and re-enables the logic for detecting a TSD event. During a sustained TSD event, the TSD threshold will update immediately after it is reset and will continue to do so as long as the TSD conditions are valid.", 8, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoPowerDissipationLabel, "This gauge shows the power loss in the LDO when it is enabled. This gauge will not be accurate when an external load is attached directly to the LDO output via the solder pad.", 9, "AdjLDOAdvanceHelp")
+        Help.registerTarget(boardTempLabel, "This gauge shows the board temperature near the ground pad of the selected LDO package.", 10, "AdjLDOAdvanceHelp")
+        Help.registerTarget(appxLDoTempLabel, "This gauge shows the approximate LDO junction temperature. See the Platform Content page for more information on how it is calculated.", 11, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoInputVolLabel, "This slider allows you to set the desired input voltage of the LDO when being supplied by the input buck regulator. The value can be set while the input buck regulator is not being used and the voltage will automatically be adjusted as needed when the input buck regulator is activated.", 12, "AdjLDOAdvanceHelp")
+        Help.registerTarget(boardInputLabel, "This combo box allows you to choose the main input voltage option (upstream power supply) for the board. The 'External' option uses the input voltage from the input banana plugs. The 'USB 5V' option uses the 5V supply from the Strata USB connector. The 'Off' option disconnects both inputs from VIN and pulls VIN low.", 13, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoEnableSwitchLabel, "This switch enables the LDO.", 14, "AdjLDOAdvanceHelp")
+        Help.registerTarget(setLDOOutputVoltageContainer, "This slider allows you to set the desired output voltage of the LDO. The value can be set while the LDO is disabled, and the voltage will automatically be adjusted as needed whenever the LDO is enabled again.", 15, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. The 'Bypass' option connects the LDO input directly to VIN_SB through a load switch. The 'Buck Regulator' option allows adjustment of the input voltage to the LDO through an adjustable output voltage buck regulator. The 'Off' option disables both the input buck regulator and bypass load switch, disconnecting the LDO from the input power supply, and pulls VIN_LDO low. The 'Direct' option allows you to power the LDO directly through the VIN_LDO solder pad on the board, bypassing the input stage entirely. WARNING! - when using this option, ensure you do not use the other LDO input voltage options while an external power supply is supplying power to the LDO through the VIN_LDO solder pad. See the Platform Content page for more information about the options for supplying the LDO input voltage.", 16, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoDisableLabel, "This switch disables the LDO output voltage adjustment circuit included on this board. See the Platform Content page for more information on using this feature.", 17, "AdjLDOAdvanceHelp")
+        Help.registerTarget(setOutputCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value can be set while the load is disabled and the load current will automatically be adjusted as needed when the load is enabled. The value may need to be reset to the desired level after recovery from an LDO UVLO event.", 18, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the LDO package actually populated on the board if different from the stock LDO package option. See the Platform Content page for more information about using alternate LDO packages with this board.", 19, "AdjLDOAdvanceHelp")
+        Help.registerTarget(loadEnableSwitchLabel, "This switch enables the onboard load.", 20, "AdjLDOAdvanceHelp")
+        Help.registerTarget(extLoadCheckboxLabel, "Check this box if an external load is connected to the output banana plugs. During normal onboard load operation, a loop is run when the current level is set within the LDO's nominal output current range to minimize the load current error, and this loop should not be run if an external load is attached.", 21, "AdjLDOAdvanceHelp")
+        Help.registerTarget(vinGoodLabel, "This indicator will be green when:\na.) VIN is greater than 2.5V when the input buck regulator is enabled\nb.) VIN is greater than 1.5V when it is disabled.", 22, "AdjLDOAdvanceHelp")
+        Help.registerTarget(vinReadyLabel, "This indicator will be green when the LDO input voltage is greater than the LDO input UVLO threshold of 1.6V.", 23, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoInputVoltageLabel, "This info box shows the input voltage of the LDO.", 24, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoOutputVoltageLabel, "This info box shows the output voltage of the LDO.", 25, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoOutputCurrentLabel, "This info box shows the output current of the LDO when pulled by either the onboard electronic load or through an external load connected to the output banana plugs. Current pulled by the onboard short-circuit load or an external load attached directly to the LDO output via the solder pad is not measured will not be shown in this box.", 26, "AdjLDOAdvanceHelp")
+        Help.registerTarget(diffVoltageLabel, "This info box shows the voltage drop across the LDO.", 27, "AdjLDOAdvanceHelp")
+        Help.registerTarget(dropReachedLabel, "This indicator will turn red when the LDO is in dropout. The dropout threshold is defined as the point when the LDO output voltage drops 3% below the value set with the \"Set LDO Output Voltage\" slider or info box. The indicator state is invalid when the LDO output voltage adjustment feature is disabled using the \"Disable LDO Output Voltage Adjustment\" switch.", 28, "AdjLDOAdvanceHelp")
     }
 
     property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
@@ -245,10 +247,14 @@ Item {
         if (control_states.vout_set_disabled === true) {
             setLDOOutputVoltageLabel.opacity = 0.5
             setLDOOutputVoltageLabel.enabled = false
+            dropReachedLabel.opacity = 0.5
+            dropReachedLabel.enabled = false
             ldoDisable.checked = true
         } else {
             setLDOOutputVoltageLabel.opacity = 1
             setLDOOutputVoltageLabel.enabled = true
+            dropReachedLabel.opacity = 1
+            dropReachedLabel.enabled = true
             ldoDisable.checked = false
         }
 
@@ -271,7 +277,7 @@ Item {
         if(int_status.tsd === true) tsdTriggered.status = SGStatusLight.Red
         else  tsdTriggered.status = SGStatusLight.Off
 
-        if(int_status.dropout === true)  dropReached.status = SGStatusLight.Red
+        if(int_status.dropout === true && dropReachedLabel.enabled)  dropReached.status = SGStatusLight.Red
         else dropReached.status = SGStatusLight.Off
     }
 
@@ -286,7 +292,7 @@ Item {
     onSc_allowedChanged: {
         if (sc_allowed === false) {
             if (root.visible && !warningPopup.opened) {
-                popup_message = "The short-circuit load cannot be enabled when using USB 5V as the upstream supply voltage or when using the input buck regulator to supply the LDO input voltage."
+                popup_message = "The short-circuit load cannot be enabled when using USB 5V or the input buck regulator to supply the LDO input voltage."
                 warningPopup.open()
             }
         }
@@ -668,7 +674,7 @@ Item {
                                         Layout.fillHeight: true
 
                                         SGButton {
-                                            id: resetCurrLimitutton
+                                            id: resetCurrLimitButton
                                             height: preferredContentHeight * 1.5
                                             width: preferredContentWidth * 1.25
                                             text: "Reset Current \n Limit Trigger"
@@ -888,7 +894,7 @@ Item {
                                         Layout.fillHeight: true
 
                                         SGButton {
-                                            id: resetTSDtutton
+                                            id: resetTSDButton
                                             height: preferredContentHeight * 1.5
                                             width: preferredContentWidth * 1.25
                                             text: "Reset TSD \n Trigger"
