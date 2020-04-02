@@ -1067,6 +1067,10 @@ Item {
                                                         inputBox.enabled: true
                                                         fontSizeMultiplier: ratioCalc * 1.2
                                                         inputBox.validator: IntValidator { top: 100; bottom: 1 }
+                                                        onUserSet: {
+                                                            if(lowLoadEnable.checked)
+                                                              platformInterface.set_load_dac.update(lowloadSetting.value)
+                                                        }
 
 
 
@@ -1104,9 +1108,8 @@ Item {
 
                                                         onToggled:  {
                                                             if(checked) {
-
                                                                 platformInterface.load_enables.update("mid_load_on")
-                                                                platformInterface.set_load_dac.update(midloadSetting.value)
+                                                                platformInterface.set_load_dac.update(midloadSetting.value.toFixed(2))
                                                             }
                                                             else {
                                                                 // midloadSetting.enabled = false
@@ -1119,7 +1122,7 @@ Item {
                                                         onLoad_enable_status_mid_loadChanged: {
                                                             if(load_enable_status_mid_load === "on") {
                                                                 midCurrentEnable.checked = true
-                                                                platformInterface.set_load_dac.update(midloadSetting.value)
+                                                                platformInterface.set_load_dac.update(midloadSetting.value.toFixed(2))
                                                             }
                                                             else {
                                                                 midCurrentEnable.checked = false
@@ -1160,6 +1163,10 @@ Item {
                                                         inputBox.enabled: true
                                                         fontSizeMultiplier: ratioCalc * 1.2
                                                         inputBox.validator: DoubleValidator { top: 100; bottom: 0.1}
+                                                        onUserSet: {
+                                                            if(midCurrentEnable.checked)
+                                                                 platformInterface.set_load_dac.update(midloadSetting.value.toFixed(2))
+                                                        }
 
 
                                                     }
@@ -1193,7 +1200,7 @@ Item {
                                                         onToggled:  {
                                                             if(checked) {
                                                                 platformInterface.load_enables.update("high_load_on")
-                                                                platformInterface.set_load_dac.update(highloadSetting.value)
+                                                                platformInterface.set_load_dac.update(highloadSetting.value.toFixed(2))
                                                             }
                                                             else {
                                                                 platformInterface.load_enables.update("off")
@@ -1203,7 +1210,7 @@ Item {
                                                         property var load_enable_status_high_load: platformInterface.load_enable_status.high_load_en
                                                         onLoad_enable_status_high_loadChanged: {
                                                             if(load_enable_status_high_load === "on") {
-                                                                platformInterface.set_load_dac.update(highloadSetting.value)
+                                                                platformInterface.set_load_dac.update(highloadSetting.value.toFixed(2))
                                                                 highCurrentEnable.checked = true
                                                             }
                                                             else {
@@ -1244,7 +1251,11 @@ Item {
                                                         inputBoxWidth: highLoadSettingContainer.width/9
                                                         inputBox.enabled: true
                                                         fontSizeMultiplier: ratioCalc * 1.2
-                                                        inputBox.validator: DoubleValidator { }
+                                                        inputBox.validator: DoubleValidator { top: 20; bottom: 0.01 }
+                                                        onUserSet: {
+                                                            if(highCurrentEnable.checked)
+                                                            platformInterface.set_load_dac.update(highloadSetting.value.toFixed(2))
+                                                        }
 
 
 
