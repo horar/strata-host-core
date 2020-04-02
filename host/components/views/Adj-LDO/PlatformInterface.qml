@@ -17,6 +17,7 @@ Item {
         "iin":"85.0",           //Board input current
         "iout":"100.0",         //LDO output current
         "vdiff":"2.70",         //LDO differential voltage
+        "iin_ldo":"101.0",       //LDO input current
         "pin_sb":"0.340",       //Sync buck regulator input power
         "pin_ldo":"0.500",      //LDO input power
         "pout_ldo":"0.330",     //LDO output power
@@ -29,11 +30,11 @@ Item {
     }
 
     property var ldo_clim_thresh: {
-        "value" : "580.0"
+        "value" : ""
     }
 
     property var tsd_thresh: {
-        "value" : "125.0"
+        "value" : ""
     }
 
     property var control_states: {

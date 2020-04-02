@@ -50,6 +50,7 @@ Item {
 
     property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
     property string vinGoodThreshText: ""
+    property string pgoodLabelText: "\n(PG_308)"
     property string prevVinLDOSel: ""
     property string newVinLDOSel: ""
 
@@ -166,7 +167,6 @@ Item {
         currentLimitThreshold.text  = ldo_clim_thresh_notification
     }
 
-
     property var  tsd_thresh_notification: platformInterface.tsd_thresh.value
     onTsd_thresh_notificationChanged: {
         estTSDThres.text =  tsd_thresh_notification
@@ -224,18 +224,21 @@ Item {
         setOutputCurrent.value = control_states.load_set
 
         if(control_states.ldo_sel === "TSOP5")  {
-            pgldoLabel.opacity = 0.5
-            pgldoLabel.enabled = false
+//            pgldoLabel.opacity = 0.5
+//            pgldoLabel.enabled = false
+            pgoodLabelText = "\n(PG_308)"
             ldoPackageComboBox.currentIndex = 0
         }
         else if(control_states.ldo_sel === "DFN6") {
-            pgldoLabel.opacity = 1
-            pgldoLabel.enabled = true
+//            pgldoLabel.opacity = 1
+//            pgldoLabel.enabled = true
+            pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 1
         }
         else if (control_states.ldo_sel === "DFN8") {
-            pgldoLabel.opacity = 1
-            pgldoLabel.enabled = true
+//            pgldoLabel.opacity = 1
+//            pgldoLabel.enabled = true
+            pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 2
         }
 
@@ -261,7 +264,7 @@ Item {
 
         if(int_status.ldo_clim === true) {
             currentLimitReach.status = SGStatusLight.Red
-            currentLimitThreshold.text = platformInterface.ldo_clim_thresh.value
+            //currentLimitThreshold.text = platformInterface.ldo_clim_thresh.value
         }
         else currentLimitReach.status = SGStatusLight.Off
 
@@ -679,7 +682,7 @@ Item {
                                                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                                 onClicked: {
                                                     platformInterface.reset_clim.update()
-                                                    currentLimitThreshold.text = 0
+                                                    currentLimitThreshold.text = ""
 
                                                 }
                                             }
@@ -758,7 +761,7 @@ Item {
                                             alignment: SGAlignedLabel.SideTopCenter
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
-                                            text: "Power Good\n(PG_LDO)"
+                                            text: "Power Good" + pgoodLabelText
                                             font.bold: true
 
                                             SGStatusLight {
@@ -899,7 +902,7 @@ Item {
                                                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                                 onClicked: {
                                                     platformInterface.reset_tsd.update()
-                                                    estTSDThres.text = 0
+                                                    estTSDThres.text = ""
                                                 }
                                             }
                                         }

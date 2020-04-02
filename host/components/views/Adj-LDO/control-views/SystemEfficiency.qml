@@ -55,6 +55,7 @@ Item {
 
     property string prevVinLDOSel: ""
     property string newVinLDOSel: ""
+    property string pgoodLabelText: "\n(PG_308)"
 
     property var variant_name: platformInterface.variant_name.value
     onVariant_nameChanged: {
@@ -140,7 +141,7 @@ Item {
         buckLDOInputVoltage.text = telemetry_notification.vin_ldo
         systemInputVoltage.text = telemetry_notification.vin_sb
         systemInputCurrent.text = telemetry_notification.iin
-        buckLDOOutputCurrent.text = telemetry_notification.iout
+        buckLDOOutputCurrent.text = telemetry_notification.iin_ldo
         ldoSystemInputVoltage.text = telemetry_notification.vout_ldo
         ldoSystemInputCurrent.text = telemetry_notification.iout
     }
@@ -209,26 +210,29 @@ Item {
             systemInputPowerLabel.enabled = false
             totalSystemEfficiencyLabel.opacity = 0.5
             totalSystemEfficiencyLabel.enabled = false
-            inputPowerLabel.opacity = 0.5
-            inputPowerLabel.enabled = false
+            inputPowerLabel.opacity = 1
+            inputPowerLabel.enabled = true
             syncBuckEfficiencyLabel.opacity = 0.5
             syncBuckEfficiencyLabel.enabled = false
             ldoInputComboBox.currentIndex = 3
         }
 
         if(control_states.ldo_sel === "TSOP5")  {
-            //            pgldoLabel.opacity = 0.5
-            //            pgldoLabel.enabled = false
+//            pgldoLabel.opacity = 0.5
+//            pgldoLabel.enabled = false
+            pgoodLabelText = "\n(PG_308)"
             ldoPackageComboBox.currentIndex = 0
         }
         else if(control_states.ldo_sel === "DFN6") {
-            //            pgldoLabel.opacity = 1
-            //            pgldoLabel.enabled = true
+//            pgldoLabel.opacity = 1
+//            pgldoLabel.enabled = true
+            pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 1
         }
         else if (control_states.ldo_sel === "DFN8") {
-            //            pgldoLabel.opacity = 1
-            //            pgldoLabel.enabled = true
+//            pgldoLabel.opacity = 1
+//            pgldoLabel.enabled = true
+            pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 2
         }
 
@@ -1207,7 +1211,7 @@ Item {
                                     toText.fontSizeMultiplier: 0.9
                                     stepSize: 0.1
                                     inputBoxWidth: setOutputCurrentContainer.width/6
-                                    onUserSet: platformInterface.set_load.update(parseInt(value))
+                                    onUserSet: platformInterface.set_load.update(value.toFixed(1))
 
                                 }
                             }
@@ -1591,7 +1595,7 @@ Item {
                                                 alignment: SGAlignedLabel.SideTopCenter
                                                 anchors.centerIn: parent
                                                 fontSizeMultiplier: ratioCalc
-                                                text: "Power Good\n(PG_LDO)"
+                                                text: "Power Good" + pgoodLabelText
                                                 font.bold: true
 
                                                 SGStatusLight {

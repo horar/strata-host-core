@@ -20,6 +20,8 @@ Item {
 
     Component.onCompleted: {
         platformInterface.get_all_states.send()
+        platformInterface.reset_tsd.update()
+        platformInterface.reset_clim.update()
         Help.registerTarget(tempLabel, "This gauge shows the board temperature near the ground pad of the selected LDO package.", 0, "AdjLDOBasicHelp")
         Help.registerTarget(efficiencyLabel, "This gauge shows the efficiency of the LDO when it is enabled.", 1, "AdjLDOBasicHelp")
         Help.registerTarget(powerDissipatedLabel, "This gauge shows the power loss in the LDO when it is enabled.", 2, "AdjLDOBasicHelp")
@@ -48,6 +50,7 @@ Item {
 
     property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
     property string titleText: "NCP164C \n Low-noise, High PSRR Linear Regulator"
+    property string pgoodLabelText: "\n(PG_308)"
     property string vinGoodThreshText: ""
     property string prevVinLDOSel: ""
     property string newVinLDOSel: ""
@@ -122,18 +125,21 @@ Item {
         else loadEnableSwitch.checked = false
 
         if(control_states.ldo_sel === "TSOP5")  {
-            pgoodLabel.opacity = 0.5
-            pgoodLabel.enabled = false
+//            pgoodLabel.opacity = 0.5
+//            pgoodLabel.enabled = false
+            pgoodLabelText = "\n(PG_308)"
             ldoPackageComboBox.currentIndex = 0
         }
         else if(control_states.ldo_sel === "DFN6") {
-            pgoodLabel.opacity = 1
-            pgoodLabel.enabled = true
+//            pgoodLabel.opacity = 1
+//            pgoodLabel.enabled = true
+            pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 1
         }
         else if (control_states.ldo_sel === "DFN8") {
-            pgoodLabel.opacity = 1
-            pgoodLabel.enabled = true
+//            pgoodLabel.opacity = 1
+//            pgoodLabel.enabled = true
+            pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 2
         }
 
@@ -775,7 +781,7 @@ Item {
                                         alignment: SGAlignedLabel.SideTopCenter
                                         anchors.centerIn: parent
                                         fontSizeMultiplier: ratioCalc
-                                        text: "Power Good \n (PG_LDO)"
+                                        text: "Power Good" + pgoodLabelText
                                         font.bold: true
 
                                         SGStatusLight {
@@ -784,7 +790,7 @@ Item {
                                             width: 40
                                             property var int_pg_ldo:  platformInterface.int_status.int_pg_ldo
                                             onInt_pg_ldoChanged: {
-                                                if(int_pg_ldo === true && pgoodLabel.enabled)
+                                                if(int_pg_ldo === true) //&& pgoodLabel.enabled)
                                                     pgoodLight.status  = SGStatusLight.Green
                                                 else pgoodLight.status  = SGStatusLight.Off
                                             }
@@ -950,17 +956,17 @@ Item {
                                                     onActivated: {
                                                         if(currentIndex === 0) {
                                                             platformInterface.select_ldo.update("TSOP5")
-                                                            pgoodLabel.opacity = 0.5
-                                                            pgoodLabel.enabled = false
+//                                                            pgoodLabel.opacity = 0.5
+//                                                            pgoodLabel.enabled = false
                                                         }
                                                         else if(currentIndex === 1) {
-                                                            pgoodLabel.opacity = 1
-                                                            pgoodLabel.enabled = true
+//                                                            pgoodLabel.opacity = 1
+//                                                            pgoodLabel.enabled = true
                                                             platformInterface.select_ldo.update("DFN6")
                                                         }
                                                         else if(currentIndex === 2) {
-                                                            pgoodLabel.opacity = 1
-                                                            pgoodLabel.enabled = true
+//                                                            pgoodLabel.opacity = 1
+//                                                            pgoodLabel.enabled = true
                                                             platformInterface.select_ldo.update("DFN8")
                                                         }
                                                         else console.log("Unknown State")
