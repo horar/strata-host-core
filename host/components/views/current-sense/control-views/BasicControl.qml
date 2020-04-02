@@ -1025,7 +1025,7 @@ Item {
                                                         onLoad_enable_status_low_loadChanged: {
                                                             if(load_enable_status_low_load === "on") {
                                                                 lowLoadEnable.checked = true
-                                                               // platformInterface.set_load_dac_load.update(lowloadSetting.value)
+                                                                // platformInterface.set_load_dac_load.update(lowloadSetting.value)
                                                             }
                                                             else {
                                                                 lowLoadEnable.checked = false
@@ -1040,45 +1040,31 @@ Item {
                                                 id: lowLoadSettingContainer
                                                 Layout.fillHeight: true
                                                 Layout.fillWidth: true
-                                                //color: "red"
 
-                                                SGAlignedLabel {
-                                                    id:  lowloadSettingLabel
-                                                    target: lowloadSetting
-                                                    text: ""
-                                                    fontSizeMultiplier: ratioCalc * 1.2
-                                                    font.bold : true
-                                                    alignment: SGAlignedLabel.SideTopLeft
-                                                    anchors.left: parent.left
+
+                                                SGSlider {
+                                                    id: lowloadSetting
+                                                    width: lowLoadSettingContainer.width - 50
                                                     anchors.verticalCenter: parent.verticalCenter
-                                                    anchors.verticalCenterOffset:  -10
-
-                                                    SGSlider {
-                                                        id: lowloadSetting
-                                                        width: lowLoadSettingContainer.width - 50
-                                                        live: false
-                                                        from: 1
-                                                        to:  100
-                                                        stepSize: 1
-                                                        fromText.text: "1µA"
-                                                        toText.text: "100µA"
-                                                        value: 0
-                                                        inputBoxWidth: lowLoadSettingContainer.width/9
-                                                        inputBox.enabled: true
-                                                        fontSizeMultiplier: ratioCalc * 1.2
-                                                        inputBox.validator: IntValidator { top: 100; bottom: 1 }
-                                                        onUserSet: {
-                                                            if(lowLoadEnable.checked)
-                                                              platformInterface.set_load_dac_load.update(lowloadSetting.value)
-                                                        }
-
-
-
+                                                    anchors.verticalCenterOffset: 10
+                                                    live: false
+                                                    from: 1
+                                                    to:  100
+                                                    stepSize: 1
+                                                    fromText.text: "1µA"
+                                                    toText.text: "100µA"
+                                                    value: 0
+                                                    inputBoxWidth: lowLoadSettingContainer.width/9
+                                                    inputBox.enabled: true
+                                                    fontSizeMultiplier: ratioCalc * 1.2
+                                                    inputBox.validator: IntValidator { top: 100; bottom: 1 }
+                                                    onUserSet: {
+                                                        if(lowLoadEnable.checked)
+                                                            platformInterface.set_load_dac_load.update(lowloadSetting.value)
                                                     }
                                                 }
 
                                             }
-
 
                                         }
                                     }
@@ -1137,37 +1123,27 @@ Item {
                                                 id: midLoadSettingContainer
                                                 Layout.fillHeight: true
                                                 Layout.fillWidth: true
-                                                SGAlignedLabel {
-                                                    id:  midloadSettingLabel
-                                                    target: midloadSetting
-                                                    text: ""
-                                                    fontSizeMultiplier: ratioCalc * 1.2
-                                                    font.bold : true
-                                                    alignment: SGAlignedLabel.SideTopLeft
-                                                    anchors.left: parent.left
+
+
+                                                SGSlider {
+                                                    id: midloadSetting
+                                                    width: midLoadSettingContainer.width - 50
+                                                    live: false
+                                                    from: 0.1
+                                                    to:  100
+                                                    stepSize: 0.1
+                                                    fromText.text: "0.1mA"
+                                                    toText.text: "100mA"
+                                                    value: 0
                                                     anchors.verticalCenter: parent.verticalCenter
-                                                    anchors.verticalCenterOffset:  -10
-
-                                                    SGSlider {
-                                                        id: midloadSetting
-                                                        width: midLoadSettingContainer.width - 50
-                                                        live: false
-                                                        from: 0.1
-                                                        to:  100
-                                                        stepSize: 0.1
-                                                        fromText.text: "0.1mA"
-                                                        toText.text: "100mA"
-                                                        value: 0
-                                                        inputBoxWidth: midLoadSettingContainer.width/9
-                                                        inputBox.enabled: true
-                                                        fontSizeMultiplier: ratioCalc * 1.2
-                                                        inputBox.validator: DoubleValidator { top: 100; bottom: 0.1}
-                                                        onUserSet: {
-                                                            if(midCurrentEnable.checked)
-                                                                 platformInterface.set_load_dac_load.update(midloadSetting.value.toFixed(2))
-                                                        }
-
-
+                                                    anchors.verticalCenterOffset: 10
+                                                    inputBoxWidth: midLoadSettingContainer.width/9
+                                                    inputBox.enabled: true
+                                                    fontSizeMultiplier: ratioCalc * 1.2
+                                                    inputBox.validator: DoubleValidator { top: 100; bottom: 0.1}
+                                                    onUserSet: {
+                                                        if(midCurrentEnable.checked)
+                                                            platformInterface.set_load_dac_load.update(midloadSetting.value.toFixed(2))
                                                     }
 
                                                 }
@@ -1210,7 +1186,6 @@ Item {
                                                         property var load_enable_status_high_load: platformInterface.load_enable_status.high_load_en
                                                         onLoad_enable_status_high_loadChanged: {
                                                             if(load_enable_status_high_load === "on") {
-                                                               // platformInterface.set_load_dac_load.update(highloadSetting.value.toFixed(2))
                                                                 highCurrentEnable.checked = true
                                                             }
                                                             else {
@@ -1225,42 +1200,30 @@ Item {
                                                 id: highLoadSettingContainer
                                                 Layout.fillHeight: true
                                                 Layout.fillWidth: true
-                                                // color: "red"
 
-                                                SGAlignedLabel {
-                                                    id:  highloadSettingLabel
-                                                    target: highloadSetting
-                                                    text: ""
-                                                    fontSizeMultiplier: ratioCalc * 1.2
-                                                    font.bold : true
-                                                    alignment: SGAlignedLabel.SideTopLeft
-                                                    anchors.left: parent.left
+
+                                                SGSlider {
+                                                    id: highloadSetting
+                                                    width: highLoadSettingContainer.width - 50
+                                                    live: false
+                                                    from: 0.01
+                                                    to:  20
+                                                    stepSize: 0.01
+                                                    fromText.text: "0.01A"
+                                                    toText.text: "20A"
+                                                    value: 0
                                                     anchors.verticalCenter: parent.verticalCenter
-                                                    anchors.verticalCenterOffset:  -10
-
-                                                    SGSlider {
-                                                        id: highloadSetting
-                                                        width: highLoadSettingContainer.width - 50
-                                                        live: false
-                                                        from: 0.01
-                                                        to:  20
-                                                        stepSize: 0.01
-                                                        fromText.text: "0.01A"
-                                                        toText.text: "20A"
-                                                        value: 0
-                                                        inputBoxWidth: highLoadSettingContainer.width/9
-                                                        inputBox.enabled: true
-                                                        fontSizeMultiplier: ratioCalc * 1.2
-                                                        inputBox.validator: DoubleValidator { top: 20; bottom: 0.01 }
-                                                        onUserSet: {
-                                                            if(highCurrentEnable.checked)
+                                                    anchors.verticalCenterOffset: 10
+                                                    inputBoxWidth: highLoadSettingContainer.width/9
+                                                    inputBox.enabled: true
+                                                    fontSizeMultiplier: ratioCalc * 1.2
+                                                    inputBox.validator: DoubleValidator { top: 20; bottom: 0.01 }
+                                                    onUserSet: {
+                                                        if(highCurrentEnable.checked)
                                                             platformInterface.set_load_dac_load.update(highloadSetting.value.toFixed(2))
-                                                        }
-
-
-
                                                     }
                                                 }
+
 
                                             }
                                         }
