@@ -1459,12 +1459,10 @@ Item {
                                                     }
                                                     margin: -5
 
-
                                                     CheckBox {
                                                         id: extLoadCheckbox
                                                         checked: false
                                                         z: 100
-
                                                         onClicked: {
                                                             if(checked) {
                                                                 platformInterface.ext_load_conn.update(true)
