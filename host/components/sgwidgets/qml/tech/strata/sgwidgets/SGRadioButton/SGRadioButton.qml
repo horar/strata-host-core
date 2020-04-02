@@ -4,8 +4,8 @@ import QtQuick.Controls 2.12
 RadioButton {
     id: root
 
-    property color textColor: masterTextColor
-    property color radioColor: masterRadioColor
+    property color textColor: typeof masterTextColor !== "undefined" ? masterTextColor : "black"
+    property color radioColor: typeof masterRadioColor !== "undefined" ? masterRadioColor : "black"
 
     text: "Radio Button"
     implicitWidth: buttonText.implicitWidth + buttonText.anchors.leftMargin + indicator.width
@@ -28,7 +28,7 @@ RadioButton {
 
     indicator: Rectangle {
         id: outerRadio
-        implicitWidth: radioButtonSize
+        implicitWidth: typeof radioButtonSize !== "undefined" ? radioButtonSize : 20
         implicitHeight: implicitWidth
 //        y: root.height / 2 - height / 2
         radius: width/2

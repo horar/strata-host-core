@@ -56,7 +56,7 @@ Item {
 
             Image{
                 id:signalStrengthImage
-                source:"../images/wifiIcon.svg"
+                source:"qrc:/views/meshNetwork/images/wifiIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -88,7 +88,7 @@ Item {
 
             Image{
                 id:ambientLightImage
-                source:"../images/ambientLightIcon.svg"
+                source:"qrc:/views/meshNetwork/images/ambientLightIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -122,7 +122,7 @@ Item {
 
             Image{
                 id:batteryChargeImage
-                source:"../images/batteryChargeIcon.svg"
+                source:"qrc:/views/meshNetwork/images/batteryChargeIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -154,7 +154,7 @@ Item {
 
             Image{
                 id:temperatureImage
-                source:"../images/temperatureIcon.svg"
+                source:"qrc:/views/meshNetwork/images/temperatureIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -185,7 +185,7 @@ Item {
 
             Image{
                 id:meshImage
-                source:"../images/meshIcon.svg"
+                source:"qrc:/views/meshNetwork/images/meshIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -224,7 +224,8 @@ Item {
 
             Image{
                 id:clearImage
-                source:"../images/clearIcon.svg"
+                source: "qrc:/views/meshNetwork/images/clearIcon.svg"
+                //source:"qrc:images/clearIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter

@@ -153,7 +153,7 @@ void DownloadDocumentListModel::downloadSelectedFiles(const QUrl &saveUrl)
     for (int i = 0; i < data_.length(); ++i) {
         DownloadDocumentItem* item = data_.at(i);
         if (item == nullptr) {
-            qCWarning(logCategoryDocumentManager) << "item is empty" << i;
+            qCCritical(logCategoryDocumentManager) << "item is empty" << i;
             continue;
         }
 

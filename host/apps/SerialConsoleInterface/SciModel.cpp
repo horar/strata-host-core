@@ -2,7 +2,8 @@
 #include "logging/LoggingQtCategories.h"
 
 SciModel::SciModel(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      platformModel_(&boardManager_)
 {
     boardManager_.init();
 
@@ -24,7 +25,7 @@ SciModel::~SciModel()
 {
 }
 
-spyglass::BoardManager *SciModel::boardManager()
+strata::BoardManager *SciModel::boardManager()
 {
     return &boardManager_;
 }
@@ -32,4 +33,9 @@ spyglass::BoardManager *SciModel::boardManager()
 SciDatabaseConnector *SciModel::databaseConnector()
 {
     return &db_;
+}
+
+SciPlatformModel *SciModel::platformModel()
+{
+    return &platformModel_;
 }

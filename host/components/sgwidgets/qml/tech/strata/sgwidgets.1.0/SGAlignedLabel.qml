@@ -234,6 +234,9 @@ Item {
                 root.implicitHeight = Qt.binding(function () {return target.height + margin + label.height})
                 break;
             }
+        } else if (target) {
+            root.implicitWidth = Qt.binding(function () {return target.width})
+            root.implicitHeight = Qt.binding(function () {return target.height})
         }
     }
 }

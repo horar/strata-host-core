@@ -78,5 +78,6 @@ var uuid_map = {
     /*****
         Real UUID generated from interaction with Deployment Portal (class_id)
     *****/
-    "72ddcc10-2d18-4316-8170-5223162e54cf": "sensor"
+    "72ddcc10-2d18-4316-8170-5223162e54cf": "sensor",
+    "87054646-955d-42ed-aa82-8927b6a70286": "motorController"
 }

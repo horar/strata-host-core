@@ -66,6 +66,7 @@ Item {
                 anchors.left:combinedPortStats.left
                 anchors.right:combinedPortStats.right
                 height:combinedPortStats.height/6
+                visible:false
 
                 Text{
                     id:combinedStatsText
@@ -102,7 +103,7 @@ Item {
                 anchors.topMargin: 20
                 anchors.horizontalCenter: combinedPortStats.horizontalCenter
                 height: combinedPortStats.height/5
-                width: combinedPortStats.width/2
+                width: combinedPortStats.width*.60
             }
 
             PortStatBox {
@@ -173,6 +174,7 @@ Item {
                 top: portColumn.top
                 topMargin: 225 * ratioCalc
                 left: portColumn.left
+                leftMargin:10
                 right: portColumn.right
             }
             portConnected: false
