@@ -1420,11 +1420,9 @@ Item {
                                                     Layout.fillHeight: true
                                                     color: "transparent"
 
-                                                    Rectangle {
+                                                    Item {
                                                         id: checkBoxContainer
                                                         anchors.fill: extLoadCheckboxContainer
-                                                        color: "transparent"
-                                                        z: 2
                                                         MouseArea {
                                                             id: hoverArea2
                                                             anchors { fill: parent }
@@ -1461,21 +1459,10 @@ Item {
                                                         fontSizeMultiplier: ratioCalc
                                                         anchors.centerIn: parent
 
-
-
-                                                        Rectangle {
-                                                            color: "transparent"
-                                                            anchors { fill: extLoadCheckboxLabel }
-                                                            MouseArea {
-                                                                id: hoverArea
-                                                                anchors { fill: parent }
-                                                                hoverEnabled: true
-                                                            }
-                                                        }
-
                                                         CheckBox {
                                                             id: extLoadCheckbox
                                                             checked: false
+                                                            z:1
 
                                                             onClicked: {
                                                                 if(checked) {

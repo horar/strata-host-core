@@ -226,20 +226,20 @@ Item {
         setOutputCurrent.value = control_states.load_set
 
         if(control_states.ldo_sel === "TSOP5")  {
-//            pgldoLabel.opacity = 0.5
-//            pgldoLabel.enabled = false
+            //            pgldoLabel.opacity = 0.5
+            //            pgldoLabel.enabled = false
             pgoodLabelText = "\n(PG_308)"
             ldoPackageComboBox.currentIndex = 0
         }
         else if(control_states.ldo_sel === "DFN6") {
-//            pgldoLabel.opacity = 1
-//            pgldoLabel.enabled = true
+            //            pgldoLabel.opacity = 1
+            //            pgldoLabel.enabled = true
             pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 1
         }
         else if (control_states.ldo_sel === "DFN8") {
-//            pgldoLabel.opacity = 1
-//            pgldoLabel.enabled = true
+            //            pgldoLabel.opacity = 1
+            //            pgldoLabel.enabled = true
             pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 2
         }
@@ -1412,20 +1412,14 @@ Item {
                                             }
 
 
-
-
-
-
                                             Rectangle {
                                                 id:extLoadCheckboxContainer
                                                 Layout.fillWidth: true
                                                 Layout.fillHeight: true
 
-                                                Rectangle {
+                                                Item {
                                                     id: checkBoxContainer
                                                     anchors.fill: extLoadCheckboxContainer
-                                                    color: "transparent"
-                                                    z: 2
                                                     MouseArea {
                                                         id: hoverArea2
                                                         anchors { fill: parent }
@@ -1445,7 +1439,7 @@ Item {
                                                     color: "#0bd"   // Default: "#00ccee"
 
                                                     content: Text {
-                                                       text: qsTr("Check this box\nif an external load\nis connected to the\noutput banana plugs.")
+                                                        text: qsTr("Check this box\nif an external load\nis connected to the\noutput banana plugs.")
                                                         color: "white"
                                                     }
                                                 }
@@ -1466,24 +1460,10 @@ Item {
                                                     margin: -5
 
 
-
-
-
-                                                    Rectangle {
-                                                        id: extLoadCheckboxHover
-                                                        color: "transparent"
-                                                        anchors { fill: extLoadCheckboxLabel }
-                                                        MouseArea {
-                                                            id: hoverArea
-                                                            anchors { fill: parent }
-                                                            hoverEnabled: true
-                                                        }
-                                                    }
-
-
                                                     CheckBox {
                                                         id: extLoadCheckbox
                                                         checked: false
+                                                        z: 100
 
                                                         onClicked: {
                                                             if(checked) {
