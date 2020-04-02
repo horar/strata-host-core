@@ -96,26 +96,30 @@ function populatePlatforms(platform_list_json) {
                 }
             } else {
                 // platform matches old API - TODO [Faller]: remove once deployment portal supports new API, also remove oldNewMap from platformFilters
-                for (var application_icon of platform.application_icons) {
-                    if (PlatformFilters.oldNewMap.hasOwnProperty(application_icon)){
-                        let filter = PlatformFilters.oldNewMap[application_icon]
-                        let filterJSON = PlatformFilters.findFilter(filter)
-                        if (filterJSON) {
-                            platform_info.filters.push(filterJSON)
+                if (platform.hasOwnProperty("application_icons")){
+                    for (var application_icon of platform.application_icons) {
+                        if (PlatformFilters.oldNewMap.hasOwnProperty(application_icon)){
+                            let filter = PlatformFilters.oldNewMap[application_icon]
+                            let filterJSON = PlatformFilters.findFilter(filter)
+                            if (filterJSON) {
+                                platform_info.filters.push(filterJSON)
+                            }
+                        } else {
+                            // icon is not a valid filter or unknown icon
                         }
-                    } else {
-                        // icon is not a valid filter or unknown icon
                     }
                 }
-                for (var product_icon of platform.product_icons) {
-                    if (PlatformFilters.oldNewMap.hasOwnProperty(product_icon)){
-                        let filter = PlatformFilters.oldNewMap[product_icon]
-                        let filterJSON = PlatformFilters.findFilter(filter)
-                        if (filterJSON) {
-                            platform_info.filters.push(filterJSON)
+                if (platform.hasOwnProperty("product_icons")){
+                    for (var product_icon of platform.product_icons) {
+                        if (PlatformFilters.oldNewMap.hasOwnProperty(product_icon)){
+                            let filter = PlatformFilters.oldNewMap[product_icon]
+                            let filterJSON = PlatformFilters.findFilter(filter)
+                            if (filterJSON) {
+                                platform_info.filters.push(filterJSON)
+                            }
+                        } else {
+                            // icon is not a valid filter or unknown icon
                         }
-                    } else {
-                        // icon is not a valid filter or unknown icon
                     }
                 }
             }
