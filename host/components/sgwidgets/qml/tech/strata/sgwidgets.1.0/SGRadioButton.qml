@@ -36,6 +36,7 @@ SGAlignedLabel {
 
         implicitWidth: indicator.width
         implicitHeight: indicator.height
+        ButtonGroup.group: root.ButtonGroup.group
 
         onClicked: root.clicked()
         onToggled: root.toggled()

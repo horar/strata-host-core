@@ -95,12 +95,17 @@ namespace strata {
          */
         void serialDeviceError(int errCode, QString msg);
 
+    // signals only for internal use:
+        // Qt5 private signals: https://woboq.com/blog/how-qt-signals-slots-work-part2-qt5.html
+        void writeToPort(const QByteArray& data, QPrivateSignal);
+
     private slots:
         void readMessage();
         void handleError(QSerialPort::SerialPortError error);
+        void handleWriteToPort(const QByteArray data);
 
     private:
-        bool writeData(const QByteArray& data, quintptr lockId);
+        bool writeData(const QByteArray data, quintptr lockId);
         // *** functions used by friend class DeviceOperations:
         void setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer);
         bool lockDevice(quintptr lockId);
