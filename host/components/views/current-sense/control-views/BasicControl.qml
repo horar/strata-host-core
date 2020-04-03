@@ -1207,17 +1207,17 @@ Item {
                                                     width: highLoadSettingContainer.width - 50
                                                     live: false
                                                     from: 0.01
-                                                    to:  20
+                                                    to:  10
                                                     stepSize: 0.01
                                                     fromText.text: "0.01A"
-                                                    toText.text: "20A"
+                                                    toText.text: "10A"
                                                     value: 0
                                                     anchors.verticalCenter: parent.verticalCenter
                                                     anchors.verticalCenterOffset: 10
                                                     inputBoxWidth: highLoadSettingContainer.width/9
                                                     inputBox.enabled: true
                                                     fontSizeMultiplier: ratioCalc * 1.2
-                                                    inputBox.validator: DoubleValidator { top: 20; bottom: 0.01 }
+                                                    inputBox.validator: DoubleValidator { top: 10;  bottom: 0.01 }
                                                     onUserSet: {
                                                         if(highCurrentEnable.checked)
                                                             platformInterface.set_load_dac_load.update(highloadSetting.value.toFixed(2))
