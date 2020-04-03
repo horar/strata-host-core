@@ -79,7 +79,7 @@ void DeviceOperations::startOperation(Operation operation) {
     }
     operation_ = operation;
 
-    if (device_->lockDevice(reinterpret_cast<quintptr>(this)) == false) {
+    if (device_->lockDeviceForOperation(reinterpret_cast<quintptr>(this)) == false) {
         QString err_msg(QStringLiteral("Cannot start operation, because cannot get access to device."));
         qCWarning(logCategoryDeviceOperations) << this << err_msg;
         emit error(err_msg);
