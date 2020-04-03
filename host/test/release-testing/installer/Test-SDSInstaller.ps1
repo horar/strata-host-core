@@ -187,7 +187,7 @@ function Test-SDSInstaller {
                 Write-Indented  "Pass: Strata Developer Studio matches the installer version $SDSVersion"
                 $global:SDSTestPass++
             } else {
-                Write-Indented  "Fail: Strata Developer Studio dose not matche the installer version $SDSVersion"
+                Write-Indented  "Fail: Strata Developer Studio does not match the installer version $SDSVersion"
             }
         }
         catch {
