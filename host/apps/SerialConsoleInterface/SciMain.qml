@@ -127,11 +127,11 @@ Item {
                             width: tabBar.statusLightHeight
 
                             status: {
-                                if (model.status === Sci.SciPlatformModel.Ready) {
+                                if (model.platform.status === Sci.SciPlatform.Ready) {
                                     return SGWidgets.SGStatusLight.Green
-                                } else if (model.status === Sci.SciPlatformModel.NotRecognized) {
+                                } else if (model.platform.status === Sci.SciPlatform.NotRecognized) {
                                     return SGWidgets.SGStatusLight.Red
-                                } else if (model.status === Sci.SciPlatformModel.Connected) {
+                                } else if (model.platform.status === Sci.SciPlatform.Connected) {
                                     return SGWidgets.SGStatusLight.Orange
                                 }
 
@@ -149,7 +149,7 @@ Item {
                                 rightMargin: 2
                             }
 
-                            text: model.verboseName
+                            text: model.platform.verboseName
                             font: dummyText.font
                             color: model.index === tabBar.currentIndex ? "black" : "white"
                             elide: Text.ElideRight
@@ -171,13 +171,13 @@ Item {
                             property bool shown: bgMouseArea.containsMouse || hovered
 
                             onClicked: {
-                                if (model.status === Sci.SciPlatformModel.Ready
-                                        || model.status === Sci.SciPlatformModel.Connected
-                                        || model.status === Sci.SciPlatformModel.NotRecognized) {
+                                if (model.platform.status === Sci.SciPlatform.Ready
+                                        || model.platform.status === Sci.SciPlatform.Connected
+                                        || model.platform.status === Sci.SciPlatform.NotRecognized) {
                                     SGWidgets.SGDialogJS.showConfirmationDialog(
                                                 root,
                                                 "Device is active",
-                                                "Do you really want to disconnect " + model.verboseName + " ?",
+                                                "Do you really want to disconnect " + model.platform.verboseName + " ?",
                                                 "Disconnect",
                                                 function () {
                                                     removeBoard(model.index)
@@ -221,14 +221,14 @@ Item {
                 width: platformContentContainer.width
                 height: platformContentContainer.height
                 rootItem: sciMain
-                scrollbackModel: model.scrollbackModel
-                commandHistoryModel: model.commandHistoryModel
+                scrollbackModel: model.platform.scrollbackModel
+                commandHistoryModel: model.platform.commandHistoryModel
 
                 onProgramDeviceRequested: {
-                    if (model.status === Sci.SciPlatformModel.Ready
-                            || model.status === Sci.SciPlatformModel.Connected
-                            || model.status === Sci.SciPlatformModel.NotRecognized) {
-                        showProgramDeviceDialogDialog(model.connectionId)
+                    if (model.platform.status === Sci.SciPlatform.Ready
+                            || model.platform.status === Sci.SciPlatform.Connected
+                            || model.platform.status === Sci.SciPlatform.NotRecognized) {
+                        showProgramDeviceDialogDialog(model.platform.deviceId)
                     }
                 }
             }
@@ -261,7 +261,7 @@ Item {
             padding: 0
             hasTitle: false
 
-            property string connectionId
+            property int deviceId
 
             contentItem: SGWidgets.SGPage {
                 implicitWidth: sciMain.width - 20
@@ -278,7 +278,7 @@ Item {
                     checkFirmware: false
 
                     useCurrentConnectionId: true
-                    currentConnectionId: connectionId
+                    currentConnectionId: dialog.deviceId
 
                     onCancelRequested: {
                         if (sciModel.platformModel.ignoreNewConnections) {
@@ -302,12 +302,12 @@ Item {
         sciModel.platformModel.removePlatform(index)
     }
 
-    function showProgramDeviceDialogDialog(connectionId) {
+    function showProgramDeviceDialogDialog(deviceId) {
         var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(
                     root,
                     programDeviceDialogComponent,
                     {
-                        "connectionId": connectionId
+                        "deviceId": deviceId
                     })
 
         sciModel.platformModel.ignoreNewConnections = true

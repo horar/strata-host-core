@@ -1,3 +1,8 @@
+RelWithDebInfo/
+Debug/
+MinSizeRel/
+Release/
+
 platform/cli/USB-PD/BUILD/*
 *build*/
 *BUILD*/

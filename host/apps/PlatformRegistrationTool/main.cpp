@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     addImportPaths(&engine);
 
     qmlRegisterType<PrtModel>("tech.strata.prt", 1, 0, "PrtModel");
-    qmlRegisterUncreatableType<spyglass::BoardManager>("tech.strata.sci", 1, 0, "BoardManager", "can not instantiate BoardManager in qml");
+    qmlRegisterUncreatableType<strata::BoardManager>("tech.strata.sci", 1, 0, "BoardManager", "can not instantiate BoardManager in qml");
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {
