@@ -84,7 +84,7 @@ Rectangle{
                     text:"one-to-many"
                     fontSizeMultiplier:1.5
                     color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/one-to-many_demo.png"
+                    icon.source: "qrc:/views/meshNetwork/images/oneToManyDemo.png"
                     iconSize:100
                     display: Button.TextUnderIcon
                     checkable:true
@@ -135,8 +135,8 @@ Rectangle{
                     text:"sensor"
                     fontSizeMultiplier:1.5
                     color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/sensorDemo.png"
-                    iconSize:100
+                    icon.source: "qrc:/views/meshNetwork/images/sensorIcon.png"
+                    iconSize:50
                     display: Button.TextUnderIcon
                     checkable:true
 
@@ -152,8 +152,8 @@ Rectangle{
                     text:"cloud"
                     fontSizeMultiplier:1.5
                     color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/oneToOneDemo.png"
-                    iconSize:100
+                    icon.source: "qrc:/views/meshNetwork/images/cloud.png"
+                    iconSize:75
                     display: Button.TextUnderIcon
                     checkable:true
 

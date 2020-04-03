@@ -11,9 +11,8 @@ Rectangle {
     id: root
 
     Image{
-            anchors.fill: parent
             source: "qrc:/views/meshNetwork/images/sensorDemo.png"
-            height:parent.height
+            height:parent.height *.4
             anchors.centerIn: parent
             fillMode: Image.PreserveAspectFit
             mipmap:true

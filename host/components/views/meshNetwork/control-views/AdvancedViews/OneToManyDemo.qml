@@ -11,9 +11,8 @@ Rectangle {
     id: root
 
     Image{
-            anchors.fill: parent
-            source: "qrc:/views/meshNetwork/images/one-to-many_demo.png"
-            height:parent.height
+            source: "qrc:/views/meshNetwork/images/oneToManyDemo.png"
+            height:parent.height*.85
             anchors.centerIn: parent
             fillMode: Image.PreserveAspectFit
             mipmap:true

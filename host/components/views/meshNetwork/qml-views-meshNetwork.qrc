@@ -45,7 +45,6 @@
         <file>control-views/BasicViews/InfoPopover.qml</file>
         <file>control-views/BasicViews/SensorRow.qml</file>
         <file>images/multipleModelsDemo.png</file>
-        <file>images/one-to-many_demo.png</file>
         <file>images/oneToOneDemo.png</file>
         <file>images/relayDemo.png</file>
         <file>images/sensorDemo.png</file>
@@ -57,5 +56,8 @@
         <file>control-views/AdvancedViews/SensorDemo.qml</file>
         <file>images/spreadsheet.png</file>
         <file>images/smartHome_green.png</file>
+        <file>images/oneToManyDemo.png</file>
+        <file>images/sensorIcon.png</file>
+        <file>images/cloud.png</file>
     </qresource>
 </RCC>

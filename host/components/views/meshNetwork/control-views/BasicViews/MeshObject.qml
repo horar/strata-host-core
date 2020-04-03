@@ -111,29 +111,7 @@ Rectangle {
                     //console.log("drag area release called")
                     var theDropAction = dragObject.Drag.drop()
                 }
-//                onHoveredChanged: {
-//                    infoBox.visible = true
-//            }
 
-//                    property int mouseButtonClicked: Qt.NoButton
-//                    onPressed: {
-//                                if (pressedButtons & Qt.LeftButton) {
-//                                    mouseButtonClicked = Qt.LeftButton
-//                                } else if (pressedButtons & Qt.RightButton) {
-//                                    mouseButtonClicked = Qt.RightButton
-//                                }
-//                            }
-
-//                                onClicked: {
-//                                    if(mouseButtonClicked & Qt.RightButton) {
-//                                        console.log("Right button used");
-//                                        //contextMenu.open()
-//                                    }
-//                                    else{
-//                                        console.log("left button used")
-//                                        infoBox.visible = true
-//                                    }
-//                                }
 
    }    //mouse area
 }       //drag object
@@ -181,15 +159,13 @@ Rectangle {
                     dragObject.color = drag.source.color;   //set this object's color to the dropped one
                     drag.source.color = "lightgrey"         //reset the dropped object's color to grey
                     dragObject.number = drag.source.number
-                    drag.source.resetLocation()             ///send the drag object back to where it was before being dragged
                     savedColor = objectCircle.color
                 }
 
+                drag.source.resetLocation()             ///send the drag object back to where it was before being dragged
                 objectCircle.border.color = "transparent"
                 objectCircle.border.width = 1
 
-                //signal to tell other drop targets using the same color to clearConnectionsButton
-                //clearTargetsOfColor(dropAreaRectangle.color, objectName);
             }
         }
 //        MouseArea {

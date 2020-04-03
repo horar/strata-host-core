@@ -12,10 +12,9 @@ Rectangle {
     color:"transparent"
 
     Image{
-        anchors.fill: parent
-        source: "qrc:/views/meshNetwork/images/oneToOneDemo.png"
-        height:parent.height
         anchors.centerIn: parent
+        source: "qrc:/views/meshNetwork/images/oneToOneDemo.png"
+        height:parent.height * .34
         fillMode: Image.PreserveAspectFit
         mipmap:true
     }
