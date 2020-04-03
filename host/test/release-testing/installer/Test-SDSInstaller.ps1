@@ -149,10 +149,10 @@ function Test-SDSInstaller {
             $FTDIDriverInstalledDisplayName = $FTDIDriverInstalledDisplayName.DisplayName -replace "/I", ""
             $SDSVersion = Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" | ForEach-Object { get-ItemProperty $_.PSPath } `
                         | Where-Object { $_ -match ("Strata*") } | Select-Object DisplayName
-            $SDSVersion = $SDSVersion.DisplayName -replace "/I",""
+            $SDSVersion = $SDSVersion.DisplayName -replace "/I","" -replace "Strata Developer Studio v",""
             $SDSInstallerVersion = Select-String -Path $SDSInstallerLogFile -Pattern "Installing Strata Developer Studio v(\d+)\.(\d+)\.(\d+)(.*)" | ForEach-Object {$_.Matches } `
                                 | ForEach-Object {$_.Value}
-            $SDSInstallerVersion = $SDSInstallerVersion -replace "Installing ",""
+            $SDSInstallerVersion = $SDSInstallerVersion -replace "Installing Strata Developer Studio v",""
 
             if ( $VisualRedistInstalledDisplayName -match [regex]::Escape($VisualRedistDisplayName) ) {
                 Write-Indented "Pass: Microsoft Visual C++ 2017 X64 is installed"
@@ -177,17 +177,17 @@ function Test-SDSInstaller {
             }
 
             if ( Test-Path $SDSControlViewsDir -PathType Container ) {
-                Write-Indented "Pass: Control Views are located in $SDSControlViewsDir"
+                Write-Indented "Pass: Control Views are located on `"$SDSControlViewsDir`" which contains $(@(Get-ChildItem $SDSControlViewsDir).Count) platforms"
                 $global:SDSTestPass++
             } else {
                 Write-Indented "Fail: Control Views are not located in $SDSControlViewsDir" 
             }
 
             if ($SDSVersion -eq $SDSInstallerVersion) {
-                Write-Indented  "Pass: $SDSVersion UI Version matches $SDSInstallerVersion the installer version"
+                Write-Indented  "Pass: Strata Developer Studio matches the installer version $SDSVersion"
                 $global:SDSTestPass++
             } else {
-                Write-Indented  "Fail: $SDSVersion Version doesn't matches $SDSInstallerVersion the installer version"
+                Write-Indented  "Fail: Strata Developer Studio dose not matche the installer version $SDSVersion"
             }
         }
         catch {
@@ -275,7 +275,7 @@ function Test-SDSInstaller {
     }
 
     Write-Separator
-    Write-Indented "Strata installer testing"
+    Write-Host "Strata installer testing"
     Write-Separator
 
     Stop-SDS
