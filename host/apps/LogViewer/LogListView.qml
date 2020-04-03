@@ -553,20 +553,22 @@ Item {
             currentIndex = currentIndex + 1
             currentItemChanged(currentIndex)
         }
-
-        if (event.key === Qt.Key_PageDown) {
+        else if (event.key === Qt.Key_Left) {
+            logListView.contentX = logListView.contentX - logListView.width
+        }
+        else if (event.key === Qt.Key_Right) {
+            logListView.contentX = logListView.contentX + logListView.width
+        }
+        else if (event.key === Qt.Key_PageDown) {
             logListView.contentY = logListView.contentY + logListView.height
         }
-
-        if (event.key === Qt.Key_PageUp) {
+        else if (event.key === Qt.Key_PageUp) {
             logListView.contentY = logListView.contentY - logListView.height
         }
-
-        if (event.key === Qt.Key_Home) {
+        else if (event.key === Qt.Key_Home) {
             logListView.positionViewAtBeginning()
         }
-
-        if (event.key === Qt.Key_End) {
+        else if (event.key === Qt.Key_End) {
             logListView.positionViewAtEnd()
         }
     }
