@@ -86,6 +86,11 @@ try:
     platform_list = message["hcs::notification"]["list"]
 except KeyError:
     print("\nError: received empty or invalid response from HCS.\n\nExiting.")
+    sys.exit(-1)
+if len(platform_list) == 0:
+    print("\nError: received empty or invalid response from HCS.\n\nExiting.")
+    sys.exit(-1)
+
 print(", received reply with " + str(len(platform_list)) + " platforms.")
 
 # Create a "DynamicPlatformList.json" file to be used down the testing pipeline
