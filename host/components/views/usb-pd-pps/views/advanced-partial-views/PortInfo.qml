@@ -187,7 +187,7 @@ Item {
 
                     PortStatBox {
                         id:outputVoltageBox
-                        label: "VOLTAGE OUT"
+                        label: "BUS VOLTAGE"
                         value: ""
                         icon: "../images/icon-voltage.svg"
                         portColor: root.portColor

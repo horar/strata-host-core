@@ -11,6 +11,7 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     qwtPlot = new QwtPlot();
 
     setBackgroundColor("white");
+    setForegroundColor("black");
 }
 
 SGQWTPlot::~SGQWTPlot()

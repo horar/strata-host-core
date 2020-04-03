@@ -51,7 +51,7 @@ int SciScrollbackModel::count() const
     return data_.length();
 }
 
-void SciScrollbackModel::append(const QString &message, MessageType type)
+void SciScrollbackModel::append(const QByteArray &message, MessageType type)
 {
     beginInsertRows(QModelIndex(), data_.length(), data_.length());
 
@@ -111,7 +111,7 @@ QString SciScrollbackModel::getTextForExport() const
         QString line = QString("%1 %2 %3")
                 .arg(item.timestamp.toString(Qt::ISODate))
                 .arg(item.type == MessageType::Request ? "request" : "response")
-                .arg(item.message);
+                .arg(QString::fromUtf8(item.message));
 
         text.append(line+"\n");
     }

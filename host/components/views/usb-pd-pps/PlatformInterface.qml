@@ -42,7 +42,7 @@ Item {
 
 
    property var input_under_voltage_notification:{
-          "state":"below",                                        // if the input voltage decreases to below the voltage limit, "above" otherwise.
+          "state":"above",                                        // if the input voltage decreases to below the voltage limit, "above" otherwise.
           "minimum_voltage":10                                     // Voltage limit in volts
     }
 

@@ -152,6 +152,10 @@ Item {
                     let curve = graph1.curve(0)
                     curve.shiftPoints(-(currentTime - lastTime)/1000, 0)
                     curve.append(0, platformInterface.usb_power_notification.output_voltage)
+                    if (platformInterface.usb_power_notification.output_voltage > graph1.yMax){
+                        graph1.yMax = Math.trunc(platformInterface.usb_power_notification.output_voltage +1)
+                        console.log("resetting y max to", graph1.yMax)
+                    }
                     removeOutOfViewPoints()
                     graph1.update()
                     lastTime = currentTime
@@ -219,6 +223,10 @@ Item {
                     let curve = graph2.curve(0)
                     curve.shiftPoints(-(currentTime - lastTime)/1000, 0)
                     curve.append(0, platformInterface.usb_power_notification.output_current)
+                    //if the value exceeds the max y value of the graph, rescale
+                    if (platformInterface.usb_power_notification.output_current > graph2.yMax){
+                        graph2.yMax = Math.trunc(platformInterface.usb_power_notification.output_current +1)
+                    }
                     removeOutOfViewPoints()
                     graph2.update()
                     lastTime = currentTime
@@ -286,6 +294,9 @@ Item {
                     let curve = graph3.curve(0)
                     curve.shiftPoints(-(currentTime - lastTime)/1000, 0)
                     curve.append(0, platformInterface.usb_power_notification.input_voltage)
+                    if (platformInterface.usb_power_notification.input_voltage > graph3.yMax){
+                        graph3.yMax = Math.trunc(platformInterface.usb_power_notification.input_voltage +1)
+                    }
                     removeOutOfViewPoints()
                     graph3.update()
                     lastTime = currentTime
@@ -351,9 +362,13 @@ Item {
                 onTriggered: {
                     let currentTime = Date.now()
                     let curve = graph4.curve(0)
+                    var power = platformInterface.usb_power_notification.output_voltage *
+                            platformInterface.usb_power_notification.output_current
                     curve.shiftPoints(-(currentTime - lastTime)/1000, 0)
-                    curve.append(0, platformInterface.usb_power_notification.output_voltage *
-                                 platformInterface.usb_power_notification.output_current)
+                    curve.append(0, power)
+                    if (power > graph4.yMax){
+                        graph4.yMax = Math.trunc(power +1)
+                    }
                     //console.log("appending new point:",platformInterface.usb_power_notification.input_voltage)
                     removeOutOfViewPoints()
                     graph4.update()

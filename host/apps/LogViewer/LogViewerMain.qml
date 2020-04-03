@@ -33,7 +33,7 @@ Item {
     property bool searchingMode: false
     property bool searchTagShown: false
     property bool automaticScroll: true
-
+    property bool timestampSimpleFormat: false
     property int searchResultCount: logFilesModelProxy.count
     property int statusBarHeight: statusBar.height
 
@@ -44,6 +44,10 @@ Item {
             if (automaticScroll) {
                 scrollbackViewAtEndTimer.restart()
             }
+        }
+
+        onModelReset: {
+            scrollbackViewAtEndTimer.restart()
         }
     }
 
@@ -69,6 +73,7 @@ Item {
         property alias sidePanelShown: logViewerMain.sidePanelShown
         property alias sidePanelWidth: logViewerMain.sidePanelWidth
         property alias automaticScroll: logViewerMain.automaticScroll
+        property alias timestampSimpleFormat: logViewerMain.timestampSimpleFormat
     }
 
     Component {
@@ -211,6 +216,22 @@ Item {
 
                 onCheckedChanged: {
                     messageWrapEnabled = checked
+                }
+            }
+
+            SGWidgets.SGIconButton {
+                id: timestampSimpleFormatButton
+                hintText: qsTr("Simple time format")
+                icon.source: "qrc:/sgimages/clock.svg"
+                iconSize: defaultIconSize
+                backgroundOnlyOnHovered: false
+                enabled: fileLoaded
+                padding: buttonPadding
+                checkable: true
+                checked: timestampSimpleFormat
+
+                onClicked: {
+                    timestampSimpleFormat = !timestampSimpleFormat
                 }
             }
 
@@ -383,42 +404,42 @@ Item {
                 SGWidgets.SGCheckBox {
                     id: checkBoxIndex
                     text: qsTr("Row")
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     checked: indexColumnVisible
                 }
 
                 SGWidgets.SGCheckBox {
                     id: checkBoxTs
                     text: qsTr("Timestamp")
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     checked: timestampColumnVisible
                 }
 
                 SGWidgets.SGCheckBox {
                     id: checkBoxPid
                     text: qsTr("PID")
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     checked: pidColumnVisible
                 }
 
                 SGWidgets.SGCheckBox {
                     id: checkBoxTid
                     text: qsTr("TID")
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     checked: tidColumnVisible
                 }
 
                 SGWidgets.SGCheckBox {
                     id: checkBoxLevel
                     text: qsTr("Level")
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     checked: levelColumnVisible
                 }
 
                 SGWidgets.SGCheckBox {
                     id: checkBoxMessage
                     text: qsTr("Message")
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     checked: true
                     enabled: !checked
                 }
@@ -457,6 +478,7 @@ Item {
                     highlightColor: searchInput.palette.highlight
                     startAnimation: secondaryLogView.activeFocus
                     automaticScroll: automaticScrollButton.checked
+                    timestampSimpleFormat: logViewerMain.timestampSimpleFormat
                 }
 
                 Rectangle {
@@ -488,6 +510,7 @@ Item {
                         searchTagShown: true
                         highlightColor: searchInput.palette.highlight
                         automaticScroll: automaticScrollButton.checked
+                        timestampSimpleFormat: timestampSimpleFormatButton.checked
 
                         onCurrentItemChanged: {
                             var sourceIndex = logFilesModelProxy.mapIndexToSource(index)
@@ -516,7 +539,7 @@ Item {
             anchors.leftMargin: 5
             anchors.verticalCenter: statusBar.verticalCenter
             width: statusBar.width - statusBarText.x
-            font.family: StrataFonts.Fonts.inconsolata
+            font.family: "monospace"
             text: {
                 if (logViewerMain.linesCount == 1) {
                     qsTr("Range: %1 - %2 | %3 log").arg(Qt.formatDateTime(logFilesModel.oldestTimestamp,
