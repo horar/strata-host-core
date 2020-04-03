@@ -27,7 +27,7 @@ function Test-SDSInstaller {
         [string]$SDSInstallerPath
     )
 
-    $SDSInstallerLogFile = "$PSScriptRoot\SDSInstallerLog.log"
+    $SDSInstallerLogFile = "$TestRoot\SDSInstallerLog.log"
     $SDSUninstallFile = "$SDSRootDir\unins"
     $SDSIniFile = "$env:AppData\ON Semiconductor\Strata Developer Studio.ini"
     $SDSControlViewsDir = "$SDSRootDir\views"
@@ -99,37 +99,43 @@ function Test-SDSInstaller {
         }
         catch {
             Write-Indented "Error uninstalling Strata Developer Studio and its components failed. `n       $_"
-            Return $global:SDSTestPass, $TestTotal
+            Exit-TestScript -1
         }
     }
 
     function Uninstall-SDS {
         Write-Indented "Uninstalling Strata Developer Studio"
-            try {
+        Try {
             $SDSUninstallerPath =  Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" | ForEach-Object { get-ItemProperty $_.PSPath } `
                                 | where-Object { $_ -match "strata*" } | Select-Object UninstallString
             if ($SDSUninstallerPath) {
                 $SDSUninstallerPath = $SDSUninstallerPath.UninstallString -replace "/I","" -replace "`"",""
-                Start-Process -FilePath "`"$SDSUninstallerPath`"" -ArgumentList "/VERYSILENT" -Wait
+                $SDSUninstallation = Start-Process -FilePath "`"$SDSUninstallerPath`"" -ArgumentList "/VERYSILENT" -Wait -PassThru
+                if ($SDSUninstallation.ExitCode -ne 0) {
+                    write-Indented "Error: uninstalling Strata Developer Studio failed."
+                    Exit-TestScript -1
+                }
                 Write-Indented "Done"
             } else {
                 Write-Indented "Strata Developer Studio is not installed`n"
+            } 
+        }Catch {
+                Write-Indented "Error: uninstalling Strata Developer Studio failed. `n        $_"
+                Exit-TestScript -1
             }
-        }
-        catch {
-            Write-Indented "Error: Uninstalling Strata Developer Studio failed. `n       $_"
-            Return $global:SDSTestPass, $TestTotal
-        }
     }
     function Install-SDS {
         Write-Indented "Installing Strata Developer Studio"
         Try {
-            Start-Process -FilePath "`"$SDSInstallerPath`"" -ArgumentList "/SP- /SUPPRESSMSGBOXES /LOG=$SDSInstallerLogFile /VERYSILENT /NORESTART /CLOSEAPPLICATIONS" -Wait
-        }
-        Catch {
-            Write-Indented "Error: installing Strata Developer Studio failed. `n       $_"
-            Return $global:SDSTestPass, $TestTotal
-        }
+            $SDSInstallation = Start-Process -FilePath "`"$SDSInstallerPath`"" -ArgumentList "/SP- /SUPPRESSMSGBOXES /LOG=$SDSInstallerLogFile /VERYSILENT /NORESTART /CLOSEAPPLICATIONS" -Wait -PassThru
+                if ($SDSInstallation.ExitCode -ne 0) {
+                    write-Indented "Error: installing Strata Developer Studio failed."
+                    Exit-TestScript -1
+                }
+        } Catch {
+                Write-Indented "Error: installing Strata Developer Studio failed. `n        $_"
+                Exit-TestScript -1
+            }
         Write-Indented "Done"
     }
 
@@ -272,6 +278,8 @@ function Test-SDSInstaller {
     Write-Indented "Strata installer testing"
     Write-Separator
 
+    Stop-SDS
+    Stop-HCS
     Test-SDSCleanUninstallation
     Test-SDSDirtyInstallationWithoutUninstallation
     Test-SDSUninstallation

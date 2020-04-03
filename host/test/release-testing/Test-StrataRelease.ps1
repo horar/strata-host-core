@@ -16,6 +16,8 @@ Result of the test
 Version:        1.0
 Creation Date:  03/17/2020
 Requires: Powershell version 5, and Python 3
+in case of a problem with executing the script run:
+Set-ExecutionPolicy -Scope CurrentUser Unrestricted
 
 .Example
 Test-StrataRelease.ps1 -SDSInstallerPath "<PATH_TO_STRATA_INSTALLER>"
@@ -24,9 +26,6 @@ Test-StrataRelease.ps1 -SDSInstallerPath "<PATH_TO_STRATA_INSTALLER>"
 Test-StrataRelease.ps1
 #>
 
-# in case of a problem with executing the script run:
-# Set-ExecutionPolicy -Scope CurrentUser Unrestricted
-# Install-Module PSSQLite -Scope CurrentUser
 [CmdletBinding()]
     param(
         [Parameter(Mandatory=$True, Position=0, HelpMessage="Please enter a path for Strata Installer")]
@@ -75,6 +74,9 @@ Set-Variable "PythonControlViewTest"        "$PSScriptRoot/strataDev/control-vie
 #------------------------------------------------------[Pre-requisite checks]------------------------------------------------------
 
 Write-Host "`n`nPerforming initial checks...`n"
+
+# Validate UAC and administration previliges
+Assert-UACAndAdmin
 
 # Validate Strata installer path
 Assert-SDSInstallerPath

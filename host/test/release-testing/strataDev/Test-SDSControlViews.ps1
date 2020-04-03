@@ -33,9 +33,6 @@ function Test-SDSControlViews {
     Write-Host "SDS Control view testing"
     Write-Separator
 
-    Write-Host "Control View test requires visual inspection.`nPress any key to continue...";
-    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
-
     # Set-Location $SDSRootDir isneeded to resolve the ddl issue when running
     # HCS seperetly so that Windows will look into this directory for dlls
     Set-Location $SDSRootDir
@@ -53,10 +50,12 @@ function Test-SDSControlViews {
     Write-Host "Checking if Strata Developer Studio is still running."
     If ($StrataDev.HasExited -eq $false) {
         Write-Host "Strata Developer Studio is running. Killing Strata Developer Studio..."
-        Stop-Process $StrataDev.id
+        Stop-SDS
+        Stop-HCS
     } Else {
         # Strata is not running. It could be a crash!
         Write-Error "Strata developer Studio is not running. It might have crashed during the test. Aborting..."
+        Stop-HCS
         Return $false
     }
 

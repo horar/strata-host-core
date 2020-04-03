@@ -34,7 +34,7 @@ function Assert-PythonAndPyzmq {
     # Verify Python being run is Python 3
     $PythonVersion = Invoke-Expression "${PythonExec} -c 'import sys; print(sys.version_info[0])'"
     If ($PythonVersion -Ne 3) {
-        Exit-TestScript -1 "Error: Python 3 is required.`nAborting."
+        Exit-TestScript -1 "Error: Python 3 is required, visit https://www.python.org/downloads/ to download.`nAborting."
     }
 }
 
@@ -69,7 +69,7 @@ function Assert-PythonScripts {
 # Tell user to manually install it if not found & exit
 function Assert-PSSQLite {
     If (!(Get-Module -ListAvailable -Name PSSQLite)) {
-        Write-Host -ForegroundColor Red "`nError: PSSQLite module for Powershell not found.`nInstall PSSQLite by running the following command on PowerShell as an administrator:`n   Install-Module PSSQLite`nAborting.`n"
+        Write-Host -ForegroundColor Red "`nError: PSSQLite module for Powershell not found.`nInstall PSSQLite by running the following command on PowerShell:`nInstall-Module PSSQLite -Scope CurrentUser`nAborting.`n"
         Exit-TestScript -1
     }
 }
@@ -79,6 +79,17 @@ function Assert-SDSInstallerPath {
         Write-Host -ForegroundColor Red "Error: Invalid Strata installer path.`nPlease make sure that you have the correct path, included .exe at the end,`nand no space at the beginning of the path"
         Exit-TestScript -1
     }
+}
+function Assert-UACAndAdmin {
+    $UACValue = Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System | Select-Object ConsentPromptBehaviorAdmin 
+    $UACValue = $UACValue.ConsentPromptBehaviorAdmin -replace "/I",""
+    $IsAdmin = ([Security.Principal.WindowsPrincipal] `
+    [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+   
+   if ($UACValue -ne 0 -and $IsAdmin -eq $False) {
+       Write-Host -ForegroundColor Red "Error: UAC (User Account Control) is enabled and PowerShell is not running as an administrator.`nPlease consider running this script with PowerShell running as an administrator or temporarly disable UAC.`nThis script requires adminstration previliges to avoid user interaction when installing and unistalling Strata."
+       Exit-TestScript -1
+   }
 }
 
 # Start one instance of HCS
@@ -99,12 +110,12 @@ function Exit-TestScript {
     )
 
     If ($ScriptExitCode -Eq 0) {
-        Write-Host "Test finished successfully. Exiting..." -ForegroundColor Green
+        Write-Host -ForegroundColor Green "Test finished successfully. Exiting..."
     } Else {
         If ($ScriptExitText) {
-            Write-Error "Test failed: $($ScriptExitText) Terminating... $($ScriptExitCode)"
+            Write-Host -ForegroundColor Red "Test failed: $($ScriptExitText) Terminating... $($ScriptExitCode)"
         } Else {
-            Write-Error "Test failed. Terminating... $($ScriptExitCode)"
+            Write-Host -ForegroundColor Red "Test failed. Terminating... $($ScriptExitCode)"
         }
     }
     Exit $ScriptExitCode
