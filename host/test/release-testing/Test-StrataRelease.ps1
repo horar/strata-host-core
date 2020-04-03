@@ -6,8 +6,8 @@ Main Strata Developer Studio / Host Controller Service / Installer script driver
 This is the main driver for the automated test script for the master test plan
 https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist
 
-.INPUTS
-None
+.INPUTS  SDSInstallerPath
+Mandatory. If not being passed as an arugment to the secript you will be prompted to choose the path
 
 .OUTPUTS
 Result of the test
@@ -15,20 +15,33 @@ Result of the test
 .NOTES
 Version:        1.0
 Creation Date:  03/17/2020
+Requires: Powershell version 5, and Python 3
+in case of a problem with executing the script run:
+Set-ExecutionPolicy -Scope CurrentUser Unrestricted
 
-Powershell 5, Python 3
+.Example
+Test-StrataRelease.ps1 -SDSInstallerPath "<PATH_TO_STRATA_INSTALLER>"
+
+.Example
+Test-StrataRelease.ps1
 #>
+
+[CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$True, Position=0, HelpMessage="Please enter a path for Strata Installer")]
+        [string]$SDSInstallerPath
+    )
 
 # Define HCS TCP endpoint to be used
 Set-Variable "HCSTCPEndpoint" "tcp://127.0.0.1:5563"
 
 # Define paths
 Set-Variable "SDSRootDir"    "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
-Set-Variable "AppDataHCSDir" "$Env:AppData\ON Semiconductor\hcs"
+Set-Variable "HCSAppDataDir" "$Env:AppData\ON Semiconductor\hcs"
 Set-Variable "HCSConfigFile" "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
 Set-Variable "HCSExecFile"   "$SDSRootDir\HCS\hcs.exe"
 Set-Variable "SDSExecFile"   "$SDSRootDir\Strata Developer Studio.exe"
-Set-Variable "HCSDbFile"     "$AppDataHCSDir\db\strata_db\db.sqlite3"
+Set-Variable "HCSDbFile"     "$HCSAppDataDir\db\strata_db\db.sqlite3"
 Set-Variable "TestRoot"      $PSScriptRoot
 
 # Define variables for server authentication credentials needed to acquire login token
@@ -37,13 +50,13 @@ Set-Variable "SDSLoginServer" "http://18.191.108.5/login" # "https://strata.onse
 Set-Variable "SDSLoginInfo"   '{"username":"test@test.com","password":"Strata12345"}'
 
 # Define paths for Python scripts ran by this script
-Set-Variable "PythonCollateralDownloadTest" "$TestRoot/hcs/hcs-collateral-download-test.py"
-Set-Variable "PythonControlViewTest"        "$TestRoot/strataDev/control-view-test.py"
+Set-Variable "PythonCollateralDownloadTest" "$PSScriptRoot/hcs/hcs-collateral-download-test.py"
+Set-Variable "PythonControlViewTest"        "$PSScriptRoot/strataDev/control-view-test.py"
 
 # Import common functions
 . "$PSScriptRoot\Common-Functions.ps1"
 
-# Import functions for test "Test-Database" 
+# Import functions for test "Test-Database"
 . "$PSScriptRoot\hcs\Test-Database.ps1"
 
 # Import functions for test "Test-TokenAndViewsDownload"
@@ -55,39 +68,51 @@ Set-Variable "PythonControlViewTest"        "$TestRoot/strataDev/control-view-te
 # Import functions for test "Test-SDSControlViews"
 . "$PSScriptRoot\strataDev\Test-SDSControlViews.ps1"
 
+# Import functions for test "Test-SDSnstaller"
+. "$PSScriptRoot\installer\Test-SDSInstaller.ps1"
+
 #------------------------------------------------------[Pre-requisite checks]------------------------------------------------------
 
 Write-Host "`n`nPerforming initial checks...`n"
 
-# Search for Python tools 
-Assert-PythonAndPyzmq
+# Validate UAC and administration previliges
+Assert-UACAndAdmin
 
-# Search for SDS and HCS
-Assert-StrataAndHCS
-
-# Search for Python scripts
-Assert-PythonScripts
+# Validate Strata installer path
+Assert-SDSInstallerPath
 
 # Search for PSSQLite
 Assert-PSSQLite
+
+# Search for Python tools
+Assert-PythonAndPyzmq
+
+# Search for Python scripts
+Assert-PythonScripts
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
 Write-Host "Starting tests...`n"
 
+# Run Test-SDSInstaller
+$SDSInstallerResults = Test-SDSInstaller -SDSInstallerPath $SDSInstallerPath
+
+# Search for SDS and HCS
+Assert-StrataAndHCS
+
 # Run Test-Database (HCS database testing)
-Test-Database
+$DatabaseResults = Test-Database
 
 # Run Test-TokenAndViewsDownload
-Test-TokenAndViewsDownload
+$TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
 
 # Run Test-CollateralDownload (HCS collateral download testing)
-Test-CollateralDownload
+$CollateralDownloadResults = Test-CollateralDownload
 
 # Run Test-SDSControlViews (SDS control view testing)
-If ((Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint) -Eq $false) {
-    Exit-TestScript -ScriptExitCode -1
-}
+$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
+
+Show-TestSummary
 
 #------------------------------------------------------------[Clean up]-------------------------------------------------------------
 

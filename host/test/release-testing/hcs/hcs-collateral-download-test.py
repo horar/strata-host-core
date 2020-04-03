@@ -86,6 +86,11 @@ try:
     platform_list = message["hcs::notification"]["list"]
 except KeyError:
     print("\nError: received empty or invalid response from HCS.\n\nExiting.")
+    sys.exit(-1)
+if len(platform_list) == 0:
+    print("\nError: received empty or invalid response from HCS.\n\nExiting.")
+    sys.exit(-1)
+
 print(", received reply with " + str(len(platform_list)) + " platforms.")
 
 # Create a "DynamicPlatformList.json" file to be used down the testing pipeline
@@ -144,6 +149,6 @@ else:
     print("\nWARNING:\nA total of " + str(total_failed_tests) + " unsuccessful test cases were found between all platforms.")
 
 # Generate result file
-results_file = os.path.join(os.path.dirname(os.path.realpath('__file__')), "hcs/collateral-download-results.txt")
+results_file = os.path.join(os.path.dirname(os.path.realpath('__file__')), "hcs/CollateralDownloadResults.txt")
 results_file = open(results_file, 'w')
 print(str(total_passed_platforms) + " " + str(len(platform_list)), file=results_file)

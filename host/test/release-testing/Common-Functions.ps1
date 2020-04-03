@@ -12,21 +12,29 @@ function Assert-PythonAndPyzmq {
     # Determine the python command based on OS. OSX will execute Python 2 by default and here we need to use Python 3.
     # on Win, Python 3 is not in the path by default, as a result we'll need to use 'python3' for OSX and 'python' for Win
     If ($Env:OS -Eq "Windows_NT") {
-        $global:PythonExec = 'python'
+        $Global:PythonExec = 'python'
     } Else {
-        $global:PythonExec = 'python3'
+        $Global:PythonExec = 'python3'
     }
 
+    # Attempt to run Python and import PyZMQ, display error if operation fails
     Try {
         If ((Start-Process $PythonExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
             If (!(Start-Process $PythonExec '-c "import zmq"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
-                Exit-TestScript -1 "Error: ZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions.`nAborting."
+                Write-Host -ForegroundColor Red "Error: ZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions.`nAborting."
+                Exit-TestScript -1
             }
         } Else {
             Exit-TestScript -1 "Error: Python not found.`nAborting."
         }
     } Catch [System.Management.Automation.CommandNotFoundException] {
         Exit-TestScript -1 "Error: Python not found.`nAborting."
+    }
+
+    # Verify Python being run is Python 3
+    $PythonVersion = Invoke-Expression "${PythonExec} -c 'import sys; print(sys.version_info[0])'"
+    If ($PythonVersion -Ne 3) {
+        Exit-TestScript -1 "Error: Python 3 is required, visit https://www.python.org/downloads/ to download.`nAborting."
     }
 }
 
@@ -40,9 +48,10 @@ function Assert-StrataAndHCS {
     If (!(Test-Path $SDSExecFile)) {
         Exit-TestScript -1 "Error: cannot find Strata Developer Studio executable at $SDSExecFile.`nAborting."
     }
+    Start-HCSAndWait(5)
     # Check for HCS directory
-    If (!(Test-Path $AppDataHCSDir)) {
-        Exit-TestScript -1 "Error: cannot find Host Controller Service directory at $AppDataHCSDir.`nAborting."
+    If (!(Test-Path $HCSAppDataDir)) {
+        Exit-TestScript -1 "Error: cannot find Host Controller Service directory at $HCSAppDataDir.`nAborting."
     }
 }
 
@@ -60,16 +69,37 @@ function Assert-PythonScripts {
 # Tell user to manually install it if not found & exit
 function Assert-PSSQLite {
     If (!(Get-Module -ListAvailable -Name PSSQLite)) {
-        Write-Warning "`n`nPSSQLite Powershell module not found: cannot proceed.`nInstall module PSSQLite by running as administrator:"
-        Write-Warning "   Install-Module PSSQLite`nAborting.`n"
+        Write-Host -ForegroundColor Red "`nError: PSSQLite module for Powershell not found.`nInstall PSSQLite by running the following command on PowerShell:`nInstall-Module PSSQLite -Scope CurrentUser`nAborting.`n"
         Exit-TestScript -1
     }
 }
 
+function Assert-SDSInstallerPath {
+    if (!($SDSInstallerPath -match "Strata Developer Studio" -and $SDSInstallerPath.Substring($SDSInstallerPath.Length -3) -eq "exe" -and $SDSInstallerPath[0] -ne " ")) {
+        Write-Host -ForegroundColor Red "Error: Invalid Strata installer path.`nPlease make sure that you have the correct path, included .exe at the end,`nand no space at the beginning of the path"
+        Exit-TestScript -1
+    }
+}
+function Assert-UACAndAdmin {
+    $UACValue = Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System | Select-Object ConsentPromptBehaviorAdmin 
+    $UACValue = $UACValue.ConsentPromptBehaviorAdmin -replace "/I",""
+    $IsAdmin = ([Security.Principal.WindowsPrincipal] `
+    [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+   
+   if ($UACValue -ne 0 -and $IsAdmin -eq $False) {
+       Write-Host -ForegroundColor Red "Error: UAC (User Account Control) is enabled and PowerShell is not running as an administrator.`nPlease consider running this script with PowerShell running as an administrator or temporarly disable UAC.`nThis script requires adminstration previliges to avoid user interaction when installing and unistalling Strata."
+       Exit-TestScript -1
+   }
+}
+
 # Start one instance of HCS
 function Start-HCS {
+    # Set-Location $SDSRootDir is needed to resolve the ddl issue when running 
+    # HCS seperetly so that Windows will look into this directory for dlls
+    Set-Location $SDSRootDir
     Start-Process -FilePath $HCSExecFile -ArgumentList "-f `"$HCSConfigFile`""
     Start-Sleep -Seconds 1
+    Set-Location $TestRoot
 }
 
 # Utility function to print the exit code and a pattern for the end of the script
@@ -80,16 +110,14 @@ function Exit-TestScript {
     )
 
     If ($ScriptExitCode -Eq 0) {
-        Write-Host "Test finished successfully. Exiting..." -ForegroundColor Green
+        Write-Host -ForegroundColor Green "Test finished successfully. Exiting..."
     } Else {
         If ($ScriptExitText) {
-            Write-Error "Test failed: $($ScriptExitText) Terminating... $($ScriptExitCode)"
+            Write-Host -ForegroundColor Red "Test failed: $($ScriptExitText) Terminating... $($ScriptExitCode)"
         } Else {
-            Write-Error "Test failed. Terminating... $($ScriptExitCode)"
+            Write-Host -ForegroundColor Red "Test failed. Terminating... $($ScriptExitCode)"
         }
     }
-    Write-Host "================================================================================"
-    Write-Host "================================================================================"
     Exit $ScriptExitCode
 }
 
@@ -108,36 +136,125 @@ function Stop-SDS {
         Start-Sleep -Seconds 1
     }
 }
+# Start one instance of Strata and wait (to give time for DB replication)
+# waiting time parameter is optional
+function Start-SDSAndWait {
+    Param (
+        [Parameter(Mandatory = $false)][int]$seconds
+    )
+    # Set-Location $SDSRootDir isneeded to resolve the ddl issue when running
+    # HCS seperetly so that Windows will look into this directory for dlls
+    Set-Location $SDSRootDir
+    Start-Process -FilePath $SDSExecFile
+    if ($seconds) {
+        Start-Sleep -Seconds 5
+    }
+    Set-Location $TestRoot
+}
 
 # Start one instance of HCS and wait (to give time for DB replication)
 function Start-HCSAndWait {
     Param (
         [Parameter(Mandatory = $false)][int]$seconds
     )
-
+    # Set-Location $SDSRootDir isneeded to resolve the ddl issue when running
+    # HCS seperetly so that Windows will look into this directory for dlls
+    Set-Location $SDSRootDir
     Start-Process -FilePath $HCSExecFile -ArgumentList "-f `"$HCSConfigFile`""
     If ($seconds) {
         Start-Sleep -Seconds $seconds
     }
+    Set-Location $TestRoot
 }
 
 function Restore-Strata_INI {
     # Delete temporary .ini file and restore original
-    Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $AppDataHCSDir)
-    If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" -PathType Leaf) {
+    Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $HCSAppDataDir)
+    If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini") {
         Remove-Item -Path "$AppData_OnSemi_dir\Strata Developer Studio.ini"
         Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" "$AppData_OnSemi_dir\Strata Developer Studio.ini"
     }
 }
 
 function Remove-TemporaryFiles {
-    # Delete DynamicPlatformList.json
-    Write-Host "Checking if DynamicPlatformList.json file exist..."
-    If (Test-Path "$TestRoot/strataDev/DynamicPlatformList.json") {
-        Write-Host "Removing DynamicPlatformList.json..."
-        Remove-Item "$TestRoot/strataDev/DynamicPlatformList.json"
+    # Delete strataDev/DynamicPlatformList.json
+    If (Test-Path "$TestRoot\strataDev\DynamicPlatformList.json") {
+        Remove-Item "$TestRoot\strataDev\DynamicPlatformList.json"
     }
     Else {
-        Write-Host "DynamicPlatformList.json not found."
+        Write-Host "$TestRoot\strataDev\DynamicPlatformList.json not found."
+    }
+
+    # Delete hcs/CollateralDownloadResults.txt
+    If (Test-Path "$TestRoot\hcs\CollateralDownloadResults.txt") {
+        Remove-Item "$TestRoot\hcs\CollateralDownloadResults.txt"
+    }
+    Else {
+        Write-Host "$TestRoot\hcs\CollateralDownloadResults.txt not found."
+    }
+}
+
+# Show a summary of the test results
+function Show-TestSummary {
+    Write-Separator
+    Write-Host "Test Summary"
+    Write-Separator
+
+    Show-TestResult -TestName "Test-SDSInstaller" -TestResults $SDSInstallerResults
+
+    Show-TestResult -TestName "Test-Database" -TestResults $DatabaseResults
+
+    Show-TestResult -TestName "Test-TokenAndViewsDownload" -TestResults $TokenAndViewsDownloadResults
+
+    Show-TestResult -TestName "Test-CollateralDownload" -TestResults $CollateralDownloadResults
+
+    If ($SDSControlViewsResults) {
+        If ($SDSControlViewsResults -Eq $true) {
+            Write-Host -ForegroundColor Green "`nResult for Test-SDSControlViews: No errors found during execution, test requires visual inspection."
+        } Else {
+            Write-Host -ForegroundColor Red "`nResult for Test-SDSControlViews: One or more errors found during execution."
+        }
+    }
+}
+
+function Show-TestResult {
+    Param (
+        [Parameter(Mandatory = $true)][string]$TestName,
+        [Parameter(Mandatory = $true)]$TestResults
+    )
+
+    If ($TestResults) {
+        If ($TestResults[0] -Lt 0 -Or $TestResults[1] -Lt 1) {
+            Write-Host -ForegroundColor Red "`nError found with test $TestName."
+        } Elseif ($TestResults[0] -Eq $TestResults[1]) {
+            Write-Host -ForegroundColor Green "`nResult for ${TestName}: $($TestResults[0]) passed out of $($TestResults[1])."
+        } Else {
+            Write-Host -ForegroundColor Red "`nResult for ${TestName}: $($TestResults[0]) passed out of $($TestResults[1])."
+        }
+    }
+}
+
+# Print a ***** the width of the console
+function Write-Separator {
+    $Line = "*" * $Host.UI.RawUI.WindowSize.Width
+    Write-Host `n$Line`n
+}
+
+# Print indented string with different colors for fail and pass messages
+# Checking for FAIL and PASS is not case sensitive
+function Write-Indented {
+    Param (
+        [Parameter(Mandatory = $true)][string]$string
+    )
+    $FirstWord = ($string -split ' ')[0]
+    if (($FirstWord -eq "FAIL") -OR ($FirstWord -eq "FAIL:") `
+        -OR ($FirstWord -eq "ERROR") -OR ($FirstWord -eq "ERROR:")) {
+        Write-Host -ForegroundColor Red "        $string"
+    } elseif (($FirstWord -eq "PASS") -OR ($FirstWord -eq "PASS:")) {
+        Write-Host -ForegroundColor Green "        $string"
+    } elseif (($FirstWord -eq "WARNING") -OR ($FirstWord -eq "WARNING:")) {
+        Write-Host -ForegroundColor Yellow "        $string"
+    } else {
+        Write-Host "        $string"  
     }
 }
