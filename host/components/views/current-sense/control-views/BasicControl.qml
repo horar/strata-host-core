@@ -879,7 +879,7 @@ Item {
                                                         if (valueSet < maxInputCurrent.from) {
                                                             value = maxInputCurrent.from
                                                         }
-                                                        platformInterface.set_i_in_dac.update(value)
+                                                        platformInterface.set_i_in_dac.update(parsevalue)
 
                                                     }
 
@@ -912,7 +912,7 @@ Item {
 
                                                     inputBoxWidth: maxInputVoltageContainer/9
                                                     fontSizeMultiplier: ratioCalc * 1.2
-                                                    inputBox.validator: IntValidator { top: 26; bottom: 0}
+                                                    inputBox.validator: DoubleValidator { top: 26; bottom: 0}
 
 
 
@@ -927,7 +927,7 @@ Item {
                                                         }
 
 
-                                                        platformInterface.set_v_set.update(value.toString())
+                                                        platformInterface.set_v_set.update(parseFloat(value.toFixed(2)))
 
                                                     }
 
