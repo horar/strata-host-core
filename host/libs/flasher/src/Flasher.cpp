@@ -36,6 +36,7 @@ void Flasher::flash(bool startApplication) {
         if (fwFile_.size() > 0) {
             chunkNumber_ = 0;
             chunkCount_ = static_cast<int>((fwFile_.size() - 1 + CHUNK_SIZE) / CHUNK_SIZE);
+            chunkProgress_ = PROGRESS_STEP;
             qCInfo(logCategoryFlasher) << this << "Preparing for flashing " << dec << chunkCount_ << " chunks of firmware.";
             operation_->prepareForFlash();
         } else {
@@ -77,7 +78,8 @@ void Flasher::handleOperationFinished(int operation, int data) {
 void Flasher::handleFlashFirmware(int lastFlashedChunk) {
     if (lastFlashedChunk == 0) {
         fwFile_.close();
-        qCInfo(logCategoryFlasher) << this << "Firmware is flashed.";
+        qCInfo(logCategoryFlasher) << this << "Flashed chunk " << dec << chunkCount_ << " of " << chunkCount_ << " - firmware is flashed.";
+        emit flashProgress(chunkCount_, chunkCount_);
         if (startApp_) {
             operation_->startApplication();
         } else {
@@ -85,8 +87,14 @@ void Flasher::handleFlashFirmware(int lastFlashedChunk) {
         }
         return;
     }
+    if (lastFlashedChunk == chunkProgress_) { // this is faster than modulo
+        chunkProgress_ += PROGRESS_STEP;
+        qCInfo(logCategoryFlasher) << this << "Flashed chunk " << dec << lastFlashedChunk << " of " << chunkCount_;
+        emit flashProgress(lastFlashedChunk, chunkCount_);
+    } else {
+        qCDebug(logCategoryFlasher) << this << "Flashed chunk " << dec << lastFlashedChunk << " of " << chunkCount_;
+    }
     chunkNumber_++;
-    int chunkNumLog = chunkNumber_;  // chunk number for log
     int chunkSize = CHUNK_SIZE;
     qint64 remainingFileSize = fwFile_.size() - fwFile_.pos();
     if (remainingFileSize <= CHUNK_SIZE) {
@@ -97,7 +105,6 @@ void Flasher::handleFlashFirmware(int lastFlashedChunk) {
 
     qint64 bytesRead = fwFile_.read(reinterpret_cast<char*>(chunk.data()), chunkSize);
     if (bytesRead == chunkSize) {
-        qCInfo(logCategoryFlasher) << this << "Going to flash chunk " << dec << chunkNumLog << " of " << chunkCount_;
         operation_->flashFirmwareChunk(chunk, chunkNumber_);
     } else {
         qCCritical(logCategoryFlasher).noquote() << this << "Cannot read from file " << fwFile_.fileName() ;

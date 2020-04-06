@@ -42,6 +42,13 @@ class Flasher : public QObject
          */
         void finished(bool success);
 
+        /*!
+         * This signal is emitted during firmware flashing.
+         * \param chunk chunk number which was flashed
+         * \param total total count of firmware chunks
+         */
+        void flashProgress(int chunk, int total);
+
     private slots:
         void handleOperationFinished(int operation, int data);
         void handleOperationError(QString msg);
@@ -60,6 +67,7 @@ class Flasher : public QObject
 
         int chunkNumber_;
         int chunkCount_;
+        int chunkProgress_;
 
         bool startApp_;
 };
