@@ -175,9 +175,9 @@ void SGJLinkConnector::finishProcess(bool exitedNormally)
 
     if (type == PROCESS_CHECK_CONNECTION) {
         bool isConnected = parseStatusOutput(output);
-        emit checkConnectionFinished(exitedNormally, isConnected);
+        emit checkConnectionProcessFinished(exitedNormally, isConnected);
     } else if(type == PROCESS_FLASH) {
-        emit flashBoardFinished(exitedNormally);
+        emit flashBoardProcessFinished(exitedNormally);
     }
 }
 
