@@ -19,12 +19,26 @@ class Flasher : public QObject
 
     public:
         /*!
+         * The Result enum for finished() signal.
+         */
+        enum class Result {
+            Ok,
+            Error,
+            Timeout,
+            Cancelled
+        };
+        Q_ENUM(Result)
+
+        /*!
          * Flasher constructor.
          * \param device device which will be used by Flasher
          * \param firmwareFilename path to firmware file
          */
-        Flasher(SerialDevicePtr device, const QString& firmwareFilename);
+        Flasher(const SerialDevicePtr& device, const QString& firmwareFilename);
 
+        /*!
+         * Flasher destructor.
+         */
         ~Flasher();
 
         /*!
@@ -33,14 +47,20 @@ class Flasher : public QObject
          */
         void flash(bool startApplication = true);
 
+        /*!
+         * Cancel flash firmware operation.
+         */
+        void cancel();
+
         friend QDebug operator<<(QDebug dbg, const Flasher* f);
 
     signals:
         /*!
          * This signal is emitted when Flasher finishes.
-         * \param success true if firmware was flashed successfully, otherwise false
+         * \param result result of flash operation
+         * \param errorString error description if result is Error
          */
-        void finished(bool success);
+        void finished(Result result, QString errorString);
 
         /*!
          * This signal is emitted during firmware flashing.
@@ -51,11 +71,11 @@ class Flasher : public QObject
 
     private slots:
         void handleOperationFinished(int operation, int data);
-        void handleOperationError(QString msg);
+        void handleOperationError(QString errStr);
 
     private:
         void handleFlashFirmware(int lastFlashedChunk);
-        void finish(bool success);
+        void finish(Result result, QString errStr = QString());
 
         SerialDevicePtr device_;
 

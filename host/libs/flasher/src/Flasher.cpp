@@ -13,7 +13,7 @@ QDebug operator<<(QDebug dbg, const Flasher* f) {
     return dbg.nospace() << "Device 0x" << hex << f->deviceId_ << ": ";
 }
 
-Flasher::Flasher(SerialDevicePtr device, const QString& firmwareFilename) :
+Flasher::Flasher(const SerialDevicePtr& device, const QString& firmwareFilename) :
     device_(device), fwFile_(firmwareFilename)
 {
     deviceId_ = static_cast<uint>(device_->deviceId());
@@ -40,13 +40,19 @@ void Flasher::flash(bool startApplication) {
             qCInfo(logCategoryFlasher) << this << "Preparing for flashing " << dec << chunkCount_ << " chunks of firmware.";
             operation_->prepareForFlash();
         } else {
-            qCCritical(logCategoryFlasher).noquote() << this << "File '" << fwFile_.fileName() << "' is empty.";
-            finish(false);
+            QString errStr = QStringLiteral("File '") + fwFile_.fileName() + QStringLiteral("' is empty.");
+            qCCritical(logCategoryFlasher).noquote() << this << errStr;
+            finish(Result::Error, errStr);
         }
     } else {
-        qCCritical(logCategoryFlasher).noquote() << this << "Cannot open file '" << fwFile_.fileName() << "'.";
-        finish(false);
+        QString errStr = QStringLiteral("Cannot open file '") + fwFile_.fileName() + QStringLiteral("'.");
+        qCCritical(logCategoryFlasher).noquote() << this << errStr;
+        finish(Result::Error, errStr);
     }
+}
+
+void Flasher::cancel() {
+    operation_->cancelOperation();
 }
 
 void Flasher::handleOperationFinished(int operation, int data) {
@@ -58,19 +64,22 @@ void Flasher::handleOperationFinished(int operation, int data) {
         break;
     case DeviceOperations::Operation::StartApplication :
         qCInfo(logCategoryFlasher) << this << "Flashed firmware is ready for use.";
-        finish(true);
+        finish(Result::Ok);
         break;
     case DeviceOperations::Operation::Timeout :
-        qCWarning(logCategoryFlasher) << this << "Timeout during flashing.";
-        finish(false);
+        qCCritical(logCategoryFlasher) << this << "Timeout during flashing.";
+        finish(Result::Timeout);
         break;
     case DeviceOperations::Operation::Cancel :
-        qCInfo(logCategoryFlasher) << this << "Flashing was cancelled.";
-        finish(false);
+        qCWarning(logCategoryFlasher) << this << "Flashing was cancelled.";
+        finish(Result::Cancelled);
         break;
     default :
-        qCWarning(logCategoryFlasher) << this << "Unsupported operation.";
-        finish(false);
+        {
+            QString errStr = QStringLiteral("Unsupported operation.");
+            qCCritical(logCategoryFlasher) << this << errStr;
+            finish(Result::Error, errStr);
+        }
     }
 }
 
@@ -83,7 +92,7 @@ void Flasher::handleFlashFirmware(int lastFlashedChunk) {
         if (startApp_) {
             operation_->startApplication();
         } else {
-            finish(true);
+            finish(Result::Ok);
         }
         return;
     }
@@ -107,21 +116,22 @@ void Flasher::handleFlashFirmware(int lastFlashedChunk) {
     if (bytesRead == chunkSize) {
         operation_->flashFirmwareChunk(chunk, chunkNumber_);
     } else {
-        qCCritical(logCategoryFlasher).noquote() << this << "Cannot read from file " << fwFile_.fileName() ;
-        finish(false);
+        QString errStr = QStringLiteral("Cannot read from file ") + fwFile_.fileName();
+        qCCritical(logCategoryFlasher).noquote() << this << errStr;
+        finish(Result::Error, errStr);
     }
 }
 
-void Flasher::handleOperationError(QString msg) {
-    qCWarning(logCategoryFlasher).noquote() << this << "Error during flashing: " << msg;
-    finish(false);
+void Flasher::handleOperationError(QString errStr) {
+    qCCritical(logCategoryFlasher).noquote() << this << "Error during flashing: " << errStr;
+    finish(Result::Error, errStr);
 }
 
-void Flasher::finish(bool success) {
+void Flasher::finish(Result result, QString errStr) {
     if (fwFile_.isOpen()) {
         fwFile_.close();
     }
-    emit finished(success);
+    emit finished(result, errStr);
 }
 
 }  // namespace
