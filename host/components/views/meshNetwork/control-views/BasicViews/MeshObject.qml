@@ -7,13 +7,16 @@ Rectangle {
     color:"transparent"
     //border.color:"black"
 
-    property string objectNumber: ""
-    property string pairingModel:""
-    property alias nodeNumber: nodeNumber.text
-    property alias objectColor: objectCircle.color
-    property string subName:""
+    property string scene:""                        //which view is this object part of (e.g. "office")
+
+    property string pairingModel:""                 //what is the role of this object (e.g. "door")
+    property alias nodeNumber: nodeNumber.text      //what number node corresponds to this object
+    property alias objectColor: objectCircle.color  //what is the color of the corresponding physical node?
+    property string displayName:""                  //the name of this node that's shown in the UI
+    property string subName:""                      //appears below the paring model name (e.g. "relay")
 
 
+    signal nodeActivated(string scene, string pairingModel, string nodeNumber, color nodeColor)
 
     Behavior on opacity{
         NumberAnimation {duration: 1000}
@@ -43,7 +46,7 @@ Rectangle {
         opacity: 0.5
 
         onColorChanged: {
-            console.log("changing objectCircle node",nodeName.text, "to",color,"drag object color is",dragObject.color)
+            //console.log("changing objectCircle node",nodeName.text, "to",color,"drag object color is",dragObject.color)
             if (color != "#d3d3d3"){    //light grey
                 nodeNumber.visible = true;
             }
@@ -76,7 +79,7 @@ Rectangle {
             }
 
             onColorChanged: {
-                console.log("changing dragObject",nodeName.text,"color to",color)
+                //console.log("changing dragObject",nodeName.text,"color to",color)
                 parent.color = color    //allows the drop area to change the color of the source
             }
 
@@ -118,11 +121,8 @@ Rectangle {
 
         DropArea{
             id:targetDropArea
-            //x: 10; y: 10
             width: 1.5*objectWidth;
             height: 2*objectHeight
-
-            property color savedColor: "transparent"        //what is this used for now?
 
             property bool acceptsDrops: {
                 if (objectCircle.color == "#d3d3d3")    //light grey color
@@ -139,18 +139,12 @@ Rectangle {
                     objectCircle.border.color = "darkGrey"
                     objectCircle.border.width = 5
                 }
-                //savedColor = objectCircle.color
-//                if (acceptsDrops){
-//                    objectCircle.color = drag.source.color;
-//                }
             }
 
             onExited: {
                 //console.log("exited drop area")
                 objectCircle.border.color = "transparent"
                 objectCircle.border.width = 1
-//                dropAreaRectangle.color = savedColor
-//                infoTextRect.visible = false;
             }
 
             onDropped: {
@@ -159,7 +153,10 @@ Rectangle {
                     dragObject.color = drag.source.color;   //set this object's color to the dropped one
                     drag.source.color = "lightgrey"         //reset the dropped object's color to grey
                     dragObject.number = drag.source.number
-                    savedColor = objectCircle.color
+                    //send a signal from this object to communicate that a node has been moved
+                    meshObject.nodeActivated(meshObject.scene, meshObject.pairingModel, dragObject.number, dragObject.color)
+                    //tell the firmware of the change
+                    platformInterface.set_node_mode(pairingModel,nodeNumber,false)
                 }
 
                 drag.source.resetLocation()             ///send the drag object back to where it was before being dragged
@@ -168,35 +165,6 @@ Rectangle {
 
             }
         }
-//        MouseArea {
-//            id: clickArea
-//            anchors.fill: parent
-//            acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-//            property int mouseButtonClicked: Qt.NoButton
-//            onPressed: {
-//                console.log("Button pressed",mouseButtonClicked);
-//                if (pressedButtons & Qt.LeftButton) {
-//                    mouseButtonClicked = Qt.LeftButton
-//                    console.log("Left button");
-//                } else if (pressedButtons & Qt.RightButton) {
-//                    mouseButtonClicked = Qt.RightButton
-//                    console.log("Right button");
-//                }
-//            }
-//            onClicked: {
-//                if(mouseButtonClicked & Qt.RightButton) {
-//                    console.log("Right button used");
-//                    infoBox.visible = true
-//                }
-//                else{
-//                    console.log("left button used")
-//                    console.log("sending color command from node",meshObject.nodeNumber)
-//                    platformInterface.light_hsl_set.update(parseInt(meshObject.nodeNumber),0,0,100)
-//                    //contextMenu.open()
-//                }
-//            }
-//        }
     }
 
 
@@ -208,7 +176,7 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom:objectCircle.top
             anchors.bottomMargin: 15
-            text:meshObject.pairingModel
+            text:meshObject.displayName
             font.pixelSize: 15
         }
 
@@ -240,7 +208,7 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: objectCircle.bottom
             anchors.topMargin: 5
-            text:meshObject.objectNumber
+            text:meshObject.nodeNumber
             font.pixelSize: 16
             visible:false
 

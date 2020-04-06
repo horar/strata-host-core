@@ -1,69 +1,30 @@
 import QtQuick 2.0
 import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 
-DropArea{
-    id:targetDropArea
+Rectangle {
+    id:root
     x: 10; y: 10
     width: nodeWidth; height: nodeHeight
+    radius:height/2
+    color: "transparent"
+    border.color: "white"
+    border.width: 5
 
+    property string scene:""
     property string nodeType: "light"
-    property string nodeNumber: "0"
-    property color savedColor: "transparent"
-    property alias radius: dropAreaRectangle.radius
-    property alias color: dropAreaRectangle.color
-    property bool acceptsDrops: true
+    property string nodeNumber: ""
 
-    signal clearTargetsOfColor(color inColor, string name)
-
-    onEntered:{
-        console.log("entered drop area")
-        savedColor = dropAreaRectangle.color
-        if (acceptsDrops){
-            dropAreaRectangle.color = drag.source.color;
-        }
-        infoTextRect.visible = true;
+    Text{
+        id:nodeNumberText
+        anchors.centerIn: parent
+        text: root.nodeNumber
+        font.pixelSize: 12
+        color:"white"
+        visible:root.color == "transparent" ? false : true
     }
 
-    onExited: {
-        console.log("exited drop area")
-        dropAreaRectangle.color = savedColor
-        infoTextRect.visible = false;
-    }
-
-    onDropped: {
-        console.log("item dropped with color",drag.source.color)
-        if (acceptsDrops){
-            dropAreaRectangle.color = drag.source.color;
-            drag.source.model = nodeType;
-            savedColor = dropAreaRectangle.color
-        }
-        infoTextRect.visible = false;
-
-        //signal to tell other drop targets using the same color to clearConnectionsButton
-        clearTargetsOfColor(dropAreaRectangle.color, objectName);
-    }
-
-    Rectangle {
-        id:dropAreaRectangle
-        anchors.fill:parent
-        radius:height/2
-        color: "transparent"
-        border.color:{
-            return "white"
-        }
-        border.width: 5
-
-        Text{
-            id:nodeNumber
-            anchors.centerIn: parent
-            text: targetDropArea.nodeNumber
-            font.pixelSize: 12
-            color:"white"
-            visible:false
-        }
-
-    }
-
+    //the mouse area handles clicks in the object.
+    //these clicks send messages to perform actions on the physical nodes
     MouseArea{
         id:dropAreaMouseArea
         anchors.fill:parent
@@ -71,28 +32,27 @@ DropArea{
         property bool relayEnabled: true
         property bool dimmerEnabled: true
         property int counter : 0
-        property int lowPowerMode: 32    //0 is high power 32 is low power
+        property bool highPowerMode: true
 
         onClicked:{
             console.log("sending click with value",nodeType)
-            if (nodeType == "voltage"){
+            if (nodeType == "solar"){
                 //enable/disable relay mode
-               platformInterface.sensor_set.update(7,"strata",relayEnabled)
-               relayEnabled = !relayEnabled;
+                //platformInterface.sensor_set.update(7,"strata",relayEnabled)
+                platformInterface.set_node_mode(nodeType,root.nodeNumber,relayEnabled)
+                relayEnabled = !relayEnabled;
             }
 
             else if (nodeType == "provisioner"){
-                console.log("sending lowPower comamnd with value",lowPowerMode)
-                platformInterface.sensor_set.update(1,"strata",lowPowerMode)
-                if (lowPowerMode === 0)
-                    lowPowerMode = 32;
-                else
-                    lowPowerMode = 0;
+                console.log("sending lowPower comamnd with value",highPowerMode)
+                platformInterface.sensor_set.update(nodeType,root.nodeNumber,highPowerMode)
+                highPowerMode = !highPowerMode
             }
 
 
-            else if (nodeType === "alarm"){
-               platformInterface.sensor_set.update(65535,"strata",4)
+            else if (nodeType === "door"){
+                //platformInterface.sensor_set.update(65535,"strata",4)
+                platformInterface.set_node_mode.update(nodeType,65535,true)
                 //the firmware should send a notification to let other parts of the UI know that the alarm is on
                 //but it is not. In the meantime, I'll inject the JSON here
                 CorePlatformInterface.data_source_handler('{
@@ -103,76 +63,28 @@ DropArea{
 
                      } ')
             }
-            else if (nodeType === "remote"){
-               counter = counter + 1;
-               platformInterface.light_hsl_set.update(8,(counter * 100),100,50)
-               if(counter === 3) {
-                   counter = 0
-               }
+            else if (nodeType === "hvac"){
+                platformInterface.light_hsl_set.update(65535,color.hslHue,color.hslSaturation,color.hslLightness)
 
-//                 platformInterface.light_hsl_set.update(8,300,100,50)
             }
             else if (nodeType == "security"){
-               platformInterface.light_hsl_set.update(65535,81,100,50)
+                platformInterface.light_hsl_set.update(65535,color.hslHue,color.hslSaturation,color.hslLightness)
             }
             else if (nodeType == "doorbell"){
-               platformInterface.light_hsl_set.update(65535,19,100,50)
+                platformInterface.light_hsl_set.update(65535,color.hslHue,color.hslSaturation,color.hslLightness)
             }
             else if (nodeType == "unknown"){
-               platformInterface.light_hsl_set.update(65535,91,100,50)
+                platformInterface.light_hsl_set.update(65535,color.hslHue,color.hslSaturation,color.hslLightness)
             }
-            else if (nodeType == "switch"){
+            else if (nodeType == "dimmer"){
                 //enable/disable dimmer mode
-               if (dimmerEnabled){
-                    platformInterface.sensor_set.update(2,"magnetic_detection",16)
-                    dimmerEnabled = ! dimmerEnabled;
-                    }
-                 else{
-                   platformInterface.sensor_set.update(2,"magnetic_detection",0)
-                   dimmerEnabled = ! dimmerEnabled;
-               }
+                console.log("sending dimmer mode",nodeType,root.nodeNumber,dimmerEnabled);
+                platformInterface.set_node_mode.update(nodeType,root.nodeNumber,dimmerEnabled)
+                dimmerEnabled = ! dimmerEnabled;
             }
-        }
-    }
 
-
-
-
-    Rectangle{
-        id: infoTextRect
-//        height: 50
-//        width:175
-//        anchors.top: dropAreaRectangle.top
-//        anchors.left: dropAreaRectangle.right
-//        anchors.leftMargin: 10
-        anchors.left: infoText.left
-        anchors.leftMargin: -10
-        anchors.right:infoText.right
-        anchors.rightMargin:-10
-        anchors.top: infoText.top
-        anchors.topMargin: -5
-        anchors.bottom:infoText.bottom
-        anchors.bottomMargin: -10
-        color:"white"
-        opacity:.4
-        radius:7
-        visible: false
-    }
-
-    Text{
-        id:infoText
-        height:50
-        //width:100
-        text: targetDropArea.nodeType
-        font.pixelSize: 48
-        //fontSizeMode: Text.Fit
-        //anchors.centerIn: infoTextRect
-        anchors.top: dropAreaRectangle.top
-        anchors.left: dropAreaRectangle.right
-        anchors.leftMargin: 10
-        visible: infoTextRect.visible
-    }
-
+        }//on clicked
+    } //MouseArea
 
 }
 

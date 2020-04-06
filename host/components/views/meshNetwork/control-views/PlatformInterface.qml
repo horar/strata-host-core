@@ -106,7 +106,7 @@ Item {
     }
 
     property var node_removed : {
-        "node_id": "8000",  // in dec (16 bit)
+        "node_id": "0",  // in dec (16 bit)
     }
 
     property var alarm_triggered:{
@@ -175,6 +175,27 @@ Item {
     //            send: function () { CorePlatformInterface.send(this) },
     //            show: function () { CorePlatformInterface.show(this) }
     //        })
+
+    property var set_node_mode : ({
+                                      "cmd" : "set_node_mode",
+                                      "payload": {
+                                          "mode":"",
+                                          "uaddr": 8000,  // in dec (16 bit uint),
+                                          "enabled":true
+                                      },
+
+                                      update: function (mode,address,enabled) {
+                                          this.set(mode,address,enabled)
+                                          this.send(this)
+                                      },
+                                      set: function (inMode,inAddress,inEnabled) {
+                                          this.payload.mode = inMode;
+                                          this.payload.uaddr = inAddress;
+                                          this.payload.enable = inEnabled;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
 
     property var set_dimmer_mode : ({
                                       "cmd" : "set_dimmer_mode",
