@@ -45,7 +45,7 @@ Item {
         "load_en":"off",		//Load enable
         "load_set":"0.0",       //Load current set value
         "ldo_sel":"TSOP5",      //LDO package selection
-        "ldo_en":"off",         //LDO enable
+        "ldo_en":"true",         //LDO enable
         "vout_set_disabled":false //LDO output voltage adjustment disable state
     }
 

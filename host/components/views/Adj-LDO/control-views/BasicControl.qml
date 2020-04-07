@@ -18,6 +18,7 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+    property alias pgoodTimer: pgoodTimer
     Component.onCompleted: {
         platformInterface.get_all_states.send()
         platformInterface.reset_tsd.update()
@@ -125,20 +126,20 @@ Item {
         else loadEnableSwitch.checked = false
 
         if(control_states.ldo_sel === "TSOP5")  {
-//            pgoodLabel.opacity = 0.5
-//            pgoodLabel.enabled = false
+            //            pgoodLabel.opacity = 0.5
+            //            pgoodLabel.enabled = false
             pgoodLabelText = "\n(PG_308)"
             ldoPackageComboBox.currentIndex = 0
         }
         else if(control_states.ldo_sel === "DFN6") {
-//            pgoodLabel.opacity = 1
-//            pgoodLabel.enabled = true
+            //            pgoodLabel.opacity = 1
+            //            pgoodLabel.enabled = true
             pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 1
         }
         else if (control_states.ldo_sel === "DFN8") {
-//            pgoodLabel.opacity = 1
-//            pgoodLabel.enabled = true
+            //            pgoodLabel.opacity = 1
+            //            pgoodLabel.enabled = true
             pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 2
         }
@@ -696,15 +697,15 @@ Item {
                     }
                 }
 
-//                Rectangle {
-//                    id: middleLine3
-//                    Layout.preferredHeight: parent.height + 5
-//                    Layout.alignment: Qt.AlignCenter
-//                    Layout.preferredWidth: 2
-//                    border.color: "lightgray"
-//                    radius: 2
-//                    //Layout.leftMargin: 10
-//                }
+                //                Rectangle {
+                //                    id: middleLine3
+                //                    Layout.preferredHeight: parent.height + 5
+                //                    Layout.alignment: Qt.AlignCenter
+                //                    Layout.preferredWidth: 2
+                //                    border.color: "lightgray"
+                //                    radius: 2
+                //                    //Layout.leftMargin: 10
+                //                }
 
 
                 Rectangle {
@@ -784,17 +785,42 @@ Item {
                                         text: "Power Good" + pgoodLabelText
                                         font.bold: true
 
+
                                         SGStatusLight {
                                             id: pgoodLight
                                             height: 40
                                             width: 40
+
                                             property var int_pg_ldo:  platformInterface.int_status.int_pg_ldo
                                             onInt_pg_ldoChanged: {
-                                                if(int_pg_ldo === true) //&& pgoodLabel.enabled)
+                                                if(int_pg_ldo === true)
                                                     pgoodLight.status  = SGStatusLight.Green
                                                 else pgoodLight.status  = SGStatusLight.Off
+
                                             }
+
+
+
+                                            Timer {
+                                                id: pgoodTimer
+                                                interval: 500; running: true; repeat: true
+
+                                                onTriggered: {
+                                                    console.log("intimer")
+
+                                                    if ((platformInterface.int_status.pg_ldo === false) && (platformInterface.control_states.ldo_en === true))
+                                                    {
+                                                        if (pgoodLight.status === SGStatusLight.Off) {
+                                                            pgoodLight.status = SGStatusLight.Red
+                                                        } else {
+                                                            pgoodLight.status = SGStatusLight.Off
+                                                        }
+                                                    }
+                                                }
+                                            }
+
                                         }
+
                                     }
                                 }
 
@@ -956,17 +982,17 @@ Item {
                                                     onActivated: {
                                                         if(currentIndex === 0) {
                                                             platformInterface.select_ldo.update("TSOP5")
-//                                                            pgoodLabel.opacity = 0.5
-//                                                            pgoodLabel.enabled = false
+                                                            //                                                            pgoodLabel.opacity = 0.5
+                                                            //                                                            pgoodLabel.enabled = false
                                                         }
                                                         else if(currentIndex === 1) {
-//                                                            pgoodLabel.opacity = 1
-//                                                            pgoodLabel.enabled = true
+                                                            //                                                            pgoodLabel.opacity = 1
+                                                            //                                                            pgoodLabel.enabled = true
                                                             platformInterface.select_ldo.update("DFN6")
                                                         }
                                                         else if(currentIndex === 2) {
-//                                                            pgoodLabel.opacity = 1
-//                                                            pgoodLabel.enabled = true
+                                                            //                                                            pgoodLabel.opacity = 1
+                                                            //                                                            pgoodLabel.enabled = true
                                                             platformInterface.select_ldo.update("DFN8")
                                                         }
                                                         else console.log("Unknown State")
@@ -1099,14 +1125,14 @@ Item {
                     }
                 }
 
-//                Rectangle {
-//                    id: middleLine
-//                    Layout.preferredHeight: parent.height
-//                    Layout.alignment: Qt.AlignCenter
-//                    Layout.preferredWidth: 2
-//                    border.color: "lightgray"
-//                    radius: 2
-//                }
+                //                Rectangle {
+                //                    id: middleLine
+                //                    Layout.preferredHeight: parent.height
+                //                    Layout.alignment: Qt.AlignCenter
+                //                    Layout.preferredWidth: 2
+                //                    border.color: "lightgray"
+                //                    radius: 2
+                //                }
 
                 Rectangle {
                     id: telemetryContainer
@@ -1395,14 +1421,14 @@ Item {
                     }
                 }
 
-//                Rectangle {
-//                    id: middleLine2
-//                    Layout.preferredHeight: parent.height
-//                    Layout.alignment: Qt.AlignCenter
-//                    Layout.preferredWidth: 2
-//                    border.color: "lightgray"
-//                    radius: 2
-//                }
+                //                Rectangle {
+                //                    id: middleLine2
+                //                    Layout.preferredHeight: parent.height
+                //                    Layout.alignment: Qt.AlignCenter
+                //                    Layout.preferredWidth: 2
+                //                    border.color: "lightgray"
+                //                    radius: 2
+                //                }
 
                 Rectangle {
                     id:outputConfigurationContainerBox
@@ -1624,7 +1650,7 @@ Item {
                                     id: checkBoxContainer
                                     anchors.fill: extLoadCheckboxContainer
                                     color: "transparent"
-                                   // z: 2
+                                    // z: 2
                                     MouseArea {
                                         id: hoverArea2
                                         anchors { fill: parent }
@@ -1646,7 +1672,7 @@ Item {
                                     color: "#0bd"   // Default: "#00ccee"
 
                                     content: Text {
-                                       text: qsTr("Check this box\nif an external load\nis connected to the\noutput banana plugs.")
+                                        text: qsTr("Check this box\nif an external load\nis connected to the\noutput banana plugs.")
                                         color: "white"
                                     }
                                 }

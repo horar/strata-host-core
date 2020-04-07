@@ -20,6 +20,7 @@ Item {
 
     Component.onCompleted: {
         Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
+        basic.pgoodTimer.stop()
     }
 
     TabBar {
@@ -37,6 +38,8 @@ Item {
                 basic.visible = true
                 advanced.visible = false
                 efficiency.visible = false
+                basic.pgoodTimer.start()
+
             }
         }
 
@@ -75,6 +78,7 @@ Item {
             id: basic
 
             visible: true
+
 
         }
 

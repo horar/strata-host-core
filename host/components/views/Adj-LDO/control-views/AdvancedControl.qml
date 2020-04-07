@@ -771,9 +771,10 @@ Item {
                                             font.bold: true
 
                                             SGStatusLight {
+                                                id: pgldo
                                                 height: 40
                                                 width: 40
-                                                id: pgldo
+
                                             }
                                         }
                                     }
