@@ -19,6 +19,7 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
     Component.onCompleted: {
+        advPGoodTimer.start()
         Help.registerTarget(currentLimitThresholdLabel, "This info box will show the approximate output current threshold at which the LDO's output current limit protection was triggered. This info box does not show the current limit threshold during a short-circuit event caused by enabling the onboard short-circuit load or if a load is attached directly at the LDO output via the solder pad.", 0, "AdjLDOAdvanceHelp")
         Help.registerTarget(resetCurrLimitButton, "This button resets the previous detected current limit threshold value and re-enables the logic for detecting a current limit event. The current limit threshold may immediately update after resetting if the output current remains above the current limit threshold.", 1, "AdjLDOAdvanceHelp")
         Help.registerTarget(shortCircuitButton, "This button enables the onboard short-circuit load used to emulate a short to ground on the LDO output for approximately 2 ms. The short-circuit load cannot be enabled when powering the LDO via the 5V from the Strata USB connector and/or when the input buck regulator is enabled. The current pulled by the short-circuit load will vary with LDO output voltage. See the Platform Content page for more information about the short-circuit load and LDO behavior during a short-circuit event.", 2, "AdjLDOAdvanceHelp")
@@ -226,20 +227,15 @@ Item {
         setOutputCurrent.value = control_states.load_set
 
         if(control_states.ldo_sel === "TSOP5")  {
-            //            pgldoLabel.opacity = 0.5
-            //            pgldoLabel.enabled = false
             pgoodLabelText = "\n(PG_308)"
             ldoPackageComboBox.currentIndex = 0
         }
         else if(control_states.ldo_sel === "DFN6") {
-            //            pgldoLabel.opacity = 1
-            //            pgldoLabel.enabled = true
             pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 1
         }
         else if (control_states.ldo_sel === "DFN8") {
-            //            pgldoLabel.opacity = 1
-            //            pgldoLabel.enabled = true
+
             pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 2
         }
@@ -262,8 +258,9 @@ Item {
 
     property var int_status: platformInterface.int_status
     onInt_statusChanged: {
-        if(int_status.int_pg_ldo === true && pgldoLabel.enabled)  pgldo.status =  SGStatusLight.Green
-        else  pgldo.status =  SGStatusLight.Off
+        //Handled in timer
+        //        if(int_status.int_pg_ldo === true && pgldoLabel.enabled)  pgldo.status =  SGStatusLight.Green
+        //        else  pgldo.status =  SGStatusLight.Off
 
         if(int_status.ocp === true) ocpTriggered.status = SGStatusLight.Red
         else ocpTriggered.status = SGStatusLight.Off
@@ -774,6 +771,28 @@ Item {
                                                 id: pgldo
                                                 height: 40
                                                 width: 40
+
+                                                Timer {
+                                                    id: advPGoodTimer
+                                                    interval: 500; running: true; repeat: true
+                                                    onTriggered: {
+                                                        if(platformInterface.int_status.int_pg_ldo === true) {
+                                                            pgldo.status  = SGStatusLight.Green
+                                                        }
+
+                                                        else if ((platformInterface.int_status.int_pg_ldo === false) && (platformInterface.control_states.ldo_en === "on"))
+                                                        {
+                                                            if (pgldo.status === SGStatusLight.Off) {
+                                                                pgldo.status = SGStatusLight.Red
+                                                            } else {
+                                                                pgldo.status = SGStatusLight.Off
+                                                            }
+                                                        }
+                                                        else  pgldo.status  = SGStatusLight.Off
+                                                    }
+                                                }
+
+
 
                                             }
                                         }

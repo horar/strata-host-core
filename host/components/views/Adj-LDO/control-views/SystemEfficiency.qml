@@ -26,6 +26,7 @@ Item {
     //    }
 
     Component.onCompleted: {
+        sysEfficiencyPGoodTimer.start()
         Help.registerTarget(systemInputVoltageLabel, "This info box shows the voltage at the input of the buck regulator and bypass load switch (VIN_SB).", 0, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(systemInputCurrentLabel, "This info box shows the input current to the board (current flowing from VIN to VIN_SB).", 1, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(systemInputPowerLabel, "This gauge shows the input power to the system consisting of the input buck regulator and LDO. This input power measurement excludes the losses in the input load switches and input current sense resistor.", 2, "AdjLDOSystemEfficiencyHelp")
@@ -218,20 +219,20 @@ Item {
         }
 
         if(control_states.ldo_sel === "TSOP5")  {
-//            pgldoLabel.opacity = 0.5
-//            pgldoLabel.enabled = false
+            //            pgldoLabel.opacity = 0.5
+            //            pgldoLabel.enabled = false
             pgoodLabelText = "\n(PG_308)"
             ldoPackageComboBox.currentIndex = 0
         }
         else if(control_states.ldo_sel === "DFN6") {
-//            pgldoLabel.opacity = 1
-//            pgldoLabel.enabled = true
+            //            pgldoLabel.opacity = 1
+            //            pgldoLabel.enabled = true
             pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 1
         }
         else if (control_states.ldo_sel === "DFN8") {
-//            pgldoLabel.opacity = 1
-//            pgldoLabel.enabled = true
+            //            pgldoLabel.opacity = 1
+            //            pgldoLabel.enabled = true
             pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 2
         }
@@ -1586,16 +1587,36 @@ Item {
                                                 font.bold: true
 
                                                 SGStatusLight {
+                                                    id: pgldo
                                                     height: 40
                                                     width: 40
-                                                    id: pgldo
+                                                    Timer {
+                                                        id: sysEfficiencyPGoodTimer
+                                                        interval: 500; running: true; repeat: true
+                                                        onTriggered: {
+                                                            if(platformInterface.int_status.int_pg_ldo === true) {
+                                                                pgldo.status  = SGStatusLight.Green
+                                                            }
 
-                                                    property var int_pg_ldo: platformInterface.int_status.int_pg_ldo
-                                                    onInt_pg_ldoChanged: {
-                                                        if(int_pg_ldo === true && pgldoLabel.enabled)
-                                                            pgldo.status =  SGStatusLight.Green
-                                                        else pgldo.status =  SGStatusLight.Off
+                                                            else if ((platformInterface.int_status.int_pg_ldo === false) && (platformInterface.control_states.ldo_en === "on"))
+                                                            {
+                                                                if (pgldo.status === SGStatusLight.Off) {
+                                                                    pgldo.status = SGStatusLight.Red
+                                                                } else {
+                                                                    pgldo.status = SGStatusLight.Off
+                                                                }
+                                                            }
+                                                            else  pgldo.status  = SGStatusLight.Off
+                                                        }
                                                     }
+
+
+                                                    //                                                    property var int_pg_ldo: platformInterface.int_status.int_pg_ldo
+                                                    //                                                    onInt_pg_ldoChanged: {
+                                                    //                                                        if(int_pg_ldo === true && pgldoLabel.enabled)
+                                                    //                                                            pgldo.status =  SGStatusLight.Green
+                                                    //                                                        else pgldo.status =  SGStatusLight.Off
+                                                    //                                                    }
                                                 }
                                             }
                                         }

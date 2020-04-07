@@ -790,9 +790,6 @@ Item {
                                             id: pgoodLight
                                             height: 40
                                             width: 40
-
-
-
                                             Timer {
                                                 id: pgoodTimer
                                                 interval: 500; running: true; repeat: true
