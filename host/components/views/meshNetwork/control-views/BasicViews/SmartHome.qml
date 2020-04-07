@@ -93,6 +93,7 @@ Rectangle {
             //console.log("set the opacity of node",theNodeNumber, "to 1");
             meshArray[theNodeNumber].objectColor = platformInterface.node_added.color
             //targetArray[theNodeNumber].color = platformInterface.node_added.color
+            meshArray[theNodeNumber].nodeNumber = theNodeNumber
         }
 
         property var nodeRemoved: platformInterface.node_removed
@@ -103,16 +104,23 @@ Rectangle {
             }
         }
 
-
-        MeshObject{ id: mesh7; objectName: "one"; pairingModel:""; subName:"";nodeNumber: "8"}
-        MeshObject{ id: mesh6; objectName: "two"; pairingModel:"" ;nodeNumber: "6"}
-        MeshObject{ id: mesh4; objectName: "three"; pairingModel:"";nodeNumber: "4"}
-        MeshObject{ id: mesh2; objectName: "four"; pairingModel:"Window";nodeNumber: "2" }
+        MeshObject{ id: mesh7; scene:"smart_home"; pairingModel:""; subName:"";nodeNumber: "8";
+             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
+        MeshObject{ id: mesh6; scene:"smart_home"; pairingModel:"" ;nodeNumber: "6";
+             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
+        MeshObject{ id: mesh4; scene:"smart_home"; pairingModel:"";nodeNumber: "4";
+             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
+        MeshObject{ id: mesh2; scene:"smart_home"; displayName:"Window"; pairingModel:"window";nodeNumber: "2";
+             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         ProvisionerObject{ id: provisioner; nodeNumber:"1" }
-        MeshObject{ id: mesh1; objectName: "five"; pairingModel:"Door";nodeNumber: "3"}
-        MeshObject{ id: mesh3; objectName: "six" ; pairingModel:"Lights";nodeNumber: "5"}
-        MeshObject{ id: mesh5; objectName: "seven"; pairingModel:""; subName:""; nodeNumber: "7"}
-        MeshObject{ id: mesh8; objectName: "eight"; pairingModel:"";nodeNumber: "9"}
+        MeshObject{ id: mesh1; scene:"smart_home"; displayName:"Door"; pairingModel:"smart_home_door";nodeNumber: "3"
+             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
+        MeshObject{ id: mesh3; scene:"smart_home"; displayName:"Lights"; pairingModel:"lights";nodeNumber: "5";
+             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
+        MeshObject{ id: mesh5; scene:"smart_home"; pairingModel:""; subName:""; nodeNumber: "7"
+             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
+        MeshObject{ id: mesh8; scene:"smart_home"; pairingModel:"";nodeNumber: "9"
+             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
     }
 
 
@@ -168,17 +176,53 @@ Rectangle {
                 dragTargets.push(targetPair);
                 targetPair =[target1, target3];
                 dragTargets.push(targetPair);
-                //since this connection draws straight through the door, it doesn't look good
-//                targetPair =[target2, target3];
-//                dragTargets.push(targetPair);
+
             }
 
-            function clearPairings(){
-                target1.color = "transparent"
-                target2.color = "transparent"
-                target3.color = "transparent"
+            property var targetArray: [0, 0, target1, target2, 0, target3,0,0,0,0]
+
+            property var newNodeAdded: platformInterface.node_added
+            onNewNodeAddedChanged: {
+
+                var theNodeNumber = platformInterface.node_added.index
+
+                targetArray[theNodeNumber].nodeNumber = platformInterface.node_added.index
+                targetArray[theNodeNumber].color = platformInterface.node_added.color
+                console.log("new node added",theNodeNumber,"to role",targetArray[theNodeNumber].nodeType)
             }
 
+            property var nodeRemoved: platformInterface.node_removed
+            onNodeRemovedChanged: {
+                var theNodeNumber = platformInterface.node_removed.node_id
+                //console.log("removing node",theNodeNumber)
+                targetArray[theNodeNumber].nodeNumber = ""
+                targetArray[theNodeNumber].color = "transparent"
+            }
+
+            //this is called when the user drags a node in the row at the top to a new location.
+            //the new location, color, pairing model and node number are communicated here.
+            function nodeActivated( scene,  pairingModel,  inNodeNumber,  nodeColor){
+                console.log("nodeActivated with scene=",scene,"model=",pairingModel,"node=",inNodeNumber,"and color",nodeColor)
+                if (scene === "smart_home"){
+                    //the node must have come from somewhere, so iterate over the nodes, and find the node that previously had
+                    //this node number, and set it back to transparent
+                    targetArray.forEach(function(item, index, array){
+                        if (item.nodeNumber === inNodeNumber){
+                            //console.log("removing node from role",item.nodeType)
+                            item.nodeNumber = ""
+                            item.color = "transparent"
+                            }
+                        })
+
+                    targetArray.forEach(function(item, index, array){
+                        if (item.nodeType === pairingModel){
+                            //console.log("assigning",item.nodeType,"node",inNodeNumber)
+                            item.nodeNumber = inNodeNumber
+                            item.color = nodeColor
+                        }
+                    })
+                }
+            }
 
 
             DragTarget{
@@ -190,8 +234,8 @@ Rectangle {
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .4
                 nodeType:"window"
-                nodeNumber:"3"
-                color:mesh7.color
+                scene:"smart_home"
+                nodeNumber:""
             }
 
             DragTarget{
@@ -202,9 +246,9 @@ Rectangle {
                 anchors.leftMargin: parent.width * .4
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .30
-                nodeType: "door"
-                nodeNumber:"4"
-                color:mesh6.color
+                scene:"smart_home"
+                nodeType: "smart_home_door"
+                nodeNumber:""
             }
 
             DragTarget{
@@ -215,9 +259,9 @@ Rectangle {
                 anchors.leftMargin: parent.width * .75
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .22
+                scene:"smart_home"
                 nodeType:"lights"
-                nodeNumber:"5"
-                color:mesh4.color
+                nodeNumber:"="
             }
 
 

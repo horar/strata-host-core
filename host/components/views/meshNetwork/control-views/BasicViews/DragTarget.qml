@@ -33,6 +33,10 @@ Rectangle {
         property bool dimmerEnabled: true
         property int counter : 0
         property bool highPowerMode: true
+        property bool windowOpen:true
+        property bool doorOpen:true
+        property var roomColors:["blue","green","purple","red","off","on"]
+        property int currentRoomColor:0
 
         onClicked:{
             console.log("sending click with value",nodeType)
@@ -81,6 +85,30 @@ Rectangle {
                 console.log("sending dimmer mode",nodeType,root.nodeNumber,dimmerEnabled);
                 platformInterface.set_node_mode.update(nodeType,root.nodeNumber,dimmerEnabled)
                 dimmerEnabled = ! dimmerEnabled;
+            }
+
+            //smarthome nodes
+            else if (nodeType == "window"){
+                var theWindow;
+                if (windowOpen)
+                    theWidow = "open"
+                  else
+                    theWindow = "closed"
+                platformInterface.toggle_window.update(theWindow)
+            }
+            else if (nodeType == "lights"){
+                platformInterface.set_room_color.update(roomColors[currentRoomColor])
+                currentRoomColor++;
+                if (currentRoomColor > roomColors.length)
+                    currentRoomColor = 0;
+            }
+            else if (nodeType == "smart_home_door"){
+                var theDoor;
+                if (doorOpen)
+                    theDoor = "open"
+                  else
+                    theDoor = "closed"
+                platformInterface.toggle_door.update(theDoor)
             }
 
         }//on clicked

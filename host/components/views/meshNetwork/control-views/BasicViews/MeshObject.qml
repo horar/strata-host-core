@@ -92,6 +92,11 @@ Rectangle {
             function resetLocation(){
                 x = 0;
                 y = 0;
+                //the color is reset to grey by the drop area,which breaks the binding of the drag
+                //color to the parent color. This manifests as a drag item that's grey if that node is
+                //added later with a different color. Resetting the binding here to fix that.
+                color  = Qt.binding(function(){return parent.color})
+                number = Qt.binding(function(){return nodeNumber.text})
             }
 
             MouseArea {
@@ -154,9 +159,10 @@ Rectangle {
                     drag.source.color = "lightgrey"         //reset the dropped object's color to grey
                     dragObject.number = drag.source.number
                     //send a signal from this object to communicate that a node has been moved
+                    console.log("Node Activated with",meshObject.scene, meshObject.pairingModel, dragObject.number, dragObject.color)
                     meshObject.nodeActivated(meshObject.scene, meshObject.pairingModel, dragObject.number, dragObject.color)
                     //tell the firmware of the change
-                    platformInterface.set_node_mode(pairingModel,nodeNumber,false)
+                    platformInterface.set_node_mode.update(pairingModel,meshObject.nodeNumber,true)
                 }
 
                 drag.source.resetLocation()             ///send the drag object back to where it was before being dragged

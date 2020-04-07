@@ -108,7 +108,6 @@ Rectangle {
             //console.log("set the opacity of node",theNodeNumber, "to 1");
             meshArray[theNodeNumber].nodeNumber = platformInterface.node_added.index
             meshArray[theNodeNumber].objectColor = platformInterface.node_added.color
-            //targetArray[theNodeNumber].color = platformInterface.node_added.color
         }
 
         property var nodeRemoved: platformInterface.node_removed
@@ -311,6 +310,7 @@ Rectangle {
                 anchors.leftMargin: parent.width * 0.05
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .32
+                scene:"office"
                 nodeType:"security"
                 nodeNumber:""
             }
