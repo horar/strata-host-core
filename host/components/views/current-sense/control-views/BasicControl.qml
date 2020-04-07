@@ -879,7 +879,7 @@ Item {
                                                         if (valueSet < maxInputCurrent.from) {
                                                             value = maxInputCurrent.from
                                                         }
-                                                        platformInterface.set_i_in_dac.update(parsevalue)
+                                                        platformInterface.set_i_in_dac.update(value)
 
                                                     }
 
