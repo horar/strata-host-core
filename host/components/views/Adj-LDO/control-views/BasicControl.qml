@@ -799,16 +799,12 @@ Item {
 
                                             }
 
-
-
                                             Timer {
                                                 id: pgoodTimer
                                                 interval: 500; running: true; repeat: true
 
                                                 onTriggered: {
-                                                    console.log("intimer")
-
-                                                    if ((platformInterface.int_status.pg_ldo === false) && (platformInterface.control_states.ldo_en === true))
+                                                    if ((platformInterface.int_status.int_pg_ldo === false) && (platformInterface.control_states.ldo_en === "on"))
                                                     {
                                                         if (pgoodLight.status === SGStatusLight.Off) {
                                                             pgoodLight.status = SGStatusLight.Red
