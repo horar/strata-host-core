@@ -23,7 +23,7 @@ Item {
         Help.registerTarget(resetCurrLimitButton, "This button resets the previous detected current limit threshold value and re-enables the logic for detecting a current limit event. The current limit threshold may immediately update after resetting if the output current remains above the current limit threshold.", 1, "AdjLDOAdvanceHelp")
         Help.registerTarget(shortCircuitButton, "This button enables the onboard short-circuit load used to emulate a short to ground on the LDO output for approximately 2 ms. The short-circuit load cannot be enabled when powering the LDO via the 5V from the Strata USB connector and/or when the input buck regulator is enabled. The current pulled by the short-circuit load will vary with LDO output voltage. See the Platform Content page for more information about the short-circuit load and LDO behavior during a short-circuit event.", 2, "AdjLDOAdvanceHelp")
         Help.registerTarget(currentLimitReachLabel, "This indicator will turn red when the LDO's current limit protection is triggered. The indicator state will need to be cleared manually when triggered using the \"Reset Current Limit Trigger\" button. See the Platform Content for more information on the current limit behavior of the LDO and how this is detected.", 3, "AdjLDOAdvanceHelp")
-        Help.registerTarget(pgldoLabel, "This indicator will be green when the LDO power good signal is high. If the TSOP-5 LDO package is being used, the indicator will be green when the PG_308 signal from the NCP308 used to monitor the LDO output voltage is high.", 4, "AdjLDOAdvanceHelp")
+        Help.registerTarget(pgldoLabel, "This indicator will be green when the LDO power good signal is high. Since the TSOP-5 package has no PG output, if the TSOP-5 LDO package is being used, the indicator will be green when the PG_308 signal from the NCP308 used to monitor the LDO output voltage is high.", 4, "AdjLDOAdvanceHelp")
         Help.registerTarget(ocpTriggeredLabel, "This indicator will turn red momentarily if the LDO's power good signal or the PG_308 signal goes low while the short-circuit load is enabled.", 5, "AdjLDOAdvanceHelp")
         Help.registerTarget(tsdTriggeredLabel, "This indicator will turn red when the LDO's thermal shutdown (TSD) protection is triggered. The indicator state will need to be cleared manually when triggered using the \"Reset TSD Trigger\" button. See the Platform Content for more information on the TSD behavior of the LDO and how this is detected.", 6, "AdjLDOAdvanceHelp")
         Help.registerTarget(estTSDThresLabel, "This info box will show the estimated LDO junction temperature threshold at which the LDO's TSD protection was triggered.", 7, "AdjLDOAdvanceHelp")
@@ -38,7 +38,7 @@ Item {
         Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. The 'Bypass' option connects the LDO input directly to VIN_SB through a load switch. The 'Buck Regulator' option allows adjustment of the input voltage to the LDO through an adjustable output voltage buck regulator. The 'Off' option disables both the input buck regulator and bypass load switch, disconnecting the LDO from the input power supply, and pulls VIN_LDO low. The 'Direct' option allows you to power the LDO directly through the VIN_LDO solder pad on the board, bypassing the input stage entirely. WARNING! - when using this option, ensure you do not use the other LDO input voltage options while an external power supply is supplying power to the LDO through the VIN_LDO solder pad. See the Platform Content page for more information about the options for supplying the LDO input voltage.", 16, "AdjLDOAdvanceHelp")
         Help.registerTarget(ldoDisableLabel, "This switch disables the LDO output voltage adjustment circuit included on this board. See the Platform Content page for more information on using this feature.", 17, "AdjLDOAdvanceHelp")
         Help.registerTarget(setOutputCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value can be set while the load is disabled and the load current will automatically be adjusted as needed when the load is enabled. The value may need to be reset to the desired level after recovery from an LDO UVLO event.", 18, "AdjLDOAdvanceHelp")
-        Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the LDO package actually populated on the board if different from the stock LDO package option. See the Platform Content page for more information about using alternate LDO packages with this board.", 19, "AdjLDOAdvanceHelp")
+        Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the LDO package currently populated on the board if different from the stock LDO package option. See the Platform Content page for more information about using alternate LDO packages with this board.", 19, "AdjLDOAdvanceHelp")
         Help.registerTarget(loadEnableSwitchLabel, "This switch enables the onboard load.", 20, "AdjLDOAdvanceHelp")
         Help.registerTarget(extLoadCheckboxLabel, "Check this box if an external load is connected to the output banana plugs. During normal onboard load operation, a loop is run when the current level is set within the LDO's nominal output current range to minimize the load current error, and this loop should not be run if an external load is attached.", 21, "AdjLDOAdvanceHelp")
         Help.registerTarget(vinGoodLabel, "This indicator will be green when:\na.) VIN is greater than 2.5V when the input buck regulator is enabled\nb.) VIN is greater than 1.5V when it is disabled.", 22, "AdjLDOAdvanceHelp")
@@ -869,30 +869,6 @@ Item {
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
 
-                                        SGAlignedLabel {
-                                            id: estTSDThresLabel
-                                            target: estTSDThres
-                                            text:  "Estimated TSD \nThreshold"
-                                            font.bold: true
-                                            alignment: SGAlignedLabel.SideTopLeft
-                                            fontSizeMultiplier: ratioCalc
-                                            anchors.centerIn: parent
-
-                                            SGInfoBox {
-                                                id: estTSDThres
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                width: 100 * ratioCalc
-                                                unit: "<b>˚C</b>"
-                                                boxColor: "lightgrey"
-                                                boxFont.family: Fonts.digitalseven
-                                            }
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
-
                                         SGButton {
                                             id: resetTSDButton
                                             height: preferredContentHeight * 1.5
@@ -914,6 +890,29 @@ Item {
                                         }
                                     }
 
+                                    Rectangle {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+
+                                        SGAlignedLabel {
+                                            id: estTSDThresLabel
+                                            target: estTSDThres
+                                            text:  "Estimated TSD \nThreshold"
+                                            font.bold: true
+                                            alignment: SGAlignedLabel.SideTopLeft
+                                            fontSizeMultiplier: ratioCalc
+                                            anchors.centerIn: parent
+
+                                            SGInfoBox {
+                                                id: estTSDThres
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                width: 100 * ratioCalc
+                                                unit: "<b>˚C</b>"
+                                                boxColor: "lightgrey"
+                                                boxFont.family: Fonts.digitalseven
+                                            }
+                                        }
+                                    }
                                 }
                             }
 

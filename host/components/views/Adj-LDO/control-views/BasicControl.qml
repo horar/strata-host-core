@@ -27,10 +27,10 @@ Item {
         Help.registerTarget(powerDissipatedLabel, "This gauge shows the power loss in the LDO when it is enabled. This gauge will not be accurate when an external load is attached directly to the LDO output via the solder pad.", 2, "AdjLDOBasicHelp")
         Help.registerTarget(outputPowerContainer, "This gauge shows the output power of the LDO when it is enabled. This gauge will not be accurate when an external load is attached directly to the LDO output via the solder pad.", 3, "AdjLDOBasicHelp")
         Help.registerTarget(vinReadyLabel, "This indicator will be green when the LDO input voltage is greater than the LDO input UVLO threshold of 1.6V.", 4, "AdjLDOBasicHelp")
-        Help.registerTarget(pgoodLabel, "This indicator will be green when the LDO power good signal is high. If the TSOP-5 LDO package is being used, the indicator will be green when the PG_308 signal from the NCP308 used to monitor the LDO output voltage is high.", 5, "AdjLDOBasicHelp")
+        Help.registerTarget(pgoodLabel, "This indicator will be green when the LDO power good signal is high. Since the TSOP-5 package has no PG output, if the TSOP-5 LDO package is being used, the indicator will be green when the PG_308 signal from the NCP308 used to monitor the LDO output voltage is high.", 5, "AdjLDOBasicHelp")
         Help.registerTarget(intLdoTempLabel, "This indicator will be red when the LDO temp sensor detects an approximate LDO temperature over the recommended threshold of 125˚C.", 6, "AdjLDOBasicHelp")
         Help.registerTarget(boardInputLabel, "This combo box allows you to choose the main input voltage option (upstream power supply) for the board. The 'External' option uses the input voltage from the input banana plugs. The 'USB 5V' option uses the 5V supply from the Strata USB connector. The 'Off' option disconnects both inputs from VIN and pulls VIN low.", 7, "AdjLDOBasicHelp")
-        Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the LDO package actually populated on the board if different from the stock LDO package option. See the Platform Content page for more information about using alternate LDO packages with this board.", 8, "AdjLDOBasicHelp")
+        Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the LDO package currently populated on the board if different from the stock LDO package option. See the Platform Content page for more information about using alternate LDO packages with this board.", 8, "AdjLDOBasicHelp")
         Help.registerTarget(ldoInputLabel, "This combo box allows you to choose the input voltage option for the LDO. The 'Bypass' option connects the LDO input directly to VIN_SB through a load switch. The 'Buck Regulator' option allows adjustment of the input voltage to the LDO through an adjustable output voltage buck regulator. The 'Off' option disables both the input buck regulator and bypass load switch, disconnecting the LDO from the input power supply, and pulls VIN_LDO low. The 'Direct' option allows you to power the LDO directly through the VIN_LDO solder pad on the board, bypassing the input stage entirely. WARNING! - when using this option, ensure you do not use the other LDO input voltage options while an external power supply is supplying power to the LDO through the VIN_LDO solder pad. See the Platform Content page for more information about the options for supplying the LDO input voltage.", 9, "AdjLDOBasicHelp")
         Help.registerTarget(vinGoodLabel, "This indicator will be green when:\na.) VIN is greater than 2.5V when the input buck regulator is enabled\nb.) VIN is greater than 1.5V when it is disabled.", 10, "AdjLDOBasicHelp")
         Help.registerTarget(ldoInputVolSliderLabel, "This slider allows you to set the desired input voltage of the LDO when being supplied by the input buck regulator. The value can be set while the input buck regulator is not being used and the voltage will automatically be adjusted as needed whenever the input buck regulator is activated again.", 11, "AdjLDOBasicHelp")
@@ -162,7 +162,7 @@ Item {
     onVariant_nameChanged: {
         if(variant_name === "NCP164C_TSOP5") {
             ldoPackageComboBox.currentIndex = 0
-            titleText: "NCP164C \n Low-noise, High PSRR Linear Regulator"
+            titleText = "NCP164C \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
 
             setLDOOutputVoltage.fromText.text = "1.1V"
@@ -177,7 +177,7 @@ Item {
         }
         else if (variant_name === "NCP164A_DFN6") {
             ldoPackageComboBox.currentIndex = 1
-            titleText: "NCP164A \n Low-noise, High PSRR Linear Regulator"
+            titleText = "NCP164A \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
 
             setLDOOutputVoltage.fromText.text ="1.1V"
@@ -191,7 +191,7 @@ Item {
         }
         else if (variant_name === "NCP164C_DFN8") {
             ldoPackageComboBox.currentIndex = 2
-            titleText: "NCP164C \n Low-noise, High PSRR Linear Regulator"
+            titleText = "NCP164C \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
 
             setLDOOutputVoltage.fromText.text ="1.1V"
@@ -205,7 +205,7 @@ Item {
         }
         else if (variant_name === "NCV8164A_TSOP5") {
             ldoPackageComboBox.currentIndex = 0
-            titleText: "NCV8164A \n Low-noise, High PSRR Linear Regulator"
+            titleText = "NCV8164A \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
 
             setLDOOutputVoltage.fromText.text ="1.2V"
@@ -219,7 +219,7 @@ Item {
         }
         else if (variant_name === "NCV8164C_DFN6") {
             ldoPackageComboBox.currentIndex = 1
-            titleText: "NCV8164C \n Low-noise, High PSRR Linear Regulator"
+            titleText = "NCV8164C \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
 
             setLDOOutputVoltage.fromText.text ="1.2V"
@@ -233,7 +233,7 @@ Item {
         }
         else if (variant_name === "NCV8164A_DFN8") {
             ldoPackageComboBox.currentIndex = 2
-            titleText: "NCV8164A \n Low-noise, High PSRR Linear Regulator"
+            titleText = "NCV8164A \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
 
             setLDOOutputVoltage.fromText.text ="1.2V"
