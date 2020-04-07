@@ -1,29 +1,19 @@
-//
-// author: ian
-// date: 25 October 2017
-//
-// Document Manager class to interact with corresponding QML SGDocumentViewer Widget
-//
-
 #include "DocumentManager.h"
 
 #include "logging/LoggingQtCategories.h"
 
 #include <QObject>
+#include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QFileInfo>
 #include <QDir>
+#include <QList>
 
-using namespace std;
+DocumentManager::DocumentManager(CoreInterface *coreInterface, QObject *parent)
+    : coreInterface_(coreInterface),
+      downloadDocumentModel_(coreInterface, parent)
 
-DocumentManager::DocumentManager()
-{
-    qCDebug(logCategoryDocumentManager) << " ctor: default";
-    init();
-}
-
-DocumentManager::DocumentManager(CoreInterface *coreInterface) : coreInterface_(coreInterface)
 {
     qCDebug(logCategoryDocumentManager) << "core interface";
     /*
@@ -31,192 +21,112 @@ DocumentManager::DocumentManager(CoreInterface *coreInterface) : coreInterface_(
         This will also send a command to Nimbus
     */
     coreInterface->registerDataSourceHandler("document",
-                                            bind(&DocumentManager::viewDocumentHandler,
-                                            this, placeholders::_1));
-    init();
-}
-
-DocumentManager::DocumentManager(QObject *parent) : QObject(parent)
-{
-    qCDebug(logCategoryDocumentManager) << "(parent=" << parent << ")";
+                                            std::bind(&DocumentManager::viewDocumentHandler,
+                                            this, std::placeholders::_1));
     init();
 }
 
 DocumentManager::~DocumentManager ()
 {
-    document_sets_.clear();
+}
+
+DownloadDocumentListModel *DocumentManager::downloadDocumentListModel()
+{
+    return &downloadDocumentModel_;
+}
+
+DocumentListModel *DocumentManager::datasheetListModel()
+{
+    return &datasheetModel_;
+}
+
+DocumentListModel *DocumentManager::pdfListModel()
+{
+    return &pdfModel_;
+}
+
+QString DocumentManager::errorString() const
+{
+    return errorString_;
 }
 
 void DocumentManager::init()
 {
-    //qCDebug(logCategoryDocumentManager);
-
-    // create document sets: "<name>",  & <name>_documnts_
-
-    document_sets_.emplace(make_pair(QString("pdf"), &pdf_documents_));
-    document_sets_.emplace(make_pair(QString("download"), &download_documents_));
-    document_sets_.emplace(make_pair(QString("datasheet"), &datasheet_documents_));
+    /* Due to std::bind(), DocumentManager::viewDocumentHandler() runs in a thread of CoreInterface,
+     * which is different from GUI thread.
+     * Data manipulation affecting GUI must run in the same thread as GUI.
+     * This connection allow us to move data manipulation to the main (GUI) thread.
+     */
+    connect(this, &DocumentManager::populateModelsReguest, this, &DocumentManager::populateModels);
 
     pdf_rev_count_ =  0;
-    download_rev_count_ =   0;
-    datasheet_rev_count_ =   0;
-
-    setErrorState(QString(""));
-    // register w/ Implementation Interface for Docoument Data Source Updates
-    // TODO [ian] change to "document" on cloud update
-
-    // TODO [ian] hack around some messaging issue we have that dead locks the communications
-    //             without the sleep.
-    //
-    //sleep(2);
-    //platformInterface_->registerDataSourceHandler("document",
-    //                                                 bind(&DocumentManager::viewDocumentHandler,
-    //                                                      this, placeholders::_1));
-
+    download_rev_count_ = 0;
+    datasheet_rev_count_ = 0;
 }
 
-// @f viewDocumentHandler
-// @b handle view document source updates from Implementation Interface
-//
-// arguments:
-//  IN:
-//   data : JSON data object
-//
-//  ERROR:
-//    returns true/false
-//
-//{
-//  "cloud_sync": "document_set",
-//  "type": "schematic",
-//  "documents": [
-//    {
-//      "uri": "x/x/x/xxxx.pdf"
-//    }
-//  ]
-//}
-//{
-//  "cloud::notification": {
-//    "type": "document",
-//    "name": "schematic",
-//    "documents": [
-//      {"uri": "x/x/x/yyyy.pdf"},
-//      {"uri": "x/x/x/xxxx.pdf"}
-//    ]
-//  }
-//}
-//{
-//  "cloud::notification": {
-//    "type": "marketing",
-//    "name": "adas_sensor_fusion",
-//    "data": "raw html"
-//  }
-//}
-
-//
 void DocumentManager::viewDocumentHandler(QJsonObject data)
 {
-    qCDebug(logCategoryDocumentManager) << " called";
+    emit populateModelsReguest(data);
+}
 
-    if (data.contains("documents") ) {
-        clearDocumentSets();
-        QJsonArray document_array = data["documents"].toArray();
+void DocumentManager::populateModels(QJsonObject data)
+{
+    qCDebug(logCategoryDocumentManager) << "data" << data;
 
-        foreach (const QJsonValue &documentValue, document_array) {
-            QJsonObject documentObject = documentValue.toObject();
+    QList<DocumentItem* > pdfList;
+    QList<DocumentItem* > datasheetList;
+    QList<DownloadDocumentItem* > downloadList;
 
-            if (documentObject.contains("name") && documentObject.contains("uri")){
-                QString name = documentObject["name"].toString();
-                QString uri = documentObject["uri"].toString();
+    if (data.contains("error")) {
+        qCWarning(logCategoryDocumentManager) << "Document download error:" << data["error"].toString();
+        clearDocuments();
+        setErrorString(data["error"].toString());
+        return;
+    }
 
-                if (name != "download" && name != "datasheet") {
-                    name = QString("pdf");
-                }
+    QJsonArray documentArray = data["documents"].toArray();
+    for (const QJsonValue &documentValue : documentArray) {
+        QJsonObject documentObject = documentValue.toObject();
 
-                DocumentSetPtr document_set = getDocumentSet (name);
+        if (documentObject.contains("category") == false
+                || documentObject.contains("name")  == false
+                || documentObject.contains("prettyname") == false
+                || documentObject.contains("uri")  == false) {
 
-                if( document_set == nullptr ) {
-                    qCCritical(logCategoryDocumentManager) << "invalid document name = '" << name.toStdString().c_str () << "'";
-                    return;
-                }
-
-                if (name == "datasheet") {
-                    // For datasheet, parse local csv into document list for UI to pick up parts, categories and PDF urls
-                    QFile file(uri);
-                    if (!file.open(QIODevice::ReadOnly)) {
-                        qCDebug(logCategoryDocumentManager) << file.errorString();
-                    }
-
-                    // Create a document and add to datasheet_documents_ for each lines of CSV
-                    while (!file.atEnd()) {
-                        QString line = file.readLine();
-                        line.remove(QRegExp("\n|\r\n|\r"));
-                        QStringList datasheetLine = line.split(QRegExp("(,)(?=(?:[^\"]|\"[^\"]*\")*$)"));  // Split on commas that are not inside quotes
-                        datasheetLine.replaceInStrings("\"", "");  // Remove quotes that stem from commas in CSV titles
-
-                        if (QRegExp("^(http:\\/\\/|https:\\/\\/).+(\\.(p|P)(d|D)(f|F))$").exactMatch(datasheetLine.at(2))) { // 3rd cell in row matches "https://***.pdf"
-                            Document *d = new Document (datasheetLine.at(2), datasheetLine.at(0), datasheetLine.at(1));
-                            document_set->append (d);
-                        }
-                    }
-                    file.close();
-
-                } else {
-                    QFileInfo fi(uri);
-                    QString filename = fi.fileName();
-                    QDir dir(fi.dir());
-                    QString dirname = dir.dirName();
-                    if (dirname == "faq") {
-                        dirname = "FAQ";
-                    }
-                    Document *d = new Document (uri, filename, dirname);
-                    if (dirname == "layout") {  // Sort layout to front
-                        document_set->insert (0, d);
-                    } else {
-                        document_set->append (d);
-                    }
-                }
-            }
+            qCWarning(logCategoryDocumentManager) << "file object is not complete";
+            continue;
         }
 
-        emit documentsUpdated();
-    } else if (data.contains("error")) {
-        qCWarning(logCategoryDocumentManager) << "Document download error:" << data["error"].toString();
-        setErrorState(QString(data["error"].toString()));
-        emit documentsUpdated();
-    }
-}
+        QString category = documentObject["category"].toString();
+        QString uri = documentObject["uri"].toString();
+        QString prettyName = documentObject["prettyname"].toString();
+        QString name = documentObject["name"].toString();
 
-// @f getDocumentSet
-// @b get document set by name
-//
-// arguments:
-//  IN:
-//   set : document set name
-//
-//  OUT:
-//   document set requested
-//
-//  ERROR:
-//    returns nullptr if document set cannot be found
-//
-DocumentSetPtr DocumentManager::getDocumentSet(const QString &set)
-{
-    auto document_set = document_sets_.find(set.toStdString ().c_str ());
-    if (document_set == document_sets_.end()) {
-        qCDebug(logCategoryDocumentManager) << set.toStdString ().c_str () << " NOT FOUND";
-        return nullptr;
+        if (category == "view") {
+            if (name == "datasheet") {
+                //for datasheets, parse csv file
+                populateDatasheetList(uri, datasheetList);
+            } else {
+                DocumentItem *di = new DocumentItem(uri, prettyName, name);
+                pdfList.append(di);
+            }
+        } else if (category == "download") {
+            if (documentObject.contains("filesize") == false) {
+                qCWarning(logCategoryDocumentManager) << "file object is not complete";
+                continue;
+            }
+
+            qint64 filesize = documentObject["filesize"].toVariant().toLongLong();
+            DownloadDocumentItem *ddi = new DownloadDocumentItem(uri, prettyName, name, filesize);
+            downloadList.append(ddi);
+        } else {
+            qCWarning(logCategoryDocumentManager) << "unknown category" << category;
+        }
     }
 
-    return document_set->second;
-}
-
-void DocumentManager::clearDocumentSets()
-{
-    for (auto doc_iter = document_sets_.begin(); doc_iter!= document_sets_.end(); doc_iter++)
-    {
-        doc_iter->second->clear();
-    }
-    setErrorState(QString(""));
+    pdfModel_.populateModel(pdfList);
+    datasheetModel_.populateModel(datasheetList);
+    downloadDocumentModel_.populateModel(downloadList);
 }
 
 void DocumentManager::clearPdfRevisionCount() {
@@ -234,6 +144,49 @@ void DocumentManager::clearDatasheetRevisionCount() {
     emit datasheetRevisionCountChanged(datasheet_rev_count_);
 }
 
-void DocumentManager::setErrorState(QString state) {
-    error_state_ = state;
+void DocumentManager::clearDocuments()
+{
+    pdfModel_.clear();
+    datasheetModel_.clear();
+    downloadDocumentModel_.clear();
+    setErrorString("");
 }
+
+void DocumentManager::setErrorString(QString errorString) {
+    if (errorString_ != errorString) {
+        errorString_ = errorString;
+        emit errorStringChanged();
+    }
+}
+
+void DocumentManager::populateDatasheetList(const QString &path, QList<DocumentItem *> &list)
+{
+    list.clear();
+
+    QFile file(path);
+    if (file.open(QIODevice::ReadOnly) == false) {
+        qCWarning(logCategoryDocumentManager) << file.errorString();
+        return;
+    }
+
+    while (file.atEnd() == false) {
+        QString line = file.readLine();
+        line.remove(QRegExp("\n|\r\n|\r"));
+
+        // Split on commas that are not inside quotes
+        QStringList datasheetLine = line.split(QRegExp("(,)(?=(?:[^\"]|\"[^\"]*\")*$)"));
+
+        // Remove quotes that stem from commas in CSV titles
+        datasheetLine.replaceInStrings("\"", "");
+
+        // 3rd cell in row matches "https://***.pdf"
+        if (QRegExp("^(http:\\/\\/|https:\\/\\/).+(\\.(p|P)(d|D)(f|F))$").exactMatch(datasheetLine.at(2))) {
+
+            DocumentItem *di = new DocumentItem(datasheetLine.at(2), datasheetLine.at(0), datasheetLine.at(1));
+            list.append(di);
+        }
+    }
+
+    file.close();
+}
+

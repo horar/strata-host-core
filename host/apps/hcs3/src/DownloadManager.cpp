@@ -3,142 +3,372 @@
 #include "logging/LoggingQtCategories.h"
 
 #include <QFile>
+#include <QUuid>
+#include <QFileInfo>
+#include <QDir>
+#include <QRandomGenerator>
+#include <QTimer>
 
-DownloadManager::DownloadManager(QObject* parent) : QObject(parent), numberOfDownloads_(4)
+DownloadManager::DownloadManager(QObject *parent)
+    : QObject(parent)
 {
-    manager_.reset(new QNetworkAccessManager(this) );
-
-    QObject::connect(manager_.get(), &QNetworkAccessManager::finished, this, &DownloadManager::onDownloadFinished);
-    QObject::connect(this, &DownloadManager::downloadAbort, this, &DownloadManager::onDownloadAbort);
+    accessManager_ = new QNetworkAccessManager(this);
 }
 
 DownloadManager::~DownloadManager()
 {
-    //stop all downloads
     for (QNetworkReply* reply : currentDownloads_) {
         reply->abort();
         reply->deleteLater();
     }
+
+    qDeleteAll(groupHash_);
+    groupHash_.clear();
 }
 
-void DownloadManager::setBaseUrl(const QString& baseUrl)
+void DownloadManager::setBaseUrl(const QString &baseUrl)
 {
     baseUrl_ = baseUrl;
-
-    qCDebug(logCategoryHcsDownloader) << "baseUrl:" << baseUrl_;
 }
 
-void DownloadManager::setMaxDownloadCount(uint count)
+void DownloadManager::setMaxDownloadCount(int maxDownloadCount)
 {
-    if (count == 0) {
+    if (maxDownloadCount < 1) {
         return;
     }
 
-    numberOfDownloads_ = count;
+    maxDownloadCount_ = maxDownloadCount;
 }
 
-void DownloadManager::download(const QString& url, const QString& filename)
+QString DownloadManager::download(
+        const QList<DownloadRequestItem> &itemList,
+        const Settings &settings)
 {
-    DownloadItem item;
-    item.url = url;
-    item.filename = filename;
-    item.state = EDownloadState::eIdle;
 
-    {
-        QMutexLocker lock(&downloadListMutex_);
-        downloadList_.push_back(item);
+    DownloadGroup *group = new DownloadGroup;
+    group->id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    group->settings = settings;
+    groupHash_.insert(group->id, group);
+
+    qCDebug(logCategoryHcsDownloader()) << "new download request" << group->id;
+
+    for (const auto& requestItem : itemList) {
+        DownloadItem item;
+        item.url = baseUrl_ + requestItem.partialUrl;
+        item.originalFilePath = requestItem.filePath;
+        item.effectiveFilePath = requestItem.filePath;
+        item.md5 = requestItem.md5;
+        item.groupId = group->id;
+        item.state = DownloadState::Pending;
+
+        itemList_.append(item);
+        itemHash_.insert(item.url, &itemList_.last());
+
+        qCDebug(logCategoryHcsDownloader())
+                << "download item"
+                << item.url << item.originalFilePath;
     }
 
-    qCDebug(logCategoryHcsDownloader) << "Download:" << url << "to file:" << filename;
+    //to make sure reponse is always asynchronious
+    QTimer::singleShot(1, [this]() {
+        for (int i = 0; i < maxDownloadCount_; ++i) {
+            startNextDownload();
+        }
+    });
 
-    if (static_cast<uint>(currentDownloads_.size()) < numberOfDownloads_) {
+    return group->id;
+}
 
-        QList<DownloadItem>::iterator findIt = findNextDownload();
-        if (findIt == downloadList_.end()) {
-            return;
+bool DownloadManager::verifyFileChecksum(
+        const QString &filePath,
+        const QString &checksum,
+        const QCryptographicHash::Algorithm &method)
+{
+    QFile file(filePath);
+    if (file.open(QIODevice::ReadOnly) == false) {
+        return false;
+    }
+
+    QCryptographicHash hash(method);
+    hash.addData(&file);
+
+    return checksum == hash.result().toHex();
+}
+
+/*
+file.txt -> file-1.txt -> file-2.txt
+*/
+QString DownloadManager::resolveUniqueFilePath(const QString &filePath)
+{
+    QFileInfo info(filePath);
+
+    QString uniqueFilePath = filePath;
+    int index = 1;
+    while (QFileInfo::exists(uniqueFilePath))
+    {
+        QString addition = "-" + QString::number(index);
+        uniqueFilePath = filePath;
+        uniqueFilePath.insert(uniqueFilePath.length() - info.completeSuffix().length() - 1, addition);
+
+        ++index;
+    }
+
+    return uniqueFilePath;
+}
+
+QList<DownloadManager::DownloadResponseItem> DownloadManager::getResponseList(const QString &groupId)
+{
+    QList<DownloadResponseItem> list;
+    for (const auto& item : itemList_) {
+
+        if (item.groupId != groupId) {
+            continue;
         }
 
-        beginDownload(*findIt);
+        DownloadResponseItem responseItem;
+        responseItem.originalFilePath = item.originalFilePath;
+        responseItem.effectiveFilePath = item.effectiveFilePath;
+        responseItem.errorString = item.errorString;
+
+        list.append(responseItem);
+    }
+
+    return list;
+}
+
+void DownloadManager::abortAll(const QString &groupId)
+{
+    //stops pending requests
+    for (auto &item : itemList_) {
+        if (item.groupId != groupId) {
+            continue;
+        }
+
+        if (item.state == DownloadState::Pending) {
+            prepareResponse(&item, "All downloads in group aborted");
+        }
+    }
+
+    //stops running requests
+    for (auto const &reply : currentDownloads_) {
+        DownloadItem *downloadItem = itemHash_.value(reply->url().toString(), nullptr);
+        if (downloadItem == nullptr) {
+            continue;
+        }
+
+        if (downloadItem->groupId != groupId) {
+            continue;
+        }
+
+        downloadItem->errorString = "All downloads in group aborted";
+
+        reply->abort();
     }
 }
 
-bool DownloadManager::removeDownloadByFilename(const QString& filename)
+void DownloadManager::readyReadHandler()
 {
-    auto findIt = findItemByFilename(filename);
-    if (findIt == downloadList_.end()) {
-        return false;
-    }
-
-    QMutexLocker lock(&downloadListMutex_);
-    downloadList_.erase(findIt);
-    return true;
-}
-
-bool DownloadManager::stopDownloadByFilename(const QString& filename)
-{
-    auto findIt = findItemByFilename(filename);
-    if (findIt == downloadList_.end()) {
-        return false;
-    }
-
-    if (findIt->state == EDownloadState::eIdle) {
-
-        QMutexLocker lock(&downloadListMutex_);
-        downloadList_.erase(findIt);
-        return true;
-    }
-    else if (findIt->state == EDownloadState::ePending) {
-        QNetworkReply* reply = findReplyByFilename(filename);
-        Q_ASSERT(reply);
-
-        findIt->state = EDownloadState::eCanceled;
-
-        //NOTE: this can be called from other than UI thread
-        // so we send signal to UI thread to cancel the download.
-        emit downloadAbort(reply);
-    }
-
-    return true;
-}
-
-void DownloadManager::beginDownload(DownloadItem& item)
-{
-    QString realUrl(baseUrl_ + item.url);
-    QNetworkReply* reply = downloadFile(realUrl);
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>(QObject::sender());
     if (reply == nullptr) {
-        qCDebug(logCategoryHcsDownloader) << "downloadFile failed! url:" << item.url;
         return;
     }
 
-    {
-        QMutexLocker lock(&mapReplyFileMutex_);
-        mapReplyToFile_.insert(reply, item.filename);
+    DownloadItem *downloadItem = itemHash_.value(reply->url().toString(), nullptr);
+    if (downloadItem == nullptr) {
+        qCWarning(logCategoryHcsDownloader) << "cannot find item with url" << reply->url().toString();
+        return;
     }
 
-    qCDebug(logCategoryHcsDownloader) << "Begin downloading" << item.filename;
-    item.state = EDownloadState::ePending;
+    QByteArray buffer = reply->readAll();
+
+    if (buffer.size() > 0) {
+        downloadItem->errorString = writeToFile(downloadItem->effectiveFilePath, buffer);
+        if (downloadItem->errorString.isEmpty() == false) {
+            reply->abort();
+        }
+    }
 }
 
-QNetworkReply* DownloadManager::downloadFile(const QString& url)
+void DownloadManager::downloadProgressHandler(qint64 bytesReceived, qint64 bytesTotal)
 {
-    QNetworkRequest request( QUrl::fromUserInput(url) );
-    QNetworkReply *reply = manager_->get(request);
-    if (reply == Q_NULLPTR) {
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>(QObject::sender());
+    if (reply == nullptr) {
+        return;
+    }
+
+    DownloadItem *downloadItem = itemHash_.value(reply->url().toString(), nullptr);
+    if (downloadItem == nullptr) {
+        qDebug(logCategoryHcsDownloader) << "cannot find item with url" << reply->url().toString();
+        return;
+    }
+
+    reply->setProperty("newProgress", true);
+
+    DownloadGroup *group = groupHash_.value(downloadItem->groupId, nullptr);
+    if (group == nullptr) {
+        qWarning(logCategoryHcsDownloader) << "cannot find groupId" << downloadItem->groupId;
+        return;
+    }
+
+    if (group->settings.notifySingleDownloadProgress) {
+        emit singleDownloadProgress(downloadItem->groupId, downloadItem->originalFilePath, bytesReceived, bytesTotal);
+    }
+}
+
+void DownloadManager::finishedHandler()
+{
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>( QObject::sender() );
+    if (reply == nullptr) {
+        return;
+    }
+
+    qCDebug(logCategoryHcsDownloader) << reply->url().toString();
+
+    DownloadItem *downloadItem = itemHash_.value(reply->url().toString(), nullptr);
+    if (downloadItem == nullptr) {
+        qCWarning(logCategoryHcsDownloader) << "cannot find item with url" << reply->url().toString();
+        return;
+    }
+
+    QString errorString;
+    if (reply->error() == QNetworkReply::NoError) {
+        if (isHttpRedirect(reply)) {
+
+            qCWarning(logCategoryHcsDownloader)
+                    << "Download request redirected"
+                    << reply->url().toString();
+
+            errorString = "request redirected";
+        } else {
+            QByteArray buffer = reply->readAll();
+
+            if (buffer.size() > 0) {
+                errorString = writeToFile(downloadItem->effectiveFilePath, buffer);
+            }
+
+            if (downloadItem->md5.isEmpty() == false) {
+                if (verifyFileChecksum(downloadItem->effectiveFilePath, downloadItem->md5) == false) {
+                    errorString = "checksum verification failed";
+                }
+            }
+        }
+    } else {
+        errorString = "Network Error: " + reply->errorString();
+    }
+
+    prepareResponse(downloadItem, errorString);
+
+    currentDownloads_.removeAll(reply);
+    reply->deleteLater();
+
+    if (downloadItem->state == DownloadState::FinishedWithError) {
+        DownloadGroup *group = groupHash_.value(downloadItem->groupId, nullptr);
+        if (group == nullptr) {
+            qWarning(logCategoryHcsDownloader) << "cannot find groupId" << downloadItem->groupId;
+        } else if (group->settings.oneFailsAllFail) {
+            abortAll(downloadItem->groupId);
+        }
+    }
+
+    startNextDownload();
+}
+
+void DownloadManager::startNextDownload()
+{
+    if (currentDownloads_.length() >= maxDownloadCount_) {
+        return;
+    }
+
+    while (true) {
+        DownloadItem *nextDownload = findNextDownload();
+        if (nextDownload == nullptr) {
+            //nothing else to download
+            break;
+        }
+
+        DownloadGroup *group = groupHash_.value(nextDownload->groupId, nullptr);
+        if (group == nullptr) {
+            qWarning(logCategoryHcsDownloader) << "cannot find groupId" << nextDownload->groupId;
+            continue;
+        }
+
+        createFolderForFile(nextDownload->originalFilePath);
+
+        if (QFileInfo::exists(nextDownload->originalFilePath)) {
+            if (group->settings.keepOriginalName) {
+                if (nextDownload->md5.isEmpty()
+                        || verifyFileChecksum(nextDownload->effectiveFilePath, nextDownload->md5) == false) {
+                    //remove file, so it can be downloaded again
+                    if (QFile::remove(nextDownload->originalFilePath) == false) {
+                        prepareResponse(nextDownload, "file already exists and removal failed");
+                        continue;
+                    }
+                } else {
+                    //skip download
+                    qCDebug(logCategoryHcsDownloader())
+                            << "file exists => skip" << nextDownload->originalFilePath;
+
+                    prepareResponse(nextDownload);
+                    continue;
+                }
+            } else {
+                //rename
+                nextDownload->effectiveFilePath = resolveUniqueFilePath(nextDownload->originalFilePath);
+
+                emit filePathChanged(nextDownload->groupId, nextDownload->originalFilePath, nextDownload->effectiveFilePath);
+            }
+        }
+
+        QNetworkReply* reply = postRequest(nextDownload->url);
+        if (reply != nullptr) {
+            qCDebug(logCategoryHcsDownloader) << "start download " << nextDownload->url << "into" << nextDownload->effectiveFilePath;
+
+            nextDownload->state = DownloadState::Running;
+            break;
+        }
+
+        prepareResponse(nextDownload, "could not post a download request");
+    }
+}
+
+DownloadManager::DownloadItem* DownloadManager::findNextDownload()
+{
+    for (DownloadItem &item : itemList_) {
+        if (item.state == DownloadState::Pending) {
+            return &item;
+        }
+    }
+
+    return nullptr;
+}
+
+void DownloadManager::createFolderForFile(const QString &filePath)
+{
+    QFileInfo info(filePath);
+    QDir basePath;
+    basePath.mkpath(info.absolutePath());
+}
+
+QNetworkReply *DownloadManager::postRequest(const QString &url)
+{
+    QNetworkRequest request(QUrl::fromUserInput(url));
+    QNetworkReply *reply = accessManager_->get(request);
+
+    if (reply == nullptr) {
         return reply;
     }
+
     ReplyTimeout::set(reply, 20000);
     reply->setProperty("newProgress", false);
 
-    QObject::connect(reply, &QNetworkReply::readyRead, this, &DownloadManager::readyRead);
-    QObject::connect(reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
-                      this, &DownloadManager::slotError);
+    connect(reply, &QNetworkReply::readyRead, this, &DownloadManager::readyReadHandler);
 
-#if QT_CONFIG(ssl)
-    connect(reply, &QNetworkReply::sslErrors, this, &DownloadManager::sslErrors);
-#endif
-    QObject::connect(reply, &QNetworkReply::downloadProgress, this, &DownloadManager::onDownloadProgress);
+    connect(reply, &QNetworkReply::downloadProgress, this, &DownloadManager::downloadProgressHandler);
+
+    connect(reply, &QNetworkReply::finished, this, &DownloadManager::finishedHandler);
 
     currentDownloads_.append(reply);
+
     return reply;
 }
 
@@ -146,223 +376,135 @@ bool DownloadManager::isHttpRedirect(QNetworkReply *reply)
 {
     int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     return statusCode == 301 || statusCode == 302 || statusCode == 303
-           || statusCode == 305 || statusCode == 307 || statusCode == 308;
+            || statusCode == 305 || statusCode == 307 || statusCode == 308;
 }
 
-void DownloadManager::readyRead()
+QString DownloadManager::writeToFile(const QString &filePath, const QByteArray &buffer)
 {
-    QNetworkReply* reply = qobject_cast<QNetworkReply*>( QObject::sender() );
-    Q_ASSERT(reply);
+     QFile file(filePath);
+     if (file.open(QIODevice::ReadWrite) == false) {
+         return "Unable to open file: " + file.errorString();
+     }
 
-    QByteArray buffer = reply->readAll();
-    if (buffer.size() > 0) {
-        writeToFile(reply, buffer);
-    }
+     uint64_t file_size = file.size();
+     file.seek(file_size);
+
+     qint64 written = file.write(buffer);
+     if (written != buffer.size()) {
+         return "Unable to write to file: " + file.errorString();
+     }
+
+     return QString();
 }
 
-void DownloadManager::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
+void DownloadManager::prepareResponse(DownloadItem *downloadItem, const QString &errorString)
 {
-    QNetworkReply* reply = qobject_cast<QNetworkReply*>( QObject::sender() );
-    Q_ASSERT(reply);
-
-    QString filename = findFilenameForReply(reply);
-    if (filename.isEmpty()) {
+    if (downloadItem == nullptr) {
         return;
     }
-    reply->setProperty("newProgress", true);
 
-    emit downloadProgress(filename, bytesReceived, bytesTotal);
+    DownloadGroup *group = groupHash_.value(downloadItem->groupId, nullptr);
+    if (group == nullptr) {
+        qWarning(logCategoryHcsDownloader) << "cannot find groupId" << downloadItem->groupId;
+        return;
+    }
+
+    if (errorString.isEmpty()) {
+        downloadItem->state = DownloadState::Finished;
+    } else {
+        qCWarning(logCategoryHcsDownloader())
+                << errorString
+                << downloadItem->effectiveFilePath
+                << downloadItem->url;
+
+        if (downloadItem->state == DownloadState::Running) {
+            qCDebug(logCategoryHcsDownloader) << "removing unfinished file" << downloadItem->effectiveFilePath;
+            QFile::remove(downloadItem->effectiveFilePath);
+        }
+
+        if (downloadItem->errorString.isEmpty()) {
+            downloadItem->errorString = errorString;
+        }
+
+        downloadItem->state = DownloadState::FinishedWithError;
+
+        if (group->errorString.isEmpty()) {
+            group->errorString = downloadItem->errorString;
+        }
+    }
+
+    if (group->settings.notifySingleDownloadFinished) {
+        emit singleDownloadFinished(downloadItem->groupId, downloadItem->originalFilePath, downloadItem->errorString);
+    }
+
+    int filesFailed, filesCompleted, filesTotal;
+    resolveGroupProgress(downloadItem->groupId, filesFailed, filesCompleted, filesTotal);
+
+    qCDebug(logCategoryHcsDownloader) << downloadItem->groupId
+             << "failed=" << filesFailed
+             << "completed=" << filesCompleted
+             << "total=" << filesTotal;
+
+    if (group->settings.notifyGroupDownloadProgress) {
+        emit groupDownloadProgress(downloadItem->groupId, filesCompleted, filesTotal);
+    }
+
+    if (filesCompleted == filesTotal) {
+        emit groupDownloadFinished(downloadItem->groupId, group->errorString);
+
+        //clear all requests for this group
+        clearData(downloadItem->groupId);
+    }
 }
 
-void DownloadManager::onDownloadFinished(QNetworkReply* reply)
+void DownloadManager::resolveGroupProgress(
+        const QString &groupId,
+        int &filesFailed,
+        int &filesCompleted,
+        int &filesTotal)
 {
-    QUrl url = reply->url();
-    if (reply->error() != QNetworkReply::NoError) {
+    filesFailed = 0;
+    filesCompleted = 0;
+    filesTotal = 0;
 
-        QString filename = findFilenameForReply(reply);
-        if (filename.isEmpty()) {
-            return;
-        }
+    for (auto const &item : itemList_) {
+        if (item.groupId == groupId) {
+            ++filesTotal;
+            if (item.state == DownloadState::Finished
+                    || item.state == DownloadState::FinishedWithError) {
 
-        auto findItItem = findItemByFilename(filename);
-        if (findItItem != downloadList_.end()) {
-            findItItem->state = EDownloadState::eDone;
-        }
-
-        qCWarning(logCategoryHcsDownloader) << "download error on:" << filename << "from:"
-                    << reply->url() << "err:" << reply->errorString();
-
-        emit downloadFinishedError(filename, reply->errorString());
-    }
-    else {
-        if (isHttpRedirect(reply)) {
-            qCWarning(logCategoryHcsDownloader) << "Redirection on a file download. " << reply->url().toString();
-            //TODO: do we support redirects ?
-            //   fputs("Request was redirected.\n", stderr);
-
-        }
-        else {
-
-            QByteArray buffer = reply->readAll();
-            if (buffer.size() > 0) {
-                writeToFile(reply, buffer);
+                ++filesCompleted;
             }
 
-            QString filename = findFilenameForReply(reply);
-            if (filename.isEmpty()) {
-                return;
-            }
-
-            auto findItItem = findItemByFilename(filename);
-            if (findItItem != downloadList_.end()) {
-                findItItem->state = EDownloadState::eDone;
-            }
-
-            qCInfo(logCategoryHcsDownloader) << "Downloaded:" << filename << "from:" << findItItem->url;
-
-            emit downloadFinished(filename);
-
-            if (static_cast<uint>(currentDownloads_.size()) <= numberOfDownloads_) {
-                auto it = findNextDownload();
-                if (it != downloadList_.end()) {
-                    beginDownload(*it);
-                }
+            if (item.state == DownloadState::FinishedWithError) {
+                ++filesFailed;
             }
         }
     }
-
-    {
-        QMutexLocker lock(&mapReplyFileMutex_);
-        mapReplyToFile_.remove(reply);
-    }
-
-    currentDownloads_.removeAll(reply);
-    reply->deleteLater();
 }
 
-bool DownloadManager::writeToFile(QNetworkReply* reply, const QByteArray& buffer)
+void DownloadManager::clearData(const QString groupId)
 {
-    QString filename = findFilenameForReply(reply);
-    if (filename.isEmpty()) {
-        qCDebug(logCategoryHcsDownloader) << "Reply:" << reply->url() << "not found in map.";
-        return false;
-    }
-
-    QFile file( filename );
-    if (file.open(QIODevice::ReadWrite) == false) {
-        qCWarning(logCategoryHcsDownloader) << "Unable to open file:" << filename <<
-                                            "for:" << reply->url() << "err:" << file.errorString();
-        return false;
-    }
-    uint64_t file_size = file.size();
-    file.seek(file_size);
-
-    qint64 written = file.write(buffer);
-    if (written != buffer.size()) {
-        qCWarning(logCategoryHcsDownloader) << "Unable to write to file:" << filename <<
-                    "for:" << reply->url() << "err:" << file.errorString();
-    }
-
-    return (written == buffer.size());
-}
-
-QList<DownloadManager::DownloadItem>::iterator DownloadManager::findNextDownload()
-{
-    QList<DownloadItem>::iterator findIt;
-    for(findIt = downloadList_.begin(); findIt != downloadList_.end(); ++findIt) {
-        if (findIt->state == EDownloadState::eIdle) {
-            break;
+    QMutableListIterator<DownloadItem> iter(itemList_);
+    while (iter.hasNext()) {
+        DownloadItem &item = iter.next();
+        if (item.groupId == groupId) {
+            itemHash_.remove(item.url);
+            iter.remove();
         }
     }
 
-    return findIt;
+    groupHash_.remove(groupId);
 }
-
-QList<DownloadManager::DownloadItem>::iterator DownloadManager::findItemByFilename(const QString& filename)
-{
-    QList<DownloadItem>::iterator findIt;
-    for(findIt = downloadList_.begin(); findIt != downloadList_.end(); ++findIt) {
-        if (findIt->filename == filename) {
-            break;
-        }
-    }
-
-    return findIt;
-}
-
-QNetworkReply* DownloadManager::findReplyByFilename(const QString& filename)
-{
-    Q_ASSERT(filename.isEmpty() == false);
-
-    QMap<QNetworkReply*, QString>::iterator it;
-    for(it = mapReplyToFile_.begin(); it != mapReplyToFile_.end(); ++it) {
-        if (it.value() == filename) {
-            return it.key();
-        }
-    }
-
-    return nullptr;
-}
-
-QString DownloadManager::findFilenameForReply(QNetworkReply* reply)
-{
-    Q_ASSERT(reply);
-
-    QMutexLocker lock(&mapReplyFileMutex_);
-    auto findIt = mapReplyToFile_.find(reply);
-    if (findIt != mapReplyToFile_.end()) {
-        return findIt.value();
-    }
-    return QString();
-}
-
-void DownloadManager::slotError(QNetworkReply::NetworkError /*err*/)
-{
-    QNetworkReply* reply = qobject_cast<QNetworkReply*>( QObject::sender() );
-    Q_ASSERT(reply);
-
-    qCWarning(logCategoryHcsDownloader) << "download error on:" << reply->url() << "err:" << reply->errorString();
-}
-
-void DownloadManager::sslErrors(const QList<QSslError>& errors)
-{
-    QNetworkReply* reply = qobject_cast<QNetworkReply*>( QObject::sender() );
-    Q_ASSERT(reply);
-
-    QString errorText;
-    for(const auto item : errors) {
-        errorText += item.errorString();
-        errorText += ",";
-    }
-
-    qCWarning(logCategoryHcsDownloader) << "download SSL error on:" << reply->url() << "err:" << errorText;
-}
-
-void DownloadManager::onDownloadAbort(QNetworkReply* reply)
-{
-    Q_ASSERT(reply);
-    reply->abort();
-
-    currentDownloads_.removeAll(reply);
-
-    reply->deleteLater();
-}
-
-void DownloadManager::stopAllDownloads()
-{
-    for(auto item : currentDownloads_) {
-        item->abort();
-    }
-
-    currentDownloads_.clear();
-}
-
 
 void ReplyTimeout::timerEvent(QTimerEvent *ev)
 {
-    if (!mSec_timer_.isActive() || ev->timerId() != mSec_timer_.timerId())
+    if (mSec_timer_.isActive() == false
+            || ev->timerId() != mSec_timer_.timerId()) {
         return;
-    auto reply = static_cast<QNetworkReply*>(parent());
+    }
+
+    QNetworkReply* reply = qobject_cast<QNetworkReply*>(QObject::parent());
 
     if (reply->isRunning()){
         if (reply->property("newProgress").toBool()) {
@@ -371,7 +513,7 @@ void ReplyTimeout::timerEvent(QTimerEvent *ev)
             reply->setProperty("newProgress", false);
             return;
         } else {
-            qCDebug(logCategoryHcsDownloader) << "Enforcing timeout for:" << reply->url();
+            qCDebug(logCategoryHcsDownloader) << "Time is up. Manually closing:" << reply->url();
             reply->close();
         }
     }

@@ -27,6 +27,7 @@ ChartView {
 
     property alias series: dataLine
     property alias repeatOldData: repeatTimer.running
+    property alias xValueAxis: valueAxisX
 
     property int textSize: 14
     property color dataLineColor: Qt.rgba(0, 0, 0, 1)

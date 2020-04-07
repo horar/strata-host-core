@@ -19,6 +19,8 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     main.cpp
     source/DocumentManager.cpp
     source/ResourceLoader.cpp
+    source/DocumentListModel.cpp
+    source/DownloadDocumentListModel.cpp
     $<IF:$<CONFIG:Release>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
 
     logging/LoggingQtCategories.cpp
@@ -29,20 +31,10 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     qml-dev-studio-resources.qrc
 
     $<IF:$<CONFIG:Release>, qml-dev-studio-release.qrc, qml-dev-studio-debug.qrc>
-
-    timestamp.cpp
-    timestamp.cpp.in
-)
-set_property(SOURCE timestamp.cpp PROPERTY SKIP_AUTOMOC ON)
-
-set_source_files_properties(
-    timestamp.cpp
-    PROPERTIES
-        GENERATED true
 )
 
 generate_app_version(GITTAG_PREFIX "devstudio_" MACBUNDLE ON)
-include(timestamp)
+generate_app_build_timestamp()
 
 if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE
@@ -63,7 +55,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::WebEngine
 
     connector
-    StrataSerialPort
     HostControllerClient
     PlatformInterface
 
@@ -108,7 +99,6 @@ if(WIN32)
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
-    QT_DEPRECATED_WARNINGS
     QT_DISABLE_DEPRECATED_BEFORE=0x060000
     $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )

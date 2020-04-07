@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QtWidgets/QApplication>
 #include <QQmlContext>
 #include <QSettings>
 #include <QResource>
@@ -14,7 +15,10 @@ void loadResources() {
     const auto resources = {
         QStringLiteral("component-fonts.rcc"),
         QStringLiteral("component-common.rcc"),
-        QStringLiteral("component-sgwidgets.rcc")};
+        QStringLiteral("component-sgwidgets.rcc"),
+        QStringLiteral("component-theme.rcc")
+    };
+
 
 #ifdef Q_OS_MACOS
     applicationDir.cdUp();
@@ -58,7 +62,7 @@ int main(int argc, char *argv[])
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/images/wg-logo.svg"));
 
     const QtLoggerSetup loggerInitialization(app);

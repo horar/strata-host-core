@@ -226,5 +226,16 @@ Module {
             Parameter { name: "path"; type: "string" }
             Parameter { name: "fileName"; type: "string" }
         }
+        Method {
+            name: "formattedDataSize"
+            type: "string"
+            Parameter { name: "bytes"; type: "qlonglong" }
+            Parameter { name: "precision"; type: "int" }
+        }
+        Method {
+            name: "formattedDataSize"
+            type: "string"
+            Parameter { name: "bytes"; type: "qlonglong" }
+        }
     }
 }

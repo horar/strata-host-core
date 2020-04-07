@@ -4,5 +4,7 @@ import tech.strata.sgwidgets 1.0 as SGWidgets
 TextEdit {
     id: control
 
-    font.pixelSize: SGWidgets.SGSettings.fontPixelSize
+    property real fontSizeMultiplier: 1.0
+
+    font.pixelSize: SGWidgets.SGSettings.fontPixelSize * fontSizeMultiplier
 }

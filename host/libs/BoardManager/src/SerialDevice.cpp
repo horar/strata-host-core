@@ -3,8 +3,12 @@
 
 #include "logging/LoggingQtCategories.h"
 
+#include <CommandValidator.h>
+
 #include <rapidjson/document.h>
 #include <rapidjson/error/en.h>
+
+#include <rapidjson/writer.h>
 
 
 namespace spyglass {
@@ -14,7 +18,7 @@ QDebug operator<<(QDebug dbg, const SerialDevice* d) {
 }
 
 SerialDevice::SerialDevice(const int connectionID, const QString& name) :
-    connection_id_(connectionID), ucid_(static_cast<uint>(connectionID)), name_(name),
+    connection_id_(connectionID), ucid_(static_cast<uint>(connectionID)), port_name_(name),
     device_busy_(false), state_(State::None), action_(Action::None)
 {
     read_buffer_.reserve(READ_BUFFER_SIZE);
@@ -27,7 +31,7 @@ SerialDevice::SerialDevice(const int connectionID, const QString& name) :
     connect(this, &SerialDevice::identifyDevice, this, &SerialDevice::deviceIdentification);
     connect(this, &SerialDevice::writeToPort, this, &SerialDevice::writeData);
 
-    qCDebug(logCategorySerialDevice).nospace() << "Created new serial device: ID: 0x" << hex << ucid_ << ", name: " << name_;
+    qCDebug(logCategorySerialDevice).nospace() << "Created new serial device: ID: 0x" << hex << ucid_ << ", name: " << port_name_;
 }
 
 SerialDevice::~SerialDevice() {
@@ -36,7 +40,7 @@ SerialDevice::~SerialDevice() {
 }
 
 bool SerialDevice::open() {
-    serial_port_.setPortName(name_);
+    serial_port_.setPortName(port_name_);
     serial_port_.setBaudRate(QSerialPort::Baud115200);
     serial_port_.setDataBits(QSerialPort::Data8);
     serial_port_.setParity(QSerialPort::NoParity);
@@ -81,7 +85,7 @@ void SerialDevice::write(const QByteArray& data) {
 }
 
 void SerialDevice::writeData(const QByteArray& data) {
-    if (device_busy_) {
+    if (device_busy_) {  // Device is busy -> device identification is still running.
         qCDebug(logCategorySerialDevice) << this << ": Cannot write to device because device is busy.";
         emit serialDeviceError(connection_id_, "Cannot write to device because device is busy.");
     }
@@ -101,7 +105,7 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
         QString err_msg = "Serial port error (" + QString::number(error) + "): " + serial_port_.errorString();
         if (error == QSerialPort::ResourceError) {
             // board was unconnected from computer (cable was unplugged)
-            qCInfo(logCategorySerialDevice).noquote() << this << ": " << err_msg << " (probably unexpectedly disconnected device).";
+            qCInfo(logCategorySerialDevice).noquote() << this << ": " << err_msg << " (Probably unexpectedly disconnected device.)";
         }
         else {
             qCCritical(logCategorySerialDevice).noquote() << this << ": " << err_msg;
@@ -110,10 +114,10 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
     }
 }
 
-bool SerialDevice::launchDevice() {
+bool SerialDevice::launchDevice(bool getFwInfo) {
     if (serial_port_.isOpen()) {
-        device_busy_ = true;
-        state_ = State::GetFirmwareInfo;
+        device_busy_ = true;  // Start of device identification.
+        state_ = getFwInfo ? State::GetFirmwareInfo : State::GetPlatformInfo;
         // some boards need time for booting, so wait before sending JSON messages
         QTimer::singleShot(LAUNCH_DELAY, [this](){ emit identifyDevice(QPrivateSignal()); });
         return true;
@@ -134,6 +138,7 @@ void SerialDevice::deviceIdentification() {
             break;
         case State::GetPlatformInfo :
             qCDebug(logCategorySerialDevice) << this << ": Sending 'request_platform_id' command.";
+            connect(this, &SerialDevice::msgFromDevice, this, &SerialDevice::handleDeviceResponse, Qt::UniqueConnection);
             serial_port_.write(CMD_REQUEST_PLATFORM_ID);
             action_ = Action::WaitingForPlatformInfo;
             response_timer_.start();
@@ -142,7 +147,7 @@ void SerialDevice::deviceIdentification() {
         case State::UnrecognizedDevice :
             disconnect(this, &SerialDevice::msgFromDevice, this, &SerialDevice::handleDeviceResponse);
             action_ = Action::Done;
-            device_busy_ = false;
+            device_busy_ = false;  // Device identification has ended.
             emit deviceReady(connection_id_, (state_ == State::DeviceReady) ? true : false);
             break;
         case State::None :
@@ -182,118 +187,78 @@ void SerialDevice::handleDeviceResponse(const int /* connectionId */, const QByt
     }
 }
 
-bool getJsonString(const rapidjson::Value& val, QString& str) {
-    if (val.IsString()) {
-        str = val.GetString();
-        return true;
-    }
-    return false;
-}
-
 bool SerialDevice::parseDeviceResponse(const QByteArray& data, bool& is_ack) {
     rapidjson::Document doc;
-    rapidjson::ParseResult result = doc.Parse(data.data());
+    bool ok = false;
 
-    if (!result) {
-        QString err_msg = "Cannot parse JSON: " + data + " Error at offset " + QString::number(result.Offset()) + ": " + GetParseError_En(result.Code());
-        qCCritical(logCategorySerialDevice).noquote() << this << ": " << err_msg;
-        emit serialDeviceError(connection_id_, err_msg);
+    if (CommandValidator::parseJson(data.toStdString(), doc) == false) {
         return false;
     }
 
-    is_ack = false;
-    bool ok = false;
+    if (doc.IsObject()) {
+        // JSON can contain only a value (e.g. "abc").
+        // We require object as a JSON content (JSON starts with '{' and ends with '}')
 
-    if (doc.HasMember(JSON_ACK)) {
-        is_ack = true;
-
-        // check value of "ack" key:
-        const rapidjson::Value& val = doc[JSON_ACK];
-        if (val.IsString()) {
-            if ((action_ == Action::WaitingForFirmwareInfo) && (val == JSON_GET_FW_INFO)) {
-                qCDebug(logCategorySerialDevice) << this << ": Received ACK for 'get_firmware_info' command.";
-                ok = true;
+        if (doc.HasMember(JSON_ACK)) {  // response is ACK
+            is_ack = true;
+            if (CommandValidator::validate(CommandValidator::JsonType::ack, doc) == false) {
+                return false;
             }
-            else if ((action_ == Action::WaitingForPlatformInfo) && (val == JSON_REQ_PLATFORM_ID)) {
+            const rapidjson::Value& ack = doc[JSON_ACK];
+            if ((action_ == Action::WaitingForFirmwareInfo) && (ack == JSON_GET_FW_INFO)) {
+                qCDebug(logCategorySerialDevice) << this << ": Received ACK for 'get_firmware_info' command.";
+               ok = true;
+            }
+            else if ((action_ == Action::WaitingForPlatformInfo) && (ack == JSON_REQ_PLATFORM_ID)) {
                 qCDebug(logCategorySerialDevice) << this << ": Received ACK for 'request_platform_id' command.";
                 ok = true;
             }
+            if (ok) {
+                ok = doc[JSON_PAYLOAD][JSON_RETURN_VALUE].GetBool();
+            }
+            return ok;
         }
 
-        // check value of "payload" key:
-        if (ok && doc.HasMember(JSON_PAYLOAD)) {
-            ok = false;
-            const rapidjson::Value& payload = doc[JSON_PAYLOAD];
-            if (payload.HasMember(JSON_RETURN_VALUE)) {
-                const rapidjson::Value& val = payload[JSON_RETURN_VALUE];
-                if (val.IsBool()) {
-                    ok = val.GetBool();
-                }
+        // response is notification
+        is_ack = false;
+
+        if (action_ == Action::WaitingForFirmwareInfo) {
+            if (CommandValidator::validate(CommandValidator::JsonType::getFwInfoRes, doc) == false) {
+                return false;
+            }
+            const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
+            const rapidjson::Value& btldr = payload[JSON_BOOTLOADER];
+            const rapidjson::Value& appl = payload[JSON_APPLICATION];
+            const rapidjson::SizeType has_btldr = btldr.MemberCount();
+            const rapidjson::SizeType has_appl = appl.MemberCount();
+            if (has_btldr) {
+                bootloader_ver_ = btldr[JSON_VERSION].GetString();
+            }
+            if (has_appl) {
+                application_ver_ = appl[JSON_VERSION].GetString();
+            }
+            if (has_btldr || has_appl) {
+                ok = true;
             }
         }
-    }
-    else if (doc.HasMember(JSON_NOTIFICATION)) {
-        const rapidjson::Value& notif = doc[JSON_NOTIFICATION];
-        do {
-            if (notif.IsObject() == false) {
-                break;
+        else if (action_ == Action::WaitingForPlatformInfo) {
+            if (CommandValidator::validate(CommandValidator::JsonType::reqPlatIdRes, doc) == false) {
+                return false;
             }
-            if (notif.HasMember(JSON_VALUE) == false || notif.HasMember(JSON_PAYLOAD) == false) {
-                break;
+            const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
+            if (payload.HasMember(JSON_NAME)) {
+                verbose_name_ = payload[JSON_NAME].GetString();
+                platform_id_ = payload[JSON_PLATFORM_ID].GetString();
+                class_id_ = payload[JSON_CLASS_ID].GetString();
+                ok = true;
             }
-            const rapidjson::Value& val = notif[JSON_VALUE];
-            if (val.IsString() == false) {
-                break;
+            else if (payload.HasMember(JSON_VERBOSE_NAME)) {
+                verbose_name_ = payload[JSON_VERBOSE_NAME].GetString();
+                platform_id_ = payload[JSON_PLATFORM_ID].GetString();
+                ok = true;
             }
-            const rapidjson::Value& payload = notif[JSON_PAYLOAD];
-            if (payload.IsObject() == false) {
-                break;
-            }
-            if (val == JSON_GET_FW_INFO) {
-                if (payload.HasMember(JSON_BOOTLOADER) == false || payload.HasMember(JSON_APPLICATION) == false) {
-                    break;
-                }
-                const rapidjson::Value& bldr = payload[JSON_BOOTLOADER];
-                const rapidjson::Value& appl = payload[JSON_APPLICATION];
-                if (bldr.IsObject() == false || appl.IsObject() == false) {
-                    break;
-                }
-                if (bldr.HasMember(JSON_VERSION)) {
-                    const rapidjson::Value& ver = bldr[JSON_VERSION];
-                    if ((ok = getJsonString(ver, bootloader_ver_)) == false) {
-                        break;
-                    }
-                }
-                if (appl.HasMember(JSON_VERSION)) {
-                    const rapidjson::Value& ver = appl[JSON_VERSION];
-                    if ((ok = getJsonString(ver, application_ver_)) == false) {
-                        break;
-                    }
-                }
-                qCDebug(logCategorySerialDevice) << this << ": Received reply to 'get_firmware_info' command.";
-            }
-            else if (val == JSON_PLATFORM_ID) {
-                if (payload.HasMember(JSON_NAME)) {
-                    const rapidjson::Value& name = payload[JSON_NAME];
-                    if ((ok = getJsonString(name, verbose_name_)) == false) {
-                        break;
-                    }
-                }
-                if (payload.HasMember(JSON_PLATFORM_ID)) {
-                    const rapidjson::Value& plat_id = payload[JSON_PLATFORM_ID];
-                    if ((ok = getJsonString(plat_id, platform_id_)) == false) {
-                        break;
-                    }
-                }
-                if (payload.HasMember(JSON_CLASS_ID)) {
-                    const rapidjson::Value& class_id = payload[JSON_CLASS_ID];
-                    if ((ok = getJsonString(class_id, class_id_)) == false) {
-                        break;
-                    }
-                }
-                qCDebug(logCategorySerialDevice) << this << ": Received reply to 'request_platform_id' command.";
-            }
-        } while (false);
+        }
+
     }
 
     if (ok == false) {
@@ -321,6 +286,32 @@ QVariantMap SerialDevice::getDeviceInfo() const {
         result.insert(QStringLiteral("applicationVersion"), application_ver_);
     }
     return result;
+}
+
+QString SerialDevice::getProperty(DeviceProperties property) const {
+    if (property == DeviceProperties::connectionName) {
+        return port_name_;
+    }
+
+    if (device_busy_ == false) {
+        switch (property) {
+            case DeviceProperties::verboseName :
+                return verbose_name_;
+            case DeviceProperties::platformId :
+                return platform_id_;
+            case DeviceProperties::classId :
+                return class_id_;
+            case DeviceProperties::bootloaderVer :
+                return bootloader_ver_;
+            case DeviceProperties::applicationVer :
+                return application_ver_;
+            default:
+                break;
+        }
+    }
+
+    // Device is busy (device identification is still running) or property is not supported.
+    return QString();
 }
 
 }  // namespace

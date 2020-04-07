@@ -9,12 +9,13 @@ var isInitialized = false
 var autoConnectEnabled = true
 var listError = {
     "retry_count": 0,
-    "retry_timer": Qt.createQmlObject("import QtQuick 2.12; Timer {interval: 10000; repeat: false; running: false;}",Qt.application,"TimeOut")
+    "retry_timer": Qt.createQmlObject("import QtQuick 2.12; Timer {interval: 3000; repeat: false; running: false;}",Qt.application,"TimeOut")
 }
 var platformListModel
 var coreInterface
 var documentManager
 var platformListModified = false
+var platformListReceived = false
 
 function initialize (newCoreInterface, newDocumentManager) {
     platformListModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string selectedClass_id: ''; property string selectedName: ''; property string selectedConnection: ''; property string platformListStatus: 'loading'}",Qt.application,"PlatformListModel")
@@ -30,12 +31,16 @@ function populatePlatforms(platform_list_json) {
 
     // Parse JSON
     try {
-        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "populatePlatforms: ", platform_list_json)
         var platform_list = JSON.parse(platform_list_json)
 
         if (platform_list.list.length < 1) {
-            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Received empty platform list from HCS, will retry in 10 seconds")
-            if (listError.retry_count<6) {
+            if (listError.retry_count < 3) {
+                console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Received empty platform list from HCS, will retry in 3 seconds")
+                listError.retry_count++
+                listError.retry_timer.start()
+            } else if (listError.retry_count < 8) {
+                console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Received empty platform list from HCS, will retry in 10 seconds")
+                listError.retry_timer.interval = 10000
                 listError.retry_count++
                 listError.retry_timer.start()
             } else {
@@ -49,10 +54,9 @@ function populatePlatforms(platform_list_json) {
 
         PlatformFilters.initialize()
 
+        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Processing platform list");
         for (var platform of platform_list.list){
             var platform_info
-
-            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Getting platform information for:", platform.class_id);
 
             // Extract platform information
             platform_info = {
@@ -92,31 +96,33 @@ function populatePlatforms(platform_list_json) {
                 }
             } else {
                 // platform matches old API - TODO [Faller]: remove once deployment portal supports new API, also remove oldNewMap from platformFilters
-                for (var application_icon of platform.application_icons) {
-                    if (PlatformFilters.oldNewMap.hasOwnProperty(application_icon)){
-                        let filter = PlatformFilters.oldNewMap[application_icon]
-                        let filterJSON = PlatformFilters.findFilter(filter)
-                        if (filterJSON) {
-                            platform_info.filters.push(filterJSON)
+                if (platform.hasOwnProperty("application_icons")){
+                    for (var application_icon of platform.application_icons) {
+                        if (PlatformFilters.oldNewMap.hasOwnProperty(application_icon)){
+                            let filter = PlatformFilters.oldNewMap[application_icon]
+                            let filterJSON = PlatformFilters.findFilter(filter)
+                            if (filterJSON) {
+                                platform_info.filters.push(filterJSON)
+                            }
+                        } else {
+                            // icon is not a valid filter or unknown icon
                         }
-                    } else {
-                        // icon is not a valid filter or unknown icon
                     }
                 }
-                for (var product_icon of platform.product_icons) {
-                    if (PlatformFilters.oldNewMap.hasOwnProperty(product_icon)){
-                        let filter = PlatformFilters.oldNewMap[product_icon]
-                        let filterJSON = PlatformFilters.findFilter(filter)
-                        if (filterJSON) {
-                            platform_info.filters.push(filterJSON)
+                if (platform.hasOwnProperty("product_icons")){
+                    for (var product_icon of platform.product_icons) {
+                        if (PlatformFilters.oldNewMap.hasOwnProperty(product_icon)){
+                            let filter = PlatformFilters.oldNewMap[product_icon]
+                            let filterJSON = PlatformFilters.findFilter(filter)
+                            if (filterJSON) {
+                                platform_info.filters.push(filterJSON)
+                            }
+                        } else {
+                            // icon is not a valid filter or unknown icon
                         }
-                    } else {
-                        // icon is not a valid filter or unknown icon
                     }
                 }
             }
-
-            // console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, JSON.stringify(platform_info));
 
             // Add to the model
             platformListModel.append(platform_info)
@@ -179,7 +185,7 @@ function parseConnectedPlatforms (connected_platform_list_json) {
                             "opn": "Class id: " + platform.class_id,
                             "description": "No information to display.",
                             "image": "images/platform-images/notFound.png",
-                            "available": { "control": false, "documents": false },  // Don't allow control or docs for unknown board
+                            "available": { "control": true, "documents": true },  // If UI exists and customer has physical board, allow access
                             "cachedDocuments": false,
                             "cachedControl": false,
                             "cachedConnection": "view",
@@ -229,16 +235,13 @@ function parseConnectedPlatforms (connected_platform_list_json) {
 
 function sendSelection () {
     // Run this disconnection code only if nav_control believes something is connected, otherwise createView() needlessly gets called
-    if (NavigationControl.context["platform_connected"] || NavigationControl.context["offline_mode"] || NavigationControl.context["class_id"] !== "") {
+    if (NavigationControl.context["platform_state"] || NavigationControl.context["class_id"] !== "") {
         console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Disconnecting platform from navigation control")
         NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
     }
 
-    console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Disconnecting platform from core interface")
-    coreInterface.disconnectPlatform()
-
     // Clear all documents for contents
-    documentManager.clearDocumentSets();
+    documentManager.clearDocuments();
 
     /*
         Determine action depending on what type of 'connection' is used
@@ -248,7 +251,7 @@ function sendSelection () {
 
     } else {
         var data = { class_id: platformListModel.selectedClass_id }
-        coreInterface.sendSelectedPlatform(platformListModel.selectedClass_id, platformListModel.selectedConnection)
+        coreInterface.connectToPlatform(platformListModel.selectedClass_id)
 
         if (platformListModel.selectedConnection === "view") {
             NavigationControl.updateState(NavigationControl.events.OFFLINE_MODE_EVENT, data)
@@ -270,6 +273,11 @@ function setContentView(){
 }
 
 function selectPlatform(index){
+    if (platformListModel.selectedClass_id !== "") {
+        // Case where viewing offline docs and then user connects platform
+        coreInterface.disconnectPlatform() // cancels any active collateral downloads
+    }
+
     if (index >= 0) {
         platformListModel.currentIndex = index
         platformListModel.selectedClass_id = platformListModel.get(index).class_id

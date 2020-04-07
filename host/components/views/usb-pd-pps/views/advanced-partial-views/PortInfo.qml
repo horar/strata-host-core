@@ -1,7 +1,9 @@
-import QtQuick 2.9
+import QtQuick 2.12
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
-import "../../sgwidgets"
+//import "../../sgwidgets"
+import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 0.9 as SGWidgets09
 
 Item {
     id: root
@@ -18,21 +20,15 @@ Item {
     //property alias efficency: efficencyBox.value
 
     property var deviceConnected: platformInterface.usb_pd_port_connect.connection_state
-    property var deviceDisconnected: platformInterface.usb_pd_port_disconnect.connection_state
     property string portName: "USB_C_port_" + portNumber
 
     onDeviceConnectedChanged: {
 
-        if (platformInterface.usb_pd_port_connect.port_id === portName){
+        if (platformInterface.usb_pd_port_connect.port == portNumber){
             if (platformInterface.usb_pd_port_connect.connection_state === "connected"){
                 root.portConnected = true;
             }
-        }
-    }
-
-    onDeviceDisconnectedChanged: {
-        if (platformInterface.usb_pd_port_disconnect.port_id === portName){
-            if (platformInterface.usb_pd_port_disconnect.connection_state === "disconnected"){
+            else if (platformInterface.usb_pd_port_connect.connection_state === "disconnected"){
                 root.portConnected = false;
             }
 
@@ -139,7 +135,8 @@ Item {
 
                 Column {
                     id: column1
-                    visible: root.portConnected
+                    //visible: root.portConnected
+                    visible: false
                     anchors {
                         verticalCenter: stats.verticalCenter
                     }
