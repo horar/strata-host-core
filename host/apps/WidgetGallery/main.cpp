@@ -8,6 +8,7 @@
 #include <QIcon>
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
+#include "WidgetGalleryVersion.h"
 
 void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
@@ -61,12 +62,13 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QGuiApplication::setApplicationVersion(AppInfo::version.data());
 
     QApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/images/wg-logo.svg"));
 
     const QtLoggerSetup loggerInitialization(app);
-    qCInfo(logCategoryWg) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(logCategoryWg) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     loadResources();
 

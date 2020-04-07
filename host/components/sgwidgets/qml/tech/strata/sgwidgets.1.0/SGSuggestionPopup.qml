@@ -10,7 +10,6 @@ Popup {
     property Item textEditor
     property variant model
     property Component delegate: delegateComponent
-    property Component highlight: highlightComponent
     property Component header: headerComponent
     property alias footer: view.footer
     property string textRole: "text"
@@ -25,8 +24,10 @@ Popup {
     property string emptyModelText: "No suggestions."
     property string headerText
     property bool delegateNumbering: false
+    property bool delegateRemovable: false
 
     signal delegateSelected(int index)
+    signal removeRequested(int index)
 
     x: {
         if (!textEditor) {
@@ -152,10 +153,6 @@ Popup {
             flickableDirection: Flickable.VerticalFlick
             delegate: popup.delegate
             spacing: popup.spacing
-            highlightFollowsCurrentItem: true
-            highlightMoveDuration: -1
-            highlightMoveVelocity: -1
-            highlight: popup.highlight
             header: count > 0 ? null : emptyModelComponent
 
             ScrollBar.vertical: ScrollBar {
@@ -195,13 +192,6 @@ Popup {
     }
 
     Component {
-        id: highlightComponent
-        Rectangle {
-            color: dummyControl.palette.highlight
-        }
-    }
-
-    Component {
         id: emptyModelComponent
 
         Item {
@@ -227,8 +217,22 @@ Popup {
     Component {
         id: delegateComponent
         Item {
+
             width: ListView.view.width
-            height: text.paintedHeight + 6
+            height: text.paintedHeight + 10
+
+            Rectangle {
+                anchors.fill: parent
+                color: {
+                    if (parent.ListView.isCurrentItem) {
+                        return dummyControl.palette.highlight
+                    } else if (delegateMouseArea.containsMouse || removeBtn.hovered) {
+                        return Qt.lighter(dummyControl.palette.highlight, 1.9)
+                    }
+
+                    return "transparent"
+                }
+            }
 
             Item {
                 id: delegateNumberWrapper
@@ -269,8 +273,8 @@ Popup {
                     verticalCenter: parent.verticalCenter
                     left: delegateNumberWrapper.visible ? delegateNumberWrapper.right : parent.left
                     leftMargin: 4
-                    right: parent.right
-                    rightMargin: 2 + 8
+                    right: removeBtn.left
+                    rightMargin: 4
                 }
 
                 elide: Text.ElideRight
@@ -279,10 +283,35 @@ Popup {
             }
 
             MouseArea {
+                id: delegateMouseArea
                 anchors.fill: parent
+                hoverEnabled: true
                 onClicked: {
                     view.currentIndex = index
                     delegateSelected(index)
+                }
+            }
+
+            SGWidgets.SGIconButton {
+                id: removeBtn
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    right: parent.right
+                    rightMargin: 2 + 8
+                }
+
+                iconSize: delegateNumberWrapper.height - 8
+                hintText: qsTr("Remove")
+                visible: delegateRemovable
+                         && (delegateMouseArea.containsMouse
+                             || removeBtn.hovered
+                             || parent.ListView.isCurrentItem)
+
+                iconColor: "white"
+                icon.source: "qrc:/sgimages/times.svg"
+                highlightImplicitColor: SGWidgets.SGColorsJS.ERROR_COLOR
+                onClicked: {
+                    removeRequested(index)
                 }
             }
         }

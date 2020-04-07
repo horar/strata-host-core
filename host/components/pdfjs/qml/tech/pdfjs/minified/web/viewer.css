@@ -1493,6 +1493,10 @@ html[dir="rtl"] .secondaryToolbarButton > span {
   content: url(images/secondaryToolbarButton-documentProperties.png);
 }
 
+.secondaryToolbarButton.documentProperties {
+  display: none !important;
+}
+
 .verticalToolbarSeparator {
   display: block;
   padding: 8px 0;
@@ -2275,6 +2279,10 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
 
   .secondaryToolbarButton.documentProperties::before {
     content: url(images/secondaryToolbarButton-documentProperties@2x.png);
+  }
+
+  .secondaryToolbarButton.documentProperties {
+    display: none !important;
   }
 
   .outlineItemToggler::before {

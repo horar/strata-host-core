@@ -33,38 +33,57 @@ bool PlatformDocument::parseDocument(const QString &document)
         return false;
     }
 
-    QJsonObject jsonDocument = jsonRoot.object().value("documents").toObject();
-    if (jsonDocument.isEmpty()) {
-        qCCritical(logCategoryHcsPlatformDocument) << "documents object does not exist in the platform document";
+    if (jsonRoot.object().contains("documents") == false) {
+        qCCritical(logCategoryHcsPlatformDocument) << "documents key is missing";
         return false;
     }
+
+    QJsonValue documentsValue = jsonRoot.object().value("documents");
+    if (documentsValue.isObject() == false) {
+        qCCritical(logCategoryHcsPlatformDocument) << "value of documents key is not an object";
+        return false;
+    }
+
+    QJsonObject jsonDocument = documentsValue.toObject();
 
     //downloads
     if (jsonDocument.contains("downloads") == false) {
-        qCCritical(logCategoryHcsPlatformDocument) << "downloads object is missing";
+        qCCritical(logCategoryHcsPlatformDocument) << "downloads key is missing";
         return false;
     }
 
-    populateFileList(jsonDocument.value("downloads").toArray(), downloadList_);
+    QJsonValue downloadsValue = jsonDocument.value("downloads");
+    if (downloadsValue.isArray()) {
+        populateFileList(downloadsValue.toArray(), downloadList_);
+    } else {
+        qCCritical(logCategoryHcsPlatformDocument) << "value of downloads key is not an array";
+        return false;
+    }
 
     //views
     if (jsonDocument.contains("views") == false) {
-        qCCritical(logCategoryHcsPlatformDocument) << "views object is missing";
+        qCCritical(logCategoryHcsPlatformDocument) << "views key is missing";
         return false;
     }
 
-    populateFileList(jsonDocument.value("views").toArray(), viewList_);
+    QJsonValue viewsValue = jsonDocument.value("views");
+    if (viewsValue.isArray()) {
+        populateFileList(viewsValue.toArray(), viewList_);
+    } else {
+        qCCritical(logCategoryHcsPlatformDocument) << "value of views key is not an array";
+        return false;
+    }
 
     //platform selector
     QJsonObject jsonPlatformSelector = jsonRoot.object().value("platform_selector").toObject();
     if (jsonPlatformSelector.isEmpty()) {
-        qCCritical(logCategoryHcsPlatformDocument) << "platform_selector object does not exist in the platform document";
+        qCCritical(logCategoryHcsPlatformDocument) << "platform_selector key is missing";
         return false;
     }
 
     bool isValid = populateFileObject(jsonPlatformSelector, platformSelector_);
     if (isValid == false) {
-        qCCritical(logCategoryHcsPlatformDocument) << "platform_selector object is not valid";
+        qCCritical(logCategoryHcsPlatformDocument) << "value of platform_selector key is not valid";
         return false;
     }
 
