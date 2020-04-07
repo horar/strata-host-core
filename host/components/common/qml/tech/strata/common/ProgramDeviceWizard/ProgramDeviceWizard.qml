@@ -586,7 +586,7 @@ Item {
                 }
 
                 onBoardDisconnected: {
-                    if (isCancelable(connectionId)) {
+                    if (isCancelable(deviceId)) {
                         cancelRequested()
                         return
                     }
@@ -622,7 +622,7 @@ Item {
                     if (status && connected) {
 
 
-                        var effectiveConnectionId = useCurrentConnectionId ? currentConnectionId : wizard.boardManager.readyConnectionIds[0]
+                        var effectiveConnectionId = useCurrentConnectionId ? currentConnectionId : wizard.boardManager.readyDeviceIds[0]
                         var connectionInfo = wizard.boardManager.getConnectionInfo(effectiveConnectionId)
 
                         var hasFirmware = connectionInfo.applicationVersion.length > 0
@@ -662,7 +662,7 @@ Item {
                     return
                 }
 
-                if (wizard.boardManager.readyConnectionIds.length === 0) {
+                if (wizard.boardManager.readyDeviceIds.length === 0) {
                     processingStatus = ProgramDeviceWizard.WaitingForDevice
                     return
                 }
