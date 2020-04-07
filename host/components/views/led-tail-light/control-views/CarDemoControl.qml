@@ -11,7 +11,7 @@ Rectangle {
     id: root
     Layout.fillHeight: true
     Layout.fillWidth: true
-    color: "grey"
+    color: "black"
 
     property int transformX:0;
     property int transformY:0;
@@ -20,28 +20,21 @@ Rectangle {
 
 
         Rectangle {
-            Layout.preferredHeight: parent.height/1.5
-            Layout.preferredWidth: parent.width - 50
-            color: "grey"
+            Layout.preferredHeight: parent.height/1.6
+            Layout.preferredWidth: parent.width - 100
+            color: "black"
+            Layout.alignment: Qt.AlignHCenter
 
 
             AnimatedImage {
                 id: carImage
                 source: "qrc:/views/led-tail-light/car-lights/car-rear-no-lights.jpg"
-                //fillMode: Image.PreserveAspectFit
+                fillMode: Image.PreserveAspectFit
                 anchors.fill: parent
                 anchors.centerIn: parent
 
             }
-            Rectangle {
-                property int frames: carImage.frameCount
 
-                width: 4; height: 8
-                x: (carImage.width - width) * carImage.currentFrame / frames
-                y: carImage.height
-                color: "red"
-                anchors.centerIn: parent
-            }
         }
 
 
@@ -89,6 +82,7 @@ Rectangle {
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         z:2
+                        color: "transparent"
                         Image {
                             id: rightArrowImage
                             source: "yellow_right.jpeg"
