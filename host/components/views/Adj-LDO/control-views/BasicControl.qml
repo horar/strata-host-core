@@ -804,6 +804,7 @@ Item {
                                                 interval: 500; running: true; repeat: true
 
                                                 onTriggered: {
+                                                    console.log("in timer")
                                                     if ((platformInterface.int_status.int_pg_ldo === false) && (platformInterface.control_states.ldo_en === "on"))
                                                     {
                                                         if (pgoodLight.status === SGStatusLight.Off) {
