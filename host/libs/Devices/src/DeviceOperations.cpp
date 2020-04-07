@@ -138,39 +138,39 @@ void DeviceOperations::process() {
     ackReceived_ = false;  // Flag if we have received ACK for sent command.
     switch (state_) {
     case State::GetFirmwareInfo :
-        qCDebug(logCategoryDeviceOperations) << this << "Sending 'get_firmware_info' command.";
+        qCInfo(logCategoryDeviceOperations) << this << "Sending 'get_firmware_info' command.";
         if (device_->sendMessage(CMD_GET_FIRMWARE_INFO, reinterpret_cast<quintptr>(this))) {
             activity_ = Activity::WaitingForFirmwareInfo;
             responseTimer_.start();
         }
         break;
     case State::GetPlatformId :
-        qCDebug(logCategoryDeviceOperations) << this << "Sending 'request_platform_id' command.";
+        qCInfo(logCategoryDeviceOperations) << this << "Sending 'request_platform_id' command.";
         if (device_->sendMessage(CMD_REQUEST_PLATFORM_ID, reinterpret_cast<quintptr>(this))) {
             activity_ = Activity::WaitingForPlatformId;
             responseTimer_.start();
         }
         break;
     case State::UpdateFirmware :
-        qCDebug(logCategoryDeviceOperations) << this << "Sending 'update_firmware' command.";
+        qCInfo(logCategoryDeviceOperations) << this << "Sending 'update_firmware' command.";
         if (device_->sendMessage(CMD_UPDATE_FIRMWARE, reinterpret_cast<quintptr>(this))) {
             activity_ = Activity::WaitingForUpdateFw;
             responseTimer_.start();
         }
         break;
     case State::ReadyForFlashFw :
-        qCInfo(logCategoryDeviceOperations) << this << "Platform in bootloader mode. Ready for flashing firmware.";
+        qCInfo(logCategoryDeviceOperations) << this << "Ready for flashing firmware.";
         finishOperation(Operation::PrepareForFlash);
         break;
     case State::FlashFwChunk :
-        qCDebug(logCategoryDeviceOperations) << this << "Sending 'flash_firmware' command.";
+        qCInfo(logCategoryDeviceOperations) << this << "Sending 'flash_firmware' command.";
         if (device_->sendMessage(createFlashFwJson(), reinterpret_cast<quintptr>(this))) {
             activity_ = Activity::WaitingForFlashFwChunk;
             responseTimer_.start();
         }
         break;
     case State::StartApplication :
-        qCDebug(logCategoryDeviceOperations) << this << "Sending 'start_application' command.";
+        qCInfo(logCategoryDeviceOperations) << this << "Sending 'start_application' command.";
         if (device_->sendMessage(CMD_START_APPLICATION, reinterpret_cast<quintptr>(this))) {
             activity_ = Activity::WaitingForStartApp;
             responseTimer_.start();
@@ -187,7 +187,7 @@ void DeviceOperations::process() {
 
 void DeviceOperations::handleResponseTimeout() {
     if (reqFwInfoResp_ == false && operation_ == Operation::Identify && activity_ == Activity::WaitingForFirmwareInfo) {
-        qCDebug(logCategoryDeviceOperations) << this << "No response to 'get_firmware_info' command.";
+        qCInfo(logCategoryDeviceOperations) << this << "No response to 'get_firmware_info' command.";
         state_ = State::GetPlatformId;
     } else {
         state_ = State::Timeout;
@@ -199,7 +199,7 @@ void DeviceOperations::handleDeviceError(int errCode, QString msg) {
     Q_UNUSED(errCode)
     responseTimer_.stop();
     resetInternalStates();
-    qCWarning(logCategoryDeviceOperations) << this << "Error: " << msg;
+    qCCritical(logCategoryDeviceOperations) << this << "Error: " << msg;
     emit error(msg);
 }
 
