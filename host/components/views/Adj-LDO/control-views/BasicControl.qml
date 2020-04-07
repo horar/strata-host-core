@@ -791,21 +791,17 @@ Item {
                                             height: 40
                                             width: 40
 
-                                            property var int_pg_ldo:  platformInterface.int_status.int_pg_ldo
-                                            onInt_pg_ldoChanged: {
-                                                if(int_pg_ldo === true)
-                                                    pgoodLight.status  = SGStatusLight.Green
-                                                else pgoodLight.status  = SGStatusLight.Off
 
-                                            }
 
                                             Timer {
                                                 id: pgoodTimer
                                                 interval: 500; running: true; repeat: true
-
                                                 onTriggered: {
-                                                    console.log("in timer")
-                                                    if ((platformInterface.int_status.int_pg_ldo === false) && (platformInterface.control_states.ldo_en === "on"))
+                                                    if(platformInterface.int_status.int_pg_ldo === true) {
+                                                        pgoodLight.status  = SGStatusLight.Green
+                                                    }
+
+                                                    else if ((platformInterface.int_status.int_pg_ldo === false) && (platformInterface.control_states.ldo_en === "on"))
                                                     {
                                                         if (pgoodLight.status === SGStatusLight.Off) {
                                                             pgoodLight.status = SGStatusLight.Red
@@ -813,6 +809,7 @@ Item {
                                                             pgoodLight.status = SGStatusLight.Off
                                                         }
                                                     }
+                                                    else  pgoodLight.status  = SGStatusLight.Off
                                                 }
                                             }
 
