@@ -59,6 +59,7 @@ DropArea{
             text: targetDropArea.nodeNumber
             font.pixelSize: 12
             color:"white"
+            visible:false
         }
 
     }

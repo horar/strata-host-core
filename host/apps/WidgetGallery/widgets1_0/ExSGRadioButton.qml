@@ -48,15 +48,14 @@ Item {
             }
         }
     }
+
     SGCheckBox {
         id: editEnabledCheckBox
         anchors {
             top: demoLabel.bottom
             topMargin: 20
         }
-
         text: "Everything enabled"
         checked: true
-
     }
 }

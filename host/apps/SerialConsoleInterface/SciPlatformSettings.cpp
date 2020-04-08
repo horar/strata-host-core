@@ -57,7 +57,7 @@ void SciPlatformSettings::setCommandHistory(const QString &id, const QStringList
 
     bool saved = saveData();
     if (saved == false) {
-        qCWarning(logCategorySci) << "platform data were not saved";
+        qCCritical(logCategorySci) << "platform data were not saved";
     }
 }
 
@@ -65,7 +65,7 @@ void SciPlatformSettings::loadData()
 {
     QFile file(boardStoragePath_);
     if (file.open(QFile::ReadOnly | QFile::Text) == false) {
-        qCWarning(logCategorySci) << "cannot load data" << boardStoragePath_ << file.errorString();
+        qCCritical(logCategorySci) << "cannot load data" << boardStoragePath_ << file.errorString();
         return;
     }
 
@@ -73,14 +73,14 @@ void SciPlatformSettings::loadData()
     QJsonDocument doc =QJsonDocument::fromJson(file.readAll(), &parseError);
 
     if (parseError.error != QJsonParseError::NoError) {
-        qCWarning(logCategorySci) << "cannot load data, json corrupted"
+        qCCritical(logCategorySci) << "cannot load data, json corrupted"
                    << "error=" << parseError.error
                    << parseError.errorString();
         return;
     }
 
     if (doc.isArray() == false) {
-        qCWarning(logCategorySci) << "cannot load data, json is not an array";
+        qCCritical(logCategorySci) << "cannot load data, json is not an array";
         return;
     }
 
@@ -93,7 +93,7 @@ void SciPlatformSettings::loadData()
         QStringList commandHistoryList = board.toObject().value(SCI_SETTINGS_CMD_HISTORY).toVariant().toStringList();
 
         if (id.isEmpty()) {
-            qCWarning(logCategorySci) << "empty board identification";
+            qCCritical(logCategorySci) << "empty board identification";
             continue;
         }
 
@@ -128,7 +128,7 @@ bool SciPlatformSettings::saveData()
     QSaveFile file(boardStoragePath_);
     bool ret = file.open(QIODevice::WriteOnly | QIODevice::Text);
     if (ret == false) {
-        qCWarning(logCategorySci) << "cannot open file" << boardStoragePath_ << file.errorString();
+        qCCritical(logCategorySci) << "cannot open file" << boardStoragePath_ << file.errorString();
         return false;
     }
 

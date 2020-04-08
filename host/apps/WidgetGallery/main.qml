@@ -15,6 +15,17 @@ SGWidgets.SGMainWindow {
 
     QtLabsPlatform.MenuBar {
         QtLabsPlatform.Menu {
+            title: "File"
+
+            QtLabsPlatform.MenuItem {
+                text: qsTr("&Exit")
+                onTriggered:  {
+                    root.close()
+                }
+            }
+        }
+
+        QtLabsPlatform.Menu {
             title: "Help"
             QtLabsPlatform.MenuItem {
                 text: qsTr("&About")

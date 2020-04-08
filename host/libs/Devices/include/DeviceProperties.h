@@ -1,10 +1,10 @@
 #ifndef DEVICE_PROPERTIES_H
 #define DEVICE_PROPERTIES_H
 
-namespace spyglass {
+namespace strata {
 
 enum class DeviceProperties {
-    connectionName,
+    deviceName,
     verboseName,
     platformId,
     classId,

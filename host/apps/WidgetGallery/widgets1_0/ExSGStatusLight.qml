@@ -21,22 +21,33 @@ Item {
                 id: sgStatusLight
                 // Useful Signals:
                 onStatusChanged: console.info("Changed to " + status)
-
             }
         }
 
-        SGButton {
-            id: switchStatus
-            text: "Switch Status"
-            onClicked: {
-                if (sgStatusLight.status > 5) { sgStatusLight.status = 0 } else { sgStatusLight.status++ }
+        Row {
+            spacing: 10
+
+            SGButton {
+                id: switchStatus
+                text: "Switch Status"
+                onClicked: {
+                    if (sgStatusLight.status > 5) { sgStatusLight.status = 0 } else { sgStatusLight.status++ }
+                }
+            }
+
+            SGButton {
+                id: toggleStyle
+                text: "Toggle Flat Style"
+                onClicked: {
+                    sgStatusLight.flatStyle = ! sgStatusLight.flatStyle
+                }
             }
         }
 
         SGAlignedLabel {
             id: demoLabel2
             target: sgStatusLightCustomize
-            text: "Customize LED Light Status"
+            text: "Customize LED Light Color"
             fontSizeMultiplier: 1.3
 
 
@@ -49,18 +60,18 @@ Item {
 
                 // Useful Signals:
                 onStatusChanged: console.info("Changed to " + status)
-
             }
         }
 
         SGButton {
             id: switchStatus2
-            text: "Switch Status"
+            text: "Randomize Custom Color"
             onClicked: {
-                if (sgStatusLightCustomize.status > 5) { sgStatusLightCustomize.status = 0 } else { sgStatusLightCustomize.status++ }
+                sgStatusLightCustomize.customColor = Qt.rgba(Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, 1)
             }
         }
     }
+
     SGCheckBox {
         id: editEnabledCheckBox
         anchors {
@@ -71,7 +82,7 @@ Item {
         text: "Everything enabled"
         checked: true
         onCheckedChanged: {
-            if(checked) {
+            if (checked) {
                 sgStatusLightCustomize.opacity = 1.0
                 sgStatusLight.opacity = 1.0
             }
@@ -80,6 +91,5 @@ Item {
                 sgStatusLight.opacity = 0.5
             }
         }
-
     }
 }
