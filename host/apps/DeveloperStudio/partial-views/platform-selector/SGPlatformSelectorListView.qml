@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as Filters
+import "qrc:/js/help_layout_manager.js" as Help
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
@@ -29,13 +30,17 @@ Item {
         if (Filters.categoryFilters.length > 0) {
             Filters.utility.categoryFiltersChanged()
         }
+
+        Help.registerTarget(textFilterContainer, "Type here to filter platforms by keyword.", 0, "selectorHelp")
+        Help.registerTarget(segmentFilterContainer, "Use this drop-down to filter platforms by segment.", 1, "selectorHelp")
     }
 
     SGSortFilterProxyModel {
         id: filteredPlatformListModel
         sourceModel: PlatformSelection.platformListModel
-        sortEnabled: false
-        invokeCustomFilter: filteringCategory || filteringText || filteringSegment
+        sortEnabled: true
+        invokeCustomFilter: true
+        sortRole: "connection"
 
         property bool filteringCategory: false
         property bool filteringText: false
