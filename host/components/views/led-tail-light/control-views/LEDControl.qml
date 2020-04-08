@@ -11,6 +11,10 @@ Item {
     Layout.fillWidth: true
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
+ //   anchors.centerIn: parent
+//    height: parent.height
+//    width: parent.width/parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+
 
     RowLayout {
         anchors.fill: parent
@@ -299,7 +303,7 @@ Item {
                                 anchors.fill: parent
                                 Rectangle {
                                     Layout.fillHeight: true
-                                    Layout.preferredWidth: parent.width/6
+                                    Layout.preferredWidth: parent.width/12
                                     //color: "blue"
                                     ColumnLayout {
                                         anchors.fill: parent
@@ -315,16 +319,20 @@ Item {
                                                 fontSizeMultiplier: ratioCalc * 1.2
                                                 anchors.right: parent.right
                                                 anchors.verticalCenter: parent.verticalCenter
+
                                             }
                                         }
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             SGText {
-                                                text: "<b>" + qsTr("Internal/External LED") + "</b>"
+                                                text: "Internal \n External LED"
+                                                horizontalAlignment: Text.AlignHCenter
+                                                font.bold: true
                                                 fontSizeMultiplier: ratioCalc * 1.2
                                                 anchors.right: parent.right
                                                 anchors.verticalCenter: parent.verticalCenter
+
                                             }
                                         }
                                         Rectangle {
@@ -335,6 +343,7 @@ Item {
                                                 fontSizeMultiplier: ratioCalc * 1.2
                                                 anchors.right: parent.right
                                                 anchors.verticalCenter: parent.verticalCenter
+
                                             }
                                         }
                                         Rectangle {
@@ -345,6 +354,7 @@ Item {
                                                 fontSizeMultiplier: ratioCalc * 1.2
                                                 anchors.right: parent.right
                                                 anchors.verticalCenter: parent.verticalCenter
+
                                             }
                                         }
 
@@ -374,11 +384,11 @@ Item {
                                             Layout.preferredHeight: parent.height/10
                                             //color: "red"
                                             SGText {
+                                                id: text1
                                                 text: "<b>" + qsTr("OUT0") + "</b>"
                                                 fontSizeMultiplier: ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
-
                                             }
                                         }
 
@@ -386,9 +396,19 @@ Item {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             // color: "blue"
-                                            SGStatusLight {
+
+
+                                            SGSwitch {
                                                 id: out0ENLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -396,20 +416,41 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out0interExterLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+
+                                            SGSwitch {
                                                 id: out0pwmEnableLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
+
+
                                         }
 
                                         Rectangle {
@@ -458,9 +499,18 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out1ENLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -468,18 +518,37 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+
+                                            SGSwitch {
                                                 id: out1interExterLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out1pwmEnableLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -530,9 +599,18 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out2ENLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -540,18 +618,36 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out2interExterLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out2pwmEnableLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -576,7 +672,7 @@ Item {
                                                 height: parent.height
                                                 orientation: Qt.Vertical
                                                 anchors.centerIn: parent
-                                               // slider_start_color: 0.1666
+                                                // slider_start_color: 0.1666
 
 
                                             }
@@ -604,9 +700,19 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+
+                                            SGSwitch {
                                                 id: out3ENLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -614,18 +720,36 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out3interExterLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out3pwmEnableLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -676,9 +800,18 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out4ENLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -686,18 +819,36 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out4interExterLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out4pwmEnableLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -748,9 +899,18 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out5ENLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -758,18 +918,36 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out5interExterLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out5pwmEnableLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -782,6 +960,7 @@ Item {
                                                 width: 30
                                                 anchors.centerIn: parent
                                             }
+
                                         }
 
                                         Rectangle {
@@ -819,9 +998,19 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+
+                                            SGSwitch {
                                                 id: out6ENLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -829,18 +1018,36 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out6interExterLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out6pwmEnableLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -891,9 +1098,18 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out7ENLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -901,18 +1117,36 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out7interExterLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out7pwmEnableLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -962,9 +1196,18 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out8ENLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -972,18 +1215,36 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out8interExterLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out8pwmEnableLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -1032,9 +1293,18 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out9ENLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -1042,18 +1312,36 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out9interExterLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out9pwmEnableLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -1101,9 +1389,18 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out10ENLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -1111,18 +1408,36 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out10interExterLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out10pwmEnableLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -1174,9 +1489,18 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out11ENLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
@@ -1184,18 +1508,36 @@ Item {
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out11interExterLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGStatusLight {
+
+                                            SGSwitch {
                                                 id: out11pwmEnableLED
-                                                width: 30
+                                                labelsInside: true
+                                                checkedLabel: "On"
+                                                uncheckedLabel: "Off"
+                                                textColor: "black"              // Default: "black"
+                                                handleColor: "white"            // Default: "white"
+                                                grooveColor: "#ccc"             // Default: "#ccc"
+                                                grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                fontSizeMultiplier: ratioCalc
+                                                checked: false
                                                 anchors.centerIn: parent
                                             }
                                         }
