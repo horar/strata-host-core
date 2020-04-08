@@ -369,14 +369,14 @@ FocusScope {
                 }
             }
 
-            SGWidgets.SGIconButton {
-                hintText: qsTr("Program Device")
-                icon.source: "qrc:/sgimages/chip-flash.svg"
-                iconSize: toolButtonRow.iconHeight
-                onClicked: {
-                    programDeviceRequested()
-                }
-            }
+//            SGWidgets.SGIconButton {
+//                hintText: qsTr("Program Device")
+//                icon.source: "qrc:/sgimages/chip-flash.svg"
+//                iconSize: toolButtonRow.iconHeight
+//                onClicked: {
+//                    programDeviceRequested()
+//                }
+//            }
 
             SGWidgets.SGIconButton {
                 hintText: qsTr("Platform Info")

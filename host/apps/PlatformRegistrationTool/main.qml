@@ -1,6 +1,5 @@
 import QtQuick 2.12
 import tech.strata.prt 1.0 as PrtCommon
-import tech.strata.common 1.0 as Common
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import Qt.labs.platform 1.1 as QtLabsPlatform
 
@@ -36,7 +35,6 @@ SGWidgets.SGMainWindow {
         }
     }
 
-
     PrtCommon.PrtModel {
         id: prtModel
     }
@@ -46,12 +44,11 @@ SGWidgets.SGMainWindow {
         color: "#eeeeee"
     }
 
-    Common.ProgramDeviceWizard {
+    ProgramDeviceWizard {
         anchors {
             fill: parent
             margins: 4
         }
-        boardManager: prtModel.boardManager
     }
 
     function showAboutWindow() {

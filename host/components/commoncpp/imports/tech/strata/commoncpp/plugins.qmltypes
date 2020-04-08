@@ -88,13 +88,13 @@ Module {
         }
         Property { name: "exePath"; type: "string" }
         Signal {
-            name: "checkConnectionFinished"
-            Parameter { name: "status"; type: "bool" }
+            name: "checkConnectionProcessFinished"
+            Parameter { name: "exitedNormally"; type: "bool" }
             Parameter { name: "connected"; type: "bool" }
         }
         Signal {
-            name: "flashBoardFinished"
-            Parameter { name: "status"; type: "bool" }
+            name: "flashBoardProcessFinished"
+            Parameter { name: "exitedNormally"; type: "bool" }
         }
         Method { name: "checkConnectionRequested"; type: "bool" }
         Method {

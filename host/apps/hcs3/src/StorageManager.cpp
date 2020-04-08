@@ -276,8 +276,12 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
         item.md5 = platDoc->platformSelector().md5;
         downloadList << item;
 
+        QUrl url;
+        url.setScheme("file");
+        url.setPath(pathPrefix + platDoc->platformSelector().partialUri);
+
         QJsonObject jsonPlatform(value.toObject());
-        jsonPlatform.insert("image", pathPrefix + platDoc->platformSelector().partialUri);
+        jsonPlatform.insert("image", url.toString());
         jsonPlatform.insert("connection", "view");
 
         jsonPlatformListResponse.append(jsonPlatform);

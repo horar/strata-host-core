@@ -2155,7 +2155,7 @@ Item {
 
     property var default_touch_first_gain0_7: {
         "caption":"CIN0-7 1st Gain (fF)",
-        "value":"1600Min",
+        "value":"1400",
         "state":"enabled",
         "values":["1600Min","1500","1400","1300","1200","1100","1000","900","800","700","600","500","400","300","200","100Max"],
         "scales":[]
@@ -2166,7 +2166,7 @@ Item {
     }
 
     property var touch_first_gain0_7_value: {
-        "value":"1600Min"
+        "value":"1400"
     }
 
     property var touch_first_gain0_7_state:{
@@ -2206,7 +2206,7 @@ Item {
         "caption":"2nd Gain",
         "value":"",
         "state":"enabled",
-        "values":["2","2","2","2","2","2","2","2","1","1","1","1","12","12","12","12"],
+        "values":["2","2","2","2","2","2","2","2","1","1","1","1","10","10","10","10"],
         "scales":[]
     }
 
@@ -2215,7 +2215,7 @@ Item {
     }
 
     property var touch_second_gain_values: {
-        "values":["2","2","2","2","2","2","2","2","1","1","1","1","12","12","12","12"]
+        "values":["2","2","2","2","2","2","2","2","1","1","1","1","10","10","10","10"]
     }
 
     property var default_touch_cin_thres: {

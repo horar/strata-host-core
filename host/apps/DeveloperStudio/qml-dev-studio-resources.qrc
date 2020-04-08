@@ -1,8 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>images/blank_avatar.png</file>
-        <file>images/icons/remote-locked.png</file>
-        <file>images/icons/remote-unlocked.png</file>
         <file>images/circuits-background-tiled.svg</file>
         <file>images/on-semi-logo-horiz.svg</file>
         <file>images/strata-logo-reverse.svg</file>
@@ -18,8 +16,6 @@
         <file>images/icons/sliders-h.svg</file>
         <file>images/icons/th-list.svg</file>
         <file>images/icons/times.svg</file>
-        <file>images/icons/user-plus.svg</file>
-        <file>images/icons/wifi.svg</file>
         <file>images/icons/eye-slash-solid.svg</file>
         <file>images/icons/eye-solid.svg</file>
         <file>images/icons/exclamation-circle-solid.svg</file>
@@ -28,5 +24,6 @@
         <file>images/icons/check-solid.svg</file>
         <file>images/grey-white-fade-background.svg</file>
         <file>images/icons/asterisk-solid.svg</file>
+        <file>images/icons/disconnected.svg</file>
     </qresource>
 </RCC>
