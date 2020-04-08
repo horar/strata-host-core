@@ -10,6 +10,15 @@ import tech.strata.sgwidgets 1.0
 Rectangle {
     id: root
 
+    Text{
+        id:title
+        anchors.top:parent.top
+        anchors.topMargin: 40
+        anchors.horizontalCenter: parent.horizontalCenter
+        text:"cloud"
+        font.pixelSize: 72
+    }
+
     Image{
             source: "qrc:/views/meshNetwork/images/spreadsheet.png"
             height:parent.height * .3

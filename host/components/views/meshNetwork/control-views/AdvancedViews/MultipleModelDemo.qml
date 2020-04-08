@@ -10,6 +10,15 @@ import tech.strata.sgwidgets 1.0
 Rectangle {
     id: root
 
+    Text{
+        id:title
+        anchors.top:parent.top
+        anchors.topMargin: 40
+        anchors.horizontalCenter: parent.horizontalCenter
+        text:"multiple model"
+        font.pixelSize: 72
+    }
+
     Image{
             anchors.fill: parent
             source: "qrc:/views/meshNetwork/images/multipleModelsDemo.png"
@@ -44,6 +53,10 @@ Rectangle {
                 border.width: 2
                 radius: 10
             }
+
+         onClicked: {
+             platformInterface.set_demo.update("multiple_models")
+         }
     }
 
 }

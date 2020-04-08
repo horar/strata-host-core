@@ -59,5 +59,11 @@
         <file>images/oneToManyDemo.png</file>
         <file>images/sensorIcon.png</file>
         <file>images/cloud.png</file>
+        <file>images/lightBulbOff.svg</file>
+        <file>images/lightBulbOn.svg</file>
+        <file>control-views/AdvancedViews/MSwitch.qml</file>
+        <file>images/rightArrow.svg</file>
+        <file>control-views/AdvancedViews/MLightBulb.qml</file>
+        <file>images/leftArrow.svg</file>
     </qresource>
 </RCC>

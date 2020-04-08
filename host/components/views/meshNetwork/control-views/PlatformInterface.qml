@@ -117,6 +117,11 @@ Item {
                 "location": "alarm" //string, with possible values: "doorbell", "alarm", "switch", "temperature", "light", "voltage", "security"
     }
 
+    property var demo_click_notification : {
+        "demo": "",             //"one_to_one"or "one_to_many", "relay", "multiple_models","sensor","cloud"
+        "button": "",           //"switch" or "switch1","switch2","relay_switch", "bulb1","bulb2","bulb3" "get_sensor_data"
+        "value":"on"
+    }
 
     property var msg_dbg:{      //debug strings
             "msg":""
@@ -646,6 +651,43 @@ Item {
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
 
+    property var set_demo : ({
+                                        "cmd" : "set_demo",
+                                        "payload": {
+                                            "demo":"demo"
+                                        },
+
+                                        update: function (demoName) {
+                                            this.set(demoName)
+                                            this.send(this)
+                                        },
+                                        set: function (inDemoName) {
+                                            this.payload.demo = inDemoName;
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+
+    property var demo_click : ({
+                                        "cmd" : "demo_click",
+                                        "payload": {
+                                              "demo":"demo",
+                                              "button":"button",
+                                              "value":"off"
+                                        },
+
+                                        update: function (demoName,buttonName,value) {
+                                            this.set(demoName,buttonName,value)
+                                            this.send(this)
+                                        },
+                                        set: function (inDemoName,inButtonName,inValue) {
+                                            this.payload.demo = inDemoName;
+                                            this.payload.button = inButtonName;
+                                            this.payload.value = inValue;
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process

@@ -10,13 +10,94 @@ import tech.strata.sgwidgets 1.0
 Rectangle {
     id: root
 
-    Image{
-            source: "qrc:/views/meshNetwork/images/sensorDemo.png"
-            height:parent.height *.4
-            anchors.centerIn: parent
-            fillMode: Image.PreserveAspectFit
-            mipmap:true
+    Text{
+        id:title
+        anchors.top:parent.top
+        anchors.topMargin: 40
+        anchors.horizontalCenter: parent.horizontalCenter
+        text:"sensor"
+        font.pixelSize: 72
+    }
+
+//    Image{
+//            source: "qrc:/views/meshNetwork/images/sensorDemo.png"
+//            height:parent.height *.4
+//            anchors.centerIn: parent
+//            fillMode: Image.PreserveAspectFit
+//            mipmap:true
+//        }
+
+    Button{
+        id:getTemperatureButton
+        anchors.left:parent.left
+        anchors.leftMargin: parent.width * .1
+        anchors.verticalCenter: parent.verticalCenter
+        text:"get temperature"
+
+        contentItem: Text {
+                text: getTemperatureButton.text
+                font.pixelSize: 24
+                opacity: enabled ? 1.0 : 0.3
+                color: "black"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
+
+            background: Rectangle {
+                implicitWidth: 100
+                implicitHeight: 40
+                color: getTemperatureButton.down ? "lightgrey" : "transparent"
+                border.color: "black"
+                border.width: 2
+                radius: 10
+            }
+
+            onClicked: {
+                platformInterface.demo_click.update("sensor","get_sensor_data","on")
+            }
+    }
+
+    Text{
+        id:temperatureText
+        anchors.top: getTemperatureButton.bottom
+        anchors.topMargin: 20
+        anchors.left: getTemperatureButton.left
+        font.pixelSize: 36
+        text:"current temperature is"
+
+        property var sensorData: platformInterface.demo_click_notification
+        onSensorDataChanged:{
+            if (platformInterface.demo_click_notification.demo === "sensor")
+                if (platformInterface.demo_click_notification.button === "get_sensor_data"){
+                    temperatureText.visible = true
+                    temperatureText.text += latformInterface.demo_click_notification.value + "°C"
+                }
+
         }
+    }
+
+    Image{
+        id:arrowImage
+        anchors.left:getTemperatureButton.right
+        anchors.right:sensorImage.left
+        anchors.verticalCenter: parent.verticalCenter
+        source: "qrc:/views/meshNetwork/images/leftArrow.svg"
+        height:25
+        fillMode: Image.PreserveAspectFit
+        mipmap:true
+    }
+
+    Image{
+        id:sensorImage
+        anchors.right:parent.right
+        anchors.rightMargin:parent.width*0
+        anchors.verticalCenter: parent.verticalCenter
+        source: "qrc:/views/meshNetwork/images/sensorIcon.png"
+        height:400
+        fillMode: Image.PreserveAspectFit
+        mipmap:true
+    }
 
     Button{
         id:resetButton
@@ -42,6 +123,10 @@ Rectangle {
                 border.color: "grey"
                 border.width: 2
                 radius: 10
+            }
+
+            onClicked: {
+                platformInterface.set_demo.update("sensor")
             }
     }
 }

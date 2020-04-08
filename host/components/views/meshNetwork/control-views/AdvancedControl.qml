@@ -24,7 +24,7 @@ Rectangle{
         minimumWidth: parent.width * .15
 
         onHeightChanged: {
-            console.log("button column is now",height)
+            //console.log("button column is now",height)
         }
 
         Rectangle{
@@ -48,7 +48,9 @@ Rectangle{
             }
 
             ButtonGroup {
+                id:demoButtonGroup
                 buttons: buttonColumn.children
+
             }
 
             Column{
@@ -58,6 +60,25 @@ Rectangle{
                 anchors.right:parent.right
                 anchors.bottom:parent.bottom
                 spacing:1
+
+                onVisibleChanged: {
+                    if (visible){
+                        //tell the firmwware which demo is currently selected
+                        if (demoButtonGroup.checkedButton == demo1Button)
+                            platformInterface.set_demo.update("one_to_one")
+                        else if (demoButtonGroup.checkedButton == demo2Button)
+                            platformInterface.set_demo.update("one_to_many")
+                         else if (demoButtonGroup.checkedButton == demo3Button)
+                            platformInterface.set_demo.update("relay")
+                         else if (demoButtonGroup.checkedButton == demo4Button)
+                            platformInterface.set_demo.update("multiple_models")
+                         else if (demoButtonGroup.checkedButton == demo5Button)
+                            platformInterface.set_demo.update("sensor")
+                         else if (demoButtonGroup.checkedButton == demo6Button)
+                            platformInterface.set_demo.update("cloud")
+                    }
+
+                }
 
                 SGButton{
                     id:demo1Button
@@ -73,8 +94,11 @@ Rectangle{
                     checked:true
 
                     onCheckedChanged: {
-                        if (checked)
+                        if (checked){
+                            console.log("demo 1 selected")
                             demoStackLayout.currentIndex = 0
+                            platformInterface.set_demo.update("one_to_one")
+                        }
                     }
                 }
                 SGButton{
@@ -90,8 +114,10 @@ Rectangle{
                     checkable:true
 
                     onCheckedChanged: {
-                        if (checked)
+                        if (checked){
                             demoStackLayout.currentIndex = 1
+                            platformInterface.set_demo.update("one_to_many")
+                        }
                     }
                 }
                 SGButton{
@@ -107,8 +133,10 @@ Rectangle{
                     checkable:true
 
                     onCheckedChanged: {
-                        if (checked)
+                        if (checked){
                             demoStackLayout.currentIndex = 2
+                            platformInterface.set_demo.update("relay")
+                        }
                     }
                 }
                 SGButton{
@@ -124,8 +152,10 @@ Rectangle{
                     checkable:true
 
                     onCheckedChanged: {
-                        if (checked)
+                        if (checked){
                             demoStackLayout.currentIndex = 3
+                            platformInterface.set_demo.update("multiple_models")
+                            }
                     }
                 }
                 SGButton{
@@ -141,8 +171,10 @@ Rectangle{
                     checkable:true
 
                     onCheckedChanged: {
-                        if (checked)
+                        if (checked){
                             demoStackLayout.currentIndex = 4
+                            platformInterface.set_demo.update("sensor")
+                        }
                     }
                 }
                 SGButton{
@@ -158,8 +190,10 @@ Rectangle{
                     checkable:true
 
                     onCheckedChanged: {
-                        if (checked)
+                        if (checked){
                             demoStackLayout.currentIndex = 5
+                            platformInterface.set_demo.update("cloud")
+                        }
                     }
                 }
 
