@@ -42,6 +42,9 @@ Item {
         "pgood":"bad"
     }
 
+    property var status_os_alert:  {
+        "os_alert":"false"
+    }
 
     // -------------------  end notification messages
 
@@ -218,24 +221,24 @@ Item {
 
 
     property var set_sync_slave_frequency: ({
-                                     "cmd" : "set_sync_slave_frequency",
-                                     "payload": {
-                                        "sync_frequency":500
-                                     },
+                                                "cmd" : "set_sync_slave_frequency",
+                                                "payload": {
+                                                    "sync_frequency":500
+                                                },
 
-                                     // Update will set and send in one shot
-                                     update: function (sync_frequency) {
-                                         this.set(sync_frequency)
-                                         CorePlatformInterface.send(this)
-                                     },
-                                     // Set can set single or multiple properties before sending to platform
-                                     set: function (sync_frequency) {
-                                         this.payload.sync_frequency = sync_frequency;
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) },
-                                     show: function () { CorePlatformInterface.show(this) }
+                                                // Update will set and send in one shot
+                                                update: function (sync_frequency) {
+                                                    this.set(sync_frequency)
+                                                    CorePlatformInterface.send(this)
+                                                },
+                                                // Set can set single or multiple properties before sending to platform
+                                                set: function (sync_frequency) {
+                                                    this.payload.sync_frequency = sync_frequency;
+                                                },
+                                                send: function () { CorePlatformInterface.send(this) },
+                                                show: function () { CorePlatformInterface.show(this) }
 
-                                 })
+                                            })
     property var set_ocp: ({
                                "cmd" : "set_ocp",
                                "payload": {
@@ -255,6 +258,8 @@ Item {
                                show: function () { CorePlatformInterface.show(this) }
 
                            })
+
+
 
 
 
