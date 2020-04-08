@@ -76,7 +76,7 @@ Item {
 
         }
         else if (variant_name === "NCP164A_DFN6") {
-           // ldoPackageComboBox.currentIndex = 1
+            // ldoPackageComboBox.currentIndex = 1
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
 
             setLDOOutputVoltage.fromText.text ="1.1V"
@@ -106,7 +106,7 @@ Item {
             ldoInputVolSlider.stepSize = 0.01
         }
         else if (variant_name === "NCV8164A_TSOP5") {
-           // ldoPackageComboBox.currentIndex = 0
+            // ldoPackageComboBox.currentIndex = 0
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
 
             setLDOOutputVoltage.fromText.text ="1.2V"
@@ -121,7 +121,7 @@ Item {
             ldoInputVolSlider.stepSize = 0.01
         }
         else if (variant_name === "NCV8164A_DFN6") {
-           // ldoPackageComboBox.currentIndex = 1
+            // ldoPackageComboBox.currentIndex = 1
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
 
             setLDOOutputVoltage.fromText.text ="1.2V"
@@ -267,11 +267,15 @@ Item {
 
         if(int_status.ldo_clim === true) {
             currentLimitReach.status = SGStatusLight.Red
+            protectionDropoutViewBadge.opacity = 1
             //currentLimitThreshold.text = platformInterface.ldo_clim_thresh.value
         }
         else currentLimitReach.status = SGStatusLight.Off
 
-        if(int_status.tsd === true) tsdTriggered.status = SGStatusLight.Red
+        if(int_status.tsd === true) {
+            tsdTriggered.status = SGStatusLight.Red
+            protectionDropoutViewBadge.opacity = 1
+        }
         else  tsdTriggered.status = SGStatusLight.Off
 
         if(int_status.dropout === true && dropReachedLabel.enabled)  dropReached.status = SGStatusLight.Red

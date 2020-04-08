@@ -18,6 +18,8 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+
+
     Component.onCompleted: {
         pgoodTimer.start()
         platformInterface.get_all_states.send()
@@ -803,6 +805,7 @@ Item {
                                                              (platformInterface.control_states.ldo_en === "on") &&
                                                              (platformInterface.int_status.vin_ldo_good === true))
                                                     {
+
                                                         if ((platformInterface.int_status.ldo_clim === true) || (platformInterface.int_status.tsd === true)) {
                                                             pgoodLabel.text = "Current Limit\nor TSD Event"
                                                         } else {

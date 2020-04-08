@@ -10,6 +10,7 @@ import tech.strata.fonts 1.0
 
 Item {
     id: controlNavigation
+
     anchors {
         fill: parent
     }
@@ -18,9 +19,11 @@ Item {
         id: platformInterface
     }
 
+
     Component.onCompleted: {
         Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
         basic.pgoodTimer.start()
+
     }
 
     TabBar {
@@ -39,6 +42,8 @@ Item {
                 advanced.visible = false
                 efficiency.visible = false
             }
+
+
         }
 
         TabButton {
@@ -48,6 +53,15 @@ Item {
                 basic.visible = false
                 advanced.visible = true
                 efficiency.visible = false
+                protectionDropoutViewBadge.opacity = 0
+
+            }
+
+            NotificationBadge{
+                id: protectionDropoutViewBadge
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                opacity: 0
             }
         }
 
@@ -58,6 +72,7 @@ Item {
                 basic.visible = false
                 advanced.visible = false
                 efficiency.visible = true
+
             }
         }
     }
@@ -93,6 +108,8 @@ Item {
 
     }
 
+
+
     SGIcon {
         id: helpIcon
         anchors {
@@ -117,7 +134,7 @@ Item {
                 if(advanced.visible)
                     Help.startHelpTour("AdjLDOAdvanceHelp")
                 if(efficiency.visible)
-                     Help.startHelpTour("AdjLDOSystemEfficiencyHelp")
+                    Help.startHelpTour("AdjLDOSystemEfficiencyHelp")
             }
             hoverEnabled: true
         }
