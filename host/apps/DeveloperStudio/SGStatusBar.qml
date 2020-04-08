@@ -32,12 +32,14 @@ Rectangle {
     property color alternateColor1: "#575757"
 
     Component.onCompleted: {
-        Help.registerTarget(platformSelectionButton, "Use button to open the platform selector view.", 0, "statusHelp")
-        Help.registerTarget(platformControlsButton, "Use this button to select the platform control view. Only available when platform is connected", 1, "statusHelp")
-        Help.registerTarget(platformContentButton, "Use this button to select the content view for the selected platform.", 2, "statusHelp")
+        // Initialize main help tour- NavigationControl loads this before PlatformSelector
+        Help.setClassId("strataMain")
+        Help.registerTarget(helpTab.close, "When a platform view is open use this button to close it and return to the platform selection view.", 2, "selectorHelp")
+        Help.registerTarget(helpTab.control, "When a platform view is open and platform is connected, this button will show the control view.", 3, "selectorHelp")
+        Help.registerTarget(helpTab.content, "When a platform view is open, this button will show the the content view.", 4, "selectorHelp")
     }
 
-    // Navigation_control calls this after login when statusbar AND control/content components are all complete
+    // Navigation_control calls this after login when statusbar AND platformSelector are all complete
     function loginSuccessful() {
         PlatformSelection.getPlatformList()
     }
@@ -46,88 +48,60 @@ Rectangle {
         Help.destroyHelp()
     }
 
-    ToolBar {
-        id: toolBar
-        anchors {
-            left: container.left
-        }
-        background: Rectangle {
-            color: container.color
-            height: container.height
-        }
+    Item {
+        id: logoContainer
+        height: container.height
+        width: 70
 
-        Row {
-            Item {
-                id: logoContainer
-                height: toolBar.height
-                width: 65
-
-                Image {
-                    source: "qrc:/images/strata-logo-reverse.svg"
-                    height: 30
-                    width: 60
-                    mipmap: true
-                    anchors {
-                        verticalCenter: logoContainer.verticalCenter
-                        right: logoContainer.right
-                    }
-                }
-            }
-
-            SGToolButton {
-                id: platformSelectionButton
-                text: qsTr("Platform Selection")
-                width: 150
-                buttonColor: hovered || PlatformSelection.platformListModel.selectedConnection === "" ? menuColor : container.color
-                onClicked: {
-                    if (NavigationControl.context["platform_state"] || NavigationControl.context["class_id"] !== "") {
-                        coreInterface.disconnectPlatform() // cancels any active collateral downloads
-                        PlatformSelection.deselectPlatform()
-                    }
-                }
-                iconSource: "images/icons/th-list.svg"
-            }
-
-            Rectangle {
-                id: buttonDivider1
-                width: 1
-                height: toolBar.height
-                color: container.color
-            }
-
-            SGToolButton {
-                id: platformControlsButton
-                text: qsTr("Platform Controls")
-                width: 150
-                buttonColor: hovered || (PlatformSelection.platformListModel.selectedConnection !== "" && !NavigationControl.flipable_parent_.flipped) ? menuColor : container.color
-                enabled: PlatformSelection.platformListModel.selectedConnection !== "view" && PlatformSelection.platformListModel.selectedConnection !== ""
-                onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.SHOW_CONTROL)
-                }
-                iconSource: "images/icons/sliders-h.svg"
-            }
-
-            Rectangle {
-                id: buttonDivider2
-                width: 1
-                height: toolBar.height
-                color: container.color
-            }
-
-            SGToolButton {
-                id: platformContentButton
-                text: qsTr("Platform Content")
-                width: 150
-                buttonColor: hovered || (PlatformSelection.platformListModel.selectedConnection !== "" && NavigationControl.flipable_parent_.flipped) ? menuColor : container.color
-                enabled: PlatformSelection.platformListModel.selectedConnection !== ""
-                onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.SHOW_CONTENT)
-                }
-                iconSource: "images/icons/file.svg"
+        Image {
+            source: "qrc:/images/strata-logo-reverse.svg"
+            height: 30
+            width: 60
+            mipmap: true
+            anchors {
+                centerIn: logoContainer
             }
         }
     }
 
+    Row {
+        id: tabRow
+        anchors {
+            left: logoContainer.right
+        }
+
+        Repeater {
+            id: platformTabRepeater
+            delegate: SGPlatformTab {}
+            model: NavigationControl.platform_view_model_
+        }
+
+        SGPlatformTab {
+            // demonstration tab set for help tour
+            id: helpTab
+            visible: false
+            class_id: "0"
+            view: "control"
+            index: 0
+            connected: true
+
+            Connections {
+                target: Help.utility
+                onInternal_tour_indexChanged:{
+                    if (Help.current_tour_targets[index]["target"] === helpTab.close ||
+                            Help.current_tour_targets[index]["target"] === helpTab.control ||
+                            Help.current_tour_targets[index]["target"] === helpTab.content ) {
+                        helpTab.visible = true
+                    } else {
+                        helpTab.visible = false
+                    }
+                }
+                onTour_runningChanged: {
+                    helpTab.visible = false
+                }
+            }
+        }
+    }
 
     Item {
         id: profileIconContainer
@@ -225,15 +199,6 @@ Rectangle {
                     width: profileMenu.width
                 }
 
-                SGMenuItem {
-                    text: qsTr("Help")
-                    onClicked: {
-                        profileMenu.close()
-                        Help.startHelpTour("statusHelp", "strataMain")
-                    }
-                    width: profileMenu.width
-                }
-
                 Rectangle {
                     id: menuDivider
                     color: "white"
@@ -253,6 +218,7 @@ Rectangle {
                         PlatformFilters.clearActiveFilters()
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                         Authenticator.logout()
+                        PlatformSelection.logout()
                         coreInterface.disconnectPlatform()
                     }
                     width: profileMenu.width
