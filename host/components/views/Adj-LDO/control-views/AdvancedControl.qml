@@ -24,7 +24,7 @@ Item {
         Help.registerTarget(resetCurrLimitButton, "This button resets the previous detected current limit threshold value and re-enables the logic for detecting a current limit event. The current limit threshold may immediately update after resetting if the output current remains above the current limit threshold.", 1, "AdjLDOAdvanceHelp")
         Help.registerTarget(shortCircuitButton, "This button enables the onboard short-circuit load used to emulate a short to ground on the LDO output for approximately 2 ms. The short-circuit load cannot be enabled when powering the LDO via the 5V from the Strata USB connector and/or when the input buck regulator is enabled. The current pulled by the short-circuit load will vary with LDO output voltage. See the Platform Content page for more information about the short-circuit load and LDO behavior during a short-circuit event.", 2, "AdjLDOAdvanceHelp")
         Help.registerTarget(currentLimitReachLabel, "This indicator will turn red when the LDO's current limit protection is triggered. The indicator state will need to be cleared manually when triggered using the \"Reset Current Limit Trigger\" button. See the Platform Content for more information on the current limit behavior of the LDO and how this is detected.", 3, "AdjLDOAdvanceHelp")
-        Help.registerTarget(pgldoLabel, "This indicator will be green when the LDO power good signal is high. Since the TSOP-5 package has no PG output, if the TSOP-5 LDO package is being used, the indicator will be green when the PG_308 signal from the NCP308 used to monitor the LDO output voltage is high.", 4, "AdjLDOAdvanceHelp")
+        Help.registerTarget(pgldoLabel, "This indicator will be green when the LDO power good signal is high. Since the TSOP-5 package has no PG output, if the TSOP-5 LDO package is being used, the indicator will be green when the PG_308 signal from the NCP308 used to monitor the LDO output voltage is high. During an LDO current limit or TSD event, this indicator will flash red.", 4, "AdjLDOAdvanceHelp")
         Help.registerTarget(ocpTriggeredLabel, "This indicator will turn red momentarily if the LDO's power good signal or the PG_308 signal goes low while the short-circuit load is enabled.", 5, "AdjLDOAdvanceHelp")
         Help.registerTarget(tsdTriggeredLabel, "This indicator will turn red when the LDO's thermal shutdown (TSD) protection is triggered. The indicator state will need to be cleared manually when triggered using the \"Reset TSD Trigger\" button. See the Platform Content for more information on the TSD behavior of the LDO and how this is detected.", 6, "AdjLDOAdvanceHelp")
         Help.registerTarget(estTSDThresLabel, "This info box will show the estimated LDO junction temperature threshold at which the LDO's TSD protection was triggered.", 7, "AdjLDOAdvanceHelp")
@@ -59,8 +59,8 @@ Item {
 
     property var variant_name: platformInterface.variant_name.value
     onVariant_nameChanged: {
-        if(variant_name === "NCP164C_TSOP5") {
-            ldoPackageComboBox.currentIndex = 0
+        if(variant_name === "NCP164A_TSOP5") {
+            //ldoPackageComboBox.currentIndex = 0
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
 
             setLDOOutputVoltage.fromText.text = "1.1V"
@@ -76,7 +76,7 @@ Item {
 
         }
         else if (variant_name === "NCP164A_DFN6") {
-            ldoPackageComboBox.currentIndex = 1
+           // ldoPackageComboBox.currentIndex = 1
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
 
             setLDOOutputVoltage.fromText.text ="1.1V"
@@ -90,8 +90,8 @@ Item {
             ldoInputVolSlider.to = 5.5
             ldoInputVolSlider.stepSize = 0.01
         }
-        else if (variant_name === "NCP164C_DFN8") {
-            ldoPackageComboBox.currentIndex = 2
+        else if (variant_name === "NCP164A_DFN8") {
+            //ldoPackageComboBox.currentIndex = 2
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
 
             setLDOOutputVoltage.fromText.text ="1.1V"
@@ -106,7 +106,7 @@ Item {
             ldoInputVolSlider.stepSize = 0.01
         }
         else if (variant_name === "NCV8164A_TSOP5") {
-            ldoPackageComboBox.currentIndex = 0
+           // ldoPackageComboBox.currentIndex = 0
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
 
             setLDOOutputVoltage.fromText.text ="1.2V"
@@ -120,8 +120,8 @@ Item {
             ldoInputVolSlider.to = 5.5
             ldoInputVolSlider.stepSize = 0.01
         }
-        else if (variant_name === "NCV8164C_DFN6") {
-            ldoPackageComboBox.currentIndex = 1
+        else if (variant_name === "NCV8164A_DFN6") {
+           // ldoPackageComboBox.currentIndex = 1
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
 
             setLDOOutputVoltage.fromText.text ="1.2V"
@@ -136,7 +136,7 @@ Item {
             ldoInputVolSlider.stepSize = 0.01
         }
         else if (variant_name === "NCV8164A_DFN8") {
-            ldoPackageComboBox.currentIndex = 2
+            //ldoPackageComboBox.currentIndex = 2
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
 
             setLDOOutputVoltage.fromText.text ="1.2V"
@@ -774,21 +774,30 @@ Item {
 
                                                 Timer {
                                                     id: advPGoodTimer
-                                                    interval: 500; running: true; repeat: true
+                                                    interval: 250; running: true; repeat: true
                                                     onTriggered: {
                                                         if(platformInterface.int_status.int_pg_ldo === true) {
                                                             pgldo.status  = SGStatusLight.Green
-                                                        }
-
-                                                        else if ((platformInterface.int_status.int_pg_ldo === false) && (platformInterface.control_states.ldo_en === "on"))
+                                                            pgldoLabel.text = "Power Good" + pgoodLabelText
+                                                        } else if ((platformInterface.int_status.int_pg_ldo === false) &&
+                                                                   (platformInterface.control_states.ldo_en === "on") &&
+                                                                   (platformInterface.int_status.vin_ldo_good === true))
                                                         {
+                                                            if ((platformInterface.int_status.ldo_clim === true) || (platformInterface.int_status.tsd === true)) {
+                                                                pgldoLabel.text = "Current Limit\nor TSD Event"
+                                                            } else {
+                                                                pgldoLabel.text = "Power Good" + pgoodLabelText
+                                                            }
+
                                                             if (pgldo.status === SGStatusLight.Off) {
                                                                 pgldo.status = SGStatusLight.Red
                                                             } else {
                                                                 pgldo.status = SGStatusLight.Off
                                                             }
+                                                        } else  {
+                                                            pgldo.status  = SGStatusLight.Off
+                                                            pgldoLabel.text = "Power Good" + pgoodLabelText
                                                         }
-                                                        else  pgldo.status  = SGStatusLight.Off
                                                     }
                                                 }
 

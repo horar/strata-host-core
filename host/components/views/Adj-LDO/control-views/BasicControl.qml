@@ -18,8 +18,8 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
-    property alias pgoodTimer: pgoodTimer
     Component.onCompleted: {
+        pgoodTimer.start()
         platformInterface.get_all_states.send()
         platformInterface.reset_tsd.update()
         platformInterface.reset_clim.update()
@@ -28,7 +28,7 @@ Item {
         Help.registerTarget(powerDissipatedLabel, "This gauge shows the power loss in the LDO when it is enabled. This gauge will not be accurate when an external load is attached directly to the LDO output via the solder pad.", 2, "AdjLDOBasicHelp")
         Help.registerTarget(outputPowerContainer, "This gauge shows the output power of the LDO when it is enabled. This gauge will not be accurate when an external load is attached directly to the LDO output via the solder pad.", 3, "AdjLDOBasicHelp")
         Help.registerTarget(vinReadyLabel, "This indicator will be green when the LDO input voltage is greater than the LDO input UVLO threshold of 1.6V.", 4, "AdjLDOBasicHelp")
-        Help.registerTarget(pgoodLabel, "This indicator will be green when the LDO power good signal is high. Since the TSOP-5 package has no PG output, if the TSOP-5 LDO package is being used, the indicator will be green when the PG_308 signal from the NCP308 used to monitor the LDO output voltage is high.", 5, "AdjLDOBasicHelp")
+        Help.registerTarget(pgoodLabel, "This indicator will be green when the LDO power good signal is high. Since the TSOP-5 package has no PG output, if the TSOP-5 LDO package is being used, the indicator will be green when the PG_308 signal from the NCP308 used to monitor the LDO output voltage is high. During an LDO current limit or TSD event, this indicator will flash red.", 5, "AdjLDOBasicHelp")
         Help.registerTarget(intLdoTempLabel, "This indicator will be red when the LDO temp sensor detects an approximate LDO temperature over the recommended threshold of 125˚C.", 6, "AdjLDOBasicHelp")
         Help.registerTarget(boardInputLabel, "This combo box allows you to choose the main input voltage option (upstream power supply) for the board. The 'External' option uses the input voltage from the input banana plugs. The 'USB 5V' option uses the 5V supply from the Strata USB connector. The 'Off' option disconnects both inputs from VIN and pulls VIN low.", 7, "AdjLDOBasicHelp")
         Help.registerTarget(ldoPackageLabel, "This combo box allows you to choose the LDO package currently populated on the board if different from the stock LDO package option. See the Platform Content page for more information about using alternate LDO packages with this board.", 8, "AdjLDOBasicHelp")
@@ -50,7 +50,7 @@ Item {
     }
 
     property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
-    property string titleText: "NCP164C \n Low-noise, High PSRR Linear Regulator"
+    property string titleText: "NCP164A \n Low-noise, High PSRR Linear Regulator"
     property string pgoodLabelText: "\n(PG_308)"
     property string vinGoodThreshText: ""
     property string prevVinLDOSel: ""
@@ -161,9 +161,9 @@ Item {
 
     property var variant_name: platformInterface.variant_name.value
     onVariant_nameChanged: {
-        if(variant_name === "NCP164C_TSOP5") {
-            ldoPackageComboBox.currentIndex = 0
-            titleText = "NCP164C \n Low-noise, High PSRR Linear Regulator"
+        if(variant_name === "NCP164A_TSOP5") {
+            //ldoPackageComboBox.currentIndex = 0
+            titleText = "NCP164A \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
 
             setLDOOutputVoltage.fromText.text = "1.1V"
@@ -177,7 +177,7 @@ Item {
 
         }
         else if (variant_name === "NCP164A_DFN6") {
-            ldoPackageComboBox.currentIndex = 1
+            //ldoPackageComboBox.currentIndex = 1
             titleText = "NCP164A \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
 
@@ -190,9 +190,9 @@ Item {
             ldoInputVolSlider.from = 1.5
             ldoInputVolSlider.to = 5.5
         }
-        else if (variant_name === "NCP164C_DFN8") {
-            ldoPackageComboBox.currentIndex = 2
-            titleText = "NCP164C \n Low-noise, High PSRR Linear Regulator"
+        else if (variant_name === "NCP164A_DFN8") {
+            //ldoPackageComboBox.currentIndex = 2
+            titleText = "NCP164A \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
 
             setLDOOutputVoltage.fromText.text ="1.1V"
@@ -205,7 +205,7 @@ Item {
             ldoInputVolSlider.to = 5
         }
         else if (variant_name === "NCV8164A_TSOP5") {
-            ldoPackageComboBox.currentIndex = 0
+            //ldoPackageComboBox.currentIndex = 0
             titleText = "NCV8164A \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
 
@@ -218,9 +218,9 @@ Item {
             ldoInputVolSlider.from = 1.5
             ldoInputVolSlider.to = 5.5
         }
-        else if (variant_name === "NCV8164C_DFN6") {
-            ldoPackageComboBox.currentIndex = 1
-            titleText = "NCV8164C \n Low-noise, High PSRR Linear Regulator"
+        else if (variant_name === "NCV8164A_DFN6") {
+            //ldoPackageComboBox.currentIndex = 1
+            titleText = "NCV8164A \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5V"
 
             setLDOOutputVoltage.fromText.text ="1.2V"
@@ -233,7 +233,7 @@ Item {
             ldoInputVolSlider.to = 5
         }
         else if (variant_name === "NCV8164A_DFN8") {
-            ldoPackageComboBox.currentIndex = 2
+            //ldoPackageComboBox.currentIndex = 2
             titleText = "NCV8164A \n Low-noise, High PSRR Linear Regulator"
             warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
 
@@ -792,21 +792,33 @@ Item {
                                             width: 40
                                             Timer {
                                                 id: pgoodTimer
-                                                interval: 500; running: true; repeat: true
+                                                interval: 250; running: true; repeat: true
                                                 onTriggered: {
                                                     if(platformInterface.int_status.int_pg_ldo === true) {
                                                         pgoodLight.status  = SGStatusLight.Green
+                                                        pgoodLabel.text = "Power Good" + pgoodLabelText
                                                     }
 
-                                                    else if ((platformInterface.int_status.int_pg_ldo === false) && (platformInterface.control_states.ldo_en === "on"))
+                                                    else if ((platformInterface.int_status.int_pg_ldo === false) &&
+                                                             (platformInterface.control_states.ldo_en === "on") &&
+                                                             (platformInterface.int_status.vin_ldo_good === true))
                                                     {
+                                                        if ((platformInterface.int_status.ldo_clim === true) || (platformInterface.int_status.tsd === true)) {
+                                                            pgoodLabel.text = "Current Limit\nor TSD Event"
+                                                        } else {
+                                                            pgoodLabel.text = "Power Good" + pgoodLabelText
+                                                        }
+
                                                         if (pgoodLight.status === SGStatusLight.Off) {
                                                             pgoodLight.status = SGStatusLight.Red
                                                         } else {
                                                             pgoodLight.status = SGStatusLight.Off
                                                         }
                                                     }
-                                                    else  pgoodLight.status  = SGStatusLight.Off
+                                                    else  {
+                                                        pgoodLight.status  = SGStatusLight.Off
+                                                        pgoodLabel.text = "Power Good" + pgoodLabelText
+                                                    }
                                                 }
                                             }
 

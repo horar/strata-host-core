@@ -38,8 +38,6 @@ Item {
                 basic.visible = true
                 advanced.visible = false
                 efficiency.visible = false
-                basic.pgoodTimer.start()
-
             }
         }
 
@@ -57,7 +55,6 @@ Item {
             id: systemEfficiencyButton
             text: qsTr("System Efficiency")
             onClicked: {
-
                 basic.visible = false
                 advanced.visible = false
                 efficiency.visible = true

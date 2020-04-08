@@ -25,6 +25,8 @@ Item {
     //        console.log("height",height)
     //    }
 
+    //property alias pgoodTimer: sysEfficiencyPGoodTimer
+
     Component.onCompleted: {
         sysEfficiencyPGoodTimer.start()
         Help.registerTarget(systemInputVoltageLabel, "This info box shows the voltage at the input of the buck regulator and bypass load switch (VIN_SB).", 0, "AdjLDOSystemEfficiencyHelp")
@@ -51,7 +53,7 @@ Item {
         Help.registerTarget(ldoEnableSwitchLabel, "This switch enables the LDO.", 21, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(vinGoodLabel, "This indicator will be green when:\na.) VIN is greater than 2.5V when the input buck regulator is enabled\nb.) VIN is greater than 1.5V when it is disabled.", 22, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(vinReadyLabel, "This indicator will be green when the LDO input voltage is greater than the LDO input UVLO threshold of 1.6V.", 23, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(pgldoLabel, "This indicator will be green when the LDO power good signal is high. Since the TSOP-5 package has no PG output, if the TSOP-5 LDO package is being used, the indicator will be green when the PG_308 signal from the NCP308 used to monitor the LDO output voltage is high.", 24, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(pgldoLabel, "This indicator will be green when the LDO power good signal is high. Since the TSOP-5 package has no PG output, if the TSOP-5 LDO package is being used, the indicator will be green when the PG_308 signal from the NCP308 used to monitor the LDO output voltage is high. During an LDO current limit or TSD event, this indicator will flash red.", 24, "AdjLDOSystemEfficiencyHelp")
     }
 
     property string prevVinLDOSel: ""
@@ -60,7 +62,7 @@ Item {
 
     property var variant_name: platformInterface.variant_name.value
     onVariant_nameChanged: {
-        if(variant_name === "NCP164C_TSOP5") {
+        if(variant_name === "NCP164A_TSOP5") {
             setLDOOutputVoltage.fromText.text = "1.1V"
             setLDOOutputVoltage.toText.text =  "4.7V"
             setLDOOutputVoltage.from = 1.1
@@ -81,7 +83,7 @@ Item {
             ldoInputVolSlider.from = 1.5
             ldoInputVolSlider.to = 5.5
         }
-        else if (variant_name === "NCP164C_DFN8") {
+        else if (variant_name === "NCP164A_DFN8") {
             setLDOOutputVoltage.fromText.text ="1.1V"
             setLDOOutputVoltage.toText.text =  "4.7V"
             setLDOOutputVoltage.from = 1.1
@@ -101,7 +103,7 @@ Item {
             ldoInputVolSlider.from = 1.5
             ldoInputVolSlider.to = 5.5
         }
-        else if (variant_name === "NCV8164C_DFN6") {
+        else if (variant_name === "NCV8164A_DFN6") {
             setLDOOutputVoltage.fromText.text ="1.2V"
             setLDOOutputVoltage.toText.text =  "4.7V"
             setLDOOutputVoltage.from = 1.2
@@ -1592,21 +1594,30 @@ Item {
                                                     width: 40
                                                     Timer {
                                                         id: sysEfficiencyPGoodTimer
-                                                        interval: 500; running: true; repeat: true
+                                                        interval: 250; running: true; repeat: true
                                                         onTriggered: {
                                                             if(platformInterface.int_status.int_pg_ldo === true) {
                                                                 pgldo.status  = SGStatusLight.Green
-                                                            }
-
-                                                            else if ((platformInterface.int_status.int_pg_ldo === false) && (platformInterface.control_states.ldo_en === "on"))
+                                                                pgldoLabel.text = "Power Good" + pgoodLabelText
+                                                            } else if ((platformInterface.int_status.int_pg_ldo === false) &&
+                                                                       (platformInterface.control_states.ldo_en === "on") &&
+                                                                       (platformInterface.int_status.vin_ldo_good === true))
                                                             {
+                                                                if ((platformInterface.int_status.ldo_clim === true) || (platformInterface.int_status.tsd === true)) {
+                                                                    pgldoLabel.text = "Current Limit\nor TSD Event"
+                                                                } else {
+                                                                    pgldoLabel.text = "Power Good" + pgoodLabelText
+                                                                }
+
                                                                 if (pgldo.status === SGStatusLight.Off) {
                                                                     pgldo.status = SGStatusLight.Red
                                                                 } else {
                                                                     pgldo.status = SGStatusLight.Off
                                                                 }
+                                                            } else  {
+                                                                pgldo.status  = SGStatusLight.Off
+                                                                pgldoLabel.text = "Power Good" + pgoodLabelText
                                                             }
-                                                            else  pgldo.status  = SGStatusLight.Off
                                                         }
                                                     }
 
