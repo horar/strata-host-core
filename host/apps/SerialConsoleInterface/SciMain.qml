@@ -19,7 +19,7 @@ Item {
     Connections {
         target: sciModel.platformModel
 
-        onPlatformReady: {
+        onPlatformConnected: {
             tabBar.currentIndex = index
         }
     }

@@ -156,6 +156,8 @@ void SciPlatformModel::boardConnectedHandler(int deviceId)
     } else {
         platformList_.at(index)->setDevice(boardManager_->device(deviceId));
         platformList_.at(index)->setStatus(SciPlatform::PlatformStatus::Connected);
+
+        emit platformConnected(index);
     }
 }
 
@@ -231,4 +233,6 @@ void SciPlatformModel::appendNewPlatform(int deviceId)
     endInsertRows();
 
     emit countChanged();
+
+    emit platformConnected(platformList_.length() - 1);
 }

@@ -66,6 +66,7 @@ signals:
     void countChanged();
     void maxScrollbackCountChanged();
     void maxCmdInHistoryCountChanged();
+    void platformConnected(int index);
     void ignoreNewConnectionsChanged();
     void platformReady(int index);
 
