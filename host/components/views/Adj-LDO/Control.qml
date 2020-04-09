@@ -39,7 +39,6 @@ Item {
                 basic.visible = true
                 advanced.visible = false
                 efficiency.visible = false
-                protectionDropoutViewBadge.opacity = 1
             }
 
 
@@ -52,7 +51,7 @@ Item {
                 basic.visible = false
                 advanced.visible = true
                 efficiency.visible = false
-                protectionDropoutViewBadge.opacity = 0
+                protectionDropoutViewBadge.opacity = 0.0
 
             }
 
