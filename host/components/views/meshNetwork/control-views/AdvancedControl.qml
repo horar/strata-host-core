@@ -395,6 +395,10 @@ Rectangle{
                 border.width: 2
                 radius: 10
             }
+
+           onClicked: {
+               messageList.clear()
+           }
     }
 
     Rectangle{
