@@ -688,6 +688,23 @@ Item {
                                         send: function () { CorePlatformInterface.send(this) },
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
+
+    property var firmware_command : ({
+                                        "cmd" : "firmware_command",
+                                        "payload": {
+                                            "command":""
+                                        },
+
+                                        update: function (command) {
+                                            this.set(command)
+                                            this.send(this)
+                                        },
+                                        set: function (inCommand) {
+                                            this.payload.command = inCommand;
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process

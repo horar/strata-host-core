@@ -249,20 +249,45 @@ Rectangle{
     }
 
 
+    Rectangle{
+        id:consoleTextContainer
+        anchors.left: parent.left
+        anchors.leftMargin: parent.width * .75
+        anchors.top:parent.top
+        anchors.right:parent.right
+        height:25
+        color:"dimgrey"
+
+        Text {
+            id: consoleText
+            text: "Node Communications"
+            font {
+                pixelSize: 24
+            }
+            color:"white"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            //        anchors {
+            //            horizontalCenter: parent.horizontalCenter
+            //            top:parent.top
+            //        }
+        }
+    }
 
     Widget09.SGResponsiveScrollView {
         id: consoleScrollView
 
         anchors.left: parent.left
         anchors.leftMargin: parent.width * .75
-        anchors.top:parent.top
+        anchors.top:consoleTextContainer.bottom
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 100
+        anchors.bottomMargin: 50
         anchors.right:parent.right
 
 
         minimumHeight: 800
         minimumWidth: parent.width * .25
+        scrollBarColor:"darkgrey"
 
         property var message_array : []
         property var message_log: platformInterface.console_message.msg
@@ -286,29 +311,15 @@ Rectangle{
             }
             color: "dimgrey"
 
-
-            Text {
-                id: name
-                text: "Node Communications"
-                font {
-                    pixelSize: 24
-                }
-                color:"white"
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                    top:parent.top
-                }
-            }
-
             Rectangle {
                 width: parent.width
-                height: (parent.height - name.contentHeight)
+                height: (parent.height)
                 anchors.left:parent.left
                 anchors.leftMargin: 20
                 anchors.right:parent.right
                 anchors.rightMargin: 20
-                anchors.top:name.bottom
-                anchors.topMargin: 50
+                anchors.top:parent.top
+                //anchors.topMargin: 50
                 anchors.bottom:parent.bottom
                 anchors.bottomMargin: 50
                 color: "transparent"
@@ -351,6 +362,7 @@ Rectangle{
                     }
 
                     function append(message,color) {
+                        console.log("appending message")
                         listElementTemplate.message = message
                         listElementTemplate.color = color
                         model.append( listElementTemplate )
@@ -368,18 +380,18 @@ Rectangle{
     }
 
     Button{
-        id:resetButton
+        id:clearButton
 
         anchors.right: parent.right
         anchors.rightMargin: 20
-        anchors.top:parent.top
-        anchors.topMargin: 50
+        anchors.top:consoleTextContainer.bottom
+        anchors.topMargin: 10
 
         text:"clear"
 
         contentItem: Text {
-                text: resetButton.text
-                font.pixelSize: 20
+                text: clearButton.text
+                font.pixelSize: 15
                 opacity: enabled ? 1.0 : 0.3
                 color: "grey"
                 horizontalAlignment: Text.AlignHCenter
@@ -388,9 +400,9 @@ Rectangle{
             }
 
             background: Rectangle {
-                implicitWidth: 100
-                implicitHeight: 40
-                color: resetButton.down ? "lightgrey" : "transparent"
+                implicitWidth: 50
+                implicitHeight: 25
+                color: clearButton.down ? "lightgrey" : "transparent"
                 border.color: "grey"
                 border.width: 2
                 radius: 10
@@ -408,18 +420,27 @@ Rectangle{
         anchors.bottom: parent.bottom
         anchors.right:parent.right
 
-        Text {
-            id: consoleSendName
-            text: "Command View"
-            font {
-                pixelSize: 24
-            }
-            color:"black"
+        SGSubmitInfoBox{
+            id:commandLineInput
             anchors {
-                horizontalCenter: parent.horizontalCenter
-                verticalCenter:parent.verticalCenter
+               //horizontalCenter: parent.horizontalCenter
+               verticalCenter:parent.verticalCenter
+               left:parent.left
+               leftMargin:10
+               right:parent.right
+               rightMargin: 10
+               }
+            horizontalAlignment: Text.AlignLeft
+
+            onAccepted: {
+                console.log("sending:",commandLineInput.text)
+                platformInterface.firmware_command.update(commandLineInput.text)
+                commandLineInput.text = "";  //clear the text after submitting
             }
+
+
         }
+
     }
 }
 
