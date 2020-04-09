@@ -108,6 +108,7 @@ namespace spyglass {
         bool parseDeviceResponse(const QByteArray& data, bool& isAck);
 
         int connection_id_;
+        int retries_;
         uint ucid_;  // unsigned connection ID - auxiliary variable for logging
         QString port_name_;
         QSerialPort serial_port_;

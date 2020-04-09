@@ -18,7 +18,7 @@ QDebug operator<<(QDebug dbg, const SerialDevice* d) {
 }
 
 SerialDevice::SerialDevice(const int connectionID, const QString& name) :
-    connection_id_(connectionID), ucid_(static_cast<uint>(connectionID)), port_name_(name),
+    connection_id_(connectionID), retries_(NUMBER_OF_RETRIES), ucid_(static_cast<uint>(connectionID)), port_name_(name),
     device_busy_(false), state_(State::None), action_(Action::None)
 {
     read_buffer_.reserve(READ_BUFFER_SIZE);
@@ -270,9 +270,16 @@ bool SerialDevice::parseDeviceResponse(const QByteArray& data, bool& is_ack) {
 }
 
 void SerialDevice::handleResponseTimeout() {
-    qCWarning(logCategorySerialDevice) << this << ": Response timeout (no valid response to the sent command).";
-    action_ = Action::None;
-    state_ = State::UnrecognizedDevice;
+    qCWarning(logCategorySerialDevice) << this << ": Response timeout (no valid response to the sent command). Number of retries left " << retries_;
+    // [Algadhib] Implemented retries logic to send "request_platorm_id" multible times. The reason is that some platforms needs up to 5 seconds to 
+    //              boot up and we need to send the command after they fininsh initilozation. as a result, the timeout doesn't help us in this case
+    //              and we need to send the command mutiple times. THIS IS A QUICK FIX TO PATCH THE REALES AND IT SHOULD BE REVISITED.
+    if (retries_ > 0) {
+        --retries_;
+    } else {
+        action_ = Action::None;
+        state_ = State::UnrecognizedDevice;
+    }
     emit identifyDevice(QPrivateSignal());
 }
 
