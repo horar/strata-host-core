@@ -21,7 +21,8 @@ Rectangle {
 
     // This margin allows us to be "a little outside" of the object in which
     // we add the badge
-    anchors.margins:  -parent.width / 5 + parent
+
+
 
     // Set a redish color (exactly the one used in OS X 10.10)
     color: "#ec3e3a"

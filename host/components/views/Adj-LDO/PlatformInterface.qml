@@ -54,7 +54,7 @@ Item {
         "int_ldo_temp":false,	//LDO temp alert
         "vin_good":false,		//Valid board input voltage valid flag
         "vin_ldo_good":false,	//LDO input voltage valid flag
-        "ldo_clim":false,		//LDO current limit reached flag
+        "ldo_clim":true,		//LDO current limit reached flag
         "dropout":false,		//LDO dropout threshold notification
         "ocp":false,			//LDO short-circuit protection notification
         "tsd":false,            //LDO TSD notification

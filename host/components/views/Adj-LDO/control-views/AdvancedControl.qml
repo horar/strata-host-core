@@ -268,17 +268,12 @@ Item {
         if(int_status.ldo_clim === true) {
             currentLimitReach.status = SGStatusLight.Red
             //check if we are on advance view
-            if(advanced.visible === true) {
-                protectionDropoutViewBadge.opacity = 1
-            }
+
         }
         else currentLimitReach.status = SGStatusLight.Off
 
         if(int_status.tsd === true) {
             tsdTriggered.status = SGStatusLight.Red
-            if(advanced.visible === true) {
-                protectionDropoutViewBadge.opacity = 1
-            }
         }
         else  tsdTriggered.status = SGStatusLight.Off
 
