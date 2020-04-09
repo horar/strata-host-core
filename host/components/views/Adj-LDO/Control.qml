@@ -62,7 +62,7 @@ Item {
                 id: protectionDropoutViewBadge
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                opacity: 0.0
+                opacity: 0
             }
         }
 
@@ -89,17 +89,12 @@ Item {
 
         BasicControl {
             id: basic
-
             visible: true
-
-
         }
 
         AdvancedControl {
             id: advanced
-
             visible: false
-
         }
 
         SystemEfficiency {
@@ -108,8 +103,6 @@ Item {
         }
 
     }
-
-
 
     SGIcon {
         id: helpIcon
