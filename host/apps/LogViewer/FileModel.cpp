@@ -10,16 +10,13 @@ FileModel::FileModel(QObject *parent)
 
 FileModel::~FileModel()
 {
-    clear();
 }
 
 void FileModel::append(const QString &path)
 {
     beginInsertRows(QModelIndex(),data_.length(),data_.length());
 
-    FileItem item;
-    item.filepath = path;
-    data_.append(item);
+    data_.append(path);
 
     endInsertRows();
     emit countChanged();
@@ -32,13 +29,13 @@ QVariant FileModel::data(const QModelIndex &index, int role) const
     if (row < 0 || row >= data_.count()) {
         return QVariant();
     }
-    FileItem item = data_.at(row);
+    QString filepath = data_.at(row);
 
     switch (role) {
     case FileNameRole:
-        return QFileInfo(item.filepath).fileName();
+        return QFileInfo(filepath).fileName();
     case FilePathRole:
-        return item.filepath;
+        return filepath;
     }
     return QVariant();
 }
@@ -54,39 +51,21 @@ int FileModel::rowCount(const QModelIndex &parent) const
     return data_.length();
 }
 
-QStringList FileModel::getFilePaths() const
-{
-    QStringList filePaths;
-    for (int i = 0; i < data_.length(); i++) {
-        filePaths.append(data_[i].filepath);
-    }
-    return filePaths;
-}
-
 QString FileModel::getFilePathAt(const int &pos) const
 {
-    return data_[pos].filepath;
+    return data_[pos];
 }
 
 bool FileModel::containsFilePath(const QString &path)
 {
-    for (int i = 0; i < data_.length(); i++) {
-        if (data_[i].filepath.contains(path)) {
-            return true;
-        }
-    } return false;
+    return data_.contains(path);
 }
 
-void FileModel::clear(bool emitSignals)
+void FileModel::clear()
 {
-    if (emitSignals) {
-        beginResetModel();
-    }
+    beginResetModel();
     data_.clear();
-
-    if (emitSignals) {
-        endResetModel();
-    }
+    endResetModel();
 }
 
 QHash<int, QByteArray> FileModel::roleNames() const

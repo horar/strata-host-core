@@ -4,8 +4,6 @@
 #include <QAbstractListModel>
 
 
-struct FileItem;
-
 class FileModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -22,11 +20,10 @@ public:
     };
 
     void append(const QString &path);
-    void clear(bool emitSignals = true);
+    void clear();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    QStringList getFilePaths() const;
     QString getFilePathAt(const int &pos) const;
     bool containsFilePath(const QString &path);
 
@@ -37,13 +34,7 @@ protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 private:
-
-    QList<FileItem> data_;
-};
-
-struct FileItem {
-
-    QString filepath;
+    QStringList data_;
 };
 
 #endif

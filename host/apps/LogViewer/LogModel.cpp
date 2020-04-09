@@ -217,7 +217,7 @@ void LogModel::checkFile()
             if (file.size() < lastPositions_[i]) {
                 QFile rotatedFile(getRotatedFilePath(filePath));
                 if (rotatedFile.exists()) {
-                    qDebug(logCategoryLogViewer) << filePath << "has rotated into" << getRotatedFilePath(filePath) ;
+                    qCDebug(logCategoryLogViewer) << filePath << "has rotated into" << getRotatedFilePath(filePath) ;
                     populateModel(getRotatedFilePath(filePath), lastPositions_[i]);
                 }
                 populateModel(filePath, 0);
