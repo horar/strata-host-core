@@ -255,6 +255,7 @@ bool SerialDevice::parseDeviceResponse(const QByteArray& data, bool& is_ack) {
             else if (payload.HasMember(JSON_VERBOSE_NAME)) {
                 verbose_name_ = payload[JSON_VERBOSE_NAME].GetString();
                 platform_id_ = payload[JSON_PLATFORM_ID].GetString();
+                class_id_ = platform_id_;       // for older platform_id notification, use the platform_id as class_id too.
                 ok = true;
             }
         }
