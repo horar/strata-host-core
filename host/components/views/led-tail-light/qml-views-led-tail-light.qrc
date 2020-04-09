@@ -10,13 +10,14 @@
         <file>control-views/PowerControl.qml</file>
         <file>control-views/MiscControl.qml</file>
         <file>control-views/SAMOPTControl.qml</file>
-        <file>control-views/yellow_right.jpeg</file>
-        <file>control-views/green-left</file>
         <file>control-views/carInterior.jpg</file>
         <file>car-lights/car-rear-brake-lights.jpg</file>
         <file>car-lights/car-rear-hazard-lights.gif</file>
         <file>car-lights/car-rear-left-turn.gif</file>
         <file>car-lights/car-rear-no-lights.jpg</file>
         <file>car-lights/car-rear-right-turn.gif</file>
+        <file>control-views/tesla-dash.jpg</file>
+        <file>control-views/rightArrow.jpg</file>
+        <file>control-views/leftArrow.jpg</file>
     </qresource>
 </RCC>

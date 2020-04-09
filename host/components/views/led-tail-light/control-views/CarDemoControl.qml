@@ -41,75 +41,264 @@ Rectangle {
         Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
-            color: "grey"
+            color: "black"
 
             Image {
                 id: carSetting
-                source: "carInterior.jpg"
-                anchors.fill: parent
+                source: "tesla-dash.jpg"
+                width: 500
+                height: 300
+                anchors.centerIn: parent
+                anchors.top:parent.top
+                anchors.bottom: parent.bottom
 
-                ColumnLayout {
-                    width: 50
-                    height: 200
 
-                    Rectangle {
-                        id: leftLight
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        color: "transparent"
-                        //anchors.top: parent
-                        z:2
-                        Image {
-                            id: leftArrowImage
-                            source: "green-left"
-                            anchors.fill: parent
-                            z: 3
-                            MouseArea {
+                Rectangle {
+                    width: 170
+                    height: 80
+                    anchors.right: parent.right
+                    anchors.rightMargin: 40
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    color: "transparent"
+
+                    ColumnLayout {
+                        anchors.fill: parent
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            RowLayout {
                                 anchors.fill: parent
-                                onClicked: {
-                                    console.log("Left pressed")
-                                    carImage.source = "qrc:/views/led-tail-light/car-lights/car-rear-left-turn.gif"
-                                    carImage.playing = true
+                                spacing: 10
 
+                                Rectangle {
+                                    id: leftLight
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "transparent"
+
+                                    Image {
+                                        id: leftArrowImage
+                                        source: "leftArrow.jpg"
+                                        anchors.fill: parent
+                                        anchors.top:parent.top
+                                        anchors.topMargin: 5
+
+
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            onClicked: {
+                                                console.log("Left pressed")
+                                                carImage.source = "qrc:/views/led-tail-light/car-lights/car-rear-left-turn.gif"
+                                                carImage.playing = true
+
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    id: rightLight
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    //   z:2
+                                    color: "transparent"
+                                    Image {
+                                        id: rightArrowImage
+                                        source: "rightArrow.jpg"
+                                        anchors.fill: parent
+                                        anchors.top:parent.top
+                                        anchors.topMargin: 6
+                                        //z: 3
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            onClicked: {
+                                                console.log("right pressed")
+                                                carImage.source = "qrc:/views/led-tail-light/car-lights/car-rear-right-turn.gif"
+                                                carImage.playing = true
+
+                                            }
+                                        }
+                                    }
                                 }
                             }
+                        }
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            RowLayout {
+                                anchors.fill: parent
+                                spacing: 10
+
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+
+                                    Text {
+                                        id:  breakText
+                                        text: qsTr("B")
+                                        font.pixelSize: 25
+                                        font.bold: true
+                                        anchors.centerIn: parent
+                                    }
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onClicked: {
+                                            console.log("Break pressed")
+                                            carImage.source = "qrc:/views/led-tail-light/car-lights/car-rear-brake-lights.jpg"
+                                            carImage.playing = true
+
+                                        }
+                                    }
+
+                                }
+
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+
+                                    Text {
+                                        id:  reverseText
+                                        text: qsTr("R")
+                                        font.pixelSize: 25
+                                        font.bold: true
+                                        anchors.centerIn: parent
+                                    }
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onClicked: {
+                                            console.log("Reverse pressed")
+                                            carImage.source = "qrc:/views/led-tail-light/car-lights/car-rear-hazard-lights.gif"
+                                            carImage.playing = true
+
+                                        }
+                                    }
+                                }
+                            }
+
                         }
 
                     }
 
-                    Rectangle {
-                        id: rightLight
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        z:2
-                        color: "transparent"
-                        Image {
-                            id: rightArrowImage
-                            source: "yellow_right.jpeg"
-                            anchors.fill: parent
-                            z: 3
-                            MouseArea {
-                                anchors.fill: parent
-                                onClicked: {
-                                    console.log("right pressed")
-                                    carImage.source = "qrc:/views/led-tail-light/car-lights/car-rear-right-turn.gif"
-                                    carImage.playing = true
-
-                                }
-                            }
-                        }
-                    }
-
-                    Rectangle {
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                    }
-
-                    Rectangle {
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                    }
                 }
+
+
+
+
+
+
+
+                //                ColumnLayout {
+                //                    width: 300
+                //                    height: 300
+                //                    anchors.centerIn: parent
+
+                //                    Rectangle {
+                //                        id: control1
+                //                        Layout.fillHeight: true
+                //                        Layout.fillWidth: true
+                //                        color: "transparent"
+
+                //                        RowLayout {
+                //                            anchors.fill: parent
+                //                            Rectangle {
+                //                                id: leftLight
+                //                                Layout.fillHeight: true
+                //                                Layout.fillWidth: true
+                //                                color: "transparent"
+
+                //                                z:2
+                //                                Image {
+                //                                    id: leftArrowImage
+                //                                    source: "green-left"
+                //                                    anchors.fill: parent
+                //                                    z: 3
+                //                                    MouseArea {
+                //                                        anchors.fill: parent
+                //                                        onClicked: {
+                //                                            console.log("Left pressed")
+                //                                            carImage.source = "qrc:/views/led-tail-light/car-lights/car-rear-left-turn.gif"
+                //                                            carImage.playing = true
+
+                //                                        }
+                //                                    }
+                //                                }
+
+                //                            }
+
+                //                            Rectangle {
+                //                                id: rightLight
+                //                                Layout.fillHeight: true
+                //                                Layout.fillWidth: true
+                //                                z:2
+                //                                color: "transparent"
+                //                                Image {
+                //                                    id: rightArrowImage
+                //                                    source: "yellow_right.jpeg"
+                //                                    anchors.fill: parent
+                //                                    z: 3
+                //                                    MouseArea {
+                //                                        anchors.fill: parent
+                //                                        onClicked: {
+                //                                            console.log("right pressed")
+                //                                            carImage.source = "qrc:/views/led-tail-light/car-lights/car-rear-right-turn.gif"
+                //                                            carImage.playing = true
+
+                //                                        }
+                //                                    }
+                //                                }
+                //                            }
+                //                        }
+                //                    }
+
+                //                    Rectangle {
+                //                        Layout.fillHeight: true
+                //                        Layout.fillWidth: true
+
+                //                        Text {
+                //                            id:  breakText
+                //                            text: qsTr("B")
+                //                            font.pixelSize: 25
+                //                            font.bold: true
+                //                            anchors.centerIn: parent
+                //                        }
+                //                        MouseArea {
+                //                            anchors.fill: parent
+                //                            onClicked: {
+                //                                console.log("Break pressed")
+                //                                carImage.source = "qrc:/views/led-tail-light/car-lights/car-rear-brake-lights.jpg"
+                //                                carImage.playing = true
+
+                //                            }
+                //                        }
+
+                //                    }
+
+                //                    Rectangle {
+                //                        Layout.fillHeight: true
+                //                        Layout.fillWidth: true
+
+                //                        Text {
+                //                            id:  reverseText
+                //                            text: qsTr("R")
+                //                            font.pixelSize: 25
+                //                            font.bold: true
+                //                            anchors.centerIn: parent
+                //                        }
+                //                        MouseArea {
+                //                            anchors.fill: parent
+                //                            onClicked: {
+                //                                console.log("Reverse pressed")
+                //                                carImage.source = "qrc:/views/led-tail-light/car-lights/car-rear-hazard-lights.gif"
+                //                                carImage.playing = true
+
+                //                            }
+                //                        }
+                //                    }
+                //                }
 
             }
 
