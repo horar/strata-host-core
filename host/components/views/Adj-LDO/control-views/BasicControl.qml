@@ -807,7 +807,9 @@ Item {
                                                     {
 
                                                         if ((platformInterface.int_status.ldo_clim === true) || (platformInterface.int_status.tsd === true)) {
-                                                            protectionDropoutViewBadge.opacity = 1.0
+                                                            if(advanced.visible !== true) {
+                                                                protectionDropoutViewBadge.opacity = 1.0
+                                                            }
                                                             pgoodLabel.text = "Current Limit\nor TSD Event"
                                                         } else {
                                                             pgoodLabel.text = "Power Good" + pgoodLabelText

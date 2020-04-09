@@ -21,7 +21,7 @@ Item {
 
 
     Component.onCompleted: {
-        Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")      
+        Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
     }
 
     TabBar {
@@ -39,6 +39,7 @@ Item {
                 basic.visible = true
                 advanced.visible = false
                 efficiency.visible = false
+                protectionDropoutViewBadge.opacity = 0.0
             }
 
 
@@ -71,6 +72,7 @@ Item {
                 basic.visible = false
                 advanced.visible = false
                 efficiency.visible = true
+                protectionDropoutViewBadge.opacity = 0.0
 
             }
         }
