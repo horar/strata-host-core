@@ -57,7 +57,6 @@
         <file>images/spreadsheet.png</file>
         <file>images/smartHome_green.png</file>
         <file>images/oneToManyDemo.png</file>
-        <file>images/sensorIcon.png</file>
         <file>images/cloud.png</file>
         <file>images/lightBulbOff.svg</file>
         <file>images/lightBulbOn.svg</file>
@@ -65,5 +64,8 @@
         <file>images/rightArrow.svg</file>
         <file>control-views/AdvancedViews/MLightBulb.qml</file>
         <file>images/leftArrow.svg</file>
+        <file>images/Bell.svg</file>
+        <file>images/sensorIcon.svg</file>
+        <file>images/sensorIconFullBar.svg</file>
     </qresource>
 </RCC>

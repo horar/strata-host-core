@@ -165,7 +165,7 @@ Rectangle{
                     text:"sensor"
                     fontSizeMultiplier:1.5
                     color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/sensorIcon.png"
+                    icon.source: "qrc:/views/meshNetwork/images/sensorIconFullBar.svg"
                     iconSize:50
                     display: Button.TextUnderIcon
                     checkable:true
@@ -265,7 +265,7 @@ Rectangle{
         minimumWidth: parent.width * .25
 
         property var message_array : []
-        property var message_log: platformInterface.msg_dbg.msg
+        property var message_log: platformInterface.console_message.msg
         onMessage_logChanged: {
             console.log("debug:",message_log)
             if(message_log !== "") {
@@ -321,7 +321,7 @@ Rectangle{
                     //statusTextColor: "white"
                     //statusBoxColor: "black"
                     statusBoxBorderColor: "dimgrey"
-                    fontSizeMultiplier: 2
+                    fontSizeMultiplier: 1
 
                     listElementTemplate : {
                         "message": "",

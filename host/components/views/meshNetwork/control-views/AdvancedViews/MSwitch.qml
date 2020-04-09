@@ -47,9 +47,9 @@ Rectangle{
 
     Rectangle{
         id:switchThumb
-        height: 130
-        width:130
-        y:switchOutline.isOn ? 10 : 130
+        height: switchOutline.width-20
+        width:height
+        y:switchOutline.isOn ? 10 : switchOutline.height/2-5
         x:10
         color:"white"
         radius:20
@@ -65,8 +65,8 @@ Rectangle{
 
     MouseArea{
         id:switchOnMouseArea
-        height:135
-        width:150
+        height:parent.height/2
+        width:parent.width
 
         onClicked: {
             switchOutline.isOn = true
@@ -76,9 +76,9 @@ Rectangle{
     MouseArea{
         id:switchOffMouseArea
         x:0
-        y:135
-        height:135
-        width:150
+        y:parent.height/2
+        height:parent.height/2
+        width:parent.width
 
         onClicked: {
             switchOutline.isOn = false

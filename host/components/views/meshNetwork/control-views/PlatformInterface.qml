@@ -123,7 +123,7 @@ Item {
         "value":"on"
     }
 
-    property var msg_dbg:{      //debug strings
+    property var console_message:{      //console message strings
             "msg":""
     }
 

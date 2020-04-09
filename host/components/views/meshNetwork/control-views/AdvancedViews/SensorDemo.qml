@@ -10,6 +10,10 @@ import tech.strata.sgwidgets 1.0
 Rectangle {
     id: root
 
+    onVisibleChanged: {
+        resetThermostatBar.start()
+    }
+
     Text{
         id:title
         anchors.top:parent.top
@@ -55,16 +59,18 @@ Rectangle {
 
             onClicked: {
                 platformInterface.demo_click.update("sensor","get_sensor_data","on")
+                growThermostatBar.start()
             }
     }
 
     Text{
         id:temperatureText
         anchors.top: getTemperatureButton.bottom
-        anchors.topMargin: 20
+        anchors.topMargin: 40
         anchors.left: getTemperatureButton.left
         font.pixelSize: 36
         text:"current temperature is"
+        visible:false
 
         property var sensorData: platformInterface.demo_click_notification
         onSensorDataChanged:{
@@ -93,10 +99,39 @@ Rectangle {
         anchors.right:parent.right
         anchors.rightMargin:parent.width*0
         anchors.verticalCenter: parent.verticalCenter
-        source: "qrc:/views/meshNetwork/images/sensorIcon.png"
+        source: "qrc:/views/meshNetwork/images/sensorIcon.svg"
         height:400
         fillMode: Image.PreserveAspectFit
         mipmap:true
+
+        Rectangle{
+            id:thermostatBar
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenterOffset: -30
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin: 100
+            width:25
+            height:10
+            color:"#f5a623"
+        }
+    }
+
+    PropertyAnimation{
+        id:growThermostatBar
+        target: thermostatBar;
+        property: "height";
+        to: 225;
+        duration: 1000
+        running:false
+    }
+
+    PropertyAnimation{
+        id:resetThermostatBar
+        target: thermostatBar;
+        property: "height";
+        to: 10;
+        duration: 0
+        running:false
     }
 
     Button{
@@ -127,6 +162,7 @@ Rectangle {
 
             onClicked: {
                 platformInterface.set_demo.update("sensor")
+                resetThermostatBar.start()
             }
     }
 }

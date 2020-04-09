@@ -75,6 +75,22 @@ Rectangle {
                 }
             }
 
+            Button {
+                id: consoleMessage
+                text: "console"
+
+                onClicked: {
+
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"console_message",
+                                "payload":{
+                                    "msg": "console message"
+                                }
+                        }')
+
+                }
+            }
+
 //            Button {
 //                id: motorRunningFalse
 //                text: "Send motor_running_notification, 'running': false"
