@@ -62,15 +62,15 @@ void ListCommand::process() {
 }
 
 
-// FLASH command
+// FIRMWARE (FLASH/BACKUP) command
 
-FlashCommand::FlashCommand(const QString &fileName, int deviceNumber) :
-    fileName_(fileName), deviceNumber_(deviceNumber) { }
+FirmwareCommand::FirmwareCommand(const QString &fileName, int deviceNumber, bool flash) :
+    fileName_(fileName), deviceNumber_(deviceNumber), flash_(flash) { }
 
 // Destructor must be defined due to unique pointer to incomplete type.
-FlashCommand::~FlashCommand() { }
+FirmwareCommand::~FirmwareCommand() { }
 
-void FlashCommand::process() {
+void FirmwareCommand::process() {
     SerialPortList serialPorts;
 
     if (serialPorts.count() == 0) {
@@ -99,7 +99,11 @@ void FlashCommand::process() {
         emit this->finished((result == Flasher::Result::Ok) ? EXIT_SUCCESS : EXIT_FAILURE);
     });
 
-    flasher_->flash();
+    if (flash_) {
+        flasher_->flash();
+    } else {
+        flasher_->backup();
+    }
 }
 
 }  // namespace

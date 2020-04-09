@@ -288,6 +288,45 @@ const rapidjson::SchemaDocument CommandValidator::flashFWResSchema(
     )
 );
 
+const rapidjson::SchemaDocument CommandValidator::backupFWResSchema(
+    CommandValidator::parseSchema(
+        R"(
+        {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "type": "object",
+          "properties": {
+            "notification": {
+            "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "pattern": "^backup_firmware$"
+                },
+                "payload": {
+                  "type": "object",
+                  "properties": {
+                    "chunk": {
+                      "type": "object",
+                      "properties": {
+                        "number": {"type": "number"},
+                        "size": {"type": "number"},
+                        "crc": {"type": "number"},
+                        "data": {"type": "string"}
+                      },
+                      "required": ["number", "size", "crc", "data"]
+                    }
+                  },
+                  "required": ["chunk"]
+                }
+              },
+              "required": ["value", "payload"]
+            }
+          },
+          "required": ["notification"]
+        })"
+    )
+);
+
 const rapidjson::SchemaDocument CommandValidator::getFWInfoResSchema(
     CommandValidator::parseSchema(
         R"(
@@ -451,6 +490,7 @@ const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument
     {JsonType::notification, notificationSchema},
     {JsonType::getFwInfoRes, getFWInfoResSchema},
     {JsonType::flashFwRes, flashFWResSchema},
+    {JsonType::backupFwRes, backupFWResSchema},
     {JsonType::updateFwRes, updateFWResSchema},
     {JsonType::strataCmd, strataCommandSchema},
     {JsonType::cmd, cmdSchema}

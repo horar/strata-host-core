@@ -19,6 +19,7 @@ public:
         notification,
         getFwInfoRes,
         flashFwRes,
+        backupFwRes,
         updateFwRes,
         strataCmd,
         cmd
@@ -32,6 +33,7 @@ private:
     static const rapidjson::SchemaDocument notificationSchema;
     static const rapidjson::SchemaDocument getFWInfoResSchema;
     static const rapidjson::SchemaDocument flashFWResSchema;
+    static const rapidjson::SchemaDocument backupFWResSchema;
     static const rapidjson::SchemaDocument updateFWResSchema;
     static const rapidjson::SchemaDocument strataCommandSchema;
     static const rapidjson::SchemaDocument cmdSchema;
