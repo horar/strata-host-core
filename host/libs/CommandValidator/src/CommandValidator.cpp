@@ -24,7 +24,7 @@ const rapidjson::SchemaDocument CommandValidator::requestPlatformIdResSchema(
                     "pattern":"^platform_id$"
                     },
                     "payload": {
-                        "oneOf":[
+                        "anyOf":[
                             {
                                 "type": "object",
                                 "properties": {
