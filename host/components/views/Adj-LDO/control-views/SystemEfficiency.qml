@@ -1604,6 +1604,7 @@ Item {
                                                                        (platformInterface.int_status.vin_ldo_good === true))
                                                             {
                                                                 if ((platformInterface.int_status.ldo_clim === true) || (platformInterface.int_status.tsd === true)) {
+                                                                    protectionDropoutViewBadge.opacity = 1.0
                                                                     pgldoLabel.text = "Current Limit\nor TSD Event"
                                                                 } else {
                                                                     pgldoLabel.text = "Power Good" + pgoodLabelText

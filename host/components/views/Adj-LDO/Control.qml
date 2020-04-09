@@ -10,7 +10,7 @@ import tech.strata.fonts 1.0
 
 Item {
     id: controlNavigation
-
+    property alias protectionDropoutViewBadge: protectionDropoutViewBadge
     anchors {
         fill: parent
     }
@@ -24,6 +24,7 @@ Item {
         Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
         basic.pgoodTimer.start()
 
+        protectionDropoutViewBadge.opacity = 0.0
     }
 
     TabBar {
@@ -61,7 +62,7 @@ Item {
                 id: protectionDropoutViewBadge
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                opacity: 0
+                opacity: 0.0
             }
         }
 

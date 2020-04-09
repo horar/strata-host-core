@@ -57,7 +57,7 @@ Item {
         "ldo_clim":false,		//LDO current limit reached flag
         "dropout":false,		//LDO dropout threshold notification
         "ocp":false,			//LDO short-circuit protection notification
-        "tsd":true,            //LDO TSD notification
+        "tsd":false,            //LDO TSD notification
     }
 
     property var variant_name: {
