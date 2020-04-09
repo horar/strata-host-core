@@ -442,6 +442,36 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
             "notification":{
                 "value":"platform_id",
                 "payload":{
+                    "name":"WaterHeater",
+                    "platform_id":"101",
+                    "class_id":"201",
+                    "count":"1",
+                    "platform_id_version":"2.0"
+                }
+            }
+        }
+    )";
+    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::reqPlatIdRes, doc));
+
+    testCommand = R"(
+        {
+            "notification": {
+                "value": "platform_id",
+                "payload": {
+                    "verbose_name": "Motor Controller Evaluation Board",
+                    "platform_id": "P2.2018.004.1.1.0.1.20180425112233.cbde0519-0f42-4431-a379-caee4a1494af",
+                    "firmware_version": "0.1.20180425112233"
+                }
+            }
+        }
+    )";
+    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::reqPlatIdRes, doc));
+
+    testCommand = R"(
+        {
+            "notification":{
+                "value":"platform_id",
+                "payload":{
                         "verbose_name":"ON WaterHeater",
                         "verbose_name_error":"error_data_corrupted",
                         "platform_id":"SEC.2018.0.0.0.0.00000000-0000-0000-0000-000000000000",
