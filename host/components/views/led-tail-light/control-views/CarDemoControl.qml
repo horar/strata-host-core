@@ -26,7 +26,7 @@ Rectangle {
             Layout.preferredWidth: parent.width/2
             //            Layout.preferredHeight: parent.height/1.6
             //            Layout.preferredWidth: parent.width - 100
-            color: "red"
+            color: "black"
             Layout.alignment: Qt.AlignHCenter
 
 
@@ -194,77 +194,156 @@ Rectangle {
 
     }
 
-    Widget09.SGDrawerMenu {
-        height:parent.height
-        menuWidth: parent.width/3
-
-        drawerMenuItems: Item {
-
-            SGAlignedLabel {
-                id: hightLightLabel
-                target: highlight
-                text: "Hightlight"
-                color: "white"
-                alignment: SGAlignedLabel.SideTopCenter
 
 
-                fontSizeMultiplier: ratioCalc * 1.2
-                font.bold : true
+    Rectangle {
+        id: navigationSidebar
+        color: Qt.darker("#666")
+        anchors {
+            right: parent.right
+            top: parent.top
+            bottom: parent.bottom
+        }
+        width: 0
+        visible: false
 
-                SGSwitch {
-                    id: highlight
-                    labelsInside: true
-                    checkedLabel: "On"
-                    uncheckedLabel: "Off"
-                    textColor: "black"              // Default: "black"
-                    handleColor: "white"            // Default: "white"
-                    grooveColor: "#ccc"             // Default: "#ccc"
-                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                    fontSizeMultiplier: ratioCalc
-                    checked: false
+        states: [
+            // default state is "", width:0, visible:false
+            State {
+                name: "open"
+                PropertyChanges {
+                    target: navigationSidebar
+                    visible: true
+                    width: 300
+                }
+            }
+        ]
+
+        Rectangle {
+            width: parent.width
+            height: parent.height/6
+            color: "red"
+        }
+    }
+
+    Rectangle {
+        id: sidebarControl
+        width: 20 + rightDivider.width
+        anchors {
+            right: navigationSidebar.left
+            top: parent.top
+            bottom: parent.bottom
+        }
+        color: controlMouse.containsMouse ? "#444" : "#333"
+
+        Rectangle {
+            id: rightDivider
+            width: 1
+            anchors {
+                top: sidebarControl.top
+                bottom: sidebarControl.bottom
+                left: sidebarControl.left
+            }
+            color: "#33b13b"
+        }
+
+        SGIcon {
+            id: control
+            anchors {
+                centerIn: sidebarControl
+            }
+            iconColor: "white"
+            source: "qrc:/sgimages/chevron-left.svg"
+            height: 30
+            width: 30
+            rotation: navigationSidebar.visible ? 180 : 0
+        }
+
+        MouseArea {
+            id: controlMouse
+            anchors {
+                fill: sidebarControl
+            }
+            onClicked: {
+                if (navigationSidebar.state === "open") {
+                    navigationSidebar.state = "" // "" is default closed state
+                } else {
+                    navigationSidebar.state = "open"
                 }
             }
 
+            hoverEnabled: true
         }
-
-        //            RowLayout {
-        //                anchors.fill: parent
-        //                Rectangle {
-        //                    Layout.fillHeight: true
-        //                    Layout.fillWidth: true
-        //                    SGAlignedLabel {
-        //                        id: hightLightLabel
-        //                        target: highlight
-        //                        text: "Hightlight"
-        //                        color: "white"
-        //                        alignment: SGAlignedLabel.SideTopCenter
-
-
-        //                        fontSizeMultiplier: ratioCalc * 1.2
-        //                        font.bold : true
-
-        //                        SGSwitch {
-        //                            id: highlight
-        //                            labelsInside: true
-        //                            checkedLabel: "On"
-        //                            uncheckedLabel: "Off"
-        //                            textColor: "black"              // Default: "black"
-        //                            handleColor: "white"            // Default: "white"
-        //                            grooveColor: "#ccc"             // Default: "#ccc"
-        //                            grooveFillColor: "#0cf"         // Default: "#0cf"
-        //                            fontSizeMultiplier: ratioCalc
-        //                            checked: false
-        //                        }
-        //                    }
-
-        //                }
-        //                Rectangle {
-        //                    Layout.fillHeight: true
-        //                    Layout.fillWidth: true
-        //                }
-        //            }
-
-
-
     }
+
+
+
+
+    //            SGAlignedLabel {
+    //                id: hightLightLabel
+    //                target: highlight
+    //                text: "Hightlight"
+    //                color: "white"
+    //                alignment: SGAlignedLabel.SideTopCenter
+
+
+    //                fontSizeMultiplier: ratioCalc * 1.2
+    //                font.bold : true
+
+    //                SGSwitch {
+    //                    id: highlight
+    //                    labelsInside: true
+    //                    checkedLabel: "On"
+    //                    uncheckedLabel: "Off"
+    //                    textColor: "black"              // Default: "black"
+    //                    handleColor: "white"            // Default: "white"
+    //                    grooveColor: "#ccc"             // Default: "#ccc"
+    //                    grooveFillColor: "#0cf"         // Default: "#0cf"
+    //                    fontSizeMultiplier: ratioCalc
+    //                    checked: false
+    //                }
+    //            }
+
+
+
+    //            RowLayout {
+    //                anchors.fill: parent
+    //                Rectangle {
+    //                    Layout.fillHeight: true
+    //                    Layout.fillWidth: true
+    //                    SGAlignedLabel {
+    //                        id: hightLightLabel
+    //                        target: highlight
+    //                        text: "Hightlight"
+    //                        color: "white"
+    //                        alignment: SGAlignedLabel.SideTopCenter
+
+
+    //                        fontSizeMultiplier: ratioCalc * 1.2
+    //                        font.bold : true
+
+    //                        SGSwitch {
+    //                            id: highlight
+    //                            labelsInside: true
+    //                            checkedLabel: "On"
+    //                            uncheckedLabel: "Off"
+    //                            textColor: "black"              // Default: "black"
+    //                            handleColor: "white"            // Default: "white"
+    //                            grooveColor: "#ccc"             // Default: "#ccc"
+    //                            grooveFillColor: "#0cf"         // Default: "#0cf"
+    //                            fontSizeMultiplier: ratioCalc
+    //                            checked: false
+    //                        }
+    //                    }
+
+    //                }
+    //                Rectangle {
+    //                    Layout.fillHeight: true
+    //                    Layout.fillWidth: true
+    //                }
+    //            }
+
+
+
+
 }
