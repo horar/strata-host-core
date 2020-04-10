@@ -100,7 +100,7 @@ Rectangle {
                 CorePlatformInterface.data_source_handler('{
                    "value":"toggle_window_shade_notification",
                     "payload":{
-                        "value": '+theWindow+'
+                        "value": "'+theWindow+'"
                      }
 
                      } ')
@@ -112,7 +112,7 @@ Rectangle {
                 CorePlatformInterface.data_source_handler('{
                    "value":"room_color_notification",
                     "payload":{
-                        "color": '+roomColors[currentRoomColor]+'
+                        "color": "'+roomColors[currentRoomColor]+'"
                      }
 
                      } ')
@@ -132,7 +132,7 @@ Rectangle {
                 CorePlatformInterface.data_source_handler('{
                    "value":"toggle_door_notification",
                     "payload":{
-                        "value": '+theDoor+'
+                        "value": "'+theDoor+'"
                      }
 
                      } ')

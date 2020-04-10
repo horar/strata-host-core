@@ -143,10 +143,40 @@ Rectangle {
         mipmap:true
         opacity:1
 
-        onHeightChanged: {
-            console.log("smart home height and width",mainImage.height, mainImage.width)
+        property var color: platformInterface.room_color_notification
+        onColorChanged: {
+            var newColor = platformInterface.room_color_notification.color
+            if (newColor === "on")
+              mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.png"
+            else if (newColor === "off")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOff.png"
+            else if (newColor === "blue")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_blue.png"
+            else if (newColor === "green")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_green.png"
+            else if (newColor === "purple")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_purple.png"
+            else if (newColor === "red")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_red.png"
             }
 
+        property var door: platformInterface.toggle_door_notification
+        onDoorChanged: {
+             var doorState = platformInterface.toggle_door_notification.value
+            if (doorState === "open")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.png"
+              else
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.png"
+            }
+
+        property var window: platformInterface.toggle_window_shade_notification
+        onWindowChanged: {
+             var windowState = platformInterface.toggle_window_shade_notification.value
+            if (windowState === "open")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.png"
+              else
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.png"
+            }
         }
 
 
