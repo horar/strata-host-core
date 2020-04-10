@@ -147,35 +147,35 @@ Rectangle {
         onColorChanged: {
             var newColor = platformInterface.room_color_notification.color
             if (newColor === "on")
-              mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.png"
+              mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
             else if (newColor === "off")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOff.png"
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOff.jpg"
             else if (newColor === "blue")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_blue.png"
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_blue.jpg"
             else if (newColor === "green")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_green.png"
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_green.jpg"
             else if (newColor === "purple")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_purple.png"
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_purple.jpg"
             else if (newColor === "red")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_red.png"
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_red.jpg"
             }
 
         property var door: platformInterface.toggle_door_notification
         onDoorChanged: {
              var doorState = platformInterface.toggle_door_notification.value
             if (doorState === "open")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.png"
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
               else
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.png"
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
             }
 
         property var window: platformInterface.toggle_window_shade_notification
         onWindowChanged: {
              var windowState = platformInterface.toggle_window_shade_notification.value
             if (windowState === "open")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.png"
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
               else
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.png"
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
             }
         }
 
