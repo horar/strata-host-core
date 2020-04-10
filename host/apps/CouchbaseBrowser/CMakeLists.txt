@@ -26,7 +26,8 @@ target_link_libraries("${PROJECT_NAME}Library"
     Qt5::Core
     Qt5::Qml
 
-    strata::CouchbaseLiteCPP
+    # strata::CouchbaseLiteCPP
+    strata::Couchbase-Lite-C
     QtLogger
 )
 
@@ -81,5 +82,5 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 if(BUILD_TESTING)
-    add_subdirectory(test)
+    # add_subdirectory(test)
 endif()
