@@ -219,10 +219,73 @@ Rectangle {
             }
         ]
 
-        Rectangle {
+        RowLayout {
             width: parent.width
             height: parent.height/6
-            color: "red"
+            anchors.centerIn: parent
+
+
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                color: "transparent"
+                SGAlignedLabel {
+                    id: hightLightLabel
+                    target: highlight
+                    text: "Hightlights"
+                    color: "white"
+                    alignment: SGAlignedLabel.SideTopCenter
+                    anchors.centerIn: parent
+
+
+                    fontSizeMultiplier: ratioCalc * 1.2
+                    font.bold : true
+
+                    SGSwitch {
+                        id: highlight
+                        labelsInside: true
+                        checkedLabel: "On"
+                        uncheckedLabel: "Off"
+                        textColor: "black"              // Default: "black"
+                        handleColor: "white"            // Default: "white"
+                        grooveColor: "#ccc"             // Default: "#ccc"
+                        grooveFillColor: "#0cf"         // Default: "#0cf"
+                        fontSizeMultiplier: ratioCalc
+                        checked: false
+                    }
+                }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                color: "transparent"
+                SGAlignedLabel {
+                    id: falsherLabel
+                    target: falsher
+                    text: "Emergency Flashers"
+                    color: "white"
+                    alignment: SGAlignedLabel.SideTopCenter
+                    anchors.centerIn: parent
+
+
+                    fontSizeMultiplier: ratioCalc * 1.2
+                    font.bold : true
+
+                    SGSwitch {
+                        id: falsher
+                        labelsInside: true
+                        checkedLabel: "On"
+                        uncheckedLabel: "Off"
+                        textColor: "black"              // Default: "black"
+                        handleColor: "white"            // Default: "white"
+                        grooveColor: "#ccc"             // Default: "#ccc"
+                        grooveFillColor: "#0cf"         // Default: "#0cf"
+                        fontSizeMultiplier: ratioCalc
+                        checked: false
+                    }
+                }
+            }
         }
     }
 
