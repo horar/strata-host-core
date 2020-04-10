@@ -54,7 +54,7 @@ Item {
     MouseArea {
         id: mouseArea
         anchors.fill: bg
-
+        cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
         onClicked: {
             if (delegate.pressable == false) {
