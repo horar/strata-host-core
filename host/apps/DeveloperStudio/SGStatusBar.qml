@@ -143,6 +143,8 @@ Rectangle {
             anchors {
                 fill: profileIconContainer
             }
+            cursorShape: Qt.PointingHandCursor
+
             onPressed: {
                 profileMenu.open()
             }

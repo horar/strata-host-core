@@ -177,6 +177,13 @@ Item {
                             verticalCenter: filter.verticalCenter
                         }
                     }
+
+                    MouseArea {
+                        id: mouseArea
+                        anchors.fill: parent
+                        onPressed: mouse.accepted = false
+                        cursorShape: Qt.IBeamCursor
+                    }
                 }
 
                 SGIcon {
