@@ -136,7 +136,7 @@ Rectangle {
 
     Image{
         id:mainImage
-        source:"qrc:/views/meshNetwork/images/smartHome_lightsOn.png"
+        source:"qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
         height:parent.height*.70
         anchors.centerIn: parent
         fillMode: Image.PreserveAspectFit

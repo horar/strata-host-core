@@ -29,12 +29,12 @@
         <file>images/chargingIcon.svg</file>
         <file>images/chargedIcon.svg</file>
         <file>images/dimmerIcon.svg</file>
-        <file>images/smartHome_blue.png</file>
-        <file>images/smartHome_doorOpen.png</file>
-        <file>images/smartHome_lightsOff.png</file>
-        <file>images/smartHome_lightsOn.png</file>
-        <file>images/smartHome_purple.png</file>
-        <file>images/smartHome_red.png</file>
+        <file>images/smartHome_blue.jpg</file>
+        <file>images/smartHome_doorOpen.jpg</file>
+        <file>images/smartHome_lightsOff.jpg</file>
+        <file>images/smartHome_lightsOn.jpg</file>
+        <file>images/smartHome_purple.jpg</file>
+        <file>images/smartHome_red.jpg</file>
         <file>control-views/BasicViews/Office.qml</file>
         <file>control-views/AdvancedControl.qml</file>
         <file>control-views/BasicViews/SmartHome.qml</file>
@@ -55,7 +55,7 @@
         <file>control-views/AdvancedViews/RelayDemo.qml</file>
         <file>control-views/AdvancedViews/SensorDemo.qml</file>
         <file>images/spreadsheet.png</file>
-        <file>images/smartHome_green.png</file>
+        <file>images/smartHome_green.jpg</file>
         <file>images/oneToManyDemo.png</file>
         <file>images/cloud.png</file>
         <file>images/lightBulbOff.svg</file>
