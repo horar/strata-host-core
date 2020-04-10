@@ -80,6 +80,17 @@ Item {
         "node_id": "8000",  // in dec (16 bit)
         "value": "true",
     }
+
+    property var room_color_notification : {
+        "color": ""     //"blue", "green","purple","red","off" or "on"
+    }
+    property var toggle_door_notification : {
+        "value": "closed"     //or "open"
+    }
+    property var toggle_window_notification : {
+        "value": "closed"     //or "open"
+    }
+
     property var hsl_color : {
         "node_id": "8000",  // in dec (16 bit)
         "h": "120",         // 0 to 360 degrees (string)
@@ -341,6 +352,57 @@ Item {
                                       },
                                       set: function (inAddress) {
                                           this.payload.node_id = inAddress;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var set_room_color : ({
+                                      "cmd" : "set_room_color",
+                                      "payload": {
+                                          "color": "on",  // or "green","purple","red", "off", "blue"
+                                      },
+
+                                      update: function (color) {
+                                          this.set(color)
+                                          this.send(this)
+                                      },
+                                      set: function (inColor) {
+                                          this.payload.color = inColor;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var toggle_door : ({
+                                      "cmd" : "toggle_door",
+                                      "payload": {
+                                          "value": "open",  // or "closed"
+                                      },
+
+                                      update: function (value) {
+                                          this.set(value)
+                                          this.send(this)
+                                      },
+                                      set: function (inValue) {
+                                          this.payload.value = inValue;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var toggle_window_shade : ({
+                                      "cmd" : "toggle_window_shade",
+                                      "payload": {
+                                          "value": "open",  // or "closed"
+                                      },
+
+                                      update: function (value) {
+                                          this.set(value)
+                                          this.send(this)
+                                      },
+                                      set: function (inValue) {
+                                          this.payload.value = inValue;
                                       },
                                       send: function () { CorePlatformInterface.send(this) },
                                       show: function () { CorePlatformInterface.show(this) }

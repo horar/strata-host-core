@@ -89,17 +89,35 @@ Rectangle {
 
             //smarthome nodes
             else if (nodeType == "window"){
-                var theWindow;
+                var theWindow = "closed";
                 if (windowOpen)
-                    theWidow = "open"
+                    theWindow = "open"
                   else
                     theWindow = "closed"
-                platformInterface.toggle_window.update(theWindow)
+                platformInterface.toggle_window_shade.update(theWindow)
+                windowOpen = !windowOpen;
+                //this notification should come from the firmware, but doesn't
+                CorePlatformInterface.data_source_handler('{
+                   "value":"toggle_window_shade_notification",
+                    "payload":{
+                        "value": '+theWindow+'
+                     }
+
+                     } ')
+
             }
             else if (nodeType == "lights"){
                 platformInterface.set_room_color.update(roomColors[currentRoomColor])
+                //this should be handled by the firmware, but isn't
+                CorePlatformInterface.data_source_handler('{
+                   "value":"room_color_notification",
+                    "payload":{
+                        "color": '+roomColors[currentRoomColor]+'
+                     }
+
+                     } ')
                 currentRoomColor++;
-                if (currentRoomColor > roomColors.length)
+                if (currentRoomColor == roomColors.length)
                     currentRoomColor = 0;
             }
             else if (nodeType == "smart_home_door"){
@@ -109,6 +127,15 @@ Rectangle {
                   else
                     theDoor = "closed"
                 platformInterface.toggle_door.update(theDoor)
+                doorOpen = !doorOpen;
+                //this should be handled by the firmware, but isn't
+                CorePlatformInterface.data_source_handler('{
+                   "value":"toggle_door_notification",
+                    "payload":{
+                        "value": '+theDoor+'
+                     }
+
+                     } ')
             }
 
         }//on clicked
