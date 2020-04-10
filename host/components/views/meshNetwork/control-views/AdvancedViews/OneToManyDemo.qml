@@ -20,19 +20,22 @@ Rectangle {
         font.pixelSize: 72
     }
 
-//    Image{
-//            source: "qrc:/views/meshNetwork/images/oneToManyDemo.png"
-//            height:parent.height*.85
-//            anchors.centerIn: parent
-//            fillMode: Image.PreserveAspectFit
-//            mipmap:true
-//        }
-
     MSwitch{
         id:switchOutline
         anchors.left:parent.left
         anchors.leftMargin:parent.width*.2
         anchors.verticalCenter: parent.verticalCenter
+
+        property var button: platformInterface.demo_click_notification
+        onButtonChanged:{
+            if (platformInterface.demo_click_notification.demo === "one_to_many")
+                if (platformInterface.demo_click_notification.button === "switch")
+                    if (platformInterface.demo_click_notification.value === "on")
+                        switchOutline.isOn = true;
+                       else
+                        switchOutline.isOn = false;
+
+        }
 
         onIsOnChanged: {
             if (isOn){
@@ -140,6 +143,7 @@ Rectangle {
 
             onClicked: {
                 platformInterface.set_demo.update("one_to_many")
+                switchOutline.isOn = false
             }
     }
 

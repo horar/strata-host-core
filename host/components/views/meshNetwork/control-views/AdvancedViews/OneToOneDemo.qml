@@ -11,6 +11,11 @@ Rectangle {
     id: root
     color:"transparent"
 
+    onVisibleChanged: {
+        if (visible)
+            resetUI();
+    }
+
     Text{
         id:title
         anchors.top:parent.top
@@ -20,19 +25,22 @@ Rectangle {
         font.pixelSize: 72
     }
 
-//    Image{
-//        anchors.centerIn: parent
-//        source: "qrc:/views/meshNetwork/images/oneToOneDemo.png"
-//        height:parent.height * .34
-//        fillMode: Image.PreserveAspectFit
-//        mipmap:true
-//    }
-
     MSwitch{
         id:switchOutline
         anchors.left:parent.left
         anchors.leftMargin:parent.width*.2
         anchors.verticalCenter: parent.verticalCenter
+
+        property var button: platformInterface.demo_click_notification
+        onButtonChanged:{
+            if (platformInterface.demo_click_notification.demo === "one_to_one")
+                if (platformInterface.demo_click_notification.button === "switch")
+                    if (platformInterface.demo_click_notification.value === "on")
+                        switchOutline.isOn = true;
+                       else
+                        switchOutline.isOn = false;
+
+        }
 
         onIsOnChanged: {
             if (isOn){
@@ -98,6 +106,13 @@ Rectangle {
 
             onClicked: {
                 platformInterface.set_demo.update("one_to_one")
+                root.resetUI()
             }
     }
+
+    function resetUI(){
+        switchOutline.isOn = false
+    }
+
+
 }

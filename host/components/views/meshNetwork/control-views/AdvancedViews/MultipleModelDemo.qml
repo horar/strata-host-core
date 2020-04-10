@@ -33,8 +33,8 @@ Rectangle {
         anchors.top:parent.top
         anchors.topMargin: parent.height*.2
         anchors.left:parent.left
-        anchors.leftMargin:parent.width*.1
-        width:200
+        anchors.leftMargin:parent.width*.2
+        width:parent.width * .2
         spacing: -outlineThickness
 
         property int outlineThickness: 5
@@ -50,6 +50,17 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 height:180
                 width:100
+
+                property var button: platformInterface.demo_click_notification
+                onButtonChanged:{
+                    if (platformInterface.demo_click_notification.demo === "multiple_models")
+                        if (platformInterface.demo_click_notification.button === "switch1")
+                            if (platformInterface.demo_click_notification.value === "on")
+                                relaySwitch.isOn = true;
+                               else
+                                relaySwitch.isOn = false;
+
+                }
 
                 onIsOnChanged: {
                     if (isOn){
@@ -75,6 +86,17 @@ Rectangle {
                 height:180
                 width:100
 
+                property var button: platformInterface.demo_click_notification
+                onButtonChanged:{
+                    if (platformInterface.demo_click_notification.demo === "multiple_models")
+                        if (platformInterface.demo_click_notification.button === "switch2")
+                            if (platformInterface.demo_click_notification.value === "on")
+                                relaySwitch.isOn = true;
+                               else
+                                relaySwitch.isOn = false;
+
+                }
+
                 onIsOnChanged: {
                     if (isOn){
                         //this should trigger the buzzer in a node, but not change anything in the UI
@@ -94,7 +116,7 @@ Rectangle {
         anchors.topMargin: parent.height*.2
         anchors.left:column1.right
         //anchors.leftMargin:parent.width*.1
-        width:200
+        width:parent.width * .2
 
 
         Rectangle{
@@ -138,7 +160,7 @@ Rectangle {
         anchors.top:parent.top
         anchors.topMargin: parent.height*.2
         anchors.left:column2.right
-        width:200
+        width:parent.width * .2
         spacing: -outlineThickness
 
         property int outlineThickness: 5
