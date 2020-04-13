@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
+import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as Widget09
@@ -434,8 +435,17 @@ Rectangle{
 
             onAccepted: {
                 console.log("sending:",commandLineInput.text)
-                platformInterface.firmware_command.update(commandLineInput.text)
-                commandLineInput.text = "";  //clear the text after submitting
+                let object = JSON.parse(commandLineInput.text)
+                try{
+                    if (!object) throw "incorrect JSON";
+                    CorePlatformInterface.send(object)
+                    commandLineInput.text = "";  //clear the text after submitting
+                }
+                catch(err){
+                    console.log("incorrect JSON command")
+                }
+
+
             }
 
 
