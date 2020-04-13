@@ -175,7 +175,7 @@ Rectangle {
                                         anchors.fill: parent
                                         onClicked: {
                                             console.log("Reverse pressed")
-                                            carImage.source = "qrc:/views/led-tail-light/car-lights/car-rear-hazard-lights.gif"
+                                            carImage.source = "qrc:/views/led-tail-light/car-lights/car-rear-reverse-lights.jpg"
                                             carImage.playing = true
 
                                         }

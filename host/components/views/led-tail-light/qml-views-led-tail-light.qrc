@@ -19,5 +19,6 @@
         <file>control-views/tesla-dash.jpg</file>
         <file>control-views/rightArrow.jpg</file>
         <file>control-views/leftArrow.jpg</file>
+        <file>car-lights/car-rear-reverse-lights.jpg</file>
     </qresource>
 </RCC>
