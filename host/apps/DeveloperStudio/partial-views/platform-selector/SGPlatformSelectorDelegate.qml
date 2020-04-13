@@ -402,6 +402,13 @@ Item {
             onClicked: {
                 PlatformSelection.selectPlatform(model.class_id)
             }
+
+            MouseArea {
+                id: buttonCursor
+                anchors.fill: parent
+                onPressed:  mouse.accepted = false
+                cursorShape: Qt.PointingHandCursor
+            }
         }
 
         Button {
@@ -432,6 +439,13 @@ Item {
 
             onClicked: {
                 orderPopup.open()
+            }
+
+            MouseArea {
+                id: buttonCursor1
+                anchors.fill: parent
+                onPressed:  mouse.accepted = false
+                cursorShape: Qt.PointingHandCursor
             }
         }
     }
