@@ -83,7 +83,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:parent.bottom
         anchors.bottomMargin: 20
-        text:"reconfigure"
+        text:"configure"
 
         contentItem: Text {
                 text: resetButton.text

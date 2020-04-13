@@ -10,6 +10,11 @@ import tech.strata.sgwidgets 1.0
 Rectangle {
     id: root
 
+    onVisibleChanged: {
+        if (visible)
+            resetUI();
+    }
+
     Text{
         id:title
         anchors.top:parent.top
@@ -120,7 +125,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:parent.bottom
         anchors.bottomMargin: 20
-        text:"reconfigure"
+        text:"configure"
 
         contentItem: Text {
                 text: resetButton.text
@@ -143,8 +148,12 @@ Rectangle {
 
             onClicked: {
                 platformInterface.set_demo.update("one_to_many")
-                switchOutline.isOn = false
+                root.resetUI()
             }
+    }
+
+    function resetUI(){
+        switchOutline.isOn = false
     }
 
 

@@ -62,25 +62,6 @@ Rectangle{
                 anchors.bottom:parent.bottom
                 spacing:1
 
-                onVisibleChanged: {
-                    if (visible){
-                        //tell the firmwware which demo is currently selected
-                        if (demoButtonGroup.checkedButton == demo1Button)
-                            platformInterface.set_demo.update("one_to_one")
-                        else if (demoButtonGroup.checkedButton == demo2Button)
-                            platformInterface.set_demo.update("one_to_many")
-                         else if (demoButtonGroup.checkedButton == demo3Button)
-                            platformInterface.set_demo.update("relay")
-                         else if (demoButtonGroup.checkedButton == demo4Button)
-                            platformInterface.set_demo.update("multiple_models")
-                         else if (demoButtonGroup.checkedButton == demo5Button)
-                            platformInterface.set_demo.update("sensor")
-                         else if (demoButtonGroup.checkedButton == demo6Button)
-                            platformInterface.set_demo.update("cloud")
-                    }
-
-                }
-
                 SGButton{
                     id:demo1Button
                     width: parent.width
@@ -98,7 +79,6 @@ Rectangle{
                         if (checked){
                             console.log("demo 1 selected")
                             demoStackLayout.currentIndex = 0
-                            platformInterface.set_demo.update("one_to_one")
                         }
                     }
                 }
@@ -117,7 +97,6 @@ Rectangle{
                     onCheckedChanged: {
                         if (checked){
                             demoStackLayout.currentIndex = 1
-                            platformInterface.set_demo.update("one_to_many")
                         }
                     }
                 }
@@ -136,7 +115,6 @@ Rectangle{
                     onCheckedChanged: {
                         if (checked){
                             demoStackLayout.currentIndex = 2
-                            platformInterface.set_demo.update("relay")
                         }
                     }
                 }
@@ -155,7 +133,6 @@ Rectangle{
                     onCheckedChanged: {
                         if (checked){
                             demoStackLayout.currentIndex = 3
-                            platformInterface.set_demo.update("multiple_models")
                             }
                     }
                 }
@@ -174,7 +151,6 @@ Rectangle{
                     onCheckedChanged: {
                         if (checked){
                             demoStackLayout.currentIndex = 4
-                            platformInterface.set_demo.update("sensor")
                         }
                     }
                 }
@@ -193,7 +169,6 @@ Rectangle{
                     onCheckedChanged: {
                         if (checked){
                             demoStackLayout.currentIndex = 5
-                            platformInterface.set_demo.update("cloud")
                         }
                     }
                 }
@@ -258,6 +233,8 @@ Rectangle{
         anchors.right:parent.right
         height:25
         color:"white"
+        border.width:3
+        border.color:"black"
 
         Text {
             id: consoleText
