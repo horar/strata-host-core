@@ -36,11 +36,11 @@ Item {
     }
 
     property var current_sense_interrupt: {
-        "value":"no"
+        "value":"yes"
     }
 
     property var voltage_sense_interrupt: {
-        "value": "no"
+        "value": "yes"
     }
 
     property var i_in_interrupt: {

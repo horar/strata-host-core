@@ -170,18 +170,32 @@ Item {
 
         }
 
+        function pushMessagesToLog (messageIs) {
+            // Change text color to black of the entire existing list of faults
+            for(var j = 0; j < logFault.model.count; j++){
+                logFault.model.get(j).color = "black"
+            }
+
+            logFault.insert(messageIs, 0, "red")
+
+        }
+
         property var current_sense_interrupt: platformInterface.current_sense_interrupt.value
         onCurrent_sense_interruptChanged:  {
-            if(current_sense_interrupt === "yes")
+            if(current_sense_interrupt === "yes") {
                 currentStatusLight.status = SGStatusLight.Red
-            else currentStatusLight.status = SGStatusLight.Off
+                pushMessagesToLog("Current Sense Interrupt")
 
+            }
+            else currentStatusLight.status = SGStatusLight.Off
         }
 
         property var voltage_sense_interrupt: platformInterface.voltage_sense_interrupt.value
         onVoltage_sense_interruptChanged: {
-            if(voltage_sense_interrupt === "yes")
+            if(voltage_sense_interrupt === "yes") {
                 voltageStatusLight.status = SGStatusLight.Red
+                pushMessagesToLog("Voltage Sense Interrupt")
+            }
             else voltageStatusLight.status = SGStatusLight.Off
 
         }
@@ -1436,10 +1450,50 @@ Item {
                                     Layout.fillHeight: true
 
                                     SGStatusLogBox{
+                                        id: logFault
                                         width: parent.width/1.5
                                         height: parent.height - 10
                                         title: "Status List"
                                         anchors.centerIn: parent
+
+                                        listElementTemplate : {
+                                            "message": "",
+                                            "id": 0,
+                                            "color": "black"
+                                        }
+                                        scrollToEnd: false
+                                        delegate: Rectangle {
+                                            id: delegatecontainer
+                                            height: delegateText.height
+                                            width: ListView.view.width
+
+                                            SGText {
+                                                id: delegateText
+                                                text: { return (
+                                                            logFault.showMessageIds ?
+                                                                model.id + ": " + model.message :
+                                                                model.message
+                                                            )}
+
+                                                fontSizeMultiplier: logFault.fontSizeMultiplier
+                                                color: model.color
+                                                wrapMode: Text.WrapAnywhere
+                                                width: parent.width
+                                            }
+                                        }
+
+                                        function append(message,color) {
+                                            listElementTemplate.message = message
+                                            listElementTemplate.color = color
+                                            model.append( listElementTemplate )
+                                            return (listElementTemplate.id++)
+                                        }
+                                        function insert(message,index,color){
+                                            listElementTemplate.message = message
+                                            listElementTemplate.color = color
+                                            model.insert(index, listElementTemplate )
+                                            return (listElementTemplate.id++)
+                                        }
                                     }
 
                                 }
