@@ -82,7 +82,7 @@ Rectangle {
                 onClicked: {
 
                     CorePlatformInterface.data_source_handler('{
-                                "value":"console_message",
+                                "value":"msg_cli",
                                 "payload":{
                                     "msg": "console message"
                                 }

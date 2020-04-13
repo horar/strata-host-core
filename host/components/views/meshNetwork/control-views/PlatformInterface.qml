@@ -134,7 +134,7 @@ Item {
         "value":"on"
     }
 
-    property var console_message:{      //console message strings
+    property var msg_cli:{      //console message strings
             "msg":""
     }
 

@@ -290,7 +290,7 @@ Rectangle{
         scrollBarColor:"darkgrey"
 
         property var message_array : []
-        property var message_log: platformInterface.console_message.msg
+        property var message_log: platformInterface.msg_cli.msg
         onMessage_logChanged: {
             console.log("debug:",message_log)
             if(message_log !== "") {
