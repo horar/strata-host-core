@@ -36,11 +36,11 @@ Item {
     }
 
     property var current_sense_interrupt: {
-        "value":"yes"
+        "value":"no"
     }
 
     property var voltage_sense_interrupt: {
-        "value": "yes"
+        "value": "no"
     }
 
     property var i_in_interrupt: {
@@ -67,12 +67,6 @@ Item {
         "low_load_en": "off",             //on or off
         "mid_load_en": "off",             //on or off
         "high_load_en": "off",            //on or off
-        "load_setting_min": "1µA",        //sets min label for load setting slider
-        "load_setting_max": "100µA",      //sets max label for load setting slider
-        "load_setting_from": 0.000001,    //float
-        "load_setting_to": 0.0001,        //float
-        "load_setting_step": 0.000001,    //float
-        "load_setting_state": 0.000001    //float
     }
 
     property var set_initial_state_UI : ({
@@ -121,140 +115,6 @@ Item {
                                      send: function () { CorePlatformInterface.send(this) },
                                      show: function () { CorePlatformInterface.show(this) }
                                  })
-    //    property var set_enable_210 : ({
-    //                                       "cmd" : "set_enable_210",
-    //                                       "payload": {
-    //                                           "enable": "on"	// default value
-    //                                       },
-
-    //                                       update: function (enable) {
-    //                                           this.set(enable)
-    //                                           this.send(this)
-    //                                       },
-    //                                       set: function (enable) {
-    //                                           this.payload.enable = enable
-    //                                       },
-    //                                       send: function () { CorePlatformInterface.send(this) },
-    //                                       show: function () { CorePlatformInterface.show(this) }
-    //                                   })
-
-    //    property var set_enable_211 : ({
-    //                                       "cmd" : "set_enable_211",
-    //                                       "payload": {
-    //                                           "enable": "on"	// default value
-    //                                       },
-
-    //                                       update: function (enable) {
-    //                                           this.set(enable)
-    //                                           this.send(this)
-    //                                       },
-    //                                       set: function (enable) {
-    //                                           this.payload.enable = enable
-    //                                       },
-    //                                       send: function () { CorePlatformInterface.send(this) },
-    //                                       show: function () { CorePlatformInterface.show(this) }
-    //                                   })
-
-    //    property var set_enable_213 : ({
-    //                                       "cmd" : "set_enable_213",
-    //                                       "payload": {
-    //                                           "enable": "on"	// default value
-    //                                       },
-
-    //                                       update: function (enable) {
-    //                                           this.set(enable)
-    //                                           this.send(this)
-    //                                       },
-    //                                       set: function (enable) {
-    //                                           this.payload.enable = enable
-    //                                       },
-    //                                       send: function () { CorePlatformInterface.send(this) },
-    //                                       show: function () { CorePlatformInterface.show(this) }
-    //                                   })
-
-    //    property var set_enable_214 : ({
-    //                                       "cmd" : "set_enable_214",
-    //                                       "payload": {
-    //                                           "enable": "on"	// default value
-    //                                       },
-
-    //                                       update: function (enable) {
-    //                                           this.set(enable)
-    //                                           this.send(this)
-    //                                       },
-    //                                       set: function (enable) {
-    //                                           this.payload.enable = enable
-    //                                       },
-    //                                       send: function () { CorePlatformInterface.send(this) },
-    //                                       show: function () { CorePlatformInterface.show(this) }
-    //                                   })
-
-    //    property var enable_333 : ({
-    //                                       "cmd" : "set_enable_333",
-    //                                       "payload": {
-    //                                           "enable": "on"	// default value
-    //                                       },
-
-    //                                       update: function (enable) {
-    //                                           this.set(enable)
-    //                                           this.send(this)
-    //                                       },
-    //                                       set: function (enable) {
-    //                                           this.payload.enable = enable
-    //                                       },
-    //                                       send: function () { CorePlatformInterface.send(this) },
-    //                                       show: function () { CorePlatformInterface.show(this) }
-    //                                   })
-
-    //    property var set_low_load_enable : ({
-    //                                            "cmd" : "set_low_load_enable",
-    //                                            "payload": {
-    //                                                "enable": "on"	// default value
-    //                                            },
-
-    //                                            update: function (enable) {
-    //                                                this.set(enable)
-    //                                                this.send(this)
-    //                                            },
-    //                                            set: function (enable) {
-    //                                                this.payload.enable = enable
-    //                                            },
-    //                                            send: function () { CorePlatformInterface.send(this) },
-    //                                            show: function () { CorePlatformInterface.show(this) }
-    //                                        })
-    //    property var set_mid_load_enable : ({
-    //                                            "cmd" : "set_mid_load_enable",
-    //                                            "payload": {
-    //                                                "enable": "on"	// default value
-    //                                            },
-
-    //                                            update: function (enable) {
-    //                                                this.set(enable)
-    //                                                this.send(this)
-    //                                            },
-    //                                            set: function (enable) {
-    //                                                this.payload.enable = enable
-    //                                            },
-    //                                            send: function () { CorePlatformInterface.send(this) },
-    //                                            show: function () { CorePlatformInterface.show(this) }
-    //                                        })
-
-    //    property var set_high_load_enable : ({
-    //                                             "cmd" : "set_high_load_enable",
-    //                                             "payload": {
-    //                                                 "enable": "on"	// default value
-    //                                             },
-
-    //                                             update: function (enable) {
-    //                                                 this.set(enable)
-    //                                                 this.send(this)
-    //                                             },
-    //                                             set: function (enable) {
-    //                                                 this.payload.enable = enable
-    //                                             },
-    //                                             send: function () { CorePlatformInterface.send(this) },
-    //                                             show: function () { CorePlatformInterface.show(this) }
-    //                                         })
 
     property var set_load_dac_load : ({
                                      "cmd" : "set_load_dac",

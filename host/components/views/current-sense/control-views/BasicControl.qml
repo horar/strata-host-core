@@ -70,43 +70,23 @@ Item {
         maxInputCurrent.value = initial_status.max_input_current
         maxInputVoltage.value = initial_status.max_input_voltage
 
-        if(initial_status.low_load_en === "on") {
+        if(initial_status.low_load_en === "on")
             lowLoadEnable.checked = true
-            //lowloadSetting.enabled = true
-        }
-        else {
 
+        else
             lowLoadEnable.checked = false
-            // lowloadSetting.enabled = false
 
-        }
-
-        if(initial_status.mid_load_en === "on") {
+        if(initial_status.mid_load_en === "on")
             midCurrentEnable.checked = true
-            // midloadSetting.enabled = true
-        }
-        else{
+
+        else
             midCurrentEnable.checked = false
-            //midloadSetting.enabled = false
-        }
 
-        if(initial_status.high_load_en === "on") {
+        if(initial_status.high_load_en === "on")
             highCurrentEnable.checked = true
-            //highloadSetting.enabled = true
-        }
-        else {
+
+        else
             highCurrentEnable.checked = false
-            // highloadSetting.enabled = false
-        }
-
-        //        loadSetting.fromText.text = initial_status.load_setting_min
-        //        loadSetting.toText.text =initial_status.load_setting_max
-        //        loadSetting.from = initial_status.load_setting_from
-        //        loadSetting.to = initial_status.load_setting_to
-        //        loadSetting.stepSize = initial_status.load_setting_step
-        //        loadSetting.value = initial_status.load_setting_state
-
-
 
     }
 
@@ -202,8 +182,11 @@ Item {
 
         property var i_in_interrupt: platformInterface.i_in_interrupt.value
         onI_in_interruptChanged: {
-            if(i_in_interrupt === "yes")
+            if(i_in_interrupt === "yes") {
                 loadCurrent.status = SGStatusLight.Red
+                pushMessagesToLog("Voltage Sense Interrupt")
+
+            }
             else loadCurrent.status = SGStatusLight.Off
         }
 
