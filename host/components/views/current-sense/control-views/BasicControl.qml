@@ -172,7 +172,6 @@ Item {
 
         property var current_sense_interrupt: platformInterface.current_sense_interrupt.value
         onCurrent_sense_interruptChanged:  {
-            console.log(current_sense_interrupt)
             if(current_sense_interrupt === "yes")
                 currentStatusLight.status = SGStatusLight.Red
             else currentStatusLight.status = SGStatusLight.Off
@@ -327,8 +326,10 @@ Item {
                                             SGInfoBox {
                                                 id: setting1Reading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                width: 100
-                                                unit: "<b>A</b>"
+                                                height:  35 * ratioCalc
+                                                width: 140 * ratioCalc
+                                                unit: " A"
+                                                unitFont.bold: true
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 anchors.left: parent.left
@@ -411,8 +412,10 @@ Item {
                                             SGInfoBox {
                                                 id: setting2Reading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                width: 100
-                                                unit: "<b>A</b>"
+                                                height:  35 * ratioCalc
+                                                width: 140 * ratioCalc
+                                                unit: " A"
+                                                unitFont.bold: true
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 anchors.left: parent.left
@@ -492,8 +495,10 @@ Item {
                                             SGInfoBox {
                                                 id: setting3Reading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                width: 110
-                                                unit: "<b>mA</b>"
+                                                height:  35 * ratioCalc
+                                                width: 150 * ratioCalc
+                                                unit: " mA"
+                                                unitFont.bold: true
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 anchors.left: parent.left
@@ -575,8 +580,10 @@ Item {
                                             SGInfoBox {
                                                 id: setting4Reading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                width: 110
-                                                unit: "<b>mA</b>"
+                                                height:  35 * ratioCalc
+                                                width: 150 * ratioCalc
+                                                unit: " mA"
+                                                unitFont.bold: true
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 anchors.left: parent.left
@@ -649,8 +656,10 @@ Item {
                                             SGInfoBox {
                                                 id: setting5Reading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                width: 110
-                                                unit: "<b>µA</b>"
+                                                height:  35 * ratioCalc
+                                                width: 150 * ratioCalc
+                                                unit: " µA"
+                                                unitFont.bold: true
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 anchors.left: parent.left
@@ -691,8 +700,10 @@ Item {
                                             SGInfoBox {
                                                 id: vinReading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                width: 100
-                                                unit: "<b>V</b>"
+                                                height:  35 * ratioCalc
+                                                width: 140 * ratioCalc
+                                                unit: " V"
+                                                unitFont.bold: true
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 anchors.left: parent.left
@@ -952,8 +963,9 @@ Item {
                         anchors.fill: parent
 
                         Rectangle {
-                            Layout.fillHeight: true
+                            Layout.preferredHeight: parent.height/1.8
                             Layout.fillWidth: true
+
 
                             Text {
                                 id: onboardLoadControl
@@ -1229,112 +1241,76 @@ Item {
                                         }
 
                                     }
+
+                                    Rectangle {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+
+                                        RowLayout {
+                                            anchors.fill: parent
+                                            Rectangle{
+                                                id: maxLoadContainer
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+
+                                                SGAlignedLabel {
+                                                    id: maxLoadLabel
+                                                    target: maxLoadCurrent
+                                                    font.bold: true
+                                                    alignment: SGAlignedLabel.SideLeftCenter
+                                                    fontSizeMultiplier: ratioCalc * 1.2
+                                                    text: "Max Load"
+                                                    anchors.left: parent.left
+                                                    anchors.verticalCenter: parent.verticalCenter
+
+                                                    SGInfoBox {
+                                                        id: maxLoadCurrent
+                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                        boxColor: "lightgrey"
+                                                        boxFont.family: Fonts.digitalseven
+                                                        height:  35 * ratioCalc
+                                                        width: 140 * ratioCalc
+                                                        unit: "<b>A</b>"
+
+
+                                                    }
+                                                }
+                                            }
+
+                                            Rectangle{
+                                                id: maxIVoltageContainer
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+
+                                                SGAlignedLabel {
+                                                    id: maxInputVolatgeLabel
+                                                    target: maxInputVolage
+                                                    font.bold: true
+                                                    alignment: SGAlignedLabel.SideLeftCenter
+                                                    fontSizeMultiplier: ratioCalc * 1.2
+                                                    text: "Max Input \nVoltage"
+                                                    anchors.centerIn: parent
+
+                                                    SGInfoBox {
+                                                        id: maxInputVolage
+                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                        boxColor: "lightgrey"
+                                                        boxFont.family: Fonts.digitalseven
+                                                        height:  35 * ratioCalc
+                                                        width: 140 * ratioCalc
+                                                        unit: "<b>V</b>"
+                                                        anchors.left: parent.left
+                                                        anchors.verticalCenter: parent.verticalCenter
+
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                    }
                                 }
 
-                                //                                Rectangle{
-                                //                                    id: loadSettingContainer
-                                //                                    Layout.fillHeight: true
-                                //                                    Layout.fillWidth: true
 
-
-                                //                                    SGAlignedLabel {
-                                //                                        id:  loadSettingLabel
-                                //                                        target: loadSetting
-                                //                                        text: "Load Setting"
-                                //                                        fontSizeMultiplier: ratioCalc * 1.2
-                                //                                        font.bold : true
-                                //                                        alignment: SGAlignedLabel.SideTopLeft
-                                //                                        anchors.centerIn: parent
-
-                                //                                        SGSlider {
-                                //                                            id: loadSetting
-                                //                                            width: loadSettingContainer.width/1.3
-                                //                                            live: false
-                                //                                            from: 0.000001
-                                //                                            to:  0.0001
-                                //                                            stepSize: 0.000001
-                                //                                            fromText.text: "0"
-                                //                                            toText.text: "1"
-                                //                                            value: 0
-                                //                                            inputBoxWidth: loadSettingContainer/9
-                                //                                            inputBox.enabled: false
-                                //                                            fontSizeMultiplier: ratioCalc * 0.9
-                                //                                            inputBox.validator: DoubleValidator { }
-                                //                                            //                                        inputBox.validator: DoubleValidator {
-                                //                                            //                                            top: loadSetting.to
-                                //                                            //                                            bottom: loadSetting.from
-                                //                                            //                                        }
-
-                                //                                            property string min: ""
-                                //                                            property string max: ""
-                                //                                            property real state: 0
-                                //                                            property real stepSizevalue: 0
-                                //                                            property real fromValue: 0
-                                //                                            property real toValue: 0
-                                //                                            toolTipText.text: inputBox.text
-
-                                //                                            property var load_enable_status: platformInterface.load_enable_status
-                                //                                            onLoad_enable_statusChanged:  {
-                                //                                                if(load_enable_status.load_setting_min !== "0") {
-                                //                                                    min = load_enable_status.load_setting_min
-                                //                                                    console.log("min",min)
-                                //                                                    fromText.text = min
-                                //                                                }
-
-                                //                                                if(load_enable_status.load_setting_max !== "0") {
-                                //                                                    max = load_enable_status.load_setting_max
-                                //                                                    toText.text = max
-                                //                                                }
-
-                                //                                                state = load_enable_status.load_setting_state
-                                //                                                stepSizevalue = load_enable_status.load_setting_step
-                                //                                                fromValue = load_enable_status.load_setting_from
-                                //                                                toValue = load_enable_status.load_setting_to
-
-                                //                                                stepSize = stepSizevalue
-                                //                                                from = fromValue
-                                //                                                to = toValue
-                                //                                                loadSetting.value = state
-
-                                //                                                inputBox.text = value/stepSizevalue
-                                //                                                console.log(value * stepSizevalue)
-                                //                                            }
-
-
-                                //                                            onUserSet: {
-
-
-                                //                                                function countDecimals  (value) {
-                                //                                                    if(Math.floor(value) === value) return 0;
-                                //                                                    return value.toString().split(".")[1].length || 0;
-                                //                                                }
-                                //                                                var decimalPlaces = countDecimals(stepSizevalue)
-
-                                //                                                console.log(value)
-                                //                                                if(lowLoadEnable.checked){
-                                //                                                    inputBox.text = (value * 1000000).toFixed(0)
-                                //                                                    console.log(inputBox.text)
-                                //                                                    platformInterface.set_load_dac_load.update(value.toFixed(decimalPlaces))
-                                //                                                }
-                                //                                                else if (midCurrentEnable.checked) {
-                                //                                                    inputBox.text = (value * 1000).toFixed(1)
-                                //                                                    platformInterface.set_load_dac_load.update(value.toFixed(decimalPlaces))
-                                //                                                }
-                                //                                                else if (highCurrentEnable.checked) {
-                                //                                                    inputBox.text = (value).toFixed(2)
-                                //                                                    platformInterface.set_load_dac_load.update(value.toFixed(decimalPlaces))
-                                //                                                }
-                                //                                                else {
-                                //                                                    inputBox.text = (value * 1000000).toFixed(0)
-                                //                                                    platformInterface.set_load_dac_load.update(value.toFixed(6))
-                                //                                                }
-
-                                //                                            }
-
-
-                                //                                        }
-                                //                                    }
-                                //                                }
 
                             }
                         }
@@ -1343,6 +1319,7 @@ Item {
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+
 
                             Text {
                                 id: interrupt
@@ -1432,35 +1409,26 @@ Item {
                                             }
                                         }
                                     }
-                                }
-                                Rectangle{
-                                    id: maxLoadContainer
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
 
-                                    SGAlignedLabel {
-                                        id: maxLoadLabel
-                                        target: maxLoadCurrent
-                                        font.bold: true
-                                        alignment: SGAlignedLabel.SideLeftCenter
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        text: "Max Load"
-                                        anchors.centerIn: parent
+                                    Rectangle {
+                                        Layout.fillHeight: true
+                                        Layout.fillWidth: true
+                                        SGAlignedLabel {
+                                            id: loadFaultLabel
+                                            target: loadFault
+                                            alignment: SGAlignedLabel.SideTopCenter
+                                            anchors.centerIn: parent
+                                            fontSizeMultiplier: ratioCalc * 1.2
+                                            text: "Load Fault "
+                                            font.bold: true
 
-                                        SGInfoBox {
-                                            id: maxLoadCurrent
-                                            width: 100
-                                            //height: 40 * ratioCalc
-                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                            boxColor: "lightgrey"
-                                            boxFont.family: Fonts.digitalseven
-                                            unit: "<b>A</b>"
-                                            anchors.left: parent.left
-                                            anchors.verticalCenter: parent.verticalCenter
-
+                                            SGStatusLight {
+                                                id: loadFault
+                                            }
                                         }
                                     }
                                 }
+
 
                                 Rectangle {
                                     id: statusListContainer
