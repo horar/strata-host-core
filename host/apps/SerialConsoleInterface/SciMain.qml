@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.fonts 1.0 as StrataFonts
 import tech.strata.commoncpp 1.0 as CommonCpp
-import tech.strata.common 1.0 as Common
 import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.logger 1.0
 import tech.strata.sci 1.0 as Sci
@@ -270,24 +269,24 @@ Item {
                 title: "Program Device Wizard"
                 hasBack: false
 
-                contentItem: Common.ProgramDeviceWizard {
-                    boardManager: sciModel.boardManager
-                    closeButtonVisible: true
-                    requestCancelOnClose: true
-                    loopMode: false
-                    checkFirmware: false
+//                contentItem: Common.ProgramDeviceWizard {
+//                    boardManager: sciModel.boardManager
+//                    closeButtonVisible: true
+//                    requestCancelOnClose: true
+//                    loopMode: false
+//                    checkFirmware: false
 
-                    useCurrentConnectionId: true
-                    currentConnectionId: dialog.deviceId
+//                    useCurrentConnectionId: true
+//                    currentConnectionId: dialog.deviceId
 
-                    onCancelRequested: {
-                        if (sciModel.platformModel.ignoreNewConnections) {
-                            dialog.close()
-                            sciModel.platformModel.ignoreNewConnections = false
-                            sciModel.platformModel.reconectAll()
-                        }
-                    }
-                }
+//                    onCancelRequested: {
+//                        if (sciModel.platformModel.ignoreNewConnections) {
+//                            dialog.close()
+//                            sciModel.platformModel.ignoreNewConnections = false
+//                            sciModel.platformModel.reconectAll()
+//                        }
+//                    }
+//                }
             }
         }
     }

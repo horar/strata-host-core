@@ -1,0 +1,24 @@
+diff --git a/web/app.js b/web/app.js
+index 35df745d..fedba68c 100644
+--- a/web/app.js
++++ b/web/app.js
+@@ -2247,7 +2247,6 @@ function webViewerKeyDown(evt) {
+     if (cmd === 1 || cmd === 8) {
+       switch (evt.keyCode) {
+         case 83: // s
+-          PDFViewerApplication.download();
+           handled = true;
+           break;
+       }
+diff --git a/web/pdf_print_service.js b/web/pdf_print_service.js
+index d6b9758d..4470cb0c 100644
+--- a/web/pdf_print_service.js
++++ b/web/pdf_print_service.js
+@@ -280,7 +280,6 @@ window.addEventListener('keydown', function(event) {
+   // Also intercept Cmd/Ctrl + Shift + P in Chrome and Opera
+   if (event.keyCode === /* P= */ 80 && (event.ctrlKey || event.metaKey) &&
+       !event.altKey && (!event.shiftKey || window.chrome || window.opera)) {
+-    window.print();
+     if (hasAttachEvent) {
+       // Only attachEvent can cancel Ctrl + P dialog in IE <=10
+       // attachEvent is gone in IE11, so the dialog will re-appear in IE11.
