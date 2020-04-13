@@ -90,6 +90,48 @@ Item {
 
     }
 
+    property var reset_status: platformInterface.reset_status
+    onReset_statusChanged: {
+        if(reset_status.en_210 === "on")
+            enable3.checked = true
+        else enable3.checked = false
+
+        if (reset_status.en_211 === "on")
+            enable4.checked = true
+        else  enable4.checked = false
+
+        if(reset_status.en_213 === "on")
+            enable1.checked = true
+        else enable1.checked = false
+
+        if(reset_status.en_214 === "on")
+            enable2.checked = true
+        else enable2.checked = false
+
+        if(reset_status.en_333 === "on")
+            enable5.checked = true
+        else enable5.checked = false
+
+        if(reset_status.low_load_en === "on")
+            lowLoadEnable.checked = true
+        else lowLoadEnable.checked = false
+
+        if(reset_status.mid_load_en === "on")
+            midCurrentEnable.checked = true
+        else midCurrentEnable.checked = false
+
+        if(reset_status.high_load_en === "on")
+            highCurrentEnable.checked = true
+        else highCurrentEnable.checked = false
+
+        if (reset_status.load_fault === "on")
+            loadFault.status = SGStatusLight.Red
+        else  loadFault.status = SGStatusLight.OFF
+
+
+    }
+
+
     property  var switch_enable_status_en_210: platformInterface.switch_enable_status.en_210
     onSwitch_enable_status_en_210Changed: {
         if(switch_enable_status_en_210 === "on") {
@@ -134,6 +176,16 @@ Item {
     }
 
 
+    function pushMessagesToLog (messageIs) {
+        // Change text color to black of the entire existing list of faults
+        for(var j = 0; j < logFault.model.count; j++){
+            logFault.model.get(j).color = "black"
+        }
+
+        logFault.insert(messageIs, 0, "red")
+
+    }
+
     ColumnLayout {
         // id: root
         anchors.fill: parent
@@ -148,46 +200,75 @@ Item {
             setting5Reading.text = periodic_status.ADC_333
             vinReading.text = periodic_status.ADC_VIN
 
-        }
 
-        function pushMessagesToLog (messageIs) {
-            // Change text color to black of the entire existing list of faults
-            for(var j = 0; j < logFault.model.count; j++){
-                logFault.model.get(j).color = "black"
-            }
-
-            logFault.insert(messageIs, 0, "red")
-
-        }
-
-        property var current_sense_interrupt: platformInterface.current_sense_interrupt.value
-        onCurrent_sense_interruptChanged:  {
-            if(current_sense_interrupt === "yes") {
-                currentStatusLight.status = SGStatusLight.Red
-                pushMessagesToLog("Current Sense Interrupt")
-
-            }
-            else currentStatusLight.status = SGStatusLight.Off
-        }
-
-        property var voltage_sense_interrupt: platformInterface.voltage_sense_interrupt.value
-        onVoltage_sense_interruptChanged: {
-            if(voltage_sense_interrupt === "yes") {
+            if(periodic_status.interrupt_status[0] === "vs_int_on") {
                 voltageStatusLight.status = SGStatusLight.Red
                 pushMessagesToLog("Voltage Sense Interrupt")
             }
             else voltageStatusLight.status = SGStatusLight.Off
 
-        }
+            if(periodic_status.interrupt_status[1] === "cs_int_on") {
+                currentStatusLight.status = SGStatusLight.Red
+                pushMessagesToLog("Current Sense Interrupt")
+            }
+            else currentStatusLight.status = SGStatusLight.Off
 
-        property var i_in_interrupt: platformInterface.i_in_interrupt.value
-        onI_in_interruptChanged: {
-            if(i_in_interrupt === "yes") {
+            if(periodic_status.interrupt_status[2] === "i_in_int_on") {
                 loadCurrent.status = SGStatusLight.Red
                 pushMessagesToLog("Voltage Sense Interrupt")
+            }
+            else loadCurrent.status = SGStatusLight.Off
+
+        }
+
+
+
+        property var current_sense_interrupt: platformInterface.current_sense_interrupt
+        onCurrent_sense_interruptChanged:  {
+            if(current_sense_interrupt.value === "yes") {
+                currentStatusLight.status = SGStatusLight.Red
+                pushMessagesToLog("Current Sense Interrupt")
+            }
+            else currentStatusLight.status = SGStatusLight.Off
+
+            if(current_sense_interrupt.load_fault === "on")
+                loadFault.status = SGStatusLight.Red
+
+            else loadFault.status = SGStatusLight.off
+        }
+
+
+
+        property var voltage_sense_interrupt: platformInterface.voltage_sense_interrupt
+        onVoltage_sense_interruptChanged: {
+            if(voltage_sense_interrupt.value === "yes") {
+                voltageStatusLight.status = SGStatusLight.Red
+                pushMessagesToLog("Voltage Sense Interrupt")
+            }
+            else voltageStatusLight.status = SGStatusLight.Off
+
+            if(voltage_sense_interrupt.load_fault === "on")
+                loadFault.status = SGStatusLight.Red
+
+            else loadFault.status = SGStatusLight.off
+
+        }
+
+        property var i_in_interrupt: platformInterface.i_in_interrupt
+        onI_in_interruptChanged: {
+            if(i_in_interrupt.value === "yes") {
+                loadCurrent.status = SGStatusLight.Red
+                pushMessagesToLog("Load Current Interrupt")
 
             }
             else loadCurrent.status = SGStatusLight.Off
+
+            if(i_in_interrupt.load_fault === "on")
+                loadFault.status = SGStatusLight.Red
+
+            else loadFault.status = SGStatusLight.Off
+
+
         }
 
         Text {
@@ -730,8 +811,8 @@ Item {
                                                 fontSizeMultiplier: ratioCalc
                                                 color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                                                 hoverEnabled: true
-                                                height: parent.height/1.5
-                                                width: parent.width/1.5
+                                                height: parent.height/2
+                                                width: parent.width/2
                                                 onClicked: platformInterface.set_recalibrate.send()
                                             }
                                         }
@@ -745,12 +826,15 @@ Item {
                                                 fontSizeMultiplier: ratioCalc
                                                 color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                                                 hoverEnabled: true
-                                                height: parent.height/1.5
-                                                width: parent.width/1.5
+                                                height: parent.height/2
+                                                width: parent.width/2
+                                                anchors.left: parent.left
+                                                anchors.verticalCenter: parent.verticalCenter
                                                 onClicked: {
                                                     platformInterface.reset_board.send()
                                                     platformInterface.switch_enables.update("off")
                                                     platformInterface.load_enables.update("off")
+                                                    logFault.clear()
                                                     enable1.checked = false
                                                     enable2.checked = false
                                                     enable3.checked = false
@@ -760,6 +844,7 @@ Item {
                                                     lowLoadEnable.checked = false
                                                     midCurrentEnable.checked = false
                                                     highCurrentEnable.checked = false
+
 
                                                 }
                                             }

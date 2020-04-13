@@ -12,7 +12,9 @@ Item {
         "ADC_213": 30.00,          //current reading of NCS213R in A (from 0 to 30.00)
         "ADC_214": 1.000,          //current reading of NCS214R in A (from 0 to 1.000)
         "ADC_333": 0.0001000,      //current reading of NCS333R in uA (from 0 to 100.0)
-        "ADC_VIN": 26.00           //current reading of Vin in V (from 0 to 26.0)
+        "ADC_VIN": 26.00 ,
+        "interrupt_status" : ["vs_int_off", "cs_int_off", "i_in_int_off"]
+
     }
 
     property var switch_enable_status: {
@@ -36,15 +38,18 @@ Item {
     }
 
     property var current_sense_interrupt: {
-        "value":"no"
+        "value":"yes",
+        "load_fault": "on"
     }
 
     property var voltage_sense_interrupt: {
-        "value": "no"
+        "value": "yes",
+        "load_fault": "on"
     }
 
     property var i_in_interrupt: {
-        "value": "no"
+        "value": "yes",
+        "load_fault": "on"
     }
 
     property var config_running: {
@@ -67,6 +72,19 @@ Item {
         "low_load_en": "off",             //on or off
         "mid_load_en": "off",             //on or off
         "high_load_en": "off",            //on or off
+    }
+
+    property var reset_status: {
+        "en_210": "off",                   //on or off
+        "en_211": "off",                  //on or off
+        "en_213": "off",                  //on or off
+        "en_214": "off",                  //on or off
+        "en_333": "off",                  //on or off
+        "low_load_en": "off",                  //on or off
+        "mid_load_en": "off",                 //on or off
+        "high_load_en": "off",                //on or off
+        "load_fault" : "off"
+
     }
 
     property var set_initial_state_UI : ({
@@ -117,21 +135,21 @@ Item {
                                  })
 
     property var set_load_dac_load : ({
-                                     "cmd" : "set_load_dac",
-                                     "payload": {
-                                         "load": "0"	// default value
-                                     },
+                                          "cmd" : "set_load_dac",
+                                          "payload": {
+                                              "load": "0"	// default value
+                                          },
 
-                                     update: function (load) {
-                                         this.set(load)
-                                         this.send(this)
-                                     },
-                                     set: function (load) {
-                                         this.payload.load = load
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) },
-                                     show: function () { CorePlatformInterface.show(this) }
-                                 })
+                                          update: function (load) {
+                                              this.set(load)
+                                              this.send(this)
+                                          },
+                                          set: function (load) {
+                                              this.payload.load = load
+                                          },
+                                          send: function () { CorePlatformInterface.send(this) },
+                                          show: function () { CorePlatformInterface.show(this) }
+                                      })
 
     property var set_mode : ({
                                  "cmd" : "set_mode",
