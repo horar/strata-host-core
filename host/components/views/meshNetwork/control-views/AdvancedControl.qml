@@ -209,7 +209,7 @@ Rectangle{
         anchors.top:parent.top
         anchors.bottom:parent.bottom
         width:parent.width*.6
-        border.color:"blue"
+        border.color:"transparent"
 
 
 
@@ -257,7 +257,7 @@ Rectangle{
         anchors.top:parent.top
         anchors.right:parent.right
         height:25
-        color:"dimgrey"
+        color:"white"
 
         Text {
             id: consoleText
@@ -265,7 +265,7 @@ Rectangle{
             font {
                 pixelSize: 24
             }
-            color:"white"
+            color:"black"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             //        anchors {
@@ -310,7 +310,7 @@ Rectangle{
             anchors {
                 fill: parent
             }
-            color: "dimgrey"
+            color: "white"
 
             Rectangle {
                 width: parent.width
@@ -329,10 +329,10 @@ Rectangle{
                     anchors.fill: parent
                     //model: messageModel
                     //showMessageIds: true
-                    color: "dimgrey"
+                    color: "white"      //background color of the status box
                     //statusTextColor: "white"
                     //statusBoxColor: "black"
-                    statusBoxBorderColor: "dimgrey"
+                    statusBoxBorderColor: "white"
                     fontSizeMultiplier: 1
 
                     listElementTemplate : {
@@ -345,7 +345,7 @@ Rectangle{
                         id: delegatecontainer
                         height: delegateText.height
                         width: ListView.view.width
-                        color:"dimgrey"
+                        color:"white"   //text background color
 
                         SGText {
                             id: delegateText
@@ -356,7 +356,7 @@ Rectangle{
                                         )}
 
                             fontSizeMultiplier: messageList.fontSizeMultiplier
-                            color: model.color
+                            color: "grey"//model.color   //text color
                             wrapMode: Text.WrapAnywhere
                             width: parent.width
                         }
@@ -394,7 +394,7 @@ Rectangle{
                 text: clearButton.text
                 font.pixelSize: 15
                 opacity: enabled ? 1.0 : 0.3
-                color: "grey"
+                color: "lightgrey"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
@@ -403,8 +403,8 @@ Rectangle{
             background: Rectangle {
                 implicitWidth: 50
                 implicitHeight: 25
-                color: clearButton.down ? "lightgrey" : "transparent"
-                border.color: "grey"
+                color: clearButton.down ? "grey" : "transparent"
+                border.color: "lightgrey"
                 border.width: 2
                 radius: 10
             }
