@@ -233,8 +233,6 @@ Rectangle{
         anchors.right:parent.right
         height:25
         color:"white"
-        border.width:3
-        border.color:"black"
 
         Text {
             id: consoleText

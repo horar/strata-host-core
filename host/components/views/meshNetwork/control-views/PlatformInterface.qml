@@ -87,7 +87,7 @@ Item {
     property var toggle_door_notification : {
         "value": "closed"     //or "open"
     }
-    property var toggle_window_notification : {
+    property var toggle_window_shade_notification : {
         "value": "closed"     //or "open"
     }
 

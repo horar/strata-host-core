@@ -67,5 +67,7 @@
         <file>images/Bell.svg</file>
         <file>images/sensorIcon.svg</file>
         <file>images/sensorIconFullBar.svg</file>
+        <file>images/smartHome_windowOpen.jpg</file>
+        <file>images/smartHome_orange.jpg</file>
     </qresource>
 </RCC>

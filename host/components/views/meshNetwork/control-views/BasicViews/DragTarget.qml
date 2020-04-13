@@ -35,7 +35,7 @@ Rectangle {
         property bool highPowerMode: true
         property bool windowOpen:true
         property bool doorOpen:true
-        property var roomColors:["blue","green","purple","red","off","on"]
+        property var roomColors:["blue","green","purple","orange","off","on"]
         property int currentRoomColor:0
 
         onClicked:{

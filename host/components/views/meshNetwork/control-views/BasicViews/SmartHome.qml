@@ -156,8 +156,8 @@ Rectangle {
                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_green.jpg"
             else if (newColor === "purple")
                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_purple.jpg"
-            else if (newColor === "red")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_red.jpg"
+            else if (newColor === "orange")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_orange.jpg"
             }
 
         property var door: platformInterface.toggle_door_notification
@@ -171,7 +171,9 @@ Rectangle {
 
         property var window: platformInterface.toggle_window_shade_notification
         onWindowChanged: {
+
              var windowState = platformInterface.toggle_window_shade_notification.value
+            console.log("settting window to be",windowState)
             if (windowState === "open")
                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
               else
