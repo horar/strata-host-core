@@ -46,6 +46,13 @@ ComboBox {
         source: "qrc:/sgimages/chevron-down.svg"
         width: height
         height: root.height/2
+
+        MouseArea {
+            id: mouseArea
+            anchors.fill: parent
+            onPressed: mouse.accepted = false
+            cursorShape: Qt.PointingHandCursor
+        }
     }
 
     contentItem: TextField {

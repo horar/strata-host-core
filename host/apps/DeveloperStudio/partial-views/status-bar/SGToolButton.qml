@@ -44,5 +44,12 @@ ToolButton {
             color: "white"
         }
     }
+
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        onPressed: mouse.accepted = false
+        cursorShape: Qt.PointingHandCursor
+    }
 }
 

@@ -80,6 +80,17 @@ Item {
         "node_id": "8000",  // in dec (16 bit)
         "value": "true",
     }
+
+    property var room_color_notification : {
+        "color": ""     //"blue", "green","purple","red","off" or "on"
+    }
+    property var toggle_door_notification : {
+        "value": "closed"     //or "open"
+    }
+    property var toggle_window_notification : {
+        "value": "closed"     //or "open"
+    }
+
     property var hsl_color : {
         "node_id": "8000",  // in dec (16 bit)
         "h": "120",         // 0 to 360 degrees (string)
@@ -106,7 +117,7 @@ Item {
     }
 
     property var node_removed : {
-        "node_id": "8000",  // in dec (16 bit)
+        "node_id": "0",  // in dec (16 bit)
     }
 
     property var alarm_triggered:{
@@ -117,8 +128,13 @@ Item {
                 "location": "alarm" //string, with possible values: "doorbell", "alarm", "switch", "temperature", "light", "voltage", "security"
     }
 
+    property var demo_click_notification : {
+        "demo": "",             //"one_to_one"or "one_to_many", "relay", "multiple_models","sensor","cloud"
+        "button": "",           //"switch" or "switch1","switch2","relay_switch", "bulb1","bulb2","bulb3" "get_sensor_data"
+        "value":"on"
+    }
 
-    property var msg_dbg:{      //debug strings
+    property var console_message:{      //console message strings
             "msg":""
     }
 
@@ -175,6 +191,27 @@ Item {
     //            send: function () { CorePlatformInterface.send(this) },
     //            show: function () { CorePlatformInterface.show(this) }
     //        })
+
+    property var set_node_mode : ({
+                                      "cmd" : "set_node_mode",
+                                      "payload": {
+                                          "mode":"",
+                                          "uaddr": 8000,  // in dec (16 bit uint),
+                                          "enabled":true
+                                      },
+
+                                      update: function (mode,address,enabled) {
+                                          this.set(mode,address,enabled)
+                                          this.send(this)
+                                      },
+                                      set: function (inMode,inAddress,inEnabled) {
+                                          this.payload.mode = inMode;
+                                          this.payload.uaddr = inAddress;
+                                          this.payload.enable = inEnabled;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
 
     property var set_dimmer_mode : ({
                                       "cmd" : "set_dimmer_mode",
@@ -315,6 +352,57 @@ Item {
                                       },
                                       set: function (inAddress) {
                                           this.payload.node_id = inAddress;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var set_room_color : ({
+                                      "cmd" : "set_room_color",
+                                      "payload": {
+                                          "color": "on",  // or "green","purple","red", "off", "blue"
+                                      },
+
+                                      update: function (color) {
+                                          this.set(color)
+                                          this.send(this)
+                                      },
+                                      set: function (inColor) {
+                                          this.payload.color = inColor;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var toggle_door : ({
+                                      "cmd" : "toggle_door",
+                                      "payload": {
+                                          "value": "open",  // or "closed"
+                                      },
+
+                                      update: function (value) {
+                                          this.set(value)
+                                          this.send(this)
+                                      },
+                                      set: function (inValue) {
+                                          this.payload.value = inValue;
+                                      },
+                                      send: function () { CorePlatformInterface.send(this) },
+                                      show: function () { CorePlatformInterface.show(this) }
+                                  })
+
+    property var toggle_window_shade : ({
+                                      "cmd" : "toggle_window_shade",
+                                      "payload": {
+                                          "value": "open",  // or "closed"
+                                      },
+
+                                      update: function (value) {
+                                          this.set(value)
+                                          this.send(this)
+                                      },
+                                      set: function (inValue) {
+                                          this.payload.value = inValue;
                                       },
                                       send: function () { CorePlatformInterface.send(this) },
                                       show: function () { CorePlatformInterface.show(this) }
@@ -625,6 +713,60 @@ Item {
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
 
+    property var set_demo : ({
+                                        "cmd" : "set_demo",
+                                        "payload": {
+                                            "demo":"demo"
+                                        },
+
+                                        update: function (demoName) {
+                                            this.set(demoName)
+                                            this.send(this)
+                                        },
+                                        set: function (inDemoName) {
+                                            this.payload.demo = inDemoName;
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+
+    property var demo_click : ({
+                                        "cmd" : "demo_click",
+                                        "payload": {
+                                              "demo":"demo",
+                                              "button":"button",
+                                              "value":"off"
+                                        },
+
+                                        update: function (demoName,buttonName,value) {
+                                            this.set(demoName,buttonName,value)
+                                            this.send(this)
+                                        },
+                                        set: function (inDemoName,inButtonName,inValue) {
+                                            this.payload.demo = inDemoName;
+                                            this.payload.button = inButtonName;
+                                            this.payload.value = inValue;
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+
+    property var firmware_command : ({
+                                        "cmd" : "firmware_command",
+                                        "payload": {
+                                            "command":""
+                                        },
+
+                                        update: function (command) {
+                                            this.set(command)
+                                            this.send(this)
+                                        },
+                                        set: function (inCommand) {
+                                            this.payload.command = inCommand;
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process
