@@ -9,7 +9,7 @@
 // this support platform id v1 and v2
 // [Mohammed] IMPORTANT NOTE: "count" data type is not validated because there are platforms in the field that
 //                              have it as a string instead of an int. As a result, validating "count" data 
-//                              type will break custumers boards.
+//                              type will break customers boards.
 const rapidjson::SchemaDocument CommandValidator::requestPlatformIdResSchema(
     CommandValidator::parseSchema(
         R"(

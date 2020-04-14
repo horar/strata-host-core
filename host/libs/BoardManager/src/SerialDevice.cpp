@@ -271,9 +271,9 @@ bool SerialDevice::parseDeviceResponse(const QByteArray& data, bool& is_ack) {
 
 void SerialDevice::handleResponseTimeout() {
     qCWarning(logCategorySerialDevice) << this << ": Response timeout (no valid response to the sent command). Number of retries left " << retries_;
-    // [Algadhib] Implemented retries logic to send "request_platorm_id" multible times. The reason is that some platforms needs up to 5 seconds to 
-    //              boot up and we need to send the command after they fininsh initilozation. as a result, the timeout doesn't help us in this case
-    //              and we need to send the command mutiple times. THIS IS A QUICK FIX TO PATCH THE REALES AND IT SHOULD BE REVISITED.
+    // [Mohammed] Implemented retries logic to send "request_platform_id" multiple times. The reason is that some platforms needs up to 5 seconds to 
+    //              boot up and we need to send the command after they finish initialization. as a result, the timeout doesn't help us in this case
+    //              and we need to send the command multiple times. THIS IS A QUICK FIX TO PATCH THE REALES AND IT SHOULD BE REVISITED.
     if (retries_ > 0) {
         --retries_;
     } else {
