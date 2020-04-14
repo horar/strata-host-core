@@ -414,8 +414,7 @@ ExternalProject_Add(cb-lite-c
     SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-C
 
     # Apply patches
-    PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C && git reset --hard && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-c.patch
-    COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C/vendor/couchbase-lite-core && git reset --hard && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-core.patch
+    PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C/vendor/couchbase-lite-core && git reset --hard && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-core.patch
 
     CMAKE_ARGS ${CMAKE_ARGS}
     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
