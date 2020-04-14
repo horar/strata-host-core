@@ -144,7 +144,7 @@ Rectangle {
         id:mainImage
         source:"qrc:/views/meshNetwork/images/office.jpg"
         //anchors.left:parent.left
-        height:parent.height*.70
+        height:parent.height*.68
         anchors.centerIn: parent
         fillMode: Image.PreserveAspectFit
         mipmap:true

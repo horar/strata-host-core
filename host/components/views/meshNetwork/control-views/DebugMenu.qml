@@ -91,6 +91,47 @@ Rectangle {
                 }
             }
 
+
+
+        Button {
+            id: tempSensor
+            text: "temperature"
+
+            onClicked: {
+
+                CorePlatformInterface.data_source_handler('{
+                    "value":"sensor_status",
+                    "payload":{
+                         "uaddr": 2,
+                         "sensor_type": "temperature",
+                         "data":  100
+                    }
+                    }')
+
+            }
+        }
+        Button {
+            id: batterySensor
+            text: "battery"
+
+            onClicked: {
+
+                CorePlatformInterface.data_source_handler('{
+                    "value":"battery_status",
+                    "payload":{
+                        "uaddr":3,
+                        "battery_level":55,
+                        "battery_voltage":3.66,
+                        "plugged_in":true,
+                        "battery_state":"charging"
+                    }
+                    }')
+
+            }
+        }
+
+
+
 //            Button {
 //                id: motorRunningFalse
 //                text: "Send motor_running_notification, 'running': false"

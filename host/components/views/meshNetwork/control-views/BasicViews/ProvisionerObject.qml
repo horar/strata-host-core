@@ -137,11 +137,11 @@ Rectangle {
         property var temperature:""
         property var signalStrength:""
 
-        property var ambientLightValue: platformInterface.status_sensor
+        property var ambientLightValue: platformInterface.sensor_status
         onAmbientLightValueChanged: {
-            if (platformInterface.status_sensor.uaddr == provisionerObject.uaddr){
-                if (platformInterface.status_sensor.sensor_type === "ambient_light"){
-                    ambientLight = platformInterface.status_sensor.data
+            if (platformInterface.sensor_status.uaddr == provisionerObject.uaddr){
+                if (platformInterface.sensor_status.sensor_type === "ambient_light"){
+                    ambientLight = platformInterface.sensor_status.data
                     if (ambientLight !== NaN)
                         sensorValueText.text = Math.round(ambientLight) + " lux";
                     else
@@ -150,13 +150,13 @@ Rectangle {
             }
         }
 
-        property var batteryValue: platformInterface.status_battery
+        property var batteryValue: platformInterface.battery_status
         onBatteryValueChanged: {
-            console.log("provisioner received battery value change",platformInterface.status_battery.uaddr,platformInterface.status_battery.battery_voltage)
-            if (platformInterface.status_battery.uaddr == provisionerObject.uaddr){
+            console.log("provisioner received battery value change",platformInterface.battery_status.uaddr,platformInterface.battery_status.battery_voltage)
+            if (platformInterface.battery_status.uaddr == provisionerObject.uaddr){
                 console.log("changing batteryText for provisioner node")
-                battery_vtg = parseFloat(platformInterface.status_battery.battery_voltage)
-                battery_lvl = parseInt(platformInterface.status_battery.battery_level)
+                battery_vtg = parseFloat(platformInterface.battery_status.battery_voltage)
+                battery_lvl = parseInt(platformInterface.battery_status.battery_level)
                 if (battery_vtg !== NaN || battery_lvl !== NaN)
                     sensorValueText.text = battery_lvl + " %\n" + battery_vtg + " V";
                 else
@@ -164,11 +164,11 @@ Rectangle {
             }
         }
 
-        property var temperatureValue: platformInterface.status_sensor
+        property var temperatureValue: platformInterface.sensor_status
         onTemperatureValueChanged: {
-            if (platformInterface.status_sensor.uaddr == provisionerObject.uaddr){
-                if (platformInterface.status_sensor.sensor_type === "temperature"){
-                    temperature = platformInterface.status_sensor.data
+            if (platformInterface.sensor_status.uaddr == provisionerObject.uaddr){
+                if (platformInterface.sensor_status.sensor_type === "temperature"){
+                    temperature = platformInterface.sensor_status.data
                     if (temperature !== "undefined")
                         sensorValueText.text = temperature + " °C";
                     else
@@ -177,11 +177,11 @@ Rectangle {
             }
         }
 
-        property var signalStrengthValue: platformInterface.status_sensor
+        property var signalStrengthValue: platformInterface.sensor_status
         onSignalStrengthValueChanged: {
-            if (platformInterface.status_sensor.uaddr == provisionerObject.uaddr){
-                if (platformInterface.status_sensor.sensor_type === "strata"){
-                    signalStrength = platformInterface.status_sensor.data - 255
+            if (platformInterface.sensor_status.uaddr == provisionerObject.uaddr){
+                if (platformInterface.sensor_status.sensor_type === "strata"){
+                    signalStrength = platformInterface.sensor_status.data - 255
                     console.log("signal strength=",signalStrength)
                     if (signalStrength !== "undefined")
                         sensorValueText.text = signalStrength + " dBm";

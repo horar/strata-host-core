@@ -226,12 +226,12 @@ Rectangle {
             property string temperature:""
             property string signalStrength:""
 
-            property var ambientLightValue: platformInterface.status_sensor
+            property var ambientLightValue: platformInterface.sensor_status
             onAmbientLightValueChanged: {
 
-                if (platformInterface.status_sensor.uaddr == meshObject.nodeNumber){
-                    if (platformInterface.status_sensor.sensor_type === "ambient_light"){
-                        ambientLight = platformInterface.status_sensor.data
+                if (platformInterface.sensor_status.uaddr == meshObject.nodeNumber){
+                    if (platformInterface.sensor_status.sensor_type === "ambient_light"){
+                        ambientLight = platformInterface.sensor_status.data
                         if (ambientLight !== "undefined")
                             sensorValueText.text = Math.round(ambientLight) + " lux";
                         else
@@ -242,14 +242,14 @@ Rectangle {
             }
 
 
-            property var batteryValue: platformInterface.status_battery
+            property var batteryValue: platformInterface.battery_status
             onBatteryValueChanged: {
-                //console.log("node",nodeNumber, " received battery value change",platformInterface.status_battery.battery_voltage)
+                console.log("node",nodeNumber, " received battery value change",platformInterface.battery_status.battery_voltage)
                 //console.log("comparing ",platformInterface.status_battery.uaddr, "and",meshObject.nodeNumber);
-                if (platformInterface.status_battery.uaddr == meshObject.nodeNumber){
+                if (platformInterface.battery_status.uaddr == meshObject.nodeNumber){
                     console.log("updating battery value for node", meshObject.nodeNumber);
-                    battery_vtg = parseFloat(platformInterface.status_battery.battery_voltage)
-                    battery_lvl = parseInt(platformInterface.status_battery.battery_level)
+                    battery_vtg = parseFloat(platformInterface.battery_status.battery_voltage)
+                    battery_lvl = parseInt(platformInterface.battery_status.battery_level)
                     if (battery_vtg !== NaN || battery_lvl !== NaN)
                         sensorValueText.text = battery_lvl + " %\n" + battery_vtg + " V"
                     else
@@ -258,11 +258,12 @@ Rectangle {
                 }
             }
 
-            property var temperatureValue: platformInterface.status_sensor
+            property var temperatureValue: platformInterface.sensor_status
             onTemperatureValueChanged: {
-                if (platformInterface.status_sensor.uaddr == meshObject.nodeNumber){
-                    if (platformInterface.status_sensor.sensor_type === "temperature"){
-                        temperature = platformInterface.status_sensor.data
+                //console.log("node",meshObject.nodeNumber, " received temp value",platformInterface.sensor_status.data)
+                if (platformInterface.sensor_status.uaddr == meshObject.nodeNumber){
+                    if (platformInterface.sensor_status.sensor_type === "temperature"){
+                        temperature = platformInterface.sensor_status.data
                         if (temperature !== "undefined")
                             sensorValueText.text = temperature + " °C";
                         else
@@ -271,13 +272,13 @@ Rectangle {
                 }
             }
 
-            property var signalStrengthValue: platformInterface.status_sensor
+            property var signalStrengthValue: platformInterface.sensor_status
             onSignalStrengthValueChanged: {
-                if (platformInterface.status_sensor.uaddr == meshObject.nodeNumber){
-                    if (platformInterface.status_sensor.sensor_type === "strata"){
+                if (platformInterface.sensor_status.uaddr == meshObject.nodeNumber){
+                    if (platformInterface.sensor_status.sensor_type === "strata"){
                         //signal strength comes in as a value between 0 and 255, but the real values
                         //should be between -120 and 0, so subtract here to get displayed values
-                        signalStrength = platformInterface.status_sensor.data -255
+                        signalStrength = platformInterface.sensor_status.data -255
                         console.log("mesh object signal strength=",signalStrength)
                         if (signalStrength !== "undefined")
                             sensorValueText.text = signalStrength + " dBm";
