@@ -413,14 +413,16 @@ ExternalProject_Add(cb-lite-c
     INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
     SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-C
 
+    # Apply patches
+    # PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C && git reset --hard && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-c.patch
+    PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C/vendor/couchbase-lite-core && git reset --hard && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-core.patch
+
     CMAKE_ARGS ${CMAKE_ARGS}
     -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
     -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-
-    PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C && git reset --hard && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-c-official.patch
 
     INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
 

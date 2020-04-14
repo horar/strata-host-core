@@ -1,0 +1,36 @@
+diff --git a/Networking/HTTP/HTTPLogic.cc b/Networking/HTTP/HTTPLogic.cc
+index d21c27b2..5a7df435 100644
+--- a/Networking/HTTP/HTTPLogic.cc
++++ b/Networking/HTTP/HTTPLogic.cc
+@@ -311,7 +311,7 @@ namespace litecore { namespace net {
+         if (!_isWebSocket)
+             return failure(WebSocketDomain, kCodeProtocolError);
+ 
+-        if (_responseHeaders["Connection"_sl] != "Upgrade"_sl
++        if ((_responseHeaders["Connection"_sl] != "Upgrade"_sl && _responseHeaders["Connection"_sl] != "upgrade"_sl)
+                 || _responseHeaders["Upgrade"_sl] != "websocket"_sl) {
+             return failure(WebSocketDomain, kCodeProtocolError,
+                            "Server failed to upgrade connection"_sl);
+diff --git a/Networking/WebSockets/WebSocketImpl.cc b/Networking/WebSockets/WebSocketImpl.cc
+index c1015735..cfcf61e2 100644
+--- a/Networking/WebSockets/WebSocketImpl.cc
++++ b/Networking/WebSockets/WebSocketImpl.cc
+@@ -37,7 +37,7 @@ namespace litecore { namespace websocket {
+     constexpr long WebSocketImpl::kConnectTimeoutSecs;
+ 
+     // Default interval at which to send PING messages (configurable via options)
+-    static constexpr auto kDefaultHeartbeatInterval = chrono::seconds(5 * 60);
++    static constexpr auto kDefaultHeartbeatInterval = chrono::seconds(30);
+ 
+     // Timeout for disconnecting if no PONG response received
+     static constexpr auto kPongTimeout  = chrono::seconds(10);
+diff --git a/../../CMakeLists.txt b/../../CMakeLists.txt
+index 12afdfb..9e77851 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -144,4 +144,4 @@ set_dylib_properties()
+ 
+ ### TESTS:
+ 
+-add_subdirectory(test)
++# add_subdirectory(test)
