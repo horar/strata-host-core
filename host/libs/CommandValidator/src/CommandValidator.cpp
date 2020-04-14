@@ -327,6 +327,45 @@ const rapidjson::SchemaDocument CommandValidator::backupFWResSchema(
     )
 );
 
+const rapidjson::SchemaDocument CommandValidator::startAppResSchema(
+    CommandValidator::parseSchema(
+        R"(
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+            "notification": {
+                "type": "object",
+                "properties": {
+                "value": {
+                    "type": "string",
+                    "pattern": "^start_application$"
+                },
+                "payload": {
+                    "type": "object",
+                    "properties": {
+                    "status": {
+                        "type": "string"
+                    }
+                    },
+                    "required": [
+                    "status"
+                    ]
+                }
+                },
+                "required": [
+                "value",
+                "payload"
+                ]
+            }
+            },
+            "required": [
+            "notification"
+            ]
+        })"
+    )
+);
+
 const rapidjson::SchemaDocument CommandValidator::getFWInfoResSchema(
     CommandValidator::parseSchema(
         R"(
@@ -492,6 +531,7 @@ const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument
     {JsonType::flashFwRes, flashFWResSchema},
     {JsonType::backupFwRes, backupFWResSchema},
     {JsonType::updateFwRes, updateFWResSchema},
+    {JsonType::startAppRes, startAppResSchema},
     {JsonType::strataCmd, strataCommandSchema},
     {JsonType::cmd, cmdSchema}
 };

@@ -382,13 +382,9 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) 
     if (doc.HasMember(JSON_NOTIFICATION)) {
         if (CommandValidator::validate(CommandValidator::JsonType::notification, doc)) {
             const rapidjson::Value& value = doc[JSON_NOTIFICATION][JSON_VALUE];
-            const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
-            const char *notificationStr = nullptr;
-            bool standardNotification = true;
             qCDebug(logCategoryDeviceOperations) << this << "Received '" << value.GetString() << "' notification.";
             switch (activity_) {
             case Activity::WaitingForFirmwareInfo :
-                standardNotification = false;
                 if (CommandValidator::validate(CommandValidator::JsonType::getFwInfoRes, doc)) {
                     const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
                     const rapidjson::Value& btldr = payload[JSON_BOOTLOADER];
@@ -404,7 +400,6 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) 
                 }
                 break;
             case Activity::WaitingForPlatformId :
-                standardNotification = false;
                 if (CommandValidator::validate(CommandValidator::JsonType::reqPlatIdRes, doc)) {
                     const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
                     if (payload.HasMember(JSON_NAME)) {
@@ -420,10 +415,14 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) 
                 }
                 break;
             case Activity::WaitingForSwitchToBtldr :
-                notificationStr = JSON_UPDATE_FIRMWARE;
+                if (CommandValidator::validate(CommandValidator::JsonType::updateFwRes, doc)) {
+                    const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
+                    if (status == JSON_OK) {
+                        ok = true;
+                    }
+                }
                 break;
             case Activity::WaitingForFlashFwChunk :
-                standardNotification = false;
                 if (CommandValidator::validate(CommandValidator::JsonType::flashFwRes, doc)) {
                     const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
                     if (status == JSON_OK) {
@@ -439,7 +438,6 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) 
                 }
                 break;
             case Activity::WaitingForBackupFwChunk :
-                standardNotification = false;
                 if (CommandValidator::validate(CommandValidator::JsonType::backupFwRes, doc)) {
                     const rapidjson::Value& chunk = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_CHUNK];
                     const rapidjson::Value& number = chunk[JSON_NUMBER];
@@ -473,19 +471,15 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) 
                 }
                 break;
             case Activity::WaitingForStartApp :
-                notificationStr = JSON_START_APP;
-                break;
-            case Activity::None :
-                break;
-            }
-
-            if (standardNotification && notificationStr) {
-                if (payload.HasMember(JSON_STATUS)) {
-                    const rapidjson::Value& status = payload[JSON_STATUS];
-                    if (value == notificationStr && status.IsString() && status == JSON_OK) {
+                if (CommandValidator::validate(CommandValidator::JsonType::startAppRes, doc)) {
+                    const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
+                    if (status == JSON_OK) {
                         ok = true;
                     }
                 }
+                break;
+            case Activity::None :
+                break;
             }
         }
     }
