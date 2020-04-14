@@ -100,9 +100,7 @@ void BoardManagerWrapper::createPlatformsList(std::string& result) {
     QJsonArray arr;
     for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
         QJsonObject item {
-            { JSON_VERBOSE_NAME, it.value().device->property(strata::DeviceProperties::verboseName) },
-            { JSON_CLASS_ID, it.value().device->property(strata::DeviceProperties::classId) },
-            { JSON_CONNECTION, JSON_CONNECTED }
+            { JSON_CLASS_ID, it.value().device->property(strata::DeviceProperties::classId) }
         };
         arr.append(item);
     }

@@ -56,6 +56,7 @@ function populatePlatforms(platform_list_json) {
     let index = 0
     for (let platform of platform_list.list){
         platform.error = false
+        platform.connection = "view"
 
         if (platform.class_id === undefined) {
             console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Platform class_id undefined, skipping");

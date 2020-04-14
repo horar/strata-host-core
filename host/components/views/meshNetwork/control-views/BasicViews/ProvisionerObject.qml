@@ -62,7 +62,7 @@ Rectangle {
             anchors.centerIn: parent
             text: "0"
             font.pixelSize: 12
-            visible:false
+            //visible:false
         }
 
         Rectangle{
