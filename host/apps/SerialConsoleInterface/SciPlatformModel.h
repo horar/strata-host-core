@@ -38,6 +38,11 @@ public:
 
     enum ModelRole {
         PlatformRole = Qt::UserRole,
+        /*
+         * bug: FileDialog (QtQuick.Dialogs 1.3) calls data() of outside model (QTBUG-83423)
+         * hack fix: make sure there is more than 1 role
+         */
+        BugFixRole,
     };
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

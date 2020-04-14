@@ -140,6 +140,7 @@ QHash<int, QByteArray> SciPlatformModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[PlatformRole] = "platform";
+    roles[BugFixRole] = "bugFixRole";
     return roles;
 }
 
