@@ -20,6 +20,35 @@ ColumnLayout {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     spacing: 10
 
+
+    Component.onCompleted:  {
+        Help.registerTarget(vinLabel, "aa.", 1,"basicFan65Help")
+        Help.registerTarget(inputVoltageLabel, "aa.", 2,"basicFan65Help")
+        Help.registerTarget(inputCurrentLabel, "aa.", 3,"basicFan65Help")
+        Help.registerTarget(inputVCCLabel, "aa.", 4,"basicFan65Help")
+        Help.registerTarget(pvccLabel, "aa.", 5,"basicFan65Help")
+        Help.registerTarget(vbstLabel, "aa.", 6,"basicFan65Help")
+        Help.registerTarget(pgoodLabel, "aa.", 7,"basicFan65Help")
+        Help.registerTarget(outputVoltage, "aa.", 8,"basicFan65Help")
+        Help.registerTarget(outputCurrent, "aa.", 9,"basicFan65Help")
+        Help.registerTarget(frequencyLabel, "aa.", 10,"basicFan65Help")
+        Help.registerTarget(outputLabel, "aa.", 11,"basicFan65Help")
+        Help.registerTarget(ocpLabel, "aa.", 12,"basicFan65Help")
+        Help.registerTarget(efficiencyGaugeContainer, "aa.", 13,"basicFan65Help")
+        Help.registerTarget(powerDissipatedContainer, "aa.", 14,"basicFan65Help")
+        Help.registerTarget(powerOutputContainer, "aa.", 15,"basicFan65Help")
+        Help.registerTarget(tempGaugeContainer, "aa.", 16,"basicFan65Help")
+        Help.registerTarget(osAlertLabel, "aa.", 17,"basicFan65Help")
+        Help.registerTarget(enableSwitchLabel, "aa.", 18,"basicFan65Help")
+        Help.registerTarget(hiccupLabel, "aa.", 19,"basicFan65Help")
+        Help.registerTarget(syncLabel, "aa.", 20,"basicFan65Help")
+        Help.registerTarget(modeLabel, "aa.", 21,"basicFan65Help")
+        Help.registerTarget(softStartLabel, "aa.", 22,"basicFan65Help")
+        Help.registerTarget(vccLabel, "aa.", 23,"basicFan65Help")
+
+
+    }
+
     property string vinState: ""
     property var read_vin: platformInterface.status_voltage_current.vingood
     onRead_vinChanged: {

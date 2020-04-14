@@ -5,10 +5,11 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import tech.strata.sgwidgets 1.0
+import tech.strata.fonts 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "control-views"
 import "qrc:/js/help_layout_manager.js" as Help
-import tech.strata.fonts 1.0
+
 
 Item {
     id: controlNavigation
@@ -26,7 +27,7 @@ Item {
 
     Component.onCompleted: {
         //helpIcon.visible = true
-        // Help.registerTarget(navTabs, "Using these two tabs, you can switch between basic or advanced control.", 0,"basic15AHelp")
+        Help.registerTarget(navTabs, "Using these two tabs, you can switch between basic or advanced control.", 0,"basicFan65Help")
     }
 
     TabBar {
@@ -37,23 +38,6 @@ Item {
             right: controlNavigation.right
         }
 
-//        TabButton {
-//            id: basicButton
-//            text: qsTr("Basic")
-//            onClicked: {
-//                basicControl.visible = true
-//                advancedControl.visible = false
-//            }
-//        }
-
-        //        TabButton {
-        //            id: advancedButton
-        //            text: qsTr("Advanced")
-        //            onClicked: {
-        //                basicControl.visible = false
-        //                advancedControl.visible = true
-        //            }
-        //        }
     }
 
     StackLayout {
@@ -74,48 +58,35 @@ Item {
             Layout.margins: 10
         }
 
-        //        Rectangle {
-        //            width: parent.width
-        //            height: parent.height
-        //            color: "light gray"
-        //            AdvancedControl {
-        //                id: advancedControl
-        //                visible: false
-        //                width: parent.width
-        //                height: parent.height
-        //            }
-        //        }
     }
 
-    //    SGIcon {
-    //        id: helpIcon
-    //        anchors {
-    //            right: parent.right
-    //            rightMargin: 20
-    //            top: parent.top
-    //            topMargin: 50
-    //        }
-    //        source: "question-circle-solid.svg"
-    //        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-    //        height: 40
-    //        width: 40
-    //        visible: true
+    SGIcon {
+        id: helpIcon
+        anchors {
+            right: parent.right
+            rightMargin: 20
+            top: parent.top
+            topMargin: 50
+        }
+        source: "qrc:/sgimages/question-circle.svg"
+        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+        height: 40
+        width: 40
+        visible: true
 
-    //        MouseArea {
-    //            id: helpMouse
-    //            anchors {
-    //                fill: helpIcon
-    //            }
-    //            onClicked: {
-    //                if(basicControl.visible === true) {
-    //                    Help.startHelpTour("basic15AHelp")
-    //                }
-    //                else if(advancedControl.visible === true) {
-    //                    Help.startHelpTour("advance15AHelp")
-    //                }
-    //                else console.log("help not available")
-    //            }
-    //            hoverEnabled: true
-    //        }
-    //    }
+        MouseArea {
+            id: helpMouse
+            anchors {
+                fill: helpIcon
+            }
+            onClicked: {
+                if(basicControl.visible === true) {
+                    Help.startHelpTour("basicFan65Help")
+                }
+
+                else console.log("help not available")
+            }
+            hoverEnabled: true
+        }
+    }
 }
