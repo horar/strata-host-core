@@ -7,6 +7,9 @@
 // define the schemas
 
 // this support platform id v1 and v2
+// [Mohammed] IMPORTANT NOTE: "count" data type is not validated because there are platforms in the field that
+//                              have it as a string instead of an int. As a result, validating "count" data 
+//                              type will break customers boards.
 const rapidjson::SchemaDocument CommandValidator::requestPlatformIdResSchema(
     CommandValidator::parseSchema(
         R"(
@@ -21,7 +24,7 @@ const rapidjson::SchemaDocument CommandValidator::requestPlatformIdResSchema(
                     "pattern":"^platform_id$"
                     },
                     "payload": {
-                        "oneOf":[
+                        "anyOf":[
                             {
                                 "type": "object",
                                 "properties": {
@@ -33,9 +36,6 @@ const rapidjson::SchemaDocument CommandValidator::requestPlatformIdResSchema(
                                     },
                                     "class_id": {
                                     "type": "string"
-                                    },
-                                    "count": {
-                                    "type": "integer"
                                     },
                                     "platform_id_version": {
                                     "type": "string"
