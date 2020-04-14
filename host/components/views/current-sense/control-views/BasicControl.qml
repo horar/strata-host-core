@@ -202,19 +202,19 @@ Item {
             vinReading.text = periodic_status.ADC_VIN
 
 
-            if(periodic_status.interrupt_status[0] === "vs_int_on") {
+            if(periodic_status.interrupts.vs_int === "on") {
                 voltageStatusLight.status = SGStatusLight.Red
                 pushMessagesToLog("Voltage Sense Interrupt")
             }
             else voltageStatusLight.status = SGStatusLight.Off
 
-            if(periodic_status.interrupt_status[1] === "cs_int_on") {
+            if(periodic_status.interrupts.cs_int === "on") {
                 currentStatusLight.status = SGStatusLight.Red
                 pushMessagesToLog("Current Sense Interrupt")
             }
             else currentStatusLight.status = SGStatusLight.Off
 
-            if(periodic_status.interrupt_status[2] === "i_in_int_on") {
+            if(periodic_status.interrupts.i_in_int === "on") {
                 loadCurrent.status = SGStatusLight.Red
                 pushMessagesToLog("Voltage Sense Interrupt")
             }
@@ -979,6 +979,7 @@ Item {
 
                                                     property var switch_enable_status_in_max: platformInterface.switch_enable_status.i_in_max
                                                     onSwitch_enable_status_in_maxChanged:  {
+                                                        console.log(switch_enable_status_in_max)
                                                         if(switch_enable_status_in_max !== "N/A") {
                                                             maxInputCurrent.value = switch_enable_status_in_max
                                                         }

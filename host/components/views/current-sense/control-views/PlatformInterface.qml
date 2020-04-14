@@ -7,14 +7,17 @@ Item {
     id: platformInterface
 
     property var periodic_status: {
-        "ADC_210": 0.10000,        //current reading of NCS210R in mA (from 0 to 100.00)
-        "ADC_211": 0.002000,       //current reading of NCS211R in mA (from 0 to 2.000)
-        "ADC_213": 30.00,          //current reading of NCS213R in A (from 0 to 30.00)
-        "ADC_214": 1.000,          //current reading of NCS214R in A (from 0 to 1.000)
+        "ADC_210": 0.00,        //current reading of NCS210R in mA (from 0 to 100.00)
+        "ADC_211": 0.000,       //current reading of NCS211R in mA (from 0 to 2.000)
+        "ADC_213": 0.00,          //current reading of NCS213R in A (from 0 to 30.00)
+        "ADC_214": 0.000,          //current reading of NCS214R in A (from 0 to 1.000)
         "ADC_333": 0.0001000,      //current reading of NCS333R in uA (from 0 to 100.0)
-        "ADC_VIN": 26.00 ,
-        "interrupt_status" : ["vs_int_off", "cs_int_off", "i_in_int_off"]
-
+        "ADC_VIN": 0 ,
+        "interrupts":   {
+            "vs_int" : "off",
+            "cs_int" : "off",
+            "i_in_int" : "off"
+        }
     }
 
     property var switch_enable_status: {
@@ -33,9 +36,6 @@ Item {
         "max_input_voltage" : "26",
         "max_current" : "100",
         "max_current_unit" : "µA"
-
-
-
     }
 
     property var current_sense_interrupt: {
