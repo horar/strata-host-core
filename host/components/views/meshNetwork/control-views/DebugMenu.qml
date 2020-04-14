@@ -12,7 +12,7 @@ import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 Rectangle {
     id: root
     height: 200
-    width: 350
+    width: 200
     border {
         width: 1
         color: "#fff"
@@ -35,7 +35,7 @@ Rectangle {
                 height: 40
 
                 Text {
-                    text: "Debug (inject fake platform notifications):"
+                    text: "Debug"
                     anchors {
                         verticalCenter: header.verticalCenter
                         left: header.left
@@ -54,44 +54,68 @@ Rectangle {
                 }
             }
 
+
             Button {
-                id: motorRunningTrue
-                text: "Send motor_running_notification, 'running': true"
+                id: addNode
+                text: "add node"
+
+                property int clickCount: 1  //node 1 is always the provisioner, so we'll start with 2
                 onClicked: {
+                    var colors = ["#ff00ff", "#ff4500","#ffff00", "#7cfc00", "#00ff7f","#ffc0cb","#9370db"];
+                    addNode.clickCount++;
+
                     CorePlatformInterface.data_source_handler('{
-                                "value":"motor_running_notification",
+                                "value":"node_added",
                                 "payload":{
-                                         "running": true
+                                    "index": '+clickCount+',
+                                    "color": "'+colors[clickCount-1]+'"
                                 }
                         }')
+
                 }
             }
 
             Button {
-                id: motorRunningFalse
-                text: "Send motor_running_notification, 'running': false"
+                id: consoleMessage
+                text: "console"
+
                 onClicked: {
+
                     CorePlatformInterface.data_source_handler('{
-                                "value":"motor_running_notification",
+                                "value":"console_message",
                                 "payload":{
-                                         "running": false
+                                    "msg": "console message"
                                 }
                         }')
+
                 }
             }
 
-            Button {
-                id: motorSpeed
-                text: "Send motor_speed_notification, 'speed': random"
-                onClicked: {
-                    CorePlatformInterface.data_source_handler('{
-                                "value":"motor_speed_notification",
-                                "payload":{
-                                         "speed": ' + (Math.random()*100).toFixed(2) + '
-                                }
-                        }')
-                }
-            }
+//            Button {
+//                id: motorRunningFalse
+//                text: "Send motor_running_notification, 'running': false"
+//                onClicked: {
+//                    CorePlatformInterface.data_source_handler('{
+//                                "value":"motor_running_notification",
+//                                "payload":{
+//                                         "running": false
+//                                }
+//                        }')
+//                }
+//            }
+
+//            Button {
+//                id: motorSpeed
+//                text: "Send motor_speed_notification, 'speed': random"
+//                onClicked: {
+//                    CorePlatformInterface.data_source_handler('{
+//                                "value":"motor_speed_notification",
+//                                "payload":{
+//                                         "speed": ' + (Math.random()*100).toFixed(2) + '
+//                                }
+//                        }')
+//                }
+//            }
         }
     }
 

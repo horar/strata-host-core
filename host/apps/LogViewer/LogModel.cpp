@@ -188,7 +188,7 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case TimestampRole:
-        return item->timestamp.toString("yyyy-MM-dd hh:mm:ss.zzz t");
+        return item->timestamp;
     case PidRole:
         return item->pid;
     case TidRole:

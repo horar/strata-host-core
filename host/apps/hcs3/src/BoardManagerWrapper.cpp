@@ -100,9 +100,7 @@ void BoardManagerWrapper::createPlatformsList(std::string& result) {
     QJsonArray arr;
     for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
         QJsonObject item {
-            { JSON_VERBOSE_NAME, it.value().device->property(strata::DeviceProperties::verboseName) },
-            { JSON_CLASS_ID, it.value().device->property(strata::DeviceProperties::classId) },
-            { JSON_CONNECTION, JSON_CONNECTED }
+            { JSON_CLASS_ID, it.value().device->property(strata::DeviceProperties::classId) }
         };
         arr.append(item);
     }
@@ -168,14 +166,17 @@ bool BoardManagerWrapper::getFirstDeviceIdByClassId(const std::string& classId, 
 }
 
 bool BoardManagerWrapper::setClientId(const std::string& clientId, const int deviceId) {
-   auto it = boards_.find(deviceId);
-   if (it != boards_.end()) {
-       if (it.value().clientId.empty()) {
-           it.value().clientId = clientId;
-           return true;
-       }
-   }
-   return false;
+    QString clientIdStr(QByteArray::fromRawData(clientId.data(), static_cast<int>(clientId.size())).toHex());
+    auto it = boards_.find(deviceId);
+    if (it != boards_.end()) {
+        if (it.value().clientId.empty()) {
+            it.value().clientId = clientId;
+            qCDebug(logCategoryHcsBoard).noquote() << logDeviceId(deviceId) << ": Assigned client '" << clientIdStr << "' to device";
+            return true;
+        }
+    }
+    qCWarning(logCategoryHcsBoard).noquote() << logDeviceId(deviceId) << ": Cannot assign client '" << clientIdStr << "' to device";
+    return false;
 }
 
 bool BoardManagerWrapper::clearClientId(const int deviceId) {

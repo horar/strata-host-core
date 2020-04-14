@@ -8,6 +8,7 @@ import "qrc:/partial-views"
 import "qrc:/partial-views/platform-selector"
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_filters.js" as Filters
+import "qrc:/js/help_layout_manager.js" as Help
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
@@ -58,6 +59,32 @@ Rectangle{
             id: rightFilters
             model: Filters.categoryFilterModel
             side: "right"
+        }
+    }
+
+    SGIcon {
+        id: helpIcon
+        anchors {
+            right: container.right
+            top: container.top
+            margins: 20
+        }
+        source: "qrc:/sgimages/question-circle.svg"
+        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+        height: 40
+        width: 40
+
+        MouseArea {
+            id: helpMouse
+            hoverEnabled: true
+            anchors {
+                fill: helpIcon
+            }
+            cursorShape: Qt.PointingHandCursor
+
+            onClicked: {
+                Help.startHelpTour("selectorHelp", "strataMain")
+            }
         }
     }
 
