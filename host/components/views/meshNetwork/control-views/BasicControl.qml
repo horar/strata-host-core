@@ -5,6 +5,7 @@ import QtQuick.Dialogs 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import tech.strata.sgwidgets 1.0
+import tech.strata.sgwidgets 0.9 as Widget09
 import "BasicViews"
 
 Rectangle {
@@ -57,5 +58,173 @@ Rectangle {
        }
    }
 
+   Drawer {
+           y: header.height
+           width: root.width * 0.3
+           height: root.height
+           edge: Qt.RightEdge
+
+           Rectangle{
+               id:consoleTextContainer
+               anchors.left: parent.left
+               anchors.top:parent.top
+               anchors.right:parent.right
+               height:25
+               color:"white"
+
+               Text {
+                   id: consoleText
+                   text: "Node Communications"
+                   font {
+                       pixelSize: 24
+                   }
+                   color:"black"
+                   anchors.horizontalCenter: parent.horizontalCenter
+                   anchors.verticalCenter: parent.verticalCenter
+                   //        anchors {
+                   //            horizontalCenter: parent.horizontalCenter
+                   //            top:parent.top
+                   //        }
+               }
+           }
+
+           Widget09.SGResponsiveScrollView {
+               id: consoleScrollView
+
+               anchors.left: parent.left
+               anchors.top:consoleTextContainer.bottom
+               anchors.bottom: parent.bottom
+               anchors.right:parent.right
+
+
+               minimumHeight: 800
+               minimumWidth: parent.width * .25
+               scrollBarColor:"darkgrey"
+
+               property var message_array : []
+               property var message_log: platformInterface.msg_cli.msg
+               onMessage_logChanged: {
+                   console.log("debug:",message_log)
+                   if(message_log !== "") {
+                       for(var j = 0; j < messageList.model.count; j++){
+                           messageList.model.get(j).color = "black"
+                       }
+
+                       messageList.append(message_log,"white")
+
+                   }
+               }
+
+               Rectangle {
+                   id: container
+                   parent: consoleScrollView.contentItem
+                   anchors {
+                       fill: parent
+                   }
+                   color: "white"
+
+                   Rectangle {
+                       width: parent.width
+                       height: (parent.height)
+                       anchors.left:parent.left
+                       anchors.leftMargin: 20
+                       anchors.right:parent.right
+                       anchors.rightMargin: 20
+                       anchors.top:parent.top
+                       //anchors.topMargin: 50
+                       anchors.bottom:parent.bottom
+                       anchors.bottomMargin: 50
+                       color: "transparent"
+                       SGStatusLogBox{
+                           id: messageList
+                           anchors.fill: parent
+                           //model: messageModel
+                           //showMessageIds: true
+                           color: "white"      //background color of the status box
+                           //statusTextColor: "white"
+                           //statusBoxColor: "black"
+                           statusBoxBorderColor: "white"
+                           fontSizeMultiplier: 1
+
+                           listElementTemplate : {
+                               "message": "",
+                               "id": 0,
+                               "color": "black"
+                           }
+                           scrollToEnd: true
+                           delegate: Rectangle {
+                               id: delegatecontainer
+                               height: delegateText.height
+                               width: ListView.view.width
+                               color:"white"   //text background color
+
+                               SGText {
+                                   id: delegateText
+                                   text: { return (
+                                               messageList.showMessageIds ?
+                                                   model.id + ": " + model.message :
+                                                   model.message
+                                               )}
+
+                                   fontSizeMultiplier: messageList.fontSizeMultiplier
+                                   color: "grey"//model.color   //text color
+                                   wrapMode: Text.WrapAnywhere
+                                   width: parent.width
+                               }
+                           }
+
+                           function append(message,color) {
+                               console.log("appending message")
+                               listElementTemplate.message = message
+                               listElementTemplate.color = color
+                               model.append( listElementTemplate )
+                               return (listElementTemplate.id++)
+                           }
+                           function insert(message,index,color){
+                               listElementTemplate.message = message
+                               listElementTemplate.color = color
+                               model.insert(index, listElementTemplate )
+                               return (listElementTemplate.id++)
+                           }
+                       }
+                   }
+               }
+           }
+
+           Button{
+               id:clearButton
+
+               anchors.right: parent.right
+               anchors.rightMargin: 20
+               anchors.top:consoleTextContainer.bottom
+               anchors.topMargin: 10
+
+               text:"clear"
+
+               contentItem: Text {
+                       text: clearButton.text
+                       font.pixelSize: 15
+                       opacity: enabled ? 1.0 : 0.3
+                       color: "lightgrey"
+                       horizontalAlignment: Text.AlignHCenter
+                       verticalAlignment: Text.AlignVCenter
+                       elide: Text.ElideRight
+                   }
+
+                   background: Rectangle {
+                       implicitWidth: 50
+                       implicitHeight: 25
+                       color: clearButton.down ? "grey" : "transparent"
+                       border.color: "lightgrey"
+                       border.width: 2
+                       radius: 10
+                   }
+
+                  onClicked: {
+                      messageList.clear()
+                  }
+           }
+
+       }//drawer
 
 }
