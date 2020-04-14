@@ -276,12 +276,17 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
                 break;
             case Activity::WaitingForFlashFwChunk :
                 responseTimer_.stop();
-                if (chunkNumber_ == 0 ) {  // the last chunk
-                    finishOperation(Operation::FlashFirmwareChunk, chunkNumber_);
+                if (chunkRetryCount_ == 0) {
+                    if (chunkNumber_ == 0 ) {  // the last chunk
+                        finishOperation(Operation::FlashFirmwareChunk, chunkNumber_);
+                    } else {
+                        // Chunk was flashed but flashing operation is not finished yet,
+                        // so emit only signal and do not call function finishOperation().
+                        emit finished(static_cast<int>(Operation::FlashFirmwareChunk), chunkNumber_);
+                    }
                 } else {
-                    // Chunk was flashed but flashing operation is not finished yet,
-                    // so emit only signal and do not call function finishOperation().
-                    emit finished(static_cast<int>(Operation::FlashFirmwareChunk), chunkNumber_);
+                    // send request for flash chunk again
+                    emit nextStep(QPrivateSignal());
                 }
                 break;
             case Activity::WaitingForBackupFwChunk :
@@ -418,7 +423,20 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) 
                 notificationStr = JSON_UPDATE_FIRMWARE;
                 break;
             case Activity::WaitingForFlashFwChunk :
-                notificationStr = JSON_FLASH_FIRMWARE;
+                standardNotification = false;
+                if (CommandValidator::validate(CommandValidator::JsonType::flashFwRes, doc)) {
+                    const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
+                    if (status == JSON_OK) {
+                        ok = true;
+                        chunkRetryCount_ = 0;
+                    } else {
+                        if ((status == JSON_RESEND_CHUNK) && (chunkRetryCount_ < MAX_CHUNK_RETRIES)) {
+                            ++chunkRetryCount_;
+                            ok = true;
+                            qCInfo(logCategoryDeviceOperations) << this << "Retry to flash firmware chunk.";
+                        }
+                    }
+                }
                 break;
             case Activity::WaitingForBackupFwChunk :
                 standardNotification = false;
@@ -449,7 +467,7 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) 
                         if ((ok == false) && (chunkRetryCount_ < MAX_CHUNK_RETRIES)) {
                             ++chunkRetryCount_;
                             ok = true;
-                            qCInfo(logCategoryDeviceOperations) << this << "Retry to get firmware chunk.";
+                            qCInfo(logCategoryDeviceOperations) << this << "Retry to backup firmware chunk.";
                         }
                     }
                 }
