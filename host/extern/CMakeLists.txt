@@ -420,6 +420,8 @@ ExternalProject_Add(cb-lite-c
     -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 
+    PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C && git reset --hard && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-c-official.patch
+
     INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
 
     # Couchbase-Lite-C
