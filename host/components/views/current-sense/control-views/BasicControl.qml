@@ -1373,7 +1373,8 @@ Item {
 
                                                         property var max_current_unit: platformInterface.load_enable_status.max_current_unit
                                                         onMax_current_unitChanged: {
-                                                            maxLoadCurrent.unit = max_current_unit
+                                                            if(max_current_unit !== undefined)
+                                                                maxLoadCurrent.unit = max_current_unit
                                                         }
                                                     }
                                                 }
