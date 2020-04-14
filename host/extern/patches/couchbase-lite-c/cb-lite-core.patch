@@ -24,13 +24,3 @@ index c1015735..cfcf61e2 100644
  
      // Timeout for disconnecting if no PONG response received
      static constexpr auto kPongTimeout  = chrono::seconds(10);
-diff --git a/../../CMakeLists.txt b/../../CMakeLists.txt
-index 12afdfb..9e77851 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -144,4 +144,4 @@ set_dylib_properties()
- 
- ### TESTS:
- 
--add_subdirectory(test)
-+# add_subdirectory(test)
