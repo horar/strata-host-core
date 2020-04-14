@@ -66,6 +66,7 @@ Rectangle {
                     meshArray[alpha].opacity = 0.5
                     meshArray[alpha].enabled = false
                     meshArray[alpha].objectColor = "lightgrey"
+                    meshArray[alpha].nodeNumber = ""
                     //targetArray[alpha].color = "transparent"
 
                     //special case because sometimes the 0th element of the notification array
@@ -75,16 +76,15 @@ Rectangle {
                             meshArray[alpha].opacity = 1.0
                             meshArray[alpha].enabled = true
                             meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+
                         }
                     }
-
-
-
                 }
                 else {
                     meshArray[alpha].opacity = 1.0
                     meshArray[alpha].enabled = true
                     meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+                    meshArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
 
                     //special case because sometimes the 0th element of the notification array
                     //really represents the first element
@@ -260,6 +260,35 @@ Rectangle {
             }
 
             property var targetArray: [0, target5, target4,target6,target3, target8, target2, target7, target1, 0]
+
+            property var network: platformInterface.network_notification
+            onNetworkChanged:{
+
+                //iterate over the nodes in the notification
+                console.log("updating nodes",platformInterface.network_notification.nodes.length)
+                for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+                    //for each node that is marked visible set the visibilty of the node appropriately
+                    if (platformInterface.network_notification.nodes[alpha].ready === 0){
+                        targetArray[alpha].objectColor = "transparent"
+                        targetArray[alpha].nodeNumber = ""
+
+                        //special case because sometimes the 0th element of the notification array
+                        //really represents the first element
+                        if (alpha === 1){
+                            if (platformInterface.network_notification.nodes[0].ready === 1 ){
+                                targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+
+                            }
+                        }
+                    }
+                    else {
+                        targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+                        targetArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+
+
+                    }
+                }
+            }
 
             property var newNodeAdded: platformInterface.node_added
             onNewNodeAddedChanged: {

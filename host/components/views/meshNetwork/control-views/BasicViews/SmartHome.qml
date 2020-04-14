@@ -51,7 +51,6 @@ Rectangle {
         }
 
         property var meshArray: [0,provisioner,mesh2, mesh1,mesh4, mesh3,mesh6,mesh5, mesh7,mesh8]
-        property var targetArray: [0, target1,target2, target3]
         property var initialNodeVisibilityColors: platformInterface.network_notification
         onInitialNodeVisibilityColorsChanged:{
 
@@ -63,7 +62,7 @@ Rectangle {
                     meshArray[alpha].opacity = 0.5
                     meshArray[alpha].enabled = false
                     meshArray[alpha].objectColor = "lightgrey"
-                    //targetArray[alpha].color = "transparent"
+                    meshArray[alpha].nodeNumber = ""
 
                     //special case because sometimes the 0th element of the notification array
                     //really represents the first element
@@ -80,6 +79,7 @@ Rectangle {
                     meshArray[alpha].opacity = 1.0
                     meshArray[alpha].enabled = true
                     meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+                    meshArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
 
                     //special case because sometimes the 0th element of the notification array
                     //really represents the first element
@@ -87,8 +87,6 @@ Rectangle {
                         if (meshArray[alpha.enabled == true])
                             meshArray[1] = true;
                     }
-
-                    //targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
                 }
             }
         }
@@ -100,9 +98,7 @@ Rectangle {
             //console.log("new node added",platformInterface.node_added.index)
             var theNodeNumber = platformInterface.node_added.index
             meshArray[theNodeNumber].opacity = 1;
-            //console.log("set the opacity of node",theNodeNumber, "to 1");
             meshArray[theNodeNumber].objectColor = platformInterface.node_added.color
-            //targetArray[theNodeNumber].color = platformInterface.node_added.color
             meshArray[theNodeNumber].nodeNumber = theNodeNumber
         }
 
@@ -222,6 +218,35 @@ Rectangle {
             }
 
             property var targetArray: [0, 0, target1, target2, 0, target3,0,0,0,0]
+
+            property var network: platformInterface.network_notification
+            onNetworkChanged:{
+
+                //iterate over the nodes in the notification
+                console.log("updating nodes",platformInterface.network_notification.nodes.length)
+                for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+                    //for each node that is marked visible set the visibilty of the node appropriately
+                    if (platformInterface.network_notification.nodes[alpha].ready === 0){
+                        targetArray[alpha].objectColor = "transparent"
+                        targetArray[alpha].nodeNumber = ""
+
+                        //special case because sometimes the 0th element of the notification array
+                        //really represents the first element
+                        if (alpha === 1){
+                            if (platformInterface.network_notification.nodes[0].ready === 1 ){
+                                targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+
+                            }
+                        }
+                    }
+                    else {
+                        targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+                        targetArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+
+
+                    }
+                }
+            }
 
             property var newNodeAdded: platformInterface.node_added
             onNewNodeAddedChanged: {

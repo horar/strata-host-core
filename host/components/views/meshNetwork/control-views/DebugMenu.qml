@@ -26,7 +26,8 @@ Rectangle {
         clip: true
 
         Column {
-            width: parent.width
+            id:rightColumn
+            width: parent.width/2
 
             Rectangle {
                 id: header
@@ -43,15 +44,6 @@ Rectangle {
                     }
                 }
 
-                Button {
-                    text: "X"
-                    height: 30
-                    width: height
-                    onClicked: root.visible = false
-                    anchors {
-                        right: header.right
-                    }
-                }
             }
 
 
@@ -93,13 +85,13 @@ Rectangle {
 
 
 
-        Button {
-            id: tempSensor
-            text: "temperature"
+            Button {
+                id: tempSensor
+                text: "temperature"
 
-            onClicked: {
+                onClicked: {
 
-                CorePlatformInterface.data_source_handler('{
+                    CorePlatformInterface.data_source_handler('{
                     "value":"sensor_status",
                     "payload":{
                          "uaddr": 2,
@@ -108,56 +100,130 @@ Rectangle {
                     }
                     }')
 
+                }
             }
-        }
-        Button {
-            id: batterySensor
-            text: "battery"
+            Button {
+                id: batterySensor
+                text: "battery"
 
-            onClicked: {
+                onClicked: {
 
-                CorePlatformInterface.data_source_handler('{
+                    CorePlatformInterface.data_source_handler('{
                     "value":"battery_status",
                     "payload":{
                         "uaddr":3,
                         "battery_level":55,
                         "battery_voltage":3.66,
-                        "plugged_in":true,
                         "battery_state":"charging"
                     }
                     }')
 
+                }
+            }
+        }
+
+        Column{
+            id:leftColumn
+            anchors.left: rightColumn.right
+            anchors.top:rightColumn.top
+            width: parent.width/2
+
+            Rectangle {
+                id: buttonheader
+                color: "#eee"
+                width: parent.width
+                height: 40
+
+                Button {
+                    text: "X"
+                    height: 30
+                    width: height
+                    onClicked: root.visible = false
+                    anchors {
+                        right: buttonheader.right
+                    }
+                }
+            }
+
+            Button {
+                id: network
+                text: "network"
+
+                onClicked: {
+
+                    CorePlatformInterface.data_source_handler('{
+                    "value":"network_notification",
+                    "payload":{
+                        "nodes":[{
+                              "index": "2",
+                              "ready": 1,
+                              "color": "#000088"
+                              },
+                              {
+                              "index": "3",
+                              "ready": 1,
+                              "color": "#0000ff"
+                              },
+                              {
+                              "index": "4",
+                              "ready": 1,
+                              "color": "#008800"
+                              },
+                              {
+                              "index": "5",
+                              "ready": 1,
+                              "color": "#008888"
+                              },
+                              {
+                              "index": "6",
+                              "ready": 1,
+                              "color": "#0088ff"
+                              },
+                              {
+                              "index": "7",
+                              "ready": 1,
+                              "color": "#00ffff"
+                              },
+                              {
+                              "index": "8",
+                              "ready": 1,
+                              "color": "#880000"
+                              }]
+                            }
+                    }')
+
+                }
             }
         }
 
 
 
-//            Button {
-//                id: motorRunningFalse
-//                text: "Send motor_running_notification, 'running': false"
-//                onClicked: {
-//                    CorePlatformInterface.data_source_handler('{
-//                                "value":"motor_running_notification",
-//                                "payload":{
-//                                         "running": false
-//                                }
-//                        }')
-//                }
-//            }
+        //            Button {
+        //                id: motorRunningFalse
+        //                text: "Send motor_running_notification, 'running': false"
+        //                onClicked: {
+        //                    CorePlatformInterface.data_source_handler('{
+        //                                "value":"motor_running_notification",
+        //                                "payload":{
+        //                                         "running": false
+        //                                }
+        //                        }')
+        //                }
+        //            }
 
-//            Button {
-//                id: motorSpeed
-//                text: "Send motor_speed_notification, 'speed': random"
-//                onClicked: {
-//                    CorePlatformInterface.data_source_handler('{
-//                                "value":"motor_speed_notification",
-//                                "payload":{
-//                                         "speed": ' + (Math.random()*100).toFixed(2) + '
-//                                }
-//                        }')
-//                }
-//            }
-        }
+        //            Button {
+        //                id: motorSpeed
+        //                text: "Send motor_speed_notification, 'speed': random"
+        //                onClicked: {
+        //                    CorePlatformInterface.data_source_handler('{
+        //                                "value":"motor_speed_notification",
+        //                                "payload":{
+        //                                         "speed": ' + (Math.random()*100).toFixed(2) + '
+        //                                }
+        //                        }')
+        //                }
+        //            }
+
     }
 
     Rectangle {

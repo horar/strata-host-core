@@ -34,6 +34,11 @@ Item {
         "poles": 6
     }
 
+    onPolesChanged: {
+        //mark has requested that we echo back the poles notification to the platform when it's changed
+        platformInterface.set_poles.update(poles)
+    }
+
     //shaft direction
     property var direction: {
         "direction": "anti-clockwise" //or clockwise

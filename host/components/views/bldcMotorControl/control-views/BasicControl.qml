@@ -222,6 +222,7 @@ Widget09.SGResponsiveScrollView {
                 font {
                     pixelSize: labelFontSize
                 }
+                color: platformInterface.M_state.state === "Halted" ? "black" : "lightgrey"
             }
 
 
@@ -239,6 +240,7 @@ Widget09.SGResponsiveScrollView {
                 handleSize: 20
                 inputBox.boxFont.family: "helvetica"
                 stepSize: 2
+                enabled:platformInterface.M_state.state === "Halted" ? true : false
 
                 value: platformInterface.poles.poles
 

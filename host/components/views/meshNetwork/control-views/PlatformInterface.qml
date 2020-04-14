@@ -50,7 +50,6 @@ Item {
         "uaddr": "8000",  // in dec (16 bit)
         "battery_level": "50",      // 0 to 100% (string)
         "battery_voltage": "4.0",   // voltage (string)
-        "plugged_in":"true",      //or false
         "battery_state": "charging", //or "not charging" or "charged"
     }
 
@@ -105,7 +104,7 @@ Item {
 
     property var network_notification : {
         "nodes": [{
-                      "index": "1",
+                      "index": "1",         //the node_id
                       "ready": 0,       //or false
                       "color": "#ffffff"    //RGB hex value of the node color
                   }]
