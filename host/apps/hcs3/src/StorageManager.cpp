@@ -282,7 +282,6 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
 
         QJsonObject jsonPlatform(value.toObject());
         jsonPlatform.insert("image", url.toString());
-        jsonPlatform.insert("connection", "view");
 
         jsonPlatformListResponse.append(jsonPlatform);
     }
