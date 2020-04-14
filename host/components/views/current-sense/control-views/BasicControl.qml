@@ -126,7 +126,7 @@ Item {
 
         if (reset_status.load_fault === "on")
             loadFault.status = SGStatusLight.Red
-        else  loadFault.status = SGStatusLight.OFF
+        else  loadFault.status = SGStatusLight.Off
 
 
     }
@@ -174,6 +174,7 @@ Item {
         }
         else enable5.checked = false
     }
+
 
 
     function pushMessagesToLog (messageIs) {
@@ -403,7 +404,7 @@ Item {
                                             Layout.fillWidth: true
                                             SGInfoBox {
                                                 id: setting1Reading
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 height:  35 * ratioCalc
                                                 width: 140 * ratioCalc
                                                 unit: " A"
@@ -489,7 +490,7 @@ Item {
                                             Layout.fillWidth: true
                                             SGInfoBox {
                                                 id: setting2Reading
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 height:  35 * ratioCalc
                                                 width: 140 * ratioCalc
                                                 unit: " A"
@@ -572,7 +573,7 @@ Item {
                                             Layout.fillWidth: true
                                             SGInfoBox {
                                                 id: setting3Reading
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 height:  35 * ratioCalc
                                                 width: 150 * ratioCalc
                                                 unit: " mA"
@@ -657,7 +658,7 @@ Item {
                                             Layout.fillWidth: true
                                             SGInfoBox {
                                                 id: setting4Reading
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 height:  35 * ratioCalc
                                                 width: 150 * ratioCalc
                                                 unit: " mA"
@@ -733,7 +734,7 @@ Item {
                                             Layout.fillWidth: true
                                             SGInfoBox {
                                                 id: setting5Reading
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 height:  35 * ratioCalc
                                                 width: 150 * ratioCalc
                                                 unit: " µA"
@@ -777,7 +778,7 @@ Item {
 
                                             SGInfoBox {
                                                 id: vinReading
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 height:  35 * ratioCalc
                                                 width: 140 * ratioCalc
                                                 unit: " V"
@@ -975,6 +976,16 @@ Item {
                                                         platformInterface.set_i_in_dac.update(value)
 
                                                     }
+
+                                                    property var switch_enable_status_in_max: platformInterface.switch_enable_status.i_in_max
+                                                    onSwitch_enable_status_in_maxChanged:  {
+                                                        if(switch_enable_status_in_max !== "N/A") {
+                                                            maxInputCurrent.value = switch_enable_status_in_max
+                                                        }
+                                                    }
+
+
+
 
 
                                                 }
@@ -1347,14 +1358,23 @@ Item {
 
                                                     SGInfoBox {
                                                         id: maxLoadCurrent
-                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                         boxColor: "lightgrey"
                                                         boxFont.family: Fonts.digitalseven
                                                         height:  35 * ratioCalc
                                                         width: 140 * ratioCalc
-                                                        unit: "<b>A</b>"
+                                                        unit: "µA"
+                                                        unitFont.bold: true
 
+                                                        property var load_enable_status_current: platformInterface.load_enable_status.max_current
+                                                        onLoad_enable_status_currentChanged:  {
+                                                            maxLoadCurrent.text = load_enable_status_current
+                                                        }
 
+                                                        property var max_current_unit: platformInterface.load_enable_status.max_current_unit
+                                                        onMax_current_unitChanged: {
+                                                            maxLoadCurrent.unit = max_current_unit
+                                                        }
                                                     }
                                                 }
                                             }
@@ -1375,7 +1395,7 @@ Item {
 
                                                     SGInfoBox {
                                                         id: maxInputVolage
-                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                         boxColor: "lightgrey"
                                                         boxFont.family: Fonts.digitalseven
                                                         height:  35 * ratioCalc
@@ -1384,6 +1404,10 @@ Item {
                                                         anchors.left: parent.left
                                                         anchors.verticalCenter: parent.verticalCenter
 
+                                                        property var load_enable_status_input_voltage: platformInterface.load_enable_status.max_input_voltage
+                                                        onLoad_enable_status_input_voltageChanged:  {
+                                                            maxInputVolage.text = load_enable_status_input_voltage
+                                                        }
                                                     }
                                                 }
                                             }
@@ -1391,9 +1415,6 @@ Item {
 
                                     }
                                 }
-
-
-
                             }
                         }
 

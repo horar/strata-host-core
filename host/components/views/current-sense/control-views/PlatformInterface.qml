@@ -22,19 +22,20 @@ Item {
         "en_211": "off",       //on or off
         "en_213": "off",       //on or off
         "en_214": "off",       //on or off
-        "en_333": "off"        //on or off
+        "en_333": "off" ,      //on or off
+        "i_in_max" : "1.2"
     }
 
     property var load_enable_status: {
         "low_load_en": "on",                  //on or off
         "mid_load_en": "off",                 //on or off
-        "high_load_en": "off",                //on or off
-        "load_setting_min": "1µA",            //min value for load setting slider
-        "load_setting_max": "100µA",          //max value for load setting slider
-        "load_setting_from": 0.000001,        //min value for load setting slider as a float
-        "load_setting_to": 0.0001,            //max value for load setting slider as a float
-        "load_setting_step": 0.000001,        //step value for the slider
-        "load_setting_state": 0.000001        //starting value for the slider
+        "high_load_en": "off",
+        "max_input_voltage" : "26",
+        "max_current" : "100",
+        "max_current_unit" : "µA"
+
+
+
     }
 
     property var current_sense_interrupt: {
