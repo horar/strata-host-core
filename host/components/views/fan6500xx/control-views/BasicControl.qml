@@ -22,29 +22,29 @@ ColumnLayout {
 
 
     Component.onCompleted:  {
-        Help.registerTarget(vinLabel, "aa.", 1,"basicFan65Help")
-        Help.registerTarget(inputVoltageLabel, "aa.", 2,"basicFan65Help")
-        Help.registerTarget(inputCurrentLabel, "aa.", 3,"basicFan65Help")
-        Help.registerTarget(inputVCCLabel, "aa.", 4,"basicFan65Help")
-        Help.registerTarget(pvccLabel, "aa.", 5,"basicFan65Help")
-        Help.registerTarget(vbstLabel, "aa.", 6,"basicFan65Help")
-        Help.registerTarget(pgoodLabel, "aa.", 7,"basicFan65Help")
-        Help.registerTarget(outputVoltage, "aa.", 8,"basicFan65Help")
-        Help.registerTarget(outputCurrent, "aa.", 9,"basicFan65Help")
-        Help.registerTarget(frequencyLabel, "aa.", 10,"basicFan65Help")
-        Help.registerTarget(outputLabel, "aa.", 11,"basicFan65Help")
-        Help.registerTarget(ocpLabel, "aa.", 12,"basicFan65Help")
-        Help.registerTarget(efficiencyGaugeContainer, "aa.", 13,"basicFan65Help")
-        Help.registerTarget(powerDissipatedContainer, "aa.", 14,"basicFan65Help")
-        Help.registerTarget(powerOutputContainer, "aa.", 15,"basicFan65Help")
-        Help.registerTarget(tempGaugeContainer, "aa.", 16,"basicFan65Help")
-        Help.registerTarget(osAlertLabel, "aa.", 17,"basicFan65Help")
-        Help.registerTarget(enableSwitchLabel, "aa.", 18,"basicFan65Help")
-        Help.registerTarget(hiccupLabel, "aa.", 19,"basicFan65Help")
-        Help.registerTarget(syncLabel, "aa.", 20,"basicFan65Help")
-        Help.registerTarget(modeLabel, "aa.", 21,"basicFan65Help")
-        Help.registerTarget(softStartLabel, "aa.", 22,"basicFan65Help")
-        Help.registerTarget(vccLabel, "aa.", 23,"basicFan65Help")
+        Help.registerTarget(vinLabel, "This LED indicates whether the input voltage is above the required 4.5 V for proper operation. Green indicates above 4.5 V and red indicates below 4.5 V.", 1,"basicFan65Help")
+        Help.registerTarget(inputVoltageLabel, "This box displays the input voltage applied to the banana plugs.", 2,"basicFan65Help")
+        Help.registerTarget(inputCurrentLabel, "This box displays the input current supplied to the board.", 3,"basicFan65Help")
+        Help.registerTarget(inputVCCLabel, "This box displays the voltage of the VCC pin of the FAN6500XX.", 4,"basicFan65Help")
+        Help.registerTarget(pvccLabel, "This box displays the voltage of the PVCC pin of the FAN6500XX.", 5,"basicFan65Help")
+        Help.registerTarget(vbstLabel, "This box displays the voltage of the VBST pin of the FAN6500XX.", 6,"basicFan65Help")
+        Help.registerTarget(pgoodLabel, "This LED will be green when the regulator is operating normally (PGOOD pin is high).", 7,"basicFan65Help")
+        Help.registerTarget(outputVoltage, "This box displays the regulated output voltage.", 8,"basicFan65Help")
+        Help.registerTarget(outputCurrent, " This box displays the regulated output current.", 9,"basicFan65Help")
+        Help.registerTarget(frequencyLabel, "This slider enables modification of the switching frequency. It is disabled while the regulator is enabled.", 10,"basicFan65Help")
+        Help.registerTarget(outputLabel, "This slider allows you to adjust the desired output voltage. Adjustment is allowed in when the regulator is enabled.", 11,"basicFan65Help")
+        Help.registerTarget(ocpLabel, "This slider changes the OCP threshold of the regulator.", 12,"basicFan65Help")
+        Help.registerTarget(efficiencyGaugeContainer, "This gauge shows the efficiency of the regulator.", 13,"basicFan65Help")
+        Help.registerTarget(powerDissipatedContainer, "This gauge shows the power loss of the regulator.", 14,"basicFan65Help")
+        Help.registerTarget(powerOutputContainer, "This gauge shows the output power of the regulator.", 15,"basicFan65Help")
+        Help.registerTarget(tempGaugeContainer, "This gauge shows the board temperature near the ground pad of the regulator.", 16,"basicFan65Help")
+        Help.registerTarget(osAlertLabel, "", 17,"basicFan65Help")
+        Help.registerTarget(enableSwitchLabel, "This switch enables the regulator..", 18,"basicFan65Help")
+        Help.registerTarget(hiccupLabel, "This switch enables the hiccup feature.", 19,"basicFan65Help")
+        Help.registerTarget(syncLabel, "This box allows the regulator to be set into master and slave mode. In slave mode, entering a value into the box will set the switching frequency in kHz.", 20,"basicFan65Help")
+        Help.registerTarget(modeLabel, "DCM (Discontinuous conduction mode) is a power saving mode that is built into the regulator. It will save power at lower current levels. FCCM (Forced continuous conduction mode) will maintain the set switching frequency, regardless of power.", 21,"basicFan65Help")
+        Help.registerTarget(softStartLabel, "This control allows the soft start time to be adjusted.", 22,"basicFan65Help")
+        Help.registerTarget(vccLabel, "This control allows the user to switch between the internally supplied 5V source (PVCC) or an external 5V source (5V).", 23,"basicFan65Help")
 
 
     }
@@ -563,7 +563,7 @@ ColumnLayout {
                                     SGAlignedLabel {
                                         id: outputLabel
                                         target: selectOutputSlider
-                                        text: "Select Output"
+                                        text: "Select Output Voltage"
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors.verticalCenter: parent.verticalCenter
                                         fontSizeMultiplier: ratioCalc
