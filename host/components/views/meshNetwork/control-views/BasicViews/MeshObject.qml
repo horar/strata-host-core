@@ -245,7 +245,7 @@ Rectangle {
             property var batteryValue: platformInterface.battery_status
             onBatteryValueChanged: {
                 console.log("node",nodeNumber, " received battery value change",platformInterface.battery_status.battery_voltage)
-                //console.log("comparing ",platformInterface.status_battery.uaddr, "and",meshObject.nodeNumber);
+                //console.log("comparing ",platformInterface.battery_status.uaddr, "and",meshObject.nodeNumber);
                 if (platformInterface.battery_status.uaddr == meshObject.nodeNumber){
                     console.log("updating battery value for node", meshObject.nodeNumber);
                     battery_vtg = parseFloat(platformInterface.battery_status.battery_voltage)
@@ -275,7 +275,7 @@ Rectangle {
             property var signalStrengthValue: platformInterface.sensor_status
             onSignalStrengthValueChanged: {
                 if (platformInterface.sensor_status.uaddr == meshObject.nodeNumber){
-                    if (platformInterface.sensor_status.sensor_type === "strata"){
+                    if (platformInterface.sensor_status.sensor_type === "rssi"){
                         //signal strength comes in as a value between 0 and 255, but the real values
                         //should be between -120 and 0, so subtract here to get displayed values
                         signalStrength = platformInterface.sensor_status.data -255
