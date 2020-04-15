@@ -20,10 +20,18 @@ ColumnLayout {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     spacing: 10
 
+    //For demo
+
+    //    Component.onCompleted:  {
+    //        Help.registerTarget(filterHelpContainer, "Help layout test 1.", 1,"basicFan65Help")
+    //        Help.registerTarget(filterHelp2Container, "Help layout test 2.", 2,"basicFan65Help")
+    //        Help.registerTarget(filterHelp3Container, "Help layout test 3.", 3,"basicFan65Help")
+    //    }
+
 
     Component.onCompleted:  {
         Help.registerTarget(vinLabel, "This LED indicates whether the input voltage is above the required 4.5 V for proper operation. Green indicates above 4.5 V and red indicates below 4.5 V.", 1,"basicFan65Help")
-        Help.registerTarget(inputVoltageLabel, "This box displays the input voltage applied to the banana plugs.", 2,"basicFan65Help")
+        Help.registerTarget(inputVoltageLabel, "This box displays the input current supplied to the board.", 2,"basicFan65Help")
         Help.registerTarget(inputCurrentLabel, "This box displays the input current supplied to the board.", 3,"basicFan65Help")
         Help.registerTarget(inputVCCLabel, "This box displays the voltage of the VCC pin of the FAN6500XX.", 4,"basicFan65Help")
         Help.registerTarget(pvccLabel, "This box displays the voltage of the PVCC pin of the FAN6500XX.", 5,"basicFan65Help")
@@ -45,9 +53,62 @@ ColumnLayout {
         Help.registerTarget(modeLabel, "DCM (Discontinuous conduction mode) is a power saving mode that is built into the regulator. It will save power at lower current levels. FCCM (Forced continuous conduction mode) will maintain the set switching frequency, regardless of power.", 21,"basicFan65Help")
         Help.registerTarget(softStartLabel, "This control allows the soft start time to be adjusted.", 22,"basicFan65Help")
         Help.registerTarget(vccLabel, "This control allows the user to switch between the internally supplied 5V source (PVCC) or an external 5V source (5V).", 23,"basicFan65Help")
-
-
     }
+
+    //For demo
+
+    //    Item {
+    //        id: filterHelpContainer
+    //        property point topLeft
+    //        property point bottomRight
+    //        width: inputVoltageContainer.width + inputCurrentContainer.width
+    //        height: bottomRight.y - topLeft.y
+    //        x: topLeft.x
+    //        y: topLeft.y
+    //        function update() {
+    //            topLeft = inputVoltageContainer.mapToItem(root, 0,  0)
+    //            bottomRight = inputCurrentContainer.mapToItem(root, inputCurrentContainer.width, inputCurrentContainer.height)
+    //        }
+    //    }
+
+    //    Item {
+    //        id: filterHelp2Container
+    //        property point topLeft
+    //        property point bottomRight
+    //        width: frequencyContainer.width
+    //        height: bottomRight.y - topLeft.y
+    //        x: topLeft.x
+    //        y: topLeft.y
+    //        function update() {
+    //            topLeft = frequencyContainer.mapToItem(root, 0,  0)
+    //            bottomRight = ocpContainer.mapToItem(root, ocpContainer.width, ocpContainer.height)
+    //        }
+    //    }
+
+    //    Item {
+    //        id: filterHelp3Container
+    //        property point topLeft
+    //        property point bottomRight
+    //        width: gaugeContainer.width
+    //        height: bottomRight.y - topLeft.y
+    //        x: topLeft.x
+    //        y: topLeft.y
+    //        function update() {
+    //            topLeft = efficiencyGaugeContainer.mapToItem(root, 0,  0)
+    //            bottomRight = tempGaugeContainer.mapToItem(root, tempGaugeContainer.width, tempGaugeContainer.height)
+    //        }
+
+    //    }
+
+    //    Connections {
+    //        target: Help.utility
+    //        onTour_runningChanged:{
+    //            filterHelpContainer.update()
+    //            filterHelp2Container.update()
+    //            filterHelp3Container.update()
+    //        }
+    //    }
+
 
     property string vinState: ""
     property var read_vin: platformInterface.status_voltage_current.vingood
@@ -243,7 +304,7 @@ ColumnLayout {
                                         }
 
                                         Rectangle {
-                                            id: inputCurrentConatiner
+                                            id: inputCurrentContainer
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             SGAlignedLabel {
@@ -683,6 +744,7 @@ ColumnLayout {
                             }
 
                             RowLayout {
+                                id: gaugeContainer
                                 anchors {
                                     top: line1.bottom
                                     topMargin: 10
@@ -1188,6 +1250,11 @@ ColumnLayout {
 
         }
 
+
+
     }
+
+
+
 
 }
