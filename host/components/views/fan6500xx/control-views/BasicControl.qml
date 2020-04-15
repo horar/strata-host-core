@@ -38,7 +38,7 @@ ColumnLayout {
         Help.registerTarget(powerDissipatedContainer, "This gauge shows the power loss of the regulator.", 14,"basicFan65Help")
         Help.registerTarget(powerOutputContainer, "This gauge shows the output power of the regulator.", 15,"basicFan65Help")
         Help.registerTarget(tempGaugeContainer, "This gauge shows the board temperature near the ground pad of the regulator.", 16,"basicFan65Help")
-        Help.registerTarget(osAlertLabel, "", 17,"basicFan65Help")
+        Help.registerTarget(osAlertLabel, "This indicator will be red when the temperature sensor detects a board temperature near the ground pad of the regulator of 80°C.", 17,"basicFan65Help")
         Help.registerTarget(enableSwitchLabel, "This switch enables the regulator..", 18,"basicFan65Help")
         Help.registerTarget(hiccupLabel, "This switch enables the hiccup feature.", 19,"basicFan65Help")
         Help.registerTarget(syncLabel, "This box allows the regulator to be set into master and slave mode. In slave mode, entering a value into the box will set the switching frequency in kHz.", 20,"basicFan65Help")
