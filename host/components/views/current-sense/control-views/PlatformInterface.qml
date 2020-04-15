@@ -35,7 +35,7 @@ Item {
         "high_load_en": "off",
         "max_input_voltage" : "26",
         "max_current" : "100",
-        "max_current_unit" : "µA"
+        "max_current_units" : "µA"
     }
 
     property var current_sense_interrupt: {

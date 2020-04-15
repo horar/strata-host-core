@@ -201,28 +201,22 @@ Item {
             setting5Reading.text = periodic_status.ADC_333
             vinReading.text = periodic_status.ADC_VIN
 
-
             if(periodic_status.interrupts.vs_int === "on") {
                 voltageStatusLight.status = SGStatusLight.Red
-                pushMessagesToLog("Voltage Sense Interrupt")
             }
             else voltageStatusLight.status = SGStatusLight.Off
 
             if(periodic_status.interrupts.cs_int === "on") {
                 currentStatusLight.status = SGStatusLight.Red
-                pushMessagesToLog("Current Sense Interrupt")
             }
             else currentStatusLight.status = SGStatusLight.Off
 
             if(periodic_status.interrupts.i_in_int === "on") {
                 loadCurrent.status = SGStatusLight.Red
-                pushMessagesToLog("Voltage Sense Interrupt")
             }
             else loadCurrent.status = SGStatusLight.Off
 
         }
-
-
 
         property var current_sense_interrupt: platformInterface.current_sense_interrupt
         onCurrent_sense_interruptChanged:  {
@@ -823,7 +817,6 @@ Item {
 
                                             SGButton {
                                                 text: "Reset"
-                                                anchors.centerIn: parent
                                                 fontSizeMultiplier: ratioCalc
                                                 color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                                                 hoverEnabled: true
@@ -841,7 +834,6 @@ Item {
                                                     enable3.checked = false
                                                     enable4.checked = false
                                                     enable5.checked = false
-
                                                     lowLoadEnable.checked = false
                                                     midCurrentEnable.checked = false
                                                     highCurrentEnable.checked = false
@@ -1353,7 +1345,7 @@ Item {
                                                     font.bold: true
                                                     alignment: SGAlignedLabel.SideLeftCenter
                                                     fontSizeMultiplier: ratioCalc * 1.2
-                                                    text: "Max Load"
+                                                    text: "Max Load \n Current"
                                                     anchors.left: parent.left
                                                     anchors.verticalCenter: parent.verticalCenter
 
@@ -1372,7 +1364,7 @@ Item {
                                                             maxLoadCurrent.text = load_enable_status_current
                                                         }
 
-                                                        property var max_current_unit: platformInterface.load_enable_status.max_current_unit
+                                                        property var max_current_unit: platformInterface.load_enable_status.max_current_units
                                                         onMax_current_unitChanged: {
                                                             if(max_current_unit !== undefined)
                                                                 maxLoadCurrent.unit = max_current_unit
@@ -1392,7 +1384,7 @@ Item {
                                                     font.bold: true
                                                     alignment: SGAlignedLabel.SideLeftCenter
                                                     fontSizeMultiplier: ratioCalc * 1.2
-                                                    text: "Max Input \nVoltage"
+                                                    text: "Max Input \n Voltage"
                                                     anchors.centerIn: parent
 
                                                     SGInfoBox {
@@ -1469,7 +1461,7 @@ Item {
                                             alignment: SGAlignedLabel.SideTopCenter
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc * 1.2
-                                            text: "Voltage Status"
+                                            text: "Input Voltage\n Status"
                                             font.bold: true
 
                                             SGStatusLight {
@@ -1488,7 +1480,7 @@ Item {
                                             alignment: SGAlignedLabel.SideTopCenter
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc * 1.2
-                                            text: "Current Status"
+                                            text: "Load Current\nStatus"
                                             font.bold: true
 
                                             SGStatusLight {
@@ -1506,7 +1498,7 @@ Item {
                                             alignment: SGAlignedLabel.SideTopCenter
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc * 1.2
-                                            text: "Load Current"
+                                            text: "Input Current\n Status"
                                             font.bold: true
 
                                             SGStatusLight {
@@ -1524,7 +1516,7 @@ Item {
                                             alignment: SGAlignedLabel.SideTopCenter
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc * 1.2
-                                            text: "Load Fault "
+                                            text: "Load\n Fault "
                                             font.bold: true
 
                                             SGStatusLight {
