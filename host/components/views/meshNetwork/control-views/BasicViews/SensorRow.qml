@@ -47,7 +47,7 @@ Item {
             onCheckedChanged: {
                 if (checked){
                     //ask the platform for the signal strength of each node
-                    platformInterface.get_all_sensor_data.update("strata");
+                    platformInterface.get_all_sensor_data.update("rssi");
                     sensorRowRoot.showSignalStrength();
                 }
                   else
