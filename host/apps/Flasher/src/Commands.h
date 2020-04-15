@@ -60,8 +60,6 @@ public:
     FlashCommand(const QString &fileName, int deviceNumber);
     ~FlashCommand() override;
     void process() override;
-private slots:
-    void flasherFinished(bool success);
 private:
     std::unique_ptr<Flasher> flasher_;
     const QString fileName_;
