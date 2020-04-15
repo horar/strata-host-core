@@ -53,8 +53,8 @@ Rectangle {
             mesh8.pairingModel = ""
         }
 
-        property var meshArray: [0,provisioner,mesh2, mesh1,mesh4, mesh3,mesh6,mesh5, mesh7,mesh8]
-        //property var targetArray: [0, target5, target4,target1,target2, target3, target6, target7, target8]
+        property var meshArray: [0,provisioner,mesh4, mesh6, mesh1, mesh2, mesh3,mesh5, mesh7,mesh8]
+
         property var initialNodeVisibilityColors: platformInterface.network_notification
         onInitialNodeVisibilityColorsChanged:{
 
@@ -259,7 +259,7 @@ Rectangle {
                 target8.color = "transparent"
             }
 
-            property var targetArray: [0, target5, target4,target6,target3, target8, target2, target7, target1, 0]
+            property var targetArray: [0, target5,target3 ,target2,target6 , target4,target8 , target7, target1, 0]
 
             property var network: platformInterface.network_notification
             onNetworkChanged:{
