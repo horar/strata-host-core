@@ -427,10 +427,14 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) 
                         ok = true;
                         chunkRetryCount_ = 0;
                     } else {
-                        if ((status == JSON_RESEND_CHUNK) && (chunkRetryCount_ < MAX_CHUNK_RETRIES)) {
-                            ++chunkRetryCount_;
-                            ok = true;
-                            qCInfo(logCategoryDeviceOperations) << this << "Retry to flash firmware chunk.";
+                        if (status == JSON_RESEND_CHUNK) {
+                            if (chunkRetryCount_ < MAX_CHUNK_RETRIES) {
+                                ++chunkRetryCount_;
+                                ok = true;
+                                qCInfo(logCategoryDeviceOperations) << this << "Retry to flash firmware chunk.";
+                            } else {
+                                qCWarning(logCategoryDeviceOperations) << this << "Reached maximum retries for flash firmware chunk.";
+                            }
                         }
                     }
                 }
@@ -460,10 +464,14 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) 
                         } else {
                             qCCritical(logCategoryDeviceOperations) << this << "Wrong SIZE of firmware chunk.";
                         }
-                        if ((ok == false) && (chunkRetryCount_ < MAX_CHUNK_RETRIES)) {
-                            ++chunkRetryCount_;
-                            ok = true;
-                            qCInfo(logCategoryDeviceOperations) << this << "Retry to backup firmware chunk.";
+                        if (ok == false) {
+                            if (chunkRetryCount_ < MAX_CHUNK_RETRIES) {
+                                ++chunkRetryCount_;
+                                ok = true;
+                                qCInfo(logCategoryDeviceOperations) << this << "Retry to backup firmware chunk.";
+                            } else {
+                                qCWarning(logCategoryDeviceOperations) << this << "Reached maximum retries for backup firmware chunk.";
+                            }
                         }
                     }
                 }
