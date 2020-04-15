@@ -168,7 +168,7 @@ void DeviceOperations::process() {
     case State::UpdateFirmware :
         qCInfo(logCategoryDeviceOperations) << this << "Sending 'update_firmware' command.";
         if (device_->sendMessage(CMD_UPDATE_FIRMWARE, reinterpret_cast<quintptr>(this))) {
-            activity_ = Activity::WaitingForSwitchToBtldr;
+            activity_ = Activity::WaitingForSwitchToBootloader;
             responseTimer_.start();
         }
         break;
@@ -264,7 +264,7 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
                     emit nextStep(QPrivateSignal());
                 }
                 break;
-            case Activity::WaitingForSwitchToBtldr :
+            case Activity::WaitingForSwitchToBootloader :
                 responseTimer_.stop();
                 state_ = State::SwitchedToBootloader;
                 // Bootloader takes 5 seconds to start (known issue related to clock source).
@@ -285,8 +285,7 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
                         emit finished(static_cast<int>(Operation::FlashFirmwareChunk), chunkNumber_);
                     }
                 } else {
-                    // send request for flash chunk again
-                    emit nextStep(QPrivateSignal());
+                    emit nextStep(QPrivateSignal());  // retry - flash chunk again
                 }
                 break;
             case Activity::WaitingForBackupFwChunk :
@@ -300,8 +299,7 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
                         emit finished(static_cast<int>(Operation::BackupFirmwareChunk), chunkNumber_);
                     }
                 } else {
-                    // send request for backup chunk again
-                    emit nextStep(QPrivateSignal());
+                    emit nextStep(QPrivateSignal());  // retry - ask for chunk again
                 }
                 break;
             case Activity::WaitingForStartApp :
@@ -350,7 +348,7 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) 
             case Activity::WaitingForPlatformId :
                 cmpStr = JSON_REQ_PLATFORM_ID;
                 break;
-            case Activity::WaitingForSwitchToBtldr :
+            case Activity::WaitingForSwitchToBootloader :
                 cmpStr = JSON_UPDATE_FIRMWARE;
                 break;
             case Activity::WaitingForFlashFwChunk :
@@ -414,7 +412,7 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) 
                     }
                 }
                 break;
-            case Activity::WaitingForSwitchToBtldr :
+            case Activity::WaitingForSwitchToBootloader :
                 if (CommandValidator::validate(CommandValidator::JsonType::updateFwRes, doc)) {
                     const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
                     if (status == JSON_OK) {

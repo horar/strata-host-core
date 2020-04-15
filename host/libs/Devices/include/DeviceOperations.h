@@ -74,7 +74,7 @@ private:
         None,
         WaitingForFirmwareInfo,
         WaitingForPlatformId,
-        WaitingForSwitchToBtldr,
+        WaitingForSwitchToBootloader,
         WaitingForFlashFwChunk,
         WaitingForBackupFwChunk,
         WaitingForStartApp

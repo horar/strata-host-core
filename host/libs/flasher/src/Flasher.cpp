@@ -46,7 +46,7 @@ void Flasher::flash(bool startApplication) {
             finish(Result::Error, errStr);
         }
     } else {
-        QString errStr = QStringLiteral("Cannot open file '") + fwFile_.fileName() + QStringLiteral("'.");
+        QString errStr = QStringLiteral("Cannot open file '") + fwFile_.fileName() + QStringLiteral("'. ") + fwFile_.errorString();
         qCCritical(logCategoryFlasher).noquote() << this << errStr;
         finish(Result::Error, errStr);
     }
@@ -61,7 +61,7 @@ void Flasher::backup(bool startApplication) {
         qCInfo(logCategoryFlasher) << this << "Preparing for firmware backup.";
         operation_->switchToBootloader();
     } else {
-        QString errStr = QStringLiteral("Cannot open file '") + fwFile_.fileName() + QStringLiteral("'.");
+        QString errStr = QStringLiteral("Cannot open file '") + fwFile_.fileName() + QStringLiteral("'. ") + fwFile_.errorString();
         qCCritical(logCategoryFlasher).noquote() << this << errStr;
         finish(Result::Error, errStr);
     }
@@ -88,19 +88,11 @@ void Flasher::handleOperationFinished(int operation, int data) {
         finish(Result::Ok);
         break;
     case DeviceOperations::Operation::Timeout :
-        if (action_ == Action::Flash) {
-            qCCritical(logCategoryFlasher) << this << "Timeout during flashing.";
-        } else {
-            qCCritical(logCategoryFlasher) << this << "Timeout during firmware backup.";
-        }
+        qCCritical(logCategoryFlasher) << this << "Timeout during firmware operation.";
         finish(Result::Timeout);
         break;
     case DeviceOperations::Operation::Cancel :
-        if (action_ == Action::Flash) {
-            qCWarning(logCategoryFlasher) << this << "Flashing was cancelled.";
-        } else {
-            qCWarning(logCategoryFlasher) << this << "Firmware backup was cancelled.";
-        }
+        qCWarning(logCategoryFlasher) << this << "Firmware operation was cancelled.";
         finish(Result::Cancelled);
         break;
     default :
@@ -166,7 +158,7 @@ void Flasher::handleBackupFirmware(int chunkNumber) {
             finish(Result::Error, errStr);
             return;
         }
-        if (chunkNumber) {
+        if (chunkNumber != 0) {
             chunkCount_ = chunkNumber;
             if (chunkNumber == chunkProgress_) { // this is faster than modulo
                 chunkProgress_ += BACKUP_PROGRESS_STEP;
