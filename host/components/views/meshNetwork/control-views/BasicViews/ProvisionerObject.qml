@@ -180,8 +180,8 @@ Rectangle {
         property var signalStrengthValue: platformInterface.sensor_status
         onSignalStrengthValueChanged: {
             if (platformInterface.sensor_status.uaddr == provisionerObject.uaddr){
-                if (platformInterface.sensor_status.sensor_type === "strata"){
-                    signalStrength = platformInterface.sensor_status.data - 255
+                if (platformInterface.sensor_status.sensor_type === "rssi"){
+                    signalStrength = platformInterface.sensor_status.data
                     console.log("signal strength=",signalStrength)
                     if (signalStrength !== "undefined")
                         sensorValueText.text = signalStrength + " dBm";
