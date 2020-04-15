@@ -40,12 +40,20 @@ var mapping = [
                 inUse: false
             },
             {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/battery.svg",
-                text: "Power Management",
-                filterMapping: "category-power-management",
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/load_switches.svg",
+                text: "Load Switches",
+                filterMapping: "subcategory-powerman-load-switch",
                 type: "category",
                 inUse: false
             },
+            // Commented out per Will Abdeh request, to be uncommented in future release
+//            {
+//                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/battery.svg",
+//                text: "Power Management",
+//                filterMapping: "category-power-management",
+//                type: "category",
+//                inUse: false
+//            },
             {
                 iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/battery.svg",
                 text: "Power Modules",
