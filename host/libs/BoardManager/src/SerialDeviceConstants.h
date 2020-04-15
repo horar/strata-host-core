@@ -5,7 +5,6 @@
 
 namespace spyglass {
 
-constexpr int NUMBER_OF_RETRIES = 5;
 constexpr unsigned READ_BUFFER_SIZE = 4096;
 constexpr std::chrono::milliseconds RESPONSE_TIMEOUT(1000);
 constexpr std::chrono::milliseconds LAUNCH_DELAY(500);
