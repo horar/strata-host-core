@@ -7,6 +7,8 @@
 // define the schemas
 
 // this support platform id v1 and v2
+// [Mohammed] "count" can be string or integer. This change was implemented because of 
+//              some released boards have it as a string instead of an integer.
 const rapidjson::SchemaDocument CommandValidator::requestPlatformIdResSchema(
     CommandValidator::parseSchema(
         R"(
@@ -35,7 +37,7 @@ const rapidjson::SchemaDocument CommandValidator::requestPlatformIdResSchema(
                                     "type": "string"
                                     },
                                     "count": {
-                                    "type": "integer"
+                                    "type": ["string", "integer"]
                                     },
                                     "platform_id_version": {
                                     "type": "string"
