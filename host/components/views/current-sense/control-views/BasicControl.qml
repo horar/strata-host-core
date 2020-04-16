@@ -222,7 +222,7 @@ Item {
         onCurrent_sense_interruptChanged:  {
             if(current_sense_interrupt.value === "yes") {
                 currentStatusLight.status = SGStatusLight.Red
-                pushMessagesToLog("Current Sense Interrupt")
+                pushMessagesToLog("On-Board Load Current Interrupt")
             }
             else currentStatusLight.status = SGStatusLight.Off
 
@@ -238,7 +238,7 @@ Item {
         onVoltage_sense_interruptChanged: {
             if(voltage_sense_interrupt.value === "yes") {
                 voltageStatusLight.status = SGStatusLight.Red
-                pushMessagesToLog("Voltage Sense Interrupt")
+                pushMessagesToLog("Input Voltage Interruptt")
             }
             else voltageStatusLight.status = SGStatusLight.Off
 
@@ -253,7 +253,7 @@ Item {
         onI_in_interruptChanged: {
             if(i_in_interrupt.value === "yes") {
                 loadCurrent.status = SGStatusLight.Red
-                pushMessagesToLog("Load Current Interrupt")
+                pushMessagesToLog("Input Current Interrupt")
 
             }
             else loadCurrent.status = SGStatusLight.Off
@@ -407,8 +407,6 @@ Item {
                                                 boxFont.family: Fonts.digitalseven
                                                 anchors.left: parent.left
                                                 anchors.verticalCenter: parent.verticalCenter
-                                                //                                                anchors.horizontalCenter: parent.horizontalCenter
-                                                //                                                anchors.horizontalCenterOffset: 5
                                             }
                                         }
 
@@ -458,8 +456,7 @@ Item {
 
                                             SGSwitch {
                                                 id: enable2
-                                                //                                            height: 35 * ratioCalc
-                                                //                                            width: 95 * ratioCalc
+
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
                                                 fontSizeMultiplier: ratioCalc
@@ -546,8 +543,6 @@ Item {
 
                                             SGSwitch {
                                                 id: enable3
-                                                //                                            height: 35 * ratioCalc
-                                                //                                            width: 95 * ratioCalc
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
                                                 fontSizeMultiplier: ratioCalc
@@ -565,19 +560,19 @@ Item {
                                         Rectangle{
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
+                                            // color: "red"
+
                                             SGInfoBox {
                                                 id: setting3Reading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 height:  35 * ratioCalc
-                                                width: 150 * ratioCalc
+                                                width: 155 * ratioCalc
                                                 unit: " mA"
                                                 unitFont.bold: true
                                                 boxColor: "lightgrey"
                                                 boxFont.family: Fonts.digitalseven
                                                 anchors.left: parent.left
                                                 anchors.verticalCenter: parent.verticalCenter
-                                                //                                                anchors.horizontalCenter: parent.horizontalCenter
-                                                //                                                anchors.horizontalCenterOffset: 5
                                             }
                                         }
 
@@ -654,7 +649,7 @@ Item {
                                                 id: setting4Reading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 height:  35 * ratioCalc
-                                                width: 150 * ratioCalc
+                                                width: 155 * ratioCalc
                                                 unit: " mA"
                                                 unitFont.bold: true
                                                 boxColor: "lightgrey"
@@ -730,7 +725,7 @@ Item {
                                                 id: setting5Reading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 height:  35 * ratioCalc
-                                                width: 150 * ratioCalc
+                                                width: 155 * ratioCalc
                                                 unit: " µA"
                                                 unitFont.bold: true
                                                 boxColor: "lightgrey"
@@ -1480,7 +1475,7 @@ Item {
                                             alignment: SGAlignedLabel.SideTopCenter
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc * 1.2
-                                            text: "Load Current\nStatus"
+                                            text: "On-Board Load\n Current Status"
                                             font.bold: true
 
                                             SGStatusLight {

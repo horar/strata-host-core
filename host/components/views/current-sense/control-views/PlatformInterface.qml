@@ -39,18 +39,18 @@ Item {
     }
 
     property var current_sense_interrupt: {
-        "value":"yes",
-        "load_fault": "on"
+        "value":"no",
+        "load_fault": "off"
     }
 
     property var voltage_sense_interrupt: {
-        "value": "yes",
-        "load_fault": "on"
+        "value": "no",
+        "load_fault": "off"
     }
 
     property var i_in_interrupt: {
-        "value": "yes",
-        "load_fault": "on"
+        "value": "no",
+        "load_fault": "off"
     }
 
     property var config_running: {
