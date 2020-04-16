@@ -821,8 +821,6 @@ Item {
                                                 anchors.verticalCenter: parent.verticalCenter
                                                 onClicked: {
                                                     platformInterface.reset_board.send()
-                                                    platformInterface.switch_enables.update("off")
-                                                    platformInterface.load_enables.update("off")
                                                     logFault.clear()
                                                     enable1.checked = false
                                                     enable2.checked = false
