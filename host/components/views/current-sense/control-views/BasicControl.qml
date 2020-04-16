@@ -1334,36 +1334,58 @@ Item {
                                                 Layout.fillWidth: true
                                                 Layout.fillHeight: true
 
-                                                SGAlignedLabel {
-                                                    id: maxLoadLabel
-                                                    target: maxLoadCurrent
-                                                    font.bold: true
-                                                    alignment: SGAlignedLabel.SideLeftCenter
-                                                    fontSizeMultiplier: ratioCalc * 1.2
-                                                    text: "Max Load \n Current"
-                                                    anchors.left: parent.left
-                                                    anchors.verticalCenter: parent.verticalCenter
+                                                RowLayout{
+                                                    anchors.fill: parent
 
-                                                    SGInfoBox {
-                                                        id: maxLoadCurrent
-                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                        boxColor: "lightgrey"
-                                                        boxFont.family: Fonts.digitalseven
-                                                        height:  35 * ratioCalc
-                                                        width: 140 * ratioCalc
-                                                        unit: "µA"
-                                                        unitFont.bold: true
+                                                    Rectangle {
+                                                        Layout.preferredWidth: parent.width/1.3
+                                                        Layout.fillHeight: true
 
-                                                        property var load_enable_status_current: platformInterface.load_enable_status.max_current
-                                                        onLoad_enable_status_currentChanged:  {
-                                                            maxLoadCurrent.text = load_enable_status_current
+                                                        SGAlignedLabel {
+                                                            id: maxLoadLabel
+                                                            target: maxLoadCurrent
+                                                            font.bold: true
+                                                            alignment: SGAlignedLabel.SideLeftCenter
+                                                            fontSizeMultiplier: ratioCalc * 1.2
+                                                            text: "Max Load \n Current"
+                                                            anchors.right: parent.right
+                                                            anchors.verticalCenter: parent.verticalCenter
+
+                                                            SGInfoBox {
+                                                                id: maxLoadCurrent
+                                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                                boxColor: "lightgrey"
+                                                                boxFont.family: Fonts.digitalseven
+                                                                height:  35 * ratioCalc
+                                                                width: 130 * ratioCalc
+
+                                                                property var load_enable_status_current: platformInterface.load_enable_status.max_current
+                                                                onLoad_enable_status_currentChanged:  {
+                                                                    maxLoadCurrent.text = load_enable_status_current
+                                                                }
+
+
+                                                            }
+                                                        }
+                                                    }
+
+                                                    Rectangle {
+                                                        Layout.fillWidth: true
+                                                        Layout.fillHeight: true
+                                                        SGText {
+                                                            id: maxLoadUnit
+                                                            text: "µA"
+                                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                            font.bold: true
+                                                            anchors.left: parent.left
+                                                            anchors.verticalCenter: parent.verticalCenter
+                                                            property var max_current_unit: platformInterface.load_enable_status.max_current_units
+                                                            onMax_current_unitChanged: {
+                                                                if(max_current_unit !== undefined)
+                                                                    maxLoadUnit.text = max_current_unit
+                                                            }
                                                         }
 
-                                                        property var max_current_unit: platformInterface.load_enable_status.max_current_units
-                                                        onMax_current_unitChanged: {
-                                                            if(max_current_unit !== undefined)
-                                                                maxLoadCurrent.unit = max_current_unit
-                                                        }
                                                     }
                                                 }
                                             }
