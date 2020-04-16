@@ -22,12 +22,12 @@ Flasher::Flasher(const SerialDevicePtr& device, const QString& firmwareFilename)
     connect(operation_.get(), &DeviceOperations::finished, this, &Flasher::handleOperationFinished);
     connect(operation_.get(), &DeviceOperations::error, this, &Flasher::handleOperationError);
 
-    qCDebug(logCategoryFlasher) << this << "Flasher created.";
+    qCDebug(logCategoryFlasher) << this << "Flasher created (unique ID: 0x" << reinterpret_cast<quintptr>(this) << ").";
 }
 
 Flasher::~Flasher() {
     // Destructor must be defined due to unique pointer to incomplete type.
-    qCDebug(logCategoryFlasher) << this << "Flasher deleted.";
+    qCDebug(logCategoryFlasher) << this << "Flasher deleted (unique ID: 0x" << reinterpret_cast<quintptr>(this) << ").";
 }
 
 void Flasher::flash(bool startApplication) {

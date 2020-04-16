@@ -5,6 +5,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QTemporaryFile>
 
 #include <SerialDevice.h>
 #include <Flasher.h>
@@ -20,9 +21,9 @@ public:
     /*!
      * FlasherConnector constructor.
      * \param device device which will be used by FlasherConnector
-     * \param firmwareFilename path to firmware file
+     * \param firmwarePath path to firmware file
      */
-    FlasherConnector(const SerialDevicePtr& device, const QString& firmwareFilename, QObject* parent = nullptr);
+    FlasherConnector(const SerialDevicePtr& device, const QString& firmwarePath, QObject* parent = nullptr);
 
     /*!
      * FlasherConnector destructor.
@@ -31,21 +32,35 @@ public:
 
     /*!
      * Flash firmware.
+     * \param backupOld if set to true backup old firmware before flashing new one and if flash process fails flash old firmware
+     * \return true if flash process has started, otherwise false
      */
-    void flash();
+    bool flash(bool backupOld = true);
 
     /*!
-     * Stop flash firmware operation.
+     * Backup firmware.
+     * \return true if backup process has started, otherwise false
+     */
+    bool backup();
+
+    /*!
+     * Stop flash/backup firmware operation.
      */
     void stop();
+
+    /*!
+     * Set path to firmware file.
+     * \param firmwarePath path to firmware file
+     */
+    void setFirmwarePath(const QString& firmwarePath);
 
 signals:
     /*!
      * This signal is emitted when FlasherConnector finishes.
-     * \param result result of flash operation
-     * \param errorString error description if result is Error, otherwise empty
+     * \param result result of firmware operation
+     * \param errorString error description (if result is Error, otherwise null string)
      */
-    void finished(Flasher::Result result, QString errorString);
+    void finished(Flasher::Result result, QString errorString = QString());
 
     /*!
      * This signal is emitted during firmware flashing.
@@ -54,10 +69,34 @@ signals:
      */
     void flashProgress(int chunk, int total);
 
+    /*!
+     * This signal is emitted during firmware backup.
+     * \param chunk chunk number which was backed up
+     * \param last true if backed up chunk is last
+     */
+    void backupProgress(int chunk, bool last);
+
+private slots:
+    void handleFlasherFinished(Flasher::Result result, QString errorString);
+
 private:
+    void flashFirmware(bool flashOld);
+    void backupFirmware(bool backupOld);
+
     SerialDevicePtr device_;
     std::unique_ptr<Flasher> flasher_;
-    const QString fileName_;
+    QString filePath_;
+    QTemporaryFile tmpBackupFile_;
+
+    enum class State {
+        None,
+        Flash,
+        Backup,
+        BackupOld,
+        FlashNew,
+        FlashOld
+    };
+    State state_;
 };
 
 }  // namespace
