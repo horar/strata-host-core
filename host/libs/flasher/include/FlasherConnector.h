@@ -32,10 +32,10 @@ public:
 
     /*!
      * Flash firmware.
-     * \param backupOld if set to true backup old firmware before flashing new one and if flash process fails flash old firmware
+     * \param backupBeforeFlash if set to true backup old firmware before flashing new one and if flash process fails flash old firmware
      * \return true if flash process has started, otherwise false
      */
-    bool flash(bool backupOld = true);
+    bool flash(bool backupBeforeFlash = true);
 
     /*!
      * Backup firmware.
@@ -54,13 +54,45 @@ public:
      */
     void setFirmwarePath(const QString& firmwarePath);
 
+    /*!
+     * The Result enum for finished() signal.
+     */
+    enum class Result {
+        Success,   /*!< Firmware is flashed (or backed up) successfully. */
+        Unsuccess, /*!< Something went wrong, new firmware was not flashed, but original firmware is avaialble (board can be in bootloader mode). */
+        Failure    /*!< Failure, neither new nor original firmware is flashed correctly. */
+    };
+    Q_ENUM(Result)
+
+    /*!
+     * The Operation enum for operationStateChanged() signal.
+     */
+    enum class Operation {
+        Preparation,
+        Flash,
+        Backup,
+        BackupBeforeFlash,
+        RestoreFromBackup
+    };
+    Q_ENUM(Operation)
+
+    /*!
+     * The State enum for operationStateChanged() signal.
+     */
+    enum class State {
+        Started,
+        Finished,
+        Cancelled,
+        Failed
+    };
+    Q_ENUM(State)
+
 signals:
     /*!
-     * This signal is emitted when FlasherConnector finishes.
-     * \param result result of firmware operation
-     * \param errorString error description (if result is Error, otherwise null string)
+     * This signal is emitted only once when FlasherConnector finishes.
+     * \param result result of FlasherConnector operation
      */
-    void finished(Flasher::Result result, QString errorString = QString());
+    void finished(Result result);
 
     /*!
      * This signal is emitted during firmware flashing.
@@ -72,31 +104,45 @@ signals:
     /*!
      * This signal is emitted during firmware backup.
      * \param chunk chunk number which was backed up
-     * \param last true if backed up chunk is last
      */
-    void backupProgress(int chunk, bool last);
+    void backupProgress(int chunk);
+
+    /*!
+     * This signal is emitted when state of FlasherConnector is changed.
+     * \param operation FlasherConnector operation
+     * \param state state of operation
+     * \param errorString error description (if state is 'Failed', otherwise null string)
+     */
+    void operationStateChanged(Operation operation, State state, QString errorString = QString());
 
 private slots:
-    void handleFlasherFinished(Flasher::Result result, QString errorString);
+    void handleFlasherFinished(Flasher::Result flasherResult);
+    void handleFlasherError(QString errorString);
+    void handleSwitchToBootloader(bool done);
 
 private:
     void flashFirmware(bool flashOld);
     void backupFirmware(bool backupOld);
+    void startOperation();
+    void processStartupError(const QString& errorString);
 
     SerialDevicePtr device_;
     std::unique_ptr<Flasher> flasher_;
     QString filePath_;
     QTemporaryFile tmpBackupFile_;
+    QString errorString_;
 
-    enum class State {
+    enum class Action {
         None,
-        Flash,
-        Backup,
-        BackupOld,
-        FlashNew,
-        FlashOld
+        Flash,      // only flash firmware (without backup)
+        Backup,     // only backup firmware
+        BackupOld,  // backup old firmware
+        FlashNew,   // flash new firmware
+        FlashOld    // flash backed up (old) firmware
     };
-    State state_;
+    Action action_;
+
+    Operation operation_;
 };
 
 }  // namespace

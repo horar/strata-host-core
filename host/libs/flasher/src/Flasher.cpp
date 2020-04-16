@@ -39,16 +39,18 @@ void Flasher::flash(bool startApplication) {
             chunkCount_ = static_cast<int>((fwFile_.size() - 1 + CHUNK_SIZE) / CHUNK_SIZE);
             chunkProgress_ = FLASH_PROGRESS_STEP;
             qCInfo(logCategoryFlasher) << this << "Preparing for flashing " << dec << chunkCount_ << " chunks of firmware.";
+            emit switchToBootloader(false);
             operation_->switchToBootloader();
         } else {
             QString errStr = QStringLiteral("File '") + fwFile_.fileName() + QStringLiteral("' is empty.");
             qCCritical(logCategoryFlasher).noquote() << this << errStr;
-            finish(Result::Error, errStr);
+            emit error(errStr);
+            finish(Result::Error);
         }
     } else {
-        QString errStr = QStringLiteral("Cannot open file '") + fwFile_.fileName() + QStringLiteral("'. ") + fwFile_.errorString();
-        qCCritical(logCategoryFlasher).noquote() << this << errStr;
-        finish(Result::Error, errStr);
+        qCCritical(logCategoryFlasher).noquote().nospace() << this << "Cannot open file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
+        emit error(fwFile_.errorString());
+        finish(Result::Error);
     }
 }
 
@@ -59,11 +61,12 @@ void Flasher::backup(bool startApplication) {
         chunkCount_ = 0;
         chunkProgress_ = BACKUP_PROGRESS_STEP;
         qCInfo(logCategoryFlasher) << this << "Preparing for firmware backup.";
+        emit switchToBootloader(false);
         operation_->switchToBootloader();
     } else {
-        QString errStr = QStringLiteral("Cannot open file '") + fwFile_.fileName() + QStringLiteral("'. ") + fwFile_.errorString();
-        qCCritical(logCategoryFlasher).noquote() << this << errStr;
-        finish(Result::Error, errStr);
+        qCCritical(logCategoryFlasher).noquote().nospace() << this << "Cannot open file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
+        emit error(fwFile_.errorString());
+        finish(Result::Error);
     }
 }
 
@@ -75,6 +78,7 @@ void Flasher::handleOperationFinished(int operation, int data) {
     DeviceOperations::Operation op = static_cast<DeviceOperations::Operation>(operation);
     switch (op) {
     case DeviceOperations::Operation::SwitchToBootloader :
+        emit switchToBootloader(true);
         (action_ == Action::Flash) ? handleFlashFirmware(data) : handleBackupFirmware(data);
         break;
     case DeviceOperations::Operation::FlashFirmwareChunk :
@@ -99,7 +103,8 @@ void Flasher::handleOperationFinished(int operation, int data) {
         {
             QString errStr = QStringLiteral("Unsupported operation.");
             qCCritical(logCategoryFlasher) << this << errStr;
-            finish(Result::Error, errStr);
+            emit error(errStr);
+            finish(Result::Error);
         }
     }
 }
@@ -139,9 +144,9 @@ void Flasher::handleFlashFirmware(int lastFlashedChunk) {
     if (bytesRead == chunkSize) {
         operation_->flashFirmwareChunk(chunk, chunkNumber_);
     } else {
-        QString errStr = QStringLiteral("Cannot read from file '") + fwFile_.fileName() + QStringLiteral("'. ") + fwFile_.errorString();
-        qCCritical(logCategoryFlasher).noquote() << this << errStr;
-        finish(Result::Error, errStr);
+        qCCritical(logCategoryFlasher).noquote().nospace() << this << "Cannot read from file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
+        emit error(QStringLiteral("File read error. ") + fwFile_.errorString());
+        finish(Result::Error);
     }
 }
 
@@ -153,9 +158,9 @@ void Flasher::handleBackupFirmware(int chunkNumber) {
         QVector<quint8> chunk = operation_->recentFirmwareChunk();
         qint64 bytesWritten = fwFile_.write(reinterpret_cast<char*>(chunk.data()), chunk.size());
         if (bytesWritten != chunk.size()) {
-            QString errStr = QStringLiteral("Cannot write to file ") + fwFile_.fileName();
-            qCCritical(logCategoryFlasher).noquote() << this << errStr;
-            finish(Result::Error, errStr);
+            qCCritical(logCategoryFlasher).noquote().nospace() << this << "Cannot write to file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
+            emit error(QStringLiteral("File write error. ") + fwFile_.errorString());
+            finish(Result::Error);
             return;
         }
         if (chunkNumber != 0) {
@@ -185,14 +190,15 @@ void Flasher::handleBackupFirmware(int chunkNumber) {
 
 void Flasher::handleOperationError(QString errStr) {
     qCCritical(logCategoryFlasher).noquote() << this << "Error during flashing: " << errStr;
-    finish(Result::Error, errStr);
+    emit error(errStr);
+    finish(Result::Error);
 }
 
-void Flasher::finish(Result result, QString errStr) {
+void Flasher::finish(Result result) {
     if (fwFile_.isOpen()) {
         fwFile_.close();
     }
-    emit finished(result, errStr);
+    emit finished(result);
 }
 
 }  // namespace
