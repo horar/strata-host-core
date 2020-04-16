@@ -48,6 +48,12 @@ class Flasher : public QObject
         void flash(bool startApplication = true);
 
         /*!
+         * Backup firmware.
+         * \param startApplication if set to true start application after backup
+         */
+        void backup(bool startApplication = true);
+
+        /*!
          * Cancel flash firmware operation.
          */
         void cancel();
@@ -69,12 +75,20 @@ class Flasher : public QObject
          */
         void flashProgress(int chunk, int total);
 
+        /*!
+         * This signal is emitted during firmware backup.
+         * \param chunk chunk number which was backed up
+         * \param last true if backed up chunk is last
+         */
+        void backupProgress(int chunk, bool last);
+
     private slots:
         void handleOperationFinished(int operation, int data);
         void handleOperationError(QString errStr);
 
     private:
         void handleFlashFirmware(int lastFlashedChunk);
+        void handleBackupFirmware(int chunkNumber);
         void finish(Result result, QString errStr = QString());
 
         SerialDevicePtr device_;
@@ -88,6 +102,12 @@ class Flasher : public QObject
         int chunkNumber_;
         int chunkCount_;
         int chunkProgress_;
+
+        enum class Action {
+            Flash,
+            Backup
+        };
+        Action action_;
 
         bool startApp_;
 };

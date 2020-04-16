@@ -22,7 +22,7 @@ QDebug operator<<(QDebug dbg, const DeviceOperations* devOp) {
     return dbg.nospace().noquote() << "Device 0x" << hex << devOp->deviceId_ << ": ";
 }
 
-DeviceOperations::DeviceOperations(SerialDevicePtr device) :
+DeviceOperations::DeviceOperations(const SerialDevicePtr& device) :
     device_(device), responseTimer_(this), operation_(Operation::None),
     state_(State::None), activity_(Activity::None), reqFwInfoResp_(true)
 {
@@ -49,14 +49,21 @@ void DeviceOperations::identify(bool requireFwInfoResponse) {
     startOperation(Operation::Identify);
 }
 
-void DeviceOperations::prepareForFlash() {
-    startOperation(Operation::PrepareForFlash);
+void DeviceOperations::switchToBootloader() {
+    startOperation(Operation::SwitchToBootloader);
 }
 
-void DeviceOperations::flashFirmwareChunk(QVector<quint8> chunk, int chunk_number) {
+void DeviceOperations::flashFirmwareChunk(const QVector<quint8>& chunk, int chunkNumber) {
     chunk_ = chunk;
-    chunkNumber_ = chunk_number;
+    chunkNumber_ = chunkNumber;
+    chunkRetryCount_ = 0;
     startOperation(Operation::FlashFirmwareChunk);
+}
+
+void DeviceOperations::backupFirmwareChunk(bool firstChunk) {
+    chunkRetryCount_ = 0;
+    firstBackupChunk_ = firstChunk;
+    startOperation(Operation::BackupFirmwareChunk);
 }
 
 void DeviceOperations::startApplication() {
@@ -67,10 +74,14 @@ int DeviceOperations::deviceId() const {
     return static_cast<int>(deviceId_);
 }
 
+QVector<quint8> DeviceOperations::recentFirmwareChunk() const {
+    return chunk_;
+}
+
 void DeviceOperations::startOperation(Operation operation) {
     if (operation_ != Operation::None) {  // another operation is runing
-        // flash firmware chunk is a special case
-        if (operation_ != Operation::FlashFirmwareChunk || operation != Operation::FlashFirmwareChunk) {
+        // flash or backup firmware chunk is a special case
+        if (operation_ != operation || (operation != Operation::FlashFirmwareChunk && operation != Operation::BackupFirmwareChunk)) {
             QString err_msg(QStringLiteral("Cannot start operation, because another operation is running."));
             qCWarning(logCategoryDeviceOperations) << this << err_msg;
             emit error(err_msg);
@@ -94,11 +105,14 @@ void DeviceOperations::startOperation(Operation operation) {
         state_ = State::GetFirmwareInfo;
         delay = LAUNCH_DELAY;
         break;
-    case Operation::PrepareForFlash :
+    case Operation::SwitchToBootloader :
         state_ = State::GetPlatformId;
         break;
     case Operation::FlashFirmwareChunk :
         state_ = State::FlashFwChunk;
+        break;
+    case Operation::BackupFirmwareChunk :
+        state_ = State::BackupFwChunk;
         break;
     case Operation::StartApplication :
         state_ = State::StartApplication;
@@ -154,18 +168,33 @@ void DeviceOperations::process() {
     case State::UpdateFirmware :
         qCInfo(logCategoryDeviceOperations) << this << "Sending 'update_firmware' command.";
         if (device_->sendMessage(CMD_UPDATE_FIRMWARE, reinterpret_cast<quintptr>(this))) {
-            activity_ = Activity::WaitingForUpdateFw;
+            activity_ = Activity::WaitingForSwitchToBootloader;
             responseTimer_.start();
         }
         break;
-    case State::ReadyForFlashFw :
-        qCInfo(logCategoryDeviceOperations) << this << "Ready for flashing firmware.";
-        finishOperation(Operation::PrepareForFlash);
+    case State::SwitchedToBootloader :
+        qCInfo(logCategoryDeviceOperations) << this << "Ready for firmware operations.";
+        finishOperation(Operation::SwitchToBootloader);
         break;
     case State::FlashFwChunk :
-        qCInfo(logCategoryDeviceOperations) << this << "Sending 'flash_firmware' command.";
+        {
+            const char *msg = "Sending 'flash_firmware' command.";
+            if (chunkNumber_ == 1) { qCInfo(logCategoryDeviceOperations) << this << msg; }
+            else { qCDebug(logCategoryDeviceOperations) << this << msg; }
+        }
         if (device_->sendMessage(createFlashFwJson(), reinterpret_cast<quintptr>(this))) {
             activity_ = Activity::WaitingForFlashFwChunk;
+            responseTimer_.start();
+        }
+        break;
+    case State::BackupFwChunk :
+        {
+            const char *msg = "Sending 'backup_firmware' command.";
+            if (firstBackupChunk_) { qCInfo(logCategoryDeviceOperations) << this << msg; }
+            else { qCDebug(logCategoryDeviceOperations) << this << msg; }
+        }
+        if (device_->sendMessage(createBackupFwJson(), reinterpret_cast<quintptr>(this))) {
+            activity_ = Activity::WaitingForBackupFwChunk;
             responseTimer_.start();
         }
         break;
@@ -225,19 +254,19 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
                 responseTimer_.stop();
                 if (operation_ == Operation::Identify) {
                     finishOperation(Operation::Identify);
-                } else {  // Operation::PrepareForFlash
+                } else {  // Operation::SwitchToBootloader
                     if (device_->property(DeviceProperties::verboseName) == BOOTLOADER_STR) {
-                        qCInfo(logCategoryDeviceOperations) << this << "Platform in bootloader mode. Ready for flashing firmware.";
-                        state_ = State::ReadyForFlashFw;
+                        qCInfo(logCategoryDeviceOperations) << this << "Platform in bootloader mode. Ready for firmware operations.";
+                        state_ = State::SwitchedToBootloader;
                     } else {
                         state_ = State::UpdateFirmware;
                     }
                     emit nextStep(QPrivateSignal());
                 }
                 break;
-            case Activity::WaitingForUpdateFw :
+            case Activity::WaitingForSwitchToBootloader :
                 responseTimer_.stop();
-                state_ = State::ReadyForFlashFw;
+                state_ = State::SwitchedToBootloader;
                 // Bootloader takes 5 seconds to start (known issue related to clock source).
                 // Platform and bootloader uses the same setting for clock source.
                 // Clock source for bootloader and application must match. Otherwise when application jumps to bootloader,
@@ -247,12 +276,30 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
                 break;
             case Activity::WaitingForFlashFwChunk :
                 responseTimer_.stop();
-                if (chunkNumber_ == 0 ) {  // the last chunk
-                    finishOperation(Operation::FlashFirmwareChunk, chunkNumber_);
+                if (chunkRetryCount_ == 0) {
+                    if (chunkNumber_ == 0 ) {  // the last chunk
+                        finishOperation(Operation::FlashFirmwareChunk, chunkNumber_);
+                    } else {
+                        // Chunk was flashed but flashing operation is not finished yet,
+                        // so emit only signal and do not call function finishOperation().
+                        emit finished(static_cast<int>(Operation::FlashFirmwareChunk), chunkNumber_);
+                    }
                 } else {
-                    // Chunk was flashed but flashing operation is not finished yet,
-                    // so emit only signal and do not call function finishOperation().
-                    emit finished(static_cast<int>(Operation::FlashFirmwareChunk), chunkNumber_);
+                    emit nextStep(QPrivateSignal());  // retry - flash chunk again
+                }
+                break;
+            case Activity::WaitingForBackupFwChunk :
+                responseTimer_.stop();
+                if (chunkRetryCount_ == 0) {
+                    if (chunkNumber_ == 0 ) {  // the last chunk
+                        finishOperation(Operation::BackupFirmwareChunk, chunkNumber_);
+                    } else {
+                        // Chunk was backed up but backup operation is not finished yet,
+                        // so emit only signal and do not call function finishOperation().
+                        emit finished(static_cast<int>(Operation::BackupFirmwareChunk), chunkNumber_);
+                    }
+                } else {
+                    emit nextStep(QPrivateSignal());  // retry - ask for chunk again
                 }
                 break;
             case Activity::WaitingForStartApp :
@@ -301,11 +348,14 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) 
             case Activity::WaitingForPlatformId :
                 cmpStr = JSON_REQ_PLATFORM_ID;
                 break;
-            case Activity::WaitingForUpdateFw :
+            case Activity::WaitingForSwitchToBootloader :
                 cmpStr = JSON_UPDATE_FIRMWARE;
                 break;
             case Activity::WaitingForFlashFwChunk :
                 cmpStr = JSON_FLASH_FIRMWARE;
+                break;
+            case Activity::WaitingForBackupFwChunk :
+                cmpStr = JSON_BACKUP_FIRMWARE;
                 break;
             case Activity::WaitingForStartApp :
                 cmpStr = JSON_START_APP;
@@ -330,13 +380,9 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) 
     if (doc.HasMember(JSON_NOTIFICATION)) {
         if (CommandValidator::validate(CommandValidator::JsonType::notification, doc)) {
             const rapidjson::Value& value = doc[JSON_NOTIFICATION][JSON_VALUE];
-            const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
-            const char *notificationStr = nullptr;
-            bool standardNotification = true;
             qCDebug(logCategoryDeviceOperations) << this << "Received '" << value.GetString() << "' notification.";
             switch (activity_) {
             case Activity::WaitingForFirmwareInfo :
-                standardNotification = false;
                 if (CommandValidator::validate(CommandValidator::JsonType::getFwInfoRes, doc)) {
                     const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
                     const rapidjson::Value& btldr = payload[JSON_BOOTLOADER];
@@ -352,7 +398,6 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) 
                 }
                 break;
             case Activity::WaitingForPlatformId :
-                standardNotification = false;
                 if (CommandValidator::validate(CommandValidator::JsonType::reqPlatIdRes, doc)) {
                     const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
                     if (payload.HasMember(JSON_NAME)) {
@@ -367,26 +412,80 @@ bool DeviceOperations::parseDeviceResponse(const QByteArray& data, bool& isAck) 
                     }
                 }
                 break;
-            case Activity::WaitingForUpdateFw :
-                notificationStr = JSON_UPDATE_FIRMWARE;
-                break;
-            case Activity::WaitingForFlashFwChunk :
-                notificationStr = JSON_FLASH_FIRMWARE;
-                break;
-            case Activity::WaitingForStartApp :
-                notificationStr = JSON_START_APP;
-                break;
-            case Activity::None :
-                break;
-            }
-
-            if (standardNotification && notificationStr) {
-                if (payload.HasMember(JSON_STATUS)) {
-                    const rapidjson::Value& status = payload[JSON_STATUS];
-                    if (value == notificationStr && status.IsString() && status == JSON_OK) {
+            case Activity::WaitingForSwitchToBootloader :
+                if (CommandValidator::validate(CommandValidator::JsonType::updateFwRes, doc)) {
+                    const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
+                    if (status == JSON_OK) {
                         ok = true;
                     }
                 }
+                break;
+            case Activity::WaitingForFlashFwChunk :
+                if (CommandValidator::validate(CommandValidator::JsonType::flashFwRes, doc)) {
+                    const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
+                    if (status == JSON_OK) {
+                        ok = true;
+                        chunkRetryCount_ = 0;
+                    } else {
+                        if (status == JSON_RESEND_CHUNK) {
+                            if (chunkRetryCount_ < MAX_CHUNK_RETRIES) {
+                                ++chunkRetryCount_;
+                                ok = true;
+                                qCInfo(logCategoryDeviceOperations) << this << "Retry to flash firmware chunk.";
+                            } else {
+                                qCWarning(logCategoryDeviceOperations) << this << "Reached maximum retries for flash firmware chunk.";
+                            }
+                        }
+                    }
+                }
+                break;
+            case Activity::WaitingForBackupFwChunk :
+                if (CommandValidator::validate(CommandValidator::JsonType::backupFwRes, doc)) {
+                    const rapidjson::Value& chunk = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_CHUNK];
+                    const rapidjson::Value& number = chunk[JSON_NUMBER];
+                    const rapidjson::Value& size = chunk[JSON_SIZE];
+                    const rapidjson::Value& crc = chunk[JSON_CRC];
+                    const rapidjson::Value& data = chunk[JSON_DATA];
+                    if (number.IsInt() && size.IsUint() && crc.IsUint()) {
+                        rapidjson::SizeType dataSize = data.GetStringLength();
+                        size_t maxDecodedSize = base64::decoded_size(dataSize); // returns max bytes needed to decode a base64 string
+                        chunk_.resize(static_cast<int>(maxDecodedSize));
+                        const char *dataStr = data.GetString();
+                        auto [realDecodedSize, readChars] = base64::decode(chunk_.data(), dataStr, dataSize);
+                        chunk_.resize(static_cast<int>(realDecodedSize));
+                        chunkNumber_ = number.GetInt();
+                        if (size.GetUint() == realDecodedSize) {
+                            if (crc.GetUint() == crc16::buypass(chunk_.data(), static_cast<uint32_t>(chunk_.size()))) {
+                                ok = true;
+                                chunkRetryCount_ = 0;
+                            } else {
+                                qCCritical(logCategoryDeviceOperations) << this << "Wrong CRC of firmware chunk.";
+                            }
+                        } else {
+                            qCCritical(logCategoryDeviceOperations) << this << "Wrong SIZE of firmware chunk.";
+                        }
+                        if (ok == false) {
+                            if (chunkRetryCount_ < MAX_CHUNK_RETRIES) {
+                                ++chunkRetryCount_;
+                                ok = true;
+                                qCInfo(logCategoryDeviceOperations) << this << "Retry to backup firmware chunk.";
+                            } else {
+                                qCWarning(logCategoryDeviceOperations) << this << "Reached maximum retries for backup firmware chunk.";
+                            }
+                        }
+                    }
+                }
+                break;
+            case Activity::WaitingForStartApp :
+                if (CommandValidator::validate(CommandValidator::JsonType::startAppRes, doc)) {
+                    const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
+                    if (status == JSON_OK) {
+                        ok = true;
+                    }
+                }
+                break;
+            case Activity::None :
+                break;
             }
         }
     }
@@ -402,41 +501,52 @@ QByteArray DeviceOperations::createFlashFwJson() {
     rapidjson::StringBuffer sb;
     rapidjson::Writer<rapidjson::StringBuffer> writer(sb);
 
-        writer.StartObject();
+    writer.StartObject();
 
-        writer.Key(JSON_CMD);
-        writer.String(JSON_FLASH_FIRMWARE);
+    writer.Key(JSON_CMD);
+    writer.String(JSON_FLASH_FIRMWARE);
 
-        writer.Key(JSON_PAYLOAD);
-        writer.StartObject();
+    writer.Key(JSON_PAYLOAD);
+    writer.StartObject();
 
-        writer.Key(JSON_CHUNK);
-        writer.StartObject();
+    writer.Key(JSON_CHUNK);
+    writer.StartObject();
 
-        writer.Key(JSON_NUMBER);
-        writer.Int(chunkNumber_);
+    writer.Key(JSON_NUMBER);
+    writer.Int(chunkNumber_);
 
-        writer.Key(JSON_SIZE);
-        writer.Int(chunk_.size());
+    writer.Key(JSON_SIZE);
+    writer.Int(chunk_.size());
 
-        writer.Key(JSON_CRC);
-        writer.Int(crc16::buypass(chunk_.data(), static_cast<uint32_t>(chunk_.size())));
+    writer.Key(JSON_CRC);
+    writer.Int(crc16::buypass(chunk_.data(), static_cast<uint32_t>(chunk_.size())));
 
-        size_t chunkBase64Size = base64::encoded_size(static_cast<size_t>(chunk_.size()));
-        QByteArray chunkBase64;
-        chunkBase64.resize(static_cast<int>(chunkBase64Size));
-        base64::encode(chunkBase64.data(), chunk_.data(), static_cast<size_t>(chunk_.size()));
+    size_t chunkBase64Size = base64::encoded_size(static_cast<size_t>(chunk_.size()));
+    QByteArray chunkBase64;
+    chunkBase64.resize(static_cast<int>(chunkBase64Size));
+    base64::encode(chunkBase64.data(), chunk_.data(), static_cast<size_t>(chunk_.size()));
 
-        writer.Key(JSON_DATA);
-        writer.String(chunkBase64.data(), static_cast<rapidjson::SizeType>(chunkBase64Size));
+    writer.Key(JSON_DATA);
+    writer.String(chunkBase64.data(), static_cast<rapidjson::SizeType>(chunkBase64Size));
 
-        writer.EndObject();
+    writer.EndObject();
 
-        writer.EndObject();
+    writer.EndObject();
 
-        writer.EndObject();
+    writer.EndObject();
 
-        return QByteArray(sb.GetString(), static_cast<int>(sb.GetSize()));
+    return QByteArray(sb.GetString(), static_cast<int>(sb.GetSize()));
+}
+
+QByteArray DeviceOperations::createBackupFwJson() {
+    const char *json = nullptr;
+    if (chunkRetryCount_ != 0) {
+        qCInfo(logCategoryDeviceOperations) << "Resend";
+        json = CMD_BACKUP_FIRMWARE_STATUS_RESEND;
+    } else {
+        json = (firstBackupChunk_) ? CMD_BACKUP_FIRMWARE : CMD_BACKUP_FIRMWARE_STATUS_OK;
+    }
+    return QByteArray(json);
 }
 
 }  // namespace
