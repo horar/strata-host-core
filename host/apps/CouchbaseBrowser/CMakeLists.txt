@@ -26,7 +26,6 @@ target_link_libraries("${PROJECT_NAME}Library"
     Qt5::Core
     Qt5::Qml
 
-    # strata::CouchbaseLiteCPP
     strata::Couchbase-Lite-C
     QtLogger
 )
