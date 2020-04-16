@@ -11,7 +11,7 @@ import "../custom"
 Item {
     id: root
 
-    property real ratioCalc: (Screen.width <= 1200) ? (root.width/Screen.width) : root.width/1200// root.width/1200
+    property real ratioCalc: root.width/1200
     property real initialAspectRatio: Screen.width/Screen.height//1200/820
 
     anchors.centerIn: parent
@@ -128,20 +128,14 @@ Item {
         else loadEnableSwitch.checked = false
 
         if(control_states.ldo_sel === "TSOP5")  {
-            //            pgoodLabel.opacity = 0.5
-            //            pgoodLabel.enabled = false
             pgoodLabelText = "\n(PG_308)"
             ldoPackageComboBox.currentIndex = 0
         }
         else if(control_states.ldo_sel === "DFN6") {
-            //            pgoodLabel.opacity = 1
-            //            pgoodLabel.enabled = true
             pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 1
         }
         else if (control_states.ldo_sel === "DFN8") {
-            //            pgoodLabel.opacity = 1
-            //            pgoodLabel.enabled = true
             pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 2
         }
@@ -163,90 +157,20 @@ Item {
 
     property var variant_name: platformInterface.variant_name.value
     onVariant_nameChanged: {
-        if(variant_name === "NCP164A_TSOP5") {
-            //ldoPackageComboBox.currentIndex = 0
+        if(variant_name === "NCP164A_TSOP5" || variant_name === "NCP164A_DFN6" || variant_name === "NCP164A_DFN8") {
             titleText = "NCP164A \n Low-noise, High PSRR Linear Regulator"
-            warningTextIs = "DO NOT exceed LDO input voltage of 5V"
 
             setLDOOutputVoltage.fromText.text = "1.1V"
-            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.toText.text =  "5V"
             setLDOOutputVoltage.from = 1.1
-            setLDOOutputVoltage.to = 4.7
-
-            ldoInputVolSlider.toText.text =  "5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5
-
-        }
-        else if (variant_name === "NCP164A_DFN6") {
-            //ldoPackageComboBox.currentIndex = 1
-            titleText = "NCP164A \n Low-noise, High PSRR Linear Regulator"
-            warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
-
-            setLDOOutputVoltage.fromText.text ="1.1V"
-            setLDOOutputVoltage.toText.text =  "5.2V"
-            setLDOOutputVoltage.from = 1.1
-            setLDOOutputVoltage.to = 5.2
-
-            ldoInputVolSlider.toText.text =  "5.5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5.5
-        }
-        else if (variant_name === "NCP164A_DFN8") {
-            //ldoPackageComboBox.currentIndex = 2
-            titleText = "NCP164A \n Low-noise, High PSRR Linear Regulator"
-            warningTextIs = "DO NOT exceed LDO input voltage of 5V"
-
-            setLDOOutputVoltage.fromText.text ="1.1V"
-            setLDOOutputVoltage.toText.text =  "4.7V"
-            setLDOOutputVoltage.from = 1.1
-            setLDOOutputVoltage.to = 4.7
-
-            ldoInputVolSlider.toText.text =  "5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5
-        }
-        else if (variant_name === "NCV8164A_TSOP5") {
-            //ldoPackageComboBox.currentIndex = 0
+            setLDOOutputVoltage.to = 5
+        } else if (variant_name === "NCV8164A_TSOP5" || variant_name === "NCV8164A_DFN6" || variant_name === "NCV8164A_DFN8") {
             titleText = "NCV8164A \n Low-noise, High PSRR Linear Regulator"
-            warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
 
             setLDOOutputVoltage.fromText.text ="1.2V"
-            setLDOOutputVoltage.toText.text =  "5.2V"
+            setLDOOutputVoltage.toText.text =  "5V"
             setLDOOutputVoltage.from = 1.2
-            setLDOOutputVoltage.to = 5.2
-
-            ldoInputVolSlider.toText.text =  "5.5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5.5
-        }
-        else if (variant_name === "NCV8164A_DFN6") {
-            //ldoPackageComboBox.currentIndex = 1
-            titleText = "NCV8164A \n Low-noise, High PSRR Linear Regulator"
-            warningTextIs = "DO NOT exceed LDO input voltage of 5V"
-
-            setLDOOutputVoltage.fromText.text ="1.2V"
-            setLDOOutputVoltage.toText.text =  "4.7V"
-            setLDOOutputVoltage.from = 1.2
-            setLDOOutputVoltage.to = 4.7
-
-            ldoInputVolSlider.toText.text =  "5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5
-        }
-        else if (variant_name === "NCV8164A_DFN8") {
-            //ldoPackageComboBox.currentIndex = 2
-            titleText = "NCV8164A \n Low-noise, High PSRR Linear Regulator"
-            warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
-
-            setLDOOutputVoltage.fromText.text ="1.2V"
-            setLDOOutputVoltage.toText.text =  "5.2V"
-            setLDOOutputVoltage.from = 1.1
-            setLDOOutputVoltage.to = 5.2
-
-            ldoInputVolSlider.toText.text =  "5.5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5.5
+            setLDOOutputVoltage.to = 5
         }
     }
 
@@ -1115,11 +1039,11 @@ Item {
                                             width: ldoInputVolSliderContainer.width/1.1
                                             textColor: "black"
                                             stepSize: 0.01
-                                            from: 0.6
-                                            to: 5
+                                            from: 1.6
+                                            to: 5.5
                                             live: false
-                                            fromText.text: "1.5V"
-                                            toText.text: "5V"
+                                            fromText.text: "1.6V"
+                                            toText.text: "5.5V"
                                             fromText.fontSizeMultiplier: 0.9
                                             toText.fontSizeMultiplier: 0.9
                                             inputBoxWidth: ldoInputVolSliderContainer.width/6

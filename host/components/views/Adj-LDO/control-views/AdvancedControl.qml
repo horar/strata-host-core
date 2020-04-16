@@ -11,7 +11,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 Item {
     id: root
 
-    property real ratioCalc: (Screen.width <= 1200) ? (root.width/Screen.width) : root.width/1200//root.width/1200
+    property real ratioCalc: root.width/1200
     property real initialAspectRatio: Screen.width/Screen.height//1200/820
 
     anchors.centerIn: parent
@@ -51,7 +51,6 @@ Item {
         Help.registerTarget(dropReachedLabel, "This indicator will turn red when the LDO is in dropout. The dropout threshold is defined as the point when the LDO output voltage drops 3% below the value set with the \"Set LDO Output Voltage\" slider or info box. The indicator state is invalid when the LDO output voltage adjustment feature is disabled using the \"Disable LDO Output Voltage Adjustment\" switch.", 28, "AdjLDOAdvanceHelp")
     }
 
-    property string warningTextIs: "DO NOT exceed LDO input voltage of 5.5V"
     property string vinGoodThreshText: ""
     property string pgoodLabelText: "\n(PG_308)"
     property string prevVinLDOSel: ""
@@ -59,96 +58,16 @@ Item {
 
     property var variant_name: platformInterface.variant_name.value
     onVariant_nameChanged: {
-        if(variant_name === "NCP164A_TSOP5") {
-            //ldoPackageComboBox.currentIndex = 0
-            warningTextIs = "DO NOT exceed LDO input voltage of 5V"
-
+        if(variant_name === "NCP164A_TSOP5" || variant_name === "NCP164A_DFN6" || variant_name === "NCP164A_DFN8") {
             setLDOOutputVoltage.fromText.text = "1.1V"
-            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.toText.text =  "5V"
             setLDOOutputVoltage.from = 1.1
-            setLDOOutputVoltage.to = 4.7
-            setLDOOutputVoltage.stepSize = 0.01
-
-            ldoInputVolSlider.toText.text =  "5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5
-            ldoInputVolSlider.stepSize = 0.01
-
-        }
-        else if (variant_name === "NCP164A_DFN6") {
-            // ldoPackageComboBox.currentIndex = 1
-            warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
-
-            setLDOOutputVoltage.fromText.text ="1.1V"
-            setLDOOutputVoltage.toText.text =  "5.2V"
-            setLDOOutputVoltage.from = 1.1
-            setLDOOutputVoltage.to = 5.2
-            setLDOOutputVoltage.stepSize = 0.01
-
-            ldoInputVolSlider.toText.text =  "5.5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5.5
-            ldoInputVolSlider.stepSize = 0.01
-        }
-        else if (variant_name === "NCP164A_DFN8") {
-            //ldoPackageComboBox.currentIndex = 2
-            warningTextIs = "DO NOT exceed LDO input voltage of 5V"
-
-            setLDOOutputVoltage.fromText.text ="1.1V"
-            setLDOOutputVoltage.toText.text =  "4.7V"
-            setLDOOutputVoltage.from = 1.1
-            setLDOOutputVoltage.to = 4.7
-            setLDOOutputVoltage.stepSize = 0.01
-
-            ldoInputVolSlider.toText.text =  "5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5
-            ldoInputVolSlider.stepSize = 0.01
-        }
-        else if (variant_name === "NCV8164A_TSOP5") {
-            // ldoPackageComboBox.currentIndex = 0
-            warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
-
+            setLDOOutputVoltage.to = 5
+        } else if (variant_name === "NCV8164A_TSOP5" || variant_name === "NCV8164A_DFN6" || variant_name === "NCV8164A_DFN8") {
             setLDOOutputVoltage.fromText.text ="1.2V"
-            setLDOOutputVoltage.toText.text =  "5.2V"
+            setLDOOutputVoltage.toText.text =  "5V"
             setLDOOutputVoltage.from = 1.2
-            setLDOOutputVoltage.to = 5.2
-            setLDOOutputVoltage.stepSize = 0.01
-
-            ldoInputVolSlider.toText.text =  "5.5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5.5
-            ldoInputVolSlider.stepSize = 0.01
-        }
-        else if (variant_name === "NCV8164A_DFN6") {
-            // ldoPackageComboBox.currentIndex = 1
-            warningTextIs = "DO NOT exceed LDO input voltage of 5V"
-
-            setLDOOutputVoltage.fromText.text ="1.2V"
-            setLDOOutputVoltage.toText.text =  "4.7V"
-            setLDOOutputVoltage.from = 1.2
-            setLDOOutputVoltage.to = 4.7
-            setLDOOutputVoltage.stepSize = 0.01
-
-            ldoInputVolSlider.toText.text =  "5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5
-            ldoInputVolSlider.stepSize = 0.01
-        }
-        else if (variant_name === "NCV8164A_DFN8") {
-            //ldoPackageComboBox.currentIndex = 2
-            warningTextIs = "DO NOT exceed LDO input voltage of 5.5V"
-
-            setLDOOutputVoltage.fromText.text ="1.2V"
-            setLDOOutputVoltage.toText.text =  "5.2V"
-            setLDOOutputVoltage.from = 1.1
-            setLDOOutputVoltage.to = 5.2
-            setLDOOutputVoltage.stepSize = 0.01
-
-            ldoInputVolSlider.toText.text =  "5.5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5.5
-            ldoInputVolSlider.stepSize = 0.01
+            setLDOOutputVoltage.to = 5
         }
     }
 
@@ -1122,12 +1041,12 @@ Item {
                                                 width: setLDOSliderContainer.width/1.1
                                                 textColor: "black"
                                                 stepSize: 0.01
-                                                from: 0.6
-                                                to: 5
+                                                from: 1.6
+                                                to: 5.5
                                                 live: false
-                                                fromText.text: "1.5V"
+                                                fromText.text: "1.6V"
                                                 fromText.fontSizeMultiplier: 0.9
-                                                toText.text: "5V"
+                                                toText.text: "5.5V"
                                                 toText.fontSizeMultiplier: 0.9
                                                 inputBoxWidth: setLDOSliderContainer.width/6
                                                 onUserSet: {

@@ -10,22 +10,12 @@ import "qrc:/js/help_layout_manager.js" as Help
 Item {
     id: root
 
-    property real ratioCalc: (Screen.width <= 1200) ? (root.width/Screen.width) : root.width/1200//root.width/1200)
+    property real ratioCalc: (Screen.width > 1200) ? root.width/1200 : root.width/(1200*(1200/Screen.width))
     property real initialAspectRatio: Screen.width/Screen.height//1200/800
 
     anchors.centerIn: parent
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
-
-    //    onWidthChanged: {
-    //        console.log("width",width)
-    //    }
-
-    //    onHeightChanged: {
-    //        console.log("height",height)
-    //    }
-
-    //property alias pgoodTimer: sysEfficiencyPGoodTimer
 
     Component.onCompleted: {
         sysEfficiencyPGoodTimer.start()
@@ -62,66 +52,16 @@ Item {
 
     property var variant_name: platformInterface.variant_name.value
     onVariant_nameChanged: {
-        if(variant_name === "NCP164A_TSOP5") {
+        if(variant_name === "NCP164A_TSOP5" || variant_name === "NCP164A_DFN6" || variant_name === "NCP164A_DFN8") {
             setLDOOutputVoltage.fromText.text = "1.1V"
-            setLDOOutputVoltage.toText.text =  "4.7V"
+            setLDOOutputVoltage.toText.text =  "5V"
             setLDOOutputVoltage.from = 1.1
-            setLDOOutputVoltage.to = 4.7
-
-            ldoInputVolSlider.toText.text =  "5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5
-
-        }
-        else if (variant_name === "NCP164A_DFN6") {
-            setLDOOutputVoltage.fromText.text ="1.1V"
-            setLDOOutputVoltage.toText.text =  "5.2V"
-            setLDOOutputVoltage.from = 1.1
-            setLDOOutputVoltage.to = 5.2
-
-            ldoInputVolSlider.toText.text =  "5.5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5.5
-        }
-        else if (variant_name === "NCP164A_DFN8") {
-            setLDOOutputVoltage.fromText.text ="1.1V"
-            setLDOOutputVoltage.toText.text =  "4.7V"
-            setLDOOutputVoltage.from = 1.1
-            setLDOOutputVoltage.to = 4.7
-
-            ldoInputVolSlider.toText.text =  "5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5
-        }
-        else if (variant_name === "NCV8164A_TSOP5") {
+            setLDOOutputVoltage.to = 5
+        } else if (variant_name === "NCV8164A_TSOP5" || variant_name === "NCV8164A_DFN6" || variant_name === "NCV8164A_DFN8") {
             setLDOOutputVoltage.fromText.text ="1.2V"
-            setLDOOutputVoltage.toText.text =  "5.2V"
+            setLDOOutputVoltage.toText.text =  "5V"
             setLDOOutputVoltage.from = 1.2
-            setLDOOutputVoltage.to = 5.2
-
-            ldoInputVolSlider.toText.text =  "5.5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5.5
-        }
-        else if (variant_name === "NCV8164A_DFN6") {
-            setLDOOutputVoltage.fromText.text ="1.2V"
-            setLDOOutputVoltage.toText.text =  "4.7V"
-            setLDOOutputVoltage.from = 1.2
-            setLDOOutputVoltage.to = 4.7
-
-            ldoInputVolSlider.toText.text =  "5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5
-        }
-        else if (variant_name === "NCV8164A_DFN8") {
-            setLDOOutputVoltage.fromText.text ="1.2V"
-            setLDOOutputVoltage.toText.text =  "5.2V"
-            setLDOOutputVoltage.from = 1.1
-            setLDOOutputVoltage.to = 5.2
-
-            ldoInputVolSlider.toText.text =  "5.5V"
-            ldoInputVolSlider.from = 1.5
-            ldoInputVolSlider.to = 5.5
+            setLDOOutputVoltage.to = 5
         }
     }
 
@@ -221,20 +161,14 @@ Item {
         }
 
         if(control_states.ldo_sel === "TSOP5")  {
-            //            pgldoLabel.opacity = 0.5
-            //            pgldoLabel.enabled = false
             pgoodLabelText = "\n(PG_308)"
             ldoPackageComboBox.currentIndex = 0
         }
         else if(control_states.ldo_sel === "DFN6") {
-            //            pgldoLabel.opacity = 1
-            //            pgldoLabel.enabled = true
             pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 1
         }
         else if (control_states.ldo_sel === "DFN8") {
-            //            pgldoLabel.opacity = 1
-            //            pgldoLabel.enabled = true
             pgoodLabelText = "\n(PG_LDO)"
             ldoPackageComboBox.currentIndex = 2
         }
