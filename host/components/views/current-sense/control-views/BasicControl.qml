@@ -1357,14 +1357,11 @@ Item {
                                                                 boxColor: "lightgrey"
                                                                 boxFont.family: Fonts.digitalseven
                                                                 height:  35 * ratioCalc
-                                                                width: 130 * ratioCalc
-
+                                                                width: 125 * ratioCalc
                                                                 property var load_enable_status_current: platformInterface.load_enable_status.max_current
                                                                 onLoad_enable_status_currentChanged:  {
                                                                     maxLoadCurrent.text = load_enable_status_current
                                                                 }
-
-
                                                             }
                                                         }
                                                     }
