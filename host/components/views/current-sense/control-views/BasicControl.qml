@@ -238,7 +238,7 @@ Item {
         onVoltage_sense_interruptChanged: {
             if(voltage_sense_interrupt.value === "yes") {
                 voltageStatusLight.status = SGStatusLight.Red
-                pushMessagesToLog("Input Voltage Interruptt")
+                pushMessagesToLog("Input Voltage Interrupt")
             }
             else voltageStatusLight.status = SGStatusLight.Off
 
