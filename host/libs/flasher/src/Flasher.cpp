@@ -116,7 +116,7 @@ void Flasher::handleFlashFirmware(int lastFlashedChunk) {
     if (bytesRead == chunkSize) {
         operation_->flashFirmwareChunk(chunk, chunkNumber_);
     } else {
-        QString errStr = QStringLiteral("Cannot read from file ") + fwFile_.fileName();
+        QString errStr = QStringLiteral("Cannot read from file '") + fwFile_.fileName() + QStringLiteral("'. ") + fwFile_.errorString();
         qCCritical(logCategoryFlasher).noquote() << this << errStr;
         finish(Result::Error, errStr);
     }

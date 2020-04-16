@@ -24,58 +24,61 @@ void BoardManager::init(bool requireFwInfoResponse) {
 
 // this method is deprecated, it will be deleted
 void BoardManager::sendMessage(const int deviceId, const QString &message) {
-    QMutexLocker lock(&mutex_);
-    auto it = openedSerialPorts_.constFind(deviceId);
-    if (it != openedSerialPorts_.constEnd()) {
-        it.value()->sendMessage(message.toUtf8());
+    bool success = false;
+    {
+        QMutexLocker lock(&mutex_);
+        auto it = openedSerialPorts_.constFind(deviceId);
+        if (it != openedSerialPorts_.constEnd()) {
+            it.value()->sendMessage(message.toUtf8());
+            success = true;
+        }
     }
-    else {
+    if (success == false) {
         logInvalidDeviceId(QStringLiteral("Cannot send message"), deviceId);
-        lock.unlock();  // Do not emit signals from locked block of code.
         emit invalidOperation(deviceId);
     }
 }
 
 void BoardManager::disconnect(const int deviceId) {
-    QMutexLocker lock(&mutex_);
-    auto it = openedSerialPorts_.find(deviceId);
-    if (it != openedSerialPorts_.end()) {
-        it.value()->close();
-        openedSerialPorts_.erase(it);
-        lock.unlock();  // Do not emit signals from locked block of code.
-        emit boardDisconnected(deviceId);
+    bool success = false;
+    {
+        QMutexLocker lock(&mutex_);
+        auto it = openedSerialPorts_.find(deviceId);
+        if (it != openedSerialPorts_.end()) {
+            it.value()->close();
+            openedSerialPorts_.erase(it);
+            success = true;
+        }
     }
-    else {
+    if (success) {
+        emit boardDisconnected(deviceId);
+    } else {
         logInvalidDeviceId(QStringLiteral("Cannot disconnect"), deviceId);
-        lock.unlock();  // Do not emit signals from locked block of code.
         emit invalidOperation(deviceId);
     }
 }
 
 void BoardManager::reconnect(const int deviceId) {
-    QMutexLocker lock(&mutex_);
     bool ok = false;
-    bool disconnected = false;
-
-    auto it = openedSerialPorts_.find(deviceId);
-    if (it != openedSerialPorts_.end()) {
-        it.value()->close();
-        openedSerialPorts_.erase(it);
-        ok = true;
-        disconnected = true;
-    } else {
-        // desired port is not opened, check if it is connected
-        if (serialPortsList_.find(deviceId) != serialPortsList_.end()) {
+    bool disconnected = false;  
+    {
+        QMutexLocker lock(&mutex_);
+        auto it = openedSerialPorts_.find(deviceId);
+        if (it != openedSerialPorts_.end()) {
+            it.value()->close();
+            openedSerialPorts_.erase(it);
             ok = true;
+            disconnected = true;
+        } else {
+            // desired port is not opened, check if it is connected
+            if (serialPortsList_.find(deviceId) != serialPortsList_.end()) {
+                ok = true;
+            }
+        }
+        if (ok) {
+            ok = addedSerialPort(deviceId);  // modifies openedSerialPorts_ - call it while mutex_ is locked
         }
     }
-    if (ok) {
-        // mutex_ must be locked before calling this function (due to modification openedSerialPorts_)
-        ok = addedSerialPort(deviceId);
-    }
-
-    lock.unlock();  // Do not emit signals from locked block of code.
-
     if (disconnected) {
         emit boardDisconnected(deviceId);
     }
@@ -99,17 +102,16 @@ SerialDevicePtr BoardManager::device(const int deviceId) {
 
 // this method is deprecated, it will be deleted
 QVariantMap BoardManager::getConnectionInfo(const int deviceId) {
-    QMutexLocker lock(&mutex_);
-    auto it = openedSerialPorts_.constFind(deviceId);
-    if (it != openedSerialPorts_.constEnd()) {
-        return it.value()->getDeviceInfo();
+    {
+        QMutexLocker lock(&mutex_);
+        auto it = openedSerialPorts_.constFind(deviceId);
+        if (it != openedSerialPorts_.constEnd()) {
+            return it.value()->getDeviceInfo();
+        }
     }
-    else {
-        logInvalidDeviceId(QStringLiteral("Cannot get connection info"), deviceId);
-        lock.unlock();  // Do not emit signals from locked block of code.
-        emit invalidOperation(deviceId);
-        return QVariantMap();
-    }
+    logInvalidDeviceId(QStringLiteral("Cannot get connection info"), deviceId);
+    emit invalidOperation(deviceId);
+    return QVariantMap();
 }
 
 QVector<int> BoardManager::readyDeviceIds() {
@@ -119,17 +121,16 @@ QVector<int> BoardManager::readyDeviceIds() {
 
 // this method is deprecated, it will be deleted
 QString BoardManager::getDeviceProperty(const int deviceId, const DeviceProperties property) {
-    QMutexLocker lock(&mutex_);
-    auto it = openedSerialPorts_.constFind(deviceId);
-    if (it != openedSerialPorts_.constEnd()) {
-        return it.value()->property(property);
+    {
+        QMutexLocker lock(&mutex_);
+        auto it = openedSerialPorts_.constFind(deviceId);
+        if (it != openedSerialPorts_.constEnd()) {
+            return it.value()->property(property);
+        }
     }
-    else {
-        logInvalidDeviceId(QStringLiteral("Cannot get required device property"), deviceId);
-        lock.unlock();  // Do not emit signals from locked block of code.
-        emit invalidOperation(deviceId);
-        return QString();
-    }
+    logInvalidDeviceId(QStringLiteral("Cannot get required device property"), deviceId);
+    emit invalidOperation(deviceId);
+    return QString();
 }
 
 void BoardManager::checkNewSerialDevices() {
