@@ -725,7 +725,7 @@ Item {
                                                 id: setting5Reading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 height:  35 * ratioCalc
-                                                width: 155 * ratioCalc
+                                                width: 152 * ratioCalc
                                                 unit: " µA"
                                                 unitFont.bold: true
                                                 boxColor: "lightgrey"
@@ -769,7 +769,7 @@ Item {
                                                 id: vinReading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 height:  35 * ratioCalc
-                                                width: 140 * ratioCalc
+                                                width: 143 * ratioCalc
                                                 unit: " V"
                                                 unitFont.bold: true
                                                 boxColor: "lightgrey"
