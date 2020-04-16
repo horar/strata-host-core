@@ -133,8 +133,9 @@ Rectangle {
     Image{
         id:mainImage
         source:"qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
-        height:parent.height*.68
+        height:parent.height*.7
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: 20
         fillMode: Image.PreserveAspectFit
         mipmap:true
         opacity:1
@@ -142,9 +143,9 @@ Rectangle {
         property var color: platformInterface.room_color_notification
         onColorChanged: {
             var newColor = platformInterface.room_color_notification.color
-            if (newColor === "on")
+            if (newColor === "white")
               mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
-            else if (newColor === "off")
+            else if (newColor === "black")
                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOff.jpg"
             else if (newColor === "blue")
                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_blue.jpg"

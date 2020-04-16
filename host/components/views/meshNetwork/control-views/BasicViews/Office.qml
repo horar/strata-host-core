@@ -144,8 +144,9 @@ Rectangle {
         id:mainImage
         source:"qrc:/views/meshNetwork/images/office.jpg"
         //anchors.left:parent.left
-        height:parent.height*.68
+        height:parent.height*.7
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: 20
         fillMode: Image.PreserveAspectFit
         mipmap:true
         opacity:1
@@ -349,9 +350,9 @@ Rectangle {
                 id:target2
                 //objectName:"target2"
                 anchors.left:parent.left
-                anchors.leftMargin: parent.width * .19
+                anchors.leftMargin: parent.width * .16
                 anchors.top:parent.top
-                anchors.topMargin: parent.height * .67
+                anchors.topMargin: parent.height * .69
                 scene:"office"
                 nodeType: "doorbell"
                 nodeNumber:""

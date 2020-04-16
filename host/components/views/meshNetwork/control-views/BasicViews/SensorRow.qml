@@ -177,8 +177,11 @@ Item {
                 }
 
             onCheckedChanged: {
-                if (checked)
+                if (checked){
                     sensorRowRoot.showMesh();
+                    console.log("asking for network configuration");
+                    platformInterface.get_network.update();
+                    }
                   else
                     sensorRowRoot.hideMesh();
             }

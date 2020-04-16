@@ -42,7 +42,7 @@ Item {
     //what is this returning? Is there an encoding of models to 16 bit strings?
     property var sensor_status : {
         "uaddr": "",  // in dec (16 bit)
-        "sensor_type": "",  // temperature ambient_light, magnetic_rotation, magnetic_detection, strata, default (string)
+        "sensor_type": "",  // temperature ambient_light, magnetic_rotation, magnetic_detection, rssi, default (string)
         "data":""
     }
 
@@ -53,10 +53,10 @@ Item {
         "battery_state": "charging", //or "not charging" or "charged"
     }
 
-    property var signal_strength : {
-        "node_id": "8000",  // in dec (16 bit)
-        "value": "100",  // in dB? %?
-    }
+//    property var signal_strength : {
+//        "node_id": "8000",  // in dec (16 bit)
+//        "value": "100",  // in dB? %?
+//    }
 
     property var ambient_light : {
         "node_id": "8000",  // in dec (16 bit)

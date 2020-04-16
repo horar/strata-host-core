@@ -35,7 +35,7 @@ Rectangle {
         property bool highPowerMode: true
         property bool windowOpen:true
         property bool doorOpen:true
-        property var roomColors:["blue","green","purple","orange","off","on"]
+        property var roomColors:["blue","green","purple","orange","black","white"]
         property int currentRoomColor:0
 
         onClicked:{
@@ -108,6 +108,10 @@ Rectangle {
             }
             else if (nodeType == "lights"){
                 platformInterface.set_room_color.update(roomColors[currentRoomColor])
+                platformInterface.light_hsl_set.update(65535,
+                                                       roomColors[currentRoomColor].hslHue,
+                                                       roomColors[currentRoomColor].hslSaturation,
+                                                       roomColors[currentRoomColor].hslLightness);
                 //this should be handled by the firmware, but isn't
                 CorePlatformInterface.data_source_handler('{
                    "value":"room_color_notification",

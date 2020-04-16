@@ -108,12 +108,16 @@ Rectangle {
 
                 onClicked: {
 
+                    var sensorID = ((Math.random() *8) +1).toFixed(0) ;
+                    var voltage = ((Math.random() *5)).toFixed(1) ;
+                    var level = ((Math.random() *100)).toFixed(0) ;
+
                     CorePlatformInterface.data_source_handler('{
                     "value":"battery_status",
                     "payload":{
-                        "uaddr":3,
-                        "battery_level":55,
-                        "battery_voltage":3.66,
+                        "uaddr":'+sensorID+',
+                        "battery_level":'+level+',
+                        "battery_voltage":'+voltage+',
                         "battery_state":"charging"
                     }
                     }')
@@ -190,6 +194,27 @@ Rectangle {
                               "color": "#880000"
                               }]
                             }
+                    }')
+
+                }
+            }
+
+            Button {
+                id: rssi
+                text: "rssi"
+
+                onClicked: {
+
+                    var sensorID = ((Math.random() *8) +1).toFixed(0) ;
+                    var rssiValue = ((Math.random() *-70) -30).toFixed(0) ;
+
+                    CorePlatformInterface.data_source_handler('{
+                    "value":"sensor_status",
+                    "payload":{
+                        "uaddr":'+sensorID+',
+                        "sensor_type":"rssi",
+                        "data": "'+rssiValue+'"
+                    }
                     }')
 
                 }

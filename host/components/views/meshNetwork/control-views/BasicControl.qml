@@ -37,6 +37,34 @@ Rectangle {
        }
    }
 
+   Image{
+       id:drawerToggleButton
+       property bool drawerIsOpen: consoleDrawer.visible
+       anchors.top:parent.top
+       anchors.topMargin: 10
+       anchors.right:parent.right
+       anchors.rightMargin: 10
+       height:30
+       width:30
+       source: "qrc:/sgimages/chevron-left.svg"
+       fillMode: Image.PreserveAspectFit
+       mipmap:true
+       opacity:.3
+
+       MouseArea{
+           id:toggleDrawerMouseArea
+           anchors.fill:parent
+
+           onClicked:{
+               if (drawerToggleButton.drawerIsOpen)
+                   consoleDrawer.close()
+               else
+                   consoleDrawer.open()
+           }
+       }
+
+   }
+
 
    StackLayout {
        id: basicControlContainer
@@ -59,7 +87,8 @@ Rectangle {
    }
 
    Drawer {
-           y: header.height
+       id:consoleDrawer
+           y: 80
            width: root.width * 0.3
            height: root.height
            edge: Qt.RightEdge
@@ -133,7 +162,6 @@ Rectangle {
                        anchors.top:parent.top
                        //anchors.topMargin: 50
                        anchors.bottom:parent.bottom
-                       anchors.bottomMargin: 50
                        color: "transparent"
                        SGStatusLogBox{
                            id: messageList

@@ -95,7 +95,7 @@ Rectangle {
             onClicked: {
                 if(mouseButtonClicked & Qt.RightButton) {
                     console.log("Right button used");
-                    infoBox.visible = true
+                    //infoBox.visible = true
                 }
                 else{
                     console.log("sending color command from node",1)
@@ -125,8 +125,8 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: provisionerCircle.bottom
         anchors.topMargin: 5
-        text:provisionerObject.nodeNumber
-        font.pixelSize: 18
+        text:""
+        font.pixelSize: 16
         visible:false
 
 

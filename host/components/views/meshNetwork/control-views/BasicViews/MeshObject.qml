@@ -214,7 +214,7 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: objectCircle.bottom
             anchors.topMargin: 5
-            text:meshObject.nodeNumber
+            text:""
             font.pixelSize: 16
             visible:false
 
