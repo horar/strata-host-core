@@ -687,7 +687,7 @@ Item {
                                                 SGText {
                                                     anchors.top:parent.top
                                                     anchors.horizontalCenter: parent.horizontalCenter
-                                                    text: "100uA Max"
+                                                    text: "100µA Max"
                                                     font.bold: true
                                                     fontSizeMultiplier: ratioCalc
                                                     color: "red"
@@ -886,7 +886,7 @@ Item {
                                     SGAlignedLabel {
                                         id:  enableModeSetLabel
                                         target: enableModeSet
-                                        text: "Enable"
+                                        text: "Mode"
                                         fontSizeMultiplier: ratioCalc * 1.2
                                         font.bold : true
                                         alignment: SGAlignedLabel.SideTopCenter
