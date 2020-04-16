@@ -30,7 +30,7 @@ ColumnLayout {
 
 
     Component.onCompleted:  {
-        Help.registerTarget(vinLabel, "This LED indicates whether the input voltage is above the required 4.5 V for proper operation. Green indicates above 4.5 V and red indicates below 4.5 V.", 1,"basicFan65Help")
+        Help.registerTarget(vinLEDLabelContainer, "This LED indicates whether the input voltage is above the required 4.5 V for proper operation. Green indicates above 4.5 V and red indicates below 4.5 V.", 1,"basicFan65Help")
         Help.registerTarget(inputVoltageLabel, "This box displays the input current supplied to the board.", 2,"basicFan65Help")
         Help.registerTarget(inputCurrentLabel, "This box displays the input current supplied to the board.", 3,"basicFan65Help")
         Help.registerTarget(inputVCCLabel, "This box displays the voltage of the VCC pin of the FAN6500XX.", 4,"basicFan65Help")
@@ -61,8 +61,8 @@ ColumnLayout {
     //        id: filterHelpContainer
     //        property point topLeft
     //        property point bottomRight
-    //        width: inputVoltageContainer.width + inputCurrentContainer.width
-    //        height: bottomRight.y - topLeft.y
+    //        width: inputVoltageContainer.width + inputCurrentContainer.width - 80
+    //        height: (bottomRight.y - topLeft.y) - 20
     //        x: topLeft.x
     //        y: topLeft.y
     //        function update() {
@@ -75,8 +75,8 @@ ColumnLayout {
     //        id: filterHelp2Container
     //        property point topLeft
     //        property point bottomRight
-    //        width: frequencyContainer.width
-    //        height: bottomRight.y - topLeft.y
+    //        width: frequencyContainer.width - 80
+    //        height: (bottomRight.y - topLeft.y) - 20
     //        x: topLeft.x
     //        y: topLeft.y
     //        function update() {
@@ -90,7 +90,7 @@ ColumnLayout {
     //        property point topLeft
     //        property point bottomRight
     //        width: gaugeContainer.width
-    //        height: bottomRight.y - topLeft.y
+    //        height: (bottomRight.y - topLeft.y) - 30
     //        x: topLeft.x
     //        y: topLeft.y
     //        function update() {
@@ -260,22 +260,45 @@ ColumnLayout {
 
 
                                         Rectangle {
+
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-                                            SGAlignedLabel {
-                                                id: vinLabel
-                                                target: ledLight
-                                                alignment: SGAlignedLabel.SideTopCenter
+
+                                            ColumnLayout{
+                                                id: vinLEDLabelContainer
+                                                //anchors.fill: parent
+                                                width: parent.width/2
+                                                height: parent.height
                                                 anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                                font.bold : true
-                                                SGStatusLight {
-                                                    id: ledLight
-                                                    height: 40 * ratioCalc
-                                                    width: 40 * ratioCalc
+                                                Rectangle {
+                                                    Layout.fillWidth: true
+                                                    Layout.fillHeight: true
+
+                                                    SGText {
+                                                        id: vinLabel
+                                                        anchors.left: parent.left
+                                                        anchors.bottom: parent.bottom
+                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                        font.bold : true
+                                                        horizontalAlignment: Text.AlignHCenter
+                                                    }
+                                                }
+                                                Rectangle {
+                                                    Layout.fillWidth: true
+                                                    Layout.fillHeight: true
+
+                                                    SGStatusLight {
+                                                        id: ledLight
+                                                        anchors.left: parent.left
+                                                        anchors.leftMargin: 20
+                                                        anchors.top: parent.top
+                                                        height: 40 * ratioCalc
+                                                        width: 40 * ratioCalc
+                                                    }
                                                 }
                                             }
                                         }
+
                                         Rectangle {
                                             id: inputVoltageContainer
                                             Layout.fillWidth: true
@@ -355,6 +378,7 @@ ColumnLayout {
                                                 text: "VCC"
                                                 alignment: SGAlignedLabel.SideTopLeft
                                                 anchors.verticalCenter: parent.verticalCenter
+                                                // anchors.horizontalCenter: parent.horizontalCenter
                                                 fontSizeMultiplier: ratioCalc
                                                 font.bold : true
                                                 SGInfoBox {
