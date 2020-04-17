@@ -163,7 +163,7 @@ Rectangle {
                     console.log("Node Activated with",meshObject.scene, meshObject.pairingModel, dragObject.number, dragObject.color)
                     meshObject.nodeActivated(meshObject.scene, meshObject.pairingModel, dragObject.number, dragObject.color)
                     //tell the firmware of the change
-                    platformInterface.set_node_mode.update(pairingModel,meshObject.nodeNumber,true)
+                    platformInterface.set_node_mode.update(pairingModel,parseInt(meshObject.nodeNumber),true)
                 }
 
                 drag.source.resetLocation()             ///send the drag object back to where it was before being dragged
