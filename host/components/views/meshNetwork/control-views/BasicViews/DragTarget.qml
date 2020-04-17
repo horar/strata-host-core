@@ -88,7 +88,7 @@ Rectangle {
             }
 
             //smarthome nodes
-            else if (nodeType == "window"){
+            else if (nodeType == "window_shade"){
                 var theWindow = "closed";
                 if (windowOpen)
                     theWindow = "open"
@@ -124,7 +124,7 @@ Rectangle {
                 if (currentRoomColor == roomColors.length)
                     currentRoomColor = 0;
             }
-            else if (nodeType == "smart_home_door"){
+            else if (nodeType == "smarthome_door"){
                 var theDoor;
                 if (doorOpen)
                     theDoor = "open"

@@ -116,10 +116,10 @@ Rectangle {
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         MeshObject{ id: mesh4; scene:"smart_home"; pairingModel:"";nodeNumber: "4";
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
-        MeshObject{ id: mesh2; scene:"smart_home"; displayName:"Window"; pairingModel:"window";nodeNumber: "2";
+        MeshObject{ id: mesh2; scene:"smart_home"; displayName:"Window"; pairingModel:"window_shade";nodeNumber: "2";
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         ProvisionerObject{ id: provisioner; nodeNumber:"1" }
-        MeshObject{ id: mesh1; scene:"smart_home"; displayName:"Door"; pairingModel:"smart_home_door";nodeNumber: "3"
+        MeshObject{ id: mesh1; scene:"smart_home"; displayName:"Door"; pairingModel:"smarthome_door";nodeNumber: "3"
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         MeshObject{ id: mesh3; scene:"smart_home"; displayName:"Lights"; pairingModel:"lights";nodeNumber: "5";
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
@@ -301,7 +301,7 @@ Rectangle {
                 anchors.leftMargin: parent.width * 0.05
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .4
-                nodeType:"window"
+                nodeType:"window_shade"
                 scene:"smart_home"
                 nodeNumber:""
             }
@@ -315,7 +315,7 @@ Rectangle {
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .30
                 scene:"smart_home"
-                nodeType: "smart_home_door"
+                nodeType: "smarthome_door"
                 nodeNumber:""
             }
 

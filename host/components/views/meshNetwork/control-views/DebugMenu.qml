@@ -219,6 +219,27 @@ Rectangle {
 
                 }
             }
+
+            Button {
+                id: light
+                text: "light"
+
+                onClicked: {
+
+                    var sensorID = ((Math.random() *8) +1).toFixed(0) ;
+                    var luxValue = ((Math.random() *1000)).toFixed(0) ;
+
+                    CorePlatformInterface.data_source_handler('{
+                    "value":"sensor_status",
+                    "payload":{
+                        "uaddr":'+sensorID+',
+                        "sensor_type":"ambient_light",
+                        "data": "'+luxValue+'"
+                    }
+                    }')
+
+                }
+            }
         }
 
 

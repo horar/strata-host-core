@@ -130,6 +130,7 @@ Rectangle {
             height: 2*objectHeight
 
             property bool acceptsDrops: {
+                //only accept drops if the circle being dropped on is light grey
                 if (objectCircle.color == "#d3d3d3")    //light grey color
                     return true;
                   else
@@ -196,19 +197,6 @@ Rectangle {
             color:"grey"
         }
 
-
-        Rectangle{
-            id:sensorValueTextOutline
-            anchors.top: objectCircle.bottom
-            anchors.topMargin: 5
-            anchors.left: objectCircle.left
-            width:objectCircle.width
-            height:20
-            color:"transparent"
-            border.color:"grey"
-            visible:false
-        }
-
         Text{
             id:sensorValueText
             anchors.horizontalCenter: parent.horizontalCenter
@@ -217,8 +205,6 @@ Rectangle {
             text:""
             font.pixelSize: 16
             visible:false
-
-
 
             property string ambientLight:""
             property string battery_vtg:""
