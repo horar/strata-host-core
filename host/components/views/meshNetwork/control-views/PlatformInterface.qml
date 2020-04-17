@@ -199,7 +199,7 @@ Item {
                                       "payload": {
                                           "mode":"",
                                           "uaddr": 8000,  // in dec (16 bit uint),
-                                          "enabled":true
+                                          "enable":true
                                       },
 
                                       update: function (mode,address,enabled) {

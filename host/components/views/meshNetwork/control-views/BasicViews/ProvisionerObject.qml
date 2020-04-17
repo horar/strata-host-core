@@ -139,16 +139,13 @@ Rectangle {
 
         property var ambientLightValue: platformInterface.sensor_status
         onAmbientLightValueChanged: {
-            console.log("provisioner received light value change",platformInterface.sensor_status.uaddr,platformInterface.sensor_status.data, provisionerObject.uaddr)
             if (platformInterface.sensor_status.uaddr == provisionerObject.uaddr){
-                console.log("provisioner checking sensor type is ambient light")
                 if (platformInterface.sensor_status.sensor_type === "ambient_light"){
                     ambientLight = platformInterface.sensor_status.data
                     if (ambientLight !== NaN)
                         sensorValueText.text = Math.round(ambientLight) + " lux";
                     else{
                       sensorValueText.text = "";
-                      console.log("light value for provisioner not changed",provisionerObject.uaddr)
                     }
                 }
             }
