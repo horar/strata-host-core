@@ -197,7 +197,7 @@ Item {
     property var set_node_mode : ({
                                       "cmd" : "set_node_mode",
                                       "payload": {
-                                          "mode":"",
+                                          "mode":0,
                                           "uaddr": 8000,  // in dec (16 bit uint),
                                           "enable":true
                                       },
