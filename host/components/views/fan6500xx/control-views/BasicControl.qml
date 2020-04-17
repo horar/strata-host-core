@@ -19,7 +19,7 @@ ColumnLayout {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     spacing: 10
-
+    property string popup_message: ""
     //For demo
 
     //    Component.onCompleted:  {
@@ -653,7 +653,7 @@ ColumnLayout {
 
                                                     boxFont.family: Fonts.digitalseven
                                                     unitFont.bold: true
-                                                    property string popup_message: ""
+
                                                     property var ouputVoltageValue:  platformInterface.status_voltage_current.vout.toFixed(2)
                                                     onOuputVoltageValueChanged: {
                                                         outputVoltage.text = ouputVoltageValue
