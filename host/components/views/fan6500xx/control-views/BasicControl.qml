@@ -109,6 +109,102 @@ ColumnLayout {
     //        }
     //    }
 
+    Popup{
+        id: warningPopup
+        width: root.width/2
+        height: root.height/4
+        anchors.centerIn: parent
+        modal: true
+        focus: true
+        closePolicy: Popup.NoAutoClose
+        background: Rectangle{
+            id: warningPopupContainer
+            width: warningPopup.width
+            height: warningPopup.height
+            color: "#dcdcdc"
+            border.color: "grey"
+            border.width: 2
+            radius: 10
+            Rectangle {
+                id:topBorder
+                width: parent.width
+                height: parent.height/7
+                anchors{
+                    top: parent.top
+                    topMargin: 2
+                    right: parent.right
+                    rightMargin: 2
+                    left: parent.left
+                    leftMargin: 2
+                }
+                radius: 5
+                color: "#c0c0c0"
+                border.color: "#c0c0c0"
+                border.width: 2
+            }
+        }
+
+        Rectangle {
+            id: warningPopupBox
+            color: "transparent"
+            anchors {
+                top: parent.top
+                topMargin: 5
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: warningPopupContainer.width - 50
+            height: warningPopupContainer.height - 50
+
+            Rectangle {
+                id: messageContainerForPopup
+                anchors {
+                    top: parent.top
+                    topMargin: 10
+                    centerIn:  parent.Center
+                }
+                color: "transparent"
+                width: parent.width
+                height:  parent.height - selectionContainerForPopup.height
+                Text {
+                    id: warningTextForPopup
+                    anchors.fill:parent
+                    text: popup_message
+                    verticalAlignment:  Text.AlignVCenter
+                    wrapMode: Text.WordWrap
+                    fontSizeMode: Text.Fit
+                    width: parent.width
+                    font.family: "Helvetica Neue"
+                    font.pixelSize: ratioCalc * 15
+                }
+            }
+
+            Rectangle {
+                id: selectionContainerForPopup
+                width: parent.width/2
+                height: parent.height/4.5
+                anchors{
+                    top: messageContainerForPopup.bottom
+                    topMargin: 10
+                    right: parent.right
+                }
+                color: "transparent"
+                SGButton {
+                    width: parent.width/3
+                    height:parent.height
+                    anchors.centerIn: parent
+                    text: "OK"
+                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                    roundedLeft: true
+                    roundedRight: true
+
+                    onClicked: {
+                        warningPopup.close()
+                    }
+                }
+            }
+        }
+    }
+
 
     property string vinState: ""
     property var read_vin: platformInterface.status_voltage_current.vingood
@@ -557,12 +653,15 @@ ColumnLayout {
 
                                                     boxFont.family: Fonts.digitalseven
                                                     unitFont.bold: true
+                                                    property string popup_message: ""
                                                     property var ouputVoltageValue:  platformInterface.status_voltage_current.vout.toFixed(2)
                                                     onOuputVoltageValueChanged: {
                                                         outputVoltage.text = ouputVoltageValue
+                                                        if (platformInterface.status_voltage_current.vout < 5 && platformInterface.status_pgood.pgood === "good" && !warningPopup.opened) {
+                                                            warningPopup.open()
+                                                            popup_message = "Output voltage is below 5V. It is recommended to disconnect R2 and short R5."
+                                                        }
                                                     }
-
-
                                                 }
                                             }
                                         }
