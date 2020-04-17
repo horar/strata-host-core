@@ -20,6 +20,7 @@ ColumnLayout {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     spacing: 10
     property string popup_message: ""
+    property bool popup_opened_previously: false
     //For demo
 
     //    Component.onCompleted:  {
@@ -657,7 +658,8 @@ ColumnLayout {
                                                     property var ouputVoltageValue:  platformInterface.status_voltage_current.vout.toFixed(2)
                                                     onOuputVoltageValueChanged: {
                                                         outputVoltage.text = ouputVoltageValue
-                                                        if (platformInterface.status_voltage_current.vout < 5 && platformInterface.status_pgood.pgood === "good" && !warningPopup.opened) {
+                                                        if (!popup_opened_previously && platformInterface.status_voltage_current.vout < 5 && platformInterface.status_pgood.pgood === "good" && !warningPopup.opened) {
+                                                            popup_opened_previously = true
                                                             warningPopup.open()
                                                             popup_message = "Output voltage is below 5V. It is recommended to disconnect R2 and short R5."
                                                         }
