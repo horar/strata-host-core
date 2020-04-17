@@ -452,6 +452,39 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
     )";
     EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::reqPlatIdRes, doc));
 
+    testCommand = R"(
+        {
+            "notification":{
+                "value":"platform_id",
+                "payload":{
+                    "name":"WaterHeater",
+                    "platform_id":"101",
+                    "class_id":"201",
+                    "count":"1",
+                    "platform_id_version":"2.0"
+                }
+            }
+        }
+    )";
+    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::reqPlatIdRes, doc));
+
+    testCommand = R"(
+        {
+            "notification":{
+                "value":"platform_id",
+                "payload":{
+                    "name":"WaterHeater",
+                    "platform_id":"101",
+                    "class_id":"201",
+                    "count":"1",
+                    "platform_id_version":"2.0",
+                    "verbose_name":"WaterHeater"
+                }
+            }
+        }
+    )";
+    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::reqPlatIdRes, doc));
+
     // Invalid test command
     testCommand = R"(
         {
@@ -478,6 +511,22 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
                     "platform_id":"101",
                     "class_id":"201",
                     "count":1,
+                    "platform_id_version":"2.0"
+                }
+            }
+        }
+    )";
+    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::reqPlatIdRes, doc));
+
+    testCommand = R"(
+        {
+            "notification":{
+                "value":"platform_id",
+                "payload":{
+                    "name":"WaterHeater",
+                    "platform_id":"101",
+                    "class_id":"201",
+                    "count": 1.1,
                     "platform_id_version":"2.0"
                 }
             }

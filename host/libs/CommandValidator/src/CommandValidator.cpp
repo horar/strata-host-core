@@ -21,7 +21,7 @@ const rapidjson::SchemaDocument CommandValidator::requestPlatformIdResSchema(
                     "pattern":"^platform_id$"
                     },
                     "payload": {
-                        "oneOf":[
+                        "anyOf":[
                             {
                                 "type": "object",
                                 "properties": {
@@ -35,7 +35,7 @@ const rapidjson::SchemaDocument CommandValidator::requestPlatformIdResSchema(
                                     "type": "string"
                                     },
                                     "count": {
-                                    "type": "integer"
+                                    "type": ["string", "integer"]
                                     },
                                     "platform_id_version": {
                                     "type": "string"
