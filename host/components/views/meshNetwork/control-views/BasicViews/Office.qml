@@ -28,7 +28,8 @@ Rectangle {
             console.log("office is now visible")
             //iterate over the meshArray, and send role and node numbers for each
             meshObjectRow.meshArray.forEach(function(item, index, array){
-                platformInterface.set_node_mode.update(item.pairingModel,item.nodeNumber,true)
+                //removed temporarily because sending nine commands back to back overloads the network.
+                //platformInterface.set_node_mode.update(item.pairingModel,item.nodeNumber,true)
                 })
         }
 
