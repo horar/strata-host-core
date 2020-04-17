@@ -19,12 +19,26 @@ class Flasher : public QObject
 
     public:
         /*!
+         * The Result enum for finished() signal.
+         */
+        enum class Result {
+            Ok,
+            Error,
+            Timeout,
+            Cancelled
+        };
+        Q_ENUM(Result)
+
+        /*!
          * Flasher constructor.
          * \param device device which will be used by Flasher
          * \param firmwareFilename path to firmware file
          */
-        Flasher(SerialDevicePtr device, const QString& firmwareFilename);
+        Flasher(const SerialDevicePtr& device, const QString& firmwareFilename);
 
+        /*!
+         * Flasher destructor.
+         */
         ~Flasher();
 
         /*!
@@ -33,22 +47,49 @@ class Flasher : public QObject
          */
         void flash(bool startApplication = true);
 
+        /*!
+         * Backup firmware.
+         * \param startApplication if set to true start application after backup
+         */
+        void backup(bool startApplication = true);
+
+        /*!
+         * Cancel flash firmware operation.
+         */
+        void cancel();
+
         friend QDebug operator<<(QDebug dbg, const Flasher* f);
 
     signals:
         /*!
          * This signal is emitted when Flasher finishes.
-         * \param success true if firmware was flashed successfully, otherwise false
+         * \param result result of flash operation
+         * \param errorString error description if result is Error
          */
-        void finished(bool success);
+        void finished(Result result, QString errorString);
+
+        /*!
+         * This signal is emitted during firmware flashing.
+         * \param chunk chunk number which was flashed
+         * \param total total count of firmware chunks
+         */
+        void flashProgress(int chunk, int total);
+
+        /*!
+         * This signal is emitted during firmware backup.
+         * \param chunk chunk number which was backed up
+         * \param last true if backed up chunk is last
+         */
+        void backupProgress(int chunk, bool last);
 
     private slots:
         void handleOperationFinished(int operation, int data);
-        void handleOperationError(QString msg);
+        void handleOperationError(QString errStr);
 
     private:
         void handleFlashFirmware(int lastFlashedChunk);
-        void finish(bool success);
+        void handleBackupFirmware(int chunkNumber);
+        void finish(Result result, QString errStr = QString());
 
         SerialDevicePtr device_;
 
@@ -60,6 +101,13 @@ class Flasher : public QObject
 
         int chunkNumber_;
         int chunkCount_;
+        int chunkProgress_;
+
+        enum class Action {
+            Flash,
+            Backup
+        };
+        Action action_;
 
         bool startApp_;
 };

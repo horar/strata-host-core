@@ -1,4 +1,4 @@
-project(flasher
+project(Flasher
     VERSION 1.0
     LANGUAGES CXX
 )
@@ -7,6 +7,10 @@ find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Core
     REQUIRED
 )
+
+set(CONNECTOR_SUFFIX "Connector")
+
+# Flasher
 
 add_library(${PROJECT_NAME}
     src/Flasher.cpp
@@ -27,5 +31,26 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
+    AUTOMOC ON
+)
+
+# FlasherConnector
+
+add_library(${PROJECT_NAME}${CONNECTOR_SUFFIX}
+    src/FlasherConnector.cpp
+    #AUTOMOC wont find header if it is in different directory
+    include/FlasherConnector.h
+)
+
+target_include_directories(${PROJECT_NAME}${CONNECTOR_SUFFIX}
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_link_libraries(${PROJECT_NAME}${CONNECTOR_SUFFIX}
+    PUBLIC Qt5::Core
+    PUBLIC ${PROJECT_NAME}
+)
+
+set_target_properties(${PROJECT_NAME}${CONNECTOR_SUFFIX} PROPERTIES
     AUTOMOC ON
 )
