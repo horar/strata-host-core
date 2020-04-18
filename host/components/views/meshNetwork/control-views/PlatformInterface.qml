@@ -94,10 +94,10 @@ Item {
     }
 
     property var hsl_color : {
-        "node_id": "8000",  // in dec (16 bit)
-        "h": "120",         // 0 to 360 degrees (string)
-        "s": "50",          // 0 to 100% (string)
-        "l": "50"           // 0 to 100% (string)
+        "node_id": 8000,  // in dec (16 bit)
+        "h": 120,         // 0 to 360 degrees (string)
+        "s": 50,          // 0 to 100% (string)
+        "l": 50           // 0 to 100% (string)
     }
 
 //    property var temperature : {
@@ -107,19 +107,27 @@ Item {
 
     property var network_notification : {
         "nodes": [{
-                      "index": "1",         //the node_id
-                      "ready": 0,       //or false
+                      "index": 1,         //the node_id
+                      "ready": 0,           //or false
                       "color": "#ffffff"    //RGB hex value of the node color
                   }]
     }
 
+    onNetwork_notificationChanged: {
+         for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+            console.log("index=",platformInterface.network_notification.nodes[alpha].index,
+                        "ready=",platformInterface.network_notification.nodes[alpha].ready,
+                        "color=",platformInterface.network_notification.nodes[alpha].color);
+         }
+    }
+
     property var node_added : {
-        "index": "1",  // in dec (16 bit)
+        "index": 1,  // in dec (16 bit)
         "color": "green",  //RGB hex value of the node color
     }
 
     property var node_removed : {
-        "node_id": "0",  // in dec (16 bit)
+        "node_id": 0,  // in dec (16 bit)
     }
 
     property var alarm_triggered:{

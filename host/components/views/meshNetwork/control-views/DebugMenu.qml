@@ -159,38 +159,38 @@ Rectangle {
                     "value":"network_notification",
                     "payload":{
                         "nodes":[{
-                              "index": "2",
-                              "ready": 1,
+                              "index": 2,
+                              "ready": '+ ((Math.random() *2)).toFixed(0) +',
                               "color": "#000088"
                               },
                               {
-                              "index": "3",
-                              "ready": 1,
+                              "index": 3,
+                              "ready": '+ ((Math.random() *2)).toFixed(0) +',
                               "color": "#0000ff"
                               },
                               {
-                              "index": "4",
-                              "ready": 1,
+                              "index": 4,
+                              "ready": '+ ((Math.random() *2)).toFixed(0) +',
                               "color": "#008800"
                               },
                               {
-                              "index": "5",
-                              "ready": 1,
+                              "index": 5,
+                              "ready": '+ ((Math.random() *2)).toFixed(0) +',
                               "color": "#008888"
                               },
                               {
-                              "index": "6",
-                              "ready": 1,
+                              "index": 6,
+                              "ready": '+ ((Math.random() *2)).toFixed(0) +',
                               "color": "#0088ff"
                               },
                               {
-                              "index": "7",
-                              "ready": 1,
+                              "index": 7,
+                              "ready": '+ ((Math.random() *2)-1).toFixed(0) +',
                               "color": "#00ffff"
                               },
                               {
-                              "index": "8",
-                              "ready": 1,
+                              "index": 8,
+                              "ready": '+ ((Math.random() *2)-1).toFixed(0) +',
                               "color": "#880000"
                               }]
                             }

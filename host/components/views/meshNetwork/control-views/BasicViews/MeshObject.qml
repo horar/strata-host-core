@@ -52,6 +52,7 @@ Rectangle {
             }
             else{
                 nodeNumber.visible = false
+                sensorValueText.text = ""        //clear the sensor text if we no longer have an active node
             }
         }
 
@@ -73,6 +74,7 @@ Rectangle {
             radius: height/2
 
             property string number: nodeNumber.text
+            property alias sensorText: sensorValueText.text
 
             onNumberChanged: {
                 nodeNumber.text = number
@@ -162,8 +164,9 @@ Rectangle {
                     //send a signal from this object to communicate that a node has been moved
                     console.log("Node Activated with",meshObject.scene, meshObject.pairingModel, dragObject.number, dragObject.color)
                     meshObject.nodeActivated(meshObject.scene, meshObject.pairingModel, dragObject.number, dragObject.color)
-                    //clear the sensor Text
-                    sensorValueText.text = ""
+                    //if this node is still showing sensor data
+                    console.log("clearing sensor text")
+                    drag.source.sensorText.text = ""
                     text: qsTr("text")
 
                     //tell the firmware of the change

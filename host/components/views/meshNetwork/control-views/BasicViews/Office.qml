@@ -64,18 +64,15 @@ Rectangle {
             for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
                 //for each node that is marked visible set the visibilty of the node appropriately
                 if (platformInterface.network_notification.nodes[alpha].ready === 0){
-                    meshArray[alpha].opacity = 0.5
-                    meshArray[alpha].enabled = false
                     meshArray[alpha].objectColor = "lightgrey"
                     meshArray[alpha].nodeNumber = ""
-                    //targetArray[alpha].color = "transparent"
 
                     //special case because sometimes the 0th element of the notification array
                     //really represents the first element
                     if (alpha === 1){
                         if (platformInterface.network_notification.nodes[0].ready === 1 ){
                             meshArray[alpha].opacity = 1.0
-                            meshArray[alpha].enabled = true
+                            //meshArray[alpha].enabled = true
                             meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
 
                         }
@@ -271,7 +268,7 @@ Rectangle {
                 for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
                     //for each node that is marked visible set the visibilty of the node appropriately
                     if (platformInterface.network_notification.nodes[alpha].ready === 0){
-                        targetArray[alpha].objectColor = "transparent"
+                        targetArray[alpha].color = "transparent"
                         targetArray[alpha].nodeNumber = ""
 
                         //special case because sometimes the 0th element of the notification array
