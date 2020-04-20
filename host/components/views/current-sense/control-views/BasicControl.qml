@@ -1559,7 +1559,9 @@ Item {
                                             id: loadFaultLabel
                                             target: loadFault
                                             alignment: SGAlignedLabel.SideTopCenter
-                                            anchors.centerIn: parent
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            anchors.verticalCenterOffset: 10
                                             fontSizeMultiplier: ratioCalc * 1.2
                                             text: "Fault "
                                             font.bold: true
@@ -1599,7 +1601,7 @@ Item {
                                                     boxColor: "lightgrey"
                                                     boxFont.family: Fonts.digitalseven
                                                     height:  35 * ratioCalc
-                                                    width: 140 * ratioCalc
+                                                    width: 125 * ratioCalc
                                                     unit: "<b>V</b>"
                                                     // anchors.centerIn: parent
 
