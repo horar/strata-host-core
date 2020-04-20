@@ -21,16 +21,16 @@ Item {
         sysEfficiencyPGoodTimer.start()
         Help.registerTarget(systemInputVoltageLabel, "This info box shows the voltage at the input of the buck regulator and bypass load switch (VIN_SB).", 0, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(systemInputCurrentLabel, "This info box shows the input current to the board (current flowing from VIN to VIN_SB).", 1, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(systemInputPowerLabel, "This gauge shows the input power to the system consisting of the input buck regulator and LDO. This input power measurement excludes the losses in the input load switches and input current sense resistor.", 2, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(totalSystemEfficiencyLabel, "This gauge shows the total efficiency of the system.", 3, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(powerOutputgaugeContainer, "This gauge shows the input power to the system consisting of the input buck regulator and LDO. This input power measurement excludes the losses in the input load switches and input current sense resistor.", 2, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(totalSystemEfficiencyContainer, "This gauge shows the total efficiency of the system.", 3, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(buckLDOOutputInputLabel, "This info box shows the output voltage of the buck regulator (LDO input voltage).", 4, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(buckLDOOutputInputCurrentLabel, "This info box shows the output current of the buck regulator (LDO input current).", 5, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(inputPowerLabel, "This gauge shows the input power to the LDO. This gauge will not be accurate when an external load is attached directly to the LDO output via the solder pad.", 6, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(syncBuckEfficiencyLabel, "This gauge shows the efficiency of the input buck regulator", 7, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoInputPowergaugeContainer, "This gauge shows the input power to the LDO. This gauge will not be accurate when an external load is attached directly to the LDO output via the solder pad.", 6, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(syncBuckEfficiencyContainer, "This gauge shows the efficiency of the input buck regulator", 7, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(ldoSystemOutputVoltageLabel, "This info box shows the output voltage of the LDO (system output voltage).", 8, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(ldoSystemOutputCurrentLabel, "This info box shows the output current of the LDO (system output current) when pulled by either the onboard electronic load or through an external load connected to the output banana plugs. Current pulled by the onboard short-circuit load or an external load attached directly to the LDO output via the solder pad is not measured and will not be shown in this box.", 9, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(ldoOutputPowerLabel, "This gauge shows the output power of the LDO (system output power). This gauge will not be accurate when an external load is attached directly to the LDO output via the solder pad.", 10, "AdjLDOSystemEfficiencyHelp")
-        Help.registerTarget(ldoEfficiencyLabel, "This gauge shows the efficiency of the LDO.", 11, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoOutputPowerContainer, "This gauge shows the output power of the LDO (system output power). This gauge will not be accurate when an external load is attached directly to the LDO output via the solder pad.", 10, "AdjLDOSystemEfficiencyHelp")
+        Help.registerTarget(ldoEfficiencyGaugeContainer, "This gauge shows the efficiency of the LDO.", 11, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(setLDOInputVoltageLabel, "This slider allows you to set the desired input voltage of the LDO when being supplied by the input buck regulator. The value can be set while the input buck regulator is not being used and the voltage will automatically be adjusted as needed whenever the input buck regulator is activated again.", 12, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(setLDOOutputVoltageLabel, "This slider allows you to set the desired output voltage of the LDO. The value can be set while the LDO is disabled. The voltage will automatically be adjusted as needed whenever the LDO is enabled again.", 13, "AdjLDOSystemEfficiencyHelp")
         Help.registerTarget(setOutputCurrentLabel, "This slider allows you to set the current pulled by the onboard load. The value can be set while the load is disabled and the load current will automatically be adjusted as needed when the load is enabled. The value may need to be reset to the desired level after recovery from an LDO UVLO event.", 14, "AdjLDOSystemEfficiencyHelp")
@@ -550,6 +550,7 @@ Item {
                                         id: powerOutputgaugeContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
+
 
                                         SGAlignedLabel {
                                             id: systemInputPowerLabel
