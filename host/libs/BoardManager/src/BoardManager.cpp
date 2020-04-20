@@ -5,6 +5,9 @@
 #include <DeviceOperations.h>
 
 #include <QSerialPortInfo>
+#include <QMutexLocker>
+
+#include <vector>
 
 namespace strata {
 
@@ -19,53 +22,66 @@ void BoardManager::init(bool requireFwInfoResponse) {
     timer_.start(DEVICE_CHECK_INTERVAL);
 }
 
+// this method is deprecated, it will be deleted
 void BoardManager::sendMessage(const int deviceId, const QString &message) {
-    // in case of multithread usage lock access to openedSerialPorts_
-    auto it = openedSerialPorts_.constFind(deviceId);
-    if (it != openedSerialPorts_.constEnd()) {
-        it.value()->sendMessage(message.toUtf8());
+    bool success = false;
+    {
+        QMutexLocker lock(&mutex_);
+        auto it = openedSerialPorts_.constFind(deviceId);
+        if (it != openedSerialPorts_.constEnd()) {
+            it.value()->sendMessage(message.toUtf8());
+            success = true;
+        }
     }
-    else {
+    if (success == false) {
         logInvalidDeviceId(QStringLiteral("Cannot send message"), deviceId);
         emit invalidOperation(deviceId);
     }
 }
 
 void BoardManager::disconnect(const int deviceId) {
-    // in case of multithread usage lock access to openedSerialPorts_
-    auto it = openedSerialPorts_.find(deviceId);
-    if (it != openedSerialPorts_.end()) {
-        it.value()->close();
-        openedSerialPorts_.erase(it);
-
-        emit boardDisconnected(deviceId);
+    bool success = false;
+    {
+        QMutexLocker lock(&mutex_);
+        auto it = openedSerialPorts_.find(deviceId);
+        if (it != openedSerialPorts_.end()) {
+            it.value()->close();
+            openedSerialPorts_.erase(it);
+            success = true;
+        }
     }
-    else {
+    if (success) {
+        emit boardDisconnected(deviceId);
+    } else {
         logInvalidDeviceId(QStringLiteral("Cannot disconnect"), deviceId);
         emit invalidOperation(deviceId);
     }
 }
 
 void BoardManager::reconnect(const int deviceId) {
-    // in case of multithread usage lock access to openedSerialPorts_
     bool ok = false;
-    auto it = openedSerialPorts_.find(deviceId);
-    if (it != openedSerialPorts_.end()) {
-        it.value()->close();
-        openedSerialPorts_.erase(it);
-        ok = true;
-        emit boardDisconnected(deviceId);
-    } else {
-        // desired port is not opened, check if it is connected
-        if (serialPortsList_.find(deviceId) != serialPortsList_.end()) {
+    bool disconnected = false;  
+    {
+        QMutexLocker lock(&mutex_);
+        auto it = openedSerialPorts_.find(deviceId);
+        if (it != openedSerialPorts_.end()) {
+            it.value()->close();
+            openedSerialPorts_.erase(it);
             ok = true;
+            disconnected = true;
+        } else {
+            // desired port is not opened, check if it is connected
+            if (serialPortsList_.find(deviceId) != serialPortsList_.end()) {
+                ok = true;
+            }
+        }
+        if (ok) {
+            ok = addedSerialPort(deviceId);  // modifies openedSerialPorts_ - call it while mutex_ is locked
         }
     }
-
-    if (ok) {
-        ok = addedSerialPort(deviceId);
+    if (disconnected) {
+        emit boardDisconnected(deviceId);
     }
-
     if (ok) {
         emit boardConnected(deviceId);
     } else {
@@ -74,8 +90,8 @@ void BoardManager::reconnect(const int deviceId) {
     }
 }
 
-SerialDevicePtr BoardManager::device(const int deviceId) const {
-    // in case of multithread usage lock access to openedSerialPorts_
+SerialDevicePtr BoardManager::device(const int deviceId) {
+    QMutexLocker lock(&mutex_);
     auto it = openedSerialPorts_.constFind(deviceId);
     if (it != openedSerialPorts_.constEnd()) {
         return it.value();
@@ -84,35 +100,37 @@ SerialDevicePtr BoardManager::device(const int deviceId) const {
     }
 }
 
+// this method is deprecated, it will be deleted
 QVariantMap BoardManager::getConnectionInfo(const int deviceId) {
-    // in case of multithread usage lock access to openedSerialPorts_
-    auto it = openedSerialPorts_.constFind(deviceId);
-    if (it != openedSerialPorts_.constEnd()) {
-        return it.value()->getDeviceInfo();
+    {
+        QMutexLocker lock(&mutex_);
+        auto it = openedSerialPorts_.constFind(deviceId);
+        if (it != openedSerialPorts_.constEnd()) {
+            return it.value()->getDeviceInfo();
+        }
     }
-    else {
-        logInvalidDeviceId(QStringLiteral("Cannot get connection info"), deviceId);
-        emit invalidOperation(deviceId);
-        return QVariantMap();
-    }
+    logInvalidDeviceId(QStringLiteral("Cannot get connection info"), deviceId);
+    emit invalidOperation(deviceId);
+    return QVariantMap();
 }
 
 QVector<int> BoardManager::readyDeviceIds() {
-    // in case of multithread usage lock access to openedSerialPorts_
+    QMutexLocker lock(&mutex_);
     return QVector<int>::fromList(openedSerialPorts_.keys());
 }
 
+// this method is deprecated, it will be deleted
 QString BoardManager::getDeviceProperty(const int deviceId, const DeviceProperties property) {
-    // in case of multithread usage lock access to openedSerialPorts_
-    auto it = openedSerialPorts_.constFind(deviceId);
-    if (it != openedSerialPorts_.constEnd()) {
-        return it.value()->property(property);
+    {
+        QMutexLocker lock(&mutex_);
+        auto it = openedSerialPorts_.constFind(deviceId);
+        if (it != openedSerialPorts_.constEnd()) {
+            return it.value()->property(property);
+        }
     }
-    else {
-        logInvalidDeviceId(QStringLiteral("Cannot get required device property"), deviceId);
-        emit invalidOperation(deviceId);
-        return QString();
-    }
+    logInvalidDeviceId(QStringLiteral("Cannot get required device property"), deviceId);
+    emit invalidOperation(deviceId);
+    return QString();
 }
 
 void BoardManager::checkNewSerialDevices() {
@@ -161,36 +179,39 @@ void BoardManager::checkNewSerialDevices() {
     std::vector<int> opened;
     opened.reserve(added.size());
 
-    // in case of multithread usage lock this block of code (see comment in *.h file)
     {  // this block of code modifies serialPortsList_, openedSerialPorts_, serialIdToName_
+        QMutexLocker lock(&mutex_);
 
         serialIdToName_ = std::move(idToName);
 
         computeListDiff(ports, added, removed);  // uses serialPortsList_ (needs old value from previous run)
 
+        // Do not emit boardDisconnected and boardConnected signals in this locked block of code.
         for (auto deviceId : removed) {
             removedSerialPort(deviceId);  // modifies openedSerialPorts_
-            emit boardDisconnected(deviceId);  // if this block of code is locked emit this after end of the block
         }
 
         for (auto deviceId : added) {
             if (addedSerialPort(deviceId)) {  // modifies openedSerialPorts_, uses serialIdToName_
                 opened.emplace_back(deviceId);
-                emit boardConnected(deviceId);  // if this block of code is locked emit this after end of the block
             }
         }
 
         serialPortsList_ = std::move(ports);
     }
 
-    if (opened.empty() == false || removed.empty() == false) {
-        // in case of multithread usage emit signals here (iterate over 'removed' and 'opened' containers)
-
+    if (removed.empty() == false || opened.empty() == false) {
+        for (auto deviceId : removed) {
+            emit boardDisconnected(deviceId);
+        }
+        for (auto deviceId : opened) {
+            emit boardConnected(deviceId);
+        }
         emit readyDeviceIdsChanged();
     }
 }
 
-// in case of multithread usage mutex must be locked before calling this function (due to accessing serialPortsList_)
+// mutex_ must be locked before calling this function (due to accessing serialPortsList_)
 void BoardManager::computeListDiff(std::set<int>& list, std::set<int>& added_ports, std::set<int>& removed_ports) {
     //create differences of the lists.. what is added / removed
     std::set_difference(list.begin(), list.end(),
@@ -202,7 +223,7 @@ void BoardManager::computeListDiff(std::set<int>& list, std::set<int>& added_por
                         std::inserter(removed_ports, removed_ports.begin()));
 }
 
-// in case of multithread usage mutex must be locked before calling this function (due to modification openedSerialPorts_)
+// mutex_ must be locked before calling this function (due to modification openedSerialPorts_ and using serialIdToName_)
 bool BoardManager::addedSerialPort(const int deviceId) {
     const QString name = serialIdToName_.value(deviceId);
 
@@ -234,7 +255,7 @@ bool BoardManager::addedSerialPort(const int deviceId) {
     }
 }
 
-// in case of multithread usage mutex must be locked before calling this function (due to modification openedSerialPorts_)
+// mutex_ must be locked before calling this function (due to modification openedSerialPorts_)
 void BoardManager::removedSerialPort(const int deviceId) {
     serialDeviceOprations_.remove(deviceId);
     auto it = openedSerialPorts_.find(deviceId);
@@ -279,6 +300,7 @@ void BoardManager::handleBoardError(QString errMsg) {
     emit boardError(deviceId, errMsg);
 }
 
+// this slot is deprecated, it will be deleted
 void BoardManager::handleNewMessage(QString message) {
     SerialDevice *device = qobject_cast<SerialDevice*>(QObject::sender());
     if (device == nullptr) {

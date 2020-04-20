@@ -1,52 +1,15 @@
-#ifndef FLASHERCONNECTOR_H
-#define FLASHERCONNECTOR_H
+#ifndef FLASHER_CONNECTOR_H_
+#define FLASHER_CONNECTOR_H_
+
+#include <memory>
 
 #include <QObject>
-#include <QMutex>
-#include <QWaitCondition>
-#include <QMap>
+#include <QString>
 
+#include <SerialDevice.h>
 #include <Flasher.h>
-#include <PlatformConnection.h>
 
-class FlasherWorker : public QObject
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(FlasherWorker)
-
-public:
-    FlasherWorker(spyglass::PlatformConnectionShPtr connection, const QString &firmwarePath, QObject *parent = nullptr);
-    ~FlasherWorker() = default;
-
-    /**
-     * Stop request, must be called from other thread
-     */
-    void stop();
-
-public slots:
-    void process();
-
-signals:
-    void taskDone(QString connectionId, bool status);
-    void notify(QString connectionId, QString message);
-    void finished();
-
-private:
-
-    /**
-     * Cancel check callback method
-     * @return returns true when cancel was requested otherwise false
-     */
-    bool isCancelRequested();
-
-private:
-    spyglass::PlatformConnectionShPtr connection_;
-    QString firmwarePath_;
-
-    QAtomicInt stopFlag_;
-};
-
-//////////////////////////////////////////////////////////////////////////////////////
+namespace strata {
 
 class FlasherConnector : public QObject
 {
@@ -54,37 +17,49 @@ class FlasherConnector : public QObject
     Q_DISABLE_COPY(FlasherConnector)
 
 public:
-    FlasherConnector(QObject *parent = nullptr);
+    /*!
+     * FlasherConnector constructor.
+     * \param device device which will be used by FlasherConnector
+     * \param firmwareFilename path to firmware file
+     */
+    FlasherConnector(const SerialDevicePtr& device, const QString& firmwareFilename, QObject* parent = nullptr);
+
+    /*!
+     * FlasherConnector destructor.
+     */
     ~FlasherConnector();
 
-    /**
-     * Starts flashing task in the background
-     * @param connection
-     * @param firmwarePath
+    /*!
+     * Flash firmware.
      */
-    bool start(spyglass::PlatformConnectionShPtr connection, const QString &firmwarePath);
+    void flash();
 
-    /**
-     * Stops flashing of given connection id and waits for finish
+    /*!
+     * Stop flash firmware operation.
      */
-    void stop(const QString& connectionId);
-
-    /**
-     * Stops all flashing and waits for finish
-     */
-    void stopAll();
+    void stop();
 
 signals:
-    void taskDone(QString connectionId, bool status);
-    void notify(QString connectionId, QString message);
+    /*!
+     * This signal is emitted when FlasherConnector finishes.
+     * \param result result of flash operation
+     * \param errorString error description if result is Error, otherwise empty
+     */
+    void finished(Flasher::Result result, QString errorString);
 
-private slots:
-    void onTaskDone(QString connectionId, bool status);
+    /*!
+     * This signal is emitted during firmware flashing.
+     * \param chunk number of firmware chunks which was flashed
+     * \param total total count of firmware chunks
+     */
+    void flashProgress(int chunk, int total);
 
 private:
-    QMutex connectionToWorkerMutex_;
-    QMap<QString, FlasherWorker*> connectionToWorker_;
-
+    SerialDevicePtr device_;
+    std::unique_ptr<Flasher> flasher_;
+    const QString fileName_;
 };
 
-#endif // FLASHERCONNECTOR_H
+}  // namespace
+
+#endif

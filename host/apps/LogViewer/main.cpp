@@ -1,4 +1,5 @@
 #include "LogModel.h"
+#include "FileModel.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -69,6 +70,7 @@ int main(int argc, char *argv[]) {
     QQmlApplicationEngine engine;
 
     qmlRegisterType<LogModel>("tech.strata.logviewer.models", 1, 0, "LogModel");
+    qmlRegisterType<FileModel>("tech.strata.logviewer.models", 1, 0, "FileModel");
     loadResources();
     addImportPaths(&engine);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
