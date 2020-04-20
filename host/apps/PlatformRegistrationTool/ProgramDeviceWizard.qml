@@ -4,13 +4,12 @@ import Qt.labs.settings 1.1 as QtLabsSettings
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
 import QtQuick.Dialogs 1.3
-import tech.strata.common 1.0
 import Qt.labs.platform 1.1 as QtLabsPlatform
+import tech.strata.logger 1.0
 
 Item {
     id: wizard
 
-    property variant boardManager: null
     property string binaryPathForJlink
     property string jlinkExePath
     property bool useJLink: false
@@ -18,12 +17,6 @@ Item {
     property bool closeButtonVisible: false
     property bool requestCancelOnClose: false
     property int processingStatus: ProgramDeviceWizard.SetupProgramming
-    property bool loopMode: true
-    property bool checkFirmware: true
-    property bool useCurrentConnectionId: false
-    property int currentConnectionId
-
-    signal cancelRequested()
 
     enum ProcessingStatus {
         SetupProgramming,
@@ -77,10 +70,9 @@ Item {
         FeedbackArrow {
             id: feedbackArrow
             width: state4.x - state2.x + 2*padding + wingWidth + 4
-            height: loopMode ? 40 : 0
+            height: 40
             x: state2.x - padding + Math.round(state2.width/2) - wingWidth - 2
 
-            visible: loopMode
             padding: 2
             color: baseColor
         }
@@ -89,7 +81,7 @@ Item {
             id: state1
             anchors {
                 horizontalCenter: label1.horizontalCenter
-                top: loopMode ? feedbackArrow.bottom : parent.top
+                top: feedbackArrow.bottom
             }
 
             source: "qrc:/sgimages/cog.svg"
@@ -174,14 +166,11 @@ Item {
 
         Arrow {
             id: arrow5
-            width: loopMode ? undefined : 0
             anchors {
                 left: state4.right
                 verticalCenter: state1.verticalCenter
             }
 
-
-            visible: loopMode
             color: baseColor
             tailLength: Math.round(arrowTailLength/2)
         }
@@ -193,7 +182,7 @@ Item {
             }
 
             color: baseColor
-            text: loopMode ? "End" : ""
+            text: "End"
             standalone: true
         }
 
@@ -215,7 +204,7 @@ Item {
                 top: state2.bottom
             }
 
-            text: loopMode ? "Connect New\nDevice" : "Device Check"
+            text: "Connect New\nDevice"
             color: baseColor
             highlight: state2.highlight
         }
@@ -263,16 +252,6 @@ Item {
 
         FocusScope {
             id: settingsPage
-
-            Connections {
-                target: settingsPage.StackView.visible ? wizard.boardManager : null
-
-                onBoardDisconnected: {
-                    if (isCancelable(connectionId)) {
-                        cancelRequested()
-                    }
-                }
-            }
 
             Flickable {
                 id: flick
@@ -579,18 +558,13 @@ Item {
             property variant warningDialog: null
 
             Connections {
-                target: wizard.boardManager
+                target: prtModel
 
                 onBoardReady: {
                     callTryProgramDevice()
                 }
 
                 onBoardDisconnected: {
-                    if (isCancelable(connectionId)) {
-                        cancelRequested()
-                        return
-                    }
-
                     callTryProgramDevice()
                 }
             }
@@ -607,9 +581,9 @@ Item {
             Connections {
                 target: jLinkConnector
 
-                onFlashBoardFinished: {
-                    console.log(Logger.pdwCategory, "JLink flash finished with status=", status)
-                    if (status) {
+                onFlashBoardProcessFinished: {
+                    console.log(Logger.prtCategory, "JLink flash finished with exitedNormally=", exitedNormally)
+                    if (exitedNormally) {
                         processingStatus = ProgramDeviceWizard.ProgrammingSucceed
                     } else {
                         processingStatus = ProgramDeviceWizard.ProgrammingFailed
@@ -617,18 +591,13 @@ Item {
                     }
                 }
 
-                onCheckConnectionFinished: {
-                    console.log(Logger.pdwCategory, "JLink check connection finished with status=", status, "connected=", connected)
-                    if (status && connected) {
+                onCheckConnectionProcessFinished: {
+                    console.log(Logger.prtCategory, "JLink check connection finished with exitedNormally=", exitedNormally, "connected=", connected)
+                    if (exitedNormally && connected) {
 
-
-                        var effectiveConnectionId = useCurrentConnectionId ? currentConnectionId : wizard.boardManager.readyConnectionIds[0]
-                        var connectionInfo = wizard.boardManager.getConnectionInfo(effectiveConnectionId)
-
-                        var hasFirmware = connectionInfo.applicationVersion.length > 0
-
-                        if (checkFirmware && hasFirmware) {
-                            showFirmwareWarning(false, connectionInfo.applicationVersion, connectionInfo.verboseName)
+                        if (prtModel.deviceFirmwareVersion().length > 0) {
+                            //device already has firmware
+                            showFirmwareWarning(false, prtModel.deviceFirmwareVersion(), prtModel.deviceFirmwareVerboseName())
                             return
                         }
 
@@ -640,10 +609,6 @@ Item {
             }
 
             function callTryProgramDevice() {
-                if (loopMode === false && processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
-                    return
-                }
-
                 if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
                     processingStatus = ProgramDeviceWizard.WaitingForDevice
                 }
@@ -657,17 +622,12 @@ Item {
                 }
 
                 if (processingStatus !== ProgramDeviceWizard.WaitingForDevice
-                        && processingStatus !== ProgramDeviceWizard.WaitingForJLink)
-                {
+                        && processingStatus !== ProgramDeviceWizard.WaitingForJLink) {
+
                     return
                 }
 
-                if (wizard.boardManager.readyConnectionIds.length === 0) {
-                    processingStatus = ProgramDeviceWizard.WaitingForDevice
-                    return
-                }
-
-                if (useCurrentConnectionId && wizard.boardManager.readyConnectionIds.indexOf(currentConnectionId) < 0) {
+                if (prtModel.deviceCount === 0 || prtModel.deviceCount > 1) {
                     processingStatus = ProgramDeviceWizard.WaitingForDevice
                     return
                 }
@@ -714,7 +674,6 @@ Item {
             }
 
             function doProgramDeviceJlink() {
-
                 var run = jLinkConnector.flashBoardRequested(wizard.binaryPathForJlink, true)
                 if (run) {
                     processingStatus = ProgramDeviceWizard.ProgrammingWithJlink
@@ -819,26 +778,29 @@ Item {
                 text: {
                     if (processingStatus === ProgramDeviceWizard.WaitingForDevice
                             || processingStatus === ProgramDeviceWizard.WaitingForJLink) {
-                        return "Only single device with MCU EFM32GG380F1024 can be connected while programming"
+
+                        var msg = "Only single device with MCU EFM32GG380F1024 can be connected while programming\n"
+
+                        if (prtModel.deviceCount > 1) {
+                            msg += "Multiple devices detected !"
+                        }
+                        return msg
                     } else if (processingStatus === ProgramDeviceWizard.ProgrammingWithJlink) {
-                        var msg = processPage.subtextNote
+                        msg = processPage.subtextNote
                         msg += "\n\n"
                         msg += "Do not unplug the device until process is complete"
                         return msg
                     } else if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
-                        if (loopMode) {
-                            msg = "To program another device, simply plug it in and\n new process will start automatically\n\n"
-                            msg += "or "
-                            msg += "press End."
-                            return msg
-                        }
+                        msg = "You can unplug the device now\n\n"
+                        msg += "To program another device, simply plug it in and\n"
+                        msg += "process will start automatically\n\n"
+                        msg += "or press End."
+                        return msg
                     } else if(processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
-                        if (loopMode) {
-                            msg = processPage.subtextNote
-                            msg += "\n\n"
-                            msg += "Unplug the device and press Continue"
-                            return msg
-                        }
+                        msg = processPage.subtextNote
+                        msg += "\n\n"
+                        msg += "Unplug the device and press Continue"
+                        return msg
                     }
 
                     return ""
@@ -853,7 +815,7 @@ Item {
                     margins: 10
                 }
 
-                source: "qrc:/tech/strata/common/ProgramDeviceWizard/images/jlink-connect-schema.svg"
+                source: "qrc://jlink-connect-schema.svg"
                 fillMode: Image.PreserveAspectFit
                 sourceSize: Qt.size(width, height)
                 smooth: true
@@ -873,9 +835,8 @@ Item {
                 SGWidgets.SGButton {
                     id: cancelBtn
 
-                    text: loopMode ? qsTr("End") : qsTr("Close")
+                    text: qsTr("End")
                     visible: processingStatus === ProgramDeviceWizard.ProgrammingSucceed
-                             || (loopMode === false && processingStatus === ProgramDeviceWizard.ProgrammingFailed)
 
                     onClicked: {
                         if (requestCancelOnClose) {
@@ -905,7 +866,7 @@ Item {
                     id: confirmErrorBtn
 
                     text: qsTr("Continue")
-                    visible: loopMode && processingStatus === ProgramDeviceWizard.ProgrammingFailed
+                    visible: processingStatus === ProgramDeviceWizard.ProgrammingFailed
 
                     onClicked: {
                         processingStatus = ProgramDeviceWizard.WaitingForDevice
@@ -951,15 +912,6 @@ Item {
         dialog.open();
     }
 
-    function isCancelable(connectionId) {
-        return loopMode === false
-                && useCurrentConnectionId
-                && connectionId === currentConnectionId
-                && (processingStatus === ProgramDeviceWizard.SetupProgramming
-                    || processingStatus === ProgramDeviceWizard.WaitingForDevice
-                    || processingStatus === ProgramDeviceWizard.WaitingForJLink)
-    }
-
     function resolveAbsoluteFileUrl(path) {
         return CommonCpp.SGUtilsCpp.pathToUrl(
             CommonCpp.SGUtilsCpp.fileAbsolutePath(path))
@@ -989,16 +941,16 @@ Item {
             exeName = "JLinkExe"
         }
 
-        console.log(Logger.pdwCategory, "exeName", exeName)
-        console.log(Logger.pdwCategory, "pathList", JSON.stringify(pathList))
+        console.log(Logger.prtCategory, "exeName", exeName)
+        console.log(Logger.prtCategory, "pathList", JSON.stringify(pathList))
 
         var url = QtLabsPlatform.StandardPaths.findExecutable(exeName, pathList)
         if (url && url.toString().length > 0) {
             url = CommonCpp.SGUtilsCpp.urlToLocalFile(url)
-            console.log(Logger.pdwCategory, "JLink exe path", url)
+            console.log(Logger.prtCategory, "JLink exe path", url)
             return url
         } else {
-            console.log(Logger.pdwCategory, "JLink exe path could not be found")
+            console.log(Logger.prtCategory, "JLink exe path could not be found")
         }
 
         return ""

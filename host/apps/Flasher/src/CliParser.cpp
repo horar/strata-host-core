@@ -9,6 +9,8 @@ CliParser::CliParser(const QStringList &args) :
     listOption_({QStringLiteral("l"), QStringLiteral("list")}, QStringLiteral("List of connected boards (serial devices).")),
     flashOption_({QStringLiteral("f"), QStringLiteral("flash")},
                  QStringLiteral("Flash firmware from <file> to board specified by 'device' option."), QStringLiteral("file")),
+    backupOption_({QStringLiteral("b"), QStringLiteral("backup")},
+                 QStringLiteral("Backup firmware from board specified by 'device' option to <file>."), QStringLiteral("file")),
     deviceOption_({QStringLiteral("d"), QStringLiteral("device")}, QStringLiteral("Board number from 'list' option."), QStringLiteral("number"))
 {
     parser_.setApplicationDescription(QStringLiteral("Flasher CLI"));
@@ -16,6 +18,7 @@ CliParser::CliParser(const QStringList &args) :
     parser_.addVersionOption();
     parser_.addOption(listOption_);
     parser_.addOption(flashOption_);
+    parser_.addOption(backupOption_);
     parser_.addOption(deviceOption_);
 }
 
@@ -55,11 +58,18 @@ CommandShPtr CliParser::parse() {
         if (hasDeviceOption == false) {
             return std::make_unique<WrongCommand>(QStringLiteral("Flash firmware: No device specified by 'device' option."));
         }
-        return std::make_unique<FlashCommand>(parser_.value(flashOption_), deviceNumber);
+        return std::make_unique<FirmwareCommand>(parser_.value(flashOption_), deviceNumber, true);
+    }
+
+    if (parser_.isSet(backupOption_)) {
+        if (hasDeviceOption == false) {
+            return std::make_unique<WrongCommand>(QStringLiteral("Backup firmware: No device specified by 'device' option."));
+        }
+        return std::make_unique<FirmwareCommand>(parser_.value(backupOption_), deviceNumber, false);
     }
 
     if (hasDeviceOption) {
-        return std::make_unique<WrongCommand>(QStringLiteral("Option 'device' cannot be used without 'flash' option!"));
+        return std::make_unique<WrongCommand>(QStringLiteral("Option 'device' cannot be used without 'flash' or 'backup' option!"));
     }
 
     // Now we have only positional arguments (if any) or none arguments.

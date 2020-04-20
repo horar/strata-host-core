@@ -14,7 +14,6 @@ Item {
     property int checkBoxSpacer: 60
     property int handleSpacer: 5
     property int searchResultCount: model.count
-    property bool indexColumnVisible: true
     property bool timestampColumnVisible: true
     property bool pidColumnVisible: true
     property bool tidColumnVisible: true
@@ -84,12 +83,6 @@ Item {
         text: "Timestamp"
     }
 
-    TextMetrics {
-        id: textMetricsIndex
-        font: timestampHeaderText.font
-        text: "99999"
-    }
-
     Item {
         id: header
         anchors.top: parent.top
@@ -115,28 +108,6 @@ Item {
             height: messageHeaderText.contentHeight
             leftPadding: handleSpacer
             spacing: 8
-
-            Item {
-                id: indexHeader
-                anchors.verticalCenter: parent.verticalCenter
-                height: indexHeaderText.contentHeight + cellHeightSpacer
-                width: textMetricsIndex.boundingRect.width + cellWidthSpacer
-                visible: indexColumnVisible
-
-                SGWidgets.SGText {
-                    id: indexHeaderText
-                    anchors {
-                        left: indexHeader.left
-                        verticalCenter: parent.verticalCenter
-                    }
-                    font.family: "monospace"
-                    text: qsTr("Row")
-                }
-            }
-
-            Divider {
-                visible: indexColumnVisible
-            }
 
             Item {
                 id: tsHeader
@@ -360,7 +331,7 @@ Item {
                 SequentialAnimation {
                     ParallelAnimation {
                         ColorAnimation {
-                            targets: [indexColumn,ts,pid,tid,msg]
+                            targets: [ts,pid,tid,msg]
                             properties: "color"
                             from: "black"
                             to: "white"
@@ -377,7 +348,7 @@ Item {
                     }
                     ParallelAnimation {
                         ColorAnimation {
-                            targets: [indexColumn,ts,pid,tid,msg]
+                            targets: [ts,pid,tid,msg]
                             properties: "color"
                             from: "white"
                             to: "black"
@@ -432,15 +403,6 @@ Item {
                 id: row
                 leftPadding: handleSpacer
                 spacing: 18
-
-                SGWidgets.SGText {
-                    id: indexColumn
-                    width: indexHeader.width
-                    color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: "monospace"
-                    text: visible ? model.rowIndex : ""
-                    visible: indexColumnVisible
-                }
 
                 SGWidgets.SGText {
                     id: ts
@@ -553,20 +515,22 @@ Item {
             currentIndex = currentIndex + 1
             currentItemChanged(currentIndex)
         }
-
-        if (event.key === Qt.Key_PageDown) {
+        else if (event.key === Qt.Key_Left) {
+            logListView.contentX = logListView.contentX - logListView.width
+        }
+        else if (event.key === Qt.Key_Right) {
+            logListView.contentX = logListView.contentX + logListView.width
+        }
+        else if (event.key === Qt.Key_PageDown) {
             logListView.contentY = logListView.contentY + logListView.height
         }
-
-        if (event.key === Qt.Key_PageUp) {
+        else if (event.key === Qt.Key_PageUp) {
             logListView.contentY = logListView.contentY - logListView.height
         }
-
-        if (event.key === Qt.Key_Home) {
+        else if (event.key === Qt.Key_Home) {
             logListView.positionViewAtBeginning()
         }
-
-        if (event.key === Qt.Key_End) {
+        else if (event.key === Qt.Key_End) {
             logListView.positionViewAtEnd()
         }
     }

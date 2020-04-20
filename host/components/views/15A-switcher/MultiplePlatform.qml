@@ -3,7 +3,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 
 Item {
 
-    property string class_id: NavigationControl.context.class_id
+    property string class_id
     /*
       properties that changes for different platform using same UI
     */

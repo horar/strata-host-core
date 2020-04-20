@@ -19,7 +19,6 @@ void loadResources() {
 
     const auto resources = {
         QStringLiteral("component-fonts.rcc"),
-        QStringLiteral("component-common.rcc"),
         QStringLiteral("component-sgwidgets.rcc")};
 
 #ifdef Q_OS_MACOS

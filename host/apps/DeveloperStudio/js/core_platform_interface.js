@@ -24,6 +24,7 @@ function data_source_handler (payload) {
     catch (e) {
         if (e instanceof SyntaxError){
             console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Multiport Notification Error. Notification JSON is invalid, ignoring")
+            console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "payload: ", payload)
         }
     }
 }

@@ -175,6 +175,7 @@ Rectangle {
                 }
 
                 hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
             }
         }
 
