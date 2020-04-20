@@ -11,6 +11,7 @@
 #include <QVariantMap>
 #include <QVector>
 #include <QSharedPointer>
+#include <QMutex>
 
 #include <SerialDevice.h>
 #include <DeviceProperties.h>
@@ -61,7 +62,7 @@ namespace strata {
          * Get smart pointer to the device.
          * @param deviceId device ID
          */
-        SerialDevicePtr device(const int deviceId) const;
+        SerialDevicePtr device(const int deviceId);
 
         /**
          * Get information about connected device (platform ID, bootloader version, ...).
@@ -148,8 +149,7 @@ namespace strata {
 
         QTimer timer_;
 
-        // There is no need to use lock now because there is only one event loop in application. But if this library
-        // will be used across QThreads (more event loops in application) in future, mutex will be necessary.
+        QMutex mutex_;
 
         // Access to next 3 members should be protected by mutex (one mutex for all) in case of multithread usage.
         // Do not emit signals in block of locked code (because their slots are executed immediately in QML
@@ -157,6 +157,7 @@ namespace strata {
         std::set<int> serialPortsList_;
         QHash<int, QString> serialIdToName_;
         QHash<int, SerialDevicePtr> openedSerialPorts_;
+
         QHash<int, QSharedPointer<DeviceOperations>> serialDeviceOprations_;
 
         // flag if require response to get_firmware_info command
