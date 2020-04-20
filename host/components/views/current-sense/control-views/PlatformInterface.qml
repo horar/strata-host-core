@@ -13,6 +13,10 @@ Item {
         "ADC_214": 0.000,          //current reading of NCS214R in A (from 0 to 1.000)
         "ADC_333": 0.0001000,      //current reading of NCS333R in uA (from 0 to 100.0)
         "ADC_VIN": 0 ,
+        "max_input_voltage": "00.0",
+        "max_OBL_current" : "00.0",
+        "max_input_current": "00.0",
+        "CSA_max_reading": "off",
         "interrupts":   {
             "vs_int" : "off",
             "cs_int" : "off",

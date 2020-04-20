@@ -229,7 +229,7 @@ Item {
             if(current_sense_interrupt.load_fault === "on")
                 loadFault.status = SGStatusLight.Red
 
-            else loadFault.status = SGStatusLight.off
+            else loadFault.status = SGStatusLight.Off
         }
 
 
@@ -245,7 +245,7 @@ Item {
             if(voltage_sense_interrupt.load_fault === "on")
                 loadFault.status = SGStatusLight.Red
 
-            else loadFault.status = SGStatusLight.off
+            else loadFault.status = SGStatusLight.Off
 
         }
 
@@ -687,7 +687,7 @@ Item {
                                                 SGText {
                                                     anchors.top:parent.top
                                                     anchors.horizontalCenter: parent.horizontalCenter
-                                                    text: "100µA Max"
+                                                    text: "100µA & 3.3V Max"
                                                     font.bold: true
                                                     fontSizeMultiplier: ratioCalc
                                                     color: "red"
@@ -741,6 +741,8 @@ Item {
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
+                                    color: "transparent"
+
 
                                     RowLayout {
                                         anchors.fill: parent
@@ -748,10 +750,35 @@ Item {
                                         Rectangle {
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
+                                            color: "transparent"
+
+                                            SGAlignedLabel {
+                                                id: currentSenseMaxLabel
+                                                target: currentSenseMaxReading
+                                                alignment: SGAlignedLabel.SideLeftCenter
+                                                anchors.centerIn: parent
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                text: "Current Sense \n Max Reading "
+                                                font.bold: true
+
+                                                SGStatusLight {
+                                                    id: currentSenseMaxReading
+                                                    width: 30
+                                                }
+
+                                                property var periodic_status_CSA_max_reading: platformInterface.periodic_status.CSA_max_reading
+                                                onPeriodic_status_CSA_max_readingChanged:  {
+                                                    if(periodic_status_CSA_max_reading === "on")
+                                                        currentSenseMaxReading.status = SGStatusLight.Red
+                                                    else currentSenseMaxReading.status = SGStatusLight.Off
+                                                }
+                                            }
                                         }
                                         Rectangle {
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
+                                            color: "transparent"
+
 
                                             SGText {
                                                 id: vinText
@@ -764,6 +791,8 @@ Item {
                                         Rectangle {
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
+                                            color: "transparent"
+
 
                                             SGInfoBox {
                                                 id: vinReading
@@ -785,15 +814,18 @@ Item {
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
+                                    color: "transparent"
                                     RowLayout {
                                         anchors.fill: parent
                                         Rectangle {
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
+                                            color: "transparent"
                                         }
                                         Rectangle {
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
+                                            color: "transparent"
 
                                             SGButton {
                                                 text: "Recalibrate"
@@ -809,6 +841,7 @@ Item {
                                         Rectangle {
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
+                                            color: "transparent"
 
                                             SGButton {
                                                 text: "Reset"
@@ -896,7 +929,7 @@ Item {
                                             checkedLabel: "Manual"
                                             uncheckedLabel: "Auto"
                                             fontSizeMultiplier: ratioCalc
-                                            onCheckedChanged: {
+                                            onToggled: {
                                                 if(checked) {
                                                     maxInputCurrentContainer.enabled = true
                                                     maxInputCurrentContainer.opacity = 1.0
@@ -1042,7 +1075,7 @@ Item {
                         anchors.fill: parent
 
                         Rectangle {
-                            Layout.preferredHeight: parent.height/1.8
+                            Layout.preferredHeight: parent.height/2.5
                             Layout.fillWidth: true
 
 
@@ -1321,105 +1354,105 @@ Item {
 
                                     }
 
-                                    Rectangle {
-                                        Layout.fillHeight: true
-                                        Layout.fillWidth: true
+                                    //                                    Rectangle {
+                                    //                                        Layout.fillHeight: true
+                                    //                                        Layout.fillWidth: true
 
-                                        RowLayout {
-                                            anchors.fill: parent
-                                            Rectangle{
-                                                id: maxLoadContainer
-                                                Layout.fillWidth: true
-                                                Layout.fillHeight: true
+                                    //                                        RowLayout {
+                                    //                                            anchors.fill: parent
+                                    //                                            Rectangle{
+                                    //                                                id: maxLoadContainer
+                                    //                                                Layout.fillWidth: true
+                                    //                                                Layout.fillHeight: true
 
-                                                RowLayout{
-                                                    anchors.fill: parent
+                                    //                                                RowLayout{
+                                    //                                                    anchors.fill: parent
 
-                                                    Rectangle {
-                                                        Layout.preferredWidth: parent.width/1.3
-                                                        Layout.fillHeight: true
+                                    //                                                    Rectangle {
+                                    //                                                        Layout.preferredWidth: parent.width/1.3
+                                    //                                                        Layout.fillHeight: true
 
-                                                        SGAlignedLabel {
-                                                            id: maxLoadLabel
-                                                            target: maxLoadCurrent
-                                                            font.bold: true
-                                                            alignment: SGAlignedLabel.SideLeftCenter
-                                                            fontSizeMultiplier: ratioCalc * 1.2
-                                                            text: "Max Load \n Current"
-                                                            anchors.right: parent.right
-                                                            anchors.verticalCenter: parent.verticalCenter
+                                    //                                                        SGAlignedLabel {
+                                    //                                                            id: maxLoadLabel
+                                    //                                                            target: maxLoadCurrent
+                                    //                                                            font.bold: true
+                                    //                                                            alignment: SGAlignedLabel.SideLeftCenter
+                                    //                                                            fontSizeMultiplier: ratioCalc * 1.2
+                                    //                                                            text: "Max Load \n Current"
+                                    //                                                            anchors.right: parent.right
+                                    //                                                            anchors.verticalCenter: parent.verticalCenter
 
-                                                            SGInfoBox {
-                                                                id: maxLoadCurrent
-                                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                                boxColor: "lightgrey"
-                                                                boxFont.family: Fonts.digitalseven
-                                                                height:  35 * ratioCalc
-                                                                width: 125 * ratioCalc
-                                                                property var load_enable_status_current: platformInterface.load_enable_status.max_current
-                                                                onLoad_enable_status_currentChanged:  {
-                                                                    maxLoadCurrent.text = load_enable_status_current
-                                                                }
-                                                            }
-                                                        }
-                                                    }
+                                    //                                                            SGInfoBox {
+                                    //                                                                id: maxLoadCurrent
+                                    //                                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    //                                                                boxColor: "lightgrey"
+                                    //                                                                boxFont.family: Fonts.digitalseven
+                                    //                                                                height:  35 * ratioCalc
+                                    //                                                                width: 125 * ratioCalc
+                                    //                                                                property var load_enable_status_current: platformInterface.load_enable_status.max_current
+                                    //                                                                onLoad_enable_status_currentChanged:  {
+                                    //                                                                    maxLoadCurrent.text = load_enable_status_current
+                                    //                                                                }
+                                    //                                                            }
+                                    //                                                        }
+                                    //                                                    }
 
-                                                    Rectangle {
-                                                        Layout.fillWidth: true
-                                                        Layout.fillHeight: true
-                                                        SGText {
-                                                            id: maxLoadUnit
-                                                            text: "µA"
-                                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                            font.bold: true
-                                                            anchors.left: parent.left
-                                                            anchors.verticalCenter: parent.verticalCenter
-                                                            property var max_current_unit: platformInterface.load_enable_status.max_current_units
-                                                            onMax_current_unitChanged: {
-                                                                if(max_current_unit !== undefined)
-                                                                    maxLoadUnit.text = max_current_unit
-                                                            }
-                                                        }
+                                    //                                                    Rectangle {
+                                    //                                                        Layout.fillWidth: true
+                                    //                                                        Layout.fillHeight: true
+                                    //                                                        SGText {
+                                    //                                                            id: maxLoadUnit
+                                    //                                                            text: "µA"
+                                    //                                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    //                                                            font.bold: true
+                                    //                                                            anchors.left: parent.left
+                                    //                                                            anchors.verticalCenter: parent.verticalCenter
+                                    //                                                            property var max_current_unit: platformInterface.load_enable_status.max_current_units
+                                    //                                                            onMax_current_unitChanged: {
+                                    //                                                                if(max_current_unit !== undefined)
+                                    //                                                                    maxLoadUnit.text = max_current_unit
+                                    //                                                            }
+                                    //                                                        }
 
-                                                    }
-                                                }
-                                            }
+                                    //                                                    }
+                                    //                                                }
+                                    //                                            }
 
-                                            Rectangle{
-                                                id: maxIVoltageContainer
-                                                Layout.fillWidth: true
-                                                Layout.fillHeight: true
+                                    //                                            Rectangle{
+                                    //                                                id: maxIVoltageContainer
+                                    //                                                Layout.fillWidth: true
+                                    //                                                Layout.fillHeight: true
 
-                                                SGAlignedLabel {
-                                                    id: maxInputVolatgeLabel
-                                                    target: maxInputVolage
-                                                    font.bold: true
-                                                    alignment: SGAlignedLabel.SideLeftCenter
-                                                    fontSizeMultiplier: ratioCalc * 1.2
-                                                    text: "Max Input \n Voltage"
-                                                    anchors.centerIn: parent
+                                    //                                                SGAlignedLabel {
+                                    //                                                    id: maxInputVolatgeLabel
+                                    //                                                    target: maxInputVolage
+                                    //                                                    font.bold: true
+                                    //                                                    alignment: SGAlignedLabel.SideLeftCenter
+                                    //                                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    //                                                    text: "Max Input \n Voltage"
+                                    //                                                    anchors.centerIn: parent
 
-                                                    SGInfoBox {
-                                                        id: maxInputVolage
-                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                                        boxColor: "lightgrey"
-                                                        boxFont.family: Fonts.digitalseven
-                                                        height:  35 * ratioCalc
-                                                        width: 140 * ratioCalc
-                                                        unit: "<b>V</b>"
-                                                        anchors.left: parent.left
-                                                        anchors.verticalCenter: parent.verticalCenter
+                                    //                                                    SGInfoBox {
+                                    //                                                        id: maxInputVolage
+                                    //                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                    //                                                        boxColor: "lightgrey"
+                                    //                                                        boxFont.family: Fonts.digitalseven
+                                    //                                                        height:  35 * ratioCalc
+                                    //                                                        width: 140 * ratioCalc
+                                    //                                                        unit: "<b>V</b>"
+                                    //                                                        anchors.left: parent.left
+                                    //                                                        anchors.verticalCenter: parent.verticalCenter
 
-                                                        property var load_enable_status_input_voltage: platformInterface.load_enable_status.max_input_voltage
-                                                        onLoad_enable_status_input_voltageChanged:  {
-                                                            maxInputVolage.text = load_enable_status_input_voltage
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
+                                    //                                                        property var load_enable_status_input_voltage: platformInterface.load_enable_status.max_input_voltage
+                                    //                                                        onLoad_enable_status_input_voltageChanged:  {
+                                    //                                                            maxInputVolage.text = load_enable_status_input_voltage
+                                    //                                                        }
+                                    //                                                    }
+                                    //                                                }
+                                    //                                            }
+                                    //                                        }
 
-                                    }
+                                    //                                    }
                                 }
                             }
                         }
@@ -1528,7 +1561,7 @@ Item {
                                             alignment: SGAlignedLabel.SideTopCenter
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc * 1.2
-                                            text: "Load\n Fault "
+                                            text: "Fault "
                                             font.bold: true
 
                                             SGStatusLight {
@@ -1536,6 +1569,115 @@ Item {
                                             }
                                         }
                                     }
+                                }
+
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+
+                                    RowLayout {
+                                        anchors.fill: parent
+
+
+                                        Rectangle{
+                                            id: maxIVoltageContainer
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGAlignedLabel {
+                                                id: maxInputVolatgeLabel
+                                                target: maxInputVolage
+                                                font.bold: true
+                                                alignment: SGAlignedLabel.SideTopCenter
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                text: "Max Input \n Voltage"
+                                                anchors.centerIn: parent
+
+                                                SGInfoBox {
+                                                    id: maxInputVolage
+                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                    boxColor: "lightgrey"
+                                                    boxFont.family: Fonts.digitalseven
+                                                    height:  35 * ratioCalc
+                                                    width: 140 * ratioCalc
+                                                    unit: "<b>V</b>"
+                                                    // anchors.centerIn: parent
+
+                                                    property var periodic_status_input_voltage: platformInterface.periodic_status.max_input_voltage
+                                                    onPeriodic_status_input_voltageChanged:  {
+                                                        maxInputVolage.text = periodic_status_input_voltage
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle{
+                                            id: maxLoadContainer
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+
+                                            SGAlignedLabel {
+                                                id: maxLoadLabel
+                                                target: maxLoadCurrent
+                                                font.bold: true
+                                                alignment: SGAlignedLabel.SideTopCenter
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                text: "Max On-Board \n Load Current"
+                                                anchors.centerIn: parent
+
+                                                SGInfoBox {
+                                                    id: maxLoadCurrent
+                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                    boxColor: "lightgrey"
+                                                    boxFont.family: Fonts.digitalseven
+                                                    height:  35 * ratioCalc
+                                                    width: 125 * ratioCalc
+                                                    unit: "A"
+                                                    unitFont.bold: true
+                                                    property var max_OBL_current: platformInterface.periodic_status.max_OBL_current
+                                                    onMax_OBL_currentChanged:  {
+                                                        maxLoadCurrent.text = max_OBL_current
+                                                    }
+                                                }
+                                            }
+
+                                        }
+
+                                        Rectangle{
+                                            id: maxICurrentContainter
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+
+                                            SGAlignedLabel {
+                                                id: maxICurrentLabel
+                                                target: maxICurrent
+                                                font.bold: true
+                                                alignment: SGAlignedLabel.SideTopCenter
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                text: "Max Input \n Current"
+                                                anchors.centerIn: parent
+
+                                                SGInfoBox {
+                                                    id: maxICurrent
+                                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                    boxColor: "lightgrey"
+                                                    boxFont.family: Fonts.digitalseven
+                                                    height:  35 * ratioCalc
+                                                    width: 125 * ratioCalc
+                                                    unit: "A"
+                                                    unitFont.bold: true
+                                                    property var periodic_max_input_current: platformInterface.periodic_status.max_input_current
+                                                    onPeriodic_max_input_currentChanged:  {
+                                                        maxICurrent.text = periodic_max_input_current
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                    }
+
                                 }
 
 
