@@ -84,12 +84,12 @@ Item {
     }
 
     //no longer used for communication to platform, but for communication within the UI
-    property var toggle_door_notification : {
+    property var smarthome_door : {
         "value": "closed"     //or "open"
     }
 
     //no longer used for communication to platform, but for communication within the UI
-    property var toggle_window_shade_notification : {
+    property var window_shade : {
         "value": "closed"     //or "open"
     }
 
@@ -113,13 +113,13 @@ Item {
                   }]
     }
 
-    onNetwork_notificationChanged: {
-         for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
-            console.log("index=",platformInterface.network_notification.nodes[alpha].index,
-                        "ready=",platformInterface.network_notification.nodes[alpha].ready,
-                        "color=",platformInterface.network_notification.nodes[alpha].color);
-         }
-    }
+//    onNetwork_notificationChanged: {
+//         for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+//            console.log("index=",platformInterface.network_notification.nodes[alpha].index,
+//                        "ready=",platformInterface.network_notification.nodes[alpha].ready,
+//                        "color=",platformInterface.network_notification.nodes[alpha].color);
+//         }
+//    }
 
     property var node_added : {
         "index": 1,  // in dec (16 bit)

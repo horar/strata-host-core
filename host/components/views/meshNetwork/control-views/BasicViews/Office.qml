@@ -26,11 +26,14 @@ Rectangle {
     onVisibleChanged: {
         if (visible){
             console.log("office is now visible")
+            //deactivate all the nodes from their previous roles when switching
+            //this is a kludge, as it means nodes will not function in the roles they appear in until they're moved
+            platformInterface.set_node_mode.update("default",65535,true)
             //iterate over the meshArray, and send role and node numbers for each
-            meshObjectRow.meshArray.forEach(function(item, index, array){
+            //meshObjectRow.meshArray.forEach(function(item, index, array){
                 //removed temporarily because sending nine commands back to back overloads the network.
                 //platformInterface.set_node_mode.update(item.pairingModel,item.nodeNumber,true)
-                })
+             //   })
         }
 
     }
@@ -116,9 +119,9 @@ Rectangle {
             }
         }
 
-        MeshObject{ id: mesh7; scene:"office"; displayName:"Security Camera";pairingModel:"security"; nodeNumber: "";
+        MeshObject{ id: mesh7; scene:"office"; displayName:"Security Camera";pairingModel:"security_camera"; nodeNumber: "";
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor) }
-        MeshObject{ id: mesh6; scene:"office"; displayName:"Doorbell"; pairingModel:"doorbell";nodeNumber: ""
+        MeshObject{ id: mesh6; scene:"office"; displayName:"Doorbell"; pairingModel:"buzzer";nodeNumber: ""
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         MeshObject{ id: mesh4; scene:"office"; displayName:"Door"; pairingModel:"door"; nodeNumber: ""
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
@@ -126,9 +129,9 @@ Rectangle {
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         ProvisionerObject{ id: provisioner; nodeNumber:"1" }
         //
-        MeshObject{ id: mesh1; scene:"office"; displayName:"Robotic Arm"; pairingModel:"robot_arm"; nodeNumber: ""
+        MeshObject{ id: mesh1; scene:"office"; displayName:"Robotic Arm"; pairingModel:"robotic_arm"; nodeNumber: ""
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
-        MeshObject{ id: mesh3; scene:"office"; displayName:"Solar Panel"; subName:"(Relay)"; pairingModel:"solar_panel"; nodeNumber: ""
+        MeshObject{ id: mesh3; scene:"office"; displayName:"Solar Panel"; subName:"(Relay)"; pairingModel:"relay"; nodeNumber: ""
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         MeshObject{ id: mesh5; scene:"office"; displayName:"HVAC"; subName:"(Remote)";pairingModel:"hvac"; nodeNumber: ""
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
@@ -142,7 +145,7 @@ Rectangle {
         id:mainImage
         source:"qrc:/views/meshNetwork/images/office.jpg"
         //anchors.left:parent.left
-        height:parent.height*.7
+        height:parent.height*.60
         anchors.centerIn: parent
         anchors.verticalCenterOffset: 20
         fillMode: Image.PreserveAspectFit
@@ -388,7 +391,7 @@ Rectangle {
                 anchors.leftMargin: parent.width * .65
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .37
-                nodeType:"provisioner"
+                nodeType:"high_power"
                 color:"green"
             }
             //—————————————————————————————————————

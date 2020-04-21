@@ -13,12 +13,15 @@ Rectangle {
 
     onVisibleChanged: {
         if (visible){
-            console.log("office is now visible")
+            console.log("smart home is now visible")
+            //deactivate all the nodes from their previous roles when switching
+            //this is a kludge, as it means nodes will not function in the roles they appear in until they're moved
+            platformInterface.set_node_mode.update("default",65535,true)
             //iterate over the meshArray, and send role and node numbers for each
-            meshObjectRow.meshArray.forEach(function(item, index, array){
+            //meshObjectRow.meshArray.forEach(function(item, index, array){
                 //removed temporarily to stop overloading the network when changing views
                 //platformInterface.set_node_mode.update(item.pairingModel,item.nodeNumber,true)
-                })
+            //    })
         }
 
     }
@@ -119,7 +122,7 @@ Rectangle {
         ProvisionerObject{ id: provisioner; nodeNumber:"1" }
         MeshObject{ id: mesh1; scene:"smart_home"; displayName:"Door"; pairingModel:"smarthome_door";nodeNumber: "3"
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
-        MeshObject{ id: mesh3; scene:"smart_home"; displayName:"Lights"; pairingModel:"lights";nodeNumber: "5";
+        MeshObject{ id: mesh3; scene:"smart_home"; displayName:"Lights"; pairingModel:"smarthome_lights";nodeNumber: "5";
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         MeshObject{ id: mesh5; scene:"smart_home"; pairingModel:""; subName:""; nodeNumber: "7"
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
@@ -131,7 +134,7 @@ Rectangle {
     Image{
         id:mainImage
         source:"qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
-        height:parent.height*.7
+        height:parent.height*.6
         anchors.centerIn: parent
         anchors.verticalCenterOffset: 20
         fillMode: Image.PreserveAspectFit
@@ -155,19 +158,19 @@ Rectangle {
                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_orange.jpg"
             }
 
-        property var door: platformInterface.toggle_door_notification
+        property var door: platformInterface.smarthome_door
         onDoorChanged: {
-             var doorState = platformInterface.toggle_door_notification.value
+             var doorState = platformInterface.smarthome_door.value
             if (doorState === "open")
                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
               else
                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
             }
 
-        property var window: platformInterface.toggle_window_shade_notification
+        property var window: platformInterface.window_shade
         onWindowChanged: {
 
-             var windowState = platformInterface.toggle_window_shade_notification.value
+             var windowState = platformInterface.window_shade.value
             console.log("settting window to be",windowState)
             if (windowState === "open")
                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
