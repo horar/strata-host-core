@@ -768,7 +768,7 @@ Item {
                                         alignment: SGAlignedLabel.SideTopCenter
                                         anchors.centerIn: parent
                                         fontSizeMultiplier: ratioCalc
-                                        text: "Temperature Alert \n (LDO_TEMP#)"
+                                        text: "LDO Temperature\nAlert"
                                         font.bold: true
 
                                         SGStatusLight {
