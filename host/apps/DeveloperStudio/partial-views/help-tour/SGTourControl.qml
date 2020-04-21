@@ -62,6 +62,7 @@ Item {
             }
             onClicked: root.close()
             hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
         }
     }
 
@@ -156,6 +157,13 @@ Item {
                     text: "Hotkey: ←"
                     visible: prevButton.showToolTip
                 }
+
+                MouseArea {
+                    id: buttonCursor
+                    anchors.fill: parent
+                    onPressed:  mouse.accepted = false
+                    cursorShape: Qt.PointingHandCursor
+                }
             }
 
             Item {
@@ -196,6 +204,13 @@ Item {
                 ToolTip {
                     text: "Hotkey: →"
                     visible: nextButton.showToolTip
+                }
+
+                MouseArea {
+                    id: buttonCursor1
+                    anchors.fill: parent
+                    onPressed:  mouse.accepted = false
+                    cursorShape: Qt.PointingHandCursor
                 }
             }
         }

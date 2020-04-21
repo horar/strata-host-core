@@ -80,6 +80,8 @@ Rectangle{
             anchors {
                 fill: helpIcon
             }
+            cursorShape: Qt.PointingHandCursor
+
             onClicked: {
                 Help.startHelpTour("selectorHelp", "strataMain")
             }

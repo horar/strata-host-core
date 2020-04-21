@@ -21,7 +21,7 @@ const rapidjson::SchemaDocument CommandValidator::requestPlatformIdResSchema(
                     "pattern":"^platform_id$"
                     },
                     "payload": {
-                        "oneOf":[
+                        "anyOf":[
                             {
                                 "type": "object",
                                 "properties": {
@@ -35,7 +35,7 @@ const rapidjson::SchemaDocument CommandValidator::requestPlatformIdResSchema(
                                     "type": "string"
                                     },
                                     "count": {
-                                    "type": "integer"
+                                    "type": ["string", "integer"]
                                     },
                                     "platform_id_version": {
                                     "type": "string"
@@ -288,6 +288,84 @@ const rapidjson::SchemaDocument CommandValidator::flashFWResSchema(
     )
 );
 
+const rapidjson::SchemaDocument CommandValidator::backupFWResSchema(
+    CommandValidator::parseSchema(
+        R"(
+        {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "type": "object",
+          "properties": {
+            "notification": {
+            "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "pattern": "^backup_firmware$"
+                },
+                "payload": {
+                  "type": "object",
+                  "properties": {
+                    "chunk": {
+                      "type": "object",
+                      "properties": {
+                        "number": {"type": "number"},
+                        "size": {"type": "number"},
+                        "crc": {"type": "number"},
+                        "data": {"type": "string"}
+                      },
+                      "required": ["number", "size", "crc", "data"]
+                    }
+                  },
+                  "required": ["chunk"]
+                }
+              },
+              "required": ["value", "payload"]
+            }
+          },
+          "required": ["notification"]
+        })"
+    )
+);
+
+const rapidjson::SchemaDocument CommandValidator::startAppResSchema(
+    CommandValidator::parseSchema(
+        R"(
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+            "notification": {
+                "type": "object",
+                "properties": {
+                "value": {
+                    "type": "string",
+                    "pattern": "^start_application$"
+                },
+                "payload": {
+                    "type": "object",
+                    "properties": {
+                    "status": {
+                        "type": "string"
+                    }
+                    },
+                    "required": [
+                    "status"
+                    ]
+                }
+                },
+                "required": [
+                "value",
+                "payload"
+                ]
+            }
+            },
+            "required": [
+            "notification"
+            ]
+        })"
+    )
+);
+
 const rapidjson::SchemaDocument CommandValidator::getFWInfoResSchema(
     CommandValidator::parseSchema(
         R"(
@@ -451,7 +529,9 @@ const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument
     {JsonType::notification, notificationSchema},
     {JsonType::getFwInfoRes, getFWInfoResSchema},
     {JsonType::flashFwRes, flashFWResSchema},
+    {JsonType::backupFwRes, backupFWResSchema},
     {JsonType::updateFwRes, updateFWResSchema},
+    {JsonType::startAppRes, startAppResSchema},
     {JsonType::strataCmd, strataCommandSchema},
     {JsonType::cmd, cmdSchema}
 };

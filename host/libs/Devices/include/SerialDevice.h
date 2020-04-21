@@ -10,6 +10,8 @@
 #include <QSerialPort>
 #include <QTimer>
 #include <QVariantMap>
+#include <QMutex>
+#include <QReadWriteLock>
 
 #include <DeviceProperties.h>
 
@@ -49,7 +51,7 @@ namespace strata {
         /**
          * Send message to serial device. Emits serialDeviceError in case of failure.
          * @param msg message to be written to device
-         * @return true if message was sent, otherwise false
+         * @return true if message can be send, otherwise false
          */
         bool sendMessage(const QByteArray msg);
 
@@ -58,14 +60,14 @@ namespace strata {
          * @return QVariantMap filled with information about device
          */
         [[deprecated("Use deviceId() and property() instead.")]]
-        QVariantMap getDeviceInfo() const;
+        QVariantMap getDeviceInfo();
 
         /**
          * Get property.
          * @param property value from enum DeviceProperties
          * @return QString filled with value of required property
          */
-        QString property(DeviceProperties property) const;
+        QString property(DeviceProperties property);
 
         /**
          * Get device ID.
@@ -108,7 +110,7 @@ namespace strata {
         bool writeData(const QByteArray data, quintptr lockId);
         // *** functions used by friend class DeviceOperations:
         void setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer);
-        bool lockDevice(quintptr lockId);
+        bool lockDeviceForOperation(quintptr lockId);
         void unlockDevice(quintptr lockId);
         bool sendMessage(const QByteArray msg, quintptr lockId);
         // ***
@@ -118,11 +120,14 @@ namespace strata {
         QSerialPort serialPort_;
         std::string readBuffer_;  // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
 
+        // Mutex for protect access to operationLock_.
+        QMutex operationMutex_;
         // If some operation (identification, flashing firmware, ...) is running, device should be locked
         // for other operations or sending messages. Device can be locked only by DeviceOperations class.
-        // Address of DeviceOperations class instance is used as value of deviceLock_. 0 means unlocked.
-        quintptr deviceLock_;
+        // Address of DeviceOperations class instance is used as value of operationLock_. 0 means unlocked.
+        quintptr operationLock_;
 
+        QReadWriteLock properiesLock_;  // Lock for protect access to device properties.
         QString platformId_;
         QString classId_;
         QString verboseName_;
