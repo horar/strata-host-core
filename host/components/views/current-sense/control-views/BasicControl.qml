@@ -201,21 +201,26 @@ Item {
             setting5Reading.text = periodic_status.ADC_333
             vinReading.text = periodic_status.ADC_VIN
 
-            if(periodic_status.interrupts.vs_int === "on") {
+
+
+        }
+
+        property var led_status: platformInterface.led_status
+        onLed_statusChanged: {
+            if(led_status.interrupts.vs_int === "on") {
                 voltageStatusLight.status = SGStatusLight.Red
             }
             else voltageStatusLight.status = SGStatusLight.Off
 
-            if(periodic_status.interrupts.cs_int === "on") {
+            if(led_status.interrupts.cs_int === "on") {
                 currentStatusLight.status = SGStatusLight.Red
             }
             else currentStatusLight.status = SGStatusLight.Off
 
-            if(periodic_status.interrupts.i_in_int === "on") {
+            if(led_status.interrupts.i_in_int === "on") {
                 loadCurrent.status = SGStatusLight.Red
             }
             else loadCurrent.status = SGStatusLight.Off
-
         }
 
         property var current_sense_interrupt: platformInterface.current_sense_interrupt
@@ -766,7 +771,7 @@ Item {
                                                     width: 30
                                                 }
 
-                                                property var periodic_status_CSA_max_reading: platformInterface.periodic_status.CSA_max_reading
+                                                property var periodic_status_CSA_max_reading: platformInterface.led_status.CSA_max_reading
                                                 onPeriodic_status_CSA_max_readingChanged:  {
                                                     if(periodic_status_CSA_max_reading === "on")
                                                         currentSenseMaxReading.status = SGStatusLight.Red
@@ -997,7 +1002,6 @@ Item {
 
                                                     property var switch_enable_status_in_max: platformInterface.switch_enable_status.i_in_max
                                                     onSwitch_enable_status_in_maxChanged:  {
-                                                        console.log(switch_enable_status_in_max)
                                                         if(switch_enable_status_in_max !== "N/A") {
                                                             maxInputCurrent.value = switch_enable_status_in_max
                                                         }
