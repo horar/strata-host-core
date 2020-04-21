@@ -7,7 +7,7 @@ This is the main driver for the automated test script for the master test plan
 https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist
 
 .INPUTS  SDSInstallerPath
-Mandatory. If not being passed as an arugment to the secript you will be prompted to choose the path
+Mandatory. If not being passed as an argument to the script you will be prompted to choose the path
 
 .OUTPUTS
 Result of the test
@@ -15,7 +15,7 @@ Result of the test
 .NOTES
 Version:        1.0
 Creation Date:  03/17/2020
-Requires: Powershell version 5, and Python 3
+Requires: PowerShell version 5, and Python 3
 in case of a problem with executing the script run:
 Set-ExecutionPolicy -Scope CurrentUser Unrestricted
 
@@ -68,14 +68,14 @@ Set-Variable "PythonControlViewTest"        "$PSScriptRoot/strataDev/control-vie
 # Import functions for test "Test-SDSControlViews"
 . "$PSScriptRoot\strataDev\Test-SDSControlViews.ps1"
 
-# Import functions for test "Test-SDSnstaller"
+# Import functions for test "Test-SDSInstaller"
 . "$PSScriptRoot\installer\Test-SDSInstaller.ps1"
 
 #------------------------------------------------------[Pre-requisite checks]------------------------------------------------------
 
 Write-Host "`n`nPerforming initial checks...`n"
 
-# Validate UAC and administration previliges
+# Validate UAC and administration privileges
 Assert-UACAndAdmin
 
 # Validate Strata installer path
