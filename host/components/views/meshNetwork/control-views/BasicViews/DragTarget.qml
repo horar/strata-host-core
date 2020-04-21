@@ -40,10 +40,11 @@ Rectangle {
 
         onClicked:{
             console.log("sending click with value",nodeType)
-            if (nodeType == "solar"){
+            if (nodeType == "solar_panel"){
                 //enable/disable relay mode
-                //platformInterface.sensor_set.update(7,"strata",relayEnabled)
-                platformInterface.set_node_mode(nodeType,root.nodeNumber,relayEnabled)
+                console.log("sending solar_panel")
+                if (root.nodeNumber != "")
+                    platformInterface.set_node_mode(nodeType,root.nodeNumber,relayEnabled)
                 relayEnabled = !relayEnabled;
             }
 
@@ -68,17 +69,18 @@ Rectangle {
                      } ')
             }
             else if (nodeType === "hvac"){
-                platformInterface.light_hsl_set.update(65535,color.hslHue,color.hslSaturation,color.hslLightness)
+                platformInterface.light_hsl_set.update(65535,color.hslHue*100,color.hslSaturation*100,color.hslLightness*100)
 
             }
             else if (nodeType == "security"){
-                platformInterface.light_hsl_set.update(65535,color.hslHue,color.hslSaturation,color.hslLightness)
+                console.log("sending color ",color.hslHue*100,color.hslSaturation*100,color.hslLightness*100);
+                platformInterface.light_hsl_set.update(65535,color.hslHue*100,color.hslSaturation*100,color.hslLightness*100)
             }
             else if (nodeType == "doorbell"){
-                platformInterface.light_hsl_set.update(65535,color.hslHue,color.hslSaturation,color.hslLightness)
+                platformInterface.light_hsl_set.update(65535,color.hslHue*100,color.hslSaturation*100,color.hslLightness*100)
             }
             else if (nodeType == "unknown"){
-                platformInterface.light_hsl_set.update(65535,color.hslHue,color.hslSaturation,color.hslLightness)
+                platformInterface.light_hsl_set.update(65535,color.hslHue*100,color.hslSaturation*100,color.hslLightness*100)
             }
             else if (nodeType == "dimmer"){
                 //enable/disable dimmer mode
@@ -109,9 +111,9 @@ Rectangle {
             else if (nodeType == "lights"){
                 platformInterface.set_room_color.update(roomColors[currentRoomColor])
                 platformInterface.light_hsl_set.update(65535,
-                                                       roomColors[currentRoomColor].hslHue,
-                                                       roomColors[currentRoomColor].hslSaturation,
-                                                       roomColors[currentRoomColor].hslLightness);
+                                                       roomColors[currentRoomColor].hslHue*100,
+                                                       roomColors[currentRoomColor].hslSaturation*100,
+                                                       roomColors[currentRoomColor].hslLightness*100);
                 //this should be handled by the firmware, but isn't
                 CorePlatformInterface.data_source_handler('{
                    "value":"room_color_notification",
