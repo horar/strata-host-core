@@ -49,16 +49,16 @@ function Test-SDSInstaller {
     function Uninstall-SDSAndItsComponents {
         try {
             $SDSUninstallerPath =  Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" | ForEach-Object { get-ItemProperty $_.PSPath } `
-                                    | where-Object { $_ -match "strata*" } | Select-Object UninstallString
+                                    | where-Object { $_.DisplayName -match "Strata Developer Studio" } | Select-Object UninstallString
             if ($SDSUninstallerPath -match [regex]::Escape($SDSUninstallFile)) {
                 $FTDIUininstallerPath =  Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" | ForEach-Object { get-ItemProperty $_.PSPath } `
                                         | where-Object { $_ -match "ftdi*" } | Select-Object UninstallString
                 $VisualRedistUninstallerPath = Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" | ForEach-Object { get-ItemProperty $_.PSPath } `
-                                                | where-Object { $_ -match "strata*" } | Select-Object InstallLocation
+                                                | where-Object { $_.DisplayName -match "Strata Developer Studio" } | Select-Object InstallLocation
                 $SDSUninstallerPath = $SDSUninstallerPath.UninstallString -replace "/I","" -replace "`"",""
                 $FTDIUininstallerPath = $FTDIUininstallerPath.UninstallString -replace "/I",""
                 $VisualRedistUninstallerPath = $VisualRedistUninstallerPath.InstallLocation + "vc_redist.x64.exe" -replace "/I",""
-                
+
                 ## for ftdi driver you will get something like this in some cases 
                 ## C:\PROGRA~1\DIFX\4A7292F75FEBBD3C\dpinst-amd64.exe /u C:\WINDOWS\System32\DriverStore\FileRepository\ftdiport.inf_amd64_90039b7dbf236588\ftdiport.inf
                 ## C:\PROGRA~1\DIFX\4A7292F75FEBBD3C\dpinst-amd64.exe /u C:\WINDOWS\System32\DriverStore\FileRepository\ftdibus.inf_amd64_49b3e24305b20ada\ftdibus.inf
@@ -107,7 +107,7 @@ function Test-SDSInstaller {
         Write-Indented "Uninstalling Strata Developer Studio"
         Try {
             $SDSUninstallerPath =  Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" | ForEach-Object { get-ItemProperty $_.PSPath } `
-                                | where-Object { $_ -match "strata*" } | Select-Object UninstallString
+                                | where-Object { $_.DisplayName -match "Strata Developer Studio" } | Select-Object UninstallString
             if ($SDSUninstallerPath) {
                 $SDSUninstallerPath = $SDSUninstallerPath.UninstallString -replace "/I","" -replace "`"",""
                 $SDSUninstallation = Start-Process -FilePath "`"$SDSUninstallerPath`"" -ArgumentList "/VERYSILENT" -Wait -PassThru
