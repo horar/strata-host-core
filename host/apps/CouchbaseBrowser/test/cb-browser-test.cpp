@@ -5,13 +5,17 @@
 
 #include <QDir>
 #include <QObject>
-#include <QTemporaryDir>
+#include <QCoreApplication>
 
 #include <future>
 
-#include <couchbaselitecpp/SGFleece.h>
-#include <couchbaselitecpp/SGCouchBaseLite.h>
+#include <iostream>
 
+using namespace fleece;
+using namespace cbl;
+
+// Need valid replicator info to run replication tests
+#define Test_Replication false
 
 TEST_F(DatabaseImplTest, CTOR)
 {
@@ -203,7 +207,7 @@ TEST_F(DatabaseImplTest, SAVEAS)
 
     DatabaseImpl *db2 = new DatabaseImpl(nullptr, false);
     EXPECT_NE(db2, nullptr);
-    db2->openDB(DB_folder_path_ + QDir::separator() + "db" + QDir::separator() + "DB_AutomatedTest_Copy" +  QDir::separator() + "db.sqlite3");
+    db2->openDB(DB_folder_path_ + QDir::separator() + "DB_AutomatedTest_Copy.cblite2" +  QDir::separator() + "db.sqlite3");
 
     ASSERT_TRUE(db2->isDBOpen());
     EXPECT_TRUE(isJsonMsgSuccess(db2->getMessage()));
@@ -212,14 +216,15 @@ TEST_F(DatabaseImplTest, SAVEAS)
     delete db2;
 }
 
+#if Test_Replication
 TEST_F(DatabaseImplTest, STARTLISTENING)
 {
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
-
     db->createNewDB(DB_folder_path_, "DB_AutomatedTest");
+
     EXPECT_TRUE(db->isDBOpen());
 
-    std::future<bool> rep_starter = std::async(std::launch::async, [&db, this]() {return db->startListening(url_);});
+    std::future<bool> rep_starter = std::async(std::launch::async, [&db, this]() {return db->startListening(url_, username_, password_);});
     rep_starter.wait();
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
@@ -228,49 +233,61 @@ TEST_F(DatabaseImplTest, STARTLISTENING)
     EXPECT_TRUE(isJsonMsgSuccess(db->getMessage()));
 
     // Compare replication results against results obtained directly from the CBLite API
-    Strata::SGDatabase *db2 = new Strata::SGDatabase("DB_AutomatedTest_2", DB_folder_path_.toStdString());
+    CBLDatabaseConfiguration db_config;
+    db_config.flags = kCBLDatabase_Create;
+    std::string db_path_str = DB_folder_path_.toStdString();
+    db_config.directory = db_path_str.c_str();
+    db_config.encryptionKey.algorithm = kCBLEncryptionNone;
+    Database *db2 = new Database("DB_AutomatedTest_2", db_config);
 
-    EXPECT_EQ(db2->open(), Strata::SGDatabaseReturnStatus::kNoError);
-    EXPECT_TRUE(db2->isOpen());
+    EXPECT_TRUE(db2->valid());
 
-    Strata::SGURLEndpoint url_endpoint(url_.toStdString());
+    ReplicatorConfiguration config(*db2);
+    config.endpoint.setURL(url_.toStdString().c_str());
 
-    EXPECT_TRUE(url_endpoint.init());
-
-    Strata::SGReplicatorConfiguration rep_config(db2, &url_endpoint);
-    rep_config.setReplicatorType(Strata::SGReplicatorConfiguration::ReplicatorType::kPull);
-    Strata::SGReplicator rep(&rep_config);
-
-    EXPECT_EQ(rep.start(), Strata::SGReplicatorReturnStatus::kNoError);
-
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-    std::vector<std::string> document_keys{};
-
-    EXPECT_TRUE(db2->getAllDocumentsKey(document_keys));
-
-    QString JSONResponse_;
-    QJsonDocument document_json;
-    QJsonObject total_json_message;
-
-    for(const std::string &iter : document_keys) {
-        Strata::SGDocument usbPDDocument(db2, iter);
-        document_json = QJsonDocument::fromJson(QString::fromStdString(usbPDDocument.getBody()).toUtf8());
-        total_json_message.insert(QString::fromStdString(iter), document_json.object());
+    if(!username_.isEmpty() && !password_.isEmpty()) {
+        config.authenticator.setBasic(username_.toStdString().c_str(), password_.toStdString().c_str());
     }
 
-    JSONResponse_ = QJsonDocument(total_json_message).toJson();
+    config.replicatorType = kCBLReplicatorTypePull;
+    Replicator replicator(config);
 
-    EXPECT_EQ(db->getJsonDBContents(), JSONResponse_);
+    replicator.start();
+    while(replicator.status().activity != kCBLReplicatorStopped) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
+    std::cout << "Finished with activity = " << replicator.status().activity <<
+        ", error = (" << replicator.status().error.domain << "/" << replicator.status().error.code << ")\n";
+
+     // Get all Document ID's in the current database
+    Query query(*db2, kCBLN1QLLanguage, "SELECT _id");
+    ResultSet results = query.execute();
+    QJsonDocument document_json;
+    QJsonObject total_json_obj;
+    std::string total_json_str;
+
+    for(ResultSetIterator it = results.begin(); it != results.end(); ++it) {
+        Result r = *it;
+        slice value_sl = r.valueAtIndex(0).asString();
+        Document d = db2->getMutableDocument(std::string(value_sl));
+        Dict read_dict = d.properties();
+        document_json = QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8());
+        total_json_obj.insert(QString::fromStdString(std::string(value_sl)), document_json.object());
+    }
+
+    total_json_str = QJsonDocument(total_json_obj).toJson().toStdString();
+
+    EXPECT_EQ(db->getJsonDBContents().toStdString(), total_json_str);
 
     delete db;
-    delete db2;
 }
 
 TEST_F(DatabaseImplTest, PUSHANDPULL)
 {
     DatabaseImpl *db = new DatabaseImpl(nullptr, false);
 
-    db->createNewDB(DB_folder_path_, "DB_AutomatedTest");
+    db->createNewDB(DB_folder_path_, "DB_AutomatedTest_Push");
     EXPECT_TRUE(db->isDBOpen());
 
     // Add a document to this DB
@@ -282,7 +299,7 @@ TEST_F(DatabaseImplTest, PUSHANDPULL)
     db->createNewDoc(test_doc_id, test_doc_body);
 
     // With the first DB, start a pushing replicator
-    std::future<bool> rep_starter = std::async(std::launch::async, [&db, this]() {return db->startListening(url_,"","","push");});
+    std::future<bool> rep_starter = std::async(std::launch::async, [&db, this]() {return db->startListening(url_, username_, password_, "push");});
     rep_starter.wait();
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
@@ -297,11 +314,11 @@ TEST_F(DatabaseImplTest, PUSHANDPULL)
 
     DatabaseImpl *db2 = new DatabaseImpl(nullptr, false);
 
-    db2->createNewDB(DB_folder_path_, "DB_AutomatedTest_2");
+    db2->createNewDB(DB_folder_path_, "DB_AutomatedTest_Pull");
     EXPECT_TRUE(db2->isDBOpen());
 
     // With the second DB, start a pulling replicator
-    std::future<bool> rep_starter2 = std::async(std::launch::async, [&db2, this]() {return db2->startListening(url_);});
+    std::future<bool> rep_starter2 = std::async(std::launch::async, [&db2, this]() {return db2->startListening(url_, username_, password_);});
     rep_starter2.wait();
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
@@ -322,12 +339,14 @@ TEST_F(DatabaseImplTest, PUSHANDPULL)
 
     delete db2;
 }
+#endif // end if Test_Replication
 
 DatabaseImplTest::DatabaseImplTest()
 {
-    QTemporaryDir dir;
+    QDir dir(QCoreApplication::applicationFilePath());
+    dir.makeAbsolute();
 
-    if(dir.isValid()) {
+    if(dir.isReadable()) {
         DB_folder_path_ = dir.path();
     }
 }
@@ -340,4 +359,31 @@ bool DatabaseImplTest::isJsonMsgSuccess(const QString &msg)
 
 void DatabaseImplTest::SetUp() {}
 
-void DatabaseImplTest::TearDown() {}
+void DatabaseImplTest::TearDown() {
+    // Delete all created DBs
+    QDir dir(QDir::cleanPath(DB_folder_path_ + QDir::separator() + "DB_AutomatedTest.cblite2"));
+    if(dir.exists()) {
+        dir.removeRecursively();
+    }
+    dir.setPath(QDir::cleanPath(DB_folder_path_ + QDir::separator() + "DB_AutomatedTest_2.cblite2"));
+    if(dir.exists()) {
+        dir.removeRecursively();
+    }
+    dir.setPath(QDir::cleanPath(DB_folder_path_ + QDir::separator() + "DB_AutomatedTest_Copy.cblite2"));
+    if(dir.exists()) {
+        dir.removeRecursively();
+    }
+    dir.setPath(QDir::cleanPath(DB_folder_path_ + QDir::separator() + "DB_AutomatedTest_Push.cblite2"));
+    if(dir.exists()) {
+        dir.removeRecursively();
+    }
+    dir.setPath(QDir::cleanPath(DB_folder_path_ + QDir::separator() + "DB_AutomatedTest_Pull.cblite2"));
+    if(dir.exists()) {
+        dir.removeRecursively();
+    }
+    // Show warning if replication testing is disabled
+    #if !Test_Replication
+        std::cout << "\nWARNING:\nTest executed with replication/sync gateway testing disabled. \
+        \nEnter valid replication information and enable replication testing if desired.\n\n";
+    #endif
+}
