@@ -22,25 +22,7 @@ Item {
     //              motor_running_command.update(_motor_running_control)
     //          }
     //
-    //  Can also synchronize control state across multiple UI views;
-    //  just bind all controls to this state as in #2 above.
-    //
-    //  ** All internal property names for PlatformInterface must avoid name
-    //  ** collisions with notification/cmd message properties.
-    //  **    Use Naming Convention: 'property var _name'
 
-    // @control_state: _motor_running_control
-    // @description: set by notification and UI control sends command
-    //
-    property bool _motor_running_control: false
-    on_Motor_running_controlChanged: {
-        motor_running_command.update(_motor_running_control)
-    }
-
-    // @control_state: _motor_speed
-    // @description: set by notification (read-only; control does not send command)
-    //
-    property real _motor_speed: 0
 
 
 
@@ -52,27 +34,42 @@ Item {
     // The property name *must* match the associated notification value.
     // Sets UI Control State when changed.
 
-    // @notification: motor_running_notification
-    // @description: update motor running status
-    //
-    property var motor_running_notification : {
-        "running": false
-    }
-    onMotor_running_notificationChanged: {
-        _motor_running_control = motor_running_notification.running
+
+    property var led_OL_value: {
+        "value":false
     }
 
-    // @notification: motor_speed_notification
-    // @description: update motor speed
-    //
-    property var motor_speed_notification : {
-        "speed": 0
-    }
-    onMotor_speed_notificationChanged: {
-        _motor_speed = motor_speed_notification.speed
+    property var led_DIAGERR_value: {
+        "value":false
     }
 
+    property var led_TSD_value: {
+        "value":false
+    }
 
+    property var led_TW_value: {
+        "value":false
+    }
+
+    property var led_diagRange_value: {
+        "value":false
+    }
+
+    property var led_UV_value: {
+        "value":false
+    }
+
+    property var led_I2Cerr_value: {
+        "value":false
+    }
+
+    property var led_SC_Iset_value: {
+        "value":false
+    }
+
+    property var led_ch_enable_read_values: {
+        "values": [true,true,true,true,true,true,true,true,true,true,true,true]
+    }
 
     // -------------------------------------------------------------------
     // Outgoing Commands
@@ -85,27 +82,34 @@ Item {
     //   send():   sends current command
     //   show():   console logs current command and properties
 
-    // @command: motor_running_command
-    // @description: sends motor running command to platform
+    // @command: led_i2c_enable_commands
+    // @description: sends LED I2C enable command to platform
     //
-    property var motor_running_command : ({
-            "cmd" : "motor_running",
+    property var led_i2c_enable_commands : ({
+            "cmd" : "led_i2c_enable",
             "payload": {
-                "running": false // default value
+               "value":true // default value
             },
 
-            update: function (running) {
-                this.set(running)
+            update: function (value) {
+                this.set(value)
                 this.send(this)
             },
-            set: function (running) {
-                this.payload.running = running
+            set: function (value) {
+                this.payload.value = value
             },
             send: function () { CorePlatformInterface.send(this) },
             show: function () { CorePlatformInterface.show(this) }
         })
 
-
+    property var led_ch_enable_read : ({
+                                       "cmd":"led_ch_enable_read",
+                                       update: function () {
+                                           CorePlatformInterface.send(this)
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+                                   })
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
