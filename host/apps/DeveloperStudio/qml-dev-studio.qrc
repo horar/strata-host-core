@@ -69,6 +69,7 @@
         <file>partial-views/platform-selector/images/icons/filter-icons/battery.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/dc_dc.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/memory.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/interfaces.svg</file>
         <file>partial-views/SGLoadError.qml</file>
         <file>partial-views/platform-view/SGPlatformView.qml</file>
         <file>partial-views/status-bar/SGPlatformTab.qml</file>

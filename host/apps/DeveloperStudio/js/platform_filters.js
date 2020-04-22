@@ -40,12 +40,20 @@ var mapping = [
                 inUse: false
             },
             {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/battery.svg",
-                text: "Power Management",
-                filterMapping: "category-power-management",
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/load_switches.svg",
+                text: "Load Switches",
+                filterMapping: "subcategory-powerman-load-switch",
                 type: "category",
                 inUse: false
             },
+            // Commented out per Will Abdeh request, to be uncommented in future release
+//            {
+//                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/battery.svg",
+//                text: "Power Management",
+//                filterMapping: "category-power-management",
+//                type: "category",
+//                inUse: false
+//            },
             {
                 iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/battery.svg",
                 text: "Power Modules",
@@ -54,7 +62,7 @@ var mapping = [
                 inUse: false
             },
             {
-                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/analog_to_digital_converters.svg",
+                iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/interfaces.svg",
                 text: "Interfaces",
                 filterMapping: "category-interface",
                 type: "category",
@@ -119,7 +127,7 @@ var mapping = [
             {
                 iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/led.svg",
                 text: "LED Drivers",
-                filterMapping: "category-powerman-led",
+                filterMapping: "subcategory-powerman-led",
                 type: "category",
                 inUse: false
             },
@@ -133,7 +141,7 @@ var mapping = [
             {
                 iconSource: "qrc:/partial-views/platform-selector/images/icons/filter-icons/usb.svg",
                 text: "USB Type-C",
-                filterMapping: "subcategory-usb",
+                filterMapping: "subcategory-interface-usbc",
                 type: "category",
                 inUse: false
             },
@@ -227,6 +235,6 @@ var oldNewMap = {
     "connectivity": "category-connectivity",
     "dc": "category-dc-dc",
     "discrete": "category-discrete-driver",
-    "led": "category-powerman-led",
+    "led": "subcategory-powerman-led",
     "sensor": "category-sensor",
 }
