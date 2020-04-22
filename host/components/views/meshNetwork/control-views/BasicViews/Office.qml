@@ -317,7 +317,7 @@ Rectangle {
                     //this node number, and set it back to transparent
                     targetArray.forEach(function(item, index, array){
                         if (item.nodeNumber === inNodeNumber){
-                            //console.log("removing node from role",item.nodeType)
+                            console.log("removing node",item.nodeNumber," from role",item.nodeType)
                             item.nodeNumber = ""
                             item.color = "transparent"
                             }
@@ -325,7 +325,7 @@ Rectangle {
 
                     targetArray.forEach(function(item, index, array){
                         if (item.nodeType === pairingModel){
-                            //console.log("assigning",item.nodeType,"node",inNodeNumber)
+                            console.log("assigning",item.nodeType,"node",inNodeNumber)
                             item.nodeNumber = inNodeNumber
                             item.color = nodeColor
                         }

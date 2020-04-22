@@ -46,11 +46,11 @@ Rectangle {
         opacity: 0.5
 
         onColorChanged: {
-            //console.log("changing objectCircle node",nodeName.text, "to",color,"drag object color is",dragObject.color)
+            console.log("changing objectCircle node",nodeName.text, "to",color,"drag object color is",dragObject.color)
             if (color != "#d3d3d3"){    //light grey
                 nodeNumber.visible = true;
             }
-            else{
+            else{   //color is going back to light grey
                 nodeNumber.visible = false
                 //nodeNumber.text = ""             //clear the node number, so if there's no active node, it won't show sensor data
                 sensorValueText.text = ""        //clear the sensor text if we no longer have an active node
@@ -159,15 +159,19 @@ Rectangle {
             onDropped: {
                 console.log("item dropped with color",drag.source.color,"and number",drag.source.number)
                 if (acceptsDrops){
+                    //dragObject.color = drag.source.color;   //set this object's color to the dropped one
+                    //drag.source.color = "lightgrey"         //reset the dropped object's color to grey
+                    //dragObject.number = drag.source.number
+                    //send a signal from this object to communicate that a node has been moved
+                    console.log("Node Activated with",meshObject.scene, meshObject.pairingModel, drag.source.number, drag.source.color)
+                    meshObject.nodeActivated(meshObject.scene, meshObject.pairingModel, drag.source.number, drag.source.color)
                     dragObject.color = drag.source.color;   //set this object's color to the dropped one
                     drag.source.color = "lightgrey"         //reset the dropped object's color to grey
                     dragObject.number = drag.source.number
-                    //send a signal from this object to communicate that a node has been moved
-                    console.log("Node Activated with",meshObject.scene, meshObject.pairingModel, dragObject.number, dragObject.color)
-                    meshObject.nodeActivated(meshObject.scene, meshObject.pairingModel, dragObject.number, dragObject.color)
                     //if this node is still showing sensor data
                     console.log("clearing sensor text")
                     drag.source.sensorText.text = ""
+                    drag.source.number = ""
                     text: qsTr("text")
 
                     //tell the firmware of the change
