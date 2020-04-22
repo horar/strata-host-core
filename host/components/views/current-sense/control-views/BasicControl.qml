@@ -1016,7 +1016,7 @@ Item {
                                                     property var switch_enable_status_iin_max: platformInterface.switch_enable_status.i_in_max
                                                     onSwitch_enable_status_iin_maxChanged: {
                                                         if(switch_enable_status_in_set !== "N/A") {
-                                                            maxInputCurrent.toText.text = switch_enable_status_iin_max
+                                                            maxInputCurrent.toText.text = switch_enable_status_iin_max + "A"
                                                             maxInputCurrent.to = switch_enable_status_iin_max
 
                                                         }
