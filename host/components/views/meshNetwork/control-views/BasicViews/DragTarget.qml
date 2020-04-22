@@ -40,9 +40,9 @@ Rectangle {
 
         onClicked:{
 
-            var theHue = (color.hslHue*100).toFixed(0)
-            var theSaturation = (color.hslSaturation*100).toFixed(0)
-            var theLightness = (color.hslLightness*100).toFixed(0)
+            var theHue = Math.round(color.hslHue*100)
+            var theSaturation = Math.round(color.hslSaturation*100)
+            var theLightness = Math.round(color.hslLightness*100)
 
             console.log("sending click with value",nodeType)
             if (nodeType == "solar_panel"){
