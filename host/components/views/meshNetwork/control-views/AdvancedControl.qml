@@ -118,24 +118,24 @@ Rectangle{
                         }
                     }
                 }
-                SGButton{
-                    id:demo4Button
-                    width: parent.width
-                    height: 130
-                    text:"multiple model"
-                    fontSizeMultiplier:1.5
-                    color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/multipleModelsDemo.png"
-                    iconSize:100
-                    display: Button.TextUnderIcon
-                    checkable:true
+//                SGButton{
+//                    id:demo4Button
+//                    width: parent.width
+//                    height: 130
+//                    text:"multiple model"
+//                    fontSizeMultiplier:1.5
+//                    color:"white"
+//                    icon.source: "qrc:/views/meshNetwork/images/multipleModelsDemo.png"
+//                    iconSize:100
+//                    display: Button.TextUnderIcon
+//                    checkable:true
 
-                    onCheckedChanged: {
-                        if (checked){
-                            demoStackLayout.currentIndex = 3
-                            }
-                    }
-                }
+//                    onCheckedChanged: {
+//                        if (checked){
+//                            demoStackLayout.currentIndex = 3
+//                            }
+//                    }
+//                }
                 SGButton{
                     id:demo5Button
                     width: parent.width
@@ -209,9 +209,9 @@ Rectangle{
                 id: rectangleThree
             }
 
-            MultipleModelDemo {
-                id: rectangleFour
-            }
+//            MultipleModelDemo {
+//                id: rectangleFour
+//            }
 
             SensorDemo {
                 id: rectangleFive

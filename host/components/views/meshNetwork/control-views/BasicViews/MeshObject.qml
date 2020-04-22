@@ -52,7 +52,6 @@ Rectangle {
             }
             else{   //color is going back to light grey
                 nodeNumber.visible = false
-                //nodeNumber.text = ""             //clear the node number, so if there's no active node, it won't show sensor data
                 sensorValueText.text = ""        //clear the sensor text if we no longer have an active node
             }
         }
