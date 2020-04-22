@@ -33,7 +33,13 @@ Item {
         "en_213": "off",       //on or off
         "en_214": "off",       //on or off
         "en_333": "off" ,      //on or off
-        "i_in_max" : "1.2"
+        "i_in_max" : "30",
+        "i_in_set" : "30"
+
+    }
+
+    property var error_notification: {
+        "message" : ""
     }
 
     property var load_enable_status: {

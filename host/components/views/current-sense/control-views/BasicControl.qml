@@ -175,7 +175,11 @@ Item {
         else enable5.checked = false
     }
 
-
+    property var error_notification: platformInterface.error_notification.message
+    onError_notificationChanged: {
+        if(error_notification !== "")
+            pushMessagesToLog(error_notification)
+    }
 
     function pushMessagesToLog (messageIs) {
         // Change text color to black of the entire existing list of faults
@@ -186,6 +190,8 @@ Item {
         logFault.insert(messageIs, 0, "red")
 
     }
+
+
 
     ColumnLayout {
         // id: root
@@ -1000,10 +1006,18 @@ Item {
 
                                                     }
 
-                                                    property var switch_enable_status_in_max: platformInterface.switch_enable_status.i_in_max
-                                                    onSwitch_enable_status_in_maxChanged:  {
-                                                        if(switch_enable_status_in_max !== "N/A") {
-                                                            maxInputCurrent.value = switch_enable_status_in_max
+                                                    property var switch_enable_status_in_set: platformInterface.switch_enable_status.i_in_set
+                                                    onSwitch_enable_status_in_setChanged:  {
+                                                        if(switch_enable_status_in_set !== "N/A") {
+                                                            maxInputCurrent.value = switch_enable_status_in_set
+                                                        }
+                                                    }
+
+                                                    property var switch_enable_status_iin_max: platformInterface.switch_enable_status.i_in_max
+                                                    onSwitch_enable_status_iin_maxChanged: {
+                                                        if(switch_enable_status_in_set !== "N/A") {
+                                                            maxInputCurrent.toText.text = switch_enable_status_iin_max
+
                                                         }
                                                     }
 
