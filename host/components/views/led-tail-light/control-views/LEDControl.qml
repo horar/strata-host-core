@@ -15,105 +15,31 @@ Item {
     //    height: parent.height
     //    width: parent.width/parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
-    //    property var led_OL_value: platformInterface.led_OL_value.value
-    //    onLed_OL_valueChanged: {
-    //        if(led_OL_value === true)
-    //            ol.status = SGStatusLight.Red
-    //        else ol.status = SGStatusLight.Off
-    //    }
-
-    //    property var led_DIAGERR_value: platformInterface.led_DIAGERR_value.value
-    //    onLed_DIAGERR_valueChanged: {
-    //        if(led_DIAGERR_value === true)
-    //            diagree.status = SGStatusLight.Red
-    //        else diagree.status = SGStatusLight.Off
-    //    }
-
-    //    property var led_TSD_value: platformInterface.led_TSD_value.value
-    //    onLed_TSD_valueChanged: {
-    //        if(led_TSD_value === true)
-    //            tsd.status = SGStatusLight.Red
-    //        else tsd.status = SGStatusLight.Off
-    //    }
-
-    //    property var led_TW_value: platformInterface.led_TW_value.value
-    //    onLed_TW_valueChanged: {
-    //        if(led_TW_value === true)
-    //            tw.status = SGStatusLight.Red
-    //        else tw.status = SGStatusLight.Off
-    //    }
-
-    //    property var led_diagRange_value: platformInterface.led_diagRange_value.value
-    //    onLed_diagRange_valueChanged: {
-    //        if(led_diagRange_value === true)
-    //            diagRange.status = SGStatusLight.Red
-    //        else diagRange.status = SGStatusLight.Off
-    //    }
-
-    //    property var led_UV_value: platformInterface.led_UV_value.value
-    //    onLed_UV_valueChanged: {
-    //        if(led_UV_value === true)
-    //            uv.status = SGStatusLight.Red
-    //        else uv.status = SGStatusLight.Off
-    //    }
-
-    //    property var led_I2Cerr_value: platformInterface.led_I2Cerr_value.value
-    //    onLed_I2Cerr_valueChanged: {
-    //        if(led_I2Cerr_value === true)
-    //            i2Cerr.status = SGStatusLight.Red
-    //        else i2Cerr.status = SGStatusLight.Off
-    //    }
-
-    //    property var led_SC_Iset_value: platformInterface.led_SC_Iset_value.value
-    //    onLed_SC_Iset_valueChanged: {
-    //        if(led_SC_Iset_value === true)
-    //            scIset.status = SGStatusLight.Red
-    //        else scIset.status = SGStatusLight.Off
-    //    }
-
-    //    property var led_ch_enable_read_values: platformInterface.led_ch_enable_read_values.values
-    //    onLed_ch_enable_read_valuesChanged: {
-    //        if(led_ch_enable_read_values[0] === true)
-    //            scIset.status = SGStatusLight.Red
-
-    //    }
-
     property var led_out_en_state: platformInterface.led_out_en_state.state
     onLed_out_en_stateChanged: {
         if(led_out_en_state === "enabled") {
             out0ENLED.enabled = true
             out0ENLED.opacity = 1.0
-
             out1ENLED.enabled = true
             out1ENLED.opacity = 1.0
-
             out2ENLED.enabled = true
             out2ENLED.opacity = 1.0
-
             out3ENLED.enabled = true
             out3ENLED.opacity = 1.0
-
             out4ENLED.enabled = true
             out4ENLED.opacity = 1.0
-
             out5ENLED.enabled = true
             out5ENLED.opacity = 1.0
-
             out6ENLED.enabled = true
             out6ENLED.opacity = 1.0
-
             out7ENLED.enabled = true
             out7ENLED.opacity = 1.0
-
             out8ENLED.enabled = true
             out8ENLED.opacity = 1.0
-
             out9ENLED.enabled = true
             out9ENLED.opacity = 1.0
-
             out10ENLED.enabled = true
             out10ENLED.opacity = 1.0
-
             out11ENLED.enabled = true
             out11ENLED.opacity = 1.0
 
@@ -121,37 +47,26 @@ Item {
         else if (led_out_en_state === "disabled") {
             out0ENLED.enabled = false
             out0ENLED.opacity = 1.0
-
             out1ENLED.enabled = false
             out1ENLED.opacity = 1.0
-
             out2ENLED.enabled = false
             out2ENLED.opacity = 1.0
-
             out3ENLED.enabled = false
             out3ENLED.opacity = 1.0
-
             out4ENLED.enabled = false
             out4ENLED.opacity = 1.0
-
             out5ENLED.enabled = false
             out5ENLED.opacity = 1.0
-
             out6ENLED.enabled = false
             out6ENLED.opacity = 1.0
-
             out7ENLED.enabled = false
             out7ENLED.opacity = 1.0
-
             out8ENLED.enabled = false
             out8ENLED.opacity = 1.0
-
             out9ENLED.enabled = false
             out9ENLED.opacity = 1.0
-
             out10ENLED.enabled = false
             out10ENLED.opacity = 1.0
-
             out11ENLED.enabled = false
             out11ENLED.opacity = 1.0
 
@@ -159,37 +74,26 @@ Item {
         else {
             out0ENLED.enabled = false
             out0ENLED.opacity = 0.5
-
             out1ENLED.enabled = false
             out1ENLED.opacity = 0.5
-
             out2ENLED.enabled = false
             out2ENLED.opacity = 0.5
-
             out3ENLED.enabled = false
             out3ENLED.opacity = 0.5
-
             out4ENLED.enabled = false
             out4ENLED.opacity = 0.5
-
             out5ENLED.enabled = false
             out5ENLED.opacity = 0.5
-
             out6ENLED.enabled = false
             out6ENLED.opacity = 0.5
-
             out7ENLED.enabled = false
             out7ENLED.opacity = 0.5
-
             out8ENLED.enabled = false
             out8ENLED.opacity = 0.5
-
             out9ENLED.enabled = false
             out9ENLED.opacity = 0.5
-
             out10ENLED.enabled = false
             out10ENLED.opacity = 0.5
-
             out11ENLED.enabled = false
             out11ENLED.opacity = 0.5
         }
@@ -248,6 +152,7 @@ Item {
 
 
 
+
     property var led_ext_values: platformInterface.led_ext_values.values
     onLed_ext_valuesChanged:  {
         if(led_ext_values[0] === true)
@@ -297,6 +202,90 @@ Item {
         if(led_ext_values[11] === true)
             out11interExterLED.checked = true
         else out11interExterLED.checked = false
+    }
+
+    property var led_ext_state: platformInterface.led_ext_state.state
+    onLed_ext_stateChanged: {
+        if(led_ext_state === "enabled") {
+            out0interExterLED.enabled = true
+            out0interExterLED.opacity = 1.0
+            out1interExterLED.enabled = true
+            out1interExterLED.opacity = 1.0
+            out2interExterLED.enabled = true
+            out2interExterLED.opacity = 1.0
+            out3interExterLED.enabled = true
+            out3interExterLED.opacity = 1.0
+            out4interExterLED.enabled = true
+            out4interExterLED.opacity = 1.0
+            out5interExterLED.enabled = true
+            out5interExterLED.opacity = 1.0
+            out6interExterLED.enabled = true
+            out6interExterLED.opacity = 1.0
+            out7interExterLED.enabled = true
+            out7interExterLED.opacity = 1.0
+            out8interExterLED.enabled = true
+            out8interExterLED.opacity = 1.0
+            out9interExterLED.enabled = true
+            out9interExterLED.opacity = 1.0
+            out10interExterLED.enabled = true
+            out10interExterLED.opacity = 1.0
+            out11interExterLED.enabled = true
+            out11interExterLED.opacity = 1.0
+
+        }
+        else if (led_ext_state === "disabled") {
+            out0interExterLED.enabled = false
+            out0interExterLED.opacity = 1.0
+            out1interExterLED.enabled = false
+            out1interExterLED.opacity = 1.0
+            out2interExterLED.enabled = false
+            out2interExterLED.opacity = 1.0
+            out3interExterLED.enabled = false
+            out3interExterLED.opacity = 1.0
+            out4interExterLED.enabled = false
+            out4interExterLED.opacity = 1.0
+            out5interExterLED.enabled = false
+            out5interExterLED.opacity = 1.0
+            out6interExterLED.enabled = false
+            out6interExterLED.opacity = 1.0
+            out7interExterLED.enabled = false
+            out7interExterLED.opacity = 1.0
+            out8interExterLED.enabled = false
+            out8interExterLED.opacity = 1.0
+            out9interExterLED.enabled = false
+            out9interExterLED.opacity = 1.0
+            out10interExterLED.enabled = false
+            out10interExterLED.opacity = 1.0
+            out11interExterLED.enabled = false
+            out11interExterLED.opacity = 1.0
+
+        }
+        else {
+            out0interExterLED.enabled = false
+            out0interExterLED.opacity = 0.5
+            out1interExterLED.enabled = false
+            out1interExterLED.opacity = 0.5
+            out2interExterLED.enabled = false
+            out2interExterLED.opacity = 0.5
+            out3interExterLED.enabled = false
+            out3interExterLED.opacity = 0.5
+            out4interExterLED.enabled = false
+            out4interExterLED.opacity = 0.5
+            out5interExterLED.enabled = false
+            out5interExterLED.opacity = 0.5
+            out6interExterLED.enabled = false
+            out6interExterLED.opacity = 0.5
+            out7interExterLED.enabled = false
+            out7interExterLED.opacity = 0.5
+            out8interExterLED.enabled = false
+            out8interExterLED.opacity = 0.5
+            out9interExterLED.enabled = false
+            out9interExterLED.opacity = 0.5
+            out10interExterLED.enabled = false
+            out10interExterLED.opacity = 0.5
+            out11interExterLED.enabled = false
+            out11interExterLED.opacity = 0.5
+        }
     }
 
     property var led_fault_status_values: platformInterface.led_fault_status_values.values
@@ -352,6 +341,92 @@ Item {
 
     }
 
+
+    property var led_fault_status_state: platformInterface.led_fault_status_state.state
+    onLed_fault_status_stateChanged: {
+        if(led_fault_status_state === "enabled") {
+            out0faultStatusLED.enabled = true
+            out0faultStatusLED.opacity = 1.0
+            out1faultStatusLED.enabled = true
+            out1faultStatusLED.opacity = 1.0
+            out2faultStatusLED.enabled = true
+            out2faultStatusLED.opacity = 1.0
+            out3faultStatusLED.enabled = true
+            out3faultStatusLED.opacity = 1.0
+            out4faultStatusLED.enabled = true
+            out4faultStatusLED.opacity = 1.0
+            out5faultStatusLED.enabled = true
+            out5faultStatusLED.opacity = 1.0
+            out6faultStatusLED.enabled = true
+            out6faultStatusLED.opacity = 1.0
+            out7faultStatusLED.enabled = true
+            out7faultStatusLED.opacity = 1.0
+            out8faultStatusLED.enabled = true
+            out8faultStatusLED.opacity = 1.0
+            out9faultStatusLED.enabled = true
+            out9faultStatusLED.opacity = 1.0
+            out10faultStatusLED.enabled = true
+            out10faultStatusLED.opacity = 1.0
+            out11faultStatusLED.enabled = true
+            out11faultStatusLED.opacity = 1.0
+
+        }
+        else if (led_fault_status_state === "disabled") {
+            out0faultStatusLED.enabled = false
+            out0faultStatusLED.opacity = 1.0
+            out1faultStatusLED.enabled = false
+            out1faultStatusLED.opacity = 1.0
+            out2faultStatusLED.enabled = false
+            out2faultStatusLED.opacity = 1.0
+            out3faultStatusLED.enabled = false
+            out3faultStatusLED.opacity = 1.0
+            out4faultStatusLED.enabled = false
+            out4faultStatusLED.opacity = 1.0
+            out5faultStatusLED.enabled = false
+            out5faultStatusLED.opacity = 1.0
+            out6faultStatusLED.enabled = false
+            out6faultStatusLED.opacity = 1.0
+            out7faultStatusLED.enabled = false
+            out7faultStatusLED.opacity = 1.0
+            out8faultStatusLED.enabled = false
+            out8faultStatusLED.opacity = 1.0
+            out9faultStatusLED.enabled = false
+            out9faultStatusLED.opacity = 1.0
+            out10faultStatusLED.enabled = false
+            out10faultStatusLED.opacity = 1.0
+            out11faultStatusLED.enabled = false
+            out11faultStatusLED.opacity = 1.0
+
+        }
+        else {
+            out0faultStatusLED.enabled = false
+            out0faultStatusLED.opacity = 0.5
+            out1faultStatusLED.enabled = false
+            out1faultStatusLED.opacity = 0.5
+            out2faultStatusLED.enabled = false
+            out2faultStatusLED.opacity = 0.5
+            out3faultStatusLED.enabled = false
+            out3faultStatusLED.opacity = 0.5
+            out4faultStatusLED.enabled = false
+            out4faultStatusLED.opacity = 0.5
+            out5faultStatusLED.enabled = false
+            out5faultStatusLED.opacity = 0.5
+            out6faultStatusLED.enabled = false
+            out6faultStatusLED.opacity = 0.5
+            out7faultStatusLED.enabled = false
+            out7faultStatusLED.opacity = 0.5
+            out8faultStatusLED.enabled = false
+            out8faultStatusLED.opacity = 0.5
+            out9faultStatusLED.enabled = false
+            out9faultStatusLED.opacity = 0.5
+            out10faultStatusLED.enabled = false
+            out10faultStatusLED.opacity = 0.5
+            out11faultStatusLED.enabled = false
+            out11faultStatusLED.opacity = 0.5
+        }
+    }
+
+
     property var led_pwm_enable_values: platformInterface.led_pwm_enable_values.values
     onLed_pwm_enable_valuesChanged: {
         if(led_pwm_enable_values[0] === true)
@@ -401,7 +476,6 @@ Item {
         if(led_pwm_enable_values[11] === true)
             out11pwmEnableLED.checked = true
         else out11pwmEnableLED.checked = false
-
     }
 
     property var led_pwm_enable_state: platformInterface.led_pwm_enable_state.state
@@ -409,37 +483,26 @@ Item {
         if(led_pwm_enable_state === "enabled") {
             out0pwmEnableLED.enabled = true
             out0pwmEnableLED.opacity = 1.0
-
             out1pwmEnableLED.enabled = true
             out1pwmEnableLED.opacity = 1.0
-
             out2pwmEnableLED.enabled = true
             out2pwmEnableLED.opacity = 1.0
-
             out3pwmEnableLED.enabled = true
             out3pwmEnableLED.opacity = 1.0
-
             out4pwmEnableLED.enabled = true
             out4pwmEnableLED.opacity = 1.0
-
             out5pwmEnableLED.enabled = true
             out5pwmEnableLED.opacity = 1.0
-
             out6pwmEnableLED.enabled = true
             out6pwmEnableLED.opacity = 1.0
-
             out7pwmEnableLED.enabled = true
             out7pwmEnableLED.opacity = 1.0
-
             out8pwmEnableLED.enabled = true
             out8pwmEnableLED.opacity = 1.0
-
             out9pwmEnableLED.enabled = true
             out9pwmEnableLED.opacity = 1.0
-
             out10pwmEnableLED.enabled = true
             out10pwmEnableLED.opacity = 1.0
-
             out11pwmEnableLED.enabled = true
             out11pwmEnableLED.opacity = 1.0
 
@@ -447,37 +510,26 @@ Item {
         else if (led_pwm_enable_state === "disabled") {
             out0pwmEnableLED.enabled = false
             out0pwmEnableLED.opacity = 1.0
-
             out1pwmEnableLED.enabled = false
             out1pwmEnableLED.opacity = 1.0
-
             out2pwmEnableLED.enabled = false
             out2pwmEnableLED.opacity = 1.0
-
             out3pwmEnableLED.enabled = false
             out3pwmEnableLED.opacity = 1.0
-
             out4pwmEnableLED.enabled = false
             out4pwmEnableLED.opacity = 1.0
-
             out5pwmEnableLED.enabled = false
             out5pwmEnableLED.opacity = 1.0
-
             out6pwmEnableLED.enabled = false
             out6pwmEnableLED.opacity = 1.0
-
             out7pwmEnableLED.enabled = false
             out7pwmEnableLED.opacity = 1.0
-
             out8pwmEnableLED.enabled = false
             out8pwmEnableLED.opacity = 1.0
-
             out9pwmEnableLED.enabled = false
             out9pwmEnableLED.opacity = 1.0
-
             out10pwmEnableLED.enabled = false
             out10pwmEnableLED.opacity = 1.0
-
             out11pwmEnableLED.enabled = false
             out11pwmEnableLED.opacity = 1.0
 
@@ -485,37 +537,26 @@ Item {
         else {
             out0pwmEnableLED.enabled = false
             out0pwmEnableLED.opacity = 0.5
-
             out1pwmEnableLED.enabled = false
             out1pwmEnableLED.opacity = 0.5
-
             out2pwmEnableLED.enabled = false
             out2pwmEnableLED.opacity = 0.5
-
             out3pwmEnableLED.enabled = false
             out3pwmEnableLED.opacity = 0.5
-
             out4pwmEnableLED.enabled = false
             out4pwmEnableLED.opacity = 0.5
-
             out5pwmEnableLED.enabled = false
             out5pwmEnableLED.opacity = 0.5
-
             out6pwmEnableLED.enabled = false
             out6pwmEnableLED.opacity = 0.5
-
             out7pwmEnableLED.enabled = false
             out7pwmEnableLED.opacity = 0.5
-
             out8pwmEnableLED.enabled = false
             out8pwmEnableLED.opacity = 0.5
-
             out9pwmEnableLED.enabled = false
             out9pwmEnableLED.opacity = 0.5
-
             out10pwmEnableLED.enabled = false
             out10pwmEnableLED.opacity = 0.5
-
             out11pwmEnableLED.enabled = false
             out11pwmEnableLED.opacity = 0.5
         }
