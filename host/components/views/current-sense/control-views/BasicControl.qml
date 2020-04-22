@@ -1017,14 +1017,10 @@ Item {
                                                     onSwitch_enable_status_iin_maxChanged: {
                                                         if(switch_enable_status_in_set !== "N/A") {
                                                             maxInputCurrent.toText.text = switch_enable_status_iin_max
+                                                            maxInputCurrent.to = switch_enable_status_iin_max
 
                                                         }
                                                     }
-
-
-
-
-
                                                 }
                                             }
                                         }
