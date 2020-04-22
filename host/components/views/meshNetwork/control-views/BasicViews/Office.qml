@@ -121,7 +121,7 @@ Rectangle {
 
         MeshObject{ id: mesh7; scene:"office"; displayName:"Security Camera";pairingModel:"security_camera"; nodeNumber: "";
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor) }
-        MeshObject{ id: mesh6; scene:"office"; displayName:"Doorbell"; pairingModel:"buzzer";nodeNumber: ""
+        MeshObject{ id: mesh6; scene:"office"; displayName:"Doorbell"; pairingModel:"doorbell";nodeNumber: ""
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         MeshObject{ id: mesh4; scene:"office"; displayName:"Door"; pairingModel:"door"; nodeNumber: ""
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
@@ -342,7 +342,7 @@ Rectangle {
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .32
                 scene:"office"
-                nodeType:"security"
+                nodeType:"security_camera"
                 nodeNumber:""
             }
 
@@ -405,7 +405,7 @@ Rectangle {
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .53
                 scene:"office"
-                nodeType:"robot_arm"
+                nodeType:"robotic_arm"
             }
 
             DragTarget{
@@ -429,7 +429,7 @@ Rectangle {
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .47
                 scene:"office"
-                nodeType:"solar_panel"
+                nodeType:"relay"
                 nodeNumber:""
             }
 

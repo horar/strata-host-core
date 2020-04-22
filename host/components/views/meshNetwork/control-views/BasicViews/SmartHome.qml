@@ -329,7 +329,7 @@ Rectangle {
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .22
                 scene:"smart_home"
-                nodeType:"lights"
+                nodeType:"smarthome_lights"
                 nodeNumber:"="
             }
 

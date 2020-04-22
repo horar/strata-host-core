@@ -221,23 +221,47 @@ Rectangle {
             }
 
             Button {
-                id: light
-                text: "light"
+                id: windowShade
+                text: "shade"
 
                 onClicked: {
 
-                    var sensorID = ((Math.random() *8) +1).toFixed(0) ;
-                    var luxValue = ((Math.random() *1000)).toFixed(0) ;
+                    var state = "open";
 
                     CorePlatformInterface.data_source_handler('{
-                    "value":"sensor_status",
+                    "value":"window_shade",
                     "payload":{
-                        "uaddr":'+sensorID+',
-                        "sensor_type":"ambient_light",
-                        "data": "'+luxValue+'"
-                    }
+                        "value":"'+state+'"
+                        }
                     }')
 
+                    if (state === "open")
+                        state = "closed"
+                      else
+                        state = "open"
+
+                }
+            }
+
+            Button {
+                id: smarthomeDoor
+                text: "door"
+
+                onClicked: {
+
+                    var state = "open";
+
+                    CorePlatformInterface.data_source_handler('{
+                    "value":"smarthome_door",
+                    "payload":{
+                        "value":"'+state+'"
+                        }
+                    }')
+
+                    if (state === "open")
+                        state = "closed"
+                      else
+                        state = "open"
                 }
             }
         }

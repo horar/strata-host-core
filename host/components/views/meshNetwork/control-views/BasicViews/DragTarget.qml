@@ -84,10 +84,8 @@ Rectangle {
                     platformInterface.light_hsl_set.update(65535,theHue, theSaturation, theLightness)
             }
             else if (nodeType == "doorbell"){
-                if (root.nodeNumber == "")
-                    platformInterface.light_hsl_set.update(65535,0, 0, 0)
-                   else
-                    platformInterface.light_hsl_set.update(65535,theHue, theSaturation, theLightness)
+                if (root.nodeNumber != "")
+                    platformInterface.set_node_mode.update("buzzer",root.nodeNumber,true)
             }
             else if (nodeType == "unknown"){
                 if (root.nodeNumber == "")
@@ -121,7 +119,7 @@ Rectangle {
                      } ')
 
             }
-            else if (nodeType == "lights"){
+            else if (nodeType == "smarthome_lights"){
                 platformInterface.set_room_color.update(roomColors[currentRoomColor])
                 var theHomeHue = Math.round(roomColors[currentRoomColor].hslHue*100);
                 var theHomeSaturdation = Math.round(roomColors[currentRoomColor].hslSaturation*100);
