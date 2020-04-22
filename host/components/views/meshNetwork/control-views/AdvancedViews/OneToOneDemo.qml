@@ -27,6 +27,8 @@ Rectangle {
 
     MSwitch{
         id:switchOutline
+        height:180
+        width:100
         anchors.left:parent.left
         anchors.leftMargin:parent.width*.2
         anchors.verticalCenter: parent.verticalCenter

@@ -150,7 +150,7 @@ Rectangle{
 
                     onCheckedChanged: {
                         if (checked){
-                            demoStackLayout.currentIndex = 4
+                            demoStackLayout.currentIndex = 3
                         }
                     }
                 }
@@ -168,7 +168,7 @@ Rectangle{
 
                     onCheckedChanged: {
                         if (checked){
-                            demoStackLayout.currentIndex = 5
+                            demoStackLayout.currentIndex = 4
                         }
                     }
                 }

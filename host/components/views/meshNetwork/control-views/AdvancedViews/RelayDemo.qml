@@ -35,6 +35,8 @@ Rectangle {
 
     MSwitch{
         id:switchOutline
+        height:180
+        width:100
         anchors.left:parent.left
         anchors.leftMargin:parent.width*.05
         anchors.verticalCenter: parent.verticalCenter
@@ -76,6 +78,8 @@ Rectangle {
 
     MSwitch{
         id:switchOutline2
+        height:180
+        width:100
         anchors.horizontalCenter:parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
