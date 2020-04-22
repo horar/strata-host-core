@@ -109,11 +109,11 @@ Rectangle {
                     theWindow = "open"
                   else
                     theWindow = "closed"
-                platformInterface.toggle_window_shade.update(theWindow)
+                //platformInterface.toggle_window_shade.update(theWindow)
                 windowOpen = !windowOpen;
                 //this notification should come from the firmware, but doesn't
                 CorePlatformInterface.data_source_handler('{
-                   "value":"toggle_window_shade_notification",
+                   "value":"window_shade",
                     "payload":{
                         "value": "'+theWindow+'"
                      }
@@ -123,10 +123,10 @@ Rectangle {
             }
             else if (nodeType == "lights"){
                 platformInterface.set_room_color.update(roomColors[currentRoomColor])
-                platformInterface.light_hsl_set.update(65535,
-                                                       (roomColors[currentRoomColor].hslHue*100).toFixed(0),
-                                                       (roomColors[currentRoomColor].hslSaturation*100).toFixed(0),
-                                                       (roomColors[currentRoomColor].hslLightness*100)).toFixed(0);
+                var theHomeHue = Math.round(roomColors[currentRoomColor].hslHue*100);
+                var theHomeSaturdation = Math.round(roomColors[currentRoomColor].hslSaturation*100);
+                var theHomeLightness = Math.round(roomColors[currentRoomColor].hslLightness*100);
+                platformInterface.light_hsl_set.update(65535,theHomeHue,theHomeSaturdation,theHomeLightness);
                 //this should be handled by the firmware, but isn't
                 CorePlatformInterface.data_source_handler('{
                    "value":"room_color_notification",
@@ -145,11 +145,11 @@ Rectangle {
                     theDoor = "open"
                   else
                     theDoor = "closed"
-                platformInterface.toggle_door.update(theDoor)
+                //platformInterface.toggle_door.update(theDoor)
                 doorOpen = !doorOpen;
                 //this should be handled by the firmware, but isn't
                 CorePlatformInterface.data_source_handler('{
-                   "value":"toggle_door_notification",
+                   "value":"smarthome_door",
                     "payload":{
                         "value": "'+theDoor+'"
                      }

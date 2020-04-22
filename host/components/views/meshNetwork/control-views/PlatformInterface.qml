@@ -26,10 +26,10 @@ Item {
 //    }
 
     property var status_light_hsl : {
-        "ele_addr": "8000",  // in dec (16 bit)
-        "h": "120",         // 0 to 360 degrees (string)
-        "s": "50",          // 0 to 100% (string)
-        "l": "50"           // 0 to 100% (string)
+        "ele_addr": 8000,  // in dec (16 bit)
+        "h": 120,         // 0 to 360 degrees (string)
+        "s": 50,          // 0 to 100% (string)
+        "l": 50           // 0 to 100% (string)
     }
 
     //a generic status level
@@ -384,23 +384,24 @@ Item {
                                       show: function () { CorePlatformInterface.show(this) }
                                   })
 
-    property var toggle_door : ({
-                                      "cmd" : "toggle_door",
-                                      "payload": {
-                                          "value": "open",  // or "closed"
-                                      },
+//    property var toggle_door : ({
+//                                      "cmd" : "toggle_door",
+//                                      "payload": {
+//                                          "value": "open",  // or "closed"
+//                                      },
 
-                                      update: function (value) {
-                                          this.set(value)
-                                          this.send(this)
-                                      },
-                                      set: function (inValue) {
-                                          this.payload.value = inValue;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+//                                      update: function (value) {
+//                                          this.set(value)
+//                                          this.send(this)
+//                                      },
+//                                      set: function (inValue) {
+//                                          this.payload.value = inValue;
+//                                      },
+//                                      send: function () { CorePlatformInterface.send(this) },
+//                                      show: function () { CorePlatformInterface.show(this) }
+//                                  })
 
+    //this is used internally by the UI, but not recognized by the firmware
     property var toggle_window_shade : ({
                                       "cmd" : "toggle_window_shade",
                                       "payload": {
