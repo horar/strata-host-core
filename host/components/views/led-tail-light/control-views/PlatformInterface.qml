@@ -330,7 +330,7 @@ Item {
     }
 
     property var led_oen: {
-      "caption":"Output EN (OEN)",
+        "caption":"Output EN (OEN)",
         "scales":[],
         "state":"disabled_and_grayed_out",
         "value":true,
@@ -348,6 +348,120 @@ Item {
     property var led_oen_value: {
         "value": true
     }
+
+    property var led_pwm_duty_lock: {
+        "caption":"Lock PWM Duty Together",
+        "scales":[],
+        "state":"disabled_and_grayed_out",
+        "value":true,
+        "values":[]
+    }
+
+    property var led_pwm_duty_lock_caption: {
+        "caption":"Lock PWM Duty Together"
+    }
+
+    property var led_pwm_duty_lock_state: {
+        "state":"disabled_and_grayed_out"
+    }
+
+    property var led_pwm_duty_lock_value: {
+        "value": true
+    }
+
+    property var led_pwm_en_lock: {
+        "caption":"Lock PWM EN Together",
+        "scales":[],
+        "state":"disabled_and_grayed_out",
+        "value":true,
+        "values":[]
+    }
+
+    property var led_pwm_en_lock_caption: {
+        "caption":"Lock PWM EN Together"
+    }
+
+    property var led_pwm_en_lock_state: {
+        "state":"disabled_and_grayed_out"
+    }
+
+    property var led_pwm_en_lock_value: {
+        "value": true
+    }
+
+    property var led_linear_log: {
+        "caption":"PWM Linear/Log",
+        "scales":[],
+        "state":"enabled",
+        "value":"Linear",
+        "values":["Linear","Log"]
+    }
+
+    property var led_linear_log_caption: {
+        "caption":"PWM Linear/Log"
+    }
+
+    property var led_linear_log_state: {
+        "state":"enabled"
+    }
+
+    property var led_linear_log_value: {
+        "value": "Linear"
+    }
+
+    property var led_linear_log_values: {
+        "values": ["Linear","Log"]
+    }
+
+    property var led_pwm_freq: {
+        "caption":"PWM Frequency (Hz)",
+        "scales":[],
+        "state":"enabled",
+        "value":"125 Hz",
+        "values":["125 Hz","250 Hz"," 300 Hz"]
+    }
+
+    property var led_pwm_freq_caption: {
+        "caption":"PWM Frequency (Hz)"
+    }
+
+    property var led_pwm_freq_state: {
+        "state":"enabled"
+    }
+
+    property var led_pwm_freq_value: {
+        "value": "125 Hz"
+    }
+
+    property var led_pwm_freq_values: {
+        "values": ["125 Hz","250 Hz"," 300 Hz"]
+    }
+
+    property var led_open_load_diagnostic: {
+        "caption":"I2C Open Load Diagnostic",
+        "scales":[],
+        "state":"enabled",
+        "value":"No Diagnostic",
+        "values":["No Diagnostic","Auto Retry","Diagnostic Only"]
+    }
+
+    property var led_open_load_diagnostic_caption: {
+        "caption":"I2C Open Load \n Diagnostic"
+    }
+
+    property var led_open_load_diagnostic_state: {
+        "state":"enabled"
+    }
+
+    property var led_open_load_diagnostic_value: {
+        "value": "No Diagnostic"
+    }
+
+    property var led_open_load_diagnostic_values: {
+        "values": ["No Diagnostic","Auto Retry","Diagnostic Only"]
+    }
+
+
 
 
 

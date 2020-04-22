@@ -555,11 +555,10 @@ Item {
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    //color: "red"
                     SGAlignedLabel {
                         id: enableOutputLabel
                         target: enableOutput
-                        // text: "Output Enable (OEN)"
+
                         alignment: SGAlignedLabel.SideLeftCenter
                         anchors {
                             right: parent.right
@@ -575,10 +574,6 @@ Item {
                             labelsInside: true
                             checkedLabel: "On"
                             uncheckedLabel: "Off"
-//                            textColor: "black"              // Default: "black"
-//                            handleColor: "white"            // Default: "white"
-//                            grooveColor: "#ccc"             // Default: "#ccc"
-//                            grooveFillColor: "#0cf"         // Default: "#0cf"
                             fontSizeMultiplier: ratioCalc
                             checked: false
 
@@ -597,12 +592,10 @@ Item {
                                 else if(led_oen_state === "disabled") {
                                     enableOutput.enabled = false
                                     enableOutput.opacity = 1.0
-                                   // enableOutput.uncheckedLabel.opacity = 1.0
                                 }
                                 else {
                                     enableOutput.enabled = false
                                     enableOutput.opacity = 0.5
-                                   // enableOutput.uncheckedLabel.opacity = 0.0
 
                                 }
                             }
@@ -627,7 +620,7 @@ Item {
                     SGAlignedLabel {
                         id: lockPWMDutyLabel
                         target: lockPWMDuty
-                        text: "Lock PWM Duty Together"
+                        //text: "Lock PWM Duty Together"
                         alignment: SGAlignedLabel.SideLeftCenter
                         anchors {
                             right: parent.right
@@ -644,12 +637,40 @@ Item {
                             labelsInside: true
                             checkedLabel: "On"
                             uncheckedLabel: "Off"
-                            textColor: "black"              // Default: "black"
-                            handleColor: "white"            // Default: "white"
-                            grooveColor: "#ccc"             // Default: "#ccc"
-                            grooveFillColor: "#0cf"         // Default: "#0cf"
                             fontSizeMultiplier: ratioCalc
                             checked: false
+
+                            property var led_pwm_duty_lock_caption: platformInterface.led_pwm_duty_lock_caption.caption
+                            onLed_pwm_duty_lock_captionChanged : {
+                                lockPWMDutyLabel.text = led_pwm_duty_lock_caption
+                            }
+
+                            property var led_pwm_duty_lock_state: platformInterface.led_pwm_duty_lock_state.state
+                            onLed_pwm_duty_lock_stateChanged : {
+                                if(led_pwm_duty_lock_state === "enabled" ) {
+                                    lockPWMDuty.enabled = true
+                                    lockPWMDuty.opacity = 1.0
+
+                                }
+                                else if(led_pwm_duty_lock_state === "disabled") {
+                                    lockPWMDuty.enabled = false
+                                    lockPWMDuty.opacity = 1.0
+                                }
+                                else {
+                                    lockPWMDuty.enabled = false
+                                    lockPWMDuty.opacity = 0.5
+
+                                }
+                            }
+
+                            property var led_pwm_duty_lock_value: platformInterface.led_pwm_duty_lock_value.value
+                            onLed_pwm_duty_lock_valueChanged : {
+                                if(led_pwm_duty_lock_value === true)
+                                    lockPWMDuty.checked = true
+                                else  lockPWMDuty.checked = false
+
+
+                            }
                         }
                     }
                 }
@@ -659,7 +680,7 @@ Item {
                     SGAlignedLabel {
                         id: lockPWMDutyENLabel
                         target: lockPWMDutyEN
-                        text: "Lock PWM EN Together"
+                        // text: "Lock PWM EN Together"
                         alignment: SGAlignedLabel.SideLeftCenter
                         anchors {
                             right: parent.right
@@ -676,12 +697,41 @@ Item {
                             labelsInside: true
                             checkedLabel: "On"
                             uncheckedLabel: "Off"
-                            textColor: "black"              // Default: "black"
-                            handleColor: "white"            // Default: "white"
-                            grooveColor: "#ccc"             // Default: "#ccc"
-                            grooveFillColor: "#0cf"         // Default: "#0cf"
+
                             fontSizeMultiplier: ratioCalc
                             checked: false
+
+                            property var led_pwm_en_lock_caption: platformInterface.led_pwm_en_lock_caption.caption
+                            onLed_pwm_en_lock_captionChanged : {
+                                lockPWMDutyENLabel.text = led_pwm_en_lock_caption
+                            }
+
+                            property var led_pwm_en_lock_state: platformInterface.led_pwm_en_lock_state.state
+                            onLed_pwm_en_lock_stateChanged : {
+                                if(led_pwm_en_lock_state === "enabled" ) {
+                                    lockPWMDutyEN.enabled = true
+                                    lockPWMDutyEN.opacity = 1.0
+
+                                }
+                                else if(led_pwm_en_lock_state === "disabled") {
+                                    lockPWMDutyEN.enabled = false
+                                    lockPWMDutyEN.opacity = 1.0
+                                }
+                                else {
+                                    lockPWMDutyEN.enabled = false
+                                    lockPWMDutyEN.opacity = 0.5
+
+                                }
+                            }
+
+                            property var led_pwm_en_lock_value: platformInterface.led_pwm_en_lock_value.value
+                            onLed_pwm_en_lock_valueChanged : {
+                                if(led_pwm_en_lock_value === true)
+                                    lockPWMDutyEN.checked = true
+                                else  lockPWMDutyEN.checked = false
+
+
+                            }
                         }
                     }
                 }
@@ -691,7 +741,7 @@ Item {
                     SGAlignedLabel {
                         id: pwmLinearLogLabel
                         target: pwmLinearLog
-                        text: "PWM Linear/Log"
+                       // text: "PWM Linear/Log"
                         alignment: SGAlignedLabel.SideLeftCenter
                         anchors {
                             right: parent.right
@@ -701,95 +751,131 @@ Item {
                         }
                         fontSizeMultiplier: ratioCalc * 1.2
                         font.bold : true
-                        //horizontalAlignment: Text.AlignHCenter
 
-                        SGSwitch {
+
+                        SGComboBox {
                             id: pwmLinearLog
-                            labelsInside: true
-                            checkedLabel: "On"
-                            uncheckedLabel: "Off"
-                            textColor: "black"              // Default: "black"
-                            handleColor: "white"            // Default: "white"
-                            grooveColor: "#ccc"             // Default: "#ccc"
-                            grooveFillColor: "#0cf"         // Default: "#0cf"
                             fontSizeMultiplier: ratioCalc
-                            checked: false
+
+                            property var led_linear_log_caption: platformInterface.led_linear_log_caption.caption
+                            onLed_linear_log_captionChanged: {
+                                pwmLinearLogLabel.text = led_linear_log_caption
+                            }
+
+                            property var led_linear_log_state: platformInterface.led_linear_log_state.state
+                            onLed_linear_log_stateChanged: {
+                                if(led_linear_log_state === "enabled" ) {
+                                    pwmLinearLog.enabled = true
+                                    pwmLinearLog.opacity = 1.0
+
+                                }
+                                else if(led_linear_log_state === "disabled") {
+                                    pwmLinearLog.enabled = false
+                                    pwmLinearLog.opacity = 1.0
+                                }
+                                else {
+                                    pwmLinearLog.enabled = false
+                                    pwmLinearLog.opacity = 0.5
+
+                                }
+                            }
+
+                            property var led_linear_log_values: platformInterface.led_linear_log_values.values
+                            onLed_linear_log_valuesChanged: {
+                                pwmLinearLog.model = led_linear_log_values
+                            }
+
+                            property var led_linear_log_value: platformInterface.led_linear_log_value.value
+                            onLed_linear_log_valueChanged: {
+                                for(var a = 0; a < pwmLinearLog.model.length; ++a) {
+                                    if(led_linear_log_value === pwmLinearLog.model[a].toString()){
+                                        pwmLinearLog.currentIndex = a
+                                    }
+                                }
+                            }
+
+
+
+
+
+
+
                         }
                     }
                 }
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    //color: "red"
+                //                Rectangle {
+                //                    Layout.fillHeight: true
+                //                    Layout.fillWidth: true
+                //                    //color: "red"
 
-                    SGAlignedLabel {
-                        id: autoFaultRecoveryLabel
-                        target: autoFaultRecovery
-                        text: "Auto Fault Recovery"
-                        alignment: SGAlignedLabel.SideLeftCenter
-                        anchors {
-                            right: parent.right
-                            verticalCenter: parent.verticalCenter
-                            rightMargin: 60
+                //                    SGAlignedLabel {
+                //                        id: autoFaultRecoveryLabel
+                //                        target: autoFaultRecovery
+                //                        text: "Auto Fault Recovery"
+                //                        alignment: SGAlignedLabel.SideLeftCenter
+                //                        anchors {
+                //                            right: parent.right
+                //                            verticalCenter: parent.verticalCenter
+                //                            rightMargin: 60
 
-                        }
+                //                        }
 
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        font.bold : true
+                //                        fontSizeMultiplier: ratioCalc * 1.2
+                //                        font.bold : true
 
-                        SGSwitch {
-                            id: autoFaultRecovery
-                            labelsInside: true
-                            checkedLabel: "On"
-                            uncheckedLabel: "Off"
-                            textColor: "black"              // Default: "black"
-                            handleColor: "white"            // Default: "white"
-                            grooveColor: "#ccc"             // Default: "#ccc"
-                            grooveFillColor: "#0cf"         // Default: "#0cf"
-                            fontSizeMultiplier: ratioCalc
-                            checked: false
-                        }
-                    }
-                }
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    SGAlignedLabel {
-                        id: label
-                        target: labelSwitch
-                        text: "?"
-                        alignment: SGAlignedLabel.SideLeftCenter
-                        anchors {
-                            right: parent.right
-                            verticalCenter: parent.verticalCenter
-                            rightMargin: 60
+                //                        SGSwitch {
+                //                            id: autoFaultRecovery
+                //                            labelsInside: true
+                //                            checkedLabel: "On"
+                //                            uncheckedLabel: "Off"
+                //                            textColor: "black"              // Default: "black"
+                //                            handleColor: "white"            // Default: "white"
+                //                            grooveColor: "#ccc"             // Default: "#ccc"
+                //                            grooveFillColor: "#0cf"         // Default: "#0cf"
+                //                            fontSizeMultiplier: ratioCalc
+                //                            checked: false
+                //                        }
+                //                    }
+                //                }
+                //                Rectangle {
+                //                    Layout.fillHeight: true
+                //                    Layout.fillWidth: true
+                //                    SGAlignedLabel {
+                //                        id: label
+                //                        target: labelSwitch
+                //                        text: "?"
+                //                        alignment: SGAlignedLabel.SideLeftCenter
+                //                        anchors {
+                //                            right: parent.right
+                //                            verticalCenter: parent.verticalCenter
+                //                            rightMargin: 60
 
-                        }
+                //                        }
 
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        font.bold : true
+                //                        fontSizeMultiplier: ratioCalc * 1.2
+                //                        font.bold : true
 
-                        SGSwitch {
-                            id: labelSwitch
-                            labelsInside: true
-                            checkedLabel: "On"
-                            uncheckedLabel: "Off"
-                            textColor: "black"              // Default: "black"
-                            handleColor: "white"            // Default: "white"
-                            grooveColor: "#ccc"             // Default: "#ccc"
-                            grooveFillColor: "#0cf"         // Default: "#0cf"
-                            fontSizeMultiplier: ratioCalc
-                            checked: false
-                        }
-                    }
-                }
+                //                        SGSwitch {
+                //                            id: labelSwitch
+                //                            labelsInside: true
+                //                            checkedLabel: "On"
+                //                            uncheckedLabel: "Off"
+                //                            textColor: "black"              // Default: "black"
+                //                            handleColor: "white"            // Default: "white"
+                //                            grooveColor: "#ccc"             // Default: "#ccc"
+                //                            grooveFillColor: "#0cf"         // Default: "#0cf"
+                //                            fontSizeMultiplier: ratioCalc
+                //                            checked: false
+                //                        }
+                //                    }
+                //                }
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     SGAlignedLabel {
                         id: pwmFrequencyLabel
                         target: pwmFrequency
-                        text: "PWM Frequency (Hz)"
+                       // text: "PWM Frequency (Hz)"
                         alignment: SGAlignedLabel.SideLeftCenter
                         anchors {
                             right: parent.right
@@ -803,7 +889,42 @@ Item {
                         SGComboBox {
                             id: pwmFrequency
                             fontSizeMultiplier: ratioCalc
-                            model: ["150", "250", "300"]
+                            property var led_pwm_freq_caption: platformInterface.led_pwm_freq_caption.caption
+                            onLed_pwm_freq_captionChanged: {
+                                pwmFrequencyLabel.text = led_pwm_freq_caption
+                            }
+
+                            property var led_pwm_freq_state: platformInterface.led_pwm_freq_state.state
+                            onLed_pwm_freq_stateChanged: {
+                                if(led_pwm_freq_state === "enabled" ) {
+                                    pwmFrequency.enabled = true
+                                    pwmFrequency.opacity = 1.0
+
+                                }
+                                else if(led_pwm_freq_state === "disabled") {
+                                    pwmFrequency.enabled = false
+                                    pwmFrequency.opacity = 1.0
+                                }
+                                else {
+                                    pwmFrequency.enabled = false
+                                    pwmFrequency.opacity = 0.5
+
+                                }
+                            }
+
+                            property var led_pwm_freq_values: platformInterface.led_pwm_freq_values.values
+                            onLed_pwm_freq_valuesChanged: {
+                                pwmFrequency.model = led_pwm_freq_values
+                            }
+
+                            property var led_pwm_freq_value: platformInterface.led_pwm_freq_value.value
+                            onLed_pwm_freq_valueChanged: {
+                                for(var a = 0; a < pwmFrequency.model.length; ++a) {
+                                    if(led_pwm_freq_value === pwmFrequency.model[a].toString()){
+                                        pwmFrequency.currentIndex = a
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -814,7 +935,7 @@ Item {
                     SGAlignedLabel {
                         id: openLoadLabel
                         target: openLoadDiagnostic
-                        text: "I2C Open Load\nDiagnostic"
+                        //text: "I2C Open Load\nDiagnostic"
                         alignment: SGAlignedLabel.SideLeftCenter
 
                         anchors {
@@ -829,7 +950,44 @@ Item {
                         SGComboBox {
                             id: openLoadDiagnostic
                             fontSizeMultiplier: ratioCalc
-                            model: ["No Diagnostic", "Auto Retry", "Detect Only", "No Regulations\nChange"]
+                           // model: ["No Diagnostic", "Auto Retry", "Detect Only", "No Regulations\nChange"]
+                            property var led_open_load_diagnostic_caption: platformInterface.led_open_load_diagnostic_caption.caption
+                            onLed_open_load_diagnostic_captionChanged: {
+                                openLoadLabel.text = led_open_load_diagnostic_caption
+                            }
+
+                            property var led_open_load_diagnostic_state: platformInterface.led_open_load_diagnostic_state.state
+                            onLed_open_load_diagnostic_stateChanged: {
+                                if(led_open_load_diagnostic_state === "enabled" ) {
+                                    openLoadDiagnostic.enabled = true
+                                    openLoadDiagnostic.opacity = 1.0
+
+                                }
+                                else if(led_open_load_diagnostic_state === "disabled") {
+                                    openLoadDiagnostic.enabled = false
+                                    openLoadDiagnostic.opacity = 1.0
+                                }
+                                else {
+                                    openLoadDiagnostic.enabled = false
+                                    openLoadDiagnostic.opacity = 0.5
+
+                                }
+                            }
+
+                            property var led_open_load_diagnostic_values: platformInterface.led_open_load_diagnostic_values.values
+                            onLed_open_load_diagnostic_valuesChanged: {
+                                openLoadDiagnostic.model = led_open_load_diagnostic_values
+                            }
+
+                            property var led_open_load_diagnostic_value: platformInterface.led_open_load_diagnostic_value.value
+                            onLed_open_load_diagnostic_valueChanged: {
+                                for(var a = 0; a < openLoadDiagnostic.model.length; ++a) {
+                                    if(led_open_load_diagnostic_value === openLoadDiagnostic.model[a].toString()){
+                                        openLoadDiagnostic.currentIndex = a
+                                    }
+                                }
+                            }
+
                         }
                     }
                 }
