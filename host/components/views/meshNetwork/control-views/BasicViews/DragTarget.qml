@@ -37,12 +37,14 @@ Rectangle {
         property bool doorOpen:true
         property var roomColors:["blue","green","purple","orange","black","white"]
         property int currentRoomColor:0
+        property color theColor: roomColors[currentRoomColor];
 
         onClicked:{
 
-            var theHue = Math.round(color.hslHue*100)
+            var theHue = Math.round(color.hslHue*360)
             var theSaturation = Math.round(color.hslSaturation*100)
             var theLightness = Math.round(color.hslLightness*100)
+            console.log("current color is",theHue,theSaturation,theLightness)
 
             console.log("sending click with value",nodeType)
             if (nodeType == "relay"){
@@ -127,9 +129,10 @@ Rectangle {
             }
             else if (nodeType == "smarthome_lights"){
                 platformInterface.set_room_color.update(roomColors[currentRoomColor])
-                var theHomeHue = Math.round(roomColors[currentRoomColor].hslHue*100);
-                var theHomeSaturdation = Math.round(roomColors[currentRoomColor].hslSaturation*100);
-                var theHomeLightness = Math.round(roomColors[currentRoomColor].hslLightness*100);
+                var theHomeHue = Math.round(theColor.hslHue*360);
+                var theHomeSaturdation = Math.round(theColor.hslSaturation*100);
+                var theHomeLightness = Math.round(theColor.hslLightness*100);
+                console.log("current smarthome color is",theHomeHue,theHomeSaturdation,theHomeLightness)
                 platformInterface.light_hsl_set.update(65535,theHomeHue,theHomeSaturdation,theHomeLightness);
                 //this should be handled by the firmware, but isn't
                 CorePlatformInterface.data_source_handler('{
