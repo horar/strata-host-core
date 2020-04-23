@@ -216,7 +216,7 @@ Item {
                                       },
                                       set: function (inMode,inAddress,inEnabled) {
                                           this.payload.mode = inMode;
-                                          this.payload.uaddr = inAddress;
+                                          this.payload.uaddr = parseInt(inAddress);
                                           this.payload.enable = inEnabled;
                                       },
                                       send: function () { CorePlatformInterface.send(this) },

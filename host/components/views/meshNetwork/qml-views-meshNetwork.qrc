@@ -69,5 +69,6 @@
         <file>images/sensorIconFullBar.svg</file>
         <file>images/smartHome_windowOpen.jpg</file>
         <file>images/smartHome_orange.jpg</file>
+        <file>images/smartHome_doorOpenWindowOpen.png</file>
     </qresource>
 </RCC>

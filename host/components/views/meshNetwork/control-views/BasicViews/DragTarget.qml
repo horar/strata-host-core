@@ -77,7 +77,7 @@ Rectangle {
                 platformInterface.light_hsl_set.update(65535,theHue, theSaturation, theLightness)
 
             }
-            else if (nodeType == "security"){
+            else if (nodeType == "security_camera"){
                 if (root.nodeNumber == "")
                     platformInterface.light_hsl_set.update(65535,0, 0, 0)
                    else
