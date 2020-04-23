@@ -501,32 +501,49 @@ Item {
     // @command: led_i2c_enable_commands
     // @description: sends LED I2C enable command to platform
     //
-    property var led_i2c_enable_commands : ({
-                                                "cmd" : "led_i2c_enable",
-                                                "payload": {
-                                                    "value":true // default value
-                                                },
+    //    property var led_i2c_enable_commands : ({
+    //                                                "cmd" : "led_i2c_enable",
+    //                                                "payload": {
+    //                                                    "value":true // default value
+    //                                                },
 
-                                                update: function (value) {
-                                                    this.set(value)
-                                                    this.send(this)
-                                                },
-                                                set: function (value) {
-                                                    this.payload.value = value
-                                                },
-                                                send: function () { CorePlatformInterface.send(this) },
-                                                show: function () { CorePlatformInterface.show(this) }
-                                            })
+    //                                                update: function (value) {
+    //                                                    this.set(value)
+    //                                                    this.send(this)
+    //                                                },
+    //                                                set: function (value) {
+    //                                                    this.payload.value = value
+    //                                                },
+    //                                                send: function () { CorePlatformInterface.send(this) },
+    //                                                show: function () { CorePlatformInterface.show(this) }
+    //                                            })
 
-    property var led_ch_enable_read : ({
-                                           "cmd":"led_ch_enable_read",
-                                           update: function () {
-                                               CorePlatformInterface.send(this)
-                                           },
-                                           send: function () { CorePlatformInterface.send(this) },
-                                           show: function () { CorePlatformInterface.show(this) }
-                                       })
+    //    property var led_ch_enable_read : ({
+    //                                           "cmd":"led_ch_enable_read",
+    //                                           update: function () {
+    //                                               CorePlatformInterface.send(this)
+    //                                           },
+    //                                           send: function () { CorePlatformInterface.send(this) },
+    //                                           show: function () { CorePlatformInterface.show(this) }
+    //                                       })
 
+
+    property var set_led_out_en : ({
+                                       "cmd" : "led_out_en",
+                                       "payload": {
+                                           "values":[0,0,0,0,0,0,0,0,0,0,0,0]
+                                       },
+
+                                       update: function (value) {
+                                           this.set(value)
+                                           this.send(this)
+                                       },
+                                       set: function (value) {
+                                           this.payload.value = value
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+                                   })
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process
