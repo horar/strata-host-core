@@ -23,20 +23,21 @@ void BoardManager::init(bool requireFwInfoResponse) {
 }
 
 // this method is deprecated, it will be deleted
-void BoardManager::sendMessage(const int deviceId, const QString &message) {
-    bool success = false;
+bool BoardManager::sendMessage(const int deviceId, const QString &message) {
+    bool sent = false;
+    bool deviceFound = false;
     {
         QMutexLocker lock(&mutex_);
         auto it = openedSerialPorts_.constFind(deviceId);
         if (it != openedSerialPorts_.constEnd()) {
-            it.value()->sendMessage(message.toUtf8());
-            success = true;
+            sent = it.value()->sendMessage(message.toUtf8());
+            deviceFound = true;
         }
     }
-    if (success == false) {
+    if (deviceFound == false) {
         logInvalidDeviceId(QStringLiteral("Cannot send message"), deviceId);
-        emit invalidOperation(deviceId);
     }
+    return sent;
 }
 
 void BoardManager::disconnect(const int deviceId) {
@@ -54,7 +55,6 @@ void BoardManager::disconnect(const int deviceId) {
         emit boardDisconnected(deviceId);
     } else {
         logInvalidDeviceId(QStringLiteral("Cannot disconnect"), deviceId);
-        emit invalidOperation(deviceId);
     }
 }
 
@@ -86,7 +86,6 @@ void BoardManager::reconnect(const int deviceId) {
         emit boardConnected(deviceId);
     } else {
         logInvalidDeviceId(QStringLiteral("Cannot reconnect"), deviceId);
-        emit invalidOperation(deviceId);
     }
 }
 
@@ -110,7 +109,6 @@ QVariantMap BoardManager::getConnectionInfo(const int deviceId) {
         }
     }
     logInvalidDeviceId(QStringLiteral("Cannot get connection info"), deviceId);
-    emit invalidOperation(deviceId);
     return QVariantMap();
 }
 
@@ -129,7 +127,6 @@ QString BoardManager::getDeviceProperty(const int deviceId, const DeviceProperti
         }
     }
     logInvalidDeviceId(QStringLiteral("Cannot get required device property"), deviceId);
-    emit invalidOperation(deviceId);
     return QString();
 }
 

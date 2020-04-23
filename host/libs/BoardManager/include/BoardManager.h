@@ -42,9 +42,10 @@ namespace strata {
          * Send a message to the device.
          * @param connectionId device connection ID
          * @param message message to send to the device
+         * @return true if attempt to send message was successful, otherwise false
          */
         [[deprecated("Do not use this function anymore, it will be deleted soon.")]]
-        Q_INVOKABLE void sendMessage(const int connectionId, const QString& message);
+        Q_INVOKABLE bool sendMessage(const int connectionId, const QString& message);
 
         /**
          * Disconnect from the device.
@@ -121,13 +122,6 @@ namespace strata {
          */
         // DEPRECATED
         void newMessage(int deviceId, QString message);
-
-        /**
-         * Emitted when required operation cannot be fulfilled (e.g. device ID does not exist).
-         * @param deviceId device ID
-         */
-        // DEPRECATED
-        void invalidOperation(int deviceId);
 
         /**
          * Emitted when device IDs has changed (available device ID list has changed).
