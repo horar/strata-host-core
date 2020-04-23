@@ -224,9 +224,9 @@ Rectangle {
                 id: windowShade
                 text: "shade"
 
-                onClicked: {
+                property var state: "open";
 
-                    var state = "open";
+                onClicked: {
 
                     CorePlatformInterface.data_source_handler('{
                     "value":"window_shade",
@@ -235,10 +235,14 @@ Rectangle {
                         }
                     }')
 
-                    if (state === "open")
+                    if (state === "open"){
+                        console.log("closing window")
                         state = "closed"
-                      else
+                    }
+                      else{
+                        console.log("opening window")
                         state = "open"
+                    }
 
                 }
             }
@@ -247,10 +251,9 @@ Rectangle {
                 id: smarthomeDoor
                 text: "door"
 
+                property var state: "open";
+
                 onClicked: {
-
-                    var state = "open";
-
                     CorePlatformInterface.data_source_handler('{
                     "value":"smarthome_door",
                     "payload":{
