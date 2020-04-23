@@ -45,11 +45,11 @@ Rectangle {
             var theLightness = Math.round(color.hslLightness*100)
 
             console.log("sending click with value",nodeType)
-            if (nodeType == "solar_panel"){
+            if (nodeType == "relay"){
                 //enable/disable relay mode
                 console.log("sending solar_panel")
                 if (root.nodeNumber != "")
-                    platformInterface.set_node_mode(nodeType,root.nodeNumber,relayEnabled)
+                    platformInterface.set_node_mode.update(nodeType,root.nodeNumber,relayEnabled)
                 relayEnabled = !relayEnabled;
             }
 
