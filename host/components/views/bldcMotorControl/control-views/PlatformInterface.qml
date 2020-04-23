@@ -26,7 +26,7 @@ Item {
 
     //Target speed
     property var target_speed: {
-        "rpm": 1600
+        "rpm": 0
     }
 
     //Poles

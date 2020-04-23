@@ -443,11 +443,18 @@ Widget09.SGResponsiveScrollView {
                 autoAdjustMaxMin: true          // Default: false - If inputData is greater than maxYValue or less than minYValue, these limits are adjusted to encompass that point.
                 maxYValue: 2000                  // Default: 10
                 maxXValue: 10
+                repeatOldData: false            //testing to see if this will help "pause" the graph
 
                 opacity:1
                 anchors.centerIn: parent
 
-                inputData: platformInterface.speed.rpm
+                property bool paused: false
+                inputData: {
+                    if (paused)
+                        return inputData;
+                      else
+                        return platformInterface.speed.rpm
+                }
 
             }
 
@@ -564,6 +571,13 @@ Widget09.SGResponsiveScrollView {
                 color:pauseButton.checked ? "dimgrey" : "lightgrey"
                 border.width: 1
                 radius: 10
+            }
+
+            onClicked: {
+                if (checked)
+                    rpmGraph.paused = true;
+                  else
+                    rpmGraph.paused = false;
             }
 
         }
