@@ -32,10 +32,10 @@ Item {
         anchors {
             right: basic.right
             top: parent.top
-            margins: 20
+            margins: 10
         }
         source:  "qrc:/sgimages/question-circle.svg"
-        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+       // iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
         height: 40
         width: 40
 

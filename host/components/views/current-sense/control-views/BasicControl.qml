@@ -50,9 +50,11 @@ Item {
         Help.registerTarget(reset, "This will reset the board by turning all circuitry off. If an interrupt occurred, the parameters that caused the interrupt will need to be fixed in order for the board to reset itself.", 4, "currentSenseHelp")
 
         Help.registerTarget(onBoardColumn, "These are the controls for the programmable load included on the board. The load is split into 3 circuits each with independent controls. Only 1 load circuit may be on at a time. The ranges for each load circuit are given by the labels below the sliders, and the sliders can be adjusted to draw the desired load. The switches enable and disable the circuit.", 5, "currentSenseHelp")
-        // Help.registerTarget(vinReading, "Input voltage to the 5 parallel circuits are measured here. This measurement is taken after the input current sense circuit.", 2, "currentSenseHelp")
-        // Help.registerTarget(vinReading, "Input voltage to the 5 parallel circuits are measured here. This measurement is taken after the input current sense circuit.", 2, "currentSenseHelp")
-
+        Help.registerTarget(ledSection, "The 3 LEDs on the left give the status of the board's individual interrupts. On-Board Load is for the load circuits provided on the board and the input current is the total current travelling through the input of the entire board. The Fault LED is the general indicator that an interrupt occurred and as long as this LED is on the board will not be able to turn on. In order to clear the Fault, first make sure the cause of the interrupt is solved and then use the Reset button in the Settings section.", 6, "currentSenseHelp")
+        Help.registerTarget(interruptBox, "These readings will let the user know where the interrupt thresholds are and will change depending on which circuit is on as well as input voltage/current through the board is. If these thresholds are exceeded an interrupt will occur.", 7, "currentSenseHelp")
+        Help.registerTarget(powerGaugeContainer, "These readings will let the user know where the interrupt thresholds are and will change depending on which circuit is on as well as input voltage/current through the board is. If these thresholds are exceeded an interrupt will occur.", 8, "currentSenseHelp")
+        Help.registerTarget(statusListContainer,  "This will contain any interrupt messages or warnings for the user to diagnose any problems.", 9, "currentSenseHelp")
+        Help.registerTarget(manualModeSection,  "This section is for if the user would like to set customizable input voltage and current limits. While in" + "Auto"  + "mode, the limits are determined by the max capabilities of whatever circuit is enabled. While in" + "Manual" + "mode the limits are determined by the user, but will still be limited by the max capabilities of whatever circuit is enabled.", 10, "currentSenseHelp")
     }
 
     Connections {
@@ -955,6 +957,7 @@ Item {
                             }
 
                             RowLayout {
+                                id: manualModeSection
                                 anchors {
                                     top: line4.bottom
                                     topMargin: 10
@@ -1033,7 +1036,7 @@ Item {
 
                                                     inputBoxWidth: 45
                                                     fontSizeMultiplier: ratioCalc * 1.2
-                                                    inputBox.validator: DoubleValidator { }
+                                                    inputBox.validator: DoubleValidator { top: maxInputCurrent.to ; bottom: 0.0  }
 
                                                     onUserSet: {
                                                         //                                                        var valueSet = parseInt(value)
@@ -1063,9 +1066,6 @@ Item {
                                                         console.log("b", maxInputCurrent.value)
 
                                                     }
-
-
-
 
                                                 }
                                             }
@@ -1460,6 +1460,7 @@ Item {
                                     Layout.fillWidth: true
 
                                     RowLayout{
+                                        id: ledSection
                                         anchors.fill: parent
                                         Rectangle {
                                             Layout.fillHeight: true
@@ -1543,6 +1544,7 @@ Item {
                                 }
 
                                 Rectangle {
+                                    id: interruptBox
                                     Layout.preferredHeight: parent.height/5
                                     Layout.fillWidth: true
 
@@ -1652,7 +1654,7 @@ Item {
                                 }
 
                                 Rectangle {
-                                    id: powerGaugeContainer
+
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
 
@@ -1661,6 +1663,7 @@ Item {
                                         anchors.fill: parent
 
                                         Rectangle {
+                                            id: powerGaugeContainer
                                             Layout.preferredWidth: parent.width/3
                                             Layout.fillHeight: true
 
@@ -1713,9 +1716,9 @@ Item {
 
                                             SGStatusLogBox{
                                                 id: logFault
-                                                anchors.fill: parent
+                                                //anchors.fill: parent
                                                 width: parent.width
-                                                height: parent.height - 10
+                                                height: parent.height - 50
                                                 title: "Status List"
                                                 anchors.centerIn: parent
 
