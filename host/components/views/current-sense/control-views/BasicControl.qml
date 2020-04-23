@@ -41,7 +41,18 @@ Item {
 
 
     Component.onCompleted:  {
+        //currentSenseMaxReading
         Help.registerTarget(filterHelpContainer, "These 5 switches enable/disable the 5 current sense circuits supplied on the board. Only 1 circuit may be enabled at a time. The current rating given is the range for accurate readings from each of the circuits throughout the entire range of input voltages from 0 - 26V. The exception is the NCS333A circuit which operates from 0 - 3.3V. Safety features will prevent the user from turning the NCS333A circuit on if the input voltage is too high. Do not exceed 26V on the input to the board.", 0, "currentSenseHelp")
+        Help.registerTarget(currentSenseMaxLabel, "This LED will let the user know if the current range through the enabled circuit has been exceeded and therefore the measurements are no longer accurate.", 1, "currentSenseHelp")
+        Help.registerTarget(vinReading, "Input voltage to the 5 parallel circuits are measured here. This measurement is taken after the input current sense circuit.", 2, "currentSenseHelp")
+        Help.registerTarget(recalibrateContainer, "This will recalibrate all 5 circuits so set the new offset reading. It is recommended to recalibrate before measurements or anytime the input voltage is changed.", 3, "currentSenseHelp")
+
+        Help.registerTarget(reset, "This will reset the board by turning all circuitry off. If an interrupt occurred, the parameters that caused the interrupt will need to be fixed in order for the board to reset itself.", 4, "currentSenseHelp")
+
+        Help.registerTarget(onBoardColumn, "These are the controls for the programmable load included on the board. The load is split into 3 circuits each with independent controls. Only 1 load circuit may be on at a time. The ranges for each load circuit are given by the labels below the sliders, and the sliders can be adjusted to draw the desired load. The switches enable and disable the circuit.", 5, "currentSenseHelp")
+        // Help.registerTarget(vinReading, "Input voltage to the 5 parallel circuits are measured here. This measurement is taken after the input current sense circuit.", 2, "currentSenseHelp")
+        // Help.registerTarget(vinReading, "Input voltage to the 5 parallel circuits are measured here. This measurement is taken after the input current sense circuit.", 2, "currentSenseHelp")
+
     }
 
     Connections {
@@ -866,6 +877,7 @@ Item {
                                             color: "transparent"
 
                                             SGButton {
+                                                id: recalibrateContainer
                                                 text: "Recalibrate"
                                                 anchors.centerIn: parent
                                                 fontSizeMultiplier: ratioCalc
@@ -882,6 +894,7 @@ Item {
                                             color: "transparent"
 
                                             SGButton {
+                                                id: reset
                                                 text: "Reset"
                                                 fontSizeMultiplier: ratioCalc
                                                 color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
@@ -1021,25 +1034,18 @@ Item {
                                                     inputBoxWidth: 45
                                                     fontSizeMultiplier: ratioCalc * 1.2
                                                     inputBox.validator: DoubleValidator { }
+
                                                     onUserSet: {
-//                                                        var valueSet = parseInt(value)
-//                                                        if (valueSet > maxInputCurrent.to) {
-//                                                            value = maxInputCurrent.to
-//                                                        }
-//                                                        if (valueSet < maxInputCurrent.from) {
-//                                                            value = maxInputCurrent.from
-//                                                        }
-                                                        console.log("tanya",value)
+                                                        //                                                        var valueSet = parseInt(value)
+                                                        //                                                        if (valueSet > maxInputCurrent.to) {
+                                                        //                                                            value = maxInputCurrent.to
+                                                        //                                                        }
+                                                        //                                                        if (valueSet < maxInputCurrent.from) {
+                                                        //                                                            value = maxInputCurrent.from
+                                                        //                                                        }
+
                                                         platformInterface.set_i_in_dac.update(value)
 
-                                                    }
-
-                                                    property var switch_enable_status_in_set: platformInterface.switch_enable_status.i_in_set
-                                                    onSwitch_enable_status_in_setChanged:  {
-                                                        if(switch_enable_status_in_set !== "N/A") {
-                                                            maxInputCurrent.value = switch_enable_status_in_set
-                                                           // maxInputCurrent.inputBox.text = switch_enable_status_in_set
-                                                        }
                                                     }
 
                                                     property var switch_enable_status_iin_max: platformInterface.switch_enable_status.i_in_max
@@ -1048,6 +1054,19 @@ Item {
                                                         maxInputCurrent.toText.text = switch_enable_status_iin_max + "A"
 
                                                     }
+
+                                                    property var enable_status_in_set: platformInterface.switch_enable_status.i_in_set
+                                                    onEnable_status_in_setChanged:  {
+                                                        maxInputCurrent.stepSize = 0.1
+
+                                                        maxInputCurrent.value = parseFloat(enable_status_in_set)
+                                                        console.log("b", maxInputCurrent.value)
+
+                                                    }
+
+
+
+
                                                 }
                                             }
                                         }
@@ -1152,15 +1171,14 @@ Item {
                                 }
 
                                 ColumnLayout {
+                                    id: onBoardColumn
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
                                     Rectangle {
                                         Layout.fillHeight: true
                                         Layout.fillWidth: true
-
                                         RowLayout {
                                             anchors.fill: parent
-
                                             Rectangle {
                                                 Layout.fillHeight: true
                                                 Layout.preferredWidth: parent.width/6
@@ -1395,105 +1413,7 @@ Item {
 
                                     }
 
-                                    //                                    Rectangle {
-                                    //                                        Layout.fillHeight: true
-                                    //                                        Layout.fillWidth: true
 
-                                    //                                        RowLayout {
-                                    //                                            anchors.fill: parent
-                                    //                                            Rectangle{
-                                    //                                                id: maxLoadContainer
-                                    //                                                Layout.fillWidth: true
-                                    //                                                Layout.fillHeight: true
-
-                                    //                                                RowLayout{
-                                    //                                                    anchors.fill: parent
-
-                                    //                                                    Rectangle {
-                                    //                                                        Layout.preferredWidth: parent.width/1.3
-                                    //                                                        Layout.fillHeight: true
-
-                                    //                                                        SGAlignedLabel {
-                                    //                                                            id: maxLoadLabel
-                                    //                                                            target: maxLoadCurrent
-                                    //                                                            font.bold: true
-                                    //                                                            alignment: SGAlignedLabel.SideLeftCenter
-                                    //                                                            fontSizeMultiplier: ratioCalc * 1.2
-                                    //                                                            text: "Max Load \n Current"
-                                    //                                                            anchors.right: parent.right
-                                    //                                                            anchors.verticalCenter: parent.verticalCenter
-
-                                    //                                                            SGInfoBox {
-                                    //                                                                id: maxLoadCurrent
-                                    //                                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    //                                                                boxColor: "lightgrey"
-                                    //                                                                boxFont.family: Fonts.digitalseven
-                                    //                                                                height:  35 * ratioCalc
-                                    //                                                                width: 125 * ratioCalc
-                                    //                                                                property var load_enable_status_current: platformInterface.load_enable_status.max_current
-                                    //                                                                onLoad_enable_status_currentChanged:  {
-                                    //                                                                    maxLoadCurrent.text = load_enable_status_current
-                                    //                                                                }
-                                    //                                                            }
-                                    //                                                        }
-                                    //                                                    }
-
-                                    //                                                    Rectangle {
-                                    //                                                        Layout.fillWidth: true
-                                    //                                                        Layout.fillHeight: true
-                                    //                                                        SGText {
-                                    //                                                            id: maxLoadUnit
-                                    //                                                            text: "µA"
-                                    //                                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    //                                                            font.bold: true
-                                    //                                                            anchors.left: parent.left
-                                    //                                                            anchors.verticalCenter: parent.verticalCenter
-                                    //                                                            property var max_current_unit: platformInterface.load_enable_status.max_current_units
-                                    //                                                            onMax_current_unitChanged: {
-                                    //                                                                if(max_current_unit !== undefined)
-                                    //                                                                    maxLoadUnit.text = max_current_unit
-                                    //                                                            }
-                                    //                                                        }
-
-                                    //                                                    }
-                                    //                                                }
-                                    //                                            }
-
-                                    //                                            Rectangle{
-                                    //                                                id: maxIVoltageContainer
-                                    //                                                Layout.fillWidth: true
-                                    //                                                Layout.fillHeight: true
-
-                                    //                                                SGAlignedLabel {
-                                    //                                                    id: maxInputVolatgeLabel
-                                    //                                                    target: maxInputVolage
-                                    //                                                    font.bold: true
-                                    //                                                    alignment: SGAlignedLabel.SideLeftCenter
-                                    //                                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    //                                                    text: "Max Input \n Voltage"
-                                    //                                                    anchors.centerIn: parent
-
-                                    //                                                    SGInfoBox {
-                                    //                                                        id: maxInputVolage
-                                    //                                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    //                                                        boxColor: "lightgrey"
-                                    //                                                        boxFont.family: Fonts.digitalseven
-                                    //                                                        height:  35 * ratioCalc
-                                    //                                                        width: 140 * ratioCalc
-                                    //                                                        unit: "<b>V</b>"
-                                    //                                                        anchors.left: parent.left
-                                    //                                                        anchors.verticalCenter: parent.verticalCenter
-
-                                    //                                                        property var load_enable_status_input_voltage: platformInterface.load_enable_status.max_input_voltage
-                                    //                                                        onLoad_enable_status_input_voltageChanged:  {
-                                    //                                                            maxInputVolage.text = load_enable_status_input_voltage
-                                    //                                                        }
-                                    //                                                    }
-                                    //                                                }
-                                    //                                            }
-                                    //                                        }
-
-                                    //                                    }
                                 }
                             }
                         }
@@ -1780,7 +1700,7 @@ Item {
                                                     }
                                                     property var power_margin: platformInterface.periodic_status.power_margin
                                                     onPower_marginChanged: {
-                                                       // value = power_margin
+                                                        // value = power_margin
                                                     }
                                                 }
                                             }
@@ -1794,8 +1714,8 @@ Item {
                                             SGStatusLogBox{
                                                 id: logFault
                                                 anchors.fill: parent
-                                                //                                                width: parent.width/1.5
-                                                //                                                height: parent.height - 10
+                                                width: parent.width
+                                                height: parent.height - 10
                                                 title: "Status List"
                                                 anchors.centerIn: parent
 
