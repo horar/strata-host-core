@@ -69,7 +69,7 @@ var uuid_map = {
     "244": "motorController",
     "245": "bldcMotorControl",
     "246": "meshNetwork",
-    "248" : "led-tail-light",
+    "led-tail-light": "led-tail-light",
     "265": "zigbee",
 
 
