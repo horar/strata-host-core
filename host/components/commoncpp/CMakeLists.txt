@@ -10,6 +10,28 @@ find_package(Qt5 ${VERSION_QT5}
 
 add_library(${PROJECT_NAME} MODULE)
 
+add_library(SGJLinkConnector
+    SGJLinkConnector.cpp
+    SGJLinkConnector.h
+    logging/LoggingQtCategories.cpp
+)
+#target_sources(SGJLinkConnector
+#    PRIVATE
+#    SGJLinkConnector.cpp
+#    SGJLinkConnector.h
+#)
+target_link_libraries(SGJLinkConnector
+    PRIVATE
+    Qt5::Core
+    QtLogger
+)
+target_include_directories(SGJLinkConnector
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+)
+set_target_properties(SGJLinkConnector PROPERTIES
+    AUTOMOC ON
+)
+
 target_sources(${PROJECT_NAME}
     PRIVATE
     CommonCppPlugin.cpp

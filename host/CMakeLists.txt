@@ -56,7 +56,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 add_subdirectory(libs)
 add_subdirectory(apps)
-#add_subdirectory(test)
+add_subdirectory(test)
 add_subdirectory(extern)
 add_subdirectory(samples)
 option(BUILD_EXAMPLES "Build project examples" OFF)
