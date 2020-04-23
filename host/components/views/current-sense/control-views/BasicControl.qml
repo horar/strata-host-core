@@ -52,7 +52,7 @@ Item {
         Help.registerTarget(onBoardColumn, "These are the controls for the programmable load included on the board. The load is split into 3 circuits each with independent controls. Only 1 load circuit may be on at a time. The ranges for each load circuit are given by the labels below the sliders, and the sliders can be adjusted to draw the desired load. The switches enable and disable the circuit.", 5, "currentSenseHelp")
         Help.registerTarget(ledSection, "The 3 LEDs on the left give the status of the board's individual interrupts. On-Board Load is for the load circuits provided on the board and the input current is the total current travelling through the input of the entire board. The Fault LED is the general indicator that an interrupt occurred and as long as this LED is on the board will not be able to turn on. In order to clear the Fault, first make sure the cause of the interrupt is solved and then use the Reset button in the Settings section.", 6, "currentSenseHelp")
         Help.registerTarget(interruptBox, "These readings will let the user know where the interrupt thresholds are and will change depending on which circuit is on as well as input voltage/current through the board is. If these thresholds are exceeded an interrupt will occur.", 7, "currentSenseHelp")
-        Help.registerTarget(powerGaugeContainer, "This gauge lets the user know how much power is being drawn by the high current on-board load circuit in relation to its maximum power capability. If maximum power is exceeded, an interrupt will trigger. Refer to "+ "Max Input Voltage" + "and" + "Max On-Board Load Current" + "above to know what the load circuits capabilities are given the current input voltage and load being drawn.", 8, "currentSenseHelp")
+        Help.registerTarget(powerGaugeContainer, "This gauge lets the user know how much power is being drawn by the high current on-board load circuit in relation to its maximum power capability. If maximum power is exceeded, an interrupt will trigger. Refer to "+ " Max Input Voltage " + " and " + "Max On-Board Load Current " + "above to know what the load circuits capabilities are given the current input voltage and load being drawn.", 8, "currentSenseHelp")
         Help.registerTarget(statusListContainer,  "This will contain any interrupt messages or warnings for the user to diagnose any problems.", 9, "currentSenseHelp")
         Help.registerTarget(manualModeSection,  "This section is for if the user would like to set customizable input voltage and current limits. While in" + "Auto"  + "mode, the limits are determined by the max capabilities of whatever circuit is enabled. While in" + "Manual" + "mode the limits are determined by the user, but will still be limited by the max capabilities of whatever circuit is enabled.", 10, "currentSenseHelp")
     }
@@ -1117,10 +1117,9 @@ Item {
                                                             value = maxInputVoltage.from
 
                                                         }
-                                                        inputBox.text = value
+                                                        inputBox.text = value.toFixed(1)
 
-
-                                                        platformInterface.set_v_set.update(parseFloat(value.toFixed(2)))
+                                                        platformInterface.set_v_set.update(parseFloat(value.toFixed(1)))
 
                                                     }
 
