@@ -94,7 +94,7 @@ Item {
         "values": [false,false,false,false,false,false,false,false,false,false,false,false]
     }
 
-    property var led_pwm_enable: {
+    property var led_pwm_enables: {
         "caption":"PWM Enable",
         "scales":[],
         "state":"enabled",
@@ -103,15 +103,15 @@ Item {
     }
 
 
-    property var led_pwm_enable_caption: {
+    property var led_pwm_enables_caption: {
         "caption": "PWM Enable"
     }
 
-    property var led_pwm_enable_state: {
+    property var led_pwm_enables_state: {
         "state":"enabled"
     }
 
-    property var led_pwm_enable_values: {
+    property var led_pwm_enables_values: {
         "values": [true,true,true,true,true,true,true,true,true,true,true,true]
     }
 
@@ -346,6 +346,26 @@ Item {
     }
 
     property var led_oen_value: {
+        "value": true
+    }
+
+    property var led_pwm_enable: {
+        "caption":"PWM Enable",
+        "scales":[],
+        "state":"enabled",
+        "value":true,
+        "values":[]
+    }
+
+    property var led_pwm_enable_caption: {
+        "caption": "PWM Enable"
+    }
+
+    property var led_pwm_enable_state: {
+        "state":"enabled"
+    }
+
+    property var led_pwm_enable_value: {
         "value": true
     }
 

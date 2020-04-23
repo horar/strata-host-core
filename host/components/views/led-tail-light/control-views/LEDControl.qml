@@ -427,60 +427,60 @@ Item {
     }
 
 
-    property var led_pwm_enable_values: platformInterface.led_pwm_enable_values.values
-    onLed_pwm_enable_valuesChanged: {
-        if(led_pwm_enable_values[0] === true)
+    property var led_pwm_enables_values: platformInterface.led_pwm_enables_values.values
+    onLed_pwm_enables_valuesChanged: {
+        if(led_pwm_enables_values[0] === true)
             out0pwmEnableLED.checked = true
         else out0pwmEnableLED.checked = false
 
-        if(led_pwm_enable_values[1] === true)
+        if(led_pwm_enables_values[1] === true)
             out1pwmEnableLED.checked = true
         else out1pwmEnableLED.checked = false
 
-        if(led_pwm_enable_values[2] === true)
+        if(led_pwm_enables_values[2] === true)
             out2pwmEnableLED.checked = true
         else out2pwmEnableLED.checked = false
 
-        if(led_pwm_enable_values[3] === true)
+        if(led_pwm_enables_values[3] === true)
             out3pwmEnableLED.checked = true
         else out3pwmEnableLED.checked = false
 
-        if(led_pwm_enable_values[4] === true)
+        if(led_pwm_enables_values[4] === true)
             out4pwmEnableLED.checked = true
         else out4pwmEnableLED.checked = false
 
-        if(led_pwm_enable_values[5] === true)
+        if(led_pwm_enables_values[5] === true)
             out5pwmEnableLED.checked = true
         else out5pwmEnableLED.checked = false
 
-        if(led_pwm_enable_values[6] === true)
+        if(led_pwm_enables_values[6] === true)
             out6pwmEnableLED.checked = true
         else out6pwmEnableLED.checked = false
 
-        if(led_pwm_enable_values[7] === true)
+        if(led_pwm_enables_values[7] === true)
             out7pwmEnableLED.checked = true
         else out7pwmEnableLED.checked = false
 
-        if(led_pwm_enable_values[8] === true)
+        if(led_pwm_enables_values[8] === true)
             out8pwmEnableLED.checked = true
         else out8pwmEnableLED.checked = false
 
-        if(led_pwm_enable_values[9] === true)
+        if(led_pwm_enables_values[9] === true)
             out9pwmEnableLED.checked = true
         else out9pwmEnableLED.checked = false
 
-        if(led_pwm_enable_values[10] === true)
+        if(led_pwm_enables_values[10] === true)
             out10pwmEnableLED.checked = true
         else out10pwmEnableLED.checked = false
 
-        if(led_pwm_enable_values[11] === true)
+        if(led_pwm_enables_values[11] === true)
             out11pwmEnableLED.checked = true
         else out11pwmEnableLED.checked = false
     }
 
-    property var led_pwm_enable_state: platformInterface.led_pwm_enable_state.state
-    onLed_pwm_enable_stateChanged: {
-        if(led_pwm_enable_state === "enabled") {
+    property var led_pwm_enables_state: platformInterface.led_pwm_enables_state.state
+    onLed_pwm_enables_stateChanged: {
+        if(led_pwm_enables_state === "enabled") {
             out0pwmEnableLED.enabled = true
             out0pwmEnableLED.opacity = 1.0
             out1pwmEnableLED.enabled = true
@@ -507,7 +507,7 @@ Item {
             out11pwmEnableLED.opacity = 1.0
 
         }
-        else if (led_pwm_enable_state === "disabled") {
+        else if (led_pwm_enables_state === "disabled") {
             out0pwmEnableLED.enabled = false
             out0pwmEnableLED.opacity = 1.0
             out1pwmEnableLED.enabled = false
@@ -646,6 +646,68 @@ Item {
                                 if(led_oen_value === true)
                                     enableOutput.checked = true
                                 else  enableOutput.checked = false
+
+
+                            }
+
+
+                        }
+                    }
+                }
+
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    SGAlignedLabel {
+                        id: pwmenableOutputLabel
+                        target: pwmenableOutput
+
+                        alignment: SGAlignedLabel.SideLeftCenter
+                        anchors {
+                            right: parent.right
+                            verticalCenter: parent.verticalCenter
+                            rightMargin: 60
+
+                        }
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        font.bold : true
+
+                        SGSwitch {
+                            id: pwmenableOutput
+                            labelsInside: true
+                            checkedLabel: "On"
+                            uncheckedLabel: "Off"
+                            fontSizeMultiplier: ratioCalc
+                            checked: false
+
+                            property var led_pwm_enable_caption: platformInterface.led_pwm_enable_caption.caption
+                            onLed_pwm_enable_captionChanged : {
+                                pwmenableOutputLabel.text = led_pwm_enable_caption
+                            }
+
+                            property var led_pwm_enable_state: platformInterface.led_pwm_enable_state.state
+                            onLed_pwm_enable_stateChanged : {
+                                if(led_pwm_enable_state === "enabled" ) {
+                                    pwmenableOutput.enabled = true
+                                    pwmenableOutput.opacity = 1.0
+
+                                }
+                                else if(led_pwm_enable_state === "disabled") {
+                                    pwmenableOutput.enabled = false
+                                    pwmenableOutput.opacity = 1.0
+                                }
+                                else {
+                                    pwmenableOutput.enabled = false
+                                    enableOutput.opacity = 0.5
+
+                                }
+                            }
+
+                            property var led_pwm_enable_value: platformInterface.led_pwm_enable_value.value
+                            onLed_pwm_enable_valueChanged : {
+                                if(led_pwm_enable_value === true)
+                                    pwmenableOutput.checked = true
+                                else  pwmenableOutput.checked = false
 
 
                             }
@@ -1116,9 +1178,9 @@ Item {
                                                 fontSizeMultiplier: ratioCalc * 1.2
                                                 anchors.right: parent.right
                                                 anchors.verticalCenter: parent.verticalCenter
-                                                property var led_pwm_enable_caption: platformInterface.led_pwm_enable_caption.caption
-                                                onLed_pwm_enable_captionChanged: {
-                                                    pwmEnableText.text =  led_pwm_enable_caption
+                                                property var led_pwm_enables_caption: platformInterface.led_pwm_enables_caption.caption
+                                                onLed_pwm_enables_captionChanged: {
+                                                    pwmEnableText.text =  led_pwm_enables_caption
                                                 }
 
                                             }
