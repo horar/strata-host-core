@@ -396,8 +396,6 @@ Item {
                                                     SGText {
                                                         anchors.bottom: parent.bottom
                                                         anchors.horizontalCenter: parent.horizontalCenter
-                                                        // anchors.centerIn: parent
-
                                                         text: "NCS213R"
                                                         font.bold: true
                                                         fontSizeMultiplier: ratioCalc * 1.2
@@ -1057,6 +1055,10 @@ Item {
 
                                                     }
 
+                                                    onValueChanged: {
+                                                         inputBox.text = value
+                                                    }
+
                                                     property var switch_enable_status_iin_max: platformInterface.switch_enable_status.i_in_max
                                                     onSwitch_enable_status_iin_maxChanged: {
                                                         maxInputCurrent.to = parseFloat(switch_enable_status_iin_max)
@@ -1121,6 +1123,7 @@ Item {
                                                         platformInterface.set_v_set.update(parseFloat(value.toFixed(2)))
 
                                                     }
+
 
 
                                                 }
