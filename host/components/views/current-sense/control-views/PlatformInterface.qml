@@ -15,12 +15,13 @@ Item {
         "ADC_VIN": 0 ,
         "max_input_voltage": "00.0",
         "max_OBL_current" : "00.0",
-        "max_input_current": "00.0",  
+        "max_input_current": "00.0",
+        "power_margin": "0",
     }
 
     property var led_status: {
         "CSA_max_reading": "off",
-         "interrupts": {
+        "interrupts": {
             "vs_int" : "off",
             "cs_int" : "off",
             "i_in_int" : "off"

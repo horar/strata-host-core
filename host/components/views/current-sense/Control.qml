@@ -24,7 +24,6 @@ Item {
     }
 
     Component.onCompleted: {
-        console.log("in component")
         platformInterface.set_initial_state_UI.update()
     }
 
@@ -35,7 +34,7 @@ Item {
             top: parent.top
             margins: 20
         }
-        source: "control-views/question-circle-solid.svg"
+        source:  "qrc:/sgimages/question-circle.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
         height: 40
         width: 40
@@ -46,7 +45,7 @@ Item {
                 fill: helpIcon
             }
             onClicked: {
-                Help.startHelpTour("LdoCpHelp")
+                Help.startHelpTour("currentSenseHelp")
             }
             hoverEnabled: true
         }

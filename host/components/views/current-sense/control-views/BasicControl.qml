@@ -14,6 +14,7 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+
     MouseArea {
         id: containMouseArea
         anchors.fill: parent
@@ -23,6 +24,32 @@ Item {
         }
     }
 
+    Item {
+        id: filterHelpContainer
+        property point topLeft
+        property point bottomRight
+        width:  enable1.width //enable.width + inputCurrentContainer.width - 80
+        height: (bottomRight.y - topLeft.y)
+        x: topLeft.x
+        y: topLeft.y
+        function update() {
+            topLeft = enable1.mapToItem(root, 0,  0)
+            bottomRight = enable5.mapToItem(root, enable5.width, enable5.height)
+        }
+    }
+
+
+
+    Component.onCompleted:  {
+        Help.registerTarget(filterHelpContainer, "These 5 switches enable/disable the 5 current sense circuits supplied on the board. Only 1 circuit may be enabled at a time. The current rating given is the range for accurate readings from each of the circuits throughout the entire range of input voltages from 0 - 26V. The exception is the NCS333A circuit which operates from 0 - 3.3V. Safety features will prevent the user from turning the NCS333A circuit on if the input voltage is too high. Do not exceed 26V on the input to the board.", 0, "currentSenseHelp")
+    }
+
+    Connections {
+        target: Help.utility
+        onTour_runningChanged:{
+            filterHelpContainer.update()
+        }
+    }
 
     property var initial_status: platformInterface.initial_status
     onInitial_statusChanged: {
@@ -280,7 +307,7 @@ Item {
         Text {
             id: platformName
             Layout.alignment: Qt.AlignHCenter
-            text: "Strata Enable Current Sense"
+            text: "Current Sense"
             font.bold: true
             font.pixelSize: ratioCalc * 25
             topPadding: 7
@@ -985,23 +1012,24 @@ Item {
                                                     id: maxInputCurrent
                                                     width: maxInputCurrentContainer.width - 50
                                                     live: false
-                                                    from: 0
+                                                    from: 0.0
                                                     to: 30
                                                     stepSize: 0.1
                                                     fromText.text: "0A"
                                                     toText.text: "30A"
 
-                                                    inputBoxWidth: maxInputCurrentContainer/9
+                                                    inputBoxWidth: 45
                                                     fontSizeMultiplier: ratioCalc * 1.2
                                                     inputBox.validator: DoubleValidator { }
                                                     onUserSet: {
-                                                        var valueSet = parseInt(value)
-                                                        if (valueSet > maxInputCurrent.to) {
-                                                            value = maxInputCurrent.to
-                                                        }
-                                                        if (valueSet < maxInputCurrent.from) {
-                                                            value = maxInputCurrent.from
-                                                        }
+//                                                        var valueSet = parseInt(value)
+//                                                        if (valueSet > maxInputCurrent.to) {
+//                                                            value = maxInputCurrent.to
+//                                                        }
+//                                                        if (valueSet < maxInputCurrent.from) {
+//                                                            value = maxInputCurrent.from
+//                                                        }
+                                                        console.log("tanya",value)
                                                         platformInterface.set_i_in_dac.update(value)
 
                                                     }
@@ -1010,16 +1038,15 @@ Item {
                                                     onSwitch_enable_status_in_setChanged:  {
                                                         if(switch_enable_status_in_set !== "N/A") {
                                                             maxInputCurrent.value = switch_enable_status_in_set
+                                                           // maxInputCurrent.inputBox.text = switch_enable_status_in_set
                                                         }
                                                     }
 
                                                     property var switch_enable_status_iin_max: platformInterface.switch_enable_status.i_in_max
                                                     onSwitch_enable_status_iin_maxChanged: {
-                                                        if(switch_enable_status_in_set !== "N/A") {
-                                                            maxInputCurrent.toText.text = switch_enable_status_iin_max + "A"
-                                                            maxInputCurrent.to = switch_enable_status_iin_max
+                                                        maxInputCurrent.to = parseInt(switch_enable_status_iin_max)
+                                                        maxInputCurrent.toText.text = switch_enable_status_iin_max + "A"
 
-                                                        }
                                                     }
                                                 }
                                             }
@@ -1047,7 +1074,7 @@ Item {
                                                     fromText.text: "0V"
                                                     toText.text: "26V"
 
-                                                    inputBoxWidth: maxInputVoltageContainer/9
+                                                    inputBoxWidth: 45
                                                     fontSizeMultiplier: ratioCalc * 1.2
                                                     inputBox.validator: DoubleValidator { top: 26; bottom: 0}
 
@@ -1089,7 +1116,7 @@ Item {
                         anchors.fill: parent
 
                         Rectangle {
-                            Layout.preferredHeight: parent.height/2.5
+                            Layout.preferredHeight: parent.height/3
                             Layout.fillWidth: true
 
 
@@ -1135,8 +1162,8 @@ Item {
                                             anchors.fill: parent
 
                                             Rectangle {
-                                                Layout.preferredWidth: parent.width/6
                                                 Layout.fillHeight: true
+                                                Layout.preferredWidth: parent.width/6
                                                 SGAlignedLabel {
                                                     id: lowCurrentLabel
                                                     target: lowLoadEnable
@@ -1192,7 +1219,7 @@ Item {
                                                     fromText.text: "1µA"
                                                     toText.text: "100µA"
                                                     value: 0
-                                                    inputBoxWidth: lowLoadSettingContainer.width/9
+                                                    inputBoxWidth: 45
                                                     inputBox.enabled: true
                                                     fontSizeMultiplier: ratioCalc * 1.2
                                                     inputBox.validator: IntValidator { top: 100; bottom: 1 }
@@ -1275,7 +1302,7 @@ Item {
                                                     value: 0
                                                     anchors.verticalCenter: parent.verticalCenter
                                                     anchors.verticalCenterOffset: 10
-                                                    inputBoxWidth: midLoadSettingContainer.width/9
+                                                    inputBoxWidth: 45
                                                     inputBox.enabled: true
                                                     fontSizeMultiplier: ratioCalc * 1.2
                                                     inputBox.validator: DoubleValidator { top: 100; bottom: 0.1}
@@ -1352,7 +1379,7 @@ Item {
                                                     value: 0
                                                     anchors.verticalCenter: parent.verticalCenter
                                                     anchors.verticalCenterOffset: 10
-                                                    inputBoxWidth: highLoadSettingContainer.width/9
+                                                    inputBoxWidth: 45
                                                     inputBox.enabled: true
                                                     fontSizeMultiplier: ratioCalc * 1.2
                                                     inputBox.validator: DoubleValidator { top: 10;  bottom: 0.01 }
@@ -1508,87 +1535,95 @@ Item {
                                     bottom: parent.bottom
                                 }
 
-                                RowLayout {
-                                    Layout.fillHeight: true
+                                Rectangle {
+                                    Layout.preferredHeight: parent.height/5
                                     Layout.fillWidth: true
-                                    Rectangle {
-                                        Layout.fillHeight: true
-                                        Layout.fillWidth: true
-                                        SGAlignedLabel {
-                                            id:voltageStatusLabel
-                                            target: voltageStatusLight
-                                            alignment: SGAlignedLabel.SideTopCenter
-                                            anchors.centerIn: parent
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                            text: "Input Voltage\n Status"
-                                            font.bold: true
 
-                                            SGStatusLight {
-                                                id: voltageStatusLight
+                                    RowLayout{
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
+                                            SGAlignedLabel {
+                                                id:voltageStatusLabel
+                                                target: voltageStatusLight
+                                                alignment: SGAlignedLabel.SideTopCenter
+                                                anchors.centerIn: parent
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                text: "Input Voltage\n Status"
+                                                font.bold: true
+
+                                                SGStatusLight {
+                                                    id: voltageStatusLight
+                                                    width: 30
+                                                }
                                             }
                                         }
-                                    }
 
-                                    Rectangle {
-                                        Layout.fillHeight: true
-                                        Layout.fillWidth: true
+                                        Rectangle {
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
 
-                                        SGAlignedLabel {
-                                            id: currentStatusLabel
-                                            target: currentStatusLight
-                                            alignment: SGAlignedLabel.SideTopCenter
-                                            anchors.centerIn: parent
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                            text: "On-Board Load\n Current Status"
-                                            font.bold: true
+                                            SGAlignedLabel {
+                                                id: currentStatusLabel
+                                                target: currentStatusLight
+                                                alignment: SGAlignedLabel.SideTopCenter
+                                                anchors.centerIn: parent
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                text: "On-Board Load\n Current Status"
+                                                font.bold: true
 
-                                            SGStatusLight {
-                                                id: currentStatusLight
+                                                SGStatusLight {
+                                                    id: currentStatusLight
+                                                    width: 30
+                                                }
                                             }
                                         }
-                                    }
 
-                                    Rectangle {
-                                        Layout.fillHeight: true
-                                        Layout.fillWidth: true
-                                        SGAlignedLabel {
-                                            id:loadCurrentStatusLabel
-                                            target: loadCurrent
-                                            alignment: SGAlignedLabel.SideTopCenter
-                                            anchors.centerIn: parent
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                            text: "Input Current\n Status"
-                                            font.bold: true
+                                        Rectangle {
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
+                                            SGAlignedLabel {
+                                                id:loadCurrentStatusLabel
+                                                target: loadCurrent
+                                                alignment: SGAlignedLabel.SideTopCenter
+                                                anchors.centerIn: parent
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                text: "Input Current\n Status"
+                                                font.bold: true
 
-                                            SGStatusLight {
-                                                id: loadCurrent
+                                                SGStatusLight {
+                                                    id: loadCurrent
+                                                    width: 30
+                                                }
                                             }
                                         }
-                                    }
 
-                                    Rectangle {
-                                        Layout.fillHeight: true
-                                        Layout.fillWidth: true
-                                        SGAlignedLabel {
-                                            id: loadFaultLabel
-                                            target: loadFault
-                                            alignment: SGAlignedLabel.SideTopCenter
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            anchors.verticalCenterOffset: 10
-                                            fontSizeMultiplier: ratioCalc * 1.2
-                                            text: "Fault "
-                                            font.bold: true
+                                        Rectangle {
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
+                                            SGAlignedLabel {
+                                                id: loadFaultLabel
+                                                target: loadFault
+                                                alignment: SGAlignedLabel.SideTopCenter
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                                anchors.verticalCenterOffset: 10
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                text: "Fault "
+                                                font.bold: true
 
-                                            SGStatusLight {
-                                                id: loadFault
+                                                SGStatusLight {
+                                                    id: loadFault
+                                                    width: 30
+                                                }
                                             }
                                         }
                                     }
                                 }
 
                                 Rectangle {
-                                    Layout.fillHeight: true
+                                    Layout.preferredHeight: parent.height/5
                                     Layout.fillWidth: true
 
                                     RowLayout {
@@ -1696,60 +1731,123 @@ Item {
 
                                 }
 
-
                                 Rectangle {
-                                    id: statusListContainer
+                                    id: powerGaugeContainer
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
 
-                                    SGStatusLogBox{
-                                        id: logFault
-                                        width: parent.width/1.5
-                                        height: parent.height - 10
-                                        title: "Status List"
-                                        anchors.centerIn: parent
 
-                                        listElementTemplate : {
-                                            "message": "",
-                                            "id": 0,
-                                            "color": "black"
-                                        }
-                                        scrollToEnd: false
-                                        delegate: Rectangle {
-                                            id: delegatecontainer
-                                            height: delegateText.height
-                                            width: ListView.view.width
+                                    RowLayout {
+                                        anchors.fill: parent
 
-                                            SGText {
-                                                id: delegateText
-                                                text: { return (
-                                                            logFault.showMessageIds ?
-                                                                model.id + ": " + model.message :
-                                                                model.message
-                                                            )}
+                                        Rectangle {
+                                            Layout.preferredWidth: parent.width/3
+                                            Layout.fillHeight: true
 
-                                                fontSizeMultiplier: logFault.fontSizeMultiplier
-                                                color: model.color
-                                                wrapMode: Text.WrapAnywhere
-                                                width: parent.width
+
+                                            SGAlignedLabel {
+                                                id: powerGaugeLabel
+                                                target: powerGauge
+                                                text: "Programmable \n Load Power Usage"
+                                                anchors.centerIn: parent
+                                                alignment: SGAlignedLabel.SideBottomCenter
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                font.bold : true
+                                                horizontalAlignment: Text.AlignHCenter
+
+                                                SGCircularGauge {
+                                                    id: powerGauge
+
+                                                    height: powerGaugeContainer.height - powerGaugeLabel.contentHeight
+                                                    tickmarkStepSize: 10
+                                                    minimumValue: 0
+                                                    maximumValue: 100
+                                                    gaugeFillColor1: "blue"
+                                                    gaugeFillColor2: "red"
+                                                    unitText: "%"
+                                                    unitTextFontSizeMultiplier: ratioCalc * 1.5
+                                                    valueDecimalPlaces: 1
+                                                    function lerpColor (color1, color2, x){
+                                                        if (Qt.colorEqual(color1, color2)){
+                                                            return color1;
+                                                        } else {
+                                                            return Qt.rgba(
+                                                                        color1.r * (1 - x) + color2.r * x,
+                                                                        color1.g * (1 - x) + color2.g * x,
+                                                                        color1.b * (1 - x) + color2.b * x, 1
+                                                                        );
+                                                        }
+                                                    }
+                                                    property var power_margin: platformInterface.periodic_status.power_margin
+                                                    onPower_marginChanged: {
+                                                       // value = power_margin
+                                                    }
+                                                }
                                             }
+
+                                        }
+                                        Rectangle {
+                                            id: statusListContainer
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            SGStatusLogBox{
+                                                id: logFault
+                                                anchors.fill: parent
+                                                //                                                width: parent.width/1.5
+                                                //                                                height: parent.height - 10
+                                                title: "Status List"
+                                                anchors.centerIn: parent
+
+                                                listElementTemplate : {
+                                                    "message": "",
+                                                    "id": 0,
+                                                    "color": "black"
+                                                }
+                                                scrollToEnd: false
+                                                delegate: Rectangle {
+                                                    id: delegatecontainer
+                                                    height: delegateText.height
+                                                    width: ListView.view.width
+
+                                                    SGText {
+                                                        id: delegateText
+                                                        text: { return (
+                                                                    logFault.showMessageIds ?
+                                                                        model.id + ": " + model.message :
+                                                                        model.message
+                                                                    )}
+
+                                                        fontSizeMultiplier: logFault.fontSizeMultiplier
+                                                        color: model.color
+                                                        wrapMode: Text.WrapAnywhere
+                                                        width: parent.width
+                                                    }
+                                                }
+
+                                                function append(message,color) {
+                                                    listElementTemplate.message = message
+                                                    listElementTemplate.color = color
+                                                    model.append( listElementTemplate )
+                                                    return (listElementTemplate.id++)
+                                                }
+                                                function insert(message,index,color){
+                                                    listElementTemplate.message = message
+                                                    listElementTemplate.color = color
+                                                    model.insert(index, listElementTemplate )
+                                                    return (listElementTemplate.id++)
+                                                }
+                                            }
+
                                         }
 
-                                        function append(message,color) {
-                                            listElementTemplate.message = message
-                                            listElementTemplate.color = color
-                                            model.append( listElementTemplate )
-                                            return (listElementTemplate.id++)
-                                        }
-                                        function insert(message,index,color){
-                                            listElementTemplate.message = message
-                                            listElementTemplate.color = color
-                                            model.insert(index, listElementTemplate )
-                                            return (listElementTemplate.id++)
-                                        }
                                     }
 
+
                                 }
+
+
+
                             }
 
                         }
