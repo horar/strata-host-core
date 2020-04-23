@@ -104,7 +104,6 @@ FocusScope {
         id: scrollBackWrapper
         anchors {
             top: parent.top
-            topMargin: 4
             bottom: inputWrapper.top
             bottomMargin: 2
             left: parent.left

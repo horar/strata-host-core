@@ -43,19 +43,24 @@ Item {
     }
 
     Item {
-        id: tabBarWrapper
+        id: tabBar
         anchors {
             left: parent.left
             right: parent.right
             top: parent.top
         }
 
-        height: tabBar.height
+        height: tabRow.y + tabRow.height + tabPadding
+        visible: tabRepeater.count > 0
 
-        Rectangle {
-            anchors.fill: parent
-            color: "black"
-        }
+        property int tabPadding: 12
+        property int currentIndex: -1
+        property int statusLightHeight: dummyText.contentHeight + 10
+        property int minTabWidth: 50
+        property int preferredTabWidth: 2*statusLightHeight + dummyText.contentWidth + 20
+        property int availableTabWidth: Math.floor((width - 2*tabPadding - (tabRow.spacing * (sciModel.platformModel.count-1))) / sciModel.platformModel.count)
+        property int tabWidth: Math.max(Math.min(preferredTabWidth, availableTabWidth), minTabWidth)
+        property color tabBorderColor: "#999999"
 
         SGWidgets.SGText {
             id: dummyText
@@ -65,127 +70,138 @@ Item {
             text: "Default Board Name Length"
         }
 
-        Flickable {
-            id: tabBar
-
-            width: tabBarWrapper.width
-            height: dummyText.contentHeight + 20
-
-            clip: true
-            boundsBehavior: Flickable.StopAtBounds
-            contentHeight: tabRow.height
-            contentWidth: tabRow.width
-
-            property int currentIndex: -1
-            property int statusLightHeight: dummyText.contentHeight + 10
-            property int minTabWidth: 100
-            property int preferredTabWidth: 2*statusLightHeight + dummyText.contentWidth + 20
-            property int availableTabWidth: Math.floor((width - (tabRow.spacing * (sciModel.platformModel.count-1))) / sciModel.platformModel.count)
-            property int tabWidth: Math.max(Math.min(preferredTabWidth, availableTabWidth), minTabWidth)
-
-            Rectangle {
-                height: parent.height
-                width: tabBar.contentWidth + tabRow.spacing
-                color: "#eeeeee"
+        Rectangle {
+            id: bottomLine
+            height: 1
+            anchors {
+                 bottom: tabRow.bottom
+                 left: parent.left
+                 right: parent.right
             }
 
-            Row {
-                id: tabRow
-                spacing: 1
+            color: tabBar.tabBorderColor
+        }
 
-                Repeater {
-                    model: sciModel.platformModel
+        Row {
+            id: tabRow
+            anchors {
+                top: parent.top
+                topMargin: tabBar.tabPadding
+                left: parent.left
+                leftMargin: tabBar.tabPadding
+            }
 
-                    delegate: Item {
-                        id: delegate
-                        width: tabBar.tabWidth
-                        height: statusLight.height + 10
+            Repeater {
+                id: tabRepeater
+                model: sciModel.platformModel
 
-                        MouseArea {
-                            id: bgMouseArea
-                            anchors.fill: parent
-                            hoverEnabled: true
+                delegate: Item {
+                    id: tabDelegate
+                    width: tabBar.tabWidth
+                    height: statusLight.height + 10
 
-                            onClicked: {
-                                tabBar.currentIndex = index
-                            }
+                    property bool isFirst: index === 0
+                    property bool isLast: index === tabRepeater.count - 1
+                    property bool isCurrent: index === tabBar.currentIndex
+
+                    MouseArea {
+                        id: bgMouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: {
+                            tabBar.currentIndex = index
                         }
+                    }
+
+                    Rectangle {
+                        id: bg
+                        anchors.fill: parent
+                        color: tabBar.tabBorderColor
 
                         Rectangle {
-                            anchors.fill: parent
-                            color: index === tabBar.currentIndex ? "#eeeeee" : SGWidgets.SGColorsJS.STRATA_DARK
+                            id: contentBg
+                            anchors {
+                                fill: parent
+                                topMargin: 1
+                                bottomMargin: tabDelegate.isCurrent ? 0 : 1
+                                leftMargin: tabDelegate.isFirst ? 1 : 0
+                                rightMargin: 1
+                            }
+
+                            color: tabDelegate.isCurrent ? "#eeeeee" : "#bbbbbb"
+                        }
+                    }
+
+                    SGWidgets.SGStatusLight {
+                        id: statusLight
+                        anchors {
+                            left: parent.left
+                            leftMargin: 4
+                            verticalCenter: parent.verticalCenter
+                        }
+                        width: tabBar.statusLightHeight
+
+                        status: {
+                            if (model.platform.status === Sci.SciPlatform.Ready) {
+                                return SGWidgets.SGStatusLight.Green
+                            } else if (model.platform.status === Sci.SciPlatform.NotRecognized) {
+                                return SGWidgets.SGStatusLight.Red
+                            } else if (model.platform.status === Sci.SciPlatform.Connected) {
+                                return SGWidgets.SGStatusLight.Orange
+                            }
+
+                            return SGWidgets.SGStatusLight.Off
+                        }
+                    }
+
+                    SGWidgets.SGText {
+                        id: buttonText
+                        anchors {
+                            left: statusLight.right
+                            leftMargin: 2
+                            verticalCenter: parent.verticalCenter
+                            right: deleteButton.shown ? deleteButton.left : parent.right
+                            rightMargin: 2
                         }
 
-                        SGWidgets.SGStatusLight {
-                            id: statusLight
-                            anchors {
-                                left: parent.left
-                                leftMargin: 4
-                                verticalCenter: parent.verticalCenter
-                            }
-                            width: tabBar.statusLightHeight
+                        text: model.platform.verboseName
+                        font: dummyText.font
+                        fontSizeMultiplier: dummyText.fontSizeMultiplier
+                        color: "black"
+                        elide: Text.ElideRight
+                    }
 
-                            status: {
-                                if (model.platform.status === Sci.SciPlatform.Ready) {
-                                    return SGWidgets.SGStatusLight.Green
-                                } else if (model.platform.status === Sci.SciPlatform.NotRecognized) {
-                                    return SGWidgets.SGStatusLight.Red
-                                } else if (model.platform.status === Sci.SciPlatform.Connected) {
-                                    return SGWidgets.SGStatusLight.Orange
-                                }
-
-                                return SGWidgets.SGStatusLight.Off
-                            }
+                    SGWidgets.SGIconButton {
+                        id: deleteButton
+                        anchors {
+                            right: parent.right
+                            rightMargin: 4
+                            verticalCenter: parent.verticalCenter
                         }
 
-                        SGWidgets.SGText {
-                            id: buttonText
-                            anchors {
-                                left: statusLight.right
-                                leftMargin: 2
-                                verticalCenter: parent.verticalCenter
-                                right: deleteButton.shown ? deleteButton.left : parent.right
-                                rightMargin: 2
-                            }
+                        opacity: shown ? 1 : 0
+                        enabled: shown
+                        highlightImplicitColor: "#888888"
+                        icon.source: "qrc:/sgimages/times.svg"
 
-                            text: model.platform.verboseName
-                            font: dummyText.font
-                            color: model.index === tabBar.currentIndex ? "black" : "white"
-                            elide: Text.ElideRight
-                        }
+                        property bool shown: (bgMouseArea.containsMouse || hovered)
 
-                        SGWidgets.SGIconButton {
-                            id: deleteButton
-                            anchors {
-                                right: parent.right
-                                rightMargin: 4
-                                verticalCenter: parent.verticalCenter
-                            }
-
-                            opacity: shown ? 1 : 0
-                            enabled: shown
-                            alternativeColorEnabled: model.index !== tabBar.currentIndex
-                            icon.source: "qrc:/sgimages/times.svg"
-
-                            property bool shown: bgMouseArea.containsMouse || hovered
-
-                            onClicked: {
-                                if (model.platform.status === Sci.SciPlatform.Ready
-                                        || model.platform.status === Sci.SciPlatform.Connected
-                                        || model.platform.status === Sci.SciPlatform.NotRecognized) {
-                                    SGWidgets.SGDialogJS.showConfirmationDialog(
-                                                root,
-                                                "Device is active",
-                                                "Do you really want to disconnect " + model.platform.verboseName + " ?",
-                                                "Disconnect",
-                                                function () {
-                                                    removeBoard(model.index)
-                                                },
-                                                "Keep Connected"
-                                                )
-                                } else {
-                                    removeBoard(model.index)
-                                }
+                        onClicked: {
+                            if (model.platform.status === Sci.SciPlatform.Ready
+                                    || model.platform.status === Sci.SciPlatform.Connected
+                                    || model.platform.status === Sci.SciPlatform.NotRecognized) {
+                                SGWidgets.SGDialogJS.showConfirmationDialog(
+                                            root,
+                                            "Device is active",
+                                            "Do you really want to disconnect " + model.platform.verboseName + " ?",
+                                            "Disconnect",
+                                            function () {
+                                                removeBoard(model.index)
+                                            },
+                                            "Keep Connected"
+                                            )
+                            } else {
+                                removeBoard(model.index)
                             }
                         }
                     }
@@ -197,7 +213,7 @@ Item {
     StackLayout {
         id: platformContentContainer
         anchors {
-            top: tabBarWrapper.bottom
+            top: tabBar.bottom
             left: parent.left
             right: parent.right
             bottom: parent.bottom
@@ -212,7 +228,7 @@ Item {
         }
 
         Repeater {
-            id: tabRepeater
+            id: platformRepeater
             model: sciModel.platformModel
 
             delegate: PlatformDelegate {
