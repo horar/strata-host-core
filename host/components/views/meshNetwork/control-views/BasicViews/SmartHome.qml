@@ -160,22 +160,31 @@ Rectangle {
 
         property var door: platformInterface.smarthome_door
         onDoorChanged: {
-             var doorState = platformInterface.smarthome_door.value
-            if (doorState === "open")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
-              else
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+            var doorState = platformInterface.smarthome_door.value
+            var windowState = platformInterface.window_shade.value
+            if (doorState === "open" && windowState === "open")
+                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpenWindowOpen.jpg"
+              else if (doorState === "open" && windowState === "closed")
+                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
+              else if (doorState === "closed" && windowState === "open")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
+              else if (doorState === "closed" && windowState === "closed")
+                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
             }
 
         property var window: platformInterface.window_shade
         onWindowChanged: {
-
+             var doorState = platformInterface.smarthome_door.value
              var windowState = platformInterface.window_shade.value
             console.log("settting window to be",windowState)
-            if (windowState === "open")
+            if (doorState === "open" && windowState === "open")
+                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpenWindowOpen.jpg"
+              else if (doorState === "open" && windowState === "closed")
+                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
+              else if (doorState === "closed" && windowState === "open")
                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
-              else
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+              else if (doorState === "closed" && windowState === "closed")
+                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
             }
         }
 

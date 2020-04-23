@@ -99,6 +99,12 @@ Rectangle {
                 platformInterface.set_node_mode.update(nodeType,root.nodeNumber,dimmerEnabled)
                 dimmerEnabled = ! dimmerEnabled;
             }
+            else if (nodeType == "robotic_arm"){
+                if (root.nodeNumber == "")
+                    platformInterface.light_hsl_set.update(65535,0, 0, 0)
+                   else
+                    platformInterface.light_hsl_set.update(65535,theHue, theSaturation, theLightness)
+            }
 
             //smarthome nodes
             else if (nodeType == "window_shade"){
