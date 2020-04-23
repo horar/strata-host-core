@@ -34,10 +34,11 @@ Item {
             top: parent.top
             margins: 10
         }
-        source:  "qrc:/sgimages/question-circle.svg"
-       // iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-        height: 40
         width: 40
+        height: 40
+        source:  "qrc:/sgimages/question-circle.svg"
+        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+
 
         MouseArea {
             id: helpMouse

@@ -28,12 +28,12 @@ Item {
         id: filterHelpContainer
         property point topLeft
         property point bottomRight
-        width:  enable1.width //enable.width + inputCurrentContainer.width - 80
+        width:  label1Container.width+ enable1.width + enable1.width + 50//enable.width + inputCurrentContainer.width - 80
         height: (bottomRight.y - topLeft.y)
         x: topLeft.x
         y: topLeft.y
         function update() {
-            topLeft = enable1.mapToItem(root, 0,  0)
+            topLeft = label1Container.mapToItem(root, 0,  0)
             bottomRight = enable5.mapToItem(root, enable5.width, enable5.height)
         }
     }
@@ -388,6 +388,7 @@ Item {
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
                                             ColumnLayout {
+                                                id: label1Container
                                                 anchors.fill: parent
                                                 Rectangle {
                                                     Layout.fillHeight: true
@@ -1036,16 +1037,20 @@ Item {
 
                                                     inputBoxWidth: 45
                                                     fontSizeMultiplier: ratioCalc * 1.2
-                                                    inputBox.validator: DoubleValidator { top: maxInputCurrent.to ; bottom: 0.0  }
+                                                    inputBox.validator: DoubleValidator { }
+                                                    inputBox.text: maxInputCurrent.value.toFixed(1)
+
+
 
                                                     onUserSet: {
-                                                        //                                                        var valueSet = parseInt(value)
-                                                        //                                                        if (valueSet > maxInputCurrent.to) {
-                                                        //                                                            value = maxInputCurrent.to
-                                                        //                                                        }
-                                                        //                                                        if (valueSet < maxInputCurrent.from) {
-                                                        //                                                            value = maxInputCurrent.from
-                                                        //                                                        }
+                                                        var valueSet = parseInt(value)
+                                                        if (valueSet > maxInputCurrent.to) {
+                                                            value = maxInputCurrent.to
+                                                        }
+                                                        if (valueSet < maxInputCurrent.from) {
+                                                            value = maxInputCurrent.from
+                                                        }
+                                                        inputBox.text = value
 
                                                         platformInterface.set_i_in_dac.update(value)
 
@@ -1053,7 +1058,8 @@ Item {
 
                                                     property var switch_enable_status_iin_max: platformInterface.switch_enable_status.i_in_max
                                                     onSwitch_enable_status_iin_maxChanged: {
-                                                        maxInputCurrent.to = parseInt(switch_enable_status_iin_max)
+                                                        maxInputCurrent.to = parseFloat(switch_enable_status_iin_max)
+                                                        console.log("a" ,maxInputCurrent.to)
                                                         maxInputCurrent.toText.text = switch_enable_status_iin_max + "A"
 
                                                     }
@@ -1108,6 +1114,7 @@ Item {
                                                             value = maxInputVoltage.from
 
                                                         }
+                                                         inputBox.text = value
 
 
                                                         platformInterface.set_v_set.update(parseFloat(value.toFixed(2)))
