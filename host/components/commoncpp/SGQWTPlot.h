@@ -15,6 +15,7 @@
 #include <qwt/qwt_scale_engine.h>
 #include <qwt/qwt_scale_widget.h>
 #include <qwt/qwt_plot_layout.h>
+#include <qwt/qwt_text_label.h>
 
 #include <QDebug>
 
@@ -31,8 +32,11 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(double yMin READ yMin WRITE setYMin NOTIFY yMinChanged)
     Q_PROPERTY(double yMax READ yMax WRITE setYMax NOTIFY yMaxChanged)
     Q_PROPERTY(QString xTitle READ xTitle WRITE setXTitle NOTIFY xTitleChanged)
+    Q_PROPERTY(int xTitlePixelSize READ xTitlePixelSize WRITE setXTitlePixelSize NOTIFY xTitlePixelSizeChanged)
     Q_PROPERTY(QString yTitle READ yTitle WRITE setYTitle NOTIFY yTitleChanged)
+    Q_PROPERTY(int yTitlePixelSize READ yTitlePixelSize WRITE setYTitlePixelSize NOTIFY yTitlePixelSizeChanged)
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
+    Q_PROPERTY(int titlePixelSize READ titlePixelSize WRITE setTitlePixelSize NOTIFY titlePixelSizeChanged)
     Q_PROPERTY(bool xLogarithmic MEMBER xLogarithmic_ WRITE setXLogarithmic NOTIFY xLogarithmicChanged)
     Q_PROPERTY(bool yLogarithmic MEMBER yLogarithmic_ WRITE setYLogarithmic NOTIFY yLogarithmicChanged)
     Q_PROPERTY(QColor backgroundColor MEMBER backgroundColor_ WRITE setBackgroundColor NOTIFY backgroundColorChanged)
@@ -68,10 +72,16 @@ public:
     double yMax();
     QString xTitle();
     void setXTitle(QString title);
+    void setXTitlePixelSize(int pixelSize);
+    int xTitlePixelSize();
     QString yTitle();
     void setYTitle(QString title);
+    void setYTitlePixelSize(int pixelSize);
+    int yTitlePixelSize();
     QString title();
     void setTitle(QString title);
+    void setTitlePixelSize(int pixelSize);
+    int titlePixelSize();
     void setXLogarithmic(bool logarithmic);
     void setYLogarithmic(bool logarithmic);
     void setBackgroundColor(QColor newColor);
@@ -89,8 +99,11 @@ signals:
     void yMinChanged();
     void yMaxChanged();
     void xTitleChanged();
+    void xTitlePixelSizeChanged();
     void yTitleChanged();
+    void yTitlePixelSizeChanged();
     void titleChanged();
+    void titlePixelSizeChanged();
     void xLogarithmicChanged();
     void yLogarithmicChanged();
     void backgroundColorChanged();

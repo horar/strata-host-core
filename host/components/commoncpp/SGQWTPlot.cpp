@@ -204,6 +204,27 @@ void SGQWTPlot::setXTitle(QString title)
     }
 }
 
+void SGQWTPlot::setXTitlePixelSize(int pixelSize)
+{
+    if (pixelSize != this->xTitlePixelSize()){
+        QwtText title = qwtPlot->axisTitle(qwtPlot->xBottom);
+        QFont titleFont = title.font();
+        titleFont.setPixelSize(pixelSize);
+        title.setFont(titleFont);
+        qwtPlot->setAxisTitle(qwtPlot->xBottom, title);
+        emit xTitlePixelSizeChanged();
+
+        if (autoUpdate_) {
+            update();
+        }
+    }
+}
+
+int SGQWTPlot::xTitlePixelSize()
+{
+    return qwtPlot->axisTitle(qwtPlot->xBottom).font().pixelSize();
+}
+
 QString SGQWTPlot::yTitle()
 {
     return qwtPlot->axisTitle(qwtPlot->yLeft).text();
@@ -220,6 +241,27 @@ void SGQWTPlot::setYTitle(QString title)
     }
 }
 
+void SGQWTPlot::setYTitlePixelSize(int pixelSize)
+{
+    if (pixelSize != this->yTitlePixelSize()){
+        QwtText title = qwtPlot->axisTitle(qwtPlot->yLeft);
+        QFont titleFont = title.font();
+        titleFont.setPixelSize(pixelSize);
+        title.setFont(titleFont);
+        qwtPlot->setAxisTitle(qwtPlot->yLeft, title);
+        emit yTitlePixelSizeChanged();
+
+        if (autoUpdate_) {
+            update();
+        }
+    }
+}
+
+int SGQWTPlot::yTitlePixelSize()
+{
+    return qwtPlot->axisTitle(qwtPlot->yLeft).font().pixelSize();
+}
+
 QString SGQWTPlot::title()
 {
     return qwtPlot->title().text();
@@ -234,6 +276,26 @@ void SGQWTPlot::setTitle(QString title)
             update();
         }
     }
+}
+
+void SGQWTPlot::setTitlePixelSize(int pixelSize)
+{
+    if (pixelSize != this->titlePixelSize()){
+        QwtTextLabel* titleLabel = qwtPlot->titleLabel();
+        QFont titleFont = titleLabel->font();
+        titleFont.setPixelSize(pixelSize);
+        titleLabel->setFont(titleFont);
+        emit titlePixelSizeChanged();
+
+        if (autoUpdate_) {
+            update();
+        }
+    }
+}
+
+int SGQWTPlot::titlePixelSize()
+{
+    return qwtPlot->titleLabel()->font().pixelSize();
 }
 
 void SGQWTPlot::setBackgroundColor(QColor newColor)
