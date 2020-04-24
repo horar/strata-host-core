@@ -66,7 +66,7 @@ Widget09.SGResponsiveScrollView {
             SGSlider {
                 id: targetSpeedSlider
                 width: parent.width * .95
-                from: 100
+                from: 0
                 to: 2000
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: targetSpeedLabel.right
@@ -83,7 +83,7 @@ Widget09.SGResponsiveScrollView {
 
                 value: platformInterface.target_speed.rpm
 
-                onMoved:{
+                onUserSet:{
                     platformInterface.set_target_speed.update(value)
                 }
             }
@@ -301,7 +301,7 @@ Widget09.SGResponsiveScrollView {
 
                 value: platformInterface.poles.poles
 
-                onMoved:{
+                onUserSet:{
                     platformInterface.set_poles.update(value)
                 }
             }
