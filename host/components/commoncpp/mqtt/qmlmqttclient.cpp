@@ -1,4 +1,4 @@
-#include "qmlmqtt.h"
+#include "qmlmqttclient.h"
 
 QmlMqttClient::QmlMqttClient(QObject *parent)
     : QMqttClient(parent)
@@ -13,17 +13,17 @@ int QmlMqttClient::publish(const QString &topic, const QString &message, quint8 
 
 QmlMqttSubscription* QmlMqttClient::subscribe(const QString &topic)
 {
-    auto sub = QMqttClient::subscribe(topic, 0);
-    auto result = new QmlMqttSubscription(sub, this);
+    auto subscription = QMqttClient::subscribe(topic, 0);
+    auto result = new QmlMqttSubscription(subscription, this);
     return result;
 }
 
-QmlMqttSubscription::QmlMqttSubscription(QMqttSubscription *s, QmlMqttClient *c)
-    : sub(s)
-    , client(c)
+QmlMqttSubscription::QmlMqttSubscription(QMqttSubscription *subscription, QmlMqttClient *client)
+    : subscription_(subscription)
+    , client_(client)
 {
-    connect(sub, &QMqttSubscription::messageReceived, this, &QmlMqttSubscription::handleMessage);
-    m_topic = sub->topic();
+    connect(subscription_, &QMqttSubscription::messageReceived, this, &QmlMqttSubscription::handleMessage);
+    topic_ = subscription_->topic();
 }
 
 QmlMqttSubscription::~QmlMqttSubscription()
@@ -37,5 +37,5 @@ void QmlMqttSubscription::handleMessage(const QMqttMessage &qmsg)
 
 void QmlMqttClient::connectToHostEncrypted()
 {
-    QMqttClient::connectToHostEncrypted(m_qmlSslConf->getQsslConfObject());
+    QMqttClient::connectToHostEncrypted(qmlSslConfiguration_->getQsslConfObject());
 }

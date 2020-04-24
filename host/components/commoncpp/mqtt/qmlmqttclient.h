@@ -10,9 +10,9 @@ class QmlMqttClient;
 class QmlMqttSubscription : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QMqttTopicFilter topic MEMBER m_topic NOTIFY topicChanged)
+    Q_PROPERTY(QMqttTopicFilter topic MEMBER topic_ NOTIFY topicChanged)
 public:
-    QmlMqttSubscription(QMqttSubscription *s, QmlMqttClient *c);
+    QmlMqttSubscription(QMqttSubscription *subscription, QmlMqttClient *client);
     ~QmlMqttSubscription();
 
 Q_SIGNALS:
@@ -24,15 +24,15 @@ public slots:
 
 private:
     Q_DISABLE_COPY(QmlMqttSubscription)
-    QMqttSubscription *sub;
-    QmlMqttClient *client;
-    QMqttTopicFilter m_topic;
+    QMqttSubscription *subscription_;
+    QmlMqttClient *client_;
+    QMqttTopicFilter topic_;
 };
 
 class QmlMqttClient : public QMqttClient
 {
     Q_OBJECT
-    Q_PROPERTY(QmlSslConfiguration* sslConfiguration MEMBER m_qmlSslConf)
+    Q_PROPERTY(QmlSslConfiguration* sslConfiguration MEMBER qmlSslConfiguration_)
 
 public:
     QmlMqttClient(QObject *parent = nullptr);
@@ -41,7 +41,7 @@ public:
     Q_INVOKABLE void connectToHostEncrypted();
 private:
     Q_DISABLE_COPY(QmlMqttClient)
-    QmlSslConfiguration *m_qmlSslConf;
+    QmlSslConfiguration *qmlSslConfiguration_;
 };
 
 #endif // QMLMQTTCLIENT_H

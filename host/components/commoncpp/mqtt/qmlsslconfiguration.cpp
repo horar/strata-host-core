@@ -21,48 +21,48 @@ QByteArray QmlSslConfiguration::readKey(const QString &fileName)
 
 QSslConfiguration QmlSslConfiguration::getQsslConfObject() const
 {
-    return m_qsslConfiguration;
+    return qsslConfiguration_;
 }
 
 QString QmlSslConfiguration::getCaCertificate() const
 {
-    return m_rootCertificate;
+    return rootCertificate_;
 }
 
 QString QmlSslConfiguration::getLocalCertificate() const
 {
-    return m_localCertificate;
+    return localCertificate_;
 }
 
 QString QmlSslConfiguration::getPrivateKey() const
 {
-    return m_privateKey;
+    return privateKey_;
 }
 
 void QmlSslConfiguration::setCaCertificate(const QString &rootCertificate)
 {
-    if (m_rootCertificate != rootCertificate) {
-        m_rootCertificate = rootCertificate;
-        m_qsslConfiguration.setCaCertificates(QSslCertificate::fromPath(m_rootCertificate));
-        emit caCertificateChanged(m_rootCertificate);
+    if (rootCertificate_ != rootCertificate) {
+        rootCertificate_ = rootCertificate;
+        qsslConfiguration_.setCaCertificates(QSslCertificate::fromPath(rootCertificate_));
+        emit caCertificateChanged(rootCertificate_);
     }
 }
 
 void QmlSslConfiguration::setLocalCertificate(const QString &localCertificate)
 {
-    if (m_localCertificate != localCertificate) {
-        m_localCertificate = localCertificate;
-        m_qsslConfiguration.setLocalCertificateChain(QSslCertificate::fromPath(m_localCertificate));
-        emit localCertificateChainChanged(m_localCertificate);
+    if (localCertificate_ != localCertificate) {
+        localCertificate_ = localCertificate;
+        qsslConfiguration_.setLocalCertificateChain(QSslCertificate::fromPath(localCertificate_));
+        emit localCertificateChainChanged(localCertificate_);
     }
 }
 
 void QmlSslConfiguration::setPrivateKey(const QString &privateKey)
 {
-    if (m_privateKey != privateKey) {
-        m_privateKey = privateKey;
+    if (privateKey_ != privateKey) {
+        privateKey_ = privateKey;
         QSslKey sslkey(readKey(privateKey), QSsl::Rsa);
-        m_qsslConfiguration.setPrivateKey(sslkey);
-        emit privateKeyChanged(m_privateKey);
+        qsslConfiguration_.setPrivateKey(sslkey);
+        emit privateKeyChanged(privateKey_);
     }
 }
