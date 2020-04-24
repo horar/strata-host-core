@@ -844,7 +844,7 @@ Item {
                     SGAlignedLabel {
                         id: pwmLinearLogLabel
                         target: pwmLinearLog
-                       // text: "PWM Linear/Log"
+                        // text: "PWM Linear/Log"
                         alignment: SGAlignedLabel.SideLeftCenter
                         anchors {
                             right: parent.right
@@ -978,7 +978,7 @@ Item {
                     SGAlignedLabel {
                         id: pwmFrequencyLabel
                         target: pwmFrequency
-                       // text: "PWM Frequency (Hz)"
+                        // text: "PWM Frequency (Hz)"
                         alignment: SGAlignedLabel.SideLeftCenter
                         anchors {
                             right: parent.right
@@ -1053,7 +1053,7 @@ Item {
                         SGComboBox {
                             id: openLoadDiagnostic
                             fontSizeMultiplier: ratioCalc
-                           // model: ["No Diagnostic", "Auto Retry", "Detect Only", "No Regulations\nChange"]
+                            // model: ["No Diagnostic", "Auto Retry", "Detect Only", "No Regulations\nChange"]
                             property var led_open_load_diagnostic_caption: platformInterface.led_open_load_diagnostic_caption.caption
                             onLed_open_load_diagnostic_captionChanged: {
                                 openLoadLabel.text = led_open_load_diagnostic_caption
@@ -1261,6 +1261,46 @@ Item {
                                                 fontSizeMultiplier: ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+
+                                                                    ] )
+                                                        platformInterface.outputEnable0 = 0
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [1,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+
+                                                                    ] )
+                                                        platformInterface.outputEnable0 = 1
+
+                                                    }
+
+                                                }
                                             }
                                         }
 
@@ -1390,6 +1430,46 @@ Item {
                                                 fontSizeMultiplier: ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     0,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+
+                                                                    ] )
+                                                        platformInterface.outputEnable1 = 0
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+
+                                                                    ] )
+                                                        platformInterface.outputEnable1 = 1
+
+                                                    }
+
+                                                }
                                             }
                                         }
 
@@ -1410,6 +1490,8 @@ Item {
                                                 fontSizeMultiplier: ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
+
+
                                             }
                                         }
                                         Rectangle {
@@ -1513,6 +1595,47 @@ Item {
                                                 fontSizeMultiplier: ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     0,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+
+                                                                    ] )
+                                                        platformInterface.outputEnable2 = 0
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     1,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+
+                                                                    ] )
+                                                        platformInterface.outputEnable2 = 1
+
+                                                    }
+
+                                                }
                                             }
                                         }
 
@@ -1637,6 +1760,46 @@ Item {
                                                 fontSizeMultiplier: ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     0,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+
+                                                                    ] )
+                                                        platformInterface.outputEnable3 = 0
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     1,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+
+                                                                    ] )
+                                                        platformInterface.outputEnable3 = 1
+
+                                                    }
+                                                }
                                             }
                                         }
 
@@ -1758,6 +1921,44 @@ Item {
                                                 fontSizeMultiplier: ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     0,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+
+                                                                    ] )
+                                                        platformInterface.outputEnable4 = 0
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     1,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+                                                                    ] )
+                                                        platformInterface.outputEnable4 = 1
+
+                                                    }
+                                                }
                                             }
                                         }
 
@@ -1880,6 +2081,45 @@ Item {
                                                 fontSizeMultiplier: ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     0,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+
+                                                                    ] )
+                                                        platformInterface.outputEnable5 = 0
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     1,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+                                                                    ] )
+                                                        platformInterface.outputEnable5 = 1
+
+                                                    }
+                                                }
                                             }
                                         }
 
@@ -2003,6 +2243,44 @@ Item {
                                                 fontSizeMultiplier: ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     0,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+
+                                                                    ] )
+                                                        platformInterface.outputEnable6 = 0
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     1,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+                                                                    ] )
+                                                        platformInterface.outputEnable6 = 1
+
+                                                    }
+                                                }
                                             }
                                         }
 
@@ -2125,6 +2403,45 @@ Item {
                                                 fontSizeMultiplier: ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     0,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+
+                                                                    ] )
+                                                        platformInterface.outputEnable7 = 0
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     1,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+                                                                    ] )
+                                                        platformInterface.outputEnable7 = 1
+
+                                                    }
+                                                }
                                             }
                                         }
 
@@ -2247,6 +2564,44 @@ Item {
                                                 fontSizeMultiplier: ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     0,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+
+                                                                    ] )
+                                                        platformInterface.outputEnable8 = 0
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     1,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+                                                                    ] )
+                                                        platformInterface.outputEnable8 = 1
+
+                                                    }
+                                                }
                                             }
                                         }
 
@@ -2367,6 +2722,45 @@ Item {
                                                 fontSizeMultiplier: ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     0,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+
+                                                                    ] )
+                                                        platformInterface.outputEnable9 = 0
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     1,
+                                                                     platformInterface.outputEnable10,
+                                                                     platformInterface.outputEnable11
+                                                                    ] )
+                                                        platformInterface.outputEnable9 = 1
+
+                                                    }
+                                                }
                                             }
                                         }
 
@@ -2486,6 +2880,44 @@ Item {
                                                 fontSizeMultiplier: ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     0,
+                                                                     platformInterface.outputEnable11
+
+                                                                    ] )
+                                                        platformInterface.outputEnable10 = 0
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     1,
+                                                                     platformInterface.outputEnable11
+                                                                    ] )
+                                                        platformInterface.outputEnable10 = 1
+
+                                                    }
+                                                }
                                             }
                                         }
 
@@ -2609,6 +3041,46 @@ Item {
                                                 fontSizeMultiplier: ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
+
+                                                onToggled: {
+                                                    if(checked) {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     0
+                                                                    ] )
+
+                                                        platformInterface.outputEnable11 = 0
+                                                    }
+                                                    else {
+                                                        platformInterface.set_led_out_en.update(
+                                                                    [platformInterface.outputEnable0,
+                                                                     platformInterface.outputEnable1,
+                                                                     platformInterface.outputEnable2,
+                                                                     platformInterface.outputEnable3,
+                                                                     platformInterface.outputEnable4,
+                                                                     platformInterface.outputEnable5,
+                                                                     platformInterface.outputEnable6,
+                                                                     platformInterface.outputEnable7,
+                                                                     platformInterface.outputEnable8,
+                                                                     platformInterface.outputEnable9,
+                                                                     platformInterface.outputEnable10,
+                                                                     1
+                                                                    ])
+
+                                                        platformInterface.outputEnable11 = 1
+
+                                                    }
+                                                }
                                             }
                                         }
 

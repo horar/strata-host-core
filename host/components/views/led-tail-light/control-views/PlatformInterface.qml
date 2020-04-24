@@ -36,7 +36,7 @@ Item {
 
     property var led_out_en: {
         "caption":"OUT EN",
-        "":[],
+        "scales":[],
         "state":"enabled",
         "value":"",
         "values":[true,true,true,true,true,true,true,true,true,true,true,true]
@@ -55,7 +55,7 @@ Item {
 
     property var led_ext: {
         "caption":"External LED",
-        "":[],
+        "scales":[],
         "state":"enabled",
         "value":"",
         "values":[false,false,false,false,false,false,false,false,false,false,false,false]
@@ -534,12 +534,12 @@ Item {
                                            "values":[0,0,0,0,0,0,0,0,0,0,0,0]
                                        },
 
-                                       update: function (value) {
-                                           this.set(value)
+                                       update: function (values) {
+                                           this.set(values)
                                            this.send(this)
                                        },
-                                       set: function (value) {
-                                           this.payload.value = value
+                                       set: function (values) {
+                                           this.payload.values = values
                                        },
                                        send: function () { CorePlatformInterface.send(this) },
                                        show: function () { CorePlatformInterface.show(this) }
@@ -547,6 +547,21 @@ Item {
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process
+
+
+    property real outputEnable0: 0
+    property real outputEnable1: 0
+    property real outputEnable2: 0
+    property real outputEnable3: 0
+    property real outputEnable4: 0
+    property real outputEnable5: 0
+    property real outputEnable6: 0
+    property real outputEnable7: 0
+    property real outputEnable8: 0
+    property real outputEnable9: 0
+    property real outputEnable10: 0
+    property real outputEnable11: 0
+
 
     Connections {
         target: coreInterface
