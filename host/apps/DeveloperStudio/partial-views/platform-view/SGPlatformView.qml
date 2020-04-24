@@ -26,21 +26,29 @@ StackLayout {
     property bool controlLoaded: false
 
     onConnectedChanged: {
-        loadControl()
-    }
-
-    Component.onCompleted: {
-        loadControl()
-    }
-
-    Component.onDestruction: {
-        if (controlLoaded) {
-            NavigationControl.removeView(controlContainer)
+        if (connected) {
+            loadControl()
+        } else {
+            removeControl()
         }
     }
 
+    Component.onCompleted: {
+        if (model.connected) {
+            loadControl()  // load control and docs
+        } else {
+            coreInterface.connectToPlatform(model.class_id)  // load docs
+        }
+    }
+
+    Component.onDestruction: {
+        removeControl()
+    }
+
     function loadControl () {
-        if (model.connected && controlLoaded === false){
+        if (controlLoaded === false){
+            coreInterface.connectToPlatform(model.class_id)
+
             Help.setClassId(model.class_id)
             let qml_control = NavigationControl.getQMLFile(model.class_id, "Control")
             NavigationControl.context.class_id = model.class_id
@@ -53,10 +61,28 @@ StackLayout {
         }
     }
 
+    function removeControl () {
+        if (controlLoaded) {
+            NavigationControl.removeView(controlContainer)
+            controlLoaded = false
+        }
+    }
+
     Item {
-        id: controlContainer
+        id: controlStackContainer
         Layout.fillHeight: true
         Layout.fillWidth: true
+
+        Item {
+            id: controlContainer
+            anchors {
+                fill: parent
+            }
+        }
+
+        DisconnectedOverlay {
+            visible: model.connected === false
+        }
     }
 
     Item {
