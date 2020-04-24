@@ -25,41 +25,26 @@ Rectangle {
         font.pixelSize: 72
     }
 
-    Button{
-        id:switchButton
-        height:100
-        width:100
+    MSwitch{
+        id:switchOutline
+        height:320
+        width:200
         anchors.left:parent.left
-        anchors.leftMargin:parent.width*.2
+        anchors.leftMargin:parent.width*.1
         anchors.verticalCenter: parent.verticalCenter
-        text:"switch"
-        font.pixelSize: 24
-
-
-        background: Rectangle {
-               implicitWidth: 100
-               implicitHeight: 40
-               color: switchButton.pressed ? "lightgrey" : "transparent"
-               border.color: "black"
-               border.width: 5
-               radius: 10
-           }
-
-        property bool isOn
 
         property var button: platformInterface.demo_click_notification
         onButtonChanged:{
-            if (platformInterface.demo_click_notification.demo === "one_to_one")
+            if (platformInterface.demo_click_notification.demo === "one_to_many")
                 if (platformInterface.demo_click_notification.button === "switch")
                     if (platformInterface.demo_click_notification.value === "on")
-                        switchButton.isOn = true;
+                        switchOutline.isOn = true;
                        else
-                        switchButton.isOn = false;
+                        switchOutline.isOn = false;
 
         }
 
-        onClicked: {
-            isOn = !isOn;
+        onIsOnChanged: {
             if (isOn){
                 lightBulb.onOpacity = 1
                 platformInterface.demo_click.update("one_to_one","switch","on")
@@ -68,30 +53,43 @@ Rectangle {
                 lightBulb.onOpacity = 0
                 platformInterface.demo_click.update("one_to_one","switch","off")
             }
-
         }
     }
 
-//    MSwitch{
-//        id:switchOutline
-//        height:180
+//    Button{
+//        id:switchButton
+//        height:100
 //        width:100
 //        anchors.left:parent.left
 //        anchors.leftMargin:parent.width*.2
 //        anchors.verticalCenter: parent.verticalCenter
+//        text:"switch"
+//        font.pixelSize: 24
+
+
+//        background: Rectangle {
+//               implicitWidth: 100
+//               implicitHeight: 40
+//               color: switchButton.pressed ? "lightgrey" : "transparent"
+//               border.color: "black"
+//               border.width: 5
+//               radius: 10
+//           }
+
+//        property bool isOn
 
 //        property var button: platformInterface.demo_click_notification
 //        onButtonChanged:{
 //            if (platformInterface.demo_click_notification.demo === "one_to_one")
 //                if (platformInterface.demo_click_notification.button === "switch")
 //                    if (platformInterface.demo_click_notification.value === "on")
-//                        switchOutline.isOn = true;
+//                        switchButton.isOn = true;
 //                       else
-//                        switchOutline.isOn = false;
-
+//                        switchButton.isOn = false;
 //        }
 
-//        onIsOnChanged: {
+//        onClicked: {
+//            isOn = !isOn;
 //            if (isOn){
 //                lightBulb.onOpacity = 1
 //                platformInterface.demo_click.update("one_to_one","switch","on")
@@ -103,9 +101,11 @@ Rectangle {
 //        }
 //    }
 
+
+
     Image{
         id:arrowImage
-        anchors.left:switchButton.right
+        anchors.left:switchOutline.right
         anchors.right:lightBulb.left
         anchors.verticalCenter: parent.verticalCenter
         source: "qrc:/views/meshNetwork/images/rightArrow.svg"
@@ -160,7 +160,7 @@ Rectangle {
     }
 
     function resetUI(){
-        switchButton.isOn = false
+        switchOutline.isOn = false
     }
 
 

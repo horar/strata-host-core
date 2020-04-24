@@ -27,10 +27,10 @@ Rectangle {
 
     MSwitch{
         id:switchOutline
-        height:180
-        width:100
+        height:320
+        width:200
         anchors.left:parent.left
-        anchors.leftMargin:parent.width*.2
+        anchors.leftMargin:parent.width*.1
         anchors.verticalCenter: parent.verticalCenter
 
         property var button: platformInterface.demo_click_notification
