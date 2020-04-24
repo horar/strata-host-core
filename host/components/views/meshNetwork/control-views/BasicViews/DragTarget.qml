@@ -64,7 +64,7 @@ Rectangle {
 
             else if (nodeType === "door"){
                 //platformInterface.sensor_set.update(65535,"strata",4)
-                platformInterface.set_node_mode.update(nodeType,65535,true)
+                platformInterface.set_node_mode.update("alarm",65535,true)
                 //the firmware should send a notification to let other parts of the UI know that the alarm is on
                 //but it is not. In the meantime, I'll inject the JSON here
                 CorePlatformInterface.data_source_handler('{
@@ -72,7 +72,6 @@ Rectangle {
                     "payload":{
                         "triggered": "true"
                      }
-
                      } ')
             }
             else if (nodeType === "hvac"){
