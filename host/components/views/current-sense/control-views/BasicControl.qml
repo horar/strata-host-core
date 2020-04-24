@@ -1152,7 +1152,7 @@ Item {
                         anchors.fill: parent
 
                         Rectangle {
-                            Layout.preferredHeight: parent.height/3
+                            Layout.preferredHeight: parent.height/2.5
                             Layout.fillWidth: true
 
 
@@ -1562,7 +1562,7 @@ Item {
 
                                 Rectangle {
                                     id: interruptBox
-                                    Layout.preferredHeight: parent.height/5
+                                    Layout.preferredHeight: parent.height/4
                                     Layout.fillWidth: true
 
                                     RowLayout {
@@ -1734,7 +1734,7 @@ Item {
                                             SGStatusLogBox{
                                                 id: logFault
                                                 //anchors.fill: parent
-                                                width: parent.width
+                                                width: parent.width - 20
                                                 height: parent.height - 50
                                                 title: "Status List"
                                                 anchors.centerIn: parent
