@@ -127,7 +127,6 @@ Rectangle {
 
             }
             else if (nodeType == "smarthome_lights"){
-                platformInterface.set_room_color.update(roomColors[currentRoomColor])
                 var theHomeHue = Math.round(theColor.hslHue*360);
                 var theHomeSaturdation = Math.round(theColor.hslSaturation*100);
                 var theHomeLightness = Math.round(theColor.hslLightness*100);
