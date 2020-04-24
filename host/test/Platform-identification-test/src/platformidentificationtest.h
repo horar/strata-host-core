@@ -2,6 +2,8 @@
 #define PLATFORMIDENTIFICATIONTEST_H
 
 #include <QObject>
+#include <QDir>
+
 #include <BoardManager.h>
 #include <SerialDevice.h>
 #include <SGJLinkConnector.h>
@@ -13,7 +15,7 @@ class PlatformIdentificationTest : public QObject
     Q_OBJECT
 public:
     explicit PlatformIdentificationTest(QObject *parent = nullptr);
-    void init();
+    void init(QString jlinkExePath, QString binariesPath);
     void start();
 
 private:
@@ -29,6 +31,7 @@ private:
 
 signals:
     void stateChanged(PlatformTestState newState);
+    void testDone(int exitStatus); // signal to exit the app
 
 private slots:
     void newConnection(int deviceId, bool recognized);
@@ -39,10 +42,10 @@ private slots:
 
 private:
     // Private functions
-    void workerThread();
     void flashPlatform();
     void connectToPlatform();
     void identifyPlatform();
+    bool parseBinaryFileList(QString binariesPath);
 
 
     // Private members
@@ -51,6 +54,9 @@ private:
     int mTestDeviceId;
     SGJLinkConnector mSGJLinkConnector;
 
+    QString mAbsloutePathToBinaries;
+    int mCurrentBinaryFileIndex;
+    QStringList mBinaryFileNameList;
 };
 
 #endif // PLATFORMIDENTIFICATIONTEST_H

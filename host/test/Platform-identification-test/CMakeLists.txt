@@ -5,7 +5,7 @@ project(platform-identification-test
 
 add_executable(${PROJECT_NAME}
    src/main.cpp
-   src/platformidentificationtest.cpp
+   src/PlatformIdentificationTest.cpp
 )
 
 # add_library(${PROJECT_NAME}
