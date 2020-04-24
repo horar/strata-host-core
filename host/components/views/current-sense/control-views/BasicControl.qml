@@ -57,6 +57,13 @@ Item {
         Help.registerTarget(manualModeSection,  "This section is for if the user would like to set customizable input voltage and current limits. While in" + "Auto"  + "mode, the limits are determined by the max capabilities of whatever circuit is enabled. While in" + "Manual" + "mode the limits are determined by the user, but will still be limited by the max capabilities of whatever circuit is enabled.", 10, "currentSenseHelp")
     }
 
+    onWidthChanged: {
+        filterHelpContainer.update()
+    }
+    onHeightChanged: {
+        filterHelpContainer.update()
+    }
+
     Connections {
         target: Help.utility
         onTour_runningChanged:{
@@ -1056,7 +1063,7 @@ Item {
                                                     }
 
                                                     onValueChanged: {
-                                                         inputBox.text = value
+                                                        inputBox.text = value
                                                     }
 
                                                     property var switch_enable_status_iin_max: platformInterface.switch_enable_status.i_in_max
