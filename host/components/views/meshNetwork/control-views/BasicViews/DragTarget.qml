@@ -29,7 +29,7 @@ Rectangle {
         id:dropAreaMouseArea
         anchors.fill:parent
 
-        property bool relayEnabled: true
+        property bool relayEnabled: false   //relay is turned on when user drags to solar panel
         property bool dimmerEnabled: true
         property int counter : 0
         property bool highPowerMode: true
