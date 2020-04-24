@@ -56,8 +56,8 @@ Rectangle {
             }
 
             else if (nodeType == "high_power"){
-                console.log("sending lowPower comamnd with value",highPowerMode)
-                platformInterface.sensor_set.update(nodeType,root.nodeNumber,highPowerMode)
+                console.log("sending lowPower comamnd with value",highPowerMode,nodeType.root)
+                platformInterface.set_node_mode.update(nodeType,root.nodeNumber,highPowerMode)
                 highPowerMode = !highPowerMode
             }
 
@@ -128,10 +128,20 @@ Rectangle {
             }
             else if (nodeType == "smarthome_lights"){
                 var theHomeHue = Math.round(theColor.hslHue*360);
-                var theHomeSaturdation = Math.round(theColor.hslSaturation*100);
+                var theHomeSaturation = Math.round(theColor.hslSaturation*100);
                 var theHomeLightness = Math.round(theColor.hslLightness*100);
-                console.log("current smarthome color is",theHomeHue,theHomeSaturdation,theHomeLightness)
-                platformInterface.light_hsl_set.update(65535,theHomeHue,theHomeSaturdation,theHomeLightness);
+                //special case for black, as Qt thinks the hue should be -1
+                if (theHomeLightness === 0){
+                    theHomeHue = 0;
+                    theHomeSaturation = 0;
+                    }
+                //special case for white
+                if (theHomeLightness === 100){
+                    theHomeHue = 0;
+                    theHomeSaturation = 0;
+                    }
+                console.log("current smarthome color is",theHomeHue,theHomeSaturation,theHomeLightness)
+                platformInterface.light_hsl_set.update(65535,theHomeHue,theHomeSaturation,theHomeLightness);
                 //this should be handled by the firmware, but isn't
                 CorePlatformInterface.data_source_handler('{
                    "value":"room_color_notification",
