@@ -3,6 +3,7 @@
 
 #include <QtMqtt/QMqttClient>
 #include <QtMqtt/QMqttSubscription>
+#include "qmlsslconfiguration.h"
 
 class QmlMqttClient;
 
@@ -31,12 +32,16 @@ private:
 class QmlMqttClient : public QMqttClient
 {
     Q_OBJECT
+    Q_PROPERTY(QmlSslConfiguration* sslConfiguration MEMBER m_qmlSslConf)
+
 public:
     QmlMqttClient(QObject *parent = nullptr);
     Q_INVOKABLE int publish(const QString &topic, const QString &message, quint8 qos = 0, bool retain = false);
     Q_INVOKABLE QmlMqttSubscription *subscribe(const QString &topic);
+    Q_INVOKABLE void connectToHostEncrypted();
 private:
     Q_DISABLE_COPY(QmlMqttClient)
+    QmlSslConfiguration *m_qmlSslConf;
 };
 
 #endif // QMLMQTTCLIENT_H

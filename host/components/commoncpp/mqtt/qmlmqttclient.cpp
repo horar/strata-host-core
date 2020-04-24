@@ -4,11 +4,13 @@ QmlMqttClient::QmlMqttClient(QObject *parent)
     : QMqttClient(parent)
 {
 }
+
 int QmlMqttClient::publish(const QString &topic, const QString &message, quint8 qos, bool retain)
 {
     auto result = QMqttClient::publish(QMqttTopicName(topic), message.toUtf8(), qos, retain);
     return result;
 }
+
 QmlMqttSubscription* QmlMqttClient::subscribe(const QString &topic)
 {
     auto sub = QMqttClient::subscribe(topic, 0);
@@ -31,4 +33,9 @@ QmlMqttSubscription::~QmlMqttSubscription()
 void QmlMqttSubscription::handleMessage(const QMqttMessage &qmsg)
 {
     emit messageReceived(qmsg.payload());
+}
+
+void QmlMqttClient::connectToHostEncrypted()
+{
+    QMqttClient::connectToHostEncrypted(m_qmlSslConf->getQsslConfObject());
 }
