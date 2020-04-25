@@ -10,7 +10,7 @@ class QmlSslConfiguration : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString rootCertificate READ getCaCertificate WRITE setCaCertificate NOTIFY caCertificateChanged)
-    Q_PROPERTY(QString localCertificate READ getLocalCertificate WRITE setLocalCertificate NOTIFY localCertificateChainChanged)
+    Q_PROPERTY(QString localCertificate READ getLocalCertificate WRITE setLocalCertificate NOTIFY localCertificateChanged)
     Q_PROPERTY(QString privateKey READ getPrivateKey WRITE setPrivateKey NOTIFY privateKeyChanged)
 
 public:
@@ -18,7 +18,7 @@ public:
     ~QmlSslConfiguration();
 
     QByteArray readKey(const QString &fileName);
-    QSslConfiguration getQsslConfObject() const;
+    QSslConfiguration getQsslConfigurationObject() const;
 
     QString getCaCertificate() const;
     QString getLocalCertificate() const;
@@ -29,16 +29,16 @@ public:
     void setPrivateKey(const QString &PrivateKey);
 
 signals:
-    void caCertificateChanged(const QString rootCertificate);
-    void localCertificateChainChanged(const QString lcoalCertificate);
-    void privateKeyChanged(const QString PrivateKey);
+    void caCertificateChanged(const QString &rootCertificate);
+    void localCertificateChanged(const QString &lcoalCertificate);
+    void privateKeyChanged(const QString &PrivateKey);
 
 private:
     Q_DISABLE_COPY(QmlSslConfiguration)
     QString rootCertificate_;
     QString localCertificate_;
     QString privateKey_;
-    QSslConfiguration qsslConfiguration_;
+    QSslConfiguration qSslConfiguration_;
 
 };
 

@@ -19,9 +19,9 @@ QByteArray QmlSslConfiguration::readKey(const QString &fileName)
     return input.readAll();
 }
 
-QSslConfiguration QmlSslConfiguration::getQsslConfObject() const
+QSslConfiguration QmlSslConfiguration::getQsslConfigurationObject() const
 {
-    return qsslConfiguration_;
+    return qSslConfiguration_;
 }
 
 QString QmlSslConfiguration::getCaCertificate() const
@@ -43,7 +43,7 @@ void QmlSslConfiguration::setCaCertificate(const QString &rootCertificate)
 {
     if (rootCertificate_ != rootCertificate) {
         rootCertificate_ = rootCertificate;
-        qsslConfiguration_.setCaCertificates(QSslCertificate::fromPath(rootCertificate_));
+        qSslConfiguration_.setCaCertificates(QSslCertificate::fromPath(rootCertificate_));
         emit caCertificateChanged(rootCertificate_);
     }
 }
@@ -52,8 +52,8 @@ void QmlSslConfiguration::setLocalCertificate(const QString &localCertificate)
 {
     if (localCertificate_ != localCertificate) {
         localCertificate_ = localCertificate;
-        qsslConfiguration_.setLocalCertificateChain(QSslCertificate::fromPath(localCertificate_));
-        emit localCertificateChainChanged(localCertificate_);
+        qSslConfiguration_.setLocalCertificateChain(QSslCertificate::fromPath(localCertificate_));
+        emit localCertificateChanged(localCertificate_);
     }
 }
 
@@ -62,7 +62,7 @@ void QmlSslConfiguration::setPrivateKey(const QString &privateKey)
     if (privateKey_ != privateKey) {
         privateKey_ = privateKey;
         QSslKey sslkey(readKey(privateKey), QSsl::Rsa);
-        qsslConfiguration_.setPrivateKey(sslkey);
+        qSslConfiguration_.setPrivateKey(sslkey);
         emit privateKeyChanged(privateKey_);
     }
 }

@@ -15,12 +15,12 @@ public:
     QmlMqttSubscription(QMqttSubscription *subscription, QmlMqttClient *client);
     ~QmlMqttSubscription();
 
-Q_SIGNALS:
-    void topicChanged(QString);
-    void messageReceived(const QString &msg);
-
 public slots:
-    void handleMessage(const QMqttMessage &qmsg);
+    void handleMessage(const QMqttMessage &qmessage);
+
+signals:
+    void topicChanged(const QString &topic);
+    void messageReceived(const QString &message);
 
 private:
     Q_DISABLE_COPY(QmlMqttSubscription)
