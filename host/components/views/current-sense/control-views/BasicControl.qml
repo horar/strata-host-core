@@ -1033,7 +1033,7 @@ Item {
 
                                                 SGSlider {
                                                     id: maxInputCurrent
-                                                    width: maxInputCurrentContainer.width - 50
+                                                    width: maxInputCurrentContainer.width - inputBoxWidth
                                                     live: false
                                                     from: 0.0
                                                     to: 30
@@ -1041,7 +1041,7 @@ Item {
                                                     fromText.text: "0A"
                                                     toText.text: "30A"
 
-                                                    inputBoxWidth: 45
+                                                    inputBoxWidth: 65
                                                     fontSizeMultiplier: ratioCalc * 1.2
                                                     inputBox.validator: DoubleValidator { }
                                                     inputBox.text: maxInputCurrent.value.toFixed(1)
@@ -1101,7 +1101,7 @@ Item {
 
                                                 SGSlider {
                                                     id: maxInputVoltage
-                                                    width: maxInputVoltageContainer.width - 50
+                                                    width: maxInputVoltageContainer.width - inputBoxWidth
                                                     live: false
                                                     from: 0
                                                     to: 26
@@ -1109,7 +1109,7 @@ Item {
                                                     fromText.text: "0V"
                                                     toText.text: "26V"
 
-                                                    inputBoxWidth: 45
+                                                    inputBoxWidth: 65
                                                     fontSizeMultiplier: ratioCalc * 1.2
                                                     inputBox.validator: DoubleValidator { top: 26; bottom: 0}
 
@@ -1232,6 +1232,17 @@ Item {
                                                             }
                                                         }
 
+                                                        property var switch_enable_status_low_load: platformInterface.switch_enable_status.low_load_en
+                                                        onSwitch_enable_status_low_loadChanged: {
+                                                            if(switch_enable_status_low_load === "on") {
+                                                                lowLoadEnable.checked = true
+                                                                // platformInterface.set_load_dac_load.update(lowloadSetting.value)
+                                                            }
+                                                            else {
+                                                                lowLoadEnable.checked = false
+                                                            }
+                                                        }
+
                                                     }
                                                 }
                                             }
@@ -1244,7 +1255,7 @@ Item {
 
                                                 SGSlider {
                                                     id: lowloadSetting
-                                                    width: lowLoadSettingContainer.width - 50
+                                                    width: lowLoadSettingContainer.width - inputBoxWidth
                                                     anchors.verticalCenter: parent.verticalCenter
                                                     anchors.verticalCenterOffset: 10
                                                     live: false
@@ -1254,7 +1265,7 @@ Item {
                                                     fromText.text: "1µA"
                                                     toText.text: "100µA"
                                                     value: 0
-                                                    inputBoxWidth: 45
+                                                    inputBoxWidth: 65
                                                     inputBox.enabled: true
                                                     fontSizeMultiplier: ratioCalc * 1.2
                                                     inputBox.validator: IntValidator { top: 100; bottom: 1 }
@@ -1327,7 +1338,7 @@ Item {
 
                                                 SGSlider {
                                                     id: midloadSetting
-                                                    width: midLoadSettingContainer.width - 50
+                                                    width: midLoadSettingContainer.width - inputBoxWidth
                                                     live: false
                                                     from: 0.1
                                                     to:  100
@@ -1337,7 +1348,7 @@ Item {
                                                     value: 0
                                                     anchors.verticalCenter: parent.verticalCenter
                                                     anchors.verticalCenterOffset: 10
-                                                    inputBoxWidth: 45
+                                                    inputBoxWidth: 65
                                                     inputBox.enabled: true
                                                     fontSizeMultiplier: ratioCalc * 1.2
                                                     inputBox.validator: DoubleValidator { top: 100; bottom: 0.1}
@@ -1404,7 +1415,7 @@ Item {
 
                                                 SGSlider {
                                                     id: highloadSetting
-                                                    width: highLoadSettingContainer.width - 50
+                                                    width: highLoadSettingContainer.width - inputBoxWidth
                                                     live: false
                                                     from: 0.01
                                                     to:  10
@@ -1414,7 +1425,7 @@ Item {
                                                     value: 0
                                                     anchors.verticalCenter: parent.verticalCenter
                                                     anchors.verticalCenterOffset: 10
-                                                    inputBoxWidth: 45
+                                                    inputBoxWidth: 65
                                                     inputBox.enabled: true
                                                     fontSizeMultiplier: ratioCalc * 1.2
                                                     inputBox.validator: DoubleValidator { top: 10;  bottom: 0.01 }

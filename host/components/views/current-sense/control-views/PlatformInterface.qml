@@ -35,7 +35,8 @@ Item {
         "en_214": "off",       //on or off
         "en_333": "off" ,      //on or off
         "i_in_max" : "30",
-        "i_in_set" : "30"
+        "i_in_set" : "30",
+        "low_load_en" : "off"
 
     }
 
