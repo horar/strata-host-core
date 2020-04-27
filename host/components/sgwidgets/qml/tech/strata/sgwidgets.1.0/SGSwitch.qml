@@ -11,6 +11,7 @@ RowLayout {
     opacity: enabled ? 1 : 0.3
     Layout.fillWidth: false
     Layout.fillHeight: false
+    layer.enabled: true
 
     signal released()
     signal canceled()

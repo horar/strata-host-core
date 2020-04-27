@@ -17,6 +17,7 @@ Item {
 
     implicitHeight: labelLeft ? Math.max(labelText.height, sliderHeight) : labelText.height + sliderHeight + rgbSlider.anchors.topMargin
     implicitWidth: 450
+    layer.enabled: true
 
     Text {
         id: labelText
