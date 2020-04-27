@@ -2,7 +2,6 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
-import tech.strata.fonts 1.0 as StrataFonts
 import tech.strata.commoncpp 1.0 as CommonCpp
 import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.logger 1.0
@@ -65,8 +64,8 @@ Item {
         SGWidgets.SGText {
             id: dummyText
             visible: false
-            fontSizeMultiplier: 1.1
-            font.family: StrataFonts.Fonts.franklinGothicBold
+            fontSizeMultiplier: 1.2
+            font.bold: true
             text: "Default Board Name Length"
         }
 

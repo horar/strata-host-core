@@ -1,7 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
-import tech.strata.fonts 1.0 as StrataFonts
 import QtQuick.Dialogs 1.3
 import tech.strata.logger 1.0
 import tech.strata.commoncpp 1.0 as CommonCpp
@@ -178,7 +177,7 @@ FocusScope {
                         return date.toLocaleTimeString(Qt.locale(), "hh:mm:ss.zzz")
                     }
 
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     color: cmdDelegate.helperTextColor
                 }
 
@@ -246,7 +245,7 @@ FocusScope {
                         rightMargin: 2
                     }
 
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     wrapMode: Text.WrapAnywhere
                     selectByKeyboard: true
                     selectByMouse: true
@@ -434,7 +433,7 @@ FocusScope {
                      || model.platform.status === Sci.SciPlatform.NotRecognized
 
             focus: true
-            font.family: StrataFonts.Fonts.inconsolata
+            font.family: "monospace"
             placeholderText: "Enter Command..."
             isValidAffectsBackground: true
             suggestionListModel: commandHistoryModel
