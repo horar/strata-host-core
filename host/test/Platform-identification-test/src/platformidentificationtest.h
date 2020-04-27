@@ -1,12 +1,12 @@
 #ifndef PLATFORMIDENTIFICATIONTEST_H
 #define PLATFORMIDENTIFICATIONTEST_H
 
-#include <QObject>
 #include <QDir>
+#include <QObject>
 
 #include <BoardManager.h>
-#include <SerialDevice.h>
 #include <SGJLinkConnector.h>
+#include <SerialDevice.h>
 
 #include <iostream>
 
@@ -15,38 +15,51 @@ class PlatformIdentificationTest : public QObject
     Q_OBJECT
 public:
     explicit PlatformIdentificationTest(QObject *parent = nullptr);
-    void init(QString jlinkExePath, QString binariesPath);
+    bool init(QString jlinkExePath, QString binariesPath);
     void start();
 
 private:
     // State machine
     enum class PlatformTestState {
-        Init = 0,
-        FlashinPlatform = 1,
+        FlashingPlatform = 1,
         ConnectingToPlatform = 2,
-        IdentifingPlatform = 3,
-        TestFinished = 4,
-        Idle = 5
+        TestFinished = 3,
+        StartTest = 4
     };
 
 signals:
     void stateChanged(PlatformTestState newState);
-    void testDone(int exitStatus); // signal to exit the app
+    void testDone(int exitStatus);  // signal to exit the app
 
 private slots:
-    void newConnection(int deviceId, bool recognized);
-    void closeConnection(int deviceId);
+    void onNewConnection(int deviceId, bool recognized);
+    void onCloseConnection(int deviceId);
     void onStateChanged(PlatformTestState newState);
     void onCheckJLinkDeviceConnection(bool exitedNormally, bool connected);
     void onFlashCompleted(bool exitedNormally);
+    void onTestTimeout();
 
 private:
-    // Private functions
-    void flashPlatform();
-    void connectToPlatform();
-    void identifyPlatform();
-    bool parseBinaryFileList(QString binariesPath);
+    // struct definition to store test results
+    struct TestCase {
+        QString fileName;
+        QString deviceName;
+        QString verboseName;
+        QString classId;
+        QString platformId;
+        QString bootloaderVersion;
+        QString applicationVersion;
+        bool deviceRecognized;
+        bool testPassed;
+    };
 
+    // Private functions
+    void flashPlatform(QString binaryFileName);
+    void connectToPlatform();
+    void identifyPlatform(bool deviceRecognized);
+    bool parseBinaryFileList(QString binariesPath);
+    void printSummary();
+    void enableBoardManagerSignals(bool enable);
 
     // Private members
     strata::BoardManager mBoardManager;
@@ -54,9 +67,12 @@ private:
     int mTestDeviceId;
     SGJLinkConnector mSGJLinkConnector;
 
+    const int TEST_TIMEOUT = 15000;  // 15s
+    QTimer mTestTimeout;
     QString mAbsloutePathToBinaries;
     int mCurrentBinaryFileIndex;
     QStringList mBinaryFileNameList;
+    std::vector<TestCase> mTestSummaryList;
 };
 
-#endif // PLATFORMIDENTIFICATIONTEST_H
+#endif  // PLATFORMIDENTIFICATIONTEST_H
