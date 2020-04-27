@@ -2,6 +2,7 @@
 
 PlatformIdentificationTest::PlatformIdentificationTest(QObject *parent)
     : QObject(parent),
+      mTestDeviceId{0},
       mTestTimeout(this),
       mCurrentBinaryFileIndex{0},
       mBinaryFileNameList(),
@@ -83,8 +84,7 @@ bool PlatformIdentificationTest::parseBinaryFileList(QString binariesPath) {
 
     // check if empty list
     if (mBinaryFileNameList.empty()) {
-        std::cout << "No .bin files were found in " << mAbsloutePathToBinaries.toStdString()
-                  << std::endl;
+        std::cout << "No .bin files were found in " << mAbsloutePathToBinaries.toStdString() << std::endl;
         return false;
     } 
     else {
@@ -204,12 +204,9 @@ void PlatformIdentificationTest::flashPlatform(QString binaryFileName) {
 }
 
 void PlatformIdentificationTest::printSummary() {
-    std::cout << "#####################################################################"
-              << std::endl;
-    std::cout << "########################### Test Summary ############################"
-              << std::endl;
-    std::cout << "#####################################################################"
-              << std::endl;
+    std::cout << "#####################################################################" << std::endl;
+    std::cout << "########################### Test Summary ############################" << std::endl;
+    std::cout << "#####################################################################" << std::endl;
 
     // check how many test failed. and print them
     int failedTestsCount = 0;
@@ -221,10 +218,8 @@ void PlatformIdentificationTest::printSummary() {
         std::cout << "verbose name: " << testCase.verboseName.toStdString() << std::endl;
         std::cout << "class id: " << testCase.classId.toStdString() << std::endl;
         std::cout << "platform id: " << testCase.platformId.toStdString() << std::endl;
-        std::cout << "bootloader version: " << testCase.bootloaderVersion.toStdString()
-                  << std::endl;
-        std::cout << "application version: " << testCase.applicationVersion.toStdString()
-                  << std::endl;
+        std::cout << "bootloader version: " << testCase.bootloaderVersion.toStdString() << std::endl;
+        std::cout << "application version: " << testCase.applicationVersion.toStdString() << std::endl;
         std::cout << "device recognized: " << testCase.deviceRecognized << std::endl;
         std::cout << "test result: " << testCase.testPassed << std::endl;
 
@@ -234,16 +229,13 @@ void PlatformIdentificationTest::printSummary() {
             failedTestsNames.push_back(testCase.fileName);
         }
 
-        std::cout << "+----------------------------------------------------------------+"
-                  << std::endl;
+        std::cout << "+----------------------------------------------------------------+" << std::endl;
     }
     std::cout << "Total tests: " << mBinaryFileNameList.count() << std::endl;
     std::cout << "Passed: " << mTestSummaryList.size() - failedTestsCount << std::endl;
 
     // tests failed and tests that were not performed.
-    std::cout << "Failed: "
-              << failedTestsCount + (mBinaryFileNameList.count() - mTestSummaryList.size())
-              << std::endl;
+    std::cout << "Failed: " << failedTestsCount + (mBinaryFileNameList.count() - mTestSummaryList.size()) << std::endl;
 
     // if there are failed tests, list their names.
     if (failedTestsCount > 0) {
@@ -263,7 +255,6 @@ void PlatformIdentificationTest::onTestTimeout() {
 }
 
 void PlatformIdentificationTest::onStateChanged(PlatformTestState newState) {
-    std::cout << "state changing from " << (int)mTestState << " to " << (int)newState << std::endl;
     mTestState = newState;
 
     switch (mTestState) {
@@ -285,10 +276,6 @@ void PlatformIdentificationTest::onStateChanged(PlatformTestState newState) {
         case PlatformTestState::StartTest:
             std::cout << "starting the test..." << std::endl;
             mTestTimeout.start();  // timeout until the JLink is connected.
-            break;
-
-        default:
-            // unknown state?
             break;
     }
 }
