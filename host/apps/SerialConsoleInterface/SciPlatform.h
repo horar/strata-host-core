@@ -6,7 +6,9 @@
 #include "SciPlatformSettings.h"
 
 #include <BoardManager.h>
+#include <FlasherConnector.h>
 #include <QObject>
+#include <QPointer>
 
 class SciPlatform: public QObject {
     Q_OBJECT
@@ -20,6 +22,7 @@ class SciPlatform: public QObject {
     Q_PROPERTY(SciScrollbackModel* scrollbackModel READ scrollbackModel CONSTANT)
     Q_PROPERTY(SciCommandHistoryModel* commandHistoryModel READ commandHistoryModel CONSTANT)
     Q_PROPERTY(QString errorString READ errorString WRITE setErrorString NOTIFY errorStringChanged)
+    Q_PROPERTY(bool programInProgress READ programInProgress NOTIFY programInProgressChanged)
 
 public:
     SciPlatform(SciPlatformSettings *settings, QObject *parent = nullptr);
@@ -48,11 +51,13 @@ public:
     SciCommandHistoryModel* commandHistoryModel();
     QString errorString();
     void setErrorString(const QString &errorString);
+    bool programInProgress() const;
 
     void resetPropertiesFromDevice();
     Q_INVOKABLE bool sendMessage(const QByteArray &message);
     Q_INVOKABLE bool exportScrollback(QString filePath) const;
     Q_INVOKABLE void removeCommandFromHistoryAt(int index);
+    Q_INVOKABLE bool programDevice(QString filePath);
 
 signals:
     void verboseNameChanged();
@@ -60,11 +65,30 @@ signals:
     void bootloaderVersionChanged();
     void statusChanged();
     void errorStringChanged();
+    void programInProgressChanged();
+    void flasherProgramProgress(int chunk, int total);
+    void flasherBackupProgress(int chunk);
+    void flasherOperationStateChanged(
+            strata::FlasherConnector::Operation operation,
+            strata::FlasherConnector::State state,
+            QString errorString);
+
+    void flasherFinished(strata::FlasherConnector::Result result);
+
 
 private slots:
     void messageFromDeviceHandler(QByteArray message);
     void messageToDeviceHandler(QByteArray message);
-    void deviceErrorHandler(strata::SerialDevice::ErrorCode errorCode, QString message);
+    void deviceErrorHandler(strata::SerialDevice::ErrorCode errorCode, QString errorString);
+    void flasherProgramProgressHandler(int chunk, int total);
+    void flasherBackupProgressHandler(int chunk);
+
+    void flasherOperationStateChangedHandler(
+            strata::FlasherConnector::Operation operation,
+            strata::FlasherConnector::State state,
+            QString errorString);
+
+    void flasherFinishedHandler(strata::FlasherConnector::Result result);
 
 private:
     strata::SerialDevicePtr device_;
@@ -74,10 +98,14 @@ private:
     QString bootloaderVersion_;
     PlatformStatus status_;
     QString errorString_;
+    bool programInProgress_ = false;
 
     SciScrollbackModel *scrollbackModel_;
     SciCommandHistoryModel *commandHistoryModel_;
     SciPlatformSettings *settings_;
+    QPointer<strata::FlasherConnector> flasherConnector_;
+
+    void setProgramInProgress(bool programInProgress);
 };
 
 #endif //SCI_PLATFORM_H

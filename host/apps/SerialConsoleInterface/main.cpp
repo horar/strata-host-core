@@ -83,6 +83,11 @@ int main(int argc, char *argv[])
 
     qmlRegisterSingletonType(QUrl("qrc:/SciSettings.qml"), "tech.strata.sci", 1, 0, "Settings");
 
+    qmlRegisterUncreatableType<strata::FlasherConnector>("tech.strata.flasherConnector", 1, 0, "FlasherConnector", "can not instantiate FlasherConnector in qml");
+    qRegisterMetaType<strata::FlasherConnector::Operation>();
+    qRegisterMetaType<strata::FlasherConnector::State>();
+    qRegisterMetaType<strata::FlasherConnector::Result>();
+
     loadResources();
 
     QQmlApplicationEngine engine;

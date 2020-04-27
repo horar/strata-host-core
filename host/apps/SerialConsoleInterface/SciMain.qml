@@ -183,7 +183,7 @@ Item {
                         highlightImplicitColor: "#888888"
                         icon.source: "qrc:/sgimages/times.svg"
 
-                        property bool shown: (bgMouseArea.containsMouse || hovered)
+                        property bool shown: (bgMouseArea.containsMouse || hovered) && model.platform.programInProgress === false
 
                         onClicked: {
                             if (model.platform.status === Sci.SciPlatform.Ready
@@ -237,14 +237,6 @@ Item {
                 rootItem: sciMain
                 scrollbackModel: model.platform.scrollbackModel
                 commandHistoryModel: model.platform.commandHistoryModel
-
-                onProgramDeviceRequested: {
-                    if (model.platform.status === Sci.SciPlatform.Ready
-                            || model.platform.status === Sci.SciPlatform.Connected
-                            || model.platform.status === Sci.SciPlatform.NotRecognized) {
-                        showProgramDeviceDialogDialog(model.platform.deviceId)
-                    }
-                }
             }
         }
     }
@@ -263,49 +255,6 @@ Item {
         }
     }
 
-    Component {
-        id: programDeviceDialogComponent
-
-        SGWidgets.SGDialog {
-            id: dialog
-
-            modal: true
-            closePolicy: Popup.NoAutoClose
-            focus: true
-            padding: 0
-            hasTitle: false
-
-            property int deviceId
-
-            contentItem: SGWidgets.SGPage {
-                implicitWidth: sciMain.width - 20
-                implicitHeight: sciMain.height - 20
-
-                title: "Program Device Wizard"
-                hasBack: false
-
-//                contentItem: Common.ProgramDeviceWizard {
-//                    boardManager: sciModel.boardManager
-//                    closeButtonVisible: true
-//                    requestCancelOnClose: true
-//                    loopMode: false
-//                    checkFirmware: false
-
-//                    useCurrentConnectionId: true
-//                    currentConnectionId: dialog.deviceId
-
-//                    onCancelRequested: {
-//                        if (sciModel.platformModel.ignoreNewConnections) {
-//                            dialog.close()
-//                            sciModel.platformModel.ignoreNewConnections = false
-//                            sciModel.platformModel.reconectAll()
-//                        }
-//                    }
-//                }
-            }
-        }
-    }
-
     function removeBoard(index) {
         if (index <= tabBar.currentIndex) {
             //shift currentIndex
@@ -314,18 +263,6 @@ Item {
 
         sciModel.platformModel.disconnectPlatformFromSci(index);
         sciModel.platformModel.removePlatform(index)
-    }
-
-    function showProgramDeviceDialogDialog(deviceId) {
-        var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(
-                    root,
-                    programDeviceDialogComponent,
-                    {
-                        "deviceId": deviceId
-                    })
-
-        sciModel.platformModel.ignoreNewConnections = true
-        dialog.open()
     }
 
     function showPlatformInfoWindow(classId, className) {
