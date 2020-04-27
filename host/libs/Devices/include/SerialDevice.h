@@ -51,7 +51,7 @@ namespace strata {
         /**
          * Send message to serial device. Emits serialDeviceError in case of failure.
          * @param msg message to be written to device
-         * @return true if message can be sent, otherwise false
+         * @return true if message can be send, otherwise false
          */
         bool sendMessage(const QByteArray msg);
 
