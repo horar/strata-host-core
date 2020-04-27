@@ -145,8 +145,8 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
         }
         else {
             qCCritical(logCategorySerialDevice).noquote() << this << errMsg;
+            emit serialDeviceError(error, serialPort_.errorString());
         }
-        emit serialDeviceError(static_cast<int>(error), serialPort_.errorString());
     }
 }
 
