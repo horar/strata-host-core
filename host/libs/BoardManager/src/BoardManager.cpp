@@ -324,7 +324,7 @@ void BoardManager::handleSerialDeviceError(int errCode, QString errStr) {
     if (errCode == static_cast<int>(QSerialPort::ResourceError)) {
         int deviceId = sDevice->deviceId();
         qCWarning(logCategoryBoardManager).nospace() << "Interrupted connection with device 0x" << hex << static_cast<uint>(deviceId);
-        QTimer::singleShot(0, [this, deviceId](){
+        QTimer::singleShot(0, this, [this, deviceId](){
             bool removed = false;
             {
                 QMutexLocker lock(&mutex_);
