@@ -38,6 +38,7 @@ Item {
             width:height
             checkable:true
             ButtonGroup.group: sensorButtonGroup
+            hoverEnabled: true
 
             background: Rectangle {
                     color:"transparent"
@@ -62,6 +63,18 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:signalStrengthButton.checked ? .75 : .2
+            }
+
+            Text{
+                id:signalStrengthLabel
+                anchors.top: signalStrengthButton.bottom
+                anchors.horizontalCenter: signalStrengthButton.horizontalCenter
+                anchors.topMargin: 10
+                text: "signal strength"
+                font.pixelSize: 18
+                visible: signalStrengthButton.hovered
+
+
             }
         }
 
