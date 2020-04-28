@@ -16,6 +16,7 @@ Rectangle{
     border.width: height > 100 ? 5 : 2
 
     property bool isOn:false
+    signal clicked
 
 
     onIsOnChanged: {
@@ -106,7 +107,8 @@ Rectangle{
         width:parent.width
 
         onClicked: {
-            root.isOn = !root.isOn
+            //root.isOn = !root.isOn
+            root.clicked()
         }
     }
 

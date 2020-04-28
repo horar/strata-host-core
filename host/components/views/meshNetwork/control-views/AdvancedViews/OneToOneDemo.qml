@@ -35,71 +35,48 @@ Rectangle {
 
         property var button: platformInterface.demo_click_notification
         onButtonChanged:{
-            if (platformInterface.demo_click_notification.demo === "one_to_many")
+            if (platformInterface.demo_click_notification.demo === "one_to_one")
                 if (platformInterface.demo_click_notification.button === "switch")
-                    if (platformInterface.demo_click_notification.value === "on")
+                    if (platformInterface.demo_click_notification.value === "on"){
                         switchOutline.isOn = true;
-                       else
+                        lightBulb.onOpacity = 1
+                    }
+                    else{
                         switchOutline.isOn = false;
+                        lightBulb.onOpacity = 0
+                    }
 
         }
 
-        onIsOnChanged: {
-            if (isOn){
+        onClicked:{
+            if (!isOn){     //turning the lightbulb on
                 lightBulb.onOpacity = 1
-                platformInterface.demo_click.update("one_to_one","switch","on")
-            }
-              else{
+                platformInterface.light_hsl_set.update(65535,0,0,100);  //set color to white
+                switchOutline.isOn = true
+              }
+              else{         //turning the lightbulb off
                 lightBulb.onOpacity = 0
-                platformInterface.demo_click.update("one_to_one","switch","off")
-            }
+                platformInterface.light_hsl_set.update(65535,0,0,0);  //set color to black
+                switchOutline.isOn = false
+              }
         }
-    }
 
-//    Button{
-//        id:switchButton
-//        height:100
-//        width:100
-//        anchors.left:parent.left
-//        anchors.leftMargin:parent.width*.2
-//        anchors.verticalCenter: parent.verticalCenter
-//        text:"switch"
-//        font.pixelSize: 24
+//        onIsOnChanged: {
 
-
-//        background: Rectangle {
-//               implicitWidth: 100
-//               implicitHeight: 40
-//               color: switchButton.pressed ? "lightgrey" : "transparent"
-//               border.color: "black"
-//               border.width: 5
-//               radius: 10
-//           }
-
-//        property bool isOn
-
-//        property var button: platformInterface.demo_click_notification
-//        onButtonChanged:{
-//            if (platformInterface.demo_click_notification.demo === "one_to_one")
-//                if (platformInterface.demo_click_notification.button === "switch")
-//                    if (platformInterface.demo_click_notification.value === "on")
-//                        switchButton.isOn = true;
-//                       else
-//                        switchButton.isOn = false;
-//        }
-
-//        onClicked: {
-//            isOn = !isOn;
 //            if (isOn){
 //                lightBulb.onOpacity = 1
-//                platformInterface.demo_click.update("one_to_one","switch","on")
+//                //platformInterface.demo_click.update("one_to_one","switch","on")
+//                platformInterface.light_hsl_set.update(65535,0,0,100);  //set color to white
 //            }
 //              else{
 //                lightBulb.onOpacity = 0
-//                platformInterface.demo_click.update("one_to_one","switch","off")
+//                //platformInterface.demo_click.update("one_to_one","switch","off")
+//                platformInterface.light_hsl_set.update(65535,0,0,0);  //set color to black
 //            }
 //        }
-//    }
+    }
+
+
 
 
 

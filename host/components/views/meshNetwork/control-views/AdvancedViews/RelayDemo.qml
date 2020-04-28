@@ -45,24 +45,44 @@ Rectangle {
         onButtonChanged:{
             if (platformInterface.demo_click_notification.demo === "relay")
                 if (platformInterface.demo_click_notification.button === "switch1")
-                    if (platformInterface.demo_click_notification.value === "on")
+                    if (platformInterface.demo_click_notification.value === "on"){
                         switchOutline.isOn = true;
-                       else
+                        if(relaySwitch.checked)
+                            lightBulb.onOpacity = 1
+                    }
+                       else{
                         switchOutline.isOn = false;
+                        if(relaySwitch.checked)
+                            lightBulb.onOpacity = 0
+                    }
 
         }
 
         //this switch should have no effect on the lightbulb if the relay switch is off
-        onIsOnChanged: {
-            if (isOn && relaySwitch.checked){
+        onClicked:{
+            if (!isOn && relaySwitch.checked){     //turning the lightbulb on
                 lightBulb.onOpacity = 1
-                platformInterface.demo_click.update("relay","switch1","on")
-            }
-              else if (!isOn && relaySwitch.checked){
+                platformInterface.light_hsl_set.update(65535,0,0,100);  //set color to white
+                switchOutline.isOn = true
+              }
+              else if (isOn && relaySwitch.checked){         //turning the lightbulb off
                 lightBulb.onOpacity = 0
-                platformInterface.demo_click.update("relay","switch1","off")
-            }
+                platformInterface.light_hsl_set.update(65535,0,0,0);  //set color to black
+                switchOutline.isOn = false
+              }
         }
+
+
+//        onIsOnChanged: {
+//            if (isOn && relaySwitch.checked){
+//                lightBulb.onOpacity = 1
+//                platformInterface.demo_click.update("relay","switch1","on")
+//            }
+//              else if (!isOn && relaySwitch.checked){
+//                lightBulb.onOpacity = 0
+//                platformInterface.demo_click.update("relay","switch1","off")
+//            }
+//        }
     }
 
     Image{
@@ -87,23 +107,40 @@ Rectangle {
         onButtonChanged:{
             if (platformInterface.demo_click_notification.demo === "relay")
                 if (platformInterface.demo_click_notification.button === "switch2")
-                    if (platformInterface.demo_click_notification.value === "on")
+                    if (platformInterface.demo_click_notification.value === "on"){
                         switchOutline2.isOn = true;
-                       else
+                        lightBulb.onOpacity = 1
+                    }
+                    else{
                         switchOutline2.isOn = false;
+                        lightBulb.onOpacity = 0
+                    }
 
         }
 
-        onIsOnChanged: {
-            if (isOn){
+        onClicked:{
+            if (!isOn){     //turning the lightbulb on
                 lightBulb.onOpacity = 1
-                platformInterface.demo_click.update("relay","switch2","on")
-            }
-              else{
+                platformInterface.light_hsl_set.update(65535,0,0,100);  //set color to white
+                switchOutline2.isOn = true
+              }
+              else{         //turning the lightbulb off
                 lightBulb.onOpacity = 0
-                platformInterface.demo_click.update("relay","switch2","off")
-            }
+                platformInterface.light_hsl_set.update(65535,0,0,0);  //set color to black
+                switchOutline2.isOn = false
+              }
         }
+
+//        onIsOnChanged: {
+//            if (isOn){
+//                lightBulb.onOpacity = 1
+//                platformInterface.demo_click.update("relay","switch2","on")
+//            }
+//              else{
+//                lightBulb.onOpacity = 0
+//                platformInterface.demo_click.update("relay","switch2","off")
+//            }
+//        }
     }
 
     SGSwitch{

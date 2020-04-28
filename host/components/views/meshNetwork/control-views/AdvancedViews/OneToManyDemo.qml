@@ -37,27 +37,52 @@ Rectangle {
         onButtonChanged:{
             if (platformInterface.demo_click_notification.demo === "one_to_many")
                 if (platformInterface.demo_click_notification.button === "switch")
-                    if (platformInterface.demo_click_notification.value === "on")
+                    if (platformInterface.demo_click_notification.value === "on"){
                         switchOutline.isOn = true;
-                       else
+                        lightBulb1.onOpacity =1
+                        lightBulb2.onOpacity =1
+                        lightBulb3.onOpacity =1
+                    }
+                    else{
                         switchOutline.isOn = false;
+                        lightBulb1.onOpacity =0
+                        lightBulb2.onOpacity =0
+                        lightBulb3.onOpacity =0
+                    }
 
         }
 
-        onIsOnChanged: {
-            if (isOn){
+        onClicked:{
+            if (!isOn){     //turning the lightbulb on
                 lightBulb1.onOpacity =1
                 lightBulb2.onOpacity =1
                 lightBulb3.onOpacity =1
-                platformInterface.demo_click.update("one_to_many","switch","on")
-            }
-              else{
+                platformInterface.light_hsl_set.update(65535,0,0,100);  //set color to white
+                switchOutline.isOn = true
+              }
+              else{         //turning the lightbulb off
                 lightBulb1.onOpacity =0
                 lightBulb2.onOpacity =0
                 lightBulb3.onOpacity =0
-                platformInterface.demo_click.update("one_to_many","switch","off")
-            }
+                platformInterface.light_hsl_set.update(65535,0,0,0);  //set color to black
+                switchOutline.isOn = false
+              }
         }
+
+//        onIsOnChanged: {
+//            if (isOn){
+//                lightBulb1.onOpacity =1
+//                lightBulb2.onOpacity =1
+//                lightBulb3.onOpacity =1
+//                platformInterface.demo_click.update("one_to_many","switch","on")
+//            }
+//              else{
+//                lightBulb1.onOpacity =0
+//                lightBulb2.onOpacity =0
+//                lightBulb3.onOpacity =0
+//                platformInterface.demo_click.update("one_to_many","switch","off")
+//            }
+//        }
     }
 
     Image{
