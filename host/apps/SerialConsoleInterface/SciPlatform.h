@@ -64,7 +64,7 @@ signals:
 private slots:
     void messageFromDeviceHandler(QByteArray message);
     void messageToDeviceHandler(QByteArray message);
-    void deviceErrorHandler(int errorCode, QString message);
+    void deviceErrorHandler(strata::SerialDevice::ErrorCode errorCode, QString message);
 
 private:
     strata::SerialDevicePtr device_;

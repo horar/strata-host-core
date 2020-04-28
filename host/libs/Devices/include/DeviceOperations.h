@@ -88,7 +88,7 @@ private:
 
     void handleResponseTimeout();
 
-    void handleDeviceError(int errCode, QString msg);
+    void handleSerialDeviceError(SerialDevice::ErrorCode errCode, QString msg);
 
     void handleDeviceResponse(const QByteArray& data);
 
