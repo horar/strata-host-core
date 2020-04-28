@@ -34,7 +34,7 @@ Rectangle {
     Button{
         id:getTemperatureButton
         anchors.left:parent.left
-        anchors.leftMargin: parent.width * .1
+        anchors.leftMargin: parent.width * .2
         anchors.verticalCenter: parent.verticalCenter
         text:"get temperature"
 
@@ -97,7 +97,7 @@ Rectangle {
     Image{
         id:sensorImage
         anchors.right:parent.right
-        anchors.rightMargin:parent.width*0
+        anchors.rightMargin:parent.width*.1
         anchors.verticalCenter: parent.verticalCenter
         source: "qrc:/views/meshNetwork/images/sensorIcon.svg"
         height:400
@@ -139,7 +139,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:parent.bottom
         anchors.bottomMargin: 20
-        text:"reconfigure"
+        text:"configure"
 
         contentItem: Text {
                 text: resetButton.text
@@ -162,7 +162,11 @@ Rectangle {
 
             onClicked: {
                 platformInterface.set_demo.update("sensor")
-                resetThermostatBar.start()
+                root.resetUI()
             }
+    }
+
+    function resetUI(){
+        resetThermostatBar.start()
     }
 }
