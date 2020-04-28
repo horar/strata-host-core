@@ -101,25 +101,13 @@ Rectangle{
         }
     }
     MouseArea{
-        id:switchOnMouseArea
-        height:parent.height/2
+        id:toggleMouseAreea
+        height:parent.height
         width:parent.width
 
         onClicked: {
-            root.isOn = true
+            root.isOn = !root.isOn
         }
     }
 
-    MouseArea{
-        id:switchOffMouseArea
-        x:0
-        y:parent.height/2
-        height:parent.height/2
-        width:parent.width
-
-        onClicked: {
-            root.isOn = false
-
-        }
-    }
 }
