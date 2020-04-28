@@ -73,6 +73,7 @@ private:
     int mCurrentBinaryFileIndex;
     QStringList mBinaryFileNameList;
     std::vector<TestCase> mTestSummaryList;
+    bool mTestFailed;
 };
 
 #endif  // PLATFORMIDENTIFICATIONTEST_H

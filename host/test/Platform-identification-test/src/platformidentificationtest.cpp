@@ -6,7 +6,8 @@ PlatformIdentificationTest::PlatformIdentificationTest(QObject *parent)
       mTestTimeout(this),
       mCurrentBinaryFileIndex{0},
       mBinaryFileNameList(),
-      mTestSummaryList()
+      mTestSummaryList(),
+      mTestFailed{false}
 {
     // Connect private signals
     connect(this, &PlatformIdentificationTest::stateChanged, this, &PlatformIdentificationTest::onStateChanged);
@@ -120,7 +121,8 @@ void PlatformIdentificationTest::onFlashCompleted(bool exitedNormally) {
         enableBoardManagerSignals(true);
         stateChanged(PlatformTestState::ConnectingToPlatform);
     } else {
-        std::cout << "Failed to flash the platform. Existing..." << std::endl;
+        std::cout << "Failed to flash the platform. Aborting..." << std::endl;
+        mTestFailed = true;
         stateChanged(PlatformTestState::TestFinished);
     }
 }
@@ -163,6 +165,7 @@ void PlatformIdentificationTest::identifyPlatform(bool deviceRecognized) {
     } 
     else {
         std::cout << "TestDevicePtr is null. Aborting..." << std::endl;
+        mTestFailed = true;
         stateChanged(PlatformTestState::TestFinished);
     }
 
@@ -182,7 +185,8 @@ void PlatformIdentificationTest::connectToPlatform() {
         // get the connected devices and set mTestDeviceId
         auto connectedDevicesList = mBoardManager.readyDeviceIds();
         if (connectedDevicesList.empty()) {
-            std::cout << "no connected devices." << std::endl;
+            std::cout << "No connected devices. Aborting..." << std::endl;
+            mTestFailed = true;
             stateChanged(PlatformTestState::TestFinished);
         } 
         else {
@@ -239,18 +243,19 @@ void PlatformIdentificationTest::printSummary() {
 
     // if there are failed tests, list their names.
     if (failedTestsCount > 0) {
+        mTestFailed = true;
         std::cout << "Failed tests:" << std::endl;
         for (const auto &fileName : failedTestsNames) {
             std::cout << "\t" << fileName.toStdString() << std::endl;
         }
     }
 
-    std::cout << "#####################################################################"
-              << std::endl;
+    std::cout << "#####################################################################" << std::endl;
 }
 
 void PlatformIdentificationTest::onTestTimeout() {
     std::cout << "Test Timeout. Aborting..." << std::endl;
+    mTestFailed = true;
     stateChanged(PlatformTestState::TestFinished);
 }
 
@@ -270,7 +275,7 @@ void PlatformIdentificationTest::onStateChanged(PlatformTestState newState) {
 
         case PlatformTestState::TestFinished:
             printSummary();
-            emit testDone(0);  // find a way to pass/fail
+            emit testDone(mTestFailed);
             break;
 
         case PlatformTestState::StartTest:
