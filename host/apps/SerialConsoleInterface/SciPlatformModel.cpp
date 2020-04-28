@@ -154,6 +154,7 @@ void SciPlatformModel::boardConnectedHandler(int deviceId)
     if (index < 0) {
         appendNewPlatform(deviceId);
     } else {
+        platformList_.at(index)->setErrorString("");
         platformList_.at(index)->setDevice(boardManager_->device(deviceId));
         platformList_.at(index)->setStatus(SciPlatform::PlatformStatus::Connected);
 
