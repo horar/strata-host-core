@@ -73,8 +73,6 @@ Item {
                 text: "signal strength"
                 font.pixelSize: 18
                 visible: signalStrengthButton.hovered
-
-
             }
         }
 
@@ -107,6 +105,16 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:ambientLightButton.checked ? .75 : .2
+            }
+
+            Text{
+                id:ambientLightLabel
+                anchors.top: ambientLightButton.bottom
+                anchors.horizontalCenter: ambientLightButton.horizontalCenter
+                anchors.topMargin: 10
+                text: "ambient light"
+                font.pixelSize: 18
+                visible: ambientLightButton.hovered
             }
         }
 
@@ -142,6 +150,16 @@ Item {
                 mipmap:true
                 opacity:batteryChargeButton.checked ? .75 : .2
             }
+
+            Text{
+                id:batteryChargeLabel
+                anchors.top: batteryChargeButton.bottom
+                anchors.horizontalCenter: batteryChargeButton.horizontalCenter
+                anchors.topMargin: 10
+                text: "battery charge"
+                font.pixelSize: 18
+                visible: batteryChargeButton.hovered
+            }
         }
 
         Button{
@@ -173,6 +191,16 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:temperatureButton.checked ? .75 : .2
+            }
+
+            Text{
+                id:temperatureButtonLabel
+                anchors.top: temperatureButton.bottom
+                anchors.horizontalCenter: temperatureButton.horizontalCenter
+                anchors.topMargin: 10
+                text: "temperature"
+                font.pixelSize: 18
+                visible: temperatureButton.hovered
             }
         }
 
@@ -207,6 +235,16 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:meshButton.checked ? .75 : .2
+            }
+
+            Text{
+                id:meshButtonLabel
+                anchors.top: meshButton.bottom
+                anchors.horizontalCenter: meshButton.horizontalCenter
+                anchors.topMargin: 10
+                text: "node connections"
+                font.pixelSize: 18
+                visible: meshButton.hovered
             }
         }
 
@@ -247,6 +285,16 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
                 opacity:clearButton.checked ? .75 : .2
+            }
+
+            Text{
+                id:clearButtonLabel
+                anchors.top: clearButton.bottom
+                anchors.horizontalCenter: clearButton.horizontalCenter
+                anchors.topMargin: 10
+                text: "clear"
+                font.pixelSize: 18
+                visible: clearButton.hovered
             }
         }
 
