@@ -10,28 +10,6 @@ find_package(Qt5 ${VERSION_QT5}
 
 add_library(${PROJECT_NAME} MODULE)
 
-add_library(SGJLinkConnector
-    SGJLinkConnector.cpp
-    SGJLinkConnector.h
-    logging/LoggingQtCategories.cpp
-)
-#target_sources(SGJLinkConnector
-#    PRIVATE
-#    SGJLinkConnector.cpp
-#    SGJLinkConnector.h
-#)
-target_link_libraries(SGJLinkConnector
-    PRIVATE
-    Qt5::Core
-    QtLogger
-)
-target_include_directories(SGJLinkConnector
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-)
-set_target_properties(SGJLinkConnector PROPERTIES
-    AUTOMOC ON
-)
-
 target_sources(${PROJECT_NAME}
     PRIVATE
     CommonCppPlugin.cpp
@@ -73,6 +51,27 @@ add_custom_command(
         ${CMAKE_COMMAND} -E copy_if_different
         ${CMAKE_CURRENT_LIST_DIR}/imports/tech/strata/commoncpp/plugins.qmltypes
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/
+)
+
+# Export SGJLinkConnector
+add_library(SGJLinkConnector
+    SGJLinkConnector.cpp
+    SGJLinkConnector.h
+    logging/LoggingQtCategories.cpp
+)
+
+target_link_libraries(SGJLinkConnector
+    PRIVATE
+    Qt5::Core
+    QtLogger
+)
+
+target_include_directories(SGJLinkConnector
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+set_target_properties(SGJLinkConnector PROPERTIES
+    AUTOMOC ON
 )
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/imports")
