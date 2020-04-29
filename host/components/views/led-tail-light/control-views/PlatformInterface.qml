@@ -438,7 +438,7 @@ Item {
         "scales":[],
         "state":"enabled",
         "value":"125 Hz",
-        "values":["125 Hz","250 Hz"," 300 Hz"]
+        "values":["125 Hz","250 Hz","300 Hz"]
     }
 
     property var led_pwm_freq_caption: {
@@ -500,32 +500,6 @@ Item {
 
     // @command: led_i2c_enable_commands
     // @description: sends LED I2C enable command to platform
-    //
-    //    property var led_i2c_enable_commands : ({
-    //                                                "cmd" : "led_i2c_enable",
-    //                                                "payload": {
-    //                                                    "value":true // default value
-    //                                                },
-
-    //                                                update: function (value) {
-    //                                                    this.set(value)
-    //                                                    this.send(this)
-    //                                                },
-    //                                                set: function (value) {
-    //                                                    this.payload.value = value
-    //                                                },
-    //                                                send: function () { CorePlatformInterface.send(this) },
-    //                                                show: function () { CorePlatformInterface.show(this) }
-    //                                            })
-
-    //    property var led_ch_enable_read : ({
-    //                                           "cmd":"led_ch_enable_read",
-    //                                           update: function () {
-    //                                               CorePlatformInterface.send(this)
-    //                                           },
-    //                                           send: function () { CorePlatformInterface.send(this) },
-    //                                           show: function () { CorePlatformInterface.show(this) }
-    //                                       })
 
 
     property var set_led_out_en : ({
@@ -544,6 +518,133 @@ Item {
                                        send: function () { CorePlatformInterface.send(this) },
                                        show: function () { CorePlatformInterface.show(this) }
                                    })
+
+    property var set_led_ext : ({
+                                    "cmd" : "led_ext",
+                                    "payload": {
+                                        "values":[0,0,0,0,0,0,0,0,0,0,0,0]
+                                    },
+
+                                    update: function (values) {
+                                        this.set(values)
+                                        this.send(this)
+                                    },
+                                    set: function (values) {
+                                        this.payload.values = values
+                                    },
+                                    send: function () { CorePlatformInterface.send(this) },
+                                    show: function () { CorePlatformInterface.show(this) }
+                                })
+
+    property var set_led_oen : ({
+                                    "cmd" : "led_oen",
+                                    "payload": {
+                                        "value":true
+                                    },
+
+                                    update: function (value) {
+                                        this.set(value)
+                                        this.send(this)
+                                    },
+                                    set: function (value) {
+                                        this.payload.value = value
+                                    },
+                                    send: function () { CorePlatformInterface.send(this) },
+                                    show: function () { CorePlatformInterface.show(this) }
+                                })
+
+    property var set_led_pwm_enable : ({
+                                           "cmd" : "led_pwm_enable",
+                                           "payload": {
+                                               "value":true
+                                           },
+
+                                           update: function (value) {
+                                               this.set(value)
+                                               this.send(this)
+                                           },
+                                           set: function (value) {
+                                               this.payload.value = value
+                                           },
+                                           send: function () { CorePlatformInterface.send(this) },
+                                           show: function () { CorePlatformInterface.show(this) }
+                                       })
+
+    property var set_led_pwm_duty_lock : ({
+                                              "cmd" : "led_pwm_duty_lock",
+                                              "payload": {
+                                                  "value":true
+                                              },
+
+                                              update: function (value) {
+                                                  this.set(value)
+                                                  this.send(this)
+                                              },
+                                              set: function (value) {
+                                                  this.payload.value = value
+                                              },
+                                              send: function () { CorePlatformInterface.send(this) },
+                                              show: function () { CorePlatformInterface.show(this) }
+                                          })
+
+    property var set_led_pwm_en_lock : ({
+                                            "cmd" : "led_pwm_en_lock",
+                                            "payload": {
+                                                "value":true
+                                            },
+
+                                            update: function (value) {
+                                                this.set(value)
+                                                this.send(this)
+                                            },
+                                            set: function (value) {
+                                                this.payload.value = value
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+
+
+    property var set_led_pwm_conf : ({
+                                         "cmd" : "led_pwm_conf",
+                                         "payload": {
+                                             "pwm_freq":"125 Hz",
+                                             "pwm_lin":true,
+                                             "pwm_duty":[3,3,3,3,3,3,3,3,3,3,3,3],
+                                             "pwm_en":[1,1,1,1,1,1,1,1,1,1,1,1]
+                                         },
+
+                                         update: function (pwm_freq,pwm_lin,pwm_duty,pwm_en) {
+                                             this.set(pwm_freq,pwm_lin,pwm_duty,pwm_en)
+                                             this.send(this)
+                                         },
+                                         set: function (pwm_freq,pwm_lin,pwm_duty,pwm_en) {
+                                             this.payload.pwm_freq = pwm_freq
+                                             this.payload.pwm_lin = pwm_lin
+                                             this.payload.pwm_duty = pwm_duty
+                                             this.payload.pwm_en = pwm_en
+                                         },
+                                         send: function () { CorePlatformInterface.send(this) },
+                                         show: function () { CorePlatformInterface.show(this) }
+                                     })
+
+    property var set_led_diag_mode : ({
+                                            "cmd" : "led_diag_mode",
+                                            "payload": {
+                                                "value":"No Diagnostic"
+                                            },
+
+                                            update: function (value) {
+                                                this.set(value)
+                                                this.send(this)
+                                            },
+                                            set: function (value) {
+                                                this.payload.value = value
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process
@@ -561,6 +662,34 @@ Item {
     property real outputEnable9: 0
     property real outputEnable10: 0
     property real outputEnable11: 0
+
+    property real outputExt0: 0
+    property real outputExt1: 0
+    property real outputExt2: 0
+    property real outputExt3: 0
+    property real outputExt4: 0
+    property real outputExt5: 0
+    property real outputExt6: 0
+    property real outputExt7: 0
+    property real outputExt8: 0
+    property real outputExt9: 0
+    property real outputExt10: 0
+    property real outputExt11: 0
+
+    property real outputDuty0: 0
+    property real outputDuty1: 0
+    property real outputDuty2: 0
+    property real outputDuty3: 0
+    property real outputDuty4: 0
+    property real outputDuty5: 0
+    property real outputDuty6: 0
+    property real outputDuty7: 0
+    property real outputDuty8: 0
+    property real outputDuty9: 0
+    property real outputDuty10: 0
+    property real outputDuty11: 0
+
+    property bool pwm_lin_state: false
 
 
     Connections {
