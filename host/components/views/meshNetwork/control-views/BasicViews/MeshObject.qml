@@ -120,6 +120,7 @@ Rectangle {
                 onReleased: {
                     //console.log("drag area release called")
                     var theDropAction = dragObject.Drag.drop()
+                    dragObject.resetLocation()              //reset the location of the drag object after it's dropped, regardless of where.
                 }
 
 
@@ -176,7 +177,6 @@ Rectangle {
                     //tell the firmware of the change
                     platformInterface.set_node_mode.update(pairingModel,parseInt(meshObject.nodeNumber),true)
                 }
-                drag.source.resetLocation()             ///send the drag object back to where it was before being dragged
                 objectCircle.border.color = "transparent"
                 objectCircle.border.width = 1
 
