@@ -54,7 +54,7 @@ Item {
         Help.registerTarget(interruptBox, "These readings will let the user know where the interrupt thresholds are and will change depending on which circuit is on as well as input voltage/current through the board is. If these thresholds are exceeded an interrupt will occur.", 7, "currentSenseHelp")
         Help.registerTarget(powerGaugeContainer, "This gauge lets the user know how much power is being drawn by the high current on-board load circuit in relation to its maximum power capability. If maximum power is exceeded, an interrupt will trigger. Refer to "+ " Max Input Voltage " + " and " + "Max On-Board Load Current " + "above to know what the load circuits capabilities are given the current input voltage and load being drawn.", 8, "currentSenseHelp")
         Help.registerTarget(statusListContainer,  "This will contain any interrupt messages or warnings for the user to diagnose any problems.", 9, "currentSenseHelp")
-        Help.registerTarget(manualModeSection,  "This section is for if the user would like to set customizable input voltage and current limits. While in" + "Auto"  + "mode, the limits are determined by the max capabilities of whatever circuit is enabled. While in" + "Manual" + "mode the limits are determined by the user, but will still be limited by the max capabilities of whatever circuit is enabled.", 10, "currentSenseHelp")
+        Help.registerTarget(manualModeSection,  "This section is for if the user would like to set customizable input voltage and current limits. While in " + "\"" + "Auto" + "\""  +" mode, the limits are determined by the max capabilities of whatever circuit is enabled. While in " + "\"" + "Manual" + "\"" + " mode the limits are determined by the user, but will still be limited by the max capabilities of whatever circuit is enabled.", 10, "currentSenseHelp")
     }
 
     onWidthChanged: {
@@ -878,7 +878,29 @@ Item {
                                         Rectangle {
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
-                                            color: "transparent"
+                                            SGAlignedLabel {
+                                                id:  activeDischargeLabel
+                                                target: activeDischarge
+                                                text: "Active \n Discharge"
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                font.bold : true
+                                                alignment: SGAlignedLabel.SideLeftCenter
+                                                anchors.centerIn: parent
+                                                horizontalAlignment: Text.AlignHCenter
+                                                SGSwitch {
+                                                    id: activeDischarge
+                                                    checkedLabel: "On"
+                                                    uncheckedLabel: "Off"
+                                                    fontSizeMultiplier: ratioCalc
+                                                    onToggled: {
+                                                        if(checked)
+                                                            platformInterface.set_active_discharge.update("on")
+                                                        else
+                                                            platformInterface.set_active_discharge.update("off")
+                                                    }
+                                                }
+                                            }
+
                                         }
                                         Rectangle {
                                             Layout.fillHeight: true
@@ -1041,10 +1063,12 @@ Item {
                                                     fromText.text: "0A"
                                                     toText.text: "30A"
 
-                                                    inputBoxWidth: 65
-                                                    fontSizeMultiplier: ratioCalc * 1.2
+                                                    inputBoxWidth: 80
+                                                    fontSizeMultiplier: ratioCalc
                                                     inputBox.validator: DoubleValidator { }
                                                     inputBox.text: maxInputCurrent.value.toFixed(1)
+                                                    inputBox.unit: " A"
+                                                    inputBox.unitFont.bold: true
 
 
 
@@ -1069,7 +1093,6 @@ Item {
                                                     property var switch_enable_status_iin_max: platformInterface.switch_enable_status.i_in_max
                                                     onSwitch_enable_status_iin_maxChanged: {
                                                         maxInputCurrent.to = parseFloat(switch_enable_status_iin_max)
-                                                        console.log("a" ,maxInputCurrent.to)
                                                         maxInputCurrent.toText.text = switch_enable_status_iin_max + "A"
 
                                                     }
@@ -1109,8 +1132,10 @@ Item {
                                                     fromText.text: "0V"
                                                     toText.text: "26V"
 
-                                                    inputBoxWidth: 65
-                                                    fontSizeMultiplier: ratioCalc * 1.2
+                                                    inputBoxWidth: 80
+                                                    inputBox.unit: " V"
+                                                    inputBox.unitFont.bold: true
+                                                    fontSizeMultiplier: ratioCalc
                                                     inputBox.validator: DoubleValidator { top: 26; bottom: 0}
 
 
@@ -1255,7 +1280,7 @@ Item {
 
                                                 SGSlider {
                                                     id: lowloadSetting
-                                                    width: lowLoadSettingContainer.width - inputBoxWidth
+                                                    width: lowLoadSettingContainer.width/1.2
                                                     anchors.verticalCenter: parent.verticalCenter
                                                     anchors.verticalCenterOffset: 10
                                                     live: false
@@ -1265,9 +1290,11 @@ Item {
                                                     fromText.text: "1µA"
                                                     toText.text: "100µA"
                                                     value: 0
-                                                    inputBoxWidth: 65
+                                                    inputBoxWidth: lowLoadSettingContainer.width/5
                                                     inputBox.enabled: true
-                                                    fontSizeMultiplier: ratioCalc * 1.2
+                                                    inputBox.unit: "µA"
+                                                    inputBox.unitFont.bold: true
+                                                    fontSizeMultiplier: ratioCalc * 1.1
                                                     inputBox.validator: IntValidator { top: 100; bottom: 1 }
                                                     onUserSet: {
                                                         if(lowLoadEnable.checked)
@@ -1286,9 +1313,9 @@ Item {
                                         RowLayout{
                                             anchors.fill: parent
                                             Rectangle {
-                                                Layout.preferredWidth: parent.width/6
+
                                                 Layout.fillHeight: true
-                                                //color: "red"
+                                                Layout.preferredWidth: parent.width/6
                                                 SGAlignedLabel {
                                                     id: midCurrentLabel
                                                     target: midCurrentEnable
@@ -1338,19 +1365,25 @@ Item {
 
                                                 SGSlider {
                                                     id: midloadSetting
-                                                    width: midLoadSettingContainer.width - inputBoxWidth
+                                                    width: midLoadSettingContainer.width/1.2
                                                     live: false
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    anchors.verticalCenterOffset: 10
+
                                                     from: 0.1
                                                     to:  100
                                                     stepSize: 0.1
                                                     fromText.text: "0.1mA"
                                                     toText.text: "100mA"
                                                     value: 0
-                                                    anchors.verticalCenter: parent.verticalCenter
-                                                    anchors.verticalCenterOffset: 10
-                                                    inputBoxWidth: 65
+                                                    inputBoxWidth: midLoadSettingContainer.width/5
+                                                    // inputBox.overrideWidth: 80
+                                                    //inputBox.fontSizeMultiplier: ratioCalc * 1.1
+                                                    fontSizeMultiplier: ratioCalc * 1.1
+                                                    inputBox.unit: "mA"
+                                                    inputBox.unitFont.bold: true
                                                     inputBox.enabled: true
-                                                    fontSizeMultiplier: ratioCalc * 1.2
+
                                                     inputBox.validator: DoubleValidator { top: 100; bottom: 0.1}
                                                     onUserSet: {
                                                         if(midCurrentEnable.checked)
@@ -1415,7 +1448,7 @@ Item {
 
                                                 SGSlider {
                                                     id: highloadSetting
-                                                    width: highLoadSettingContainer.width - inputBoxWidth
+                                                    width: highLoadSettingContainer.width/1.2
                                                     live: false
                                                     from: 0.01
                                                     to:  10
@@ -1423,11 +1456,17 @@ Item {
                                                     fromText.text: "0.01A"
                                                     toText.text: "10A"
                                                     value: 0
+
+                                                    inputBox.unit: "A"
+                                                    inputBox.unitFont.bold: true
                                                     anchors.verticalCenter: parent.verticalCenter
                                                     anchors.verticalCenterOffset: 10
-                                                    inputBoxWidth: 65
+                                                    inputBoxWidth: highLoadSettingContainer.width/5
+
                                                     inputBox.enabled: true
-                                                    fontSizeMultiplier: ratioCalc * 1.2
+
+                                                    // inputBox.fontSizeMultiplier: ratioCalc * 1.1
+                                                    fontSizeMultiplier: ratioCalc * 1.1
                                                     inputBox.validator: DoubleValidator { top: 10;  bottom: 0.01 }
                                                     onUserSet: {
                                                         if(highCurrentEnable.checked)

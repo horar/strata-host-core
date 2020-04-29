@@ -234,6 +234,25 @@ Item {
                                     show: function () { CorePlatformInterface.show(this) }
                                 })
 
+    property var set_active_discharge : ({
+                                     "cmd" : "set_active_discharge",
+                                     "payload": {
+                                         "AD_set":"on"	// default value
+                                     },
+
+                                     update: function (AD_set) {
+                                         this.set(AD_set)
+                                         this.send(this)
+                                     },
+                                     set: function (AD_set) {
+                                         this.payload.AD_set = AD_set
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+                                 })
+
+
+
 
 
     // -------------------------------------------------------------------
