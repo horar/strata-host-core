@@ -70,5 +70,6 @@
         <file>images/smartHome_windowOpen.jpg</file>
         <file>images/smartHome_orange.jpg</file>
         <file>images/smartHome_doorOpenWindowOpen.jpg</file>
+        <file>images/mesh_help.html</file>
     </qresource>
 </RCC>

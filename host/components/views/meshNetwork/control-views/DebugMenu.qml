@@ -76,7 +76,7 @@ Rectangle {
                     CorePlatformInterface.data_source_handler('{
                                 "value":"msg_cli",
                                 "payload":{
-                                    "msg": "console message"
+                                    "msg": "12345678901234567890123456789012345678901234567890123456789012345"
                                 }
                         }')
 
