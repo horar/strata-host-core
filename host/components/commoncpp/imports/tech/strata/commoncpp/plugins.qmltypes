@@ -189,6 +189,11 @@ Module {
             Parameter { name: "file"; type: "string" }
         }
         Method {
+            name: "dirName"
+            type: "string"
+            Parameter { name: "path"; type: "string" }
+        }
+        Method {
             name: "pathToUrl"
             type: "QUrl"
             Parameter { name: "path"; type: "string" }
