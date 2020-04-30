@@ -218,7 +218,7 @@ void SciPlatform::messageToDeviceHandler(QByteArray message)
     scrollbackModel_->append(message, SciScrollbackModel::MessageType::Request);
 }
 
-void SciPlatform::deviceErrorHandler(int errorCode, QString message)
+void SciPlatform::deviceErrorHandler(strata::SerialDevice::ErrorCode errorCode, QString message)
 {
     Q_UNUSED(errorCode);
     setErrorString(message);
