@@ -7,13 +7,11 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: root
-    Layout.fillHeight: true
-    Layout.fillWidth: true
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
-    //   anchors.centerIn: parent
-    //    height: parent.height
-    //    width: parent.width/parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+    anchors.centerIn: parent
+    height: parent.height
+    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
     property var led_out_en_state: platformInterface.led_out_en_state.state
     onLed_out_en_stateChanged: {

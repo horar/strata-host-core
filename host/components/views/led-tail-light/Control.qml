@@ -18,23 +18,28 @@ Item {
         id: platformInterface
     }
 
-//    Component.onCompleted: {
-//        Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
-//    }
+    Component.onCompleted: {
+        platformInterface.mode.update("Car Demo")
+    }
 
     TabBar {
         id: navTabs
         anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
+            top: controlNavigation.top
+            left: controlNavigation.left
+            right: controlNavigation.right
         }
 
         TabButton {
             id: carDemoButton
             text: qsTr("Car Demo Mode")
             onClicked: {
-                controlContainer.currentIndex = 0
+                platformInterface.mode.update("Car Demo")
+                carDemoMode.visible = true
+                ledControl.visible = false
+                powerControl.visible = false
+                sAMOPTControl.visible = false
+                miscControl.visible = false
             }
         }
 
@@ -42,7 +47,12 @@ Item {
             id: ledControlButton
             text: qsTr("LED Control")
             onClicked: {
-                controlContainer.currentIndex = 1
+                platformInterface.mode.update("LED Driver")
+                carDemoMode.visible = false
+                ledControl.visible = true
+                powerControl.visible = false
+                sAMOPTControl.visible = false
+                miscControl.visible = false
             }
         }
 
@@ -50,7 +60,11 @@ Item {
             id: powerControlButton
             text: qsTr("Power")
             onClicked: {
-                controlContainer.currentIndex = 2
+                carDemoMode.visible = false
+                ledControl.visible = false
+                powerControl.visible = true
+                sAMOPTControl.visible = false
+                miscControl.visible = false
             }
         }
 
@@ -58,7 +72,11 @@ Item {
             id: samOptControlButton
             text: qsTr("SAM,OTP,And CRC")
             onClicked: {
-                controlContainer.currentIndex = 3
+                carDemoMode.visible = false
+                ledControl.visible = false
+                powerControl.visible = false
+                sAMOPTControl.visible = true
+                miscControl.visible = false
             }
         }
 
@@ -66,12 +84,16 @@ Item {
             id: miscControlButton
             text: qsTr("Miscellaneous")
             onClicked: {
-                controlContainer.currentIndex = 4
+                carDemoMode.visible = false
+                ledControl.visible = false
+                powerControl.visible = false
+                sAMOPTControl.visible = false
+                miscControl.visible = true
             }
         }
     }
 
-    StackLayout {
+    Item {
         id: controlContainer
         anchors {
             top: navTabs.bottom
@@ -82,50 +104,55 @@ Item {
 
         CarDemoControl{
             id: carDemoMode
+            visible: true
         }
 
         LEDControl {
             id: ledControl
+            visible: false
         }
 
         PowerControl {
             id: powerControl
+            visible: false
         }
 
         SAMOPTControl {
             id: sAMOPTControl
+            visible: false
         }
 
         MiscControl {
             id: miscControl
+            visible: false
         }
 
     }
 
-//    SGIcon {
-//        id: helpIcon
-//        anchors {
-//            right: controlContainer.right
-//            top: controlContainer.top
-//            margins: 20
-//        }
-//        source: "control-views/question-circle-solid.svg"
-//        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
-//        height: 40
-//        width: 40
+    //    SGIcon {
+    //        id: helpIcon
+    //        anchors {
+    //            right: controlContainer.right
+    //            top: controlContainer.top
+    //            margins: 20
+    //        }
+    //        source: "control-views/question-circle-solid.svg"
+    //        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+    //        height: 40
+    //        width: 40
 
-//        MouseArea {
-//            id: helpMouse
-//            anchors {
-//                fill: helpIcon
-//            }
-//            onClicked: {
-//                // Make sure view is set to Basic before starting tour
-//                controlContainer.currentIndex = 0
-//                carDemoMode.clicked()
-//                Help.startHelpTour("controlHelp")
-//            }
-//            hoverEnabled: true
-//        }
-//    }
+    //        MouseArea {
+    //            id: helpMouse
+    //            anchors {
+    //                fill: helpIcon
+    //            }
+    //            onClicked: {
+    //                // Make sure view is set to Basic before starting tour
+    //                controlContainer.currentIndex = 0
+    //                carDemoMode.clicked()
+    //                Help.startHelpTour("controlHelp")
+    //            }
+    //            hoverEnabled: true
+    //        }
+    //    }
 }

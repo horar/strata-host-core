@@ -690,6 +690,25 @@ Item {
     property bool reverse_value: false
 
 
+    //Mode commands
+    property var mode : ({
+                                          "cmd" : "mode",
+                                          "payload": {
+                                              "value":"Car Demo"
+                                          },
+
+                                          update: function (value) {
+                                              this.set(value)
+                                              this.send(this)
+                                          },
+                                          set: function (value) {
+                                              this.payload.value = value
+                                          },
+                                          send: function () { CorePlatformInterface.send(this) },
+                                          show: function () { CorePlatformInterface.show(this) }
+                                      })
+
+
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp

@@ -7,13 +7,11 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: root
-    Layout.fillHeight: true
-    Layout.fillWidth: true
-
-
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
-
+    anchors.centerIn: parent
+    height: parent.height
+    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
     Popup{
         id: warningPopup
@@ -633,135 +631,135 @@ Item {
 
                 }
 
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.preferredWidth: parent.width/6
-                    RowLayout {
-                        anchors.fill: parent
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
+                //                Rectangle {
+                //                    Layout.fillHeight: true
+                //                    Layout.preferredWidth: parent.width/6
+                //                    RowLayout {
+                //                        anchors.fill: parent
+                //                        Rectangle {
+                //                            Layout.fillHeight: true
+                //                            Layout.fillWidth: true
 
-                            SGAlignedLabel {
-                                id: i2cAddressLabel
-                                text: "I2C\nAddress"
-                                target: i2cAddress
-                                alignment: SGAlignedLabel.SideTopLeft
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                font.bold : true
+                //                            SGAlignedLabel {
+                //                                id: i2cAddressLabel
+                //                                text: "I2C\nAddress"
+                //                                target: i2cAddress
+                //                                alignment: SGAlignedLabel.SideTopLeft
+                //                                anchors.centerIn: parent
+                //                                fontSizeMultiplier: ratioCalc * 1.2
+                //                                font.bold : true
 
-                                SGStatusLight {
-                                    id: i2cAddress
-                                    width: 30
+                //                                SGStatusLight {
+                //                                    id: i2cAddress
+                //                                    width: 30
 
-                                }
-                            }
-                        }
+                //                                }
+                //                            }
+                //                        }
 
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id: placeholdLabel
-                                text: "\n"
-                                target: add2
-                                alignment: SGAlignedLabel.SideTopLeft
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                font.bold : true
-                                SGStatusLight {
-                                    id: add2
-                                    width: 30
-                                    //anchors.centerIn: parent
-                                }
-                            }
-                        }
-                    }
-                }
+                //                        Rectangle {
+                //                            Layout.fillHeight: true
+                //                            Layout.fillWidth: true
+                //                            SGAlignedLabel {
+                //                                id: placeholdLabel
+                //                                text: "\n"
+                //                                target: add2
+                //                                alignment: SGAlignedLabel.SideTopLeft
+                //                                anchors.centerIn: parent
+                //                                fontSizeMultiplier: ratioCalc * 1.2
+                //                                font.bold : true
+                //                                SGStatusLight {
+                //                                    id: add2
+                //                                    width: 30
+                //                                    //anchors.centerIn: parent
+                //                                }
+                //                            }
+                //                        }
+                //                    }
+                //                }
 
-                Rectangle {
-                    Layout.preferredWidth: parent.width/2.6
-                    Layout.fillHeight: true
-                    RowLayout {
-                        anchors.fill: parent
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id: placehold3Label
-                                text: "\n"
-                                target: add3
-                                alignment: SGAlignedLabel.SideTopLeft
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                font.bold : true
-                                SGStatusLight {
-                                    id: add3
-                                    width: 30
-                                    // anchors.centerIn: parent
-                                }
-                            }
-                        }
+                //                Rectangle {
+                //                    Layout.preferredWidth: parent.width/2.6
+                //                    Layout.fillHeight: true
+                //                    RowLayout {
+                //                        anchors.fill: parent
+                //                        Rectangle {
+                //                            Layout.fillHeight: true
+                //                            Layout.fillWidth: true
+                //                            SGAlignedLabel {
+                //                                id: placehold3Label
+                //                                text: "\n"
+                //                                target: add3
+                //                                alignment: SGAlignedLabel.SideTopLeft
+                //                                anchors.centerIn: parent
+                //                                fontSizeMultiplier: ratioCalc * 1.2
+                //                                font.bold : true
+                //                                SGStatusLight {
+                //                                    id: add3
+                //                                    width: 30
+                //                                    // anchors.centerIn: parent
+                //                                }
+                //                            }
+                //                        }
 
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id: placehold4Label
-                                text: "\n"
-                                target: add4
-                                alignment: SGAlignedLabel.SideTopLeft
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                font.bold : true
-                                SGStatusLight {
-                                    id: add4
-                                    width: 30
-                                    // anchors.centerIn: parent
-                                }
-                            }
-                        }
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id: placehold5Label
-                                text: "\n"
-                                target: add5
-                                alignment: SGAlignedLabel.SideTopLeft
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                font.bold : true
-                                SGStatusLight {
-                                    id: add5
-                                    width: 30
-                                    //anchors.centerIn: parent
-                                }
-                            }
-                        }
+                //                        Rectangle {
+                //                            Layout.fillHeight: true
+                //                            Layout.fillWidth: true
+                //                            SGAlignedLabel {
+                //                                id: placehold4Label
+                //                                text: "\n"
+                //                                target: add4
+                //                                alignment: SGAlignedLabel.SideTopLeft
+                //                                anchors.centerIn: parent
+                //                                fontSizeMultiplier: ratioCalc * 1.2
+                //                                font.bold : true
+                //                                SGStatusLight {
+                //                                    id: add4
+                //                                    width: 30
+                //                                    // anchors.centerIn: parent
+                //                                }
+                //                            }
+                //                        }
+                //                        Rectangle {
+                //                            Layout.fillHeight: true
+                //                            Layout.fillWidth: true
+                //                            SGAlignedLabel {
+                //                                id: placehold5Label
+                //                                text: "\n"
+                //                                target: add5
+                //                                alignment: SGAlignedLabel.SideTopLeft
+                //                                anchors.centerIn: parent
+                //                                fontSizeMultiplier: ratioCalc * 1.2
+                //                                font.bold : true
+                //                                SGStatusLight {
+                //                                    id: add5
+                //                                    width: 30
+                //                                    //anchors.centerIn: parent
+                //                                }
+                //                            }
+                //                        }
 
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
+                //                        Rectangle {
+                //                            Layout.fillHeight: true
+                //                            Layout.fillWidth: true
 
-                            SGAlignedLabel {
-                                id: placehold6Label
-                                text: "\n"
-                                target: add6
-                                alignment: SGAlignedLabel.SideTopLeft
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                font.bold : true
-                                SGStatusLight {
-                                    id: add6
-                                    width: 30
-                                    // anchors.centerIn: parent
-                                }
-                            }
-                        }
-                    }
-                }
+                //                            SGAlignedLabel {
+                //                                id: placehold6Label
+                //                                text: "\n"
+                //                                target: add6
+                //                                alignment: SGAlignedLabel.SideTopLeft
+                //                                anchors.centerIn: parent
+                //                                fontSizeMultiplier: ratioCalc * 1.2
+                //                                font.bold : true
+                //                                SGStatusLight {
+                //                                    id: add6
+                //                                    width: 30
+                //                                    // anchors.centerIn: parent
+                //                                }
+                //                            }
+                //                        }
+                //                    }
+                //                }
             }
         }
 
@@ -772,38 +770,6 @@ Item {
                 width:parent.width/2
                 height: parent.height
                 anchors.left:parent.left
-
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-
-                    SGAlignedLabel {
-                        id: pullISETHightLabel
-                        target: pullISETHight
-                        text: "Pull ISET\nHigh"
-                        alignment: SGAlignedLabel.SideTopLeft
-                        anchors {
-                            verticalCenter: parent.verticalCenter
-                        }
-
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        font.bold : true
-
-                        SGSwitch {
-                            id: pullISETHight
-                            labelsInside: true
-                            checkedLabel: "on"
-                            uncheckedLabel: "off"
-                            textColor: "black"              // Default: "black"
-                            handleColor: "white"            // Default: "white"
-                            grooveColor: "#ccc"             // Default: "#ccc"
-                            grooveFillColor: "#0cf"         // Default: "#0cf"
-                            fontSizeMultiplier: ratioCalc * 1.2
-                            checked: false
-                        }
-                    }
-                }
-
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
@@ -828,6 +794,5 @@ Item {
                 }
             }
         }
-
     }
 }

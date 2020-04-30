@@ -7,23 +7,20 @@ import tech.strata.fonts 1.0
 
 Item {
     id: root
-    Layout.fillHeight: true
-    Layout.fillWidth: true
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
+    anchors.centerIn: parent
+    height: parent.height
+    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     property string voltageType: "Boost"
-
 
     RowLayout {
         width: parent.width - 10
         height: parent.height/1.5
         anchors.centerIn: parent
-
         Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
-            // color: "red"
-
             ColumnLayout {
                 anchors.fill: parent
                 Rectangle {
@@ -211,12 +208,12 @@ Item {
 
         Rectangle {
             Layout.fillHeight: true
-            Layout.preferredWidth: parent.width/1.8
+            Layout.preferredWidth: parent.width/1.5
             ColumnLayout {
                 anchors.fill: parent
 
                 Rectangle {
-                    Layout.preferredHeight: parent.height/1.8
+                    Layout.preferredHeight: parent.height/2
                     Layout.fillWidth: true
                     //color: "red"
 
@@ -452,13 +449,96 @@ Item {
                         anchors.fill: parent
 
                         Rectangle{
+                            id: ledDriverTempTopContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id: ledDriverTempTopLabel
+                                target: ledDriverTempTop
+                                text: "LED Driver Temp Top \n (°C)"
+                                anchors.centerIn: parent
+                                alignment: SGAlignedLabel.SideBottomCenter
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+                                horizontalAlignment: Text.AlignHCenter
+
+                                SGCircularGauge {
+                                    id: ledDriverTempTop
+                                    width: ledDriverTempTopContainer.width
+                                    height: ledDriverTempTopContainer.height - ledDriverTempTopLabel.contentHeight
+                                    tickmarkStepSize: 10
+                                    minimumValue: 0
+                                    maximumValue: 150
+                                    gaugeFillColor1: "blue"
+                                    gaugeFillColor2: "red"
+                                    unitText: "°C"
+                                    unitTextFontSizeMultiplier: ratioCalc * 2.5
+                                    valueDecimalPlaces: 0
+                                    function lerpColor (color1, color2, x){
+                                        if (Qt.colorEqual(color1, color2)){
+                                            return color1;
+                                        } else {
+                                            return Qt.rgba(
+                                                        color1.r * (1 - x) + color2.r * x,
+                                                        color1.g * (1 - x) + color2.g * x,
+                                                        color1.b * (1 - x) + color2.b * x, 1
+                                                        );
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+
+                        Rectangle{
+                            id: ledDriverTempBottomContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id: ledDriverTempBottomLabel
+                                target: ledDriverTempBottom
+                                text: "LED Driver Temp Bottom \n (°C)"
+                                anchors.centerIn: parent
+                                alignment: SGAlignedLabel.SideBottomCenter
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+                                horizontalAlignment: Text.AlignHCenter
+
+                                SGCircularGauge {
+                                    id: ledDriverTempBottom
+                                    width: ledDriverTempBottomContainer.width
+                                    height: ledDriverTempBottomContainer.height - ledDriverTempBottomLabel.contentHeight
+                                    tickmarkStepSize: 10
+                                    minimumValue: 0
+                                    maximumValue: 150
+                                    gaugeFillColor1: "blue"
+                                    gaugeFillColor2: "red"
+                                    unitText: "°C"
+                                    unitTextFontSizeMultiplier: ratioCalc * 2.5
+                                    valueDecimalPlaces: 0
+                                    function lerpColor (color1, color2, x){
+                                        if (Qt.colorEqual(color1, color2)){
+                                            return color1;
+                                        } else {
+                                            return Qt.rgba(
+                                                        color1.r * (1 - x) + color2.r * x,
+                                                        color1.g * (1 - x) + color2.g * x,
+                                                        color1.b * (1 - x) + color2.b * x, 1
+                                                        );
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                        Rectangle{
                             id: tempGaugeContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             SGAlignedLabel {
                                 id: tempGaugeLabel
                                 target: tempGauge
-                                text: "Board Temperature"
+                                text: "LED Temperature \n (°C)"
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier: ratioCalc * 1.2
@@ -467,6 +547,7 @@ Item {
 
                                 SGCircularGauge {
                                     id: tempGauge
+                                    width: tempGaugeContainer.width
                                     height: tempGaugeContainer.height - tempGaugeLabel.contentHeight
                                     tickmarkStepSize: 10
                                     minimumValue: 0
@@ -474,7 +555,7 @@ Item {
                                     gaugeFillColor1: "blue"
                                     gaugeFillColor2: "red"
                                     unitText: "°C"
-                                    unitTextFontSizeMultiplier: ratioCalc * 1.7
+                                    unitTextFontSizeMultiplier: ratioCalc * 2.5
                                     valueDecimalPlaces: 0
                                     function lerpColor (color1, color2, x){
                                         if (Qt.colorEqual(color1, color2)){
@@ -500,7 +581,7 @@ Item {
                             SGAlignedLabel {
                                 id: powerLossGaugeLabel
                                 target: powerLoss
-                                text: "Total Power Loss"
+                                text: "Total Power Loss \n (W)"
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier: ratioCalc * 1.2
@@ -509,6 +590,7 @@ Item {
 
                                 SGCircularGauge {
                                     id: powerLoss
+                                    width: powerLossContainer.width
                                     height: powerLossContainer.height - powerLossGaugeLabel.contentHeight
                                     tickmarkStepSize: 0.5
                                     minimumValue: 0
@@ -516,7 +598,7 @@ Item {
                                     gaugeFillColor1: "blue"
                                     gaugeFillColor2: "red"
                                     unitText: "W"
-                                    unitTextFontSizeMultiplier: ratioCalc * 1.7
+                                    unitTextFontSizeMultiplier: ratioCalc * 2.5
                                     valueDecimalPlaces: 0
                                     function lerpColor (color1, color2, x){
                                         if (Qt.colorEqual(color1, color2)){

@@ -8,11 +8,13 @@ import QtGraphicalEffects 1.12
 
 Rectangle {
     id: root
-    Layout.fillHeight: true
-    Layout.fillWidth: true
     color: "black"
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
+    anchors.centerIn: parent
+    height: parent.height
+    width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
+
 
     property int transformX:0;
     property int transformY:0;
@@ -20,9 +22,6 @@ Rectangle {
     property var car_demo_brightness: platformInterface.car_demo_brightness.value
     onCar_demo_brightnessChanged: {
         baseCar.brightness = car_demo_brightness
-//        if(car_demo_brightness < -0.6)
-//           headlights.visible = true
-//        else   headlights.visible = false
     }
 
     RowLayout {
@@ -30,13 +29,11 @@ Rectangle {
         Rectangle {
             Layout.alignment: Qt.AlignHCenter
             Layout.fillHeight: parent.height
-            // Layout.preferredHeight: parent.height/1.5
             Layout.preferredWidth: parent.width/1.2
-
 
             Image {
                 id: base
-                source: "base.jpg"
+                source: "car-Images/base.jpg"
                 anchors.fill: parent
             }
 
@@ -44,7 +41,7 @@ Rectangle {
                 id: baseCar
                 anchors.fill: base
                 source: base
-                brightness: slider.value
+                // brightness: slider.value
                 contrast: 0
 
 
@@ -52,35 +49,35 @@ Rectangle {
 
             Image {
                 id: headlights
-                source: "headlights.png"
+                source: "car-Images/headlights.png"
                 anchors.fill: parent
                 visible: car_demo_brightness.value < -.6
             }
 
-//            Image {
-//                id: runninglights
-//                source: "running.png"
-//                anchors.fill: parent
-//                visible: running.checked
-//            }
+            //            Image {
+            //                id: runninglights
+            //                source: "running.png"
+            //                anchors.fill: parent
+            //                visible: running.checked
+            //            }
 
             Image {
                 id: brakeLights
-                source: "brakes.png"
+                source: "car-Images/brakes.png"
                 anchors.fill: parent
                 visible: false
             }
 
             Image {
                 id: reverseLights
-                source: "reverse.png"
+                source: "car-Images/reverse.png"
                 anchors.fill: parent
                 visible: reverse.checked
             }
 
             Image {
                 id: hazardLights
-                source: "markers.png"
+                source: "car-Images/markers.png"
                 anchors.fill: parent
                 visible: false
 
@@ -101,7 +98,7 @@ Rectangle {
 
             Image {
                 id: leftSignal
-                source: "left.png"
+                source: "car-Images/left.png"
                 anchors.fill: parent
                 visible: false
 
@@ -122,7 +119,7 @@ Rectangle {
 
             Image {
                 id: rightSignal
-                source: "right.png"
+                source: "car-Images/right.png"
                 anchors.fill: parent
                 visible: false
 
@@ -172,24 +169,24 @@ Rectangle {
                                     brakeLights.visible = true
                                     platformInterface.brake_value = true
                                     platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                   platformInterface.right_value,
-                                                                   platformInterface.brake_value,
-                                                                   platformInterface.hazard_value,
-                                                                   platformInterface.reverse_value
+                                                                          platformInterface.right_value,
+                                                                          platformInterface.brake_value,
+                                                                          platformInterface.hazard_value,
+                                                                          platformInterface.reverse_value
 
-                                                                   )
+                                                                          )
                                 }
                                 else {
 
                                     brakeLights.visible = false
                                     platformInterface.brake_value = false
                                     platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                   platformInterface.right_value,
-                                                                   platformInterface.brake_value,
-                                                                   platformInterface.hazard_value,
-                                                                   platformInterface.reverse_value
+                                                                          platformInterface.right_value,
+                                                                          platformInterface.brake_value,
+                                                                          platformInterface.hazard_value,
+                                                                          platformInterface.reverse_value
 
-                                                                   )
+                                                                          )
                                 }
                             }
 
@@ -221,24 +218,24 @@ Rectangle {
                                     hazardLightsTimer.start()
                                     platformInterface.hazard_value = true
                                     platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                   platformInterface.right_value,
-                                                                   platformInterface.brake_value,
-                                                                   platformInterface.hazard_value,
-                                                                   platformInterface.reverse_value
+                                                                          platformInterface.right_value,
+                                                                          platformInterface.brake_value,
+                                                                          platformInterface.hazard_value,
+                                                                          platformInterface.reverse_value
 
-                                                                   )
+                                                                          )
                                 }
                                 else {
 
                                     hazardLightsTimer.stop()
                                     platformInterface.hazard_value = false
                                     platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                   platformInterface.right_value,
-                                                                   platformInterface.brake_value,
-                                                                   platformInterface.hazard_value,
-                                                                   platformInterface.reverse_value
+                                                                          platformInterface.right_value,
+                                                                          platformInterface.brake_value,
+                                                                          platformInterface.hazard_value,
+                                                                          platformInterface.reverse_value
 
-                                                                   )
+                                                                          )
 
                                 }
                             }
@@ -253,37 +250,37 @@ Rectangle {
                     text: "Reverse"
                     checkable: true
                     checked: false
-                     Layout.alignment: Qt.AlignHCenter
-                     onCheckedChanged: {
-                         if(checked) {
-                             platformInterface.reverse_value = true
-                             platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                            platformInterface.right_value,
-                                                            platformInterface.brake_value,
-                                                            platformInterface.hazard_value,
-                                                            platformInterface.reverse_value
+                    Layout.alignment: Qt.AlignHCenter
+                    onCheckedChanged: {
+                        if(checked) {
+                            platformInterface.reverse_value = true
+                            platformInterface.set_car_demo.update(platformInterface.left_value,
+                                                                  platformInterface.right_value,
+                                                                  platformInterface.brake_value,
+                                                                  platformInterface.hazard_value,
+                                                                  platformInterface.reverse_value
 
-                                                            )
-                         }
-                         else {
-                             platformInterface.reverse_value = false
-                             platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                            platformInterface.right_value,
-                                                            platformInterface.brake_value,
-                                                            platformInterface.hazard_value,
-                                                            platformInterface.reverse_value
+                                                                  )
+                        }
+                        else {
+                            platformInterface.reverse_value = false
+                            platformInterface.set_car_demo.update(platformInterface.left_value,
+                                                                  platformInterface.right_value,
+                                                                  platformInterface.brake_value,
+                                                                  platformInterface.hazard_value,
+                                                                  platformInterface.reverse_value
 
-                                                            )
-                         }
-                     }
-                     property var car_demo_reverse: platformInterface.car_demo.reverse
-                     onCar_demo_reverseChanged: {
-                         if(car_demo_reverse === false)
-                             reverse.checked = false
-                         else reverse.checked = true
+                                                                  )
+                        }
+                    }
+                    property var car_demo_reverse: platformInterface.car_demo.reverse
+                    onCar_demo_reverseChanged: {
+                        if(car_demo_reverse === false)
+                            reverse.checked = false
+                        else reverse.checked = true
 
-                         platformInterface.reverse_value = car_demo_reverse
-                     }
+                        platformInterface.reverse_value = car_demo_reverse
+                    }
 
                 }
 
@@ -305,22 +302,22 @@ Rectangle {
                                     leftTimer.start()
                                     platformInterface.left_value = true
                                     platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                   platformInterface.right_value,
-                                                                   platformInterface.brake_value,
-                                                                   platformInterface.hazard_value,
-                                                                   platformInterface.reverse_value
-                                                                   )
+                                                                          platformInterface.right_value,
+                                                                          platformInterface.brake_value,
+                                                                          platformInterface.hazard_value,
+                                                                          platformInterface.reverse_value
+                                                                          )
                                 }
                                 else {
 
                                     leftTimer.stop()
                                     platformInterface.left_value = false
                                     platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                   platformInterface.right_value,
-                                                                   platformInterface.brake_value,
-                                                                   platformInterface.hazard_value,
-                                                                   platformInterface.reverse_value
-                                                                   )
+                                                                          platformInterface.right_value,
+                                                                          platformInterface.brake_value,
+                                                                          platformInterface.hazard_value,
+                                                                          platformInterface.reverse_value
+                                                                          )
                                 }
                             }
 
@@ -345,21 +342,21 @@ Rectangle {
                                     rightTimer.start()
                                     platformInterface.right_value = true
                                     platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                   platformInterface.right_value,
-                                                                   platformInterface.brake_value,
-                                                                   platformInterface.hazard_value,
-                                                                   platformInterface.reverse_value
-                                                                   )
+                                                                          platformInterface.right_value,
+                                                                          platformInterface.brake_value,
+                                                                          platformInterface.hazard_value,
+                                                                          platformInterface.reverse_value
+                                                                          )
                                 }
                                 else {
                                     rightTimer.stop()
                                     platformInterface.right_value = true
                                     platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                   platformInterface.right_value,
-                                                                   platformInterface.brake_value,
-                                                                   platformInterface.hazard_value,
-                                                                   platformInterface.reverse_value
-                                                                   )
+                                                                          platformInterface.right_value,
+                                                                          platformInterface.brake_value,
+                                                                          platformInterface.hazard_value,
+                                                                          platformInterface.reverse_value
+                                                                          )
                                 }
                             }
                         }
@@ -377,321 +374,22 @@ Rectangle {
 
 
 
-//                Rectangle {
-//                    Layout.fillHeight: true
-//                    Layout.fillWidth: true
-//                    Slider {
-//                        id: slider
-//                        anchors.centerIn: parent
-//                        orientation: Qt.Vertical
-//                        from: -.85
-//                        to: 0
-//                    }
-//                }
+                //                Rectangle {
+                //                    Layout.fillHeight: true
+                //                    Layout.fillWidth: true
+                //                    Slider {
+                //                        id: slider
+                //                        anchors.centerIn: parent
+                //                        orientation: Qt.Vertical
+                //                        from: -.85
+                //                        to: 0
+                //                    }
+                //                }
             }
         }
     }
 
 }
-
-
-
-//        Rectangle {
-//            Layout.fillHeight: true
-//            Layout.fillWidth: true
-//            color: "black"
-
-
-
-//            Image {
-//                id: carSetting
-//                source: "tesla-dash.jpg"
-//                width: 500
-//                height: 300
-//                anchors.centerIn: parent
-//                anchors.top:parent.top
-//                anchors.bottom: parent.bottom
-//                Rectangle {
-//                    width: 170
-//                    height: 80
-//                    anchors.right: parent.right
-//                    anchors.rightMargin: 40
-//                    anchors.verticalCenter: parent.verticalCenter
-
-//                    color: "transparent"
-
-//                    ColumnLayout {
-//                        anchors.fill: parent
-
-//                        Rectangle {
-//                            Layout.fillHeight: true
-//                            Layout.fillWidth: true
-//                            color: "transparent"
-//                            RowLayout {
-//                                anchors.fill: parent
-//                                spacing: 10
-
-//                                Rectangle {
-//                                    id: leftLight
-//                                    Layout.fillHeight: true
-//                                    Layout.fillWidth: true
-//                                    color: "transparent"
-
-//                                    Image {
-//                                        id: leftArrowImage
-//                                        source: "leftArrow.jpg"
-//                                        anchors.fill: parent
-//                                        anchors.top:parent.top
-//                                        //  anchors.topMargin: 5
-
-
-//                                        MouseArea {
-//                                            anchors.fill: parent
-//                                            onClicked: {
-//                                                console.log("Left pressed")
-//                                                carImage.source = "qrc:/views/led-tail-light/car-lights/car-rear-left-turn.gif"
-//                                                carImage.playing = true
-
-//                                            }
-//                                        }
-//                                    }
-//                                }
-
-//                                Rectangle {
-//                                    id: rightLight
-//                                    Layout.fillHeight: true
-//                                    Layout.fillWidth: true
-//                                    //   z:2
-//                                    color: "transparent"
-//                                    Image {
-//                                        id: rightArrowImage
-//                                        source: "rightArrow.jpg"
-//                                        anchors.fill: parent
-//                                        anchors.top:parent.top
-//                                        //  anchors.topMargin: 6
-//                                        //z: 3
-//                                        MouseArea {
-//                                            anchors.fill: parent
-//                                            onClicked: {
-//                                                console.log("right pressed")
-//                                                carImage.source = "qrc:/views/led-tail-light/car-lights/car-rear-right-turn.gif"
-//                                                carImage.playing = true
-
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        Rectangle {
-//                            Layout.fillHeight: true
-//                            Layout.fillWidth: true
-//                            color: "transparent"
-//                            RowLayout {
-//                                anchors.fill: parent
-//                                spacing: 10
-
-//                                Rectangle {
-//                                    Layout.fillHeight: true
-//                                    Layout.fillWidth: true
-
-//                                    Text {
-//                                        id:  breakText
-//                                        text: qsTr("B")
-//                                        font.pixelSize: 25
-//                                        font.bold: true
-//                                        anchors.centerIn: parent
-//                                    }
-//                                    MouseArea {
-//                                        anchors.fill: parent
-//                                        onClicked: {
-//                                            console.log("Break pressed")
-//                                            carImage.source = "qrc:/views/led-tail-light/car-lights/car-rear-brake-lights.jpg"
-//                                            carImage.playing = true
-
-//                                        }
-//                                    }
-
-//                                }
-
-//                                Rectangle {
-//                                    Layout.fillHeight: true
-//                                    Layout.fillWidth: true
-
-//                                    Text {
-//                                        id:  reverseText
-//                                        text: qsTr("R")
-//                                        font.pixelSize: 25
-//                                        font.bold: true
-//                                        anchors.centerIn: parent
-//                                    }
-//                                    MouseArea {
-//                                        anchors.fill: parent
-//                                        onClicked: {
-//                                            console.log("Reverse pressed")
-//                                            carImage.source = "qrc:/views/led-tail-light/car-lights/car-rear-reverse-lights.jpg"
-//                                            carImage.playing = true
-
-//                                        }
-//                                    }
-//                                }
-//                            }
-
-//                        }
-
-//                    }
-
-//                }
-
-//            }
-//        }
-
-//    }
-
-
-
-//    Rectangle {
-//        id: navigationSidebar
-//        color: Qt.darker("#666")
-//        anchors {
-//            right: parent.right
-//            top: parent.top
-//            bottom: parent.bottom
-//        }
-//        width: 0
-//        visible: false
-
-//        states: [
-//            // default state is "", width:0, visible:false
-//            State {
-//                name: "open"
-//                PropertyChanges {
-//                    target: navigationSidebar
-//                    visible: true
-//                    width: 300
-//                }
-//            }
-//        ]
-
-//        RowLayout {
-//            width: parent.width
-//            height: parent.height/6
-//            anchors.centerIn: parent
-
-
-//            Rectangle {
-//                Layout.fillWidth: true
-//                Layout.fillHeight: true
-//                color: "transparent"
-//                SGAlignedLabel {
-//                    id: hightLightLabel
-//                    target: highlight
-//                    text: "Hightlights"
-//                    color: "white"
-//                    alignment: SGAlignedLabel.SideTopCenter
-//                    anchors.centerIn: parent
-
-
-//                    fontSizeMultiplier: ratioCalc * 1.2
-//                    font.bold : true
-
-//                    SGSwitch {
-//                        id: highlight
-//                        labelsInside: true
-//                        checkedLabel: "On"
-//                        uncheckedLabel: "Off"
-//                        textColor: "black"              // Default: "black"
-//                        handleColor: "white"            // Default: "white"
-//                        grooveColor: "#ccc"             // Default: "#ccc"
-//                        grooveFillColor: "#0cf"         // Default: "#0cf"
-//                        fontSizeMultiplier: ratioCalc
-//                        checked: false
-//                    }
-//                }
-//            }
-
-//            Rectangle {
-//                Layout.fillWidth: true
-//                Layout.fillHeight: true
-//                color: "transparent"
-//                SGAlignedLabel {
-//                    id: falsherLabel
-//                    target: falsher
-//                    text: "Emergency Flashers"
-//                    color: "white"
-//                    alignment: SGAlignedLabel.SideTopCenter
-//                    anchors.centerIn: parent
-
-
-//                    fontSizeMultiplier: ratioCalc * 1.2
-//                    font.bold : true
-
-//                    SGSwitch {
-//                        id: falsher
-//                        labelsInside: true
-//                        checkedLabel: "On"
-//                        uncheckedLabel: "Off"
-//                        textColor: "black"              // Default: "black"
-//                        handleColor: "white"            // Default: "white"
-//                        grooveColor: "#ccc"             // Default: "#ccc"
-//                        grooveFillColor: "#0cf"         // Default: "#0cf"
-//                        fontSizeMultiplier: ratioCalc
-//                        checked: false
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-//    Rectangle {
-//        id: sidebarControl
-//        width: 20 + rightDivider.width
-//        anchors {
-//            right: navigationSidebar.left
-//            top: parent.top
-//            bottom: parent.bottom
-//        }
-//        color: controlMouse.containsMouse ? "#444" : "#333"
-
-//        Rectangle {
-//            id: rightDivider
-//            width: 1
-//            anchors {
-//                top: sidebarControl.top
-//                bottom: sidebarControl.bottom
-//                left: sidebarControl.left
-//            }
-//            color: "#33b13b"
-//        }
-
-//        SGIcon {
-//            id: control
-//            anchors {
-//                centerIn: sidebarControl
-//            }
-//            iconColor: "white"
-//            source: "qrc:/sgimages/chevron-left.svg"
-//            height: 30
-//            width: 30
-//            rotation: navigationSidebar.visible ? 180 : 0
-//        }
-
-//        MouseArea {
-//            id: controlMouse
-//            anchors {
-//                fill: sidebarControl
-//            }
-//            onClicked: {
-//                if (navigationSidebar.state === "open") {
-//                    navigationSidebar.state = "" // "" is default closed state
-//                } else {
-//                    navigationSidebar.state = "open"
-//                }
-//            }
-
-//            hoverEnabled: true
-//        }
-//    }
 
 
 
