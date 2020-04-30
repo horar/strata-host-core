@@ -11,10 +11,12 @@ FocusScope {
 
     property string firmwareBinaryPath
     property int processingStatus: ProgramDeviceView.Setup
+    property bool doBackup: true
 
     property int backupChunks: 0
     property real programProgress: 0.0
     property real programBackupProgress: 0.0
+    property int baseSpacing: 16
 
     property bool editable: processingStatus === ProgramDeviceView.Setup
                             || processingStatus === ProgramDeviceView.ProgramSucceed
@@ -105,7 +107,7 @@ FocusScope {
         id: content
         anchors {
             fill: parent
-            margins: 10
+            margins: baseSpacing
         }
 
         focus: true
@@ -121,150 +123,176 @@ FocusScope {
             font.bold: true
         }
 
-        Column {
-            spacing: 16
+        Row {
+            id: firmwareRow
             anchors {
                 top: title.bottom
-                topMargin: 16
+                topMargin: baseSpacing
             }
 
-            Row {
-                spacing: 10
-                SGWidgets.SGTextFieldEditor {
-                    id: firmwarePathEdit
+            spacing: baseSpacing
+            SGWidgets.SGTextFieldEditor {
+                id: firmwarePathEdit
 
-                    label: qsTr("Firmware data file")
-                    itemWidth: content.width - selectButton.width - 2*10
-                    inputValidation: true
-                    enabled: programDeviceView.editable
-                    placeholderText: "Select path..."
-                    focus: true
-                    text: firmwareBinaryPath
-                    onTextChanged: {
-                        firmwareBinaryPath = text
-                    }
-
-                    Binding {
-                        target: firmwarePathEdit
-                        property: "text"
-                        value: firmwareBinaryPath
-                    }
-
-                    function inputValidationErrorMsg() {
-                        if (text.length === 0) {
-                            return qsTr("Firmware data file is required")
-                        } else if (!CommonCpp.SGUtilsCpp.isFile(text)) {
-                            return qsTr("Firmware data file path does not refer to a file")
-                        }
-
-                        return ""
-                    }
+                label: qsTr("Firmware data file")
+                itemWidth: content.width - selectButton.width - baseSpacing
+                inputValidation: true
+                enabled: programDeviceView.editable
+                placeholderText: "Select path..."
+                focus: true
+                text: firmwareBinaryPath
+                onTextChanged: {
+                    firmwareBinaryPath = text
                 }
 
-                SGWidgets.SGButton {
-                    id: selectButton
-                    y: firmwarePathEdit.itemY + (firmwarePathEdit.item.height - height) / 2
+                Binding {
+                    target: firmwarePathEdit
+                    property: "text"
+                    value: firmwareBinaryPath
+                }
 
-                    enabled: programDeviceView.editable
-                    text: "Select"
-                    onClicked: {
-                        selectFirmwareBinary()
+                function inputValidationErrorMsg() {
+                    if (text.length === 0) {
+                        return qsTr("Firmware data file is required")
+                    } else if (!CommonCpp.SGUtilsCpp.isFile(text)) {
+                        return qsTr("Firmware data file path does not refer to a file")
                     }
+
+                    return ""
                 }
             }
 
-            Column {
+            SGWidgets.SGButton {
+                id: selectButton
+                y: firmwarePathEdit.itemY + (firmwarePathEdit.item.height - height) / 2
 
-                StatusNode {
-                    id: setupNode
-                    text: "Setup"
-                    isFirst: true
-                    highlight: processingStatus === ProgramDeviceView.Setup
+                enabled: programDeviceView.editable
+                text: "Select"
+                onClicked: {
+                    selectFirmwareBinary()
                 }
+            }
+        }
 
-                StatusNode {
-                    id: preparationNode
-                    text: "Preparation"
+        SGWidgets.SGCheckBox {
+            id: backupCheckbox
+            anchors {
+                top: firmwareRow.bottom
+            }
 
-                    highlight: processingStatus === ProgramDeviceView.Preparation
-                }
+            leftPadding: 0
+            text: "Backup firmware before programming"
+            onCheckStateChanged: {
+                programDeviceView.doBackup = checked
+            }
 
-                StatusNode {
-                    id: backupNode
-                    text: {
-                        var t = "Backup"
-                        if (processingStatus !== ProgramDeviceView.Setup) {
-                            t += " (" + backupChunks + " chunk" + (backupChunks == 1 ? "" : "s")  + " completed)"
-                        }
-                        return t
+            Binding {
+                target: backupCheckbox
+                property: "checked"
+                value: programDeviceView.doBackup
+            }
+        }
+
+        Column {
+            id: statusColumn
+            anchors {
+                top: backupCheckbox.bottom
+                topMargin: baseSpacing
+            }
+
+            StatusNode {
+                id: setupNode
+                text: "Setup"
+                isFirst: true
+                highlight: processingStatus === ProgramDeviceView.Setup
+            }
+
+            StatusNode {
+                id: preparationNode
+                text: "Preparation"
+
+                highlight: processingStatus === ProgramDeviceView.Preparation
+            }
+
+            StatusNode {
+                id: backupNode
+                visible: doBackup
+                text: {
+                    var t = "Backup"
+                    if (processingStatus !== ProgramDeviceView.Setup) {
+                        t += " (" + backupChunks + " chunk" + (backupChunks == 1 ? "" : "s")  + " completed)"
                     }
-                    highlight: processingStatus === ProgramDeviceView.FirmwareBackup
+                    return t
                 }
+                highlight: processingStatus === ProgramDeviceView.FirmwareBackup
+            }
 
-                StatusNode {
-                    id: programNode
-                    text:  {
-                        var t = "Program"
-                        if (processingStatus !== ProgramDeviceView.Setup) {
-                            t += " (" + Math.floor(programProgress * 100) + "% completed)"
-                        }
-                        return t
+            StatusNode {
+                id: programNode
+                text:  {
+                    var t = "Program"
+                    if (processingStatus !== ProgramDeviceView.Setup) {
+                        t += " (" + Math.floor(programProgress * 100) + "% completed)"
                     }
-                    highlight: processingStatus === ProgramDeviceView.ProgramInProgress
+                    return t
                 }
+                highlight: processingStatus === ProgramDeviceView.ProgramInProgress
+            }
 
-                StatusNode {
-                    id: programBackupNode
-                    text:  "Restore (" + Math.floor(programBackupProgress * 100) + "% completed)"
-                    highlight: processingStatus === ProgramDeviceView.ProgramBackupInProgress
-                    visible: false
-                }
+            StatusNode {
+                id: programBackupNode
+                text:  "Restore (" + Math.floor(programBackupProgress * 100) + "% completed)"
+                highlight: processingStatus === ProgramDeviceView.ProgramBackupInProgress
+                visible: false
+            }
 
-                StatusNode {
-                    id: finishedNode
-                    text: {
-                        if (nodeState === StatusNode.Failed) {
-                            return "Failed"
-                        }
-
-                        "Done"
+            StatusNode {
+                id: finishedNode
+                text: {
+                    if (nodeState === StatusNode.Failed) {
+                        return "Failed"
                     }
-                    isFinal: true
-                    highlight: processingStatus === ProgramDeviceView.ProgramSucceed
-                               || processingStatus === ProgramDeviceView.ProgramFailed
+
+                    "Done"
+                }
+                isFinal: true
+                highlight: processingStatus === ProgramDeviceView.ProgramSucceed
+                           || processingStatus === ProgramDeviceView.ProgramFailed
+            }
+        }
+
+        Row {
+            spacing: baseSpacing
+            anchors {
+                top: statusColumn.bottom
+                topMargin: 2*baseSpacing
+            }
+            SGWidgets.SGButton {
+                text: "Back"
+                icon.source: "qrc:/sgimages/chevron-left.svg"
+                enabled: programDeviceView.editable
+                onClicked: {
+                    closeProgramDeviceViewRequested()
                 }
             }
 
-            Row {
-                spacing: 10
-
-                SGWidgets.SGButton {
-                    text: "Back"
-                    icon.source: "qrc:/sgimages/chevron-left.svg"
-                    enabled: programDeviceView.editable
-                    onClicked: {
-                        closeProgramDeviceViewRequested()
-                    }
-                }
-
-                SGWidgets.SGButton {
-                    id: programButton
-                    text: "Program"
-                    icon.source: "qrc:/sgimages/chip-flash.svg"
-                    enabled: programDeviceView.editable
-                             && (model.platform.status === Sci.SciPlatform.Ready
-                                 || model.platform.status === Sci.SciPlatform.NotRecognized)
-                    onClicked: {
-                        var error = firmwarePathEdit.inputValidationErrorMsg()
-                        if (error.length > 0) {
-                            SGWidgets.SGDialogJS.showMessageDialog(
-                                        programDeviceView,
-                                        SGWidgets.SGMessageDialog.Error,
-                                        "Firmware file not set",
-                                        error)
-                        } else {
-                            startProgramProcess()
-                        }
+            SGWidgets.SGButton {
+                id: programButton
+                text: "Program"
+                icon.source: "qrc:/sgimages/chip-flash.svg"
+                enabled: programDeviceView.editable
+                         && (model.platform.status === Sci.SciPlatform.Ready
+                             || model.platform.status === Sci.SciPlatform.NotRecognized)
+                onClicked: {
+                    var error = firmwarePathEdit.inputValidationErrorMsg()
+                    if (error.length > 0) {
+                        SGWidgets.SGDialogJS.showMessageDialog(
+                                    programDeviceView,
+                                    SGWidgets.SGMessageDialog.Error,
+                                    "Firmware file not set",
+                                    error)
+                    } else {
+                        startProgramProcess()
                     }
                 }
             }
@@ -294,7 +322,7 @@ FocusScope {
         programProgress = 0.0
         programBackupProgress = 0.0
 
-        var ok = model.platform.programDevice(firmwareBinaryPath)
+        var ok = model.platform.programDevice(firmwareBinaryPath, doBackup)
         if (ok) {
             setupNode.nodeState = StatusNode.Succeed
         } else {

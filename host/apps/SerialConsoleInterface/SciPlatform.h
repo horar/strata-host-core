@@ -57,7 +57,7 @@ public:
     Q_INVOKABLE bool sendMessage(const QByteArray &message);
     Q_INVOKABLE bool exportScrollback(QString filePath) const;
     Q_INVOKABLE void removeCommandFromHistoryAt(int index);
-    Q_INVOKABLE bool programDevice(QString filePath);
+    Q_INVOKABLE bool programDevice(QString filePath, bool doBackup=true);
 
 signals:
     void verboseNameChanged();

@@ -218,7 +218,7 @@ void SciPlatform::removeCommandFromHistoryAt(int index)
     }
 }
 
-bool SciPlatform::programDevice(QString filePath)
+bool SciPlatform::programDevice(QString filePath, bool doBackup)
 {
     if (status_ != PlatformStatus::Ready
             && status_ != PlatformStatus::NotRecognized) {
@@ -238,7 +238,7 @@ bool SciPlatform::programDevice(QString filePath)
     connect(flasherConnector_, &strata::FlasherConnector::operationStateChanged, this, &SciPlatform::flasherOperationStateChangedHandler);
     connect(flasherConnector_, &strata::FlasherConnector::finished, this, &SciPlatform::flasherFinishedHandler);
 
-    flasherConnector_->flash();
+    flasherConnector_->flash(doBackup);
     setProgramInProgress(true);
 
     return true;
