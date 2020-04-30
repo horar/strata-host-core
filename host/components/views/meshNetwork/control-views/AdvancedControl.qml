@@ -291,9 +291,9 @@ Rectangle{
                 width: parent.width
                 height: (parent.height)
                 anchors.left:parent.left
-                anchors.leftMargin: 20
+                anchors.leftMargin: 10
                 anchors.right:parent.right
-                anchors.rightMargin: 20
+                anchors.rightMargin: 10
                 anchors.top:parent.top
                 //anchors.topMargin: 50
                 anchors.bottom:parent.bottom
@@ -308,7 +308,7 @@ Rectangle{
                     //statusTextColor: "white"
                     //statusBoxColor: "black"
                     statusBoxBorderColor: "white"
-                    fontSizeMultiplier: 1
+                    fontSizeMultiplier: .9
 
                     listElementTemplate : {
                         "message": "",
