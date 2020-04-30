@@ -16,6 +16,97 @@ Rectangle {
             resetUI();
     }
 
+    Rectangle{
+        id:nodeRectangle
+        width: switchOutline.width + 100
+        height:switchOutline.height + 200
+        anchors.horizontalCenter: switchOutline.horizontalCenter
+        anchors.verticalCenter: switchOutline.verticalCenter
+        radius:10
+        border.color:"black"
+
+        Text{
+            property int nodeNumber: 1
+            id:nodeText
+            anchors.top:parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            text:"node " + nodeNumber
+            font.pixelSize: 18
+        }
+
+        Text{
+            property int address: 2
+            id:nodeAddressText
+            anchors.bottom:parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            text:"uaddr " + address
+            font.pixelSize: 18
+        }
+
+        Rectangle{
+            id:primaryElementRectangle
+            anchors.left:parent.left
+            anchors.leftMargin:15
+            anchors.right:parent.right
+            anchors.rightMargin: 15
+            anchors.top:parent.top
+            anchors.topMargin:25
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:25
+            radius:10
+            border.color:"black"
+
+            Text{
+                id:primaryElementText
+                anchors.top:parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
+                text:"primary element "
+                font.pixelSize: 18
+            }
+
+            Text{
+                property int address: 2
+                id:primaryElementAddressText
+                anchors.bottom:parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                text:"uaddr " + address
+                font.pixelSize: 18
+            }
+
+            Rectangle{
+                id:modelRectangle
+                anchors.left:parent.left
+                anchors.leftMargin:15
+                anchors.right:parent.right
+                anchors.rightMargin: 15
+                anchors.top:parent.top
+                anchors.topMargin:25
+                anchors.bottom:parent.bottom
+                anchors.bottomMargin:25
+                radius:10
+                border.color:"black"
+
+                Text{
+                    id:modelText
+                    anchors.top:parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text:"light hsl client model"
+                    font.pixelSize: 12
+                }
+
+                Text{
+                    property int address: 1309
+                    id:modelAddressText
+                    anchors.bottom:parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text:"model id 0x" + address
+                    font.pixelSize: 18
+                }
+            }
+        }
+
+    }
+
     Text{
         id:title
         anchors.top:parent.top
@@ -27,8 +118,8 @@ Rectangle {
 
     MSwitch{
         id:switchOutline
-        height:320
-        width:200
+        height:160
+        width:100
         anchors.left:parent.left
         anchors.leftMargin:parent.width*.1
         anchors.verticalCenter: parent.verticalCenter
@@ -89,12 +180,113 @@ Rectangle {
         height:25
         fillMode: Image.PreserveAspectFit
         mipmap:true
+
+        Text{
+            property int address: 3
+            id:messageText
+            anchors.top:parent.bottom
+            anchors.topMargin: 10
+            anchors.horizontalCenter: parent.horizontalCenter
+            text:"message to uaddr " + address
+            font.pixelSize: 18
+        }
     }
 
+    Rectangle{
+        id:bulbNodeRectangle
+        width: lightBulb.width + 100
+        height:lightBulb.height + 200
+        anchors.horizontalCenter: lightBulb.horizontalCenter
+        anchors.verticalCenter: lightBulb.verticalCenter
+        radius:10
+        border.color:"black"
+
+        Text{
+            property int nodeNumber: 2
+            id:blubNodeText
+            anchors.top:parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            text:"node " + nodeNumber
+            font.pixelSize: 18
+        }
+
+        Text{
+            property int address: 3
+            id:bulbNodeAddressText
+            anchors.bottom:parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            text:"uaddr " + address
+            font.pixelSize: 18
+        }
+
+        Rectangle{
+            id:bulbPrimaryElementRectangle
+            anchors.left:parent.left
+            anchors.leftMargin:15
+            anchors.right:parent.right
+            anchors.rightMargin: 15
+            anchors.top:parent.top
+            anchors.topMargin:25
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:25
+            radius:10
+            border.color:"black"
+
+            Text{
+                id:bulbPrimaryElementText
+                anchors.top:parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
+                text:"primary element"
+                font.pixelSize: 18
+            }
+
+            Text{
+                property int address: 3
+                id:bulbPrimaryElementAddressText
+                anchors.bottom:parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                text:"uaddr " + address
+                font.pixelSize: 18
+            }
+
+            Rectangle{
+                id:bulbModelRectangle
+                anchors.left:parent.left
+                anchors.leftMargin:15
+                anchors.right:parent.right
+                anchors.rightMargin: 15
+                anchors.top:parent.top
+                anchors.topMargin:25
+                anchors.bottom:parent.bottom
+                anchors.bottomMargin:25
+                radius:10
+                border.color:"black"
+
+                Text{
+                    id:bulbModelText
+                    anchors.top:parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text:"light hsl server model"
+                    font.pixelSize: 12
+                }
+
+                Text{
+                    property int address: 1307
+                    id:bulbModelAddressText
+                    anchors.bottom:parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text:"model id 0x" + address
+                    font.pixelSize: 18
+                }
+            }
+        }
+
+    }
     MLightBulb{
         id:lightBulb
+        height:parent.height * .2
         anchors.right:parent.right
-        anchors.rightMargin:parent.width*.2
+        anchors.rightMargin:parent.width*.1
         anchors.verticalCenter: parent.verticalCenter
 
         onBulbClicked: {
@@ -102,6 +294,7 @@ Rectangle {
             console.log("bulb clicked")
         }
     }
+
 
 
     Button{
