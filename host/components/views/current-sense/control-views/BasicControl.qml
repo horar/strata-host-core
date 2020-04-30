@@ -1055,7 +1055,7 @@ Item {
 
                                                 SGSlider {
                                                     id: maxInputCurrent
-                                                    width: maxInputCurrentContainer.width - inputBoxWidth
+                                                    width: maxInputCurrentContainer.width
                                                     live: false
                                                     from: 0.0
                                                     to: 30
@@ -1063,7 +1063,7 @@ Item {
                                                     fromText.text: "0A"
                                                     toText.text: "30A"
 
-                                                    inputBoxWidth: 80
+                                                    inputBoxWidth: maxInputCurrentContainer.width/5
                                                     fontSizeMultiplier: ratioCalc
                                                     inputBox.validator: DoubleValidator { }
                                                     inputBox.text: maxInputCurrent.value.toFixed(1)
@@ -1124,7 +1124,7 @@ Item {
 
                                                 SGSlider {
                                                     id: maxInputVoltage
-                                                    width: maxInputVoltageContainer.width - inputBoxWidth
+                                                    width: maxInputVoltageContainer.width
                                                     live: false
                                                     from: 0
                                                     to: 26
@@ -1132,7 +1132,7 @@ Item {
                                                     fromText.text: "0V"
                                                     toText.text: "26V"
 
-                                                    inputBoxWidth: 80
+                                                    inputBoxWidth: maxInputVoltageContainer.width/5
                                                     inputBox.unit: " V"
                                                     inputBox.unitFont.bold: true
                                                     fontSizeMultiplier: ratioCalc
@@ -1277,10 +1277,9 @@ Item {
                                                 Layout.fillHeight: true
                                                 Layout.fillWidth: true
 
-
                                                 SGSlider {
                                                     id: lowloadSetting
-                                                    width: lowLoadSettingContainer.width/1.2
+                                                    width: lowLoadSettingContainer.width
                                                     anchors.verticalCenter: parent.verticalCenter
                                                     anchors.verticalCenterOffset: 10
                                                     live: false
@@ -1365,7 +1364,7 @@ Item {
 
                                                 SGSlider {
                                                     id: midloadSetting
-                                                    width: midLoadSettingContainer.width/1.2
+                                                    width: midLoadSettingContainer.width
                                                     live: false
                                                     anchors.verticalCenter: parent.verticalCenter
                                                     anchors.verticalCenterOffset: 10
@@ -1386,6 +1385,7 @@ Item {
 
                                                     inputBox.validator: DoubleValidator { top: 100; bottom: 0.1}
                                                     onUserSet: {
+                                                        console.log("inputBoxWidth mid", inputBoxWidth)
                                                         if(midCurrentEnable.checked)
                                                             platformInterface.set_load_dac_load.update(midloadSetting.value.toFixed(2))
                                                     }
@@ -1448,7 +1448,7 @@ Item {
 
                                                 SGSlider {
                                                     id: highloadSetting
-                                                    width: highLoadSettingContainer.width/1.2
+                                                    width: highLoadSettingContainer.width
                                                     live: false
                                                     from: 0.01
                                                     to:  10
@@ -1456,19 +1456,19 @@ Item {
                                                     fromText.text: "0.01A"
                                                     toText.text: "10A"
                                                     value: 0
-
                                                     inputBox.unit: "A"
                                                     inputBox.unitFont.bold: true
                                                     anchors.verticalCenter: parent.verticalCenter
                                                     anchors.verticalCenterOffset: 10
                                                     inputBoxWidth: highLoadSettingContainer.width/5
-
                                                     inputBox.enabled: true
+                                                   // inputBox.overrideWidth: highLoadSettingContainer.width/5
 
                                                     // inputBox.fontSizeMultiplier: ratioCalc * 1.1
                                                     fontSizeMultiplier: ratioCalc * 1.1
                                                     inputBox.validator: DoubleValidator { top: 10;  bottom: 0.01 }
                                                     onUserSet: {
+                                                         console.log("inputBoxWidth High", inputBoxWidth)
                                                         if(highCurrentEnable.checked)
                                                             platformInterface.set_load_dac_load.update(highloadSetting.value.toFixed(2))
                                                     }
