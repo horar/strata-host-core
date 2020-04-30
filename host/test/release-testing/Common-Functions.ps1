@@ -63,6 +63,9 @@ function Assert-PythonScripts {
     If (!(Test-Path $PythonControlViewTest)) {
         Exit-TestScript -1 "Error: cannot find Python script at $PythonControlViewTest.`nAborting."
     }
+    If (!(Test-Path $PythonPlatformIdentificationTest)) {
+        Exit-TestScript -1 "Error: cannot find Python script at $PythonPlatformIdentificationTest.`nAborting."
+    }
 }
 
 # Check if PS module 'PSSQLite' is installed
@@ -208,6 +211,10 @@ function Show-TestSummary {
 
     Show-TestResult -TestName "Test-CollateralDownload" -TestResults $CollateralDownloadResults
 
+    If ($EnablePlatformIdentificationTest -eq $true) { 
+        Show-TestResult -TestName "Test-PlatformIdentification" -TestResults $PlatformIdentificationResults
+    }
+    
     If ($SDSControlViewsResults) {
         If ($SDSControlViewsResults -Eq $true) {
             Write-Host -ForegroundColor Green "`nResult for Test-SDSControlViews: No errors found during execution, test requires visual inspection."

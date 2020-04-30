@@ -8,6 +8,7 @@ https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+
 
 .INPUTS  SDSInstallerPath
 Mandatory. If not being passed as an argument to the script you will be prompted to choose the path
+-EnablePlatformIdentificationTest Optional switch to enable the platform Identification test.
 
 .OUTPUTS
 Result of the test
@@ -19,6 +20,8 @@ Requires: PowerShell version 5, and Python 3
 in case of a problem with executing the script run:
 Set-ExecutionPolicy -Scope CurrentUser Unrestricted
 
+platform Identification test requires JLink device and a platform connected.
+
 .Example
 Test-StrataRelease.ps1 -SDSInstallerPath "<PATH_TO_STRATA_INSTALLER>"
 
@@ -29,7 +32,8 @@ Test-StrataRelease.ps1
 [CmdletBinding()]
     param(
         [Parameter(Mandatory=$True, Position=0, HelpMessage="Please enter a path for Strata Installer")]
-        [string]$SDSInstallerPath
+        [string]$SDSInstallerPath,
+        [switch]$EnablePlatformIdentificationTest
     )
 
 # Define HCS TCP endpoint to be used
@@ -43,6 +47,7 @@ Set-Variable "HCSExecFile"   "$SDSRootDir\HCS\hcs.exe"
 Set-Variable "SDSExecFile"   "$SDSRootDir\Strata Developer Studio.exe"
 Set-Variable "HCSDbFile"     "$HCSAppDataDir\db\strata_db\db.sqlite3"
 Set-Variable "TestRoot"      $PSScriptRoot
+Set-Variable "JLinkExePath"  "${Env:ProgramFiles(x86)}\SEGGER\JLink\JLink.exe"
 
 # Define variables for server authentication credentials needed to acquire login token
 Set-Variable "SDSServer"      "http://18.191.108.5/"      # "https://strata.onsemi.com"
@@ -50,8 +55,9 @@ Set-Variable "SDSLoginServer" "http://18.191.108.5/login" # "https://strata.onse
 Set-Variable "SDSLoginInfo"   '{"username":"test@test.com","password":"Strata12345"}'
 
 # Define paths for Python scripts ran by this script
-Set-Variable "PythonCollateralDownloadTest" "$PSScriptRoot/hcs/hcs-collateral-download-test.py"
-Set-Variable "PythonControlViewTest"        "$PSScriptRoot/strataDev/control-view-test.py"
+Set-Variable "PythonCollateralDownloadTest"     "$PSScriptRoot/hcs/hcs-collateral-download-test.py"
+Set-Variable "PythonControlViewTest"            "$PSScriptRoot/strataDev/control-view-test.py"
+Set-Variable "PythonPlatformIdentificationTest" "$PSScriptRoot/PlatformIdentification/platform-identification-test.py"
 
 # Import common functions
 . "$PSScriptRoot\Common-Functions.ps1"
@@ -71,18 +77,21 @@ Set-Variable "PythonControlViewTest"        "$PSScriptRoot/strataDev/control-vie
 # Import functions for test "Test-SDSInstaller"
 . "$PSScriptRoot\installer\Test-SDSInstaller.ps1"
 
+# Import functions for test "Test-PlatformIdentification"
+. "$PSScriptRoot\PlatformIdentification\Test-PlatformIdentification.ps1"
+
 #------------------------------------------------------[Pre-requisite checks]------------------------------------------------------
 
 Write-Host "`n`nPerforming initial checks...`n"
 
 # Validate UAC and administration privileges
-Assert-UACAndAdmin
+ Assert-UACAndAdmin
 
 # Validate Strata installer path
-Assert-SDSInstallerPath
+ Assert-SDSInstallerPath
 
 # Search for PSSQLite
-Assert-PSSQLite
+ Assert-PSSQLite
 
 # Search for Python tools
 Assert-PythonAndPyzmq
@@ -95,24 +104,31 @@ Assert-PythonScripts
 Write-Host "Starting tests...`n"
 
 # Run Test-SDSInstaller
-$SDSInstallerResults = Test-SDSInstaller -SDSInstallerPath $SDSInstallerPath
+ $SDSInstallerResults = Test-SDSInstaller -SDSInstallerPath $SDSInstallerPath
 
 # Search for SDS and HCS
 Assert-StrataAndHCS
 
 # Run Test-Database (HCS database testing)
-$DatabaseResults = Test-Database
+ $DatabaseResults = Test-Database
 
 # Run Test-TokenAndViewsDownload
-$TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
+ $TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
 
 # Run Test-CollateralDownload (HCS collateral download testing)
-$CollateralDownloadResults = Test-CollateralDownload
+ $CollateralDownloadResults = Test-CollateralDownload
+
+# Run Test-PlatformIdentification
+# The test is disabled by default, The reason is that it requires having a platform and a JLink connected to the test machine.
+# To enable the test, pass this flag -EnablePlatformIdentificationTest when running Test-StrataRelease.ps script
+If ($EnablePlatformIdentificationTest -eq $true) {
+    $PlatformIdentificationResults = Test-PlatformIdentification -PythonScriptPath $PythonPlatformIdentificationTest -ZmqEndpoint $HCSTCPEndpoint -BinariesPath "$PSScriptRoot\PlatformIdentification\bins"
+}
 
 # Run Test-SDSControlViews (SDS control view testing)
 # Because the recent changes in the Navigation of Strata Developer Studio, this test is not working as expected.
 # These issues will be resolved in CS-626
-#$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
+# $SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
 
 Show-TestSummary
 

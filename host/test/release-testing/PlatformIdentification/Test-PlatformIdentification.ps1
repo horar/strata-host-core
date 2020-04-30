@@ -1,19 +1,20 @@
 <#
 .SYNOPSIS
+Host Controller Service
 
 .DESCRIPTION
+This test flashes a platform with given list of binaries and verify that HCS is able to identify the platform.
 
 .INPUTS  
-
+-PythonScriptPath   Path to Strata executable
+-BinariesPath       Path to *.bin files
+-ZmqEndpoint        The address of zmq client
 .OUTPUTS
 
 .NOTES
 Version:        1.0
 Creation Date:  04/28/2020
-Requires: PowerShell version 5, and Python 3
-
-.Example
-
+Requires: PowerShell version 5, Python 3, Jlink.exe, connected JLink device, and a connected platform
 #>
 
 # function to flash a binary file to the platform using JLinkExe
@@ -37,10 +38,9 @@ function Flash-JLinkFunction {
     # Add the script to the temporary file 
     Set-Content $JLinkScriptTempFile $JLinkScriptContent
 
-    # TODO: remove the hardcoded path for JLinkExe
     # run JLinkExe 
     Write-Host "Flashing $PathToBinaryFile..."
-    $JLinkProcess = Start-Process -FilePath 'C:\Program Files (x86)\SEGGER\JLink\JLink.exe' -ArgumentList "-ExitOnError -CommanderScript $($JLinkScriptTempFile.FullName)" -NoNewWindow -PassThru -Wait 
+    $JLinkProcess = Start-Process -FilePath $JLinkExePath -ArgumentList "-ExitOnError -CommanderScript $($JLinkScriptTempFile.FullName)" -NoNewWindow -PassThru -Wait 
 
     # Check the exit code of JLinkExe
     If($JLinkProcess.ExitCode -ne 0) {
@@ -53,15 +53,23 @@ function Flash-JLinkFunction {
     }
 }
 
-function Test-PlatformIdentifciation {
+function Test-PlatformIdentification {
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory = $true)][string]$PathToPythonScript,
-        [Parameter(Mandatory = $true)][string]$PathToBinaries
+        [Parameter(Mandatory = $true)][string]$PythonScriptPath,    # Path to Strata executable
+        [Parameter(Mandatory = $true)][string]$BinariesPath,        # Path to *.bin files
+        [Parameter(Mandatory = $true)][string]$ZmqEndpoint          # The address of zmq client
     )
-    
+
     # List to store the names of the failed tests.
     $FailedTestsList = New-Object System.Collections.ArrayList
+
+    # Check if JLink is installed, using the default path for Windows
+    Write-Host "Checking if JLink.exe exist..."
+    IF( $(Test-Path $JLinkExePath) -eq $false) {
+        Write-Host "JLink.exe is missing. Aborting..."
+        return -1, -1
+    }
 
     # Look for a connected JLink device. Only works with windows
     If (Get-PnpDevice -Status OK -Class USB -FriendlyName "J-Link driver") {
@@ -69,7 +77,7 @@ function Test-PlatformIdentifciation {
     }
     Else {
         Write-Host "No JLink Device is connected. Aborting..."
-        return $false
+        return -1, -1
     }
 
     # Look for a connected platform. Only works with windows
@@ -78,37 +86,43 @@ function Test-PlatformIdentifciation {
     }
     Else {
         Write-Host "No Platform is connected. Aborting..."
-        return $false
+        return -1, -1
     }
 
     # get the list of binaries
-    $BinaryFileList = Get-ChildItem -Path $PathToBinaries -name *.bin
+    Write-Host "Looking for .bin files in $BinariesPath"
+    $BinaryFileList = Get-ChildItem -Path $BinariesPath -name *.bin
     
-    #print how many files we found and their names.
-    Write-Host "We found $($BinaryFileList.Count) Files."
-    Write-Host "Binary File List:"
-    Write-Host $BinaryFileList
+    # Check if .bin files were found in the given path
+    if($($BinaryFileList.count) -gt 0) {
+        #print how many files we found and their names.
+        Write-Host "$($BinaryFileList.Count) .bin files were found."
+        Write-Host "Binary File List:"
+        Write-Host $BinaryFileList
+    }
+    Else {
+        Write-Host "No .bin files were found in $BinariesPath. Aborting..."
+        return -1, -1
+    }
 
     # Loop through the files
-    foreach ($BinaryFile in $BinaryFileList) {
+    Foreach ($BinaryFile in $BinaryFileList) {
         Write-Separator
         Write-Host "Testing the file $BinaryFile..."
 
-        # Flash the thing
-        If($(Flash-JLinkFunction("$PathToBinaries\$BinaryFile")) -eq $false) {
+        # Flash the platform
+        If($(Flash-JLinkFunction("$BinariesPath\$BinaryFile")) -eq $false) {
             Write-Host "JLinkExe failed. Aborting the test."
-            return $false
+            return -1, -1
         }
 
-        # Start hcs & python script.
-
+        # Start hcs
         Write-Host "Starting HCS..."
         Start-HCS
-        # C:\Users\zbjmpd\spyglass\host\debug5128\bin\hcs.exe -f C:\Users\zbjmpd\spyglass\host\apps\hcs3\files\conf\hcs.config
         
         # Start the python script
-        Write-Host "Startting the python Script" # Maybe print the file name? Check what we have in other tests.
-        $pythonScript =  Start-Process $PythonExec -ArgumentList "$PythonScriptPath $ZmqEndpoint" -NoNewWindow -PassThru -Wait
+        Write-Host "Startting the python Script"
+        $PythonScript =  Start-Process $PythonExec -ArgumentList "$PythonScriptPath $ZmqEndpoint" -NoNewWindow -PassThru -Wait
         
         # check the exit status of the python Script.
         If ($PythonScript.ExitCode -eq 0) {
@@ -130,14 +144,14 @@ function Test-PlatformIdentifciation {
     Write-Separator
     Write-Host "$($BinaryFileList.Count - $FailedTestsList.Count) tests passed out of $($BinaryFileList.Count)"
     
-    if ($FailedTestsList.Count -ne 0) {         # If there are any failed test, list them.
+    If ($FailedTestsList.Count -ne 0) {         # If there are any failed test, list them.
         Write-Host "List of failed tests:"
-        foreach ($TestName in $FailedTestsList) {
+        Foreach ($TestName in $FailedTestsList) {
             Write-Host "`t$TestName"
         }
     }
 
     Write-Separator
     # return the summary to be printed with the other tests
-    return {$FailedTestsList.Count, $BinaryFileList.Count}
+    return $($BinaryFileList.Count - $FailedTestsList.Count), $BinaryFileList.Count
 }
