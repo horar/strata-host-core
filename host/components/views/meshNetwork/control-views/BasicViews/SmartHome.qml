@@ -13,11 +13,15 @@ Rectangle {
 
     onVisibleChanged: {
         if (visible){
-            console.log("office is now visible")
+            console.log("smart home is now visible")
+            //deactivate all the nodes from their previous roles when switching
+            //this is a kludge, as it means nodes will not function in the roles they appear in until they're moved
+            platformInterface.set_node_mode.update("default",65535,true)
             //iterate over the meshArray, and send role and node numbers for each
-            meshObjectRow.meshArray.forEach(function(item, index, array){
-                platformInterface.set_node_mode.update(item.pairingModel,item.nodeNumber,true)
-                })
+            //meshObjectRow.meshArray.forEach(function(item, index, array){
+                //removed temporarily to stop overloading the network when changing views
+                //platformInterface.set_node_mode.update(item.pairingModel,item.nodeNumber,true)
+            //    })
         }
 
     }
@@ -51,7 +55,6 @@ Rectangle {
         }
 
         property var meshArray: [0,provisioner,mesh2, mesh1,mesh4, mesh3,mesh6,mesh5, mesh7,mesh8]
-        property var targetArray: [0, target1,target2, target3]
         property var initialNodeVisibilityColors: platformInterface.network_notification
         onInitialNodeVisibilityColorsChanged:{
 
@@ -60,17 +63,14 @@ Rectangle {
             for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
                 //for each node that is marked visible set the visibilty of the node appropriately
                 if (platformInterface.network_notification.nodes[alpha].ready === 0){
-                    meshArray[alpha].opacity = 0.5
-                    meshArray[alpha].enabled = false
                     meshArray[alpha].objectColor = "lightgrey"
-                    //targetArray[alpha].color = "transparent"
+                    meshArray[alpha].nodeNumber = ""
 
                     //special case because sometimes the 0th element of the notification array
                     //really represents the first element
                     if (alpha === 1){
                         if (platformInterface.network_notification.nodes[0].ready === 1 ){
                             meshArray[alpha].opacity = 1.0
-                            meshArray[alpha].enabled = true
                             meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
                         }
                     }
@@ -80,6 +80,7 @@ Rectangle {
                     meshArray[alpha].opacity = 1.0
                     meshArray[alpha].enabled = true
                     meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+                    meshArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
 
                     //special case because sometimes the 0th element of the notification array
                     //really represents the first element
@@ -87,8 +88,6 @@ Rectangle {
                         if (meshArray[alpha.enabled == true])
                             meshArray[1] = true;
                     }
-
-                    //targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
                 }
             }
         }
@@ -100,9 +99,7 @@ Rectangle {
             //console.log("new node added",platformInterface.node_added.index)
             var theNodeNumber = platformInterface.node_added.index
             meshArray[theNodeNumber].opacity = 1;
-            //console.log("set the opacity of node",theNodeNumber, "to 1");
             meshArray[theNodeNumber].objectColor = platformInterface.node_added.color
-            //targetArray[theNodeNumber].color = platformInterface.node_added.color
             meshArray[theNodeNumber].nodeNumber = theNodeNumber
         }
 
@@ -120,12 +117,12 @@ Rectangle {
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         MeshObject{ id: mesh4; scene:"smart_home"; pairingModel:"";nodeNumber: "4";
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
-        MeshObject{ id: mesh2; scene:"smart_home"; displayName:"Window"; pairingModel:"window";nodeNumber: "2";
+        MeshObject{ id: mesh2; scene:"smart_home"; displayName:"Window"; pairingModel:"window_shade";nodeNumber: "2";
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         ProvisionerObject{ id: provisioner; nodeNumber:"1" }
-        MeshObject{ id: mesh1; scene:"smart_home"; displayName:"Door"; pairingModel:"smart_home_door";nodeNumber: "3"
+        MeshObject{ id: mesh1; scene:"smart_home"; displayName:"Door"; pairingModel:"smarthome_door";nodeNumber: "3"
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
-        MeshObject{ id: mesh3; scene:"smart_home"; displayName:"Lights"; pairingModel:"lights";nodeNumber: "5";
+        MeshObject{ id: mesh3; scene:"smart_home"; displayName:"Lights"; pairingModel:"smarthome_lights";nodeNumber: "5";
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         MeshObject{ id: mesh5; scene:"smart_home"; pairingModel:""; subName:""; nodeNumber: "7"
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
@@ -137,8 +134,9 @@ Rectangle {
     Image{
         id:mainImage
         source:"qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
-        height:parent.height*.70
+        height:parent.height*.6
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: 20
         fillMode: Image.PreserveAspectFit
         mipmap:true
         opacity:1
@@ -146,9 +144,9 @@ Rectangle {
         property var color: platformInterface.room_color_notification
         onColorChanged: {
             var newColor = platformInterface.room_color_notification.color
-            if (newColor === "on")
+            if (newColor === "white")
               mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
-            else if (newColor === "off")
+            else if (newColor === "black")
                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOff.jpg"
             else if (newColor === "blue")
                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_blue.jpg"
@@ -156,26 +154,37 @@ Rectangle {
                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_green.jpg"
             else if (newColor === "purple")
                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_purple.jpg"
-            else if (newColor === "red")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_red.jpg"
+            else if (newColor === "orange")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_orange.jpg"
             }
 
-        property var door: platformInterface.toggle_door_notification
+        property var door: platformInterface.smarthome_door
         onDoorChanged: {
-             var doorState = platformInterface.toggle_door_notification.value
-            if (doorState === "open")
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
-              else
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+            var doorState = platformInterface.smarthome_door.value
+            var windowState = platformInterface.window_shade.value
+            if (doorState === "open" && windowState === "open")
+                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpenWindowOpen.jpg"
+              else if (doorState === "open" && windowState === "closed")
+                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
+              else if (doorState === "closed" && windowState === "open")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
+              else if (doorState === "closed" && windowState === "closed")
+                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
             }
 
-        property var window: platformInterface.toggle_window_shade_notification
+        property var window: platformInterface.window_shade
         onWindowChanged: {
-             var windowState = platformInterface.toggle_window_shade_notification.value
-            if (windowState === "open")
+             var doorState = platformInterface.smarthome_door.value
+             var windowState = platformInterface.window_shade.value
+            console.log("settting window to be",windowState)
+            if (doorState === "open" && windowState === "open")
+                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpenWindowOpen.jpg"
+              else if (doorState === "open" && windowState === "closed")
+                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
+              else if (doorState === "closed" && windowState === "open")
                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
-              else
-                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+              else if (doorState === "closed" && windowState === "closed")
+                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
             }
         }
 
@@ -220,6 +229,35 @@ Rectangle {
             }
 
             property var targetArray: [0, 0, target1, target2, 0, target3,0,0,0,0]
+
+            property var network: platformInterface.network_notification
+            onNetworkChanged:{
+
+                //iterate over the nodes in the notification
+                console.log("updating nodes",platformInterface.network_notification.nodes.length)
+                for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+                    //for each node that is marked visible set the visibilty of the node appropriately
+                    if (platformInterface.network_notification.nodes[alpha].ready === 0){
+                        targetArray[alpha].color = "transparent"
+                        targetArray[alpha].nodeNumber = ""
+
+                        //special case because sometimes the 0th element of the notification array
+                        //really represents the first element
+                        if (alpha === 1){
+                            if (platformInterface.network_notification.nodes[0].ready === 1 ){
+                                targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+
+                            }
+                        }
+                    }
+                    else {
+                        targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+                        targetArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+
+
+                    }
+                }
+            }
 
             property var newNodeAdded: platformInterface.node_added
             onNewNodeAddedChanged: {
@@ -273,7 +311,7 @@ Rectangle {
                 anchors.leftMargin: parent.width * 0.05
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .4
-                nodeType:"window"
+                nodeType:"window_shade"
                 scene:"smart_home"
                 nodeNumber:""
             }
@@ -287,7 +325,7 @@ Rectangle {
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .30
                 scene:"smart_home"
-                nodeType: "smart_home_door"
+                nodeType: "smarthome_door"
                 nodeNumber:""
             }
 
@@ -300,7 +338,7 @@ Rectangle {
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .22
                 scene:"smart_home"
-                nodeType:"lights"
+                nodeType:"smarthome_lights"
                 nodeNumber:"="
             }
 

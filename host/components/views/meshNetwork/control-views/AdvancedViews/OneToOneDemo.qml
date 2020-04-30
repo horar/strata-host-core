@@ -11,6 +11,11 @@ Rectangle {
     id: root
     color:"transparent"
 
+    onVisibleChanged: {
+        if (visible)
+            resetUI();
+    }
+
     Text{
         id:title
         anchors.top:parent.top
@@ -20,19 +25,24 @@ Rectangle {
         font.pixelSize: 72
     }
 
-//    Image{
-//        anchors.centerIn: parent
-//        source: "qrc:/views/meshNetwork/images/oneToOneDemo.png"
-//        height:parent.height * .34
-//        fillMode: Image.PreserveAspectFit
-//        mipmap:true
-//    }
-
     MSwitch{
         id:switchOutline
+        height:320
+        width:200
         anchors.left:parent.left
-        anchors.leftMargin:parent.width*.2
+        anchors.leftMargin:parent.width*.1
         anchors.verticalCenter: parent.verticalCenter
+
+        property var button: platformInterface.demo_click_notification
+        onButtonChanged:{
+            if (platformInterface.demo_click_notification.demo === "one_to_many")
+                if (platformInterface.demo_click_notification.button === "switch")
+                    if (platformInterface.demo_click_notification.value === "on")
+                        switchOutline.isOn = true;
+                       else
+                        switchOutline.isOn = false;
+
+        }
 
         onIsOnChanged: {
             if (isOn){
@@ -45,6 +55,53 @@ Rectangle {
             }
         }
     }
+
+//    Button{
+//        id:switchButton
+//        height:100
+//        width:100
+//        anchors.left:parent.left
+//        anchors.leftMargin:parent.width*.2
+//        anchors.verticalCenter: parent.verticalCenter
+//        text:"switch"
+//        font.pixelSize: 24
+
+
+//        background: Rectangle {
+//               implicitWidth: 100
+//               implicitHeight: 40
+//               color: switchButton.pressed ? "lightgrey" : "transparent"
+//               border.color: "black"
+//               border.width: 5
+//               radius: 10
+//           }
+
+//        property bool isOn
+
+//        property var button: platformInterface.demo_click_notification
+//        onButtonChanged:{
+//            if (platformInterface.demo_click_notification.demo === "one_to_one")
+//                if (platformInterface.demo_click_notification.button === "switch")
+//                    if (platformInterface.demo_click_notification.value === "on")
+//                        switchButton.isOn = true;
+//                       else
+//                        switchButton.isOn = false;
+//        }
+
+//        onClicked: {
+//            isOn = !isOn;
+//            if (isOn){
+//                lightBulb.onOpacity = 1
+//                platformInterface.demo_click.update("one_to_one","switch","on")
+//            }
+//              else{
+//                lightBulb.onOpacity = 0
+//                platformInterface.demo_click.update("one_to_one","switch","off")
+//            }
+//        }
+//    }
+
+
 
     Image{
         id:arrowImage
@@ -75,7 +132,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:parent.bottom
         anchors.bottomMargin: 20
-        text:"reconfigure"
+        text:"configure"
 
         contentItem: Text {
                 text: resetButton.text
@@ -98,6 +155,13 @@ Rectangle {
 
             onClicked: {
                 platformInterface.set_demo.update("one_to_one")
+                root.resetUI()
             }
     }
+
+    function resetUI(){
+        switchOutline.isOn = false
+    }
+
+
 }

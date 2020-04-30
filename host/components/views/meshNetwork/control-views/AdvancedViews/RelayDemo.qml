@@ -10,6 +10,11 @@ import tech.strata.sgwidgets 1.0
 Rectangle {
     id: root
 
+    onVisibleChanged: {
+        if (visible)
+            resetUI();
+    }
+
     Text{
         id:title
         anchors.top:parent.top
@@ -30,9 +35,22 @@ Rectangle {
 
     MSwitch{
         id:switchOutline
+        height:180
+        width:100
         anchors.left:parent.left
         anchors.leftMargin:parent.width*.05
         anchors.verticalCenter: parent.verticalCenter
+
+        property var button: platformInterface.demo_click_notification
+        onButtonChanged:{
+            if (platformInterface.demo_click_notification.demo === "relay")
+                if (platformInterface.demo_click_notification.button === "switch1")
+                    if (platformInterface.demo_click_notification.value === "on")
+                        switchOutline.isOn = true;
+                       else
+                        switchOutline.isOn = false;
+
+        }
 
         //this switch should have no effect on the lightbulb if the relay switch is off
         onIsOnChanged: {
@@ -60,8 +78,21 @@ Rectangle {
 
     MSwitch{
         id:switchOutline2
+        height:180
+        width:100
         anchors.horizontalCenter:parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+
+        property var button: platformInterface.demo_click_notification
+        onButtonChanged:{
+            if (platformInterface.demo_click_notification.demo === "relay")
+                if (platformInterface.demo_click_notification.button === "switch2")
+                    if (platformInterface.demo_click_notification.value === "on")
+                        switchOutline2.isOn = true;
+                       else
+                        switchOutline2.isOn = false;
+
+        }
 
         onIsOnChanged: {
             if (isOn){
@@ -85,18 +116,24 @@ Rectangle {
         grooveFillColor: "limegreen"
         grooveColor:"lightgrey"
 
+        property var button: platformInterface.demo_click_notification
+        onButtonChanged:{
+            if (platformInterface.demo_click_notification.demo === "relay")
+                if (platformInterface.demo_click_notification.button === "relay_switch")
+                    if (platformInterface.demo_click_notification.value === "on")
+                        relaySwitch.isOn = true;
+                       else
+                        relaySwitch.isOn = false;
+
+        }
+
         onToggled: {
+            //note that turning on or off the relay doesn't change the state of the light
             if (checked){
                 platformInterface.demo_click.update("relay","relay_switch","on")
-                if (switchOutline.isOn){
-                    lightBulb.onOpacity = 1
-                }
             }
             else{
                 platformInterface.demo_click.update("relay","relay_switch","off")
-                if (switchOutline.isOn){
-                    lightBulb.onOpacity = 0
-                }
             }
         }
     }
@@ -138,7 +175,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:parent.bottom
         anchors.bottomMargin: 20
-        text:"reconfigure"
+        text:"configure"
 
         contentItem: Text {
                 text: resetButton.text
@@ -161,6 +198,13 @@ Rectangle {
 
             onClicked: {
                 platformInterface.set_demo.update("relay")
+                root.resetUI()
             }
+    }
+
+    function resetUI(){
+        switchOutline.isOn = false
+        switchOutline2.isOn = false
+        relaySwitch.checked = false
     }
 }

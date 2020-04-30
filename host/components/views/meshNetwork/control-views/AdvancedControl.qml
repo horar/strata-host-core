@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
+import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as Widget09
@@ -61,25 +62,6 @@ Rectangle{
                 anchors.bottom:parent.bottom
                 spacing:1
 
-                onVisibleChanged: {
-                    if (visible){
-                        //tell the firmwware which demo is currently selected
-                        if (demoButtonGroup.checkedButton == demo1Button)
-                            platformInterface.set_demo.update("one_to_one")
-                        else if (demoButtonGroup.checkedButton == demo2Button)
-                            platformInterface.set_demo.update("one_to_many")
-                         else if (demoButtonGroup.checkedButton == demo3Button)
-                            platformInterface.set_demo.update("relay")
-                         else if (demoButtonGroup.checkedButton == demo4Button)
-                            platformInterface.set_demo.update("multiple_models")
-                         else if (demoButtonGroup.checkedButton == demo5Button)
-                            platformInterface.set_demo.update("sensor")
-                         else if (demoButtonGroup.checkedButton == demo6Button)
-                            platformInterface.set_demo.update("cloud")
-                    }
-
-                }
-
                 SGButton{
                     id:demo1Button
                     width: parent.width
@@ -97,7 +79,6 @@ Rectangle{
                         if (checked){
                             console.log("demo 1 selected")
                             demoStackLayout.currentIndex = 0
-                            platformInterface.set_demo.update("one_to_one")
                         }
                     }
                 }
@@ -116,7 +97,6 @@ Rectangle{
                     onCheckedChanged: {
                         if (checked){
                             demoStackLayout.currentIndex = 1
-                            platformInterface.set_demo.update("one_to_many")
                         }
                     }
                 }
@@ -135,29 +115,27 @@ Rectangle{
                     onCheckedChanged: {
                         if (checked){
                             demoStackLayout.currentIndex = 2
-                            platformInterface.set_demo.update("relay")
                         }
                     }
                 }
-                SGButton{
-                    id:demo4Button
-                    width: parent.width
-                    height: 130
-                    text:"multiple model"
-                    fontSizeMultiplier:1.5
-                    color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/multipleModelsDemo.png"
-                    iconSize:100
-                    display: Button.TextUnderIcon
-                    checkable:true
+//                SGButton{
+//                    id:demo4Button
+//                    width: parent.width
+//                    height: 130
+//                    text:"multiple model"
+//                    fontSizeMultiplier:1.5
+//                    color:"white"
+//                    icon.source: "qrc:/views/meshNetwork/images/multipleModelsDemo.png"
+//                    iconSize:100
+//                    display: Button.TextUnderIcon
+//                    checkable:true
 
-                    onCheckedChanged: {
-                        if (checked){
-                            demoStackLayout.currentIndex = 3
-                            platformInterface.set_demo.update("multiple_models")
-                            }
-                    }
-                }
+//                    onCheckedChanged: {
+//                        if (checked){
+//                            demoStackLayout.currentIndex = 3
+//                            }
+//                    }
+//                }
                 SGButton{
                     id:demo5Button
                     width: parent.width
@@ -172,8 +150,7 @@ Rectangle{
 
                     onCheckedChanged: {
                         if (checked){
-                            demoStackLayout.currentIndex = 4
-                            platformInterface.set_demo.update("sensor")
+                            demoStackLayout.currentIndex = 3
                         }
                     }
                 }
@@ -191,8 +168,7 @@ Rectangle{
 
                     onCheckedChanged: {
                         if (checked){
-                            demoStackLayout.currentIndex = 5
-                            platformInterface.set_demo.update("cloud")
+                            demoStackLayout.currentIndex = 4
                         }
                     }
                 }
@@ -208,7 +184,7 @@ Rectangle{
         anchors.top:parent.top
         anchors.bottom:parent.bottom
         width:parent.width*.6
-        border.color:"blue"
+        border.color:"transparent"
 
 
 
@@ -233,9 +209,9 @@ Rectangle{
                 id: rectangleThree
             }
 
-            MultipleModelDemo {
-                id: rectangleFour
-            }
+//            MultipleModelDemo {
+//                id: rectangleFour
+//            }
 
             SensorDemo {
                 id: rectangleFive
@@ -256,7 +232,7 @@ Rectangle{
         anchors.top:parent.top
         anchors.right:parent.right
         height:25
-        color:"dimgrey"
+        color:"white"
 
         Text {
             id: consoleText
@@ -264,7 +240,7 @@ Rectangle{
             font {
                 pixelSize: 24
             }
-            color:"white"
+            color:"black"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             //        anchors {
@@ -290,7 +266,7 @@ Rectangle{
         scrollBarColor:"darkgrey"
 
         property var message_array : []
-        property var message_log: platformInterface.console_message.msg
+        property var message_log: platformInterface.msg_cli.msg
         onMessage_logChanged: {
             console.log("debug:",message_log)
             if(message_log !== "") {
@@ -309,7 +285,7 @@ Rectangle{
             anchors {
                 fill: parent
             }
-            color: "dimgrey"
+            color: "white"
 
             Rectangle {
                 width: parent.width
@@ -328,10 +304,10 @@ Rectangle{
                     anchors.fill: parent
                     //model: messageModel
                     //showMessageIds: true
-                    color: "dimgrey"
+                    color: "white"      //background color of the status box
                     //statusTextColor: "white"
                     //statusBoxColor: "black"
-                    statusBoxBorderColor: "dimgrey"
+                    statusBoxBorderColor: "white"
                     fontSizeMultiplier: 1
 
                     listElementTemplate : {
@@ -344,7 +320,7 @@ Rectangle{
                         id: delegatecontainer
                         height: delegateText.height
                         width: ListView.view.width
-                        color:"dimgrey"
+                        color:"white"   //text background color
 
                         SGText {
                             id: delegateText
@@ -355,7 +331,7 @@ Rectangle{
                                         )}
 
                             fontSizeMultiplier: messageList.fontSizeMultiplier
-                            color: model.color
+                            color: "grey"//model.color   //text color
                             wrapMode: Text.WrapAnywhere
                             width: parent.width
                         }
@@ -393,7 +369,7 @@ Rectangle{
                 text: clearButton.text
                 font.pixelSize: 15
                 opacity: enabled ? 1.0 : 0.3
-                color: "grey"
+                color: "lightgrey"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
@@ -402,8 +378,8 @@ Rectangle{
             background: Rectangle {
                 implicitWidth: 50
                 implicitHeight: 25
-                color: clearButton.down ? "lightgrey" : "transparent"
-                border.color: "grey"
+                color: clearButton.down ? "grey" : "transparent"
+                border.color: "lightgrey"
                 border.width: 2
                 radius: 10
             }
@@ -434,8 +410,17 @@ Rectangle{
 
             onAccepted: {
                 console.log("sending:",commandLineInput.text)
-                platformInterface.firmware_command.update(commandLineInput.text)
-                commandLineInput.text = "";  //clear the text after submitting
+                let object = JSON.parse(commandLineInput.text)
+                try{
+                    if (!object) throw "incorrect JSON";
+                    CorePlatformInterface.send(object)
+                    commandLineInput.text = "";  //clear the text after submitting
+                }
+                catch(err){
+                    console.log("incorrect JSON command")
+                }
+
+
             }
 
 
