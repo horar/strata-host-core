@@ -1295,6 +1295,7 @@ Item {
                                                     inputBox.unitFont.bold: true
                                                     fontSizeMultiplier: ratioCalc * 1.1
                                                     inputBox.validator: IntValidator { top: 100; bottom: 1 }
+                                                    inputBox.unitOverrideWidth: 30 * ratioCalc
                                                     onUserSet: {
                                                         if(lowLoadEnable.checked)
                                                             platformInterface.set_load_dac_load.update(lowloadSetting.value)
@@ -1382,6 +1383,7 @@ Item {
                                                     inputBox.unit: "mA"
                                                     inputBox.unitFont.bold: true
                                                     inputBox.enabled: true
+                                                    inputBox.unitOverrideWidth: 30 * ratioCalc
 
                                                     inputBox.validator: DoubleValidator { top: 100; bottom: 0.1}
                                                     onUserSet: {
@@ -1445,7 +1447,6 @@ Item {
                                                 Layout.fillHeight: true
                                                 Layout.fillWidth: true
 
-
                                                 SGSlider {
                                                     id: highloadSetting
                                                     width: highLoadSettingContainer.width
@@ -1462,7 +1463,7 @@ Item {
                                                     anchors.verticalCenterOffset: 10
                                                     inputBoxWidth: highLoadSettingContainer.width/5
                                                     inputBox.enabled: true
-                                                   // inputBox.overrideWidth: highLoadSettingContainer.width/5
+                                                    inputBox.unitOverrideWidth: 30 * ratioCalc
 
                                                     // inputBox.fontSizeMultiplier: ratioCalc * 1.1
                                                     fontSizeMultiplier: ratioCalc * 1.1
