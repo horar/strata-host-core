@@ -9,5 +9,7 @@
         <file>SciAboutWindow.qml</file>
         <file>SciSettingsDialog.qml</file>
         <file>VerticalDivider.qml</file>
+        <file>ProgramDeviceView.qml</file>
+        <file>StatusNode.qml</file>
     </qresource>
 </RCC>

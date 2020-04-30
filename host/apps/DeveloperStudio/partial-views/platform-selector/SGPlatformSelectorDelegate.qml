@@ -254,7 +254,7 @@ Item {
                 }
 
                 function is_segment_filter (item){
-                    return item.filterMapping.startsWith("segment-")
+                    return item.filterName.startsWith("segment-")
                 }
             }
             pathItemCount: 3

@@ -33,7 +33,7 @@ DeviceOperations::DeviceOperations(const SerialDevicePtr& device) :
 
     connect(this, &DeviceOperations::nextStep, this, &DeviceOperations::process, Qt::QueuedConnection);
     connect(device_.get(), &SerialDevice::msgFromDevice, this, &DeviceOperations::handleDeviceResponse);
-    connect(device_.get(), &SerialDevice::serialDeviceError, this, &DeviceOperations::handleDeviceError);
+    connect(device_.get(), &SerialDevice::serialDeviceError, this, &DeviceOperations::handleSerialDeviceError);
     connect(&responseTimer_, &QTimer::timeout, this, &DeviceOperations::handleResponseTimeout);
 
     qCDebug(logCategoryDeviceOperations) << this << "Created object for device operations.";
@@ -224,7 +224,7 @@ void DeviceOperations::handleResponseTimeout() {
     emit nextStep(QPrivateSignal());
 }
 
-void DeviceOperations::handleDeviceError(int errCode, QString msg) {
+void DeviceOperations::handleSerialDeviceError(SerialDevice::ErrorCode errCode, QString msg) {
     Q_UNUSED(errCode)
     responseTimer_.stop();
     resetInternalStates();
