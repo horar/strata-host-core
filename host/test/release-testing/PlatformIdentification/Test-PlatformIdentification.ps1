@@ -27,21 +27,34 @@ function Flash-JLinkFunction {
         [Parameter(Mandatory = $true)]$PathToBinaryFile
     )
 
+    # The script file content to flash the given .bin file to the platform
+    $JlinkFlashScript = "device EFM32GG380F1024
+                            if SWD
+                            speed 4000
+                            erase
+                            loadbin $PathToBinaryFile, 0
+                            r
+                            q"
+
+    # Create a temporary file to store the JLink scrip to flash the given binary
+    $JLinkScriptTempFile = New-TemporaryFile
+
+    # Add the script to the temporary file 
+    Set-Content $JLinkScriptTempFile $JlinkFlashScript
+
+    # run jlink using start-process
     Write-Host "Flashing $PathToBinaryFile..."
+    $JLinkProcess = Start-Process -FilePath 'C:\Program Files (x86)\SEGGER\JLink\JLink.exe' -ArgumentList "-ExitOnError -CommanderScript $($JLinkScriptTempFile.FullName)" -NoNewWindow -PassThru -Wait
 
-    # Build the flashing command
-    $JLinkCommand = @"
-device EFM32GG380F1024
-if SWD
-speed 4000
-erase
-loadbin $PathToBinaryFile, 0
-r
-q
-"@
-
-    # Find a way to get the exit code of JLinkExe
-    $JLinkCommand | &'C:\Program Files (x86)\SEGGER\JLink\JLink.exe'
+    # Check the exit code of JLinkExe
+    If($JLinkProcess.ExitCode -ne 0) {
+        write-host "JLinkExe faild during platform flashing."
+        return $false
+    }
+    Else {
+        Write-host "The platform was flashed successfully."
+        return $true
+    }
 }
 
 function Test-PlatformIdentifciation {
@@ -87,7 +100,10 @@ function Test-PlatformIdentifciation {
         Write-Host "Testing the file $BinaryFile..."
 
         # Flash the thing
-        Flash-JLinkFunction("$PathToBinaries\$BinaryFile")
+        If($(Flash-JLinkFunction("$PathToBinaries\$BinaryFile")) -eq $false) {
+            Write-Host "JLinkExe failed. Aborting the test."
+            return $false
+        }
 
         # Start hcs & python script.
 
