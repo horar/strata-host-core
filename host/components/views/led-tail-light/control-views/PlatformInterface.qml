@@ -482,6 +482,13 @@ Item {
     }
 
 
+    //Car demo Notification
+
+    property var car_demo_brightness: {
+        "value": "0.18"
+    }
+
+
 
 
 
@@ -629,21 +636,23 @@ Item {
                                      })
 
     property var set_led_diag_mode : ({
-                                            "cmd" : "led_diag_mode",
-                                            "payload": {
-                                                "value":"No Diagnostic"
-                                            },
+                                          "cmd" : "led_diag_mode",
+                                          "payload": {
+                                              "value":"No Diagnostic"
+                                          },
 
-                                            update: function (value) {
-                                                this.set(value)
-                                                this.send(this)
-                                            },
-                                            set: function (value) {
-                                                this.payload.value = value
-                                            },
-                                            send: function () { CorePlatformInterface.send(this) },
-                                            show: function () { CorePlatformInterface.show(this) }
-                                        })
+                                          update: function (value) {
+                                              this.set(value)
+                                              this.send(this)
+                                          },
+                                          set: function (value) {
+                                              this.payload.value = value
+                                          },
+                                          send: function () { CorePlatformInterface.send(this) },
+                                          show: function () { CorePlatformInterface.show(this) }
+                                      })
+
+
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp

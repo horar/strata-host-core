@@ -10,15 +10,16 @@
         <file>control-views/PowerControl.qml</file>
         <file>control-views/MiscControl.qml</file>
         <file>control-views/SAMOPTControl.qml</file>
-        <file>control-views/carInterior.jpg</file>
-        <file>car-lights/car-rear-brake-lights.jpg</file>
-        <file>car-lights/car-rear-hazard-lights.gif</file>
-        <file>car-lights/car-rear-left-turn.gif</file>
-        <file>car-lights/car-rear-no-lights.jpg</file>
-        <file>car-lights/car-rear-right-turn.gif</file>
-        <file>control-views/tesla-dash.jpg</file>
-        <file>control-views/rightArrow.jpg</file>
-        <file>control-views/leftArrow.jpg</file>
-        <file>car-lights/car-rear-reverse-lights.jpg</file>
+        <file>control-views/base.jpg</file>
+        <file>control-views/brakes.png</file>
+        <file>control-views/headlights.png</file>
+        <file>control-views/left.png</file>
+        <file>control-views/markers.png</file>
+        <file>control-views/reverse.png</file>
+        <file>control-views/right.png</file>
+        <file>control-views/running.png</file>
+        <file>control-views/control-Images/Blinker.png</file>
+        <file>control-views/control-Images/Brake.png</file>
+        <file>control-views/control-Images/flasher.png</file>
     </qresource>
 </RCC>
