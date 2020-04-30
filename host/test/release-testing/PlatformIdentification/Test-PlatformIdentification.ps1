@@ -1,9 +1,7 @@
 <#
 .SYNOPSIS
-Main Strata Developer Studio / Host Controller Service / Installer script driver
 
 .DESCRIPTION
-
 
 .INPUTS  
 
@@ -18,17 +16,14 @@ Requires: PowerShell version 5, and Python 3
 
 #>
 
-# Import the common functions.
-. ..\Common-Functions.ps1
-
-# function to flash a binaries using JLinkExe
+# function to flash a binary file to the platform using JLinkExe
 function Flash-JLinkFunction {
     Param (
         [Parameter(Mandatory = $true)]$PathToBinaryFile
     )
 
     # The script file content to flash the given .bin file to the platform
-    $JlinkFlashScript = "device EFM32GG380F1024
+    $JLinkScriptContent = "device EFM32GG380F1024
                             if SWD
                             speed 4000
                             erase
@@ -40,11 +35,12 @@ function Flash-JLinkFunction {
     $JLinkScriptTempFile = New-TemporaryFile
 
     # Add the script to the temporary file 
-    Set-Content $JLinkScriptTempFile $JlinkFlashScript
+    Set-Content $JLinkScriptTempFile $JLinkScriptContent
 
-    # run jlink using start-process
+    # TODO: remove the hardcoded path for JLinkExe
+    # run JLinkExe 
     Write-Host "Flashing $PathToBinaryFile..."
-    $JLinkProcess = Start-Process -FilePath 'C:\Program Files (x86)\SEGGER\JLink\JLink.exe' -ArgumentList "-ExitOnError -CommanderScript $($JLinkScriptTempFile.FullName)" -NoNewWindow -PassThru -Wait
+    $JLinkProcess = Start-Process -FilePath 'C:\Program Files (x86)\SEGGER\JLink\JLink.exe' -ArgumentList "-ExitOnError -CommanderScript $($JLinkScriptTempFile.FullName)" -NoNewWindow -PassThru -Wait 
 
     # Check the exit code of JLinkExe
     If($JLinkProcess.ExitCode -ne 0) {
@@ -60,7 +56,7 @@ function Flash-JLinkFunction {
 function Test-PlatformIdentifciation {
     [CmdletBinding()]
     param (
-        # [Parameter]$PathToPythonScript,
+        [Parameter(Mandatory = $true)][string]$PathToPythonScript,
         [Parameter(Mandatory = $true)][string]$PathToBinaries
     )
     
@@ -85,7 +81,6 @@ function Test-PlatformIdentifciation {
         return $false
     }
 
-
     # get the list of binaries
     $BinaryFileList = Get-ChildItem -Path $PathToBinaries -name *.bin
     
@@ -108,26 +103,21 @@ function Test-PlatformIdentifciation {
         # Start hcs & python script.
 
         Write-Host "Starting HCS..."
-        #Start-HCS
-        C:\Users\zbjmpd\spyglass\host\debug5128\bin\hcs.exe -f C:\Users\zbjmpd\spyglass\host\apps\hcs3\files\conf\hcs.config
+        Start-HCS
+        # C:\Users\zbjmpd\spyglass\host\debug5128\bin\hcs.exe -f C:\Users\zbjmpd\spyglass\host\apps\hcs3\files\conf\hcs.config
         
         # Start the python script
         Write-Host "Startting the python Script" # Maybe print the file name? Check what we have in other tests.
-        $pythonScript = Start-Process python -ArgumentList ".\zmq-example-dealer.py" -NoNewWindow -PassThru -Wait
+        $pythonScript =  Start-Process $PythonExec -ArgumentList "$PythonScriptPath $ZmqEndpoint" -NoNewWindow -PassThru -Wait
         
         # check the exit status of the python Script.
-        # Write-Host "Python Exit Code = $($pythonScript.ExitCode)"
         If ($PythonScript.ExitCode -eq 0) {
             # Test Successful
             Write-Host "Test passed" # print a better output! add the file name and change the color of output 
             # Return $true
         } Else {
-            # TODO: Add the name of the failed test to the summary.
-            $FailedTestsList += $BinaryFile
-
+            $FailedTestsList += $BinaryFile     # Add the name of the binary to a list to be printed in the test summary.
             Write-Host "Test failed." # print a better output! add the file name and change the color of output 
-            Write-Host "Exit Code = $($pythonScript.ExitCode)"
-            # Return $false
         }
 
         # Kill all hcs..
@@ -139,17 +129,15 @@ function Test-PlatformIdentifciation {
     # Print test Summary
     Write-Separator
     Write-Host "$($BinaryFileList.Count - $FailedTestsList.Count) tests passed out of $($BinaryFileList.Count)"
-    # print failed tests
-    if ($FailedTestsList.Count -ne 0) {
+    
+    if ($FailedTestsList.Count -ne 0) {         # If there are any failed test, list them.
         Write-Host "List of failed tests:"
         foreach ($TestName in $FailedTestsList) {
             Write-Host "`t$TestName"
         }
     }
+
     Write-Separator
-
     # return the summary to be printed with the other tests
-
+    return {$FailedTestsList.Count, $BinaryFileList.Count}
 }
-
-Test-PlatformIdentifciation -PathToBinaries "C:\Users\zbjmpd\release-bin\smaller_test"
