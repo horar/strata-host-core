@@ -17,7 +17,7 @@ Item {
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
         onClicked: {
-            root.selected(model.filterMapping)
+            root.selected(model.filterName)
         }
     }
 
@@ -55,7 +55,7 @@ Item {
     Connections {
         target: segmentFilterRow
         onSelected: {
-            if (model.filterMapping !== filter) {
+            if (model.filterName !== filter) {
                 root.checked = false
             } else if (root.checked) {
                 root.checked = false

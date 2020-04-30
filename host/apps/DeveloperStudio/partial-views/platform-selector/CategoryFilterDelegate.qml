@@ -32,7 +32,7 @@ Item {
     Component.onCompleted: {
         // Restore previously set filters
         for (let i = 0; i < Filters.categoryFilters.length; i++) {
-            if (Filters.categoryFilters[i] === model.filterMapping) {
+            if (Filters.categoryFilters[i] === model.filterName) {
                 root.pressed = true
                 break
             }
@@ -119,11 +119,11 @@ Item {
         onClicked: {
             root.pressed = !root.pressed
             if (root.pressed) {
-                Filters.categoryFilters.push(model.filterMapping)
+                Filters.categoryFilters.push(model.filterName)
                 Filters.utility.categoryFiltersChanged()
             } else {
                 for (let i = 0; i < Filters.categoryFilters.length; i++) {
-                    if (Filters.categoryFilters[i] === model.filterMapping) {
+                    if (Filters.categoryFilters[i] === model.filterName) {
                         Filters.categoryFilters.splice(i,1)
                         Filters.utility.categoryFiltersChanged()
                         break
