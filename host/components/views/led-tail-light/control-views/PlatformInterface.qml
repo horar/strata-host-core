@@ -488,6 +488,14 @@ Item {
         "value": "0.18"
     }
 
+    property var car_demo: {
+        "brake":false,
+        "left":false,
+        "reverse":true,
+        "right":true
+    }
+
+
 
 
 
@@ -651,6 +659,35 @@ Item {
                                           send: function () { CorePlatformInterface.send(this) },
                                           show: function () { CorePlatformInterface.show(this) }
                                       })
+    property var set_car_demo : ({
+                                     "cmd" : "car_demo",
+                                     "payload": {
+                                         "left":true,
+                                         "right":false,
+                                         "brake":true,
+                                         "hazard":true,
+                                         "reverse":false
+                                     },
+
+                                     update: function (left,right,brake,hazard,reverse) {
+                                         this.set(left,right,brake,hazard,reverse)
+                                         this.send(this)
+                                     },
+                                     set: function (left,right,brake,hazard,reverse) {
+                                         this.payload.left = left
+                                         this.payload.right = right
+                                         this.payload.brake = brake
+                                         this.payload.hazard = hazard
+                                         this.payload.reverse = reverse
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+                                 })
+    property bool left_value: false
+    property bool right_value: false
+    property bool brake_value: false
+    property bool hazard_value: false
+    property bool reverse_value: false
 
 
 

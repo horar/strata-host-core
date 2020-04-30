@@ -14,10 +14,11 @@ Item {
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
 
+
     Popup{
         id: warningPopup
-        width: root.width/2
-        height: root.height/4
+        width: parent.width/2
+        height: parent.height/4
         anchors.centerIn: parent
         modal: true
         focus: true
