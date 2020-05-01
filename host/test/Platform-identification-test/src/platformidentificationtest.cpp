@@ -279,7 +279,6 @@ void PlatformIdentificationTest::onStateChanged(PlatformTestState newState) {
             break;
 
         case PlatformTestState::StartTest:
-            std::cout << "starting the test..." << std::endl;
             mTestTimeout.start();  // timeout until the JLink is connected.
             break;
     }

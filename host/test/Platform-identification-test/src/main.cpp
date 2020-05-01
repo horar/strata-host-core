@@ -29,7 +29,8 @@ int main(int argc, char* argv[]) {
         binariesPath = parser.value("b");
     } 
     else {
-        std::cout << "args not supplied. existing :P" << std::endl;
+        std::cout << "No Arguments were Supplied." << std::endl;
+        std::cout << "\nUsage: platform-identification-test [-b | --binaries-path] <PATH_TO_BINARIES> [-j | --jlink-path] <PATH_TO_JLINKEXE>\n" << std::endl;
         return -1;
     }
 
