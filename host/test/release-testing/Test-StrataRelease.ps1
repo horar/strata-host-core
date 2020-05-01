@@ -85,13 +85,13 @@ Set-Variable "PythonPlatformIdentificationTest" "$PSScriptRoot/PlatformIdentific
 Write-Host "`n`nPerforming initial checks...`n"
 
 # Validate UAC and administration privileges
- Assert-UACAndAdmin
+Assert-UACAndAdmin
 
 # Validate Strata installer path
- Assert-SDSInstallerPath
+Assert-SDSInstallerPath
 
 # Search for PSSQLite
- Assert-PSSQLite
+Assert-PSSQLite
 
 # Search for Python tools
 Assert-PythonAndPyzmq
@@ -104,25 +104,25 @@ Assert-PythonScripts
 Write-Host "Starting tests...`n"
 
 # Run Test-SDSInstaller
- $SDSInstallerResults = Test-SDSInstaller -SDSInstallerPath $SDSInstallerPath
+$SDSInstallerResults = Test-SDSInstaller -SDSInstallerPath $SDSInstallerPath
 
 # Search for SDS and HCS
 Assert-StrataAndHCS
 
 # Run Test-Database (HCS database testing)
- $DatabaseResults = Test-Database
+$DatabaseResults = Test-Database
 
 # Run Test-TokenAndViewsDownload
- $TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
+$TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
 
 # Run Test-CollateralDownload (HCS collateral download testing)
- $CollateralDownloadResults = Test-CollateralDownload
+$CollateralDownloadResults = Test-CollateralDownload
 
 # Run Test-PlatformIdentification
 # The test is disabled by default, The reason is that it requires having a platform and a JLink connected to the test machine.
 # To enable the test, pass this flag -EnablePlatformIdentificationTest when running Test-StrataRelease.ps script
 If ($EnablePlatformIdentificationTest -eq $true) {
-    $PlatformIdentificationResults = Test-PlatformIdentification -PythonScriptPath $PythonPlatformIdentificationTest -ZmqEndpoint $HCSTCPEndpoint -BinariesPath "$PSScriptRoot\PlatformIdentification\bins"
+    $PlatformIdentificationResults = Test-PlatformIdentification -PythonScriptPath $PythonPlatformIdentificationTest -ZmqEndpoint $HCSTCPEndpoint
 }
 
 # Run Test-SDSControlViews (SDS control view testing)

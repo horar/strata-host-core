@@ -7,7 +7,7 @@ This test flashes a platform with given list of binaries and verify that HCS is 
 
 .INPUTS  
 -PythonScriptPath   Path to Strata executable
--BinariesPath       Path to *.bin files
+-$PathToBinaries    Path to *.bin files
 -ZmqEndpoint        The address of zmq client
 .OUTPUTS
 
@@ -16,6 +16,36 @@ Version:        1.0
 Creation Date:  04/28/2020
 Requires: PowerShell version 5, Python 3, Jlink.exe, connected JLink device, and a connected platform
 #>
+
+# Function to search in hcs directory in AppData to look for bin files. These files are downloaded by Test-CollateralDownload,
+# as a result if this test fail, this test might fail too.
+function Copy-AllBinariesFromAppData {
+    Param (
+        [Parameter(Mandatory = $true)][string]$DestinationDirectory
+    )
+    # Check if there are binaries in $HCSAppDataDir
+    $BinaryFileList = Get-ChildItem -Path "$HCSAppDataDir\documents\views\" -Recurse -Filter *.bin
+    write-host "$($BinaryFileList.Count) .bin files were found."
+
+    $BinaryFilesDir = "$TestRoot\PlatformIdentification\BinaryFiles"
+    If ($($BinaryFileList.Count) -ne 0) {
+        Write-Host "Copying the .bin files to $DestinationDirectory"
+        
+        # Create a new directory, Don't fail if it does exist.
+        New-Item -Path $DestinationDirectory -ItemType "directory" -Force
+        
+        # Copy the .bin files to the destination.
+        foreach( $filename in $BinaryFileList) {
+            write-host "Copying $($filename.FullName)"
+            Copy-Item -Path $filename.FullName -Destination "$DestinationDirectory\$($filename.name)" -Recurse
+        }
+        return $true
+    }
+    Else {
+        Write-Host "No Binary files were found in $HCSAppDataDir\documents\views\. Aborting..."
+        return $false
+    }
+}
 
 # function to flash a binary file to the platform using JLinkExe
 function Flash-JLinkFunction {
@@ -57,7 +87,7 @@ function Test-PlatformIdentification {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)][string]$PythonScriptPath,    # Path to Strata executable
-        [Parameter(Mandatory = $true)][string]$BinariesPath,        # Path to *.bin files
+        [Parameter][string]$PathToBinaries,                         # Path to *.bin files
         [Parameter(Mandatory = $true)][string]$ZmqEndpoint          # The address of zmq client
     )
 
@@ -87,6 +117,22 @@ function Test-PlatformIdentification {
     Else {
         Write-Host "No Platform is connected. Aborting..."
         return -1, -1
+    }
+
+    # Check if Binaries path was passed as an argument, if not create a new directory and copy the bins to it.
+    If($PathToBinaries) {
+        $BinariesPath = $PathToBinaries
+    }
+    Else {
+        $DefualtBinDirectory = "$TestRoot\PlatformIdentification\BinaryFiles"
+        Write-Host "Binary files location was not supplied, the binary files will be copied to $DefualtBinDirectory"
+        If ( $(Copy-AllBinariesFromAppData -DestinationDirectory $DefualtBinDirectory) -eq $true ) {
+            $BinariesPath = $DefualtBinDirectory
+        }
+        Else {
+            Write-Host "Failed to get the binary files. Aborting..."
+            return -1, -1
+        }
     }
 
     # get the list of binaries
