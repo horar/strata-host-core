@@ -208,7 +208,7 @@ Rectangle {
             property var signalStrengthValue: platformInterface.status_sensor
             onSignalStrengthValueChanged: {
                 if (platformInterface.status_sensor.uaddr == meshObject.nodeNumber){
-                    if (platformInterface.status_sensor.sensor_type === "strata"){
+                    if (platformInterface.status_sensor.sensor_type === "rssi"){
                         //signal strength comes in as a value between 0 and 255, but the real values
                         //should be between -120 and 0, so subtract here to get displayed values
                         signalStrength = platformInterface.status_sensor.data -255

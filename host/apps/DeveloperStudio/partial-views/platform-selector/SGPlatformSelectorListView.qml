@@ -56,7 +56,7 @@ Item {
             if (filteringCategory){
                 for (let i = 0; i < Filters.categoryFilters.length; i++){
                     for (let j = 0; j < item.filters.count; j++){
-                        if (Filters.categoryFilters[i] === item.filters.get(j).filterMapping) {
+                        if (Filters.categoryFilters[i] === item.filters.get(j).filterName) {
                             return true
                         }
                     }
@@ -83,7 +83,7 @@ Item {
         function in_segment(item) {
             if (filteringSegment){
                 for (let j = 0; j < item.filters.count; j++){
-                    if (Filters.segmentFilter === item.filters.get(j).filterMapping) {
+                    if (Filters.segmentFilter === item.filters.get(j).filterName) {
                         return true
                     }
                 }

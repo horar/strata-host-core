@@ -51,7 +51,7 @@ namespace strata {
         /**
          * Send message to serial device. Emits serialDeviceError in case of failure.
          * @param msg message to be written to device
-         * @return true if message can be send, otherwise false
+         * @return true if message can be sent, otherwise false
          */
         bool sendMessage(const QByteArray msg);
 
@@ -77,6 +77,31 @@ namespace strata {
 
         friend QDebug operator<<(QDebug dbg, const SerialDevice* d);
 
+        /**
+         * The ErrorCode enum for serialDeviceError() signal.
+         */
+        enum class ErrorCode {
+            NoError = 0,
+            UndefinedError,
+            DeviceBusy,
+            SendMessageError,
+            // values from QSerialPort::SerialPortError:
+            SP_DeviceNotFoundError = 101,
+            SP_PermissionError,
+            SP_OpenError,
+            SP_ParityError,
+            SP_FramingError,
+            SP_BreakConditionError,
+            SP_WriteError,
+            SP_ReadError,
+            SP_ResourceError,
+            SP_UnsupportedOperationError,
+            SP_UnknownError,
+            SP_TimeoutError,
+            SP_NotOpenError
+        };
+        Q_ENUM(ErrorCode)
+
     signals:
         /**
          * Emitted when there is available new message from serial port.
@@ -92,10 +117,10 @@ namespace strata {
 
         /**
          * Emitted when error occured during communication on the serial port.
-         * @param errCode error code (value < 0 is custom error code, other values are from QSerialPort::SerialPortError)
+         * @param errCode error code
          * @param msg error description
          */
-        void serialDeviceError(int errCode, QString msg);
+        void serialDeviceError(ErrorCode errCode, QString msg);
 
     // signals only for internal use:
         // Qt5 private signals: https://woboq.com/blog/how-qt-signals-slots-work-part2-qt5.html
@@ -108,6 +133,7 @@ namespace strata {
 
     private:
         bool writeData(const QByteArray data, quintptr lockId);
+        ErrorCode translateQSerialPortError(QSerialPort::SerialPortError error);
         // *** functions used by friend class DeviceOperations:
         void setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer);
         bool lockDeviceForOperation(quintptr lockId);
@@ -136,6 +162,7 @@ namespace strata {
     };
 
     typedef std::shared_ptr<SerialDevice> SerialDevicePtr;
-}
+
+}  // namespace
 
 #endif
