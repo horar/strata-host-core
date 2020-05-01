@@ -24,25 +24,26 @@ function Copy-AllBinariesFromAppData {
         [Parameter(Mandatory = $true)][string]$DestinationDirectory
     )
     # Check if there are binaries in $HCSAppDataDir
+    Write-Host "Looking for .bin files in $HCSAppDataDir\documents\views\..."
     $BinaryFileList = Get-ChildItem -Path "$HCSAppDataDir\documents\views\" -Recurse -Filter *.bin
-    write-host "$($BinaryFileList.Count) .bin files were found."
+    write-Indented "$($BinaryFileList.Count) .bin files were found."
 
     $BinaryFilesDir = "$TestRoot\PlatformIdentification\BinaryFiles"
     If ($($BinaryFileList.Count) -ne 0) {
-        Write-Host "Copying the .bin files to $DestinationDirectory"
+        write-Indented "Copying the .bin files to $DestinationDirectory"
         
         # Create a new directory, Don't fail if it does exist.
         New-Item -Path $DestinationDirectory -ItemType "directory" -Force
         
         # Copy the .bin files to the destination.
         foreach( $filename in $BinaryFileList) {
-            write-host "Copying $($filename.FullName)"
+            write-Indented "Copying $($filename.FullName)"
             Copy-Item -Path $filename.FullName -Destination "$DestinationDirectory\$($filename.name)" -Recurse
         }
         return $true
     }
     Else {
-        Write-Host "No Binary files were found in $HCSAppDataDir\documents\views\. Aborting..."
+        write-Indented "No Binary files were found in $HCSAppDataDir\documents\views\. Aborting..."
         return $false
     }
 }
@@ -74,11 +75,11 @@ function Flash-JLinkFunction {
 
     # Check the exit code of JLinkExe
     If($JLinkProcess.ExitCode -ne 0) {
-        write-host "JLinkExe faild during platform flashing."
+        write-Indented "JLinkExe faild during platform flashing."
         return $false
     }
     Else {
-        Write-host "The platform was flashed successfully."
+        write-Indented "The platform was flashed successfully."
         return $true
     }
 }
@@ -97,25 +98,27 @@ function Test-PlatformIdentification {
     # Check if JLink is installed, using the default path for Windows
     Write-Host "Checking if JLink.exe exist..."
     IF( $(Test-Path $JLinkExePath) -eq $false) {
-        Write-Host "JLink.exe is missing. Aborting..."
+        write-Indented "JLink.exe is missing. Aborting..."
         return -1, -1
     }
 
     # Look for a connected JLink device. Only works with windows
+    Write-Host "Checking if a JLink device is connected..."
     If (Get-PnpDevice -Status OK -Class USB -FriendlyName "J-Link driver") {
-        Write-Host "JLink Device was found."
+        write-Indented "JLink Device was found."
     }
     Else {
-        Write-Host "No JLink Device is connected. Aborting..."
+        write-Indented "No JLink Device is connected. Aborting..."
         return -1, -1
     }
 
     # Look for a connected platform. Only works with windows
+    Write-Host "Checking if a platform is connected..."
     If (Get-PnpDevice -Status OK -Class Ports -InstanceId "FTDIBUS*") {
-        Write-Host "Platform Connected."
+        write-Indented "Platform Connected."
     }
     Else {
-        Write-Host "No Platform is connected. Aborting..."
+        write-Indented "No Platform is connected. Aborting..."
         return -1, -1
     }
 
@@ -130,7 +133,7 @@ function Test-PlatformIdentification {
             $BinariesPath = $DefualtBinDirectory
         }
         Else {
-            Write-Host "Failed to get the binary files. Aborting..."
+            write-Indented "Failed to get the binary files. Aborting..."
             return -1, -1
         }
     }
@@ -142,48 +145,52 @@ function Test-PlatformIdentification {
     # Check if .bin files were found in the given path
     if($($BinaryFileList.count) -gt 0) {
         #print how many files we found and their names.
-        Write-Host "$($BinaryFileList.Count) .bin files were found."
-        Write-Host "Binary File List:"
-        Write-Host $BinaryFileList
+        write-Indented "$($BinaryFileList.Count) .bin files were found."
+        write-Indented "Binary File List:"
+        ForEach ($BinaryFileName in $BinaryFileList) {
+            write-Indented $BinaryFileName
+        }
     }
     Else {
-        Write-Host "No .bin files were found in $BinariesPath. Aborting..."
+        write-Indented "No .bin files were found in $BinariesPath. Aborting..."
         return -1, -1
     }
 
-    # Loop through the files
+    # Stop All hcs
+    Stop-HCS
+
+    # Loop through the 
     Foreach ($BinaryFile in $BinaryFileList) {
         Write-Separator
         Write-Host "Testing the file $BinaryFile..."
 
         # Flash the platform
         If($(Flash-JLinkFunction("$BinariesPath\$BinaryFile")) -eq $false) {
-            Write-Host "JLinkExe failed. Aborting the test."
+            write-Indented "JLinkExe failed. Aborting the test."
             return -1, -1
         }
 
         # Start hcs
-        Write-Host "Starting HCS..."
+        Write-Host "`nStarting HCS...`n"
         Start-HCS
         
         # Start the python script
-        Write-Host "Startting the python Script"
+        Write-Host "Startting the python Script..."
         $PythonScript =  Start-Process $PythonExec -ArgumentList "$PythonScriptPath $ZmqEndpoint" -NoNewWindow -PassThru -Wait
         
         # check the exit status of the python Script.
         If ($PythonScript.ExitCode -eq 0) {
             # Test Successful
-            Write-Host "Test passed" # print a better output! add the file name and change the color of output 
+            write-Indented "Test passed" # print a better output! add the file name and change the color of output 
             # Return $true
         } Else {
             $FailedTestsList += $BinaryFile     # Add the name of the binary to a list to be printed in the test summary.
-            Write-Host "Test failed." # print a better output! add the file name and change the color of output 
+            write-Indented "Test failed." # print a better output! add the file name and change the color of output 
         }
 
         # Kill all hcs..
-        Write-Host "Stopping HCS..."
+        Write-Host "`nStopping HCS...`n"
         Stop-HCS
-        Write-Separator
     }
 
     # Print test Summary
@@ -193,7 +200,7 @@ function Test-PlatformIdentification {
     If ($FailedTestsList.Count -ne 0) {         # If there are any failed test, list them.
         Write-Host "List of failed tests:"
         Foreach ($TestName in $FailedTestsList) {
-            Write-Host "`t$TestName"
+            write-Indented "$TestName"
         }
     }
 
