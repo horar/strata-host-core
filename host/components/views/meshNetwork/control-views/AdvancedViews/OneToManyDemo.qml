@@ -18,9 +18,8 @@ Rectangle {
     Text{
         id:title
         anchors.top:parent.top
-        anchors.topMargin: 40
-        anchors.right: bulbGroup.left
-        anchors.rightMargin: 20
+        anchors.topMargin: 20
+        anchors.horizontalCenter: parent.horizontalCenter
         text:"one-to-many"
         font.pixelSize: 72
     }
@@ -104,12 +103,11 @@ Rectangle {
                 }
 
                 Text{
-                    property int address: 1309
                     id:modelAddressText
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"model id 0x" + address
-                    font.pixelSize: 18
+                    text:"model id 0x1309"
+                    font.pixelSize: 15
                 }
             }
         }
@@ -167,11 +165,14 @@ Rectangle {
     Image{
         id:arrowImage
         anchors.left:nodeRectangle.right
+        anchors.leftMargin: 10
         anchors.right:bulbGroup.left
+         anchors.rightMargin: 10
         anchors.verticalCenter: parent.verticalCenter
         source: "qrc:/views/meshNetwork/images/rightArrow.svg"
         height:25
-        fillMode: Image.PreserveAspectFit
+        sourceSize: Qt.size(width, height)
+        //fillMode: Image.PreserveAspectFit
         mipmap:true
 
         Text{
@@ -190,22 +191,23 @@ Rectangle {
         anchors.right:parent.right
         anchors.rightMargin:parent.width*.05
         anchors.top:parent.top
-        anchors.topMargin: 50
+        anchors.topMargin: 100
         anchors.bottom:parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 100
         width:200
         color:"transparent"
-        border.color:"lightgrey"
+        border.color:"transparent"
         border.width: 3
 
         Column{
+            id:bulbColumn
             anchors.fill:parent
             topPadding: 10
-            spacing:(parent.height - (bulbNodeRectangle.height*3) -topPadding*2)/2
+            spacing:10//(parent.height - (bulbNodeRectangle.height*3) -topPadding*2)/2
 
             Rectangle{
                 id:bulbNodeRectangle
-                height:lightBulb1.height + 150
+                height:bulbColumn.height/3 - bulbColumn.spacing*2
                 width:parent.width-10
                 anchors.horizontalCenter: parent.horizontalCenter
                 radius:10
@@ -282,9 +284,14 @@ Rectangle {
 
                         MLightBulb{
                             id:lightBulb1
-                            height:50
+                            height:{
+                                if (bulbModelRectangle.height > 50)
+                                    return bulbModelRectangle.height *.65
+                                else
+                                    return 0
+                            }
                             anchors.top: bulbModelText.bottom
-                            anchors.topMargin: 10
+                            anchors.topMargin: 0
                             anchors.horizontalCenter: parent.horizontalCenter
                             onBulbClicked: {
                                 platformInterface.demo_click.update("one_to_many","bulb1","on")
@@ -308,14 +315,14 @@ Rectangle {
 
             Rectangle{
                 id:bulbNodeRectangle2
-                height:lightBulb2.height + 150
+                height:bulbColumn.height/3 - bulbColumn.spacing*2
                 width:parent.width-10
                 anchors.horizontalCenter: parent.horizontalCenter
                 radius:10
                 border.color:"black"
 
                 Text{
-                    property int nodeNumber: 2
+                    property int nodeNumber: 3
                     id:blubNodeText2
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -385,9 +392,14 @@ Rectangle {
 
                         MLightBulb{
                             id:lightBulb2
-                            height:50
+                            height:{
+                                if (bulbModelRectangle2.height > 50)
+                                    return bulbModelRectangle2.height *.65
+                                else
+                                    return 0
+                            }
                             anchors.top: bulbModelText2.bottom
-                            anchors.topMargin: 10
+                            anchors.topMargin: 0
                             anchors.horizontalCenter: parent.horizontalCenter
                             onBulbClicked: {
                                 platformInterface.demo_click.update("one_to_many","bulb2","on")
@@ -410,14 +422,14 @@ Rectangle {
 
             Rectangle{
                 id:bulbNodeRectangle3
-                height:lightBulb1.height + 150
+                height:bulbColumn.height/3 - bulbColumn.spacing*2
                 width:parent.width-10
                 anchors.horizontalCenter: parent.horizontalCenter
                 radius:10
                 border.color:"black"
 
                 Text{
-                    property int nodeNumber: 2
+                    property int nodeNumber: 4
                     id:blubNodeText3
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -487,9 +499,14 @@ Rectangle {
 
                         MLightBulb{
                             id:lightBulb3
-                            height:50
+                            height:{
+                                if (bulbModelRectangle3.height > 50)
+                                    return bulbModelRectangle3.height *.65
+                                else
+                                    return 0
+                            }
                             anchors.top: bulbModelText3.bottom
-                            anchors.topMargin: 10
+                            anchors.topMargin: 0
                             anchors.horizontalCenter: parent.horizontalCenter
                             onBulbClicked: {
                                 platformInterface.demo_click.update("one_to_many","bulb3","on")

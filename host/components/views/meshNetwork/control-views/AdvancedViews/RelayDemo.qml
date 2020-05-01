@@ -142,14 +142,21 @@ Rectangle {
 
         //this switch should have no effect on the lightbulb if the relay switch is off
         onClicked:{
-            if (!isOn && relaySwitch.checked){     //turning the lightbulb on
-                lightBulb.onOpacity = 1
+            if (!isOn){         //turning the bulb off
                 platformInterface.light_hsl_set.update(65535,0,0,100);  //set color to white
-              }
-              else if (isOn && relaySwitch.checked){         //turning the lightbulb off
-                lightBulb.onOpacity = 0
+                lightBulb1.onOpacity = 1
+                if (relaySwitch.checked){
+                    lightBulb2.onOpacity = 1
+                }
+            }
+            else{       //turning the lightbulb off
                 platformInterface.light_hsl_set.update(65535,0,0,0);  //set color to black
-              }
+                lightBulb1.onOpacity = 0
+                if (relaySwitch.checked){
+                    lightBulb2.onOpacity = 0
+                }
+            }
+
             switchOutline.isOn = !switchOutline.isOn
         }
 
@@ -169,10 +176,13 @@ Rectangle {
     Image{
         id:arrowImage
         anchors.left:nodeRectangle.right
+        anchors.leftMargin: 10
         anchors.right:nodeRectangle2.left
+        anchors.rightMargin: 10
         anchors.verticalCenter: parent.verticalCenter
         source: "qrc:/views/meshNetwork/images/rightArrow.svg"
         height:12
+        sourceSize: Qt.size(width, height)
         //fillMode: Image.PreserveAspectFit
         mipmap:true
 
@@ -189,16 +199,16 @@ Rectangle {
 
     Rectangle{
         id:nodeRectangle2
-        width: switchOutline2.width + 50
-        height:switchOutline2.height + 250
-        anchors.horizontalCenter: switchOutline2.horizontalCenter
-        anchors.verticalCenter: switchOutline2.verticalCenter
+        width: lightBulb1.width + 50
+        height:lightBulb1.height + 250
+        anchors.horizontalCenter: lightBulb1.horizontalCenter
+        anchors.verticalCenter: lightBulb1.verticalCenter
         anchors.verticalCenterOffset: 25
         radius:10
         border.color:"black"
 
         Text{
-            property int nodeNumber: 1
+            property int nodeNumber: 2
             id:nodeText2
             anchors.top:parent.top
             anchors.horizontalCenter: parent.horizontalCenter
@@ -267,11 +277,10 @@ Rectangle {
                 }
 
                 Text{
-                    property int address: 1309
                     id:modelAddressText2
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"model id 0x" + address
+                    text:"model id 0x1307"
                     font.pixelSize: 10
                 }
             }
@@ -320,52 +329,55 @@ Rectangle {
 
     }
 
-    MSwitch{
-        id:switchOutline2
-        height:160
-        width:100
+    MLightBulb{
+        id:lightBulb1
+        height:parent.height * .2
         anchors.horizontalCenter:parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
-        property var button: platformInterface.demo_click_notification
-        onButtonChanged:{
-            if (platformInterface.demo_click_notification.demo === "relay")
-                if (platformInterface.demo_click_notification.button === "switch2")
-                    if (platformInterface.demo_click_notification.value === "on"){
-                        switchOutline2.isOn = true;
-                        lightBulb.onOpacity = 1
-                    }
-                    else{
-                        switchOutline2.isOn = false;
-                        lightBulb.onOpacity = 0
-                    }
-
+        onBulbClicked: {
+            platformInterface.demo_click.update("relay","bulb1","on")
+            console.log("bulb clicked")
         }
-
-        onClicked:{
-            if (!isOn){     //turning the lightbulb on
-                lightBulb.onOpacity = 1
-                platformInterface.light_hsl_set.update(65535,0,0,100);  //set color to white
-                switchOutline2.isOn = true
-              }
-              else{         //turning the lightbulb off
-                lightBulb.onOpacity = 0
-                platformInterface.light_hsl_set.update(65535,0,0,0);  //set color to black
-                switchOutline2.isOn = false
-              }
-        }
-
-//        onIsOnChanged: {
-//            if (isOn){
-//                lightBulb.onOpacity = 1
-//                platformInterface.demo_click.update("relay","switch2","on")
-//            }
-//              else{
-//                lightBulb.onOpacity = 0
-//                platformInterface.demo_click.update("relay","switch2","off")
-//            }
-//        }
     }
+
+//    MSwitch{
+//        id:switchOutline2
+//        height:160
+//        width:100
+//        anchors.horizontalCenter:parent.horizontalCenter
+//        anchors.verticalCenter: parent.verticalCenter
+
+//        property var button: platformInterface.demo_click_notification
+//        onButtonChanged:{
+//            if (platformInterface.demo_click_notification.demo === "relay")
+//                if (platformInterface.demo_click_notification.button === "switch2")
+//                    if (platformInterface.demo_click_notification.value === "on"){
+//                        switchOutline2.isOn = true;
+//                        lightBulb.onOpacity = 1
+//                    }
+//                    else{
+//                        switchOutline2.isOn = false;
+//                        lightBulb.onOpacity = 0
+//                    }
+
+//        }
+
+//        onClicked:{
+//            if (!isOn){     //turning the lightbulb on
+//                lightBulb.onOpacity = 1
+//                platformInterface.light_hsl_set.update(65535,0,0,100);  //set color to white
+//                switchOutline2.isOn = true
+//              }
+//              else{         //turning the lightbulb off
+//                lightBulb.onOpacity = 0
+//                platformInterface.light_hsl_set.update(65535,0,0,0);  //set color to black
+//                switchOutline2.isOn = false
+//              }
+//        }
+
+
+//    }
 
 
 
@@ -378,7 +390,7 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         source: "qrc:/views/meshNetwork/images/rightArrow.svg"
         height:12
-        //fillMode: Image.PreserveAspectFit
+        sourceSize: Qt.size(width, height)
         mipmap:true
 
         Text{
@@ -393,15 +405,15 @@ Rectangle {
 
     Rectangle{
         id:bulbNodeRectangle
-        width: lightBulb.width + 50
-        height:lightBulb.height + 200
-        anchors.horizontalCenter: lightBulb.horizontalCenter
-        anchors.verticalCenter: lightBulb.verticalCenter
+        width: lightBulb2.width + 50
+        height:lightBulb2.height + 200
+        anchors.horizontalCenter: lightBulb2.horizontalCenter
+        anchors.verticalCenter: lightBulb2.verticalCenter
         radius:10
         border.color:"black"
 
         Text{
-            property int nodeNumber: 2
+            property int nodeNumber: 3
             id:blubNodeText
             anchors.top:parent.top
             anchors.horizontalCenter: parent.horizontalCenter
@@ -483,7 +495,7 @@ Rectangle {
     }
 
     MLightBulb{
-        id:lightBulb
+        id:lightBulb2
         height:parent.height * .2
         anchors.right:parent.right
         anchors.rightMargin:parent.width*.05
@@ -529,7 +541,6 @@ Rectangle {
 
     function resetUI(){
         switchOutline.isOn = false
-        switchOutline2.isOn = false
         relaySwitch.checked = false
     }
 }

@@ -156,7 +156,6 @@ Item {
             id:temperatureButton
             height:parent.height
             width:height
-            checkable:true
 
             background: Rectangle {
                     color:"transparent"
@@ -196,7 +195,6 @@ Item {
             id:meshButton
             height:parent.height
             width:height
-            checkable:true
             visible:true
 
             background: Rectangle {

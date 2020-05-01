@@ -11,9 +11,19 @@ Rectangle {
     id: root
     color:"transparent"
 
+    property int node1ID: 0
+    property int node2ID: 0
+
     onVisibleChanged: {
-        if (visible)
+        if (visible){
             resetUI();
+
+//            for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+//                //for each node that is marked visible set the visibilty of the node appropriately
+//                if (platformInterface.network_notification.nodes[alpha].ready === 0){
+//                }
+//            }
+        }
     }
 
     Rectangle{
@@ -100,7 +110,7 @@ Rectangle {
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
                     text:"model id 0x" + address
-                    font.pixelSize: 18
+                    font.pixelSize: 15
                 }
             }
         }
@@ -151,20 +161,6 @@ Rectangle {
                 switchOutline.isOn = false
               }
         }
-
-//        onIsOnChanged: {
-
-//            if (isOn){
-//                lightBulb.onOpacity = 1
-//                //platformInterface.demo_click.update("one_to_one","switch","on")
-//                platformInterface.light_hsl_set.update(65535,0,0,100);  //set color to white
-//            }
-//              else{
-//                lightBulb.onOpacity = 0
-//                //platformInterface.demo_click.update("one_to_one","switch","off")
-//                platformInterface.light_hsl_set.update(65535,0,0,0);  //set color to black
-//            }
-//        }
     }
 
 
@@ -173,12 +169,13 @@ Rectangle {
 
     Image{
         id:arrowImage
-        anchors.left:switchOutline.right
-        anchors.right:lightBulb.left
+        anchors.left:nodeRectangle.right
+        anchors.right:bulbNodeRectangle.left
         anchors.verticalCenter: parent.verticalCenter
         source: "qrc:/views/meshNetwork/images/rightArrow.svg"
         height:25
-        fillMode: Image.PreserveAspectFit
+        sourceSize: Qt.size(width, height)
+        //fillMode: Image.PreserveAspectFit
         mipmap:true
 
         Text{
@@ -276,7 +273,7 @@ Rectangle {
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
                     text:"model id 0x" + address
-                    font.pixelSize: 18
+                    font.pixelSize: 15
                 }
             }
         }
