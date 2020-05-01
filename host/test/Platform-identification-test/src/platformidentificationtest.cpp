@@ -87,13 +87,12 @@ bool PlatformIdentificationTest::parseBinaryFileList(QString binariesPath) {
     if (mBinaryFileNameList.empty()) {
         std::cout << "No .bin files were found in " << mAbsloutePathToBinaries.toStdString() << std::endl;
         return false;
-    } 
-    else {
-        // print the file names
-        std::cout << mBinaryFileNameList.count() << " .bin files were found in " << mAbsloutePathToBinaries.toStdString() << std::endl;
-        for (const auto &fileName : mBinaryFileNameList) {
-            std::cout << fileName.toStdString() << std::endl;
-        }
+    }
+    
+    // print the file names
+    std::cout << mBinaryFileNameList.count() << " .bin files were found in " << mAbsloutePathToBinaries.toStdString() << std::endl;
+    for (const auto &fileName : mBinaryFileNameList) {
+        std::cout << fileName.toStdString() << std::endl;
     }
 
     return true;
