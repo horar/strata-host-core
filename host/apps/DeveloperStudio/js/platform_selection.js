@@ -40,7 +40,8 @@ function populatePlatforms(platform_list_json) {
         platform_list = JSON.parse(platform_list_json)
     } catch(err) {
         console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Error parsing platform list:", err.toString())
-        insertErrorListing()
+        platformListModel.clear()
+        platformListModel.platformListStatus = "error"
     }
 
     if (platform_list.list.length < 1) {
@@ -79,44 +80,19 @@ function populatePlatforms(platform_list_json) {
         }
 
         // Parse list of text filters and gather complete filter info from PlatformFilters
-        // Support both intermediate and planned Deployment Portal API
         if (platform.hasOwnProperty("filters")) {
-            // platform matches new API
             let filterModel = []
             for (let filter of platform.filters) {
                 let filterListItem = PlatformFilters.findFilter(filter)
                 if (filterListItem) {
                     filterModel.push(filterListItem)
                 } else {
-                    // filter from Deployment Portal unknown to UI; update Strata
+                    console.warn(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Ignoring unimplemented filter:", filter);
                 }
             }
             platform.filters = filterModel
         } else {
             platform.filters = []
-            // platform matches old API - TODO [Faller]: remove once deployment portal supports new API, also remove oldNewMap from platformFilters
-            if (platform.hasOwnProperty("application_icons")) {
-                for (let application_icon of platform.application_icons) {
-                    if (PlatformFilters.oldNewMap.hasOwnProperty(application_icon)){
-                        let filter = PlatformFilters.oldNewMap[application_icon]
-                        let filterListItem = PlatformFilters.findFilter(filter)
-                        if (filterListItem) {
-                            platform.filters.push(filterListItem)
-                        }
-                    }
-                }
-            }
-            if (platform.hasOwnProperty("product_icons")) {
-                for (let product_icon of platform.product_icons) {
-                    if (PlatformFilters.oldNewMap.hasOwnProperty(product_icon)){
-                        let filter = PlatformFilters.oldNewMap[product_icon]
-                        let filterListItem = PlatformFilters.findFilter(filter)
-                        if (filterListItem) {
-                            platform.filters.push(filterListItem)
-                        }
-                    }
-                }
-            }
         }
 
         // Add to the model
@@ -253,23 +229,6 @@ function emptyListRetry() {
         console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "HCS failed to supply valid list, displaying error.")
         platformListModel.platformListStatus = "error"
     }
-}
-
-function insertErrorListing () {
-    platformListModel.clear()
-    let platform_info = {
-        "verbose_name": "Platform List Unavailable",
-        "connection": "view",
-        "class_id": "",
-        "opn": "",
-        "description": "There was a problem loading the platform list",
-        "image": "file:/", // Assigns 'not found' image
-        "available": { "control": false, "documents": false },
-        "filters":[],
-        "error": true,
-    }
-    platformListModel.append(platform_info)
-    platformMap = {}
 }
 
 function insertUnknownListing (platform) {

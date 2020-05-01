@@ -37,6 +37,11 @@ int SciPlatform::deviceId()
 void SciPlatform::setDevice(strata::SerialDevicePtr device)
 {
     if (device == nullptr) {
+        if (status_ == PlatformStatus::Disconnected) {
+             qCCritical(logCategorySci) << "device is already disconnected";
+             return;
+        }
+
         device_->disconnect();
         device_.reset();
         setStatus(PlatformStatus::Disconnected);
@@ -127,6 +132,11 @@ void SciPlatform::setErrorString(const QString &errorString)
     }
 }
 
+bool SciPlatform::programInProgress() const
+{
+    return programInProgress_;
+}
+
 void SciPlatform::resetPropertiesFromDevice()
 {
     if (device_ == nullptr) {
@@ -208,6 +218,32 @@ void SciPlatform::removeCommandFromHistoryAt(int index)
     }
 }
 
+bool SciPlatform::programDevice(QString filePath, bool doBackup)
+{
+    if (status_ != PlatformStatus::Ready
+            && status_ != PlatformStatus::NotRecognized) {
+        qCWarning(logCategorySci) << "platform not ready";
+        return false;
+    }
+
+    if (flasherConnector_.isNull() == false) {
+        qCWarning(logCategorySci) << "flasherConnector already exists";
+        return false;
+    }
+
+    flasherConnector_ = new strata::FlasherConnector(device_, filePath, this);
+
+    connect(flasherConnector_, &strata::FlasherConnector::flashProgress, this, &SciPlatform::flasherProgramProgressHandler);
+    connect(flasherConnector_, &strata::FlasherConnector::backupProgress, this, &SciPlatform::flasherBackupProgressHandler);
+    connect(flasherConnector_, &strata::FlasherConnector::operationStateChanged, this, &SciPlatform::flasherOperationStateChangedHandler);
+    connect(flasherConnector_, &strata::FlasherConnector::finished, this, &SciPlatform::flasherFinishedHandler);
+
+    flasherConnector_->flash(doBackup);
+    setProgramInProgress(true);
+
+    return true;
+}
+
 void SciPlatform::messageFromDeviceHandler(QByteArray message)
 {
     scrollbackModel_->append(message, SciScrollbackModel::MessageType::Response);
@@ -218,8 +254,44 @@ void SciPlatform::messageToDeviceHandler(QByteArray message)
     scrollbackModel_->append(message, SciScrollbackModel::MessageType::Request);
 }
 
-void SciPlatform::deviceErrorHandler(int errorCode, QString message)
+void SciPlatform::deviceErrorHandler(strata::SerialDevice::ErrorCode errorCode, QString errorString)
 {
     Q_UNUSED(errorCode);
-    setErrorString(message);
+    setErrorString(errorString);
+}
+
+void SciPlatform::flasherProgramProgressHandler(int chunk, int total)
+{
+    emit flasherProgramProgress(chunk, total);
+}
+
+void SciPlatform::flasherBackupProgressHandler(int chunk)
+{
+    emit flasherBackupProgress(chunk);
+}
+
+void SciPlatform::flasherOperationStateChangedHandler(
+        strata::FlasherConnector::Operation operation,
+        strata::FlasherConnector::State state,
+        QString errorString)
+{
+    emit flasherOperationStateChanged(operation, state, errorString);
+}
+
+void SciPlatform::flasherFinishedHandler(strata::FlasherConnector::Result result)
+{
+    flasherConnector_->disconnect();
+    flasherConnector_->deleteLater();
+
+    emit flasherFinished(result);
+
+    setProgramInProgress(false);
+}
+
+void SciPlatform::setProgramInProgress(bool programInProgress)
+{
+    if (programInProgress_ != programInProgress) {
+        programInProgress_ = programInProgress;
+        emit programInProgressChanged();
+    }
 }

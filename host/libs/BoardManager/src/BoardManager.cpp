@@ -4,7 +4,6 @@
 #include <SerialDevice.h>
 #include <DeviceOperations.h>
 
-#include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QMutexLocker>
 
@@ -314,14 +313,14 @@ void BoardManager::handleNewMessage(QString message) {
     emit newMessage(device->deviceId(), message);
 }
 
-void BoardManager::handleSerialDeviceError(int errCode, QString errStr) {
+void BoardManager::handleSerialDeviceError(SerialDevice::ErrorCode errCode, QString errStr) {
     Q_UNUSED(errStr)
     SerialDevice *sDevice = qobject_cast<SerialDevice*>(QObject::sender());
     if (sDevice == nullptr) {
         return;
     }
     // if device is unexpectedly disconnected remove it
-    if (errCode == static_cast<int>(QSerialPort::ResourceError)) {
+    if (errCode == SerialDevice::ErrorCode::SP_ResourceError) {
         int deviceId = sDevice->deviceId();
         qCWarning(logCategoryBoardManager).nospace() << "Interrupted connection with device 0x" << hex << static_cast<uint>(deviceId);
         QTimer::singleShot(0, this, [this, deviceId](){
