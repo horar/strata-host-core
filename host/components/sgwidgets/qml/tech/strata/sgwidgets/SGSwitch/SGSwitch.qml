@@ -17,6 +17,7 @@ Item {
 
     property real fontSize: 10
     opacity: enabled ? 1 : 0.2
+    layer.enabled: true
 
     // Optional Configurations:
     property alias switchWidth: groove.width

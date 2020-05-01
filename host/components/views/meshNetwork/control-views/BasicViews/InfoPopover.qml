@@ -31,35 +31,35 @@ Popup {
     property color backgroundColor: "lightgrey"
     property color textColor: "black"
 
-    onAboutToShow:{
-        //configure the view to match the current settings.
-        platformInterface.get_alarm_mode.update(nodeNumber);
-        platformInterface.get_dimmer_mode.update(nodeNumber);
-        platformInterface.get_relay_mode.update(nodeNumber);
-        platformInterface.get_high_power_mode.update(nodeNumber);
-        platformInterface.get_hsl_color.update(nodeNumber);
-    }
+//    onAboutToShow:{
+//        //configure the view to match the current settings.
+//        platformInterface.get_alarm_mode.update(nodeNumber);
+//        platformInterface.get_dimmer_mode.update(nodeNumber);
+//        platformInterface.get_relay_mode.update(nodeNumber);
+//        platformInterface.get_high_power_mode.update(nodeNumber);
+//        platformInterface.get_hsl_color.update(nodeNumber);
+//    }
 
-    property bool alarmModeIsOn: platformInterface.alarm_mode.value;
-    onAlarmModeIsOnChanged: {
-        if (alarmModeIsOn && platformInterface.alarm_mode.uaddr === nodeNumber)
-            alarmSwitch.checked = true;
-    }
-    property bool dimmerModeIsOn: platformInterface.dimmer_mode.value;
-    onDimmerModeIsOnChanged: {
-        if (dimmerModeIsOn && platformInterface.dimmer_mode.uaddr === nodeNumber)
-            dimmerSwitch.checked = true;
-    }
-    property bool relayModeIsOn: platformInterface.relay_mode.value;
-    onRelayModeIsOnChanged: {
-        if (relayModeIsOn && platformInterface.relay_mode.uaddr === nodeNumber)
-            relayModeIsOn.checked = true;
-    }
-    property bool highPowerIsOn: platformInterface.high_power_mode.value;
-    onHighPowerIsOnChanged: {
-        if (highPowerIsOn && platformInterface.high_power_mode.uaddr === nodeNumber)
-            highPowerIsOn.checked = true;
-    }
+//    property bool alarmModeIsOn: platformInterface.alarm_mode.value;
+//    onAlarmModeIsOnChanged: {
+//        if (alarmModeIsOn && platformInterface.alarm_mode.uaddr === nodeNumber)
+//            alarmSwitch.checked = true;
+//    }
+//    property bool dimmerModeIsOn: platformInterface.dimmer_mode.value;
+//    onDimmerModeIsOnChanged: {
+//        if (dimmerModeIsOn && platformInterface.dimmer_mode.uaddr === nodeNumber)
+//            dimmerSwitch.checked = true;
+//    }
+//    property bool relayModeIsOn: platformInterface.relay_mode.value;
+//    onRelayModeIsOnChanged: {
+//        if (relayModeIsOn && platformInterface.relay_mode.uaddr === nodeNumber)
+//            relayModeIsOn.checked = true;
+//    }
+//    property bool highPowerIsOn: platformInterface.high_power_mode.value;
+//    onHighPowerIsOnChanged: {
+//        if (highPowerIsOn && platformInterface.high_power_mode.uaddr === nodeNumber)
+//            highPowerIsOn.checked = true;
+//    }
     property var hslColor: platformInterface.hsl_color.uaddr;
     onHslColorChanged: {
         if (platformInterface.hsl_color.uaddr === nodeNumber){

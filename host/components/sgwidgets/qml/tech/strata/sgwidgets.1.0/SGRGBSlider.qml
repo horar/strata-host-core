@@ -9,6 +9,7 @@ Slider {
     height: 28
     width: 300
     live: false
+    layer.enabled: true
 
     property var rgbArray: hToRgb(value)
     property string color: "red"

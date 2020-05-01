@@ -26,10 +26,14 @@ Rectangle {
     onVisibleChanged: {
         if (visible){
             console.log("office is now visible")
+            //deactivate all the nodes from their previous roles when switching
+            //this is a kludge, as it means nodes will not function in the roles they appear in until they're moved
+            platformInterface.set_node_mode.update("default",65535,true)
             //iterate over the meshArray, and send role and node numbers for each
-            meshObjectRow.meshArray.forEach(function(item, index, array){
-                platformInterface.set_node_mode.update(item.pairingModel,item.nodeNumber,true)
-                })
+            //meshObjectRow.meshArray.forEach(function(item, index, array){
+                //removed temporarily because sending nine commands back to back overloads the network.
+                //platformInterface.set_node_mode.update(item.pairingModel,item.nodeNumber,true)
+             //   })
         }
 
     }
@@ -53,8 +57,8 @@ Rectangle {
             mesh8.pairingModel = ""
         }
 
-        property var meshArray: [0,provisioner,mesh2, mesh1,mesh4, mesh3,mesh6,mesh5, mesh7,mesh8]
-        //property var targetArray: [0, target5, target4,target1,target2, target3, target6, target7, target8]
+        property var meshArray: [0,provisioner,mesh4, mesh6, mesh1, mesh2, mesh3,mesh5, mesh7,mesh8]
+
         property var initialNodeVisibilityColors: platformInterface.network_notification
         onInitialNodeVisibilityColorsChanged:{
 
@@ -63,28 +67,25 @@ Rectangle {
             for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
                 //for each node that is marked visible set the visibilty of the node appropriately
                 if (platformInterface.network_notification.nodes[alpha].ready === 0){
-                    meshArray[alpha].opacity = 0.5
-                    meshArray[alpha].enabled = false
                     meshArray[alpha].objectColor = "lightgrey"
-                    //targetArray[alpha].color = "transparent"
+                    meshArray[alpha].nodeNumber = ""
 
                     //special case because sometimes the 0th element of the notification array
                     //really represents the first element
                     if (alpha === 1){
                         if (platformInterface.network_notification.nodes[0].ready === 1 ){
                             meshArray[alpha].opacity = 1.0
-                            meshArray[alpha].enabled = true
+                            //meshArray[alpha].enabled = true
                             meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+
                         }
                     }
-
-
-
                 }
                 else {
                     meshArray[alpha].opacity = 1.0
                     meshArray[alpha].enabled = true
                     meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+                    meshArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
 
                     //special case because sometimes the 0th element of the notification array
                     //really represents the first element
@@ -118,7 +119,7 @@ Rectangle {
             }
         }
 
-        MeshObject{ id: mesh7; scene:"office"; displayName:"Security Camera";pairingModel:"security"; nodeNumber: "";
+        MeshObject{ id: mesh7; scene:"office"; displayName:"Security Camera";pairingModel:"security_camera"; nodeNumber: "";
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor) }
         MeshObject{ id: mesh6; scene:"office"; displayName:"Doorbell"; pairingModel:"doorbell";nodeNumber: ""
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
@@ -128,9 +129,9 @@ Rectangle {
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         ProvisionerObject{ id: provisioner; nodeNumber:"1" }
         //
-        MeshObject{ id: mesh1; scene:"office"; displayName:"Robotic Arm"; pairingModel:"robot_arm"; nodeNumber: ""
+        MeshObject{ id: mesh1; scene:"office"; displayName:"Robotic Arm"; pairingModel:"robotic_arm"; nodeNumber: ""
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
-        MeshObject{ id: mesh3; scene:"office"; displayName:"Solar Panel"; subName:"(Relay)"; pairingModel:"solar_panel"; nodeNumber: ""
+        MeshObject{ id: mesh3; scene:"office"; displayName:"Solar Panel"; subName:"(Relay)"; pairingModel:"relay"; nodeNumber: ""
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         MeshObject{ id: mesh5; scene:"office"; displayName:"HVAC"; subName:"(Remote)";pairingModel:"hvac"; nodeNumber: ""
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
@@ -144,8 +145,9 @@ Rectangle {
         id:mainImage
         source:"qrc:/views/meshNetwork/images/office.jpg"
         //anchors.left:parent.left
-        height:parent.height*.70
+        height:parent.height*.60
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: 20
         fillMode: Image.PreserveAspectFit
         mipmap:true
         opacity:1
@@ -259,7 +261,36 @@ Rectangle {
                 target8.color = "transparent"
             }
 
-            property var targetArray: [0, target5, target4,target6,target3, target8, target2, target7, target1, 0]
+            property var targetArray: [0, target5,target3 ,target2,target6 , target4,target8 , target7, target1, 0]
+
+            property var network: platformInterface.network_notification
+            onNetworkChanged:{
+
+                //iterate over the nodes in the notification
+                console.log("updating nodes",platformInterface.network_notification.nodes.length)
+                for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+                    //for each node that is marked visible set the visibilty of the node appropriately
+                    if (platformInterface.network_notification.nodes[alpha].ready === 0){
+                        targetArray[alpha].color = "transparent"
+                        targetArray[alpha].nodeNumber = ""
+
+                        //special case because sometimes the 0th element of the notification array
+                        //really represents the first element
+                        if (alpha === 1){
+                            if (platformInterface.network_notification.nodes[0].ready === 1 ){
+                                targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+
+                            }
+                        }
+                    }
+                    else {
+                        targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+                        targetArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+
+
+                    }
+                }
+            }
 
             property var newNodeAdded: platformInterface.node_added
             onNewNodeAddedChanged: {
@@ -286,7 +317,7 @@ Rectangle {
                     //this node number, and set it back to transparent
                     targetArray.forEach(function(item, index, array){
                         if (item.nodeNumber === inNodeNumber){
-                            //console.log("removing node from role",item.nodeType)
+                            console.log("removing node",item.nodeNumber," from role",item.nodeType)
                             item.nodeNumber = ""
                             item.color = "transparent"
                             }
@@ -294,7 +325,7 @@ Rectangle {
 
                     targetArray.forEach(function(item, index, array){
                         if (item.nodeType === pairingModel){
-                            //console.log("assigning",item.nodeType,"node",inNodeNumber)
+                            console.log("assigning",item.nodeType,"node",inNodeNumber)
                             item.nodeNumber = inNodeNumber
                             item.color = nodeColor
                         }
@@ -311,7 +342,7 @@ Rectangle {
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .32
                 scene:"office"
-                nodeType:"security"
+                nodeType:"security_camera"
                 nodeNumber:""
             }
 
@@ -320,9 +351,9 @@ Rectangle {
                 id:target2
                 //objectName:"target2"
                 anchors.left:parent.left
-                anchors.leftMargin: parent.width * .19
+                anchors.leftMargin: parent.width * .16
                 anchors.top:parent.top
-                anchors.topMargin: parent.height * .67
+                anchors.topMargin: parent.height * .69
                 scene:"office"
                 nodeType: "doorbell"
                 nodeNumber:""
@@ -360,7 +391,7 @@ Rectangle {
                 anchors.leftMargin: parent.width * .65
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .37
-                nodeType:"provisioner"
+                nodeType:"high_power"
                 color:"green"
             }
             //—————————————————————————————————————
@@ -374,7 +405,7 @@ Rectangle {
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .53
                 scene:"office"
-                nodeType:"robot_arm"
+                nodeType:"robotic_arm"
             }
 
             DragTarget{
@@ -398,7 +429,7 @@ Rectangle {
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .47
                 scene:"office"
-                nodeType:"solar_panel"
+                nodeType:"relay"
                 nodeNumber:""
             }
 

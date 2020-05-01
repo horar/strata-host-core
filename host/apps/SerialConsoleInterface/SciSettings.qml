@@ -10,6 +10,7 @@ Item {
     property int maxCommandsInScrollback: defaultMaxCommandsInScrollback
     property bool commandsInScrollbackUnlimited: defaultCommandsInScrollbackUnlimited
     property int maxCommandsInHistory: defaultMaxCommandsInHistory
+    property string lastSelectedFirmware
 
     readonly property int defaultMaxCommandsInScrollback: 5000
     readonly property bool defaultCommandsInScrollbackUnlimited: false
@@ -20,6 +21,7 @@ Item {
         property alias maxCommandsInScrollback: root.maxCommandsInScrollback
         property alias commandsInScrollbackUnlimited: root.commandsInScrollbackUnlimited
         property alias maxCommandsInHistory: root.maxCommandsInHistory
+        property alias lastSelectedFirmware: root.lastSelectedFirmware
     }
 
     function resetToDefaultValues() {

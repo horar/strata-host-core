@@ -33,7 +33,7 @@ DeviceOperations::DeviceOperations(const SerialDevicePtr& device) :
 
     connect(this, &DeviceOperations::nextStep, this, &DeviceOperations::process, Qt::QueuedConnection);
     connect(device_.get(), &SerialDevice::msgFromDevice, this, &DeviceOperations::handleDeviceResponse);
-    connect(device_.get(), &SerialDevice::serialDeviceError, this, &DeviceOperations::handleDeviceError);
+    connect(device_.get(), &SerialDevice::serialDeviceError, this, &DeviceOperations::handleSerialDeviceError);
     connect(&responseTimer_, &QTimer::timeout, this, &DeviceOperations::handleResponseTimeout);
 
     qCDebug(logCategoryDeviceOperations) << this << "Created object for device operations.";
@@ -126,7 +126,7 @@ void DeviceOperations::startOperation(Operation operation) {
         return;
     }
 
-    QTimer::singleShot(delay, [this](){ emit nextStep(QPrivateSignal()); });
+    QTimer::singleShot(delay, this, [this](){ emit nextStep(QPrivateSignal()); });
 }
 
 void DeviceOperations::finishOperation(Operation operation, int data) {
@@ -224,7 +224,7 @@ void DeviceOperations::handleResponseTimeout() {
     emit nextStep(QPrivateSignal());
 }
 
-void DeviceOperations::handleDeviceError(int errCode, QString msg) {
+void DeviceOperations::handleSerialDeviceError(SerialDevice::ErrorCode errCode, QString msg) {
     Q_UNUSED(errCode)
     responseTimer_.stop();
     resetInternalStates();
@@ -272,7 +272,7 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
                 // Clock source for bootloader and application must match. Otherwise when application jumps to bootloader,
                 // it will have a hardware fault which requires board to be reset.
                 qCInfo(logCategoryDeviceOperations) << this << "Waiting 5 seconds for bootloader to start.";
-                QTimer::singleShot(BOOTLOADER_START_DELAY, [this](){ emit nextStep(QPrivateSignal()); });
+                QTimer::singleShot(BOOTLOADER_START_DELAY, this, [this](){ emit nextStep(QPrivateSignal()); });
                 break;
             case Activity::WaitingForFlashFwChunk :
                 responseTimer_.stop();
