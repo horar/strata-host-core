@@ -1069,6 +1069,7 @@ Item {
                                                     inputBox.text: maxInputCurrent.value.toFixed(1)
                                                     inputBox.unit: " A"
                                                     inputBox.unitFont.bold: true
+                                                    inputBox.unitOverrideWidth: 30 * ratioCalc
 
 
 
@@ -1131,14 +1132,12 @@ Item {
                                                     stepSize: 0.1
                                                     fromText.text: "0V"
                                                     toText.text: "26V"
-
                                                     inputBoxWidth: maxInputVoltageContainer.width/5
                                                     inputBox.unit: " V"
                                                     inputBox.unitFont.bold: true
                                                     fontSizeMultiplier: ratioCalc
+                                                    inputBox.unitOverrideWidth: 30 * ratioCalc
                                                     inputBox.validator: DoubleValidator { top: 26; bottom: 0}
-
-
 
                                                     onUserSet:{
                                                         var valueSet = parseInt(value)
