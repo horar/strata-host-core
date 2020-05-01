@@ -117,7 +117,6 @@ Item {
             id:batteryChargeButton
             height:parent.height
             width:height
-            checkable:true
 
             background: Rectangle {
                     color:"transparent"
@@ -125,7 +124,7 @@ Item {
                 }
 
             onPressedChanged: {
-                if (checked){
+                if (pressed){
                     platformInterface.get_all_sensor_data.update("battery");
                     sensorRow.clearAllText();
                     sensorRowRoot.showBatteryCharge();
