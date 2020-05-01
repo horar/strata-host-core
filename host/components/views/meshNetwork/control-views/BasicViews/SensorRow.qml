@@ -156,7 +156,7 @@ Item {
                 anchors.top: batteryChargeButton.bottom
                 anchors.horizontalCenter: batteryChargeButton.horizontalCenter
                 anchors.topMargin: 10
-                text: "battery charge"
+                text: "battery"
                 font.pixelSize: 18
                 visible: batteryChargeButton.hovered
             }
