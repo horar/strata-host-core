@@ -3,7 +3,7 @@
 These scripts were written to automate parts of the Strata release testing plan:
 https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist
 
-## These tests cover the following
+# These tests cover the following
 
 * Installation/uninstallation testing in different scenarios.
 * Couchbase DB replication through HCS and check of contents.
@@ -13,7 +13,7 @@ https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+
 * A display of every control view available to HCS.
 * Verify that all released platforms are identified successfully by HCS.
 
-## Software Requirements
+# Software Requirements
 1. PowerShell
   * PSSQLite module
 2. Python3
