@@ -34,7 +34,7 @@ void PlatformIdentificationTest::enableBoardManagerSignals(bool enable) {
     }
 }
 
-bool PlatformIdentificationTest::init(QString jlinkExePath, QString binariesPath) {
+bool PlatformIdentificationTest::init(const QString& jlinkExePath, const QString& binariesPath) {
     mBoardManager.init(false);
 
     // get a list of *.bin files found in the provided path
@@ -78,7 +78,7 @@ void PlatformIdentificationTest::onCheckJLinkDeviceConnection(bool exitedNormall
     }
 }
 
-bool PlatformIdentificationTest::parseBinaryFileList(QString binariesPath) {
+bool PlatformIdentificationTest::parseBinaryFileList(const QString& binariesPath) {
     QDir binariesDirectory(binariesPath);
     mBinaryFileNameList = binariesDirectory.entryList({"*.bin"}, QDir::Files);
     mAbsloutePathToBinaries = binariesDirectory.absolutePath();
@@ -195,7 +195,7 @@ void PlatformIdentificationTest::connectToPlatform() {
     mBoardManager.reconnect(mTestDeviceId);
 }
 
-void PlatformIdentificationTest::flashPlatform(QString binaryFileName) {
+void PlatformIdentificationTest::flashPlatform(const QString& binaryFileName) {
     std::cout << "*****************************************************************" << std::endl;
     std::cout << "Test #" << mCurrentBinaryFileIndex + 1 << " out of "
               << mBinaryFileNameList.count() << std::endl;

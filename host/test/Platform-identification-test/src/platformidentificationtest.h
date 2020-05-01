@@ -15,7 +15,7 @@ class PlatformIdentificationTest : public QObject
     Q_OBJECT
 public:
     explicit PlatformIdentificationTest(QObject *parent = nullptr);
-    bool init(QString jlinkExePath, QString binariesPath);
+    bool init(const QString& jlinkExePath, const QString& binariesPath);
     void start();
 
 private:
@@ -54,10 +54,10 @@ private:
     };
 
     // Private functions
-    void flashPlatform(QString binaryFileName);
+    void flashPlatform(const QString& binaryFileName);
     void connectToPlatform();
     void identifyPlatform(bool deviceRecognized);
-    bool parseBinaryFileList(QString binariesPath);
+    bool parseBinaryFileList(const QString& binariesPath);
     void printSummary();
     void enableBoardManagerSignals(bool enable);
 
