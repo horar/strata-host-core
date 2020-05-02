@@ -10,9 +10,36 @@ import tech.strata.sgwidgets 1.0
 Rectangle {
     id: root
 
+    property int node1ID: 0
+    property int node2ID: 0
+    property int node3ID: 0
+
     onVisibleChanged: {
         if (visible)
             resetUI();
+
+        var nodeCount = 0;
+        for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+            //for each node that is marked visible set the visibilty of the node appropriately
+            console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
+            if (platformInterface.network_notification.nodes[alpha].ready !== 0){
+                nodeCount++;
+                if (nodeCount === 1){
+                    root.node1ID = platformInterface.network_notification.nodes[alpha].index
+                    //console.log("node 1 set to",root,node1ID)
+                }
+                else if (nodeCount === 2){
+                    root.node2ID = platformInterface.network_notification.nodes[alpha].index
+                    //console.log("node 1 set to",root,node2ID)
+                }
+                else if (nodeCount === 3){
+                    root.node3ID = platformInterface.network_notification.nodes[alpha].index
+                }
+                else if (nodeCount === 4){
+                    root.node4ID = platformInterface.network_notification.nodes[alpha].index
+                }
+            }
+        }
     }
 
     Text{
@@ -43,11 +70,16 @@ Rectangle {
         }
 
         Text{
-            property int address: 2
+            property int address: root.node1ID
             id:nodeAddressText
             anchors.bottom:parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"uaddr " + address
+            text:{
+                if (address != 0)
+                  return  "uaddr " + address
+                else
+                  return "uddr -"
+            }
             font.pixelSize: 15
         }
 
@@ -73,11 +105,16 @@ Rectangle {
             }
 
             Text{
-                property int address: 2
+                property int address: root.node1ID
                 id:primaryElementAddressText
                 anchors.bottom:parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
-                text:"uaddr " + address
+                text:{
+                    if (address != 0)
+                      return  "uaddr " + address
+                    else
+                      return "uddr -"
+                }
                 font.pixelSize: 15
             }
 
@@ -187,12 +224,17 @@ Rectangle {
         mipmap:true
 
         Text{
-            property int address: 3
+            property int address: root.node2ID
             id:messageText
             anchors.top:parent.bottom
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"message \nto uaddr " + address
+            text:{
+                if (address != 0)
+                  return  "message \nto uaddr " + address
+                else
+                  return "message \nto uaddr -"
+            }
             font.pixelSize: 15
         }
     }
@@ -217,11 +259,16 @@ Rectangle {
         }
 
         Text{
-            property int address: 2
+            property int address: root.node2ID
             id:nodeAddressText2
             anchors.bottom:parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"uaddr " + address
+            text:{
+                if (address != 0)
+                  return  "uaddr " + address
+                else
+                  return "uddr -"
+            }
             font.pixelSize: 15
         }
 
@@ -247,11 +294,16 @@ Rectangle {
             }
 
             Text{
-                property int address: 2
+                property int address: root.node2ID
                 id:primaryElementAddressText2
                 anchors.bottom:parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
-                text:"uaddr " + address
+                text:{
+                    if (address != 0)
+                      return  "uaddr " + address
+                    else
+                      return "uddr -"
+                }
                 font.pixelSize: 15
             }
 
@@ -341,43 +393,7 @@ Rectangle {
         }
     }
 
-//    MSwitch{
-//        id:switchOutline2
-//        height:160
-//        width:100
-//        anchors.horizontalCenter:parent.horizontalCenter
-//        anchors.verticalCenter: parent.verticalCenter
 
-//        property var button: platformInterface.demo_click_notification
-//        onButtonChanged:{
-//            if (platformInterface.demo_click_notification.demo === "relay")
-//                if (platformInterface.demo_click_notification.button === "switch2")
-//                    if (platformInterface.demo_click_notification.value === "on"){
-//                        switchOutline2.isOn = true;
-//                        lightBulb.onOpacity = 1
-//                    }
-//                    else{
-//                        switchOutline2.isOn = false;
-//                        lightBulb.onOpacity = 0
-//                    }
-
-//        }
-
-//        onClicked:{
-//            if (!isOn){     //turning the lightbulb on
-//                lightBulb.onOpacity = 1
-//                platformInterface.light_hsl_set.update(65535,0,0,100);  //set color to white
-//                switchOutline2.isOn = true
-//              }
-//              else{         //turning the lightbulb off
-//                lightBulb.onOpacity = 0
-//                platformInterface.light_hsl_set.update(65535,0,0,0);  //set color to black
-//                switchOutline2.isOn = false
-//              }
-//        }
-
-
-//    }
 
 
 
@@ -422,11 +438,16 @@ Rectangle {
         }
 
         Text{
-            property int address: 3
+            property int address: root.node3ID
             id:bulbNodeAddressText
             anchors.bottom:parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"uaddr " + address
+            text:{
+                if (address != 0)
+                  return  "uaddr " + address
+                else
+                  return "uddr -"
+            }
             font.pixelSize: 15
         }
 
@@ -452,11 +473,16 @@ Rectangle {
             }
 
             Text{
-                property int address: 3
+                property int address: root.node3ID
                 id:bulbPrimaryElementAddressText
                 anchors.bottom:parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
-                text:"uaddr " + address
+                text:{
+                    if (address != 0)
+                      return  "uaddr " + address
+                    else
+                      return "uddr -"
+                }
                 font.pixelSize: 15
             }
 

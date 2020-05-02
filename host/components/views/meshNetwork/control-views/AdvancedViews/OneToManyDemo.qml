@@ -10,9 +10,37 @@ import tech.strata.sgwidgets 1.0
 Rectangle {
     id: root
 
+    property int node1ID: 0
+    property int node2ID: 0
+    property int node3ID: 0
+    property int node4ID: 0
+
     onVisibleChanged: {
         if (visible)
             resetUI();
+
+        var nodeCount = 0;
+        for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+            //for each node that is marked visible set the visibilty of the node appropriately
+            console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
+            if (platformInterface.network_notification.nodes[alpha].ready !== 0){
+                nodeCount++;
+                if (nodeCount === 1){
+                    root.node1ID = platformInterface.network_notification.nodes[alpha].index
+                    //console.log("node 1 set to",root,node1ID)
+                }
+                else if (nodeCount === 2){
+                    root.node2ID = platformInterface.network_notification.nodes[alpha].index
+                    //console.log("node 1 set to",root,node2ID)
+                }
+                else if (nodeCount === 3){
+                    root.node3ID = platformInterface.network_notification.nodes[alpha].index
+                }
+                else if (nodeCount === 4){
+                    root.node4ID = platformInterface.network_notification.nodes[alpha].index
+                }
+            }
+        }
     }
 
     Text{
@@ -43,11 +71,16 @@ Rectangle {
         }
 
         Text{
-            property int address: 2
+            property int address: root.node1ID
             id:nodeAddressText
             anchors.bottom:parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"uaddr " + address
+            text:{
+                if (address != 0)
+                  return  "uaddr " + address
+                else
+                  return "uddr -"
+            }
             font.pixelSize: 18
         }
 
@@ -73,11 +106,16 @@ Rectangle {
             }
 
             Text{
-                property int address: 2
+                property int address: root.node1ID
                 id:primaryElementAddressText
                 anchors.bottom:parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
-                text:"uaddr " + address
+                text:{
+                    if (address != 0)
+                      return  "uaddr " + address
+                    else
+                      return "uddr -"
+                }
                 font.pixelSize: 18
             }
 
@@ -172,16 +210,14 @@ Rectangle {
         source: "qrc:/views/meshNetwork/images/rightArrow.svg"
         height:25
         sourceSize: Qt.size(width, height)
-        //fillMode: Image.PreserveAspectFit
         mipmap:true
 
         Text{
-            property int address: 3
             id:messageText
             anchors.top:parent.bottom
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"message to uaddr " + address
+            text:"message to uaddr FFFF"
             font.pixelSize: 18
         }
     }
@@ -223,11 +259,16 @@ Rectangle {
                 }
 
                 Text{
-                    property int address: 3
+                    property int address: root.node2ID
                     id:bulbNodeAddressText
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"uaddr " + address
+                    text:{
+                        if (address != 0)
+                          return  "uaddr " + address
+                        else
+                          return "uddr -"
+                    }
                     font.pixelSize: 15
                 }
 
@@ -253,11 +294,16 @@ Rectangle {
                     }
 
                     Text{
-                        property int address: 3
+                        property int address: root.node2ID
                         id:bulbPrimaryElementAddressText
                         anchors.bottom:parent.bottom
                         anchors.horizontalCenter: parent.horizontalCenter
-                        text:"uaddr " + address
+                        text:{
+                            if (address != 0)
+                              return  "uaddr " + address
+                            else
+                              return "uddr -"
+                        }
                         font.pixelSize: 15
                     }
 
@@ -331,11 +377,16 @@ Rectangle {
                 }
 
                 Text{
-                    property int address: 3
+                    property int address: root.node3ID
                     id:bulbNodeAddressText2
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"uaddr " + address
+                    text:{
+                        if (address != 0)
+                          return  "uaddr " + address
+                        else
+                          return "uddr -"
+                    }
                     font.pixelSize: 15
                 }
 
@@ -361,11 +412,16 @@ Rectangle {
                     }
 
                     Text{
-                        property int address: 3
+                        property int address: root.node3ID
                         id:bulbPrimaryElementAddressText2
                         anchors.bottom:parent.bottom
                         anchors.horizontalCenter: parent.horizontalCenter
-                        text:"uaddr " + address
+                        text:{
+                            if (address != 0)
+                              return  "uaddr " + address
+                            else
+                              return "uddr -"
+                        }
                         font.pixelSize: 15
                     }
 
@@ -438,11 +494,16 @@ Rectangle {
                 }
 
                 Text{
-                    property int address: 3
+                    property int address: root.node4ID
                     id:bulbNodeAddressText3
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"uaddr " + address
+                    text:{
+                        if (address != 0)
+                          return  "uaddr " + address
+                        else
+                          return "uddr -"
+                    }
                     font.pixelSize: 15
                 }
 
@@ -468,11 +529,16 @@ Rectangle {
                     }
 
                     Text{
-                        property int address: 3
+                        property int address: root.node4ID
                         id:bulbPrimaryElementAddressText3
                         anchors.bottom:parent.bottom
                         anchors.horizontalCenter: parent.horizontalCenter
-                        text:"uaddr " + address
+                        text:{
+                            if (address != 0)
+                              return  "uaddr " + address
+                            else
+                              return "uddr -"
+                        }
                         font.pixelSize: 15
                     }
 

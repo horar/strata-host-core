@@ -160,27 +160,27 @@ Rectangle {
                     "payload":{
                         "nodes":[{
                               "index": 2,
-                              "ready": '+ ((Math.random() *2)).toFixed(0) +',
+                              "ready": '+ ((Math.random() *2)-1).toFixed(0) +',
                               "color": "#000088"
                               },
                               {
                               "index": 3,
-                              "ready": '+ ((Math.random() *2)).toFixed(0) +',
+                              "ready": '+ ((Math.random() *2)-1).toFixed(0) +',
                               "color": "#0000ff"
                               },
                               {
                               "index": 4,
-                              "ready": '+ ((Math.random() *2)).toFixed(0) +',
+                              "ready": '+ ((Math.random() *2)-1).toFixed(0) +',
                               "color": "#008800"
                               },
                               {
                               "index": 5,
-                              "ready": '+ ((Math.random() *2)).toFixed(0) +',
+                              "ready": '+ ((Math.random() *2)-1).toFixed(0) +',
                               "color": "#008888"
                               },
                               {
                               "index": 6,
-                              "ready": '+ ((Math.random() *2)).toFixed(0) +',
+                              "ready": '+ ((Math.random() *2)-1).toFixed(0) +',
                               "color": "#0088ff"
                               },
                               {
