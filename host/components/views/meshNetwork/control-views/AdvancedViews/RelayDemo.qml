@@ -35,9 +35,6 @@ Rectangle {
                 else if (nodeCount === 3){
                     root.node3ID = platformInterface.network_notification.nodes[alpha].index
                 }
-                else if (nodeCount === 4){
-                    root.node4ID = platformInterface.network_notification.nodes[alpha].index
-                }
             }
         }
     }
