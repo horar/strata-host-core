@@ -1346,7 +1346,7 @@ Item {
                                                 onToggled: {
                                                     if(checked) {
                                                         platformInterface.set_led_out_en.update(
-                                                                    [0,
+                                                                    [true,
                                                                      platformInterface.outputEnable1,
                                                                      platformInterface.outputEnable2,
                                                                      platformInterface.outputEnable3,
@@ -1360,11 +1360,11 @@ Item {
                                                                      platformInterface.outputEnable11
 
                                                                     ] )
-                                                        platformInterface.outputEnable0 = 0
+                                                        platformInterface.outputEnable0 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_out_en.update(
-                                                                    [1,
+                                                                    [false,
                                                                      platformInterface.outputEnable1,
                                                                      platformInterface.outputEnable2,
                                                                      platformInterface.outputEnable3,
@@ -1378,7 +1378,7 @@ Item {
                                                                      platformInterface.outputEnable11
 
                                                                     ] )
-                                                        platformInterface.outputEnable0 = 1
+                                                        platformInterface.outputEnable0 = false
 
                                                     }
 
@@ -1434,7 +1434,7 @@ Item {
                                                 onToggled: {
                                                     if(checked) {
                                                         platformInterface.set_led_ext.update(
-                                                                    [0,
+                                                                    [true,
                                                                      platformInterface.outputExt1,
                                                                      platformInterface.outputExt2,
                                                                      platformInterface.outputExt3,
@@ -1448,11 +1448,11 @@ Item {
                                                                      platformInterface.outputExt11
 
                                                                     ] )
-                                                        platformInterface.outputExt0 = 0
+                                                        platformInterface.outputExt0 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(
-                                                                    [1,
+                                                                    [false,
                                                                      platformInterface.outputExt1,
                                                                      platformInterface.outputExt2,
                                                                      platformInterface.outputExt3,
@@ -1466,7 +1466,7 @@ Item {
                                                                      platformInterface.outputExt11
 
                                                                     ] )
-                                                        platformInterface.outputExt0 = 1
+                                                        platformInterface.outputExt0 = false
 
                                                     }
                                                 }
@@ -1613,7 +1613,7 @@ Item {
                                                     if(checked) {
                                                         platformInterface.set_led_out_en.update(
                                                                     [platformInterface.outputEnable0,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputEnable2,
                                                                      platformInterface.outputEnable3,
                                                                      platformInterface.outputEnable4,
@@ -1626,12 +1626,12 @@ Item {
                                                                      platformInterface.outputEnable11
 
                                                                     ] )
-                                                        platformInterface.outputEnable1 = 0
+                                                        platformInterface.outputEnable1 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_out_en.update(
                                                                     [platformInterface.outputEnable0,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputEnable2,
                                                                      platformInterface.outputEnable3,
                                                                      platformInterface.outputEnable4,
@@ -1644,7 +1644,7 @@ Item {
                                                                      platformInterface.outputEnable11
 
                                                                     ] )
-                                                        platformInterface.outputEnable1 = 1
+                                                        platformInterface.outputEnable1 = false
 
                                                     }
 
@@ -1703,7 +1703,7 @@ Item {
                                                     if(checked) {
                                                         platformInterface.set_led_ext.update(
                                                                     [platformInterface.outputExt0,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputExt2,
                                                                      platformInterface.outputExt3,
                                                                      platformInterface.outputExt4,
@@ -1716,12 +1716,12 @@ Item {
                                                                      platformInterface.outputExt11
 
                                                                     ] )
-                                                        platformInterface.outputExt1 = 0
+                                                        platformInterface.outputExt1 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(
                                                                     [platformInterface.outputExt0,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputExt2,
                                                                      platformInterface.outputExt3,
                                                                      platformInterface.outputExt4,
@@ -1734,7 +1734,7 @@ Item {
                                                                      platformInterface.outputExt11
 
                                                                     ] )
-                                                        platformInterface.outputExt1 = 1
+                                                        platformInterface.outputExt1 = false
 
                                                     }
                                                 }
@@ -1881,7 +1881,7 @@ Item {
                                                         platformInterface.set_led_ext.update(
                                                                     [platformInterface.outputEnable0,
                                                                      platformInterface.outputEnable1,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputEnable3,
                                                                      platformInterface.outputEnable4,
                                                                      platformInterface.outputEnable5,
@@ -1893,13 +1893,13 @@ Item {
                                                                      platformInterface.outputEnable11
 
                                                                     ] )
-                                                        platformInterface.outputEnable2 = 0
+                                                        platformInterface.outputEnable2 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(
                                                                     [platformInterface.outputEnable0,
                                                                      platformInterface.outputEnable1,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputEnable3,
                                                                      platformInterface.outputEnable4,
                                                                      platformInterface.outputEnable5,
@@ -1911,7 +1911,7 @@ Item {
                                                                      platformInterface.outputEnable11
 
                                                                     ] )
-                                                        platformInterface.outputEnable2 = 1
+                                                        platformInterface.outputEnable2 = false
                                                     }
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
@@ -1966,7 +1966,7 @@ Item {
                                                         platformInterface.set_led_ext.update(
                                                                     [platformInterface.outputExt0,
                                                                      platformInterface.outputExt1,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputExt3,
                                                                      platformInterface.outputExt4,
                                                                      platformInterface.outputExt5,
@@ -1978,13 +1978,13 @@ Item {
                                                                      platformInterface.outputExt11
 
                                                                     ] )
-                                                        platformInterface.outputExt2 = 0
+                                                        platformInterface.outputExt2 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(
                                                                     [platformInterface.outputExt0,
                                                                      platformInterface.outputExt1,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputExt3,
                                                                      platformInterface.outputExt4,
                                                                      platformInterface.outputExt5,
@@ -1996,7 +1996,7 @@ Item {
                                                                      platformInterface.outputExt11
 
                                                                     ] )
-                                                        platformInterface.outputExt2 = 1
+                                                        platformInterface.outputExt2 = false
                                                     }
                                                 }
                                             }
@@ -2144,7 +2144,7 @@ Item {
                                                                     [platformInterface.outputEnable0,
                                                                      platformInterface.outputEnable1,
                                                                      platformInterface.outputEnable2,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputEnable4,
                                                                      platformInterface.outputEnable5,
                                                                      platformInterface.outputEnable6,
@@ -2155,14 +2155,14 @@ Item {
                                                                      platformInterface.outputEnable11
 
                                                                     ] )
-                                                        platformInterface.outputEnable3 = 0
+                                                        platformInterface.outputEnable3 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_out_en.update(
                                                                     [platformInterface.outputEnable0,
                                                                      platformInterface.outputEnable1,
                                                                      platformInterface.outputEnable2,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputEnable4,
                                                                      platformInterface.outputEnable5,
                                                                      platformInterface.outputEnable6,
@@ -2173,7 +2173,7 @@ Item {
                                                                      platformInterface.outputEnable11
 
                                                                     ] )
-                                                        platformInterface.outputEnable3 = 1
+                                                        platformInterface.outputEnable3 = true
 
                                                     }
 
@@ -2232,7 +2232,7 @@ Item {
                                                                     [platformInterface.outputExt0,
                                                                      platformInterface.outputExt1,
                                                                      platformInterface.outputExt2,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputExt4,
                                                                      platformInterface.outputExt5,
                                                                      platformInterface.outputExt6,
@@ -2243,14 +2243,14 @@ Item {
                                                                      platformInterface.outputExt11
 
                                                                     ] )
-                                                        platformInterface.outputExt3 = 0
+                                                        platformInterface.outputExt3 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(
                                                                     [platformInterface.outputExt0,
                                                                      platformInterface.outputExt1,
                                                                      platformInterface.outputExt2,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputExt4,
                                                                      platformInterface.outputExt5,
                                                                      platformInterface.outputExt6,
@@ -2261,7 +2261,7 @@ Item {
                                                                      platformInterface.outputExt11
 
                                                                     ] )
-                                                        platformInterface.outputExt3 = 1
+                                                        platformInterface.outputExt3 = false
 
                                                     }
                                                 }
@@ -2406,7 +2406,7 @@ Item {
                                                                      platformInterface.outputEnable1,
                                                                      platformInterface.outputEnable2,
                                                                      platformInterface.outputEnable3,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputEnable5,
                                                                      platformInterface.outputEnable6,
                                                                      platformInterface.outputEnable7,
@@ -2416,7 +2416,7 @@ Item {
                                                                      platformInterface.outputEnable11
 
                                                                     ] )
-                                                        platformInterface.outputEnable4 = 0
+                                                        platformInterface.outputEnable4 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_out_en.update(
@@ -2424,7 +2424,7 @@ Item {
                                                                      platformInterface.outputEnable1,
                                                                      platformInterface.outputEnable2,
                                                                      platformInterface.outputEnable3,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputEnable5,
                                                                      platformInterface.outputEnable6,
                                                                      platformInterface.outputEnable7,
@@ -2433,7 +2433,7 @@ Item {
                                                                      platformInterface.outputEnable10,
                                                                      platformInterface.outputEnable11
                                                                     ] )
-                                                        platformInterface.outputEnable4 = 1
+                                                        platformInterface.outputEnable4 = false
 
                                                     }
 
@@ -2493,7 +2493,7 @@ Item {
                                                                      platformInterface.outputExt1,
                                                                      platformInterface.outputExt2,
                                                                      platformInterface.outputExt3,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputExt5,
                                                                      platformInterface.outputExt6,
                                                                      platformInterface.outputExt7,
@@ -2503,7 +2503,7 @@ Item {
                                                                      platformInterface.outputExt11
 
                                                                     ] )
-                                                        platformInterface.outputExt4 = 0
+                                                        platformInterface.outputExt4 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(
@@ -2511,7 +2511,7 @@ Item {
                                                                      platformInterface.outputExt1,
                                                                      platformInterface.outputExt2,
                                                                      platformInterface.outputExt3,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputExt5,
                                                                      platformInterface.outputExt6,
                                                                      platformInterface.outputExt7,
@@ -2520,7 +2520,7 @@ Item {
                                                                      platformInterface.outputExt10,
                                                                      platformInterface.outputExt11
                                                                     ] )
-                                                        platformInterface.outputExt4 = 1
+                                                        platformInterface.outputExt4 = false
 
                                                     }
                                                 }
@@ -2669,7 +2669,7 @@ Item {
                                                                      platformInterface.outputEnable2,
                                                                      platformInterface.outputEnable3,
                                                                      platformInterface.outputEnable4,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputEnable6,
                                                                      platformInterface.outputEnable7,
                                                                      platformInterface.outputEnable8,
@@ -2678,7 +2678,7 @@ Item {
                                                                      platformInterface.outputEnable11
 
                                                                     ] )
-                                                        platformInterface.outputEnable5 = 0
+                                                        platformInterface.outputEnable5 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_out_en.update(
@@ -2687,7 +2687,7 @@ Item {
                                                                      platformInterface.outputEnable2,
                                                                      platformInterface.outputEnable3,
                                                                      platformInterface.outputEnable4,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputEnable6,
                                                                      platformInterface.outputEnable7,
                                                                      platformInterface.outputEnable8,
@@ -2695,7 +2695,7 @@ Item {
                                                                      platformInterface.outputEnable10,
                                                                      platformInterface.outputEnable11
                                                                     ] )
-                                                        platformInterface.outputEnable5 = 1
+                                                        platformInterface.outputEnable5 = false
 
                                                     }
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
@@ -2755,7 +2755,7 @@ Item {
                                                                      platformInterface.outputExt2,
                                                                      platformInterface.outputExt3,
                                                                      platformInterface.outputExt4,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputExt6,
                                                                      platformInterface.outputExt7,
                                                                      platformInterface.outputExt8,
@@ -2764,7 +2764,7 @@ Item {
                                                                      platformInterface.outputExt11
 
                                                                     ] )
-                                                        platformInterface.outputExt5 = 0
+                                                        platformInterface.outputExt5 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(
@@ -2773,7 +2773,7 @@ Item {
                                                                      platformInterface.outputExt2,
                                                                      platformInterface.outputExt3,
                                                                      platformInterface.outputExt4,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputExt6,
                                                                      platformInterface.outputExt7,
                                                                      platformInterface.outputExt8,
@@ -2781,7 +2781,7 @@ Item {
                                                                      platformInterface.outputExt10,
                                                                      platformInterface.outputExt11
                                                                     ] )
-                                                        platformInterface.outputExt5 = 1
+                                                        platformInterface.outputExt5 = false
 
                                                     }
                                                 }
@@ -2931,7 +2931,7 @@ Item {
                                                                      platformInterface.outputEnable3,
                                                                      platformInterface.outputEnable4,
                                                                      platformInterface.outputEnable5,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputEnable7,
                                                                      platformInterface.outputEnable8,
                                                                      platformInterface.outputEnable9,
@@ -2939,7 +2939,7 @@ Item {
                                                                      platformInterface.outputEnable11
 
                                                                     ] )
-                                                        platformInterface.outputEnable6 = 0
+                                                        platformInterface.outputEnable6 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_out_en.update(
@@ -2949,14 +2949,14 @@ Item {
                                                                      platformInterface.outputEnable3,
                                                                      platformInterface.outputEnable4,
                                                                      platformInterface.outputEnable5,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputEnable7,
                                                                      platformInterface.outputEnable8,
                                                                      platformInterface.outputEnable9,
                                                                      platformInterface.outputEnable10,
                                                                      platformInterface.outputEnable11
                                                                     ] )
-                                                        platformInterface.outputEnable6 = 1
+                                                        platformInterface.outputEnable6 = false
 
                                                     }
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
@@ -3017,7 +3017,7 @@ Item {
                                                                      platformInterface.outputExt3,
                                                                      platformInterface.outputExt4,
                                                                      platformInterface.outputExt5,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputExt7,
                                                                      platformInterface.outputExt8,
                                                                      platformInterface.outputExt9,
@@ -3025,7 +3025,7 @@ Item {
                                                                      platformInterface.outputExt11
 
                                                                     ] )
-                                                        platformInterface.outputExt6 = 0
+                                                        platformInterface.outputExt6 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(
@@ -3035,14 +3035,14 @@ Item {
                                                                      platformInterface.outputExt3,
                                                                      platformInterface.outputExt4,
                                                                      platformInterface.outputExt5,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputExt7,
                                                                      platformInterface.outputExt8,
                                                                      platformInterface.outputExt9,
                                                                      platformInterface.outputExt10,
                                                                      platformInterface.outputExt11
                                                                     ] )
-                                                        platformInterface.outputExt6 = 1
+                                                        platformInterface.outputExt6 = false
 
                                                     }
                                                 }
@@ -3193,14 +3193,14 @@ Item {
                                                                      platformInterface.outputEnable4,
                                                                      platformInterface.outputEnable5,
                                                                      platformInterface.outputEnable6,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputEnable8,
                                                                      platformInterface.outputEnable9,
                                                                      platformInterface.outputEnable10,
                                                                      platformInterface.outputEnable11
 
                                                                     ] )
-                                                        platformInterface.outputEnable7 = 0
+                                                        platformInterface.outputEnable7 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_out_en.update(
@@ -3211,13 +3211,13 @@ Item {
                                                                      platformInterface.outputEnable4,
                                                                      platformInterface.outputEnable5,
                                                                      platformInterface.outputEnable6,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputEnable8,
                                                                      platformInterface.outputEnable9,
                                                                      platformInterface.outputEnable10,
                                                                      platformInterface.outputEnable11
                                                                     ] )
-                                                        platformInterface.outputEnable7 = 1
+                                                        platformInterface.outputEnable7 = false
 
                                                     }
 
@@ -3280,14 +3280,14 @@ Item {
                                                                      platformInterface.outputExt4,
                                                                      platformInterface.outputExt5,
                                                                      platformInterface.outputExt6,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputExt8,
                                                                      platformInterface.outputExt9,
                                                                      platformInterface.outputExt10,
                                                                      platformInterface.outputExt11
 
                                                                     ] )
-                                                        platformInterface.outputExt7 = 0
+                                                        platformInterface.outputExt7 = false
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(
@@ -3298,13 +3298,13 @@ Item {
                                                                      platformInterface.outputExt4,
                                                                      platformInterface.outputExt5,
                                                                      platformInterface.outputExt6,
-                                                                     1,
+                                                                     true,
                                                                      platformInterface.outputExt8,
                                                                      platformInterface.outputExt9,
                                                                      platformInterface.outputExt10,
                                                                      platformInterface.outputExt11
                                                                     ] )
-                                                        platformInterface.outputExt7 = 1
+                                                        platformInterface.outputExt7 = false
 
                                                     }
                                                 }
@@ -3455,13 +3455,13 @@ Item {
                                                                      platformInterface.outputEnable5,
                                                                      platformInterface.outputEnable6,
                                                                      platformInterface.outputEnable7,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputEnable9,
                                                                      platformInterface.outputEnable10,
                                                                      platformInterface.outputEnable11
 
                                                                     ] )
-                                                        platformInterface.outputEnable8 = 0
+                                                        platformInterface.outputEnable8 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_out_en.update(
@@ -3473,12 +3473,12 @@ Item {
                                                                      platformInterface.outputEnable5,
                                                                      platformInterface.outputEnable6,
                                                                      platformInterface.outputEnable7,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputEnable9,
                                                                      platformInterface.outputEnable10,
                                                                      platformInterface.outputEnable11
                                                                     ] )
-                                                        platformInterface.outputEnable8 = 1
+                                                        platformInterface.outputEnable8 = false
 
                                                     }
 
@@ -3542,13 +3542,13 @@ Item {
                                                                      platformInterface.outputExt5,
                                                                      platformInterface.outputExt6,
                                                                      platformInterface.outputExt7,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputExt9,
                                                                      platformInterface.outputExt10,
                                                                      platformInterface.outputExt11
 
                                                                     ] )
-                                                        platformInterface.outputExt8 = 0
+                                                        platformInterface.outputExt8 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(
@@ -3560,12 +3560,12 @@ Item {
                                                                      platformInterface.outputExt5,
                                                                      platformInterface.outputExt6,
                                                                      platformInterface.outputExt7,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputExt9,
                                                                      platformInterface.outputExt10,
                                                                      platformInterface.outputExt11
                                                                     ] )
-                                                        platformInterface.outputExt8 = 1
+                                                        platformInterface.outputExt8 = false
 
                                                     }
                                                 }
@@ -3717,12 +3717,12 @@ Item {
                                                                      platformInterface.outputEnable6,
                                                                      platformInterface.outputEnable7,
                                                                      platformInterface.outputEnable8,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputEnable10,
                                                                      platformInterface.outputEnable11
 
                                                                     ] )
-                                                        platformInterface.outputEnable9 = 0
+                                                        platformInterface.outputEnable9 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_out_en.update(
@@ -3735,11 +3735,11 @@ Item {
                                                                      platformInterface.outputEnable6,
                                                                      platformInterface.outputEnable7,
                                                                      platformInterface.outputEnable8,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputEnable10,
                                                                      platformInterface.outputEnable11
                                                                     ] )
-                                                        platformInterface.outputEnable9 = 1
+                                                        platformInterface.outputEnable9 = false
 
                                                     }
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
@@ -3803,12 +3803,12 @@ Item {
                                                                      platformInterface.outputExt6,
                                                                      platformInterface.outputExt7,
                                                                      platformInterface.outputExt8,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputExt10,
                                                                      platformInterface.outputExt11
 
                                                                     ] )
-                                                        platformInterface.outputExt9 = 0
+                                                        platformInterface.outputExt9 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(
@@ -3821,11 +3821,11 @@ Item {
                                                                      platformInterface.outputExt6,
                                                                      platformInterface.outputExt7,
                                                                      platformInterface.outputExt8,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputExt10,
                                                                      platformInterface.outputExt11
                                                                     ] )
-                                                        platformInterface.outputExt9 = 1
+                                                        platformInterface.outputExt9 = false
 
                                                     }
                                                 }
@@ -3975,11 +3975,11 @@ Item {
                                                                      platformInterface.outputEnable7,
                                                                      platformInterface.outputEnable8,
                                                                      platformInterface.outputEnable9,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputEnable11
 
                                                                     ] )
-                                                        platformInterface.outputEnable10 = 0
+                                                        platformInterface.outputEnable10 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_out_en.update(
@@ -3993,10 +3993,10 @@ Item {
                                                                      platformInterface.outputEnable7,
                                                                      platformInterface.outputEnable8,
                                                                      platformInterface.outputEnable9,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputEnable11
                                                                     ] )
-                                                        platformInterface.outputEnable10 = 1
+                                                        platformInterface.outputEnable10 = false
 
                                                     }
 
@@ -4062,11 +4062,11 @@ Item {
                                                                      platformInterface.outputExt7,
                                                                      platformInterface.outputExt8,
                                                                      platformInterface.outputExt9,
-                                                                     0,
+                                                                     true,
                                                                      platformInterface.outputExt11
 
                                                                     ] )
-                                                        platformInterface.outputExt10 = 0
+                                                        platformInterface.outputExt10 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(
@@ -4080,10 +4080,10 @@ Item {
                                                                      platformInterface.outputExt7,
                                                                      platformInterface.outputExt8,
                                                                      platformInterface.outputExt9,
-                                                                     1,
+                                                                     false,
                                                                      platformInterface.outputExt11
                                                                     ] )
-                                                        platformInterface.outputExt10 = 1
+                                                        platformInterface.outputExt10 = false
 
                                                     }
                                                 }
@@ -4239,10 +4239,10 @@ Item {
                                                                      platformInterface.outputEnable8,
                                                                      platformInterface.outputEnable9,
                                                                      platformInterface.outputEnable10,
-                                                                     0
+                                                                     true
                                                                     ] )
 
-                                                        platformInterface.outputEnable11 = 0
+                                                        platformInterface.outputEnable11 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_out_en.update(
@@ -4257,10 +4257,10 @@ Item {
                                                                      platformInterface.outputEnable8,
                                                                      platformInterface.outputEnable9,
                                                                      platformInterface.outputEnable10,
-                                                                     1
+                                                                     false
                                                                     ])
 
-                                                        platformInterface.outputEnable11 = 1
+                                                        platformInterface.outputEnable11 = false
 
                                                     }
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
@@ -4325,10 +4325,10 @@ Item {
                                                                      platformInterface.outputExt8,
                                                                      platformInterface.outputExt9,
                                                                      platformInterface.outputExt10,
-                                                                     0
+                                                                     true
                                                                     ] )
 
-                                                        platformInterface.outputExt11 = 0
+                                                        platformInterface.outputExt11 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(
@@ -4343,10 +4343,11 @@ Item {
                                                                      platformInterface.outputExt8,
                                                                      platformInterface.outputExt9,
                                                                      platformInterface.outputExt10,
-                                                                     1
+                                                                     false
                                                                     ])
 
-                                                        platformInterface.outputExt11 = 1
+                                                        platformInterface.outputExt11 = false
+
 
                                                     }
                                                 }

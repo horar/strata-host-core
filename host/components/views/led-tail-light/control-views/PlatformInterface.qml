@@ -715,31 +715,31 @@ Item {
     // Forward messages to core_platform_interface.js to process
 
 
-    property real outputEnable0: 0
-    property real outputEnable1: 0
-    property real outputEnable2: 0
-    property real outputEnable3: 0
-    property real outputEnable4: 0
-    property real outputEnable5: 0
-    property real outputEnable6: 0
-    property real outputEnable7: 0
-    property real outputEnable8: 0
-    property real outputEnable9: 0
-    property real outputEnable10: 0
-    property real outputEnable11: 0
+    property bool outputEnable0: true
+    property bool outputEnable1: true
+    property bool outputEnable2: true
+    property bool outputEnable3: true
+    property bool outputEnable4: true
+    property bool outputEnable5: true
+    property bool outputEnable6: true
+    property bool outputEnable7: true
+    property bool outputEnable8: true
+    property bool outputEnable9: true
+    property bool outputEnable10: true
+    property bool outputEnable11: true
 
-    property real outputExt0: 0
-    property real outputExt1: 0
-    property real outputExt2: 0
-    property real outputExt3: 0
-    property real outputExt4: 0
-    property real outputExt5: 0
-    property real outputExt6: 0
-    property real outputExt7: 0
-    property real outputExt8: 0
-    property real outputExt9: 0
-    property real outputExt10: 0
-    property real outputExt11: 0
+    property bool outputExt0: false
+    property bool outputExt1: false
+    property bool outputExt2: false
+    property bool outputExt3: false
+    property bool outputExt4: false
+    property bool outputExt5: false
+    property bool outputExt6: false
+    property bool outputExt7: false
+    property bool outputExt8: false
+    property bool outputExt9: false
+    property bool outputExt10: false
+    property bool outputExt11: false
 
     property real outputDuty0: 0
     property real outputDuty1: 0

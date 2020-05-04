@@ -22,6 +22,10 @@ Rectangle {
     property var car_demo_brightness: platformInterface.car_demo_brightness.value
     onCar_demo_brightnessChanged: {
         baseCar.brightness = car_demo_brightness
+        if(car_demo_brightness < -0.6){
+            headlights.visible = true
+        }
+        else  headlights.visible = false
     }
 
     RowLayout {
@@ -41,7 +45,7 @@ Rectangle {
                 id: baseCar
                 anchors.fill: base
                 source: base
-                // brightness: slider.value
+               // brightness: slider.value
                 contrast: 0
 
 
@@ -51,7 +55,7 @@ Rectangle {
                 id: headlights
                 source: "car-Images/headlights.png"
                 anchors.fill: parent
-                visible: car_demo_brightness.value < -.6
+                //visible: car_demo_brightness < -.6
             }
 
             //            Image {
@@ -374,17 +378,17 @@ Rectangle {
 
 
 
-                //                Rectangle {
-                //                    Layout.fillHeight: true
-                //                    Layout.fillWidth: true
-                //                    Slider {
-                //                        id: slider
-                //                        anchors.centerIn: parent
-                //                        orientation: Qt.Vertical
-                //                        from: -.85
-                //                        to: 0
-                //                    }
-                //                }
+//                Rectangle {
+//                    Layout.fillHeight: true
+//                    Layout.fillWidth: true
+//                    Slider {
+//                        id: slider
+//                        anchors.centerIn: parent
+//                        orientation: Qt.Vertical
+//                        from: -.85
+//                        to: 0
+//                    }
+//                }
             }
         }
     }
