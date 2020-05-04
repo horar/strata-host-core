@@ -180,6 +180,7 @@ Rectangle {
                                                                           platformInterface.reverse_value
 
                                                                           )
+
                                 }
                                 else {
 
@@ -204,6 +205,9 @@ Rectangle {
                             else brakeLights.visible = true
 
                             platformInterface.brake_value = car_demo_brake
+
+                            console.log( platformInterface.brake_value)
+
                         }
 
                     }
@@ -235,11 +239,9 @@ Rectangle {
 
                                     hazardLightsTimer.stop()
                                     platformInterface.hazard_value = false
-                                    platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                          platformInterface.right_value,
-                                                                          platformInterface.brake_value,
+                                    platformInterface.set_car_demo.update(
                                                                           platformInterface.hazard_value,
-                                                                          platformInterface.reverse_value
+
 
                                                                           )
 
@@ -286,6 +288,8 @@ Rectangle {
                         else reverse.checked = true
 
                         platformInterface.reverse_value = car_demo_reverse
+                        console.log(
+                                    platformInterface.reverse_value)
                     }
 
                 }
@@ -334,6 +338,8 @@ Rectangle {
                                 else  leftTimer.start()
 
                                 platformInterface.left_value = car_demo_left
+                                console.log(platformInterface.left_value)
+
                             }
 
                         }
@@ -374,6 +380,8 @@ Rectangle {
                             else  rightTimer.start()
 
                             platformInterface.right_value = car_demo_right
+                            console.log(platformInterface.right_value)
+
                         }
                     }
                 }

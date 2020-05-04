@@ -5,10 +5,11 @@ import QtGraphicalEffects 1.12
 Slider {
     id: root
     padding: 0
-    value: 100
+    value: 0
     height: 28
     width: 300
     live: false
+    signal userSet()
 
     property var rgbArray: hToRgb(value)
     property string color: "yellow"
@@ -16,6 +17,29 @@ Slider {
     property real slider_start_color: 0
     property real slider_start_color2 : 1
 
+    property int decimalPlacesFromStepSize: {
+        return (Math.floor(root.stepSize) === root.stepSize) ?  0 :
+               root.stepSize.toString().split(".")[1].length || 0
+    }
+
+    function userInput(value) {
+        value = parseFloat(value).toFixed(root.decimalPlacesFromStepSize)
+        if (root.value != value) { //@disable-check M126
+            root.value = value
+            userSet()
+        }
+    }
+
+    onPressedChanged: {
+        if (!pressed) {
+            if (value.toFixed(decimalPlacesFromStepSize) != root.value) {
+                root.userInput(value.toFixed(decimalPlacesFromStepSize))
+            }
+        }
+    }
+    onValueChanged: {
+        root.userInput(value.toFixed(decimalPlacesFromStepSize))
+    }
     background: Rectangle {
         y: 4
         x: 5
@@ -74,19 +98,19 @@ Slider {
     //        }
     //    }
 
-    onValueChanged: {
-        root.rgbArray = hToRgb(root.value)
-        if (rgbArray[0] !== '0') {
-            color = "red"
-            color_value = rgbArray[0]
-        } else if (rgbArray[1] !== '0') {
-            color = "green"
-            color_value = rgbArray[1]
-        } else {
-            color = "blue"
-            color_value = rgbArray[2]
-        }
-    }
+//    onValueChanged: {
+//        root.rgbArray = hToRgb(root.value)
+//        if (rgbArray[0] !== '0') {
+//            color = "red"
+//            color_value = rgbArray[0]
+//        } else if (rgbArray[1] !== '0') {
+//            color = "green"
+//            color_value = rgbArray[1]
+//        } else {
+//            color = "blue"
+//            color_value = rgbArray[2]
+//        }
+//    }
 
     // Dumbed down version of hsvToRgb function to match simpler RGB gradient slider
     function hToRgb(h){

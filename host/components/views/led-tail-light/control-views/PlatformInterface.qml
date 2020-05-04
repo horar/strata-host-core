@@ -754,6 +754,21 @@ Item {
 
     property bool pwm_lin_state: false
 
+    property bool outputPwm0: true
+    property bool outputPwm1: true
+    property bool outputPwm2: true
+    property bool outputPwm3: true
+    property bool outputPwm4: true
+    property bool outputPwm5: true
+    property bool outputPwm6: true
+    property bool outputPwm7: true
+    property bool outputPwm8: true
+    property bool outputPwm9: true
+    property bool outputPwm10: true
+    property bool outputPwm11: true
+
+   // property real startUI: 0
+
 
     Connections {
         target: coreInterface
@@ -863,8 +878,9 @@ Item {
 
 
             }
+        }
 
-            /*
+        /*
     property var led_fault_status_values: {
         "values": [false,false,false,false,false,false,false,false,false,false,false,false]
 
@@ -874,33 +890,33 @@ Item {
     }
 
      */
-            Button {
-                id: button6
+        Button {
+            id: button6
 
 
-                anchors { top: button5.bottom }
-                text: "send_led_linear_log_value"
-                onClicked: {
-                    CorePlatformInterface.data_source_handler ('{
+            anchors { top: button5.bottom }
+            text: "send_led_linear_log_value"
+            onClicked: {
+                CorePlatformInterface.data_source_handler ('{
                                 "value": "led_linear_log_value" ,
                                 "payload":{
                                   "value": "Log"
                                 }
                             }')
 
-                    led_out_en_values.values = enableArray
-                    console.log(platformInterface.led_out_en_values.values)
+                led_out_en_values.values = enableArray
+                console.log(platformInterface.led_out_en_values.values)
 
-                }
             }
+        }
 
-            Button {
-                id: button7
+        Button {
+            id: button7
 
-                anchors { top: button6.bottom }
-                text: "send led_ext_caption"
-                onClicked: {
-                    CorePlatformInterface.data_source_handler ('{
+            anchors { top: button6.bottom }
+            text: "send led_ext_caption"
+            onClicked: {
+                CorePlatformInterface.data_source_handler ('{
                                 "value": "led_ext_caption" ,
                                 "payload":{
                                   "caption":"abc"
@@ -908,15 +924,15 @@ Item {
                             }')
 
 
-                }
             }
+        }
 
-            Button {
-                id: button8
-                anchors { top: button7.bottom }
-                text: "send led_i2cerr_value"
-                onClicked: {
-                    CorePlatformInterface.data_source_handler ('{
+        Button {
+            id: button8
+            anchors { top: button7.bottom }
+            text: "send led_i2cerr_value"
+            onClicked: {
+                CorePlatformInterface.data_source_handler ('{
                                 "value": "led_i2cerr_value" ,
                                 "payload":{
                                   "value": true
@@ -924,23 +940,23 @@ Item {
                             }')
 
 
-                }
             }
+        }
 
-            Button {
-                id: button9
-                anchors { top: button8.bottom }
-                text: "send led_open_load_diagnostic_state"
+        Button {
+            id: button9
+            anchors { top: button8.bottom }
+            text: "send led_open_load_diagnostic_state"
 
-                onClicked: {
-                    CorePlatformInterface.data_source_handler ('{
+            onClicked: {
+                CorePlatformInterface.data_source_handler ('{
                                 "value": "led_open_load_diagnostic_state" ,
                                 "payload":{
                                   "state":"disabled_and_grayed_out"
                                 }
                             }')
-                }
             }
         }
     }
 }
+
