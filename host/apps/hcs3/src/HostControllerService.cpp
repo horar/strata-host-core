@@ -398,14 +398,14 @@ void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
 
 void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
 {
-    if (!payload->HasMember("platform_uuid")) {
+    if (!payload->HasMember("class_id")) {
         return;
     }
 
     HCS_Client* client = getSenderClient();
     assert(client);
 
-    std::string classId = (*payload)["platform_uuid"].GetString();
+    std::string classId = (*payload)["class_id"].GetString();
     if (classId.empty()) {
         return;
     }
