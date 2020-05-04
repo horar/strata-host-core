@@ -1,5 +1,6 @@
 import QtQuick 2.12
-
+import QtQuick.Controls 2.2
+import QtQuick.Window 2.3
 import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 
 Item {
@@ -482,6 +483,8 @@ Item {
     }
 
 
+
+
     //Car demo Notification
 
     property var car_demo_brightness: {
@@ -495,15 +498,10 @@ Item {
         "right":true
     }
 
-
-
-
-
-
-
+    //----------- ---
 
     // -------------------------------------------------------------------
-    // Outgoing Commands
+    // Outgoing Commands For Car Demo
     //
     // Define and document platform commands here.
     //
@@ -692,21 +690,21 @@ Item {
 
     //Mode commands
     property var mode : ({
-                                          "cmd" : "mode",
-                                          "payload": {
-                                              "value":"Car Demo"
-                                          },
+                             "cmd" : "mode",
+                             "payload": {
+                                 "value":"Car Demo"
+                             },
 
-                                          update: function (value) {
-                                              this.set(value)
-                                              this.send(this)
-                                          },
-                                          set: function (value) {
-                                              this.payload.value = value
-                                          },
-                                          send: function () { CorePlatformInterface.send(this) },
-                                          show: function () { CorePlatformInterface.show(this) }
-                                      })
+                             update: function (value) {
+                                 this.set(value)
+                                 this.send(this)
+                             },
+                             set: function (value) {
+                                 this.payload.value = value
+                             },
+                             send: function () { CorePlatformInterface.send(this) },
+                             show: function () { CorePlatformInterface.show(this) }
+                         })
 
 
 
@@ -761,6 +759,188 @@ Item {
         target: coreInterface
         onNotification: {
             CorePlatformInterface.data_source_handler(payload)
+        }
+    }
+
+    Window {
+        id: debug
+        visible: true
+        width: 400
+        height: 400
+
+
+
+        Rectangle {
+            anchors.left: button2.right
+            anchors.leftMargin: 10
+            width: parent.width
+            height: 50
+            Slider {
+                id: slider
+
+                orientation: Qt.Horizontal
+                from: -1
+                to: 1
+            }
+        }
+
+        Button {
+            id: button2
+            anchors { top: parent.top }
+            text: "send car brightness"
+            onClicked: {
+
+                CorePlatformInterface.data_source_handler('{
+                    "value":"car_demo_brightness",
+                    "payload":{
+                                  "value": ' + slider.value + '
+                               }
+                             }')
+
+
+            }
+        }
+        Button {
+            id: button3
+            anchors { top: button2.bottom }
+            text: "send car_demo random"
+            onClicked: {
+                CorePlatformInterface.data_source_handler('{
+                            "value":"car_demo",
+                            "payload":{
+                                        "brake": ' + Boolean(Math.round(Math.random())) + ',
+                                        "left": ' + Boolean(Math.round(Math.random())) + ',
+                                        "reverse": ' + Boolean(Math.round(Math.random())) + ',
+                                        "right": ' + Boolean(Math.round(Math.random())) + '
+                            }
+
+            }')
+
+
+
+            }
+        }
+
+        Button {
+            id: button4
+            anchors { top: button3.bottom }
+            text: "send car_demo reset"
+            onClicked: {
+                CorePlatformInterface.data_source_handler('{
+                            "value":"car_demo",
+                            "payload":{
+                                        "brake":  false,
+                                        "left": false,
+                                        "reverse": false,
+                                        "right": false
+                            }
+                    }
+            ')
+
+            }
+        }
+
+        Button {
+            id: button5
+            anchors { top: button4.bottom }
+            text: "send led_oen_value & led_oen_state"
+            onClicked: {
+                CorePlatformInterface.data_source_handler('{
+                            "value":"led_oen_value",
+                            "payload":{
+                                  "value": ' + Boolean(Math.round(Math.random())) + '
+                            }
+                    }
+            ')
+                CorePlatformInterface.data_source_handler('{
+                            "value":"led_oen_state",
+                            "payload":{
+                                  "state": "enabled"
+                            }
+                    }
+            ')
+
+
+
+            }
+
+            /*
+    property var led_fault_status_values: {
+        "values": [false,false,false,false,false,false,false,false,false,false,false,false]
+
+    property var led_linear_log_values: {
+        "values": ["Linear","Log"]
+    }
+    }
+
+     */
+            Button {
+                id: button6
+
+
+                anchors { top: button5.bottom }
+                text: "send_led_linear_log_value"
+                onClicked: {
+                    CorePlatformInterface.data_source_handler ('{
+                                "value": "led_linear_log_value" ,
+                                "payload":{
+                                  "value": "Log"
+                                }
+                            }')
+
+                    led_out_en_values.values = enableArray
+                    console.log(platformInterface.led_out_en_values.values)
+
+                }
+            }
+
+            Button {
+                id: button7
+
+                anchors { top: button6.bottom }
+                text: "send led_ext_caption"
+                onClicked: {
+                    CorePlatformInterface.data_source_handler ('{
+                                "value": "led_ext_caption" ,
+                                "payload":{
+                                  "caption":"abc"
+                                }
+                            }')
+
+
+                }
+            }
+
+            Button {
+                id: button8
+                anchors { top: button7.bottom }
+                text: "send led_i2cerr_value"
+                onClicked: {
+                    CorePlatformInterface.data_source_handler ('{
+                                "value": "led_i2cerr_value" ,
+                                "payload":{
+                                  "value": true
+                                }
+                            }')
+
+
+                }
+            }
+
+            Button {
+                id: button9
+                anchors { top: button8.bottom }
+                text: "send led_open_load_diagnostic_state"
+
+                onClicked: {
+                    CorePlatformInterface.data_source_handler ('{
+                                "value": "led_open_load_diagnostic_state" ,
+                                "payload":{
+                                  "state":"disabled_and_grayed_out"
+                                }
+                            }')
+                }
+            }
         }
     }
 }

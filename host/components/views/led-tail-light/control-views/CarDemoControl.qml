@@ -21,6 +21,7 @@ Rectangle {
 
     property var car_demo_brightness: platformInterface.car_demo_brightness.value
     onCar_demo_brightnessChanged: {
+        console.log(car_demo_brightness)
         baseCar.brightness = car_demo_brightness
         if(car_demo_brightness < -0.6){
             headlights.visible = true
@@ -197,6 +198,7 @@ Rectangle {
                         }
                         property var car_demo_brake: platformInterface.car_demo.brake
                         onCar_demo_brakeChanged: {
+
                             if(car_demo_brake === false)
                                 brakeLights.visible = false
                             else brakeLights.visible = true
@@ -255,7 +257,7 @@ Rectangle {
                     checkable: true
                     checked: false
                     Layout.alignment: Qt.AlignHCenter
-                    onCheckedChanged: {
+                    onClicked: {
                         if(checked) {
                             platformInterface.reverse_value = true
                             platformInterface.set_car_demo.update(platformInterface.left_value,

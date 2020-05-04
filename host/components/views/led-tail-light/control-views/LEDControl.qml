@@ -99,6 +99,7 @@ Item {
 
     property var led_out_en_values: platformInterface.led_out_en_values.values
     onLed_out_en_valuesChanged:  {
+        console.log(platformInterface.led_out_en_values.values)
         if(led_out_en_values[0] === true)
             out0ENLED.checked = true
         else out0ENLED.checked = false
@@ -1538,9 +1539,7 @@ Item {
                                                     }
                                                 }
 
-
-
-                                                onValueChanged: {
+                                                onMoved: {
                                                     platformInterface.outputDuty0 =  out0duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
@@ -1570,6 +1569,11 @@ Item {
                                                                                                   platformInterface.outputEnable9,
                                                                                                   platformInterface.outputEnable10,
                                                                                                   platformInterface.outputEnable11])
+                                                }
+
+                                                onValueChanged: {
+                                                    platformInterface.outputDuty0 =  out0duty.value.toFixed(0)
+
                                                 }
                                             }
                                         }
@@ -1804,7 +1808,8 @@ Item {
                                                         out1duty.opacity = 0.5
                                                     }
                                                 }
-                                                onValueChanged: {
+
+                                                onMoved: {
                                                     platformInterface.outputDuty1 =  out1duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
@@ -1834,6 +1839,11 @@ Item {
                                                                                                   platformInterface.outputEnable9,
                                                                                                   platformInterface.outputEnable10,
                                                                                                   platformInterface.outputEnable11])
+                                                }
+
+                                                onValueChanged: {
+                                                    platformInterface.outputDuty1 =  out1duty.value.toFixed(0)
+
                                                 }
 
 
@@ -2065,7 +2075,7 @@ Item {
                                                     }
                                                 }
 
-                                                onValueChanged: {
+                                                onMoved:  {
                                                     platformInterface.outputDuty2 =  out2duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
@@ -2095,6 +2105,11 @@ Item {
                                                                                                   platformInterface.outputEnable9,
                                                                                                   platformInterface.outputEnable10,
                                                                                                   platformInterface.outputEnable11])
+                                                }
+
+                                                onValueChanged: {
+                                                    platformInterface.outputDuty2 =  out2duty.value.toFixed(0)
+
                                                 }
 
 
@@ -2328,7 +2343,7 @@ Item {
                                                         out3duty.opacity = 0.5
                                                     }
                                                 }
-                                                onValueChanged: {
+                                                onMoved: {
                                                     platformInterface.outputDuty3 =  out3duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
@@ -2358,6 +2373,11 @@ Item {
                                                                                                   platformInterface.outputEnable9,
                                                                                                   platformInterface.outputEnable10,
                                                                                                   platformInterface.outputEnable11])
+                                                }
+
+                                                onValueChanged: {
+                                                    platformInterface.outputDuty3 =  out3duty.value.toFixed(0)
+
                                                 }
 
 
@@ -2590,7 +2610,7 @@ Item {
                                                     }
                                                 }
 
-                                                onValueChanged: {
+                                                onMoved: {
                                                     platformInterface.outputDuty4 =  out4duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
@@ -2620,6 +2640,11 @@ Item {
                                                                                                   platformInterface.outputEnable9,
                                                                                                   platformInterface.outputEnable10,
                                                                                                   platformInterface.outputEnable11])
+                                                }
+
+                                                onValueChanged: {
+                                                    platformInterface.outputDuty4 =  out4duty.value.toFixed(0)
+
                                                 }
 
                                             }
@@ -2852,7 +2877,7 @@ Item {
                                                     }
                                                 }
 
-                                                onValueChanged: {
+                                                onMoved: {
                                                     platformInterface.outputDuty5 =  out5duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
@@ -2882,6 +2907,14 @@ Item {
                                                                                                   platformInterface.outputEnable9,
                                                                                                   platformInterface.outputEnable10,
                                                                                                   platformInterface.outputEnable11])
+
+                                                }
+
+
+
+                                                onValueChanged: {
+                                                    platformInterface.outputDuty5 =  out5duty.value.toFixed(0)
+
                                                 }
 
                                             }
@@ -3111,8 +3144,7 @@ Item {
                                                         out6duty.opacity = 0.5
                                                     }
                                                 }
-
-                                                onValueChanged: {
+                                                onMoved: {
                                                     platformInterface.outputDuty6 =  out6duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
@@ -3143,6 +3175,12 @@ Item {
                                                                                                   platformInterface.outputEnable10,
                                                                                                   platformInterface.outputEnable11])
                                                 }
+
+                                                onValueChanged: {
+                                                    platformInterface.outputDuty6 =  out6duty.value.toFixed(0)
+                                                }
+
+
 
                                             }
                                         }
@@ -3375,7 +3413,7 @@ Item {
                                                     }
                                                 }
 
-                                                onValueChanged: {
+                                                onMoved: {
                                                     platformInterface.outputDuty7 =  out7duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
@@ -3405,6 +3443,11 @@ Item {
                                                                                                   platformInterface.outputEnable9,
                                                                                                   platformInterface.outputEnable10,
                                                                                                   platformInterface.outputEnable11])
+                                                }
+
+                                                onValueChanged: {
+                                                    platformInterface.outputDuty7 =  out7duty.value.toFixed(0)
+
                                                 }
 
                                             }
@@ -3632,8 +3675,7 @@ Item {
                                                         out8duty.opacity = 0.5
                                                     }
                                                 }
-
-                                                onValueChanged: {
+                                                onMoved: {
                                                     platformInterface.outputDuty8 =  out8duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
@@ -3663,6 +3705,10 @@ Item {
                                                                                                   platformInterface.outputEnable9,
                                                                                                   platformInterface.outputEnable10,
                                                                                                   platformInterface.outputEnable11])
+                                                }
+
+                                                onValueChanged: {
+                                                    platformInterface.outputDuty8 =  out8duty.value.toFixed(0)
                                                 }
 
 
@@ -3892,8 +3938,7 @@ Item {
                                                         out9duty.opacity = 0.5
                                                     }
                                                 }
-
-                                                onValueChanged: {
+                                                onMoved: {
                                                     platformInterface.outputDuty9 =  out9duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
@@ -3923,6 +3968,11 @@ Item {
                                                                                                   platformInterface.outputEnable9,
                                                                                                   platformInterface.outputEnable10,
                                                                                                   platformInterface.outputEnable11])
+                                                }
+
+                                                onValueChanged: {
+                                                    platformInterface.outputDuty9 =  out9duty.value.toFixed(0)
+
                                                 }
 
                                             }
@@ -4153,8 +4203,7 @@ Item {
                                                         out10duty.opacity = 0.5
                                                     }
                                                 }
-
-                                                onValueChanged: {
+                                                onMoved: {
                                                     platformInterface.outputDuty10 =  out10duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
@@ -4184,6 +4233,11 @@ Item {
                                                                                                   platformInterface.outputEnable9,
                                                                                                   platformInterface.outputEnable10,
                                                                                                   platformInterface.outputEnable11])
+                                                }
+
+                                                onValueChanged: {
+                                                    platformInterface.outputDuty10 =  out10duty.value.toFixed(0)
+
                                                 }
 
                                             }
@@ -4418,7 +4472,7 @@ Item {
                                                     }
                                                 }
 
-                                                onValueChanged: {
+                                                onMoved: {
                                                     platformInterface.outputDuty11 =  out11duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
@@ -4448,6 +4502,11 @@ Item {
                                                                                                   platformInterface.outputEnable9,
                                                                                                   platformInterface.outputEnable10,
                                                                                                   platformInterface.outputEnable11])
+                                                }
+
+                                                onValueChanged: {
+                                                    platformInterface.outputDuty11 =  out11duty.value.toFixed(0)
+
                                                 }
                                             }
                                         }
