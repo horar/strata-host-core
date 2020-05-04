@@ -20,8 +20,6 @@ struct PlatformMessage
 
         eMsgClientMessage,
         eMsgCouchbaseMessage,
-
-        eMsgStorageRequest,     //from StorageManager / Downloader
     };
 
     // New BoardManager uses int for connection ID.
