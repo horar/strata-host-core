@@ -13,34 +13,34 @@
 class PlatformIdentificationTest : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(PlatformIdentificationTest)
+
 public:
     explicit PlatformIdentificationTest(QObject *parent = nullptr);
     bool init(const QString& jlinkExePath, const QString& binariesPath);
     void start();
 
 private:
-    // State machine
-    enum class PlatformTestState {
-        FlashingPlatform = 1,
-        ConnectingToPlatform = 2,
-        TestFinished = 3,
-        StartTest = 4
+    enum class PlatfortestState_ {
+        FlashingPlatform,
+        ConnectingToPlatform,
+        TestFinished,
+        StartTest
     };
 
 signals:
-    void stateChanged(PlatformTestState newState);
-    void testDone(int exitStatus);  // signal to exit the app
+    void setState(PlatfortestState_ newState);
+    void testDone(int exitStatus);
 
 private slots:
-    void onNewConnection(int deviceId, bool recognized);
-    void onCloseConnection(int deviceId);
-    void onStateChanged(PlatformTestState newState);
-    void onCheckJLinkDeviceConnection(bool exitedNormally, bool connected);
-    void onFlashCompleted(bool exitedNormally);
-    void onTestTimeout();
+    void newConnectionHandler(int deviceId, bool recognized);
+    void closeConnectionHandler(int deviceId);
+    void stateChangedHandler(PlatfortestState_ newState);
+    void checkJLinkDeviceConnectionHandler(bool exitedNormally, bool connected);
+    void flashCompletedHandler(bool exitedNormally);
+    void testTimeoutHandler();
 
 private:
-    // struct definition to store test results
     struct TestCase {
         QString fileName;
         QString deviceName;
@@ -53,7 +53,6 @@ private:
         bool testPassed;
     };
 
-    // Private functions
     void flashPlatform(const QString& binaryFileName);
     void connectToPlatform();
     void identifyPlatform(bool deviceRecognized);
@@ -61,19 +60,18 @@ private:
     void printSummary();
     void enableBoardManagerSignals(bool enable);
 
-    // Private members
-    strata::BoardManager mBoardManager;
-    PlatformTestState mTestState;
-    int mTestDeviceId;
-    SGJLinkConnector mSGJLinkConnector;
+    strata::BoardManager boardManager_;
+    PlatfortestState_ testState_;
+    int testDeviceId_;
+    SGJLinkConnector jlinkConnector_;
 
-    const int TEST_TIMEOUT = 15000;  // 15s
-    QTimer mTestTimeout;
-    QString mAbsloutePathToBinaries;
-    int mCurrentBinaryFileIndex;
-    QStringList mBinaryFileNameList;
-    std::vector<TestCase> mTestSummaryList;
-    bool mTestFailed;
+    const int TEST_TIMEOUT = 15000;
+    QTimer testTimeout_;
+    QString absloutePathToBinaries_;
+    int currentBinaryFileIndex_;
+    QStringList binaryFileNameList_;
+    QList<TestCase> testSummaryList_;
+    bool testFailed_;
 };
 
 #endif  // PLATFORMIDENTIFICATIONTEST_H

@@ -2,57 +2,49 @@
 
 PlatformIdentificationTest::PlatformIdentificationTest(QObject *parent)
     : QObject(parent),
-      mTestDeviceId{0},
-      mTestTimeout(this),
-      mCurrentBinaryFileIndex{0},
-      mBinaryFileNameList(),
-      mTestSummaryList(),
-      mTestFailed{false}
+      testDeviceId_{0},
+      testTimeout_(this),
+      currentBinaryFileIndex_{0},
+      binaryFileNameList_(),
+      testSummaryList_(),
+      testFailed_{false}
 {
-    // Connect private signals
-    connect(this, &PlatformIdentificationTest::stateChanged, this, &PlatformIdentificationTest::onStateChanged);
+    connect(this, &PlatformIdentificationTest::setState, this, &PlatformIdentificationTest::stateChangedHandler);
 
-    // Connect SGJLinkConnector signals
-    connect(&mSGJLinkConnector, &SGJLinkConnector::checkConnectionProcessFinished, this, &PlatformIdentificationTest::onCheckJLinkDeviceConnection);
-    connect(&mSGJLinkConnector, &SGJLinkConnector::flashBoardProcessFinished, this, &PlatformIdentificationTest::onFlashCompleted);
+    connect(&jlinkConnector_, &SGJLinkConnector::checkConnectionProcessFinished, this, &PlatformIdentificationTest::checkJLinkDeviceConnectionHandler);
+    connect(&jlinkConnector_, &SGJLinkConnector::flashBoardProcessFinished, this, &PlatformIdentificationTest::flashCompletedHandler);
 
-    // Set up the timeout
-    mTestTimeout.setInterval(TEST_TIMEOUT);
-    mTestTimeout.setSingleShot(true);
-    connect(&mTestTimeout, &QTimer::timeout, this, &PlatformIdentificationTest::onTestTimeout);
+    testTimeout_.setInterval(TEST_TIMEOUT);
+    testTimeout_.setSingleShot(true);
+    connect(&testTimeout_, &QTimer::timeout, this, &PlatformIdentificationTest::testTimeoutHandler);
 }
 
 void PlatformIdentificationTest::enableBoardManagerSignals(bool enable) {
     if (enable) {
-        // Connect BoardManager signals
-        connect(&mBoardManager, &strata::BoardManager::boardReady, this, &PlatformIdentificationTest::onNewConnection);
-        connect(&mBoardManager, &strata::BoardManager::boardDisconnected, this, &PlatformIdentificationTest::onCloseConnection);
+        connect(&boardManager_, &strata::BoardManager::boardReady, this, &PlatformIdentificationTest::newConnectionHandler);
+        connect(&boardManager_, &strata::BoardManager::boardDisconnected, this, &PlatformIdentificationTest::closeConnectionHandler);
     } else {
-        // Disconnect BoardManager signals
-        disconnect(&mBoardManager, &strata::BoardManager::boardReady, this, &PlatformIdentificationTest::onNewConnection);
-        disconnect(&mBoardManager, &strata::BoardManager::boardDisconnected, this, &PlatformIdentificationTest::onCloseConnection);
+        disconnect(&boardManager_, &strata::BoardManager::boardReady, this, &PlatformIdentificationTest::newConnectionHandler);
+        disconnect(&boardManager_, &strata::BoardManager::boardDisconnected, this, &PlatformIdentificationTest::closeConnectionHandler);
     }
 }
 
 bool PlatformIdentificationTest::init(const QString& jlinkExePath, const QString& binariesPath) {
-    mBoardManager.init(false);
+    boardManager_.init(false);
 
-    // get a list of *.bin files found in the provided path
-    if (!parseBinaryFileList(binariesPath)) {
+    if (parseBinaryFileList(binariesPath) == false) {
         return false;
     }
 
-    // set up SGJLinkConnector
-    if (QFile::exists(jlinkExePath)) {  // check if the JLinkExe path is correct
-        mSGJLinkConnector.setExePath(jlinkExePath);
+    if (QFile::exists(jlinkExePath)) { 
+        jlinkConnector_.setExePath(jlinkExePath);
         // check if there is a JLinkConnected. need to connect the signals to get the result, this
         // is async process!
-        if (!mSGJLinkConnector.checkConnectionRequested()) {
+        if (!jlinkConnector_.checkConnectionRequested()) {
             std::cout << "Failed to check if a JLink is connected." << std::endl;
             return false;
         }
-    } 
-    else {
+    } else {
         std::cout << "Invalid JLinkExe file path." << std::endl;
         return false;
     }
@@ -61,87 +53,84 @@ bool PlatformIdentificationTest::init(const QString& jlinkExePath, const QString
 }
 
 void PlatformIdentificationTest::start() {
-    // change the state to StartTest
     std::cout << "Starting the test..." << std::endl;
-    stateChanged(PlatformTestState::StartTest);
+    setState(PlatfortestState_::StartTest);
 }
 
-void PlatformIdentificationTest::onCheckJLinkDeviceConnection(bool exitedNormally, bool connected) {
-    mTestTimeout.stop();
+void PlatformIdentificationTest::checkJLinkDeviceConnectionHandler(bool exitedNormally, bool connected) {
+    testTimeout_.stop();
     if (exitedNormally && connected) {
         std::cout << "JLink device is connected" << std::endl;
-        stateChanged(PlatformTestState::FlashingPlatform);
+        setState(PlatfortestState_::FlashingPlatform);
     } 
     else {
         std::cout << "Error connecting to JLink device" << std::endl;
-        stateChanged(PlatformTestState::TestFinished);
+        setState(PlatfortestState_::TestFinished);
     }
 }
 
 bool PlatformIdentificationTest::parseBinaryFileList(const QString& binariesPath) {
     QDir binariesDirectory(binariesPath);
-    mBinaryFileNameList = binariesDirectory.entryList({"*.bin"}, QDir::Files);
-    mAbsloutePathToBinaries = binariesDirectory.absolutePath();
+    binaryFileNameList_ = binariesDirectory.entryList({"*.bin"}, QDir::Files);
+    absloutePathToBinaries_ = binariesDirectory.absolutePath();
 
-    // check if empty list
-    if (mBinaryFileNameList.empty()) {
-        std::cout << "No .bin files were found in " << mAbsloutePathToBinaries.toStdString() << std::endl;
+    if (binaryFileNameList_.empty()) {
+        std::cout << "No .bin files were found in " << absloutePathToBinaries_.toStdString() << std::endl;
         return false;
     }
-    
-    // print the file names
-    std::cout << mBinaryFileNameList.count() << " .bin files were found in " << mAbsloutePathToBinaries.toStdString() << std::endl;
-    for (const auto &fileName : mBinaryFileNameList) {
+
+    std::cout << binaryFileNameList_.count() << " .bin files were found in " << absloutePathToBinaries_.toStdString() << std::endl;
+    for (const auto &fileName : binaryFileNameList_) {
         std::cout << fileName.toStdString() << std::endl;
     }
 
     return true;
 }
 
-void PlatformIdentificationTest::onNewConnection(int deviceId, bool recognized) {
-    mTestTimeout.stop();
+void PlatformIdentificationTest::newConnectionHandler(int deviceId, bool recognized) {
+    testTimeout_.stop();
     std::cout << "new board connected deviceId=" << deviceId << std::endl;
     std::cout << "board identified = " << recognized << std::endl;  // This flag is not enough!
-    mTestDeviceId = deviceId;
+    testDeviceId_ = deviceId;
     enableBoardManagerSignals(false);
     identifyPlatform(recognized);
 }
 
-void PlatformIdentificationTest::onCloseConnection(int deviceId) {
+void PlatformIdentificationTest::closeConnectionHandler(int deviceId) {
     std::cout << "board disconnected deviceId=" << deviceId << std::endl;
 }
 
-void PlatformIdentificationTest::onFlashCompleted(bool exitedNormally) {
+void PlatformIdentificationTest::flashCompletedHandler(bool exitedNormally) {
     // on success go to reconnect state
-    mTestTimeout.stop();
+    testTimeout_.stop();
     std::cout << "flash is done" << std::endl;
     if (exitedNormally) {
         std::cout << "Platform was flashed successfully" << std::endl;
         enableBoardManagerSignals(true);
-        stateChanged(PlatformTestState::ConnectingToPlatform);
+        setState(PlatfortestState_::ConnectingToPlatform);
     } else {
         std::cout << "Failed to flash the platform. Aborting..." << std::endl;
-        mTestFailed = true;
-        stateChanged(PlatformTestState::TestFinished);
+        testFailed_ = true;
+        setState(PlatfortestState_::TestFinished);
     }
 }
 
 void PlatformIdentificationTest::identifyPlatform(bool deviceRecognized) {
-    strata::SerialDevicePtr testDevice = mBoardManager.device(mTestDeviceId);
+    strata::SerialDevicePtr testDevice = boardManager_.device(testDeviceId_);
     // determine if the test passed or not
     bool testPassed = false;
+    
     // if device not recognized, doesn't have name, or doesn't have class id then it fails.
-    if (!deviceRecognized
-            || testDevice->property(strata::DeviceProperties::classId).isEmpty()
-            || testDevice->property(strata::DeviceProperties::verboseName).isEmpty()) {
+    if ( deviceRecognized == false
+         || testDevice->property(strata::DeviceProperties::classId).isEmpty()
+         || testDevice->property(strata::DeviceProperties::verboseName).isEmpty()) {
         testPassed = false;
-    } 
-    else {
+    } else {
         testPassed = true;
     }
 
     if (testDevice != nullptr) {
-        std::cout << "bin name: " << mBinaryFileNameList[mCurrentBinaryFileIndex].toStdString() << std::endl;
+        std::cout << "bin name: " << binaryFileNameList_[currentBinaryFileIndex_].toStdString() << std::endl;
         std::cout << "class id: " << testDevice->property(strata::DeviceProperties::classId).toStdString() << std::endl;
         std::cout << "device name: " << testDevice->property(strata::DeviceProperties::deviceName).toStdString() << std::endl;
         std::cout << "platform id: " << testDevice->property(strata::DeviceProperties::platformId).toStdString() << std::endl;
@@ -150,60 +139,58 @@ void PlatformIdentificationTest::identifyPlatform(bool deviceRecognized) {
         std::cout << "application version: " << testDevice->property(strata::DeviceProperties::applicationVer).toStdString() << std::endl;
 
         // Append to the test summary list
-        mTestSummaryList.push_back({
-                                        mBinaryFileNameList[mCurrentBinaryFileIndex],
-                                        testDevice->property(strata::DeviceProperties::deviceName),
-                                        testDevice->property(strata::DeviceProperties::verboseName),
-                                        testDevice->property(strata::DeviceProperties::classId),
-                                        testDevice->property(strata::DeviceProperties::platformId),
-                                        testDevice->property(strata::DeviceProperties::bootloaderVer),
-                                        testDevice->property(strata::DeviceProperties::applicationVer),
-                                        deviceRecognized,
-                                        testPassed
+        testSummaryList_.push_back({
+                                       binaryFileNameList_[currentBinaryFileIndex_],
+                                       testDevice->property(strata::DeviceProperties::deviceName),
+                                       testDevice->property(strata::DeviceProperties::verboseName),
+                                       testDevice->property(strata::DeviceProperties::classId),
+                                       testDevice->property(strata::DeviceProperties::platformId),
+                                       testDevice->property(strata::DeviceProperties::bootloaderVer),
+                                       testDevice->property(strata::DeviceProperties::applicationVer),
+                                       deviceRecognized,
+                                       testPassed
                                    });
     } 
     else {
         std::cout << "TestDevicePtr is null. Aborting..." << std::endl;
-        mTestFailed = true;
-        stateChanged(PlatformTestState::TestFinished);
+        testFailed_ = true;
+        setState(PlatfortestState_::TestFinished);
     }
 
     // Move to the next file, or finish the test
-    mCurrentBinaryFileIndex++;
-    if (mCurrentBinaryFileIndex < mBinaryFileNameList.count()) {
-        stateChanged(PlatformTestState::FlashingPlatform);
-    } 
-    else {
-        stateChanged(PlatformTestState::TestFinished);
+    currentBinaryFileIndex_++;
+    if (currentBinaryFileIndex_ < binaryFileNameList_.count()) {
+        setState(PlatfortestState_::FlashingPlatform);
+    } else {
+        setState(PlatfortestState_::TestFinished);
     }
 }
 
 void PlatformIdentificationTest::connectToPlatform() {
     std::cout << "Connecting to platform" << std::endl;
-    if (mTestDeviceId == 0) {
-        // get the connected devices and set mTestDeviceId
-        auto connectedDevicesList = mBoardManager.readyDeviceIds();
+    if (testDeviceId_ == 0) {
+        // get the connected devices and set testDeviceId_
+        auto connectedDevicesList = boardManager_.readyDeviceIds();
         if (connectedDevicesList.empty()) {
             std::cout << "No connected devices. Aborting..." << std::endl;
-            mTestFailed = true;
-            stateChanged(PlatformTestState::TestFinished);
-        } 
-        else {
-            mTestDeviceId = connectedDevicesList.front();
+            testFailed_ = true;
+            setState(PlatfortestState_::TestFinished);
+        } else {
+            testDeviceId_ = connectedDevicesList.front();
         }
     }
-    mBoardManager.reconnect(mTestDeviceId);
+    boardManager_.reconnect(testDeviceId_);
 }
 
 void PlatformIdentificationTest::flashPlatform(const QString& binaryFileName) {
     std::cout << "*****************************************************************" << std::endl;
-    std::cout << "Test #" << mCurrentBinaryFileIndex + 1 << " out of "
-              << mBinaryFileNameList.count() << std::endl;
+    std::cout << "Test #" << currentBinaryFileIndex_ + 1 << " out of "
+              << binaryFileNameList_.count() << std::endl;
     std::cout << "bin file: " << binaryFileName.toStdString() << std::endl;
     std::cout << "flashing platform..." << std::endl;
 
     // Use SGJLinkConnector to flash a the platform
-    mSGJLinkConnector.flashBoardRequested(binaryFileName, true);
+    jlinkConnector_.flashBoardRequested(binaryFileName, true);
 }
 
 void PlatformIdentificationTest::printSummary() {
@@ -215,7 +202,7 @@ void PlatformIdentificationTest::printSummary() {
     int failedTestsCount = 0;
     QStringList failedTestsNames;
 
-    for (const auto &testCase : mTestSummaryList) {
+    for (const auto &testCase : testSummaryList_) {
         std::cout << "file name: " << testCase.fileName.toStdString() << std::endl;
         std::cout << "device name: " << testCase.deviceName.toStdString() << std::endl;
         std::cout << "verbose name: " << testCase.verboseName.toStdString() << std::endl;
@@ -227,22 +214,22 @@ void PlatformIdentificationTest::printSummary() {
         std::cout << "test result: " << testCase.testPassed << std::endl;
 
         // if the test failed add the name of the .bin file to the list.
-        if (!testCase.testPassed) {
+        if (testCase.testPassed == false) {
             failedTestsCount++;
             failedTestsNames.push_back(testCase.fileName);
         }
 
         std::cout << "+----------------------------------------------------------------+" << std::endl;
     }
-    std::cout << "Total tests: " << mBinaryFileNameList.count() << std::endl;
-    std::cout << "Passed: " << mTestSummaryList.size() - failedTestsCount << std::endl;
+    std::cout << "Total tests: " << binaryFileNameList_.count() << std::endl;
+    std::cout << "Passed: " << testSummaryList_.size() - failedTestsCount << std::endl;
 
     // tests failed and tests that were not performed.
-    std::cout << "Failed: " << failedTestsCount + (mBinaryFileNameList.count() - mTestSummaryList.size()) << std::endl;
+    std::cout << "Failed: " << failedTestsCount + (binaryFileNameList_.count() - testSummaryList_.size()) << std::endl;
 
     // if there are failed tests, list their names.
     if (failedTestsCount > 0) {
-        mTestFailed = true;
+        testFailed_ = true;
         std::cout << "Failed tests:" << std::endl;
         for (const auto &fileName : failedTestsNames) {
             std::cout << "\t" << fileName.toStdString() << std::endl;
@@ -252,33 +239,33 @@ void PlatformIdentificationTest::printSummary() {
     std::cout << "#####################################################################" << std::endl;
 }
 
-void PlatformIdentificationTest::onTestTimeout() {
+void PlatformIdentificationTest::testTimeoutHandler() {
     std::cout << "Test Timeout. Aborting..." << std::endl;
-    mTestFailed = true;
-    stateChanged(PlatformTestState::TestFinished);
+    testFailed_ = true;
+    setState(PlatfortestState_::TestFinished);
 }
 
-void PlatformIdentificationTest::onStateChanged(PlatformTestState newState) {
-    mTestState = newState;
+void PlatformIdentificationTest::stateChangedHandler(PlatfortestState_ newState) {
+    testState_ = newState;
 
-    switch (mTestState) {
-        case PlatformTestState::FlashingPlatform:
-            flashPlatform(mAbsloutePathToBinaries + "/" + mBinaryFileNameList[mCurrentBinaryFileIndex]);
-            mTestTimeout.start();
+    switch (testState_) {
+        case PlatfortestState_::FlashingPlatform:
+            flashPlatform(QDir(absloutePathToBinaries_).filePath(binaryFileNameList_[currentBinaryFileIndex_]));
+            testTimeout_.start();
             break;
 
-        case PlatformTestState::ConnectingToPlatform:
+        case PlatfortestState_::ConnectingToPlatform:
             connectToPlatform();
-            mTestTimeout.start();
+            testTimeout_.start();
             break;
 
-        case PlatformTestState::TestFinished:
+        case PlatfortestState_::TestFinished:
             printSummary();
-            emit testDone(mTestFailed);
+            emit testDone(testFailed_);
             break;
 
-        case PlatformTestState::StartTest:
-            mTestTimeout.start();  // timeout until the JLink is connected.
+        case PlatfortestState_::StartTest:
+            testTimeout_.start();  // timeout until the JLink is connected.
             break;
     }
 }

@@ -5,14 +5,14 @@
 #include "PlatformIdentificationTest.h"
 
 int main(int argc, char* argv[]) {
-    // set up the QtCoreApp
     QCoreApplication::setApplicationName(QStringLiteral("platform-identification-test"));
     QCoreApplication theApp(argc, argv);
 
-    // Commandline argument parser
-    QCommandLineParser parser;
 
-    // Add Commandline Options
+    QCommandLineParser parser;
+    parser.setApplicationDescription("Description: This is a simple test to verify that the released platforms are identifed by the BoardManager.");
+    parser.addHelpOption();
+
     QCommandLineOption jlinkExePathOption(QStringList() << "j" << "jlink-path",
                                           QObject::tr("Path to JLinkExe executable."),
                                           QObject::tr("JLinkPath"));
@@ -22,7 +22,6 @@ int main(int argc, char* argv[]) {
     parser.addOptions({jlinkExePathOption, binariesPathOption});
     parser.process(theApp);
 
-    // both args are required!
     QString jlinkExePath, binariesPath;
     if (parser.isSet("j") && parser.isSet("b")) {
         jlinkExePath = parser.value("j");
@@ -35,12 +34,12 @@ int main(int argc, char* argv[]) {
     }
 
     // set up the test object
-    std::shared_ptr<PlatformIdentificationTest> mTest(new PlatformIdentificationTest);
-    if (!mTest->init(jlinkExePath, binariesPath)) {  // pass the jlink and binaries paths.
+    std::shared_ptr<PlatformIdentificationTest> test_(new PlatformIdentificationTest);
+    if (!test_->init(jlinkExePath, binariesPath)) {  // pass the jlink and binaries paths.
         return -1;
     }
 
-    mTest->start();
-    QObject::connect(mTest.get(), &PlatformIdentificationTest::testDone, &theApp, &QCoreApplication::exit);
+    QObject::connect(test_.get(), &PlatformIdentificationTest::testDone, &theApp, &QCoreApplication::exit);
+    test_->start();
     return theApp.exec();
 }
