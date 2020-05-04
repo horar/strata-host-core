@@ -7,41 +7,16 @@ Rectangle {
     color:"transparent"
     //border.color:"black"
 
-    property string objectNumber: ""
-    property string pairingModel:""
-    property string nodeNumber:""
-    property alias objectColor: objectCircle.color
-    property string subName:""
+    property string scene:""                        //which view is this object part of (e.g. "office")
 
-    onPairingModelChanged:{
+    property string pairingModel:""                 //what is the role of this object (e.g. "door")
+    property alias nodeNumber: nodeNumber.text      //what number node corresponds to this object
+    property alias objectColor: objectCircle.color  //what is the color of the corresponding physical node?
+    property string displayName:""                  //the name of this node that's shown in the UI
+    property string subName:""                      //appears below the paring model name (e.g. "relay")
 
-        pairingImage.height = meshObject.height * .8
 
-        if (pairingModel === "doorbell"){
-            pairingImage.source = "../images/doorbellIcon.svg"
-        }
-        else if (pairingModel === "alarm"){
-            pairingImage.source = "../images/alarmIcon.svg"
-        }
-        else if (pairingModel === "switch"){
-            pairingImage.source = "../images/dimmerIcon.svg"
-        }
-        else if (pairingModel === "temperature"){
-            pairingImage.source = "../images/temperatureIcon.svg"
-        }
-        else if (pairingModel === "light"){
-            pairingImage.source = "../images/ambientLightIcon2.svg"
-        }
-        else if (pairingModel === "voltage"){
-            pairingImage.source = "../images/voltageIcon.svg"
-        }
-        else if (pairingModel === "security"){
-            pairingImage.source = "../images/safetyIcon.svg"
-        }
-        else  if (pairingModel === ""){
-            pairingImage.source = ""
-        }
-    }
+    signal nodeActivated(string scene, string pairingModel, string nodeNumber, color nodeColor)
 
     Behavior on opacity{
         NumberAnimation {duration: 1000}
@@ -70,43 +45,144 @@ Rectangle {
         color: "lightgrey"
         opacity: 0.5
 
+        onColorChanged: {
+            console.log("changing objectCircle node",nodeName.text, "to",color,"drag object color is",dragObject.color)
+            if (color != "#d3d3d3"){    //light grey
+                nodeNumber.visible = true;
+            }
+            else{   //color is going back to light grey
+                nodeNumber.visible = false
+                sensorValueText.text = ""        //clear the sensor text if we no longer have an active node
+            }
+        }
+
         Text{
             id:nodeNumber
             anchors.centerIn: parent
-            text:meshObject.nodeNumber
+            text:""
             font.pixelSize: 14
             visible:false
         }
 
-        MouseArea {
-            id: clickArea
-            anchors.fill: parent
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
+        Rectangle{
+            id:dragObject
+            //anchors.fill:parent
+            height:parent.height
+            width:parent.width
+            color:parent.color
+            opacity: Drag.active ? 1: 0
+            radius: height/2
 
-            property int mouseButtonClicked: Qt.NoButton
-            onPressed: {
-                console.log("Button pressed",mouseButtonClicked);
-                if (pressedButtons & Qt.LeftButton) {
-                    mouseButtonClicked = Qt.LeftButton
-                    console.log("Left button");
-                } else if (pressedButtons & Qt.RightButton) {
-                    mouseButtonClicked = Qt.RightButton
-                    console.log("Right button");
+            property string number: nodeNumber.text
+            property alias sensorText: sensorValueText.text
+
+            onNumberChanged: {
+                nodeNumber.text = number
+            }
+
+            onColorChanged: {
+                //console.log("changing dragObject",nodeName.text,"color to",color)
+                parent.color = color    //allows the drop area to change the color of the source
+            }
+
+            Drag.active: dragArea.drag.active
+            Drag.hotSpot.x: width/2
+            Drag.hotSpot.y: height/2
+
+            property alias model:meshObject.pairingModel
+
+            function resetLocation(){
+                x = 0;
+                y = 0;
+                //the color is reset to grey by the drop area,which breaks the binding of the drag
+                //color to the parent color. This manifests as a drag item that's grey if that node is
+                //added later with a different color. Resetting the binding here to fix that.
+                color  = Qt.binding(function(){return parent.color})
+                number = Qt.binding(function(){return nodeNumber.text})
+            }
+
+            MouseArea {
+                id: dragArea
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                anchors.fill: parent
+
+
+                drag.target: parent
+
+                onPressed:{
+                    //console.log("drag object pressed")
+                    console.log("drag area for node",nodeName.text,"and color",dragObject.color,"pressed")
+                }
+
+                onEntered: {
+                    //console.log("drag area entered")
+                }
+                onReleased: {
+                    //console.log("drag area release called")
+                    var theDropAction = dragObject.Drag.drop()
+                }
+
+
+   }    //mouse area
+}       //drag object
+
+        DropArea{
+            id:targetDropArea
+            width: 1.5*objectWidth;
+            height: 2*objectHeight
+
+            property bool acceptsDrops: {
+                //only accept drops if the circle being dropped on is light grey
+                if (objectCircle.color == "#d3d3d3")    //light grey color
+                    return true;
+                  else
+                    return false;
+            }
+
+            signal clearTargetsOfColor(color inColor, string name)
+
+            onEntered:{
+                //onsole.log("entered drop area")
+                if (acceptsDrops){
+                    objectCircle.border.color = "darkGrey"
+                    objectCircle.border.width = 5
                 }
             }
-            onClicked: {
-                if(mouseButtonClicked & Qt.RightButton) {
-                    console.log("Right button used");
-                    infoBox.visible = true
+
+            onExited: {
+                //console.log("exited drop area")
+                objectCircle.border.color = "transparent"
+                objectCircle.border.width = 1
+            }
+
+            onDropped: {
+                console.log("item dropped with color",drag.source.color,"and number",drag.source.number)
+                if (acceptsDrops){
+                    //dragObject.color = drag.source.color;   //set this object's color to the dropped one
+                    //drag.source.color = "lightgrey"         //reset the dropped object's color to grey
+                    //dragObject.number = drag.source.number
+                    //send a signal from this object to communicate that a node has been moved
+                    console.log("Node Activated with",meshObject.scene, meshObject.pairingModel, drag.source.number, drag.source.color)
+                    meshObject.nodeActivated(meshObject.scene, meshObject.pairingModel, drag.source.number, drag.source.color)
+                    dragObject.color = drag.source.color;   //set this object's color to the dropped one
+                    drag.source.color = "lightgrey"         //reset the dropped object's color to grey
+                    dragObject.number = drag.source.number
+                    //if this node is still showing sensor data
+                    console.log("clearing sensor text")
+                    drag.source.sensorText.text = ""
+                    drag.source.number = ""
+                    text: qsTr("text")
+
+                    //tell the firmware of the change
+                    platformInterface.set_node_mode.update(pairingModel,parseInt(meshObject.nodeNumber),true)
                 }
-                else{
-                    console.log("left button used")
-                    console.log("sending color command from node",meshObject.nodeNumber)
-                    platformInterface.light_hsl_set.update(parseInt(meshObject.nodeNumber),0,0,100)
-                    //contextMenu.open()
-                }
+                drag.source.resetLocation()             ///send the drag object back to where it was before being dragged
+                objectCircle.border.color = "transparent"
+                objectCircle.border.width = 1
+
             }
         }
+    }
 
 
 
@@ -117,7 +193,7 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom:objectCircle.top
             anchors.bottomMargin: 15
-            text:meshObject.pairingModel
+            text:meshObject.displayName
             font.pixelSize: 15
         }
 
@@ -131,29 +207,14 @@ Rectangle {
             color:"grey"
         }
 
-
-        Rectangle{
-            id:sensorValueTextOutline
-            anchors.top: objectCircle.bottom
-            anchors.topMargin: 5
-            anchors.left: objectCircle.left
-            width:objectCircle.width
-            height:20
-            color:"transparent"
-            border.color:"grey"
-            visible:false
-        }
-
         Text{
             id:sensorValueText
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: objectCircle.bottom
             anchors.topMargin: 5
-            text:meshObject.objectNumber
+            text:""
             font.pixelSize: 16
             visible:false
-
-
 
             property string ambientLight:""
             property string battery_vtg:""
@@ -161,12 +222,12 @@ Rectangle {
             property string temperature:""
             property string signalStrength:""
 
-            property var ambientLightValue: platformInterface.status_sensor
+            property var ambientLightValue: platformInterface.sensor_status
             onAmbientLightValueChanged: {
 
-                if (platformInterface.status_sensor.uaddr == meshObject.nodeNumber){
-                    if (platformInterface.status_sensor.sensor_type === "ambient_light"){
-                        ambientLight = platformInterface.status_sensor.data
+                if (platformInterface.sensor_status.uaddr == meshObject.nodeNumber){
+                    if (platformInterface.sensor_status.sensor_type === "ambient_light"){
+                        ambientLight = platformInterface.sensor_status.data
                         if (ambientLight !== "undefined")
                             sensorValueText.text = Math.round(ambientLight) + " lux";
                         else
@@ -177,14 +238,14 @@ Rectangle {
             }
 
 
-            property var batteryValue: platformInterface.status_battery
+            property var batteryValue: platformInterface.battery_status
             onBatteryValueChanged: {
-                //console.log("node",nodeNumber, " received battery value change",platformInterface.status_battery.battery_voltage)
-                //console.log("comparing ",platformInterface.status_battery.uaddr, "and",meshObject.nodeNumber);
-                if (platformInterface.status_battery.uaddr == meshObject.nodeNumber){
+                console.log("node",nodeNumber, " received battery value change",platformInterface.battery_status.battery_voltage)
+                //console.log("comparing ",platformInterface.battery_status.uaddr, "and",meshObject.nodeNumber);
+                if (platformInterface.battery_status.uaddr == meshObject.nodeNumber){
                     console.log("updating battery value for node", meshObject.nodeNumber);
-                    battery_vtg = parseFloat(platformInterface.status_battery.battery_voltage)
-                    battery_lvl = parseInt(platformInterface.status_battery.battery_level)
+                    battery_vtg = parseFloat(platformInterface.battery_status.battery_voltage)
+                    battery_lvl = parseInt(platformInterface.battery_status.battery_level)
                     if (battery_vtg !== NaN || battery_lvl !== NaN)
                         sensorValueText.text = battery_lvl + " %\n" + battery_vtg + " V"
                     else
@@ -193,11 +254,12 @@ Rectangle {
                 }
             }
 
-            property var temperatureValue: platformInterface.status_sensor
+            property var temperatureValue: platformInterface.sensor_status
             onTemperatureValueChanged: {
-                if (platformInterface.status_sensor.uaddr == meshObject.nodeNumber){
-                    if (platformInterface.status_sensor.sensor_type === "temperature"){
-                        temperature = platformInterface.status_sensor.data
+                //console.log("node",meshObject.nodeNumber, " received temp value",platformInterface.sensor_status.data)
+                if (platformInterface.sensor_status.uaddr == meshObject.nodeNumber){
+                    if (platformInterface.sensor_status.sensor_type === "temperature"){
+                        temperature = platformInterface.sensor_status.data
                         if (temperature !== "undefined")
                             sensorValueText.text = temperature + " °C";
                         else
@@ -206,13 +268,11 @@ Rectangle {
                 }
             }
 
-            property var signalStrengthValue: platformInterface.status_sensor
+            property var signalStrengthValue: platformInterface.sensor_status
             onSignalStrengthValueChanged: {
-                if (platformInterface.status_sensor.uaddr == meshObject.nodeNumber){
-                    if (platformInterface.status_sensor.sensor_type === "strata"){
-                        //signal strength comes in as a value between 0 and 255, but the real values
-                        //should be between -120 and 0, so subtract here to get displayed values
-                        signalStrength = platformInterface.status_sensor.data -255
+                if (platformInterface.sensor_status.uaddr == meshObject.nodeNumber){
+                    if (platformInterface.sensor_status.sensor_type === "rssi"){
+                        signalStrength = platformInterface.sensor_status.data
                         console.log("mesh object signal strength=",signalStrength)
                         if (signalStrength !== "undefined")
                             sensorValueText.text = signalStrength + " dBm";
@@ -263,241 +323,14 @@ Rectangle {
             }
         }
 
-        Image{
-            id:chargingImage
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.horizontalCenterOffset: 2
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: -18
-            source:"qrc:/views/meshNetwork/images/chargingIcon.svg"
-            fillMode: Image.PreserveAspectFit
-            height:parent.height*.3
-            mipmap:true
-            visible:false
-
-            property var chargeStatus: ""
-            property var chargingStatus: platformInterface.status_battery
-            onChargingStatusChanged: {
-                if (platformInterface.status_battery.uaddr === nodeNumber){
-                    chargeStatus = platformInterface.status_battery.battery_state
-                }
-            }
-
-            Connections{
-                target: sensorRow
-                onShowBatteryCharge:{
-                    if (chargingImage.chargingStatus === "charging"){
-                        chargingImage.visible = true
-                        chargingImage.source = "../images/chargingIcon.svg"
-                    }
-                    else if (chargingImage.chargeStatus === "charged"){
-                        chargingImage.visible = true
-                        chargingImage.source = "../images/chargedIcon.svg"
-                    }
-                }
-
-                onHideBatteryCharge:{
-                    chargingImage.visible = false
-                }
-            }
-        }
-
-        Image{
-            id:wifiImage
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            source:"qrc:/views/meshNetwork/images/wifiIcon.svg"
-            fillMode: Image.PreserveAspectFit
-            height:parent.height/2
-            mipmap:true
-            visible:false
-
-            property string signalStrength:""
-
-            property var signalStrengthValue: platformInterface.status_sensor
-            onSignalStrengthValueChanged: {
-                if (platformInterface.status_sensor.uaddr === nodeNumber){
-                    if (platformInterface.sensor_data.sensor_type === "strata")
-                        signalStrength = platformInterface.signal_strength.data
-                    //need to do something here to convert the value into something between 0 and 3?
-                }
-            }
-
-            Connections{
-                target: sensorRow
-                onShowSignalStrength:{
-                    if (wifiImage.signalStrength != ""){
-                        wifiImage.visible = true
-
-                        if (wifiImage.signalStrength === 0){
-                            wifiImage.source = "../images/wifiIcon_noBars.svg"
-                            wifiImage.height = meshObject.height * .2
-                        }
-                        else if (wifiImage.signalStrength === 1){
-                            wifiImage.source = "../images/wifiIcon_oneBar.svg"
-                            wifiImage.height = meshObject.height* .4
-                        }
-                        else if (wifiImage.signalStrength === 2){
-                            wifiImage.source = "../images/wifiIcon_twoBars.svg"
-                            wifiImage.height = 1.5 * meshObject.height*.4
-                        }
-                        else if (wifiImage.signalStrength === 3){
-                            wifiImage.source = "../images/wifiIcon.svg"
-                            wifiImage.height = meshObject.height * .8
-                        }
-                    }
-                }
-
-                onHideSignalStrength:{
-                    wifiImage.visible = false
-                }
-            }
-        }
-
-        Image{
-            id:pairingImage
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            fillMode: Image.PreserveAspectFit
-            mipmap:true
-            visible:false//showParingSelected
-
-            property bool showParingSelected: true
-
-            Connections{
-                target: sensorRow
-                onShowPairing:{
-                    pairingImage.showParingSelected = true
-                    if (pairingModel === "doorbell"){
-                        pairingImage.source = "../images/doorbellIcon.svg"
-                        pairingImage.height = meshObject.height * .2
-                    }
-                    else if (pairingModel === "alarm"){
-                        pairingImage.source = "../images/alarmIcon.svg"
-                        pairingImage.height = meshObject.height* .4
-                    }
-                    else if (pairingModel === "switch"){
-                        pairingImage.source = "../images/dimmerIcon.svg"
-                        pairingImage.height = 1.5 * meshObject.height*.2
-                    }
-                    else if (pairingModel === "temperature"){
-                        pairingImage.source = "../images/temperatureIcon.svg"
-                        pairingImage.height = meshObject.height * .8
-                    }
-                    else if (pairingModel === "light"){
-                        pairingImage.source = "../images/ambientLightIcon2.svg"
-                        pairingImage.height = meshObject.height * .8
-                    }
-                    else if (pairingModel === "voltage"){
-                        pairingImage.source = "../images/voltageIcon.svg"
-                        pairingImage.height = meshObject.height * 2
-                    }
-                    else if (pairingModel === "security"){
-                        pairingImage.source = "../images/safetyIcon.svg"
-                        pairingImage.height = meshObject.height * 1
-                    }
-                    else  if (pairingModel === ""){
-                        pairingImage.source = ""
-                    }
-                }
-
-                onHidePairing:{
-                    pairingImage.showParingSelected = false
-                }
-            }
-        }
 
 
-        //    Rectangle{
-        //        id:dragObject
-        //        //anchors.fill:parent
-        //        height:parent.height
-        //        width:parent.width
-        //        color:parent.color
-        //        opacity: Drag.active ? 1: 0
-        //        radius: height/2
-
-        //        Drag.active: dragArea.drag.active
-        //        Drag.hotSpot.x: width/2
-        //        Drag.hotSpot.y: height/2
-
-        //        property alias model:meshObject.pairingModel
-
-        //        MouseArea {
-        //            id: dragArea
-        //            acceptedButtons: Qt.LeftButton | Qt.RightButton
-        //            anchors.fill: parent
 
 
-        //drag.target: parent
 
-        //            onPressed:{
-        //                console.log("drag object pressed")
-        //            }
 
-        //            onReleased:{
-        //                console.log("mouse area release called")
-        //                dragObject.Drag.drop()
-        //                //reset the dragged object's position
-        //                parent.x = 0;
-        //                parent.y = 0;
-        //            }
 
-        //            onEntered: {
-        //                meshObject.z = window.highestZLevel;     //bring object to the fore
-        //                //console.log("elevating z level to ",window.highestZLevel)
-        //                window.highestZLevel++;
-        //            }
-        //            onReleased: {
-        //                meshObject.Drag.drop()
-        //            }
-        //        onHoveredChanged: {
-        //            infoBox.visible = true
-        //        }
 
-        //            property int mouseButtonClicked: Qt.NoButton
-        //            onPressed: {
-        //                        if (pressedButtons & Qt.LeftButton) {
-        //                            mouseButtonClicked = Qt.LeftButton
-        //                        } else if (pressedButtons & Qt.RightButton) {
-        //                            mouseButtonClicked = Qt.RightButton
-        //                        }
-        //                    }
-
-        //                        onClicked: {
-        //                            if(mouseButtonClicked & Qt.RightButton) {
-        //                                console.log("Right button used");
-        //                                //contextMenu.open()
-        //                            }
-        //                            else{
-        //                                console.log("left button used")
-        //                                infoBox.visible = true
-        //                            }
-        //                        }
-
-        //            Menu {
-        //                id: contextMenu
-        //                MenuItem {
-        //                    text: "LED"
-        //                    checkable:true
-        //                    checked:infoBox.hasLEDModel
-        //                    onTriggered: {infoBox.hasLEDModel = !infoBox.hasLEDModel}
-        //                }
-        //                MenuItem {
-        //                    text: "Buzz"
-        //                    checkable:true
-        //                    checked:infoBox.hasBuzzerModel
-        //                    onTriggered: {infoBox.hasBuzzerModel = !infoBox.hasBuzzerModel}
-        //                }
-        //                MenuItem {
-        //                    text: "Vibrate"
-        //                    checkable:true
-        //                    checked:infoBox.hasVibrationModel
-        //                    onTriggered: {infoBox.hasVibrationModel = !infoBox.hasVibrationModel}
-        //                }
-        //            }
-        //}
-    }
 
 
 

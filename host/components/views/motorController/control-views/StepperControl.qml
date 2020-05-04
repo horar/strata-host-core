@@ -493,7 +493,6 @@ Widget09.SGResponsiveScrollView {
                                 textActiveColor: "white"
                                 checked: true
                                 onClicked: {
-                                    //stepMotorSpeedSlider.to = 1000;
                                     platformInterface.step_speed.update(stepMotorSpeedSlider.value, "sps");
                                 }
                             }
@@ -507,7 +506,6 @@ Widget09.SGResponsiveScrollView {
                                 textActiveColor: "white"
                                 onClicked: {
                                     platformInterface.step_speed.update(stepMotorSpeedSlider.value,"rpm");
-                                    //stepMotorSpeedSlider.to = 500
                                 }
                             }
 

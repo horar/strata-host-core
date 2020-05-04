@@ -14,6 +14,7 @@ Item {
     id: root
     implicitWidth: 950
     implicitHeight: 160
+
     property bool isCurrentItem: false
 
     MouseArea{
@@ -54,7 +55,7 @@ Item {
                     console.error(Logger.devStudioCategory, "Platform Selector Delegate: No image source supplied by platform list")
                     source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
                 } else if (SGUtilsCpp.isFile(model.image.replace("file:/",""))) {
-                    source = model.image
+                    source = Qt.binding(function(){ return model.image })
                 } else {
                     imageCheck.start()
                 }
@@ -70,7 +71,7 @@ Item {
                     interval += interval
                     if (interval < 32000) {
                         if (SGUtilsCpp.isFile(model.image.replace("file:/",""))){
-                            image.source = model.image
+                            image.source = Qt.binding(function(){ return model.image })
                             return
                         }
                         imageCheck.start()
@@ -88,6 +89,27 @@ Item {
                 fillMode: Image.PreserveAspectFit
                 source: "images/platform-images/comingsoon.png"
                 visible: !model.available.documents && !model.available.control && !model.error
+            }
+
+            Rectangle {
+                color: "#33b13b"
+                width: image.width
+                anchors {
+                    bottom: image.bottom
+                }
+                height: 25
+                visible: model.connection === "connected"
+                clip: true
+
+                SGText {
+                    color: "white"
+                    anchors {
+                        centerIn: parent
+                    }
+                    text: "CONNECTED"
+                    font.bold: true
+                    fontSizeMultiplier: 1.4
+                }
             }
         }
 
@@ -232,7 +254,7 @@ Item {
                 }
 
                 function is_segment_filter (item){
-                    return item.filterMapping.startsWith("segment-")
+                    return item.filterName.startsWith("segment-")
                 }
             }
             pathItemCount: 3
@@ -264,12 +286,12 @@ Item {
                     height: iconPathview.delegateHeight
                     width: iconPathview.delegateWidth
                     mipmap: true
-                    source: model.iconSource
+                    source: model.iconSource ? model.iconSource : ""
                 }
 
                 SGText {
                     id: iconText
-                    text: model.text
+                    text: model.text ? model.text : ""
                     anchors {
                         top: icon.bottom
                         topMargin: 5
@@ -352,11 +374,12 @@ Item {
 
         Button {
             id: select
-            text: model.connection === "connected" ? "Connect to Board" : "Browse Documentation"
+            // model.name === undefined means no UI found
+            text: model.connection === "connected" && model.name !== undefined ? "Open Platform Controls" : "Browse Documentation"
             anchors {
                 horizontalCenter: buttonColumn.horizontalCenter
             }
-            visible: model.connection === "connected" ? model.available.control : model.available.documents
+            visible: model.connection === "connected" && model.name !== undefined ? model.available.control : model.available.documents
 
             contentItem: Text {
                 text: select.text
@@ -377,8 +400,14 @@ Item {
             }
 
             onClicked: {
-                // Selects proxy index mapped to platformListModel to ignore any active filters
-                PlatformSelection.selectPlatform(filteredPlatformListModel.mapIndexToSource(index))
+                PlatformSelection.selectPlatform(model.class_id)
+            }
+
+            MouseArea {
+                id: buttonCursor
+                anchors.fill: parent
+                onPressed:  mouse.accepted = false
+                cursorShape: Qt.PointingHandCursor
             }
         }
 
@@ -410,6 +439,13 @@ Item {
 
             onClicked: {
                 orderPopup.open()
+            }
+
+            MouseArea {
+                id: buttonCursor1
+                anchors.fill: parent
+                onPressed:  mouse.accepted = false
+                cursorShape: Qt.PointingHandCursor
             }
         }
     }

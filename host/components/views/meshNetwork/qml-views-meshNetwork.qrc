@@ -29,12 +29,12 @@
         <file>images/chargingIcon.svg</file>
         <file>images/chargedIcon.svg</file>
         <file>images/dimmerIcon.svg</file>
-        <file>images/smartHome_blue.png</file>
-        <file>images/smartHome_doorOpen.png</file>
-        <file>images/smartHome_lightsOff.png</file>
-        <file>images/smartHome_lightsOn.png</file>
-        <file>images/smartHome_purple.png</file>
-        <file>images/smartHome_red.png</file>
+        <file>images/smartHome_blue.jpg</file>
+        <file>images/smartHome_doorOpen.jpg</file>
+        <file>images/smartHome_lightsOff.jpg</file>
+        <file>images/smartHome_lightsOn.jpg</file>
+        <file>images/smartHome_purple.jpg</file>
+        <file>images/smartHome_red.jpg</file>
         <file>control-views/BasicViews/Office.qml</file>
         <file>control-views/AdvancedControl.qml</file>
         <file>control-views/BasicViews/SmartHome.qml</file>
@@ -45,7 +45,6 @@
         <file>control-views/BasicViews/InfoPopover.qml</file>
         <file>control-views/BasicViews/SensorRow.qml</file>
         <file>images/multipleModelsDemo.png</file>
-        <file>images/one-to-many_demo.png</file>
         <file>images/oneToOneDemo.png</file>
         <file>images/relayDemo.png</file>
         <file>images/sensorDemo.png</file>
@@ -56,5 +55,20 @@
         <file>control-views/AdvancedViews/RelayDemo.qml</file>
         <file>control-views/AdvancedViews/SensorDemo.qml</file>
         <file>images/spreadsheet.png</file>
+        <file>images/smartHome_green.jpg</file>
+        <file>images/oneToManyDemo.png</file>
+        <file>images/cloud.png</file>
+        <file>images/lightBulbOff.svg</file>
+        <file>images/lightBulbOn.svg</file>
+        <file>control-views/AdvancedViews/MSwitch.qml</file>
+        <file>images/rightArrow.svg</file>
+        <file>control-views/AdvancedViews/MLightBulb.qml</file>
+        <file>images/leftArrow.svg</file>
+        <file>images/Bell.svg</file>
+        <file>images/sensorIcon.svg</file>
+        <file>images/sensorIconFullBar.svg</file>
+        <file>images/smartHome_windowOpen.jpg</file>
+        <file>images/smartHome_orange.jpg</file>
+        <file>images/smartHome_doorOpenWindowOpen.jpg</file>
     </qresource>
 </RCC>

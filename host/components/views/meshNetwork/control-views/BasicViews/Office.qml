@@ -10,8 +10,6 @@ import tech.strata.sgwidgets 1.0
 Rectangle {
     id: root
     visible: true
-    //anchors.fill:parent
-
 
     property int objectWidth: 50
     property int objectHeight: 50
@@ -25,82 +23,20 @@ Rectangle {
     property variant meshObjects
     property var dragTargets:[]
 
-    signal changeObjectSize(int objectSize);
-    onChangeObjectSize:{
-        console.log("changing object size to",objectSize)
-        mesh1.height = objectSize;
-        mesh1.width = objectSize;
-        mesh1.radius = objectSize/2
+    onVisibleChanged: {
+        if (visible){
+            console.log("office is now visible")
+            //deactivate all the nodes from their previous roles when switching
+            //this is a kludge, as it means nodes will not function in the roles they appear in until they're moved
+            platformInterface.set_node_mode.update("default",65535,true)
+            //iterate over the meshArray, and send role and node numbers for each
+            //meshObjectRow.meshArray.forEach(function(item, index, array){
+                //removed temporarily because sending nine commands back to back overloads the network.
+                //platformInterface.set_node_mode.update(item.pairingModel,item.nodeNumber,true)
+             //   })
+        }
 
-        mesh2.height = objectSize;
-        mesh2.width = objectSize;
-        mesh2.radius = objectSize/2
-
-        mesh3.height = objectSize;
-        mesh3.width = objectSize;
-        mesh3.radius = objectSize/2
-
-        mesh4.height = objectSize;
-        mesh4.width = objectSize;
-        mesh4.radius = objectSize/2
-
-        mesh5.height = objectSize;
-        mesh5.width = objectSize;
-        mesh5.radius = objectSize/2
-
-        mesh6.height = objectSize;
-        mesh6.width = objectSize;
-        mesh6.radius = objectSize/2
-
-        mesh7.height = objectSize;
-        mesh7.width = objectSize;
-        mesh7.radius = objectSize/2
-
-        mesh8.height = objectSize;
-        mesh8.width = objectSize;
-        mesh8.radius = objectSize/2
-
-        provisioner.height = objectSize;
-        provisioner.width = objectSize;
-        provisioner.radius = objectSize/2
-
-        target1.height = objectSize
-        target1.width = objectSize
-        target1.radius = objectSize/2
-
-        target2.height = objectSize
-        target2.width = objectSize
-        target2.radius = objectSize/2
-
-
-        target3.height = objectSize
-        target3.width = objectSize
-        target3.radius = objectSize/2
-
-        target4.height = objectSize
-        target4.width = objectSize
-        target4.radius = objectSize/2
-
-        target5.height = objectSize
-        target5.width = objectSize
-        target5.radius = objectSize/2
-
-        target6.height = objectSize
-        target6.width = objectSize
-        target6.radius = objectSize/2
-
-        target7.height = objectSize
-        target7.width = objectSize
-        target7.radius = objectSize/2
-
-        target8.height = objectSize
-        target8.width = objectSize
-        target8.radius = objectSize/2
-
-        //doesn't redraw well. What's the secret?
-        nodeConnector.canvas.requestPaint();
     }
-
 
     Row{
         id:meshObjectRow
@@ -121,8 +57,8 @@ Rectangle {
             mesh8.pairingModel = ""
         }
 
-        property var meshArray: [0,provisioner,mesh2, mesh1,mesh4, mesh3,mesh6,mesh5, mesh7,mesh8]
-        property var targetArray: [0, target5, target4,target1,target2, target3, target6, target7, target8]
+        property var meshArray: [0,provisioner,mesh4, mesh6, mesh1, mesh2, mesh3,mesh5, mesh7,mesh8]
+
         property var initialNodeVisibilityColors: platformInterface.network_notification
         onInitialNodeVisibilityColorsChanged:{
 
@@ -131,28 +67,25 @@ Rectangle {
             for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
                 //for each node that is marked visible set the visibilty of the node appropriately
                 if (platformInterface.network_notification.nodes[alpha].ready === 0){
-                    meshArray[alpha].opacity = 0.5
-                    meshArray[alpha].enabled = false
                     meshArray[alpha].objectColor = "lightgrey"
-                    //targetArray[alpha].color = "transparent"
+                    meshArray[alpha].nodeNumber = ""
 
                     //special case because sometimes the 0th element of the notification array
                     //really represents the first element
                     if (alpha === 1){
                         if (platformInterface.network_notification.nodes[0].ready === 1 ){
                             meshArray[alpha].opacity = 1.0
-                            meshArray[alpha].enabled = true
+                            //meshArray[alpha].enabled = true
                             meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+
                         }
                     }
-
-
-
                 }
                 else {
                     meshArray[alpha].opacity = 1.0
                     meshArray[alpha].enabled = true
                     meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+                    meshArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
 
                     //special case because sometimes the 0th element of the notification array
                     //really represents the first element
@@ -170,12 +103,12 @@ Rectangle {
 
         property var newNodeAdded: platformInterface.node_added
         onNewNodeAddedChanged: {
-            console.log("new node added",platformInterface.node_added.index)
+            //console.log("new node added",platformInterface.node_added.index)
             var theNodeNumber = platformInterface.node_added.index
             meshArray[theNodeNumber].opacity = 1;
-            console.log("set the opacity of node",theNodeNumber, "to 1");
+            //console.log("set the opacity of node",theNodeNumber, "to 1");
+            meshArray[theNodeNumber].nodeNumber = platformInterface.node_added.index
             meshArray[theNodeNumber].objectColor = platformInterface.node_added.color
-            //targetArray[theNodeNumber].color = platformInterface.node_added.color
         }
 
         property var nodeRemoved: platformInterface.node_removed
@@ -186,16 +119,25 @@ Rectangle {
             }
         }
 
-
-        MeshObject{ id: mesh7; objectName: "one"; pairingModel:"HVAC"; subName:"(Remote)";nodeNumber: "8"}
-        MeshObject{ id: mesh6; objectName: "two"; pairingModel:"Robotic Arm" ;nodeNumber: "6"}
-        MeshObject{ id: mesh4; objectName: "three"; pairingModel:"Doorbell";nodeNumber: "4"}
-        MeshObject{ id: mesh2; objectName: "four"; pairingModel:"Dimmer";nodeNumber: "2" }
+        MeshObject{ id: mesh7; scene:"office"; displayName:"Security Camera";pairingModel:"security_camera"; nodeNumber: "";
+            onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor) }
+        MeshObject{ id: mesh6; scene:"office"; displayName:"Doorbell"; pairingModel:"doorbell";nodeNumber: ""
+            onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
+        MeshObject{ id: mesh4; scene:"office"; displayName:"Door"; pairingModel:"door"; nodeNumber: ""
+            onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
+        MeshObject{ id: mesh2; scene:"office"; displayName:"Dimmer";pairingModel:"dimmer"; nodeNumber: ""
+            onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         ProvisionerObject{ id: provisioner; nodeNumber:"1" }
-        MeshObject{ id: mesh1; objectName: "five"; pairingModel:"Security Camera";nodeNumber: "3"}
-        MeshObject{ id: mesh3; objectName: "six" ; pairingModel:"Door";nodeNumber: "5"}
-        MeshObject{ id: mesh5; objectName: "seven"; pairingModel:"Solar Panel"; subName:"(Relay)"; nodeNumber: "7"}
-        MeshObject{ id: mesh8; objectName: "eight"; pairingModel:"Spare";nodeNumber: "9"}
+        //
+        MeshObject{ id: mesh1; scene:"office"; displayName:"Robotic Arm"; pairingModel:"robotic_arm"; nodeNumber: ""
+            onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
+        MeshObject{ id: mesh3; scene:"office"; displayName:"Solar Panel"; subName:"(Relay)"; pairingModel:"relay"; nodeNumber: ""
+            onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
+        MeshObject{ id: mesh5; scene:"office"; displayName:"HVAC"; subName:"(Remote)";pairingModel:"hvac"; nodeNumber: ""
+            onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
+        MeshObject{ id: mesh8; scene:"office"; displayName:""; pairingModel:""; nodeNumber: ""
+            onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
+
     }
 
 
@@ -203,8 +145,9 @@ Rectangle {
         id:mainImage
         source:"qrc:/views/meshNetwork/images/office.jpg"
         //anchors.left:parent.left
-        height:parent.height*.65
+        height:parent.height*.60
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: 20
         fillMode: Image.PreserveAspectFit
         mipmap:true
         opacity:1
@@ -233,10 +176,10 @@ Rectangle {
 
             onTriggered:{
                 if (redLightOn){
-                    mainImage.source = "qrc:/views/meshNetwork/images/office_doorOpen.png"
+                    mainImage.source = "qrc:/views/meshNetwork/images/office_doorOpen.jpg"
                 }
                 else{
-                    mainImage.source = "qrc:/views/meshNetwork/images/office_alarmOn.png"
+                    mainImage.source = "qrc:/views/meshNetwork/images/office_alarmOn.jpg"
                 }
                 redLightOn = !redLightOn;
             }
@@ -318,123 +261,176 @@ Rectangle {
                 target8.color = "transparent"
             }
 
-            //TODO: prevent a node from being dragged to a node that's already linked without unlinking the first one
-            //        Connections{
-            //            target: DragTarget
-            //                onClearTargetsOfColor:{
-            //                    //color and name are passed in to this funciton by clearTargetsOfColor
-            //                    var dragObjects = [target1, target2, target3, target4, target5, target6, target7, target8];
-            //                    for (var i = 0; i< dragObjects.length; i++){        //iterate over the drag targets
-            //                        var theObject = dragObjects[i];
-            //                        if (theObject.objectName !== "name"){           //if the name doesn't match
-            //                            if (theObject.color === inColor){             //check the object's color
-            //                                console.log("changing color of",name,"to transparent");
-            //                                theObject.color ="transparent"          //if the color is the same as the color passed
-            //                            }                                           //then change it to transparent
-            //                        }
-            //                    }
-            //                }
-            //        }
+            property var targetArray: [0, target5,target3 ,target2,target6 , target4,target8 , target7, target1, 0]
+
+            property var network: platformInterface.network_notification
+            onNetworkChanged:{
+
+                //iterate over the nodes in the notification
+                console.log("updating nodes",platformInterface.network_notification.nodes.length)
+                for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+                    //for each node that is marked visible set the visibilty of the node appropriately
+                    if (platformInterface.network_notification.nodes[alpha].ready === 0){
+                        targetArray[alpha].color = "transparent"
+                        targetArray[alpha].nodeNumber = ""
+
+                        //special case because sometimes the 0th element of the notification array
+                        //really represents the first element
+                        if (alpha === 1){
+                            if (platformInterface.network_notification.nodes[0].ready === 1 ){
+                                targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+
+                            }
+                        }
+                    }
+                    else {
+                        targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+                        targetArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+
+
+                    }
+                }
+            }
+
+            property var newNodeAdded: platformInterface.node_added
+            onNewNodeAddedChanged: {
+
+                var theNodeNumber = platformInterface.node_added.index
+
+                targetArray[theNodeNumber].nodeNumber = platformInterface.node_added.index
+                targetArray[theNodeNumber].color = platformInterface.node_added.color
+                console.log("new node added",theNodeNumber,"to role",targetArray[theNodeNumber].nodeType)
+            }
+
+            property var nodeRemoved: platformInterface.node_removed
+            onNodeRemovedChanged: {
+                var theNodeNumber = platformInterface.node_removed.node_id
+                console.log("removing node",theNodeNumber)
+                targetArray[theNodeNumber].nodeNumber = ""
+                targetArray[theNodeNumber].color = "transparent"
+            }
+
+            function nodeActivated( scene,  pairingModel,  inNodeNumber,  nodeColor){
+                //console.log("nodeActivated with scene=",scene,"model=",pairingModel,"node=",inNodeNumber,"and color",nodeColor)
+                if (scene === "office"){
+                    //the node must have come from somewhere, so iterate over the nodes, and find the node that previously had
+                    //this node number, and set it back to transparent
+                    targetArray.forEach(function(item, index, array){
+                        if (item.nodeNumber === inNodeNumber){
+                            console.log("removing node",item.nodeNumber," from role",item.nodeType)
+                            item.nodeNumber = ""
+                            item.color = "transparent"
+                            }
+                        })
+
+                    targetArray.forEach(function(item, index, array){
+                        if (item.nodeType === pairingModel){
+                            console.log("assigning",item.nodeType,"node",inNodeNumber)
+                            item.nodeNumber = inNodeNumber
+                            item.color = nodeColor
+                        }
+                    })
+                }
+            }
 
             DragTarget{
                 //security camera upper left
                 id:target1
-                objectName:"target1"
+                //objectName:"target1"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * 0.05
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .32
-                nodeType:"security"
-                nodeNumber:"3"
-                color:mesh7.color
+                scene:"office"
+                nodeType:"security_camera"
+                nodeNumber:""
             }
 
             DragTarget{
                 //left of the back door
                 id:target2
-                objectName:"target2"
+                //objectName:"target2"
                 anchors.left:parent.left
-                anchors.leftMargin: parent.width * .19
+                anchors.leftMargin: parent.width * .16
                 anchors.top:parent.top
-                anchors.topMargin: parent.height * .67
+                anchors.topMargin: parent.height * .69
+                scene:"office"
                 nodeType: "doorbell"
-                nodeNumber:"4"
-                color:mesh6.color
+                nodeNumber:""
             }
 
             DragTarget{
                 //on the back door
                 id:target3
-                objectName:"target3"
+                //objectName:"target3"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * .30
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .61
-                nodeType:"alarm"
-                nodeNumber:"5"
-                color:mesh4.color
+                scene:"office"
+                nodeType:"door"
+                nodeNumber:""
             }
             DragTarget{
                 //right of front door
                 id:target4
-                objectName:"target4"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * .45
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .33
-                nodeType:"switch"
-                nodeNumber:"2"
-                color:mesh2.color
+                scene:"office"
+                nodeType:"dimmer"
+                nodeNumber:""
             }
+
+            //******PROVISIONING NODE**************
             DragTarget{
-                //provisioning node
+
                 id:target5
-                objectName:"provisioner"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * .65
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .37
-                nodeType:"provisioner"
+                nodeType:"high_power"
                 color:"green"
-                nodeNumber:"1"
-                acceptsDrops: false
             }
+            //—————————————————————————————————————
+
             DragTarget{
                 //robot arm
                 id:target6
-                objectName:"target6"
+                //objectName:"target6"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * .63
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .53
-                nodeType:"unknown"
-                nodeNumber:"6"
-                color:mesh1.color
+                scene:"office"
+                nodeType:"robotic_arm"
             }
 
             DragTarget{
                 //roof fan
                 id:target7
-                objectName:"target7"
+                //objectName:"target7"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * .80
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .23
-                nodeType:"remote"
-                nodeNumber:"8"
-                color:mesh5.color
+                scene:"office"
+                nodeType:"hvac"
+                nodeNumber:""
             }
             DragTarget{
                 //solar panel
                 id:target8
-                objectName:"target8"
+                //objectName:"target8"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * .80
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .47
-                nodeType:"voltage"
-                nodeNumber:"7"
-                color:mesh3.color
+                scene:"office"
+                nodeType:"relay"
+                nodeNumber:""
             }
 
         }

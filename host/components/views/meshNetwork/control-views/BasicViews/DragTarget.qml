@@ -1,98 +1,70 @@
 import QtQuick 2.0
 import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 
-DropArea{
-    id:targetDropArea
+Rectangle {
+    id:root
     x: 10; y: 10
     width: nodeWidth; height: nodeHeight
+    radius:height/2
+    color: "transparent"
+    border.color: "white"
+    border.width: 5
 
+    property string scene:""
     property string nodeType: "light"
-    property string nodeNumber: "0"
-    property color savedColor: "transparent"
-    property alias radius: dropAreaRectangle.radius
-    property alias color: dropAreaRectangle.color
-    property bool acceptsDrops: true
+    property string nodeNumber: ""
 
-    signal clearTargetsOfColor(color inColor, string name)
-
-    onEntered:{
-        console.log("entered drop area")
-        savedColor = dropAreaRectangle.color
-        if (acceptsDrops){
-            dropAreaRectangle.color = drag.source.color;
-        }
-        infoTextRect.visible = true;
+    Text{
+        id:nodeNumberText
+        anchors.centerIn: parent
+        text: root.nodeNumber
+        font.pixelSize: 12
+        color:"white"
+        visible:root.color == "transparent" ? false : true
     }
 
-    onExited: {
-        console.log("exited drop area")
-        dropAreaRectangle.color = savedColor
-        infoTextRect.visible = false;
-    }
-
-    onDropped: {
-        console.log("item dropped with color",drag.source.color)
-        if (acceptsDrops){
-            dropAreaRectangle.color = drag.source.color;
-            drag.source.model = nodeType;
-            savedColor = dropAreaRectangle.color
-        }
-        infoTextRect.visible = false;
-
-        //signal to tell other drop targets using the same color to clearConnectionsButton
-        clearTargetsOfColor(dropAreaRectangle.color, objectName);
-    }
-
-    Rectangle {
-        id:dropAreaRectangle
-        anchors.fill:parent
-        radius:height/2
-        color: "transparent"
-        border.color:{
-            return "white"
-        }
-        border.width: 5
-
-        Text{
-            id:nodeNumber
-            anchors.centerIn: parent
-            text: targetDropArea.nodeNumber
-            font.pixelSize: 12
-            color:"white"
-            visible:false
-        }
-
-    }
-
+    //the mouse area handles clicks in the object.
+    //these clicks send messages to perform actions on the physical nodes
     MouseArea{
         id:dropAreaMouseArea
         anchors.fill:parent
 
-        property bool relayEnabled: true
+        property bool relayEnabled: false   //relay is turned on when user drags to solar panel
         property bool dimmerEnabled: true
         property int counter : 0
-        property int lowPowerMode: 32    //0 is high power 32 is low power
+        property bool highPowerMode: true
+        property bool windowOpen:true
+        property bool doorOpen:true
+        property var roomColors:["blue","green","purple","orange","black","white"]
+        property int currentRoomColor:0
+        property color theColor: roomColors[currentRoomColor];
 
         onClicked:{
+
+            var theHue = Math.round(color.hslHue*360)
+            var theSaturation = Math.round(color.hslSaturation*100)
+            var theLightness = Math.round(color.hslLightness*100)
+            console.log("current color is",theHue,theSaturation,theLightness)
+
             console.log("sending click with value",nodeType)
-            if (nodeType == "voltage"){
+            if (nodeType == "relay"){
                 //enable/disable relay mode
-               platformInterface.sensor_set.update(7,"strata",relayEnabled)
-               relayEnabled = !relayEnabled;
+                console.log("sending solar_panel")
+                if (root.nodeNumber != "")
+                    platformInterface.set_node_mode.update(nodeType,root.nodeNumber,relayEnabled)
+                relayEnabled = !relayEnabled;
             }
 
-            else if (nodeType == "provisioner"){
-                console.log("sending lowPower comamnd with value",lowPowerMode)
-                platformInterface.sensor_set.update(1,"strata",lowPowerMode)
-                if (lowPowerMode === 0)
-                    lowPowerMode = 32;
-                else
-                    lowPowerMode = 0;
+            else if (nodeType == "high_power"){
+                console.log("sending lowPower comamnd with value",highPowerMode,nodeType.root)
+                platformInterface.set_node_mode.update(nodeType,root.nodeNumber,highPowerMode)
+                highPowerMode = !highPowerMode
             }
 
 
-            else if (nodeType === "alarm"){
-               platformInterface.sensor_set.update(65535,"strata",4)
+            else if (nodeType === "door"){
+                //platformInterface.sensor_set.update(65535,"strata",4)
+                platformInterface.set_node_mode.update("alarm",65535,true)
                 //the firmware should send a notification to let other parts of the UI know that the alarm is on
                 //but it is not. In the meantime, I'll inject the JSON here
                 CorePlatformInterface.data_source_handler('{
@@ -100,79 +72,108 @@ DropArea{
                     "payload":{
                         "triggered": "true"
                      }
+                     } ')
+            }
+            else if (nodeType === "hvac"){
+                platformInterface.light_hsl_set.update(65535,theHue, theSaturation, theLightness)
+
+            }
+            else if (nodeType == "security_camera"){
+                if (root.nodeNumber == "")
+                    platformInterface.light_hsl_set.update(65535,0, 0, 0)
+                   else
+                    platformInterface.light_hsl_set.update(65535,theHue, theSaturation, theLightness)
+            }
+            else if (nodeType == "doorbell"){
+                if (root.nodeNumber != "")
+                    platformInterface.set_node_mode.update("buzzer",root.nodeNumber,true)
+            }
+            else if (nodeType == "unknown"){
+                if (root.nodeNumber == "")
+                    platformInterface.light_hsl_set.update(65535,0, 0, 0)
+                   else
+                    platformInterface.light_hsl_set.update(65535,theHue, theSaturation, theLightness)
+            }
+            else if (nodeType == "dimmer"){
+                //enable/disable dimmer mode
+                console.log("sending dimmer mode",nodeType,root.nodeNumber,dimmerEnabled);
+                platformInterface.set_node_mode.update(nodeType,root.nodeNumber,dimmerEnabled)
+                dimmerEnabled = ! dimmerEnabled;
+            }
+            else if (nodeType == "robotic_arm"){
+                if (root.nodeNumber == "")
+                    platformInterface.light_hsl_set.update(65535,0, 0, 0)
+                   else
+                    platformInterface.light_hsl_set.update(65535,theHue, theSaturation, theLightness)
+            }
+
+            //smarthome nodes
+            else if (nodeType == "window_shade"){
+                var theWindow = "closed";
+                if (windowOpen)
+                    theWindow = "open"
+                  else
+                    theWindow = "closed"
+                //platformInterface.toggle_window_shade.update(theWindow)
+                windowOpen = !windowOpen;
+                //this notification should come from the firmware, but doesn't
+                CorePlatformInterface.data_source_handler('{
+                   "value":"window_shade",
+                    "payload":{
+                        "value": "'+theWindow+'"
+                     }
+
+                     } ')
+
+            }
+            else if (nodeType == "smarthome_lights"){
+                var theHomeHue = Math.round(theColor.hslHue*360);
+                var theHomeSaturation = Math.round(theColor.hslSaturation*100);
+                var theHomeLightness = Math.round(theColor.hslLightness*100);
+                //special case for black, as Qt thinks the hue should be -1
+                if (theHomeLightness === 0){
+                    theHomeHue = 0;
+                    theHomeSaturation = 0;
+                    }
+                //special case for white
+                if (theHomeLightness === 100){
+                    theHomeHue = 0;
+                    theHomeSaturation = 0;
+                    }
+                console.log("current smarthome color is",theHomeHue,theHomeSaturation,theHomeLightness)
+                platformInterface.light_hsl_set.update(65535,theHomeHue,theHomeSaturation,theHomeLightness);
+                //this should be handled by the firmware, but isn't
+                CorePlatformInterface.data_source_handler('{
+                   "value":"room_color_notification",
+                    "payload":{
+                        "color": "'+roomColors[currentRoomColor]+'"
+                     }
+
+                     } ')
+                currentRoomColor++;
+                if (currentRoomColor == roomColors.length)
+                    currentRoomColor = 0;
+            }
+            else if (nodeType == "smarthome_door"){
+                var theDoor;
+                if (doorOpen)
+                    theDoor = "open"
+                  else
+                    theDoor = "closed"
+                //platformInterface.toggle_door.update(theDoor)
+                doorOpen = !doorOpen;
+                //this should be handled by the firmware, but isn't
+                CorePlatformInterface.data_source_handler('{
+                   "value":"smarthome_door",
+                    "payload":{
+                        "value": "'+theDoor+'"
+                     }
 
                      } ')
             }
-            else if (nodeType === "remote"){
-               counter = counter + 1;
-               platformInterface.light_hsl_set.update(8,(counter * 100),100,50)
-               if(counter === 3) {
-                   counter = 0
-               }
 
-//                 platformInterface.light_hsl_set.update(8,300,100,50)
-            }
-            else if (nodeType == "security"){
-               platformInterface.light_hsl_set.update(65535,81,100,50)
-            }
-            else if (nodeType == "doorbell"){
-               platformInterface.light_hsl_set.update(65535,19,100,50)
-            }
-            else if (nodeType == "unknown"){
-               platformInterface.light_hsl_set.update(65535,91,100,50)
-            }
-            else if (nodeType == "switch"){
-                //enable/disable dimmer mode
-               if (dimmerEnabled){
-                    platformInterface.sensor_set.update(2,"magnetic_detection",16)
-                    dimmerEnabled = ! dimmerEnabled;
-                    }
-                 else{
-                   platformInterface.sensor_set.update(2,"magnetic_detection",0)
-                   dimmerEnabled = ! dimmerEnabled;
-               }
-            }
-        }
-    }
-
-
-
-
-    Rectangle{
-        id: infoTextRect
-//        height: 50
-//        width:175
-//        anchors.top: dropAreaRectangle.top
-//        anchors.left: dropAreaRectangle.right
-//        anchors.leftMargin: 10
-        anchors.left: infoText.left
-        anchors.leftMargin: -10
-        anchors.right:infoText.right
-        anchors.rightMargin:-10
-        anchors.top: infoText.top
-        anchors.topMargin: -5
-        anchors.bottom:infoText.bottom
-        anchors.bottomMargin: -10
-        color:"white"
-        opacity:.4
-        radius:7
-        visible: false
-    }
-
-    Text{
-        id:infoText
-        height:50
-        //width:100
-        text: targetDropArea.nodeType
-        font.pixelSize: 48
-        //fontSizeMode: Text.Fit
-        //anchors.centerIn: infoTextRect
-        anchors.top: dropAreaRectangle.top
-        anchors.left: dropAreaRectangle.right
-        anchors.leftMargin: 10
-        visible: infoTextRect.visible
-    }
-
+        }//on clicked
+    } //MouseArea
 
 }
 

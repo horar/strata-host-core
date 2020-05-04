@@ -31,8 +31,8 @@ public:
     void setExePath(const QString &exePath);
 
 signals:
-    void checkConnectionFinished(bool status, bool connected);
-    void flashBoardFinished(bool status);
+    void checkConnectionProcessFinished(bool exitedNormally, bool connected);
+    void flashBoardProcessFinished(bool exitedNormally);
     void exePathChanged();
 
 private slots:

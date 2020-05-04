@@ -11,6 +11,7 @@
 #include <QVariantMap>
 #include <QVector>
 #include <QSharedPointer>
+#include <QMutex>
 
 #include <SerialDevice.h>
 #include <DeviceProperties.h>
@@ -41,27 +42,30 @@ namespace strata {
          * Send a message to the device.
          * @param connectionId device connection ID
          * @param message message to send to the device
+         * @return true if attempt to send message was successful, otherwise false
          */
         [[deprecated("Do not use this function anymore, it will be deleted soon.")]]
-        Q_INVOKABLE void sendMessage(const int connectionId, const QString& message);
+        Q_INVOKABLE bool sendMessage(const int connectionId, const QString& message);
 
         /**
          * Disconnect from the device.
          * @param deviceId device ID
+         * @return true if device was disconnected, otherwise false
          */
-        Q_INVOKABLE void disconnect(const int deviceId);
+        Q_INVOKABLE bool disconnect(const int deviceId);
 
         /**
          * Reconnect the device.
          * @param deviceId device ID
+         * @return true if device was reconnected (and identification process has started), otherwise false
          */
-        Q_INVOKABLE void reconnect(const int deviceId);
+        Q_INVOKABLE bool reconnect(const int deviceId);
 
         /**
          * Get smart pointer to the device.
          * @param deviceId device ID
          */
-        SerialDevicePtr device(const int deviceId) const;
+        SerialDevicePtr device(const int deviceId);
 
         /**
          * Get information about connected device (platform ID, bootloader version, ...).
@@ -107,7 +111,7 @@ namespace strata {
         void boardReady(int deviceId, bool recognized);
 
         /**
-         * Emitted when error occured during communication with the board.
+         * Emitted when error occures during communication with the board.
          * @param deviceId device ID
          * @param message error description
          */
@@ -122,13 +126,6 @@ namespace strata {
         void newMessage(int deviceId, QString message);
 
         /**
-         * Emitted when required operation cannot be fulfilled (e.g. device ID does not exist).
-         * @param deviceId device ID
-         */
-        // DEPRECATED
-        void invalidOperation(int deviceId);
-
-        /**
          * Emitted when device IDs has changed (available device ID list has changed).
          */
         void readyDeviceIdsChanged();
@@ -136,20 +133,20 @@ namespace strata {
     private slots:
         void checkNewSerialDevices();
         void handleNewMessage(QString message);  // DEPRECATED
-        void handleBoardError(QString message);
         void handleOperationFinished(int operation, int);
+        void handleOperationError(QString message);
+        void handleSerialDeviceError(SerialDevice::ErrorCode errCode, QString errStr);
 
     private:
         void computeListDiff(std::set<int>& list, std::set<int>& added_ports, std::set<int>& removed_ports);
-        bool addedSerialPort(const int deviceId);
-        void removedSerialPort(const int deviceId);
+        bool addSerialPort(const int deviceId);
+        bool removeSerialPort(const int deviceId);
 
         void logInvalidDeviceId(const QString& message, const int deviceId) const;
 
         QTimer timer_;
 
-        // There is no need to use lock now because there is only one event loop in application. But if this library
-        // will be used across QThreads (more event loops in application) in future, mutex will be necessary.
+        QMutex mutex_;
 
         // Access to next 3 members should be protected by mutex (one mutex for all) in case of multithread usage.
         // Do not emit signals in block of locked code (because their slots are executed immediately in QML
@@ -157,7 +154,8 @@ namespace strata {
         std::set<int> serialPortsList_;
         QHash<int, QString> serialIdToName_;
         QHash<int, SerialDevicePtr> openedSerialPorts_;
-        QHash<int, QSharedPointer<DeviceOperations>> serialDeviceOprations_;
+
+        QHash<int, QSharedPointer<DeviceOperations>> serialDeviceOperations_;
 
         // flag if require response to get_firmware_info command
         bool reqFwInfoResp_;

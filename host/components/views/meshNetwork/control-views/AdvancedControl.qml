@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
+import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as Widget09
@@ -17,15 +18,21 @@ Rectangle{
         anchors.top:parent.top
         anchors.bottom:parent.bottom
         width:parent.width*.15
+        scrollBarColor:"lightgrey"
 
 
-        minimumHeight: 800
+        minimumHeight: 850
         minimumWidth: parent.width * .15
+
+        onHeightChanged: {
+            //console.log("button column is now",height)
+        }
 
         Rectangle{
             id:tabSelectorView
             color:"black"
             anchors.fill:parent
+            parent: demoButonScrollView.contentItem
             border.color:"black"
 
             Text {
@@ -42,7 +49,9 @@ Rectangle{
             }
 
             ButtonGroup {
+                id:demoButtonGroup
                 buttons: buttonColumn.children
+
             }
 
             Column{
@@ -53,11 +62,10 @@ Rectangle{
                 anchors.bottom:parent.bottom
                 spacing:1
 
-
                 SGButton{
                     id:demo1Button
                     width: parent.width
-                    height: width*.75
+                    height: 130
                     text:"one-to-one"
                     fontSizeMultiplier:1.5
                     color:"white"
@@ -68,31 +76,34 @@ Rectangle{
                     checked:true
 
                     onCheckedChanged: {
-                        if (checked)
+                        if (checked){
+                            console.log("demo 1 selected")
                             demoStackLayout.currentIndex = 0
+                        }
                     }
                 }
                 SGButton{
                     id:demo2Button
                     width: parent.width
-                    height: width*.75
+                    height: 130
                     text:"one-to-many"
                     fontSizeMultiplier:1.5
                     color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/one-to-many_demo.png"
+                    icon.source: "qrc:/views/meshNetwork/images/oneToManyDemo.png"
                     iconSize:100
                     display: Button.TextUnderIcon
                     checkable:true
 
                     onCheckedChanged: {
-                        if (checked)
+                        if (checked){
                             demoStackLayout.currentIndex = 1
+                        }
                     }
                 }
                 SGButton{
                     id:demo3Button
                     width: parent.width
-                    height: width*.75
+                    height: 130
                     text:"relay"
                     fontSizeMultiplier:1.5
                     color:"white"
@@ -102,59 +113,63 @@ Rectangle{
                     checkable:true
 
                     onCheckedChanged: {
-                        if (checked)
+                        if (checked){
                             demoStackLayout.currentIndex = 2
+                        }
                     }
                 }
-                SGButton{
-                    id:demo4Button
-                    width: parent.width
-                    height: width*.75
-                    text:"multiple model"
-                    fontSizeMultiplier:1.5
-                    color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/multipleModelsDemo.png"
-                    iconSize:100
-                    display: Button.TextUnderIcon
-                    checkable:true
+//                SGButton{
+//                    id:demo4Button
+//                    width: parent.width
+//                    height: 130
+//                    text:"multiple model"
+//                    fontSizeMultiplier:1.5
+//                    color:"white"
+//                    icon.source: "qrc:/views/meshNetwork/images/multipleModelsDemo.png"
+//                    iconSize:100
+//                    display: Button.TextUnderIcon
+//                    checkable:true
 
-                    onCheckedChanged: {
-                        if (checked)
-                            demoStackLayout.currentIndex = 3
-                    }
-                }
+//                    onCheckedChanged: {
+//                        if (checked){
+//                            demoStackLayout.currentIndex = 3
+//                            }
+//                    }
+//                }
                 SGButton{
                     id:demo5Button
                     width: parent.width
-                    height: width*.75
+                    height: 130
                     text:"sensor"
                     fontSizeMultiplier:1.5
                     color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/sensorDemo.png"
-                    iconSize:100
+                    icon.source: "qrc:/views/meshNetwork/images/sensorIconFullBar.svg"
+                    iconSize:50
                     display: Button.TextUnderIcon
                     checkable:true
 
                     onCheckedChanged: {
-                        if (checked)
-                            demoStackLayout.currentIndex = 4
+                        if (checked){
+                            demoStackLayout.currentIndex = 3
+                        }
                     }
                 }
                 SGButton{
                     id:demo6Button
                     width: parent.width
-                    height: width*.75
+                    height: 130
                     text:"cloud"
                     fontSizeMultiplier:1.5
                     color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/oneToOneDemo.png"
-                    iconSize:100
+                    icon.source: "qrc:/views/meshNetwork/images/cloud.png"
+                    iconSize:75
                     display: Button.TextUnderIcon
                     checkable:true
 
                     onCheckedChanged: {
-                        if (checked)
-                            demoStackLayout.currentIndex = 5
+                        if (checked){
+                            demoStackLayout.currentIndex = 4
+                        }
                     }
                 }
 
@@ -169,7 +184,7 @@ Rectangle{
         anchors.top:parent.top
         anchors.bottom:parent.bottom
         width:parent.width*.6
-        border.color:"blue"
+        border.color:"transparent"
 
 
 
@@ -194,9 +209,9 @@ Rectangle{
                 id: rectangleThree
             }
 
-            MultipleModelDemo {
-                id: rectangleFour
-            }
+//            MultipleModelDemo {
+//                id: rectangleFour
+//            }
 
             SensorDemo {
                 id: rectangleFive
@@ -209,22 +224,49 @@ Rectangle{
 
     }
 
+
+    Rectangle{
+        id:consoleTextContainer
+        anchors.left: parent.left
+        anchors.leftMargin: parent.width * .75
+        anchors.top:parent.top
+        anchors.right:parent.right
+        height:25
+        color:"white"
+
+        Text {
+            id: consoleText
+            text: "Node Communications"
+            font {
+                pixelSize: 24
+            }
+            color:"black"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            //        anchors {
+            //            horizontalCenter: parent.horizontalCenter
+            //            top:parent.top
+            //        }
+        }
+    }
+
     Widget09.SGResponsiveScrollView {
         id: consoleScrollView
 
         anchors.left: parent.left
         anchors.leftMargin: parent.width * .75
-        anchors.top:parent.top
+        anchors.top:consoleTextContainer.bottom
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 100
+        anchors.bottomMargin: 50
         anchors.right:parent.right
 
 
         minimumHeight: 800
         minimumWidth: parent.width * .25
+        scrollBarColor:"darkgrey"
 
         property var message_array : []
-        property var message_log: platformInterface.msg_dbg.msg
+        property var message_log: platformInterface.msg_cli.msg
         onMessage_logChanged: {
             console.log("debug:",message_log)
             if(message_log !== "") {
@@ -243,31 +285,17 @@ Rectangle{
             anchors {
                 fill: parent
             }
-            color: "dimgrey"
-
-
-            Text {
-                id: name
-                text: "Node Communications"
-                font {
-                    pixelSize: 24
-                }
-                color:"white"
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                    top:parent.top
-                }
-            }
+            color: "white"
 
             Rectangle {
                 width: parent.width
-                height: (parent.height - name.contentHeight)
+                height: (parent.height)
                 anchors.left:parent.left
                 anchors.leftMargin: 20
                 anchors.right:parent.right
                 anchors.rightMargin: 20
-                anchors.top:name.bottom
-                anchors.topMargin: 50
+                anchors.top:parent.top
+                //anchors.topMargin: 50
                 anchors.bottom:parent.bottom
                 anchors.bottomMargin: 50
                 color: "transparent"
@@ -276,11 +304,11 @@ Rectangle{
                     anchors.fill: parent
                     //model: messageModel
                     //showMessageIds: true
-                    color: "dimgrey"
+                    color: "white"      //background color of the status box
                     //statusTextColor: "white"
                     //statusBoxColor: "black"
-                    statusBoxBorderColor: "dimgrey"
-                    fontSizeMultiplier: 2
+                    statusBoxBorderColor: "white"
+                    fontSizeMultiplier: 1
 
                     listElementTemplate : {
                         "message": "",
@@ -292,7 +320,7 @@ Rectangle{
                         id: delegatecontainer
                         height: delegateText.height
                         width: ListView.view.width
-                        color:"dimgrey"
+                        color:"white"   //text background color
 
                         SGText {
                             id: delegateText
@@ -303,13 +331,14 @@ Rectangle{
                                         )}
 
                             fontSizeMultiplier: messageList.fontSizeMultiplier
-                            color: model.color
+                            color: "grey"//model.color   //text color
                             wrapMode: Text.WrapAnywhere
                             width: parent.width
                         }
                     }
 
                     function append(message,color) {
+                        console.log("appending message")
                         listElementTemplate.message = message
                         listElementTemplate.color = color
                         model.append( listElementTemplate )
@@ -326,6 +355,40 @@ Rectangle{
         }
     }
 
+    Button{
+        id:clearButton
+
+        anchors.right: parent.right
+        anchors.rightMargin: 20
+        anchors.top:consoleTextContainer.bottom
+        anchors.topMargin: 10
+
+        text:"clear"
+
+        contentItem: Text {
+                text: clearButton.text
+                font.pixelSize: 15
+                opacity: enabled ? 1.0 : 0.3
+                color: "lightgrey"
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
+
+            background: Rectangle {
+                implicitWidth: 50
+                implicitHeight: 25
+                color: clearButton.down ? "grey" : "transparent"
+                border.color: "lightgrey"
+                border.width: 2
+                radius: 10
+            }
+
+           onClicked: {
+               messageList.clear()
+           }
+    }
+
     Rectangle{
         id:consoleSendView
         anchors.left: consoleScrollView.left
@@ -333,18 +396,36 @@ Rectangle{
         anchors.bottom: parent.bottom
         anchors.right:parent.right
 
-        Text {
-            id: consoleSendName
-            text: "Command View"
-            font {
-                pixelSize: 24
-            }
-            color:"black"
+        SGSubmitInfoBox{
+            id:commandLineInput
             anchors {
-                horizontalCenter: parent.horizontalCenter
-                verticalCenter:parent.verticalCenter
+               //horizontalCenter: parent.horizontalCenter
+               verticalCenter:parent.verticalCenter
+               left:parent.left
+               leftMargin:10
+               right:parent.right
+               rightMargin: 10
+               }
+            horizontalAlignment: Text.AlignLeft
+
+            onAccepted: {
+                console.log("sending:",commandLineInput.text)
+                let object = JSON.parse(commandLineInput.text)
+                try{
+                    if (!object) throw "incorrect JSON";
+                    CorePlatformInterface.send(object)
+                    commandLineInput.text = "";  //clear the text after submitting
+                }
+                catch(err){
+                    console.log("incorrect JSON command")
+                }
+
+
             }
+
+
         }
+
     }
 }
 

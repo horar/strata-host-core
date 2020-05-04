@@ -16,14 +16,16 @@ class DeviceOperations : public QObject
     Q_DISABLE_COPY(DeviceOperations)
 
 public:
-    DeviceOperations(SerialDevicePtr device);
+    DeviceOperations(const SerialDevicePtr& device);
     ~DeviceOperations();
 
     void identify(bool requireFwInfoResponse = true);
 
-    void prepareForFlash();
+    void switchToBootloader();
 
-    void flashFirmwareChunk(QVector<quint8> chunk, int chunk_number);
+    void flashFirmwareChunk(const QVector<quint8>& chunk, int chunkNumber);
+
+    void backupFirmwareChunk(bool firstChunk);
 
     void startApplication();
 
@@ -31,13 +33,16 @@ public:
 
     int deviceId() const;
 
-    friend QDebug operator<<(QDebug dbg, const DeviceOperations* dev_op);
+    QVector<quint8> recentFirmwareChunk() const;
+
+    friend QDebug operator<<(QDebug dbg, const DeviceOperations* devOp);
 
     enum class Operation {
         None,
         Identify,
-        PrepareForFlash,
+        SwitchToBootloader,
         FlashFirmwareChunk,
+        BackupFirmwareChunk,
         StartApplication,
         // special values for finished signal:
         Cancel,
@@ -58,8 +63,9 @@ private:
         GetFirmwareInfo,
         GetPlatformId,
         UpdateFirmware,
-        ReadyForFlashFw,
+        SwitchedToBootloader,
         FlashFwChunk,
+        BackupFwChunk,
         StartApplication,
         Timeout
     };
@@ -68,8 +74,9 @@ private:
         None,
         WaitingForFirmwareInfo,
         WaitingForPlatformId,
-        WaitingForUpdateFw,
+        WaitingForSwitchToBootloader,
         WaitingForFlashFwChunk,
+        WaitingForBackupFwChunk,
         WaitingForStartApp
     };
 
@@ -81,7 +88,7 @@ private:
 
     void handleResponseTimeout();
 
-    void handleDeviceError(int errCode, QString msg);
+    void handleSerialDeviceError(SerialDevice::ErrorCode errCode, QString msg);
 
     void handleDeviceResponse(const QByteArray& data);
 
@@ -90,6 +97,7 @@ private:
     void resetInternalStates();
 
     QByteArray createFlashFwJson();
+    QByteArray createBackupFwJson();
 
     SerialDevicePtr device_;
 
@@ -97,6 +105,7 @@ private:
 
     QVector<quint8> chunk_;
     int chunkNumber_;
+    uint chunkRetryCount_;
 
     uint deviceId_;
 
@@ -109,6 +118,8 @@ private:
     bool ackReceived_;
 
     bool reqFwInfoResp_;
+
+    bool firstBackupChunk_;
 };
 
 }  // namespace

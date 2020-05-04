@@ -12,6 +12,8 @@ Item {
         fill: parent
     }
 
+    property alias class_id: efuseClassID.class_id // passed in when created by SGPlatformView
+
     PlatformInterface {
         id: platformInterface
     }
