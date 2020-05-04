@@ -20,7 +20,7 @@ ColumnLayout {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     spacing: 10
     property string popup_message: ""
-    property bool popup_opened_previously: false
+
     //For demo
 
     //    Component.onCompleted:  {
@@ -178,6 +178,27 @@ ColumnLayout {
                     font.pixelSize: ratioCalc * 15
                 }
             }
+            SGAlignedLabel {
+                id: displayPopupAgainCheckboxLabel
+                target: displayPopupAgainCheckbox
+                text: "Don't display message again?"
+                margin: -5
+                font.bold : true
+                font.italic: true
+                alignment: SGAlignedLabel.SideTopCenter
+                fontSizeMultiplier: ratioCalc
+                anchors{
+                    top: messageContainerForPopup.bottom
+                    right: selectionContainerForPopup.left
+                    rightMargin: 10
+                }
+
+                CheckBox {
+                    id: displayPopupAgainCheckbox
+                    checked: false
+                    z:1
+                }
+            }
 
             Rectangle {
                 id: selectionContainerForPopup
@@ -199,8 +220,21 @@ ColumnLayout {
                     roundedRight: true
 
                     onClicked: {
+                        if (displayPopupAgainCheckbox.checked){
+                            platformInterface.vout_warning_response.update("off")
+                        } else {
+                            platformInterface.vout_warning_response.update("on")
+                        }
                         warningPopup.close()
                     }
+                }
+            }
+
+            property var voutBelowValue: platformInterface.vout_below_threshold.vout_below_status
+            onVoutBelowValueChanged: {
+                if (!warningPopup.opened && voutBelowValue === "true") {
+                    warningPopup.open()
+                    popup_message = "Output voltage is below 5V. It is recommended to disconnect the EXTBIAS pin from the output and short the EXTBIAS pin to the HVBIAS pin."
                 }
             }
         }
@@ -658,11 +692,6 @@ ColumnLayout {
                                                     property var ouputVoltageValue:  platformInterface.status_voltage_current.vout.toFixed(2)
                                                     onOuputVoltageValueChanged: {
                                                         outputVoltage.text = ouputVoltageValue
-                                                        if (!popup_opened_previously && platformInterface.status_voltage_current.vout < 5 && platformInterface.status_pgood.pgood === "good" && !warningPopup.opened) {
-                                                            popup_opened_previously = true
-                                                            warningPopup.open()
-                                                            popup_message = "Output voltage is below 5V. It is recommended to disconnect R2 and short R5."
-                                                        }
                                                     }
                                                 }
                                             }
@@ -734,6 +763,10 @@ ColumnLayout {
                                             onUserSet: {
                                                 platformInterface.switchFrequency = value
                                                 platformInterface.set_switching_frequency.update(value)
+
+                                                if (SGComboBox.model === "Slave"){
+                                                    platformInterface.set_sync_slave_frequency.update(value)
+                                                }
                                             }
 
                                         }
@@ -1156,6 +1189,16 @@ ColumnLayout {
                                                             frequencyContainer.opacity = 0.5
                                                             vccContainer.enabled = false
                                                             vccContainer.opacity = 0.5
+                                                            outputContainer.enabled = false
+                                                            outputContainer.opacity = 0.5
+                                                            ocpContainer.enabled = false
+                                                            ocpContainer.opacity = 0.5
+                                                            syncContainer.enabled = false
+                                                            syncContainer.opacity = 0.5
+                                                            softStartContainer.enabled = false
+                                                            softStartContainer.opacity = 0.5
+                                                            modeContainer.enabled = false
+                                                            modeContainer.opacity = 0.5
                                                         }
                                                         else{
                                                             platformInterface.set_enable.update("off")
@@ -1163,8 +1206,17 @@ ColumnLayout {
                                                             frequencyContainer.opacity = 1.0
                                                             vccContainer.enabled = true
                                                             vccContainer.opacity = 1.0
+                                                            outputContainer.enabled = true
+                                                            outputContainer.opacity = 1
+                                                            ocpContainer.enabled = true
+                                                            ocpContainer.opacity = 1
+                                                            syncContainer.enabled = true
+                                                            syncContainer.opacity = 1
+                                                            softStartContainer.enabled = true
+                                                            softStartContainer.opacity = 1
+                                                            modeContainer.enabled = true
+                                                            modeContainer.opacity = 1
                                                         }
-
                                                     }
                                                 }
                                             }
@@ -1211,6 +1263,7 @@ ColumnLayout {
                                                 anchors.fill: parent
                                                 spacing: 10
                                                 Rectangle {
+                                                    id: syncContainer
                                                     Layout.fillHeight: true
                                                     Layout.fillWidth: true
                                                     SGAlignedLabel {
@@ -1231,42 +1284,12 @@ ColumnLayout {
                                                             model: [ "Master", "Slave" ]
                                                             onActivated: {
                                                                 platformInterface.set_sync_mode.update(currentText.toLowerCase())
-                                                                if(currentIndex === 0) {
-                                                                    syncTextEdit.enabled = false
-                                                                    syncTextEdit.opacity = 0.5
-                                                                }
-                                                                else {
-                                                                    syncTextEdit.enabled = true
-                                                                    syncTextEdit.opacity = 1.0
+                                                                if(syncCombo.currentText === "Slave") {
+                                                                    platformInterface.set_sync_slave_frequency.update(platformInterface.switchFrequency)
                                                                 }
                                                             }
                                                         }
-                                                        SGSubmitInfoBox {
-                                                            id: syncTextEdit
-                                                            anchors.left: parent.right
-                                                            anchors.leftMargin: 10
-                                                            opacity: 0.5
-                                                            enabled: false
 
-
-                                                            fontSizeMultiplier: ratioCalc
-                                                            width: syncCombo.width
-                                                            infoBoxHeight: syncCombo.height
-
-                                                            anchors.verticalCenter: syncCombo.verticalCenter
-                                                            //anchors.verticalCenterOffset: 10
-
-                                                            placeholderText: "100-1000"
-                                                            IntValidator {
-                                                                top: 1000
-                                                                bottom: 100
-                                                            }
-
-                                                            onEditingFinished: {
-                                                                platformInterface.set_sync_slave_frequency.update(parseInt(syncTextEdit.text))
-                                                            }
-
-                                                        }
                                                     }
                                                 }
 
@@ -1284,6 +1307,7 @@ ColumnLayout {
                                         anchors.fill: parent
                                         spacing: 10
                                         Rectangle {
+                                            id : modeContainer
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
                                             SGAlignedLabel {
@@ -1314,6 +1338,7 @@ ColumnLayout {
                                             }
                                         }
                                         Rectangle {
+                                            id: softStartContainer
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
                                             SGAlignedLabel {

@@ -46,6 +46,10 @@ Item {
         "os_alert":"false"
     }
 
+    property var vout_below_threshold:  {
+        "vout_below_status":"false"
+    }
+
     // -------------------  end notification messages
 
 
@@ -253,6 +257,26 @@ Item {
                                // Set can set single or multiple properties before sending to platform
                                set: function (ocp_setting) {
                                    this.payload.ocp_setting = ocp_setting;
+                               },
+                               send: function () { CorePlatformInterface.send(this) },
+                               show: function () { CorePlatformInterface.show(this) }
+
+                           })
+
+    property var vout_warning_response: ({
+                               "cmd" : "vout_warning_response",
+                               "payload": {
+                                   "response": "on"
+                               },
+
+                               // Update will set and send in one shot
+                               update: function (response) {
+                                   this.set(response)
+                                   CorePlatformInterface.send(this)
+                               },
+                               // Set can set single or multiple properties before sending to platform
+                               set: function (response) {
+                                   this.payload.response = response;
                                },
                                send: function () { CorePlatformInterface.send(this) },
                                show: function () { CorePlatformInterface.show(this) }
