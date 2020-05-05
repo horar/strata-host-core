@@ -62,42 +62,82 @@ Rectangle {
         property var initialNodeVisibilityColors: platformInterface.network_notification
         onInitialNodeVisibilityColorsChanged:{
 
-            //iterate over the nodes in the notification
+            //iterate over the nodes in the notification, and over the meshArray nodes for each node in the
+            //notification. If the node number already exists in the meshArray, then set the notification's nodeNumber to
+            //-1. If the node exists in the meshArray, but not in the notification, the node has been lost without a notification
+            //coming through, so remove the node from the meshArray
             console.log("updating nodes",platformInterface.network_notification.nodes.length)
+            var nodeFoundInMeshArray = false;
+
             for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
-                //for each node that is marked visible set the visibilty of the node appropriately
-                if (platformInterface.network_notification.nodes[alpha].ready === 0){
-                    meshArray[alpha].objectColor = "lightgrey"
-                    meshArray[alpha].nodeNumber = ""
+                console.log("looking for node number",platformInterface.network_notification.nodes[alpha].index,"in meshArray")
+                for(var beta = 0; beta < meshArray.length; beta++){
+                    console.log("comparing to",meshArray[beta].nodeNumber)
+                    if (meshArray[beta].nodeNumber == platformInterface.network_notification.nodes[alpha].index){
 
-                    //special case because sometimes the 0th element of the notification array
-                    //really represents the first element
-                    if (alpha === 1){
-                        if (platformInterface.network_notification.nodes[0].ready === 1 ){
-                            meshArray[alpha].opacity = 1.0
-                            //meshArray[alpha].enabled = true
-                            meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
-
+                        if (platformInterface.network_notification.nodes[alpha].ready === 0){
+                            //remove the item from the meshArray. It's not in the network anymore
+                            nodeFoundInMeshArray = true;
+                            meshArray[alpha].objectColor = "lightgrey"
+                            meshArray[alpha].nodeNumber = ""
+                            console.log("node",platformInterface.network_notification.nodes[alpha].index,"found in meshArray")
                         }
-                    }
-                }
-                else {
+                        else if (platformInterface.network_notification.nodes[alpha].ready !== 0){
+                            //the node is in both the notification and in the meshArray, no need to update anything
+                            console.log("node",platformInterface.network_notification.nodes[alpha].index,"found in meshArray")
+                            nodeFoundInMeshArray = true;
+                        }
+                    }   //if node numbers match
+                }   //beta for loop
+                console.log("finished looking for node",platformInterface.network_notification.nodes[alpha].index,"found=",nodeFoundInMeshArray)
+                if (!nodeFoundInMeshArray){
+                    //we looked through the whole meshArray, and didn't find the nodeNumber that was in the notification
+                    //so we should add this node in an empty slot
+                    //this should only happen if we're building the meshArray from scratch, so we'll assume slot alpha is empty
                     meshArray[alpha].opacity = 1.0
-                    meshArray[alpha].enabled = true
                     meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
                     meshArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+                }
+                nodeFoundInMeshArray = false; //reset for next iteration notification node
+            }
+
+
+
+            //iterate over the nodes in the notification
+//            console.log("updating nodes",platformInterface.network_notification.nodes.length)
+//            for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+//                //for each node that is marked visible set the visibilty of the node appropriately
+//                if (platformInterface.network_notification.nodes[alpha].ready === 0){
+//                    meshArray[alpha].objectColor = "lightgrey"
+//                    meshArray[alpha].nodeNumber = ""
 
                     //special case because sometimes the 0th element of the notification array
                     //really represents the first element
-                    if (alpha == 0){
-                        if (meshArray[alpha.enabled == true])
-                            meshArray[1] = true;
-                    }
+//                    if (alpha === 1){
+//                        if (platformInterface.network_notification.nodes[0].ready === 1 ){
+//                            meshArray[alpha].opacity = 1.0
+//                            //meshArray[alpha].enabled = true
+//                            meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
 
-                    //targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
-                }
-            }
-        }
+//                        }
+//                    }
+//                }
+//                else {  //the node is in the network, and should be added (if not already there)
+//                    if (meshArray[alpha].objectColor === "lightgrey"){ //there's no object here, so we can add it
+//                        meshArray[alpha].opacity = 1.0
+//                        meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+//                        meshArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+//                        }
+//                      else{ //there's already an object at this location
+//                        //hmm. what to do here? Push the object to the next open slot?
+//                        //if we already have nodes populated, then we don't want to risk double adding, so we'll have to CheckBox
+//                        //to see if the notification node is already in the meshArray
+//                        }
+
+
+//                }
+//            }
+       }
 
 
 
