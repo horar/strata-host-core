@@ -79,6 +79,7 @@ void FlasherConnector::flashFirmware(bool flashOld) {
     connect(flasher_.get(), &Flasher::error, this, &FlasherConnector::handleFlasherError);
     connect(flasher_.get(), &Flasher::flashProgress, this, &FlasherConnector::flashProgress);
     connect(flasher_.get(), &Flasher::switchToBootloader, this, &FlasherConnector::handleSwitchToBootloader);
+    connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 
     if (operation_ != Operation::Preparation) {
         startOperation();
@@ -97,6 +98,7 @@ void FlasherConnector::backupFirmware(bool backupOld) {
     connect(flasher_.get(), &Flasher::error, this, &FlasherConnector::handleFlasherError);
     connect(flasher_.get(), &Flasher::backupProgress, this, &FlasherConnector::backupProgress);
     connect(flasher_.get(), &Flasher::switchToBootloader, this, &FlasherConnector::handleSwitchToBootloader);
+    connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 
     if (operation_ != Operation::Preparation) {
         startOperation();

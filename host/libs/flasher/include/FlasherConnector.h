@@ -115,6 +115,11 @@ signals:
      */
     void operationStateChanged(Operation operation, State state, QString errorString = QString());
 
+    /*!
+     * This signal is emitted when device properties are changed (when device is switched to/from bootloader mode).
+     */
+    void devicePropertiesChanged();
+
 private slots:
     void handleFlasherFinished(Flasher::Result flasherResult);
     void handleFlasherError(QString errorString);

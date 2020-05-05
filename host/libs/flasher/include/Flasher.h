@@ -95,6 +95,11 @@ class Flasher : public QObject
          */
         void backupProgress(int chunk, bool last);
 
+        /*!
+         * This signal is emitted when device properties are changed (e.g. board switched to/from bootloader).
+         */
+        void devicePropertiesChanged();
+
     private slots:
         void handleOperationFinished(DeviceOperation operation, int data);
         void handleOperationError(QString errStr);

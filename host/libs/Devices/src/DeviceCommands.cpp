@@ -2,6 +2,8 @@
 #include "DeviceOperationsConstants.h"
 #include <CommandValidator.h>
 
+#include <climits>
+
 #include <CodecBase64.h>
 #include <Buypass.h>
 
@@ -15,7 +17,7 @@ namespace strata {
 // Base Command
 
 BaseDeviceCommand::BaseDeviceCommand(const SerialDevicePtr& device, const QString& commandName) :
-    cmdName_(commandName), device_(device), ackReceived_(false), result_(CommandResult::Undone) { }
+    cmdName_(commandName), device_(device), ackReceived_(false), result_(CommandResult::InProgress) { }
 
 BaseDeviceCommand::~BaseDeviceCommand() { }
 
@@ -28,7 +30,7 @@ bool BaseDeviceCommand::ackReceived() const {
 }
 
 void BaseDeviceCommand::onTimeout() {
-    result_ = CommandResult::Undone;
+    result_ = CommandResult::InProgress;
 }
 
 bool BaseDeviceCommand::skip() {
@@ -46,7 +48,7 @@ std::chrono::milliseconds BaseDeviceCommand::waitBeforeNextCommand() const {
 void BaseDeviceCommand::prepareRepeat() { }
 
 int BaseDeviceCommand::dataForFinish() const {
-    return -1;
+    return INT_MIN;  // default value for finished() signal
 }
 
 const QString BaseDeviceCommand::name() const {
@@ -92,7 +94,7 @@ bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc) {
 }
 
 void CmdGetFirmwareInfo::onTimeout() {
-    result_ = (requireResponse_) ? CommandResult::Undone : CommandResult::Done;
+    result_ = (requireResponse_) ? CommandResult::InProgress : CommandResult::Done;
 }
 
 
@@ -142,7 +144,7 @@ bool CmdUpdateFirmware::processNotification(rapidjson::Document& doc) {
 bool CmdUpdateFirmware::skip() {
     if (device_->property(DeviceProperties::verboseName) == BOOTLOADER_STR) {
         qCInfo(logCategoryDeviceOperations) << device_.get() << "Platform already in bootloader mode. Ready for firmware operations.";
-        result_ = CommandResult::Done;
+        result_ = CommandResult::FinaliseOperation;
         return true;
     } else {
         return false;
@@ -156,6 +158,11 @@ std::chrono::milliseconds CmdUpdateFirmware::waitBeforeNextCommand() const {
     // it will have a hardware fault which requires board to be reset.
     qCInfo(logCategoryDeviceOperations) << device_.get() << "Waiting 5 seconds for bootloader to start.";
     return std::chrono::milliseconds(5500);
+}
+
+int CmdUpdateFirmware::dataForFinish() const {
+    // If this command was skipped, return 1 instead of default value INT_MIN.
+    return (result_ == CommandResult::FinaliseOperation) ? 1 : INT_MIN;
 }
 
 
@@ -238,6 +245,7 @@ void CmdFlashFirmware::prepareRepeat() {
 }
 
 int CmdFlashFirmware::dataForFinish() const {
+    // flashed chunk number is used as data for finished() signal
     return chunkNumber_;
 }
 
@@ -314,6 +322,7 @@ void CmdBackupFirmware::prepareRepeat() {
 }
 
 int CmdBackupFirmware::dataForFinish() const {
+    // backed up chunk number is used as data for finished() signal
     return chunkNumber_;
 }
 
