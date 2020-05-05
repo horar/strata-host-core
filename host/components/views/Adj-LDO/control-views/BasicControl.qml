@@ -6,7 +6,6 @@ import QtQuick.Window 2.3
 import tech.strata.sgwidgets 0.9 as Widget09
 import tech.strata.fonts 1.0
 import "qrc:/js/help_layout_manager.js" as Help
-import "../custom"
 
 Item {
     id: root
