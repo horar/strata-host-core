@@ -232,17 +232,17 @@ Rectangle {
                                                                           platformInterface.brake_value,
                                                                           platformInterface.hazard_value,
                                                                           platformInterface.reverse_value
-
                                                                           )
                                 }
                                 else {
 
                                     hazardLightsTimer.stop()
                                     platformInterface.hazard_value = false
-                                    platformInterface.set_car_demo.update(
+                                    platformInterface.set_car_demo.update(platformInterface.left_value,
+                                                                          platformInterface.right_value,
+                                                                          platformInterface.brake_value,
                                                                           platformInterface.hazard_value,
-
-
+                                                                          platformInterface.reverse_value
                                                                           )
 
                                 }
@@ -362,7 +362,7 @@ Rectangle {
                                 }
                                 else {
                                     rightTimer.stop()
-                                    platformInterface.right_value = true
+                                    platformInterface.right_value = false
                                     platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                           platformInterface.right_value,
                                                                           platformInterface.brake_value,

@@ -35,7 +35,7 @@ Item {
                             SGAlignedLabel {
                                 id: vledInputVoltageLabel
                                 target: vledInputVoltage
-                                text: "VLED Input\nVoltage"
+                                // text: "VLED Input\nVoltage"
                                 alignment: SGAlignedLabel.SideTopLeft
 
                                 anchors {
@@ -51,8 +51,8 @@ Item {
                                 SGSwitch {
                                     id: vledInputVoltage
                                     labelsInside: true
-                                    checkedLabel: "On"
-                                    uncheckedLabel: "Off"
+                                    //                                    checkedLabel: "On"
+                                    //                                    uncheckedLabel: "Off"
                                     textColor: "black"              // Default: "black"
                                     handleColor: "white"            // Default: "white"
                                     grooveColor: "#ccc"             // Default: "#ccc"
@@ -60,6 +60,44 @@ Item {
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     checked: false
                                 }
+                                property var power_vled_input_caption: platformInterface.power_vled_input_caption.caption
+                                onPower_vled_input_captionChanged: {
+                                    vledInputVoltageLabel.text = power_vled_input_caption
+                                }
+
+                                property var power_vled_input_state: platformInterface.power_vled_input_state.state
+                                onPower_vled_input_stateChanged: {
+                                    if(power_vled_input_state === "enabled") {
+                                        vledInputVoltage.opacity = 1.0
+                                        vledInputVoltage.enabled = true
+                                    }
+                                    else if (power_vled_input_state === "disabled") {
+                                        vledInputVoltage.opacity = 1.0
+                                        vledInputVoltage.enabled = false
+                                    }
+                                    else  {
+                                        vledInputVoltage.opacity = 0.5
+                                        vledInputVoltage.enabled = false
+                                    }
+                                }
+
+                                property var power_vled_input_values: platformInterface.power_vled_input_values.values
+                                onPower_vled_input_valuesChanged: {
+                                    vledInputVoltage.checkedLabel = power_vled_input_values[0]
+                                    vledInputVoltage.uncheckedLabel = power_vled_input_values[1]
+                                }
+
+                                property var power_vled_input_value: platformInterface.power_vled_input_value.value
+                                onPower_vled_input_valueChanged: {
+                                    var ValuesOfSwitch = platformInterface.power_vled_input_values.values
+                                    if(power_vled_input_value === ValuesOfSwitch[0]) {
+                                        vledInputVoltage.checked = true
+
+                                    }
+                                    else  vledInputVoltage.checked = false
+
+                                }
+
                             }
 
                         }
@@ -71,7 +109,7 @@ Item {
                             SGAlignedLabel {
                                 id: vedInputVoltageTypeLabel
                                 target: vedInputVoltageType
-                                text: "VED Input Voltage \nType"
+                                //text: "VED Input Voltage \nType"
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors {
                                     top:parent.top
@@ -85,29 +123,63 @@ Item {
                                 SGComboBox {
                                     id: vedInputVoltageType
                                     fontSizeMultiplier: ratioCalc
+                                    //Check on the firmware
+                                    //model: ["Boost", "Buck", "Bypass"]
+                                    //                                    onCurrentIndexChanged: {
+                                    //                                        if(currentIndex === 0) {
+                                    //                                            voltageType = "Boost"
+                                    //                                            voltageSet.to = 12
+                                    //                                            voltageSet.from = 5.5
+                                    //                                            voltageSet.toText.text = "12V"
+                                    //                                            voltageSet.fromText.text = "5.5V"
+                                    //                                        }
+                                    //                                        else if (currentIndex === 1) {
+                                    //                                            voltageType = "Buck"
+                                    //                                            voltageSet.to = 18
+                                    //                                            voltageSet.from = 2
+                                    //                                            voltageSet.toText.text = "18V"
+                                    //                                            voltageSet.fromText.text = "2V"
+                                    //                                        }
+                                    //                                        else if (currentIndex === 2) {
+                                    //                                            voltageSet.enabled = false
+                                    //                                            voltageSet.opacity = 0.5
+                                    //                                        }
+                                    //                                    }
 
-                                    model: ["Boost", "Buck", "Bypass"]
-                                    onCurrentIndexChanged: {
-                                        if(currentIndex === 0) {
-                                            voltageType = "Boost"
-                                            voltageSet.to = 12
-                                            voltageSet.from = 5.5
-                                            voltageSet.toText.text = "12V"
-                                            voltageSet.fromText.text = "5.5V"
-                                        }
-                                        else if (currentIndex === 1) {
-                                            voltageType = "Buck"
-                                            voltageSet.to = 18
-                                            voltageSet.from = 2
-                                            voltageSet.toText.text = "18V"
-                                            voltageSet.fromText.text = "2V"
-                                        }
-                                        else if (currentIndex === 2) {
-                                            voltageSet.enabled = false
-                                            voltageSet.opacity = 0.5
-                                        }
+                                    property var power_vled_type_caption: platformInterface.power_vled_type_caption.caption
+                                    onPower_vled_type_captionChanged: {
+                                        vedInputVoltageTypeLabel.text = power_vled_type_caption
+                                    }
 
+                                    property var power_vled_type_state: platformInterface.power_vled_type_state.state
+                                    onPower_vled_type_stateChanged: {
+                                        if(power_vled_type_state === "enabled") {
+                                            vedInputVoltageType.opacity = 1.0
+                                            vedInputVoltageType.enabled = true
+                                        }
+                                        else if (power_vled_type_state === "disabled") {
+                                            vedInputVoltageType.opacity = 1.0
+                                            vedInputVoltageType.enabled = false
+                                        }
+                                        else  {
+                                            vedInputVoltageType.opacity = 0.5
+                                            vedInputVoltageType.enabled = false
+                                        }
+                                    }
 
+                                    property var power_vled_type_values: platformInterface.power_vled_type_values.values
+                                    onPower_vled_type_valuesChanged:{
+                                        vedInputVoltageType.model = power_vled_type_values
+                                    }
+
+                                    property var power_vled_type_value: platformInterface.power_vled_type_value.value
+                                    onPower_vled_type_valueChanged: {
+                                        for(var a = 0; a < vedInputVoltageType.model.length; ++a) {
+                                            if(power_vled_type_value === vedInputVoltageType.model[a].toString()){
+                                                vedInputVoltageType.currentIndex = a
+
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -128,13 +200,41 @@ Item {
                                     leftMargin: 20
                                 }
                                 fontSizeMultiplier: ratioCalc * 1.2
-                                text: "Boost\nOCP"
+                                //text: "Boost\nOCP"
                                 font.bold: true
 
                                 SGStatusLight {
                                     id: boostOCP
 
                                 }
+                                property var power_boost_ocp_caption: platformInterface.power_boost_ocp_caption.caption
+                                onPower_boost_ocp_captionChanged: {
+                                    boostOCPLabel.text = power_boost_ocp_caption
+                                }
+
+                                property var power_boost_ocp_state: platformInterface.power_boost_ocp_state.state
+                                onPower_boost_ocp_stateChanged: {
+                                    if(power_boost_ocp_state === "enabled") {
+                                        boostOCP.opacity = 1.0
+                                        boostOCP.enabled = true
+                                    }
+                                    else if (power_boost_ocp_state === "disabled") {
+                                        boostOCP.opacity = 1.0
+                                        boostOCP.enabled = false
+                                    }
+                                    else  {
+                                        boostOCP.opacity = 0.5
+                                        boostOCP.enabled = false
+                                    }
+                                }
+
+                                property var power_boost_ocp_value: platformInterface.power_boost_ocp_value.value
+                                onPower_boost_ocp_valueChanged:{
+                                    if(power_boost_ocp_value === true)
+                                        boostOCP.status = SGStatusLight.Red
+                                    else boostOCP.status = SGStatusLight.Off
+                                }
+
                             }
                         }
                     }
@@ -153,19 +253,54 @@ Item {
                         anchors.left: parent.left
                         anchors.leftMargin: 20
                         anchors.top: parent.top
-                        text: voltageType + " Voltage Set"
+                        //text: voltageType + " Voltage Set"
                         SGSlider {
                             id: voltageSet
-                            width: voltageSetContainer.width/1.5
+                            width: voltageSetContainer.width/1.2
                             live: false
                             fontSizeMultiplier: ratioCalc * 1.2
-                            to: 18
-                            from: 2
-                            stepSize: 1
-                            toText.text: "18V"
-                            fromText.text: "2V"
-                            value: 7
+                            //                            to: 18
+                            //                            from: 2
+                            //                            stepSize: 1
+                            //                            toText.text: "18V"
+                            //                            fromText.text: "2V"
+                            //                            value: 7
                         }
+
+                        property var power_voltage_set_caption: platformInterface.power_voltage_set_caption.caption
+                        onPower_voltage_set_captionChanged: {
+                            voltageSetLabel.text = power_voltage_set_caption
+                        }
+
+                        property var power_voltage_set_scales: platformInterface.power_voltage_set_scales.scales
+                        onPower_voltage_set_scalesChanged: {
+                            voltageSet.to = power_voltage_set_scales[0]
+                            voltageSet.from =  power_voltage_set_scales[1]
+                            voltageSet.toText.text = power_voltage_set_scales[0] + "V"
+                            voltageSet.fromText.text = power_voltage_set_scales[1] + "V"
+                            voltageSet.stepSize = power_voltage_set_scales[2]
+                        }
+
+                        property var power_voltage_set_state: platformInterface.power_voltage_set_state.state
+                        onPower_voltage_set_stateChanged: {
+                            if(power_voltage_set_state === "enabled") {
+                                voltageSet.opacity = 1.0
+                                voltageSet.enabled = true
+                            }
+                            else if (power_voltage_set_state === "disabled") {
+                                voltageSet.opacity = 1.0
+                                voltageSet.enabled = false
+                            }
+                            else  {
+                                voltageSet.opacity = 0.5
+                                voltageSet.enabled = false
+                            }
+                        }
+                        property var power_voltage_set_value: platformInterface.power_voltage_set_value.value
+                        onPower_voltage_set_valueChanged: {
+                            voltageSet.value =  power_voltage_set_value
+                        }
+
 
                     }
 
@@ -176,7 +311,7 @@ Item {
                     SGAlignedLabel {
                         id: vsVoltageSelectLabel
                         target: vsVoltageSelect
-                        text: "VS Voltage Select"
+                        //text: "VS Voltage Select"
                         alignment: SGAlignedLabel.SideTopLeft
 
                         anchors {
@@ -192,8 +327,8 @@ Item {
                         SGSwitch {
                             id: vsVoltageSelect
                             labelsInside: true
-                            checkedLabel: "VLED"
-                            uncheckedLabel: "5V"
+                            //checkedLabel: "VLED"
+                            //uncheckedLabel: "5V"
                             textColor: "black"              // Default: "black"
                             handleColor: "white"            // Default: "white"
                             grooveColor: "#ccc"             // Default: "#ccc"
@@ -201,6 +336,46 @@ Item {
                             fontSizeMultiplier: ratioCalc * 1.2
                             checked: false
                         }
+
+                        property var power_vs_select_caption: platformInterface.power_vs_select_caption.caption
+                        onPower_vs_select_captionChanged: {
+                            vsVoltageSelectLabel.text = power_vs_select_caption
+                        }
+
+                        property var power_vs_select_state: platformInterface.power_vs_select_state.state
+                        onPower_vs_select_stateChanged: {
+                            if(power_vs_select_state === "enabled") {
+                                vsVoltageSelect.opacity = 1.0
+                                vsVoltageSelect.enabled = true
+                            }
+                            else if (power_vs_select_state === "disabled") {
+                                vsVoltageSelect.opacity = 1.0
+                                vsVoltageSelect.enabled = false
+                            }
+                            else  {
+                                vsVoltageSelect.opacity = 0.5
+                                vsVoltageSelect.enabled = false
+                            }
+                        }
+
+                        property var power_vs_select_values: platformInterface.power_vs_select_values.values
+                        onPower_vs_select_valuesChanged: {
+                            vsVoltageSelect.checkedLabel = power_vs_select_values[0]
+                            vsVoltageSelect.uncheckedLabel = power_vs_select_values[1]
+                        }
+
+                        property var power_vs_select_value: platformInterface.power_vs_select_value.value
+                        onPower_vs_select_valueChanged: {
+                            var valuesOfswitch =  platformInterface.power_vs_select_values.values
+
+                            console.log(valuesOfswitch,power_vs_select_value)
+                            if(power_vs_select_value === valuesOfswitch[0])
+                                vsVoltageSelect.checked = true
+                            else  vsVoltageSelect.checked = false
+                        }
+
+
+
                     }
                 }
             }
