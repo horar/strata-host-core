@@ -14,10 +14,10 @@ int main(int argc, char* argv[]) {
     parser.addHelpOption();
 
     QCommandLineOption jlinkExePathOption(QStringList() << "j" << "jlink-path",
-                                          QObject::tr("Path to JLinkExe executable."),
+                                          QObject::tr("Path to JLinkExe executable. (Required)"),
                                           QObject::tr("JLinkPath"));
     QCommandLineOption binariesPathOption(QStringList() << "b" << "binaries-path",
-                                          QObject::tr("Path to the directory containing the binary files."),
+                                          QObject::tr("Path to the directory containing the binary files. (Required)"),
                                           QObject::tr("binariesPath"));
     parser.addOptions({jlinkExePathOption, binariesPathOption});
     parser.process(theApp);
@@ -26,10 +26,9 @@ int main(int argc, char* argv[]) {
     if (parser.isSet("j") && parser.isSet("b")) {
         jlinkExePath = parser.value("j");
         binariesPath = parser.value("b");
-    } 
-    else {
+    } else {
         std::cout << "No Arguments were Supplied." << std::endl;
-        std::cout << "\nUsage: platform-identification-test [-b | --binaries-path] <PATH_TO_BINARIES> [-j | --jlink-path] <PATH_TO_JLINKEXE>\n" << std::endl;
+        parser.showHelp();
         return -1;
     }
 
