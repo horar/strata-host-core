@@ -58,10 +58,6 @@ void DocumentManager::init()
      * This connection allow us to move data manipulation to the main (GUI) thread.
      */
     connect(this, &DocumentManager::populateModelsReguest, this, &DocumentManager::populateModels);
-
-    pdf_rev_count_ =  0;
-    download_rev_count_ = 0;
-    datasheet_rev_count_ = 0;
 }
 
 void DocumentManager::viewDocumentHandler(QJsonObject data)
@@ -127,21 +123,6 @@ void DocumentManager::populateModels(QJsonObject data)
     pdfModel_.populateModel(pdfList);
     datasheetModel_.populateModel(datasheetList);
     downloadDocumentModel_.populateModel(downloadList);
-}
-
-void DocumentManager::clearPdfRevisionCount() {
-    pdf_rev_count_ = 0;
-    emit pdfRevisionCountChanged(pdf_rev_count_);
-}
-
-void DocumentManager::clearDownloadRevisionCount() {
-    download_rev_count_ = 0;
-    emit downloadRevisionCountChanged(download_rev_count_);
-}
-
-void DocumentManager::clearDatasheetRevisionCount() {
-    datasheet_rev_count_ = 0;
-    emit datasheetRevisionCountChanged(datasheet_rev_count_);
 }
 
 void DocumentManager::clearDocuments()

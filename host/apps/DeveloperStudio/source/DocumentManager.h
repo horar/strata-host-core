@@ -25,10 +25,6 @@ class DocumentManager : public QObject
     Q_PROPERTY(DocumentListModel* datasheetListModel READ datasheetListModel CONSTANT)
     Q_PROPERTY(DocumentListModel* pdfListModel READ pdfListModel CONSTANT)
 
-    Q_PROPERTY(uint pdfRevisionCount MEMBER pdf_rev_count_ NOTIFY pdfRevisionCountChanged)
-    Q_PROPERTY(uint downloadRevisionCount MEMBER download_rev_count_ NOTIFY downloadRevisionCountChanged)
-    Q_PROPERTY(uint datasheetRevisionCount MEMBER datasheet_rev_count_ NOTIFY datasheetRevisionCountChanged)
-
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
 
 public:
@@ -42,20 +38,11 @@ public:
 
     QString errorString() const;
 
-    Q_INVOKABLE void clearPdfRevisionCount();
-    Q_INVOKABLE void clearDownloadRevisionCount();
-    Q_INVOKABLE void clearDatasheetRevisionCount();
     Q_INVOKABLE void clearDocuments();
 
 signals:
     void errorStringChanged();
     void populateModelsReguest(QJsonObject data);
-
-    // Revision Count Changes
-    void pdfRevisionCountChanged(uint revisionCount);
-    void downloadRevisionCountChanged(uint revisionCount);
-    void datasheetRevisionCountChanged(uint revisionCount);
-
     void setPdfModel(QList<DocumentItem*> list);
     void setDatasheetModel(QList<DocumentItem*> list);
     void setDownloadModel(QList<DownloadDocumentItem*> list);
@@ -71,11 +58,6 @@ private:
     DownloadDocumentListModel downloadDocumentModel_;
     DocumentListModel datasheetModel_;
     DocumentListModel pdfModel_;
-
-    // Count the amount of deployments that have been received
-    uint pdf_rev_count_;
-    uint download_rev_count_;
-    uint datasheet_rev_count_;
 
     QString errorString_;
     void setErrorString(QString errorString);
