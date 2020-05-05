@@ -11,6 +11,7 @@
 namespace strata {
 
 class DeviceOperations;
+enum class DeviceOperation: int;
 
 class Flasher : public QObject
 {
@@ -95,7 +96,7 @@ class Flasher : public QObject
         void backupProgress(int chunk, bool last);
 
     private slots:
-        void handleOperationFinished(int operation, int data);
+        void handleOperationFinished(DeviceOperation operation, int data);
         void handleOperationError(QString errStr);
 
     private:
