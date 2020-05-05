@@ -1,8 +1,6 @@
-include(CMakeDependentOption)
+option(TEST_PLATFORM_IDENTIFICATION "Build 'Platform Identification Test'" ON)
+add_feature_info(TEST_PLATFORM_IDENTIFICATION TEST_PLATFORM_IDENTIFICATION "Platform Identification Test")
 
-option(PLATFORM_IDENTIFICATION_TEST "Build 'Platform Identification Test'" ON)
-add_feature_info(PLATFORM_IDENTIFICATION_TEST PLATFORM_IDENTIFICATION_TEST "Platform Identification Test")
-
-if (PLATFORM_IDENTIFICATION_TEST)
+if (TEST_PLATFORM_IDENTIFICATION)
    add_subdirectory(Platform-identification-test)
 endif()
