@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
         jlinkExePath = parser.value("j");
         binariesPath = parser.value("b");
     } else {
-        std::cout << "No Arguments were Supplied." << std::endl;
+        std::cerr << "No Arguments were Supplied." << std::endl;
         parser.showHelp();
         return -1;
     }

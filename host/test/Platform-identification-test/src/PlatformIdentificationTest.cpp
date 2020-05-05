@@ -41,11 +41,11 @@ bool PlatformIdentificationTest::init(const QString& jlinkExePath, const QString
         // check if there is a JLinkConnected. need to connect the signals to get the result, this
         // is async process!
         if (!jlinkConnector_.checkConnectionRequested()) {
-            std::cout << "Failed to check if a JLink is connected." << std::endl;
+            std::cerr << "Failed to check if a JLink is connected." << std::endl;
             return false;
         }
     } else {
-        std::cout << "Invalid JLinkExe file path." << std::endl;
+        std::cerr << "Invalid JLinkExe file path." << std::endl;
         return false;
     }
 
@@ -64,7 +64,7 @@ void PlatformIdentificationTest::checkJLinkDeviceConnectionHandler(bool exitedNo
         setState(PlatfortestState_::FlashingPlatform);
     } 
     else {
-        std::cout << "Error connecting to JLink device" << std::endl;
+        std::cerr << "Error connecting to JLink device" << std::endl;
         setState(PlatfortestState_::TestFinished);
     }
 }
@@ -75,7 +75,7 @@ bool PlatformIdentificationTest::parseBinaryFileList(const QString& binariesPath
     absloutePathToBinaries_ = binariesDirectory.absolutePath();
 
     if (binaryFileNameList_.empty()) {
-        std::cout << "No .bin files were found in " << absloutePathToBinaries_.toStdString() << std::endl;
+        std::cerr << "No .bin files were found in " << absloutePathToBinaries_.toStdString() << std::endl;
         return false;
     }
 
@@ -109,7 +109,7 @@ void PlatformIdentificationTest::flashCompletedHandler(bool exitedNormally) {
         enableBoardManagerSignals(true);
         setState(PlatfortestState_::ConnectingToPlatform);
     } else {
-        std::cout << "Failed to flash the platform. Aborting..." << std::endl;
+        std::cerr << "Failed to flash the platform. Aborting..." << std::endl;
         testFailed_ = true;
         setState(PlatfortestState_::TestFinished);
     }
@@ -152,7 +152,7 @@ void PlatformIdentificationTest::identifyPlatform(bool deviceRecognized) {
                                    });
     } 
     else {
-        std::cout << "TestDevicePtr is null. Aborting..." << std::endl;
+        std::cerr << "TestDevicePtr is null. Aborting..." << std::endl;
         testFailed_ = true;
         setState(PlatfortestState_::TestFinished);
     }
@@ -172,7 +172,7 @@ void PlatformIdentificationTest::connectToPlatform() {
         // get the connected devices and set testDeviceId_
         auto connectedDevicesList = boardManager_.readyDeviceIds();
         if (connectedDevicesList.empty()) {
-            std::cout << "No connected devices. Aborting..." << std::endl;
+            std::cerr << "No connected devices. Aborting..." << std::endl;
             testFailed_ = true;
             setState(PlatfortestState_::TestFinished);
         } else {
@@ -225,14 +225,14 @@ void PlatformIdentificationTest::printSummary() {
     std::cout << "Passed: " << testSummaryList_.size() - failedTestsCount << std::endl;
 
     // tests failed and tests that were not performed.
-    std::cout << "Failed: " << failedTestsCount + (binaryFileNameList_.count() - testSummaryList_.size()) << std::endl;
+    std::cerr << "Failed: " << failedTestsCount + (binaryFileNameList_.count() - testSummaryList_.size()) << std::endl;
 
     // if there are failed tests, list their names.
     if (failedTestsCount > 0) {
         testFailed_ = true;
-        std::cout << "Failed tests:" << std::endl;
+        std::cerr << "Failed tests:" << std::endl;
         for (const auto &fileName : failedTestsNames) {
-            std::cout << "\t" << fileName.toStdString() << std::endl;
+            std::cerr << "\t" << fileName.toStdString() << std::endl;
         }
     }
 
@@ -240,7 +240,7 @@ void PlatformIdentificationTest::printSummary() {
 }
 
 void PlatformIdentificationTest::testTimeoutHandler() {
-    std::cout << "Test Timeout. Aborting..." << std::endl;
+    std::cerr << "Test Timeout. Aborting..." << std::endl;
     testFailed_ = true;
     setState(PlatfortestState_::TestFinished);
 }
