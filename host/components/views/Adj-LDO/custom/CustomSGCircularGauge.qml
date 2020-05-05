@@ -21,7 +21,6 @@ Item {
     property real outerTextFontSizeMultiplier: 1.0
     property int valueDecimalPlaces: tickmarkDecimalPlaces
     property int tickmarkDecimalPlaces: ticksBackground.decimalPlacesFromStepSize
-
     property alias unitText: unitLabel.text
     property alias maximumValue: ticksBackground.maximumValue
     property alias minimumValue: ticksBackground.minimumValue

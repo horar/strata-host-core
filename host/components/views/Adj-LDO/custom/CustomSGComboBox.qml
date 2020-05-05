@@ -111,7 +111,6 @@ ComboBox {
             alternativeColor: "gray"
             alternativeColorEnabled: model[root.grayedOutRole] ? true : false
             font: root.font
-            //                elide: Text.ElideRight
             wrapMode: Text.Wrap
             verticalAlignment: Text.AlignVCenter
         }

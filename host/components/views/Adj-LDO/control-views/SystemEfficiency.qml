@@ -9,10 +9,11 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: root
-
     property real ratioCalc: (Screen.width > 1200) ? root.width/1200 : root.width/(1200*(1200/Screen.width))
-    property real initialAspectRatio: Screen.width/Screen.height//1200/800
-
+    property real initialAspectRatio: Screen.width/Screen.height
+    property string prevVinLDOSel: ""
+    property string newVinLDOSel: ""
+    property string pgoodLabelText: "\n(PG_308)"
     anchors.centerIn: parent
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
@@ -46,9 +47,6 @@ Item {
         Help.registerTarget(pgldoLabel, "This indicator will be green when the LDO power good signal is high. Since the TSOP-5 package has no PG output, if the TSOP-5 LDO package is being used, the indicator will be green when the PG_308 signal from the NCP308 used to monitor the LDO output voltage is high. During an LDO current limit or TSD event, this indicator will flash red.", 24, "AdjLDOSystemEfficiencyHelp")
     }
 
-    property string prevVinLDOSel: ""
-    property string newVinLDOSel: ""
-    property string pgoodLabelText: "\n(PG_308)"
 
     property var variant_name: platformInterface.variant_name.value
     onVariant_nameChanged: {
@@ -194,7 +192,6 @@ Item {
             setLDOOutputVoltageLabel.enabled = true
             ldoDisable.checked = false
         }
-
     }
 
     property string popup_message: ""
@@ -295,7 +292,6 @@ Item {
                     color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
                     roundedLeft: true
                     roundedRight: true
-
                     onClicked: {
                         warningPopup.close()
                     }
@@ -390,8 +386,6 @@ Item {
                     width: parent.width/2
                     height:parent.height
                     color: "transparent"
-
-
                     SGButton {
                         anchors.centerIn: parent
                         text: "OK"
@@ -412,7 +406,6 @@ Item {
                     height:parent.height
                     anchors.left: okButtonForLDOInput.right
                     color: "transparent"
-
                     SGButton {
                         anchors.centerIn: parent
                         text: "Cancel"
@@ -434,23 +427,18 @@ Item {
         id: systemEfficiencyView
         anchors.fill: parent
         anchors.margins: 10
-
         Rectangle {
             id: column1Container
             Layout.fillHeight: true
             Layout.preferredWidth: (parent.width - middleLine.width) * (7/12) - 10
             Layout.leftMargin: 10
-
             ColumnLayout {
                 anchors.fill: parent
-
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-
                     ColumnLayout {
                         anchors.fill: parent
-
                         Text {
                             id: inputConfigurationText
                             font.bold: true
@@ -472,20 +460,15 @@ Item {
                         RowLayout {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-
                                 ColumnLayout {
                                     anchors.fill: parent
-
                                     Rectangle {
                                         id: systemInputVoltageContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-
-
                                         SGAlignedLabel {
                                             id: systemInputVoltageLabel
                                             target: systemInputVoltage
@@ -494,7 +477,6 @@ Item {
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
-
                                             SGInfoBox {
                                                 id: systemInputVoltage
                                                 unit: "V"
@@ -512,7 +494,6 @@ Item {
                                         id:systemInputCurrentContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-
                                         SGAlignedLabel {
                                             id: systemInputCurrentLabel
                                             target: systemInputCurrent
@@ -521,7 +502,6 @@ Item {
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
-
                                             SGInfoBox {
                                                 id: systemInputCurrent
                                                 unit: "mA"
@@ -542,16 +522,12 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 color: "transparent"
-
                                 RowLayout {
                                     anchors.fill: parent
-
                                     Rectangle {
                                         id: powerOutputgaugeContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-
-
                                         SGAlignedLabel {
                                             id: systemInputPowerLabel
                                             target: systemInputPowerGauge
@@ -582,7 +558,6 @@ Item {
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
                                         color: "white"
-
                                         SGAlignedLabel {
                                             id: totalSystemEfficiencyLabel
                                             target:totalSystemEfficiencyGauge
@@ -593,7 +568,6 @@ Item {
                                             fontSizeMultiplier: ratioCalc * 0.95
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
-
                                             SGCircularGauge {
                                                 id:totalSystemEfficiencyGauge
                                                 minimumValue: 0
@@ -620,10 +594,8 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: "transparent"
-
                     ColumnLayout {
                         anchors.fill: parent
-
                         Text {
                             id: buckLDOOutputInputText
                             font.bold: true
@@ -631,9 +603,7 @@ Item {
                             font.pixelSize: ratioCalc * 20
                             color: "#696969"
                             Layout.leftMargin: 20
-
                         }
-
                         Rectangle {
                             id: line2
                             Layout.preferredHeight: 1.5
@@ -642,24 +612,19 @@ Item {
                             border.color: "lightgray"
                             radius: 2
                         }
-
                         RowLayout {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-
                             Rectangle {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
                                 color: "transparent"
-
                                 ColumnLayout {
                                     anchors.fill: parent
-
                                     Rectangle {
                                         id: buckLDOOutputInputContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-
                                         SGAlignedLabel {
                                             id: buckLDOOutputInputLabel
                                             target: buckLDOInputVoltage
@@ -668,7 +633,6 @@ Item {
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
-
                                             SGInfoBox {
                                                 id: buckLDOInputVoltage
                                                 unit: "V"
@@ -686,7 +650,6 @@ Item {
                                         id:buckLDOOutputInputCurrentContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-
                                         SGAlignedLabel {
                                             id: buckLDOOutputInputCurrentLabel
                                             target: buckLDOOutputCurrent
@@ -695,7 +658,6 @@ Item {
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
-
                                             SGInfoBox {
                                                 id: buckLDOOutputCurrent
                                                 unit: "mA"
@@ -715,15 +677,12 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 color: "transparent"
-
                                 RowLayout {
                                     anchors.fill: parent
-
                                     Rectangle {
                                         id: ldoInputPowergaugeContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-
                                         SGAlignedLabel {
                                             id: inputPowerLabel
                                             target:inputPowerGauge
@@ -734,7 +693,6 @@ Item {
                                             fontSizeMultiplier: ratioCalc * 0.95
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
-
                                             SGCircularGauge {
                                                 id: inputPowerGauge
                                                 minimumValue: 0
@@ -754,7 +712,6 @@ Item {
                                         id:syncBuckEfficiencyContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-
                                         SGAlignedLabel {
                                             id: syncBuckEfficiencyLabel
                                             target:syncBuckEfficiencyGauge
@@ -765,7 +722,6 @@ Item {
                                             fontSizeMultiplier: ratioCalc * 0.95
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
-
                                             SGCircularGauge {
                                                 id: syncBuckEfficiencyGauge
                                                 minimumValue: 0
@@ -789,10 +745,8 @@ Item {
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-
                     ColumnLayout {
                         anchors.fill:parent
-
                         Text {
                             id: ldoSystemOutputText
                             font.bold: true
@@ -800,7 +754,6 @@ Item {
                             font.pixelSize: ratioCalc * 20
                             color: "#696969"
                             Layout.leftMargin: 20
-
                         }
 
                         Rectangle {
@@ -815,19 +768,15 @@ Item {
                         RowLayout {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-
                                 ColumnLayout {
                                     anchors.fill: parent
-
                                     Rectangle {
                                         id: ldoSystemOutputVoltageContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-
                                         SGAlignedLabel {
                                             id: ldoSystemOutputVoltageLabel
                                             target: ldoSystemInputVoltage
@@ -836,7 +785,6 @@ Item {
                                             anchors.centerIn: parent
                                             fontSizeMultiplier: ratioCalc
                                             font.bold : true
-
                                             SGInfoBox {
                                                 id: ldoSystemInputVoltage
                                                 unit: "V"
@@ -854,7 +802,6 @@ Item {
                                         id:ldoSystemOutputCurrentContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-
                                         SGAlignedLabel {
                                             id: ldoSystemOutputCurrentLabel
                                             target: ldoSystemInputCurrent
@@ -883,15 +830,12 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
                                 color: "transparent"
-
                                 RowLayout {
                                     anchors.fill:parent
-
                                     Rectangle {
                                         id:ldoOutputPowerContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-
                                         SGAlignedLabel {
                                             id: ldoOutputPowerLabel
                                             target:ldoOutputPowerGauge
@@ -902,7 +846,6 @@ Item {
                                             fontSizeMultiplier: ratioCalc * 0.95
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
-
                                             SGCircularGauge {
                                                 id: ldoOutputPowerGauge
                                                 minimumValue: 0
@@ -922,7 +865,6 @@ Item {
                                         id: ldoEfficiencyGaugeContainer
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-
                                         SGAlignedLabel {
                                             id: ldoEfficiencyLabel
                                             target:ldoEfficiencyGauge
@@ -933,7 +875,6 @@ Item {
                                             fontSizeMultiplier: ratioCalc * 0.95
                                             font.bold : true
                                             horizontalAlignment: Text.AlignHCenter
-
                                             SGCircularGauge {
                                                 id: ldoEfficiencyGauge
                                                 minimumValue: 0

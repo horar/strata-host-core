@@ -10,10 +10,12 @@ import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
     id: root
-
     property real ratioCalc: root.width/1200
-    property real initialAspectRatio: Screen.width/Screen.height//1200/820
-
+    property real initialAspectRatio: Screen.width/Screen.height
+    property string vinGoodThreshText: ""
+    property string pgoodLabelText: "\n(PG_308)"
+    property string prevVinLDOSel: ""
+    property string newVinLDOSel: ""
     anchors.centerIn: parent
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
@@ -51,10 +53,7 @@ Item {
         Help.registerTarget(dropReachedLabel, "This indicator will turn red when the LDO is in dropout. The dropout threshold is defined as the point when the LDO output voltage drops 3% below the value set with the \"Set LDO Output Voltage\" slider or info box. The indicator state is invalid when the LDO output voltage adjustment feature is disabled using the \"Disable LDO Output Voltage Adjustment\" switch.", 28, "AdjLDOAdvanceHelp")
     }
 
-    property string vinGoodThreshText: ""
-    property string pgoodLabelText: "\n(PG_308)"
-    property string prevVinLDOSel: ""
-    property string newVinLDOSel: ""
+
 
     property var variant_name: platformInterface.variant_name.value
     onVariant_nameChanged: {
@@ -80,8 +79,6 @@ Item {
         ldoOutputVoltage.text = telemetry_notification.vout_ldo
         ldoOutputCurrent.text = telemetry_notification.iout
         diffVoltage.text = telemetry_notification.vdiff
-
-
     }
 
     property var ldo_clim_thresh_notification: platformInterface.ldo_clim_thresh.value
@@ -177,17 +174,11 @@ Item {
 
     property var int_status: platformInterface.int_status
     onInt_statusChanged: {
-        //Handled in timer
-        //        if(int_status.int_pg_ldo === true && pgldoLabel.enabled)  pgldo.status =  SGStatusLight.Green
-        //        else  pgldo.status =  SGStatusLight.Off
-
         if(int_status.ocp === true) ocpTriggered.status = SGStatusLight.Red
         else ocpTriggered.status = SGStatusLight.Off
 
         if(int_status.ldo_clim === true) {
             currentLimitReach.status = SGStatusLight.Red
-            //check if we are on advance view
-
         }
         else currentLimitReach.status = SGStatusLight.Off
 
@@ -410,7 +401,6 @@ Item {
                     height:parent.height
                     color: "transparent"
 
-
                     SGButton {
                         anchors.centerIn: parent
                         text: "OK"
@@ -508,7 +498,6 @@ Item {
             top: noteMessage.bottom
             topMargin: 5
             left: parent.left
-            //leftMargin: 5
             right: parent.right
             rightMargin: 10
             bottom: parent.bottom
@@ -566,7 +555,6 @@ Item {
                                     Rectangle {
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-                                        // color: "red"
 
                                         SGAlignedLabel {
                                             id: currentLimitThresholdLabel
@@ -637,12 +625,6 @@ Item {
                                             }
                                         }
                                     }
-
-
-
-
-
-
                                 }
                             }
 
@@ -657,8 +639,6 @@ Item {
                                     Rectangle {
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
-                                        //color: "red"
-
                                         SGAlignedLabel {
                                             id: currentLimitReachLabel
                                             target: currentLimitReach
@@ -722,9 +702,6 @@ Item {
                                                         }
                                                     }
                                                 }
-
-
-
                                             }
                                         }
                                     }
@@ -749,7 +726,6 @@ Item {
                                             }
                                         }
                                     }
-
 
                                 }
                             }
@@ -810,7 +786,6 @@ Item {
 
                                             SGStatusLight {
                                                 height: tsdTriggeredContainer.height - tsdTriggeredLabel.contentHeight
-                                                //width: 40
                                                 id: tsdTriggered
                                             }
                                         }
@@ -1003,7 +978,6 @@ Item {
                                 Layout.topMargin: 10
                                 color: "#696969"
                                 Layout.leftMargin: 20
-
                             }
 
                             Rectangle {
@@ -1018,15 +992,12 @@ Item {
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-
                                 RowLayout {
                                     anchors.fill: parent
-
                                     Rectangle {
                                         id: setLDOSliderContainer
                                         Layout.preferredWidth: parent.width/2
                                         Layout.fillHeight: true
-
                                         SGAlignedLabel {
                                             id: ldoInputVolLabel
                                             target: ldoInputVolSlider
@@ -1317,21 +1288,16 @@ Item {
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-
                                 RowLayout {
                                     anchors.fill:parent
-
                                     Rectangle {
                                         Layout.preferredWidth: parent.width/2
                                         Layout.fillHeight: true
-
                                         RowLayout {
                                             anchors.fill: parent
-
                                             Rectangle {
                                                 Layout.fillWidth: true
                                                 Layout.fillHeight: true
-
                                                 SGAlignedLabel {
                                                     id: loadEnableSwitchLabel
                                                     target: loadEnableSwitch
@@ -1387,7 +1353,6 @@ Item {
                                                     }
 
                                                     color: "#0bd"   // Default: "#00ccee"
-
                                                     content: Text {
                                                         text: qsTr("Check this box\nif an external load\nis connected to the\noutput banana plugs.")
                                                         color: "white"
@@ -1529,18 +1494,14 @@ Item {
 
                                         ColumnLayout {
                                             anchors.fill: parent
-
                                             Rectangle {
                                                 Layout.fillWidth: true
                                                 Layout.fillHeight: true
-
                                                 RowLayout {
                                                     anchors.fill: parent
-
                                                     Rectangle {
                                                         Layout.fillWidth: true
                                                         Layout.fillHeight: true
-
                                                         SGAlignedLabel {
                                                             id: ldoInputVoltageLabel
                                                             target: ldoInputVoltage
@@ -1551,8 +1512,6 @@ Item {
                                                                 leftMargin: 20
                                                                 verticalCenter: parent.verticalCenter
                                                             }
-                                                            //                                                            anchors.verticalCenter: parent.verticalCenter
-                                                            //                                                            anchors.horizontalCenter: parent.horizontalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             font.bold : true
 
@@ -1582,8 +1541,6 @@ Item {
                                                                 leftMargin: 20
                                                                 verticalCenter: parent.verticalCenter
                                                             }
-                                                            //                                                            anchors.verticalCenter: parent.verticalCenter
-                                                            //                                                            anchors.horizontalCenter: parent.horizontalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             font.bold : true
 
@@ -1604,10 +1561,8 @@ Item {
                                             Rectangle {
                                                 Layout.fillWidth: true
                                                 Layout.fillHeight: true
-
                                                 RowLayout {
                                                     anchors.fill: parent
-
                                                     Rectangle {
                                                         id: ldoOutputCurrentContainer
                                                         Layout.fillWidth: true
@@ -1623,8 +1578,6 @@ Item {
                                                                 leftMargin: 20
                                                                 verticalCenter: parent.verticalCenter
                                                             }
-                                                            //                                                            anchors.verticalCenter: parent.verticalCenter
-                                                            //                                                            anchors.horizontalCenter: parent.horizontalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             font.bold : true
 
@@ -1655,8 +1608,6 @@ Item {
                                                                 leftMargin: 20
                                                                 verticalCenter: parent.verticalCenter
                                                             }
-                                                            //                                                            anchors.verticalCenter: parent.verticalCenter
-                                                            //                                                            anchors.horizontalCenter: parent.horizontalCenter
                                                             fontSizeMultiplier: ratioCalc
                                                             font.bold : true
 

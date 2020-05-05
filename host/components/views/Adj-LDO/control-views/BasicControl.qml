@@ -10,15 +10,11 @@ import "../custom"
 
 Item {
     id: root
-
     property real ratioCalc: root.width/1200
     property real initialAspectRatio: Screen.width/Screen.height//1200/820
-
     anchors.centerIn: parent
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
-
-
 
     Component.onCompleted: {
         pgoodTimer.start()
@@ -438,7 +434,6 @@ Item {
                 Rectangle {
                     Layout.preferredWidth: parent.width * (2/3)
                     Layout.fillHeight: true
-                    // color: "red"
 
                     ColumnLayout {
                         anchors.fill: parent
@@ -448,10 +443,8 @@ Item {
                             font.bold: true
                             text: "Temperature/Efficiency/Power"
                             font.pixelSize: ratioCalc * 20
-                            //Layout.topMargin: 2
                             color: "#696969"
                             Layout.leftMargin: 20
-
                         }
 
                         Rectangle {
@@ -466,11 +459,8 @@ Item {
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-
-
                             RowLayout {
                                 anchors.fill: parent
-
                                 Rectangle {
                                     id: tempGaugeContainer
                                     Layout.fillHeight: true
@@ -499,7 +489,6 @@ Item {
                                             gaugeFillColor2: "red"
                                             tickmarkStepSize: 25
                                             unitText: "˚C"
-
                                             unitTextFontSizeMultiplier: ratioCalc * 2.5
                                             valueDecimalPlaces: 1
                                             function lerpColor (color1, color2, x){
@@ -623,34 +612,20 @@ Item {
                     }
                 }
 
-                //                Rectangle {
-                //                    id: middleLine3
-                //                    Layout.preferredHeight: parent.height + 5
-                //                    Layout.alignment: Qt.AlignCenter
-                //                    Layout.preferredWidth: 2
-                //                    border.color: "lightgray"
-                //                    radius: 2
-                //                    //Layout.leftMargin: 10
-                //                }
 
 
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.preferredWidth: parent.width * 0.30
-
-
                     ColumnLayout {
                         anchors.fill: parent
-
                         Text {
                             id: interruptText
                             font.bold: true
                             text: "Status Indicators"
                             font.pixelSize: ratioCalc * 20
-                            //Layout.topMargin: 10
                             color: "#696969"
                             Layout.leftMargin: 20
-
                         }
 
                         Rectangle {
@@ -665,15 +640,11 @@ Item {
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-
-
                             RowLayout {
                                 anchors.fill:parent
-
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
-
                                     SGAlignedLabel {
                                         id:vinReadyLabel
                                         target: vinReadyLight
@@ -682,7 +653,6 @@ Item {
                                         fontSizeMultiplier: ratioCalc
                                         text: "VIN_LDO Ready \n (Above 1.6V)"
                                         font.bold: true
-
                                         SGStatusLight {
                                             id: vinReadyLight
                                             height: 40
@@ -691,7 +661,6 @@ Item {
                                             onVin_ldo_goodChanged: {
                                                 if(vin_ldo_good === true)
                                                     vinReadyLight.status  = SGStatusLight.Green
-
                                                 else vinReadyLight.status  = SGStatusLight.Off
                                             }
                                         }
@@ -710,7 +679,6 @@ Item {
                                         fontSizeMultiplier: ratioCalc
                                         text: "Power Good" + pgoodLabelText
                                         font.bold: true
-
 
                                         SGStatusLight {
                                             id: pgoodLight
@@ -803,13 +771,12 @@ Item {
 
                 Rectangle {
                     id: inputConfigurationContainer
-                    Layout.preferredWidth: (parent.width /*- middleLine.width - middleLine2.width*/) * (1/3)
+                    Layout.preferredWidth: (parent.width) * (1/3)
                     Layout.fillHeight: true
                     color: "transparent"
 
                     ColumnLayout {
                         anchors.fill: parent
-
                         Text {
                             id: inputConfigurationText
                             font.bold: true
@@ -818,7 +785,6 @@ Item {
                             Layout.topMargin: 10
                             color: "#696969"
                             Layout.leftMargin: 20
-
                         }
 
                         Rectangle {
@@ -837,7 +803,6 @@ Item {
                             ColumnLayout {
                                 anchors.fill: parent
                                 anchors.rightMargin: 10
-
                                 Rectangle {
                                     Layout.preferredHeight: parent.height  * (5/12)
                                     Layout.fillWidth: true
@@ -855,15 +820,11 @@ Item {
                                     Layout.fillWidth: true
                                     Layout.preferredHeight: parent.height * (7/36)
                                     Layout.leftMargin: 20
-
-
                                     RowLayout{
                                         anchors.fill:parent
-
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
-
                                             SGAlignedLabel {
                                                 id: boardInputLabel
                                                 target: boardInputComboBox
@@ -915,17 +876,11 @@ Item {
                                                     onActivated: {
                                                         if(currentIndex === 0) {
                                                             platformInterface.select_ldo.update("TSOP5")
-                                                            //                                                            pgoodLabel.opacity = 0.5
-                                                            //                                                            pgoodLabel.enabled = false
                                                         }
                                                         else if(currentIndex === 1) {
-                                                            //                                                            pgoodLabel.opacity = 1
-                                                            //                                                            pgoodLabel.enabled = true
                                                             platformInterface.select_ldo.update("DFN6")
                                                         }
                                                         else if(currentIndex === 2) {
-                                                            //                                                            pgoodLabel.opacity = 1
-                                                            //                                                            pgoodLabel.enabled = true
                                                             platformInterface.select_ldo.update("DFN8")
                                                         }
                                                         else console.log("Unknown State")
@@ -942,10 +897,8 @@ Item {
                                     Layout.preferredHeight: parent.height * (7/36)
                                     Layout.leftMargin: 20
 
-
                                     RowLayout {
                                         anchors.fill:parent
-
                                         Rectangle {
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
@@ -1023,7 +976,6 @@ Item {
                                     Layout.preferredHeight: parent.height * (7/36)
                                     Layout.leftMargin: 20
 
-
                                     SGAlignedLabel {
                                         id: ldoInputVolSliderLabel
                                         target: ldoInputVolSlider
@@ -1058,18 +1010,10 @@ Item {
                     }
                 }
 
-                //                Rectangle {
-                //                    id: middleLine
-                //                    Layout.preferredHeight: parent.height
-                //                    Layout.alignment: Qt.AlignCenter
-                //                    Layout.preferredWidth: 2
-                //                    border.color: "lightgray"
-                //                    radius: 2
-                //                }
 
                 Rectangle {
                     id: telemetryContainer
-                    Layout.preferredWidth: (parent.width/* - middleLine.width - middleLine2.width*/) * (1/3)
+                    Layout.preferredWidth: (parent.width) * (1/3)
                     Layout.fillHeight: true
 
                     ColumnLayout {
@@ -1354,14 +1298,6 @@ Item {
                     }
                 }
 
-                //                Rectangle {
-                //                    id: middleLine2
-                //                    Layout.preferredHeight: parent.height
-                //                    Layout.alignment: Qt.AlignCenter
-                //                    Layout.preferredWidth: 2
-                //                    border.color: "lightgray"
-                //                    radius: 2
-                //                }
 
                 Rectangle {
                     id:outputConfigurationContainerBox
@@ -1583,7 +1519,6 @@ Item {
                                     id: checkBoxContainer
                                     anchors.fill: extLoadCheckboxContainer
                                     color: "transparent"
-                                    // z: 2
                                     MouseArea {
                                         id: hoverArea2
                                         anchors { fill: parent }
@@ -1601,9 +1536,7 @@ Item {
                                         horizontalCenter: extLoadCheckboxContainer.horizontalCenter
                                         horizontalCenterOffset: -10
                                     }
-
                                     color: "#0bd"   // Default: "#00ccee"
-
                                     content: Text {
                                         text: qsTr("Check this box\nif an external load\nis connected to the\noutput banana plugs.")
                                         color: "white"
@@ -1621,8 +1554,6 @@ Item {
                                     alignment: SGAlignedLabel.SideTopCenter
                                     fontSizeMultiplier: ratioCalc
                                     anchors.centerIn: parent
-
-
                                     CheckBox {
                                         id: extLoadCheckbox
                                         checked: false

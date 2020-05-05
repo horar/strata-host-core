@@ -11,14 +11,10 @@ import tech.strata.fonts 1.0
 Item {
     id: controlNavigation
     property alias protectionDropoutViewBadge: protectionDropoutViewBadge
-    anchors {
-        fill: parent
-    }
-
+    anchors.fill: parent
     PlatformInterface {
         id: platformInterface
     }
-
 
     Component.onCompleted: {
         Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
@@ -41,7 +37,6 @@ Item {
                 efficiency.visible = false
                 protectionDropoutViewBadge.opacity = 0.0
             }
-
 
         }
 
@@ -101,7 +96,6 @@ Item {
             id: efficiency
             visible:  false
         }
-
     }
 
     SGIcon {
@@ -117,12 +111,9 @@ Item {
         width: 40
         visible: true
 
-
         MouseArea {
             id: helpMouse
-            anchors {
-                fill: helpIcon
-            }
+            anchors.fill: helpIcon
             onClicked: {
                 // Make sure view is set to Basic before starting tour
                 if(basic.visible)

@@ -15,15 +15,6 @@ Rectangle {
     // Create an animation when the opacity changes
     Behavior on opacity {NumberAnimation{}}
 
-    // Setup the anchors so that the badge appears on the bottom right
-    // area of its parent
-
-
-    // This margin allows us to be "a little outside" of the object in which
-    // we add the badge
-
-
-
     // Set a redish color (exactly the one used in OS X 10.10)
     color: "#ec3e3a"
 
@@ -34,7 +25,7 @@ Rectangle {
     height: 30
 
     // Make the rectangle and ellipse if the length of the text is bigger than 2 characters
-    width: label.text.length > 2 ? label.paintedWidth + height / 2 : height
+    width: label.text.length > 2 ? label.paintedWidth + height/2 : height
 
     // Create a label that will display the number of connected users.
     Label {

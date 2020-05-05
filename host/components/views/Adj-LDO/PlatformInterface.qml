@@ -1,5 +1,4 @@
 import QtQuick 2.12
-
 import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 
 Item {
@@ -68,7 +67,6 @@ Item {
         "value":false
     }
 
-
     property var config_running: {
         "value":false
     }
@@ -77,11 +75,9 @@ Item {
         "value":false
     }
 
-
     // -------------------------------------------------------------------
     // Outgoing Commands
     //
-
     property var set_isolate_ldo : ({
                                         "cmd" : "isolate_ldo",
                                         "payload": {
@@ -283,6 +279,7 @@ Item {
                                  show: function () { CorePlatformInterface.show(this) }
                              })
 
+
     property var enable_sc: ({
                                  "cmd" : "enable_sc",
                                  "payload": {  },
@@ -292,8 +289,6 @@ Item {
                                  },
                                  send: function () { CorePlatformInterface.send(this) },
                                  show: function () { CorePlatformInterface.show(this) }
-
-
                              })
 
     property var reset_clim: ({
@@ -305,8 +300,6 @@ Item {
                                  },
                                  send: function () { CorePlatformInterface.send(this) },
                                  show: function () { CorePlatformInterface.show(this) }
-
-
                              })
 
     property var reset_tsd: ({
@@ -318,13 +311,11 @@ Item {
                                  },
                                  send: function () { CorePlatformInterface.send(this) },
                                  show: function () { CorePlatformInterface.show(this) }
-
-
                              })
+
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process
-
     Connections {
         target: coreInterface
         onNotification: {
