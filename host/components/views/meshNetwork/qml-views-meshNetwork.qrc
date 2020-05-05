@@ -71,5 +71,6 @@
         <file>images/smartHome_orange.jpg</file>
         <file>images/smartHome_doorOpenWindowOpen.jpg</file>
         <file>images/mesh_help.html</file>
+        <file>images/question-circle-white.svg</file>
     </qresource>
 </RCC>
