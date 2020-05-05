@@ -577,52 +577,74 @@ Item {
                                    show: function () { CorePlatformInterface.show(this) }
                                })
 
+    property var set_groupid : ({
+                                   "cmd" : "set_groupid",
+                                   "payload": {
+                                        "group_id": 49633,            // in dec (16 bit),
+                                        "uaddr": 1,
+                                        "model": "battery_server",    // battery_server, light_hsl_server, sensor_server, onoff_server, nothing, default
+                                        "subscribe":true              // or false to desubscribe
+                                   },
 
-    property var bind_elements : ({
-                                      "cmd" : "bind_elements",
-                                      "payload": {
-                                          "grp_id": 9864,               // in dec (16 bit),
-                                          "ele_addr":[                 // More than one element addresses can be bound at a time
-                                              0002,        // in dec (16 bit),
-                                              0004,        // in dec (16 bit),
-                                              0006         // in dec (16 bit),
-                                          ]
-                                      },
+                                   update: function (group_id,address, model, subscribe) {
+                                       this.set(group_id,address, model, subscribe)
+                                       this.send(this)
+                                   },
+                                   set: function (inGroup, inAddress, inModel, inSubscribe) {
+                                       this.payload.group_id = inGroup;
+                                       this.payload.uaddr = inAddress;
+                                       this.payload.model = inModel;
+                                       this.payload.subscribe = inSubscribe;
+                                   },
+                                   send: function () { CorePlatformInterface.send(this) },
+                                   show: function () { CorePlatformInterface.show(this) }
+                               })
 
-                                      update: function (groupID, addresses) {
-                                          this.set(groupID, addresses)
-                                          this.send(this)
-                                      },
-                                      set: function (inGroupID, inAddresses) {
-                                          this.payload.grp_id = groupID;
-                                          this.payload.ele_addr = inAddresses;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+//    property var bind_elements : ({
+//                                      "cmd" : "bind_elements",
+//                                      "payload": {
+//                                          "grp_id": 9864,               // in dec (16 bit),
+//                                          "ele_addr":[                 // More than one element addresses can be bound at a time
+//                                              0002,        // in dec (16 bit),
+//                                              0004,        // in dec (16 bit),
+//                                              0006         // in dec (16 bit),
+//                                          ]
+//                                      },
 
-    property var unbind_elements : ({
-                                        "cmd" : "unbind_elements",
-                                        "payload": {
-                                            "grp_id": 9864,               // in dec (16 bit),
-                                            "ele_addr":[                 // More than one element addresses can be unbound at a time
-                                                0002,        // in dec (16 bit),
-                                                0004,        // in dec (16 bit),
-                                                0006         // in dec (16 bit),
-                                            ]
-                                        },
+//                                      update: function (groupID, addresses) {
+//                                          this.set(groupID, addresses)
+//                                          this.send(this)
+//                                      },
+//                                      set: function (inGroupID, inAddresses) {
+//                                          this.payload.grp_id = groupID;
+//                                          this.payload.ele_addr = inAddresses;
+//                                      },
+//                                      send: function () { CorePlatformInterface.send(this) },
+//                                      show: function () { CorePlatformInterface.show(this) }
+//                                  })
 
-                                        update: function (groupID, addresses) {
-                                            this.set(groupID, addresses)
-                                            this.send(this)
-                                        },
-                                        set: function (inGroupID, inAddresses) {
-                                            this.payload.grp_id = groupID;
-                                            this.payload.ele_addr = inAddresses;
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
+//    property var unbind_elements : ({
+//                                        "cmd" : "unbind_elements",
+//                                        "payload": {
+//                                            "grp_id": 9864,               // in dec (16 bit),
+//                                            "ele_addr":[                 // More than one element addresses can be unbound at a time
+//                                                0002,        // in dec (16 bit),
+//                                                0004,        // in dec (16 bit),
+//                                                0006         // in dec (16 bit),
+//                                            ]
+//                                        },
+
+//                                        update: function (groupID, addresses) {
+//                                            this.set(groupID, addresses)
+//                                            this.send(this)
+//                                        },
+//                                        set: function (inGroupID, inAddresses) {
+//                                            this.payload.grp_id = groupID;
+//                                            this.payload.ele_addr = inAddresses;
+//                                        },
+//                                        send: function () { CorePlatformInterface.send(this) },
+//                                        show: function () { CorePlatformInterface.show(this) }
+//                                    })
 
 //    property var location_clicked : ({
 //                                          "cmd" : "location_clicked",
