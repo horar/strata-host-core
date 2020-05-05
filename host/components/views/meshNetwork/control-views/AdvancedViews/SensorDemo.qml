@@ -86,6 +86,7 @@ Rectangle {
     Image{
         id:arrowImage
         anchors.left:getTemperatureButton.right
+        anchors.leftMargin: 10
         anchors.right:sensorImage.left
         anchors.verticalCenter: parent.verticalCenter
         source: "qrc:/views/meshNetwork/images/leftArrow.svg"

@@ -216,8 +216,8 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         source: "qrc:/views/meshNetwork/images/rightArrow.svg"
         height:12
-        sourceSize: Qt.size(width, height)
-        //fillMode: Image.PreserveAspectFit
+        //sourceSize: Qt.size(width, height)
+        fillMode: Image.PreserveAspectFit
         mipmap:true
 
         Text{
@@ -403,7 +403,8 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         source: "qrc:/views/meshNetwork/images/rightArrow.svg"
         height:12
-        sourceSize: Qt.size(width, height)
+        //sourceSize: Qt.size(width, height)
+        fillMode: Image.PreserveAspectFit
         mipmap:true
 
         Text{

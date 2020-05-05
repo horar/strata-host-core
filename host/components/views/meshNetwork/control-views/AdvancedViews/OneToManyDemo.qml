@@ -205,11 +205,12 @@ Rectangle {
         anchors.left:nodeRectangle.right
         anchors.leftMargin: 10
         anchors.right:bulbGroup.left
-         anchors.rightMargin: 10
+        anchors.rightMargin: 10
         anchors.verticalCenter: parent.verticalCenter
         source: "qrc:/views/meshNetwork/images/rightArrow.svg"
         height:25
-        sourceSize: Qt.size(width, height)
+        //sourceSize: Qt.size(width, height)
+        fillMode: Image.PreserveAspectFit
         mipmap:true
 
         Text{
