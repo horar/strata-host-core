@@ -89,7 +89,6 @@ Item {
 
     property var control_states: platformInterface.control_states
     onControl_statesChanged: {
-
         if(control_states.vin_sel === "USB 5V")  {
             if (setOutputCurrentSlider.value > 300) {
                 setOutputCurrentSlider.value = 300
@@ -1499,14 +1498,6 @@ Item {
                                                             }
                                                         }
                                                     }
-
-
-                                                    //                                                    property var int_pg_ldo: platformInterface.int_status.int_pg_ldo
-                                                    //                                                    onInt_pg_ldoChanged: {
-                                                    //                                                        if(int_pg_ldo === true && pgldoLabel.enabled)
-                                                    //                                                            pgldo.status =  SGStatusLight.Green
-                                                    //                                                        else pgldo.status =  SGStatusLight.Off
-                                                    //                                                    }
                                                 }
                                             }
                                         }
