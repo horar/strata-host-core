@@ -53,7 +53,6 @@
         <file>views/images/trimmedGraph.png</file>
         <file>views/BasicControl.qml</file>
         <file>views/SystemControl.qml</file>
-        <file>Content.qml</file>
         <file>Control.qml</file>
         <file>PlatformInterface.qml</file>
         <file>views/basic-partial-views/Sensor.qml</file>
