@@ -27,17 +27,17 @@ class SciPlatformModel: public QAbstractListModel
                WRITE setMaxCmdInHistoryCount
                NOTIFY maxCmdInHistoryCountChanged)
 
-    Q_PROPERTY(bool ignoreNewConnections
-               READ ignoreNewConnections
-               WRITE setIgnoreNewConnections
-               NOTIFY ignoreNewConnectionsChanged)
-
 public:
     SciPlatformModel(strata::BoardManager *boardManager, QObject *parent = nullptr);
     virtual ~SciPlatformModel() override;
 
     enum ModelRole {
-        PlatformRole = Qt::UserRole,
+        PlatformRole = Qt::UserRole + 1,
+        /*
+         * bug: FileDialog (QtQuick.Dialogs 1.3) calls data() of outside model (QTBUG-83423)
+         * hack fix: make sure there is more than 1 role
+         */
+        BugFixRole,
     };
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -50,18 +50,15 @@ public:
     int maxCmdInHistoryCount() const;
     void setMaxCmdInHistoryCount(int maxCmdInHistoryCount);
 
-    bool ignoreNewConnections() const;
-    void setIgnoreNewConnections(bool ignoreNewConnections);
-
     Q_INVOKABLE void disconnectPlatformFromSci(int index);
     Q_INVOKABLE void removePlatform(int index);
-    Q_INVOKABLE void reconectAll();
+    Q_INVOKABLE void reconnect(int index);
 
 signals:
     void countChanged();
     void maxScrollbackCountChanged();
     void maxCmdInHistoryCountChanged();
-    void ignoreNewConnectionsChanged();
+    void platformConnected(int index);
     void platformReady(int index);
 
 protected:
@@ -80,9 +77,8 @@ private:
     QList<SciPlatform*> platformList_;
     SciPlatformSettings sciSettings_;
 
-    int maxScrollbackCount_;
-    int maxCmdInHistoryCount_;
-    bool ignoreNewConnections_ = false;
+    int maxScrollbackCount_ = 99;
+    int maxCmdInHistoryCount_ = 99;
 
     void setModelRoles();
     int findPlatform(int deviceId) const;

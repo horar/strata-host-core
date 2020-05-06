@@ -135,7 +135,7 @@ namespace strata {
         void handleNewMessage(QString message);  // DEPRECATED
         void handleOperationFinished(int operation, int);
         void handleOperationError(QString message);
-        void handleSerialDeviceError(int errCode, QString errStr);
+        void handleSerialDeviceError(SerialDevice::ErrorCode errCode, QString errStr);
 
     private:
         void computeListDiff(std::set<int>& list, std::set<int>& added_ports, std::set<int>& removed_ports);
