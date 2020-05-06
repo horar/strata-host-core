@@ -75,7 +75,7 @@ Rectangle {
                 if (address != 0)
                   return  "uaddr " + address
                 else
-                  return "uddr -"
+                  return "uaddr -"
             }
             font.pixelSize: 15
         }
@@ -110,7 +110,7 @@ Rectangle {
                     if (address != 0)
                       return  "uaddr " + address
                     else
-                      return "uddr -"
+                      return "uaddr -"
                 }
                 font.pixelSize: 15
             }
@@ -264,7 +264,7 @@ Rectangle {
                 if (address != 0)
                   return  "uaddr " + address
                 else
-                  return "uddr -"
+                  return "uaddr -"
             }
             font.pixelSize: 15
         }
@@ -299,7 +299,7 @@ Rectangle {
                     if (address != 0)
                       return  "uaddr " + address
                     else
-                      return "uddr -"
+                      return "uaddr -"
                 }
                 font.pixelSize: 15
             }
@@ -444,7 +444,7 @@ Rectangle {
                 if (address != 0)
                   return  "uaddr " + address
                 else
-                  return "uddr -"
+                  return "uaddr -"
             }
             font.pixelSize: 15
         }
@@ -479,7 +479,7 @@ Rectangle {
                     if (address != 0)
                       return  "uaddr " + address
                     else
-                      return "uddr -"
+                      return "uaddr -"
                 }
                 font.pixelSize: 15
             }

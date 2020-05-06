@@ -64,7 +64,7 @@ Rectangle {
                 if (address != 0)
                   return  "uaddr " + address
                 else
-                  return "uddr -"
+                  return "uaddr -"
             }
 
             font.pixelSize: 18
@@ -100,7 +100,7 @@ Rectangle {
                     if (address != 0)
                       return  "uaddr " + address
                     else
-                      return "uddr -"
+                      return "uaddr -"
                 }
                 font.pixelSize: 18
             }
@@ -212,7 +212,7 @@ Rectangle {
                 if (address != 0)
                   return  "message to uaddr " + address
                 else
-                  return "message to uddr -"
+                  return "message to uaddr -"
             }
             font.pixelSize: 18
         }
@@ -245,7 +245,7 @@ Rectangle {
                 if (address != 0)
                   return  "uaddr " + address
                 else
-                  return "uddr -"
+                  return "uaddr -"
             }
             font.pixelSize: 18
         }
@@ -280,7 +280,7 @@ Rectangle {
                     if (address != 0)
                       return  "uaddr " + address
                     else
-                      return "uddr -"
+                      return "uaddr -"
                 }
                 font.pixelSize: 18
             }

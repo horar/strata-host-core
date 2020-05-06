@@ -23,14 +23,6 @@ Rectangle {
         font.pixelSize: 72
     }
 
-//    Image{
-//            source: "qrc:/views/meshNetwork/images/sensorDemo.png"
-//            height:parent.height *.4
-//            anchors.centerIn: parent
-//            fillMode: Image.PreserveAspectFit
-//            mipmap:true
-//        }
-
     Button{
         id:getTemperatureButton
         anchors.left:parent.left

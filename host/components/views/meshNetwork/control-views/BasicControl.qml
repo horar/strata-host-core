@@ -15,14 +15,22 @@ Rectangle {
     //anchors.fill:parent
 
 
+    Text{
+        id:viewComboLabel
+        anchors.left: parent.left
+        anchors.leftMargin: 20
+        anchors.top: parent.top
+        anchors.topMargin: 20
+        text: "Virtual environment:"
+
+    }
 
    SGComboBox{
        id:basicViewCombo
-       anchors.top:parent.top
-       anchors.topMargin: 20
-       anchors.left:parent.left
-       anchors.leftMargin: 20
-       width: 200
+       anchors.verticalCenter: viewComboLabel.verticalCenter
+       anchors.left:viewComboLabel.right
+       anchors.leftMargin: 5
+       width: 125
        model: [ "Office", "Smart home"]
 
        onCurrentIndexChanged: {
