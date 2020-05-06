@@ -337,8 +337,7 @@ Rectangle {
                                 else
                                     return 0
                             }
-                            anchors.top: bulbModelText.bottom
-                            anchors.topMargin: 0
+                            anchors.verticalCenter: bulbModelRectangle.verticalCenter
                             anchors.horizontalCenter: parent.horizontalCenter
                             onBulbClicked: {
                                 platformInterface.demo_click.update("one_to_many","bulb1","on")
@@ -455,8 +454,7 @@ Rectangle {
                                 else
                                     return 0
                             }
-                            anchors.top: bulbModelText2.bottom
-                            anchors.topMargin: 0
+                            anchors.verticalCenter: bulbModelRectangle2.verticalCenter
                             anchors.horizontalCenter: parent.horizontalCenter
                             onBulbClicked: {
                                 platformInterface.demo_click.update("one_to_many","bulb2","on")
@@ -572,8 +570,7 @@ Rectangle {
                                 else
                                     return 0
                             }
-                            anchors.top: bulbModelText3.bottom
-                            anchors.topMargin: 0
+                            anchors.verticalCenter: bulbModelRectangle3.verticalCenter
                             anchors.horizontalCenter: parent.horizontalCenter
                             onBulbClicked: {
                                 platformInterface.demo_click.update("one_to_many","bulb3","on")
