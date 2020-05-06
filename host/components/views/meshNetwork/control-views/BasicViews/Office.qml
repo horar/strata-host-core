@@ -59,6 +59,26 @@ Rectangle {
 
         property var meshArray: [0,provisioner,mesh4, mesh6, mesh1, mesh2, mesh3,mesh5, mesh7,mesh8]
 
+        function findEmptySlot(inCurrentSlot){
+            console.log("emptyslot starting search in position",inCurrentSlot,"array length is",meshArray.length)
+            for(var beta = inCurrentSlot; beta < meshArray.length; beta++){
+               if ( meshArray[beta].nodeNumber == ""){
+                    console.log(" found emptyslot in position",beta)
+                   return beta;
+                   }
+                 }
+            //we didn't find an empty slot? try again from the start
+            for(beta = 1; beta < inCurrentSlot; beta++){
+               if ( meshArray[beta].nodeNumber == ""){
+                   console.log(" found emptyslot in position",beta)
+                   return beta;
+                   }
+                 }
+            //still here? Return the 0th slot, it's always open
+            console.log(" NO emptyslot found, returning 0")
+            return 0;
+        }
+
         property var initialNodeVisibilityColors: platformInterface.network_notification
         onInitialNodeVisibilityColorsChanged:{
 
@@ -66,21 +86,22 @@ Rectangle {
             //notification. If the node number already exists in the meshArray, then set the notification's nodeNumber to
             //-1. If the node exists in the meshArray, but not in the notification, the node has been lost without a notification
             //coming through, so remove the node from the meshArray
-            console.log("updating nodes",platformInterface.network_notification.nodes.length)
+            //console.log("updating nodes",platformInterface.network_notification.nodes.length)
             var nodeFoundInMeshArray = false;
 
-            for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+            for (var alpha = 1;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
                 console.log("looking for node number",platformInterface.network_notification.nodes[alpha].index,"in meshArray")
-                for(var beta = 0; beta < meshArray.length; beta++){
-                    console.log("comparing to",meshArray[beta].nodeNumber)
-                    if (meshArray[beta].nodeNumber == platformInterface.network_notification.nodes[alpha].index){
+                //we can skip the first element in the nodeArray, as it's awlays null
+                for(var beta = 1; beta < meshArray.length; beta++){
+                    console.log("comparing",platformInterface.network_notification.nodes[alpha].index, meshArray[beta].nodeNumber)
+                    if (meshArray[beta].nodeNumber !== "" && meshArray[beta].nodeNumber == platformInterface.network_notification.nodes[alpha].index){
 
                         if (platformInterface.network_notification.nodes[alpha].ready === 0){
                             //remove the item from the meshArray. It's not in the network anymore
                             nodeFoundInMeshArray = true;
                             meshArray[alpha].objectColor = "lightgrey"
                             meshArray[alpha].nodeNumber = ""
-                            console.log("node",platformInterface.network_notification.nodes[alpha].index,"found in meshArray")
+                            console.log("node",platformInterface.network_notification.nodes[alpha].index,"found in meshArray, but node not ready")
                         }
                         else if (platformInterface.network_notification.nodes[alpha].ready !== 0){
                             //the node is in both the notification and in the meshArray, no need to update anything
@@ -89,14 +110,25 @@ Rectangle {
                         }
                     }   //if node numbers match
                 }   //beta for loop
-                console.log("finished looking for node",platformInterface.network_notification.nodes[alpha].index,"found=",nodeFoundInMeshArray)
-                if (!nodeFoundInMeshArray){
+                console.log("finished looking for node",platformInterface.network_notification.nodes[alpha].index,"found=",nodeFoundInMeshArray,"ready=",platformInterface.network_notification.nodes[alpha].ready)
+                if (!nodeFoundInMeshArray && platformInterface.network_notification.nodes[alpha].ready !== 0){
                     //we looked through the whole meshArray, and didn't find the nodeNumber that was in the notification
                     //so we should add this node in an empty slot
-                    //this should only happen if we're building the meshArray from scratch, so we'll assume slot alpha is empty
-                    meshArray[alpha].opacity = 1.0
-                    meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
-                    meshArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+                    var emptySlot = alpha;
+
+                    //check to see if the the node already has an object there before adding a new one
+                    if (meshArray[alpha].objectColor != "lightgrey"){
+                        emptySlot = findEmptySlot(alpha)
+                        console.log("node",platformInterface.network_notification.nodes[alpha].index,"not found in meshArray. Adding in slot",emptySlot)
+                        meshArray[emptySlot].opacity = 1.0
+                        meshArray[emptySlot].objectColor = platformInterface.network_notification.nodes[alpha].color
+                        meshArray[emptySlot].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+                    }
+                    else{
+                        meshArray[alpha].opacity = 1.0
+                        meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+                        meshArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+                    }
                 }
                 nodeFoundInMeshArray = false; //reset for next iteration notification node
             }
