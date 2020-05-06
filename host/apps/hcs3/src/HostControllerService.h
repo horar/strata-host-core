@@ -81,6 +81,11 @@ public slots:
             const QByteArray &clientId,
             const QJsonArray &platformList);
 
+    void sendPlatformDocumentsProgressMessage(
+            const QByteArray &clientId,
+            int filesCompleted,
+            int filesTotal);
+
     void sendPlatformDocumentsMessage(
             const QByteArray &clientId,
             const QJsonArray &documentList,

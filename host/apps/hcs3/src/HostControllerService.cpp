@@ -70,6 +70,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(storageManager_, &StorageManager::downloadPlatformSingleFileFinished, this, &HostControllerService::sendDownloadPlatformSingleFileFinishedMessage);
     connect(storageManager_, &StorageManager::downloadPlatformFilesFinished, this, &HostControllerService::sendDownloadPlatformFilesFinishedMessage);
     connect(storageManager_, &StorageManager::platformListResponseRequested, this, &HostControllerService::sendPlatformListMessage);
+    connect(storageManager_, &StorageManager::downloadPlatformDocumentsProgress, this, &HostControllerService::sendPlatformDocumentsProgressMessage);
     connect(storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
 
     /* We dont want to call these StorageManager methods directly
@@ -214,6 +215,22 @@ void HostControllerService::sendPlatformListMessage(
     payload.insert("list", platformList);
 
     message.insert("hcs::notification", payload);
+    doc.setObject(message);
+
+    clients_.sendMessage(clientId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
+}
+
+void HostControllerService::sendPlatformDocumentsProgressMessage(const QByteArray &clientId, int filesCompleted, int filesTotal)
+{
+    QJsonDocument doc;
+    QJsonObject message;
+    QJsonObject payload;
+
+    payload.insert("type", "document_progress");
+    payload.insert("files_completed", filesCompleted);
+    payload.insert("files_total", filesTotal);
+
+    message.insert("cloud::notification", payload);
     doc.setObject(message);
 
     clients_.sendMessage(clientId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());

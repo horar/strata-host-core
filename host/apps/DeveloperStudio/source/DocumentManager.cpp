@@ -20,8 +20,12 @@ DocumentManager::DocumentManager(CoreInterface *coreInterface, QObject *parent)
         Register document handler with CoreInterface
         This will also send a command to Nimbus
     */
+    coreInterface->registerDataSourceHandler("document_progress",
+                                            std::bind(&DocumentManager::documentProgressHandler,
+                                            this, std::placeholders::_1));
+
     coreInterface->registerDataSourceHandler("document",
-                                            std::bind(&DocumentManager::viewDocumentHandler,
+                                            std::bind(&DocumentManager::loadDocumentHandler,
                                             this, std::placeholders::_1));
     init();
 }
@@ -50,19 +54,43 @@ QString DocumentManager::errorString() const
     return errorString_;
 }
 
-void DocumentManager::init()
+bool DocumentManager::loading() const
 {
-    /* Due to std::bind(), DocumentManager::viewDocumentHandler() runs in a thread of CoreInterface,
-     * which is different from GUI thread.
-     * Data manipulation affecting GUI must run in the same thread as GUI.
-     * This connection allow us to move data manipulation to the main (GUI) thread.
-     */
-    connect(this, &DocumentManager::populateModelsReguest, this, &DocumentManager::populateModels);
+    return loading_;
 }
 
-void DocumentManager::viewDocumentHandler(QJsonObject data)
+int DocumentManager::loadingProgressPercentage() const
 {
-    emit populateModelsReguest(data);
+    return loadingProgressPercentage_;
+}
+
+void DocumentManager::loadPlatformDocuments(const QString &classId)
+{
+    setLoadingProgressPercentage(0);
+    setLoading(true);
+    setErrorString("");
+    coreInterface_->connectToPlatform(classId);
+}
+
+void DocumentManager::documentProgressHandler(QJsonObject data)
+{
+    emit updateProgressRequested(data);
+}
+
+void DocumentManager::loadDocumentHandler(QJsonObject data)
+{
+    emit populateModelsRequested(data);
+}
+
+void DocumentManager::updateLoadingProgress(QJsonObject data)
+{
+    QJsonDocument doc(data);
+    int filesCompleted = data["files_completed"].toInt();
+    int filesTotal = data["files_total"].toInt();
+
+    int progress = filesCompleted / (float)filesTotal * 100;
+
+    setLoadingProgressPercentage(progress);
 }
 
 void DocumentManager::populateModels(QJsonObject data)
@@ -77,6 +105,7 @@ void DocumentManager::populateModels(QJsonObject data)
         qCWarning(logCategoryDocumentManager) << "Document download error:" << data["error"].toString();
         clearDocuments();
         setErrorString(data["error"].toString());
+        setLoading(false);
         return;
     }
 
@@ -123,6 +152,8 @@ void DocumentManager::populateModels(QJsonObject data)
     pdfModel_.populateModel(pdfList);
     datasheetModel_.populateModel(datasheetList);
     downloadDocumentModel_.populateModel(downloadList);
+
+    setLoading(false);
 }
 
 void DocumentManager::clearDocuments()
@@ -138,6 +169,33 @@ void DocumentManager::setErrorString(QString errorString) {
         errorString_ = errorString;
         emit errorStringChanged();
     }
+}
+
+void DocumentManager::setLoading(bool loading)
+{
+    if (loading_ != loading) {
+        loading_ = loading;
+        emit loadingChanged();
+    }
+}
+
+void DocumentManager::setLoadingProgressPercentage(int loadingProgress)
+{
+    if (loadingProgressPercentage_ != loadingProgress) {
+        loadingProgressPercentage_ = loadingProgress;
+        emit loadingProgressPercentageChanged();
+    }
+}
+
+void DocumentManager::init()
+{
+    /* Due to std::bind(), DocumentManager::viewDocumentHandler() runs in a thread of CoreInterface,
+     * which is different from GUI thread.
+     * Data manipulation affecting GUI must run in the same thread as GUI.
+     * This connection allow us to move data manipulation to the main (GUI) thread.
+     */
+    connect(this, &DocumentManager::populateModelsRequested, this, &DocumentManager::populateModels);
+    connect(this, &DocumentManager::updateProgressRequested, this, &DocumentManager::updateLoadingProgress);
 }
 
 void DocumentManager::populateDatasheetList(const QString &path, QList<DocumentItem *> &list)
