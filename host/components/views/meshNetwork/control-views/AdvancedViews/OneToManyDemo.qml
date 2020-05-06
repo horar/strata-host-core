@@ -23,7 +23,7 @@ Rectangle {
         for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
             //for each node that is marked visible set the visibilty of the node appropriately
             console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
-            if (platformInterface.network_notification.nodes[alpha].ready !== 0){
+            if (platformInterface.network_notification.nodes[alpha].ready != 0){
                 nodeCount++;
                 if (nodeCount === 1){
                     root.node1ID = platformInterface.network_notification.nodes[alpha].index

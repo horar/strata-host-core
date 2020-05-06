@@ -22,16 +22,16 @@ Rectangle {
 
             for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
                 //for each node that is marked visible set the visibilty of the node appropriately
-                //console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
-                if (platformInterface.network_notification.nodes[alpha].ready !== 0){
+                console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
+                if (platformInterface.network_notification.nodes[alpha].ready != 0){
                     nodeCount++;
                     if (nodeCount === 1){
                         root.node1ID = platformInterface.network_notification.nodes[alpha].index
-                        //console.log("node 1 set to",root,node1ID)
+                        console.log("node 1 set to",root,node1ID)
                     }
                     else if (nodeCount === 2){
                         root.node2ID = platformInterface.network_notification.nodes[alpha].index
-                        //console.log("node 1 set to",root,node2ID)
+                        console.log("node 1 set to",root,node2ID)
                     }
                 }
             }
