@@ -28,79 +28,7 @@ Item {
                     Layout.fillWidth: true
                     RowLayout {
                         anchors.fill: parent
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
 
-                            SGAlignedLabel {
-                                id: vledInputVoltageLabel
-                                target: vledInputVoltage
-                                // text: "VLED Input\nVoltage"
-                                alignment: SGAlignedLabel.SideTopLeft
-
-                                anchors {
-                                    top:parent.top
-                                    left: parent.left
-                                    verticalCenter: parent.verticalCenter
-                                    leftMargin: 20
-                                }
-
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                font.bold : true
-
-                                SGSwitch {
-                                    id: vledInputVoltage
-                                    labelsInside: true
-                                    //                                    checkedLabel: "On"
-                                    //                                    uncheckedLabel: "Off"
-                                    textColor: "black"              // Default: "black"
-                                    handleColor: "white"            // Default: "white"
-                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    checked: false
-                                }
-                                property var power_vled_input_caption: platformInterface.power_vled_input_caption.caption
-                                onPower_vled_input_captionChanged: {
-                                    vledInputVoltageLabel.text = power_vled_input_caption
-                                }
-
-                                property var power_vled_input_state: platformInterface.power_vled_input_state.state
-                                onPower_vled_input_stateChanged: {
-                                    if(power_vled_input_state === "enabled") {
-                                        vledInputVoltage.opacity = 1.0
-                                        vledInputVoltage.enabled = true
-                                    }
-                                    else if (power_vled_input_state === "disabled") {
-                                        vledInputVoltage.opacity = 1.0
-                                        vledInputVoltage.enabled = false
-                                    }
-                                    else  {
-                                        vledInputVoltage.opacity = 0.5
-                                        vledInputVoltage.enabled = false
-                                    }
-                                }
-
-                                property var power_vled_input_values: platformInterface.power_vled_input_values.values
-                                onPower_vled_input_valuesChanged: {
-                                    vledInputVoltage.checkedLabel = power_vled_input_values[0]
-                                    vledInputVoltage.uncheckedLabel = power_vled_input_values[1]
-                                }
-
-                                property var power_vled_input_value: platformInterface.power_vled_input_value.value
-                                onPower_vled_input_valueChanged: {
-                                    var ValuesOfSwitch = platformInterface.power_vled_input_values.values
-                                    if(power_vled_input_value === ValuesOfSwitch[0]) {
-                                        vledInputVoltage.checked = true
-
-                                    }
-                                    else  vledInputVoltage.checked = false
-
-                                }
-
-                            }
-
-                        }
 
                         Rectangle {
                             Layout.fillHeight: true
@@ -407,7 +335,7 @@ Item {
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
                                         id: vLEDLabel
-                                        text: "LED Voltage\n(VLED)"
+                                        //text: "LED Voltage\n(VLED)"
                                         target: vLED
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors {
@@ -423,10 +351,41 @@ Item {
                                             height:  35 * ratioCalc
                                             width: 140 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                            unit: "<b>V</b>"
-                                            text: "12.5"
+                                            // unit: "<b>V</b>"
+                                            // text: "12.5"
                                             boxFont.family: Fonts.digitalseven
                                         }
+
+                                        property var power_vled_caption: platformInterface.power_vled_caption.caption
+                                        onPower_vled_captionChanged: {
+                                            vLEDLabel.text = power_vled_caption
+                                        }
+
+                                        property var power_vled_state: platformInterface.power_vled_state.state
+                                        onPower_vled_stateChanged: {
+                                            if(power_vled_state === "enabled") {
+                                                vLED.opacity = 1.0
+                                                vLED.enabled = true
+                                            }
+                                            else if (power_vled_state === "disabled") {
+                                                vLED.opacity = 1.0
+                                                vLED.enabled = false
+                                            }
+                                            else  {
+                                                vLED.opacity = 0.5
+                                                vLED.enabled = false
+                                            }
+                                        }
+
+                                        property var power_vled_value: platformInterface.power_vled_value.value
+                                        onPower_vled_valueChanged:{
+                                            vLED.text = power_vled_value
+                                            vLED.unit = "<b>V</b>"
+                                        }
+
+
+
+
                                     }
                                 }
                                 Rectangle {
@@ -434,7 +393,7 @@ Item {
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
                                         id: supplyVoltageLabel
-                                        text: "Supply Voltage\n(VS)"
+                                        //text: "Supply Voltage\n(VS)"
                                         target: supplyVoltage
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors {
@@ -451,8 +410,34 @@ Item {
                                             width: 140 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                             unit: "<b>V</b>"
-                                            text: "5"
+                                            // text: "5"
                                             boxFont.family: Fonts.digitalseven
+                                        }
+
+                                        property var power_vs_caption: platformInterface.power_vs_caption.caption
+                                        onPower_vs_captionChanged: {
+                                            supplyVoltageLabel.text = power_vs_caption
+                                        }
+
+                                        property var power_vs_state: platformInterface.power_vs_state.state
+                                        onPower_vs_stateChanged: {
+                                            if(power_vs_state === "enabled") {
+                                                supplyVoltage.opacity = 1.0
+                                                supplyVoltage.enabled = true
+                                            }
+                                            else if (power_vs_state === "disabled") {
+                                                supplyVoltage.opacity = 1.0
+                                                supplyVoltage.enabled = false
+                                            }
+                                            else  {
+                                                supplyVoltage.opacity = 0.5
+                                                supplyVoltage.enabled = false
+                                            }
+                                        }
+
+                                        property var power_vs_value: platformInterface.power_vs_value.value
+                                        onPower_vs_valueChanged:{
+                                            supplyVoltage.text = power_vs_value
                                         }
                                     }
                                 }
@@ -461,7 +446,7 @@ Item {
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
                                         id: digitalVoltageLabel
-                                        text: "Digital Voltage\n(VDD)"
+                                        //text: "Digital Voltage\n(VDD)"
                                         target: digitalVoltage
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors {
@@ -477,9 +462,35 @@ Item {
                                             height:  35 * ratioCalc
                                             width: 140 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                            unit: "<b>mA</b>"
-                                            text: "500"
+                                            unit: "<b> mA</b>"
+
+                                            // text: "500"
                                             boxFont.family: Fonts.digitalseven
+                                        }
+                                        property var power_vdd_caption: platformInterface.power_vdd_caption.caption
+                                        onPower_vdd_captionChanged: {
+                                            digitalVoltageLabel.text = power_vdd_caption
+                                        }
+
+                                        property var power_vdd_state: platformInterface.power_vdd_state.state
+                                        onPower_vdd_stateChanged: {
+                                            if(power_vdd_state === "enabled") {
+                                                digitalVoltage.opacity = 1.0
+                                                digitalVoltage.enabled = true
+                                            }
+                                            else if (power_vdd_state === "disabled") {
+                                                digitalVoltage.opacity = 1.0
+                                                digitalVoltage.enabled = false
+                                            }
+                                            else  {
+                                                digitalVoltage.opacity = 0.5
+                                                digitalVoltage.enabled = false
+                                            }
+                                        }
+
+                                        property var power_vdd_value: platformInterface.power_vdd_value.value
+                                        onPower_vdd_valueChanged:{
+                                            digitalVoltage.text = power_vdd_value
                                         }
                                     }
                                 }
@@ -488,7 +499,7 @@ Item {
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
                                         id: batteryVoltageLabel
-                                        text: "Battery Voltage\n(VBAT)"
+                                        // text: "Battery Voltage\n(VBAT)"
                                         target: batteryVoltage
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors {
@@ -505,9 +516,37 @@ Item {
                                             width: 140 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                             unit: "<b>V</b>"
-                                            text: "14.4"
+                                            //text: "14.4"
                                             boxFont.family: Fonts.digitalseven
                                         }
+
+                                        property var power_vbat_caption: platformInterface.power_vbat_caption.caption
+                                        onPower_vbat_captionChanged: {
+                                            batteryVoltageLabel.text = power_vbat_caption
+                                        }
+
+                                        property var power_vbat_state: platformInterface.power_vbat_state.state
+                                        onPower_vbat_stateChanged: {
+                                            if(power_vbat_state === "enabled") {
+                                                batteryVoltage.opacity = 1.0
+                                                batteryVoltage.enabled = true
+                                            }
+                                            else if (power_vbat_state === "disabled") {
+                                                batteryVoltage.opacity = 1.0
+                                                batteryVoltage.enabled = false
+                                            }
+                                            else  {
+                                                batteryVoltage.opacity = 0.5
+                                                batteryVoltage.enabled = false
+                                            }
+                                        }
+
+                                        property var power_vbat_value: platformInterface.power_vbat_value.value
+                                        onPower_vbat_valueChanged:{
+                                            batteryVoltage.text = power_vbat_value
+                                        }
+
+
                                     }
                                 }
                             }
@@ -524,7 +563,7 @@ Item {
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
                                         id: ledCurrentLabel
-                                        text: "LED Current\n(ILED)"
+                                        //text: "LED Current\n(ILED)"
                                         target: ledCurrent
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors.centerIn: parent
@@ -533,11 +572,37 @@ Item {
                                         SGInfoBox {
                                             id: ledCurrent
                                             height:  35 * ratioCalc
-                                            width: 140 * ratioCalc
+                                            width: 160 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                             unit: "<b>mA</b>"
-                                            text: "500"
+                                            //text: "500"
                                             boxFont.family: Fonts.digitalseven
+                                        }
+
+                                        property var power_iled_caption: platformInterface.power_iled_caption.caption
+                                        onPower_iled_captionChanged: {
+                                            ledCurrentLabel.text = power_iled_caption
+                                        }
+
+                                        property var power_iled_state: platformInterface.power_iled_state.state
+                                        onPower_iled_stateChanged: {
+                                            if(power_iled_state === "enabled") {
+                                                ledCurrent.opacity = 1.0
+                                                ledCurrent.enabled = true
+                                            }
+                                            else if (power_iled_state === "disabled") {
+                                                ledCurrent.opacity = 1.0
+                                                ledCurrent.enabled = false
+                                            }
+                                            else  {
+                                                ledCurrent.opacity = 0.5
+                                                ledCurrent.enabled = false
+                                            }
+                                        }
+
+                                        property var power_iled_value: platformInterface.power_iled_value.value
+                                        onPower_iled_valueChanged:{
+                                            ledCurrent.text = power_iled_value
                                         }
                                     }
                                 }
@@ -546,7 +611,7 @@ Item {
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
                                         id: supplyCurrentLabel
-                                        text: "Supply Current\n(IS)"
+                                        //text: "Supply Current\n(IS)"
                                         target: supplyCurrent
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors.centerIn: parent
@@ -555,12 +620,40 @@ Item {
                                         SGInfoBox {
                                             id: supplyCurrent
                                             height:  35 * ratioCalc
-                                            width: 140 * ratioCalc
+                                            width: 160 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                             unit: "<b>mA</b>"
-                                            text: "500"
+                                            //text: "500"
                                             boxFont.family: Fonts.digitalseven
                                         }
+
+
+                                        property var power_is_caption: platformInterface.power_is_caption.caption
+                                        onPower_is_captionChanged: {
+                                            supplyCurrentLabel.text = power_is_caption
+                                        }
+
+                                        property var power_is_state: platformInterface.power_is_state.state
+                                        onPower_is_stateChanged: {
+                                            if(power_is_state === "enabled") {
+                                                supplyCurrent.opacity = 1.0
+                                                supplyCurrent.enabled = true
+                                            }
+                                            else if (power_is_state === "disabled") {
+                                                supplyCurrent.opacity = 1.0
+                                                supplyCurrent.enabled = false
+                                            }
+                                            else  {
+                                                supplyCurrent.opacity = 0.5
+                                                supplyCurrent.enabled = false
+                                            }
+                                        }
+
+                                        property var power_is_value: platformInterface.power_is_value.value
+                                        onPower_is_valueChanged:{
+                                            supplyCurrent.text = power_is_value
+                                        }
+
                                     }
                                 }
                                 Rectangle {
@@ -568,7 +661,7 @@ Item {
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
                                         id: digitalCurrentLabel
-                                        text: "Digital Current\n(IDD)"
+                                        // text: "Digital Current\n(IDD)"
                                         target: digitalCurrent
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors.centerIn: parent
@@ -577,11 +670,37 @@ Item {
                                         SGInfoBox {
                                             id: digitalCurrent
                                             height:  35 * ratioCalc
-                                            width: 140 * ratioCalc
+                                            width: 160 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                             unit: "<b>mA</b>"
-                                            text: "500"
+                                            //text: "500"
                                             boxFont.family: Fonts.digitalseven
+                                        }
+
+                                        property var power_idd_caption: platformInterface.power_idd_caption.caption
+                                        onPower_idd_captionChanged: {
+                                            digitalCurrentLabel.text = power_idd_caption
+                                        }
+
+                                        property var power_idd_state: platformInterface.power_idd_state.state
+                                        onPower_idd_stateChanged: {
+                                            if(power_idd_state === "enabled") {
+                                                digitalCurrent.opacity = 1.0
+                                                digitalCurrent.enabled = true
+                                            }
+                                            else if (power_idd_state === "disabled") {
+                                                digitalCurrent.opacity = 1.0
+                                                digitalCurrent.enabled = false
+                                            }
+                                            else  {
+                                                digitalCurrent.opacity = 0.5
+                                                digitalCurrent.enabled = false
+                                            }
+                                        }
+
+                                        property var power_idd_value: platformInterface.power_idd_value.value
+                                        onPower_idd_valueChanged:{
+                                            digitalCurrent.text = power_idd_value
                                         }
                                     }
                                 }
@@ -590,7 +709,7 @@ Item {
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
                                         id: voltageLabel
-                                        text: "Voltage\n(VCC)"
+                                        // text: "Voltage\n(VCC)"
                                         target: voltage
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors.centerIn: parent
@@ -599,11 +718,37 @@ Item {
                                         SGInfoBox {
                                             id: voltage
                                             height:  35 * ratioCalc
-                                            width: 140 * ratioCalc
+                                            width: 160 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                             unit: "<b>mA</b>"
-                                            text: "500"
+                                            // text: "500"
                                             boxFont.family: Fonts.digitalseven
+                                        }
+
+                                        property var power_vcc_caption: platformInterface.power_vcc_caption.caption
+                                        onPower_vcc_captionChanged: {
+                                            voltageLabel.text = power_vcc_caption
+                                        }
+
+                                        property var power_vcc_state: platformInterface.power_vcc_state.state
+                                        onPower_vcc_stateChanged: {
+                                            if(power_vcc_state === "enabled") {
+                                                voltage.opacity = 1.0
+                                                voltage.enabled = true
+                                            }
+                                            else if (power_vcc_state === "disabled") {
+                                                voltage.opacity = 1.0
+                                                voltage.enabled = false
+                                            }
+                                            else  {
+                                                voltage.opacity = 0.5
+                                                voltage.enabled = false
+                                            }
+                                        }
+
+                                        property var power_vcc_value: platformInterface.power_vcc_value.value
+                                        onPower_vcc_valueChanged:{
+                                            voltage.text = power_vcc_value
                                         }
                                     }
                                 }
@@ -630,7 +775,7 @@ Item {
                             SGAlignedLabel {
                                 id: ledDriverTempTopLabel
                                 target: ledDriverTempTop
-                                text: "LED Driver Temp Top \n (°C)"
+                                //text: "LED Driver Temp Top \n (°C)"
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier: ratioCalc * 1.2
@@ -641,14 +786,14 @@ Item {
                                     id: ledDriverTempTop
                                     width: ledDriverTempTopContainer.width
                                     height: ledDriverTempTopContainer.height - ledDriverTempTopLabel.contentHeight
-                                    tickmarkStepSize: 10
-                                    minimumValue: 0
-                                    maximumValue: 150
+                                    //tickmarkStepSize: 10
+                                    //  minimumValue: 0
+                                    //  maximumValue: 150
                                     gaugeFillColor1: "blue"
                                     gaugeFillColor2: "red"
                                     unitText: "°C"
                                     unitTextFontSizeMultiplier: ratioCalc * 2.5
-                                    valueDecimalPlaces: 0
+                                    // valueDecimalPlaces: 0
                                     function lerpColor (color1, color2, x){
                                         if (Qt.colorEqual(color1, color2)){
                                             return color1;
@@ -660,6 +805,40 @@ Item {
                                                         );
                                         }
                                     }
+                                }
+
+                                property var power_led_driver_temp_top_caption: platformInterface.power_led_driver_temp_top_caption.caption
+                                onPower_led_driver_temp_top_captionChanged: {
+                                    ledDriverTempTopLabel.text = power_led_driver_temp_top_caption
+                                }
+
+                                property var power_led_driver_temp_top_state: platformInterface.power_led_driver_temp_top_state.state
+                                onPower_led_driver_temp_top_stateChanged: {
+                                    if(power_led_driver_temp_top_state === "enabled") {
+                                        ledDriverTempTop.opacity = 1.0
+                                        ledDriverTempTop.enabled = true
+                                    }
+                                    else if (power_led_driver_temp_top_state === "disabled") {
+                                        ledDriverTempTop.opacity = 1.0
+                                        ledDriverTempTop.enabled = false
+                                    }
+                                    else  {
+                                        ledDriverTempTop.opacity = 0.5
+                                        ledDriverTempTop.enabled = false
+                                    }
+                                }
+
+                                property var power_led_driver_temp_top_scales: platformInterface.power_led_driver_temp_top_scales.scales
+                                onPower_led_driver_temp_top_scalesChanged: {
+                                    ledDriverTempTop.maximumValue = power_led_driver_temp_top_scales[0]
+                                    ledDriverTempTop.minimumValue = power_led_driver_temp_top_scales[1]
+                                    ledDriverTempTop.tickmarkStepSize = power_led_driver_temp_top_scales[2]
+
+                                }
+
+                                property var power_led_driver_temp_top_value: platformInterface.power_led_driver_temp_top_value.value
+                                onPower_led_driver_temp_top_valueChanged: {
+                                    ledDriverTempTop.value = power_led_driver_temp_top_value
                                 }
                             }
 
@@ -672,7 +851,7 @@ Item {
                             SGAlignedLabel {
                                 id: ledDriverTempBottomLabel
                                 target: ledDriverTempBottom
-                                text: "LED Driver Temp Bottom \n (°C)"
+                                //text: "LED Driver Temp Bottom \n (°C)"
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier: ratioCalc * 1.2
@@ -683,9 +862,9 @@ Item {
                                     id: ledDriverTempBottom
                                     width: ledDriverTempBottomContainer.width
                                     height: ledDriverTempBottomContainer.height - ledDriverTempBottomLabel.contentHeight
-                                    tickmarkStepSize: 10
-                                    minimumValue: 0
-                                    maximumValue: 150
+                                    //tickmarkStepSize: 10
+                                    // minimumValue: 0
+                                    // maximumValue: 150
                                     gaugeFillColor1: "blue"
                                     gaugeFillColor2: "red"
                                     unitText: "°C"
@@ -703,6 +882,41 @@ Item {
                                         }
                                     }
                                 }
+
+                                property var power_led_driver_temp_bottom_caption: platformInterface.power_led_driver_temp_bottom_caption.caption
+                                onPower_led_driver_temp_bottom_captionChanged: {
+                                    ledDriverTempBottomLabel.text = power_led_driver_temp_bottom_caption
+                                }
+
+                                property var power_led_driver_temp_bottom_state: platformInterface.power_led_driver_temp_bottom_state.state
+                                onPower_led_driver_temp_bottom_stateChanged: {
+                                    if(power_led_driver_temp_bottom_state === "enabled") {
+                                        ledDriverTempBottom.opacity = 1.0
+                                        ledDriverTempBottom.enabled = true
+                                    }
+                                    else if (power_led_driver_temp_bottom_state === "disabled") {
+                                        ledDriverTempBottom.opacity = 1.0
+                                        ledDriverTempBottom.enabled = false
+                                    }
+                                    else  {
+                                        ledDriverTempBottom.opacity = 0.5
+                                        ledDriverTempBottom.enabled = false
+                                    }
+                                }
+
+                                property var power_led_driver_temp_bottom_scales: platformInterface.power_led_driver_temp_bottom_scales.scales
+                                onPower_led_driver_temp_bottom_scalesChanged: {
+                                    ledDriverTempBottom.maximumValue = power_led_driver_temp_bottom_scales[0]
+                                    ledDriverTempBottom.minimumValue = power_led_driver_temp_bottom_scales[1]
+                                    ledDriverTempBottom.tickmarkStepSize = power_led_driver_temp_bottom_scales[2]
+
+
+                                }
+
+                                property var power_led_driver_temp_top_value: platformInterface.power_led_driver_temp_top_value.value
+                                onPower_led_driver_temp_top_valueChanged: {
+                                    ledDriverTempBottom.value = power_led_driver_temp_top_value
+                                }
                             }
 
                         }
@@ -713,7 +927,6 @@ Item {
                             SGAlignedLabel {
                                 id: tempGaugeLabel
                                 target: tempGauge
-                                text: "LED Temperature \n (°C)"
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier: ratioCalc * 1.2
@@ -724,9 +937,8 @@ Item {
                                     id: tempGauge
                                     width: tempGaugeContainer.width
                                     height: tempGaugeContainer.height - tempGaugeLabel.contentHeight
-                                    tickmarkStepSize: 10
-                                    minimumValue: 0
-                                    maximumValue: 150
+                                    //tickmarkStepSize: 10
+
                                     gaugeFillColor1: "blue"
                                     gaugeFillColor2: "red"
                                     unitText: "°C"
@@ -742,6 +954,41 @@ Item {
                                                         color1.b * (1 - x) + color2.b * x, 1
                                                         );
                                         }
+                                    }
+
+                                    property var power_led_temp_caption: platformInterface.power_led_temp_caption.caption
+                                    onPower_led_temp_captionChanged: {
+                                        tempGaugeLabel.text = power_led_temp_caption
+                                    }
+
+                                    property var power_led_temp_state: platformInterface.power_led_temp_state.state
+                                    onPower_led_temp_stateChanged: {
+                                        if(power_led_temp_state === "enabled") {
+                                            tempGauge.opacity = 1.0
+                                            tempGauge.enabled = true
+                                        }
+                                        else if (power_led_temp_state === "disabled") {
+                                            tempGauge.opacity = 1.0
+                                            tempGauge.enabled = false
+                                        }
+                                        else  {
+                                            tempGauge.opacity = 0.5
+                                            tempGauge.enabled = false
+                                        }
+                                    }
+
+                                    property var power_led_temp_scales: platformInterface.power_led_temp_scales.scales
+                                    onPower_led_temp_scalesChanged: {
+                                        tempGauge.maximumValue = power_led_temp_scales[0]
+                                        tempGauge.minimumValue = power_led_temp_scales[1]
+                                        tempGauge.tickmarkStepSize = power_led_temp_scales[2]
+
+
+                                    }
+
+                                    property var power_led_temp_value: platformInterface.power_led_temp_value.value
+                                    onPower_led_temp_valueChanged: {
+                                        tempGauge.value = power_led_driver_temp_top_value
                                     }
                                 }
                             }
@@ -756,7 +1003,7 @@ Item {
                             SGAlignedLabel {
                                 id: powerLossGaugeLabel
                                 target: powerLoss
-                                text: "Total Power Loss \n (W)"
+                                //text: "Total Power Loss \n (W)"
                                 anchors.centerIn: parent
                                 alignment: SGAlignedLabel.SideBottomCenter
                                 fontSizeMultiplier: ratioCalc * 1.2
@@ -767,14 +1014,15 @@ Item {
                                     id: powerLoss
                                     width: powerLossContainer.width
                                     height: powerLossContainer.height - powerLossGaugeLabel.contentHeight
-                                    tickmarkStepSize: 0.5
-                                    minimumValue: 0
-                                    maximumValue: 5
+                                    //tickmarkStepSize: 0.5
+                                    //                                    minimumValue: 0
+                                    //                                    maximumValue: 5
                                     gaugeFillColor1: "blue"
                                     gaugeFillColor2: "red"
                                     unitText: "W"
                                     unitTextFontSizeMultiplier: ratioCalc * 2.5
-                                    valueDecimalPlaces: 0
+                                    valueDecimalPlaces: 2
+
                                     function lerpColor (color1, color2, x){
                                         if (Qt.colorEqual(color1, color2)){
                                             return color1;
@@ -785,6 +1033,41 @@ Item {
                                                         color1.b * (1 - x) + color2.b * x, 1
                                                         );
                                         }
+                                    }
+
+                                    property var power_total_power_loss_caption: platformInterface.power_total_power_loss_caption.caption
+                                    onPower_total_power_loss_captionChanged: {
+                                        powerLossGaugeLabel.text = power_total_power_loss_caption
+                                    }
+
+                                    property var power_total_power_loss_state: platformInterface.power_total_power_loss_state.state
+                                    onPower_total_power_loss_stateChanged: {
+                                        if(power_total_power_loss_state === "enabled") {
+                                            powerLoss.opacity = 1.0
+                                            powerLoss.enabled = true
+                                        }
+                                        else if (power_total_power_loss_state === "disabled") {
+                                            powerLoss.opacity = 1.0
+                                            powerLoss.enabled = false
+                                        }
+                                        else  {
+                                            powerLoss.opacity = 0.5
+                                            powerLoss.enabled = false
+                                        }
+                                    }
+
+                                    property var power_total_power_loss_scales: platformInterface.power_total_power_loss_scales.scales
+                                    onPower_total_power_loss_scalesChanged: {
+                                        powerLoss.maximumValue = power_total_power_loss_scales[0]
+                                        powerLoss.minimumValue = power_total_power_loss_scales[1]
+                                        powerLoss.tickmarkStepSize = power_total_power_loss_scales[2]
+
+
+                                    }
+
+                                    property var power_total_power_loss_value: platformInterface.power_total_power_loss_value.value
+                                    onPower_total_power_loss_valueChanged: {
+                                        powerLoss.value = power_total_power_loss_value
                                     }
                                 }
                             }

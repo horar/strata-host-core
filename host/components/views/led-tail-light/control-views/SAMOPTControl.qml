@@ -165,7 +165,7 @@ Item {
 
                         SGStatusLight {
                             id: diag
-                            //width : 30
+                            width : 40
 
                         }
                     }
@@ -780,8 +780,8 @@ Item {
                         fontSizeMultiplier: ratioCalc
                         color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                         hoverEnabled: true
-                        height: parent.height/2
-                        width: parent.width/1.5
+                        height: parent.height/3
+                        width: parent.width/3
                         MouseArea {
                             hoverEnabled: true
                             anchors.fill: parent

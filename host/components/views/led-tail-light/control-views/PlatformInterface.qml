@@ -706,30 +706,6 @@ Item {
     // Power notification and commands
     /*****************/
 
-    property var power_vled_input: {
-        "caption":"VLED Input Voltage",
-        "scales":[],
-        "state":"enabled",
-        "value":"On",
-        "values":["On","Off"]
-    }
-
-    property var power_vled_input_caption: {
-        "caption":"VLED Input\nVoltage"
-    }
-
-    property var power_vled_input_state: {
-        "state":"enabled"
-    }
-
-    property var power_vled_input_value: {
-        "value": "On"
-    }
-
-    property var power_vled_input_values: {
-        "values": ["On", "Off"]
-    }
-
     property var power_vled_type: {
         "caption":"VLED Input Voltage Type",
         "scales":[],
@@ -821,6 +797,266 @@ Item {
 
     property var power_vs_select_values: {
         "values": ["5V_USB","VLED"]
+    }
+
+    property var power_vled: {
+        "caption":"LED Voltage (VLED)",
+        "scales":[],
+        "state":"disabled",
+        "value":0,
+        "values":[]
+    }
+
+    property var power_vled_caption: {
+        "caption":"LED Voltage\n(VLED)"
+    }
+
+    property var power_vled_state: {
+        "state":"disabled"
+    }
+
+    property var power_vled_value: {
+        "value": 0
+    }
+
+    property var power_vs: {
+        "caption":"Supply Voltage (VS)",
+        "scales":[],
+        "state":"disabled",
+        "value":0,
+        "values":[]
+    }
+
+    property var power_vs_caption: {
+        "caption":"Supply Voltage\n(VS)"
+    }
+
+    property var power_vs_state: {
+        "state":"disabled"
+    }
+
+    property var power_vs_value: {
+        "value": 0
+    }
+
+    property var power_vdd: {
+        "caption":"Digital Voltage (VDD)",
+        "scales":[],
+        "state":"disabled",
+        "value":0,
+        "values":[]
+    }
+
+    property var power_vdd_caption: {
+        "caption": "Digital Voltage\n(VDD)"
+    }
+
+    property var power_vdd_state: {
+        "state":"disabled"
+    }
+
+    property var power_vdd_value: {
+        "value": 0
+    }
+
+    property var power_vbat: {
+        "caption":"Battery Voltage\n(VBAT)",
+        "scales":[],
+        "state":"disabled",
+        "value":0,
+        "values":[]
+    }
+
+    property var power_vbat_caption: {
+        "caption": "Battery Voltage\n(VBAT)"
+    }
+
+    property var power_vbat_state: {
+        "state":"disabled"
+    }
+
+    property var power_vbat_value: {
+        "value": 0
+    }
+
+    property var power_iled: {
+        "caption":"LED Current\n(ILED)",
+        "scales":[],
+        "state":"disabled",
+        "value":0,
+        "values":[]
+    }
+
+    property var power_iled_caption: {
+        "caption": "LED Current\n(ILED)"
+    }
+
+    property var power_iled_state: {
+        "state":"disabled"
+    }
+
+    property var power_iled_value: {
+        "value": 0
+    }
+
+    property var power_is: {
+        "caption":"Supply Current (IS)",
+        "scales":[],
+        "state":"disabled",
+        "value":0,
+        "values":[]
+    }
+
+    property var power_is_caption: {
+        "caption": "Supply Current\n(IS)"
+    }
+
+    property var power_is_state: {
+        "state":"disabled"
+    }
+
+    property var power_is_value: {
+        "value": 0
+    }
+
+    property var power_idd: {
+        "caption":"Digital Current\n(IDD)",
+        "scales":[],
+        "state":"disabled",
+        "value":0,
+        "values":[]
+    }
+
+    property var power_idd_caption: {
+        "caption": "Digital Current\n(IDD)"
+    }
+
+    property var power_idd_state: {
+        "state":"disabled"
+    }
+
+    property var power_idd_value: {
+        "value": 0
+    }
+
+    property var power_vcc: {
+        "caption":"Reference Voltage (VCC)",
+        "scales":[],
+        "state":"disabled",
+        "value":0,
+        "values":[]
+    }
+
+    property var power_vcc_caption: {
+        "caption": "Reference Voltage\n(VCC)"
+    }
+
+    property var power_vcc_state: {
+        "state":"disabled"
+    }
+
+    property var power_vcc_value: {
+        "value": 0
+    }
+
+    property var power_led_driver_temp_top: {
+        "caption":"LED Driver Temp Top (°C)",
+        "scales":[150,0,1],
+        "state":"disabled",
+        "value":0,
+        "values":[]
+    }
+
+
+    property var power_led_driver_temp_top_caption: {
+        "caption": "LED Driver Temp Top \n (°C)"
+    }
+
+    property var power_led_driver_temp_top_state: {
+        "state":"disabled"
+    }
+
+    property var power_led_driver_temp_top_scales: {
+        "scales":[150,0,10]
+    }
+
+    property var power_led_driver_temp_top_value: {
+        "value": 0
+    }
+
+
+    property var power_led_driver_temp_bottom: {
+        "caption":"LED Driver Temp Bottom (°C)",
+        "scales":[150,0,10],
+        "state":"disabled",
+        "value":0,
+        "values":[]
+    }
+
+
+    property var power_led_driver_temp_bottom_caption: {
+        "caption": "LED Driver Temp Bottom \n (°C)"
+    }
+
+    property var power_led_driver_temp_bottom_state: {
+        "state":"disabled"
+    }
+
+    property var power_led_driver_temp_bottom_scales: {
+        "scales":[150,0,10]
+    }
+
+    property var power_led_driver_temp_bottom_value: {
+        "value": 0
+    }
+
+    property var power_led_temp: {
+        "caption":"LED Temperature (°C)",
+        "scales":[150,0,10],
+        "state":"disabled",
+        "value":0,
+        "values":[]
+    }
+
+    property var power_led_temp_caption: {
+        "caption": "LED Temperature \n (°C)"
+    }
+
+    property var power_led_temp_state: {
+        "state":"disabled"
+    }
+
+    property var power_led_temp_scales: {
+        "scales":[150,0,10]
+    }
+
+    property var power_led_temp_value: {
+        "value": 0
+    }
+
+    property var power_total_power_loss: {
+        "caption":"Total Power Loss (W)",
+        "scales":[5.00,0.00,0.5],
+        "state":"disabled",
+        "value":0,
+        "values":[]
+    }
+
+
+    property var power_total_power_loss_caption: {
+        "caption": "Total Power Loss \n (W)"
+    }
+
+    property var power_total_power_loss_state: {
+        "state":"disabled"
+    }
+
+    property var power_total_power_loss_scales: {
+        "scales":[5.00,0.00,0.5]
+    }
+
+    property var power_total_power_loss_value: {
+        "value": 0
     }
 
 
