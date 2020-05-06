@@ -27,6 +27,9 @@ Test-StrataRelease.ps1 -SDSInstallerPath "<PATH_TO_STRATA_INSTALLER>"
 
 .Example
 Test-StrataRelease.ps1
+
+.Example
+Test-StrataRelease.ps1 -SDSInstallerPath "<PATH_TO_STRATA_INSTALLER>" -EnablePlatformIdentificationTest
 #>
 
 [CmdletBinding()]
