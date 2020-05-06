@@ -173,9 +173,11 @@ function Start-HCSAndWait {
 function Restore-Strata_INI {
     # Delete temporary .ini file and restore original
     Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $HCSAppDataDir)
-    If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini") {
+    If (Test-Path -Path "$AppData_OnSemi_dir\Strata Developer Studio.ini") {
         Remove-Item -Path "$AppData_OnSemi_dir\Strata Developer Studio.ini"
-        Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" "$AppData_OnSemi_dir\Strata Developer Studio.ini"
+        If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini") {
+            Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" "$AppData_OnSemi_dir\Strata Developer Studio.ini"
+        }
     }
 }
 
