@@ -51,28 +51,11 @@ Item {
                                 SGComboBox {
                                     id: vedInputVoltageType
                                     fontSizeMultiplier: ratioCalc
-                                    //Check on the firmware
-                                    //model: ["Boost", "Buck", "Bypass"]
-                                    //                                    onCurrentIndexChanged: {
-                                    //                                        if(currentIndex === 0) {
-                                    //                                            voltageType = "Boost"
-                                    //                                            voltageSet.to = 12
-                                    //                                            voltageSet.from = 5.5
-                                    //                                            voltageSet.toText.text = "12V"
-                                    //                                            voltageSet.fromText.text = "5.5V"
-                                    //                                        }
-                                    //                                        else if (currentIndex === 1) {
-                                    //                                            voltageType = "Buck"
-                                    //                                            voltageSet.to = 18
-                                    //                                            voltageSet.from = 2
-                                    //                                            voltageSet.toText.text = "18V"
-                                    //                                            voltageSet.fromText.text = "2V"
-                                    //                                        }
-                                    //                                        else if (currentIndex === 2) {
-                                    //                                            voltageSet.enabled = false
-                                    //                                            voltageSet.opacity = 0.5
-                                    //                                        }
-                                    //                                    }
+
+                                    onActivated: {
+                                        platformInterface.set_power_vled_type.update(currentText)
+                                    }
+
 
                                     property var power_vled_type_caption: platformInterface.power_vled_type_caption.caption
                                     onPower_vled_type_captionChanged: {
@@ -187,12 +170,9 @@ Item {
                             width: voltageSetContainer.width/1.2
                             live: false
                             fontSizeMultiplier: ratioCalc * 1.2
-                            //                            to: 18
-                            //                            from: 2
-                            //                            stepSize: 1
-                            //                            toText.text: "18V"
-                            //                            fromText.text: "2V"
-                            //                            value: 7
+                            onUserSet: {
+                                platformInterface.set_power_voltage_set.update(value.toFixed(1))
+                            }
                         }
 
                         property var power_voltage_set_caption: platformInterface.power_voltage_set_caption.caption
@@ -263,6 +243,14 @@ Item {
                             grooveFillColor: "#0cf"         // Default: "#0cf"
                             fontSizeMultiplier: ratioCalc * 1.2
                             checked: false
+
+                            onToggled: {
+                                if(checked)
+                                    platformInterface.set_power_vs_select.update("5V_USB")
+                                else
+                                    platformInterface.set_power_vs_select.update("VLED")
+
+                            }
                         }
 
                         property var power_vs_select_caption: platformInterface.power_vs_select_caption.caption
@@ -520,18 +508,18 @@ Item {
                                             boxFont.family: Fonts.digitalseven
                                         }
 
-                                        property var power_vbat_caption: platformInterface.power_vbat_caption.caption
-                                        onPower_vbat_captionChanged: {
-                                            batteryVoltageLabel.text = power_vbat_caption
+                                        property var power_vconn_caption: platformInterface.power_vconn_caption.caption
+                                        onPower_vconn_captionChanged: {
+                                            batteryVoltageLabel.text = power_vconn_caption
                                         }
 
-                                        property var power_vbat_state: platformInterface.power_vbat_state.state
-                                        onPower_vbat_stateChanged: {
-                                            if(power_vbat_state === "enabled") {
+                                        property var power_vconn_state: platformInterface.power_vconn_state.state
+                                        onPower_vconn_stateChanged: {
+                                            if(power_vconn_state === "enabled") {
                                                 batteryVoltage.opacity = 1.0
                                                 batteryVoltage.enabled = true
                                             }
-                                            else if (power_vbat_state === "disabled") {
+                                            else if (power_vconn_state === "disabled") {
                                                 batteryVoltage.opacity = 1.0
                                                 batteryVoltage.enabled = false
                                             }
@@ -541,9 +529,9 @@ Item {
                                             }
                                         }
 
-                                        property var power_vbat_value: platformInterface.power_vbat_value.value
-                                        onPower_vbat_valueChanged:{
-                                            batteryVoltage.text = power_vbat_value
+                                        property var power_vconn_value: platformInterface.power_vconn_value.value
+                                        onPower_vconn_valueChanged:{
+                                            batteryVoltage.text = power_vconn_value
                                         }
 
 
@@ -656,54 +644,54 @@ Item {
 
                                     }
                                 }
-                                Rectangle {
-                                    Layout.fillHeight: true
-                                    Layout.fillWidth: true
-                                    SGAlignedLabel {
-                                        id: digitalCurrentLabel
-                                        // text: "Digital Current\n(IDD)"
-                                        target: digitalCurrent
-                                        alignment: SGAlignedLabel.SideTopLeft
-                                        anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc * 1.2
-                                        font.bold : true
-                                        SGInfoBox {
-                                            id: digitalCurrent
-                                            height:  35 * ratioCalc
-                                            width: 160 * ratioCalc
-                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                            unit: "<b>mA</b>"
-                                            //text: "500"
-                                            boxFont.family: Fonts.digitalseven
-                                        }
+                                //                                Rectangle {
+                                //                                    Layout.fillHeight: true
+                                //                                    Layout.fillWidth: true
+                                //                                    SGAlignedLabel {
+                                //                                        id: digitalCurrentLabel
+                                //                                        // text: "Digital Current\n(IDD)"
+                                //                                        target: digitalCurrent
+                                //                                        alignment: SGAlignedLabel.SideTopLeft
+                                //                                        anchors.centerIn: parent
+                                //                                        fontSizeMultiplier: ratioCalc * 1.2
+                                //                                        font.bold : true
+                                //                                        SGInfoBox {
+                                //                                            id: digitalCurrent
+                                //                                            height:  35 * ratioCalc
+                                //                                            width: 160 * ratioCalc
+                                //                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                //                                            unit: "<b>mA</b>"
+                                //                                            //text: "500"
+                                //                                            boxFont.family: Fonts.digitalseven
+                                //                                        }
 
-                                        property var power_idd_caption: platformInterface.power_idd_caption.caption
-                                        onPower_idd_captionChanged: {
-                                            digitalCurrentLabel.text = power_idd_caption
-                                        }
+                                //                                        property var power_idd_caption: platformInterface.power_idd_caption.caption
+                                //                                        onPower_idd_captionChanged: {
+                                //                                            digitalCurrentLabel.text = power_idd_caption
+                                //                                        }
 
-                                        property var power_idd_state: platformInterface.power_idd_state.state
-                                        onPower_idd_stateChanged: {
-                                            if(power_idd_state === "enabled") {
-                                                digitalCurrent.opacity = 1.0
-                                                digitalCurrent.enabled = true
-                                            }
-                                            else if (power_idd_state === "disabled") {
-                                                digitalCurrent.opacity = 1.0
-                                                digitalCurrent.enabled = false
-                                            }
-                                            else  {
-                                                digitalCurrent.opacity = 0.5
-                                                digitalCurrent.enabled = false
-                                            }
-                                        }
+                                //                                        property var power_idd_state: platformInterface.power_idd_state.state
+                                //                                        onPower_idd_stateChanged: {
+                                //                                            if(power_idd_state === "enabled") {
+                                //                                                digitalCurrent.opacity = 1.0
+                                //                                                digitalCurrent.enabled = true
+                                //                                            }
+                                //                                            else if (power_idd_state === "disabled") {
+                                //                                                digitalCurrent.opacity = 1.0
+                                //                                                digitalCurrent.enabled = false
+                                //                                            }
+                                //                                            else  {
+                                //                                                digitalCurrent.opacity = 0.5
+                                //                                                digitalCurrent.enabled = false
+                                //                                            }
+                                //                                        }
 
-                                        property var power_idd_value: platformInterface.power_idd_value.value
-                                        onPower_idd_valueChanged:{
-                                            digitalCurrent.text = power_idd_value
-                                        }
-                                    }
-                                }
+                                //                                        property var power_idd_value: platformInterface.power_idd_value.value
+                                //                                        onPower_idd_valueChanged:{
+                                //                                            digitalCurrent.text = power_idd_value
+                                //                                        }
+                                //                                    }
+                                //                                }
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
@@ -751,6 +739,11 @@ Item {
                                             voltage.text = power_vcc_value
                                         }
                                     }
+                                }
+
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
                                 }
                             }
 
@@ -988,7 +981,7 @@ Item {
 
                                     property var power_led_temp_value: platformInterface.power_led_temp_value.value
                                     onPower_led_temp_valueChanged: {
-                                        tempGauge.value = power_led_driver_temp_top_value
+                                        tempGauge.value = power_led_temp_value
                                     }
                                 }
                             }
@@ -1035,18 +1028,18 @@ Item {
                                         }
                                     }
 
-                                    property var power_total_power_loss_caption: platformInterface.power_total_power_loss_caption.caption
-                                    onPower_total_power_loss_captionChanged: {
-                                        powerLossGaugeLabel.text = power_total_power_loss_caption
+                                    property var power_total_power_caption: platformInterface.power_total_power_caption.caption
+                                    onPower_total_power_captionChanged: {
+                                        powerLossGaugeLabel.text = power_total_power_caption
                                     }
 
-                                    property var power_total_power_loss_state: platformInterface.power_total_power_loss_state.state
-                                    onPower_total_power_loss_stateChanged: {
-                                        if(power_total_power_loss_state === "enabled") {
+                                    property var power_total_power_state: platformInterface.power_total_power_state.state
+                                    onPower_total_power_stateChanged: {
+                                        if(power_total_power_state === "enabled") {
                                             powerLoss.opacity = 1.0
                                             powerLoss.enabled = true
                                         }
-                                        else if (power_total_power_loss_state === "disabled") {
+                                        else if (power_total_power_state === "disabled") {
                                             powerLoss.opacity = 1.0
                                             powerLoss.enabled = false
                                         }
@@ -1056,18 +1049,18 @@ Item {
                                         }
                                     }
 
-                                    property var power_total_power_loss_scales: platformInterface.power_total_power_loss_scales.scales
-                                    onPower_total_power_loss_scalesChanged: {
-                                        powerLoss.maximumValue = power_total_power_loss_scales[0]
-                                        powerLoss.minimumValue = power_total_power_loss_scales[1]
-                                        powerLoss.tickmarkStepSize = power_total_power_loss_scales[2]
+                                    property var power_total_power_scales: platformInterface.power_total_power_scales.scales
+                                    onPower_total_power_scalesChanged: {
+                                        powerLoss.maximumValue = power_total_power_scales[0]
+                                        powerLoss.minimumValue = power_total_power_scales[1]
+                                        powerLoss.tickmarkStepSize = power_total_power_scales[2]
 
 
                                     }
 
-                                    property var power_total_power_loss_value: platformInterface.power_total_power_loss_value.value
-                                    onPower_total_power_loss_valueChanged: {
-                                        powerLoss.value = power_total_power_loss_value
+                                    property var power_total_power_value: platformInterface.power_total_power_value.value
+                                    onPower_total_power_valueChanged: {
+                                        powerLoss.value = power_total_power_value
                                     }
                                 }
                             }

@@ -859,7 +859,7 @@ Item {
         "value": 0
     }
 
-    property var power_vbat: {
+    property var power_vconn: {
         "caption":"Battery Voltage\n(VBAT)",
         "scales":[],
         "state":"disabled",
@@ -867,15 +867,15 @@ Item {
         "values":[]
     }
 
-    property var power_vbat_caption: {
+    property var power_vconn_caption: {
         "caption": "Battery Voltage\n(VBAT)"
     }
 
-    property var power_vbat_state: {
+    property var power_vconn_state: {
         "state":"disabled"
     }
 
-    property var power_vbat_value: {
+    property var power_vconn_value: {
         "value": 0
     }
 
@@ -919,25 +919,25 @@ Item {
         "value": 0
     }
 
-    property var power_idd: {
-        "caption":"Digital Current\n(IDD)",
-        "scales":[],
-        "state":"disabled",
-        "value":0,
-        "values":[]
-    }
+    //    property var power_idd: {
+    //        "caption":"Digital Current\n(IDD)",
+    //        "scales":[],
+    //        "state":"disabled",
+    //        "value":0,
+    //        "values":[]
+    //    }
 
-    property var power_idd_caption: {
-        "caption": "Digital Current\n(IDD)"
-    }
+    //    property var power_idd_caption: {
+    //        "caption": "Digital Current\n(IDD)"
+    //    }
 
-    property var power_idd_state: {
-        "state":"disabled"
-    }
+    //    property var power_idd_state: {
+    //        "state":"disabled"
+    //    }
 
-    property var power_idd_value: {
-        "value": 0
-    }
+    //    property var power_idd_value: {
+    //        "value": 0
+    //    }
 
     property var power_vcc: {
         "caption":"Reference Voltage (VCC)",
@@ -1034,7 +1034,7 @@ Item {
         "value": 0
     }
 
-    property var power_total_power_loss: {
+    property var power_total_power: {
         "caption":"Total Power Loss (W)",
         "scales":[5.00,0.00,0.5],
         "state":"disabled",
@@ -1043,21 +1043,74 @@ Item {
     }
 
 
-    property var power_total_power_loss_caption: {
+    property var power_total_power_caption: {
         "caption": "Total Power Loss \n (W)"
     }
 
-    property var power_total_power_loss_state: {
+    property var power_total_power_state: {
         "state":"disabled"
     }
 
-    property var power_total_power_loss_scales: {
+    property var power_total_power_scales: {
         "scales":[5.00,0.00,0.5]
     }
 
-    property var power_total_power_loss_value: {
+    property var power_total_power_value: {
         "value": 0
     }
+
+    //Power commands
+    property var set_power_vled_type : ({
+                                       "cmd" : "power_vled_type",
+                                       "payload": {
+                                           "value" :"Boost"
+                                       },
+
+                                       update: function (value) {
+                                           this.set(value)
+                                           this.send(this)
+                                       },
+                                       set: function (value) {
+                                           this.payload.value = value
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+                                   })
+
+    property var set_power_voltage_set : ({
+                                       "cmd" : "power_voltage_set",
+                                       "payload": {
+                                           "value" : 8.0
+                                       },
+
+                                       update: function (value) {
+                                           this.set(value)
+                                           this.send(this)
+                                       },
+                                       set: function (value) {
+                                           this.payload.value = value
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+                                   })
+
+    property var set_power_vs_select : ({
+                                       "cmd" : "power_vs_select",
+                                       "payload": {
+                                           "value":"5V_USB"
+                                       },
+
+                                       update: function (value) {
+                                           this.set(value)
+                                           this.send(this)
+                                       },
+                                       set: function (value) {
+                                           this.payload.value = value
+                                       },
+                                       send: function () { CorePlatformInterface.send(this) },
+                                       show: function () { CorePlatformInterface.show(this) }
+                                   })
+
 
 
     // -------------------------------------------------------------------
