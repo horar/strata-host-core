@@ -20,6 +20,7 @@ public:
     };
 
     void append(const QString &path);
+    int remove(const QString &path); /*returns index at which the file was removed*/
     void clear();
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     int count() const;
