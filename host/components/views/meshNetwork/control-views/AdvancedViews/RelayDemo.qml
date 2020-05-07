@@ -28,14 +28,15 @@ Rectangle {
                 nodeCount++;
                 if (nodeCount === 1){
                     root.node1ID = platformInterface.network_notification.nodes[alpha].index
-                    //console.log("node 1 set to",root,node1ID)
+                    console.log("node 1 set to",root.node1ID)
                 }
                 else if (nodeCount === 2){
                     root.node2ID = platformInterface.network_notification.nodes[alpha].index
-                    //console.log("node 1 set to",root,node2ID)
+                    console.log("node 2 set to",root.node2ID)
                 }
                 else if (nodeCount === 3){
                     root.node3ID = platformInterface.network_notification.nodes[alpha].index
+                    console.log("node 3 set to",root.node3ID)
                 }
             }
         }

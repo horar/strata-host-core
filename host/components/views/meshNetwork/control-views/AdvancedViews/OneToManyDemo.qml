@@ -27,17 +27,19 @@ Rectangle {
                 nodeCount++;
                 if (nodeCount === 1){
                     root.node1ID = platformInterface.network_notification.nodes[alpha].index
-                    //console.log("node 1 set to",root,node1ID)
+                    console.log("node 1 set to",root.node1ID)
                 }
                 else if (nodeCount === 2){
                     root.node2ID = platformInterface.network_notification.nodes[alpha].index
-                    //console.log("node 1 set to",root,node2ID)
+                    console.log("node 2 set to",root.node2ID)
                 }
                 else if (nodeCount === 3){
                     root.node3ID = platformInterface.network_notification.nodes[alpha].index
+                    console.log("node 3 set to",root.node3ID)
                 }
                 else if (nodeCount === 4){
                     root.node4ID = platformInterface.network_notification.nodes[alpha].index
+                    console.log("node 4 set to",root.node4ID)
                 }
             }
         }
@@ -161,11 +163,9 @@ Rectangle {
         anchors.leftMargin:parent.width*.1
         anchors.verticalCenter: parent.verticalCenter
 
-        property var button: platformInterface.demo_click_notification
+        property var button: platformInterface.one_to_many_demo
         onButtonChanged:{
-            if (platformInterface.demo_click_notification.demo === "one_to_many")
-                if (platformInterface.demo_click_notification.button === "switch")
-                    if (platformInterface.demo_click_notification.value === "on"){
+            if (platformInterface.one_to_many_demo.lights === "on"){
                         switchOutline.isOn = true;
                         lightBulb1.onOpacity =1
                         lightBulb2.onOpacity =1
@@ -625,13 +625,17 @@ Rectangle {
             }
 
             onClicked: {
-                platformInterface.set_demo.update("one_to_many")
+                //platformInterface.set_demo.update("one_to_many")
+                //according to documentation, no action is needed to configure the one to many demo
                 root.resetUI()
             }
     }
 
     function resetUI(){
         switchOutline.isOn = false
+        lightBulb1.onOpacity = 0
+        lightBulb2.onOpacity = 0
+        lightBulb3.onOpacity = 0
     }
 
 

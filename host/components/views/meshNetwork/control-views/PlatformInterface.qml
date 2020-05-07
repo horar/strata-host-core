@@ -138,10 +138,18 @@ Item {
 //                "location": "alarm" //string, with possible values: "doorbell", "alarm", "switch", "temperature", "light", "voltage", "security"
 //    }
 
-    property var demo_click_notification : {
-        "demo": "",             //"one_to_one"or "one_to_many", "relay", "multiple_models","sensor","cloud"
-        "button": "",           //"switch" or "switch1","switch2","relay_switch", "bulb1","bulb2","bulb3" "get_sensor_data"
-        "value":"on"
+//    property var demo_click_notification : {
+//        "demo": "",             //"one_to_one"or "one_to_many", "relay", "multiple_models","sensor","cloud"
+//        "button": "",           //"switch" or "switch1","switch2","relay_switch", "bulb1","bulb2","bulb3" "get_sensor_data"
+//        "value":"on"
+//    }
+
+    property var one_to_one_demo:{
+                "light": "on"  //or off
+    }
+
+    property var one_to_many_demo:{
+                "lights": "on"  //or off
     }
 
     property var msg_cli:{      //console message strings
@@ -746,22 +754,39 @@ Item {
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
 
-    property var set_demo : ({
-                                        "cmd" : "set_demo",
+//    property var set_demo : ({
+//                                        "cmd" : "set_demo",
+//                                        "payload": {
+//                                            "demo":"demo"
+//                                        },
+
+//                                        update: function (demoName) {
+//                                            this.set(demoName)
+//                                            this.send(this)
+//                                        },
+//                                        set: function (inDemoName) {
+//                                            this.payload.demo = inDemoName;
+//                                        },
+//                                        send: function () { CorePlatformInterface.send(this) },
+//                                        show: function () { CorePlatformInterface.show(this) }
+//                                    })
+
+    property var set_onetoone_demo : ({
+                                        "cmd" : "set_onetoone_demo",
                                         "payload": {
-                                            "demo":"demo"
+                                              "UADDR":65535,
+                                              "daddr":2
                                         },
 
-                                        update: function (demoName) {
-                                            this.set(demoName)
+                                        update: function () {
                                             this.send(this)
                                         },
-                                        set: function (inDemoName) {
-                                            this.payload.demo = inDemoName;
+                                        set: function () {
                                         },
                                         send: function () { CorePlatformInterface.send(this) },
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
+
 
     property var demo_click : ({
                                         "cmd" : "demo_click",

@@ -17,21 +17,22 @@ Rectangle {
     onVisibleChanged: {
         if (visible){
             resetUI();
+            platformInterface.set_onetoone_demo.update()
 
             var nodeCount = 0;
 
             for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
                 //for each node that is marked visible set the visibilty of the node appropriately
                 console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
-                if (platformInterface.network_notification.nodes[alpha].ready != 0){
+                if (platformInterface.network_notification.nodes[alpha].ready !== 0){
                     nodeCount++;
                     if (nodeCount === 1){
                         root.node1ID = platformInterface.network_notification.nodes[alpha].index
-                        console.log("node 1 set to",root,node1ID)
+                        console.log("node 1 set to",root.node1ID)
                     }
                     else if (nodeCount === 2){
                         root.node2ID = platformInterface.network_notification.nodes[alpha].index
-                        console.log("node 1 set to",root,node2ID)
+                        console.log("node 1 set to",root.node2ID)
                     }
                 }
             }
@@ -156,30 +157,28 @@ Rectangle {
         anchors.leftMargin:parent.width*.1
         anchors.verticalCenter: parent.verticalCenter
 
-        property var button: platformInterface.demo_click_notification
-        onButtonChanged:{
-            if (platformInterface.demo_click_notification.demo === "one_to_one")
-                if (platformInterface.demo_click_notification.button === "switch")
-                    if (platformInterface.demo_click_notification.value === "on"){
-                        switchOutline.isOn = true;
-                        lightBulb.onOpacity = 1
-                    }
-                    else{
-                        switchOutline.isOn = false;
-                        lightBulb.onOpacity = 0
-                    }
+        property var demo: platformInterface.one_to_one_demo
+        onDemoChanged:{
+            if (platformInterface.one_to_one_demo.light === "on"){
+                switchOutline.isOn = true;
+                lightBulb.onOpacity = 1
+            }
+            else{
+                switchOutline.isOn = false;
+                lightBulb.onOpacity = 0
+            }
 
         }
 
         onClicked:{
             if (!isOn){     //turning the lightbulb on
                 lightBulb.onOpacity = 1
-                platformInterface.light_hsl_set.update(65535,0,0,100);  //set color to white
+                platformInterface.light_hsl_set.update(49633,0,0,100);  //set color to white
                 switchOutline.isOn = true
               }
               else{         //turning the lightbulb off
                 lightBulb.onOpacity = 0
-                platformInterface.light_hsl_set.update(65535,0,0,0);  //set color to black
+                platformInterface.light_hsl_set.update(49633,0,0,0);  //set color to black
                 switchOutline.isOn = false
               }
         }
@@ -360,13 +359,14 @@ Rectangle {
             }
 
             onClicked: {
-                platformInterface.set_demo.update("one_to_one")
+                platformInterface.set_onetoone_demo.update()
                 root.resetUI()
             }
     }
 
     function resetUI(){
         switchOutline.isOn = false
+        lightBulb.onOpacity = 0
     }
 
 
