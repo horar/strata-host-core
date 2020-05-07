@@ -248,6 +248,9 @@ int main(int argc, char *argv[])
     if (hcsProcess->state() == QProcess::Running) {
         qCDebug(logCategoryStrataDevStudio) << "killing HCS";
         hcsProcess->kill();
+        if (!hcsProcess->waitForFinished()) {
+            qCWarning(logCategoryStrataDevStudio) << "Failed to kill HCS server";
+        }
     }
 #else
     if (hcsProcess->state() == QProcess::Running) {
