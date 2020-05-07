@@ -266,6 +266,7 @@ int main(int argc, char *argv[])
         }
     }
 #endif // windows check to kill hcs3
+    qCDebug(logCategoryStrataDevStudio) << "terminating HCS result: " << hcsProcess->state() << "(error:" << hcsProcess->errorString() << ")";
 #endif // start services
 
     return appResult;
