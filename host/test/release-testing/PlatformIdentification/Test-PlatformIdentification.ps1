@@ -43,7 +43,7 @@ function Copy-AllBinariesFromAppData {
         return $true
     }
     Else {
-        write-Indented "No Binary files were found in $HCSAppDataDir\documents\views\. Aborting..."
+        write-Indented "ERROR: No Binary files were found in $HCSAppDataDir\documents\views\. Aborting..."
         return $false
     }
 }
@@ -75,11 +75,11 @@ function Flash-JLinkFunction {
 
     # Check the exit code of JLinkExe
     If($JLinkProcess.ExitCode -ne 0) {
-        write-Indented "JLinkExe faild during platform flashing."
+        write-Indented "ERROR: JLinkExe faild during platform flashing."
         return $false
     }
     Else {
-        write-Indented "The platform was flashed successfully."
+        write-Indented "PASS: The platform was flashed successfully."
         return $true
     }
 }
@@ -98,7 +98,7 @@ function Test-PlatformIdentification {
     # Check if JLink is installed, using the default path for Windows
     Write-Host "Checking if JLink.exe exist..."
     IF( $(Test-Path $JLinkExePath) -eq $false) {
-        write-Indented "JLink.exe is missing. Aborting..."
+        write-Indented "ERROR: JLink.exe is missing. Aborting..."
         return -1, -1
     }
 
@@ -108,7 +108,7 @@ function Test-PlatformIdentification {
         write-Indented "JLink Device was found."
     }
     Else {
-        write-Indented "No JLink Device is connected. Aborting..."
+        write-Indented "ERROR: No JLink Device is connected. Aborting..."
         return -1, -1
     }
 
@@ -118,7 +118,7 @@ function Test-PlatformIdentification {
         write-Indented "Platform Connected."
     }
     Else {
-        write-Indented "No Platform is connected. Aborting..."
+        write-Indented "ERROR: No Platform is connected. Aborting..."
         return -1, -1
     }
 
@@ -133,7 +133,7 @@ function Test-PlatformIdentification {
             $BinariesPath = $DefualtBinDirectory
         }
         Else {
-            write-Indented "Failed to get the binary files. Aborting..."
+            write-Indented "ERROR: Failed to get the binary files. Aborting..."
             return -1, -1
         }
     }
@@ -152,25 +152,25 @@ function Test-PlatformIdentification {
         }
     }
     Else {
-        write-Indented "No .bin files were found in $BinariesPath. Aborting..."
+        write-Indented "ERROR: No .bin files were found in $BinariesPath. Aborting..."
         return -1, -1
     }
 
-    # Stop All hcs
+    # Stop All hcs, This is needed before starting the test to make sure that there is only one hcs instance running 
     Stop-HCS
 
-    # Loop through the 
+    # Loop through the binary files. (i.e. the test cases)
     Foreach ($BinaryFile in $BinaryFileList) {
         Write-Separator
         Write-Host "Testing the file $BinaryFile..."
 
         # Flash the platform
         If($(Flash-JLinkFunction("$BinariesPath\$BinaryFile")) -eq $false) {
-            write-Indented "JLinkExe failed. Aborting the test."
+            write-Indented "ERROR: JLinkExe failed. Aborting the test."
             return -1, -1
         }
 
-        # Start hcs
+        # HCS need to be restarted with each iteration to reconnect to the platform.
         Write-Host "`nStarting HCS...`n"
         Start-HCS
         
@@ -181,11 +181,10 @@ function Test-PlatformIdentification {
         # check the exit status of the python Script.
         If ($PythonScript.ExitCode -eq 0) {
             # Test Successful
-            write-Indented "Test passed" # print a better output! add the file name and change the color of output 
-            # Return $true
+            write-Indented "PASS: Test Sucessful" # print a better output! add the file name and change the color of output 
         } Else {
             $FailedTestsList += $BinaryFile     # Add the name of the binary to a list to be printed in the test summary.
-            write-Indented "Test failed." # print a better output! add the file name and change the color of output 
+            write-Indented "ERROR: Test Failed." # print a better output! add the file name and change the color of output 
         }
 
         # Kill all hcs..
