@@ -93,15 +93,15 @@ Rectangle {
                 console.log("looking for node number",platformInterface.network_notification.nodes[alpha].index,"in meshArray")
                 //we can skip the first element in the nodeArray, as it's awlays null
                 for(var beta = 1; beta < meshArray.length; beta++){
-                    console.log("comparing",platformInterface.network_notification.nodes[alpha].index, meshArray[beta].nodeNumber)
+                    //console.log("comparing",platformInterface.network_notification.nodes[alpha].index, meshArray[beta].nodeNumber)
                     if (meshArray[beta].nodeNumber !== "" && meshArray[beta].nodeNumber == platformInterface.network_notification.nodes[alpha].index){
-
+                        console.log("found node",platformInterface.network_notification.nodes[alpha].index, "at location",beta)
                         if (platformInterface.network_notification.nodes[alpha].ready === 0){
                             //remove the item from the meshArray. It's not in the network anymore
                             nodeFoundInMeshArray = true;
-                            meshArray[alpha].objectColor = "lightgrey"
+                            meshArray[alpha].objectColor = "#d3d3d3"
                             meshArray[alpha].nodeNumber = ""
-                            console.log("node",platformInterface.network_notification.nodes[alpha].index,"found in meshArray, but node not ready")
+                            console.log("Removing. Node not ready")
                         }
                         else if (platformInterface.network_notification.nodes[alpha].ready !== 0){
                             //the node is in both the notification and in the meshArray, no need to update anything

@@ -62,6 +62,10 @@ Rectangle {
             text:""
             font.pixelSize: 14
             visible:false
+
+            onTextChanged: {
+                console.log("node number changed to",nodeNumber.text)
+            }
         }
 
         Rectangle{
@@ -80,8 +84,8 @@ Rectangle {
                 nodeNumber.text = number
             }
 
-            onColorChanged: {
-                //console.log("changing dragObject",nodeName.text,"color to",color)
+            onColorChanged: {x
+                console.log("changing dragObject",nodeName.text,"color to",color)
                 parent.color = color    //allows the drop area to change the color of the source
             }
 
@@ -94,9 +98,13 @@ Rectangle {
             function resetLocation(){
                 x = 0;
                 y = 0;
+            }
+
+            function resetBindings(){
                 //the color is reset to grey by the drop area,which breaks the binding of the drag
                 //color to the parent color. This manifests as a drag item that's grey if that node is
                 //added later with a different color. Resetting the binding here to fix that.
+                console.log("resetting drag area bindings")
                 color  = Qt.binding(function(){return parent.color})
                 number = Qt.binding(function(){return nodeNumber.text})
             }
@@ -118,9 +126,10 @@ Rectangle {
                     //console.log("drag area entered")
                 }
                 onReleased: {
-                    //console.log("drag area release called")
+                    console.log("drag area release called")
                     var theDropAction = dragObject.Drag.drop()
                     dragObject.resetLocation()              //reset the location of the drag object after it's dropped, regardless of where.
+                    dragObject.resetBindings()
                 }
 
 
@@ -159,20 +168,24 @@ Rectangle {
             onDropped: {
                 console.log("item dropped with color",drag.source.color,"and number",drag.source.number)
                 if (acceptsDrops){
-                    //dragObject.color = drag.source.color;   //set this object's color to the dropped one
-                    //drag.source.color = "lightgrey"         //reset the dropped object's color to grey
-                    //dragObject.number = drag.source.number
                     //send a signal from this object to communicate that a node has been moved
                     console.log("Node Activated with",meshObject.scene, meshObject.pairingModel, drag.source.number, drag.source.color)
                     meshObject.nodeActivated(meshObject.scene, meshObject.pairingModel, drag.source.number, drag.source.color)
+
+                    //update the properties of the object that was dropped on
                     dragObject.color = drag.source.color;   //set this object's color to the dropped one
-                    drag.source.color = "lightgrey"         //reset the dropped object's color to grey
                     dragObject.number = drag.source.number
+                    //reset the bindings after changing the color
+                    dragObject.resetBindings()
+
                     //if this node is still showing sensor data
                     console.log("clearing sensor text")
                     drag.source.sensorText.text = ""
                     drag.source.number = ""
+                    drag.source.color = "lightgrey"         //reset the dropped object's color to grey
                     text: qsTr("text")
+
+
 
                     //tell the firmware of the change
                     platformInterface.set_node_mode.update(pairingModel,parseInt(meshObject.nodeNumber),true)

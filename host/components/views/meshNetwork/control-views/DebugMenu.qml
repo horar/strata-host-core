@@ -217,6 +217,15 @@ Rectangle {
                     "value":"network_notification",
                     "payload":{
                         "nodes":[{
+                              "index": 0,
+                              "ready": 0,
+                              "color": "#000000"
+                              },{
+                              "index": 1,
+                              "ready": 1,
+                              "color": "#00FF00"
+                              },
+                              {
                               "index": 2,
                               "ready": '+ ((Math.random() *2)-1).toFixed(0) +',
                               "color": "#000088"
@@ -258,25 +267,83 @@ Rectangle {
             }
 
             Button {
-                id: rssi
-                text: "rssi"
+                id: networkPlusDoor
+                text: "network+door"
 
                 onClicked: {
 
-                    var sensorID = ((Math.random() *8) +1).toFixed(0) ;
-                    var rssiValue = ((Math.random() *-70) -30).toFixed(0) ;
-
                     CorePlatformInterface.data_source_handler('{
-                    "value":"sensor_status",
-                    "payload":{
-                        "uaddr":'+sensorID+',
-                        "sensor_type":"rssi",
-                        "data": "'+rssiValue+'"
-                    }
-                    }')
+                                            "value":"network_notification",
+                                            "payload":{
+                                                "nodes":[{
+                                                    "index":0,
+                                                    "ready":0,
+                                                    "color":"#0000FF"
+                                                    },
+                                                    {
+                                                    "index":1,
+                                                    "ready":1,
+                                                    "color":"#00FF00"
+                                                    },
+                                                    {
+                                                    "index":2,
+                                                    "ready":1,
+                                                    "color":"#FF00FF"
+                                                    },
+                                                    {"index":3,
+                                                    "ready":0,
+                                                    "color":"#00FFFF"
+                                                    },{
+                                                    "index":4,
+                                                    "ready":0,
+                                                    "color":"#7BFF00"
+                                                    },{
+                                                    "index":5,
+                                                    "ready":0,
+                                                    "color":"#FFFF00"
+                                                    },{
+                                                    "index":6,
+                                                    "ready":0,
+                                                    "color":"#7B00FF"
+                                                    },{
+                                                    "index":7,
+                                                    "ready":0,
+                                                    "color":"#00FF52"
+                                                    },{
+                                                    "index":8,
+                                                    "ready":0,
+                                                    "color":"#FF5200"
+                                                    },{
+                                                    "index":9,
+                                                    "ready":0,
+                                                    "color":"#FFFFFF"
+                                                    }]
+                                                }
+                                            }')
 
                 }
             }
+
+//            Button {
+//                id: rssi
+//                text: "rssi"
+
+//                onClicked: {
+
+//                    var sensorID = ((Math.random() *8) +1).toFixed(0) ;
+//                    var rssiValue = ((Math.random() *-70) -30).toFixed(0) ;
+
+//                    CorePlatformInterface.data_source_handler('{
+//                    "value":"sensor_status",
+//                    "payload":{
+//                        "uaddr":'+sensorID+',
+//                        "sensor_type":"rssi",
+//                        "data": "'+rssiValue+'"
+//                    }
+//                    }')
+
+//                }
+//            }
 
             Button {
                 id: windowShade
