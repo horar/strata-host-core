@@ -1061,62 +1061,402 @@ Item {
 
     //Power commands
     property var set_power_vled_type : ({
-                                       "cmd" : "power_vled_type",
-                                       "payload": {
-                                           "value" :"Boost"
-                                       },
+                                            "cmd" : "power_vled_type",
+                                            "payload": {
+                                                "value" :"Boost"
+                                            },
 
-                                       update: function (value) {
-                                           this.set(value)
-                                           this.send(this)
-                                       },
-                                       set: function (value) {
-                                           this.payload.value = value
-                                       },
-                                       send: function () { CorePlatformInterface.send(this) },
-                                       show: function () { CorePlatformInterface.show(this) }
-                                   })
+                                            update: function (value) {
+                                                this.set(value)
+                                                this.send(this)
+                                            },
+                                            set: function (value) {
+                                                this.payload.value = value
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
 
     property var set_power_voltage_set : ({
-                                       "cmd" : "power_voltage_set",
-                                       "payload": {
-                                           "value" : 8.0
-                                       },
+                                              "cmd" : "power_voltage_set",
+                                              "payload": {
+                                                  "value" : 8.0
+                                              },
 
-                                       update: function (value) {
-                                           this.set(value)
-                                           this.send(this)
-                                       },
-                                       set: function (value) {
-                                           this.payload.value = value
-                                       },
-                                       send: function () { CorePlatformInterface.send(this) },
-                                       show: function () { CorePlatformInterface.show(this) }
-                                   })
+                                              update: function (value) {
+                                                  this.set(value)
+                                                  this.send(this)
+                                              },
+                                              set: function (value) {
+                                                  this.payload.value = value
+                                              },
+                                              send: function () { CorePlatformInterface.send(this) },
+                                              show: function () { CorePlatformInterface.show(this) }
+                                          })
 
     property var set_power_vs_select : ({
-                                       "cmd" : "power_vs_select",
-                                       "payload": {
-                                           "value":"5V_USB"
-                                       },
+                                            "cmd" : "power_vs_select",
+                                            "payload": {
+                                                "value":"5V_USB"
+                                            },
 
-                                       update: function (value) {
-                                           this.set(value)
-                                           this.send(this)
-                                       },
-                                       set: function (value) {
-                                           this.payload.value = value
-                                       },
-                                       send: function () { CorePlatformInterface.send(this) },
-                                       show: function () { CorePlatformInterface.show(this) }
-                                   })
+                                            update: function (value) {
+                                                this.set(value)
+                                                this.send(this)
+                                            },
+                                            set: function (value) {
+                                                this.payload.value = value
+                                            },
+                                            send: function () { CorePlatformInterface.send(this) },
+                                            show: function () { CorePlatformInterface.show(this) }
+                                        })
+
+    /*****************************************
+
+   //** SAMOPTControl notification & cmds  **/
+
+    property var soc_diag: {
+        "caption":"DIAG",
+        "scales":[],
+        "state":"disabled",
+        "value": false,
+        "values":[]
+    }
+
+    property var soc_diag_caption: {
+        "caption":"DIAG"
+    }
+
+    property var soc_diag_state: {
+        "state":"disabled"
+    }
+
+    property var soc_diag_value: {
+        "value": false
+    }
+
+    property var soc_crc: {
+        "caption":"I2C CRC",
+        "scales":[],
+        "state":"enabled",
+        "value":false,
+        "values":[]
+    }
+
+    property var soc_crc_caption: {
+        "caption":"I2C\nCRC"
+    }
+
+    property var soc_crc_state: {
+        "state":"enabled"
+    }
+
+    property var soc_crc_value: {
+        "value": false
+    }
+
+    property var soc_vdd_disconnect: {
+        "caption":"VDD Voltage",
+        "scales":[],
+        "state":"enabled",
+        "value":"Connect",
+        "values":["Connect","Disconnect"]
+    }
+
+    property var soc_vdd_disconnect_caption: {
+        "caption":"VDD\nVoltage"
+    }
+
+    property var soc_vdd_disconnect_state: {
+        "state":"enabled"
+    }
+
+    property var soc_vdd_disconnect_value: {
+        "value":"Connect"
+    }
+
+    property var soc_vdd_disconnect_values: {
+        "values":["Connect","Disconnect"]
+    }
+
+    property var soc_mode: {
+        "caption":"Mode (I2CFLAG)",
+        "scales":[],
+        "state":"enabled",
+        "value":"I2C",
+        "values":["I2C","SAM"]
+    }
+
+    property var soc_mode_caption: {
+        "caption":"Mode\n(I2CFLAG)"
+    }
+
+    property var soc_mode_state: {
+        "state":"enabled"
+    }
+
+    property var soc_mode_value: {
+        "value":"I2C"
+    }
+
+    property var soc_mode_values: {
+        "values":["I2C","SAM"]
+    }
+
+    property var soc_open_load_diagnostic: {
+        "caption":"SAM Open Load Diagnostic",
+        "scales":[],
+        "state":"enabled",
+        "value":"No Diagnostic",
+        "values":["No Diagnostic","Auto Retry","Diagnostic Only"]
+    }
+
+    property var soc_open_load_diagnostic_caption: {
+        "caption":"SAM Open Load\nDiagnostic"
+    }
+
+    property var soc_open_load_diagnostic_state: {
+        "state":"enabled"
+    }
+
+    property var soc_open_load_diagnostic_value: {
+        "value":"No Diagnostic"
+    }
+
+    property var soc_open_load_diagnostic_values: {
+        "values":["No Diagnostic","Auto Retry","Diagnostic Only"]
+    }
+
+
+    property var soc_sam_conf_1: {
+        "caption":"SAM_CONF_1",
+        "scales":[],
+        "state":"enabled",
+        "value":"",
+        "values":[false,false,false,false,false,false,false,false,false,false,false,false]
+    }
+
+    property var soc_sam_conf_1_caption: {
+        "caption":"SAM_CONF_1"
+    }
+
+    property var soc_sam_conf_1_state: {
+        "state":"enabled"
+    }
+
+    property var soc_sam_conf_1_values: {
+        "values":[false,false,false,false,false,false,false,false,false,false,false,false]
+    }
+
+    property var soc_sam_conf_2: {
+        "caption":"SAM_CONF_1",
+        "scales":[],
+        "state":"enabled",
+        "value":"",
+        "values":[true,true,true,true,true,true,true,true,true,true,true,true]
+    }
+
+    property var soc_sam_conf_2_caption: {
+        "caption":"SAM_CONF_2"
+    }
+
+    property var soc_sam_conf_2_state: {
+        "state":"enabled"
+    }
+
+    property var soc_sam_conf_2_values: {
+        "values": [true,true,true,true,true,true,true,true,true,true,true,true]
+    }
+
+
+    property var soc_addr_curr: {
+        "caption":"Current 7-bit I2C Address",
+        "scales":[],
+        "state":"disabled",
+        "value":"0x60",
+        "values":[]
+    }
+
+    property var soc_addr_curr_caption: {
+        "caption":"Current 7-bit I2C Address"
+    }
+
+    property var soc_addr_curr_state: {
+        "state":"disabled"
+    }
+
+    property var soc_addr_curr_value: {
+        "value":"0x60"
+    }
+
+    property var soc_addr_new: {
+        "caption":"New 7-bit I2C Address",
+        "scales":[127,96,1],
+        "state":"enabled",
+        "value":96,
+        "values":[]
+    }
+
+    property var soc_addr_new_caption: {
+        "caption":"New 7-bit I2C Address"
+    }
+
+    property var soc_addr_new_scales: {
+        "scales":[127,96,1]
+    }
+
+    property var soc_addr_new_state: {
+        "state":"enabled"
+    }
+
+    property var soc_addr_new_value: {
+        "value":"96"
+    }
+
+    property var soc_otp: {
+        "caption":"One Time Program (zap)",
+        "scales":[],
+        "state":"enabled",
+        "value":"",
+        "values":[]
+    }
+
+    property var soc_otp_caption: {
+        "caption": "One Time\nProgram (zap)"
+    }
+
+    property var soc_otp_state: {
+        "state":"enabled"
+    }
+
+    //Commands
+    //May not be necessary
+    property var set_soc_read: ({
+                                    "cmd":"soc_read",
+                                    update: function () {
+                                        CorePlatformInterface.send(this)
+                                    },
+                                    send: function () { CorePlatformInterface.send(this) },
+                                    show: function () { CorePlatformInterface.show(this) }
+                                })
+
+
+    //where to use this
+    property var set_soc_conf : ({
+                                     "cmd" : "soc_conf",
+                                     "payload": {
+                                         "value":"SAM1"
+                                     },
+
+                                     update: function (value) {
+                                         this.set(value)
+                                         this.send(this)
+                                     },
+                                     set: function (value) {
+                                         this.payload.value = value
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+                                 })
+
+    property var set_soc_mode: ({
+                                    "cmd" : "soc_mode",
+                                    "payload": {
+                                        "value":"I2C"
+                                    },
+
+                                    update: function (value) {
+                                        this.set(value)
+                                        this.send(this)
+                                    },
+                                    set: function (value) {
+                                        this.payload.value = value
+                                    },
+                                    send: function () { CorePlatformInterface.send(this) },
+                                    show: function () { CorePlatformInterface.show(this) }
+                                })
+
+    property var set_soc_vdd_disconnect: ({
+                                              "cmd" : "soc_vdd_disconnect",
+                                              "payload": {
+                                                  "value":"Connect"
+                                              },
+
+                                              update: function (value) {
+                                                  this.set(value)
+                                                  this.send(this)
+                                              },
+                                              set: function (value) {
+                                                  this.payload.value = value
+                                              },
+                                              send: function () { CorePlatformInterface.send(this) },
+                                              show: function () { CorePlatformInterface.show(this) }
+                                          })
+    //0 means true / 1 means false
+    property var set_soc_write: ({
+                                     "cmd" : "soc_write",
+                                     "payload": {
+                                         "soc_otp": false,
+                                         "soc_sam_conf_1": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                                         "soc_sam_conf_2": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                                         "soc_diag": "No Diagnostic",
+                                         "soc_crc": false,
+                                         "soc_addr": 96
+                                     },
+
+                                     update: function (soc_otp,soc_sam_conf_1, soc_sam_conf_2,soc_diag,soc_crc,soc_addr) {
+                                         this.set(soc_otp,soc_sam_conf_1, soc_sam_conf_2,soc_diag,soc_crc,soc_addr)
+                                         this.send(this)
+                                     },
+                                     set: function (soc_otp,soc_sam_conf_1, soc_sam_conf_2,soc_diag,soc_crc,soc_addr) {
+                                         this.payload.soc_otp = soc_otp
+                                         this.payload.soc_sam_conf_1 = soc_sam_conf_1
+                                         this.payload.soc_sam_conf_2 = soc_sam_conf_2
+                                         this.payload.soc_diag = soc_diag
+                                         this.payload.soc_crc = soc_crc
+                                         this.payload.soc_addr = soc_addr
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+                                 })
+
+    property real soc_sam_conf_1_out1: 1
+    property real soc_sam_conf_1_out2: 1
+    property real soc_sam_conf_1_out3: 1
+    property real soc_sam_conf_1_out4: 1
+    property real soc_sam_conf_1_out5: 1
+    property real soc_sam_conf_1_out6: 1
+    property real soc_sam_conf_1_out7: 1
+    property real soc_sam_conf_1_out8: 1
+    property real soc_sam_conf_1_out9: 1
+    property real soc_sam_conf_1_out10: 1
+    property real soc_sam_conf_1_out11: 1
+
+    property real soc_sam_conf_2_out1: 1
+    property real soc_sam_conf_2_out2: 1
+    property real soc_sam_conf_2_out3: 1
+    property real soc_sam_conf_2_out4: 1
+    property real soc_sam_conf_2_out5: 1
+    property real soc_sam_conf_2_out6: 1
+    property real soc_sam_conf_2_out7: 1
+    property real soc_sam_conf_2_out8: 1
+    property real soc_sam_conf_2_out9: 1
+    property real soc_sam_conf_2_out10: 1
+    property real soc_sam_conf_2_out11: 1
+
+    property bool soc_crcValue: false
+    property bool soc_otpValue: false
+
+    property real addr_curr: 0
+
+
+
 
 
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process
-
 
     property bool outputEnable0: true
     property bool outputEnable1: true
