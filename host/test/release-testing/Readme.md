@@ -25,7 +25,7 @@ https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+
 
 # Notes
 1. This test was made to work with Windows. However, it is possible to run it on mac with some modifications on the paths and executables locations.
-1. `Test-SDSControlViews` is disabled and it will be fixed in this story CS-626.
-2. `Test-PlatformIdentification` is disabled by default, to enable this it, run `Test-StrataRelease.ps1` script with this optional flag `-EnablePlatformIdentificationTest`.
+2. `Test-SDSControlViews` is disabled and it will be fixed in this story CS-626.
+3. `Test-PlatformIdentification` is disabled by default, to enable this it, run `Test-StrataRelease.ps1` script with this optional flag `-EnablePlatformIdentificationTest`.
   * This test assumes that JLink software is installed in the default location `C:\Program Files (x86)\SEGGER\JLink\JLink.exe`.
   * This test requires connecting a platform and a JLink device to the test machine.
