@@ -64,6 +64,21 @@ Item {
         if(soc_sam_conf_1_values[11] === false)
             out12.status = SGStatusLight.Off
         else  out12.status = SGStatusLight.Red
+
+
+        platformInterface.soc_sam_conf_1_out1 = soc_sam_conf_1_values[0]
+        platformInterface.soc_sam_conf_1_out2 = soc_sam_conf_1_values[1]
+        platformInterface.soc_sam_conf_1_out3 = soc_sam_conf_1_values[2]
+        platformInterface.soc_sam_conf_1_out4 = soc_sam_conf_1_values[3]
+        platformInterface.soc_sam_conf_1_out5 = soc_sam_conf_1_values[4]
+        platformInterface.soc_sam_conf_1_out6 = soc_sam_conf_1_values[5]
+        platformInterface.soc_sam_conf_1_out7 = soc_sam_conf_1_values[6]
+        platformInterface.soc_sam_conf_1_out8 = soc_sam_conf_1_values[7]
+        platformInterface.soc_sam_conf_1_out9 = soc_sam_conf_1_values[8]
+        platformInterface.soc_sam_conf_1_out10 = soc_sam_conf_1_values[9]
+        platformInterface.soc_sam_conf_1_out11 = soc_sam_conf_1_values[10]
+        platformInterface.soc_sam_conf_1_out12 = soc_sam_conf_1_values[11]
+
     }
 
     property var soc_sam_conf_1_state: platformInterface.soc_sam_conf_1_state.state
@@ -199,6 +214,19 @@ Item {
         if(soc_sam_conf_2_values[11] === false)
             samOut12.status = SGStatusLight.Off
         else  samOut12.status = SGStatusLight.Red
+
+        platformInterface.soc_sam_conf_2_out1 = soc_sam_conf_2_values[0]
+        platformInterface.soc_sam_conf_2_out2 = soc_sam_conf_2_values[1]
+        platformInterface.soc_sam_conf_2_out3 = soc_sam_conf_2_values[2]
+        platformInterface.soc_sam_conf_2_out4 = soc_sam_conf_2_values[3]
+        platformInterface.soc_sam_conf_2_out5 = soc_sam_conf_2_values[4]
+        platformInterface.soc_sam_conf_2_out6 = soc_sam_conf_2_values[5]
+        platformInterface.soc_sam_conf_2_out7 = soc_sam_conf_2_values[6]
+        platformInterface.soc_sam_conf_2_out8 = soc_sam_conf_2_values[7]
+        platformInterface.soc_sam_conf_2_out9 = soc_sam_conf_2_values[8]
+        platformInterface.soc_sam_conf_2_out10 = soc_sam_conf_2_values[9]
+        platformInterface.soc_sam_conf_2_out11 = soc_sam_conf_2_values[10]
+        platformInterface.soc_sam_conf_2_out12 = soc_sam_conf_2_values[11]
     }
 
     property var soc_sam_conf_2_state: platformInterface.soc_sam_conf_2_state.state
@@ -513,7 +541,9 @@ Item {
                                              platformInterface.soc_sam_conf_1_out8,
                                              platformInterface.soc_sam_conf_1_out9,
                                              platformInterface.soc_sam_conf_1_out10,
-                                             platformInterface.soc_sam_conf_1_out11
+                                             platformInterface.soc_sam_conf_1_out11,
+                                             platformInterface.soc_sam_conf_1_out12
+
                                             ],
                                             [platformInterface.soc_sam_conf_2_out1,
                                              platformInterface.soc_sam_conf_2_out2,
@@ -525,7 +555,8 @@ Item {
                                              platformInterface.soc_sam_conf_2_out8,
                                              platformInterface.soc_sam_conf_2_out9,
                                              platformInterface.soc_sam_conf_2_out10,
-                                             platformInterface.soc_sam_conf_2_out11
+                                             platformInterface.soc_sam_conf_2_out11,
+                                             platformInterface.soc_sam_conf_2_out12
                                             ],
                                             samOpenLoadDiagnostic.currentText,
                                             platformInterface.soc_otpValue,
@@ -1118,40 +1149,6 @@ Item {
                             width: 140 * ratioCalc
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                             //text: "0x60"
-                            //                            onAccepted: {
-                            //                                platformInterface.addr_curr = parseInt(text, 16)
-
-                            //                                platformInterface.set_soc_write.update(
-                            //                                          platformInterface.soc_otpValue,
-                            //                                           [platformInterface.soc_sam_conf_1_out1,
-                            //                                            platformInterface.soc_sam_conf_1_out2,
-                            //                                            platformInterface.soc_sam_conf_1_out3,
-                            //                                            platformInterface.soc_sam_conf_1_out4,
-                            //                                            platformInterface.soc_sam_conf_1_out5,
-                            //                                            platformInterface.soc_sam_conf_1_out6,
-                            //                                            platformInterface.soc_sam_conf_1_out7,
-                            //                                            platformInterface.soc_sam_conf_1_out8,
-                            //                                            platformInterface.soc_sam_conf_1_out9,
-                            //                                            platformInterface.soc_sam_conf_1_out10,
-                            //                                            platformInterface.soc_sam_conf_1_out11
-                            //                                            ],
-                            //                                            [platformInterface.soc_sam_conf_2_out1,
-                            //                                             platformInterface.soc_sam_conf_2_out2,
-                            //                                             platformInterface.soc_sam_conf_2_out3,
-                            //                                             platformInterface.soc_sam_conf_2_out4,
-                            //                                             platformInterface.soc_sam_conf_2_out5,
-                            //                                             platformInterface.soc_sam_conf_2_out6,
-                            //                                             platformInterface.soc_sam_conf_2_out7,
-                            //                                             platformInterface.soc_sam_conf_2_out8,
-                            //                                             platformInterface.soc_sam_conf_2_out9,
-                            //                                             platformInterface.soc_sam_conf_2_out10,
-                            //                                             platformInterface.soc_sam_conf_2_out11
-                            //                                             ],
-                            //                                            samOpenLoadDiagnostic.currentText,
-                            //                                            platformInterface.soc_otpValue,
-                            //                                            platformInterface.addr_curr)
-                            //                            }
-
                         }
 
                         property var soc_addr_curr_caption: platformInterface.soc_addr_curr_caption.caption
@@ -1206,8 +1203,38 @@ Item {
                                 top: platformInterface.soc_addr_new.scales[0]
                                 bottom: platformInterface.soc_addr_new.scales[1]
                             }
-                            placeholderText: "0x60-0x7F"
-
+                            onAccepted: {
+                                platformInterface.addr_curr = text
+                                platformInterface.set_soc_write.update(
+                                            platformInterface.soc_otpValue,
+                                            [platformInterface.soc_sam_conf_1_out1,
+                                             platformInterface.soc_sam_conf_1_out2,
+                                             platformInterface.soc_sam_conf_1_out3,
+                                             platformInterface.soc_sam_conf_1_out4,
+                                             platformInterface.soc_sam_conf_1_out5,
+                                             platformInterface.soc_sam_conf_1_out6,
+                                             platformInterface.soc_sam_conf_1_out7,
+                                             platformInterface.soc_sam_conf_1_out8,
+                                             platformInterface.soc_sam_conf_1_out9,
+                                             platformInterface.soc_sam_conf_1_out10,
+                                             platformInterface.soc_sam_conf_1_out11
+                                            ],
+                                            [platformInterface.soc_sam_conf_2_out1,
+                                             platformInterface.soc_sam_conf_2_out2,
+                                             platformInterface.soc_sam_conf_2_out3,
+                                             platformInterface.soc_sam_conf_2_out4,
+                                             platformInterface.soc_sam_conf_2_out5,
+                                             platformInterface.soc_sam_conf_2_out6,
+                                             platformInterface.soc_sam_conf_2_out7,
+                                             platformInterface.soc_sam_conf_2_out8,
+                                             platformInterface.soc_sam_conf_2_out9,
+                                             platformInterface.soc_sam_conf_2_out10,
+                                             platformInterface.soc_sam_conf_2_out11
+                                            ],
+                                            samOpenLoadDiagnostic.currentText,
+                                            platformInterface.soc_otpValue,
+                                            platformInterface.addr_curr)
+                            }
                         }
 
                         //what's scale for

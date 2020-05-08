@@ -1420,38 +1420,93 @@ Item {
                                      show: function () { CorePlatformInterface.show(this) }
                                  })
 
-    property real soc_sam_conf_1_out1: 1
-    property real soc_sam_conf_1_out2: 1
-    property real soc_sam_conf_1_out3: 1
-    property real soc_sam_conf_1_out4: 1
-    property real soc_sam_conf_1_out5: 1
-    property real soc_sam_conf_1_out6: 1
-    property real soc_sam_conf_1_out7: 1
-    property real soc_sam_conf_1_out8: 1
-    property real soc_sam_conf_1_out9: 1
-    property real soc_sam_conf_1_out10: 1
-    property real soc_sam_conf_1_out11: 1
 
-    property real soc_sam_conf_2_out1: 1
-    property real soc_sam_conf_2_out2: 1
-    property real soc_sam_conf_2_out3: 1
-    property real soc_sam_conf_2_out4: 1
-    property real soc_sam_conf_2_out5: 1
-    property real soc_sam_conf_2_out6: 1
-    property real soc_sam_conf_2_out7: 1
-    property real soc_sam_conf_2_out8: 1
-    property real soc_sam_conf_2_out9: 1
-    property real soc_sam_conf_2_out10: 1
-    property real soc_sam_conf_2_out11: 1
+    //****************************
 
-    property bool soc_crcValue: false
-    property bool soc_otpValue: false
+    /*****************************************
 
-    property real addr_curr: 0
+   //**  Miscellaneous notification & cmds  **/
 
 
+    property var misc_id_vers_1: {
+        "caption":"ID_VERS_1",
+        "scales":[],
+        "state":"disabled",
+        "value":67,
+        "values":[]
+    }
 
+    property var misc_id_vers_1_caption: {
+        "caption":"ID_VERS_1"
+    }
 
+    property var misc_id_vers_1_state: {
+        "state":"disabled"
+    }
+
+    property var misc_id_vers_1_value: {
+        "value":67
+    }
+
+    property var misc_id_vers_2: {
+        "caption":"ID_VERS_2",
+        "scales":[],
+        "state":"disabled",
+        "value":4,
+        "values":[]
+    }
+
+    property var misc_id_vers_2_caption: {
+        "caption":"ID_VERS_2"
+    }
+
+    property var misc_id_vers_2_state: {
+        "state":"disabled"
+    }
+
+    property var misc_id_vers_2_value: {
+        "value": 4
+    }
+
+    property var misc_odd_ch_error: {
+        "caption":"Odd Channel Error",
+        "scales":[],
+        "state":"disabled",
+        "value":false,
+        "values":[]
+    }
+
+    property var misc_odd_ch_error_caption: {
+        "caption":"Odd Channel Error"
+    }
+
+    property var misc_odd_ch_error_state: {
+        "state":"disabled"
+    }
+
+    property var misc_odd_ch_error_value: {
+        "value": false
+    }
+
+    property var misc_even_ch_error: {
+        "caption":"Even Channel Error",
+        "scales":[],
+        "state":"disabled",
+        "value":false,
+        "values":[]
+    }
+
+    property var misc_even_ch_error_caption: {
+        "caption":"Even Channel Error"
+    }
+
+    property var misc_even_ch_error_state: {
+        "state":"disabled"
+    }
+
+    property var misc_even_ch_error_value: {
+        "value": false
+    }
 
 
     // -------------------------------------------------------------------
@@ -1518,7 +1573,36 @@ Item {
     property bool hazard_value: false
     property bool reverse_value: false
 
-    // property real startUI: 0
+    property real soc_sam_conf_1_out1: 1
+    property real soc_sam_conf_1_out2: 1
+    property real soc_sam_conf_1_out3: 1
+    property real soc_sam_conf_1_out4: 1
+    property real soc_sam_conf_1_out5: 1
+    property real soc_sam_conf_1_out6: 1
+    property real soc_sam_conf_1_out7: 1
+    property real soc_sam_conf_1_out8: 1
+    property real soc_sam_conf_1_out9: 1
+    property real soc_sam_conf_1_out10: 1
+    property real soc_sam_conf_1_out11: 1
+    property real soc_sam_conf_1_out12: 1
+
+    property real soc_sam_conf_2_out1: 1
+    property real soc_sam_conf_2_out2: 1
+    property real soc_sam_conf_2_out3: 1
+    property real soc_sam_conf_2_out4: 1
+    property real soc_sam_conf_2_out5: 1
+    property real soc_sam_conf_2_out6: 1
+    property real soc_sam_conf_2_out7: 1
+    property real soc_sam_conf_2_out8: 1
+    property real soc_sam_conf_2_out9: 1
+    property real soc_sam_conf_2_out10: 1
+    property real soc_sam_conf_2_out11: 1
+    property real soc_sam_conf_2_out12: 1
+
+    property bool soc_crcValue: false
+    property bool soc_otpValue: false
+
+    property real addr_curr: 0
 
 
     Connections {
