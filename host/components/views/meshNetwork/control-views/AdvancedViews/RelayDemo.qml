@@ -160,22 +160,22 @@ Rectangle {
         anchors.leftMargin:parent.width*.05
         anchors.verticalCenter: parent.verticalCenter
 
-        property var button: platformInterface.demo_click_notification
-        onButtonChanged:{
-            if (platformInterface.demo_click_notification.demo === "relay")
-                if (platformInterface.demo_click_notification.button === "switch1")
-                    if (platformInterface.demo_click_notification.value === "on"){
-                        switchOutline.isOn = true;
-                        if(relaySwitch.checked)
-                            lightBulb.onOpacity = 1
-                    }
-                       else{
-                        switchOutline.isOn = false;
-                        if(relaySwitch.checked)
-                            lightBulb.onOpacity = 0
-                    }
+//        property var button: platformInterface.demo_click_notification
+//        onButtonChanged:{
+//            if (platformInterface.demo_click_notification.demo === "relay")
+//                if (platformInterface.demo_click_notification.button === "switch1")
+//                    if (platformInterface.demo_click_notification.value === "on"){
+//                        switchOutline.isOn = true;
+//                        if(relaySwitch.checked)
+//                            lightBulb.onOpacity = 1
+//                    }
+//                       else{
+//                        switchOutline.isOn = false;
+//                        if(relaySwitch.checked)
+//                            lightBulb.onOpacity = 0
+//                    }
 
-        }
+//        }
 
         //this switch should have no effect on the lightbulb if the relay switch is off
         onClicked:{
@@ -348,16 +348,16 @@ Rectangle {
             grooveFillColor: "limegreen"
             grooveColor:"lightgrey"
 
-            property var button: platformInterface.demo_click_notification
-            onButtonChanged:{
-                if (platformInterface.demo_click_notification.demo === "relay")
-                    if (platformInterface.demo_click_notification.button === "relay_switch")
-                        if (platformInterface.demo_click_notification.value === "on")
-                            relaySwitch.isOn = true;
-                           else
-                            relaySwitch.isOn = false;
+//            property var button: platformInterface.demo_click_notification
+//            onButtonChanged:{
+//                if (platformInterface.demo_click_notification.demo === "relay")
+//                    if (platformInterface.demo_click_notification.button === "relay_switch")
+//                        if (platformInterface.demo_click_notification.value === "on")
+//                            relaySwitch.isOn = true;
+//                           else
+//                            relaySwitch.isOn = false;
 
-            }
+//            }
 
             onToggled: {
                 //note that turning on or off the relay doesn't change the state of the light

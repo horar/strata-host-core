@@ -64,15 +64,15 @@ Rectangle {
         text:"current temperature is"
         visible:false
 
-        property var sensorData: platformInterface.demo_click_notification
-        onSensorDataChanged:{
-            if (platformInterface.demo_click_notification.demo === "sensor")
-                if (platformInterface.demo_click_notification.button === "get_sensor_data"){
-                    temperatureText.visible = true
-                    temperatureText.text += latformInterface.demo_click_notification.value + "°C"
-                }
+//        property var sensorData: platformInterface.demo_click_notification
+//        onSensorDataChanged:{
+//            if (platformInterface.demo_click_notification.demo === "sensor")
+//                if (platformInterface.demo_click_notification.button === "get_sensor_data"){
+//                    temperatureText.visible = true
+//                    temperatureText.text += latformInterface.demo_click_notification.value + "°C"
+//                }
 
-        }
+//        }
     }
 
     Image{
