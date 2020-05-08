@@ -27,7 +27,7 @@ QString LogModel::populateModel(const QString &path, const qint64 &lastPosition)
     QFile file(path);
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text) == false) {
-        qCWarning(logCategoryLogViewer) << "cannot open " + path + " " + file.errorString();
+        qCWarning(logCategoryLogViewer) << "cannot open file with path " + path + " " + file.errorString();
         return file.errorString();
     }
     if (fileModel_.containsFilePath(path) == false) {
@@ -71,8 +71,8 @@ QString LogModel::populateModel(const QString &path, const qint64 &lastPosition)
 QString LogModel::followFile(const QString &path)
 {
     if (fileModel_.containsFilePath(path)) {
-        qCWarning(logCategoryLogViewer) << "cannot open " + path + " " + "Already following";
-        return "Already following file";
+        qCWarning(logCategoryLogViewer) << "cannot open file with path " + path + " " + "file is already opened";
+        return "file is already opened";
     } else {
         return populateModel(path, 0);
     }
