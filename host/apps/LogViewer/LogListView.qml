@@ -1,7 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
-import tech.strata.fonts 1.0 as StrataFonts
 import tech.strata.logviewer.models 1.0 as LogViewModels
 
 Item {
@@ -187,7 +186,6 @@ Item {
                     anchors {
                         left: levelHeader.left
                         centerIn: parent
-                        //verticalCenter: parent.verticalCenter
                     }
                     font.family: "monospace"
                     text: qsTr("Level")

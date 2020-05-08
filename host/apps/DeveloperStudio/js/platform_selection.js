@@ -238,7 +238,7 @@ function insertUnknownListing (platform) {
         "class_id" : platform.class_id,
         "opn": "Class id: " + platform.class_id,
         "description": "Strata does not recognize this class_id. Updating Strata may fix this problem.",
-        "image": "file:/", // Assigns 'not found' image
+        "image": "", // Assigns 'not found' image
         "available": { "control": false, "documents": false },  // Don't allow control or docs for unknown platform
         "filters":[],
         "error": true
@@ -261,7 +261,7 @@ function insertUnlistedListing (platform) {
         "class_id" : platform.class_id,
         "opn": "Class id: " + platform.class_id,
         "description": "No information to display.",
-        "image": "file:/", // Assigns 'not found' image
+        "image": "", // Assigns 'not found' image
         "available": { "control": true, "documents": true },  // If UI exists and customer has physical platform, allow access
         "filters":[],
         "name": UuidMap.uuid_map[class_id_string],
