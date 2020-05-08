@@ -225,6 +225,17 @@ Rectangle{
             }
         }
 
+        Rectangle{
+            id:demoConsoleDivider
+            anchors.right:parent.right
+            anchors.rightMargin: 1
+            anchors.top:parent.top
+            anchors.bottom:parent.bottom
+            width:1
+            color:"grey"
+
+        }
+
     }
 
     Widget09.SGSegmentedButtonStrip {
@@ -276,8 +287,8 @@ Rectangle{
 //                    anchors.right:drawerToggleButton.left
 //                    anchors.rightMargin: 10
                     anchors.centerIn: parent
-                    height:30
-                    width:30
+                    height:25
+                    width:25
                     source: helpSegmentedButton.checked ? "qrc:/views/meshNetwork/images/question-circle-white.svg" : "qrc:/sgimages/question-circle.svg"
                     fillMode: Image.PreserveAspectFit
                     mipmap:true

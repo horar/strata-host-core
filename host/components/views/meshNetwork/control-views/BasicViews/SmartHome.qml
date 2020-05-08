@@ -80,8 +80,7 @@ Rectangle {
         onNetworkChanged:{
 
             //iterate over the nodes in the notification, and over the meshArray nodes for each node in the
-            //notification. If the node number already exists in the meshArray, then set the notification's nodeNumber to
-            //-1. If the node exists in the meshArray, but not in the notification, the node has been lost without a notification
+            //notification. If the node exists in the meshArray, but not in the notification, the node has been lost without a notification
             //coming through, so remove the node from the meshArray
             //console.log("updating nodes",platformInterface.network_notification.nodes.length)
             var nodeFoundInMeshArray = false;
