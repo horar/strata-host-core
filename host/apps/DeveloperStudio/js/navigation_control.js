@@ -11,9 +11,6 @@ var context = {
     "user_id" : "",
     "first_name" : "",
     "last_name" : "",
-    "class_id" : "",
-    "is_logged_in" : false,
-    "platform_state" : "",
     "error_message": ""
 }
 
@@ -22,7 +19,8 @@ var context = {
 */
 var screens = {
     LOGIN_SCREEN: "qrc:/SGLogin.qml",
-    WELCOME_SCREEN : "qrc:/SGWelcome.qml",
+    PLATFORM_SELECTOR : "qrc:/SGPlatformSelector.qml",
+    PLATFORM_VIEW : "qrc:/partial-views/platform-view/SGPlatformView.qml",
     CONTENT_SCREEN : "qrc:/Content.qml",
     STATUS_BAR: "qrc:/SGStatusBar.qml",
     LOAD_ERROR: "qrc:/partial-views/SGLoadError.qml"
@@ -45,12 +43,10 @@ var events = {
     LOGIN_SUCCESSFUL_EVENT:         2,
     LOGOUT_EVENT:                   3,
     PLATFORM_DISCONNECTED_EVENT:    4,
-    SHOW_CONTROL_EVENT:             5,
-    OFFLINE_MODE_EVENT:             6,
-    NEW_PLATFORM_CONNECTED_EVENT:   7,
-    TOGGLE_CONTROL_CONTENT:         8,
-    SHOW_CONTROL:                   9,
-    SHOW_CONTENT:                   10,
+    VIEW_COLLATERAL_EVENT:          6,
+    PLATFORM_CONNECTED_EVENT:       7,
+    CLOSE_PLATFORM_VIEW_EVENT:      8,
+    SWITCH_VIEW_EVENT:              9,
 }
 
 /*
@@ -59,8 +55,25 @@ var events = {
 var navigation_state_ = states.UNINITIALIZED
 var control_container_ = null
 var content_container_ = null
+var main_container_ = null
 var status_bar_container_ = null
-var flipable_parent_= null
+var platform_view_repeater_ = null
+var platform_view_model_ = null
+var stack_container_= null
+
+/*
+  Navigation initialized with parent containers
+  that will hold views
+*/
+function init(status_bar_container, stack_container)
+{
+    status_bar_container_ = status_bar_container
+    main_container_ = stack_container.mainContainer
+    platform_view_repeater_ = stack_container.platformViewRepeater
+    platform_view_model_ = stack_container.platformViewModel
+    stack_container_ = stack_container
+    updateState(events.PROMPT_LOGIN_EVENT)
+}
 
 /*
     Retrieve the qml file in the templated file structure
@@ -111,19 +124,6 @@ function loadViewVersion(filePath)
 }
 
 /*
-  Navigation must be initialized with parent container
-  that will hold control views
-*/
-function init(flipable_parent, control_parent, content_parent, bar_parent)
-{
-    flipable_parent_    = flipable_parent
-    control_container_ = control_parent
-    content_container_ = content_parent
-    status_bar_container_ = bar_parent
-    updateState(events.PROMPT_LOGIN_EVENT)
-}
-
-/*
   Dynamically load qml controls by qml filename
 */
 function createView(name, parent)
@@ -135,7 +135,7 @@ function createView(name, parent)
         removeView(parent)
     }
     catch(err){
-        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "ERROR: Could not destroy child")
+        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "ERROR: Could not destroy child")
     }
 
     var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
@@ -148,7 +148,9 @@ function createView(name, parent)
     var object = component.createObject(parent,context)
     if (object === null) {
         console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Error creating object: name=", name, ", parameters=", JSON.stringify(context));
-    }
+    } else {
+        context.error_message = ""
+    }
     return object;
 }
 
@@ -178,9 +180,8 @@ function globalEventHandler(event,data)
         //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Updated state to Login:", states.LOGIN_STATE)
         navigation_state_ = states.LOGIN_STATE
 
-        // Update both containers
-        removeView(content_container_)
-        createView(screens.LOGIN_SCREEN, control_container_)
+        // Show login, reset stack
+        createView(screens.LOGIN_SCREEN, main_container_)
 
         // Remove StatusBar at Login
         removeView(status_bar_container_)
@@ -188,37 +189,19 @@ function globalEventHandler(event,data)
         break;
 
     case events.LOGOUT_EVENT:
-        updateState(events.SHOW_CONTROL)
-
-        context.is_logged_in = false;
         context.user_id = ""
         context.first_name = ""
         context.last_name = ""
 
-        removeView(content_container_)
-        removeView(control_container_)
-
-        // Set login state before disconnect event, so global event happens, not control_state version
-        navigation_state_ = states.LOGIN_STATE
-        updateState(events.PLATFORM_DISCONNECTED_EVENT)
+        // Reset stack, remove all platform views
+        stack_container_.currentIndex = 0
+        while (platform_view_model_.count > 0) {
+            platform_view_model_.remove(0)
+        }
 
         // Show Login Screen
-//        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Logging user out. Displaying Login screen")
+        navigation_state_ = states.LOGIN_STATE
         updateState(events.PROMPT_LOGIN_EVENT)
-        break;
-
-    case events.NEW_PLATFORM_CONNECTED_EVENT:
-        // Cache platform name until we are ready to view
-        //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform connected. Caching platform: ", data.class_id)
-        context.class_id = data.class_id
-        context.platform_state = true;
-        break;
-
-    case events.PLATFORM_DISCONNECTED_EVENT:
-        // Disconnected
-//        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform disconnected in global event handler")
-        context.class_id = "";
-        context.platform_state = false;
         break;
 
     default:
@@ -246,8 +229,6 @@ function updateState(event)
 */
 function updateState(event, data)
 {
-    //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Received event: ", event)
-
     switch(navigation_state_){
         case states.UNINITIALIZED:
             switch(event)
@@ -267,15 +248,15 @@ function updateState(event, data)
                 context.user_id = data.user_id
                 context.first_name = data.first_name
                 context.last_name = data.last_name
-                context.is_logged_in = true;
 
                 // Update StatusBar
                 status_bar_container_.visible = true
-                var statusBar = createView(screens.STATUS_BAR, status_bar_container_)
+                let statusBar = createView(screens.STATUS_BAR, status_bar_container_)
 
-                // Update Control by next state
+                createView(screens.PLATFORM_SELECTOR, main_container_)
+
+                // Progress to next state
                 navigation_state_ = states.CONTROL_STATE
-                updateState(events.SHOW_CONTROL_EVENT,null)
 
                  // Populate platforms only after all UI components are complete
                 statusBar.loginSuccessful()
@@ -290,76 +271,52 @@ function updateState(event, data)
         case states.CONTROL_STATE:
             switch(event)
             {
-            case events.SHOW_CONTROL_EVENT:
-                // Refresh Control View based on conditions
-                if (context.platform_state){
-                    // Show control when connected
-                    var qml_control = getQMLFile(context.class_id, "Control")
-                    let control = createView(qml_control, control_container_)
-                    if (control === null) {
-                        createView(screens.LOAD_ERROR, control_container_)
-                        context.error_message = ""
+            case events.PLATFORM_CONNECTED_EVENT:
+                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform connected, class_id:", data.class_id)
+                // Don't connect if a platform view already open (only one allowed at this time)
+                if (platform_view_model_.count === 0) {
+                    platform_view_model_.append({"class_id":data.class_id, "view":"control", "connected":true})
+                    stack_container_.currentIndex = platform_view_model_.count
+                } else {
+                    if (platform_view_model_.get(0).class_id === data.class_id) {
+                        // if existing view matches connected platform, re-connect status
+                        platform_view_model_.get(0).connected = true
                     }
                 }
-                else {
-                    // Disconnected; Show detection page
-                    createView(screens.WELCOME_SCREEN, control_container_)
-                }
-
-                // Show content when we have a platform clasS_id; doesn't have to be actively connected
-                if(context.class_id !== ""){
-                    var qml_content = getQMLFile(context.class_id, "Content")
-                    let content = createView(qml_content, content_container_)
-                    if (content === null) {
-                        createView(screens.LOAD_ERROR, content_container_)
-                        context.error_message = ""
-                    }
-                }
-                else {
-                    // Otherwise; no platform has been connected or chosen
-                    removeView(content_container_)
-                }
-                break;
-
-            case events.NEW_PLATFORM_CONNECTED_EVENT:
-                // Cache platform name until we are ready to view
-                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "new platform connected data:", data.class_id)
-                context.class_id = data.class_id
-                context.platform_state = true;
-                // Refresh
-                updateState(events.SHOW_CONTROL_EVENT)
                 break;
 
             case events.PLATFORM_DISCONNECTED_EVENT:
-                context.platform_state = false;
-                context.class_id = "";
-                // Refresh
-                updateState(events.SHOW_CONTROL_EVENT)
-                break;
-
-            case events.OFFLINE_MODE_EVENT:
-                // Offline mode just keeps platform_state as false
-                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Entering offline mode for ", data.class_id)
-                context.class_id = data.class_id
-                context.platform_state = false;
-                updateState(events.SHOW_CONTROL_EVENT)
-                break;
-
-            case events.TOGGLE_CONTROL_CONTENT:
-                // Flip to show control/content
-                flipable_parent_.flipped = !flipable_parent_.flipped
-
-                break;
-
-            case events.SHOW_CONTROL:
-                if (flipable_parent_.flipped) {
-                    updateState(events.TOGGLE_CONTROL_CONTENT)
+                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform disconnected, class_id:", data.class_id)
+                // Disable control view in any matching open platform view
+                for (let i=0; i< platform_view_model_.count; i++) {
+                    if (platform_view_model_.get(i).class_id === data.class_id) {
+                        platform_view_model_.get(i).connected = false
+                        break
+                    }
                 }
                 break;
 
-            case events.SHOW_CONTENT:
-                if (!flipable_parent_.flipped) {
-                    updateState(events.TOGGLE_CONTROL_CONTENT)
+            case events.CLOSE_PLATFORM_VIEW_EVENT:
+                stack_container_.currentIndex = 0 // focus platform selector in stack_container_
+                for (let i=0; i< platform_view_model_.count; i++) {
+                    if (platform_view_model_.get(i).class_id === data.class_id) {
+                        platform_view_model_.remove(i)
+                        break
+                    }
+                }
+                break;
+
+            case events.VIEW_COLLATERAL_EVENT:
+                // Collateral mode disables control view
+                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Entering collateral viewing mode for ", data.class_id)
+                platform_view_model_.append({"class_id":data.class_id, "view":"collateral", "connected":false})
+                stack_container_.currentIndex = platform_view_model_.count // focus on new view in stack_container_ (offset by 1 due to platform selector occupying index 0)
+                break;
+
+            case events.SWITCH_VIEW_EVENT:
+                // Change index of main view stack - switch between views or between view and platform selection
+                if (stack_container_.currentIndex !== data.index) {
+                    stack_container_.currentIndex = data.index
                 }
                 break;
 

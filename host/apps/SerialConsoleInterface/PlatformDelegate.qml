@@ -325,6 +325,9 @@ FocusScope {
                 checkable: true
                 onClicked: {
                     automaticScroll = !automaticScroll
+                    if (automaticScroll) {
+                        scrollbackView.positionViewAtEnd()
+                    }
                 }
 
                 Binding {
@@ -366,21 +369,21 @@ FocusScope {
                 }
             }
 
-            SGWidgets.SGIconButton {
-                hintText: qsTr("Program Device")
-                icon.source: "qrc:/sgimages/chip-flash.svg"
-                iconSize: toolButtonRow.iconHeight
-                onClicked: {
-                    programDeviceRequested()
-                }
-            }
+//            SGWidgets.SGIconButton {
+//                hintText: qsTr("Program Device")
+//                icon.source: "qrc:/sgimages/chip-flash.svg"
+//                iconSize: toolButtonRow.iconHeight
+//                onClicked: {
+//                    programDeviceRequested()
+//                }
+//            }
 
             SGWidgets.SGIconButton {
                 hintText: qsTr("Platform Info")
                 icon.source: "qrc:/sgimages/info-circle.svg"
                 iconSize: toolButtonRow.iconHeight
                 onClicked: {
-                    showPlatformInfoWindow("201", model.verboseName)
+                    showPlatformInfoWindow("201", model.platform.verboseName)
                 }
                 //hiden until remote db is ready
                 visible: false
@@ -402,24 +405,39 @@ FocusScope {
             property int filteredCount: scrollbackModel.count - scrollbackFilterModel.count
         }
 
+        SGWidgets.SGTag {
+            id: inputStatusTag
+            anchors {
+                top: toolButtonRow.bottom
+                left: parent.left
+                topMargin: 2
+                margins: 6
+            }
+
+            text: model.platform.errorString
+            verticalPadding: 1
+            color: SGWidgets.SGColorsJS.TANGO_SCARLETRED1
+            textColor: "white"
+            font.bold: true
+        }
+
         SGWidgets.SGTextField {
             id: cmdInput
             anchors {
-                top: toolButtonRow.bottom
+                top: inputStatusTag.bottom
                 left: parent.left
                 right: btnSend.left
                 topMargin: 2
                 margins: 6
             }
 
-            enabled: model.status === Sci.SciPlatformModel.Ready
-                     || model.status === Sci.SciPlatformModel.NotRecognized
+            enabled: model.platform.status === Sci.SciPlatform.Ready
+                     || model.platform.status === Sci.SciPlatform.NotRecognized
 
             focus: true
             font.family: StrataFonts.Fonts.inconsolata
             placeholderText: "Enter Command..."
             isValidAffectsBackground: true
-            maximumLength: 500
             suggestionListModel: commandHistoryModel
             suggestionModelTextRole: "message"
             suggestionPosition: Item.Top
@@ -428,9 +446,14 @@ FocusScope {
             suggestionOpenWithAnyKey: false
             suggestionMaxHeight: 250
             suggestionCloseOnDown: true
+            suggestionDelegateRemovable: true
+            showCursorPosition: true
+
+            onTextChanged: {
+                model.platform.errorString = "";
+            }
 
             Keys.onPressed: {
-                isValid = true
                 if (event.key === Qt.Key_Up) {
                     if (!suggestionPopup.opened) {
                         suggestionPopup.open()
@@ -448,6 +471,10 @@ FocusScope {
                 }
 
                 cmdInput.text = commandHistoryModel.get(index).message
+            }
+
+            onSuggestionDelegateRemoveRequested: {
+                model.platform.removeCommandFromHistoryAt(index)
             }
         }
 
@@ -480,25 +507,16 @@ FocusScope {
     }
 
     function sendTextInputTextAsComand() {
-        if (model.status !== Sci.SciPlatformModel.Ready
-                && model.status !== Sci.SciPlatformModel.NotRecognized) {
-            return
-        }
-
-        var successful = sciModel.platformModel.sendMessage(model.index, cmdInput.text)
-        if (successful) {
+        var result = model.platform.sendMessage(cmdInput.text)
+        if (result) {
             cmdInput.clear()
-        } else {
-            cmdInput.isValid = false
         }
     }
 
     function showFileExportDialog() {
         var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(platformDelegate, fileDialogComponent)
         dialog.accepted.connect(function() {
-            var result = sciModel.platformModel.exportScrollback(
-                        model.index,
-                        CommonCpp.SGUtilsCpp.urlToLocalFile(dialog.fileUrl))
+            var result = model.platform.exportScrollback(CommonCpp.SGUtilsCpp.urlToLocalFile(dialog.fileUrl))
             if (result === false) {
                 console.error(Logger.sciCategory, "failed to export content into", dialog.fileUrl)
 

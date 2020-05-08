@@ -7,6 +7,7 @@ import Qt.labs.settings 1.1 as QtLabsSettings
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/login_utilities.js" as Authenticator
+import "qrc:/js/uuid_map.js" as UuidMap
 
 Item {
     id: root
@@ -80,19 +81,17 @@ Item {
                             }
 
                             onClicked: {
-                                if (NavigationControl.context.is_logged_in == false) {
+                                if (NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
                                     NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
                                 }
-
-                                // Mock NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT)
-                                NavigationControl.context.class_id = "debug"
-                                NavigationControl.context.platform_state = true;
-                                NavigationControl.createView("qrc" + filePath + "/Control.qml", NavigationControl.control_container_)
-                                NavigationControl.createView("qrc" + filePath + "/Content.qml", NavigationControl.content_container_)
-
-                                NavigationControl.loadViewVersion("qrc" + filePath)
-
-                                viewCombobox.currentIndex = index
+                                const uuids = Object.keys(UuidMap.uuid_map)
+                                for (const uuid of uuids) {
+                                    if (UuidMap.uuid_map[uuid] === model.fileName) {
+                                        NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, { "class_id": uuid } )
+                                        viewCombobox.currentIndex = index
+                                        break
+                                    }
+                                }
                             }
                         }
                     }
@@ -118,7 +117,9 @@ Item {
             Button {
                 text: "Login as Guest"
                 onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                    if (NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
+                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                    }
                 }
             }
 
@@ -126,7 +127,7 @@ Item {
                 id: alwaysLogin
                 text: "Always Login as Guest"
                 onCheckedChanged: {
-                    if (checked) {
+                    if (checked && NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
                         NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
                     }
                 }

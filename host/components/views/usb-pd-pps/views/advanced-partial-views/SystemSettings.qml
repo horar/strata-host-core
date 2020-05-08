@@ -238,7 +238,7 @@ Item {
                     console.log("new hysteresis value2:", platformInterface.temperature_hysteresis.value)
                     return platformInterface.temperature_hysteresis.value
                 }
-                onMoved: {
+                onUserSet: {
                     platformInterface.set_temperature_hysteresis.update(value);
                 }
             }
@@ -343,7 +343,7 @@ Item {
 
             SGComboBox {
                 id: limitOutput
-                model: ["16","30","45","60"]
+                model: ["30","60"]
                 anchors {
                     left: parent.left
                     leftMargin: 135
@@ -441,6 +441,7 @@ Item {
                 }
                 from: 20
                 to: 100
+                stepSize:5
                 fromText.fontSizeMultiplier:.75
                 toText.fontSizeMultiplier: .75
                 fromText.text: "20°C"
@@ -471,7 +472,7 @@ Item {
 
             SGComboBox {
                 id: limitOutput2
-                model: ["16", "30", "45","60"]
+                model: [ "30","60"]
                 anchors {
                     left: parent.left
                     leftMargin: 135
@@ -558,17 +559,23 @@ Item {
 
             onOverTempEventChanged: {
                 if (overTempEvent.state === "above"){   //add temp  message to list
-                    stateMessage = platformInterface.over_temperature_notification.port
-                    stateMessage += " temperature is above ";
+                    stateMessage = "Temperature is above ";
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
                     stateMessage += " °C";
-                    //console.log("over temp event:",stateMessage)
-                    faultListModel.append({"type":"temperature", "portName":platformInterface.over_temperature_notification.port, "message":stateMessage});
+                    //if there's already a temperature fault in the list, remove it (there can only be one at a time)
+                    for(var a = 0; a < faultListModel.count; ++a){
+                        var theListItem = faultListModel.get(a);
+                        if (theListItem.type === "temperature"){
+                            console.log("removing old over-temp fault",a)
+                            faultListModel.remove(a);
+                        }
+                    }
+                    faultListModel.append({"type":"temperature", "message":stateMessage});
                 }
                 else{                                       //remove temp message for the correct port from list
                     for(var i = 0; i < faultListModel.count; ++i){
                         var theItem = faultListModel.get(i);
-                        if (theItem.type === "temperature" && theItem.portName === platformInterface.over_temperature_notification.port){
+                        if (theItem.type === "temperature"){
                             faultListModel.remove(i);
                         }
                     }
@@ -614,15 +621,13 @@ Item {
 
             onOverTempEventChanged: {
                 if (overTempEvent.state === "above"){   //add temp  message to list
-                    stateMessage = platformInterface.over_temperature_notification.port
-                    stateMessage += " temperature is above ";
+                    stateMessage = "Temperature is above ";
                     stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
                     stateMessage += " °C";
                     faultHistory.append(stateMessage);
                 }
                 else{
-//                    stateMessage = platformInterface.over_temperature_notification.port
-//                    stateMessage += " temperature went below ";
+//                    stateMessage += "Temperature went below ";
 //                    stateMessage += platformInterface.over_temperature_notification.maximum_temperature;
 //                    stateMessage += " °C";
 //                    faultHistory.input = stateMessage;

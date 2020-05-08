@@ -1,11 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file>SGContentContainer.qml</file>
-        <file>SGControlContainer.qml</file>
         <file>SGLogin.qml</file>
         <file>partial-views/login/LoginSignals.qml</file>
         <file>SGStatusBar.qml</file>
-        <file>SGWelcome.qml</file>
+        <file>SGPlatformSelector.qml</file>
         <file>include/Modules/CircleBadge.qml</file>
         <file>js/core_platform_interface.js</file>
         <file>js/feedback.js</file>
@@ -39,7 +37,6 @@
         <file>partial-views/status-bar/SGFeedbackPopup.qml</file>
         <file>partial-views/status-bar/SGMenuItem.qml</file>
         <file>partial-views/status-bar/SGSubmitInfoBox.qml</file>
-        <file>partial-views/status-bar/SGTabButton.qml</file>
         <file>partial-views/status-bar/SGToolButton.qml</file>
         <file>partial-views/login/registration/PasswordRequirements.qml</file>
         <file>partial-views/login/SGLoginControls.qml</file>
@@ -74,5 +71,8 @@
         <file>partial-views/platform-selector/images/icons/filter-icons/memory.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/interfaces.svg</file>
         <file>partial-views/SGLoadError.qml</file>
+        <file>partial-views/platform-view/SGPlatformView.qml</file>
+        <file>partial-views/status-bar/SGPlatformTab.qml</file>
+        <file>partial-views/platform-view/DisconnectedOverlay.qml</file>
     </qresource>
 </RCC>

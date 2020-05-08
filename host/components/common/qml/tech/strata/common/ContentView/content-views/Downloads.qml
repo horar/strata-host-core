@@ -330,6 +330,13 @@ Item {
 
                     fileDialog.open()
                 }
+
+                MouseArea {
+                    id: buttonCursor
+                    anchors.fill: parent
+                    onPressed:  mouse.accepted = false
+                    cursorShape: Qt.PointingHandCursor
+                }
             }
         }
 
@@ -371,6 +378,13 @@ Item {
             onClicked: {
                 var url = CommonCpp.SGUtilsCpp.pathToUrl(savePath)
                 repeater.model.downloadSelectedFiles(url)
+            }
+
+            MouseArea {
+                id: buttonCursor1
+                anchors.fill: parent
+                onPressed:  mouse.accepted = false
+                cursorShape: Qt.PointingHandCursor
             }
         }
     }

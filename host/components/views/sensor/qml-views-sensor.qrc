@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/views/sensor">
-        <file>Content.qml</file>
         <file>Control.qml</file>
         <file>control-views/TouchSensorControl.qml</file>
         <file>control-views/TemperatureSentorControl.qml</file>

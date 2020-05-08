@@ -3,9 +3,9 @@
 
 #include <QAbstractListModel>
 #include <QDateTime>
+#include <FileModel.h>
 
 
-/*forward declarations*/
 struct LogItem;
 class QTimer;
 
@@ -16,6 +16,7 @@ class LogModel : public QAbstractListModel
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(QDateTime oldestTimestamp READ oldestTimestamp NOTIFY oldestTimestampChanged)
     Q_PROPERTY(QDateTime newestTimestamp READ newestTimestamp NOTIFY newestTimestampChanged)
+    Q_PROPERTY(FileModel* fileModel READ fileModel CONSTANT)
 
 public:
     explicit LogModel(QObject *parent = nullptr);
@@ -38,22 +39,16 @@ public:
         LevelError
     };
     Q_ENUM(LogLevel)
-
     Q_INVOKABLE QString followFile(const QString &path);
 
-    void updateModel(const QString &path);
-
     QString getRotatedFilePath(const QString &path) const;
-
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-
     void clear(bool emitSignals);
-
     QDateTime oldestTimestamp() const;
     QDateTime newestTimestamp() const;
-
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    FileModel *fileModel();
 
 public slots:
     void checkFile();
@@ -65,24 +60,19 @@ signals:
     void countChanged();
     void oldestTimestampChanged();
     void newestTimestampChanged();
-    void fileChanged();
 
 private:
-    qint64 lastPos_;
-    qint64 rotatedPos_;
-    bool logRotated_ = false;
-    QString filePath_;
+    bool followingInitialized_ = false;
     QTimer *timer_;
-    QList<LogItem*>data_;
     QDateTime oldestTimestamp_;
     QDateTime newestTimestamp_;
-
-    static LogItem* parseLine(const QString &line);
-
+    QDateTime previousTimestamp_;
+    QList<LogItem> data_;
+    QVector<qint64> lastPositions_;
+    void parseLine(const QString &line, LogItem &item);
+    QString populateModel(const QString &path, const qint64 &lastPosition);
     void updateTimestamps();
-
-    QString populateModel(const QString &path, bool logRotated);
-
+    FileModel fileModel_;
     void setOldestTimestamp(const QDateTime &timestamp);
     void setNewestTimestamp(const QDateTime &timestamp);
 };
@@ -94,11 +84,15 @@ struct LogItem {
     {
     }
 
+    bool operator<(const LogItem& second) const {
+        return (timestamp < second.timestamp);
+    }
+
     QDateTime timestamp;
     QString pid;
     QString tid;
-    LogModel::LogLevel level;
     QString message;
+    LogModel::LogLevel level;
     int rowIndex;
 };
 

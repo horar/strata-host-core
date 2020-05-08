@@ -51,7 +51,7 @@ void StorageManager::init()
     Q_ASSERT(baseFolder_.isEmpty() == false);
 
     if (baseUrl_.isEmpty()) {
-        qCWarning(logCategoryHcsStorage) << "Base URL is empty.";
+        qCCritical(logCategoryHcsStorage) << "Base URL is empty.";
         return;
     }
 
@@ -132,7 +132,7 @@ void StorageManager::groupDownloadFinishedHandler(const QString &groupId, const 
     } else if (request->type == RequestType::FileDownload) {
         emit downloadPlatformFilesFinished(request->clientId, errorString);
     } else {
-        qCWarning(logCategoryHcsStorage) << "unknown request type";
+        qCCritical(logCategoryHcsStorage) << "unknown request type";
     }
 
     downloadRequests_.remove(groupId);
@@ -199,14 +199,14 @@ PlatformDocument* StorageManager::fetchPlatformDoc(const QString &classId)
     if (platDoc == nullptr) {
         std::string document;
         if (db_->getDocument(classId.toStdString(), document) == false) {
-            qCWarning(logCategoryHcsStorage) << "Platform document not found.";
+            qCCritical(logCategoryHcsStorage) << "Platform document not found.";
             return nullptr;
         }
 
         platDoc = new PlatformDocument(classId);
 
         if (platDoc->parseDocument(QString::fromStdString(document)) == false) {
-            qCWarning(logCategoryHcsStorage) << "Parse platform document failed!";
+            qCCritical(logCategoryHcsStorage) << "Parse platform document failed!";
 
             delete platDoc;
             return nullptr;
@@ -222,14 +222,14 @@ PlatformDocument* StorageManager::fetchPlatformDoc(const QString &classId)
 void StorageManager::requestPlatformList(const QByteArray &clientId)
 {
     if (isInitialized() == false) {
-        qCWarning(logCategoryHcsStorage) << "StorageManager is not initialized";
+        qCCritical(logCategoryHcsStorage) << "StorageManager is not initialized";
         handlePlatformListResponse(clientId, QJsonArray());
         return;
     }
 
     std::string platform_list_body;
     if (db_->getDocument("platform_list", platform_list_body) == false) {
-        qCWarning(logCategoryHcsStorage) << "platform_list document not found";
+        qCCritical(logCategoryHcsStorage) << "platform_list document not found";
         handlePlatformListResponse(clientId, QJsonArray());
         return;
     }
@@ -237,14 +237,14 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
     QJsonParseError parseError;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(platform_list_body.c_str(), &parseError);
     if (parseError.error != QJsonParseError::NoError ) {
-        qCWarning(logCategoryHcsStorage) << "Parse error" << parseError.errorString();
+        qCCritical(logCategoryHcsStorage) << "Parse error" << parseError.errorString();
         handlePlatformListResponse(clientId, QJsonArray());
         return;
     }
 
     QJsonArray jsonPlatformList = jsonDoc.object().value("platform_list").toArray();
     if (jsonPlatformList.isEmpty()) {
-        qCWarning(logCategoryHcsStorage) << "platform_list key is missing";
+        qCCritical(logCategoryHcsStorage) << "platform_list key is missing";
         handlePlatformListResponse(clientId, QJsonArray());
         return;
     }
@@ -258,13 +258,13 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
     for (const QJsonValue &value : jsonPlatformList) {
         QString classId = value.toObject().value("class_id").toString();
         if (classId.isEmpty()) {
-            qCWarning(logCategoryHcsStorage) << "class_id key is missing";
+            qCCritical(logCategoryHcsStorage) << "class_id key is missing";
             continue;
         }
 
         PlatformDocument *platDoc = fetchPlatformDoc(classId);
         if (platDoc == nullptr) {
-            qCWarning(logCategoryHcsStorage) << "Failed to fetch platform data with classId" << classId;
+            qCCritical(logCategoryHcsStorage) << "Failed to fetch platform data with classId" << classId;
             continue;
         }
 
@@ -276,9 +276,12 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
         item.md5 = platDoc->platformSelector().md5;
         downloadList << item;
 
+        QUrl url;
+        url.setScheme("file");
+        url.setPath(pathPrefix + platDoc->platformSelector().partialUri);
+
         QJsonObject jsonPlatform(value.toObject());
-        jsonPlatform.insert("image", pathPrefix + platDoc->platformSelector().partialUri);
-        jsonPlatform.insert("connection", "view");
+        jsonPlatform.insert("image", url.toString());
 
         jsonPlatformListResponse.append(jsonPlatform);
     }
@@ -304,7 +307,7 @@ void StorageManager::requestPlatformDocuments(
 
     if (platDoc == nullptr){
         platformDocumentsResponseRequested(clientId, QJsonArray(), "Failed to fetch platform data");
-        qCWarning(logCategoryHcsStorage) << "Failed to fetch platform data with id:" << classId;
+        qCCritical(logCategoryHcsStorage) << "Failed to fetch platform data with id:" << classId;
         return;
     }
 
@@ -352,7 +355,7 @@ void StorageManager::requestDownloadPlatformFiles(
     //suplement info from db
     QStringList splitPath = partialUriList.first().split("/");
     if (splitPath.isEmpty()) {
-        qCWarning(logCategoryHcsStorage) << "Failed to resolve classId from request";
+        qCCritical(logCategoryHcsStorage) << "Failed to resolve classId from request";
         emit downloadPlatformFilesFinished(clientId, "Failed to resolve classId from request");
         return;
     }
@@ -360,7 +363,7 @@ void StorageManager::requestDownloadPlatformFiles(
     QString classId = splitPath.first();
     PlatformDocument *platDoc = fetchPlatformDoc(classId);
     if (platDoc == nullptr) {
-        qCWarning(logCategoryHcsStorage) << "Failed to fetch platform data with classId" << classId;
+        qCCritical(logCategoryHcsStorage) << "Failed to fetch platform data with classId" << classId;
         emit downloadPlatformFilesFinished(clientId, "Failed to fetch platform data");
         return;
     }

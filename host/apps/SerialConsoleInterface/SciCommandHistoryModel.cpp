@@ -120,6 +120,19 @@ QStringList SciCommandHistoryModel::getCommandList() const
     return list;
 }
 
+bool SciCommandHistoryModel::removeAt(int row)
+{
+    if (row < 0 || row >= commandList_.length()) {
+        return false;
+    }
+
+    beginRemoveRows(QModelIndex(), row, row);
+    commandList_.removeAt(row);
+    endRemoveRows();
+
+    return true;
+}
+
 QHash<int, QByteArray> SciCommandHistoryModel::roleNames() const
 {
     QHash<int, QByteArray> roles;

@@ -10,7 +10,7 @@ SGWidgets.SGWindow {
     minimumWidth: 600
     minimumHeight: 400
 
-    title: "About " + Qt.application.name
+    title: qsTr("About")
     visible: true
     modality: Qt.ApplicationModal
     flags: Qt.Dialog

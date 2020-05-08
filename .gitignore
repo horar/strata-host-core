@@ -1,3 +1,8 @@
+RelWithDebInfo/
+Debug/
+MinSizeRel/
+Release/
+
 platform/cli/USB-PD/BUILD/*
 *build*/
 *BUILD*/
@@ -6,7 +11,6 @@ host/build
 *.pro.user*
 *.pro.user
 *.exe
-*.py
 !platform/lib/libmbed-os.a
 !host/lib/linux/lib*
 *.project
