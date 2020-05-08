@@ -238,6 +238,31 @@ Item {
 
     }
 
+    property var current_sense_interrupt_message: platformInterface.current_sense_interrupt.error_message
+    onCurrent_sense_interrupt_messageChanged: {
+        if(current_sense_interrupt_message !== "")
+            pushMessagesToLog(current_sense_interrupt_message)
+    }
+
+    property var voltage_sense_interrupt_message: platformInterface.voltage_sense_interrupt.error_message
+    onVoltage_sense_interrupt_messageChanged: {
+        if(voltage_sense_interrupt_message !== "")
+            pushMessagesToLog(voltage_sense_interrupt_message)
+    }
+
+    property var i_in_interrupt_message: platformInterface.i_in_interrupt.error_message
+    onI_in_interrupt_messageChanged: {
+        if(i_in_interrupt_message !== "")
+            pushMessagesToLog(i_in_interrupt_message)
+    }
+
+    property var led_status_CSA_warning: platformInterface.led_status.CSA_warning
+    onLed_status_CSA_warningChanged: {
+        if(led_status_CSA_warning !== "" && led_status_CSA_warning !== "N/A") {
+            pushMessagesToLog(led_status_CSA_warning)
+        }
+    }
+
 
 
     ColumnLayout {
@@ -1468,7 +1493,7 @@ Item {
                                                     fontSizeMultiplier: ratioCalc * 1.1
                                                     inputBox.validator: DoubleValidator { top: 10;  bottom: 0.01 }
                                                     onUserSet: {
-                                                         console.log("inputBoxWidth High", inputBoxWidth)
+                                                        console.log("inputBoxWidth High", inputBoxWidth)
                                                         if(highCurrentEnable.checked)
                                                             platformInterface.set_load_dac_load.update(highloadSetting.value.toFixed(2))
                                                     }

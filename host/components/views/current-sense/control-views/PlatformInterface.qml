@@ -21,6 +21,7 @@ Item {
 
     property var led_status: {
         "CSA_max_reading": "off",
+        "CSA_warning" : "",
         "interrupts": {
             "vs_int" : "off",
             "cs_int" : "off",
@@ -55,17 +56,20 @@ Item {
 
     property var current_sense_interrupt: {
         "value":"no",
-        "load_fault": "off"
+        "load_fault": "off",
+        "error_message": ""
     }
 
     property var voltage_sense_interrupt: {
         "value": "no",
-        "load_fault": "off"
+        "load_fault": "off",
+        "error_message": ""
     }
 
     property var i_in_interrupt: {
         "value": "no",
-        "load_fault": "off"
+        "load_fault": "off",
+        "error_message": ""
     }
 
     property var config_running: {
