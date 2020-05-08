@@ -46,7 +46,7 @@ Rectangle {
         opacity: 0.5
 
         onColorChanged: {
-            console.log("changing objectCircle node",nodeName.text, "to",color,"drag object color is",dragObject.color)
+            //console.log("changing objectCircle node",nodeName.text, "to",color,"drag object color is",dragObject.color)
             if (color != "#d3d3d3"){    //light grey
                 nodeNumber.visible = true;
             }
@@ -62,10 +62,6 @@ Rectangle {
             text:""
             font.pixelSize: 14
             visible:false
-
-            onTextChanged: {
-                console.log("node number changed to",nodeNumber.text)
-            }
         }
 
         Rectangle{
@@ -77,15 +73,15 @@ Rectangle {
             opacity: Drag.active ? 1: 0
             radius: height/2
 
-            property string number: nodeNumber.text
+            property alias number: nodeNumber.text
             property alias sensorText: sensorValueText.text
 
-            onNumberChanged: {
-                nodeNumber.text = number
-            }
+//            onNumberChanged: {
+//                nodeNumber.text = number
+//            }
 
             onColorChanged: {x
-                console.log("changing dragObject",nodeName.text,"color to",color)
+                //console.log("changing dragObject",nodeName.text,"color to",color)
                 parent.color = color    //allows the drop area to change the color of the source
             }
 
@@ -104,7 +100,7 @@ Rectangle {
                 //the color is reset to grey by the drop area,which breaks the binding of the drag
                 //color to the parent color. This manifests as a drag item that's grey if that node is
                 //added later with a different color. Resetting the binding here to fix that.
-                console.log("resetting drag area bindings")
+                //console.log("resetting drag area bindings")
                 color  = Qt.binding(function(){return parent.color})
                 number = Qt.binding(function(){return nodeNumber.text})
             }
@@ -173,10 +169,8 @@ Rectangle {
                     meshObject.nodeActivated(meshObject.scene, meshObject.pairingModel, drag.source.number, drag.source.color)
 
                     //update the properties of the object that was dropped on
-                    dragObject.color = drag.source.color;   //set this object's color to the dropped one
-                    dragObject.number = drag.source.number
-                    //reset the bindings after changing the color
-                    dragObject.resetBindings()
+                    objectCircle.color = drag.source.color;
+                    nodeNumber.text  = drag.source.number
 
                     //if this node is still showing sensor data
                     console.log("clearing sensor text")
@@ -184,8 +178,6 @@ Rectangle {
                     drag.source.number = ""
                     drag.source.color = "lightgrey"         //reset the dropped object's color to grey
                     text: qsTr("text")
-
-
 
                     //tell the firmware of the change
                     platformInterface.set_node_mode.update(pairingModel,parseInt(meshObject.nodeNumber),true)

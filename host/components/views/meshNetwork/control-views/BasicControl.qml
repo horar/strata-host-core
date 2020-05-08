@@ -22,6 +22,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 20
         text: "Virtual environment:"
+        font.pixelSize: 24
 
     }
 
@@ -30,8 +31,9 @@ Rectangle {
        anchors.verticalCenter: viewComboLabel.verticalCenter
        anchors.left:viewComboLabel.right
        anchors.leftMargin: 5
-       width: 125
+       width: 200
        model: [ "Office", "Smart home"]
+       fontSizeMultiplier: 1.75
 
        onCurrentIndexChanged: {
            if (currentIndex === 0){
