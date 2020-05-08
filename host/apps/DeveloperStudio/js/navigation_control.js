@@ -290,7 +290,6 @@ function updateState(event, data)
                 // Disable control view in any matching open platform view
                 for (let i=0; i< platform_view_model_.count; i++) {
                     if (platform_view_model_.get(i).class_id === data.class_id) {
-                        platform_view_model_.get(i).view = "collateral"
                         platform_view_model_.get(i).connected = false
                         break
                     }

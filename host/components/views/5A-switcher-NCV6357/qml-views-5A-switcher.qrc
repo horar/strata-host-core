@@ -2,7 +2,6 @@
     <qresource prefix="/views/5A-switcher-NCV6357">
         <file>AdvancedControl.qml</file>
         <file>BasicControl.qml</file>
-        <file>Content.qml</file>
         <file>Control.qml</file>
         <file>Diagnotics.qml</file>
         <file>PlatformInterface.qml</file>

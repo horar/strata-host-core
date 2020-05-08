@@ -186,11 +186,6 @@ function parseConnectedPlatforms (connected_platform_list_json) {
 }
 
 function selectPlatform(class_id){
-    // Get docs if no views are currently open (only one set of docs supported at this time)
-    if (platformViewModel.count === 0) {
-        coreInterface.connectToPlatform(class_id)
-    }
-
     let index = platformMap[String(class_id)].index
     let data = { "class_id": class_id }
     if (platformListModel.get(index).connection === "view" || platformMap[String(class_id)].ui_exists === false) {
