@@ -107,6 +107,10 @@ Item {
 
     }
 
+    property var switch_status_notification: {
+        switch_status: ""
+    }
+
     property var set_initial_state_UI : ({
                                              "cmd" : "set_initial_state_UI",
                                              update: function () {

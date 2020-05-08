@@ -71,6 +71,32 @@ Item {
         }
     }
 
+    property var switch_status_notification: platformInterface.switch_status_notification.switch_status
+    onSwitch_status_notificationChanged: {
+        if(switch_status_notification !== "") {
+            if(switch_status_notification === "freeze") {
+                enable1.enabled = false
+                enable2.enabled = false
+                enable3.enabled = false
+                enable4.enabled = false
+                enable5.enabled = false
+                lowLoadEnable.enabled = false
+                midCurrentEnable.enabled = false
+                highCurrentEnable.enabled = false
+            }
+            else {
+                enable1.enabled = true
+                enable2.enabled = true
+                enable3.enabled = true
+                enable4.enabled = true
+                enable5.enabled = true
+                lowLoadEnable.enabled = true
+                midCurrentEnable.enabled = true
+                highCurrentEnable.enabled = true
+            }
+        }
+    }
+
     property var initial_status: platformInterface.initial_status
     onInitial_statusChanged: {
         if(initial_status.en_210 === "on") {
