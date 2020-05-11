@@ -75,7 +75,7 @@ function Flash-JLinkFunction {
 
     # Check the exit code of JLinkExe
     If($JLinkProcess.ExitCode -ne 0) {
-        write-Indented "ERROR: JLinkExe faild during platform flashing."
+        write-Indented "ERROR: JLinkExe failed during platform flashing."
         return $false
     }
     Else {
@@ -127,10 +127,10 @@ function Test-PlatformIdentification {
         $BinariesPath = $PathToBinaries
     }
     Else {
-        $DefualtBinDirectory = "$TestRoot\PlatformIdentification\BinaryFiles"
-        Write-Host "Binary files location was not supplied, the binary files will be copied to $DefualtBinDirectory"
-        If ( $(Copy-AllBinariesFromAppData -DestinationDirectory $DefualtBinDirectory) -eq $true ) {
-            $BinariesPath = $DefualtBinDirectory
+        $DefaultBinDirectory = "$TestRoot\PlatformIdentification\BinaryFiles"
+        Write-Host "Binary files location was not supplied, the binary files will be copied to $DefaultBinDirectory"
+        If ( $(Copy-AllBinariesFromAppData -DestinationDirectory $DefaultBinDirectory) -eq $true ) {
+            $BinariesPath = $DefaultBinDirectory
         }
         Else {
             write-Indented "ERROR: Failed to get the binary files. Aborting..."
@@ -175,16 +175,16 @@ function Test-PlatformIdentification {
         Start-HCS
         
         # Start the python script
-        Write-Host "Startting the python Script..."
+        Write-Host "Starting the python Script..."
         $PythonScript =  Start-Process $PythonExec -ArgumentList "$PythonScriptPath $ZmqEndpoint" -NoNewWindow -PassThru -Wait
         
         # check the exit status of the python Script.
         If ($PythonScript.ExitCode -eq 0) {
             # Test Successful
-            write-Indented "PASS: Test Sucessful" # print a better output! add the file name and change the color of output 
+            write-Indented "PASS: Test successful."
         } Else {
             $FailedTestsList += $BinaryFile     # Add the name of the binary to a list to be printed in the test summary.
-            write-Indented "ERROR: Test Failed." # print a better output! add the file name and change the color of output 
+            write-Indented "ERROR: Test Failed."
         }
 
         # Kill all hcs..

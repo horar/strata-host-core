@@ -24,7 +24,6 @@ def checkIfPlatformConnected(hcsMessage):
     #     }
     jsonResponse = json.loads(message)
 
-    # Very long if statement :/
     if ( "hcs::notification" in jsonResponse
             and "type" in jsonResponse["hcs::notification"]
             and jsonResponse["hcs::notification"]["type"] == "connected_platforms"
@@ -33,9 +32,9 @@ def checkIfPlatformConnected(hcsMessage):
 
         print("Valid connected platform notification.")
         return True
-    else:
-        print("Invalid connected platform notification.")
-        return False
+    
+    print("Invalid connected platform notification.")
+    return False
 
 # Zmq set up
 context = zmq.Context()
@@ -44,7 +43,7 @@ socket.RCVTIMEO = 2000
 socket.connect(zmqClientURL)
 
 # register the client with hcs. 
-print("Connecting to hcs…")
+print("Connecting to hcs...")
 socket.send(b'{"cmd":"register_client","payload":{}}')
 
 # Wait for hcs notification of connected platforms
