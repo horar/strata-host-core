@@ -1573,36 +1573,37 @@ Item {
     property bool hazard_value: false
     property bool reverse_value: false
 
-    property real soc_sam_conf_1_out1: 1
-    property real soc_sam_conf_1_out2: 1
-    property real soc_sam_conf_1_out3: 1
-    property real soc_sam_conf_1_out4: 1
-    property real soc_sam_conf_1_out5: 1
-    property real soc_sam_conf_1_out6: 1
-    property real soc_sam_conf_1_out7: 1
-    property real soc_sam_conf_1_out8: 1
-    property real soc_sam_conf_1_out9: 1
-    property real soc_sam_conf_1_out10: 1
-    property real soc_sam_conf_1_out11: 1
-    property real soc_sam_conf_1_out12: 1
+    property bool soc_sam_conf_1_out1: false
+    property bool soc_sam_conf_1_out2: false
+    property bool soc_sam_conf_1_out3: false
+    property bool soc_sam_conf_1_out4: false
+    property bool soc_sam_conf_1_out5: false
+    property bool soc_sam_conf_1_out6: false
+    property bool soc_sam_conf_1_out7: false
+    property bool soc_sam_conf_1_out8: false
+    property bool soc_sam_conf_1_out9: false
+    property bool soc_sam_conf_1_out10: false
+    property bool soc_sam_conf_1_out11: false
+    property bool soc_sam_conf_1_out12: false
 
-    property real soc_sam_conf_2_out1: 1
-    property real soc_sam_conf_2_out2: 1
-    property real soc_sam_conf_2_out3: 1
-    property real soc_sam_conf_2_out4: 1
-    property real soc_sam_conf_2_out5: 1
-    property real soc_sam_conf_2_out6: 1
-    property real soc_sam_conf_2_out7: 1
-    property real soc_sam_conf_2_out8: 1
-    property real soc_sam_conf_2_out9: 1
-    property real soc_sam_conf_2_out10: 1
-    property real soc_sam_conf_2_out11: 1
-    property real soc_sam_conf_2_out12: 1
+    property bool soc_sam_conf_2_out1: true
+    property bool soc_sam_conf_2_out2: true
+    property bool soc_sam_conf_2_out3: true
+    property bool soc_sam_conf_2_out4: true
+    property bool soc_sam_conf_2_out5: true
+    property bool soc_sam_conf_2_out6: true
+    property bool soc_sam_conf_2_out7: true
+    property bool soc_sam_conf_2_out8: true
+    property bool soc_sam_conf_2_out9: true
+    property bool soc_sam_conf_2_out10: true
+    property bool soc_sam_conf_2_out11: true
+    property bool soc_sam_conf_2_out12: true
 
     property bool soc_crcValue: false
     property bool soc_otpValue: false
 
     property real addr_curr: 0
+    property real addr_curr_apply: 0
 
 
     Connections {
