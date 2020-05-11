@@ -48,7 +48,6 @@ Item {
         Help.registerTarget(recalibrateContainer, "This will recalibrate all 5 circuits so set the new offset reading. It is recommended to recalibrate before measurements or anytime the input voltage is changed.", 4, "currentSenseHelp")
         Help.registerTarget(activeDischargeLabel, "This switch enables/disables the active discharge on the output of the board. When this switch is enabled the output will actively discharge the output capacitance.", 3,"currentSenseHelp")
         Help.registerTarget(reset, "This will reset the board by turning all circuitry off. If an interrupt occurred, the parameters that caused the interrupt will need to be fixed in order for the board to reset itself.", 5, "currentSenseHelp")
-
         Help.registerTarget(onBoardColumn, "These are the controls for the programmable load included on the board. The load is split into 3 circuits each with independent controls. Only 1 load circuit may be on at a time. The ranges for each load circuit are given by the labels below the sliders, and the sliders can be adjusted to draw the desired load. The switches enable and disable the circuit.", 6, "currentSenseHelp")
         Help.registerTarget(ledSection, "The 3 LEDs on the left give the status of the board's individual interrupts. On-Board Load is for the load circuits provided on the board and the input current is the total current travelling through the input of the entire board. The Fault LED is the general indicator that an interrupt occurred and as long as this LED is on the board will not be able to turn on. In order to clear the Fault, first make sure the cause of the interrupt is solved and then use the Reset button in the Settings section.", 7, "currentSenseHelp")
         Help.registerTarget(interruptBox, "These readings will let the user know where the interrupt thresholds are and will change depending on which circuit is on as well as input voltage/current through the board is. If these thresholds are exceeded an interrupt will occur.", 8, "currentSenseHelp")
@@ -1950,7 +1949,7 @@ Item {
 
                                                         fontSizeMultiplier: logFault.fontSizeMultiplier
                                                         color: model.color
-                                                        wrapMode: Text.WrapAnywhere
+                                                        wrapMode: Text.Wrap
                                                         width: parent.width
                                                     }
                                                 }
