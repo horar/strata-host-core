@@ -27,7 +27,9 @@ bool BaseDeviceCommand::ackReceived() const {
     return ackReceived_;
 }
 
-void BaseDeviceCommand::onTimeout() { }
+void BaseDeviceCommand::onTimeout() {
+    result_ = CommandResult::Undone;
+}
 
 bool BaseDeviceCommand::skip() {
     return false;
@@ -90,9 +92,7 @@ bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc) {
 }
 
 void CmdGetFirmwareInfo::onTimeout() {
-    if (requireResponse_ == false) {
-        result_ = CommandResult::Done;
-    }
+    result_ = (requireResponse_) ? CommandResult::Undone : CommandResult::Done;
 }
 
 
