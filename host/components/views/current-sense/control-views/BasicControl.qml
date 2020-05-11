@@ -71,10 +71,62 @@ Item {
         }
     }
 
-    property var switch_status_notification: platformInterface.switch_status_notification.switch_status
-    onSwitch_status_notificationChanged: {
-        if(switch_status_notification !== "") {
-            if(switch_status_notification === "freeze") {
+    property var switch_status_notification_current: platformInterface.current_sense_interrupt.switch_status
+    onSwitch_status_notification_currentChanged: {
+        if(switch_status_notification_current !== "") {
+            if(switch_status_notification_current === "freeze") {
+                enable1.enabled = false
+                enable2.enabled = false
+                enable3.enabled = false
+                enable4.enabled = false
+                enable5.enabled = false
+                lowLoadEnable.enabled = false
+                midCurrentEnable.enabled = false
+                highCurrentEnable.enabled = false
+            }
+            else {
+                enable1.enabled = true
+                enable2.enabled = true
+                enable3.enabled = true
+                enable4.enabled = true
+                enable5.enabled = true
+                lowLoadEnable.enabled = true
+                midCurrentEnable.enabled = true
+                highCurrentEnable.enabled = true
+            }
+        }
+    }
+
+    property var switch_status_notification_voltage: platformInterface.voltage_sense_interrupt.switch_status
+    onSwitch_status_notification_voltageChanged: {
+        if(switch_status_notification_voltage !== "") {
+            if(switch_status_notification_voltage === "freeze") {
+                enable1.enabled = false
+                enable2.enabled = false
+                enable3.enabled = false
+                enable4.enabled = false
+                enable5.enabled = false
+                lowLoadEnable.enabled = false
+                midCurrentEnable.enabled = false
+                highCurrentEnable.enabled = false
+            }
+            else {
+                enable1.enabled = true
+                enable2.enabled = true
+                enable3.enabled = true
+                enable4.enabled = true
+                enable5.enabled = true
+                lowLoadEnable.enabled = true
+                midCurrentEnable.enabled = true
+                highCurrentEnable.enabled = true
+            }
+        }
+    }
+
+    property var switch_status_notification_i_in: platformInterface.i_in_interrupt.switch_status
+    onSwitch_status_notification_i_inChanged: {
+        if(switch_status_notification_i_in !== "") {
+            if(switch_status_notification_i_in === "freeze") {
                 enable1.enabled = false
                 enable2.enabled = false
                 enable3.enabled = false
@@ -161,6 +213,18 @@ Item {
         else
             highCurrentEnable.checked = false
 
+        if(initial_status.active_discharge === "on")
+            activeDischarge.checked = true
+        else activeDischarge.checked = false
+
+    }
+
+    property var ad_status: platformInterface.ad_status.status
+    onAd_statusChanged: {
+        if(ad_status === "on"){
+             activeDischarge.checked = true
+        }
+        else  activeDischarge.checked = false
     }
 
     property var reset_status: platformInterface.reset_status
@@ -200,6 +264,29 @@ Item {
         if (reset_status.load_fault === "on")
             loadFault.status = SGStatusLight.Red
         else  loadFault.status = SGStatusLight.Off
+
+        if(reset_status.switch_status !== "") {
+            if(reset_status.switch_status === "freeze") {
+                enable1.enabled = false
+                enable2.enabled = false
+                enable3.enabled = false
+                enable4.enabled = false
+                enable5.enabled = false
+                lowLoadEnable.enabled = false
+                midCurrentEnable.enabled = false
+                highCurrentEnable.enabled = false
+            }
+            else {
+                enable1.enabled = true
+                enable2.enabled = true
+                enable3.enabled = true
+                enable4.enabled = true
+                enable5.enabled = true
+                lowLoadEnable.enabled = true
+                midCurrentEnable.enabled = true
+                highCurrentEnable.enabled = true
+            }
+        }
 
 
     }
@@ -264,19 +351,19 @@ Item {
 
     }
 
-    property var current_sense_interrupt_message: platformInterface.current_sense_interrupt.error_message
+    property var current_sense_interrupt_message: platformInterface.current_sense_interrupt.error_msg
     onCurrent_sense_interrupt_messageChanged: {
         if(current_sense_interrupt_message !== "")
             pushMessagesToLog(current_sense_interrupt_message)
     }
 
-    property var voltage_sense_interrupt_message: platformInterface.voltage_sense_interrupt.error_message
+    property var voltage_sense_interrupt_message: platformInterface.voltage_sense_interrupt.error_msg
     onVoltage_sense_interrupt_messageChanged: {
         if(voltage_sense_interrupt_message !== "")
             pushMessagesToLog(voltage_sense_interrupt_message)
     }
 
-    property var i_in_interrupt_message: platformInterface.i_in_interrupt.error_message
+    property var i_in_interrupt_message: platformInterface.i_in_interrupt.error_msg
     onI_in_interrupt_messageChanged: {
         if(i_in_interrupt_message !== "")
             pushMessagesToLog(i_in_interrupt_message)
@@ -288,6 +375,8 @@ Item {
             pushMessagesToLog(led_status_CSA_warning)
         }
     }
+
+
 
 
 
@@ -331,7 +420,7 @@ Item {
         onCurrent_sense_interruptChanged:  {
             if(current_sense_interrupt.value === "yes") {
                 currentStatusLight.status = SGStatusLight.Red
-                pushMessagesToLog("On-Board Load Current Interrupt")
+                //  pushMessagesToLog("On-Board Load Current Interrupt")
             }
             else currentStatusLight.status = SGStatusLight.Off
 
@@ -347,7 +436,7 @@ Item {
         onVoltage_sense_interruptChanged: {
             if(voltage_sense_interrupt.value === "yes") {
                 voltageStatusLight.status = SGStatusLight.Red
-                pushMessagesToLog("Input Voltage Interrupt")
+                //pushMessagesToLog("Input Voltage Interrupt")
             }
             else voltageStatusLight.status = SGStatusLight.Off
 
@@ -362,7 +451,7 @@ Item {
         onI_in_interruptChanged: {
             if(i_in_interrupt.value === "yes") {
                 loadCurrent.status = SGStatusLight.Red
-                pushMessagesToLog("Input Current Interrupt")
+                // pushMessagesToLog("Input Current Interrupt")
 
             }
             else loadCurrent.status = SGStatusLight.Off

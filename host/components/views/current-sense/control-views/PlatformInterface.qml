@@ -57,19 +57,22 @@ Item {
     property var current_sense_interrupt: {
         "value":"no",
         "load_fault": "off",
-        "error_message": ""
+        "error_msg": "",
+        "switch_status": ""
     }
 
     property var voltage_sense_interrupt: {
         "value": "no",
         "load_fault": "off",
-        "error_message": ""
+        "error_msg": "",
+        "switch_status": ""
     }
 
     property var i_in_interrupt: {
         "value": "no",
         "load_fault": "off",
-        "error_message": ""
+        "error_msg": "",
+        "switch_status": ""
     }
 
     property var config_running: {
@@ -92,6 +95,7 @@ Item {
         "low_load_en": "off",             //on or off
         "mid_load_en": "off",             //on or off
         "high_load_en": "off",            //on or off
+        "active_discharge": "on"
     }
 
     property var reset_status: {
@@ -103,13 +107,19 @@ Item {
         "low_load_en": "off",                  //on or off
         "mid_load_en": "off",                 //on or off
         "high_load_en": "off",                //on or off
-        "load_fault" : "off"
+        "load_fault" : "off",
+        "switch_status" : ""
 
     }
 
-    property var switch_status_notification: {
-        switch_status: ""
+    property var ad_status:{
+        "status":"on"
     }
+
+//    property var switch_status_notification: {
+//        "switch_status": ""
+//    }
+
 
     property var set_initial_state_UI : ({
                                              "cmd" : "set_initial_state_UI",
@@ -243,21 +253,21 @@ Item {
                                 })
 
     property var set_active_discharge : ({
-                                     "cmd" : "set_active_discharge",
-                                     "payload": {
-                                         "AD_set":"on"	// default value
-                                     },
+                                             "cmd" : "set_active_discharge",
+                                             "payload": {
+                                                 "AD_set":"on"	// default value
+                                             },
 
-                                     update: function (AD_set) {
-                                         this.set(AD_set)
-                                         this.send(this)
-                                     },
-                                     set: function (AD_set) {
-                                         this.payload.AD_set = AD_set
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) },
-                                     show: function () { CorePlatformInterface.show(this) }
-                                 })
+                                             update: function (AD_set) {
+                                                 this.set(AD_set)
+                                                 this.send(this)
+                                             },
+                                             set: function (AD_set) {
+                                                 this.payload.AD_set = AD_set
+                                             },
+                                             send: function () { CorePlatformInterface.send(this) },
+                                             show: function () { CorePlatformInterface.show(this) }
+                                         })
 
 
 
