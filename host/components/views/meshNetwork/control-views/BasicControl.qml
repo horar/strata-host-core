@@ -148,11 +148,6 @@ Rectangle {
                     id: webView
                     anchors.fill: parent
                     url: "qrc:/views/meshNetwork/images/mesh_help.html"   //doesn't render html
-                    //url:"../images/mesh_help.html"                          //doesn't render html
-                    //url:"http://www.onsemi.com"                             //renders web page correctly
-
-
-
                    }
            }
 
@@ -174,10 +169,6 @@ Rectangle {
                    color:"black"
                    anchors.horizontalCenter: parent.horizontalCenter
                    anchors.verticalCenter: parent.verticalCenter
-                   //        anchors {
-                   //            horizontalCenter: parent.horizontalCenter
-                   //            top:parent.top
-                   //        }
                }
            }
 

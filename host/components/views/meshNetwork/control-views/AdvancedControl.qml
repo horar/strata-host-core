@@ -157,24 +157,24 @@ Rectangle{
                         }
                     }
                 }
-                SGButton{
-                    id:demo6Button
-                    width: parent.width
-                    height: 130
-                    text:"cloud"
-                    fontSizeMultiplier:1.5
-                    color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/cloud.png"
-                    iconSize:75
-                    display: Button.TextUnderIcon
-                    checkable:true
+//                SGButton{
+//                    id:demo6Button
+//                    width: parent.width
+//                    height: 130
+//                    text:"cloud"
+//                    fontSizeMultiplier:1.5
+//                    color:"white"
+//                    icon.source: "qrc:/views/meshNetwork/images/cloud.png"
+//                    iconSize:75
+//                    display: Button.TextUnderIcon
+//                    checkable:true
 
-                    onCheckedChanged: {
-                        if (checked){
-                            demoStackLayout.currentIndex = 4
-                        }
-                    }
-                }
+//                    onCheckedChanged: {
+//                        if (checked){
+//                            demoStackLayout.currentIndex = 4
+//                        }
+//                    }
+//                }
 
             }
         }
@@ -220,9 +220,9 @@ Rectangle{
                 id: rectangleFive
             }
 
-            CloudDemo {
-                id: rectangleSix
-            }
+//            CloudDemo {
+//                id: rectangleSix
+//            }
         }
 
         Rectangle{
@@ -308,18 +308,13 @@ Rectangle{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
         anchors.right:parent.right
-        color:"pink"
+        color:"white"
         visible: !root.showConsole
 
         WebEngineView {
              id: webView
              anchors.fill: parent
              url: "qrc:/views/meshNetwork/images/mesh_help.html"   //doesn't render html
-             //url:"../images/mesh_help.html"                          //doesn't render html
-             //url:"http://www.onsemi.com"                             //renders web page correctly
-
-
-
             }
     }
 

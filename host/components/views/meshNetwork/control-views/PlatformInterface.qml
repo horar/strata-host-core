@@ -775,7 +775,7 @@ Item {
     property var set_onetoone_demo : ({
                                         "cmd" : "set_onetoone_demo",
                                         "payload": {
-                                              "UADDR":65535,
+                                              "uaddr":65535,
                                               "daddr":2
                                         },
 

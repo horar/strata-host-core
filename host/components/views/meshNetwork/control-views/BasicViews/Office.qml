@@ -29,11 +29,6 @@ Rectangle {
             //deactivate all the nodes from their previous roles when switching
             //this is a kludge, as it means nodes will not function in the roles they appear in until they're moved
             platformInterface.set_node_mode.update("default",65535,true)
-            //iterate over the meshArray, and send role and node numbers for each
-            //meshObjectRow.meshArray.forEach(function(item, index, array){
-                //removed temporarily because sending nine commands back to back overloads the network.
-                //platformInterface.set_node_mode.update(item.pairingModel,item.nodeNumber,true)
-             //   })
         }
 
     }
@@ -83,8 +78,7 @@ Rectangle {
         onNetworkChanged:{
 
             //iterate over the nodes in the notification, and over the meshArray nodes for each node in the
-            //notification. If the node number already exists in the meshArray, then set the notification's nodeNumber to
-            //-1. If the node exists in the meshArray, but not in the notification, the node has been lost without a notification
+            //notification. If the node exists in the meshArray, but not in the notification, the node has been lost without a notification
             //coming through, so remove the node from the meshArray
             //console.log("updating nodes",platformInterface.network_notification.nodes.length)
             var nodeFoundInMeshArray = false;
@@ -180,7 +174,6 @@ Rectangle {
     Image{
         id:mainImage
         source:"qrc:/views/meshNetwork/images/office.jpg"
-        //anchors.left:parent.left
         height:parent.height*.60
         anchors.centerIn: parent
         anchors.verticalCenterOffset: 20
