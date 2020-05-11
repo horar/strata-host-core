@@ -623,8 +623,8 @@ Item {
                             fontSizeMultiplier: ratioCalc * 1.2
                             onToggled: {
                                 if(checked)
-                                    platformInterface.soc_vdd_disconnect.update("Connect")
-                                else  platformInterface.soc_vdd_disconnect.update("Disconnect")
+                                    platformInterface.set_soc_vdd_disconnect.update("Connect")
+                                else  platformInterface.set_soc_vdd_disconnect.update("Disconnect")
                             }
                         }
 
