@@ -327,6 +327,7 @@ FocusScope {
 
                     SGWidgets.SGIconButton {
                         hintText: qsTr("Clear scrollback")
+                        text: "Clear"
                         icon.source: "qrc:/images/broom.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: {
@@ -337,6 +338,7 @@ FocusScope {
                     SGWidgets.SGIconButton {
                         id: automaticScrollButton
                         hintText: qsTr("Automatically scroll to the last message")
+                        text: "Follow"
                         icon.source: "qrc:/sgimages/arrow-list-bottom.svg"
                         iconSize: toolButtonRow.iconHeight
                         checkable: true
@@ -356,6 +358,8 @@ FocusScope {
 
                     SGWidgets.SGIconButton {
                         hintText: scrollbackModel.condensedMode ? qsTr("Expand all commands") : qsTr("Collapse all commands")
+                        text: scrollbackModel.condensedMode ? "Expand" : "Collapse"
+                        minimumWidthText: "Collapse"
                         icon.source: scrollbackModel.condensedMode ? "qrc:/images/list-expand.svg" : "qrc:/images/list-collapse.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: {
@@ -366,6 +370,7 @@ FocusScope {
 
                     SGWidgets.SGIconButton {
                         hintText: qsTr("Filter")
+                        text: "Filter"
                         icon.source: "qrc:/sgimages/funnel.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: {
@@ -378,6 +383,7 @@ FocusScope {
                     }
 
                     SGWidgets.SGIconButton {
+                        text: "Export"
                         hintText: qsTr("Export to file")
                         icon.source: "qrc:/sgimages/file-export.svg"
                         iconSize: toolButtonRow.iconHeight
@@ -388,6 +394,7 @@ FocusScope {
 
                     SGWidgets.SGIconButton {
                         hintText: qsTr("Program Device")
+                        text: "Program"
                         icon.source: "qrc:/sgimages/chip-flash.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: {
