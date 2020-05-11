@@ -10,6 +10,11 @@ import tech.strata.sgwidgets 1.0
 Rectangle {
     id: root
 
+    onVisibleChanged: {
+        if (visible)
+            resetUI();
+    }
+
     Text{
         id:title
         anchors.top:parent.top
@@ -20,19 +25,24 @@ Rectangle {
         font.pixelSize: 72
     }
 
-//    Image{
-//            source: "qrc:/views/meshNetwork/images/oneToManyDemo.png"
-//            height:parent.height*.85
-//            anchors.centerIn: parent
-//            fillMode: Image.PreserveAspectFit
-//            mipmap:true
-//        }
-
     MSwitch{
         id:switchOutline
+        height:320
+        width:200
         anchors.left:parent.left
-        anchors.leftMargin:parent.width*.2
+        anchors.leftMargin:parent.width*.1
         anchors.verticalCenter: parent.verticalCenter
+
+        property var button: platformInterface.demo_click_notification
+        onButtonChanged:{
+            if (platformInterface.demo_click_notification.demo === "one_to_many")
+                if (platformInterface.demo_click_notification.button === "switch")
+                    if (platformInterface.demo_click_notification.value === "on")
+                        switchOutline.isOn = true;
+                       else
+                        switchOutline.isOn = false;
+
+        }
 
         onIsOnChanged: {
             if (isOn){
@@ -117,7 +127,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:parent.bottom
         anchors.bottomMargin: 20
-        text:"reconfigure"
+        text:"configure"
 
         contentItem: Text {
                 text: resetButton.text
@@ -140,7 +150,12 @@ Rectangle {
 
             onClicked: {
                 platformInterface.set_demo.update("one_to_many")
+                root.resetUI()
             }
+    }
+
+    function resetUI(){
+        switchOutline.isOn = false
     }
 
 

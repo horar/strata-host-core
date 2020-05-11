@@ -94,13 +94,17 @@ bool SerialDevice::sendMessage(const QByteArray msg, quintptr lockId) {
 }
 
 bool SerialDevice::writeData(const QByteArray data, quintptr lockId) {
-    QMutexLocker lock(&operationMutex_);
-    if (operationLock_ == lockId) {
+    bool canWrite = false;
+    {
+        QMutexLocker lock(&operationMutex_);
+        if (operationLock_ == lockId) {
+            canWrite = true;
+        }
+    }
+    if (canWrite) {
         // * Slot connected to below emitted signal emits other signals
         //   and it should'n be locked. Also if we are here it is not necessary
         //   to lock writting to serial port because all writting happens in one thread.
-        lock.unlock();
-
         // * Signal must be emitted because of calling this function from another
         //   thread as in which this SerialDevice object was created. Slot connected
         //   to this signal will be executed in correct thread.
@@ -111,11 +115,43 @@ bool SerialDevice::writeData(const QByteArray data, quintptr lockId) {
     } else {
         QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
         qCWarning(logCategorySerialDevice).noquote() << this << errMsg;
-        // We do not want to emit signal in locked block of code.
-        lock.unlock();
-        emit serialDeviceError(-1, errMsg);
+        emit serialDeviceError(ErrorCode::DeviceBusy, errMsg);
         return false;
     }
+}
+
+SerialDevice::ErrorCode SerialDevice::translateQSerialPortError(QSerialPort::SerialPortError error) {
+    switch (error) {
+        case QSerialPort::SerialPortError::NoError :
+            return ErrorCode::NoError;
+        case QSerialPort::SerialPortError::DeviceNotFoundError :
+            return ErrorCode::SP_DeviceNotFoundError;
+        case QSerialPort::SerialPortError::PermissionError :
+            return ErrorCode::SP_PermissionError;
+        case QSerialPort::SerialPortError::OpenError :
+            return ErrorCode::SP_OpenError;
+        case QSerialPort::SerialPortError::ParityError :
+            return ErrorCode::SP_ParityError;
+        case QSerialPort::SerialPortError::FramingError :
+            return ErrorCode::SP_FramingError;
+        case QSerialPort::SerialPortError::BreakConditionError :
+            return ErrorCode::SP_BreakConditionError;
+        case QSerialPort::SerialPortError::WriteError :
+            return ErrorCode::SP_WriteError;
+        case QSerialPort::SerialPortError::ReadError :
+            return ErrorCode::SP_ReadError;
+        case QSerialPort::SerialPortError::ResourceError :
+            return ErrorCode::SP_ResourceError;
+        case QSerialPort::SerialPortError::UnsupportedOperationError :
+            return ErrorCode::SP_UnsupportedOperationError;
+        case QSerialPort::SerialPortError::UnknownError :
+            return ErrorCode::SP_UnknownError;
+        case QSerialPort::SerialPortError::TimeoutError :
+            return ErrorCode::SP_TimeoutError;
+        case QSerialPort::SerialPortError::NotOpenError :
+            return ErrorCode::SP_NotOpenError;
+    }
+    return ErrorCode::UndefinedError;
 }
 
 void SerialDevice::handleWriteToPort(const QByteArray data) {
@@ -131,7 +167,7 @@ void SerialDevice::handleWriteToPort(const QByteArray data) {
     } else {
         QString errMsg(QStringLiteral("Cannot write whole data to device."));
         qCCritical(logCategorySerialDevice).noquote() << this << errMsg;
-        emit serialDeviceError(-1, errMsg);
+        emit serialDeviceError(ErrorCode::SendMessageError, errMsg);
     }
 }
 
@@ -145,8 +181,8 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
         }
         else {
             qCCritical(logCategorySerialDevice).noquote() << this << errMsg;
-            emit serialDeviceError(error, serialPort_.errorString());
         }
+        emit serialDeviceError(translateQSerialPortError(error), serialPort_.errorString());
     }
 }
 

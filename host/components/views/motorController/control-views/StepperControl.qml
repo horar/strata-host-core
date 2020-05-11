@@ -441,18 +441,6 @@ Widget09.SGResponsiveScrollView {
 
                         }
 
-                        property var stepUnit:  platformInterface.step_speed_notification.unit
-
-                        onStepUnitChanged: {
-                            if (stepUnit === "sps"){
-                                stepMotorSpeedSlider.to = 1000;
-                            }
-                            else if (stepUnit === "rpm"){
-                                stepMotorSpeedSlider.to = 500;
-                            }
-
-                        }
-
                         onSpeedChanged: {
                             stepMotorSpeedSlider.value =speed;
                         }

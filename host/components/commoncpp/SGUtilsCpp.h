@@ -17,6 +17,7 @@ public:
     Q_INVOKABLE bool isExecutable(const QString &file);
     Q_INVOKABLE QString fileName(const QString &file);
     Q_INVOKABLE QString fileAbsolutePath(const QString &file);
+    Q_INVOKABLE QString dirName(const QString &path);
     Q_INVOKABLE QUrl pathToUrl(const QString &path, const QString &scheme=QString("file"));
 
     Q_INVOKABLE bool atomicWrite(const QString &path, const QString &content);

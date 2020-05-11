@@ -7,18 +7,22 @@ import QtQuick.Layouts 1.3
 import tech.strata.sgwidgets 1.0
 
 Rectangle{
-    id:switchOutline
+    id:root
+    color:"transparent"
     height:270
     width:150
     radius:20
-    color: "lightgrey"
+    border.color:"black"
+    border.width: height > 100 ? 5 : 2
 
     property bool isOn:false
 
 
     onIsOnChanged: {
-        if (isOn)
+        if (isOn){
+            console.log("calling turning on animation")
             turningOnAnimation.start()
+        }
         else
             turningOffAnimation.start()
     }
@@ -27,7 +31,7 @@ Rectangle{
         id:turningOnAnimation
         target:switchOutline
         from: "lightgrey"
-        to: "limegreen"
+        to: "lightgrey"
         properties:"color"
         duration: 600
         running:false
@@ -37,39 +41,72 @@ Rectangle{
     ColorAnimation {
         id:turningOffAnimation
         target:switchOutline
-        from: "limegreen"
+        from: "lightgrey"
         to: "lightgrey"
         properties:"color"
         duration: 600
         running:false
     }
 
-
     Rectangle{
-        id:switchThumb
-        height: switchOutline.width-20
+        id:upperScrew
+        height:parent.width/10
         width:height
-        y:switchOutline.isOn ? 10 : switchOutline.height/2-5
-        x:10
-        color:"white"
-        radius:20
-        border.width: 10
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top:parent.top
+        anchors.topMargin: parent.height/8
+        radius:height/2
+        color:"lightgrey"
 
-        Behavior on y {
-           NumberAnimation {
-             duration: 600
-             easing.type: Easing.OutCubic
-             }
-         }
     }
 
+    Rectangle{
+        id:lowerScrew
+        height:parent.width/10
+        width:height
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom:parent.bottom
+        anchors.bottomMargin: parent.height/8
+        radius:height/2
+        color:"lightgrey"
+
+    }
+
+
+    Rectangle{
+        id:switchOutline
+        height:parent.height/2
+        width:parent.width/2
+        anchors.centerIn: parent
+        radius:height>20? parent.width/8 : 5
+        color: "lightgrey"
+
+
+        Rectangle{
+            id:switchThumb
+            height: switchOutline.width-20
+            width:height
+            y:root.isOn ? 10 : switchOutline.height/2-5
+            x:10
+            color:"white"
+            radius:height>50? 20 : 5
+            border.width: height>50 ? 10 : 2
+
+            Behavior on y {
+                NumberAnimation {
+                    duration: 600
+                    easing.type: Easing.OutCubic
+                }
+            }
+        }
+    }
     MouseArea{
         id:switchOnMouseArea
         height:parent.height/2
         width:parent.width
 
         onClicked: {
-            switchOutline.isOn = true
+            root.isOn = true
         }
     }
 
@@ -81,7 +118,7 @@ Rectangle{
         width:parent.width
 
         onClicked: {
-            switchOutline.isOn = false
+            root.isOn = false
 
         }
     }
