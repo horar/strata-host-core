@@ -137,15 +137,21 @@ Rectangle {
             }
        }
 
-
-
         property var newNodeAdded: platformInterface.node_added
         onNewNodeAddedChanged: {
             //console.log("new node added",platformInterface.node_added.index)
             var theNodeNumber = platformInterface.node_added.index
-            meshArray[theNodeNumber].opacity = 1;
-            meshArray[theNodeNumber].objectColor = platformInterface.node_added.color
-            meshArray[theNodeNumber].nodeNumber = theNodeNumber
+            var emptySlot = theNodeNumber
+
+            console.log("adding new node",platformInterface.node_added.index)
+            if (theNodeNumber !== 1 && (meshArray[theNodeNumber].objectColor != "lightgrey")){
+                emptySlot = findEmptySlot(theNodeNumber)
+                console.log("node not empty, adding in position",emptySlot)
+            }
+
+            meshArray[emptySlot].opacity = 1;
+            meshArray[emptySlot].objectColor = platformInterface.node_added.color
+            meshArray[emptySlot].nodeNumber = theNodeNumber
         }
 
         property var nodeRemoved: platformInterface.node_removed
