@@ -91,7 +91,7 @@ Rectangle {
                 for(var beta = 1; beta < meshArray.length; beta++){
                     //console.log("comparing",platformInterface.network_notification.nodes[alpha].index, meshArray[beta].nodeNumber)
                     if (meshArray[beta].nodeNumber !== "" && meshArray[beta].nodeNumber == platformInterface.network_notification.nodes[alpha].index){
-                        //console.log("found node",platformInterface.network_notification.nodes[alpha].index, "at location",beta)
+                        console.log("found node",platformInterface.network_notification.nodes[alpha].index, "at location",beta)
                         if (platformInterface.network_notification.nodes[alpha].ready === 0){
                             //remove the item from the meshArray. It's not in the network anymore
                             nodeFoundInMeshArray = true;
@@ -101,7 +101,13 @@ Rectangle {
                         }
                         else if (platformInterface.network_notification.nodes[alpha].ready !== 0){
                             //the node is in both the notification and in the meshArray, no need to update anything
-                            //console.log("node",platformInterface.network_notification.nodes[alpha].index,"found in meshArray")
+                            //unless this is the provisioner, in which case we'll update the color, as it doesn't start as a grey node
+                            if (alpha === 1){
+                                console.log("updating provisioner color to",platformInterface.network_notification.nodes[alpha].color)
+                                meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+                            }
+
+                            console.log("node",platformInterface.network_notification.nodes[alpha].index,"found in meshArray")
                             nodeFoundInMeshArray = true;
                         }
                     }   //if node numbers match
@@ -308,7 +314,10 @@ Rectangle {
                             }
                             else if (platformInterface.network_notification.nodes[alpha].ready !== 0){
                                 //the node is in both the notification and in the targetArray, no need to update anything
-                                //console.log("node",platformInterface.network_notification.nodes[alpha].index,"found in meshArray")
+                                if (alpha === 1){
+                                    console.log("updating provisioner color to",platformInterface.network_notification.nodes[alpha].color)
+                                    targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+                                }
                                 nodeFoundInTargetArray = true;
                             }
                         }   //if node numbers match

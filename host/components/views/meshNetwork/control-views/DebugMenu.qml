@@ -341,7 +341,7 @@ Rectangle {
                                                     {
                                                     "index":1,
                                                     "ready":1,
-                                                    "color":"#00FF00"
+                                                    "color":"#0000FF"
                                                     },
                                                     {
                                                     "index":2,

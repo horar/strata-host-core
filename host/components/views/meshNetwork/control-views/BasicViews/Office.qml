@@ -89,7 +89,7 @@ Rectangle {
                 for(var beta = 1; beta < meshArray.length; beta++){
                     //console.log("comparing",platformInterface.network_notification.nodes[alpha].index, meshArray[beta].nodeNumber)
                     if (meshArray[beta].nodeNumber !== "" && meshArray[beta].nodeNumber == platformInterface.network_notification.nodes[alpha].index){
-                        //console.log("found node",platformInterface.network_notification.nodes[alpha].index, "at location",beta)
+                        console.log("found node",platformInterface.network_notification.nodes[alpha].index, "at location",beta)
                         if (platformInterface.network_notification.nodes[alpha].ready === 0){
                             //remove the item from the meshArray. It's not in the network anymore
                             nodeFoundInMeshArray = true;
@@ -99,6 +99,11 @@ Rectangle {
                         }
                         else if (platformInterface.network_notification.nodes[alpha].ready !== 0){
                             //the node is in both the notification and in the meshArray, no need to update anything
+                            //unless this is the provisioner, which doesn't start as a grey node
+                            if (alpha === 1){
+                                console.log("updating provisioner color to",platformInterface.network_notification.nodes[alpha].color)
+                                meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+                            }
                             console.log("node",platformInterface.network_notification.nodes[alpha].index,"found in meshArray")
                             nodeFoundInMeshArray = true;
                         }
@@ -119,7 +124,7 @@ Rectangle {
                         meshArray[emptySlot].nodeNumber = platformInterface.network_notification.nodes[alpha].index
                     }
                     else{
-                        //console.log("adding node",platformInterface.network_notification.nodes[alpha].index,"in position",alpha)
+                        console.log("adding node",platformInterface.network_notification.nodes[alpha].index,"in position",alpha)
                         meshArray[alpha].opacity = 1.0
                         meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
                         meshArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
@@ -331,7 +336,11 @@ Rectangle {
                             }
                             else if (platformInterface.network_notification.nodes[alpha].ready !== 0){
                                 //the node is in both the notification and in the targetArray, no need to update anything
-                                //console.log("node",platformInterface.network_notification.nodes[alpha].index,"found in meshArray")
+                                //unless this is the provisioner, which doesn't start as a grey node
+                                if (alpha === 1){
+                                    console.log("updating provisioner color to",platformInterface.network_notification.nodes[alpha].color)
+                                    targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+                                }
                                 nodeFoundInMeshArray = true;
                             }
                         }   //if node numbers match
