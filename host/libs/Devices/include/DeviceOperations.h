@@ -1,6 +1,9 @@
 #ifndef DEVICE_OPERATIONS_H
 #define DEVICE_OPERATIONS_H
 
+#include <vector>
+#include <memory>
+
 #include <QObject>
 #include <QByteArray>
 #include <QTimer>
@@ -10,116 +13,128 @@
 
 namespace strata {
 
+class BaseDeviceCommand;
+
+/*!
+ * The DeviceOperation enum for DeviceOperations::finished() signal.
+ */
+enum class DeviceOperation: int {
+    None,
+    Identify,
+    SwitchToBootloader,
+    FlashFirmwareChunk,
+    BackupFirmwareChunk,
+    StartApplication,
+    // special values for finished signal:
+    Cancel,
+    Timeout
+};
+
 class DeviceOperations : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(DeviceOperations)
 
 public:
+    /*!
+     * DeviceOperations constructor.
+     * \param device device which will be used by DeviceOperations
+     */
     DeviceOperations(const SerialDevicePtr& device);
+
+    /*!
+     * DeviceOperations destructor.
+     */
     ~DeviceOperations();
 
+    /*!
+     * Identify board operation.
+     * \param requireFwInfoResponse true if response to 'get_firmware_info' command is required
+     */
     void identify(bool requireFwInfoResponse = true);
 
+    /*!
+     * Switch To Bootloader operation.
+     */
     void switchToBootloader();
 
+    /*!
+     * Flash Firmware Chunk operation.
+     * \param chunk firmware chunk
+     * \param chunkNumber firmware chunk number
+     */
     void flashFirmwareChunk(const QVector<quint8>& chunk, int chunkNumber);
 
-    void backupFirmwareChunk(bool firstChunk);
+    /*!
+     * Backup Firmware Chunk operation.
+     */
+    void backupFirmwareChunk();
 
+    /*!
+     * Start Application operation.
+     */
     void startApplication();
 
+    /*!
+     * Cancel operation - terminate running operation.
+     */
     void cancelOperation();
 
+    /*!
+     * Get ID of device used by DeviceOperations.
+     * \return device ID
+     */
     int deviceId() const;
 
-    QVector<quint8> recentFirmwareChunk() const;
+    /*!
+     * Get firmware chunk from last backupFirmwareChunk() operation.
+     * \return firmware chunk from last backupFirmwareChunk() operation
+     */
+    QVector<quint8> recentBackupChunk() const;
 
     friend QDebug operator<<(QDebug dbg, const DeviceOperations* devOp);
 
-    enum class Operation {
-        None,
-        Identify,
-        SwitchToBootloader,
-        FlashFirmwareChunk,
-        BackupFirmwareChunk,
-        StartApplication,
-        // special values for finished signal:
-        Cancel,
-        Timeout
-    };
-
 signals:
-    void finished(int operation, int data = -1);
-    void error(QString msg);
+    /*!
+     * This signal is emitted when DeviceOperations finishes.
+     * \param operation value from DeviceOperation enum (opertion identificator or special value, e.g. Timeout)
+     * \param data data related to finished operation (-1 if unused)
+     */
+    void finished(DeviceOperation operation, int data = -1);
 
-    // signals only for internal use:
+    /*!
+     * This signal is emitted when error occurres.
+     * \param errorString error description
+     */
+    void error(QString errorString);
+
+    // signal only for internal use:
     // Qt5 private signals: https://woboq.com/blog/how-qt-signals-slots-work-part2-qt5.html
-    void nextStep(QPrivateSignal);
+    void sendCommand(QPrivateSignal);
 
-private:
-    enum class State {
-        None,
-        GetFirmwareInfo,
-        GetPlatformId,
-        UpdateFirmware,
-        SwitchedToBootloader,
-        FlashFwChunk,
-        BackupFwChunk,
-        StartApplication,
-        Timeout
-    };
-
-    enum class Activity {
-        None,
-        WaitingForFirmwareInfo,
-        WaitingForPlatformId,
-        WaitingForSwitchToBootloader,
-        WaitingForFlashFwChunk,
-        WaitingForBackupFwChunk,
-        WaitingForStartApp
-    };
-
-    void startOperation(Operation operation);
-
-    void finishOperation(Operation operation, int data = -1);
-
-    void process();
-
+private slots:
+    void handleSendCommand();
+    void handleDeviceResponse(const QByteArray& data);
     void handleResponseTimeout();
-
     void handleSerialDeviceError(SerialDevice::ErrorCode errCode, QString msg);
 
-    void handleDeviceResponse(const QByteArray& data);
-
-    bool parseDeviceResponse(const QByteArray& data, bool& isAck);
-
-    void resetInternalStates();
-
-    QByteArray createFlashFwJson();
-    QByteArray createBackupFwJson();
+private:
+    bool startOperation(DeviceOperation operation);
+    void nextCommand();
+    void finishOperation(DeviceOperation operation, int data = -1);
+    void reset();
 
     SerialDevicePtr device_;
+    uint deviceId_;
 
     QTimer responseTimer_;
 
-    QVector<quint8> chunk_;
-    int chunkNumber_;
-    uint chunkRetryCount_;
+    DeviceOperation operation_;
 
-    uint deviceId_;
+    std::vector<std::unique_ptr<BaseDeviceCommand>> commandList_;
+    std::vector<std::unique_ptr<BaseDeviceCommand>>::iterator currentCommand_;
 
-    Operation operation_;
-
-    State state_;
-
-    Activity activity_;
-
-    bool ackReceived_;
-
-    bool reqFwInfoResp_;
-
-    bool firstBackupChunk_;
+    QVector<quint8> backupChunk_;
 };
 
 }  // namespace

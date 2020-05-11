@@ -42,6 +42,7 @@ set_target_properties(${SERIAL_DEVICE} PROPERTIES
 # DeviceOperations
 add_library(${DEVICE_OPERATIONS}
     src/DeviceOperations.cpp
+    src/DeviceCommands.cpp
     src/logging/LoggingQtCategories.cpp
 
     #AUTOMOC wont find header if it is in different directory
