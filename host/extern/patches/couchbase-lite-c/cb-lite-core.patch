@@ -24,3 +24,22 @@ index c1015735..cfcf61e2 100644
  
      // Timeout for disconnecting if no PONG response received
      static constexpr auto kPongTimeout  = chrono::seconds(10);
+diff --git a/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc b/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc
+index 87899c4f..8f54e3c4 100644
+--- a/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc
++++ b/vendor/couchbase-lite-core/Networking/NetworkInterfaces.cc
+@@ -244,10 +244,10 @@ namespace litecore::net {
+         string hostName;
+     #if TARGET_OS_OSX
+         // On macOS, we can get it from SystemConfiguration (not available on iOS)
+-        if (CFStringRef cfName = SCDynamicStoreCopyLocalHostName(NULL); cfName) {
+-            nsstring_slice strsl(cfName);
+-            hostName = string(strsl);
+-        }
++        // if (CFStringRef cfName = SCDynamicStoreCopyLocalHostName(NULL); cfName) {
++        //     nsstring_slice strsl(cfName);
++        //     hostName = string(strsl);
++        // }
+     #else
+         // From <http://stackoverflow.com/a/16902907/98077>.
+         // On iOS, gethostname() returns the mDNS/Bonjour hostname (without the ".local")
