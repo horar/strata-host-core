@@ -229,7 +229,7 @@ int main(int argc, char *argv[])
         // XXX: [LC] end
 
         hcsProcess->start(hcsPath, arguments, QIODevice::ReadWrite);
-        if (!hcsProcess->waitForStarted()) {
+        if (hcsProcess->waitForStarted() == false) {
             qCWarning(logCategoryStrataDevStudio) << "Process does not started yet (state:" << hcsProcess->state() << ")";
         }
         qCInfo(logCategoryStrataDevStudio) << "HCS started";
@@ -248,7 +248,7 @@ int main(int argc, char *argv[])
     if (hcsProcess->state() == QProcess::Running) {
         qCDebug(logCategoryStrataDevStudio) << "killing HCS";
         hcsProcess->kill();
-        if (!hcsProcess->waitForFinished()) {
+        if (hcsProcess->waitForFinished() == false) {
             qCWarning(logCategoryStrataDevStudio) << "Failed to kill HCS server";
         }
     }
@@ -260,7 +260,7 @@ int main(int argc, char *argv[])
         if (hcsProcess->waitForFinished(10000) == false) {
             qCDebug(logCategoryStrataDevStudio) << "termination failed, killing HCS";
             hcsProcess->kill();
-            if (!hcsProcess->waitForFinished()) {
+            if (hcsProcess->waitForFinished() == false) {
                 qCWarning(logCategoryStrataDevStudio) << "Failed to kill HCS server";
             }
         }
