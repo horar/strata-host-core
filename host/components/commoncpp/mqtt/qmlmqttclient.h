@@ -38,7 +38,7 @@ public:
     QmlMqttClient(QObject *parent = nullptr);
     Q_INVOKABLE int publish(const QString &topic, const QString &message, quint8 qos = 0, bool retain = false);
     Q_INVOKABLE QmlMqttSubscription *subscribe(const QString &topic);
-    Q_INVOKABLE void connectToHostEncrypted();
+    Q_INVOKABLE void connectToHostSsl();
 private:
     Q_DISABLE_COPY(QmlMqttClient)
     QmlSslConfiguration *qmlSslConfiguration_;

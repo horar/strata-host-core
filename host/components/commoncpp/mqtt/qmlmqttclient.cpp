@@ -35,7 +35,7 @@ void QmlMqttSubscription::handleMessage(const QMqttMessage &message)
     emit messageReceived(message.payload());
 }
 
-void QmlMqttClient::connectToHostEncrypted()
+void QmlMqttClient::connectToHostSsl()
 {
-    QMqttClient::connectToHostEncrypted(qmlSslConfiguration_->getQsslConfigurationObject());
+    connectToHostEncrypted(qmlSslConfiguration_->getQsslConfigurationObject());
 }
