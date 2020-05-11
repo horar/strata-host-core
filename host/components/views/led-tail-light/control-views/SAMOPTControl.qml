@@ -432,7 +432,7 @@ Item {
 
 
     ColumnLayout {
-        width: parent.width/1.2
+        width: parent.width/1.1
         height: parent.height/1.2
         anchors.centerIn: parent
 
@@ -664,6 +664,45 @@ Item {
                         }
 
 
+                    }
+                }
+
+                Rectangle{
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    SGAlignedLabel {
+                        id: samConfigLabel
+                        target: samConfig
+                        text: "SAM\n(Configuration)"
+                        alignment: SGAlignedLabel.SideTopLeft
+                        anchors {
+                            top:parent.top
+                            left: parent.left
+                            verticalCenter: parent.verticalCenter
+                            leftMargin: 20
+                        }
+
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        font.bold : true
+
+                        SGSwitch {
+                            id: samConfig
+                            labelsInside: true
+                            checkedLabel: "SAM1"
+                            uncheckedLabel: "SAM2"
+                            textColor: "black"              // Default: "black"
+                            handleColor: "white"            // Default: "white"
+                            grooveColor: "#ccc"             // Default: "#ccc"
+                            grooveFillColor: "#0cf"         // Default: "#0cf"
+                            fontSizeMultiplier: ratioCalc * 1.2
+                            onToggled: {
+                                if(checked)
+                                    platformInterface.set_soc_conf.update("SAM1")
+                                else
+                                    platformInterface.set_soc_conf.update("SAM2")
+
+                            }
+                        }
                     }
                 }
 
@@ -2225,6 +2264,58 @@ Item {
 
 
                 }
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    SGButton {
+                        id:  i2cAddressButton
+                        text: qsTr("Apply \n I2C Address")
+                        anchors.verticalCenter: parent.verticalCenter
+                        fontSizeMultiplier: ratioCalc
+                        color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                        hoverEnabled: true
+                        height: parent.height/3
+                        width: parent.width/3
+                        MouseArea {
+                            hoverEnabled: true
+                            anchors.fill: parent
+                            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            onClicked: {
+                                platformInterface.set_soc_write.update(
+                                            platformInterface.soc_otpValue,
+                                            [platformInterface.soc_sam_conf_1_out1,
+                                             platformInterface.soc_sam_conf_1_out2,
+                                             platformInterface.soc_sam_conf_1_out3,
+                                             platformInterface.soc_sam_conf_1_out4,
+                                             platformInterface.soc_sam_conf_1_out5,
+                                             platformInterface.soc_sam_conf_1_out6,
+                                             platformInterface.soc_sam_conf_1_out7,
+                                             platformInterface.soc_sam_conf_1_out8,
+                                             platformInterface.soc_sam_conf_1_out9,
+                                             platformInterface.soc_sam_conf_1_out10,
+                                             platformInterface.soc_sam_conf_1_out11
+                                            ],
+                                            [platformInterface.soc_sam_conf_2_out1,
+                                             platformInterface.soc_sam_conf_2_out2,
+                                             platformInterface.soc_sam_conf_2_out3,
+                                             platformInterface.soc_sam_conf_2_out4,
+                                             platformInterface.soc_sam_conf_2_out5,
+                                             platformInterface.soc_sam_conf_2_out6,
+                                             platformInterface.soc_sam_conf_2_out7,
+                                             platformInterface.soc_sam_conf_2_out8,
+                                             platformInterface.soc_sam_conf_2_out9,
+                                             platformInterface.soc_sam_conf_2_out10,
+                                             platformInterface.soc_sam_conf_2_out11
+                                            ],
+                                            samOpenLoadDiagnostic.currentText,
+                                            platformInterface.soc_otpValue,
+                                            platformInterface.addr_curr_apply)
+
+                            }
+
+                        }
+                    }
+                }
 
                 //                Rectangle {
                 //                    Layout.fillHeight: true
@@ -2362,7 +2453,7 @@ Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
             RowLayout {
-                width:parent.width/1.5
+                width:parent.width/3
                 height: parent.height
                 anchors.left:parent.left
                 Rectangle {
@@ -2409,58 +2500,7 @@ Item {
 
                 }
 
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    SGButton {
-                        id:  i2cAddressButton
-                        text: qsTr("Apply \n I2C Address")
-                        anchors.verticalCenter: parent.verticalCenter
-                        fontSizeMultiplier: ratioCalc
-                        color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
-                        hoverEnabled: true
-                        height: parent.height/3
-                        width: parent.width/3
-                        MouseArea {
-                            hoverEnabled: true
-                            anchors.fill: parent
-                            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            onClicked: {
-                                platformInterface.set_soc_write.update(
-                                            platformInterface.soc_otpValue,
-                                            [platformInterface.soc_sam_conf_1_out1,
-                                             platformInterface.soc_sam_conf_1_out2,
-                                             platformInterface.soc_sam_conf_1_out3,
-                                             platformInterface.soc_sam_conf_1_out4,
-                                             platformInterface.soc_sam_conf_1_out5,
-                                             platformInterface.soc_sam_conf_1_out6,
-                                             platformInterface.soc_sam_conf_1_out7,
-                                             platformInterface.soc_sam_conf_1_out8,
-                                             platformInterface.soc_sam_conf_1_out9,
-                                             platformInterface.soc_sam_conf_1_out10,
-                                             platformInterface.soc_sam_conf_1_out11
-                                            ],
-                                            [platformInterface.soc_sam_conf_2_out1,
-                                             platformInterface.soc_sam_conf_2_out2,
-                                             platformInterface.soc_sam_conf_2_out3,
-                                             platformInterface.soc_sam_conf_2_out4,
-                                             platformInterface.soc_sam_conf_2_out5,
-                                             platformInterface.soc_sam_conf_2_out6,
-                                             platformInterface.soc_sam_conf_2_out7,
-                                             platformInterface.soc_sam_conf_2_out8,
-                                             platformInterface.soc_sam_conf_2_out9,
-                                             platformInterface.soc_sam_conf_2_out10,
-                                             platformInterface.soc_sam_conf_2_out11
-                                            ],
-                                            samOpenLoadDiagnostic.currentText,
-                                            platformInterface.soc_otpValue,
-                                            platformInterface.addr_curr_apply)
 
-                            }
-
-                        }
-                    }
-                }
             }
         }
     }
