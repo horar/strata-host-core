@@ -14,6 +14,9 @@ Rectangle {
     visible: true
     //anchors.fill:parent
 
+    Component.onDestruction: {
+        consoleDrawer.close();
+    }
 
     Text{
         id:viewComboLabel
