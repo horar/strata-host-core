@@ -10,8 +10,24 @@ import tech.strata.sgwidgets 1.0
 Rectangle {
     id: root
 
+    property int sensorNodeID:0
+
     onVisibleChanged: {
         resetThermostatBar.start()
+
+        //start at node 2, the node after the provisioner
+        var alpha = 2;
+        var sensorNodeFound = false
+        while (alpha < platformInterface.network_notification.nodes.length && !sensorNodeFound){
+            //for each node that is marked visible set the visibilty of the node appropriately
+            console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
+            if (platformInterface.network_notification.nodes[alpha].ready !== 0){
+                root.sensorNodeID = platformInterface.network_notification.nodes[alpha].index
+                console.log("sensor node set to",root.sensorNodeID)
+                sensorNodeFound = true;
+            }
+            alpha++;
+        }
     }
 
     Text{
@@ -50,7 +66,7 @@ Rectangle {
             }
 
             onClicked: {
-                platformInterface.demo_click.update("sensor","get_sensor_data","on")
+                platformInterface.get_sensor.update(root.sensorNodeID,"temperature")
                 growThermostatBar.start()
             }
     }
@@ -60,19 +76,18 @@ Rectangle {
         anchors.top: getTemperatureButton.bottom
         anchors.topMargin: 40
         anchors.left: getTemperatureButton.left
-        font.pixelSize: 36
+        font.pixelSize: 24
         text:"current temperature is"
         visible:false
 
-//        property var sensorData: platformInterface.demo_click_notification
-//        onSensorDataChanged:{
-//            if (platformInterface.demo_click_notification.demo === "sensor")
-//                if (platformInterface.demo_click_notification.button === "get_sensor_data"){
-//                    temperatureText.visible = true
-//                    temperatureText.text += latformInterface.demo_click_notification.value + "°C"
-//                }
-
-//        }
+        property var sensorData: platformInterface.sensor_status
+        onSensorDataChanged:{
+            if (platformInterface.sensor_status.uaddr === root.sensorNodeID)
+                if (platformInterface.sensor_status.sensor_type === "temperature"){
+                    temperatureText.visible = true
+                    temperatureText.text += platformInterface.sensor_status.data + "°C"
+                }
+        }
     }
 
     Image{

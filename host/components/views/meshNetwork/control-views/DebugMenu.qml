@@ -325,57 +325,17 @@ Rectangle {
             }
 
             Button {
-                id: networkPlusDimmer
-                text: "network+doorbell"
+                id: sensorData
+                text: "temperature"
 
                 onClicked: {
 
                     CorePlatformInterface.data_source_handler('{
-                                            "value":"network_notification",
+                                            "value":"sensor_status",
                                             "payload":{
-                                                "nodes":[{
-                                                    "index":0,
-                                                    "ready":0,
-                                                    "color":"#0000FF"
-                                                    },
-                                                    {
-                                                    "index":1,
-                                                    "ready":1,
-                                                    "color":"#0000FF"
-                                                    },
-                                                    {
-                                                    "index":2,
-                                                    "ready":1,
-                                                    "color":"#FF00FF"
-                                                    },
-                                                    {"index":3,
-                                                    "ready":1,
-                                                    "color":"#00FFFF"
-                                                    },{
-                                                    "index":4,
-                                                    "ready":0,
-                                                    "color":"#7BFF00"
-                                                    },{
-                                                    "index":5,
-                                                    "ready":0,
-                                                    "color":"#FFFF00"
-                                                    },{
-                                                    "index":6,
-                                                    "ready":0,
-                                                    "color":"#7B00FF"
-                                                    },{
-                                                    "index":7,
-                                                    "ready":0,
-                                                    "color":"#00FF52"
-                                                    },{
-                                                    "index":8,
-                                                    "ready":0,
-                                                    "color":"#FF5200"
-                                                    },{
-                                                    "index":9,
-                                                    "ready":0,
-                                                    "color":"#FFFFFF"
-                                                    }]
+                                                "uaddr":2,
+                                                "sensor_type":"temperature",
+                                                "data":123
                                                 }
                                             }')
 
