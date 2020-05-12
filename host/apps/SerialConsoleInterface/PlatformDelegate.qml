@@ -538,7 +538,6 @@ FocusScope {
 
         ProgramDeviceView {
             onCloseProgramDeviceViewRequested: {
-                sciModel.platformModel.reconnect(index)
                 stackView.pop();
             }
         }

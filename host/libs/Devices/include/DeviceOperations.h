@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <climits>
 
 #include <QObject>
 #include <QByteArray>
@@ -25,6 +26,7 @@ enum class DeviceOperation: int {
     FlashFirmwareChunk,
     BackupFirmwareChunk,
     StartApplication,
+    RefreshPlatformId,
     // special values for finished signal:
     Cancel,
     Timeout
@@ -76,6 +78,11 @@ public:
     void startApplication();
 
     /*!
+     * Refresh information about device (name, platform Id, class ID).
+     */
+    void refreshPlatformId();
+
+    /*!
      * Cancel operation - terminate running operation.
      */
     void cancelOperation();
@@ -98,9 +105,9 @@ signals:
     /*!
      * This signal is emitted when DeviceOperations finishes.
      * \param operation value from DeviceOperation enum (opertion identificator or special value, e.g. Timeout)
-     * \param data data related to finished operation (-1 if unused)
+     * \param data data related to finished operation (INT_MIN by default)
      */
-    void finished(DeviceOperation operation, int data = -1);
+    void finished(DeviceOperation operation, int data = INT_MIN);
 
     /*!
      * This signal is emitted when error occurres.
@@ -121,7 +128,7 @@ private slots:
 private:
     bool startOperation(DeviceOperation operation);
     void nextCommand();
-    void finishOperation(DeviceOperation operation, int data = -1);
+    void finishOperation(DeviceOperation operation, int data = INT_MIN);
     void reset();
 
     SerialDevicePtr device_;

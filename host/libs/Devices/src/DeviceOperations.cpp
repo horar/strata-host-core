@@ -50,8 +50,11 @@ void DeviceOperations::identify(bool requireFwInfoResponse) {
 
 void DeviceOperations::switchToBootloader() {
     if (startOperation(DeviceOperation::SwitchToBootloader)) {
+        // If board is already in bootloader mode, CmdUpdateFirmware is skipped
+        // and whole operation ends. Finished() signal will be sent with data set to 1 then.
         commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
         commandList_.emplace_back(std::make_unique<CmdUpdateFirmware>(device_));
+        commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
         currentCommand_ = commandList_.begin();
         emit sendCommand(QPrivateSignal());
     }
@@ -88,6 +91,14 @@ void DeviceOperations::backupFirmwareChunk() {
 void DeviceOperations::startApplication() {
     if (startOperation(DeviceOperation::StartApplication)) {
         commandList_.emplace_back(std::make_unique<CmdStartApplication>(device_));
+        currentCommand_ = commandList_.begin();
+        emit sendCommand(QPrivateSignal());
+    }
+}
+
+void DeviceOperations::refreshPlatformId() {
+    if (startOperation(DeviceOperation::RefreshPlatformId)) {
+        commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
         currentCommand_ = commandList_.begin();
         emit sendCommand(QPrivateSignal());
     }
@@ -195,8 +206,8 @@ void DeviceOperations::handleResponseTimeout() {
     BaseDeviceCommand *command = currentCommand_->get();
     qCWarning(logCategoryDeviceOperations) << this << "Command '" << command->name() << "' timed out.";
     command->onTimeout();  // This can change command result.
-    // Some commands can timeout - result is other than 'Undone' then.
-    if (command->result() == CommandResult::Undone) {
+    // Some commands can timeout - result is other than 'InProgress' then.
+    if (command->result() == CommandResult::InProgress) {
         finishOperation(DeviceOperation::Timeout);
     } else {
         // In this case we move to next command (or do retry).
@@ -244,7 +255,7 @@ void DeviceOperations::nextCommand() {
     BaseDeviceCommand *command = currentCommand_->get();
     CommandResult result = command->result();
     switch (result) {
-    case CommandResult::Undone :
+    case CommandResult::InProgress :
         //qCDebug(logCategoryDeviceOperations) << this << "Waiting for valid notification to '" << command->name() << "' command.";
         break;
     case CommandResult::Done :
@@ -264,6 +275,9 @@ void DeviceOperations::nextCommand() {
         break;
     case CommandResult::Retry :
         emit sendCommand(QPrivateSignal());  // send same command again
+        break;
+    case CommandResult::FinaliseOperation :
+        finishOperation(operation_, command->dataForFinish());
         break;
     }
 }

@@ -78,7 +78,13 @@ void Flasher::handleOperationFinished(DeviceOperation operation, int data) {
     switch (operation) {
     case DeviceOperation::SwitchToBootloader :
         emit switchToBootloader(true);
-        (action_ == Action::Flash) ? handleFlashFirmware(data) : handleBackupFirmware(data);
+        if (data != 1) {
+            // Operation SwitchToBootloader has data set to 1 if board was already in
+            // bootloader mode, otherwise data has default value INT_MIN.
+            emit devicePropertiesChanged();
+        }
+        // negative value (-1) means that no chunk was flashed / backed up yet
+        (action_ == Action::Flash) ? handleFlashFirmware(-1) : handleBackupFirmware(-1);
         break;
     case DeviceOperation::FlashFirmwareChunk :
         handleFlashFirmware(data);
@@ -87,7 +93,11 @@ void Flasher::handleOperationFinished(DeviceOperation operation, int data) {
         handleBackupFirmware(data);
         break;
     case DeviceOperation::StartApplication :
+        operation_->refreshPlatformId();
+        break;
+    case DeviceOperation::RefreshPlatformId :
         qCInfo(logCategoryFlasher) << this << "Firmware is ready for use.";
+        emit devicePropertiesChanged();
         finish(Result::Ok);
         break;
     case DeviceOperation::Timeout :
@@ -121,7 +131,7 @@ void Flasher::handleFlashFirmware(int lastFlashedChunk) {
         }
         return;
     }
-    if (lastFlashedChunk > 0) {  // operation SwitchToBootloader has this value set to -1
+    if (lastFlashedChunk > 0) {  // if no chunk was flashed yet, 'lastFlashedChunk' is negative number (-1)
         if (lastFlashedChunk == chunkProgress_) { // this is faster than modulo
             chunkProgress_ += FLASH_PROGRESS_STEP;
             qCInfo(logCategoryFlasher) << this << "Flashed chunk " << dec << lastFlashedChunk << " of " << chunkCount_;
@@ -150,7 +160,7 @@ void Flasher::handleFlashFirmware(int lastFlashedChunk) {
 }
 
 void Flasher::handleBackupFirmware(int chunkNumber) {
-    if (chunkNumber >= 0) {  // operation SwitchToBootloader has this value set to -1
+    if (chunkNumber >= 0) {  // if no chunk was backed up yet, 'chunkNumber' is negative number (-1)
         QVector<quint8> chunk = operation_->recentBackupChunk();
         qint64 bytesWritten = fwFile_.write(reinterpret_cast<char*>(chunk.data()), chunk.size());
         if (bytesWritten != chunk.size()) {

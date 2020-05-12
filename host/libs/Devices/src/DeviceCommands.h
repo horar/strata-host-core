@@ -14,10 +14,11 @@
 namespace strata {
 
 enum class CommandResult {
-    Undone,
-    Done,
-    Repeat,
-    Retry
+    InProgress,        // waiting for proper response from device
+    Done,              // successfully done (received device response is OK)
+    Repeat,            // repeat - send command again again with new data, e.g. when flashing firmware
+    Retry,             // retry - send command again with same data
+    FinaliseOperation  // finish operation (there is no point in continuing)
 };
 
 class BaseDeviceCommand {
@@ -94,7 +95,7 @@ public:
 
     /*!
      * Returns specific data for finished() signal (e.g. chunk number).
-     * \return data for finished() signal or -1 if not used
+     * \return data for finished() signal or INT_MIN if not used (by default)
      */
     virtual int dataForFinish() const;
 
@@ -142,6 +143,7 @@ public:
     bool processNotification(rapidjson::Document& doc) override;
     bool skip() override;
     std::chrono::milliseconds waitBeforeNextCommand() const override;
+    int dataForFinish() const override;
 };
 
 class CmdFlashFirmware : public BaseDeviceCommand {
