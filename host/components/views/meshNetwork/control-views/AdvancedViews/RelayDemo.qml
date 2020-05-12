@@ -540,6 +540,7 @@ Rectangle {
         anchors.bottom:parent.bottom
         anchors.bottomMargin: 20
         text:"configure"
+        visible:false
 
         contentItem: Text {
                 text: resetButton.text

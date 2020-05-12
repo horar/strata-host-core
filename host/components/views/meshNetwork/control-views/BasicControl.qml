@@ -26,7 +26,6 @@ Rectangle {
         anchors.topMargin: 20
         text: "Virtual environment:"
         font.pixelSize: 24
-
     }
 
    SGComboBox{
