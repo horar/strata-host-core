@@ -50,7 +50,7 @@ Rectangle {
         anchors.top:parent.top
         anchors.topMargin: 20
         anchors.horizontalCenter: parent.horizontalCenter
-        text:"one-to-many"
+        text:"One-to-Many"
         font.pixelSize: 72
     }
 
@@ -68,7 +68,7 @@ Rectangle {
             id:nodeText
             anchors.top:parent.top
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"node " + nodeNumber
+            text:"Node " + nodeNumber
             font.pixelSize: 18
         }
 
@@ -103,7 +103,7 @@ Rectangle {
                 id:primaryElementText
                 anchors.top:parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                text:"primary element "
+                text:"Primary Element "
                 font.pixelSize: 18
             }
 
@@ -138,7 +138,7 @@ Rectangle {
                     id:modelText
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"light hsl client model"
+                    text:"Light HSL Client Model"
                     font.pixelSize: 12
                 }
 
@@ -146,7 +146,7 @@ Rectangle {
                     id:modelAddressText
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"model id 0x1309"
+                    text:"Model id 0x1309"
                     font.pixelSize: 15
                 }
             }
@@ -218,7 +218,7 @@ Rectangle {
             anchors.top:parent.bottom
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"message to uaddr FFFF"
+            text:"Message to uaddr FFFF"
             font.pixelSize: 18
         }
     }
@@ -255,7 +255,7 @@ Rectangle {
                     id:blubNodeText
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"node " + nodeNumber
+                    text:"Node " + nodeNumber
                     font.pixelSize: 15
                 }
 
@@ -290,7 +290,7 @@ Rectangle {
                         id:bulbPrimaryElementText
                         anchors.top:parent.top
                         anchors.horizontalCenter: parent.horizontalCenter
-                        text:"primary element"
+                        text:"Primary Element"
                         font.pixelSize: 15
                     }
 
@@ -325,7 +325,7 @@ Rectangle {
                             id:bulbModelText
                             anchors.top:parent.top
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text:"light hsl server model"
+                            text:"Light HSL Server Model"
                             font.pixelSize: 12
                         }
 
@@ -372,7 +372,7 @@ Rectangle {
                     id:blubNodeText2
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"node " + nodeNumber
+                    text:"Node " + nodeNumber
                     font.pixelSize: 15
                 }
 
@@ -407,7 +407,7 @@ Rectangle {
                         id:bulbPrimaryElementText2
                         anchors.top:parent.top
                         anchors.horizontalCenter: parent.horizontalCenter
-                        text:"primary element"
+                        text:"Primary Element"
                         font.pixelSize: 15
                     }
 
@@ -442,7 +442,7 @@ Rectangle {
                             id:bulbModelText2
                             anchors.top:parent.top
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text:"light hsl server model"
+                            text:"Light HSL Server Model"
                             font.pixelSize: 12
                         }
 
@@ -488,7 +488,7 @@ Rectangle {
                     id:blubNodeText3
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"node " + nodeNumber
+                    text:"Node " + nodeNumber
                     font.pixelSize: 15
                 }
 
@@ -523,7 +523,7 @@ Rectangle {
                         id:bulbPrimaryElementText3
                         anchors.top:parent.top
                         anchors.horizontalCenter: parent.horizontalCenter
-                        text:"primary element"
+                        text:"Primary Element"
                         font.pixelSize: 15
                     }
 
@@ -558,7 +558,7 @@ Rectangle {
                             id:bulbModelText3
                             anchors.top:parent.top
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text:"light hsl server model"
+                            text:"Light HSL Server Model"
                             font.pixelSize: 12
                         }
 
@@ -603,7 +603,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:parent.bottom
         anchors.bottomMargin: 20
-        text:"configure"
+        text:"Configure"
         visible:false
 
         contentItem: Text {

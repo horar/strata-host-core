@@ -20,18 +20,9 @@ Rectangle {
         anchors.top:parent.top
         anchors.topMargin: 40
         anchors.horizontalCenter: parent.horizontalCenter
-        text:"multiple model"
+        text:"Multiple Model"
         font.pixelSize: 72
     }
-
-//    Image{
-//            anchors.fill: parent
-//            source: "qrc:/views/meshNetwork/images/multipleModelsDemo.png"
-//            height:parent.height
-//            anchors.centerIn: parent
-//            fillMode: Image.PreserveAspectFit
-//            mipmap:true
-//        }
 
     Column{
         id:column1

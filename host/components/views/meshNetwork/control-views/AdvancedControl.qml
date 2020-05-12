@@ -40,7 +40,7 @@ Rectangle{
 
             Text {
                 id: demoTabTitle
-                text: "demos"
+                text: "Demos"
                 font {
                     pixelSize: 24
                 }
@@ -69,7 +69,7 @@ Rectangle{
                     id:demo1Button
                     width: parent.width
                     height: 130
-                    text:"one-to-one"
+                    text:"One-to-One"
                     fontSizeMultiplier:1.5
                     color:"white"
                     icon.source: "qrc:/views/meshNetwork/images/oneToOneDemo.png"
@@ -89,7 +89,7 @@ Rectangle{
                     id:demo2Button
                     width: parent.width
                     height: 130
-                    text:"one-to-many"
+                    text:"One-to-Many"
                     fontSizeMultiplier:1.5
                     color:"white"
                     icon.source: "qrc:/views/meshNetwork/images/oneToManyDemo.png"
@@ -107,7 +107,7 @@ Rectangle{
                     id:demo3Button
                     width: parent.width
                     height: 130
-                    text:"relay"
+                    text:"Relay"
                     fontSizeMultiplier:1.5
                     color:"white"
                     icon.source: "qrc:/views/meshNetwork/images/relayDemo.png"
@@ -125,7 +125,7 @@ Rectangle{
 //                    id:demo4Button
 //                    width: parent.width
 //                    height: 130
-//                    text:"multiple model"
+//                    text:"Multiple Model"
 //                    fontSizeMultiplier:1.5
 //                    color:"white"
 //                    icon.source: "qrc:/views/meshNetwork/images/multipleModelsDemo.png"
@@ -143,7 +143,7 @@ Rectangle{
                     id:demo5Button
                     width: parent.width
                     height: 130
-                    text:"sensor"
+                    text:"Sensor"
                     fontSizeMultiplier:1.5
                     color:"white"
                     icon.source: "qrc:/views/meshNetwork/images/sensorIconFullBar.svg"
@@ -262,7 +262,7 @@ Rectangle{
 
             Widget09.SGSegmentedButton{
                 id:nodeCommunicationsSegmentedButton
-                text: qsTr("node communications")
+                text: qsTr("Node Communications")
                 activeColor: "dimgrey"
                 inactiveColor: "gainsboro"
                 textActiveColor: "white"
@@ -432,7 +432,7 @@ Rectangle{
         anchors.bottom:consoleScrollView.bottom
         anchors.bottomMargin: 10
 
-        text:"clear"
+        text:"Clear"
 
         contentItem: Text {
                 text: clearButton.text
@@ -478,7 +478,7 @@ Rectangle{
             horizontalAlignment: Text.AlignLeft
 
             onAccepted: {
-                console.log("sending:",commandLineInput.text)
+                //console.log("sending:",commandLineInput.text)
                 let object = JSON.parse(commandLineInput.text)
                 try{
                     if (!object) throw "incorrect JSON";

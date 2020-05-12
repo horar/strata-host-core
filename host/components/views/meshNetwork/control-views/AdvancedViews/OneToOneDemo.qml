@@ -88,7 +88,7 @@ Rectangle {
                 id:primaryElementText
                 anchors.top:parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                text:"primary element "
+                text:"Primary Element "
                 font.pixelSize: 18
             }
 
@@ -123,7 +123,7 @@ Rectangle {
                     id:modelText
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"light hsl client model"
+                    text:"Light HSL Client Model"
                     font.pixelSize: 12
                 }
 
@@ -132,7 +132,7 @@ Rectangle {
                     id:modelAddressText
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"model id 0x" + address
+                    text:"Model id 0x" + address
                     font.pixelSize: 15
                 }
             }
@@ -145,7 +145,7 @@ Rectangle {
         anchors.top:parent.top
         anchors.topMargin: 40
         anchors.horizontalCenter: parent.horizontalCenter
-        text:"one-to-one"
+        text:"One-to-One"
         font.pixelSize: 72
     }
 
@@ -209,9 +209,9 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             text:{
                 if (address != 0)
-                  return  "message to uaddr " + address
+                  return  "Message to uaddr " + address
                 else
-                  return "message to uaddr -"
+                  return "Message to uaddr -"
             }
             font.pixelSize: 18
         }
@@ -266,7 +266,7 @@ Rectangle {
                 id:bulbPrimaryElementText
                 anchors.top:parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                text:"primary element"
+                text:"Primary Element"
                 font.pixelSize: 18
             }
 
@@ -301,7 +301,7 @@ Rectangle {
                     id:bulbModelText
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"light hsl server model"
+                    text:"Light HSL Server Model"
                     font.pixelSize: 12
                 }
 
@@ -310,7 +310,7 @@ Rectangle {
                     id:bulbModelAddressText
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"model id 0x" + address
+                    text:"Model id 0x" + address
                     font.pixelSize: 15
                 }
             }
@@ -326,7 +326,7 @@ Rectangle {
 
         onBulbClicked: {
             platformInterface.demo_click.update("one_to_one","bulb1","on")
-            console.log("bulb clicked")
+            //console.log("bulb clicked")
         }
     }
 
@@ -337,7 +337,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:parent.bottom
         anchors.bottomMargin: 20
-        text:"configure"
+        text:"Configure"
         visible:false
 
         contentItem: Text {

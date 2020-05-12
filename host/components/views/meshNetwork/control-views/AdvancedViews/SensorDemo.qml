@@ -35,7 +35,7 @@ Rectangle {
         anchors.top:parent.top
         anchors.topMargin: 40
         anchors.horizontalCenter: parent.horizontalCenter
-        text:"sensor"
+        text:"Sensor"
         font.pixelSize: 72
     }
 
@@ -44,7 +44,7 @@ Rectangle {
         anchors.left:parent.left
         anchors.leftMargin: parent.width * .2
         anchors.verticalCenter: parent.verticalCenter
-        text:"get temperature"
+        text:"Get Temperature"
 
         contentItem: Text {
                 text: getTemperatureButton.text

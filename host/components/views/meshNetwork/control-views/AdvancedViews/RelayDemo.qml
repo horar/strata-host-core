@@ -47,7 +47,7 @@ Rectangle {
         anchors.top:parent.top
         anchors.topMargin: 40
         anchors.horizontalCenter: parent.horizontalCenter
-        text:"relay"
+        text:"Relay"
         font.pixelSize: 72
     }
 
@@ -65,7 +65,7 @@ Rectangle {
             id:nodeText
             anchors.top:parent.top
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"node " + nodeNumber
+            text:"Node " + nodeNumber
             font.pixelSize: 15
         }
 
@@ -100,7 +100,7 @@ Rectangle {
                 id:primaryElementText
                 anchors.top:parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                text:"primary element "
+                text:"Primary Element "
                 font.pixelSize: 15
             }
 
@@ -135,7 +135,7 @@ Rectangle {
                     id:modelText
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"light hsl client model"
+                    text:"Light HSL Client Model"
                     font.pixelSize: 10
                 }
 
@@ -144,7 +144,7 @@ Rectangle {
                     id:modelAddressText
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"model id 0x" + address
+                    text:"Model id 0x" + address
                     font.pixelSize: 10
                 }
             }
@@ -160,22 +160,24 @@ Rectangle {
         anchors.leftMargin:parent.width*.05
         anchors.verticalCenter: parent.verticalCenter
 
-//        property var button: platformInterface.demo_click_notification
-//        onButtonChanged:{
-//            if (platformInterface.demo_click_notification.demo === "relay")
-//                if (platformInterface.demo_click_notification.button === "switch1")
-//                    if (platformInterface.demo_click_notification.value === "on"){
-//                        switchOutline.isOn = true;
-//                        if(relaySwitch.checked)
-//                            lightBulb.onOpacity = 1
-//                    }
-//                       else{
-//                        switchOutline.isOn = false;
-//                        if(relaySwitch.checked)
-//                            lightBulb.onOpacity = 0
-//                    }
+        property var demo: platformInterface.one_to_one_demo
+        onDemoChanged:{
+            if (platformInterface.one_to_one_demo.light === "on"){
+                switchOutline.isOn = true;
+                lightBulb.onOpacity = 1
+                if (relaySwitch.checked){
+                    lightBulb2.onOpacity = 1
+                }
+            }
+            else{
+                switchOutline.isOn = false;
+                lightBulb.onOpacity = 0
+                if (relaySwitch.checked){
+                    lightBulb2.onOpacity = 0
+                }
+            }
 
-//        }
+        }
 
         //this switch should have no effect on the lightbulb if the relay switch is off
         onClicked:{
@@ -196,18 +198,6 @@ Rectangle {
 
             switchOutline.isOn = !switchOutline.isOn
         }
-
-
-//        onIsOnChanged: {
-//            if (isOn && relaySwitch.checked){
-//                lightBulb.onOpacity = 1
-//                platformInterface.demo_click.update("relay","switch1","on")
-//            }
-//              else if (!isOn && relaySwitch.checked){
-//                lightBulb.onOpacity = 0
-//                platformInterface.demo_click.update("relay","switch1","off")
-//            }
-//        }
     }
 
     Image{
@@ -248,7 +238,7 @@ Rectangle {
             id:nodeText2
             anchors.top:parent.top
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"node " + nodeNumber
+            text:"Node " + nodeNumber
             font.pixelSize: 15
         }
 
@@ -283,7 +273,7 @@ Rectangle {
                 id:primaryElementText2
                 anchors.top:parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                text:"primary element "
+                text:"Primary Element "
                 font.pixelSize: 15
             }
 
@@ -318,7 +308,7 @@ Rectangle {
                     id:modelText2
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"light hsl server model"
+                    text:"Light HSL Server Model"
                     font.pixelSize: 10
                 }
 
@@ -326,7 +316,7 @@ Rectangle {
                     id:modelAddressText2
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"model id 0x1307"
+                    text:"Model id 0x1307"
                     font.pixelSize: 10
                 }
             }
@@ -341,17 +331,6 @@ Rectangle {
             height:30
             grooveFillColor: "limegreen"
             grooveColor:"lightgrey"
-
-//            property var button: platformInterface.demo_click_notification
-//            onButtonChanged:{
-//                if (platformInterface.demo_click_notification.demo === "relay")
-//                    if (platformInterface.demo_click_notification.button === "relay_switch")
-//                        if (platformInterface.demo_click_notification.value === "on")
-//                            relaySwitch.isOn = true;
-//                           else
-//                            relaySwitch.isOn = false;
-
-//            }
 
             onToggled: {
                 //note that turning on or off the relay doesn't change the state of the light
@@ -369,7 +348,7 @@ Rectangle {
             anchors.top:relaySwitch.bottom
             anchors.topMargin: 0
             anchors.horizontalCenter: relaySwitch.horizontalCenter
-            text:"relay"
+            text:"Relay"
             font.pixelSize: 24
         }
 
@@ -409,7 +388,7 @@ Rectangle {
             anchors.top:parent.bottom
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"relay \nmessage"
+            text:"Relay \nMessage"
             font.pixelSize: 15
         }
     }
@@ -428,7 +407,7 @@ Rectangle {
             id:blubNodeText
             anchors.top:parent.top
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"node " + nodeNumber
+            text:"Node " + nodeNumber
             font.pixelSize: 15
         }
 
@@ -463,7 +442,7 @@ Rectangle {
                 id:bulbPrimaryElementText
                 anchors.top:parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                text:"primary element"
+                text:"Primary Element"
                 font.pixelSize: 15
             }
 
@@ -498,7 +477,7 @@ Rectangle {
                     id:bulbModelText
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"light hsl server model"
+                    text:"Light HSL Server Model"
                     font.pixelSize: 10
                 }
 
@@ -507,7 +486,7 @@ Rectangle {
                     id:bulbModelAddressText
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"model id 0x" + address
+                    text:"Model id 0x" + address
                     font.pixelSize: 10
                 }
             }
@@ -533,7 +512,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:parent.bottom
         anchors.bottomMargin: 20
-        text:"configure"
+        text:"Configure"
         visible:false
 
         contentItem: Text {
