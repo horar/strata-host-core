@@ -55,7 +55,7 @@ void DatabaseImpl::openDB(const QString &file_path)
     }
 
     QString dir_name = dir.dirName();
-    dir_name.replace(".cblite2","");
+    dir_name.replace(".cblite2", "");
 
     if (!dir.cdUp()) {
         qCCritical(cb_browser_) << "Problem with path to database file: " << file_path_;
@@ -80,7 +80,7 @@ void DatabaseImpl::openDB(const QString &file_path)
 
     setDBstatus(false);
     setRepstatus(false);
-    listened_channels_.clear();
+    latest_replication_.reset();
 
     if (!sg_db_ || !sg_db_->valid()) {
         setMessageAndStatus(MessageType::Error, "Problem with initialization of database.");
@@ -271,7 +271,7 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
     }
 
     document_keys_.clear();
-    listened_channels_.clear();
+    latest_replication_.reset();
     suggested_channels_.clear();
     setDBstatus(true);
     emitUpdate();
@@ -295,7 +295,7 @@ void DatabaseImpl::closeDB()
     setDBstatus(false);
     stopListening();
     document_keys_.clear();
-    listened_channels_.clear();
+    latest_replication_.reset();
     suggested_channels_.clear();
     setMessageAndStatus(MessageType::Success,"Successfully closed database '" + getDBName() + "'.");
     setDBName("");
@@ -326,9 +326,8 @@ bool DatabaseImpl::stopListening()
 
     sg_replicator_configuration_.reset();
     setRepstatus(false);
-    suggested_channels_ += listened_channels_;
+    suggested_channels_ += latest_replication_.channels;
     suggested_channels_.removeDuplicates();
-    listened_channels_.clear();
     setAllChannelsStr();
     return true;
 }
@@ -385,25 +384,15 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
         return false;
     }
 
-    url_ = url;
-    username_ = username;
-    password_ = password;
-    rep_type_ = rep_type;
-    listened_channels_.clear();
-
-    for (const QString &chan : channels) {
-        listened_channels_ << chan;
-    }
-
     sg_replicator_configuration_ = make_unique<ReplicatorConfiguration>(*sg_db_.get());
-    sg_replicator_configuration_->endpoint.setURL(url_.toUtf8());
+    sg_replicator_configuration_->endpoint.setURL(url.toUtf8());
 
     // Set replicator type (pull / push / push and pull)
-    if (rep_type_ == "pull") {
+    if (rep_type == "pull") {
         sg_replicator_configuration_->replicatorType = kCBLReplicatorTypePull;
-    } else if (rep_type_ == "push") {
+    } else if (rep_type == "push") {
         sg_replicator_configuration_->replicatorType = kCBLReplicatorTypePush;
-    } else if (rep_type_ == "pushpull") {
+    } else if (rep_type == "pushpull") {
         sg_replicator_configuration_->replicatorType = kCBLReplicatorTypePushAndPull;
     } else {
         setMessageAndStatus(MessageType::Error, "Unidentified replicator type selected.");
@@ -411,20 +400,13 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
     }
 
     // Set basic replicator authentication (username / password)
-    if (!username_.isEmpty() && !password_.isEmpty()) {
+    if (!username.isEmpty() && !password.isEmpty()) {
         sg_replicator_configuration_->authenticator.setBasic(username.toUtf8(), password.toUtf8());
     }
 
-    vector<string> chan_strvec{};
-
-    for (const QString &chan : listened_channels_) {
-        chan_strvec.push_back(chan.toStdString());
-    }
-
-    if (!chan_strvec.empty()) {
+    if (!channels.empty()) {
         fleece::MutableArray channels_mutablearray = fleece::MutableArray::newArray();
-
-        for (const QString &chan : listened_channels_) {
+        for (const auto &chan : channels) {
             channels_mutablearray.append(chan.toStdString());
         }
         sg_replicator_configuration_->channels = channels_mutablearray;
@@ -432,7 +414,7 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
 
     sg_replicator_configuration_->continuous = true;
 
-    // Official CBL API: Replicator CTOR can throw so this is now wrapped in try/catch
+    // Official CBL API: Replicator CTOR can throw so this is wrapped in try/catch
     try {
         sg_replicator_ = make_unique<Replicator>(*sg_replicator_configuration_);
     }
@@ -456,26 +438,58 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
     manual_replicator_stop_ = false;
     replicator_first_connection_ = true;
 
+    unsigned int retries = 0;
     sg_replicator_->start();
     while (sg_replicator_->status().activity != kCBLReplicatorStopped && sg_replicator_->status().activity != kCBLReplicatorIdle) {
-        this_thread::sleep_for(chrono::milliseconds(200));
+        ++retries;
+        this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
         if (sg_replicator_->status().error.code != 0) {
             stopListening();
             setMessageAndStatus(MessageType::Error, "Problem with start of replicator.");
+            qCCritical(cb_browser_) << "Problem with start of replicator. Received replicator error code: " << sg_replicator_->status().error.code <<
+                ", domain: " << sg_replicator_->status().error.domain << ", info: " << sg_replicator_->status().error.internal_info;
+            return false;
+        }
+        if (retries >= REPLICATOR_RETRY_MAX) {
+            stopListening();
+            setMessageAndStatus(MessageType::Error, "Problem with start of replicator (out of retries).");
+            qCCritical(cb_browser_) << "Problem with start of replicator (out of retries)";
             return false;
         }
     }
 
+    latest_replication_.url = url;
+    latest_replication_.username = username;
+    latest_replication_.password = password;
+    latest_replication_.rep_type = rep_type;
+    latest_replication_.channels.clear();
+
+    for (const auto &chan : channels) {
+        latest_replication_.channels << chan;
+    }
+
     if (config_mgr_) {
         vector<string> chan_strvec{};
-        for (const QString &chan : listened_channels_) {
+        for (const auto &chan : channels) {
             chan_strvec.push_back(chan.toStdString());
         }
-        config_mgr_->addRepToConfigDB(db_name_, url_, username_, rep_type_, chan_strvec);
+        config_mgr_->addRepToConfigDB(db_name_, url, username, rep_type, chan_strvec);
     }
 
     emit jsonConfigChanged();
     return true;
+}
+
+bool DatabaseImpl::restartListening()
+{
+    if (stopListening()) {
+        vector<QString> channels;
+        for (const auto &channel : latest_replication_.channels) {
+            channels.push_back(channel);
+        }
+        return startListening(latest_replication_.url, latest_replication_.username, latest_replication_.password, latest_replication_.rep_type, channels);
+    }
+    return false;
 }
 
 void DatabaseImpl::repStatusChanged(Replicator, const CBLReplicatorStatus &level)
@@ -483,6 +497,18 @@ void DatabaseImpl::repStatusChanged(Replicator, const CBLReplicatorStatus &level
     if (!sg_replicator_ || !isDBOpen()) {
         qCCritical(cb_browser_) << "Attempted to update status of replicator, but replicator is not running.";
         return;
+    }
+
+    // Check status for error
+    if (sg_replicator_->status().error.code != 0) {
+        qCCritical(cb_browser_) << "Received replicator error code: " << sg_replicator_->status().error.code <<
+            ", domain: " << sg_replicator_->status().error.domain << ", info: " << sg_replicator_->status().error.internal_info;
+
+        // Check for error "POSIX Error 5"
+        if (sg_replicator_->status().error.code == 5 && sg_replicator_->status().error.domain == 2 && sg_replicator_->status().error.internal_info == 1000) {
+            qCCritical(cb_browser_) << "Received replicator error 'POSIX error 5: Input/output error'";
+            restartListening();
+        }
     }
 
     switch (level.activity) {
@@ -498,7 +524,6 @@ void DatabaseImpl::repStatusChanged(Replicator, const CBLReplicatorStatus &level
             manual_replicator_stop_ = false;
             sg_replicator_->stop();
             setRepstatus(false);
-            listened_channels_.clear();
             break;
         case kCBLReplicatorIdle:
             activity_level_ = "Idle";
@@ -930,18 +955,18 @@ bool DatabaseImpl::getListenStatus() const
 void DatabaseImpl::setAllChannelsStr()
 {
     QJsonObject json_message;
-    QStringList listened_channels_copy = listened_channels_;
+    QStringList listened_channels_copy = latest_replication_.channels;
 
     if (getListenStatus() && listened_channels_copy.empty() && !suggested_channels_.empty()) {
         listened_channels_copy << suggested_channels_;
     }
 
-    // Add channels to the active channel list (listened_channels_)
+    // Add channels to the active channel list
     for (const QString &iter : listened_channels_copy) {
         json_message.insert(iter, "active");
     }
 
-    // Add channels to the suggested channel list (suggested_channels_)
+    // Add channels to the suggested channel list
     for (const QString &iter : suggested_channels_) {
         if (!listened_channels_copy.contains(iter)) {
             json_message.insert(iter, "suggested");

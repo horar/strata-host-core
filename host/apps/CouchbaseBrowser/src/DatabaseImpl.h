@@ -59,6 +59,8 @@ public:
     Q_INVOKABLE bool startListening(QString url, QString username = "", QString password = "",
                                     QString rep_type = "pull", std::vector<QString> channels = std::vector<QString> ());
 
+    Q_INVOKABLE bool restartListening();
+
     Q_INVOKABLE bool stopListening();
 
     Q_INVOKABLE void openDB(const QString &file_path);
@@ -84,14 +86,29 @@ public:
     Q_INVOKABLE QStringList getChannelSuggestions();
 
 private:
-    QString file_path_, db_path_, db_name_, url_, username_, password_,
-    rep_type_, message_, activity_level_, JsonDBContents_, JSONChannels_;
+    struct LatestReplicationInformation {
+        QString url;
+        QString username;
+        QString password;
+        QString rep_type;
+        QStringList channels;
+
+        void reset () {
+            url = "";
+            username = "";
+            password = "";
+            rep_type = "";
+            channels = QStringList();
+        }
+    };
+
+    QString file_path_, db_path_, db_name_, rep_type_, message_, activity_level_, JsonDBContents_, JSONChannels_;
 
     bool db_is_running_ = false, rep_is_running_ = false, manual_replicator_stop_ = false, replicator_first_connection_ = true;
 
     std::vector<std::string> document_keys_ = {};
 
-    QStringList listened_channels_ = {}, suggested_channels_ = {};
+    QStringList suggested_channels_ = {};
 
     std::vector<QString> toggled_channels_ = {};
 
@@ -108,6 +125,8 @@ private:
     QLoggingCategory cb_browser_;
 
     MessageType current_status_;
+
+    LatestReplicationInformation latest_replication_;
 
     void emitUpdate();
 
@@ -136,6 +155,10 @@ private:
     bool docExistsInDB(const QString &doc_id) const;
 
     void updateContents();
+
+    const std::chrono::milliseconds REPLICATOR_RETRY_INTERVAL = std::chrono::milliseconds(200);
+
+    const unsigned int REPLICATOR_RETRY_MAX = 50; // 50 * 200ms = 10s
 
 signals:
     void dbNameChanged();
