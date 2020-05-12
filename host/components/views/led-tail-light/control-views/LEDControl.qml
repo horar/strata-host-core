@@ -593,6 +593,60 @@ Item {
                 anchors.fill: parent
                 spacing: 10
 
+                Rectangle{
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+
+                    SGAlignedLabel {
+                        id: partNumberLabel
+                        target: partNumber
+                        alignment: SGAlignedLabel.SideLeftCenter
+                        anchors {
+                            right: parent.right
+                            verticalCenter: parent.verticalCenter
+                            rightMargin: 60
+
+                        }
+                        fontSizeMultiplier: ratioCalc * 1.2
+                        font.bold : true
+                        SGInfoBox{
+                            id: partNumber
+                            height:  35 * ratioCalc
+                            width: 120 * ratioCalc
+                            fontSizeMultiplier: ratioCalc * 1.2
+                        }
+
+                        property var led_part_number_value_caption: platformInterface.led_part_number_value_caption.caption
+                        onLed_part_number_value_captionChanged: {
+                            partNumberLabel.text = led_part_number_value_caption
+                        }
+
+                        property var led_part_number_value_state: platformInterface.led_part_number_value_state.state
+                        onLed_part_number_value_stateChanged: {
+                            if(led_part_number_value_state === "enabled" ) {
+                                partNumber.enabled = true
+                                partNumber.opacity = 1.0
+
+                            }
+                            else if(led_part_number_value_state === "disabled") {
+                                partNumber.enabled = false
+                                partNumber.opacity = 1.0
+                            }
+                            else {
+                                partNumber.enabled = false
+                                partNumber.opacity = 0.5
+
+                            }
+                        }
+
+                        property var led_part_number_value_value: platformInterface.led_part_number_value_value.value
+                        onLed_part_number_value_valueChanged: {
+                            partNumber.text = led_part_number_value_value
+                        }
+
+                    }
+                }
+
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
@@ -3434,36 +3488,36 @@ Item {
 
                                                 onUserSet: {
 
-                                                        platformInterface.outputDuty7 =  out7duty.value.toFixed(0)
-                                                        platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                                  platformInterface.pwm_lin_state,
-                                                                                                  [platformInterface.outputDuty0,
-                                                                                                   platformInterface.outputDuty1,
-                                                                                                   platformInterface.outputDuty2,
-                                                                                                   platformInterface.outputDuty3,
-                                                                                                   platformInterface.outputDuty4,
-                                                                                                   platformInterface.outputDuty5,
-                                                                                                   platformInterface.outputDuty6,
-                                                                                                   platformInterface.outputDuty7,
-                                                                                                   platformInterface.outputDuty8,
-                                                                                                   platformInterface.outputDuty9,
-                                                                                                   platformInterface.outputDuty10,
-                                                                                                   platformInterface.outputDuty11
+                                                    platformInterface.outputDuty7 =  out7duty.value.toFixed(0)
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty0,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty11
 
-                                                                                                  ],[
-                                                                                                      platformInterface.outputPwm0,
-                                                                                                      platformInterface.outputPwm1,
-                                                                                                      platformInterface.outputPwm2,
-                                                                                                      platformInterface.outputPwm3,
-                                                                                                      platformInterface.outputPwm4,
-                                                                                                      platformInterface.outputPwm5,
-                                                                                                      platformInterface.outputPwm6,
-                                                                                                      platformInterface.outputPwm7,
-                                                                                                      platformInterface.outputPwm8,
-                                                                                                      platformInterface.outputPwm9,
-                                                                                                      platformInterface.outputPwm10,
-                                                                                                      platformInterface.outputPwm11])
-                                                    }
+                                                                                              ],[
+                                                                                                  platformInterface.outputPwm0,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm11])
+                                                }
 
 
 
@@ -3700,36 +3754,36 @@ Item {
 
                                                 onUserSet: {
 
-                                                        platformInterface.outputDuty8 =  out8duty.value.toFixed(0)
-                                                        platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                                                  platformInterface.pwm_lin_state,
-                                                                                                  [platformInterface.outputDuty0,
-                                                                                                   platformInterface.outputDuty1,
-                                                                                                   platformInterface.outputDuty2,
-                                                                                                   platformInterface.outputDuty3,
-                                                                                                   platformInterface.outputDuty4,
-                                                                                                   platformInterface.outputDuty5,
-                                                                                                   platformInterface.outputDuty6,
-                                                                                                   platformInterface.outputDuty7,
-                                                                                                   platformInterface.outputDuty8,
-                                                                                                   platformInterface.outputDuty9,
-                                                                                                   platformInterface.outputDuty10,
-                                                                                                   platformInterface.outputDuty11
+                                                    platformInterface.outputDuty8 =  out8duty.value.toFixed(0)
+                                                    platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                              platformInterface.pwm_lin_state,
+                                                                                              [platformInterface.outputDuty0,
+                                                                                               platformInterface.outputDuty1,
+                                                                                               platformInterface.outputDuty2,
+                                                                                               platformInterface.outputDuty3,
+                                                                                               platformInterface.outputDuty4,
+                                                                                               platformInterface.outputDuty5,
+                                                                                               platformInterface.outputDuty6,
+                                                                                               platformInterface.outputDuty7,
+                                                                                               platformInterface.outputDuty8,
+                                                                                               platformInterface.outputDuty9,
+                                                                                               platformInterface.outputDuty10,
+                                                                                               platformInterface.outputDuty11
 
-                                                                                                  ],[
-                                                                                                      platformInterface.outputPwm0,
-                                                                                                      platformInterface.outputPwm1,
-                                                                                                      platformInterface.outputPwm2,
-                                                                                                      platformInterface.outputPwm3,
-                                                                                                      platformInterface.outputPwm4,
-                                                                                                      platformInterface.outputPwm5,
-                                                                                                      platformInterface.outputPwm6,
-                                                                                                      platformInterface.outputPwm7,
-                                                                                                      platformInterface.outputPwm8,
-                                                                                                      platformInterface.outputPwm9,
-                                                                                                      platformInterface.outputPwm10,
-                                                                                                      platformInterface.outputPwm11])
-                                                    }
+                                                                                              ],[
+                                                                                                  platformInterface.outputPwm0,
+                                                                                                  platformInterface.outputPwm1,
+                                                                                                  platformInterface.outputPwm2,
+                                                                                                  platformInterface.outputPwm3,
+                                                                                                  platformInterface.outputPwm4,
+                                                                                                  platformInterface.outputPwm5,
+                                                                                                  platformInterface.outputPwm6,
+                                                                                                  platformInterface.outputPwm7,
+                                                                                                  platformInterface.outputPwm8,
+                                                                                                  platformInterface.outputPwm9,
+                                                                                                  platformInterface.outputPwm10,
+                                                                                                  platformInterface.outputPwm11])
+                                                }
 
 
 
@@ -4638,6 +4692,54 @@ Item {
                         RowLayout{
                             anchors.fill: parent
 
+                            Rectangle {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                color: "transparent"
+
+                                SGAlignedLabel {
+                                    id: diagLabel
+                                    target: diag
+                                    //text:  "SC_Iset"
+                                    font.bold: true
+                                    alignment: SGAlignedLabel.SideTopCenter
+                                    fontSizeMultiplier: ratioCalc
+                                    anchors.centerIn: parent
+
+                                    SGStatusLight {
+                                        id: diag
+                                        width: 30
+                                        property var led_diag_caption: platformInterface.led_diag_caption.caption
+                                        onLed_diag_captionChanged: {
+                                            diagLabel.text =  led_diag_caption
+                                        }
+
+                                        property var led_diag_state: platformInterface.led_diag_state.state
+                                        onLed_diag_stateChanged: {
+                                            if(led_diag_state === "enabled") {
+                                                diagLabel.enabled = true
+                                                diagLabel.opacity = 1.0
+                                            }
+                                            else if (led_diag_state === "disabled") {
+                                                diagLabel.enabled = false
+                                                diagLabel.opacity = 1.0
+                                            }
+                                            else  {
+                                                diagLabel.enabled = false
+                                                diagLabel.opacity = 0.5
+                                            }
+                                        }
+
+                                        property var led_diag_value: platformInterface.led_diag_value.value
+                                        onLed_diag_valueChanged: {
+                                            if(led_diag_value === false) {
+                                                diag.status = SGStatusLight.Off
+                                            }
+                                            else  diag.status = SGStatusLight.Red
+                                        }
+                                    }
+                                }
+                            }
                             Rectangle {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true

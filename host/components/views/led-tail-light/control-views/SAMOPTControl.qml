@@ -13,6 +13,9 @@ Item {
     height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
+    function toHex(d) {
+        return  ("0"+(Number(d).toString(16))).slice(-2).toUpperCase()
+    }
 
     property var soc_sam_conf_1_values: platformInterface.soc_sam_conf_1_values.values
     onSoc_sam_conf_1_valuesChanged: {
@@ -372,7 +375,7 @@ Item {
                                     ],
                                     samOpenLoadDiagnostic.currentText,
                                     platformInterface.soc_otpValue,
-                                    platformInterface.addr_curr)
+                                    platformInterface.addr_curr_apply)
                     }
                 }
 
@@ -673,7 +676,7 @@ Item {
                     SGAlignedLabel {
                         id: samConfigLabel
                         target: samConfig
-                        text: "SAM\n(Configuration)"
+                       // text: "SAM\n(Configuration)"
                         alignment: SGAlignedLabel.SideTopLeft
                         anchors {
                             top:parent.top
@@ -688,8 +691,8 @@ Item {
                         SGSwitch {
                             id: samConfig
                             labelsInside: true
-                            checkedLabel: "SAM1"
-                            uncheckedLabel: "SAM2"
+                            //checkedLabel: "SAM1"
+                            //uncheckedLabel: "SAM2"
                             textColor: "black"              // Default: "black"
                             handleColor: "white"            // Default: "white"
                             grooveColor: "#ccc"             // Default: "#ccc"
@@ -702,6 +705,44 @@ Item {
                                     platformInterface.set_soc_conf.update("SAM2")
 
                             }
+
+                            property var soc_conf_caption: platformInterface.soc_conf_caption.caption
+                            onSoc_conf_captionChanged: {
+                                samConfigLabel.text = soc_conf_caption
+                            }
+
+                            property var soc_conf_state: platformInterface.soc_conf_state.state
+                            onSoc_conf_stateChanged: {
+                                if(soc_conf_state === "enabled"){
+                                    samConfig.enabled = true
+                                    samConfig.opacity = 1.0
+                                }
+                                else if (soc_conf_state === "disabled") {
+                                    samConfig.enabled = false
+                                    samConfig.opacity = 1.0
+                                }
+                                else {
+                                    samConfig.enabled = false
+                                    samConfig.opacity = 0.5
+                                }
+                            }
+
+                            property var soc_conf_values: platformInterface.soc_conf_values.values
+                            onSoc_conf_valuesChanged: {
+                                samConfig.checkedLabel = soc_conf_values[0]
+                                samConfig.uncheckedLabel = soc_conf_values[1]
+                            }
+
+                            property var soc_conf_value: platformInterface.soc_conf_value.value
+                            onSoc_conf_valueChanged:{
+                                if(soc_conf_value === "SAM1"){
+                                    samConfig.checked = true
+                                }
+                                else  samConfig.checked = false
+                            }
+
+
+
                         }
                     }
                 }
@@ -2172,9 +2213,12 @@ Item {
                     }
                 }
 
+
+
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+
 
                     SGAlignedLabel {
                         id: new7bitLabel
@@ -2189,46 +2233,42 @@ Item {
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                             height:  35 * ratioCalc
                             width: 140 * ratioCalc
-                            validator: IntValidator {
-                                top: platformInterface.soc_addr_new.scales[0]
-                                bottom: platformInterface.soc_addr_new.scales[1]
-                            }
+                            //                            validator: IntValidator {
+                            //                                 top: platformInterface.soc_addr_new.scales[0]
+                            //                                  bottom: platformInterface.soc_addr_new.scales[1]
+                            //
+
+
                             onAccepted: {
-                                platformInterface.addr_curr_apply = text
+                                //                                new7bit.text = "0x"+ text
+
+
+
+                                var hexTodecimal = parseInt(text, 16)
+                                console.log(text)
+                                console.log(hexTodecimal)
+
+
+
+                                if(hexTodecimal > platformInterface.soc_addr_new.scales[0]) {
+                                    console.log(text.toString(16))
+                                    new7bit.text = toHex(platformInterface.soc_addr_new.scales[0])
+                                    platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
+                                }
+
+                                else if(hexTodecimal < platformInterface.soc_addr_new.scales[1]){
+                                    new7bit.text = toHex(platformInterface.soc_addr_new.scales[1])
+                                    platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
+                                }
+                                else if(hexTodecimal <= platformInterface.soc_addr_new.scales[0] && hexTodecimal >= platformInterface.soc_addr_new.scales[1]){
+                                    new7bit.text = text
+                                    platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
+                                }
+
+
+
                             }
 
-                            //                            onAccepted: {
-                            //                                platformInterface.addr_curr = text
-                            //                                platformInterface.set_soc_write.update(
-                            //                                            platformInterface.soc_otpValue,
-                            //                                            [platformInterface.soc_sam_conf_1_out1,
-                            //                                             platformInterface.soc_sam_conf_1_out2,
-                            //                                             platformInterface.soc_sam_conf_1_out3,
-                            //                                             platformInterface.soc_sam_conf_1_out4,
-                            //                                             platformInterface.soc_sam_conf_1_out5,
-                            //                                             platformInterface.soc_sam_conf_1_out6,
-                            //                                             platformInterface.soc_sam_conf_1_out7,
-                            //                                             platformInterface.soc_sam_conf_1_out8,
-                            //                                             platformInterface.soc_sam_conf_1_out9,
-                            //                                             platformInterface.soc_sam_conf_1_out10,
-                            //                                             platformInterface.soc_sam_conf_1_out11
-                            //                                            ],
-                            //                                            [platformInterface.soc_sam_conf_2_out1,
-                            //                                             platformInterface.soc_sam_conf_2_out2,
-                            //                                             platformInterface.soc_sam_conf_2_out3,
-                            //                                             platformInterface.soc_sam_conf_2_out4,
-                            //                                             platformInterface.soc_sam_conf_2_out5,
-                            //                                             platformInterface.soc_sam_conf_2_out6,
-                            //                                             platformInterface.soc_sam_conf_2_out7,
-                            //                                             platformInterface.soc_sam_conf_2_out8,
-                            //                                             platformInterface.soc_sam_conf_2_out9,
-                            //                                             platformInterface.soc_sam_conf_2_out10,
-                            //                                             platformInterface.soc_sam_conf_2_out11
-                            //                                            ],
-                            //                                            samOpenLoadDiagnostic.currentText,
-                            //                                            platformInterface.soc_otpValue,
-                            //                                            platformInterface.addr_curr)
-                            //                            }
                         }
 
                         //what's scale for
@@ -2256,8 +2296,9 @@ Item {
 
                         property var soc_addr_new_value: platformInterface.soc_addr_new_value.value
                         onSoc_addr_new_valueChanged: {
-                            new7bit.text = soc_addr_new_value
-                            platformInterface.addr_curr_apply = soc_addr_new_value
+
+                            new7bit.text =  toHex(soc_addr_new_value)
+                            platformInterface.addr_curr_apply = parseInt(soc_addr_new_value, 16)
                         }
 
                     }

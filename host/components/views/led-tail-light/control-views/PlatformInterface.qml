@@ -35,6 +35,25 @@ Item {
     // The property name *must* match the associated notification value.
     // Sets UI Control State when changed.
 
+    property var led_part_number_value: {
+        "caption":"Part Number",
+        "scales":[],
+        "state":"enabled",
+        "value":"NCV7685",
+        "values":[]
+    }
+
+    property var led_part_number_value_caption: {
+        "caption":"Part Number"
+    }
+
+    property var led_part_number_value_state: {
+        "state":"enabled"
+    }
+    property var led_part_number_value_value: {
+         "value":"NCV7685"
+    }
+
     property var led_out_en: {
         "caption":"OUT EN",
         "scales":[],
@@ -167,6 +186,27 @@ Item {
     property var led_iset_value: {
         "value": 30
     }
+
+    property var led_diag: {
+        "caption":"DIAG",
+        "scales":[],
+        "state":"disabled",
+        "value":false,
+        "values":[]
+    }
+
+    property var led_diag_caption: {
+        "caption": "DIAG"
+    }
+
+    property var led_diag_state: {
+        "state":"disabled"
+    }
+
+    property var led_diag_value: {
+        "value":false
+    }
+
 
     property var led_sc_iset: {
         "caption":"SC_Iset",
@@ -333,7 +373,7 @@ Item {
     property var led_oen: {
         "caption":"Output EN (OEN)",
         "scales":[],
-        "state":"disabled_and_grayed_out",
+        "state":"enabled",
         "value":true,
         "values":[]
     }
@@ -343,7 +383,7 @@ Item {
     }
 
     property var led_oen_state: {
-        "state":"disabled_and_grayed_out"
+        "state":"enabled"
     }
 
     property var led_oen_value: {
@@ -373,7 +413,7 @@ Item {
     property var led_pwm_duty_lock: {
         "caption":"Lock PWM Duty Together",
         "scales":[],
-        "state":"disabled_and_grayed_out",
+        "state":"enabled",
         "value":true,
         "values":[]
     }
@@ -383,17 +423,17 @@ Item {
     }
 
     property var led_pwm_duty_lock_state: {
-        "state":"disabled_and_grayed_out"
+        "state":"enabled"
     }
 
     property var led_pwm_duty_lock_value: {
-        "value": true
+        "value": false
     }
 
     property var led_pwm_en_lock: {
         "caption":"Lock PWM EN Together",
         "scales":[],
-        "state":"disabled_and_grayed_out",
+        "state":"enabled",
         "value":true,
         "values":[]
     }
@@ -403,11 +443,11 @@ Item {
     }
 
     property var led_pwm_en_lock_state: {
-        "state":"disabled_and_grayed_out"
+        "state":"enabled"
     }
 
     property var led_pwm_en_lock_value: {
-        "value": true
+        "value": false
     }
 
     property var led_linear_log: {
@@ -439,7 +479,7 @@ Item {
         "scales":[],
         "state":"enabled",
         "value":"125 Hz",
-        "values":["125 Hz","250 Hz","300 Hz"]
+        "values":["150 Hz","300 Hz","600 Hz","1200 Hz"]
     }
 
     property var led_pwm_freq_caption: {
@@ -451,11 +491,11 @@ Item {
     }
 
     property var led_pwm_freq_value: {
-        "value": "125 Hz"
+        "value": "150 Hz"
     }
 
     property var led_pwm_freq_values: {
-        "values": ["125 Hz","250 Hz"," 300 Hz"]
+        "values": ["150 Hz","300 Hz","600 Hz","1200 Hz"]
     }
 
     property var led_open_load_diagnostic: {
@@ -900,7 +940,7 @@ Item {
     }
 
     property var power_is: {
-        "caption":"Supply Current (IS)",
+        "caption":"Supply Current mA \n(IS)",
         "scales":[],
         "state":"disabled",
         "value":0,
@@ -908,7 +948,7 @@ Item {
     }
 
     property var power_is_caption: {
-        "caption": "Supply Current\n(IS)"
+        "caption": "Supply Current mA \n(IS)"
     }
 
     property var power_is_state: {
@@ -1036,7 +1076,7 @@ Item {
 
     property var power_total_power: {
         "caption":"Total Power Loss (W)",
-        "scales":[5.00,0.00,0.5],
+        "scales":[5.00,0.00,0.50],
         "state":"disabled",
         "value":0,
         "values":[]
@@ -1203,6 +1243,30 @@ Item {
         "values":["I2C","SAM"]
     }
 
+    property var soc_conf: {
+        "caption":"SAM Configuration",
+        "scales":[],
+        "state":"enabled",
+        "value":"SAM1",
+        "values":["SAM1","SAM2"]
+    }
+
+    property var soc_conf_caption: {
+        "caption":"SAM\nConfiguration"
+    }
+
+    property var soc_conf_state: {
+        "state":"enabled"
+    }
+
+    property var soc_conf_value: {
+        "value":"SAM1"
+    }
+
+    property var soc_conf_values: {
+        "values":["SAM1","SAM2"]
+    }
+
     property var soc_open_load_diagnostic: {
         "caption":"SAM Open Load Diagnostic",
         "scales":[],
@@ -1298,7 +1362,7 @@ Item {
     }
 
     property var soc_addr_new_caption: {
-        "caption":"New 7-bit I2C Address"
+        "caption":"New 7-bit I2C Address \n (0x)"
     }
 
     property var soc_addr_new_scales: {
@@ -1310,7 +1374,7 @@ Item {
     }
 
     property var soc_addr_new_value: {
-        "value":"96"
+        "value":96
     }
 
     property var soc_otp: {
