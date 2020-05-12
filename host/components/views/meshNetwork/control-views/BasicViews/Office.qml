@@ -140,10 +140,17 @@ Rectangle {
         onNewNodeAddedChanged: {
             //console.log("new node added",platformInterface.node_added.index)
             var theNodeNumber = platformInterface.node_added.index
-            meshArray[theNodeNumber].opacity = 1;
-            //console.log("set the opacity of node",theNodeNumber, "to 1");
-            meshArray[theNodeNumber].nodeNumber = platformInterface.node_added.index
-            meshArray[theNodeNumber].objectColor = platformInterface.node_added.color
+            var emptySlot = theNodeNumber
+
+            //console.log("adding new node",platformInterface.node_added.index)
+            if (theNodeNumber !== 1 && (meshArray[theNodeNumber].objectColor != "lightgrey")){
+                emptySlot = findEmptySlot(theNodeNumber)
+                console.log("node not empty, adding in position",emptySlot)
+            }
+
+            meshArray[emptySlot].opacity = 1;
+            meshArray[emptySlot].objectColor = platformInterface.node_added.color
+            meshArray[emptySlot].nodeNumber = theNodeNumber
         }
 
         property var nodeRemoved: platformInterface.node_removed
@@ -369,13 +376,19 @@ Rectangle {
 
             property var newNodeAdded: platformInterface.node_added
             onNewNodeAddedChanged: {
-
                 var theNodeNumber = platformInterface.node_added.index
+                var emptySlot = theNodeNumber
 
-                targetArray[theNodeNumber].nodeNumber = platformInterface.node_added.index
-                targetArray[theNodeNumber].color = platformInterface.node_added.color
+                if (theNodeNumber !== 1 && (targetArray[theNodeNumber].color != "transparent")){
+                    emptySlot = findEmptySlot(theNodeNumber)
+                    console.log("node not empty, adding in position",emptySlot)
+                }
+
+                targetArray[emptySlot].nodeNumber = platformInterface.node_added.index
+                targetArray[emptySlot].color = platformInterface.node_added.color
                 console.log("new node added",theNodeNumber,"to role",targetArray[theNodeNumber].nodeType)
             }
+
 
             property var nodeRemoved: platformInterface.node_removed
             onNodeRemovedChanged: {
