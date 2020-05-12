@@ -1,6 +1,6 @@
 #include "DeviceOperations.h"
 #include "DeviceOperationsConstants.h"
-#include "DeviceCommands.h"
+#include "DeviceCommands/DeviceCommands.h"
 
 #include <DeviceProperties.h>
 #include <CommandValidator.h>
