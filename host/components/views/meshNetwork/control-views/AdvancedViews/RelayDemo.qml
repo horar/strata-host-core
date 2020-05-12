@@ -18,7 +18,7 @@ Rectangle {
         if (visible)
             resetUI();
         //configure the firmware
-        platformInterface.set_node_mode.update(65535, "default", true)
+        platformInterface.set_node_mode.update( "default",65535, true)
 
         var nodeCount = 0;
         for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
@@ -362,10 +362,10 @@ Rectangle {
             onToggled: {
                 //note that turning on or off the relay doesn't change the state of the light
                 if (checked){
-                    platformInterface.set_node_mode.update(node2ID,"relay",true)
+                    platformInterface.set_node_mode.update("relay", node2ID,true)
                 }
                 else{
-                    platformInterface.demo_click.update(node2ID,"relay",false)
+                    platformInterface.set_node_mode.update("relay",node2ID, false)
                 }
             }
         }
