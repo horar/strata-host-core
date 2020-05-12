@@ -5,11 +5,14 @@ import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as Widget09
+import QtWebEngine 1.0
 import "AdvancedViews"
 
 import "qrc:/js/help_layout_manager.js" as Help
 Rectangle{
     id: root
+
+    property bool showConsole: true
 
     Widget09.SGResponsiveScrollView {
         id: demoButonScrollView
@@ -154,24 +157,24 @@ Rectangle{
                         }
                     }
                 }
-                SGButton{
-                    id:demo6Button
-                    width: parent.width
-                    height: 130
-                    text:"cloud"
-                    fontSizeMultiplier:1.5
-                    color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/cloud.png"
-                    iconSize:75
-                    display: Button.TextUnderIcon
-                    checkable:true
+//                SGButton{
+//                    id:demo6Button
+//                    width: parent.width
+//                    height: 130
+//                    text:"cloud"
+//                    fontSizeMultiplier:1.5
+//                    color:"white"
+//                    icon.source: "qrc:/views/meshNetwork/images/cloud.png"
+//                    iconSize:75
+//                    display: Button.TextUnderIcon
+//                    checkable:true
 
-                    onCheckedChanged: {
-                        if (checked){
-                            demoStackLayout.currentIndex = 4
-                        }
-                    }
-                }
+//                    onCheckedChanged: {
+//                        if (checked){
+//                            demoStackLayout.currentIndex = 4
+//                        }
+//                    }
+//                }
 
             }
         }
@@ -217,37 +220,102 @@ Rectangle{
                 id: rectangleFive
             }
 
-            CloudDemo {
-                id: rectangleSix
-            }
+//            CloudDemo {
+//                id: rectangleSix
+//            }
+        }
+
+        Rectangle{
+            id:demoConsoleDivider
+            anchors.right:parent.right
+            anchors.rightMargin: 1
+            anchors.top:parent.top
+            anchors.bottom:parent.bottom
+            width:1
+            color:"grey"
+
         }
 
     }
 
+    Widget09.SGSegmentedButtonStrip {
+        id: rightViewSelectorStrip
 
-    Rectangle{
-        id:consoleTextContainer
         anchors.left: parent.left
-        anchors.leftMargin: parent.width * .75
+        anchors.leftMargin: parent.width * .8
         anchors.top:parent.top
         anchors.right:parent.right
-        height:25
-        color:"white"
 
-        Text {
-            id: consoleText
-            text: "Node Communications"
-            font {
-                pixelSize: 24
+        labelLeft: false
+        textColor: "#666"
+        activeTextColor: "white"
+        radius: 4
+        buttonHeight: 30
+        exclusive: true
+        buttonImplicitWidth: 50
+        hoverEnabled:false
+        enabled: !container.inOverCurrentProtection
+
+        segmentedButtons: GridLayout {
+            columnSpacing: 2
+            rowSpacing: 2
+
+            Widget09.SGSegmentedButton{
+                id:nodeCommunicationsSegmentedButton
+                text: qsTr("node communications")
+                activeColor: "dimgrey"
+                inactiveColor: "gainsboro"
+                textActiveColor: "white"
+                checked: true
+                buttonText.font.pixelSize: 18
+                onClicked: root.showConsole = true
             }
-            color:"black"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            //        anchors {
-            //            horizontalCenter: parent.horizontalCenter
-            //            top:parent.top
-            //        }
+
+            Widget09.SGSegmentedButton{
+                id:helpSegmentedButton
+                text: qsTr("")
+                activeColor: "dimgrey"
+                inactiveColor: "gainsboro"
+                textActiveColor: "white"
+                buttonText.font.pixelSize: 18
+                onClicked: root.showConsole = false
+
+                Image{
+                    id:questionMarkImage
+//                    anchors.top:parent.top
+//                    anchors.topMargin: 10
+//                    anchors.right:drawerToggleButton.left
+//                    anchors.rightMargin: 10
+                    anchors.centerIn: parent
+                    height:25
+                    width:25
+                    source: helpSegmentedButton.checked ? "qrc:/views/meshNetwork/images/question-circle-white.svg" : "qrc:/sgimages/question-circle.svg"
+                    fillMode: Image.PreserveAspectFit
+                    mipmap:true
+                    opacity:helpSegmentedButton.checked ? .8 : .3
+                }
+            }
+
         }
+    }
+
+
+    Rectangle{
+        id:helpViewContainer
+        anchors.left: parent.left
+        anchors.leftMargin: parent.width * .75
+        anchors.top:rightViewSelectorStrip.bottom
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 50
+        anchors.right:parent.right
+        color:"white"
+        visible: !root.showConsole
+
+        WebEngineView {
+             id: webView
+             anchors.fill: parent
+             url: "qrc:/views/meshNetwork/images/mesh_help.html"   //doesn't render html
+            }
     }
 
     Widget09.SGResponsiveScrollView {
@@ -255,10 +323,11 @@ Rectangle{
 
         anchors.left: parent.left
         anchors.leftMargin: parent.width * .75
-        anchors.top:consoleTextContainer.bottom
+        anchors.top:rightViewSelectorStrip.bottom
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
         anchors.right:parent.right
+        visible: root.showConsole
 
 
         minimumHeight: 800
@@ -291,9 +360,9 @@ Rectangle{
                 width: parent.width
                 height: (parent.height)
                 anchors.left:parent.left
-                anchors.leftMargin: 20
+                anchors.leftMargin: 10
                 anchors.right:parent.right
-                anchors.rightMargin: 20
+                anchors.rightMargin: 10
                 anchors.top:parent.top
                 //anchors.topMargin: 50
                 anchors.bottom:parent.bottom
@@ -308,7 +377,7 @@ Rectangle{
                     //statusTextColor: "white"
                     //statusBoxColor: "black"
                     statusBoxBorderColor: "white"
-                    fontSizeMultiplier: 1
+                    fontSizeMultiplier: .9
 
                     listElementTemplate : {
                         "message": "",
@@ -360,8 +429,8 @@ Rectangle{
 
         anchors.right: parent.right
         anchors.rightMargin: 20
-        anchors.top:consoleTextContainer.bottom
-        anchors.topMargin: 10
+        anchors.bottom:consoleScrollView.bottom
+        anchors.bottomMargin: 10
 
         text:"clear"
 

@@ -11,9 +11,133 @@ Rectangle {
     id: root
     color:"transparent"
 
+    property int node1ID: 0
+    property int node2ID: 0
+
     onVisibleChanged: {
-        if (visible)
+        if (visible){
             resetUI();
+            platformInterface.set_onetoone_demo.update()
+
+            var nodeCount = 0;
+
+            for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+                //for each node that is marked visible set the visibilty of the node appropriately
+                console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
+                if (platformInterface.network_notification.nodes[alpha].ready !== 0){
+                    nodeCount++;
+                    if (nodeCount === 1){
+                        root.node1ID = platformInterface.network_notification.nodes[alpha].index
+                        console.log("node 1 set to",root.node1ID)
+                    }
+                    else if (nodeCount === 2){
+                        root.node2ID = platformInterface.network_notification.nodes[alpha].index
+                        console.log("node 1 set to",root.node2ID)
+                    }
+                }
+            }
+        }
+    }
+
+    Rectangle{
+        id:nodeRectangle
+        width: switchOutline.width + 100
+        height:switchOutline.height + 200
+        anchors.horizontalCenter: switchOutline.horizontalCenter
+        anchors.verticalCenter: switchOutline.verticalCenter
+        radius:10
+        border.color:"black"
+
+        Text{
+            id:nodeText
+            anchors.top:parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            text:"node 1"
+            font.pixelSize: 18
+        }
+
+        Text{
+            property int address: root.node1ID
+            id:nodeAddressText
+            anchors.bottom:parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            text:{
+                if (address != 0)
+                  return  "uaddr " + address
+                else
+                  return "uaddr -"
+            }
+
+            font.pixelSize: 18
+        }
+
+        Rectangle{
+            id:primaryElementRectangle
+            anchors.left:parent.left
+            anchors.leftMargin:15
+            anchors.right:parent.right
+            anchors.rightMargin: 15
+            anchors.top:parent.top
+            anchors.topMargin:25
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:25
+            radius:10
+            border.color:"black"
+
+            Text{
+                id:primaryElementText
+                anchors.top:parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
+                text:"primary element "
+                font.pixelSize: 18
+            }
+
+            Text{
+                property int address: root.node1ID
+                id:primaryElementAddressText
+                anchors.bottom:parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                text:{
+                    if (address != 0)
+                      return  "uaddr " + address
+                    else
+                      return "uaddr -"
+                }
+                font.pixelSize: 18
+            }
+
+            Rectangle{
+                id:modelRectangle
+                anchors.left:parent.left
+                anchors.leftMargin:15
+                anchors.right:parent.right
+                anchors.rightMargin: 15
+                anchors.top:parent.top
+                anchors.topMargin:25
+                anchors.bottom:parent.bottom
+                anchors.bottomMargin:25
+                radius:10
+                border.color:"black"
+
+                Text{
+                    id:modelText
+                    anchors.top:parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text:"light hsl client model"
+                    font.pixelSize: 12
+                }
+
+                Text{
+                    property int address: 1309
+                    id:modelAddressText
+                    anchors.bottom:parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text:"model id 0x" + address
+                    font.pixelSize: 15
+                }
+            }
+        }
+
     }
 
     Text{
@@ -27,97 +151,177 @@ Rectangle {
 
     MSwitch{
         id:switchOutline
-        height:320
-        width:200
+        height:parent.height * .2
+        width:height * .6
         anchors.left:parent.left
         anchors.leftMargin:parent.width*.1
         anchors.verticalCenter: parent.verticalCenter
 
-        property var button: platformInterface.demo_click_notification
-        onButtonChanged:{
-            if (platformInterface.demo_click_notification.demo === "one_to_many")
-                if (platformInterface.demo_click_notification.button === "switch")
-                    if (platformInterface.demo_click_notification.value === "on")
-                        switchOutline.isOn = true;
-                       else
-                        switchOutline.isOn = false;
+        property var demo: platformInterface.one_to_one_demo
+        onDemoChanged:{
+            if (platformInterface.one_to_one_demo.light === "on"){
+                switchOutline.isOn = true;
+                lightBulb.onOpacity = 1
+            }
+            else{
+                switchOutline.isOn = false;
+                lightBulb.onOpacity = 0
+            }
 
         }
 
-        onIsOnChanged: {
-            if (isOn){
+        onClicked:{
+            if (!isOn){     //turning the lightbulb on
                 lightBulb.onOpacity = 1
-                platformInterface.demo_click.update("one_to_one","switch","on")
-            }
-              else{
+                platformInterface.light_hsl_set.update(49633,0,0,100);  //set color to white
+                switchOutline.isOn = true
+              }
+              else{         //turning the lightbulb off
                 lightBulb.onOpacity = 0
-                platformInterface.demo_click.update("one_to_one","switch","off")
-            }
+                platformInterface.light_hsl_set.update(49633,0,0,0);  //set color to black
+                switchOutline.isOn = false
+              }
         }
     }
 
-//    Button{
-//        id:switchButton
-//        height:100
-//        width:100
-//        anchors.left:parent.left
-//        anchors.leftMargin:parent.width*.2
-//        anchors.verticalCenter: parent.verticalCenter
-//        text:"switch"
-//        font.pixelSize: 24
 
-
-//        background: Rectangle {
-//               implicitWidth: 100
-//               implicitHeight: 40
-//               color: switchButton.pressed ? "lightgrey" : "transparent"
-//               border.color: "black"
-//               border.width: 5
-//               radius: 10
-//           }
-
-//        property bool isOn
-
-//        property var button: platformInterface.demo_click_notification
-//        onButtonChanged:{
-//            if (platformInterface.demo_click_notification.demo === "one_to_one")
-//                if (platformInterface.demo_click_notification.button === "switch")
-//                    if (platformInterface.demo_click_notification.value === "on")
-//                        switchButton.isOn = true;
-//                       else
-//                        switchButton.isOn = false;
-//        }
-
-//        onClicked: {
-//            isOn = !isOn;
-//            if (isOn){
-//                lightBulb.onOpacity = 1
-//                platformInterface.demo_click.update("one_to_one","switch","on")
-//            }
-//              else{
-//                lightBulb.onOpacity = 0
-//                platformInterface.demo_click.update("one_to_one","switch","off")
-//            }
-//        }
-//    }
 
 
 
     Image{
         id:arrowImage
-        anchors.left:switchOutline.right
-        anchors.right:lightBulb.left
+        anchors.left:nodeRectangle.right
+        anchors.leftMargin: 10
+        anchors.right:bulbNodeRectangle.left
+        anchors.rightMargin: 10
         anchors.verticalCenter: parent.verticalCenter
         source: "qrc:/views/meshNetwork/images/rightArrow.svg"
         height:25
+        //sourceSize: Qt.size(width, height)
         fillMode: Image.PreserveAspectFit
         mipmap:true
+
+        Text{
+            property int address: root.node2ID
+            id:messageText
+            anchors.top:parent.bottom
+            anchors.topMargin: 10
+            anchors.horizontalCenter: parent.horizontalCenter
+            text:{
+                if (address != 0)
+                  return  "message to uaddr " + address
+                else
+                  return "message to uaddr -"
+            }
+            font.pixelSize: 18
+        }
     }
 
+    Rectangle{
+        id:bulbNodeRectangle
+        width: lightBulb.width + 100
+        height:lightBulb.height + 200
+        anchors.horizontalCenter: lightBulb.horizontalCenter
+        anchors.verticalCenter: lightBulb.verticalCenter
+        radius:10
+        border.color:"black"
+
+        Text{
+            property int nodeNumber: 2
+            id:blubNodeText
+            anchors.top:parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            text:"node " + nodeNumber
+            font.pixelSize: 18
+        }
+
+        Text{
+            property int address: root.node2ID
+            id:bulbNodeAddressText
+            anchors.bottom:parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            text:{
+                if (address != 0)
+                  return  "uaddr " + address
+                else
+                  return "uaddr -"
+            }
+            font.pixelSize: 18
+        }
+
+        Rectangle{
+            id:bulbPrimaryElementRectangle
+            anchors.left:parent.left
+            anchors.leftMargin:15
+            anchors.right:parent.right
+            anchors.rightMargin: 15
+            anchors.top:parent.top
+            anchors.topMargin:25
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:25
+            radius:10
+            border.color:"black"
+
+            Text{
+                id:bulbPrimaryElementText
+                anchors.top:parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
+                text:"primary element"
+                font.pixelSize: 18
+            }
+
+            Text{
+                property int address: root.node2ID
+                id:bulbPrimaryElementAddressText
+                anchors.bottom:parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                text:{
+                    if (address != 0)
+                      return  "uaddr " + address
+                    else
+                      return "uaddr -"
+                }
+                font.pixelSize: 18
+            }
+
+            Rectangle{
+                id:bulbModelRectangle
+                anchors.left:parent.left
+                anchors.leftMargin:15
+                anchors.right:parent.right
+                anchors.rightMargin: 15
+                anchors.top:parent.top
+                anchors.topMargin:25
+                anchors.bottom:parent.bottom
+                anchors.bottomMargin:25
+                radius:10
+                border.color:"black"
+
+                Text{
+                    id:bulbModelText
+                    anchors.top:parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text:"light hsl server model"
+                    font.pixelSize: 12
+                }
+
+                Text{
+                    property int address: 1307
+                    id:bulbModelAddressText
+                    anchors.bottom:parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text:"model id 0x" + address
+                    font.pixelSize: 15
+                }
+            }
+        }
+
+    }
     MLightBulb{
         id:lightBulb
+        height:parent.height * .2
         anchors.right:parent.right
-        anchors.rightMargin:parent.width*.2
+        anchors.rightMargin:parent.width*.1
         anchors.verticalCenter: parent.verticalCenter
 
         onBulbClicked: {
@@ -125,6 +329,7 @@ Rectangle {
             console.log("bulb clicked")
         }
     }
+
 
 
     Button{
@@ -154,13 +359,14 @@ Rectangle {
             }
 
             onClicked: {
-                platformInterface.set_demo.update("one_to_one")
+                platformInterface.set_onetoone_demo.update()
                 root.resetUI()
             }
     }
 
     function resetUI(){
         switchOutline.isOn = false
+        lightBulb.onOpacity = 0
     }
 
 
