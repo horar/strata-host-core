@@ -224,17 +224,11 @@ Rectangle {
         mipmap:true
 
         Text{
-            property int address: root.node2ID
             id:messageText
             anchors.top:parent.bottom
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
-            text:{
-                if (address != 0)
-                  return  "message \nto uaddr " + address
-                else
-                  return "message \nto uaddr -"
-            }
+            text:"message \nto uaddr FFFF"
             font.pixelSize: 15
         }
     }
