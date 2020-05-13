@@ -1150,7 +1150,7 @@ Item {
                                             id: enableModeSet
                                             checkedLabel: "Manual"
                                             uncheckedLabel: "Auto"
-                                            fontSizeMultiplier: ratioCalc
+                                            //fontSizeMultiplier: ratioCalc * 1.2
                                             onToggled: {
                                                 if(checked) {
                                                     maxInputCurrentContainer.enabled = true
@@ -1373,7 +1373,7 @@ Item {
                                                         id: lowLoadEnable
                                                         checkedLabel: "On"
                                                         uncheckedLabel: "Off"
-                                                        fontSizeMultiplier: ratioCalc
+                                                       // fontSizeMultiplier: ratioCalc * 1.2
                                                         onToggled:  {
                                                             if(checked) {
                                                                 platformInterface.load_enables.update("low_load_on")
