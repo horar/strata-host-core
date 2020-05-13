@@ -24,7 +24,14 @@ Item {
     //          }
     //
 
-
+    property var control_props: ({
+                                "cmd":"control_props",
+                                update: function () {
+                                    CorePlatformInterface.send(this)
+                                },
+                                send: function () { CorePlatformInterface.send(this) },
+                                show: function () { CorePlatformInterface.show(this) }
+                            })
 
 
     // -------------------------------------------------------------------

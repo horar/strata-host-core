@@ -23,8 +23,15 @@ Slider {
     }
 
     function userInput(value) {
+        console.log(root.value, value)
         value = parseFloat(value).toFixed(root.decimalPlacesFromStepSize)
         if (root.value != value) { //@disable-check M126
+            root.value = value
+            userSet()
+
+        }
+        else if(root.value === root.to || root.value === root.from){
+            console.log("1",root.value, value)
             root.value = value
             userSet()
         }
@@ -38,7 +45,7 @@ Slider {
         }
     }
     onValueChanged: {
-        root.userInput(value.toFixed(decimalPlacesFromStepSize))
+        root.userInput(value)
     }
     background: Rectangle {
         y: 4
