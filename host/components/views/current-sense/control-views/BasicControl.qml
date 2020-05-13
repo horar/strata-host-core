@@ -122,6 +122,22 @@ Item {
         }
     }
 
+    property var switch_enable_status_state: platformInterface.switch_enable_status.load_switch_status
+    onSwitch_enable_status_stateChanged: {
+        if(switch_enable_status_state !== "") {
+            if(switch_enable_status_state === "freeze") {
+                lowLoadEnable.enabled = false
+                midCurrentEnable.enabled = false
+                highCurrentEnable.enabled = false
+            }
+            else {
+                lowLoadEnable.enabled = true
+                midCurrentEnable.enabled = true
+                highCurrentEnable.enabled = true
+            }
+        }
+    }
+
     property var switch_status_notification_i_in: platformInterface.i_in_interrupt.switch_status
     onSwitch_status_notification_i_inChanged: {
         if(switch_status_notification_i_in !== "") {

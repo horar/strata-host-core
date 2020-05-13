@@ -37,7 +37,8 @@ Item {
         "en_333": "off" ,      //on or off
         "i_in_max" : "30",
         "i_in_set" : "30",
-        "low_load_en" : "off"
+        "low_load_en" : "off",
+        "load_switch_status":""
 
     }
 
