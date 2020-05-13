@@ -161,22 +161,18 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
 
         property var demo: platformInterface.one_to_one_demo
+        //Tejashree says a message from the platform should turn both lights on or off.
         onDemoChanged:{
             if (platformInterface.one_to_one_demo.light === "on"){
                 switchOutline.isOn = true;
                 lightBulb.onOpacity = 1
-                if (relaySwitch.checked){
-                    lightBulb2.onOpacity = 1
+                lightBulb2.onOpacity = 1
                 }
-            }
             else{
                 switchOutline.isOn = false;
                 lightBulb.onOpacity = 0
-                if (relaySwitch.checked){
-                    lightBulb2.onOpacity = 0
+                lightBulb2.onOpacity = 0
                 }
-            }
-
         }
 
         //this switch should have no effect on the lightbulb if the relay switch is off

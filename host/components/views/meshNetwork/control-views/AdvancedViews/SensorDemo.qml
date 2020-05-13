@@ -31,6 +31,10 @@ Rectangle {
     }
 
     Text{
+
+
+
+
         id:title
         anchors.top:parent.top
         anchors.topMargin: 40
