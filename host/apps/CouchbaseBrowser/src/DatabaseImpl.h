@@ -160,6 +160,8 @@ private:
 
     const unsigned int REPLICATOR_RETRY_MAX = 50; // 50 * 200ms = 10s
 
+    bool is_restart_ = false;
+
 signals:
     void dbNameChanged();
 

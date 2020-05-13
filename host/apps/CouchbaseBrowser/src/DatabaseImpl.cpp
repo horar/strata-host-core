@@ -6,7 +6,7 @@
 #include "couchbase-lite-C/CouchbaseLite.hh"
 #include "DatabaseImpl.h"
 #include "ConfigManager.h"
-
+#include <iostream>
 using namespace std;
 using namespace cbl;
 
@@ -297,7 +297,7 @@ void DatabaseImpl::closeDB()
     document_keys_.clear();
     latest_replication_.reset();
     suggested_channels_.clear();
-    setMessageAndStatus(MessageType::Success,"Successfully closed database '" + getDBName() + "'.");
+    setMessageAndStatus(MessageType::Success, "Successfully closed database '" + getDBName() + "'.");
     setDBName("");
     JsonDBContents_ = "{}";
     emit jsonDBContentsChanged();
@@ -435,6 +435,16 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
         return false;
     }
 
+    latest_replication_.url = url; std::cout << "\n[VICTOR] SET URL!!\nURL: ->" << latest_replication_.url.toStdString() << "<-" << std::endl;
+    latest_replication_.username = username;
+    latest_replication_.password = password;
+    latest_replication_.rep_type = rep_type;
+    latest_replication_.channels.clear();
+
+    for (const auto &chan : channels) {
+        latest_replication_.channels << chan;
+    }
+
     manual_replicator_stop_ = false;
     replicator_first_connection_ = true;
 
@@ -445,9 +455,16 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
         this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
         if (sg_replicator_->status().error.code != 0) {
             stopListening();
-            setMessageAndStatus(MessageType::Error, "Problem with start of replicator.");
-            qCCritical(cb_browser_) << "Problem with start of replicator. Received replicator error code: " << sg_replicator_->status().error.code <<
-                ", domain: " << sg_replicator_->status().error.domain << ", info: " << sg_replicator_->status().error.internal_info;
+
+
+
+            if(!is_restart_) {
+                setMessageAndStatus(MessageType::Error, "Problem with start of replicator.");
+                qCCritical(cb_browser_) << "Problem with start of replicator. Received replicator error code: " << sg_replicator_->status().error.code <<
+                    ", domain: " << sg_replicator_->status().error.domain << ", info: " << sg_replicator_->status().error.internal_info;
+            }
+
+
             return false;
         }
         if (retries >= REPLICATOR_RETRY_MAX) {
@@ -458,15 +475,15 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
         }
     }
 
-    latest_replication_.url = url;
-    latest_replication_.username = username;
-    latest_replication_.password = password;
-    latest_replication_.rep_type = rep_type;
-    latest_replication_.channels.clear();
+    // latest_replication_.url = url; std::cout << "\n[VICTOR] SET URL!!\nURL: ->" << latest_replication_.url.toStdString() << "<-" << std::endl;
+    // latest_replication_.username = username;
+    // latest_replication_.password = password;
+    // latest_replication_.rep_type = rep_type;
+    // latest_replication_.channels.clear();
 
-    for (const auto &chan : channels) {
-        latest_replication_.channels << chan;
-    }
+    // for (const auto &chan : channels) {
+    //     latest_replication_.channels << chan;
+    // }
 
     if (config_mgr_) {
         vector<string> chan_strvec{};
@@ -477,12 +494,20 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
     }
 
     emit jsonConfigChanged();
+
+    is_restart_ = false;
+
     return true;
 }
 
 bool DatabaseImpl::restartListening()
 {
+
+    std::cout << "\n[VICTOR] Inside DatabaseImpl::restartListening()\nURL: ->" << latest_replication_.url.toStdString() << "<-" << std::endl;
+
+    is_restart_ = true;
     if (stopListening()) {
+        this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
         vector<QString> channels;
         for (const auto &channel : latest_replication_.channels) {
             channels.push_back(channel);
@@ -507,6 +532,9 @@ void DatabaseImpl::repStatusChanged(Replicator, const CBLReplicatorStatus &level
         // Check for error "POSIX Error 5"
         if (sg_replicator_->status().error.code == 5 && sg_replicator_->status().error.domain == 2 && sg_replicator_->status().error.internal_info == 1000) {
             qCCritical(cb_browser_) << "Received replicator error 'POSIX error 5: Input/output error'";
+
+            std::cout << "\n{VICTOR} CALLING RESTART LISTENING() ...\n\n";
+
             restartListening();
         }
     }
