@@ -20,6 +20,3 @@
 	path = extern/couchbase-lite-cpp
 	url = https://github.com/stratadeveloperstudio/couchbase-lite-cpp.git
 	ignore = dirty
-[submodule "extern/couchbase-lite-C"]
-	path = extern/couchbase-lite-C
-	url = https://github.com/stratadeveloperstudio/couchbase-lite-C.git
