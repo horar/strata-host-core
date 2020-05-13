@@ -884,7 +884,7 @@ Item {
                                                 SGText {
                                                     anchors.top:parent.top
                                                     anchors.horizontalCenter: parent.horizontalCenter
-                                                    text: "100µA & 3.3V Max"
+                                                    text: "100µA & 5V Max"
                                                     font.bold: true
                                                     fontSizeMultiplier: ratioCalc
                                                     color: "red"
@@ -1632,7 +1632,7 @@ Item {
 
                             Text {
                                 id: interrupt
-                                text: "Interrupts"
+                                text: "Status and Information"
                                 font.bold: true
                                 font.pixelSize: ratioCalc * 20
                                 color: "#696969"
