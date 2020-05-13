@@ -573,7 +573,7 @@ Item {
                                                 id: enable1
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
-                                                fontSizeMultiplier: ratioCalc
+                                                //fontSizeMultiplier: ratioCalc
                                                 anchors.centerIn: parent
 
 
@@ -656,7 +656,7 @@ Item {
 
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
-                                                fontSizeMultiplier: ratioCalc
+                                                //fontSizeMultiplier: ratioCalc
 
                                                 anchors.centerIn: parent
 
@@ -742,7 +742,7 @@ Item {
                                                 id: enable3
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
-                                                fontSizeMultiplier: ratioCalc
+                                               // fontSizeMultiplier: ratioCalc
 
                                                 anchors.centerIn: parent
                                                 onToggled:  {
@@ -825,7 +825,7 @@ Item {
                                                 //                                            width: 95 * ratioCalc
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
-                                                fontSizeMultiplier: ratioCalc
+                                               // fontSizeMultiplier: ratioCalc
 
                                                 anchors.centerIn: parent
 
@@ -901,7 +901,7 @@ Item {
                                                 id: enable5
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
-                                                fontSizeMultiplier: ratioCalc
+                                              //  fontSizeMultiplier: ratioCalc
 
                                                 anchors.centerIn: parent
 
@@ -1030,7 +1030,7 @@ Item {
                                                     id: activeDischarge
                                                     checkedLabel: "On"
                                                     uncheckedLabel: "Off"
-                                                    fontSizeMultiplier: ratioCalc
+                                                   // fontSizeMultiplier: ratioCalc
                                                     onToggled: {
                                                         if(checked)
                                                             platformInterface.set_active_discharge.update("on")
@@ -1466,7 +1466,7 @@ Item {
 
                                                         checkedLabel: "On"
                                                         uncheckedLabel: "Off"
-                                                        fontSizeMultiplier: ratioCalc
+                                                        //fontSizeMultiplier: ratioCalc
 
                                                         onToggled:  {
                                                             if(checked) {
@@ -1555,7 +1555,7 @@ Item {
                                                         id: highCurrentEnable
                                                         checkedLabel: "On"
                                                         uncheckedLabel: "Off"
-                                                        fontSizeMultiplier: ratioCalc
+                                                       // fontSizeMultiplier: ratioCalc
 
                                                         onToggled:  {
                                                             if(checked) {
