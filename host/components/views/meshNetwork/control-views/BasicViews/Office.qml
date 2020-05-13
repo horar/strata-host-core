@@ -25,7 +25,7 @@ Rectangle {
 
     onVisibleChanged: {
         if (visible){
-            console.log("office is now visible")
+            //console.log("office is now visible")
             //deactivate all the nodes from their previous roles when switching
             //this is a kludge, as it means nodes will not function in the roles they appear in until they're moved
             platformInterface.set_node_mode.update("default",65535,true)

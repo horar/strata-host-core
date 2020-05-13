@@ -15,6 +15,8 @@ Rectangle {
     //anchors.fill:parent
 
     Component.onDestruction: {
+        console.log("closing platform")
+        consoleDrawer.exit.enabled = false
         consoleDrawer.close();
     }
 
