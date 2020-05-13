@@ -19,7 +19,9 @@ Item {
     }
 
     Component.onCompleted: {
+        platformInterface.control_props.update()
         platformInterface.mode.update("Car Demo")
+
     }
 
     TabBar {

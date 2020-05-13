@@ -2298,7 +2298,8 @@ Item {
                         onSoc_addr_new_valueChanged: {
 
                             new7bit.text =  toHex(soc_addr_new_value)
-                            platformInterface.addr_curr_apply = parseInt(soc_addr_new_value, 16)
+                            platformInterface.addr_curr_apply = parseInt(new7bit.text , 16)
+                            console.log(platformInterface.addr_curr_apply)
                         }
 
                     }
