@@ -192,6 +192,57 @@ Rectangle {
         mipmap:true
         opacity:1
 
+        function toggleWindow(){
+           if (platformInterface.window_shade.value === "open")
+                platformInterface.window_shade.value = "closed"
+              else
+                platformInterface.window_shade.value = "open"
+
+           var doorState = platformInterface.smarthome_door.value
+           var windowState = platformInterface.window_shade.value
+           if (doorState === "open" && windowState === "open")
+                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpenWindowOpen.jpg"
+             else if (doorState === "open" && windowState === "closed")
+                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
+             else if (doorState === "closed" && windowState === "open")
+               mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
+             else if (doorState === "closed" && windowState === "closed")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+        }
+
+        function setColor(inColor){
+            if (inColor === "white")
+              mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+            else if (inColor === "black")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOff.jpg"
+            else if (inColor === "blue")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_blue.jpg"
+            else if (inColor === "green")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_green.jpg"
+            else if (inColor === "purple")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_purple.jpg"
+            else if (inColor === "orange")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_orange.jpg"
+        }
+
+        function toggleDoor(){
+            if (platformInterface.smarthome_door.value === "open")
+                 platformInterface.smarthome_door.value = "closed"
+               else
+                 platformInterface.smarthome_door.value = "open"
+
+            var doorState = platformInterface.smarthome_door.value
+            var windowState = platformInterface.window_shade.value
+            if (doorState === "open" && windowState === "open")
+                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpenWindowOpen.jpg"
+              else if (doorState === "open" && windowState === "closed")
+                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
+              else if (doorState === "closed" && windowState === "open")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
+              else if (doorState === "closed" && windowState === "closed")
+                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+        }
+
         property var color: platformInterface.room_color_notification
         onColorChanged: {
             var newColor = platformInterface.room_color_notification.color
@@ -412,6 +463,8 @@ Rectangle {
                 nodeType:"window_shade"
                 scene:"smart_home"
                 nodeNumber:""
+
+                onToggleWindow: mainImage.toggleWindow();
             }
 
             DragTarget{
@@ -425,6 +478,8 @@ Rectangle {
                 scene:"smart_home"
                 nodeType: "smarthome_door"
                 nodeNumber:""
+
+                onToggleDoor: mainImage.toggleDoor();
             }
 
             DragTarget{
@@ -438,6 +493,8 @@ Rectangle {
                 scene:"smart_home"
                 nodeType:"smarthome_lights"
                 nodeNumber:""
+
+                onSetRoomColor: mainImage.setColor(inColor)
             }
             DragTarget{
                 id:target4

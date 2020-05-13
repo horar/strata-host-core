@@ -193,6 +193,8 @@ Rectangle {
         mipmap:true
         opacity:1
 
+        property alias alarm: alarmTimer
+
         property var triggered: platformInterface.alarm_triggered
         onTriggeredChanged: {
             console.log("alarm triggered=",platformInterface.alarm_triggered.triggered)
@@ -458,6 +460,12 @@ Rectangle {
                 scene:"office"
                 nodeType:"door"
                 nodeNumber:""
+
+                onAlarmTriggered:{
+                    console.log("alarm triggerd caught for target 3")
+                    mainImage.alarm.start()
+                }
+
             }
             DragTarget{
                 //right of front door
