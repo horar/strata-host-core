@@ -140,6 +140,7 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult) {
     State result;
     switch (flasherResult) {
     case Flasher::Result::Ok :
+    case Flasher::Result::NoFirmware :
         result = State::Finished;
         break;
     case Flasher::Result::Cancelled :
@@ -178,11 +179,17 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult) {
             action_ = Action::FlashNew;
             flashFirmware(false);
         } else {
-            if (flasherResult != Flasher::Result::Cancelled) {
-                qCCritical(logCategoryFlasherConnector) << "Failed to backup original firmware.";
+            if (flasherResult == Flasher::Result::NoFirmware) {
+                qCInfo(logCategoryFlasherConnector) << "Board has no firmware, cannot backup. Going to flash new firmware.";
+                action_ = Action::Flash;
+                flashFirmware(false);
+            } else {
+                if (flasherResult != Flasher::Result::Cancelled) {
+                    qCCritical(logCategoryFlasherConnector) << "Failed to backup original firmware.";
+                }
+                action_ = Action::None;
+                emit finished(Result::Unsuccess);
             }
-            action_ = Action::None;
-            emit finished(Result::Unsuccess);
         }
         break;
     case Action::FlashNew :

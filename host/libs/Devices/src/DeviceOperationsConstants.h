@@ -33,7 +33,9 @@ constexpr const char* const JSON_STATUS = "status";
 constexpr const char* const JSON_OK = "ok";
 constexpr const char* const JSON_RESEND_CHUNK = "resend_chunk";
 
-const QString BOOTLOADER_STR("Bootloader");
+const QString QSTR_BOOTLOADER("Bootloader");
+
+constexpr const char* const CSTR_NO_FIRMWARE = "no_firmware";
 
 }  // namespace
 

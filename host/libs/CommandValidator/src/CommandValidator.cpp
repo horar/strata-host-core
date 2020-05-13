@@ -284,20 +284,31 @@ const rapidjson::SchemaDocument CommandValidator::backupFWResSchema(
                   "pattern": "^backup_firmware$"
                 },
                 "payload": {
-                  "type": "object",
-                  "properties": {
-                    "chunk": {
+                  "oneOf": [
+                    {
                       "type": "object",
                       "properties": {
-                        "number": {"type": "number"},
-                        "size": {"type": "number"},
-                        "crc": {"type": "number"},
-                        "data": {"type": "string"}
+                        "chunk": {
+                          "type": "object",
+                          "properties": {
+                            "number": {"type": "number"},
+                            "size": {"type": "number"},
+                            "crc": {"type": "number"},
+                            "data": {"type": "string"}
+                          },
+                          "required": ["number", "size", "crc", "data"]
+                        }
                       },
-                      "required": ["number", "size", "crc", "data"]
+                      "required": ["chunk"]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "status": {"type": "string"}
+                      },
+                      "required": ["status"]
                     }
-                  },
-                  "required": ["chunk"]
+                  ]
                 }
               },
               "required": ["value", "payload"]

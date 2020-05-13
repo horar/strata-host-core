@@ -4,6 +4,7 @@
 #include <SerialDevice.h>
 #include <DeviceProperties.h>
 #include <DeviceOperations.h>
+#include <DeviceOperationsFinished.h>
 
 #include "logging/LoggingQtCategories.h"
 
@@ -90,7 +91,11 @@ void Flasher::handleOperationFinished(DeviceOperation operation, int data) {
         handleFlashFirmware(data);
         break;
     case DeviceOperation::BackupFirmwareChunk :
-        handleBackupFirmware(data);
+        if (data == OPERATION_BACKUP_NO_FIRMWARE) {
+            finish(Result::NoFirmware);
+        } else {
+            handleBackupFirmware(data);
+        }
         break;
     case DeviceOperation::StartApplication :
         operation_->refreshPlatformId();

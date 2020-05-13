@@ -24,6 +24,7 @@ class Flasher : public QObject
          */
         enum class Result {
             Ok,
+            NoFirmware,
             Error,
             Timeout,
             Cancelled

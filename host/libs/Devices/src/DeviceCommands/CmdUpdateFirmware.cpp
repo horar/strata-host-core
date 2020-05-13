@@ -26,7 +26,7 @@ bool CmdUpdateFirmware::processNotification(rapidjson::Document& doc) {
 }
 
 bool CmdUpdateFirmware::skip() {
-    if (device_->property(DeviceProperties::verboseName) == BOOTLOADER_STR) {
+    if (device_->property(DeviceProperties::verboseName) == QSTR_BOOTLOADER) {
         qCInfo(logCategoryDeviceOperations) << device_.get() << "Platform already in bootloader mode. Ready for firmware operations.";
         result_ = CommandResult::FinaliseOperation;
         return true;
