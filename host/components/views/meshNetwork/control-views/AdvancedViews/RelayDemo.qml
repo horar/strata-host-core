@@ -160,17 +160,17 @@ Rectangle {
         anchors.leftMargin:parent.width*.05
         anchors.verticalCenter: parent.verticalCenter
 
-        property var demo: platformInterface.one_to_one_demo
+        property var demo: platformInterface.one_to_many_demo
         //Tejashree says a message from the platform should turn both lights on or off.
         onDemoChanged:{
-            if (platformInterface.one_to_one_demo.light === "on"){
+            if (platformInterface.one_to_many_demo.light === "on"){
                 switchOutline.isOn = true;
-                lightBulb.onOpacity = 1
+                lightBulb1.onOpacity = 1
                 lightBulb2.onOpacity = 1
                 }
             else{
                 switchOutline.isOn = false;
-                lightBulb.onOpacity = 0
+                lightBulb1.onOpacity = 0
                 lightBulb2.onOpacity = 0
                 }
         }

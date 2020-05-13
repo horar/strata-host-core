@@ -324,23 +324,23 @@ Rectangle {
                 }
             }
 
-            Button {
-                id: sensorData
-                text: "temperature"
+                        Button {
+                            id: temperature
+                            text: "temperature"
 
-                onClicked: {
+                            onClicked: {
 
-                    CorePlatformInterface.data_source_handler('{
-                                            "value":"sensor_status",
-                                            "payload":{
-                                                "uaddr":2,
-                                                "sensor_type":"temperature",
-                                                "data":123
-                                                }
-                                            }')
+                                CorePlatformInterface.data_source_handler('{
+                                "value":"sensor_status",
+                                "payload":{
+                                    "uaddr":2,
+                                    "sensor_type":"temperature",
+                                    "data": 123
+                                }
+                                }')
+                                }
+                        }
 
-                }
-            }
 
 //            Button {
 //                id: rssi

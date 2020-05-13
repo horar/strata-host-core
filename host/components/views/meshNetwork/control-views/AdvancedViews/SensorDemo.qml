@@ -81,7 +81,7 @@ Rectangle {
         anchors.topMargin: 40
         anchors.left: getTemperatureButton.left
         font.pixelSize: 24
-        text:"current temperature is "
+        text:""
         visible:false
 
         property var sensorData: platformInterface.sensor_status
@@ -89,7 +89,7 @@ Rectangle {
             if (platformInterface.sensor_status.uaddr === root.sensorNodeID)
                 if (platformInterface.sensor_status.sensor_type === "temperature"){
                     temperatureText.visible = true
-                    temperatureText.text += platformInterface.sensor_status.data + "°C"
+                    temperatureText.text = "current temperature is " + platformInterface.sensor_status.data + "°C"
                 }
         }
     }
