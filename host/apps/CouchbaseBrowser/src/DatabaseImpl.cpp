@@ -462,8 +462,8 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
 
             if(!is_restart_) {
                 setMessageAndStatus(MessageType::Error, "Problem with start of replicator.");
-                qCCritical(cb_browser_) << "Problem with start of replicator. Received replicator error code: " << sg_replicator_->status().error.code <<
-                    ", domain: " << sg_replicator_->status().error.domain << ", info: " << sg_replicator_->status().error.internal_info;
+                qCCritical(cb_browser_) << "Problem with start of replicator. Received replicator error code:" << sg_replicator_->status().error.code <<
+                    ", domain:" << sg_replicator_->status().error.domain << ", info:" << sg_replicator_->status().error.internal_info;
             }
 
 
@@ -528,8 +528,8 @@ void DatabaseImpl::repStatusChanged(Replicator, const CBLReplicatorStatus &level
 
     // Check status for error
     if (sg_replicator_->status().error.code != 0) {
-        qCCritical(cb_browser_) << "Received replicator error code: " << sg_replicator_->status().error.code <<
-            ", domain: " << sg_replicator_->status().error.domain << ", info: " << sg_replicator_->status().error.internal_info;
+        qCCritical(cb_browser_) << "Received replicator error code:" << sg_replicator_->status().error.code <<
+            ", domain:" << sg_replicator_->status().error.domain << ", info:" << sg_replicator_->status().error.internal_info;
 
         // Check for error "POSIX Error 5"
         if (sg_replicator_->status().error.code == 5 && sg_replicator_->status().error.domain == 2 && sg_replicator_->status().error.internal_info == 1000) {

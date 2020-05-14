@@ -24,3 +24,84 @@ index 2d4f74d..04e69b3 100644
                          RefCounted::check(false, error);
                  }
              }
+diff --git a/include/cbl/CBLBlob.h b/include/cbl/CBLBlob.h
+index 4035afa..34e0845 100644
+--- a/include/cbl/CBLBlob.h
++++ b/include/cbl/CBLBlob.h
+@@ -196,12 +196,12 @@ extern "C" {
+     /** Stores a blob in a mutable array. */
+     void FLMutableArray_SetBlob(FLMutableArray array _cbl_nonnull,
+                                 uint32_t index,
+-                                CBLBlob* blob _cbl_nonnull) CBLAPI _cbl_deprecated;
++                                CBLBlob* blob _cbl_nonnull) CBLAPI; // _cbl_deprecated;
+ 
+     /** Stores a blob in a mutable dictionary. */
+     void FLMutableDict_SetBlob(FLMutableDict dict _cbl_nonnull,
+                                FLString key,
+-                               CBLBlob* blob _cbl_nonnull) CBLAPI _cbl_deprecated;
++                               CBLBlob* blob _cbl_nonnull) CBLAPI; // _cbl_deprecated;
+ 
+ 
+ /** @} */
+diff --git a/src/CBLLog.cc b/src/CBLLog.cc
+index f3437ee..9610900 100644
+--- a/src/CBLLog.cc
++++ b/src/CBLLog.cc
+@@ -66,25 +66,25 @@ bool CBLLog_WillLogToConsole(CBLLogDomain domain, CBLLogLevel level) CBLAPI {
+ 
+ 
+ void CBLLog_SetCallback(CBLLogCallback callback) CBLAPI {
+-    auto c4Callback = [](C4LogDomain domain, C4LogLevel level, const char *msg, va_list) noexcept {
+-        // Map C4LogDomain to CBLLogDomain:
+-        auto callback = sCallback;
+-        if (!callback)
+-            return;
+-        CBLLogDomain cblDomain = kCBLLogDomainAll;
+-        for (int d = 0; d < 5; ++d) {
+-            if (kC4Domains[d] == domain) {
+-                cblDomain = CBLLogDomain(d);
+-                break;
+-            }
+-        }
+-        callback(cblDomain, CBLLogLevel(level), msg);
+-    };
+-
+-    sCallback = callback;
+-    c4log_writeToCallback(c4log_callbackLevel(),
+-                          callback ? c4Callback : nullptr,
+-                          true);
++    // auto c4Callback = [](C4LogDomain domain, C4LogLevel level, const char *msg, va_list) noexcept {
++    //     // Map C4LogDomain to CBLLogDomain:
++    //     auto callback = sCallback;
++    //     if (!callback)
++    //         return;
++    //     CBLLogDomain cblDomain = kCBLLogDomainAll;
++    //     for (int d = 0; d < 5; ++d) {
++    //         if (kC4Domains[d] == domain) {
++    //             cblDomain = CBLLogDomain(d);
++    //             break;
++    //         }
++    //     }
++    //     callback(cblDomain, CBLLogLevel(level), msg);
++    // };
++
++    // sCallback = callback;
++    // c4log_writeToCallback(c4log_callbackLevel(),
++    //                       callback ? c4Callback : nullptr,
++    //                       true);
+ }
+ 
+ 
+diff --git a/src/CBL.def b/src/CBL.def
+index 0d46e7b..23073e7 100644
+--- a/src/CBL.def
++++ b/src/CBL.def
+@@ -6,7 +6,7 @@ CBL_InstanceCount
+ CBL_DumpInstances
+ 
+ CBL_Log
+-CBL_SetLogLevel
++; CBL_SetLogLevel
+ 
+ CBL_Now
+ 
