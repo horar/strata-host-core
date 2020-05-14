@@ -73,7 +73,7 @@ void DatabaseImpl::openDB(const QString &file_path)
     try {
         sg_db_ = make_unique<Database>(db_name_.toStdString().c_str(), db_config);
     }
-    catch(CBLError) {
+    catch (CBLError) {
         setMessageAndStatus(MessageType::Error, "Problem with initialization of database.");
         return;
     }
@@ -262,7 +262,7 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
     try {
         sg_db_ = make_unique<Database>(db_name.toStdString().c_str(), db_config);
     }
-    catch(CBLError) {
+    catch (CBLError) {
         setMessageAndStatus(MessageType::Error, "Problem with initialization of database.");
         return;
     }
@@ -420,7 +420,7 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
     try {
         sg_replicator_ = make_unique<Replicator>(*sg_replicator_configuration_);
     }
-    catch(CBLError) {
+    catch (CBLError) {
         setMessageAndStatus(MessageType::Error, "Problem with start of replicator.");
         return false;
     }
@@ -728,12 +728,11 @@ void DatabaseImpl::saveAs(QString path, const QString &db_name)
     CBLDatabaseConfiguration db_config = {db_path_.toStdString().c_str(), kCBLDatabase_Create};
 
     // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
-    Database *temp_db;
+    unique_ptr<Database> temp_db;
     try {
-        // Database temp_db(db_name.toStdString(), db_config);
-        temp_db = new Database(db_name.toStdString(), db_config);
+        temp_db = make_unique<Database>(db_name.toStdString(), db_config);
     }
-    catch(CBLError) {
+    catch (CBLError) {
         setMessageAndStatus(MessageType::Error, "Problem saving database.");
         return;
     }
