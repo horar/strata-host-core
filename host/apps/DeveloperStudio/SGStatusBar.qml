@@ -36,7 +36,7 @@ Rectangle {
         Help.setClassId("strataMain")
         Help.registerTarget(helpTab.close, "When a platform view is open use this button to close it and return to the platform selection view.", 2, "selectorHelp")
         Help.registerTarget(helpTab.control, "When a platform view is open and platform is connected, this button will show the control view.", 3, "selectorHelp")
-        Help.registerTarget(helpTab.content, "When a platform view is open, this button will show the the content view.", 4, "selectorHelp")
+        Help.registerTarget(helpTab.content, "When a platform view is open, this button will show the content view.", 4, "selectorHelp")
     }
 
     // Navigation_control calls this after login when statusbar AND platformSelector are all complete

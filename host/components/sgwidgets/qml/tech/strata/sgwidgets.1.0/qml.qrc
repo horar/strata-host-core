@@ -24,7 +24,7 @@
         <file>SGPage.qml</file>
         <file>SGRadioButton.qml</file>
         <file>SGRadioButtonContainer.qml</file>
-        <file>SGResponsiveSCrollView.qml</file>
+        <file>SGResponsiveScrollView.qml</file>
         <file>SGRGBSlider.qml</file>
         <file>SGSettings.qml</file>
         <file>SGSlider.qml</file>

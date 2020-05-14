@@ -442,21 +442,6 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
             "notification":{
                 "value":"platform_id",
                 "payload":{
-                        "verbose_name":"ON WaterHeater",
-                        "verbose_name_error":"error_data_corrupted",
-                        "platform_id":"SEC.2018.0.0.0.0.00000000-0000-0000-0000-000000000000",
-                        "platform_id_error":"not_flashed"
-                }
-            }
-        }
-    )";
-    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::reqPlatIdRes, doc));
-
-    testCommand = R"(
-        {
-            "notification":{
-                "value":"platform_id",
-                "payload":{
                     "name":"WaterHeater",
                     "platform_id":"101",
                     "class_id":"201",
@@ -528,6 +513,22 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
                     "class_id":"201",
                     "count": 1.1,
                     "platform_id_version":"2.0"
+                }
+            }
+        }
+    )";
+    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::reqPlatIdRes, doc));
+
+    // Deprecated response 
+    testCommand = R"(
+        {
+            "notification":{
+                "value":"platform_id",
+                "payload":{
+                        "verbose_name":"ON WaterHeater",
+                        "verbose_name_error":"error_data_corrupted",
+                        "platform_id":"SEC.2018.0.0.0.0.00000000-0000-0000-0000-000000000000",
+                        "platform_id_error":"not_flashed"
                 }
             }
         }

@@ -1,14 +1,18 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
+import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as Widget09
+import QtWebEngine 1.0
 import "AdvancedViews"
 
 import "qrc:/js/help_layout_manager.js" as Help
 Rectangle{
     id: root
+
+    property bool showConsole: true
 
     Widget09.SGResponsiveScrollView {
         id: demoButonScrollView
@@ -61,25 +65,6 @@ Rectangle{
                 anchors.bottom:parent.bottom
                 spacing:1
 
-                onVisibleChanged: {
-                    if (visible){
-                        //tell the firmwware which demo is currently selected
-                        if (demoButtonGroup.checkedButton == demo1Button)
-                            platformInterface.set_demo.update("one_to_one")
-                        else if (demoButtonGroup.checkedButton == demo2Button)
-                            platformInterface.set_demo.update("one_to_many")
-                         else if (demoButtonGroup.checkedButton == demo3Button)
-                            platformInterface.set_demo.update("relay")
-                         else if (demoButtonGroup.checkedButton == demo4Button)
-                            platformInterface.set_demo.update("multiple_models")
-                         else if (demoButtonGroup.checkedButton == demo5Button)
-                            platformInterface.set_demo.update("sensor")
-                         else if (demoButtonGroup.checkedButton == demo6Button)
-                            platformInterface.set_demo.update("cloud")
-                    }
-
-                }
-
                 SGButton{
                     id:demo1Button
                     width: parent.width
@@ -97,7 +82,6 @@ Rectangle{
                         if (checked){
                             console.log("demo 1 selected")
                             demoStackLayout.currentIndex = 0
-                            platformInterface.set_demo.update("one_to_one")
                         }
                     }
                 }
@@ -116,7 +100,6 @@ Rectangle{
                     onCheckedChanged: {
                         if (checked){
                             demoStackLayout.currentIndex = 1
-                            platformInterface.set_demo.update("one_to_many")
                         }
                     }
                 }
@@ -135,29 +118,27 @@ Rectangle{
                     onCheckedChanged: {
                         if (checked){
                             demoStackLayout.currentIndex = 2
-                            platformInterface.set_demo.update("relay")
                         }
                     }
                 }
-                SGButton{
-                    id:demo4Button
-                    width: parent.width
-                    height: 130
-                    text:"multiple model"
-                    fontSizeMultiplier:1.5
-                    color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/multipleModelsDemo.png"
-                    iconSize:100
-                    display: Button.TextUnderIcon
-                    checkable:true
+//                SGButton{
+//                    id:demo4Button
+//                    width: parent.width
+//                    height: 130
+//                    text:"multiple model"
+//                    fontSizeMultiplier:1.5
+//                    color:"white"
+//                    icon.source: "qrc:/views/meshNetwork/images/multipleModelsDemo.png"
+//                    iconSize:100
+//                    display: Button.TextUnderIcon
+//                    checkable:true
 
-                    onCheckedChanged: {
-                        if (checked){
-                            demoStackLayout.currentIndex = 3
-                            platformInterface.set_demo.update("multiple_models")
-                            }
-                    }
-                }
+//                    onCheckedChanged: {
+//                        if (checked){
+//                            demoStackLayout.currentIndex = 3
+//                            }
+//                    }
+//                }
                 SGButton{
                     id:demo5Button
                     width: parent.width
@@ -172,30 +153,28 @@ Rectangle{
 
                     onCheckedChanged: {
                         if (checked){
-                            demoStackLayout.currentIndex = 4
-                            platformInterface.set_demo.update("sensor")
+                            demoStackLayout.currentIndex = 3
                         }
                     }
                 }
-                SGButton{
-                    id:demo6Button
-                    width: parent.width
-                    height: 130
-                    text:"cloud"
-                    fontSizeMultiplier:1.5
-                    color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/cloud.png"
-                    iconSize:75
-                    display: Button.TextUnderIcon
-                    checkable:true
+//                SGButton{
+//                    id:demo6Button
+//                    width: parent.width
+//                    height: 130
+//                    text:"cloud"
+//                    fontSizeMultiplier:1.5
+//                    color:"white"
+//                    icon.source: "qrc:/views/meshNetwork/images/cloud.png"
+//                    iconSize:75
+//                    display: Button.TextUnderIcon
+//                    checkable:true
 
-                    onCheckedChanged: {
-                        if (checked){
-                            demoStackLayout.currentIndex = 5
-                            platformInterface.set_demo.update("cloud")
-                        }
-                    }
-                }
+//                    onCheckedChanged: {
+//                        if (checked){
+//                            demoStackLayout.currentIndex = 4
+//                        }
+//                    }
+//                }
 
             }
         }
@@ -208,7 +187,7 @@ Rectangle{
         anchors.top:parent.top
         anchors.bottom:parent.bottom
         width:parent.width*.6
-        border.color:"blue"
+        border.color:"transparent"
 
 
 
@@ -233,45 +212,110 @@ Rectangle{
                 id: rectangleThree
             }
 
-            MultipleModelDemo {
-                id: rectangleFour
-            }
+//            MultipleModelDemo {
+//                id: rectangleFour
+//            }
 
             SensorDemo {
                 id: rectangleFive
             }
 
-            CloudDemo {
-                id: rectangleSix
-            }
+//            CloudDemo {
+//                id: rectangleSix
+//            }
+        }
+
+        Rectangle{
+            id:demoConsoleDivider
+            anchors.right:parent.right
+            anchors.rightMargin: 1
+            anchors.top:parent.top
+            anchors.bottom:parent.bottom
+            width:1
+            color:"grey"
+
         }
 
     }
 
+    Widget09.SGSegmentedButtonStrip {
+        id: rightViewSelectorStrip
 
-    Rectangle{
-        id:consoleTextContainer
         anchors.left: parent.left
-        anchors.leftMargin: parent.width * .75
+        anchors.leftMargin: parent.width * .8
         anchors.top:parent.top
         anchors.right:parent.right
-        height:25
-        color:"dimgrey"
 
-        Text {
-            id: consoleText
-            text: "Node Communications"
-            font {
-                pixelSize: 24
+        labelLeft: false
+        textColor: "#666"
+        activeTextColor: "white"
+        radius: 4
+        buttonHeight: 30
+        exclusive: true
+        buttonImplicitWidth: 50
+        hoverEnabled:false
+        enabled: !container.inOverCurrentProtection
+
+        segmentedButtons: GridLayout {
+            columnSpacing: 2
+            rowSpacing: 2
+
+            Widget09.SGSegmentedButton{
+                id:nodeCommunicationsSegmentedButton
+                text: qsTr("node communications")
+                activeColor: "dimgrey"
+                inactiveColor: "gainsboro"
+                textActiveColor: "white"
+                checked: true
+                buttonText.font.pixelSize: 18
+                onClicked: root.showConsole = true
             }
-            color:"white"
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            //        anchors {
-            //            horizontalCenter: parent.horizontalCenter
-            //            top:parent.top
-            //        }
+
+            Widget09.SGSegmentedButton{
+                id:helpSegmentedButton
+                text: qsTr("")
+                activeColor: "dimgrey"
+                inactiveColor: "gainsboro"
+                textActiveColor: "white"
+                buttonText.font.pixelSize: 18
+                onClicked: root.showConsole = false
+
+                Image{
+                    id:questionMarkImage
+//                    anchors.top:parent.top
+//                    anchors.topMargin: 10
+//                    anchors.right:drawerToggleButton.left
+//                    anchors.rightMargin: 10
+                    anchors.centerIn: parent
+                    height:25
+                    width:25
+                    source: helpSegmentedButton.checked ? "qrc:/views/meshNetwork/images/question-circle-white.svg" : "qrc:/sgimages/question-circle.svg"
+                    fillMode: Image.PreserveAspectFit
+                    mipmap:true
+                    opacity:helpSegmentedButton.checked ? .8 : .3
+                }
+            }
+
         }
+    }
+
+
+    Rectangle{
+        id:helpViewContainer
+        anchors.left: parent.left
+        anchors.leftMargin: parent.width * .75
+        anchors.top:rightViewSelectorStrip.bottom
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 50
+        anchors.right:parent.right
+        color:"white"
+        visible: !root.showConsole
+
+        WebEngineView {
+             id: webView
+             anchors.fill: parent
+             url: "qrc:/views/meshNetwork/images/mesh_help.html"   //doesn't render html
+            }
     }
 
     Widget09.SGResponsiveScrollView {
@@ -279,10 +323,11 @@ Rectangle{
 
         anchors.left: parent.left
         anchors.leftMargin: parent.width * .75
-        anchors.top:consoleTextContainer.bottom
+        anchors.top:rightViewSelectorStrip.bottom
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
         anchors.right:parent.right
+        visible: root.showConsole
 
 
         minimumHeight: 800
@@ -290,7 +335,7 @@ Rectangle{
         scrollBarColor:"darkgrey"
 
         property var message_array : []
-        property var message_log: platformInterface.console_message.msg
+        property var message_log: platformInterface.msg_cli.msg
         onMessage_logChanged: {
             console.log("debug:",message_log)
             if(message_log !== "") {
@@ -309,15 +354,15 @@ Rectangle{
             anchors {
                 fill: parent
             }
-            color: "dimgrey"
+            color: "white"
 
             Rectangle {
                 width: parent.width
                 height: (parent.height)
                 anchors.left:parent.left
-                anchors.leftMargin: 20
+                anchors.leftMargin: 10
                 anchors.right:parent.right
-                anchors.rightMargin: 20
+                anchors.rightMargin: 10
                 anchors.top:parent.top
                 //anchors.topMargin: 50
                 anchors.bottom:parent.bottom
@@ -328,11 +373,11 @@ Rectangle{
                     anchors.fill: parent
                     //model: messageModel
                     //showMessageIds: true
-                    color: "dimgrey"
+                    color: "white"      //background color of the status box
                     //statusTextColor: "white"
                     //statusBoxColor: "black"
-                    statusBoxBorderColor: "dimgrey"
-                    fontSizeMultiplier: 1
+                    statusBoxBorderColor: "white"
+                    fontSizeMultiplier: .9
 
                     listElementTemplate : {
                         "message": "",
@@ -344,7 +389,7 @@ Rectangle{
                         id: delegatecontainer
                         height: delegateText.height
                         width: ListView.view.width
-                        color:"dimgrey"
+                        color:"white"   //text background color
 
                         SGText {
                             id: delegateText
@@ -355,7 +400,7 @@ Rectangle{
                                         )}
 
                             fontSizeMultiplier: messageList.fontSizeMultiplier
-                            color: model.color
+                            color: "grey"//model.color   //text color
                             wrapMode: Text.WrapAnywhere
                             width: parent.width
                         }
@@ -384,8 +429,8 @@ Rectangle{
 
         anchors.right: parent.right
         anchors.rightMargin: 20
-        anchors.top:consoleTextContainer.bottom
-        anchors.topMargin: 10
+        anchors.bottom:consoleScrollView.bottom
+        anchors.bottomMargin: 10
 
         text:"clear"
 
@@ -393,7 +438,7 @@ Rectangle{
                 text: clearButton.text
                 font.pixelSize: 15
                 opacity: enabled ? 1.0 : 0.3
-                color: "grey"
+                color: "lightgrey"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
@@ -402,8 +447,8 @@ Rectangle{
             background: Rectangle {
                 implicitWidth: 50
                 implicitHeight: 25
-                color: clearButton.down ? "lightgrey" : "transparent"
-                border.color: "grey"
+                color: clearButton.down ? "grey" : "transparent"
+                border.color: "lightgrey"
                 border.width: 2
                 radius: 10
             }
@@ -434,8 +479,17 @@ Rectangle{
 
             onAccepted: {
                 console.log("sending:",commandLineInput.text)
-                platformInterface.firmware_command.update(commandLineInput.text)
-                commandLineInput.text = "";  //clear the text after submitting
+                let object = JSON.parse(commandLineInput.text)
+                try{
+                    if (!object) throw "incorrect JSON";
+                    CorePlatformInterface.send(object)
+                    commandLineInput.text = "";  //clear the text after submitting
+                }
+                catch(err){
+                    console.log("incorrect JSON command")
+                }
+
+
             }
 
 
