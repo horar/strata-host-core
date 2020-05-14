@@ -15,16 +15,20 @@ Rectangle {
     property int node3ID: 0
 
     onVisibleChanged: {
-        if (visible)
+        if (visible){
             resetUI();
-        //configure the firmware
-        platformInterface.set_node_mode.update( "default",65535, true)
+            root.updateNodeIDs();
 
+            platformInterface.set_node_mode.update( "default",65535, true)  //configure the firmware
+        }
+    }
+
+    function updateNodeIDs(){
         var nodeCount = 0;
         for (var alpha = 0;  alpha < root.availableNodes.length  ; alpha++){
             //for each node that is marked visible set the visibilty of the node appropriately
             //console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
-            if (platformInterface.network_notification.nodes[alpha].ready !== 0){
+            if (root.availableNodes[alpha] !== 0){
                 nodeCount++;
                 if (nodeCount === 1){
                     root.node1ID = alpha
@@ -45,7 +49,10 @@ Rectangle {
     //an array to hold the available nodes that can be used in this demo
     //values will be 0 if not available, or 1 if available.
     //node 0 is never used in the network, and node 1 is always the provisioner
-    property var availableNodes: [0, 0, 0 ,0, 0, 0, 0, 0, 0, 0]
+    property var availableNodes: [0, 0, 0 ,0, 0, 0, 0, 0, 0, 0];
+    onAvailableNodesChanged: {
+        root.updateNodeIDs();
+    }
 
     property var network: platformInterface.network_notification
     onNetworkChanged:{

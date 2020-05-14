@@ -17,27 +17,31 @@ Rectangle {
     onVisibleChanged: {
         if (visible){
             resetUI();
+            root.updateNodeIDs();
 
-            var nodeCount = 0;
-
-            node1ID = node2ID = 0; //clear previous values
-            for (var alpha = 1;  alpha < root.availableNodes.length  ; alpha++){
-                //for each node that is marked visible set the visibilty of the node appropriately
-                //console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
-                if (root.availableNodes[alpha] !== 0){
-                    nodeCount++;
-                    if (nodeCount === 1){
-                        root.node1ID = alpha
-                        //console.log("node 1 set to",root.node1ID)
-                    }
-                    else if (nodeCount === 2){
-                        root.node2ID = alpha
-                        //console.log("node 1 set to",root.node2ID)
-                    }
-                }
-            }
             //now tell the platform what node we'll be communicating with
             platformInterface.set_onetoone_demo.update(node2ID)
+        }
+    }
+
+    function updateNodeIDs(){
+        var nodeCount = 0;
+
+        node1ID = node2ID = 0; //clear previous values
+        for (var alpha = 1;  alpha < root.availableNodes.length  ; alpha++){
+            //for each node that is marked visible set the visibilty of the node appropriately
+            //console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
+            if (root.availableNodes[alpha] !== 0){
+                nodeCount++;
+                if (nodeCount === 1){
+                    root.node1ID = alpha
+                    //console.log("node 1 set to",root.node1ID)
+                }
+                else if (nodeCount === 2){
+                    root.node2ID = alpha
+                    //console.log("node 1 set to",root.node2ID)
+                }
+            }
         }
     }
 
@@ -45,6 +49,10 @@ Rectangle {
     //values will be 0 if not available, or 1 if available.
     //node 0 is never used in the network, and node 1 is always the provisioner
     property var availableNodes: [0, 0, 0 ,0, 0, 0, 0, 0, 0, 0]
+
+    onAvailableNodesChanged: {
+        root.updateNodeIDs();
+    }
 
     property var network: platformInterface.network_notification
     onNetworkChanged:{

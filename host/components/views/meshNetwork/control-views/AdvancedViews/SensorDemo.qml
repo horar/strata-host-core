@@ -13,16 +13,21 @@ Rectangle {
     property int sensorNodeID:0
 
     onVisibleChanged: {
-        resetThermostatBar.start()
+        if (visible){
+            resetThermostatBar.start()
+            root.updateNodeIDs();
+            }
+     }
 
+    function updateNodeIDs(){
         //start at node 2, the node after the provisioner
         var alpha = 2;
         var sensorNodeFound = false
-        while (alpha < platformInterface.network_notification.nodes.length && !sensorNodeFound){
+        while (alpha < root.availableNodes.length && !sensorNodeFound){
             //for each node that is marked visible set the visibilty of the node appropriately
-            console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
-            if (platformInterface.network_notification.nodes[alpha].ready !== 0){
-                root.sensorNodeID = platformInterface.network_notification.nodes[alpha].index
+            //console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
+            if (root.availableNodes[alpha] !== 0){
+                root.sensorNodeID = alpha
                 console.log("sensor node set to",root.sensorNodeID)
                 sensorNodeFound = true;
             }
@@ -30,11 +35,48 @@ Rectangle {
         }
     }
 
+    //an array to hold the available nodes that can be used in this demo
+    //values will be 0 if not available, or 1 if available.
+    //node 0 is never used in the network, and node 1 is always the provisioner
+    property var availableNodes: [0, 0, 0 ,0, 0, 0, 0, 0, 0, 0];
+    onAvailableNodesChanged: {
+        root.updateNodeIDs();
+    }
+
+    property var network: platformInterface.network_notification
+    onNetworkChanged:{
+
+        for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+            if (platformInterface.network_notification.nodes[alpha].ready === 0){
+                root.availableNodes[alpha] = 0;
+                }
+            else{
+                root.availableNodes[alpha] = 1;
+            }
+        }
+    }
+
+
+
+    property var newNodeAdded: platformInterface.node_added
+    onNewNodeAddedChanged: {
+        //console.log("new node added",platformInterface.node_added.index)
+        var theNodeNumber = platformInterface.node_added.index
+        if (root.availableNodes[theNodeNumber] !== undefined)
+            root.availableNodes[theNodeNumber] = 1;
+
+
+    }
+
+    property var nodeRemoved: platformInterface.node_removed
+    onNodeRemovedChanged: {
+        var theNodeNumber = platformInterface.node_removed.node_id
+        if(root.availableNodes[theNodeNumber] !== undefined ){
+            root.availableNodes[theNodeNumber] = 0
+        }
+    }
+
     Text{
-
-
-
-
         id:title
         anchors.top:parent.top
         anchors.topMargin: 40
