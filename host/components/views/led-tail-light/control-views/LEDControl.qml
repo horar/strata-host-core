@@ -1137,8 +1137,22 @@ Item {
         out10duty.value = led_pwm_duty_values[10]
         out11duty.value = led_pwm_duty_values[11]
 
-        out0duty.from = led_pwm_duty.scales[0]
-        out0duty.to = led_pwm_duty.scales[1]
+        platformInterface.outputDuty0 = led_pwm_duty_values[0]
+        platformInterface.outputDuty1 = led_pwm_duty_values[1]
+        platformInterface.outputDuty2 = led_pwm_duty_values[2]
+        platformInterface.outputDuty3 = led_pwm_duty_values[3]
+        platformInterface.outputDuty4 = led_pwm_duty_values[4]
+        platformInterface.outputDuty5 = led_pwm_duty_values[5]
+        platformInterface.outputDuty6 = led_pwm_duty_values[6]
+        platformInterface.outputDuty7 = led_pwm_duty_values[7]
+        platformInterface.outputDuty8 = led_pwm_duty_values[8]
+        platformInterface.outputDuty9 = led_pwm_duty_values[9]
+        platformInterface.outputDuty10 = led_pwm_duty_values[10]
+        platformInterface.outputDuty11 =  led_pwm_duty_values[11]
+
+
+        out0duty.from = led_pwm_duty.scales[1]
+        out0duty.to = led_pwm_duty.scales[0]
         out0duty.value = led_pwm_duty.scales[2]
 
         if(led_pwm_duty.state === "enabled") {
@@ -1157,7 +1171,6 @@ Item {
 
     RowLayout {
         anchors.fill: parent
-
         Rectangle {
             id: leftSetting
             Layout.fillHeight: true
@@ -2347,11 +2360,10 @@ Item {
                                                 orientation: Qt.Vertical
                                                 anchors.centerIn: parent
                                                 slider_start_color: 0.1666
-                                                decimalPlacesFromStepSize: 0
                                                 property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
                                                 onLed_pwm_duty_scalesChanged: {
-                                                    out0duty.from = led_pwm_duty_scales[0]
-                                                    out0duty.to = led_pwm_duty_scales[1]
+                                                    out0duty.from = led_pwm_duty_scales[1]
+                                                    out0duty.to = led_pwm_duty_scales[0]
                                                     out0duty.value = led_pwm_duty_scales[2]
                                                 }
 
@@ -2373,7 +2385,7 @@ Item {
 
                                                 onUserSet: {
                                                     console.log("pwm duty", out0duty.value)
-                                                    platformInterface.outputDuty0 =  out0duty.value
+                                                    platformInterface.outputDuty0 =  out0duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
                                                                                               platformInterface.pwm_lin_state,
                                                                                               [platformInterface.outputDuty0,
@@ -2623,8 +2635,8 @@ Item {
                                                 slider_start_color: 0.1666
                                                 property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
                                                 onLed_pwm_duty_scalesChanged: {
-                                                    out1duty.from = led_pwm_duty_scales[0]
-                                                    out1duty.to = led_pwm_duty_scales[1]
+                                                    out1duty.from = led_pwm_duty_scales[1]
+                                                    out1duty.to = led_pwm_duty_scales[0]
                                                     out1duty.value = led_pwm_duty_scales[2]
                                                 }
 
@@ -2889,8 +2901,8 @@ Item {
                                                 anchors.centerIn: parent
                                                 property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
                                                 onLed_pwm_duty_scalesChanged: {
-                                                    out2duty.from = led_pwm_duty_scales[0]
-                                                    out2duty.to = led_pwm_duty_scales[1]
+                                                    out2duty.from = led_pwm_duty_scales[1]
+                                                    out2duty.to = led_pwm_duty_scales[0]
                                                     out2duty.value = led_pwm_duty_scales[2]
                                                 }
 
@@ -3159,8 +3171,8 @@ Item {
                                                 anchors.centerIn: parent
                                                 property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
                                                 onLed_pwm_duty_scalesChanged: {
-                                                    out3duty.from = led_pwm_duty_scales[0]
-                                                    out3duty.to = led_pwm_duty_scales[1]
+                                                    out3duty.from = led_pwm_duty_scales[1]
+                                                    out3duty.to = led_pwm_duty_scales[0]
                                                     out3duty.value = led_pwm_duty_scales[2]
                                                 }
 
@@ -3432,8 +3444,8 @@ Item {
                                                 slider_start_color2: 0
                                                 property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
                                                 onLed_pwm_duty_scalesChanged: {
-                                                    out4duty.from = led_pwm_duty_scales[0]
-                                                    out4duty.to = led_pwm_duty_scales[1]
+                                                    out4duty.from = led_pwm_duty_scales[1]
+                                                    out4duty.to = led_pwm_duty_scales[0]
                                                     out4duty.value = led_pwm_duty_scales[2]
                                                 }
 
@@ -3700,8 +3712,8 @@ Item {
                                                 slider_start_color2: 0
                                                 property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
                                                 onLed_pwm_duty_scalesChanged: {
-                                                    out5duty.from = led_pwm_duty_scales[0]
-                                                    out5duty.to = led_pwm_duty_scales[1]
+                                                    out5duty.from = led_pwm_duty_scales[1]
+                                                    out5duty.to = led_pwm_duty_scales[0]
                                                     out5duty.value = led_pwm_duty_scales[2]
                                                 }
 
@@ -3967,8 +3979,8 @@ Item {
                                                 slider_start_color2: 0
                                                 property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
                                                 onLed_pwm_duty_scalesChanged: {
-                                                    out6duty.from = led_pwm_duty_scales[0]
-                                                    out6duty.to = led_pwm_duty_scales[1]
+                                                    out6duty.from = led_pwm_duty_scales[1]
+                                                    out6duty.to = led_pwm_duty_scales[0]
                                                     out6duty.value = led_pwm_duty_scales[2]
                                                 }
 
@@ -4237,8 +4249,8 @@ Item {
 
                                                 property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
                                                 onLed_pwm_duty_scalesChanged: {
-                                                    out7duty.from = led_pwm_duty_scales[0]
-                                                    out7duty.to = led_pwm_duty_scales[1]
+                                                    out7duty.from = led_pwm_duty_scales[1]
+                                                    out7duty.to = led_pwm_duty_scales[0]
                                                     out7duty.value = led_pwm_duty_scales[2]
                                                 }
 
@@ -4502,8 +4514,8 @@ Item {
                                                 anchors.centerIn: parent
                                                 property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
                                                 onLed_pwm_duty_scalesChanged: {
-                                                    out8duty.from = led_pwm_duty_scales[0]
-                                                    out8duty.to = led_pwm_duty_scales[1]
+                                                    out8duty.from = led_pwm_duty_scales[1]
+                                                    out8duty.to = led_pwm_duty_scales[0]
                                                     out8duty.value = led_pwm_duty_scales[2]
                                                 }
 
@@ -4770,8 +4782,8 @@ Item {
                                                 anchors.centerIn: parent
                                                 property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
                                                 onLed_pwm_duty_scalesChanged: {
-                                                    out9duty.from = led_pwm_duty_scales[0]
-                                                    out9duty.to = led_pwm_duty_scales[1]
+                                                    out9duty.from = led_pwm_duty_scales[1]
+                                                    out9duty.to = led_pwm_duty_scales[0]
                                                     out9duty.value = led_pwm_duty_scales[2]
                                                 }
 
@@ -5036,8 +5048,8 @@ Item {
                                                 slider_start_color: 0.1666
                                                 property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
                                                 onLed_pwm_duty_scalesChanged: {
-                                                    out10duty.from = led_pwm_duty_scales[0]
-                                                    out10duty.to = led_pwm_duty_scales[1]
+                                                    out10duty.from = led_pwm_duty_scales[1]
+                                                    out10duty.to = led_pwm_duty_scales[0]
                                                     out10duty.value = led_pwm_duty_scales[2]
                                                 }
 
@@ -5305,8 +5317,8 @@ Item {
                                                 slider_start_color: 0.1666
                                                 property var led_pwm_duty_scales: platformInterface.led_pwm_duty_scales.scales
                                                 onLed_pwm_duty_scalesChanged: {
-                                                    out11duty.from = led_pwm_duty_scales[0]
-                                                    out11duty.to = led_pwm_duty_scales[1]
+                                                    out11duty.from = led_pwm_duty_scales[1]
+                                                    out11duty.to = led_pwm_duty_scales[0]
                                                     out11duty.value = led_pwm_duty_scales[2]
                                                 }
 
