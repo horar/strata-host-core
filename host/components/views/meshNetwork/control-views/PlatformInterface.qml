@@ -779,10 +779,12 @@ Item {
                                               "daddr":2
                                         },
 
-                                        update: function () {
+                                        update: function (bulbAddress) {
+                                            this.set(bulbAddress)
                                             this.send(this)
                                         },
-                                        set: function () {
+                                        set: function (inAddress) {
+                                            this.payload.daddr = inAddress
                                         },
                                         send: function () { CorePlatformInterface.send(this) },
                                         show: function () { CorePlatformInterface.show(this) }
