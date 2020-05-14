@@ -282,10 +282,6 @@ Rectangle{
 
                 Image{
                     id:questionMarkImage
-//                    anchors.top:parent.top
-//                    anchors.topMargin: 10
-//                    anchors.right:drawerToggleButton.left
-//                    anchors.rightMargin: 10
                     anchors.centerIn: parent
                     height:25
                     width:25

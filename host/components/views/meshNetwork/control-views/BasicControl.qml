@@ -141,6 +141,14 @@ Rectangle {
            height: root.height
            edge: Qt.RightEdge
 
+           Overlay.modal: Rectangle {
+                          color: "#66222222"
+                          Component.onDestruction: {
+                              visible = false
+                              opacity = 0
+                          }
+               }
+
            property bool showConsole: true
 
            Rectangle{
