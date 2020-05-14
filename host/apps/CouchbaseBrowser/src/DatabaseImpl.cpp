@@ -1,11 +1,8 @@
 #include <thread>
 #include <QDir>
 #include <QJsonArray>
-#include "fleece/Fleece.hh"
-#include "fleece/Mutable.hh"
-#include "couchbase-lite-C/CouchbaseLite.hh"
+
 #include "DatabaseImpl.h"
-#include "ConfigManager.h"
 #include <iostream>
 using namespace std;
 using namespace cbl;
