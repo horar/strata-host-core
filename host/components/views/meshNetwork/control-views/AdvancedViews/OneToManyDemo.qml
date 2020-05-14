@@ -19,29 +19,68 @@ Rectangle {
         if (visible)
             resetUI();
 
+        node1ID = node2ID = node3ID = node4ID = 0;      //clear previous values
         var nodeCount = 0;
-        for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+        for (var alpha = 1;  alpha < root.availableNodes.length  ; alpha++){
             //for each node that is marked visible set the visibilty of the node appropriately
-            console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
-            if (platformInterface.network_notification.nodes[alpha].ready != 0){
+            //console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
+            if (root.availableNodes[alpha] != 0){
                 nodeCount++;
                 if (nodeCount === 1){
-                    root.node1ID = platformInterface.network_notification.nodes[alpha].index
-                    console.log("node 1 set to",root.node1ID)
+                    root.node1ID = alpha
+                    //console.log("node 1 set to",root.node1ID)
                 }
                 else if (nodeCount === 2){
-                    root.node2ID = platformInterface.network_notification.nodes[alpha].index
-                    console.log("node 2 set to",root.node2ID)
+                    root.node2ID = alpha
+                    //console.log("node 2 set to",root.node2ID)
                 }
                 else if (nodeCount === 3){
-                    root.node3ID = platformInterface.network_notification.nodes[alpha].index
-                    console.log("node 3 set to",root.node3ID)
+                    root.node3ID = alpha
+                    //console.log("node 3 set to",root.node3ID)
                 }
                 else if (nodeCount === 4){
-                    root.node4ID = platformInterface.network_notification.nodes[alpha].index
-                    console.log("node 4 set to",root.node4ID)
+                    root.node4ID = alpha
+                    //console.log("node 4 set to",root.node4ID)
                 }
             }
+        }
+    }
+
+    //an array to hold the available nodes that can be used in this demo
+    //values will be 0 if not available, or 1 if available.
+    //node 0 is never used in the network, and node 1 is always the provisioner
+    property var availableNodes: [0, 0, 0 ,0, 0, 0, 0, 0, 0, 0]
+
+    property var network: platformInterface.network_notification
+    onNetworkChanged:{
+
+        for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+            if (platformInterface.network_notification.nodes[alpha].ready === 0){
+                root.availableNodes[alpha] = 0;
+                }
+            else{
+                root.availableNodes[alpha] = 1;
+            }
+        }
+    }
+
+
+
+    property var newNodeAdded: platformInterface.node_added
+    onNewNodeAddedChanged: {
+        //console.log("new node added",platformInterface.node_added.index)
+        var theNodeNumber = platformInterface.node_added.index
+        if (root.availableNodes[theNodeNumber] !== undefined)
+            root.availableNodes[theNodeNumber] = 1;
+
+
+    }
+
+    property var nodeRemoved: platformInterface.node_removed
+    onNodeRemovedChanged: {
+        var theNodeNumber = platformInterface.node_removed.node_id
+        if(root.availableNodes[theNodeNumber] !== undefined ){
+            root.availableNodes[theNodeNumber] = 0
         }
     }
 
@@ -218,7 +257,7 @@ Rectangle {
             anchors.top:parent.bottom
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"Message to uaddr FFFF"
+            text:"Message to uaddr 0xFFFF"
             font.pixelSize: 18
         }
     }
