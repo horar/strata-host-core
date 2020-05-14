@@ -70,23 +70,25 @@ void DatabaseImpl::openDB(const QString &file_path)
     setDBName(dir_name);
     setDBPath(dir.path() + QDir::separator());
 
-    CBLDatabaseConfiguration db_config;
-    db_config.flags = kCBLDatabase_Create;
-    std::string db_path_str = db_path_.toStdString();
-    db_config.directory = db_path_str.c_str();
-    db_config.encryptionKey.algorithm = kCBLEncryptionNone;
+    CBLDatabaseConfiguration db_config = {db_path_.toStdString().c_str(), kCBLDatabase_Create};
 
-    sg_db_ = make_unique<Database>(db_name_.toStdString().c_str(), db_config);
-
-    setDBstatus(false);
-    setRepstatus(false);
-    latest_replication_.reset();
+    // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
+    try {
+        sg_db_ = make_unique<Database>(db_name_.toStdString().c_str(), db_config);
+    }
+    catch(CBLError) {
+        setMessageAndStatus(MessageType::Error, "Problem with initialization of database.");
+        return;
+    }
 
     if (!sg_db_ || !sg_db_->valid()) {
         setMessageAndStatus(MessageType::Error, "Problem with initialization of database.");
         return;
     }
 
+    setDBstatus(false);
+    setRepstatus(false);
+    latest_replication_.reset();
     setDBstatus(true);
     getChannelSuggestions();
     setAllChannelsStr();
@@ -146,7 +148,7 @@ QStringList DatabaseImpl::getChannelSuggestions()
         QJsonDocument config_doc = QJsonDocument::fromJson(config_mgr_->getConfigJson().toUtf8());
 
         if (config_doc.isNull() || config_doc.isEmpty()) {
-            qCCritical(cb_browser_) << "Received empty list of previously used channels from the Config DB.";
+            qCWarning(cb_browser_) << "Received empty list of previously used channels from the Config DB.";
             return suggestions;
         }
 
@@ -154,7 +156,7 @@ QStringList DatabaseImpl::getChannelSuggestions()
         QJsonObject db_entry_obj = config_obj.value(getDBName()).toObject();
 
         if (db_entry_obj.isEmpty()) {
-            qCCritical(cb_browser_) << "Received empty list of previously used channels from the Config DB.";
+            qCWarning(cb_browser_) << "Received empty list of previously used channels from the Config DB.";
             return suggestions;
         }
 
@@ -257,13 +259,16 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
     setDBName(db_name);
     setDBPath(folder_path);
 
-    CBLDatabaseConfiguration db_config;
-    db_config.flags = kCBLDatabase_Create;
-    std::string db_path_str = db_path_.toStdString();
-    db_config.directory = db_path_str.c_str();
-    db_config.encryptionKey.algorithm = kCBLEncryptionNone;
+    CBLDatabaseConfiguration db_config = {db_path_.toStdString().c_str(), kCBLDatabase_Create};
 
-    sg_db_ = make_unique<Database>(db_name.toStdString().c_str(), db_config);
+    // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
+    try {
+        sg_db_ = make_unique<Database>(db_name.toStdString().c_str(), db_config);
+    }
+    catch(CBLError) {
+        setMessageAndStatus(MessageType::Error, "Problem with initialization of database.");
+        return;
+    }
 
     if (!sg_db_ || !sg_db_->valid()) {
         setMessageAndStatus(MessageType::Error, "Problem with initialization of database.");
@@ -723,14 +728,20 @@ void DatabaseImpl::saveAs(QString path, const QString &db_name)
         return;
     }
 
-    CBLDatabaseConfiguration db_config;
-    db_config.flags = kCBLDatabase_Create;
-    std::string db_path_str = db_path_.toStdString();
-    db_config.directory = db_path_str.c_str();
-    db_config.encryptionKey.algorithm = kCBLEncryptionNone;
-    Database temp_db(db_name.toStdString(), db_config);
+    CBLDatabaseConfiguration db_config = {db_path_.toStdString().c_str(), kCBLDatabase_Create};
 
-    if (!temp_db.valid()) {
+    // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
+    Database *temp_db;
+    try {
+        // Database temp_db(db_name.toStdString(), db_config);
+        temp_db = new Database(db_name.toStdString(), db_config);
+    }
+    catch(CBLError) {
+        setMessageAndStatus(MessageType::Error, "Problem saving database.");
+        return;
+    }
+
+    if (!temp_db->valid()) {
         setMessageAndStatus(MessageType::Error, "Problem saving database.");
         return;
     }
@@ -739,7 +750,7 @@ void DatabaseImpl::saveAs(QString path, const QString &db_name)
         MutableDocument temp_doc(iter);
         Document existing_doc = sg_db_->getMutableDocument(iter);
         temp_doc.setPropertiesAsJSON(existing_doc.propertiesAsJSON());
-        temp_db.saveDocument(temp_doc);
+        temp_db->saveDocument(temp_doc);
     }
 
     if (config_mgr_) {
