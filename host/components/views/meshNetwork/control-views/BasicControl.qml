@@ -26,7 +26,7 @@ Rectangle {
         anchors.leftMargin: 20
         anchors.top: parent.top
         anchors.topMargin: 20
-        text: "Virtual environment:"
+        text: "Virtual Environment:"
         font.pixelSize: 24
     }
 
@@ -142,12 +142,12 @@ Rectangle {
            edge: Qt.RightEdge
 
            Overlay.modal: Rectangle {
-                          color: "#66222222"
-                          Component.onDestruction: {
-                              visible = false
-                              opacity = 0
-                          }
+               color: "#66222222"
+               Component.onDestruction: {
+                   visible = false
+                   opacity = 0
                }
+           }
 
            property bool showConsole: true
 
