@@ -36,6 +36,8 @@ Item {
     property int searchResultCount: logFilesModelProxy.count
     property int statusBarHeight: statusBar.height
     property string borderColor: "darkgray"
+    property string timestampFormat: "yyyy-MM-dd hh:mm:ss.zzz t"
+    property string simpleTimestampFormat: "hh:mm:ss.zzz"
 
     LogViewModels.LogModel {
         id: logFilesModel
@@ -693,15 +695,10 @@ Item {
             width: statusBar.width - statusBarText.x
             font.family: "monospace"
             text: {
-                if (logViewerMain.linesCount == 1) {
-                    qsTr("Range: %1 - %2 | %3 log").arg(Qt.formatDateTime(logFilesModel.oldestTimestamp,
-                                                                          "yyyy-MM-dd hh:mm:ss.zzz t")).arg(Qt.formatDateTime(logFilesModel.newestTimestamp,
-                                                                                                                              "yyyy-MM-dd hh:mm:ss.zzz t")).arg(logViewerMain.linesCount)
-                } else {
-                    qsTr("Range: %1 - %2 | %3 logs").arg(Qt.formatDateTime(logFilesModel.oldestTimestamp,
-                                                                           "yyyy-MM-dd hh:mm:ss.zzz t")).arg(Qt.formatDateTime(logFilesModel.newestTimestamp,
-                                                                                                                               "yyyy-MM-dd hh:mm:ss.zzz t")).arg(logViewerMain.linesCount)
-                }
+                qsTr("Range: %1 - %2 | %3 %4").arg(CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(logFilesModel.oldestTimestamp, timestampFormat))
+                .arg(CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(logFilesModel.newestTimestamp, timestampFormat))
+                .arg(logViewerMain.linesCount)
+                .arg((logViewerMain.linesCount == 1) ? "log" : "logs")
             }
             elide: Text.ElideRight
         }
