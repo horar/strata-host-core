@@ -8,3 +8,19 @@ index 12afdfb..9e77851 100644
  
 -add_subdirectory(test)
 +# add_subdirectory(test)
+diff --git a/include/cbl++/Database.hh b/include/cbl++/Database.hh
+index 2d4f74d..04e69b3 100644
+--- a/include/cbl++/Database.hh
++++ b/include/cbl++/Database.hh
+@@ -232,10 +232,7 @@ namespace cbl {
+                     // If an exception is thrown while a Batch is in scope, its destructor will
+                     // call end(). If I'm in this situation I cannot throw another exception or
+                     // the C++ runtime will abort the process. Detect this and just warn instead.
+-                    if (std::current_exception())
+-                        CBL_Log(kCBLLogDomainDatabase, CBLLogWarning,
+-                                "Batch::end failed, while handling an exception");
+-                    else
++                    if (!std::current_exception())
+                         RefCounted::check(false, error);
+                 }
+             }
