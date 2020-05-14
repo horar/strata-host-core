@@ -33,6 +33,25 @@ Item {
                                 show: function () { CorePlatformInterface.show(this) }
                             })
 
+    //Mode commands
+    property var mode : ({
+                             "cmd" : "mode",
+                             "payload": {
+                                 "value":"Car Demo"
+                             },
+
+                             update: function (value) {
+                                 this.set(value)
+                                 this.send(this)
+                             },
+                             set: function (value) {
+                                 this.payload.value = value
+                             },
+                             send: function () { CorePlatformInterface.send(this) },
+                             show: function () { CorePlatformInterface.show(this) }
+                         })
+
+
 
     // -------------------------------------------------------------------
     // Incoming Notification Messages
@@ -730,23 +749,6 @@ Item {
                                  })
 
 
-    //Mode commands
-    property var mode : ({
-                             "cmd" : "mode",
-                             "payload": {
-                                 "value":"Car Demo"
-                             },
-
-                             update: function (value) {
-                                 this.set(value)
-                                 this.send(this)
-                             },
-                             set: function (value) {
-                                 this.payload.value = value
-                             },
-                             send: function () { CorePlatformInterface.send(this) },
-                             show: function () { CorePlatformInterface.show(this) }
-                         })
 
 
 
@@ -966,25 +968,7 @@ Item {
         "value": 0
     }
 
-    //    property var power_idd: {
-    //        "caption":"Digital Current\n(IDD)",
-    //        "scales":[],
-    //        "state":"disabled",
-    //        "value":0,
-    //        "values":[]
-    //    }
 
-    //    property var power_idd_caption: {
-    //        "caption": "Digital Current\n(IDD)"
-    //    }
-
-    //    property var power_idd_state: {
-    //        "state":"disabled"
-    //    }
-
-    //    property var power_idd_value: {
-    //        "value": 0
-    //    }
 
     property var power_vcc: {
         "caption":"Reference Voltage (VCC)",
@@ -1344,7 +1328,7 @@ Item {
         "caption":"Current 7-bit I2C Address",
         "scales":[],
         "state":"disabled",
-        "value":"0x60",
+        "value":"60",
         "values":[]
     }
 
@@ -1357,7 +1341,7 @@ Item {
     }
 
     property var soc_addr_curr_value: {
-        "value":"0x60"
+        "value":"60"
     }
 
     property var soc_addr_new: {
@@ -1369,7 +1353,7 @@ Item {
     }
 
     property var soc_addr_new_caption: {
-        "caption":"New 7-bit I2C Address \n (0x)"
+        "caption":"New 7-bit I2C Address"
     }
 
     property var soc_addr_new_scales: {

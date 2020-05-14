@@ -15,14 +15,45 @@ Item {
     property string voltageType: "Boost"
 
     RowLayout {
-        width: parent.width - 10
-        height: parent.height/1.5
+        width: parent.width - 20
+        height: parent.height/1.3
         anchors.centerIn: parent
         Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
             ColumnLayout {
                 anchors.fill: parent
+
+                Rectangle{
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: parent.height/9
+                    color: "transparent"
+
+                    Text {
+                        id: powerControlHeading
+                        text: "Power Control"
+                        font.bold: true
+                        font.pixelSize: ratioCalc * 20
+                        color: "#696969"
+                        anchors {
+                            top: parent.top
+                            topMargin: 5
+                        }
+                    }
+
+                    Rectangle {
+                        id: line1
+                        height: 1.5
+                        Layout.alignment: Qt.AlignCenter
+                        width: parent.width
+                        border.color: "lightgray"
+                        radius: 2
+                        anchors {
+                            top: powerControlHeading.bottom
+                            topMargin: 7
+                        }
+                    }
+                }
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
@@ -48,12 +79,39 @@ Item {
                                 fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
 
+
                                 SGComboBox {
                                     id: vedInputVoltageType
                                     fontSizeMultiplier: ratioCalc
 
                                     onActivated: {
                                         platformInterface.set_power_vled_type.update(currentText)
+                                    }
+
+                                    property var power_vled_type: platformInterface.power_vled_type
+                                    onPower_vled_typeChanged: {
+                                        vedInputVoltageTypeLabel.text = power_vled_type.caption
+                                        if(power_vled_type.state === "enabled") {
+                                            vedInputVoltageType.opacity = 1.0
+                                            vedInputVoltageType.enabled = true
+                                        }
+                                        else if (power_vled_type.state === "disabled") {
+                                            vedInputVoltageType.opacity = 1.0
+                                            vedInputVoltageType.enabled = false
+                                        }
+                                        else  {
+                                            vedInputVoltageType.opacity = 0.5
+                                            vedInputVoltageType.enabled = false
+                                        }
+
+                                        vedInputVoltageType.model = power_vled_type.values
+
+                                        for(var a = 0; a < vedInputVoltageType.model.length; ++a) {
+                                            if(power_vled_type.value === vedInputVoltageType.model[a].toString()){
+                                                vedInputVoltageType.currentIndex = a
+
+                                            }
+                                        }
                                     }
 
 
@@ -118,6 +176,27 @@ Item {
                                     id: boostOCP
 
                                 }
+
+                                property var power_boost_ocp: platformInterface.power_boost_ocp
+                                onPower_boost_ocpChanged: {
+                                    boostOCPLabel.text = power_boost_ocp.caption
+                                    if(power_boost_ocp.state === "enabled") {
+                                        boostOCP.opacity = 1.0
+                                        boostOCP.enabled = true
+                                    }
+                                    else if (power_boost_ocp.state === "disabled") {
+                                        boostOCP.opacity = 1.0
+                                        boostOCP.enabled = false
+                                    }
+                                    else  {
+                                        boostOCP.opacity = 0.5
+                                        boostOCP.enabled = false
+                                    }
+                                    if(power_boost_ocp.value === true)
+                                        boostOCP.status = SGStatusLight.Red
+                                    else boostOCP.status = SGStatusLight.Off
+                                }
+
                                 property var power_boost_ocp_caption: platformInterface.power_boost_ocp_caption.caption
                                 onPower_boost_ocp_captionChanged: {
                                     boostOCPLabel.text = power_boost_ocp_caption
@@ -173,6 +252,33 @@ Item {
                             onUserSet: {
                                 platformInterface.set_power_voltage_set.update(value.toFixed(1))
                             }
+                        }
+
+                        property var power_voltage_set: platformInterface.power_voltage_set
+                        onPower_voltage_setChanged: {
+                            voltageSetLabel.text = power_voltage_set.caption
+
+                            voltageSet.to = power_voltage_set.scales[0]
+                            voltageSet.from =  power_voltage_set.scales[1]
+                            voltageSet.toText.text = power_voltage_set.scales[0] + "V"
+                            voltageSet.fromText.text = power_voltage_set.scales[1] + "V"
+                            voltageSet.stepSize = power_voltage_set.scales[2]
+
+                            if(power_voltage_set.state === "enabled") {
+                                voltageSet.opacity = 1.0
+                                voltageSet.enabled = true
+                            }
+                            else if (power_voltage_set.state === "disabled") {
+                                voltageSet.opacity = 1.0
+                                voltageSet.enabled = false
+                            }
+                            else  {
+                                voltageSet.opacity = 0.5
+                                voltageSet.enabled = false
+                            }
+
+                            voltageSet.value =  power_voltage_set.value
+
                         }
 
                         property var power_voltage_set_caption: platformInterface.power_voltage_set_caption.caption
@@ -253,6 +359,31 @@ Item {
                             }
                         }
 
+                        property var power_vs_select: platformInterface.power_vs_select
+                        onPower_vs_selectChanged: {
+                            vsVoltageSelectLabel.text = power_vs_select.caption
+
+                            if(power_vs_select.state === "enabled") {
+                                vsVoltageSelect.opacity = 1.0
+                                vsVoltageSelect.enabled = true
+                            }
+                            else if (power_vs_select.state === "disabled") {
+                                vsVoltageSelect.opacity = 1.0
+                                vsVoltageSelect.enabled = false
+                            }
+                            else  {
+                                vsVoltageSelect.opacity = 0.5
+                                vsVoltageSelect.enabled = false
+                            }
+
+                            vsVoltageSelect.checkedLabel = power_vs_select.values[0]
+                            vsVoltageSelect.uncheckedLabel = power_vs_select.values[1]
+
+                            if(power_vs_select.value === power_vs_select.values[0])
+                                vsVoltageSelect.checked = true
+                            else  vsVoltageSelect.checked = false
+                        }
+
                         property var power_vs_select_caption: platformInterface.power_vs_select_caption.caption
                         onPower_vs_select_captionChanged: {
                             vsVoltageSelectLabel.text = power_vs_select_caption
@@ -303,6 +434,37 @@ Item {
             ColumnLayout {
                 anchors.fill: parent
 
+                Rectangle{
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: parent.height/9
+                    color: "transparent"
+
+                    Text {
+                        id: telemetryHeading
+                        text: "Telemetry"
+                        font.bold: true
+                        font.pixelSize: ratioCalc * 20
+                        color: "#696969"
+                        anchors {
+                            top: parent.top
+                            topMargin: 5
+                        }
+                    }
+
+                    Rectangle {
+                        id: line2
+                        height: 1.5
+                        Layout.alignment: Qt.AlignCenter
+                        width: parent.width
+                        border.color: "lightgray"
+                        radius: 2
+                        anchors {
+                            top: telemetryHeading.bottom
+                            topMargin: 7
+                        }
+                    }
+                }
+
                 Rectangle {
                     Layout.preferredHeight: parent.height/2
                     Layout.fillWidth: true
@@ -342,6 +504,29 @@ Item {
                                             // unit: "<b>V</b>"
                                             // text: "12.5"
                                             boxFont.family: Fonts.digitalseven
+                                        }
+
+                                        property var power_vled: platformInterface.power_vled
+                                        onPower_vledChanged: {
+                                            vLEDLabel.text = power_vled.caption
+
+                                            if(power_vled_state === "enabled") {
+                                                vLED.opacity = 1.0
+                                                vLED.enabled = true
+                                            }
+                                            else if (power_vled.state === "disabled") {
+                                                vLED.opacity = 1.0
+                                                vLED.enabled = false
+                                            }
+                                            else  {
+                                                vLED.opacity = 0.5
+                                                vLED.enabled = false
+                                            }
+
+                                            vLED.text = power_vled.value
+                                            vLED.unit = "<b>V</b>"
+
+
                                         }
 
                                         property var power_vled_caption: platformInterface.power_vled_caption.caption
@@ -402,6 +587,27 @@ Item {
                                             boxFont.family: Fonts.digitalseven
                                         }
 
+                                        property var power_vs: platformInterface.power_vs
+                                        onPower_vsChanged: {
+                                            supplyVoltageLabel.text = power_vs.caption
+
+                                            if(power_vs.state === "enabled") {
+                                                supplyVoltage.opacity = 1.0
+                                                supplyVoltage.enabled = true
+                                            }
+                                            else if (power_vs.state === "disabled") {
+                                                supplyVoltage.opacity = 1.0
+                                                supplyVoltage.enabled = false
+                                            }
+                                            else  {
+                                                supplyVoltage.opacity = 0.5
+                                                supplyVoltage.enabled = false
+                                            }
+
+                                            supplyVoltage.text = power_vs.value
+
+                                        }
+
                                         property var power_vs_caption: platformInterface.power_vs_caption.caption
                                         onPower_vs_captionChanged: {
                                             supplyVoltageLabel.text = power_vs_caption
@@ -455,6 +661,28 @@ Item {
                                             // text: "500"
                                             boxFont.family: Fonts.digitalseven
                                         }
+
+                                        property var power_vdd: platformInterface.power_vdd
+                                        onPower_vddChanged: {
+                                            digitalVoltageLabel.text = power_vdd.caption
+
+                                            if(power_vdd.state === "enabled") {
+                                                digitalVoltage.opacity = 1.0
+                                                digitalVoltage.enabled = true
+                                            }
+                                            else if (power_vdd.state === "disabled") {
+                                                digitalVoltage.opacity = 1.0
+                                                digitalVoltage.enabled = false
+                                            }
+                                            else  {
+                                                digitalVoltage.opacity = 0.5
+                                                digitalVoltage.enabled = false
+                                            }
+
+                                            digitalVoltage.text = power_vdd.value
+
+                                        }
+
                                         property var power_vdd_caption: platformInterface.power_vdd_caption.caption
                                         onPower_vdd_captionChanged: {
                                             digitalVoltageLabel.text = power_vdd_caption
@@ -506,6 +734,24 @@ Item {
                                             unit: "<b>V</b>"
                                             //text: "14.4"
                                             boxFont.family: Fonts.digitalseven
+                                        }
+
+                                        property var power_vconn: platformInterface.power_vconn
+                                        onPower_vconnChanged: {
+                                            batteryVoltageLabel.text = power_vconn.caption
+                                            if(power_vconn.state === "enabled") {
+                                                batteryVoltage.opacity = 1.0
+                                                batteryVoltage.enabled = true
+                                            }
+                                            else if (power_vconn.state === "disabled") {
+                                                batteryVoltage.opacity = 1.0
+                                                batteryVoltage.enabled = false
+                                            }
+                                            else  {
+                                                batteryVoltage.opacity = 0.5
+                                                batteryVoltage.enabled = false
+                                            }
+                                            batteryVoltage.text = power_vconn.value
                                         }
 
                                         property var power_vconn_caption: platformInterface.power_vconn_caption.caption
@@ -567,6 +813,25 @@ Item {
                                             boxFont.family: Fonts.digitalseven
                                         }
 
+                                        property var power_iled: platformInterface.power_iled
+                                        onPower_iledChanged: {
+                                            ledCurrentLabel.text = power_iled.caption
+                                            if(power_iled.state === "enabled") {
+                                                ledCurrent.opacity = 1.0
+                                                ledCurrent.enabled = true
+                                            }
+                                            else if (power_iled.state === "disabled") {
+                                                ledCurrent.opacity = 1.0
+                                                ledCurrent.enabled = false
+                                            }
+                                            else  {
+                                                ledCurrent.opacity = 0.5
+                                                ledCurrent.enabled = false
+                                            }
+                                            ledCurrent.text = power_iled.value
+
+                                        }
+
                                         property var power_iled_caption: platformInterface.power_iled_caption.caption
                                         onPower_iled_captionChanged: {
                                             ledCurrentLabel.text = power_iled_caption
@@ -615,6 +880,24 @@ Item {
                                             boxFont.family: Fonts.digitalseven
                                         }
 
+                                        property var power_is: platformInterface.power_is
+                                        onPower_isChanged: {
+                                            supplyCurrentLabel.text = power_is.caption
+                                            if(power_is.state === "enabled") {
+                                                supplyCurrent.opacity = 1.0
+                                                supplyCurrent.enabled = true
+                                            }
+                                            else if (power_is.state === "disabled") {
+                                                supplyCurrent.opacity = 1.0
+                                                supplyCurrent.enabled = false
+                                            }
+                                            else  {
+                                                supplyCurrent.opacity = 0.5
+                                                supplyCurrent.enabled = false
+                                            }
+                                            supplyCurrent.text = power_is.value
+
+                                        }
 
                                         property var power_is_caption: platformInterface.power_is_caption.caption
                                         onPower_is_captionChanged: {
@@ -644,54 +927,6 @@ Item {
 
                                     }
                                 }
-                                //                                Rectangle {
-                                //                                    Layout.fillHeight: true
-                                //                                    Layout.fillWidth: true
-                                //                                    SGAlignedLabel {
-                                //                                        id: digitalCurrentLabel
-                                //                                        // text: "Digital Current\n(IDD)"
-                                //                                        target: digitalCurrent
-                                //                                        alignment: SGAlignedLabel.SideTopLeft
-                                //                                        anchors.centerIn: parent
-                                //                                        fontSizeMultiplier: ratioCalc * 1.2
-                                //                                        font.bold : true
-                                //                                        SGInfoBox {
-                                //                                            id: digitalCurrent
-                                //                                            height:  35 * ratioCalc
-                                //                                            width: 160 * ratioCalc
-                                //                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                //                                            unit: "<b>mA</b>"
-                                //                                            //text: "500"
-                                //                                            boxFont.family: Fonts.digitalseven
-                                //                                        }
-
-                                //                                        property var power_idd_caption: platformInterface.power_idd_caption.caption
-                                //                                        onPower_idd_captionChanged: {
-                                //                                            digitalCurrentLabel.text = power_idd_caption
-                                //                                        }
-
-                                //                                        property var power_idd_state: platformInterface.power_idd_state.state
-                                //                                        onPower_idd_stateChanged: {
-                                //                                            if(power_idd_state === "enabled") {
-                                //                                                digitalCurrent.opacity = 1.0
-                                //                                                digitalCurrent.enabled = true
-                                //                                            }
-                                //                                            else if (power_idd_state === "disabled") {
-                                //                                                digitalCurrent.opacity = 1.0
-                                //                                                digitalCurrent.enabled = false
-                                //                                            }
-                                //                                            else  {
-                                //                                                digitalCurrent.opacity = 0.5
-                                //                                                digitalCurrent.enabled = false
-                                //                                            }
-                                //                                        }
-
-                                //                                        property var power_idd_value: platformInterface.power_idd_value.value
-                                //                                        onPower_idd_valueChanged:{
-                                //                                            digitalCurrent.text = power_idd_value
-                                //                                        }
-                                //                                    }
-                                //                                }
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
@@ -711,6 +946,25 @@ Item {
                                             unit: "<b>mA</b>"
                                             // text: "500"
                                             boxFont.family: Fonts.digitalseven
+                                        }
+
+                                        property var power_vcc: platformInterface.power_vcc
+                                        onPower_vccChanged: {
+                                            voltageLabel.text = power_vcc.caption
+                                            if(power_vcc.state === "enabled") {
+                                                voltage.opacity = 1.0
+                                                voltage.enabled = true
+                                            }
+                                            else if (power_vcc.state === "disabled") {
+                                                voltage.opacity = 1.0
+                                                voltage.enabled = false
+                                            }
+                                            else  {
+                                                voltage.opacity = 0.5
+                                                voltage.enabled = false
+                                            }
+                                            voltage.text = power_vcc.value
+
                                         }
 
                                         property var power_vcc_caption: platformInterface.power_vcc_caption.caption
@@ -800,6 +1054,30 @@ Item {
                                     }
                                 }
 
+                                property var power_led_driver_temp_top: platformInterface.power_led_driver_temp_top
+                                onPower_led_driver_temp_topChanged: {
+                                    ledDriverTempTopLabel.text = power_led_driver_temp_top.caption
+                                    if(power_led_driver_temp_top.state === "enabled") {
+                                        ledDriverTempTop.opacity = 1.0
+                                        ledDriverTempTop.enabled = true
+                                    }
+                                    else if (power_led_driver_temp_top.state === "disabled") {
+                                        ledDriverTempTop.opacity = 1.0
+                                        ledDriverTempTop.enabled = false
+                                    }
+                                    else  {
+                                        ledDriverTempTop.opacity = 0.5
+                                        ledDriverTempTop.enabled = false
+                                    }
+
+                                    ledDriverTempTop.maximumValue = power_led_driver_temp_top.scales[0]
+                                    ledDriverTempTop.minimumValue = power_led_driver_temp_top.scales[1]
+                                    ledDriverTempTop.tickmarkStepSize = power_led_driver_temp_top.scales[2]
+
+                                    ledDriverTempTop.value = power_led_driver_temp_top.value
+
+                                }
+
                                 property var power_led_driver_temp_top_caption: platformInterface.power_led_driver_temp_top_caption.caption
                                 onPower_led_driver_temp_top_captionChanged: {
                                     ledDriverTempTopLabel.text = power_led_driver_temp_top_caption
@@ -876,6 +1154,28 @@ Item {
                                     }
                                 }
 
+                                property var power_led_driver_temp_bottom: platformInterface.power_led_driver_temp_bottom
+                                onPower_led_driver_temp_bottomChanged: {
+                                    ledDriverTempBottomLabel.text = power_led_driver_temp_bottom.caption
+                                    if(power_led_driver_temp_bottom.state === "enabled") {
+                                        ledDriverTempBottom.opacity = 1.0
+                                        ledDriverTempBottom.enabled = true
+                                    }
+                                    else if (power_led_driver_temp_bottom.state === "disabled") {
+                                        ledDriverTempBottom.opacity = 1.0
+                                        ledDriverTempBottom.enabled = false
+                                    }
+                                    else  {
+                                        ledDriverTempBottom.opacity = 0.5
+                                        ledDriverTempBottom.enabled = false
+                                    }
+                                    ledDriverTempBottom.maximumValue = power_led_driver_temp_bottom.scales[0]
+                                    ledDriverTempBottom.minimumValue = power_led_driver_temp_bottom.scales[1]
+                                    ledDriverTempBottom.tickmarkStepSize = power_led_driver_temp_bottom.scales[2]
+                                    ledDriverTempBottom.value = power_led_driver_temp_bottom.value
+
+                                }
+
                                 property var power_led_driver_temp_bottom_caption: platformInterface.power_led_driver_temp_bottom_caption.caption
                                 onPower_led_driver_temp_bottom_captionChanged: {
                                     ledDriverTempBottomLabel.text = power_led_driver_temp_bottom_caption
@@ -949,6 +1249,28 @@ Item {
                                         }
                                     }
 
+                                    property var power_led_temp: platformInterface.power_led_temp
+                                    onPower_led_tempChanged: {
+                                        tempGaugeLabel.text = power_led_temp.caption
+                                        if(power_led_temp.state === "enabled") {
+                                            tempGauge.opacity = 1.0
+                                            tempGauge.enabled = true
+                                        }
+                                        else if (power_led_temp.state === "disabled") {
+                                            tempGauge.opacity = 1.0
+                                            tempGauge.enabled = false
+                                        }
+                                        else  {
+                                            tempGauge.opacity = 0.5
+                                            tempGauge.enabled = false
+                                        }
+
+                                        tempGauge.maximumValue = power_led_temp.scales[0]
+                                        tempGauge.minimumValue = power_led_temp.scales[1]
+                                        tempGauge.tickmarkStepSize = power_led_temp.scales[2]
+                                        tempGauge.value = power_led_temp.value
+
+                                    }
                                     property var power_led_temp_caption: platformInterface.power_led_temp_caption.caption
                                     onPower_led_temp_captionChanged: {
                                         tempGaugeLabel.text = power_led_temp_caption
@@ -1026,6 +1348,28 @@ Item {
                                                         color1.b * (1 - x) + color2.b * x, 1
                                                         );
                                         }
+                                    }
+
+                                    property var power_total_power: platformInterface.power_total_power
+                                    onPower_total_powerChanged: {
+                                        powerLossGaugeLabel.text = power_total_power.caption
+                                        if(power_total_power.state === "enabled") {
+                                            powerLoss.opacity = 1.0
+                                            powerLoss.enabled = true
+                                        }
+                                        else if (power_total_power.state === "disabled") {
+                                            powerLoss.opacity = 1.0
+                                            powerLoss.enabled = false
+                                        }
+                                        else  {
+                                            powerLoss.opacity = 0.5
+                                            powerLoss.enabled = false
+                                        }
+                                        powerLoss.maximumValue = power_total_power.scales[0]
+                                        powerLoss.minimumValue = power_total_power.scales[1]
+                                        powerLoss.tickmarkStepSize = power_total_power.scales[2]
+                                        powerLoss.value = power_total_power.value
+
                                     }
 
                                     property var power_total_power_caption: platformInterface.power_total_power_caption.caption

@@ -8,7 +8,7 @@ import QtGraphicalEffects 1.12
 
 Rectangle {
     id: root
-    color: "black"
+    //color: "gray"
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
     anchors.centerIn: parent
@@ -35,10 +35,12 @@ Rectangle {
             Layout.alignment: Qt.AlignHCenter
             Layout.fillHeight: parent.height
             Layout.preferredWidth: parent.width/1.2
+            //color: "gray"
 
             Image {
                 id: base
                 source: "car-Images/base.jpg"
+                //fillMode: Image.PreserveAspectFit
                 anchors.fill: parent
             }
 
@@ -148,6 +150,7 @@ Rectangle {
         Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
+           // color: "gray"
 
             ColumnLayout {
                 width: parent.width

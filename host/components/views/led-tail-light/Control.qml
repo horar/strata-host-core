@@ -62,6 +62,7 @@ Item {
             id: powerControlButton
             text: qsTr("Power")
             onClicked: {
+                platformInterface.mode.update("LED Driver")
                 carDemoMode.visible = false
                 ledControl.visible = false
                 powerControl.visible = true
@@ -72,8 +73,9 @@ Item {
 
         TabButton {
             id: samOptControlButton
-            text: qsTr("SAM,OTP,And CRC")
+            text: qsTr("SAM, OTP, and CRC")
             onClicked: {
+                platformInterface.mode.update("LED Driver")
                 carDemoMode.visible = false
                 ledControl.visible = false
                 powerControl.visible = false
@@ -86,6 +88,7 @@ Item {
             id: miscControlButton
             text: qsTr("Miscellaneous")
             onClicked: {
+                platformInterface.mode.update("LED Driver")
                 carDemoMode.visible = false
                 ledControl.visible = false
                 powerControl.visible = false
