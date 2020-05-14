@@ -110,6 +110,7 @@ Item {
         CarDemoControl{
             id: carDemoMode
             visible: true
+
         }
 
         LEDControl {

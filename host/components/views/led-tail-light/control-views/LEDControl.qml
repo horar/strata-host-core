@@ -3020,7 +3020,7 @@ Item {
                                                                      platformInterface.outputEnable11
 
                                                                     ] )
-                                                        platformInterface.outputEnable3 = true
+                                                        platformInterface.outputEnable3 = false
 
                                                     }
 
