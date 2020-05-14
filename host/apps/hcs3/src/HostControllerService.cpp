@@ -81,6 +81,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(this, &HostControllerService::cancelPlatformDocumentRequested, storageManager_, &StorageManager::requestCancelAllDownloads, Qt::QueuedConnection);
     connect(this, &HostControllerService::updatePlatformDocRequested, storageManager_, &StorageManager::updatePlatformDoc, Qt::QueuedConnection);
 
+    connect(&boards_, &BoardManagerWrapper::boardConnected, this, &HostControllerService::platformConnected);
     QString baseUrl = QString::fromStdString( db_cfg["file_server"].GetString() );
     storageManager_->setBaseUrl(baseUrl);
     storageManager_->setDatabase(&db_);
@@ -297,7 +298,6 @@ void HostControllerService::handleMessage(const PlatformMessage& msg)
 {
     switch(msg.msg_type)
     {
-        case PlatformMessage::eMsgPlatformConnected:            platformConnected(msg); break;
         case PlatformMessage::eMsgPlatformDisconnected:         platformDisconnected(msg); break;
         case PlatformMessage::eMsgPlatformMessage:              sendMessageToClients(msg); break;
 
@@ -310,22 +310,14 @@ void HostControllerService::handleMessage(const PlatformMessage& msg)
     }
 }
 
-void HostControllerService::platformConnected(const PlatformMessage& item)
+void HostControllerService::platformConnected(const QString &classId, const QString &platformId)
 {
-    if (item.from_connectionId.is_set == false) {
-        qCWarning(logCategoryHcs) << "Missing platform connection Id.";
-        return;
-    }
+    Q_UNUSED(platformId)
 
-    std::string classId = boards_.getClassId(item.from_connectionId.conn_id);
-
-    if (classId.empty()) {
+    if (classId.isEmpty()) {
         qCWarning(logCategoryHcs) << "Connected platform doesn't have class Id.";
         return;
     }
-
-    // TODO: Logic will be changed in SCT-517
-    //db_.addReplChannel(classId);
 
     //send update to all clients
     std::string platformList;

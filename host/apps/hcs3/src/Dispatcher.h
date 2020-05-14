@@ -14,7 +14,6 @@ struct PlatformMessage
 {
     enum MessageType {
         eMsgUnknown = 0,
-        eMsgPlatformConnected,
         eMsgPlatformDisconnected,
         eMsgPlatformMessage,
 

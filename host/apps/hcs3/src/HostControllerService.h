@@ -113,8 +113,7 @@ private:
     void onCmdHostDownloadFiles(const rapidjson::Value* );      //from UI
     void onCmdDynamicPlatformList(const rapidjson::Value* );
 
-    //called from Platform manager to handle platforms connect/disconnect
-    void platformConnected(const PlatformMessage& item);
+    void platformConnected(const QString &classId, const QString &platformId);
     void platformDisconnected(const PlatformMessage& item);
 
     HCS_Client* getSenderClient() const { return current_client_; }     //TODO: only one client

@@ -33,19 +33,17 @@ void BoardManagerWrapper::newConnection(int deviceId, bool recognized) {
         if (device == nullptr) {
             return;
         }
+
         connect(device.get(), &strata::SerialDevice::msgFromDevice, this, &BoardManagerWrapper::messageFromBoard);
         boards_.insert(deviceId, Board(device));
-        PlatformMessage item;
-        item.msg_type = PlatformMessage::eMsgPlatformConnected;
-        item.from_connectionId.conn_id = deviceId;
-        item.from_connectionId.is_set = true;
-        item.msg_document = nullptr;
 
-        dispatcher_->addMessage(item);
+        QString classId = QString::fromStdString(getClassId(deviceId));
+        QString platformId = QString::fromStdString(getPlatformId(deviceId));
 
         qCInfo(logCategoryHcsBoard).noquote() << "Connected new board." << logDeviceId(deviceId);
-    }
-    else {
+
+        emit boardConnected(classId, platformId);
+    } else {
         qCWarning(logCategoryHcsBoard).noquote() << "Connected unknown (unrecognized) board." << logDeviceId(deviceId);
     }
 }
