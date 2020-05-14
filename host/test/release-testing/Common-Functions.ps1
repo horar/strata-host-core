@@ -63,6 +63,9 @@ function Assert-PythonScripts {
     If (!(Test-Path $PythonControlViewTest)) {
         Exit-TestScript -1 "Error: cannot find Python script at $PythonControlViewTest.`nAborting."
     }
+    If (!(Test-Path $PythonPlatformIdentificationTest)) {
+        Exit-TestScript -1 "Error: cannot find Python script at $PythonPlatformIdentificationTest.`nAborting."
+    }
 }
 
 # Check if PS module 'PSSQLite' is installed
@@ -170,9 +173,11 @@ function Start-HCSAndWait {
 function Restore-Strata_INI {
     # Delete temporary .ini file and restore original
     Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $HCSAppDataDir)
-    If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini") {
+    If (Test-Path -Path "$AppData_OnSemi_dir\Strata Developer Studio.ini") {
         Remove-Item -Path "$AppData_OnSemi_dir\Strata Developer Studio.ini"
-        Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" "$AppData_OnSemi_dir\Strata Developer Studio.ini"
+        If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini") {
+            Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" "$AppData_OnSemi_dir\Strata Developer Studio.ini"
+        }
     }
 }
 
@@ -208,6 +213,10 @@ function Show-TestSummary {
 
     Show-TestResult -TestName "Test-CollateralDownload" -TestResults $CollateralDownloadResults
 
+    If ($EnablePlatformIdentificationTest -eq $true) { 
+        Show-TestResult -TestName "Test-PlatformIdentification" -TestResults $PlatformIdentificationResults
+    }
+    
     If ($SDSControlViewsResults) {
         If ($SDSControlViewsResults -Eq $true) {
             Write-Host -ForegroundColor Green "`nResult for Test-SDSControlViews: No errors found during execution, test requires visual inspection."

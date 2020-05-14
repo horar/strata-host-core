@@ -70,6 +70,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(storageManager_, &StorageManager::downloadPlatformSingleFileFinished, this, &HostControllerService::sendDownloadPlatformSingleFileFinishedMessage);
     connect(storageManager_, &StorageManager::downloadPlatformFilesFinished, this, &HostControllerService::sendDownloadPlatformFilesFinishedMessage);
     connect(storageManager_, &StorageManager::platformListResponseRequested, this, &HostControllerService::sendPlatformListMessage);
+    connect(storageManager_, &StorageManager::downloadPlatformDocumentsProgress, this, &HostControllerService::sendPlatformDocumentsProgressMessage);
     connect(storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
 
     /* We dont want to call these StorageManager methods directly
@@ -219,6 +220,22 @@ void HostControllerService::sendPlatformListMessage(
     clients_.sendMessage(clientId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
 }
 
+void HostControllerService::sendPlatformDocumentsProgressMessage(const QByteArray &clientId, int filesCompleted, int filesTotal)
+{
+    QJsonDocument doc;
+    QJsonObject message;
+    QJsonObject payload;
+
+    payload.insert("type", "document_progress");
+    payload.insert("files_completed", filesCompleted);
+    payload.insert("files_total", filesTotal);
+
+    message.insert("cloud::notification", payload);
+    doc.setObject(message);
+
+    clients_.sendMessage(clientId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
+}
+
 void HostControllerService::sendPlatformDocumentsMessage(
         const QByteArray &clientId,
         const QJsonArray &documentList,
@@ -286,8 +303,6 @@ void HostControllerService::handleMessage(const PlatformMessage& msg)
 
         case PlatformMessage::eMsgClientMessage:                handleClientMsg(msg); break;
         case PlatformMessage::eMsgCouchbaseMessage:             handleCouchbaseMsg(msg); break;
-
-        case PlatformMessage::eMsgStorageRequest:               handleStorageRequest(msg); break;
 
         default:
             assert(false);
@@ -398,37 +413,27 @@ void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
 
 void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
 {
-    if (!payload->HasMember("platform_uuid")) {
-        return;
-    }
-
     HCS_Client* client = getSenderClient();
-    assert(client);
-
-    std::string classId = (*payload)["platform_uuid"].GetString();
-    if (classId.empty()) {
+    if (client == nullptr) {
+        qCCritical(logCategoryHcs) << "sender client is missing";
         return;
     }
 
-    QString clientId = QByteArray::fromRawData(client->getClientId().data(), static_cast<int>(client->getClientId().size()) ).toHex();
-    qCInfo(logCategoryHcs) << "Client:" << clientId <<  " Selected platform:" << QString::fromStdString(classId);
+    if (!payload->HasMember("class_id")) {
+        qCCritical(logCategoryHcs) << "class_id key is missing";
+        return;
+    }
 
-    rapidjson::Document* request = new rapidjson::Document();
-    request->SetObject();
-    rapidjson::Document::AllocatorType& allocator = request->GetAllocator();
-    request->AddMember("cmd", "request", allocator);
-    request->AddMember("class_id", rapidjson::Value(classId.c_str(), allocator), allocator);
-    request->AddMember("client_id", rapidjson::Value(client->getClientId().c_str(), allocator), allocator);
+    QString classId = QString::fromStdString((*payload)["class_id"].GetString());
+    if (classId.isEmpty()) {
+        qCCritical(logCategoryHcs) << "class_id is empty";
+        return;
+    }
 
-    PlatformMessage msg;
-    msg.msg_type = PlatformMessage::eMsgStorageRequest;
-    msg.from_client = client->getClientId();
-    msg.message = std::string();
-    msg.msg_document = request;
+    QByteArray clientId = QByteArray::fromStdString(client->getClientId());
+    emit platformDocumentsRequested(clientId, classId);
 
-    dispatcher_.addMessage(msg);
-
-    if (int device_id; boards_.getFirstDeviceIdByClassId(classId, device_id) ) {
+    if (int device_id; boards_.getFirstDeviceIdByClassId(classId.toStdString(), device_id) ) {
         std::string platformId = boards_.getPlatformId(device_id);
         if (platformId.empty()) {
             qCWarning(logCategoryHcs) << "Board doesn't have platfomId!";
@@ -556,20 +561,6 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)  //const
 void HostControllerService::handleCouchbaseMsg(const PlatformMessage& msg)
 {
     emit updatePlatformDocRequested(QString::fromStdString(msg.from_client));
-}
-
-void HostControllerService::handleStorageRequest(const PlatformMessage& msg)
-{
-    assert(msg.msg_document != nullptr);
-
-    rapidjson::Document* request_doc = msg.msg_document;
-
-    QString classId = QString::fromStdString((*request_doc)["class_id"].GetString());
-    QByteArray clientId = QByteArray::fromStdString(msg.from_client);
-
-    emit platformDocumentsRequested(clientId, classId);
-
-    delete msg.msg_document;
 }
 
 bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer_id, const std::string& message )

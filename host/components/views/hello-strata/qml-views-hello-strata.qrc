@@ -8,7 +8,6 @@
         <file>control-views/PWMHeatGeneratorAndTempSensorControl.qml</file>
         <file>control-views/PWMMotorControlControl.qml</file>
         <file>control-views/PWMToFiltersControl.qml</file>
-        <file>Content.qml</file>
         <file>Control.qml</file>
         <file>PlatformInterface.qml</file>
         <file>HelloStrataControl_TabView.qml</file>

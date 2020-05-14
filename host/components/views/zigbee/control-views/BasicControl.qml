@@ -46,9 +46,9 @@ Rectangle {
             }
         }
 
-        property var doorToggled: platformInterface.toggle_door_notification
+        property var doorToggled: platformInterface.toggle_door
         onDoorToggledChanged: {
-            if (platformInterface.toggle_door_notification.value === "open"){
+            if (platformInterface.toggle_door.value === "open"){
                 //switch to image with light on
                 officeImage.source = "../images/room_doorOpen.jpg"
             }

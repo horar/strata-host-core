@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/views/logic-gate">
-        <file>Content.qml</file>
         <file>Control.qml</file>
         <file>PartOne.qml</file>
         <file>PartTwo.qml</file>

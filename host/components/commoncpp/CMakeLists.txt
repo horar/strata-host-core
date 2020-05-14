@@ -53,4 +53,25 @@ add_custom_command(
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/
 )
 
+# Export SGJLinkConnector
+add_library(SGJLinkConnector
+    SGJLinkConnector.cpp
+    SGJLinkConnector.h
+    logging/LoggingQtCategories.cpp
+)
+
+target_link_libraries(SGJLinkConnector
+    PRIVATE
+    Qt5::Core
+    QtLogger
+)
+
+target_include_directories(SGJLinkConnector
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+set_target_properties(SGJLinkConnector PROPERTIES
+    AUTOMOC ON
+)
+
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/imports")

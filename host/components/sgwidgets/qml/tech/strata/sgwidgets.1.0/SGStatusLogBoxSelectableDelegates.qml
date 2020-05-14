@@ -72,7 +72,7 @@ SGStatusLogBox {
     function toggleItemAtXY(x, y) {
         var mousedItemIndex = listView.indexAt(x, y)
         if (mousedItemIndex !==-1) {
-            var mousedItem = listView.model.get(mousedItemIndex)
+            var mousedItem = root.model.get(root.filterModel.mapIndexToSource(mousedItemIndex))
             if (!mousedItem.stateChanged) {
                 if (!mousedItem.selected) {
                     mousedItem.selected = true
@@ -86,14 +86,14 @@ SGStatusLogBox {
     }
 
     function deselectAll() {
-        for (var i = 0; i<listView.model.count; i++) {
-            listView.model.get(i).selected = false;
+        for (var i = 0; i<root.model.count; i++) {
+            root.model.get(i).selected = false;
         }
     }
 
     function resetStateChanged() {
-        for (var i = 0; i<listView.model.count; i++) {
-            listView.model.get(i).stateChanged = false;
+        for (var i = 0; i<root.model.count; i++) {
+            root.model.get(i).stateChanged = false;
         }
     }
 

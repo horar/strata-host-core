@@ -79,23 +79,14 @@ void SciPlatformModel::setMaxCmdInHistoryCount(int maxCmdInHistoryCount)
     }
 }
 
-bool SciPlatformModel::ignoreNewConnections() const
-{
-    return ignoreNewConnections_;
-}
-
-void SciPlatformModel::setIgnoreNewConnections(bool ignoreNewConnections)
-{
-    if (ignoreNewConnections_ != ignoreNewConnections) {
-        ignoreNewConnections_ = ignoreNewConnections;
-        emit ignoreNewConnectionsChanged();
-    }
-}
-
 void SciPlatformModel::disconnectPlatformFromSci(int index)
 {
     if (index < 0 || index >= platformList_.count()) {
         qCCritical(logCategorySci) << "index out of range";
+        return;
+    }
+
+    if (platformList_.at(index)->status() == SciPlatform::PlatformStatus::Disconnected) {
         return;
     }
 
@@ -123,47 +114,39 @@ void SciPlatformModel::removePlatform(int index)
     emit countChanged();
 }
 
-void SciPlatformModel::reconectAll()
+void SciPlatformModel::reconnect(int index)
 {
-    QVector<int> ids = boardManager_->readyDeviceIds();
-    for (int id : ids) {
-        int index = findPlatform(id);
-        if (index >= 0) {
-            platformList_.at(index)->setStatus(SciPlatform::PlatformStatus::Connected);
-        }
-
-        boardManager_->reconnect(id);
+    if (index < 0 || index >= platformList_.count()) {
+        qCCritical(logCategorySci) << "index out of range";
     }
+
+    boardManager_->reconnect(platformList_.at(index)->deviceId());
 }
 
 QHash<int, QByteArray> SciPlatformModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[PlatformRole] = "platform";
+    roles[BugFixRole] = "bugFixRole";
     return roles;
 }
 
 void SciPlatformModel::boardConnectedHandler(int deviceId)
 {
-    if (ignoreNewConnections_) {
-        return;
-    }
-
     int index = findPlatform(deviceId);
     if (index < 0) {
         appendNewPlatform(deviceId);
     } else {
+        platformList_.at(index)->setErrorString("");
         platformList_.at(index)->setDevice(boardManager_->device(deviceId));
         platformList_.at(index)->setStatus(SciPlatform::PlatformStatus::Connected);
+
+        emit platformConnected(index);
     }
 }
 
 void SciPlatformModel::boardReadyHandler(int deviceId, bool recognized)
 {
-    if (ignoreNewConnections_) {
-        return;
-    }
-
     int index = findPlatform(deviceId);
     if (index < 0) {
         qCCritical(logCategorySci) << "unknown board" << deviceId;
@@ -192,7 +175,7 @@ void SciPlatformModel::boardDisconnectedHandler(int deviceId)
 {
     int index = findPlatform(deviceId);
     if (index < 0) {
-        qCCritical(logCategorySci) << "unknown board" << deviceId;
+        //device might have been disconnected from UI
         return;
     }
 
@@ -230,4 +213,6 @@ void SciPlatformModel::appendNewPlatform(int deviceId)
     endInsertRows();
 
     emit countChanged();
+
+    emit platformConnected(platformList_.length() - 1);
 }

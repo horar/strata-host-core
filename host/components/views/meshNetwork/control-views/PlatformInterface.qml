@@ -20,141 +20,160 @@ Item {
 
 
     //
-    property var status_onoff : {
-        "ele_addr": "8000",     // in dec (16 bit)
-        "state":  "on"         // or "off"
-    }
+//    property var status_onoff : {
+//        "ele_addr": "8000",     // in dec (16 bit)
+//        "state":  "on"         // or "off"
+//    }
 
     property var status_light_hsl : {
-        "ele_addr": "8000",  // in dec (16 bit)
-        "h": "120",         // 0 to 360 degrees (string)
-        "s": "50",          // 0 to 100% (string)
-        "l": "50"           // 0 to 100% (string)
+        "ele_addr": 8000,  // in dec (16 bit)
+        "h": 120,         // 0 to 360 degrees (string)
+        "s": 50,          // 0 to 100% (string)
+        "l": 50           // 0 to 100% (string)
     }
 
     //a generic status level
-    property var status_level : {
-        "ele_addr": "8000",  // in dec (16 bit)
-        "level": "8000" // in dec (16 bit), (string)
-    }
+//    property var status_level : {
+//        "ele_addr": "8000",  // in dec (16 bit)
+//        "level": "8000" // in dec (16 bit), (string)
+//    }
 
-    //a generic sensor model
-    //what is this returning? Is there an encoding of models to 16 bit strings?
-    property var status_sensor : {
-        "uaddr": "",  // in dec (16 bit)
-        "sensor_type": "",  // temperature ambient_light, magnetic_rotation, magnetic_detection, strata, default (string)
+    //notification back from a sensor on a node
+    property var sensor_status : {
+        "uaddr": 0,  // in dec (16 bit)
+        "sensor_type": "",  // temperature ambient_light, magnetic_rotation, magnetic_detection, rssi, default (string)
         "data":""
     }
 
-    property var status_battery : {
+    property var battery_status : {
         "uaddr": "8000",  // in dec (16 bit)
         "battery_level": "50",      // 0 to 100% (string)
         "battery_voltage": "4.0",   // voltage (string)
-        "plugged_in":"true",      //or false
         "battery_state": "charging", //or "not charging" or "charged"
     }
 
-    property var signal_strength : {
-        "node_id": "8000",  // in dec (16 bit)
-        "value": "100",  // in dB? %?
-    }
+//    property var signal_strength : {
+//        "node_id": "8000",  // in dec (16 bit)
+//        "value": "100",  // in dB? %?
+//    }
 
-    property var ambient_light : {
-        "node_id": "8000",  // in dec (16 bit)
-        "value": "100",  // in lumens?
-    }
+//    property var ambient_light : {
+//        "node_id": "8000",  // in dec (16 bit)
+//        "value": "100",  // in lumens?
+//    }
 
-    property var dimmer_mode : {
-        "node_id": "8000",  // in dec (16 bit)
-        "value": "true",
-    }
-    property var relay_mode : {
-        "node_id": "8000",  // in dec (16 bit)
-        "value": "true",
-    }
-    property var alarm_mode : {
-        "node_id": "8000",  // in dec (16 bit)
-        "value": "true",
-    }
-    property var high_power_mode : {
-        "node_id": "8000",  // in dec (16 bit)
-        "value": "true",
-    }
+//    property var dimmer_mode : {
+//        "node_id": "8000",  // in dec (16 bit)
+//        "value": "true",
+//    }
+//    property var relay_mode : {
+//        "node_id": "8000",  // in dec (16 bit)
+//        "value": "true",
+//    }
+//    property var alarm_mode : {
+//        "node_id": "8000",  // in dec (16 bit)
+//        "value": "true",
+//    }
+//    property var high_power_mode : {
+//        "node_id": "8000",  // in dec (16 bit)
+//        "value": "true",
+//    }
 
     property var room_color_notification : {
         "color": ""     //"blue", "green","purple","red","off" or "on"
     }
-    property var toggle_door_notification : {
+
+    //no longer used for communication to platform, but for communication within the UI
+    property var smarthome_door : {
         "value": "closed"     //or "open"
     }
-    property var toggle_window_notification : {
+
+    //no longer used for communication to platform, but for communication within the UI
+    property var window_shade : {
         "value": "closed"     //or "open"
     }
 
     property var hsl_color : {
-        "node_id": "8000",  // in dec (16 bit)
-        "h": "120",         // 0 to 360 degrees (string)
-        "s": "50",          // 0 to 100% (string)
-        "l": "50"           // 0 to 100% (string)
+        "node_id": 8000,  // in dec (16 bit)
+        "h": 120,         // 0 to 360 degrees (string)
+        "s": 50,          // 0 to 100% (string)
+        "l": 50           // 0 to 100% (string)
     }
 
-    property var temperature : {
-        "node_id": "8000",  // in dec (16 bit)
-        "value": "100",  // in in °C?
-    }
+//    property var temperature : {
+//        "node_id": "8000",  // in dec (16 bit)
+//        "value": "100",  // in in °C?
+//    }
 
     property var network_notification : {
         "nodes": [{
-                      "index": "1",
-                      "ready": 0,       //or false
+                      "index": 1,         //the node_id
+                      "ready": 0,           //or false
                       "color": "#ffffff"    //RGB hex value of the node color
                   }]
     }
 
+//    onNetwork_notificationChanged: {
+//        console.log("new network notification")
+//         for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+//            console.log("index=",platformInterface.network_notification.nodes[alpha].index,
+//                        "ready=",platformInterface.network_notification.nodes[alpha].ready,
+//                        "color=",platformInterface.network_notification.nodes[alpha].color);
+//         }
+//    }
+
     property var node_added : {
-        "index": "1",  // in dec (16 bit)
+        "index": 1,  // in dec (16 bit)
         "color": "green",  //RGB hex value of the node color
     }
 
     property var node_removed : {
-        "node_id": "0",  // in dec (16 bit)
+        "node_id": 0,  // in dec (16 bit)
     }
 
     property var alarm_triggered:{
                 "triggered": "false"  //or false when the alarm is reset
     }
 
-    property var location_clicked_notification:{
-                "location": "alarm" //string, with possible values: "doorbell", "alarm", "switch", "temperature", "light", "voltage", "security"
+//    property var location_clicked_notification:{
+//                "location": "alarm" //string, with possible values: "doorbell", "alarm", "switch", "temperature", "light", "voltage", "security"
+//    }
+
+//    property var demo_click_notification : {
+//        "demo": "",             //"one_to_one"or "one_to_many", "relay", "multiple_models","sensor","cloud"
+//        "button": "",           //"switch" or "switch1","switch2","relay_switch", "bulb1","bulb2","bulb3" "get_sensor_data"
+//        "value":"on"
+//    }
+
+    property var one_to_one_demo:{
+                "light": "on"  //or off
     }
 
-    property var demo_click_notification : {
-        "demo": "",             //"one_to_one"or "one_to_many", "relay", "multiple_models","sensor","cloud"
-        "button": "",           //"switch" or "switch1","switch2","relay_switch", "bulb1","bulb2","bulb3" "get_sensor_data"
-        "value":"on"
+    property var one_to_many_demo:{
+                "lights": "on"  //or off
     }
 
-    property var console_message:{      //console message strings
+    property var msg_cli:{      //console message strings
             "msg":""
     }
 
     // set provisioner client to address (node or  GROUP_ID)
-    property var node : ({
-                             "cmd" : "node",
-                             "payload": {
-                                 "send":"abc"// default value
-                             },
+//    property var node : ({
+//                             "cmd" : "node",
+//                             "payload": {
+//                                 "send":"abc"// default value
+//                             },
 
-                             update: function (send) {
-                                 this.set(send)
-                                 this.send(this)
-                             },
-                             set: function (send) {
-                                 this.payload.send = send
-                             },
-                             send: function () { CorePlatformInterface.send(this) },
-                             show: function () { CorePlatformInterface.show(this) }
-                         })
+//                             update: function (send) {
+//                                 this.set(send)
+//                                 this.send(this)
+//                             },
+//                             set: function (send) {
+//                                 this.payload.send = send
+//                             },
+//                             send: function () { CorePlatformInterface.send(this) },
+//                             show: function () { CorePlatformInterface.show(this) }
+//                         })
     //_________________________________________________________________________________________
     //    property var onoff_set : ({
     //            "cmd" : "onoff_set",
@@ -195,9 +214,9 @@ Item {
     property var set_node_mode : ({
                                       "cmd" : "set_node_mode",
                                       "payload": {
-                                          "mode":"",
+                                          "mode":0,
                                           "uaddr": 8000,  // in dec (16 bit uint),
-                                          "enabled":true
+                                          "enable":true
                                       },
 
                                       update: function (mode,address,enabled) {
@@ -206,156 +225,156 @@ Item {
                                       },
                                       set: function (inMode,inAddress,inEnabled) {
                                           this.payload.mode = inMode;
-                                          this.payload.uaddr = inAddress;
+                                          this.payload.uaddr = parseInt(inAddress);
                                           this.payload.enable = inEnabled;
                                       },
                                       send: function () { CorePlatformInterface.send(this) },
                                       show: function () { CorePlatformInterface.show(this) }
                                   })
 
-    property var set_dimmer_mode : ({
-                                      "cmd" : "set_dimmer_mode",
-                                      "payload": {
-                                          "node_id": 8000,  // in dec (16 bit uint),
-                                          "value":true
-                                      },
+//    property var set_dimmer_mode : ({
+//                                      "cmd" : "set_dimmer_mode",
+//                                      "payload": {
+//                                          "node_id": 8000,  // in dec (16 bit uint),
+//                                          "value":true
+//                                      },
 
-                                      update: function (address,value) {
-                                          this.set(address,value)
-                                          this.send(this)
-                                      },
-                                      set: function (inAddress,inValue) {
-                                          this.payload.node_id = inAddress;
-                                          this.payload.value = inValue;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+//                                      update: function (address,value) {
+//                                          this.set(address,value)
+//                                          this.send(this)
+//                                      },
+//                                      set: function (inAddress,inValue) {
+//                                          this.payload.node_id = inAddress;
+//                                          this.payload.value = inValue;
+//                                      },
+//                                      send: function () { CorePlatformInterface.send(this) },
+//                                      show: function () { CorePlatformInterface.show(this) }
+//                                  })
 
-    property var get_dimmer_mode : ({
-                                      "cmd" : "get_dimmer_mode",
-                                      "payload": {
-                                          "node_id": 8000,  // in dec (16 bit uint),
-                                      },
+//    property var get_dimmer_mode : ({
+//                                      "cmd" : "get_dimmer_mode",
+//                                      "payload": {
+//                                          "node_id": 8000,  // in dec (16 bit uint),
+//                                      },
 
-                                      update: function (address) {
-                                          this.set(address)
-                                          this.send(this)
-                                      },
-                                      set: function (inAddress) {
-                                          this.payload.node_id = inAddress;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+//                                      update: function (address) {
+//                                          this.set(address)
+//                                          this.send(this)
+//                                      },
+//                                      set: function (inAddress) {
+//                                          this.payload.node_id = inAddress;
+//                                      },
+//                                      send: function () { CorePlatformInterface.send(this) },
+//                                      show: function () { CorePlatformInterface.show(this) }
+//                                  })
 
-    property var set_relay_mode : ({
-                                      "cmd" : "set_relay_mode",
-                                      "payload": {
-                                          "node_id": 8000,  // in dec (16 bit uint),
-                                          "value":true
-                                      },
+//    property var set_relay_mode : ({
+//                                      "cmd" : "set_relay_mode",
+//                                      "payload": {
+//                                          "node_id": 8000,  // in dec (16 bit uint),
+//                                          "value":true
+//                                      },
 
-                                      update: function (address,value) {
-                                          this.set(address,value)
-                                          this.send(this)
-                                      },
-                                      set: function (inAddress,inValue) {
-                                          this.payload.node_id = inAddress;
-                                          this.payload.value = inValue;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+//                                      update: function (address,value) {
+//                                          this.set(address,value)
+//                                          this.send(this)
+//                                      },
+//                                      set: function (inAddress,inValue) {
+//                                          this.payload.node_id = inAddress;
+//                                          this.payload.value = inValue;
+//                                      },
+//                                      send: function () { CorePlatformInterface.send(this) },
+//                                      show: function () { CorePlatformInterface.show(this) }
+//                                  })
 
-    property var get_relay_mode : ({
-                                      "cmd" : "get_relay_mode",
-                                      "payload": {
-                                          "node_id": 8000,  // in dec (16 bit uint),
-                                      },
+//    property var get_relay_mode : ({
+//                                      "cmd" : "get_relay_mode",
+//                                      "payload": {
+//                                          "node_id": 8000,  // in dec (16 bit uint),
+//                                      },
 
-                                      update: function (address) {
-                                          this.set(address)
-                                          this.send(this)
-                                      },
-                                      set: function (inAddress) {
-                                          this.payload.node_id = inAddress;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+//                                      update: function (address) {
+//                                          this.set(address)
+//                                          this.send(this)
+//                                      },
+//                                      set: function (inAddress) {
+//                                          this.payload.node_id = inAddress;
+//                                      },
+//                                      send: function () { CorePlatformInterface.send(this) },
+//                                      show: function () { CorePlatformInterface.show(this) }
+//                                  })
 
-    property var set_alarm_mode : ({
-                                      "cmd" : "set_alarm_mode",
-                                      "payload": {
-                                          "node_id": 8000,  // in dec (16 bit uint),
-                                          "value":true
-                                      },
+//    property var set_alarm_mode : ({
+//                                      "cmd" : "set_alarm_mode",
+//                                      "payload": {
+//                                          "node_id": 8000,  // in dec (16 bit uint),
+//                                          "value":true
+//                                      },
 
-                                      update: function (address,value) {
-                                          this.set(address,value)
-                                          this.send(this)
-                                      },
-                                      set: function (inAddress,inValue) {
-                                          this.payload.node_id = inAddress;
-                                          this.payload.value = inValue;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+//                                      update: function (address,value) {
+//                                          this.set(address,value)
+//                                          this.send(this)
+//                                      },
+//                                      set: function (inAddress,inValue) {
+//                                          this.payload.node_id = inAddress;
+//                                          this.payload.value = inValue;
+//                                      },
+//                                      send: function () { CorePlatformInterface.send(this) },
+//                                      show: function () { CorePlatformInterface.show(this) }
+//                                  })
 
-    property var get_alarm_mode : ({
-                                      "cmd" : "get_alarm_mode",
-                                      "payload": {
-                                          "node_id": 8000,  // in dec (16 bit uint),
-                                      },
+//    property var get_alarm_mode : ({
+//                                      "cmd" : "get_alarm_mode",
+//                                      "payload": {
+//                                          "node_id": 8000,  // in dec (16 bit uint),
+//                                      },
 
-                                      update: function (address) {
-                                          this.set(address)
-                                          this.send(this)
-                                      },
-                                      set: function (inAddress) {
-                                          this.payload.node_id = inAddress;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+//                                      update: function (address) {
+//                                          this.set(address)
+//                                          this.send(this)
+//                                      },
+//                                      set: function (inAddress) {
+//                                          this.payload.node_id = inAddress;
+//                                      },
+//                                      send: function () { CorePlatformInterface.send(this) },
+//                                      show: function () { CorePlatformInterface.show(this) }
+//                                  })
 
-    property var set_high_power_mode : ({
-                                      "cmd" : "set_high_power_mode",
-                                      "payload": {
-                                          "node_id": 8000,  // in dec (16 bit uint),
-                                          "value":true
-                                      },
+//    property var set_high_power_mode : ({
+//                                      "cmd" : "set_high_power_mode",
+//                                      "payload": {
+//                                          "node_id": 8000,  // in dec (16 bit uint),
+//                                          "value":true
+//                                      },
 
-                                      update: function (address,value) {
-                                          this.set(address,value)
-                                          this.send(this)
-                                      },
-                                      set: function (inAddress,inValue) {
-                                          this.payload.node_id = inAddress;
-                                          this.payload.value = inValue;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+//                                      update: function (address,value) {
+//                                          this.set(address,value)
+//                                          this.send(this)
+//                                      },
+//                                      set: function (inAddress,inValue) {
+//                                          this.payload.node_id = inAddress;
+//                                          this.payload.value = inValue;
+//                                      },
+//                                      send: function () { CorePlatformInterface.send(this) },
+//                                      show: function () { CorePlatformInterface.show(this) }
+//                                  })
 
-    property var get_high_power_mode : ({
-                                      "cmd" : "get_high_power_mode",
-                                      "payload": {
-                                          "node_id": 8000,  // in dec (16 bit uint),
-                                      },
+//    property var get_high_power_mode : ({
+//                                      "cmd" : "get_high_power_mode",
+//                                      "payload": {
+//                                          "node_id": 8000,  // in dec (16 bit uint),
+//                                      },
 
-                                      update: function (address) {
-                                          this.set(address)
-                                          this.send(this)
-                                      },
-                                      set: function (inAddress) {
-                                          this.payload.node_id = inAddress;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+//                                      update: function (address) {
+//                                          this.set(address)
+//                                          this.send(this)
+//                                      },
+//                                      set: function (inAddress) {
+//                                          this.payload.node_id = inAddress;
+//                                      },
+//                                      send: function () { CorePlatformInterface.send(this) },
+//                                      show: function () { CorePlatformInterface.show(this) }
+//                                  })
 
     property var set_room_color : ({
                                       "cmd" : "set_room_color",
@@ -374,23 +393,24 @@ Item {
                                       show: function () { CorePlatformInterface.show(this) }
                                   })
 
-    property var toggle_door : ({
-                                      "cmd" : "toggle_door",
-                                      "payload": {
-                                          "value": "open",  // or "closed"
-                                      },
+//    property var toggle_door : ({
+//                                      "cmd" : "toggle_door",
+//                                      "payload": {
+//                                          "value": "open",  // or "closed"
+//                                      },
 
-                                      update: function (value) {
-                                          this.set(value)
-                                          this.send(this)
-                                      },
-                                      set: function (inValue) {
-                                          this.payload.value = inValue;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+//                                      update: function (value) {
+//                                          this.set(value)
+//                                          this.send(this)
+//                                      },
+//                                      set: function (inValue) {
+//                                          this.payload.value = inValue;
+//                                      },
+//                                      send: function () { CorePlatformInterface.send(this) },
+//                                      show: function () { CorePlatformInterface.show(this) }
+//                                  })
 
+    //this is used internally by the UI, but not recognized by the firmware
     property var toggle_window_shade : ({
                                       "cmd" : "toggle_window_shade",
                                       "payload": {
@@ -452,102 +472,102 @@ Item {
                                       show: function () { CorePlatformInterface.show(this) }
                                   })
 
-    property var get_hsl_color : ({
-                                      "cmd" : "get_hsl_color",
-                                      "payload": {
-                                          "node_id": 8000,  // in dec (16 bit uint),
-                                      },
+//    property var get_hsl_color : ({
+//                                      "cmd" : "get_hsl_color",
+//                                      "payload": {
+//                                          "node_id": 8000,  // in dec (16 bit uint),
+//                                      },
 
-                                      update: function (address) {
-                                          this.set(address)
-                                          this.send(this)
-                                      },
-                                      set: function (inAddress) {
-                                          this.payload.node_id = inAddress;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+//                                      update: function (address) {
+//                                          this.set(address)
+//                                          this.send(this)
+//                                      },
+//                                      set: function (inAddress) {
+//                                          this.payload.node_id = inAddress;
+//                                      },
+//                                      send: function () { CorePlatformInterface.send(this) },
+//                                      show: function () { CorePlatformInterface.show(this) }
+//                                  })
 
-    property var set_hsl_color : ({
-                                      "cmd" : "set_hsl_color",
-                                      "payload": {
-                                          "uaddr": 8000,  // in dec (16 bit uint),
-                                          "h": 120,         // 0 to 360 degrees
-                                          "s": 50,          // 0 to 100%
-                                          "l": 50           // 0 to 100%
-                                      },
+//    property var set_hsl_color : ({
+//                                      "cmd" : "set_hsl_color",
+//                                      "payload": {
+//                                          "uaddr": 8000,  // in dec (16 bit uint),
+//                                          "h": 120,         // 0 to 360 degrees
+//                                          "s": 50,          // 0 to 100%
+//                                          "l": 50           // 0 to 100%
+//                                      },
 
-                                      update: function (address, hue, saturation, lightness) {
-                                          this.set(address,hue, saturation, lightness)
-                                          this.send(this)
-                                      },
-                                      set: function (inAddress,inHue,inSaturation,inLightness) {
-                                          this.payload.uaddr = inAddress;
-                                          this.payload.h = inHue;
-                                          this.payload.s = inSaturation;
-                                          this.payload.l = inLightness;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+//                                      update: function (address, hue, saturation, lightness) {
+//                                          this.set(address,hue, saturation, lightness)
+//                                          this.send(this)
+//                                      },
+//                                      set: function (inAddress,inHue,inSaturation,inLightness) {
+//                                          this.payload.uaddr = inAddress;
+//                                          this.payload.h = inHue;
+//                                          this.payload.s = inSaturation;
+//                                          this.payload.l = inLightness;
+//                                      },
+//                                      send: function () { CorePlatformInterface.send(this) },
+//                                      show: function () { CorePlatformInterface.show(this) }
+//                                  })
 
-    property var level_get : ({
-                                  "cmd" : "level_get",
-                                  "payload": {
-                                      "ele_addr": 8000,  // in dec (16 bit uint),
-                                  },
+//    property var level_get : ({
+//                                  "cmd" : "level_get",
+//                                  "payload": {
+//                                      "ele_addr": 8000,  // in dec (16 bit uint),
+//                                  },
 
-                                  update: function (address) {
-                                      this.set(address)
-                                      this.send(this)
-                                  },
-                                  set: function (inAddress) {
-                                      this.payload.ele_addr = inAddress;
-                                  },
-                                  send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
-                              })
+//                                  update: function (address) {
+//                                      this.set(address)
+//                                      this.send(this)
+//                                  },
+//                                  set: function (inAddress) {
+//                                      this.payload.ele_addr = inAddress;
+//                                  },
+//                                  send: function () { CorePlatformInterface.send(this) },
+//                                  show: function () { CorePlatformInterface.show(this) }
+//                              })
 
-    property var sensor_set : ({
-                                  "cmd" : "sensor_set",
-                                  "payload": {
-                                       "uaddr": 1000,  // in dec (16 bit uint)
-                                       "sensor_type": "strata",  // magnetic_rotation, magnetic_detection, strata (string)
-                                       "sensor_setting": 16  // in dec (8 bit uint)
-                                  },
+//    property var sensor_set : ({
+//                                  "cmd" : "sensor_set",
+//                                  "payload": {
+//                                       "uaddr": 1000,  // in dec (16 bit uint)
+//                                       "sensor_type": "strata",  // magnetic_rotation, magnetic_detection, strata (string)
+//                                       "sensor_setting": 16  // in dec (8 bit uint)
+//                                  },
 
-                                  update: function (address,type,setting) {
-                                      this.set(address,type,setting)
-                                      this.send(this)
-                                  },
-                                  set: function (inAddress,inType,inSetting) {
-                                      this.payload.uaddr = inAddress;
-                                      this.payload.sensor_type = inType;
-                                      this.payload.sensor_setting = inSetting;
-                                  },
-                                  send: function () { CorePlatformInterface.send(this) },
-                                  show: function () { CorePlatformInterface.show(this) }
-                              })
+//                                  update: function (address,type,setting) {
+//                                      this.set(address,type,setting)
+//                                      this.send(this)
+//                                  },
+//                                  set: function (inAddress,inType,inSetting) {
+//                                      this.payload.uaddr = inAddress;
+//                                      this.payload.sensor_type = inType;
+//                                      this.payload.sensor_setting = inSetting;
+//                                  },
+//                                  send: function () { CorePlatformInterface.send(this) },
+//                                  show: function () { CorePlatformInterface.show(this) }
+//                              })
 
-    property var get_sensor_data : ({
-                                   "cmd" : "sensor_get",
-                                   "payload": {
-                                       "uaddr": 1000,  // in dec (16 bit uint)
-                                       "sensor_type": "temperature"  // ambient_light, magnetic_rotation, magnetic_detection, strata, default (string)
-                                   },
+//    property var get_sensor_data : ({
+//                                   "cmd" : "sensor_get",
+//                                   "payload": {
+//                                       "uaddr": 1000,  // in dec (16 bit uint)
+//                                       "sensor_type": "temperature"  // ambient_light, magnetic_rotation, magnetic_detection, strata, default (string)
+//                                   },
 
-                                   update: function (address,sensor_type) {
-                                       this.set(address,sensor_type)
-                                       this.send(this)
-                                   },
-                                   set: function (inAddress,inSensorType) {
-                                       this.payload.uaddr = inAddress;
-                                       this.payload.sensor_type = inSensorType;
-                                   },
-                                   send: function () { CorePlatformInterface.send(this) },
-                                   show: function () { CorePlatformInterface.show(this) }
-                               })
+//                                   update: function (address,sensor_type) {
+//                                       this.set(address,sensor_type)
+//                                       this.send(this)
+//                                   },
+//                                   set: function (inAddress,inSensorType) {
+//                                       this.payload.uaddr = inAddress;
+//                                       this.payload.sensor_type = inSensorType;
+//                                   },
+//                                   send: function () { CorePlatformInterface.send(this) },
+//                                   show: function () { CorePlatformInterface.show(this) }
+//                               })
 
     property var get_all_sensor_data : ({
                                    "cmd" : "sensors_get_all",
@@ -566,138 +586,160 @@ Item {
                                    show: function () { CorePlatformInterface.show(this) }
                                })
 
+    property var set_groupid : ({
+                                   "cmd" : "set_groupid",
+                                   "payload": {
+                                        "group_id": 49633,            // in dec (16 bit),
+                                        "uaddr": 1,
+                                        "model": "battery_server",    // battery_server, light_hsl_server, sensor_server, onoff_server, nothing, default
+                                        "subscribe":true              // or false to desubscribe
+                                   },
 
-    property var bind_elements : ({
-                                      "cmd" : "bind_elements",
-                                      "payload": {
-                                          "grp_id": 9864,               // in dec (16 bit),
-                                          "ele_addr":[                 // More than one element addresses can be bound at a time
-                                              0002,        // in dec (16 bit),
-                                              0004,        // in dec (16 bit),
-                                              0006         // in dec (16 bit),
-                                          ]
-                                      },
+                                   update: function (group_id,address, model, subscribe) {
+                                       this.set(group_id,address, model, subscribe)
+                                       this.send(this)
+                                   },
+                                   set: function (inGroup, inAddress, inModel, inSubscribe) {
+                                       this.payload.group_id = inGroup;
+                                       this.payload.uaddr = inAddress;
+                                       this.payload.model = inModel;
+                                       this.payload.subscribe = inSubscribe;
+                                   },
+                                   send: function () { CorePlatformInterface.send(this) },
+                                   show: function () { CorePlatformInterface.show(this) }
+                               })
 
-                                      update: function (groupID, addresses) {
-                                          this.set(groupID, addresses)
-                                          this.send(this)
-                                      },
-                                      set: function (inGroupID, inAddresses) {
-                                          this.payload.grp_id = groupID;
-                                          this.payload.ele_addr = inAddresses;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+//    property var bind_elements : ({
+//                                      "cmd" : "bind_elements",
+//                                      "payload": {
+//                                          "grp_id": 9864,               // in dec (16 bit),
+//                                          "ele_addr":[                 // More than one element addresses can be bound at a time
+//                                              0002,        // in dec (16 bit),
+//                                              0004,        // in dec (16 bit),
+//                                              0006         // in dec (16 bit),
+//                                          ]
+//                                      },
 
-    property var unbind_elements : ({
-                                        "cmd" : "unbind_elements",
-                                        "payload": {
-                                            "grp_id": 9864,               // in dec (16 bit),
-                                            "ele_addr":[                 // More than one element addresses can be unbound at a time
-                                                0002,        // in dec (16 bit),
-                                                0004,        // in dec (16 bit),
-                                                0006         // in dec (16 bit),
-                                            ]
-                                        },
+//                                      update: function (groupID, addresses) {
+//                                          this.set(groupID, addresses)
+//                                          this.send(this)
+//                                      },
+//                                      set: function (inGroupID, inAddresses) {
+//                                          this.payload.grp_id = groupID;
+//                                          this.payload.ele_addr = inAddresses;
+//                                      },
+//                                      send: function () { CorePlatformInterface.send(this) },
+//                                      show: function () { CorePlatformInterface.show(this) }
+//                                  })
 
-                                        update: function (groupID, addresses) {
-                                            this.set(groupID, addresses)
-                                            this.send(this)
-                                        },
-                                        set: function (inGroupID, inAddresses) {
-                                            this.payload.grp_id = groupID;
-                                            this.payload.ele_addr = inAddresses;
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
+//    property var unbind_elements : ({
+//                                        "cmd" : "unbind_elements",
+//                                        "payload": {
+//                                            "grp_id": 9864,               // in dec (16 bit),
+//                                            "ele_addr":[                 // More than one element addresses can be unbound at a time
+//                                                0002,        // in dec (16 bit),
+//                                                0004,        // in dec (16 bit),
+//                                                0006         // in dec (16 bit),
+//                                            ]
+//                                        },
 
-    property var location_clicked : ({
-                                          "cmd" : "location_clicked",
-                                          "payload": {
-                                              "location": "alarm",  //string, with possible values: "doorbell", "alarm", "switch", "temperature", "light", "voltage", "security"
-                                          },
+//                                        update: function (groupID, addresses) {
+//                                            this.set(groupID, addresses)
+//                                            this.send(this)
+//                                        },
+//                                        set: function (inGroupID, inAddresses) {
+//                                            this.payload.grp_id = groupID;
+//                                            this.payload.ele_addr = inAddresses;
+//                                        },
+//                                        send: function () { CorePlatformInterface.send(this) },
+//                                        show: function () { CorePlatformInterface.show(this) }
+//                                    })
 
-                                          update: function (location) {
-                                              this.set(location)
-                                              this.send(this)
-                                          },
-                                          set: function (inLocation) {
-                                              this.payload.location = inLocation;
-                                          },
-                                          send: function () { CorePlatformInterface.send(this) },
-                                          show: function () { CorePlatformInterface.show(this) }
-                                      })
+//    property var location_clicked : ({
+//                                          "cmd" : "location_clicked",
+//                                          "payload": {
+//                                              "location": "alarm",  //string, with possible values: "doorbell", "alarm", "switch", "temperature", "light", "voltage", "security"
+//                                          },
 
-    property var get_battery_level : ({
-                                          "cmd" : "battery_level_get",
-                                          "payload": {
-                                              "uaddr": 8000,  // in dec (16 bit uint),
-                                          },
+//                                          update: function (location) {
+//                                              this.set(location)
+//                                              this.send(this)
+//                                          },
+//                                          set: function (inLocation) {
+//                                              this.payload.location = inLocation;
+//                                          },
+//                                          send: function () { CorePlatformInterface.send(this) },
+//                                          show: function () { CorePlatformInterface.show(this) }
+//                                      })
 
-                                          update: function (address) {
-                                              this.set(address)
-                                              this.send(this)
-                                              console.log("sending battery level get for",address);
-                                          },
-                                          set: function (inAddress) {
-                                              this.payload.uaddr = inAddress;
-                                          },
-                                          send: function () { CorePlatformInterface.send(this) },
-                                          show: function () { CorePlatformInterface.show(this) }
-                                      })
+//    property var get_battery_level : ({
+//                                          "cmd" : "battery_level_get",
+//                                          "payload": {
+//                                              "uaddr": 8000,  // in dec (16 bit uint),
+//                                          },
 
-    property var get_signal_strength : ({
-                                            "cmd" : "get_signal_strength",
-                                            "payload": {
-                                                "node_id": 8000,  // in dec (16 bit uint),
-                                            },
+//                                          update: function (address) {
+//                                              this.set(address)
+//                                              this.send(this)
+//                                              console.log("sending battery level get for",address);
+//                                          },
+//                                          set: function (inAddress) {
+//                                              this.payload.uaddr = inAddress;
+//                                          },
+//                                          send: function () { CorePlatformInterface.send(this) },
+//                                          show: function () { CorePlatformInterface.show(this) }
+//                                      })
 
-                                            update: function (address) {
-                                                this.set(address)
-                                                this.send(this)
-                                            },
-                                            set: function (inAddress) {
-                                                this.payload.node_id = inAddress;
-                                            },
-                                            send: function () { CorePlatformInterface.send(this) },
-                                            show: function () { CorePlatformInterface.show(this) }
-                                        })
+//    property var get_signal_strength : ({
+//                                            "cmd" : "get_signal_strength",
+//                                            "payload": {
+//                                                "node_id": 8000,  // in dec (16 bit uint),
+//                                            },
 
-    property var get_ambient_light : ({
-                                          "cmd" : "get_ambient_light",
-                                          "payload": {
-                                              "node_id": 8000,  // in dec (16 bit uint),
-                                          },
+//                                            update: function (address) {
+//                                                this.set(address)
+//                                                this.send(this)
+//                                            },
+//                                            set: function (inAddress) {
+//                                                this.payload.node_id = inAddress;
+//                                            },
+//                                            send: function () { CorePlatformInterface.send(this) },
+//                                            show: function () { CorePlatformInterface.show(this) }
+//                                        })
 
-                                          update: function (address) {
-                                              this.set(address)
-                                              this.send(this)
-                                          },
-                                          set: function (inAddress) {
-                                              this.payload.node_id = inAddress;
-                                          },
-                                          send: function () { CorePlatformInterface.send(this) },
-                                          show: function () { CorePlatformInterface.show(this) }
-                                      })
+//    property var get_ambient_light : ({
+//                                          "cmd" : "get_ambient_light",
+//                                          "payload": {
+//                                              "node_id": 8000,  // in dec (16 bit uint),
+//                                          },
 
-    property var get_temperature : ({
-                                        "cmd" : "get_temperature",
-                                        "payload": {
-                                            "node_id": 8000,  // in dec (16 bit uint),
-                                        },
+//                                          update: function (address) {
+//                                              this.set(address)
+//                                              this.send(this)
+//                                          },
+//                                          set: function (inAddress) {
+//                                              this.payload.node_id = inAddress;
+//                                          },
+//                                          send: function () { CorePlatformInterface.send(this) },
+//                                          show: function () { CorePlatformInterface.show(this) }
+//                                      })
 
-                                        update: function (address) {
-                                            this.set(address)
-                                            this.send(this)
-                                        },
-                                        set: function (inAddress) {
-                                            this.payload.node_id = inAddress;
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
+//    property var get_temperature : ({
+//                                        "cmd" : "get_temperature",
+//                                        "payload": {
+//                                            "node_id": 8000,  // in dec (16 bit uint),
+//                                        },
+
+//                                        update: function (address) {
+//                                            this.set(address)
+//                                            this.send(this)
+//                                        },
+//                                        set: function (inAddress) {
+//                                            this.payload.node_id = inAddress;
+//                                        },
+//                                        send: function () { CorePlatformInterface.send(this) },
+//                                        show: function () { CorePlatformInterface.show(this) }
+//                                    })
 
     property var get_network : ({
                                         "cmd" : "get_network_map",
@@ -713,22 +755,39 @@ Item {
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
 
-    property var set_demo : ({
-                                        "cmd" : "set_demo",
+//    property var set_demo : ({
+//                                        "cmd" : "set_demo",
+//                                        "payload": {
+//                                            "demo":"demo"
+//                                        },
+
+//                                        update: function (demoName) {
+//                                            this.set(demoName)
+//                                            this.send(this)
+//                                        },
+//                                        set: function (inDemoName) {
+//                                            this.payload.demo = inDemoName;
+//                                        },
+//                                        send: function () { CorePlatformInterface.send(this) },
+//                                        show: function () { CorePlatformInterface.show(this) }
+//                                    })
+
+    property var set_onetoone_demo : ({
+                                        "cmd" : "set_onetoone_demo",
                                         "payload": {
-                                            "demo":"demo"
+                                              "uaddr":65535,
+                                              "daddr":2
                                         },
 
-                                        update: function (demoName) {
-                                            this.set(demoName)
+                                        update: function () {
                                             this.send(this)
                                         },
-                                        set: function (inDemoName) {
-                                            this.payload.demo = inDemoName;
+                                        set: function () {
                                         },
                                         send: function () { CorePlatformInterface.send(this) },
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
+
 
     property var demo_click : ({
                                         "cmd" : "demo_click",
@@ -751,22 +810,7 @@ Item {
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
 
-    property var firmware_command : ({
-                                        "cmd" : "firmware_command",
-                                        "payload": {
-                                            "command":""
-                                        },
 
-                                        update: function (command) {
-                                            this.set(command)
-                                            this.send(this)
-                                        },
-                                        set: function (inCommand) {
-                                            this.payload.command = inCommand;
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp
     // Forward messages to core_platform_interface.js to process
@@ -779,77 +823,4 @@ Item {
     }
 
 
-//    // DEBUG Window for testing motor vortex UI without a platform
-//    Window {
-//        id: debug
-//        visible: true
-//        width: 400
-//        height: 400
-
-//        Rectangle {
-//            id: test1
-//            width: parent.width
-//            height: parent.height/4
-//            color: "transparent"
-
-
-//            SGSubmitInfoBox{
-//                anchors.fill:parent
-//                buttonText: "Send"
-//                onAccepted: {
-//                    console.log("text",text.toString())
-//                    platformInterface.node.update(text.toString())
-//                }
-//            }
-//        }
-//        Button {
-//            id:test2
-//            anchors.top: test1.bottom
-//            text: "get network notification"
-//            onClicked: {
-//                CorePlatformInterface.data_source_handler('{
-//                                                "value":"network_notification",
-//                                                "payload":{
-//                                                         "nodes":  [
-//                                                                    {"index":0,"available":1,"color":"#00ff00"},
-//                                                                    {"index":1,"available":1,"color":"#ff00ff"} ,
-//                                                                    {"index":2,"available":1,"color":"#ff4500"} ,
-//                                                                    {"index":3,"available":1,"color":"#ffff00"} ,
-//                                                                    {"index":4,"available":1,"color":"#7cfc00"},
-//                                                                    {"index":5,"available":1,"color":"#00ff7f"},
-//                                                                    {"index":6,"available":1,"color":"#ffc0cb"},
-//                                                                    {"index":8,"available":1,"color":"#9370db"}
-
-//                                                            ]
-//                                                }
-
-//                               } ')
-//            }
-
-//        }
-
-//        Button {
-//            id:test3
-//            anchors.top: test2.bottom
-//            checkable: true
-//            checked:false
-//            text: checked ? "alarm off" : "alarm!"
-
-//            property bool alarmIsOn: checked;
-
-//            onClicked: {
-//                CorePlatformInterface.data_source_handler('{
-//                   "value":"alarm_triggered",
-//                    "payload":{
-//                        "triggered": "'+alarmIsOn+'"
-//                     }
-
-//                     } ')
-//            }
-
-//        }
-
-
-
-//    } //end of windows
 }

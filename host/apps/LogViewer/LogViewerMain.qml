@@ -2,9 +2,9 @@
 import QtQuick.Dialogs 1.2
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
+import QtQuick.Shapes 1.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCPP
-import tech.strata.fonts 1.0 as StrataFonts
 import tech.strata.logviewer.models 1.0 as LogViewModels
 import Qt.labs.settings 1.1 as QtLabsSettings
 
@@ -14,7 +14,6 @@ Item {
 
     property bool fileLoaded: false
     property bool messageWrapEnabled: true
-    property string filePath
     property alias linesCount: logFilesModel.count
     property alias fileModel: logFilesModel.fileModel
     property int cellHeightSpacer: 6
@@ -36,6 +35,7 @@ Item {
     property bool timestampSimpleFormat: false
     property int searchResultCount: logFilesModelProxy.count
     property int statusBarHeight: statusBar.height
+    property string borderColor: "darkgray"
 
     LogViewModels.LogModel {
         id: logFilesModel
@@ -85,19 +85,7 @@ Item {
             nameFilters: ["Log files (*.log)","All files (*)"]
 
             onAccepted: {
-                primaryLogView.resetRequestedWith()
-                secondaryLogView.resetRequestedWith()
-                for (var i = 0; i < fileUrls.length; ++i) {
-                    var errorString = logFilesModel.followFile(CommonCPP.SGUtilsCpp.urlToLocalFile(fileUrls[i]))
-                    if (errorString.length > 0) {
-                        SGWidgets.SGDialogJS.showMessageDialog(
-                                    root,
-                                    SGWidgets.SGMessageDialog.Error,
-                                    qsTr("File not opened"),
-                                    "Cannot open file with path\n\n" + CommonCPP.SGUtilsCpp.urlToLocalFile(fileUrls[i])  + "\n\n" + errorString)
-                    }
-                }
-                fileLoaded = true
+                loadFile(fileUrls)
             }
         }
     }
@@ -120,6 +108,46 @@ Item {
         })
 
         dialog.open();
+    }
+
+    function loadFile(path) {
+        var errorStringList = []
+        var pathList = []
+
+        for (var i = 0; i < path.length; ++i) {
+            var errorString = logFilesModel.followFile(CommonCPP.SGUtilsCpp.urlToLocalFile(path[i]))
+
+            if (errorString.length > 0) {
+                errorStringList.push(errorString)
+                if (CommonCPP.SGUtilsCpp.fileName(path[i]) === "") {
+                    pathList.push(CommonCPP.SGUtilsCpp.dirName(path[i]))
+                } else {
+                    pathList.push(CommonCPP.SGUtilsCpp.fileName(path[i]))
+                }
+            }
+
+            if (errorStringList.length > 0 && fileLoaded === false) {
+                fileLoaded = false
+            } else {
+                fileLoaded = true
+            }
+        }
+        if (errorStringList.length > 0) {
+            SGWidgets.SGDialogJS.showMessageDialog(
+                        root,
+                        SGWidgets.SGMessageDialog.Error,
+                        errorStringList.length > 1 ? qsTr("Could not open files (" + errorStringList.length + ")") : qsTr("Could not open file"),
+                        generateHtmlList(pathList, errorStringList))
+        }
+    }
+
+    function generateHtmlList(firstList,secondList) {
+        var text = "<ul>"
+        for (var i = 0; i < firstList.length; ++i) {
+            text += "<li>" + firstList[i] + " - " + secondList[i].charAt(0).toUpperCase() + secondList[i].slice(1) + "</li>"
+        }
+        text += "</ul>"
+        return text
     }
 
     CommonCPP.SGSortFilterProxyModel {
@@ -237,7 +265,7 @@ Item {
 
             SGWidgets.SGIconButton {
                 id: automaticScrollButton
-                hintText: qsTr("Automatically scroll to the last log")
+                hintText: qsTr("Auto scroll")
                 icon.source: "qrc:/sgimages/arrow-list-bottom.svg"
                 iconSize: defaultIconSize
                 backgroundOnlyOnHovered: false
@@ -321,27 +349,31 @@ Item {
         }
     }
 
-    SGWidgets.SGText {
-        id: midtext
-        anchors.centerIn: logViewerMain
-        text: qsTr("Press Add file to add a log file")
-        fontSizeMultiplier: 2
-        visible: fileLoaded == false
+    Rectangle {
+        id: topBorderSidePanel
+        anchors.top: sidePanelSplitView.top
+        anchors.left: sidePanelSplitView.left
+        width: sidePanel.width
+        height: 1
+        color: "lightgray"
+        visible: sidePanel.visible
     }
 
     Rectangle {
+        id: leftBorderSidePanel
+        anchors.left: sidePanelSplitView.left
+        anchors.top: sidePanelSplitView.top
+        anchors.bottom: sidePanelSplitView.bottom
+        width: 1
         color: "lightgray"
         visible: sidePanel.visible
-        width: sidePanel.width
-        height: 1
-        anchors.bottom: sidePanelSplitView.top
     }
 
     SGWidgets.SGSplitView {
         id: sidePanelSplitView
         anchors {
             top: buttonRowRightButtons.bottom
-            topMargin: 5
+            topMargin: 10
             left: parent.left
             right: parent.right
             bottom: parent.bottom
@@ -647,8 +679,8 @@ Item {
         id: statusBar
         visible: fileLoaded
         anchors.top: logViewerMain.bottom
-        anchors.bottomMargin: 5
-        width: parent.width
+        anchors.left: logViewerMain.left
+        anchors.right: logViewerMain.right
         height: statusBarText.contentHeight + 8
         color: "lightgrey"
         clip: true
@@ -672,6 +704,138 @@ Item {
                 }
             }
             elide: Text.ElideRight
+        }
+    }
+
+    DropArea {
+        anchors {
+            top: buttonRowRightButtons.bottom
+            topMargin: 5
+            left: parent.left
+            right: parent.right
+            bottom: statusBar.bottom
+        }
+
+        onEntered: {
+            for (var i = 0 ; i < drag.urls.length; i++) {
+                var url = CommonCPP.SGUtilsCpp.urlToLocalFile(drag.urls[i])
+                if (CommonCPP.SGUtilsCpp.isFile(url)) {
+                    drag.accept()
+                }
+            }
+            showAreaIndicator(true)
+        }
+
+        onExited: {
+            showAreaIndicator(false)
+        }
+
+        onDropped: {
+            drop.accept()
+            showAreaIndicator(false)
+            loadFileTimer.urls = drop.urls
+            loadFileTimer.start()
+        }
+
+        Timer {
+            property variant urls
+
+            id: loadFileTimer
+            interval: 1
+
+            onTriggered: {
+                loadFile(urls)
+            }
+        }
+
+        function showAreaIndicator(status) {
+            if (status) {
+                dashedBorder.dashesSize = 3
+                dropAreaColor.color = "darkgray"
+                borderColor = "black"
+                if (fileLoaded) {
+                    dashedBorder.visible = true
+                    dropAreaText.visible = true
+                }
+            } else {
+                dashedBorder.dashesSize = 2
+                dropAreaColor.color = "#eeeeee"
+                borderColor = "darkgray"
+                if (fileLoaded) {
+                    dashedBorder.visible = false
+                    dropAreaText.visible = false
+                }
+            }
+        }
+
+        Rectangle {
+            id: dropAreaColor
+            anchors.fill: parent
+            color: "#eeeeee"
+            opacity: dashedBorder.visible ? fileLoaded ? 0.85 : 1 : 0
+            visible: dashedBorder.visible
+        }
+
+        Shape {
+            id: dashedBorder
+            anchors {
+                fill: parent
+            }
+            visible: !fileLoaded
+
+            property int dashesSize: 2
+
+            ShapePath {
+                strokeColor: borderColor
+                strokeWidth: dashedBorder.dashesSize
+                strokeStyle: ShapePath.DashLine
+                startX: dashedBorder.dashesSize/2
+                startY: dashedBorder.dashesSize/2
+                PathLine { x: dashedBorder.width - dashedBorder.dashesSize/2; y: dashedBorder.dashesSize/2 }
+            }
+            ShapePath {
+                strokeColor: borderColor
+                strokeWidth: dashedBorder.dashesSize
+                strokeStyle: ShapePath.DashLine
+                startX: dashedBorder.dashesSize/2
+                startY: dashedBorder.dashesSize/2
+                PathLine { x: dashedBorder.dashesSize/2; y: dashedBorder.height - dashedBorder.dashesSize/2 }
+            }
+            ShapePath {
+                strokeColor: borderColor
+                strokeWidth: dashedBorder.dashesSize
+                strokeStyle: ShapePath.DashLine
+                startX: dashedBorder.width - dashedBorder.dashesSize/2
+                startY: dashedBorder.dashesSize/2
+                PathLine { x: dashedBorder.width - dashedBorder.dashesSize/2; y: dashedBorder.height - dashedBorder.dashesSize/2 }
+            }
+            ShapePath {
+                strokeColor: borderColor
+                strokeWidth: dashedBorder.dashesSize
+                strokeStyle: ShapePath.DashLine
+                startX: dashedBorder.dashesSize/2
+                startY: dashedBorder.height - dashedBorder.dashesSize/2
+                PathLine { x: dashedBorder.width - dashedBorder.dashesSize/2; y: dashedBorder.height - dashedBorder.dashesSize/2 }
+            }
+        }
+
+        SGWidgets.SGIcon {
+            id: dropFileIcon
+            source: "qrc:/sgimages/drop-file.svg"
+            anchors.bottom: dropAreaText.top
+            anchors.bottomMargin: 10
+            anchors.horizontalCenter: dropAreaText.horizontalCenter
+            width: dropAreaText.width/3
+            height: width
+            visible: dashedBorder.visible
+        }
+
+        SGWidgets.SGText {
+            id: dropAreaText
+            anchors.centerIn: parent
+            text: fileLoaded === false ? qsTr("Add a file or drop it here.") : qsTr("Drop a file here.")
+            fontSizeMultiplier: 2
+            visible: dashedBorder.visible ? fileLoaded === false ? true : false : false
         }
     }
 

@@ -43,6 +43,13 @@ set_target_properties(${SERIAL_DEVICE} PROPERTIES
 add_library(${DEVICE_OPERATIONS}
     src/DeviceOperations.cpp
     src/logging/LoggingQtCategories.cpp
+    src/DeviceCommands/BaseDeviceCommand.cpp
+    src/DeviceCommands/CmdGetFirmwareInfo.cpp
+    src/DeviceCommands/CmdRequestPlatformId.cpp
+    src/DeviceCommands/CmdUpdateFirmware.cpp
+    src/DeviceCommands/CmdFlashFirmware.cpp
+    src/DeviceCommands/CmdBackupFirmware.cpp
+    src/DeviceCommands/CmdStartApplication.cpp
 
     #AUTOMOC wont find header if it is in different directory
     include/DeviceOperations.h
