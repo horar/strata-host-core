@@ -28,9 +28,10 @@ enum class DeviceOperation: int {
     BackupFirmwareChunk,
     StartApplication,
     RefreshPlatformId,
-    // special values for finished signal:
-    Cancel,
-    Timeout
+    // special values for finished signal (operation was not finished successfully):
+    Cancel,   // operation was cancelled
+    Timeout,  // no response from device
+    Failure   // faulty response from device
 };
 
 class DeviceOperations : public QObject

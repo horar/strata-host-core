@@ -21,8 +21,9 @@ bool CmdRequestPlatformId::processNotification(rapidjson::Document& doc) {
         setDeviceProperties(name, platformId, classId, nullptr, nullptr);
         result_ = CommandResult::Done;
         return true;
+    } else {
+        return false;
     }
-    return false;
 }
 
 }  // namespace

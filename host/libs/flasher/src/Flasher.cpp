@@ -113,6 +113,14 @@ void Flasher::handleOperationFinished(DeviceOperation operation, int data) {
         qCWarning(logCategoryFlasher) << this << "Firmware operation was cancelled.";
         finish(Result::Cancelled);
         break;
+    case DeviceOperation::Failure :
+        {
+            QString errStr(QStringLiteral("Firmware operation has failed (faulty response from device)."));
+            qCCritical(logCategoryFlasher).noquote() << this << errStr;
+            emit error(errStr);
+            finish(Result::Error);
+        }
+        break;
     default :
         {
             QString errStr = QStringLiteral("Unsupported operation.");

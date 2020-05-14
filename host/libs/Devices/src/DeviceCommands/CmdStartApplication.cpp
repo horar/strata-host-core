@@ -15,12 +15,11 @@ QByteArray CmdStartApplication::message() {
 bool CmdStartApplication::processNotification(rapidjson::Document& doc) {
     if (CommandValidator::validate(CommandValidator::JsonType::startAppRes, doc)) {
         const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
-        if (status == JSON_OK) {
-            result_ = CommandResult::Done;
-            return true;
-        }
+        result_ = (status == JSON_OK) ? CommandResult::Done : CommandResult::Failure;
+        return true;
+    } else {
+        return false;
     }
-    return false;
 }
 
 }  // namespace

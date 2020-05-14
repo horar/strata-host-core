@@ -159,6 +159,7 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult) {
     }
     if (result == State::Failed) {
         emit operationStateChanged(operation_, result, errorString_);
+        errorString_.clear();
     } else {
         emit operationStateChanged(operation_, result);
     }
