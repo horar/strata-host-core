@@ -18,6 +18,8 @@ target_sources(${PROJECT_NAME}
     SGSortFilterProxyModel.cpp
     logging/LoggingQtCategories.cpp
     SGQWTPlot.cpp
+    mqtt/qmlmqttclient.cpp
+    mqtt/qmlsslconfiguration.cpp
 
     imports/tech/strata/commoncpp/qmldir
     imports/tech/strata/commoncpp/plugins.qmltypes
