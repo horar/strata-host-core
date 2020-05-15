@@ -64,7 +64,7 @@ Item {
     property var led_part_number_value: {
         "caption":"Part Number",
         "scales":[],
-        "state":"enabled",
+        "states":[0],
         "value":"NCV7685",
         "values":[]
     }
@@ -73,9 +73,10 @@ Item {
         "caption":"Part Number"
     }
 
-    property var led_part_number_value_state: {
-        "state":"enabled"
+    property var led_part_number_value_states: {
+       "states":[0]
     }
+
     property var led_part_number_value_value: {
          "value":"NCV7685"
     }
@@ -103,7 +104,7 @@ Item {
     property var led_ext: {
         "caption":"External LED",
         "scales":[],
-        "states":"enabled",
+        "states":[0,0,0,0,0,0,0,0,0,0,0,0],
         "value":"",
         "values":[false,false,false,false,false,false,false,false,false,false,false,false]
     }
@@ -113,8 +114,8 @@ Item {
         "caption":"External LED"
     }
 
-    property var led_ext_state: {
-        "state":"enabled"
+    property var led_ext_states: {
+         "states":[0,0,0,0,0,0,0,0,0,0,0,0]
     }
     property var led_ext_values: {
         "values": [false,false,false,false,false,false,false,false,false,false,false,false]

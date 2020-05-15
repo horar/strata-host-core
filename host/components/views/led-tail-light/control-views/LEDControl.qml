@@ -13,33 +13,55 @@ Item {
     height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
-    function setStateForPWMDuty(pwmDutyid,index) {
-        if(index === 0) {
-            pwmDutyid.enabled = true
-            pwmDutyid.opacity = 1.0
-        }
-        else if (index === 1) {
-            pwmDutyid.enabled = false
-            pwmDutyid.opacity = 1.0
-        }
-        else {
-            pwmDutyid.enabled = false
-            pwmDutyid.opacity = 0.5
+    function setStateForPWMDuty(pwmDutyid,index)
+    {
+        if(index !== "undefined") {
+            if(index === 0) {
+                pwmDutyid.enabled = true
+                pwmDutyid.opacity = 1.0
+            }
+            else if (index === 1) {
+                pwmDutyid.enabled = false
+                pwmDutyid.opacity = 1.0
+            }
+            else {
+                pwmDutyid.enabled = false
+                pwmDutyid.opacity = 0.5
+            }
         }
     }
 
     function setOutEnState(outputEnable,index) {
-        if(index === 0) {
-            outputEnable.enabled = true
-            outputEnable.opacity = 1.0
+        if(index !==  "undefined")  {
+            if(index === 0) {
+                outputEnable.enabled = true
+                outputEnable.opacity = 1.0
+            }
+            else if(index === 1) {
+                outputEnable.enabled = false
+                outputEnable.opacity = 1.0
+            }
+            else {
+                outputEnable.enabled = false
+                outputEnable.opacity = 0.5
+            }
         }
-        else if(index === 1) {
-            outputEnable.enabled = false
-            outputEnable.opacity = 1.0
-        }
-        else {
-            outputEnable.enabled = false
-            outputEnable.opacity = 0.5
+    }
+
+    function setStatesForControls (theId, index){
+        if(index !== null && index !== undefined)  {
+            if(index === 0) {
+                theId.enabled = true
+                theId.opacity = 1.0
+            }
+            else if(index === 1) {
+                theId.enabled = false
+                theId.opacity = 1.0
+            }
+            else {
+                theId.enabled = false
+                theId.opacity = 0.5
+            }
         }
     }
 
@@ -58,7 +80,6 @@ Item {
         setOutEnState(out9ENLED,led_out_en.states[9])
         setOutEnState(out10ENLED,led_out_en.states[10])
         setOutEnState(out11ENLED,led_out_en.states[11])
-
 
 
         if(led_out_en.values[0] === true)
@@ -113,18 +134,19 @@ Item {
 
     property var led_out_en_states: platformInterface.led_out_en_states.states
     onLed_out_en_statesChanged: {
-        setOutEnState(out0ENLED,led_out_en.states[0])
-        setOutEnState(out1ENLED,led_out_en.states[1])
-        setOutEnState(out2ENLED,led_out_en.states[2])
-        setOutEnState(out3ENLED,led_out_en.states[3])
-        setOutEnState(out4ENLED,led_out_en.states[4])
-        setOutEnState(out5ENLED,led_out_en.states[5])
-        setOutEnState(out6ENLED,led_out_en.states[6])
-        setOutEnState(out7ENLED,led_out_en.states[7])
-        setOutEnState(out8ENLED,led_out_en.states[8])
-        setOutEnState(out9ENLED,led_out_en.states[9])
-        setOutEnState(out10ENLED,led_out_en.states[10])
-        setOutEnState(out11ENLED,led_out_en.states[11])
+
+        setOutEnState(out0ENLED,led_out_en_states[0])
+        setOutEnState(out1ENLED,led_out_en_states[1])
+        setOutEnState(out2ENLED,led_out_en_states[2])
+        setOutEnState(out3ENLED,led_out_en_states[3])
+        setOutEnState(out4ENLED,led_out_en_states[4])
+        setOutEnState(out5ENLED,led_out_en_states[5])
+        setOutEnState(out6ENLED,led_out_en_states[6])
+        setOutEnState(out7ENLED,led_out_en_states[7])
+        setOutEnState(out8ENLED,led_out_en_states[8])
+        setOutEnState(out9ENLED,led_out_en_states[9])
+        setOutEnState(out10ENLED,led_out_en_states[10])
+        setOutEnState(out11ENLED,led_out_en_states[11])
     }
 
     property var led_out_en_values: platformInterface.led_out_en_values.values
@@ -231,86 +253,18 @@ Item {
             out11interExterLED.checked = true
         else out11interExterLED.checked = false
 
-        if(led_ext.state === "enabled") {
-            out0interExterLED.enabled = true
-            out0interExterLED.opacity = 1.0
-            out1interExterLED.enabled = true
-            out1interExterLED.opacity = 1.0
-            out2interExterLED.enabled = true
-            out2interExterLED.opacity = 1.0
-            out3interExterLED.enabled = true
-            out3interExterLED.opacity = 1.0
-            out4interExterLED.enabled = true
-            out4interExterLED.opacity = 1.0
-            out5interExterLED.enabled = true
-            out5interExterLED.opacity = 1.0
-            out6interExterLED.enabled = true
-            out6interExterLED.opacity = 1.0
-            out7interExterLED.enabled = true
-            out7interExterLED.opacity = 1.0
-            out8interExterLED.enabled = true
-            out8interExterLED.opacity = 1.0
-            out9interExterLED.enabled = true
-            out9interExterLED.opacity = 1.0
-            out10interExterLED.enabled = true
-            out10interExterLED.opacity = 1.0
-            out11interExterLED.enabled = true
-            out11interExterLED.opacity = 1.0
-
-        }
-        else if (led_ext.state === "disabled") {
-            out0interExterLED.enabled = false
-            out0interExterLED.opacity = 1.0
-            out1interExterLED.enabled = false
-            out1interExterLED.opacity = 1.0
-            out2interExterLED.enabled = false
-            out2interExterLED.opacity = 1.0
-            out3interExterLED.enabled = false
-            out3interExterLED.opacity = 1.0
-            out4interExterLED.enabled = false
-            out4interExterLED.opacity = 1.0
-            out5interExterLED.enabled = false
-            out5interExterLED.opacity = 1.0
-            out6interExterLED.enabled = false
-            out6interExterLED.opacity = 1.0
-            out7interExterLED.enabled = false
-            out7interExterLED.opacity = 1.0
-            out8interExterLED.enabled = false
-            out8interExterLED.opacity = 1.0
-            out9interExterLED.enabled = false
-            out9interExterLED.opacity = 1.0
-            out10interExterLED.enabled = false
-            out10interExterLED.opacity = 1.0
-            out11interExterLED.enabled = false
-            out11interExterLED.opacity = 1.0
-
-        }
-        else {
-            out0interExterLED.enabled = false
-            out0interExterLED.opacity = 0.5
-            out1interExterLED.enabled = false
-            out1interExterLED.opacity = 0.5
-            out2interExterLED.enabled = false
-            out2interExterLED.opacity = 0.5
-            out3interExterLED.enabled = false
-            out3interExterLED.opacity = 0.5
-            out4interExterLED.enabled = false
-            out4interExterLED.opacity = 0.5
-            out5interExterLED.enabled = false
-            out5interExterLED.opacity = 0.5
-            out6interExterLED.enabled = false
-            out6interExterLED.opacity = 0.5
-            out7interExterLED.enabled = false
-            out7interExterLED.opacity = 0.5
-            out8interExterLED.enabled = false
-            out8interExterLED.opacity = 0.5
-            out9interExterLED.enabled = false
-            out9interExterLED.opacity = 0.5
-            out10interExterLED.enabled = false
-            out10interExterLED.opacity = 0.5
-            out11interExterLED.enabled = false
-            out11interExterLED.opacity = 0.5
-        }
+        setStatesForControls(out0interExterLED,led_ext.states[0])
+        setStatesForControls(out1interExterLED,led_ext.states[1])
+        setStatesForControls(out2interExterLED,led_ext.states[2])
+        setStatesForControls(out3interExterLED,led_ext.states[3])
+        setStatesForControls(out4interExterLED,led_ext.states[4])
+        setStatesForControls(out5interExterLED,led_ext.states[5])
+        setStatesForControls(out6interExterLED,led_ext.states[6])
+        setStatesForControls(out7interExterLED,led_ext.states[7])
+        setStatesForControls(out8interExterLED,led_ext.states[8])
+        setStatesForControls(out9interExterLED,led_ext.states[9])
+        setStatesForControls(out10interExterLED,led_ext.states[10])
+        setStatesForControls(out11interExterLED,led_ext.states[11])
 
 
     }
@@ -366,88 +320,22 @@ Item {
         else out11interExterLED.checked = false
     }
 
-    property var led_ext_state: platformInterface.led_ext_state.state
-    onLed_ext_stateChanged: {
-        if(led_ext_state === "enabled") {
-            out0interExterLED.enabled = true
-            out0interExterLED.opacity = 1.0
-            out1interExterLED.enabled = true
-            out1interExterLED.opacity = 1.0
-            out2interExterLED.enabled = true
-            out2interExterLED.opacity = 1.0
-            out3interExterLED.enabled = true
-            out3interExterLED.opacity = 1.0
-            out4interExterLED.enabled = true
-            out4interExterLED.opacity = 1.0
-            out5interExterLED.enabled = true
-            out5interExterLED.opacity = 1.0
-            out6interExterLED.enabled = true
-            out6interExterLED.opacity = 1.0
-            out7interExterLED.enabled = true
-            out7interExterLED.opacity = 1.0
-            out8interExterLED.enabled = true
-            out8interExterLED.opacity = 1.0
-            out9interExterLED.enabled = true
-            out9interExterLED.opacity = 1.0
-            out10interExterLED.enabled = true
-            out10interExterLED.opacity = 1.0
-            out11interExterLED.enabled = true
-            out11interExterLED.opacity = 1.0
+    property var led_ext_states: platformInterface.led_ext_states.states
+    onLed_ext_statesChanged: {
+        setStatesForControls(out0interExterLED,led_ext_states[0])
+        setStatesForControls(out1interExterLED,led_ext_states[1])
+        setStatesForControls(out2interExterLED,led_ext_states[2])
+        setStatesForControls(out3interExterLED,led_ext_states[3])
+        setStatesForControls(out4interExterLED,led_ext_states[4])
+        setStatesForControls(out5interExterLED,led_ext_states[5])
+        setStatesForControls(out6interExterLED,led_ext_states[6])
+        setStatesForControls(out7interExterLED,led_ext_states[7])
+        setStatesForControls(out8interExterLED,led_ext_states[8])
+        setStatesForControls(out9interExterLED,led_ext_states[9])
+        setStatesForControls(out10interExterLED,led_ext_states[10])
+        setStatesForControls(out11interExterLED,led_ext_states[11])
 
-        }
-        else if (led_ext_state === "disabled") {
-            out0interExterLED.enabled = false
-            out0interExterLED.opacity = 1.0
-            out1interExterLED.enabled = false
-            out1interExterLED.opacity = 1.0
-            out2interExterLED.enabled = false
-            out2interExterLED.opacity = 1.0
-            out3interExterLED.enabled = false
-            out3interExterLED.opacity = 1.0
-            out4interExterLED.enabled = false
-            out4interExterLED.opacity = 1.0
-            out5interExterLED.enabled = false
-            out5interExterLED.opacity = 1.0
-            out6interExterLED.enabled = false
-            out6interExterLED.opacity = 1.0
-            out7interExterLED.enabled = false
-            out7interExterLED.opacity = 1.0
-            out8interExterLED.enabled = false
-            out8interExterLED.opacity = 1.0
-            out9interExterLED.enabled = false
-            out9interExterLED.opacity = 1.0
-            out10interExterLED.enabled = false
-            out10interExterLED.opacity = 1.0
-            out11interExterLED.enabled = false
-            out11interExterLED.opacity = 1.0
 
-        }
-        else {
-            out0interExterLED.enabled = false
-            out0interExterLED.opacity = 0.5
-            out1interExterLED.enabled = false
-            out1interExterLED.opacity = 0.5
-            out2interExterLED.enabled = false
-            out2interExterLED.opacity = 0.5
-            out3interExterLED.enabled = false
-            out3interExterLED.opacity = 0.5
-            out4interExterLED.enabled = false
-            out4interExterLED.opacity = 0.5
-            out5interExterLED.enabled = false
-            out5interExterLED.opacity = 0.5
-            out6interExterLED.enabled = false
-            out6interExterLED.opacity = 0.5
-            out7interExterLED.enabled = false
-            out7interExterLED.opacity = 0.5
-            out8interExterLED.enabled = false
-            out8interExterLED.opacity = 0.5
-            out9interExterLED.enabled = false
-            out9interExterLED.opacity = 0.5
-            out10interExterLED.enabled = false
-            out10interExterLED.opacity = 0.5
-            out11interExterLED.enabled = false
-            out11interExterLED.opacity = 0.5
-        }
     }
 
     property var led_fault_status: platformInterface.led_fault_status
@@ -1154,12 +1042,12 @@ Item {
                                 property var led_part_number_value: platformInterface.led_part_number_value
                                 onLed_part_number_valueChanged: {
                                     partNumberLabel.text = led_part_number_value.caption
-                                    if(led_part_number_value.state === "enabled" ) {
+                                    if(led_part_number_value.states === 0) {
                                         partNumber.enabled = true
                                         partNumber.opacity = 1.0
 
                                     }
-                                    else if(led_part_number_value.state === "disabled") {
+                                    else if(led_part_number_value.states === 1) {
                                         partNumber.enabled = false
                                         partNumber.opacity = 1.0
                                     }
@@ -1177,22 +1065,9 @@ Item {
                                     partNumberLabel.text = led_part_number_value_caption
                                 }
 
-                                property var led_part_number_value_state: platformInterface.led_part_number_value_state.state
-                                onLed_part_number_value_stateChanged: {
-                                    if(led_part_number_value_state === "enabled" ) {
-                                        partNumber.enabled = true
-                                        partNumber.opacity = 1.0
-
-                                    }
-                                    else if(led_part_number_value_state === "disabled") {
-                                        partNumber.enabled = false
-                                        partNumber.opacity = 1.0
-                                    }
-                                    else {
-                                        partNumber.enabled = false
-                                        partNumber.opacity = 0.5
-
-                                    }
+                                property var led_part_number_value_states: platformInterface.led_part_number_value_states.states
+                                onLed_part_number_value_statesChanged: {
+                                    setStatesForControls(partNumber,led_part_number_value_states[0])
                                 }
 
                                 property var led_part_number_value_value: platformInterface.led_part_number_value_value.value
