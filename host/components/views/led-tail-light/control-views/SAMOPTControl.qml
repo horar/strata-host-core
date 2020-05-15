@@ -17,6 +17,120 @@ Item {
         return  ("0"+(Number(d).toString(16))).slice(-2).toUpperCase()
     }
 
+    property var soc_sam_conf_1: platformInterface.soc_sam_conf_1
+    onSoc_sam_conf_1Changed: {
+        samconfi1Text.text = soc_sam_conf_1.caption
+        out1.checked = soc_sam_conf_1.values[0]
+        out2.checked = soc_sam_conf_1.values[1]
+        out3.checked = soc_sam_conf_1.values[2]
+        out4.checked = soc_sam_conf_1.values[3]
+        out5.checked = soc_sam_conf_1.values[4]
+        out6.checked = soc_sam_conf_1.values[5]
+        out7.checked = soc_sam_conf_1.values[6]
+        out8.checked = soc_sam_conf_1.values[7]
+        out9.checked = soc_sam_conf_1.values[8]
+        out10.checked = soc_sam_conf_1.values[9]
+        out11.checked = soc_sam_conf_1.values[10]
+        out12.checked = soc_sam_conf_1.values[11]
+
+        platformInterface.soc_sam_conf_1_out1 = soc_sam_conf_1.values[0]
+        platformInterface.soc_sam_conf_1_out2 = soc_sam_conf_1.values[1]
+        platformInterface.soc_sam_conf_1_out3 = soc_sam_conf_1.values[2]
+        platformInterface.soc_sam_conf_1_out4 = soc_sam_conf_1.values[3]
+        platformInterface.soc_sam_conf_1_out5 = soc_sam_conf_1.values[4]
+        platformInterface.soc_sam_conf_1_out6 = soc_sam_conf_1.values[5]
+        platformInterface.soc_sam_conf_1_out7 = soc_sam_conf_1.values[6]
+        platformInterface.soc_sam_conf_1_out8 = soc_sam_conf_1.values[7]
+        platformInterface.soc_sam_conf_1_out9 = soc_sam_conf_1.values[8]
+        platformInterface.soc_sam_conf_1_out10 = soc_sam_conf_1.values[9]
+        platformInterface.soc_sam_conf_1_out11 = soc_sam_conf_1.values[10]
+        platformInterface.soc_sam_conf_1_out12 = soc_sam_conf_1.values[11]
+
+        if(soc_sam_conf_1.state === "enabled") {
+            out1.enabled = true
+            out1.opacity = 1.0
+            out2.enabled = true
+            out2.opacity = 1.0
+            out3.enabled = true
+            out3.opacity = 1.0
+            out4.enabled = true
+            out4.opacity = 1.0
+            out5.enabled = true
+            out5.opacity = 1.0
+            out6.enabled = true
+            out6.opacity = 1.0
+            out7.enabled = true
+            out7.opacity = 1.0
+            out8.enabled = true
+            out8.opacity = 1.0
+            out9.enabled = true
+            out9.opacity = 1.0
+            out10.enabled = true
+            out10.opacity = 1.0
+            out11.enabled = true
+            out11.opacity = 1.0
+            out12.enabled = true
+            out12.opacity = 1.0
+
+        }
+        else if (soc_sam_conf_1.state === "disabled") {
+            out1.enabled = false
+            out1.opacity = 1.0
+            out2.enabled = false
+            out2.opacity = 1.0
+            out3.enabled = false
+            out3.opacity = 1.0
+            out4.enabled = false
+            out4.opacity = 1.0
+            out5.enabled = false
+            out5.opacity = 1.0
+            out6.enabled = false
+            out6.opacity = 1.0
+            out7.enabled = false
+            out7.opacity = 1.0
+            out8.enabled = false
+            out8.opacity = 1.0
+            out9.enabled = false
+            out9.opacity = 1.0
+            out10.enabled = false
+            out10.opacity = 1.0
+            out11.enabled = false
+            out11.opacity = 1.0
+            out12.enabled = false
+            out12.opacity = 1.0
+
+        }
+        else {
+            out1.enabled = false
+            out1.opacity = 0.5
+            out2.enabled = false
+            out2.opacity = 0.5
+            out3.enabled = false
+            out3.opacity = 0.5
+            out4.enabled = false
+            out4.opacity = 0.5
+            out5.enabled = false
+            out5.opacity = 0.5
+            out6.enabled = false
+            out6.opacity = 0.5
+            out7.enabled = false
+            out7.opacity = 0.5
+            out8.enabled = false
+            out8.opacity = 0.5
+            out9.enabled = false
+            out9.opacity = 0.5
+            out10.enabled = false
+            out10.opacity = 0.5
+            out11.enabled = false
+            out11.opacity = 0.5
+            out12.enabled = false
+            out12.opacity = 0.5
+        }
+
+
+
+    }
+
     property var soc_sam_conf_1_values: platformInterface.soc_sam_conf_1_values.values
     onSoc_sam_conf_1_valuesChanged: {
         out1.checked = soc_sam_conf_1_values[0]
@@ -44,6 +158,8 @@ Item {
         platformInterface.soc_sam_conf_1_out10 = soc_sam_conf_1_values[9]
         platformInterface.soc_sam_conf_1_out11 = soc_sam_conf_1_values[10]
         platformInterface.soc_sam_conf_1_out12 = soc_sam_conf_1_values[11]
+
+
 
 
 
@@ -133,10 +249,120 @@ Item {
         }
     }
 
+    property var soc_sam_conf_2: platformInterface.soc_sam_conf_2
+    onSoc_sam_conf_2Changed: {
+        samConfig2Text.text = soc_sam_conf_2.caption
+        samOut1.checked = soc_sam_conf_2.values[0]
+        samOut2.checked = soc_sam_conf_2.values[1]
+        samOut3.checked = soc_sam_conf_2.values[2]
+        samOut4.checked = soc_sam_conf_2.values[3]
+        samOut5.checked = soc_sam_conf_2.values[4]
+        samOut6.checked = soc_sam_conf_2.values[5]
+        samOut7.checked = soc_sam_conf_2.values[6]
+        samOut8.checked = soc_sam_conf_2.values[7]
+        samOut9.checked = soc_sam_conf_2.values[8]
+        samOut10.checked = soc_sam_conf_2.values[9]
+        samOut11.checked = soc_sam_conf_2.values[10]
+        samOut12.checked = soc_sam_conf_2.values[11]
+
+
+        platformInterface.soc_sam_conf_2_out1 = soc_sam_conf_2.values[0]
+        platformInterface.soc_sam_conf_2_out2 = soc_sam_conf_2.values[1]
+        platformInterface.soc_sam_conf_2_out3 = soc_sam_conf_2.values[2]
+        platformInterface.soc_sam_conf_2_out4 = soc_sam_conf_2.values[3]
+        platformInterface.soc_sam_conf_2_out5 = soc_sam_conf_2.values[4]
+        platformInterface.soc_sam_conf_2_out6 = soc_sam_conf_2.values[5]
+        platformInterface.soc_sam_conf_2_out7 = soc_sam_conf_2.values[6]
+        platformInterface.soc_sam_conf_2_out8 = soc_sam_conf_2.values[7]
+        platformInterface.soc_sam_conf_2_out9 = soc_sam_conf_2.values[8]
+        platformInterface.soc_sam_conf_2_out10 = soc_sam_conf_2.values[9]
+        platformInterface.soc_sam_conf_2_out11 = soc_sam_conf_2.values[10]
+        platformInterface.soc_sam_conf_2_out12 = soc_sam_conf_2.values[11]
+
+        if(soc_sam_conf_2.state === "enabled") {
+            samOut1.enabled = true
+            samOut1.opacity = 1.0
+            samOut2.enabled = true
+            samOut2.opacity = 1.0
+            samOut3.enabled = true
+            samOut3.opacity = 1.0
+            samOut4.enabled = true
+            samOut4.opacity = 1.0
+            samOut5.enabled = true
+            samOut5.opacity = 1.0
+            samOut6.enabled = true
+            samOut6.opacity = 1.0
+            samOut7.enabled = true
+            samOut7.opacity = 1.0
+            samOut8.enabled = true
+            samOut8.opacity = 1.0
+            samOut9.enabled = true
+            samOut9.opacity = 1.0
+            samOut10.enabled = true
+            samOut10.opacity = 1.0
+            samOut11.enabled = true
+            samOut11.opacity = 1.0
+            samOut12.enabled = true
+            samOut12.opacity = 1.0
+
+        }
+        else if (soc_sam_conf_2.state === "disabled") {
+            samOut1.enabled = false
+            samOut1.opacity = 1.0
+            samOut2.enabled = false
+            samOut2.opacity = 1.0
+            samOut3.enabled = false
+            samOut3.opacity = 1.0
+            samOut4.enabled = false
+            samOut4.opacity = 1.0
+            samOut5.enabled = false
+            samOut5.opacity = 1.0
+            samOut6.enabled = false
+            samOut6.opacity = 1.0
+            samOut7.enabled = false
+            samOut7.opacity = 1.0
+            samOut8.enabled = false
+            samOut8.opacity = 1.0
+            samOut9.enabled = false
+            samOut9.opacity = 1.0
+            samOut10.enabled = false
+            samOut10.opacity = 1.0
+            samOut11.enabled = false
+            samOut11.opacity = 1.0
+            samOut12.enabled = false
+            samOut12.opacity = 1.0
+
+        }
+        else {
+            samOut1.enabled = false
+            samOut1.opacity = 0.5
+            samOut2.enabled = false
+            samOut2.opacity = 0.5
+            samOut3.enabled = false
+            samOut3.opacity = 0.5
+            samOut4.enabled = false
+            samOut4.opacity = 0.5
+            samOut5.enabled = false
+            samOut5.opacity = 0.5
+            samOut6.enabled = false
+            samOut6.opacity = 0.5
+            samOut7.enabled = false
+            samOut7.opacity = 0.5
+            samOut8.enabled = false
+            samOut8.opacity = 0.5
+            samOut9.enabled = false
+            samOut9.opacity = 0.5
+            samOut10.enabled = false
+            samOut10.opacity = 0.5
+            samOut11.enabled = false
+            samOut11.opacity = 0.5
+            samOut12.enabled = false
+            samOut12.opacity = 0.5
+        }
+    }
+
     property var soc_sam_conf_2_values: platformInterface.soc_sam_conf_2_values.values
     onSoc_sam_conf_2_valuesChanged: {
-
-
         samOut1.checked = soc_sam_conf_2_values[0]
         samOut2.checked = soc_sam_conf_2_values[1]
         samOut3.checked = soc_sam_conf_2_values[2]
@@ -163,6 +389,8 @@ Item {
         platformInterface.soc_sam_conf_2_out10 = soc_sam_conf_2_values[9]
         platformInterface.soc_sam_conf_2_out11 = soc_sam_conf_2_values[10]
         platformInterface.soc_sam_conf_2_out12 = soc_sam_conf_2_values[11]
+
+
     }
 
     property var soc_sam_conf_2_state: platformInterface.soc_sam_conf_2_state.state
@@ -407,10 +635,9 @@ Item {
         height: parent.height/1.2
         anchors.centerIn: parent
 
-        Rectangle{
+        Rectangle {
+            Layout.fillHeight: true
             Layout.fillWidth: true
-            Layout.preferredHeight: parent.height/9
-            color: "transparent"
 
             Text {
                 id: i2cConfigHeading
@@ -436,20 +663,21 @@ Item {
                     topMargin: 7
                 }
             }
-        }
-
-        Rectangle {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
 
             RowLayout {
-                anchors.fill: parent
-
-
-
+                width: parent.width
+                height: parent.height - i2cConfigHeading.contentHeight - line.height
+                anchors {
+                    top: line.bottom
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
+                }
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+
+
                     SGAlignedLabel {
                         id: enableCRCLabel
                         target: enableCRC
@@ -562,7 +790,6 @@ Item {
                     Layout.fillWidth: true
                     SGAlignedLabel {
                         id: current7bitLabel
-                        //text: "Current 7-bit\nI2C Address"
                         target: current7bit
                         alignment: SGAlignedLabel.SideTopCenter
                         anchors.verticalCenter: parent.verticalCenter
@@ -586,11 +813,29 @@ Item {
                         }
 
 
+                        property var soc_addr_curr: platformInterface.soc_addr_curr
+                        onSoc_addr_currChanged: {
+                            text = soc_addr_curr.caption
+                            if(soc_addr_curr.state === "enabled") {
+                                current7bit.enabled = true
+                                current7bit.opacity = 1.0
+                            }
+                            else if (soc_addr_curr.state === "disabled") {
+                                current7bit.enabled = false
+                                current7bit.opacity = 1.0
+                            }
+                            else {
+                                current7bit.enabled = false
+                                current7bit.opacity = 0.5
+                            }
+                            current7bit.text = toHex(soc_addr_curr.value)
+                            platformInterface.addr_curr = soc_addr_curr.value
+
+                        }
 
                         property var soc_addr_curr_caption: platformInterface.soc_addr_curr_caption.caption
                         onSoc_addr_curr_captionChanged: {
                             text = soc_addr_curr_caption
-
                         }
 
                         property var soc_addr_curr_state: platformInterface.soc_addr_curr_state.state
@@ -611,8 +856,9 @@ Item {
 
                         property var soc_addr_curr_value: platformInterface.soc_addr_curr_value.value
                         onSoc_addr_curr_valueChanged: {
-                            current7bit.text = soc_addr_curr_value
-                            platformInterface.addr_curr = parseInt(soc_addr_curr_value, 16)
+                            console.log("curr_value",soc_addr_curr_value)
+                            current7bit.text = toHex(soc_addr_curr_value)
+                            platformInterface.addr_curr = soc_addr_curr_value
 
                         }
                     }
@@ -621,11 +867,8 @@ Item {
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-
-
                     SGAlignedLabel {
                         id: new7bitLabel
-                        //text: "New 7-bit I2C\nAddress After OTP"
                         target: new7bit
                         alignment: SGAlignedLabel.SideTopCenter
                         anchors.verticalCenter: parent.verticalCenter
@@ -636,14 +879,10 @@ Item {
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                             height:  35 * ratioCalc
                             width: 50 * ratioCalc
-
-
                             onAccepted: {
-
                                 var hexTodecimal = parseInt(text, 16)
                                 console.log(text)
                                 console.log(hexTodecimal)
-
                                 if(hexTodecimal > platformInterface.soc_addr_new.scales[0]) {
                                     console.log(text.toString(16))
                                     new7bit.text = toHex(platformInterface.soc_addr_new.scales[0])
@@ -658,10 +897,7 @@ Item {
                                     new7bit.text = text
                                     platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
                                 }
-
-
                             }
-
                         }
 
                         SGText{
@@ -674,7 +910,24 @@ Item {
                         }
 
 
-                        //what's scale for
+                        property var soc_addr_new: platformInterface.soc_addr_new
+                        onSoc_addr_newChanged: {
+                            new7bitLabel.text = soc_addr_new.caption
+                            if(soc_addr_new.state === "enabled") {
+                                new7bit.enabled = true
+                                new7bit.opacity = 1.0
+                            }
+                            else if (soc_addr_new.state === "disabled") {
+                                new7bit.enabled = false
+                                new7bit.opacity = 1.0
+                            }
+                            else {
+                                new7bit.enabled = false
+                                new7bit.opacity = 0.5
+                            }
+                            new7bit.text =  toHex(soc_addr_new.value)
+                            platformInterface.addr_curr_apply = parseInt(new7bit.text , 16)
+                        }
 
                         property var soc_addr_new_caption: platformInterface.soc_addr_new_caption.caption
                         onSoc_addr_new_captionChanged: {
@@ -699,7 +952,6 @@ Item {
 
                         property var soc_addr_new_value: platformInterface.soc_addr_new_value.value
                         onSoc_addr_new_valueChanged: {
-
                             new7bit.text =  toHex(soc_addr_new_value)
                             platformInterface.addr_curr_apply = parseInt(new7bit.text , 16)
                             console.log(platformInterface.addr_curr_apply)
@@ -761,10 +1013,6 @@ Item {
                         }
                     }
                 }
-
-
-
-
             }
         }
 
@@ -772,15 +1020,12 @@ Item {
         Rectangle {
             Layout.preferredHeight: parent.height/2
             Layout.fillWidth: true
-
             ColumnLayout{
                 anchors.fill: parent
-
                 Rectangle{
                     Layout.fillWidth: true
                     Layout.preferredHeight: parent.height/9
                     color: "transparent"
-
                     Text {
                         id: standAloneModeHeading
                         text: "Stand Alone Mode (SAM) Configuration"
@@ -812,8 +1057,6 @@ Item {
                     Layout.fillWidth: true
                     RowLayout{
                         anchors.fill: parent
-
-
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
@@ -823,20 +1066,16 @@ Item {
                                 // text: "I2C/Standalone\n(I2CFLAG)"
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors {
-                                    top:parent.top
                                     left: parent.left
                                     verticalCenter: parent.verticalCenter
                                     leftMargin: 20
                                 }
-
                                 fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
 
                                 SGSwitch {
                                     id: i2cStandalone
                                     labelsInside: true
-                                    //                            checkedLabel: "on"
-                                    //                            uncheckedLabel: "off"
                                     textColor: "black"              // Default: "black"
                                     handleColor: "white"            // Default: "white"
                                     grooveColor: "#ccc"             // Default: "#ccc"
@@ -847,6 +1086,28 @@ Item {
                                             platformInterface.set_soc_mode.update("I2C")
                                         else platformInterface.set_soc_mode.update("SAM")
                                     }
+                                }
+
+                                property var soc_mode: platformInterface.soc_mode
+                                onSoc_modeChanged: {
+                                    i2cStandaloneLabel.text = soc_mode.caption
+                                    if(soc_mode.state === "enabled"){
+                                        i2cStandalone.enabled = true
+                                        i2cStandalone.opacity = 1.0
+                                    }
+                                    else if (soc_mode.state === "disabled") {
+                                        i2cStandalone.enabled = false
+                                        i2cStandalone.opacity = 1.0
+                                    }
+                                    else {
+                                        i2cStandalone.enabled = false
+                                        i2cStandalone.opacity = 0.5
+                                    }
+                                    i2cStandalone.checkedLabel = soc_mode.values[0]
+                                    i2cStandalone.uncheckedLabel = soc_mode.values[1]
+                                    if(soc_mode.value === "I2C")
+                                        i2cStandalone.checked = true
+                                    else  i2cStandalone.checked = false
                                 }
 
                                 property var soc_mode_caption: platformInterface.soc_mode_caption.caption
@@ -878,9 +1139,8 @@ Item {
 
                                 property var soc_mode_value: platformInterface.soc_mode_value.value
                                 onSoc_mode_valueChanged:{
-                                    if(soc_mode_value === "I2C"){
+                                    if(soc_mode_value === "I2C")
                                         i2cStandalone.checked = true
-                                    }
                                     else  i2cStandalone.checked = false
                                 }
 
@@ -897,7 +1157,7 @@ Item {
                                 // text: "SAM\n(Configuration)"
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors {
-                                    top:parent.top
+                                    //top:parent.top
                                     left: parent.left
                                     verticalCenter: parent.verticalCenter
                                     leftMargin: 20
@@ -921,6 +1181,30 @@ Item {
                                             platformInterface.set_soc_conf.update("SAM1")
                                         else
                                             platformInterface.set_soc_conf.update("SAM2")
+
+                                    }
+
+                                    property var soc_conf: platformInterface.soc_conf
+                                    onSoc_confChanged: {
+                                        samConfigLabel.text = soc_conf.caption
+                                        if(soc_conf.state === "enabled"){
+                                            samConfig.enabled = true
+                                            samConfig.opacity = 1.0
+                                        }
+                                        else if (soc_conf.state === "disabled") {
+                                            samConfig.enabled = false
+                                            samConfig.opacity = 1.0
+                                        }
+                                        else {
+                                            samConfig.enabled = false
+                                            samConfig.opacity = 0.5
+                                        }
+
+                                        samConfig.checkedLabel = soc_conf.values[0]
+                                        samConfig.uncheckedLabel = soc_conf.values[1]
+                                        if(soc_conf.value === "SAM1")
+                                            samConfig.checked = true
+                                        else  samConfig.checked = false
 
                                     }
 
@@ -972,7 +1256,7 @@ Item {
                                 target: vDDVoltageDisconnect
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors {
-                                    top:parent.top
+                                    //top:parent.top
                                     left: parent.left
                                     verticalCenter: parent.verticalCenter
                                     leftMargin: 20
@@ -997,6 +1281,32 @@ Item {
                                         else  platformInterface.set_soc_vdd_disconnect.update("Disconnect")
                                     }
                                 }
+
+                                property var soc_vdd_disconnect: platformInterface.soc_vdd_disconnect
+                                onSoc_vdd_disconnectChanged: {
+                                    vDDVoltageDisconnectLabel.text = soc_vdd_disconnect.caption
+                                    if(soc_vdd_disconnect.state === "enabled"){
+                                        vDDVoltageDisconnect.enabled = true
+                                        vDDVoltageDisconnect.opacity = 1.0
+                                    }
+                                    else if (soc_vdd_disconnect.state === "disabled") {
+                                        vDDVoltageDisconnect.enabled = false
+                                        vDDVoltageDisconnect.opacity = 1.0
+                                    }
+                                    else {
+                                        vDDVoltageDisconnect.enabled = false
+                                        vDDVoltageDisconnect.opacity = 0.5
+                                    }
+                                    vDDVoltageDisconnect.checkedLabel = soc_vdd_disconnect.values[0]
+                                    vDDVoltageDisconnect.uncheckedLabel = soc_vdd_disconnect.values[1]
+
+                                    if(soc_vdd_disconnect.value === "Connect")
+                                        vDDVoltageDisconnect.checked = true
+
+                                    else  vDDVoltageDisconnect.checked = false
+
+                                }
+
 
                                 property var soc_vdd_disconnect_caption: platformInterface.soc_vdd_disconnect_caption.caption
                                 onSoc_vdd_disconnect_captionChanged: {
@@ -1027,9 +1337,9 @@ Item {
 
                                 property var soc_vdd_disconnect_value: platformInterface.soc_vdd_disconnect_value.value
                                 onSoc_vdd_disconnect_valueChanged:{
-                                    if(soc_vdd_disconnect_value === "Connect"){
+                                    if(soc_vdd_disconnect_value === "Connect")
                                         vDDVoltageDisconnect.checked = true
-                                    }
+
                                     else  vDDVoltageDisconnect.checked = false
                                 }
 
@@ -1055,6 +1365,7 @@ Item {
                             Layout.fillHeight: true
 
                             SGText {
+                                id:samconfi1Text
                                 //text: "<b>" + qsTr("SAM_CONF_1") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold: true
@@ -1789,6 +2100,7 @@ Item {
                             Layout.fillHeight: true
 
                             SGText {
+                                id: samConfig2Text
                                 // text: "<b>" + qsTr("SAM_CONF_2") + "</b>"
                                 fontSizeMultiplier: ratioCalc * 1.2
                                 anchors.verticalCenter: parent.verticalCenter
@@ -2445,19 +2757,36 @@ Item {
                         }
                         SGButton {
                             id:  zapButton
-                            //text: qsTr("One Time \n Program (zap)")
+
                             anchors.verticalCenter: parent.verticalCenter
                             fontSizeMultiplier: ratioCalc
                             color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                             hoverEnabled: true
-                            height: parent.height/1.7
-                            width: parent.width/1.7
+                            height: parent.height/2
+                            width: parent.width/2
                             MouseArea {
                                 hoverEnabled: true
                                 anchors.fill: parent
                                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                                 onClicked: warningPopup.open()
 
+                            }
+
+                            property var soc_otp: platformInterface.soc_otp
+                            onSoc_otpChanged:{
+                                 text = soc_otp.caption
+                                if(soc_otp.state === "enabled") {
+                                    zapButton.opacity = 1.0
+                                    zapButton.enabled = true
+                                }
+                                else if (soc_otp.state === "disabled") {
+                                    zapButton.opacity = 1.0
+                                    zapButton.enabled = false
+                                }
+                                else {
+                                    zapButton.opacity = 0.5
+                                    zapButton.enabled = false
+                                }
                             }
 
                             property var soc_otp_caption: platformInterface.soc_otp_caption.caption
@@ -2532,14 +2861,7 @@ Item {
                                 id: diagLabel
                                 target: diag
                                 alignment: SGAlignedLabel.SideTopCenter
-                                anchors {
-                                    top:parent.top
-                                    topMargin: 10
-                                    //left: parent.left
-                                    verticalCenter: parent.verticalCenter
-                                    //leftMargin: 20
-                                }
-
+                                anchors.verticalCenter: parent.verticalCenter
                                 fontSizeMultiplier: ratioCalc * 1.2
                                 // text: "DIAG"
                                 font.bold: true
@@ -2549,6 +2871,7 @@ Item {
                                     width : 40
 
                                 }
+
 
                                 property var soc_diag: platformInterface.soc_diag
                                 onSoc_diagChanged: {
@@ -2612,12 +2935,8 @@ Item {
                                 target: samOpenLoadDiagnostic
                                 //text: "SAM Open Load\nDiagnostic"
                                 alignment: SGAlignedLabel.SideTopLeft
-                                anchors {
-                                    top:parent.top
-                                    left: parent.left
-                                    verticalCenter: parent.verticalCenter
-                                    leftMargin: 20
-                                }
+                                anchors.verticalCenter: parent.verticalCenter
+
                                 fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
 
@@ -2659,18 +2978,42 @@ Item {
                                     }
                                 }
 
-                                property var soc_open_load_diagnostic_caption: platformInterface.soc_open_load_diagnostic_caption.caption
-                                onSoc_open_load_diagnostic_captionChanged: {
-                                    samOpenLoadLabel.text = soc_open_load_diagnostic_caption
-                                }
-
-                                property var soc_open_load_diagnostic_state: platformInterface.soc_open_load_diagnostic_state.state
-                                onSoc_open_load_diagnostic_stateChanged: {
-                                    if(soc_open_load_diagnostic_state === "enabled"){
+                                property var soc_sam_open_load_diagnostic: platformInterface.soc_sam_open_load_diagnostic
+                                onSoc_sam_open_load_diagnosticChanged: {
+                                    samOpenLoadLabel.text = soc_sam_open_load_diagnostic.caption
+                                    if(soc_sam_open_load_diagnostic.state === "enabled"){
                                         samOpenLoadDiagnostic.enabled = true
                                         samOpenLoadDiagnostic.opacity = 1.0
                                     }
-                                    else if (soc_open_load_diagnostic_state === "disabled") {
+                                    else if (soc_sam_open_load_diagnostic.state === "disabled") {
+                                        samOpenLoadDiagnostic.enabled = false
+                                        samOpenLoadDiagnostic.opacity = 1.0
+                                    }
+                                    else {
+                                        samOpenLoadDiagnostic.enabled = false
+                                        samOpenLoadDiagnostic.opacity = 0.5
+                                    }
+                                    samOpenLoadDiagnostic.model = soc_sam_open_load_diagnostic.values
+                                    for(var a = 0; a < samOpenLoadDiagnostic.model.length; ++a) {
+                                        if(soc_sam_open_load_diagnostic.value === samOpenLoadDiagnostic.model[a].toString()){
+                                            samOpenLoadDiagnostic.currentIndex = a
+                                        }
+                                    }
+
+                                }
+
+                                property var soc_sam_open_load_diagnostic_caption: platformInterface.soc_sam_open_load_diagnostic_caption.caption
+                                onSoc_sam_open_load_diagnostic_captionChanged: {
+                                    samOpenLoadLabel.text = soc_sam_open_load_diagnostic_caption
+                                }
+
+                                property var soc_sam_open_load_diagnostic_state: platformInterface.soc_sam_open_load_diagnostic_state.state
+                                onSoc_sam_open_load_diagnostic_stateChanged: {
+                                    if(soc_sam_open_load_diagnostic_state === "enabled"){
+                                        samOpenLoadDiagnostic.enabled = true
+                                        samOpenLoadDiagnostic.opacity = 1.0
+                                    }
+                                    else if (soc_sam_open_load_diagnostic_state === "disabled") {
                                         samOpenLoadDiagnostic.enabled = false
                                         samOpenLoadDiagnostic.opacity = 1.0
                                     }
@@ -2680,15 +3023,15 @@ Item {
                                     }
                                 }
 
-                                property var soc_open_load_diagnostic_values: platformInterface.soc_open_load_diagnostic_values.values
-                                onSoc_open_load_diagnostic_valuesChanged: {
-                                    samOpenLoadDiagnostic.model = soc_open_load_diagnostic_values
+                                property var soc_sam_open_load_diagnostic_values: platformInterface.soc_sam_open_load_diagnostic_values.values
+                                onSoc_sam_open_load_diagnostic_valuesChanged: {
+                                    samOpenLoadDiagnostic.model = soc_sam_open_load_diagnostic_values
                                 }
 
-                                property var soc_open_load_diagnostic_value: platformInterface.soc_open_load_diagnostic_value.value
-                                onSoc_open_load_diagnostic_valueChanged: {
+                                property var soc_sam_open_load_diagnostic_value: platformInterface.soc_sam_open_load_diagnostic_values.value
+                                onSoc_sam_open_load_diagnostic_valueChanged: {
                                     for(var a = 0; a < samOpenLoadDiagnostic.model.length; ++a) {
-                                        if(soc_open_load_diagnostic_value === samOpenLoadDiagnostic.model[a].toString()){
+                                        if(soc_sam_open_load_diagnostic_values === samOpenLoadDiagnostic.model[a].toString()){
                                             samOpenLoadDiagnostic.currentIndex = a
                                         }
                                     }

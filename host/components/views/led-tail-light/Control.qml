@@ -62,7 +62,7 @@ Item {
             id: powerControlButton
             text: qsTr("Power")
             onClicked: {
-                platformInterface.mode.update("LED Driver")
+                platformInterface.mode.update("Power")
                 carDemoMode.visible = false
                 ledControl.visible = false
                 powerControl.visible = true

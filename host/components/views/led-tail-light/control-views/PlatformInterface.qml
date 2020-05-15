@@ -554,6 +554,7 @@ Item {
     //Car demo Notification
 
     property var car_demo_brightness: {
+        "headlights":true,
         "value": "0.18"
     }
 
@@ -1258,7 +1259,7 @@ Item {
         "values":["SAM1","SAM2"]
     }
 
-    property var soc_open_load_diagnostic: {
+    property var soc_sam_open_load_diagnostic: {
         "caption":"SAM Open Load Diagnostic",
         "scales":[],
         "state":"enabled",
@@ -1266,22 +1267,21 @@ Item {
         "values":["No Diagnostic","Auto Retry","Diagnostic Only"]
     }
 
-    property var soc_open_load_diagnostic_caption: {
+    property var soc_sam_open_load_diagnostic_caption: {
         "caption":"SAM Open Load\nDiagnostic"
     }
 
-    property var soc_open_load_diagnostic_state: {
+    property var soc_sam_open_load_diagnostic_state: {
         "state":"enabled"
     }
 
-    property var soc_open_load_diagnostic_value: {
+    property var soc_sam_open_load_diagnostic_value: {
         "value":"No Diagnostic"
     }
 
-    property var soc_open_load_diagnostic_values: {
+    property var soc_sam_open_load_diagnostic_values: {
         "values":["No Diagnostic","Auto Retry","Diagnostic Only"]
     }
-
 
     property var soc_sam_conf_1: {
         "caption":"SAM_CONF_1",

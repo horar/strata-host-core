@@ -20,5 +20,14 @@
         <file>control-views/car-Images/reverse.png</file>
         <file>control-views/car-Images/right.png</file>
         <file>control-views/car-Images/running.png</file>
+        <file>control-views/car-icon/brake.svg</file>
+        <file>control-views/car-icon/drive.svg</file>
+        <file>control-views/car-icon/hazard.svg</file>
+        <file>control-views/car-icon/left-signal.svg</file>
+        <file>control-views/car-icon/no-brake.svg</file>
+        <file>control-views/car-icon/no-hazard.svg</file>
+        <file>control-views/car-icon/no-signal.svg</file>
+        <file>control-views/car-icon/reverse.svg</file>
+        <file>control-views/car-icon/right-signal.svg</file>
     </qresource>
 </RCC>
