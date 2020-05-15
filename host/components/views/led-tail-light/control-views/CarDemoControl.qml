@@ -30,7 +30,7 @@ Rectangle{
         property var car_demo_brightness_headlights: platformInterface.car_demo_brightness.headlights
         onCar_demo_brightness_headlightsChanged: {
             if(car_demo_brightness_headlights === true){
-                 headlights.visible = true
+                headlights.visible = true
             }
             else  headlights.visible = false
         }
@@ -258,6 +258,7 @@ Rectangle{
                                         hazard.visible = true
                                         noHazard.visible = false
                                         platformInterface.hazard_value = true
+                                        blinkerContainer.enabled = false
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
                                                                               platformInterface.brake_value,
@@ -271,6 +272,7 @@ Rectangle{
                                         leftSignal.visible = false
                                         rightSignal.visible = false
                                         platformInterface.hazard_value = false
+                                        blinkerContainer.enabled = true
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
                                                                               platformInterface.brake_value,
@@ -303,6 +305,7 @@ Rectangle{
                                         rightSignal.visible = true
                                         hazard.visible = true
                                         noHazard.visible = false
+                                        blinkerContainer.enabled = false
                                         platformInterface.hazard_value = true
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
@@ -312,10 +315,14 @@ Rectangle{
                                                                               )
                                     }
                                     else {
+                                        console.log("hazard")
                                         leftSignal.visible = false
                                         rightSignal.visible = false
                                         hazard.visible = false
+
                                         noHazard.visible = true
+                                        blinkerContainer.enabled = true
+
                                         platformInterface.hazard_value = false
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
@@ -434,9 +441,11 @@ Rectangle{
                     }
 
                     Rectangle{
+                        id: blinkerContainer
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         color: "light gray"
+
 
                         Image{
                             id: blinkerBaseImage
@@ -444,72 +453,84 @@ Rectangle{
                             anchors.fill: parent
                             fillMode: Image.PreserveAspectFit
 
-                            MouseArea{
-                                id: leftSignalContainer
+                            Rectangle{
                                 width: parent.width/2
                                 height: parent.height
                                 anchors.left: parent.left
-                                onClicked: {
-                                    platformInterface.right_value = false
-                                    rightSignal.visible = false
-                                    console.log("left clicked")
-                                    if(platformInterface.left_value === false){
-                                        leftSignal.visible = true
-                                        blinkerBaseImage.source = "car-icon/left-signal.svg"
-                                        platformInterface.left_value = true
-                                        platformInterface.set_car_demo.update(true,
-                                                                              platformInterface.right_value,
-                                                                              platformInterface.brake_value,
-                                                                              platformInterface.hazard_value,
-                                                                              platformInterface.reverse_value
-                                                                              )
-                                    }
-                                    else {
-                                        leftSignal.visible = false
-                                        blinkerBaseImage.source = "car-icon/no-signal.svg"
-                                        platformInterface.left_value = false
-                                        platformInterface.set_car_demo.update(false,
-                                                                              platformInterface.right_value,
-                                                                              platformInterface.brake_value,
-                                                                              platformInterface.hazard_value,
-                                                                              platformInterface.reverse_value
-                                                                              )
+                                color: "transparent"
+
+                                MouseArea{
+                                    id: leftSignalContainer
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        platformInterface.right_value = false
+                                        rightSignal.visible = false
+                                        console.log("left clicked", platformInterface.left_value)
+                                        if(platformInterface.left_value === false){
+                                            leftSignal.visible = true
+                                            blinkerBaseImage.source = "car-icon/left-signal.svg"
+                                            platformInterface.left_value = true
+                                            platformInterface.set_car_demo.update(true,
+                                                                                  platformInterface.right_value,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.hazard_value,
+                                                                                  platformInterface.reverse_value
+                                                                                  )
+                                        }
+                                        else {
+                                            leftSignal.visible = false
+                                            blinkerBaseImage.source = "car-icon/no-signal.svg"
+                                            platformInterface.left_value = false
+                                            platformInterface.set_car_demo.update(false,
+                                                                                  platformInterface.right_value,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.hazard_value,
+                                                                                  platformInterface.reverse_value
+                                                                                  )
+                                        }
+
+                                        console.log("platformInterface.left_value", platformInterface.left_value)
                                     }
                                 }
                             }
 
-                            MouseArea{
-                                id: rightSignalContainer
+                            Rectangle{
                                 width: parent.width/2
                                 height: parent.height
                                 anchors.right: parent.right
-                                onClicked: {
-                                    leftSignal.visible = false
-                                    platformInterface.left_value = false
-                                    console.log("right clicked")
-                                    if(platformInterface.right_value === false) {
-                                        rightSignal.visible = true
-                                        blinkerBaseImage.source = "car-icon/right-signal.svg"
-                                        platformInterface.right_value = true
-                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                              platformInterface.right_value,
-                                                                              platformInterface.brake_value,
-                                                                              platformInterface.hazard_value,
-                                                                              platformInterface.reverse_value
-                                                                              )
-                                    }
-                                    else {
-                                        rightSignal.visible = false
-                                        blinkerBaseImage.source = "car-icon/no-signal.svg"
-                                        platformInterface.right_value = false
-                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                              platformInterface.right_value,
-                                                                              platformInterface.brake_value,
-                                                                              platformInterface.hazard_value,
-                                                                              platformInterface.reverse_value
-                                                                              )
-                                    }
+                                color: "transparent"
+                                MouseArea{
+                                    id: rightSignalContainer
+                                    anchors.fill: parent
 
+                                    onClicked: {
+                                        leftSignal.visible = false
+                                        platformInterface.left_value = false
+                                        console.log("right clicked", platformInterface.right_value)
+                                        if(platformInterface.right_value === false) {
+                                            rightSignal.visible = true
+                                            blinkerBaseImage.source = "car-icon/right-signal.svg"
+                                            platformInterface.right_value = true
+                                            platformInterface.set_car_demo.update(platformInterface.left_value,
+                                                                                  platformInterface.right_value,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.hazard_value,
+                                                                                  platformInterface.reverse_value
+                                                                                  )
+                                        }
+                                        else {
+                                            rightSignal.visible = false
+                                            blinkerBaseImage.source = "car-icon/no-signal.svg"
+                                            platformInterface.right_value = false
+                                            platformInterface.set_car_demo.update(platformInterface.left_value,
+                                                                                  platformInterface.right_value,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.hazard_value,
+                                                                                  platformInterface.reverse_value
+                                                                                  )
+                                        }
+
+                                    }
                                 }
                             }
 
@@ -517,7 +538,6 @@ Rectangle{
                         property var car_demo_left: platformInterface.car_demo.left
                         onCar_demo_leftChanged: {
                             leftSignal.visible = car_demo_left
-                            platformInterface.left_value = car_demo_left
                             console.log("left pn", car_demo_left)
                         }
 
@@ -525,7 +545,6 @@ Rectangle{
                         onCar_demo_rightChanged: {
                             console.log("right pn", car_demo_right)
                             rightSignal.visible = car_demo_right
-                            platformInterface.right_value = car_demo_right
 
                         }
                     }
