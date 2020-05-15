@@ -96,7 +96,8 @@ Item {
         "low_load_en": "off",             //on or off
         "mid_load_en": "off",             //on or off
         "high_load_en": "off",            //on or off
-        "active_discharge": "on"
+        "active_discharge": "on",
+        "load_switch_status" :"freeze"
     }
 
     property var reset_status: {
