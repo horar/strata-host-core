@@ -224,7 +224,7 @@ Rectangle {
         onClicked:{
             if (!isOn){     //turning the lightbulb on
                 lightBulb.onOpacity = 1
-                platformInterface.light_hsl_set.update(49633,0,0,100);  //set color to white
+                platformInterface.light_hsl_set.update(49633,0,0,50);  //set color to white
                 switchOutline.isOn = true
               }
               else{         //turning the lightbulb off
