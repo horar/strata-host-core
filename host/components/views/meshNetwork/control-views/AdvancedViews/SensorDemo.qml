@@ -54,6 +54,7 @@ Rectangle {
                 root.availableNodes[alpha] = 1;
             }
         }
+        availableNodesChanged();
     }
 
 
@@ -62,10 +63,10 @@ Rectangle {
     onNewNodeAddedChanged: {
         //console.log("new node added",platformInterface.node_added.index)
         var theNodeNumber = platformInterface.node_added.index
-        if (root.availableNodes[theNodeNumber] !== undefined)
+        if (root.availableNodes[theNodeNumber] !== undefined){
             root.availableNodes[theNodeNumber] = 1;
-
-
+            }
+        availableNodesChanged();
     }
 
     property var nodeRemoved: platformInterface.node_removed
@@ -74,6 +75,7 @@ Rectangle {
         if(root.availableNodes[theNodeNumber] !== undefined ){
             root.availableNodes[theNodeNumber] = 0
         }
+        availableNodesChanged();
     }
 
     Text{
@@ -186,6 +188,23 @@ Rectangle {
         to: 10;
         duration: 0
         running:false
+    }
+
+    Text{
+        property int address: root.sensorNodeID
+        id:primaryElementAddressText
+        anchors.top:sensorImage.bottom
+        anchors.topMargin: 20
+        anchors.horizontalCenter: sensorImage.horizontalCenter
+        anchors.horizontalCenterOffset: -sensorImage.width * .15
+
+        text:{
+            if (address != 0)
+              return  "uaddr " + address
+            else
+              return "uaddr -"
+        }
+        font.pixelSize: 24
     }
 
     function resetUI(){

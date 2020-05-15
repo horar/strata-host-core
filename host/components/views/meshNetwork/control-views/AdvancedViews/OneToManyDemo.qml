@@ -70,6 +70,7 @@ Rectangle {
                 root.availableNodes[alpha] = 1;
             }
         }
+        availableNodesChanged();
     }
 
 
@@ -78,10 +79,10 @@ Rectangle {
     onNewNodeAddedChanged: {
         //console.log("new node added",platformInterface.node_added.index)
         var theNodeNumber = platformInterface.node_added.index
-        if (root.availableNodes[theNodeNumber] !== undefined)
+        if (root.availableNodes[theNodeNumber] !== undefined){
             root.availableNodes[theNodeNumber] = 1;
-
-
+            }
+        availableNodesChanged();
     }
 
     property var nodeRemoved: platformInterface.node_removed
@@ -90,6 +91,7 @@ Rectangle {
         if(root.availableNodes[theNodeNumber] !== undefined ){
             root.availableNodes[theNodeNumber] = 0
         }
+        availableNodesChanged();
     }
 
     Text{

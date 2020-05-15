@@ -335,8 +335,8 @@ Rectangle {
                                 "payload":{
                                     "uaddr":2,
                                     "sensor_type":"temperature",
-                                    "data": 123
-                                }
+                                    "data": '+ ((Math.random() * 200).toFixed(0)) +'
+                                    }
                                 }')
                                 }
                         }

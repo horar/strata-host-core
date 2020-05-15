@@ -35,11 +35,11 @@ Rectangle {
                 nodeCount++;
                 if (nodeCount === 1){
                     root.node1ID = alpha
-                    //console.log("node 1 set to",root.node1ID)
+                    console.log("node 1 set to",root.node1ID)
                 }
                 else if (nodeCount === 2){
                     root.node2ID = alpha
-                    //console.log("node 1 set to",root.node2ID)
+                    console.log("node 1 set to",root.node2ID)
                 }
             }
         }
@@ -65,6 +65,8 @@ Rectangle {
                 root.availableNodes[alpha] = 1;
             }
         }
+        availableNodesChanged();        //array variables won't trigger a changed if a single element is changed
+
     }
 
 
@@ -75,7 +77,7 @@ Rectangle {
         var theNodeNumber = platformInterface.node_added.index
         if (root.availableNodes[theNodeNumber] !== undefined)
             root.availableNodes[theNodeNumber] = 1;
-
+        availableNodesChanged();
 
     }
 
@@ -85,6 +87,7 @@ Rectangle {
         if(root.availableNodes[theNodeNumber] !== undefined ){
             root.availableNodes[theNodeNumber] = 0
         }
+        availableNodesChanged();
     }
 
     Rectangle{
