@@ -8,7 +8,6 @@
 
 
 class PlatformBoard;
-class HCS_Dispatcher;
 
 /*
 This BoardManagerWrapper class is replacement for original classes BoardsController and PlatformBoard.
@@ -39,9 +38,8 @@ public:
 
     /**
      * Initializes the board manager
-     * @param dispatcher
      */
-    void initialize(HCS_Dispatcher* dispatcher);
+    void initialize();
 
     /**
      * Sends message to board specified by device Id
@@ -116,9 +114,7 @@ signals:
 private slots:  // slots for signals from BoardManager
 
     void newConnection(int deviceId, bool recognized);
-
     void closeConnection(int deviceId);
-
     void messageFromBoard(QString message);
 
 private:
@@ -132,8 +128,6 @@ private:
     };
 
     strata::BoardManager boardManager_;
-
-    HCS_Dispatcher* dispatcher_{nullptr};
 
     // map: deviceID <-> Board
     QHash<int, Board> boards_;

@@ -12,8 +12,7 @@ BoardManagerWrapper::BoardManagerWrapper() {
     connect(&boardManager_, &strata::BoardManager::boardDisconnected, this, &BoardManagerWrapper::closeConnection);
 }
 
-void BoardManagerWrapper::initialize(HCS_Dispatcher* dispatcher) {
-    dispatcher_ = dispatcher;
+void BoardManagerWrapper::initialize() {
     boardManager_.init(false);
 }
 
