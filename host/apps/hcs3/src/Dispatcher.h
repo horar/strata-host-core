@@ -16,7 +16,6 @@ struct PlatformMessage
         eMsgUnknown = 0,
 
         eMsgClientMessage,
-        eMsgCouchbaseMessage,
     };
 
     MessageType msg_type;

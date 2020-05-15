@@ -52,7 +52,6 @@ signals:
     void platformDocumentsRequested(QByteArray clientId, QString classId);
     void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
-    void updatePlatformDocRequested(QString classId);
 
 public slots:
     void onAboutToQuit();
@@ -95,7 +94,6 @@ private:
     void handleMessage(const PlatformMessage& msg);
 
     void handleClientMsg(const PlatformMessage& msg);
-    void handleCouchbaseMsg(const PlatformMessage& msg);
     void sendMessageToClients(const QString &platformId, const QString& message);
     bool disptachMessageToPlatforms(const std::string& dealer_id, const std::string& read_message);
 

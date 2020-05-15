@@ -58,8 +58,6 @@ bool HostControllerService::initialize(const QString& config)
         return false;
     }
 
-    db_.setDispatcher(&dispatcher_);
-
     // TODO: Will resolved in SCT-517
     //db_.addReplChannel("platform_list");
 
@@ -79,7 +77,6 @@ bool HostControllerService::initialize(const QString& config)
     connect(this, &HostControllerService::platformDocumentsRequested, storageManager_, &StorageManager::requestPlatformDocuments, Qt::QueuedConnection);
     connect(this, &HostControllerService::downloadPlatformFilesRequested, storageManager_, &StorageManager::requestDownloadPlatformFiles, Qt::QueuedConnection);
     connect(this, &HostControllerService::cancelPlatformDocumentRequested, storageManager_, &StorageManager::requestCancelAllDownloads, Qt::QueuedConnection);
-    connect(this, &HostControllerService::updatePlatformDocRequested, storageManager_, &StorageManager::updatePlatformDoc, Qt::QueuedConnection);
 
     connect(&boards_, &BoardManagerWrapper::boardConnected, this, &HostControllerService::platformConnected);
     connect(&boards_, &BoardManagerWrapper::boardDisconnected, this, &HostControllerService::platformDisconnected);
@@ -302,7 +299,6 @@ void HostControllerService::handleMessage(const PlatformMessage& msg)
     switch(msg.msg_type)
     {
         case PlatformMessage::eMsgClientMessage:                handleClientMsg(msg); break;
-        case PlatformMessage::eMsgCouchbaseMessage:             handleCouchbaseMsg(msg); break;
 
         default:
             assert(false);
@@ -532,10 +528,6 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)  //const
     }
 }
 
-void HostControllerService::handleCouchbaseMsg(const PlatformMessage& msg)
-{
-    emit updatePlatformDocRequested(QString::fromStdString(msg.from_client));
-}
 
 bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer_id, const std::string& message )
 {
