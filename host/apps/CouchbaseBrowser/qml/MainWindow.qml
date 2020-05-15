@@ -167,6 +167,9 @@ Window {
                 loginPopup.close()
                 waitingForStartListening = false;
             }
+            else {
+                loginPopup.submit()
+            }
         }
 
         if (waitingForStopListening) {

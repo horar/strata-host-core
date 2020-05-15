@@ -59,8 +59,6 @@ public:
     Q_INVOKABLE bool startListening(QString url, QString username = "", QString password = "",
                                     QString rep_type = "pull", std::vector<QString> channels = std::vector<QString> ());
 
-    Q_INVOKABLE bool restartListening();
-
     Q_INVOKABLE bool stopListening();
 
     Q_INVOKABLE void openDB(const QString &file_path);
@@ -160,7 +158,7 @@ private:
 
     const unsigned int REPLICATOR_RETRY_MAX = 50; // 50 * 200ms = 10s
 
-    bool is_restart_ = false;
+    bool is_retry_ = false;
 
 signals:
     void dbNameChanged();

@@ -3,7 +3,7 @@
 #include <QJsonArray>
 
 #include "DatabaseImpl.h"
-#include <iostream>
+
 using namespace std;
 using namespace cbl;
 
@@ -327,6 +327,7 @@ bool DatabaseImpl::stopListening()
     }
 
     sg_replicator_configuration_.reset();
+    is_retry_ = false;
     setRepstatus(false);
     suggested_channels_ += latest_replication_.channels;
     suggested_channels_.removeDuplicates();
@@ -437,7 +438,7 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
         return false;
     }
 
-    latest_replication_.url = url; std::cout << "\n[VICTOR] SET URL!!\nURL: ->" << latest_replication_.url.toStdString() << "<-" << std::endl;
+    latest_replication_.url = url;
     latest_replication_.username = username;
     latest_replication_.password = password;
     latest_replication_.rep_type = rep_type;
@@ -450,23 +451,21 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
     manual_replicator_stop_ = false;
     replicator_first_connection_ = true;
 
+    // Start replicator and check return status
     unsigned int retries = 0;
     sg_replicator_->start();
     while (sg_replicator_->status().activity != kCBLReplicatorStopped && sg_replicator_->status().activity != kCBLReplicatorIdle) {
         ++retries;
         this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
         if (sg_replicator_->status().error.code != 0) {
-            stopListening();
-
-
-
-            if(!is_restart_) {
-                setMessageAndStatus(MessageType::Error, "Problem with start of replicator.");
-                qCCritical(cb_browser_) << "Problem with start of replicator. Received replicator error code:" << sg_replicator_->status().error.code <<
-                    ", domain:" << sg_replicator_->status().error.domain << ", info:" << sg_replicator_->status().error.internal_info;
+            if(is_retry_) {
+                stopListening();
+                return false;
             }
-
-
+            stopListening();
+            setMessageAndStatus(MessageType::Error, "Problem with start of replicator.");
+            qCCritical(cb_browser_) << "Problem with start of replicator. Received replicator error code:" << sg_replicator_->status().error.code <<
+                ", domain:" << sg_replicator_->status().error.domain << ", info:" << sg_replicator_->status().error.internal_info;
             return false;
         }
         if (retries >= REPLICATOR_RETRY_MAX) {
@@ -477,16 +476,6 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
         }
     }
 
-    // latest_replication_.url = url; std::cout << "\n[VICTOR] SET URL!!\nURL: ->" << latest_replication_.url.toStdString() << "<-" << std::endl;
-    // latest_replication_.username = username;
-    // latest_replication_.password = password;
-    // latest_replication_.rep_type = rep_type;
-    // latest_replication_.channels.clear();
-
-    // for (const auto &chan : channels) {
-    //     latest_replication_.channels << chan;
-    // }
-
     if (config_mgr_) {
         vector<string> chan_strvec{};
         for (const auto &chan : channels) {
@@ -496,27 +485,7 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
     }
 
     emit jsonConfigChanged();
-
-    is_restart_ = false;
-
     return true;
-}
-
-bool DatabaseImpl::restartListening()
-{
-
-    std::cout << "\n[VICTOR] Inside DatabaseImpl::restartListening()\nURL: ->" << latest_replication_.url.toStdString() << "<-" << std::endl;
-
-    is_restart_ = true;
-    if (stopListening()) {
-        this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
-        vector<QString> channels;
-        for (const auto &channel : latest_replication_.channels) {
-            channels.push_back(channel);
-        }
-        return startListening(latest_replication_.url, latest_replication_.username, latest_replication_.password, latest_replication_.rep_type, channels);
-    }
-    return false;
 }
 
 void DatabaseImpl::repStatusChanged(Replicator, const CBLReplicatorStatus &level)
@@ -526,18 +495,13 @@ void DatabaseImpl::repStatusChanged(Replicator, const CBLReplicatorStatus &level
         return;
     }
 
-    // Check status for error
+    // Check status for error, set retry flag
     if (sg_replicator_->status().error.code != 0) {
         qCCritical(cb_browser_) << "Received replicator error code:" << sg_replicator_->status().error.code <<
             ", domain:" << sg_replicator_->status().error.domain << ", info:" << sg_replicator_->status().error.internal_info;
-
-        // Check for error "POSIX Error 5"
-        if (sg_replicator_->status().error.code == 5 && sg_replicator_->status().error.domain == 2 && sg_replicator_->status().error.internal_info == 1000) {
-            qCCritical(cb_browser_) << "Received replicator error 'POSIX error 5: Input/output error'";
-
-            std::cout << "\n{VICTOR} CALLING RESTART LISTENING() ...\n\n";
-
-            restartListening();
+        if (sg_replicator_->status().error.domain == 2 && sg_replicator_->status().error.code == 5) {
+            is_retry_ = true;
+            return;
         }
     }
 
