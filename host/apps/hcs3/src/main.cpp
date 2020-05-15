@@ -36,6 +36,10 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
     qCInfo(logCategoryHcs) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
     qCInfo(logCategoryHcs) << QStringLiteral("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
+    qCInfo(logCategoryHcs) << QStringLiteral("--------------------------------------------------------------------------------");
+    qCInfo(logCategoryHcs) << QStringLiteral("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
+    qCInfo(logCategoryHcs) << QStringLiteral("Running on %1").arg(QSysInfo::prettyProductName());
+    qCInfo(logCategoryHcs) << QStringLiteral("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
     qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
 
     spyglass::EvEventsMgrInstance instance;
