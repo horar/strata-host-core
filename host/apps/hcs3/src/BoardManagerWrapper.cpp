@@ -177,4 +177,4 @@ QString BoardManagerWrapper::logDeviceId(const int deviceId) const {
     return "Device Id: 0x" + QString::number(static_cast<uint>(deviceId), 16);
 }
 
-BoardManagerWrapper::Board::Board(strata::SerialDevicePtr& devPtr) : device(devPtr) { }
+BoardManagerWrapper::Board::Board(const strata::SerialDevicePtr& devPtr) : device(devPtr) { }
