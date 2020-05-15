@@ -42,6 +42,8 @@ add_library(${PROJECT_NAME}Lib STATIC
     src/PlatformDocument.cpp
     src/LoggingAdapter.cpp
 
+    src/RunGuard.cpp
+
     src/logging/LoggingQtCategories.cpp
 )
 

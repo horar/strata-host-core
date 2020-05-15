@@ -3,6 +3,8 @@
 #include "HostControllerServiceVersion.h"
 #include "HostControllerServiceTimestamp.h"
 
+#include "RunGuard.h"
+
 #include "logging/LoggingQtCategories.h"
 
 #include <QtLoggerSetup.h>
@@ -34,6 +36,7 @@ int main(int argc, char *argv[])
     parser.addHelpOption();
     parser.process(app);
 
+    RunGuard appGuard{"tech.strata.hcs"};
     const QtLoggerSetup loggerInitialization(app);
     qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
     qCInfo(logCategoryHcs) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
@@ -43,6 +46,11 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryHcs) << QStringLiteral("Running on %1").arg(QSysInfo::prettyProductName());
     qCInfo(logCategoryHcs) << QStringLiteral("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
     qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
+
+    if (appGuard.tryToRun() == false) {
+        qCCritical(logCategoryHcs) << QStringLiteral("Another instance of Host Controller Service is already running.");
+        return EXIT_FAILURE;
+    }
 
     spyglass::EvEventsMgrInstance instance;
 
