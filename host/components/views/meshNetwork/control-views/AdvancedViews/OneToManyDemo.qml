@@ -397,7 +397,7 @@ Rectangle {
                             id:bulbModelAddressText
                             anchors.bottom:parent.bottom
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text:"model id 0x" + address
+                            text:"Model ID 0x" + address
                             font.pixelSize: 15
                         }
                     }
@@ -514,7 +514,7 @@ Rectangle {
                             id:bulbModelAddressText2
                             anchors.bottom:parent.bottom
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text:"model id 0x" + address
+                            text:"Model ID 0x" + address
                             font.pixelSize: 15
                         }
                     }
@@ -630,7 +630,7 @@ Rectangle {
                             id:bulbModelAddressText3
                             anchors.bottom:parent.bottom
                             anchors.horizontalCenter: parent.horizontalCenter
-                            text:"model id 0x" + address
+                            text:"Model ID 0x" + address
                             font.pixelSize: 15
                         }
                     }

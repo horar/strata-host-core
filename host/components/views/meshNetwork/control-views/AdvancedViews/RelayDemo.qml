@@ -25,6 +25,8 @@ Rectangle {
 
     function updateNodeIDs(){
         var nodeCount = 0;
+        node1ID = node2ID = node3ID = 0;      //clear previous values
+
         for (var alpha = 0;  alpha < root.availableNodes.length  ; alpha++){
             //for each node that is marked visible set the visibilty of the node appropriately
             //console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
