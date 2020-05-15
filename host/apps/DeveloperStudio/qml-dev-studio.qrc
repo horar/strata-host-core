@@ -73,5 +73,6 @@
         <file>partial-views/SGLoadError.qml</file>
         <file>partial-views/platform-view/SGPlatformView.qml</file>
         <file>partial-views/status-bar/SGPlatformTab.qml</file>
+        <file>partial-views/platform-view/DisconnectedOverlay.qml</file>
     </qresource>
 </RCC>

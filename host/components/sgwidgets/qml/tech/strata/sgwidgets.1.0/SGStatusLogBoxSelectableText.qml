@@ -30,8 +30,8 @@ SGStatusLogBox {
     signal selectInBetween(int indexDragEnded)
 
     onDeselectAll: {
-        for (var i = 0; i < listView.model.count; i++) {
-            listView.model.get(i).state = "noneSelected"
+        for (var i = 0; i < root.model.count; i++) {
+            root.model.get(i).state = "noneSelected"
         }
     }
 
@@ -46,8 +46,8 @@ SGStatusLogBox {
             end = root.indexDragStarted
         }
 
-        for (var i = 0; i < listView.model.count; i++) {
-            var listElement = listView.model.get(i);
+        for (var i = 0; i < root.filterModel.count; i++) {
+            var listElement = root.model.get(filterModel.mapIndexToSource(i));
             if (i >= start && i < end) {
                 listElement.state = "allSelected"
             } else if (i < start - 1 || i > end) {
@@ -180,6 +180,7 @@ SGStatusLogBox {
             } else {
                 root.indexDragStarted = listView.model.count
             }
+            root.forceActiveFocus()
         }
 
         onClicked: {

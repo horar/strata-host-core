@@ -120,7 +120,7 @@ Rectangle {
                     CorePlatformInterface.data_source_handler('{
                                 "value":"direction",
                                 "payload":{
-                                         "direction": ' + direction + '
+                                         "direction": "' + direction + '"
                                 }
                         }')
 

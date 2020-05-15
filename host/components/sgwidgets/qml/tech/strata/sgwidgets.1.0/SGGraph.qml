@@ -1,6 +1,7 @@
 import QtQuick 2.0
-import tech.strata.commoncpp 1.0
 import QtQuick.Controls 2.12
+import tech.strata.commoncpp 1.0
+import tech.strata.sgwidgets 1.0 as SGWidgets
 
 SGQWTPlot {
     id: sgGraph
@@ -13,6 +14,11 @@ SGQWTPlot {
     property bool panYEnabled: true
     property bool zoomXEnabled: true
     property bool zoomYEnabled: true
+    property real fontSizeMultiplier: 1.0
+
+    titlePixelSize: SGWidgets.SGSettings.fontPixelSize * fontSizeMultiplier * 1.1667
+    xTitlePixelSize: SGWidgets.SGSettings.fontPixelSize * fontSizeMultiplier
+    yTitlePixelSize: SGWidgets.SGSettings.fontPixelSize * fontSizeMultiplier
 
     MouseArea {
         anchors.fill: parent

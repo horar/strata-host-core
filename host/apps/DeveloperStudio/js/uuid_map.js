@@ -64,6 +64,10 @@ var uuid_map = {
     "231": "ACF-PSU", // change this to actual AC - DC UUID which is 231
     "232": "subGHz2",
     "233": "sar-adc",
+    "234" : "Adj-LDO",
+    "235" : "Adj-LDO",
+    "236" : "Adj-LDO",
+    "237" : "Adj-LDO",
     "238": "ecoSWITCH",
     "239": "1A-LED",
     "240": "ldo-cp",
@@ -79,5 +83,7 @@ var uuid_map = {
         Real UUID generated from interaction with Deployment Portal (class_id)
     *****/
     "72ddcc10-2d18-4316-8170-5223162e54cf": "sensor",
-    "87054646-955d-42ed-aa82-8927b6a70286": "motorController"
+    "87054646-955d-42ed-aa82-8927b6a70286": "motorController",
+    "b8a53467-4155-4104-905e-8d23bb5664a3": "Adj-LDO",
+    "8da4158e-caa7-469d-8e4c-949d7a7e9858": "Adj-LDO"
 }

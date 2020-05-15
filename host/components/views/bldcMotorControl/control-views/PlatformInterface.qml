@@ -26,12 +26,17 @@ Item {
 
     //Target speed
     property var target_speed: {
-        "rpm": 1600
+        "rpm": 0
     }
 
     //Poles
     property var poles: {
         "poles": 6
+    }
+
+    onPolesChanged: {
+        //mark has requested that we echo back the poles notification to the platform when it's changed
+        platformInterface.set_poles.update(poles)
     }
 
     //shaft direction

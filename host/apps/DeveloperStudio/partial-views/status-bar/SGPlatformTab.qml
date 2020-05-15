@@ -46,8 +46,7 @@ Row {
             model.view = "control"
             row.bringIntoView()
         }
-        enabled: row.connected === true
-        iconSource: enabled ? "qrc:/images/icons/sliders-h.svg" : "qrc:/images/icons/disconnected.svg"
+        iconSource: row.connected ? "qrc:/images/icons/sliders-h.svg" : "qrc:/images/icons/disconnected.svg"
     }
 
     Rectangle {

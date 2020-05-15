@@ -24,11 +24,8 @@ class DocumentManager : public QObject
     Q_PROPERTY(DownloadDocumentListModel* downloadDocumentListModel READ downloadDocumentListModel CONSTANT)
     Q_PROPERTY(DocumentListModel* datasheetListModel READ datasheetListModel CONSTANT)
     Q_PROPERTY(DocumentListModel* pdfListModel READ pdfListModel CONSTANT)
-
-    Q_PROPERTY(uint pdfRevisionCount MEMBER pdf_rev_count_ NOTIFY pdfRevisionCountChanged)
-    Q_PROPERTY(uint downloadRevisionCount MEMBER download_rev_count_ NOTIFY downloadRevisionCountChanged)
-    Q_PROPERTY(uint datasheetRevisionCount MEMBER datasheet_rev_count_ NOTIFY datasheetRevisionCountChanged)
-
+    Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
+    Q_PROPERTY(int loadingProgressPercentage READ loadingProgressPercentage NOTIFY loadingProgressPercentageChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
 
 public:
@@ -41,47 +38,43 @@ public:
     DocumentListModel* pdfListModel();
 
     QString errorString() const;
+    bool loading() const;
+    int loadingProgressPercentage() const;
 
-    Q_INVOKABLE void clearPdfRevisionCount();
-    Q_INVOKABLE void clearDownloadRevisionCount();
-    Q_INVOKABLE void clearDatasheetRevisionCount();
+    Q_INVOKABLE void loadPlatformDocuments(const QString &classId);
     Q_INVOKABLE void clearDocuments();
 
 signals:
     void errorStringChanged();
-    void populateModelsReguest(QJsonObject data);
-
-    // Revision Count Changes
-    void pdfRevisionCountChanged(uint revisionCount);
-    void downloadRevisionCountChanged(uint revisionCount);
-    void datasheetRevisionCountChanged(uint revisionCount);
-
+    void loadingChanged();
+    void loadingProgressPercentageChanged();
+    void updateProgressRequested(QJsonObject data);
+    void populateModelsRequested(QJsonObject data);
     void setPdfModel(QList<DocumentItem*> list);
     void setDatasheetModel(QList<DocumentItem*> list);
     void setDownloadModel(QList<DownloadDocumentItem*> list);
 
-private:
-    CoreInterface *coreInterface_;
+private slots:
+    void documentProgressHandler(QJsonObject data);
+    void loadDocumentHandler(QJsonObject data);
 
-    void viewDocumentHandler(QJsonObject);
-
+    void updateLoadingProgress(QJsonObject data);
     void populateModels(QJsonObject data);
 
-
+private:
+    CoreInterface *coreInterface_;
     DownloadDocumentListModel downloadDocumentModel_;
     DocumentListModel datasheetModel_;
     DocumentListModel pdfModel_;
 
-    // Count the amount of deployments that have been received
-    uint pdf_rev_count_;
-    uint download_rev_count_;
-    uint datasheet_rev_count_;
-
     QString errorString_;
+    bool loading_ = false;
+    int loadingProgressPercentage_ = 0;
+
     void setErrorString(QString errorString);
-
+    void setLoading(bool loading);
+    void setLoadingProgressPercentage(int loadingProgressPercentage);
     void init();
-
     void populateDatasheetList(const QString &path, QList<DocumentItem* > &list);
 };
 
