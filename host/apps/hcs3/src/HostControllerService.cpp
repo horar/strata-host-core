@@ -82,6 +82,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(this, &HostControllerService::updatePlatformDocRequested, storageManager_, &StorageManager::updatePlatformDoc, Qt::QueuedConnection);
 
     connect(&boards_, &BoardManagerWrapper::boardConnected, this, &HostControllerService::platformConnected);
+    connect(&boards_, &BoardManagerWrapper::boardDisconnected, this, &HostControllerService::platformDisconnected);
     QString baseUrl = QString::fromStdString( db_cfg["file_server"].GetString() );
     storageManager_->setBaseUrl(baseUrl);
     storageManager_->setDatabase(&db_);
@@ -298,7 +299,6 @@ void HostControllerService::handleMessage(const PlatformMessage& msg)
 {
     switch(msg.msg_type)
     {
-        case PlatformMessage::eMsgPlatformDisconnected:         platformDisconnected(msg); break;
         case PlatformMessage::eMsgPlatformMessage:              sendMessageToClients(msg); break;
 
         case PlatformMessage::eMsgClientMessage:                handleClientMsg(msg); break;
@@ -325,30 +325,14 @@ void HostControllerService::platformConnected(const QString &classId, const QStr
     broadcastMessage(platformList);
 }
 
-void HostControllerService::platformDisconnected(const PlatformMessage& item)
+void HostControllerService::platformDisconnected(const QString &classId, const QString &platformId)
 {
-    rapidjson::Document doc;
-    if (doc.Parse<rapidjson::kParseCommentsFlag>(item.message.data()).HasParseError()) {
-        qCWarning(logCategoryHcs) << "Parse error!";
-        return;
-    }
+    Q_UNUSED(classId)
 
-    if (doc.HasMember("class_id") == false || doc.HasMember("platform_id") == false) {
-        qCWarning(logCategoryHcs) << "Parse error! no members";
-        return;
-    }
-
-    std::string platformId = doc["platform_id"].GetString();
-    HCS_Client* client = findClientByPlatformId(platformId);
+    HCS_Client* client = findClientByPlatformId(platformId.toStdString());
     if (client != nullptr) {
         client->resetPlatformId();
         emit cancelPlatformDocumentRequested(QByteArray::fromStdString(client->getClientId()));
-    }
-
-    std::string classId = doc["class_id"].GetString();
-    if (!classId.empty()) {
-        // TODO: Logic will be changed in SCT-517
-        //db_.remReplChannel(classId);
     }
 
     //send update to all clients

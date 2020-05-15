@@ -48,7 +48,8 @@ void BoardManagerWrapper::newConnection(int deviceId, bool recognized) {
     }
 }
 
-void BoardManagerWrapper::closeConnection(int deviceId) {
+void BoardManagerWrapper::closeConnection(int deviceId)
+{
     auto it = boards_.constFind(deviceId);
     if (it == boards_.constEnd()) {
         // This situation can occur if unrecognized board is disconnected.
@@ -56,24 +57,14 @@ void BoardManagerWrapper::closeConnection(int deviceId) {
         return;
     }
 
-    QJsonObject msg {
-        { JSON_PLATFORM_ID, it.value().device->property(strata::DeviceProperties::platformId) },
-        { JSON_CLASS_ID, it.value().device->property(strata::DeviceProperties::classId) }
-    };
-    QJsonDocument doc(msg);
+    QString classId = it.value().device->property(strata::DeviceProperties::classId);
+    QString platformId = it.value().device->property(strata::DeviceProperties::platformId);
 
     boards_.remove(deviceId);
 
-    PlatformMessage item;
-    item.msg_type = PlatformMessage::eMsgPlatformDisconnected;
-    item.from_connectionId.conn_id = deviceId;
-    item.from_connectionId.is_set = true;
-    item.message = doc.toJson(QJsonDocument::Compact).toStdString();
-    item.msg_document = nullptr;
-
-    dispatcher_->addMessage(item);
-
     qCInfo(logCategoryHcsBoard).noquote() << "Disconnected board." << logDeviceId(deviceId);
+
+    emit boardDisconnected(classId, platformId);
 }
 
 void BoardManagerWrapper::messageFromBoard(QString message) {
