@@ -812,6 +812,26 @@ Item {
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
 
+    property var switch_views : ({
+                                        "cmd" : "switch_views",
+                                        "payload": {
+                                              "uaddr":[],                           // array of node addresses
+                                              "mode":[]                             // relay, high_power, charging, door, alarm, security_camera, hvac, doorbell,
+                                                                                    // buzzer, robotic_arm, window_shade, smarthome_door, smarthome_lights, default
+                                        },
+
+                                        update: function (address,mode) {
+                                            this.set(address,mode)
+                                            this.send(this)
+                                        },
+                                        set: function (inAddress,inMode) {
+                                            this.payload.uaddr = inAddress;
+                                            this.payload.mode = inMode;
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+
 
     // -------------------------------------------------------------------
     // Listens to message notifications coming from CoreInterface.cpp

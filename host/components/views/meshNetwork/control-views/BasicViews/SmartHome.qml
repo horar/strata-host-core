@@ -11,22 +11,6 @@ Rectangle {
     id: root
     visible: true
 
-    onVisibleChanged: {
-        if (visible){
-            console.log("smart home is now visible")
-            //deactivate all the nodes from their previous roles when switching
-            //this is a kludge, as it means nodes will not function in the roles they appear in until they're moved
-            platformInterface.set_node_mode.update("default",65535,true)
-            //iterate over the meshArray, and send role and node numbers for each
-            //meshObjectRow.meshArray.forEach(function(item, index, array){
-                //removed temporarily to stop overloading the network when changing views
-                //platformInterface.set_node_mode.update(item.pairingModel,item.nodeNumber,true)
-            //    })
-        }
-
-    }
-
-
     property int objectWidth: 50
     property int objectHeight: 50
     property int nodeWidth: 32
@@ -38,6 +22,38 @@ Rectangle {
     property int meshObjectCount:0
     property variant meshObjects
     property var dragTargets:[]
+
+    property var activeNodes:[]     //nodes which are currently populated to be used for the switch_views command
+    property var activeNodeRoles:[] //the corresponding role for each node in activeNodes
+
+    onVisibleChanged: {
+        if (visible){
+            //console.log("smart home is now visible")
+            root.getActiveNodesAndRoles();
+            platformInterface.switch_views.update(activeNodes,activeNodeRoles)
+        }
+    }
+
+    function getActiveNodesAndRoles(){
+        var currentNode = 0;
+
+        //iterate over the meshArray, but start at 2, since the node 0 is never used, and node 1 is always a provisioner
+        for(var alpha=2; alpha < meshObjectRow.meshArray.length; alpha++){
+            //check to see if this mesh object has been assigned to a numbered node
+            if (meshObjectRow.meshArray[alpha] !== undefined && meshObjectRow.meshArray[alpha].nodeNumber !== ""){
+                //console.log("looking at node",alpha,"node number is",meshObjectRow.meshArray[alpha].nodeNumber,"role is",meshObjectRow.meshArray[alpha].pairingModel);
+                //put the node number in the next spot in the activeNodes array
+                root.activeNodes[currentNode] = parseInt(meshObjectRow.meshArray[alpha].nodeNumber);
+                //put the pairing model in the next spot in the activeNodeRoles array
+                //if the node has no pairing model, use "default"
+                root.activeNodeRoles[currentNode] = meshObjectRow.meshArray[alpha].pairingModel;
+                if (root.activeNodeRoles[currentNode] === ""){
+                    root.activeNodeRoles[currentNode] = "default"
+                }
+                currentNode++;
+            }
+        }
+    }
 
 
     Row{
@@ -91,28 +107,28 @@ Rectangle {
                 for(var beta = 1; beta < meshArray.length; beta++){
                     //console.log("comparing",platformInterface.network_notification.nodes[alpha].index, meshArray[beta].nodeNumber)
                     if (meshArray[beta].nodeNumber !== "" && meshArray[beta].nodeNumber == platformInterface.network_notification.nodes[alpha].index){
-                        console.log("found node",platformInterface.network_notification.nodes[alpha].index, "at location",beta)
+                        //console.log("found node",platformInterface.network_notification.nodes[alpha].index, "at location",beta)
                         if (platformInterface.network_notification.nodes[alpha].ready === 0){
                             //remove the item from the meshArray. It's not in the network anymore
                             nodeFoundInMeshArray = true;
                             meshArray[beta].objectColor = "#d3d3d3"
                             meshArray[beta].nodeNumber = ""
-                            console.log("Removing. Node not ready")
+                            //console.log("Removing. Node not ready")
                         }
                         else if (platformInterface.network_notification.nodes[alpha].ready !== 0){
                             //the node is in both the notification and in the meshArray, no need to update anything
                             //unless this is the provisioner, in which case we'll update the color, as it doesn't start as a grey node
                             if (alpha === 1){
-                                console.log("updating provisioner color to",platformInterface.network_notification.nodes[alpha].color)
+                                //console.log("updating provisioner color to",platformInterface.network_notification.nodes[alpha].color)
                                 meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
                             }
 
-                            console.log("node",platformInterface.network_notification.nodes[alpha].index,"found in meshArray")
+                            //console.log("node",platformInterface.network_notification.nodes[alpha].index,"found in meshArray")
                             nodeFoundInMeshArray = true;
                         }
                     }   //if node numbers match
                 }   //beta for loop
-                console.log("finished looking for node",platformInterface.network_notification.nodes[alpha].index,"found=",nodeFoundInMeshArray,"ready=",platformInterface.network_notification.nodes[alpha].ready)
+                //console.log("finished looking for node",platformInterface.network_notification.nodes[alpha].index,"found=",nodeFoundInMeshArray,"ready=",platformInterface.network_notification.nodes[alpha].ready)
                 if (!nodeFoundInMeshArray && platformInterface.network_notification.nodes[alpha].ready !== 0){
                     //we looked through the whole meshArray, and didn't find the nodeNumber that was in the notification
                     //so we should add this node in an empty slot
@@ -372,7 +388,7 @@ Rectangle {
                             else if (platformInterface.network_notification.nodes[alpha].ready !== 0){
                                 //the node is in both the notification and in the targetArray, no need to update anything
                                 if (alpha === 1){
-                                    console.log("updating provisioner color to",platformInterface.network_notification.nodes[alpha].color)
+                                    //console.log("updating provisioner color to",platformInterface.network_notification.nodes[alpha].color)
                                     targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
                                 }
                                 nodeFoundInTargetArray = true;
