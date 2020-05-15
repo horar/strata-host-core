@@ -147,7 +147,7 @@ Item {
     property var set_soft_start: ({
                                       "cmd" : "set_soft_start",
                                       "payload": {
-                                          "soft_start": "2.4ms"
+                                          "soft_start": "6ms"
                                       },
 
                                       // Update will set and send in one shot

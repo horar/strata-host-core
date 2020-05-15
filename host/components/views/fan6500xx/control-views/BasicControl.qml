@@ -763,10 +763,11 @@ ColumnLayout {
                                             onUserSet: {
                                                 platformInterface.switchFrequency = value
                                                 platformInterface.set_switching_frequency.update(value)
+                                                platformInterface.set_sync_slave_frequency.update(value)
 
-                                                if (SGComboBox.model === "Slave"){
-                                                    platformInterface.set_sync_slave_frequency.update(value)
-                                                }
+                                                //if (SGComboBox.model === "Slave"){
+                                                //platformInterface.set_sync_slave_frequency.update(value)
+                                                //}
                                             }
 
                                         }
@@ -1284,9 +1285,9 @@ ColumnLayout {
                                                             model: [ "Master", "Slave" ]
                                                             onActivated: {
                                                                 platformInterface.set_sync_mode.update(currentText.toLowerCase())
-                                                                if(syncCombo.currentText === "Slave") {
-                                                                    platformInterface.set_sync_slave_frequency.update(platformInterface.switchFrequency)
-                                                                }
+                                                                //if(syncCombo.currentText === "Slave") {
+                                                                //    platformInterface.set_sync_slave_frequency.update(platformInterface.switchFrequency)
+                                                                //}
                                                             }
                                                         }
 
@@ -1355,7 +1356,7 @@ ColumnLayout {
                                                     //                                                    borderColor: "black"
                                                     //                                                    textColor: "black"          // Default: "black"
                                                     //                                                    indicatorColor: "black"
-                                                    model: [ "1.2ms" , "2.4ms"]
+                                                    model: [ "3ms" , "6ms"]
                                                     fontSizeMultiplier: ratioCalc
                                                     onActivated: {
                                                         platformInterface.set_soft_start.update(currentText)
