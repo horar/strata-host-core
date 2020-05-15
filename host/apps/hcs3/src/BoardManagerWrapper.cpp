@@ -67,22 +67,19 @@ void BoardManagerWrapper::closeConnection(int deviceId)
     emit boardDisconnected(classId, platformId);
 }
 
-void BoardManagerWrapper::messageFromBoard(QString message) {
+void BoardManagerWrapper::messageFromBoard(QString message)
+{
     strata::SerialDevice *device = qobject_cast<strata::SerialDevice*>(QObject::sender());
     if (device == nullptr) {
         return;
     }
-    int deviceId = device->deviceId();
-    PlatformMessage item;
-    item.msg_type = PlatformMessage::eMsgPlatformMessage;
-    item.from_connectionId.conn_id = deviceId;
-    item.from_connectionId.is_set = true;
-    item.message = message.toStdString();
-    item.msg_document = nullptr;
 
-    dispatcher_->addMessage(item);
+    int deviceId = device->deviceId();
+    QString platformId = QString::fromStdString(getPlatformId(deviceId));
 
     qCDebug(logCategoryHcsBoard).noquote() << "New board message." << logDeviceId(deviceId);
+
+    emit boardMessage(platformId, message);
 }
 
 void BoardManagerWrapper::createPlatformsList(std::string& result) {

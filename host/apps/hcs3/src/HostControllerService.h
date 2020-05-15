@@ -96,7 +96,7 @@ private:
 
     void handleClientMsg(const PlatformMessage& msg);
     void handleCouchbaseMsg(const PlatformMessage& msg);
-    void sendMessageToClients(const PlatformMessage& msg);
+    void sendMessageToClients(const QString &platformId, const QString& message);
     bool disptachMessageToPlatforms(const std::string& dealer_id, const std::string& read_message);
 
     bool broadcastMessage(const std::string& message);

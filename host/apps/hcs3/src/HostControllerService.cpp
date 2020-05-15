@@ -83,13 +83,15 @@ bool HostControllerService::initialize(const QString& config)
 
     connect(&boards_, &BoardManagerWrapper::boardConnected, this, &HostControllerService::platformConnected);
     connect(&boards_, &BoardManagerWrapper::boardDisconnected, this, &HostControllerService::platformDisconnected);
+    connect(&boards_, &BoardManagerWrapper::boardMessage, this, &HostControllerService::sendMessageToClients);
+
     QString baseUrl = QString::fromStdString( db_cfg["file_server"].GetString() );
     storageManager_->setBaseUrl(baseUrl);
     storageManager_->setDatabase(&db_);
 
     db_.initReplicator(db_cfg["gateway_sync"].GetString(), replicator_username, replicator_password);
 
-    boards_.initialize(&dispatcher_);
+    boards_.initialize();
 
     rapidjson::Value& hcs_cfg = config_["host_controller_service"];
 
@@ -299,8 +301,6 @@ void HostControllerService::handleMessage(const PlatformMessage& msg)
 {
     switch(msg.msg_type)
     {
-        case PlatformMessage::eMsgPlatformMessage:              sendMessageToClients(msg); break;
-
         case PlatformMessage::eMsgClientMessage:                handleClientMsg(msg); break;
         case PlatformMessage::eMsgCouchbaseMessage:             handleCouchbaseMsg(msg); break;
 
@@ -341,13 +341,11 @@ void HostControllerService::platformDisconnected(const QString &classId, const Q
     broadcastMessage(platformList);
 }
 
-void HostControllerService::sendMessageToClients(const PlatformMessage& msg)
+void HostControllerService::sendMessageToClients(const QString &platformId, const QString &message)
 {
-    if (msg.from_connectionId.is_set) {
-        std::string clientId = boards_.getClientId(msg.from_connectionId.conn_id);
-        if (clientId.empty() == false) {
-            clients_.sendMessage(clientId, msg.message);
-        }
+    HCS_Client* client = findClientByPlatformId(platformId.toStdString());
+    if (client != nullptr) {
+        clients_.sendMessage(client->getClientId(), message.toStdString());
     }
 }
 
@@ -412,7 +410,7 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
     if (int device_id; boards_.getFirstDeviceIdByClassId(classId.toStdString(), device_id) ) {
         std::string platformId = boards_.getPlatformId(device_id);
         if (platformId.empty()) {
-            qCWarning(logCategoryHcs) << "Board doesn't have platfomId!";
+            qCWarning(logCategoryHcs) << "Board doesn't have platformId!";
             return;
         }
         if (boards_.setClientId(client->getClientId(), device_id) == false) {

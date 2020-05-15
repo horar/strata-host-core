@@ -111,6 +111,8 @@ public:
 signals:
     void boardConnected(QString classId, QString platformId);
     void boardDisconnected(QString classId, QString platformId);
+    void boardMessage(QString platformId, QString message);
+
 private slots:  // slots for signals from BoardManager
 
     void newConnection(int deviceId, bool recognized);
