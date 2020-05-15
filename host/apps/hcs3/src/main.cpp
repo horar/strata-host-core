@@ -1,4 +1,5 @@
 #include "HostControllerServiceVersion.h"
+#include "HostControllerServiceTimestamp.h"
 
 #include <QCoreApplication>
 #include <QCommandLineParser>
@@ -32,7 +33,10 @@ int main(int argc, char *argv[])
     parser.process(theApp);
 
     const QtLoggerSetup loggerInitialization(theApp);
+    qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
     qCInfo(logCategoryHcs) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(logCategoryHcs) << QStringLiteral("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
+    qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
 
     spyglass::EvEventsMgrInstance instance;
 
