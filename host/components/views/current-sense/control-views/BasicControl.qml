@@ -238,8 +238,8 @@ Item {
             activeDischarge.checked = true
         else activeDischarge.checked = false
 
-        if(initial_status.initial_status !== "") {
-            if(initial_status.initial_status === "freeze") {
+        if(initial_status.load_switch_status !== "") {
+            if(initial_status.load_switch_status === "freeze") {
                 lowLoadEnable.enabled = false
                 midCurrentEnable.enabled = false
                 highCurrentEnable.enabled = false
