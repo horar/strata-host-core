@@ -13,91 +13,53 @@ Item {
     height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
+    function setStateForPWMDuty(pwmDutyid,index) {
+        if(index === 0) {
+            pwmDutyid.enabled = true
+            pwmDutyid.opacity = 1.0
+        }
+        else if (index === 1) {
+            pwmDutyid.enabled = false
+            pwmDutyid.opacity = 1.0
+        }
+        else {
+            pwmDutyid.enabled = false
+            pwmDutyid.opacity = 0.5
+        }
+    }
+
+    function setOutEnState(outputEnable,index) {
+        if(index === 0) {
+            outputEnable.enabled = true
+            outputEnable.opacity = 1.0
+        }
+        else if(index === 1) {
+            outputEnable.enabled = false
+            outputEnable.opacity = 1.0
+        }
+        else {
+            outputEnable.enabled = false
+            outputEnable.opacity = 0.5
+        }
+    }
 
     property var led_out_en: platformInterface.led_out_en
     onLed_out_enChanged: {
         ledoutEnLabel.text =  led_out_en.caption
+        setOutEnState(out0ENLED,led_out_en.states[0])
+        setOutEnState(out1ENLED,led_out_en.states[1])
+        setOutEnState(out2ENLED,led_out_en.states[2])
+        setOutEnState(out3ENLED,led_out_en.states[3])
+        setOutEnState(out4ENLED,led_out_en.states[4])
+        setOutEnState(out5ENLED,led_out_en.states[5])
+        setOutEnState(out6ENLED,led_out_en.states[6])
+        setOutEnState(out7ENLED,led_out_en.states[7])
+        setOutEnState(out8ENLED,led_out_en.states[8])
+        setOutEnState(out9ENLED,led_out_en.states[9])
+        setOutEnState(out10ENLED,led_out_en.states[10])
+        setOutEnState(out11ENLED,led_out_en.states[11])
 
-        if(led_out_en.state === "enabled") {
-            out0ENLED.enabled = true
-            out0ENLED.opacity = 1.0
-            out1ENLED.enabled = true
-            out1ENLED.opacity = 1.0
-            out2ENLED.enabled = true
-            out2ENLED.opacity = 1.0
-            out3ENLED.enabled = true
-            out3ENLED.opacity = 1.0
-            out4ENLED.enabled = true
-            out4ENLED.opacity = 1.0
-            out5ENLED.enabled = true
-            out5ENLED.opacity = 1.0
-            out6ENLED.enabled = true
-            out6ENLED.opacity = 1.0
-            out7ENLED.enabled = true
-            out7ENLED.opacity = 1.0
-            out8ENLED.enabled = true
-            out8ENLED.opacity = 1.0
-            out9ENLED.enabled = true
-            out9ENLED.opacity = 1.0
-            out10ENLED.enabled = true
-            out10ENLED.opacity = 1.0
-            out11ENLED.enabled = true
-            out11ENLED.opacity = 1.0
 
-        }
-        else if (led_out_en.state === "disabled") {
-            out0ENLED.enabled = false
-            out0ENLED.opacity = 1.0
-            out1ENLED.enabled = false
-            out1ENLED.opacity = 1.0
-            out2ENLED.enabled = false
-            out2ENLED.opacity = 1.0
-            out3ENLED.enabled = false
-            out3ENLED.opacity = 1.0
-            out4ENLED.enabled = false
-            out4ENLED.opacity = 1.0
-            out5ENLED.enabled = false
-            out5ENLED.opacity = 1.0
-            out6ENLED.enabled = false
-            out6ENLED.opacity = 1.0
-            out7ENLED.enabled = false
-            out7ENLED.opacity = 1.0
-            out8ENLED.enabled = false
-            out8ENLED.opacity = 1.0
-            out9ENLED.enabled = false
-            out9ENLED.opacity = 1.0
-            out10ENLED.enabled = false
-            out10ENLED.opacity = 1.0
-            out11ENLED.enabled = false
-            out11ENLED.opacity = 1.0
-
-        }
-        else {
-            out0ENLED.enabled = false
-            out0ENLED.opacity = 0.5
-            out1ENLED.enabled = false
-            out1ENLED.opacity = 0.5
-            out2ENLED.enabled = false
-            out2ENLED.opacity = 0.5
-            out3ENLED.enabled = false
-            out3ENLED.opacity = 0.5
-            out4ENLED.enabled = false
-            out4ENLED.opacity = 0.5
-            out5ENLED.enabled = false
-            out5ENLED.opacity = 0.5
-            out6ENLED.enabled = false
-            out6ENLED.opacity = 0.5
-            out7ENLED.enabled = false
-            out7ENLED.opacity = 0.5
-            out8ENLED.enabled = false
-            out8ENLED.opacity = 0.5
-            out9ENLED.enabled = false
-            out9ENLED.opacity = 0.5
-            out10ENLED.enabled = false
-            out10ENLED.opacity = 0.5
-            out11ENLED.enabled = false
-            out11ENLED.opacity = 0.5
-        }
 
         if(led_out_en.values[0] === true)
             out0ENLED.checked = true
@@ -149,88 +111,20 @@ Item {
 
     }
 
-    property var led_out_en_state: platformInterface.led_out_en_state.state
-    onLed_out_en_stateChanged: {
-        if(led_out_en_state === "enabled") {
-            out0ENLED.enabled = true
-            out0ENLED.opacity = 1.0
-            out1ENLED.enabled = true
-            out1ENLED.opacity = 1.0
-            out2ENLED.enabled = true
-            out2ENLED.opacity = 1.0
-            out3ENLED.enabled = true
-            out3ENLED.opacity = 1.0
-            out4ENLED.enabled = true
-            out4ENLED.opacity = 1.0
-            out5ENLED.enabled = true
-            out5ENLED.opacity = 1.0
-            out6ENLED.enabled = true
-            out6ENLED.opacity = 1.0
-            out7ENLED.enabled = true
-            out7ENLED.opacity = 1.0
-            out8ENLED.enabled = true
-            out8ENLED.opacity = 1.0
-            out9ENLED.enabled = true
-            out9ENLED.opacity = 1.0
-            out10ENLED.enabled = true
-            out10ENLED.opacity = 1.0
-            out11ENLED.enabled = true
-            out11ENLED.opacity = 1.0
-
-        }
-        else if (led_out_en_state === "disabled") {
-            out0ENLED.enabled = false
-            out0ENLED.opacity = 1.0
-            out1ENLED.enabled = false
-            out1ENLED.opacity = 1.0
-            out2ENLED.enabled = false
-            out2ENLED.opacity = 1.0
-            out3ENLED.enabled = false
-            out3ENLED.opacity = 1.0
-            out4ENLED.enabled = false
-            out4ENLED.opacity = 1.0
-            out5ENLED.enabled = false
-            out5ENLED.opacity = 1.0
-            out6ENLED.enabled = false
-            out6ENLED.opacity = 1.0
-            out7ENLED.enabled = false
-            out7ENLED.opacity = 1.0
-            out8ENLED.enabled = false
-            out8ENLED.opacity = 1.0
-            out9ENLED.enabled = false
-            out9ENLED.opacity = 1.0
-            out10ENLED.enabled = false
-            out10ENLED.opacity = 1.0
-            out11ENLED.enabled = false
-            out11ENLED.opacity = 1.0
-
-        }
-        else {
-            out0ENLED.enabled = false
-            out0ENLED.opacity = 0.5
-            out1ENLED.enabled = false
-            out1ENLED.opacity = 0.5
-            out2ENLED.enabled = false
-            out2ENLED.opacity = 0.5
-            out3ENLED.enabled = false
-            out3ENLED.opacity = 0.5
-            out4ENLED.enabled = false
-            out4ENLED.opacity = 0.5
-            out5ENLED.enabled = false
-            out5ENLED.opacity = 0.5
-            out6ENLED.enabled = false
-            out6ENLED.opacity = 0.5
-            out7ENLED.enabled = false
-            out7ENLED.opacity = 0.5
-            out8ENLED.enabled = false
-            out8ENLED.opacity = 0.5
-            out9ENLED.enabled = false
-            out9ENLED.opacity = 0.5
-            out10ENLED.enabled = false
-            out10ENLED.opacity = 0.5
-            out11ENLED.enabled = false
-            out11ENLED.opacity = 0.5
-        }
+    property var led_out_en_states: platformInterface.led_out_en_states.states
+    onLed_out_en_statesChanged: {
+        setOutEnState(out0ENLED,led_out_en.states[0])
+        setOutEnState(out1ENLED,led_out_en.states[1])
+        setOutEnState(out2ENLED,led_out_en.states[2])
+        setOutEnState(out3ENLED,led_out_en.states[3])
+        setOutEnState(out4ENLED,led_out_en.states[4])
+        setOutEnState(out5ENLED,led_out_en.states[5])
+        setOutEnState(out6ENLED,led_out_en.states[6])
+        setOutEnState(out7ENLED,led_out_en.states[7])
+        setOutEnState(out8ENLED,led_out_en.states[8])
+        setOutEnState(out9ENLED,led_out_en.states[9])
+        setOutEnState(out10ENLED,led_out_en.states[10])
+        setOutEnState(out11ENLED,led_out_en.states[11])
     }
 
     property var led_out_en_values: platformInterface.led_out_en_values.values
@@ -1102,8 +996,6 @@ Item {
 
     property var led_pwm_duty: platformInterface.led_pwm_duty
     onLed_pwm_dutyChanged: {
-        pwmDutyText.text = led_pwm_duty.caption
-
         out0duty.value = led_pwm_duty.values[0]
         out1duty.value = led_pwm_duty.values[1]
         out2duty.value = led_pwm_duty.values[2]
@@ -1118,7 +1010,41 @@ Item {
         out9duty.value = led_pwm_duty.values[9]
         out10duty.value = led_pwm_duty.values[10]
         out11duty.value = led_pwm_duty.values[11]
+
+        platformInterface.outputDuty0 = led_pwm_duty.values[0]
+        platformInterface.outputDuty1 = led_pwm_duty.values[1]
+        platformInterface.outputDuty2 = led_pwm_duty.values[2]
+        platformInterface.outputDuty3 = led_pwm_duty.values[3]
+        platformInterface.outputDuty4 = led_pwm_duty.values[4]
+        platformInterface.outputDuty5 = led_pwm_duty.values[5]
+        platformInterface.outputDuty6 = led_pwm_duty.values[6]
+        platformInterface.outputDuty7 = led_pwm_duty.values[7]
+        platformInterface.outputDuty8 = led_pwm_duty.values[8]
+        platformInterface.outputDuty9 = led_pwm_duty.values[9]
+        platformInterface.outputDuty10 = led_pwm_duty.values[10]
+        platformInterface.outputDuty11 =  led_pwm_duty.values[11]
+
+
+        out0duty.from = led_pwm_duty.scales[1]
+        out0duty.to = led_pwm_duty.scales[0]
+        out0duty.value = led_pwm_duty.scales[2]
+
+        setStateForPWMDuty(out0duty,led_pwm_duty.states[0])
+        setStateForPWMDuty(out1duty,led_pwm_duty.states[1])
+        setStateForPWMDuty(out2duty,led_pwm_duty.states[2])
+        setStateForPWMDuty(out3duty,led_pwm_duty.states[3])
+        setStateForPWMDuty(out4duty,led_pwm_duty.states[4])
+        setStateForPWMDuty(out5duty,led_pwm_duty.states[5])
+        setStateForPWMDuty(out6duty,led_pwm_duty.states[6])
+        setStateForPWMDuty(out7duty,led_pwm_duty.states[7])
+        setStateForPWMDuty(out8duty,led_pwm_duty.states[8])
+        setStateForPWMDuty(out9duty,led_pwm_duty.states[9])
+        setStateForPWMDuty(out10duty,led_pwm_duty.states[10])
+        setStateForPWMDuty(out11duty,led_pwm_duty.states[11])
+
     }
+
+
 
     property var led_pwm_duty_values: platformInterface.led_pwm_duty_values.values
     onLed_pwm_duty_valuesChanged: {
@@ -1150,23 +1076,6 @@ Item {
         platformInterface.outputDuty10 = led_pwm_duty_values[10]
         platformInterface.outputDuty11 =  led_pwm_duty_values[11]
 
-
-        out0duty.from = led_pwm_duty.scales[1]
-        out0duty.to = led_pwm_duty.scales[0]
-        out0duty.value = led_pwm_duty.scales[2]
-
-        if(led_pwm_duty.state === "enabled") {
-            out0duty.enabled = true
-            out0duty.opacity = 1.0
-        }
-        else if(led_pwm_duty.state === "disabled") {
-            out0duty.enabled = false
-            out0duty.opacity = 1.0
-        }
-        else {
-            out0duty.enabled = false
-            out0duty.opacity = 0.5
-        }
     }
 
     RowLayout {
@@ -2619,20 +2528,10 @@ Item {
                                                     out0duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_state: platformInterface.led_pwm_duty_state.state
-                                                onLed_pwm_duty_stateChanged: {
-                                                    if(led_pwm_duty_state === "enabled") {
-                                                        out0duty.enabled = true
-                                                        out0duty.opacity = 1.0
-                                                    }
-                                                    else if(led_pwm_duty_state === "disabled") {
-                                                        out0duty.enabled = false
-                                                        out0duty.opacity = 1.0
-                                                    }
-                                                    else {
-                                                        out0duty.enabled = false
-                                                        out0duty.opacity = 0.5
-                                                    }
+                                                property var led_pwm_duty_states0: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states0Changed: {
+                                                    console.log(led_pwm_duty_states0[0])
+                                                    setStateForPWMDuty(out0duty,led_pwm_duty_states0[0])
                                                 }
 
                                                 onUserSet: {
@@ -2892,20 +2791,9 @@ Item {
                                                     out1duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_state: platformInterface.led_pwm_duty_state.state
-                                                onLed_pwm_duty_stateChanged: {
-                                                    if(led_pwm_duty_state === "enabled") {
-                                                        out1duty.enabled = true
-                                                        out1duty.opacity = 1.0
-                                                    }
-                                                    else if(led_pwm_duty_state === "disabled") {
-                                                        out1duty.enabled = false
-                                                        out1duty.opacity = 1.0
-                                                    }
-                                                    else {
-                                                        out1duty.enabled = false
-                                                        out1duty.opacity = 0.5
-                                                    }
+                                                property var led_pwm_duty_states1: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states1Changed: {
+                                                    setStateForPWMDuty(out1duty,led_pwm_duty_states1[1])
                                                 }
 
                                                 onUserSet: {
@@ -3158,20 +3046,9 @@ Item {
                                                     out2duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_state: platformInterface.led_pwm_duty_state.state
-                                                onLed_pwm_duty_stateChanged: {
-                                                    if(led_pwm_duty_state === "enabled") {
-                                                        out2duty.enabled = true
-                                                        out2duty.opacity = 1.0
-                                                    }
-                                                    else if(led_pwm_duty_state === "disabled") {
-                                                        out2duty.enabled = false
-                                                        out2duty.opacity = 1.0
-                                                    }
-                                                    else {
-                                                        out2duty.enabled = false
-                                                        out2duty.opacity = 0.5
-                                                    }
+                                                property var led_pwm_duty_states2: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states2Changed: {
+                                                    setStateForPWMDuty(out2duty,led_pwm_duty_states2[2])
                                                 }
 
                                                 onUserSet:  {
@@ -3428,21 +3305,11 @@ Item {
                                                     out3duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_state: platformInterface.led_pwm_duty_state.state
-                                                onLed_pwm_duty_stateChanged: {
-                                                    if(led_pwm_duty_state === "enabled") {
-                                                        out3duty.enabled = true
-                                                        out3duty.opacity = 1.0
-                                                    }
-                                                    else if(led_pwm_duty_state === "disabled") {
-                                                        out3duty.enabled = false
-                                                        out3duty.opacity = 1.0
-                                                    }
-                                                    else {
-                                                        out3duty.enabled = false
-                                                        out3duty.opacity = 0.5
-                                                    }
+                                                property var led_pwm_duty_states3: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states3Changed: {
+                                                    setStateForPWMDuty(out3duty,led_pwm_duty_states3[3])
                                                 }
+
 
                                                 onUserSet:
                                                 {
@@ -3701,21 +3568,11 @@ Item {
                                                     out4duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_state: platformInterface.led_pwm_duty_state.state
-                                                onLed_pwm_duty_stateChanged: {
-                                                    if(led_pwm_duty_state === "enabled") {
-                                                        out4duty.enabled = true
-                                                        out4duty.opacity = 1.0
-                                                    }
-                                                    else if(led_pwm_duty_state === "disabled") {
-                                                        out4duty.enabled = false
-                                                        out4duty.opacity = 1.0
-                                                    }
-                                                    else {
-                                                        out4duty.enabled = false
-                                                        out4duty.opacity = 0.5
-                                                    }
+                                                property var led_pwm_duty_states4: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states4Changed: {
+                                                    setStateForPWMDuty(out4duty,led_pwm_duty_states4[4])
                                                 }
+
 
                                                 onUserSet: {
                                                     platformInterface.outputDuty4 =  out4duty.value.toFixed(0)
@@ -3969,21 +3826,11 @@ Item {
                                                     out5duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_state: platformInterface.led_pwm_duty_state.state
-                                                onLed_pwm_duty_stateChanged: {
-                                                    if(led_pwm_duty_state === "enabled") {
-                                                        out5duty.enabled = true
-                                                        out5duty.opacity = 1.0
-                                                    }
-                                                    else if(led_pwm_duty_state === "disabled") {
-                                                        out5duty.enabled = false
-                                                        out5duty.opacity = 1.0
-                                                    }
-                                                    else {
-                                                        out5duty.enabled = false
-                                                        out5duty.opacity = 0.5
-                                                    }
+                                                property var led_pwm_duty_states5: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states5Changed: {
+                                                    setStateForPWMDuty(out5duty,led_pwm_duty_states5[5])
                                                 }
+
 
                                                 onUserSet: {
                                                     platformInterface.outputDuty5 =  out5duty.value.toFixed(0)
@@ -4236,21 +4083,11 @@ Item {
                                                     out6duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_state: platformInterface.led_pwm_duty_state.state
-                                                onLed_pwm_duty_stateChanged: {
-                                                    if(led_pwm_duty_state === "enabled") {
-                                                        out6duty.enabled = true
-                                                        out6duty.opacity = 1.0
-                                                    }
-                                                    else if(led_pwm_duty_state === "disabled") {
-                                                        out6duty.enabled = false
-                                                        out6duty.opacity = 1.0
-                                                    }
-                                                    else {
-                                                        out6duty.enabled = false
-                                                        out6duty.opacity = 0.5
-                                                    }
+                                                property var led_pwm_duty_states6: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states6Changed: {
+                                                    setStateForPWMDuty(out6duty,led_pwm_duty_states6[6])
                                                 }
+
                                                 onUserSet: {
                                                     platformInterface.outputDuty6 =  out6duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
@@ -4506,21 +4343,11 @@ Item {
                                                     out7duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_state: platformInterface.led_pwm_duty_state.state
-                                                onLed_pwm_duty_stateChanged: {
-                                                    if(led_pwm_duty_state === "enabled") {
-                                                        out7duty.enabled = true
-                                                        out7duty.opacity = 1.0
-                                                    }
-                                                    else if(led_pwm_duty_state === "disabled") {
-                                                        out7duty.enabled = false
-                                                        out7duty.opacity = 1.0
-                                                    }
-                                                    else {
-                                                        out7duty.enabled = false
-                                                        out7duty.opacity = 0.5
-                                                    }
+                                                property var led_pwm_duty_states7: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states7Changed: {
+                                                    setStateForPWMDuty(out7duty,led_pwm_duty_states7[7])
                                                 }
+
 
                                                 onUserSet: {
 
@@ -4770,21 +4597,9 @@ Item {
                                                     out8duty.to = led_pwm_duty_scales[0]
                                                     out8duty.value = led_pwm_duty_scales[2]
                                                 }
-
-                                                property var led_pwm_duty_state: platformInterface.led_pwm_duty_state.state
-                                                onLed_pwm_duty_stateChanged: {
-                                                    if(led_pwm_duty_state === "enabled") {
-                                                        out8duty.enabled = true
-                                                        out8duty.opacity = 1.0
-                                                    }
-                                                    else if(led_pwm_duty_state === "disabled") {
-                                                        out8duty.enabled = false
-                                                        out8duty.opacity = 1.0
-                                                    }
-                                                    else {
-                                                        out8duty.enabled = false
-                                                        out8duty.opacity = 0.5
-                                                    }
+                                                property var led_pwm_duty_states8: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states8Changed: {
+                                                    setStateForPWMDuty(out8duty,led_pwm_duty_states8[8])
                                                 }
 
 
@@ -5039,21 +4854,11 @@ Item {
                                                     out9duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_state: platformInterface.led_pwm_duty_state.state
-                                                onLed_pwm_duty_stateChanged: {
-                                                    if(led_pwm_duty_state === "enabled") {
-                                                        out9duty.enabled = true
-                                                        out9duty.opacity = 1.0
-                                                    }
-                                                    else if(led_pwm_duty_state === "disabled") {
-                                                        out9duty.enabled = false
-                                                        out9duty.opacity = 1.0
-                                                    }
-                                                    else {
-                                                        out9duty.enabled = false
-                                                        out9duty.opacity = 0.5
-                                                    }
+                                                property var led_pwm_duty_states9: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states9Changed: {
+                                                    setStateForPWMDuty(out9duty,led_pwm_duty_states9[9])
                                                 }
+
                                                 onUserSet: {
                                                     platformInterface.outputDuty9 =  out9duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
@@ -5305,21 +5110,11 @@ Item {
                                                     out10duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_state: platformInterface.led_pwm_duty_state.state
-                                                onLed_pwm_duty_stateChanged: {
-                                                    if(led_pwm_duty_state === "enabled") {
-                                                        out10duty.enabled = true
-                                                        out10duty.opacity = 1.0
-                                                    }
-                                                    else if(led_pwm_duty_state === "disabled") {
-                                                        out10duty.enabled = false
-                                                        out10duty.opacity = 1.0
-                                                    }
-                                                    else {
-                                                        out10duty.enabled = false
-                                                        out10duty.opacity = 0.5
-                                                    }
+                                                property var led_pwm_duty_states10: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states10Changed: {
+                                                    setStateForPWMDuty(out10duty,led_pwm_duty_states10[10])
                                                 }
+
                                                 onUserSet: {
                                                     platformInterface.outputDuty10 =  out10duty.value.toFixed(0)
                                                     platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
@@ -5574,20 +5369,9 @@ Item {
                                                     out11duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_state: platformInterface.led_pwm_duty_state.state
-                                                onLed_pwm_duty_stateChanged: {
-                                                    if(led_pwm_duty_state === "enabled") {
-                                                        out11duty.enabled = true
-                                                        out11duty.opacity = 1.0
-                                                    }
-                                                    else if(led_pwm_duty_state === "disabled") {
-                                                        out11duty.enabled = false
-                                                        out11duty.opacity = 1.0
-                                                    }
-                                                    else {
-                                                        out11duty.enabled = false
-                                                        out11duty.opacity = 0.5
-                                                    }
+                                                property var led_pwm_duty_states11: platformInterface.led_pwm_duty_states.states
+                                                onLed_pwm_duty_states11Changed: {
+                                                    setStateForPWMDuty(out11duty,led_pwm_duty_states11[11])
                                                 }
 
                                                 onUserSet: {

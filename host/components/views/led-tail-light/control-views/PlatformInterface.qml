@@ -83,7 +83,7 @@ Item {
     property var led_out_en: {
         "caption":"OUT EN",
         "scales":[],
-        "state":"enabled",
+        "states":[0,0,0,0,0,0,0,0,0,0,0,0],
         "value":"",
         "values":[true,true,true,true,true,true,true,true,true,true,true,true]
     }
@@ -92,17 +92,18 @@ Item {
         "caption":"OUT EN"
     }
 
-    property var led_out_en_state: {
-        "state":"enabled"
+    property var led_out_en_states: {
+        "states": [0,0,0,0,0,0,0,0,0,0,0,0]
     }
     property var led_out_en_values: {
         "values": [true,true,true,true,true,true,true,true,true,true,true,true]
     }
 
+
     property var led_ext: {
         "caption":"External LED",
         "scales":[],
-        "state":"enabled",
+        "states":"enabled",
         "value":"",
         "values":[false,false,false,false,false,false,false,false,false,false,false,false]
     }
@@ -166,7 +167,7 @@ Item {
     property var led_pwm_duty: {
         "caption":"PWM Duty",
         "scales":[127,0,1],
-        "state":"enabled",
+        "states":[1,0,0,0,0,0,0,0,0,0,0,0],
         "value":"",
         "values":[3,3,3,3,3,3,3,3,3,3,3,3]
     }
@@ -179,8 +180,8 @@ Item {
         "scales":[127,0,1]
     }
 
-    property var led_pwm_duty_state: {
-        "state":"enabled"
+    property var led_pwm_duty_states: {
+        "states":[0,0,0,0,0,0,0,0,0,0,0,0]
     }
 
     property var led_pwm_duty_values: {
