@@ -83,5 +83,6 @@ var uuid_map = {
     "87054646-955d-42ed-aa82-8927b6a70286": "motorController",
     "b8a53467-4155-4104-905e-8d23bb5664a3": "Adj-LDO",
     "8da4158e-caa7-469d-8e4c-949d7a7e9858": "Adj-LDO",
-    "72ddcc10-2d18-4316-8170-5223162e54cf": "led-tail-light"
+    "72ddcc10-2d18-4316-8170-5223162e54cf": "led-tail-light",
+    "led-tail-light" : "led-tail-light"
 }

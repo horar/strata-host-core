@@ -10,7 +10,7 @@ Item {
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
     anchors.centerIn: parent
-    height: parent.height
+   height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
     function toHex(d) {
@@ -2774,7 +2774,7 @@ Item {
 
                             property var soc_otp: platformInterface.soc_otp
                             onSoc_otpChanged:{
-                                 text = soc_otp.caption
+                                text = soc_otp.caption
                                 if(soc_otp.state === "enabled") {
                                     zapButton.opacity = 1.0
                                     zapButton.enabled = true

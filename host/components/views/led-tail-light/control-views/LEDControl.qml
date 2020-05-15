@@ -1171,12 +1171,16 @@ Item {
 
     RowLayout {
         anchors.fill: parent
+        spacing: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 10
+        anchors.top: parent.top
+        anchors.topMargin: 10
         Rectangle {
             id: leftSetting
             Layout.fillHeight: true
             Layout.preferredWidth: root.width/3
-            // color: "red"
-
+            color: "transparent"
             ColumnLayout {
                 anchors.fill: parent
                 spacing: 10
@@ -1184,836 +1188,1054 @@ Item {
                 Rectangle{
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    color: "transparent"
+                    ColumnLayout{
+                        anchors.fill: parent
 
-                    SGAlignedLabel {
-                        id: partNumberLabel
-                        target: partNumber
-                        alignment: SGAlignedLabel.SideLeftCenter
-                        anchors {
-                            right: parent.right
-                            verticalCenter: parent.verticalCenter
-                            rightMargin: 60
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: parent.height/9
+                            color: "transparent"
 
-                        }
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        font.bold : true
-                        SGInfoBox{
-                            id: partNumber
-                            height:  35 * ratioCalc
-                            width: 120 * ratioCalc
-                            fontSizeMultiplier: ratioCalc * 1.2
-                        }
-
-                        property var led_part_number_value: platformInterface.led_part_number_value
-                        onLed_part_number_valueChanged: {
-                            partNumberLabel.text = led_part_number_value.caption
-                            if(led_part_number_value.state === "enabled" ) {
-                                partNumber.enabled = true
-                                partNumber.opacity = 1.0
-
-                            }
-                            else if(led_part_number_value.state === "disabled") {
-                                partNumber.enabled = false
-                                partNumber.opacity = 1.0
-                            }
-                            else {
-                                partNumber.enabled = false
-                                partNumber.opacity = 0.5
-
+                            Text {
+                                id: generalSettingHeading
+                                text: "General Settings"
+                                font.bold: true
+                                font.pixelSize: ratioCalc * 20
+                                color: "#696969"
+                                anchors {
+                                    top: parent.top
+                                    topMargin: 5
+                                }
                             }
 
-                            partNumber.text = led_part_number_value.value
-                        }
-
-                        property var led_part_number_value_caption: platformInterface.led_part_number_value_caption.caption
-                        onLed_part_number_value_captionChanged: {
-                            partNumberLabel.text = led_part_number_value_caption
-                        }
-
-                        property var led_part_number_value_state: platformInterface.led_part_number_value_state.state
-                        onLed_part_number_value_stateChanged: {
-                            if(led_part_number_value_state === "enabled" ) {
-                                partNumber.enabled = true
-                                partNumber.opacity = 1.0
-
-                            }
-                            else if(led_part_number_value_state === "disabled") {
-                                partNumber.enabled = false
-                                partNumber.opacity = 1.0
-                            }
-                            else {
-                                partNumber.enabled = false
-                                partNumber.opacity = 0.5
-
+                            Rectangle {
+                                id: line1
+                                height: 2
+                                Layout.alignment: Qt.AlignCenter
+                                width: parent.width
+                                border.color: "lightgray"
+                                radius: 1.5
+                                anchors {
+                                    top: generalSettingHeading.bottom
+                                    topMargin: 7
+                                }
                             }
                         }
+                        Rectangle{
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
 
-                        property var led_part_number_value_value: platformInterface.led_part_number_value_value.value
-                        onLed_part_number_value_valueChanged: {
-                            partNumber.text = led_part_number_value_value
-                        }
-
-                    }
-                }
-
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    SGAlignedLabel {
-                        id: enableOutputLabel
-                        target: enableOutput
-
-                        alignment: SGAlignedLabel.SideLeftCenter
-                        anchors {
-                            right: parent.right
-                            verticalCenter: parent.verticalCenter
-                            rightMargin: 60
-
-                        }
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        font.bold : true
-
-                        SGSwitch {
-                            id: enableOutput
-                            labelsInside: true
-                            checkedLabel: "On"
-                            uncheckedLabel: "Off"
-                            fontSizeMultiplier: ratioCalc
-                            checked: false
-
-                            onToggled: {
-                                if(checked)
-                                    platformInterface.set_led_oen.update(true)
-                                else platformInterface.set_led_oen.update(false)
-                            }
-
-                            property var led_oen: platformInterface.led_oen
-                            onLed_oenChanged: {
-                                enableOutputLabel.text = led_oen.caption
-                                if(led_oen.state === "enabled" ) {
-                                    enableOutput.enabled = true
-                                    enableOutput.opacity = 1.0
-
-                                }
-                                else if(led_oen.state === "disabled") {
-                                    enableOutput.enabled = false
-                                    enableOutput.opacity = 1.0
-                                }
-                                else {
-                                    enableOutput.enabled = false
-                                    enableOutput.opacity = 0.5
-
-                                }
-                                if(led_oen.value === true)
-                                    enableOutput.checked = true
-                                else  enableOutput.checked = false
-                            }
-
-                            property var led_oen_caption: platformInterface.led_oen_caption.caption
-                            onLed_oen_captionChanged : {
-                                enableOutputLabel.text = led_oen_caption
-                            }
-
-                            property var led_oen_state: platformInterface.led_oen_state.state
-                            onLed_oen_stateChanged : {
-                                if(led_oen_state === "enabled" ) {
-                                    enableOutput.enabled = true
-                                    enableOutput.opacity = 1.0
-
-                                }
-                                else if(led_oen_state === "disabled") {
-                                    enableOutput.enabled = false
-                                    enableOutput.opacity = 1.0
-                                }
-                                else {
-                                    enableOutput.enabled = false
-                                    enableOutput.opacity = 0.5
-
-                                }
-                            }
-
-                            property var led_oen_value: platformInterface.led_oen_value.value
-                            onLed_oen_valueChanged : {
-                                if(led_oen_value === true)
-                                    enableOutput.checked = true
-                                else  enableOutput.checked = false
-
-
-                            }
-
-
-                        }
-                    }
-                }
-
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    SGAlignedLabel {
-                        id: pwmenableOutputLabel
-                        target: pwmenableOutput
-
-                        alignment: SGAlignedLabel.SideLeftCenter
-                        anchors {
-                            right: parent.right
-                            verticalCenter: parent.verticalCenter
-                            rightMargin: 60
-
-                        }
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        font.bold : true
-
-                        SGSwitch {
-                            id: pwmenableOutput
-                            labelsInside: true
-                            checkedLabel: "On"
-                            uncheckedLabel: "Off"
-                            fontSizeMultiplier: ratioCalc
-                            checked: false
-                            onToggled: {
-                                if(checked)
-                                    platformInterface.set_led_pwm_enable.update(true)
-                                else platformInterface.set_led_pwm_enable.update(false)
-                            }
-
-                            property var led_pwm_enable: platformInterface.led_pwm_enable
-                            onLed_pwm_enableChanged: {
-                                pwmenableOutputLabel.text = led_pwm_enable.caption
-
-                                if(led_pwm_enable.state === "enabled" ) {
-                                    pwmenableOutput.enabled = true
-                                    pwmenableOutput.opacity = 1.0
-
-                                }
-                                else if(led_pwm_enable.state === "disabled") {
-                                    pwmenableOutput.enabled = false
-                                    pwmenableOutput.opacity = 1.0
-                                }
-                                else {
-                                    pwmenableOutput.enabled = false
-                                    enableOutput.opacity = 0.5
+                            SGAlignedLabel {
+                                id: partNumberLabel
+                                target: partNumber
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+                                SGInfoBox{
+                                    id: partNumber
+                                    height:  35 * ratioCalc
+                                    width: 120 * ratioCalc
+                                    fontSizeMultiplier: ratioCalc * 1.2
                                 }
 
-                                if(led_pwm_enable.value === true)
-                                    pwmenableOutput.checked = true
-                                else  pwmenableOutput.checked = false
-                            }
-
-                            property var led_pwm_enable_caption: platformInterface.led_pwm_enable_caption.caption
-                            onLed_pwm_enable_captionChanged : {
-                                pwmenableOutputLabel.text = led_pwm_enable_caption
-                            }
-
-                            property var led_pwm_enable_state: platformInterface.led_pwm_enable_state.state
-                            onLed_pwm_enable_stateChanged : {
-                                if(led_pwm_enable_state === "enabled" ) {
-                                    pwmenableOutput.enabled = true
-                                    pwmenableOutput.opacity = 1.0
-
-                                }
-                                else if(led_pwm_enable_state === "disabled") {
-                                    pwmenableOutput.enabled = false
-                                    pwmenableOutput.opacity = 1.0
-                                }
-                                else {
-                                    pwmenableOutput.enabled = false
-                                    enableOutput.opacity = 0.5
-
-                                }
-                            }
-
-                            property var led_pwm_enable_value: platformInterface.led_pwm_enable_value.value
-                            onLed_pwm_enable_valueChanged : {
-                                if(led_pwm_enable_value === true)
-                                    pwmenableOutput.checked = true
-                                else  pwmenableOutput.checked = false
-
-
-                            }
-
-
-                        }
-                    }
-                }
-
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    SGAlignedLabel {
-                        id: lockPWMDutyLabel
-                        target: lockPWMDuty
-                        //text: "Lock PWM Duty Together"
-                        alignment: SGAlignedLabel.SideLeftCenter
-                        anchors {
-                            right: parent.right
-                            verticalCenter: parent.verticalCenter
-                            rightMargin: 60
-
-                        }
-
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        font.bold : true
-
-                        SGSwitch {
-                            id: lockPWMDuty
-                            labelsInside: true
-                            checkedLabel: "On"
-                            uncheckedLabel: "Off"
-                            fontSizeMultiplier: ratioCalc
-                            checked: false
-
-                            onToggled: {
-                                platformInterface.set_led_pwm_duty_lock.update(checke)
-                            }
-
-
-                            property var led_pwm_duty_lock: platformInterface.led_pwm_duty_lock
-                            onLed_pwm_duty_lockChanged: {
-                                lockPWMDutyLabel.text = led_pwm_duty_lock.caption
-
-                                if(led_pwm_duty_lock.state === "enabled" ) {
-                                    lockPWMDuty.enabled = true
-                                    lockPWMDuty.opacity = 1.0
-
-                                }
-                                else if(led_pwm_duty_lock.state === "disabled") {
-                                    lockPWMDuty.enabled = false
-                                    lockPWMDuty.opacity = 1.0
-                                }
-                                else {
-                                    lockPWMDuty.enabled = false
-                                    lockPWMDuty.opacity = 0.5
-
-                                }
-                                if(led_pwm_duty_lock.value === true)
-                                    lockPWMDuty.checked = true
-                                else  lockPWMDuty.checked = false
-                            }
-
-                            property var led_pwm_duty_lock_caption: platformInterface.led_pwm_duty_lock_caption.caption
-                            onLed_pwm_duty_lock_captionChanged : {
-                                lockPWMDutyLabel.text = led_pwm_duty_lock_caption
-                            }
-
-                            property var led_pwm_duty_lock_state: platformInterface.led_pwm_duty_lock_state.state
-                            onLed_pwm_duty_lock_stateChanged : {
-                                if(led_pwm_duty_lock_state === "enabled" ) {
-                                    lockPWMDuty.enabled = true
-                                    lockPWMDuty.opacity = 1.0
-
-                                }
-                                else if(led_pwm_duty_lock_state === "disabled") {
-                                    lockPWMDuty.enabled = false
-                                    lockPWMDuty.opacity = 1.0
-                                }
-                                else {
-                                    lockPWMDuty.enabled = false
-                                    lockPWMDuty.opacity = 0.5
-
-                                }
-                            }
-
-                            property var led_pwm_duty_lock_value: platformInterface.led_pwm_duty_lock_value.value
-                            onLed_pwm_duty_lock_valueChanged : {
-                                if(led_pwm_duty_lock_value === true)
-                                    lockPWMDuty.checked = true
-                                else  lockPWMDuty.checked = false
-
-
-                            }
-                        }
-                    }
-                }
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    SGAlignedLabel {
-                        id: lockPWMDutyENLabel
-                        target: lockPWMDutyEN
-                        // text: "Lock PWM EN Together"
-                        alignment: SGAlignedLabel.SideLeftCenter
-                        anchors {
-                            right: parent.right
-                            verticalCenter: parent.verticalCenter
-                            rightMargin: 60
-
-                        }
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        font.bold : true
-                        horizontalAlignment: Text.AlignHCenter
-
-                        SGSwitch {
-                            id: lockPWMDutyEN
-                            labelsInside: true
-                            checkedLabel: "On"
-                            uncheckedLabel: "Off"
-                            fontSizeMultiplier: ratioCalc
-                            checked: false
-
-                            onToggled: {
-                                platformInterface.set_led_pwm_en_lock.update(checked)
-                            }
-
-                            property var led_pwm_en_lock: platformInterface.led_pwm_en_lock
-                            onLed_pwm_en_lockChanged: {
-                                lockPWMDutyENLabel.text = led_pwm_en_lock.caption
-                                if(led_pwm_en_lock.state === "enabled" ) {
-                                    lockPWMDutyEN.enabled = true
-                                    lockPWMDutyEN.opacity = 1.0
-
-                                }
-                                else if(led_pwm_en_lock.state === "disabled") {
-                                    lockPWMDutyEN.enabled = false
-                                    lockPWMDutyEN.opacity = 1.0
-                                }
-                                else {
-                                    lockPWMDutyEN.enabled = false
-                                    lockPWMDutyEN.opacity = 0.5
-
-                                }
-                                if(led_pwm_en_lock.value === true)
-                                    lockPWMDutyEN.checked = true
-                                else  lockPWMDutyEN.checked = false
-
-                            }
-
-                            property var led_pwm_en_lock_caption: platformInterface.led_pwm_en_lock_caption.caption
-                            onLed_pwm_en_lock_captionChanged : {
-                                lockPWMDutyENLabel.text = led_pwm_en_lock_caption
-
-                            }
-
-                            property var led_pwm_en_lock_state: platformInterface.led_pwm_en_lock_state.state
-                            onLed_pwm_en_lock_stateChanged : {
-                                if(led_pwm_en_lock_state === "enabled" ) {
-                                    lockPWMDutyEN.enabled = true
-                                    lockPWMDutyEN.opacity = 1.0
-
-                                }
-                                else if(led_pwm_en_lock_state === "disabled") {
-                                    lockPWMDutyEN.enabled = false
-                                    lockPWMDutyEN.opacity = 1.0
-                                }
-                                else {
-                                    lockPWMDutyEN.enabled = false
-                                    lockPWMDutyEN.opacity = 0.5
-
-                                }
-                            }
-
-                            property var led_pwm_en_lock_value: platformInterface.led_pwm_en_lock_value.value
-                            onLed_pwm_en_lock_valueChanged : {
-                                if(led_pwm_en_lock_value === true)
-                                    lockPWMDutyEN.checked = true
-                                else  lockPWMDutyEN.checked = false
-
-
-                            }
-                        }
-                    }
-                }
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    SGAlignedLabel {
-                        id: pwmLinearLogLabel
-                        target: pwmLinearLog
-                        // text: "PWM Linear/Log"
-                        alignment: SGAlignedLabel.SideLeftCenter
-                        anchors {
-                            right: parent.right
-                            verticalCenter: parent.verticalCenter
-                            rightMargin: 60
-
-                        }
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        font.bold : true
-
-
-                        SGSwitch {
-                            id: pwmLinearLog
-                            fontSizeMultiplier: ratioCalc
-
-                            onToggled:  {
-                                platformInterface.pwm_lin_state = checked
-                                platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                          checked,
-                                                                          [platformInterface.outputDuty0,
-                                                                           platformInterface.outputDuty1,
-                                                                           platformInterface.outputDuty2,
-                                                                           platformInterface.outputDuty3,
-                                                                           platformInterface.outputDuty4,
-                                                                           platformInterface.outputDuty5,
-                                                                           platformInterface.outputDuty6,
-                                                                           platformInterface.outputDuty7,
-                                                                           platformInterface.outputDuty8,
-                                                                           platformInterface.outputDuty9,
-                                                                           platformInterface.outputDuty10,
-                                                                           platformInterface.outputDuty11
-
-                                                                          ], [
-                                                                              platformInterface.outputPwm0,
-                                                                              platformInterface.outputPwm1,
-                                                                              platformInterface.outputPwm2,
-                                                                              platformInterface.outputPwm3,
-                                                                              platformInterface.outputPwm4,
-                                                                              platformInterface.outputPwm5,
-                                                                              platformInterface.outputPwm6,
-                                                                              platformInterface.outputPwm7,
-                                                                              platformInterface.outputPwm8,
-                                                                              platformInterface.outputPwm9,
-                                                                              platformInterface.outputPwm10,
-                                                                              platformInterface.outputPwm11])
-
-
-                            }
-
-                            property var led_linear_log: platformInterface.led_linear_log
-                            onLed_linear_logChanged: {
-                                pwmLinearLogLabel.text = led_linear_log.caption
-                                if(led_linear_log.state === "enabled" ) {
-                                    pwmLinearLog.enabled = true
-                                    pwmLinearLog.opacity = 1.0
-
-                                }
-                                else if(led_linear_log.state === "disabled") {
-                                    pwmLinearLog.enabled = false
-                                    pwmLinearLog.opacity = 1.0
-                                }
-                                else {
-                                    pwmLinearLog.enabled = false
-                                    pwmLinearLog.opacity = 0.5
-
-                                }
-                                pwmLinearLog.checkedLabel = led_linear_log.values[0]
-                                pwmLinearLog.uncheckedLabel = led_linear_log.values[1]
-
-                                if(led_linear_log.value === "Linear")
-                                    pwmLinearLog.checked = true
-                                else  pwmLinearLog.checked = false
-                            }
-
-
-                            property var led_linear_log_caption: platformInterface.led_linear_log_caption.caption
-                            onLed_linear_log_captionChanged: {
-                                pwmLinearLogLabel.text = led_linear_log_caption
-                            }
-
-                            property var led_linear_log_state: platformInterface.led_linear_log_state.state
-                            onLed_linear_log_stateChanged: {
-                                if(led_linear_log_state === "enabled" ) {
-                                    pwmLinearLog.enabled = true
-                                    pwmLinearLog.opacity = 1.0
-
-                                }
-                                else if(led_linear_log_state === "disabled") {
-                                    pwmLinearLog.enabled = false
-                                    pwmLinearLog.opacity = 1.0
-                                }
-                                else {
-                                    pwmLinearLog.enabled = false
-                                    pwmLinearLog.opacity = 0.5
-
-                                }
-                            }
-
-                            property var led_linear_log_values: platformInterface.led_linear_log_values.values
-                            onLed_linear_log_valuesChanged: {
-                                pwmLinearLog.checkedLabel = led_linear_log_values[0]
-                                pwmLinearLog.uncheckedLabel = led_linear_log_values[1]
-                            }
-
-                            property var led_linear_log_value: platformInterface.led_linear_log_value.value
-                            onLed_linear_log_valueChanged: {
-                                if(led_linear_log_value === "Linear")
-                                    pwmLinearLog.checked = true
-                                else  pwmLinearLog.checked = false
-
-                            }
-                        }
-                    }
-                }
-                //                Rectangle {
-                //                    Layout.fillHeight: true
-                //                    Layout.fillWidth: true
-                //                    //color: "red"
-
-                //                    SGAlignedLabel {
-                //                        id: autoFaultRecoveryLabel
-                //                        target: autoFaultRecovery
-                //                        text: "Auto Fault Recovery"
-                //                        alignment: SGAlignedLabel.SideLeftCenter
-                //                        anchors {
-                //                            right: parent.right
-                //                            verticalCenter: parent.verticalCenter
-                //                            rightMargin: 60
-
-                //                        }
-
-                //                        fontSizeMultiplier: ratioCalc * 1.2
-                //                        font.bold : true
-
-                //                        SGSwitch {
-                //                            id: autoFaultRecovery
-                //                            labelsInside: true
-                //                            checkedLabel: "On"
-                //                            uncheckedLabel: "Off"
-                //                            textColor: "black"              // Default: "black"
-                //                            handleColor: "white"            // Default: "white"
-                //                            grooveColor: "#ccc"             // Default: "#ccc"
-                //                            grooveFillColor: "#0cf"         // Default: "#0cf"
-                //                            fontSizeMultiplier: ratioCalc
-                //                            checked: false
-                //                        }
-                //                    }
-                //                }
-                //                Rectangle {
-                //                    Layout.fillHeight: true
-                //                    Layout.fillWidth: true
-                //                    SGAlignedLabel {
-                //                        id: label
-                //                        target: labelSwitch
-                //                        text: "?"
-                //                        alignment: SGAlignedLabel.SideLeftCenter
-                //                        anchors {
-                //                            right: parent.right
-                //                            verticalCenter: parent.verticalCenter
-                //                            rightMargin: 60
-
-                //                        }
-
-                //                        fontSizeMultiplier: ratioCalc * 1.2
-                //                        font.bold : true
-
-                //                        SGSwitch {
-                //                            id: labelSwitch
-                //                            labelsInside: true
-                //                            checkedLabel: "On"
-                //                            uncheckedLabel: "Off"
-                //                            textColor: "black"              // Default: "black"
-                //                            handleColor: "white"            // Default: "white"
-                //                            grooveColor: "#ccc"             // Default: "#ccc"
-                //                            grooveFillColor: "#0cf"         // Default: "#0cf"
-                //                            fontSizeMultiplier: ratioCalc
-                //                            checked: false
-                //                        }
-                //                    }
-                //                }
-                Rectangle {
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    SGAlignedLabel {
-                        id: pwmFrequencyLabel
-                        target: pwmFrequency
-                        // text: "PWM Frequency (Hz)"
-                        alignment: SGAlignedLabel.SideLeftCenter
-                        anchors {
-                            right: parent.right
-                            verticalCenter: parent.verticalCenter
-                            rightMargin: 60
-
-                        }
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        font.bold : true
-
-                        SGComboBox {
-                            id: pwmFrequency
-                            fontSizeMultiplier: ratioCalc
-
-                            onActivated: {
-                                platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
-                                                                          platformInterface.pwm_lin_state,
-                                                                          [platformInterface.outputDuty0,
-                                                                           platformInterface.outputDuty1,
-                                                                           platformInterface.outputDuty2,
-                                                                           platformInterface.outputDuty3,
-                                                                           platformInterface.outputDuty4,
-                                                                           platformInterface.outputDuty5,
-                                                                           platformInterface.outputDuty6,
-                                                                           platformInterface.outputDuty7,
-                                                                           platformInterface.outputDuty8,
-                                                                           platformInterface.outputDuty9,
-                                                                           platformInterface.outputDuty10,
-                                                                           platformInterface.outputDuty11
-
-                                                                          ], [
-                                                                              platformInterface.outputPwm0,
-                                                                              platformInterface.outputPwm1,
-                                                                              platformInterface.outputPwm2,
-                                                                              platformInterface.outputPwm3,
-                                                                              platformInterface.outputPwm4,
-                                                                              platformInterface.outputPwm5,
-                                                                              platformInterface.outputPwm6,
-                                                                              platformInterface.outputPwm7,
-                                                                              platformInterface.outputPwm8,
-                                                                              platformInterface.outputPwm9,
-                                                                              platformInterface.outputPwm10,
-                                                                              platformInterface.outputPwm11])
-                            }
-
-                            property var led_pwm_freq: platformInterface.led_pwm_freq
-                            onLed_pwm_freqChanged: {
-                                pwmFrequencyLabel.text = led_pwm_freq.caption
-
-                                if(led_pwm_freq.state === "enabled" ) {
-                                    pwmFrequency.enabled = true
-                                    pwmFrequency.opacity = 1.0
-
-                                }
-                                else if(led_pwm_freq.state === "disabled") {
-                                    pwmFrequency.enabled = false
-                                    pwmFrequency.opacity = 1.0
-                                }
-                                else {
-                                    pwmFrequency.enabled = false
-                                    pwmFrequency.opacity = 0.5
-
+                                property var led_part_number_value: platformInterface.led_part_number_value
+                                onLed_part_number_valueChanged: {
+                                    partNumberLabel.text = led_part_number_value.caption
+                                    if(led_part_number_value.state === "enabled" ) {
+                                        partNumber.enabled = true
+                                        partNumber.opacity = 1.0
+
+                                    }
+                                    else if(led_part_number_value.state === "disabled") {
+                                        partNumber.enabled = false
+                                        partNumber.opacity = 1.0
+                                    }
+                                    else {
+                                        partNumber.enabled = false
+                                        partNumber.opacity = 0.5
+
+                                    }
+
+                                    partNumber.text = led_part_number_value.value
                                 }
 
-                                pwmFrequency.model = led_pwm_freq.values
+                                property var led_part_number_value_caption: platformInterface.led_part_number_value_caption.caption
+                                onLed_part_number_value_captionChanged: {
+                                    partNumberLabel.text = led_part_number_value_caption
+                                }
 
-                                for(var a = 0; a < pwmFrequency.model.length; ++a) {
-                                    if(led_pwm_freq.value === pwmFrequency.model[a].toString()){
-                                        pwmFrequency.currentIndex = a
+                                property var led_part_number_value_state: platformInterface.led_part_number_value_state.state
+                                onLed_part_number_value_stateChanged: {
+                                    if(led_part_number_value_state === "enabled" ) {
+                                        partNumber.enabled = true
+                                        partNumber.opacity = 1.0
+
+                                    }
+                                    else if(led_part_number_value_state === "disabled") {
+                                        partNumber.enabled = false
+                                        partNumber.opacity = 1.0
+                                    }
+                                    else {
+                                        partNumber.enabled = false
+                                        partNumber.opacity = 0.5
+
                                     }
                                 }
-                            }
 
-                            property var led_pwm_freq_caption: platformInterface.led_pwm_freq_caption.caption
-                            onLed_pwm_freq_captionChanged: {
-                                pwmFrequencyLabel.text = led_pwm_freq_caption
-                            }
+                                property var led_part_number_value_value: platformInterface.led_part_number_value_value.value
+                                onLed_part_number_value_valueChanged: {
+                                    partNumber.text = led_part_number_value_value
+                                }
 
-                            property var led_pwm_freq_state: platformInterface.led_pwm_freq_state.state
-                            onLed_pwm_freq_stateChanged: {
-                                if(led_pwm_freq_state === "enabled" ) {
-                                    pwmFrequency.enabled = true
-                                    pwmFrequency.opacity = 1.0
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id: enableOutputLabel
+                                target: enableOutput
+
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+
+                                SGSwitch {
+                                    id: enableOutput
+                                    labelsInside: true
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
+                                    fontSizeMultiplier: ratioCalc
+                                    checked: false
+
+                                    onToggled: {
+                                        if(checked)
+                                            platformInterface.set_led_oen.update(true)
+                                        else platformInterface.set_led_oen.update(false)
+                                    }
+
+                                    property var led_oen: platformInterface.led_oen
+                                    onLed_oenChanged: {
+                                        enableOutputLabel.text = led_oen.caption
+                                        if(led_oen.state === "enabled" ) {
+                                            enableOutput.enabled = true
+                                            enableOutput.opacity = 1.0
+
+                                        }
+                                        else if(led_oen.state === "disabled") {
+                                            enableOutput.enabled = false
+                                            enableOutput.opacity = 1.0
+                                        }
+                                        else {
+                                            enableOutput.enabled = false
+                                            enableOutput.opacity = 0.5
+
+                                        }
+                                        if(led_oen.value === true)
+                                            enableOutput.checked = true
+                                        else  enableOutput.checked = false
+                                    }
+
+                                    property var led_oen_caption: platformInterface.led_oen_caption.caption
+                                    onLed_oen_captionChanged : {
+                                        enableOutputLabel.text = led_oen_caption
+                                    }
+
+                                    property var led_oen_state: platformInterface.led_oen_state.state
+                                    onLed_oen_stateChanged : {
+                                        if(led_oen_state === "enabled" ) {
+                                            enableOutput.enabled = true
+                                            enableOutput.opacity = 1.0
+
+                                        }
+                                        else if(led_oen_state === "disabled") {
+                                            enableOutput.enabled = false
+                                            enableOutput.opacity = 1.0
+                                        }
+                                        else {
+                                            enableOutput.enabled = false
+                                            enableOutput.opacity = 0.5
+
+                                        }
+                                    }
+
+                                    property var led_oen_value: platformInterface.led_oen_value.value
+                                    onLed_oen_valueChanged : {
+                                        if(led_oen_value === true)
+                                            enableOutput.checked = true
+                                        else  enableOutput.checked = false
+
+
+                                    }
+
 
                                 }
-                                else if(led_pwm_freq_state === "disabled") {
-                                    pwmFrequency.enabled = false
-                                    pwmFrequency.opacity = 1.0
-                                }
-                                else {
-                                    pwmFrequency.enabled = false
-                                    pwmFrequency.opacity = 0.5
+                            }
+                        }
 
+                        Rectangle {
+                            id: gobalCurrentSetContainer
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id: gobalCurrentSetLabel
+                                target: gobalCurrentSetSlider
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                //text: "Gobal Current Set (ISET)"
+                                SGSlider {
+                                    id: gobalCurrentSetSlider
+                                    width: gobalCurrentSetContainer.width - gobalCurrentSetLabel.contentWidth - 10
+                                    live: false
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    showInputBox: false
+
+                                }
+
+
+                                property var led_iset: platformInterface.led_iset
+                                onLed_isetChanged:{
+                                    gobalCurrentSetLabel.text = led_iset.caption
+
+                                    gobalCurrentSetSlider.toText.text = led_iset.scales[0] + "mA"
+                                    gobalCurrentSetSlider.to = led_iset.scales[0]
+                                    gobalCurrentSetSlider.fromText.text = led_iset.scales[1] + "mA"
+                                    gobalCurrentSetSlider.from = led_iset.scales[1]
+                                    gobalCurrentSetSlider.stepSize = led_iset.scales[2]
+
+                                    if(led_iset.state === "enabled") {
+                                        gobalCurrentSetLabel.enabled = true
+                                        gobalCurrentSetLabel.opacity = 1.0
+                                    }
+                                    else if (led_iset.state === "disabled") {
+                                        gobalCurrentSetLabel.enabled = false
+                                        gobalCurrentSetLabel.opacity = 1.0
+                                    }
+                                    else  {
+                                        gobalCurrentSetLabel.enabled = false
+                                        gobalCurrentSetLabel.opacity = 0.5
+                                    }
+
+                                    gobalCurrentSetSlider.value = led_iset.value
+                                }
+
+                                property var led_iset_caption: platformInterface.led_iset_caption.caption
+                                onLed_iset_captionChanged:{
+                                    gobalCurrentSetLabel.text = led_iset_caption
+                                }
+
+                                property var led_iset_scales: platformInterface.led_iset_scales.scales
+                                onLed_iset_scalesChanged: {
+                                    gobalCurrentSetSlider.toText.text = led_iset_scales[0] + "mA"
+                                    gobalCurrentSetSlider.to = led_iset_scales[0]
+                                    gobalCurrentSetSlider.fromText.text = led_iset_scales[1] + "mA"
+                                    gobalCurrentSetSlider.from = led_iset_scales[1]
+                                    gobalCurrentSetSlider.stepSize = led_iset_scales[2]
+
+                                }
+
+                                property var led_iset_state: platformInterface.led_iset_state.state
+                                onLed_iset_stateChanged:{
+                                    if(led_iset_state === "enabled") {
+                                        gobalCurrentSetLabel.enabled = true
+                                        gobalCurrentSetLabel.opacity = 1.0
+                                    }
+                                    else if (led_iset_state === "disabled") {
+                                        gobalCurrentSetLabel.enabled = false
+                                        gobalCurrentSetLabel.opacity = 1.0
+                                    }
+                                    else  {
+                                        gobalCurrentSetLabel.enabled = false
+                                        gobalCurrentSetLabel.opacity = 0.5
+                                    }
+
+                                }
+
+                                property var led_iset_value: platformInterface.led_iset_value.value
+                                onLed_iset_valueChanged: {
+                                    gobalCurrentSetSlider.value = led_iset_value
+                                }
+                            }
+                        }
+
+
+
+                    }
+                } // end of first column
+
+                Rectangle{
+                    Layout.preferredHeight: parent.height/2.1
+                    Layout.fillWidth: true
+                    color: "transparent"
+
+                    ColumnLayout{
+                        anchors.fill: parent
+
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: parent.height/9
+                            color: "transparent"
+
+                            Text {
+                                id: pwmSettingHeading
+                                text: "PWM Settings"
+                                font.bold: true
+                                font.pixelSize: ratioCalc * 20
+                                color: "#696969"
+                                anchors {
+                                    top: parent.top
+                                    topMargin: 5
                                 }
                             }
 
-                            property var led_pwm_freq_values: platformInterface.led_pwm_freq_values.values
-                            onLed_pwm_freq_valuesChanged: {
-                                pwmFrequency.model = led_pwm_freq_values
+                            Rectangle {
+                                id: line2
+                                height: 1.5
+                                Layout.alignment: Qt.AlignCenter
+                                width: parent.width
+                                border.color: "lightgray"
+                                radius: 2
+                                anchors {
+                                    top: pwmSettingHeading.bottom
+                                    topMargin: 7
+                                }
                             }
+                        }
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            SGAlignedLabel {
+                                id: pwmenableOutputLabel
+                                target: pwmenableOutput
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors {
+                                    left: parent.left
+                                    verticalCenter: parent.verticalCenter
+                                }
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
 
-                            property var led_pwm_freq_value: platformInterface.led_pwm_freq_value.value
-                            onLed_pwm_freq_valueChanged: {
-                                for(var a = 0; a < pwmFrequency.model.length; ++a) {
-                                    if(led_pwm_freq_value === pwmFrequency.model[a].toString()){
-                                        pwmFrequency.currentIndex = a
+                                SGSwitch {
+                                    id: pwmenableOutput
+                                    labelsInside: true
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
+                                    fontSizeMultiplier: ratioCalc
+                                    checked: false
+                                    onToggled: {
+                                        if(checked)
+                                            platformInterface.set_led_pwm_enable.update(true)
+                                        else platformInterface.set_led_pwm_enable.update(false)
+                                    }
+
+                                    property var led_pwm_enable: platformInterface.led_pwm_enable
+                                    onLed_pwm_enableChanged: {
+                                        pwmenableOutputLabel.text = led_pwm_enable.caption
+
+                                        if(led_pwm_enable.state === "enabled" ) {
+                                            pwmenableOutput.enabled = true
+                                            pwmenableOutput.opacity = 1.0
+
+                                        }
+                                        else if(led_pwm_enable.state === "disabled") {
+                                            pwmenableOutput.enabled = false
+                                            pwmenableOutput.opacity = 1.0
+                                        }
+                                        else {
+                                            pwmenableOutput.enabled = false
+                                            enableOutput.opacity = 0.5
+                                        }
+
+                                        if(led_pwm_enable.value === true)
+                                            pwmenableOutput.checked = true
+                                        else  pwmenableOutput.checked = false
+                                    }
+
+                                    property var led_pwm_enable_caption: platformInterface.led_pwm_enable_caption.caption
+                                    onLed_pwm_enable_captionChanged : {
+                                        pwmenableOutputLabel.text = led_pwm_enable_caption
+                                    }
+
+                                    property var led_pwm_enable_state: platformInterface.led_pwm_enable_state.state
+                                    onLed_pwm_enable_stateChanged : {
+                                        if(led_pwm_enable_state === "enabled" ) {
+                                            pwmenableOutput.enabled = true
+                                            pwmenableOutput.opacity = 1.0
+
+                                        }
+                                        else if(led_pwm_enable_state === "disabled") {
+                                            pwmenableOutput.enabled = false
+                                            pwmenableOutput.opacity = 1.0
+                                        }
+                                        else {
+                                            pwmenableOutput.enabled = false
+                                            enableOutput.opacity = 0.5
+
+                                        }
+                                    }
+
+                                    property var led_pwm_enable_value: platformInterface.led_pwm_enable_value.value
+                                    onLed_pwm_enable_valueChanged : {
+                                        if(led_pwm_enable_value === true)
+                                            pwmenableOutput.checked = true
+                                        else  pwmenableOutput.checked = false
+
+
+                                    }
+
+
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id: lockPWMDutyLabel
+                                target: lockPWMDuty
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors {
+                                    left: parent.left
+                                    verticalCenter: parent.verticalCenter
+
+                                }
+                                SGSwitch {
+                                    id: lockPWMDuty
+                                    labelsInside: true
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
+                                    fontSizeMultiplier: ratioCalc
+                                    checked: false
+
+                                    onToggled: {
+                                        platformInterface.set_led_pwm_duty_lock.update(checke)
+                                    }
+
+
+                                    property var led_pwm_duty_lock: platformInterface.led_pwm_duty_lock
+                                    onLed_pwm_duty_lockChanged: {
+                                        lockPWMDutyLabel.text = led_pwm_duty_lock.caption
+
+                                        if(led_pwm_duty_lock.state === "enabled" ) {
+                                            lockPWMDuty.enabled = true
+                                            lockPWMDuty.opacity = 1.0
+
+                                        }
+                                        else if(led_pwm_duty_lock.state === "disabled") {
+                                            lockPWMDuty.enabled = false
+                                            lockPWMDuty.opacity = 1.0
+                                        }
+                                        else {
+                                            lockPWMDuty.enabled = false
+                                            lockPWMDuty.opacity = 0.5
+
+                                        }
+                                        if(led_pwm_duty_lock.value === true)
+                                            lockPWMDuty.checked = true
+                                        else  lockPWMDuty.checked = false
+                                    }
+
+                                    property var led_pwm_duty_lock_caption: platformInterface.led_pwm_duty_lock_caption.caption
+                                    onLed_pwm_duty_lock_captionChanged : {
+                                        lockPWMDutyLabel.text = led_pwm_duty_lock_caption
+                                    }
+
+                                    property var led_pwm_duty_lock_state: platformInterface.led_pwm_duty_lock_state.state
+                                    onLed_pwm_duty_lock_stateChanged : {
+                                        if(led_pwm_duty_lock_state === "enabled" ) {
+                                            lockPWMDuty.enabled = true
+                                            lockPWMDuty.opacity = 1.0
+
+                                        }
+                                        else if(led_pwm_duty_lock_state === "disabled") {
+                                            lockPWMDuty.enabled = false
+                                            lockPWMDuty.opacity = 1.0
+                                        }
+                                        else {
+                                            lockPWMDuty.enabled = false
+                                            lockPWMDuty.opacity = 0.5
+
+                                        }
+                                    }
+
+                                    property var led_pwm_duty_lock_value: platformInterface.led_pwm_duty_lock_value.value
+                                    onLed_pwm_duty_lock_valueChanged : {
+                                        if(led_pwm_duty_lock_value === true)
+                                            lockPWMDuty.checked = true
+                                        else  lockPWMDuty.checked = false
+
+
                                     }
                                 }
                             }
                         }
+
+
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id: lockPWMDutyENLabel
+                                target: lockPWMDutyEN
+                                // text: "Lock PWM EN Together"
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors {
+                                    left: parent.left
+                                    verticalCenter: parent.verticalCenter
+
+                                }
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+                                horizontalAlignment: Text.AlignHCenter
+
+                                SGSwitch {
+                                    id: lockPWMDutyEN
+                                    labelsInside: true
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
+                                    fontSizeMultiplier: ratioCalc
+                                    checked: false
+
+                                    onToggled: {
+                                        platformInterface.set_led_pwm_en_lock.update(checked)
+                                    }
+
+                                    property var led_pwm_en_lock: platformInterface.led_pwm_en_lock
+                                    onLed_pwm_en_lockChanged: {
+                                        lockPWMDutyENLabel.text = led_pwm_en_lock.caption
+                                        if(led_pwm_en_lock.state === "enabled" ) {
+                                            lockPWMDutyEN.enabled = true
+                                            lockPWMDutyEN.opacity = 1.0
+
+                                        }
+                                        else if(led_pwm_en_lock.state === "disabled") {
+                                            lockPWMDutyEN.enabled = false
+                                            lockPWMDutyEN.opacity = 1.0
+                                        }
+                                        else {
+                                            lockPWMDutyEN.enabled = false
+                                            lockPWMDutyEN.opacity = 0.5
+
+                                        }
+                                        if(led_pwm_en_lock.value === true)
+                                            lockPWMDutyEN.checked = true
+                                        else  lockPWMDutyEN.checked = false
+
+                                    }
+
+                                    property var led_pwm_en_lock_caption: platformInterface.led_pwm_en_lock_caption.caption
+                                    onLed_pwm_en_lock_captionChanged : {
+                                        lockPWMDutyENLabel.text = led_pwm_en_lock_caption
+
+                                    }
+
+                                    property var led_pwm_en_lock_state: platformInterface.led_pwm_en_lock_state.state
+                                    onLed_pwm_en_lock_stateChanged : {
+                                        if(led_pwm_en_lock_state === "enabled" ) {
+                                            lockPWMDutyEN.enabled = true
+                                            lockPWMDutyEN.opacity = 1.0
+
+                                        }
+                                        else if(led_pwm_en_lock_state === "disabled") {
+                                            lockPWMDutyEN.enabled = false
+                                            lockPWMDutyEN.opacity = 1.0
+                                        }
+                                        else {
+                                            lockPWMDutyEN.enabled = false
+                                            lockPWMDutyEN.opacity = 0.5
+
+                                        }
+                                    }
+
+                                    property var led_pwm_en_lock_value: platformInterface.led_pwm_en_lock_value.value
+                                    onLed_pwm_en_lock_valueChanged : {
+                                        if(led_pwm_en_lock_value === true)
+                                            lockPWMDutyEN.checked = true
+                                        else  lockPWMDutyEN.checked = false
+
+
+                                    }
+                                }
+                            }
+                        }
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id: pwmLinearLogLabel
+                                target: pwmLinearLog
+                                // text: "PWM Linear/Log"
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors {
+                                    left: parent.left
+                                    verticalCenter: parent.verticalCenter
+
+                                }
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+
+
+                                SGSwitch {
+                                    id: pwmLinearLog
+                                    fontSizeMultiplier: ratioCalc
+
+                                    onToggled:  {
+                                        platformInterface.pwm_lin_state = checked
+                                        platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                  checked,
+                                                                                  [platformInterface.outputDuty0,
+                                                                                   platformInterface.outputDuty1,
+                                                                                   platformInterface.outputDuty2,
+                                                                                   platformInterface.outputDuty3,
+                                                                                   platformInterface.outputDuty4,
+                                                                                   platformInterface.outputDuty5,
+                                                                                   platformInterface.outputDuty6,
+                                                                                   platformInterface.outputDuty7,
+                                                                                   platformInterface.outputDuty8,
+                                                                                   platformInterface.outputDuty9,
+                                                                                   platformInterface.outputDuty10,
+                                                                                   platformInterface.outputDuty11
+
+                                                                                  ], [
+                                                                                      platformInterface.outputPwm0,
+                                                                                      platformInterface.outputPwm1,
+                                                                                      platformInterface.outputPwm2,
+                                                                                      platformInterface.outputPwm3,
+                                                                                      platformInterface.outputPwm4,
+                                                                                      platformInterface.outputPwm5,
+                                                                                      platformInterface.outputPwm6,
+                                                                                      platformInterface.outputPwm7,
+                                                                                      platformInterface.outputPwm8,
+                                                                                      platformInterface.outputPwm9,
+                                                                                      platformInterface.outputPwm10,
+                                                                                      platformInterface.outputPwm11])
+
+
+                                    }
+
+                                    property var led_linear_log: platformInterface.led_linear_log
+                                    onLed_linear_logChanged: {
+                                        pwmLinearLogLabel.text = led_linear_log.caption
+                                        if(led_linear_log.state === "enabled" ) {
+                                            pwmLinearLog.enabled = true
+                                            pwmLinearLog.opacity = 1.0
+
+                                        }
+                                        else if(led_linear_log.state === "disabled") {
+                                            pwmLinearLog.enabled = false
+                                            pwmLinearLog.opacity = 1.0
+                                        }
+                                        else {
+                                            pwmLinearLog.enabled = false
+                                            pwmLinearLog.opacity = 0.5
+
+                                        }
+                                        pwmLinearLog.checkedLabel = led_linear_log.values[0]
+                                        pwmLinearLog.uncheckedLabel = led_linear_log.values[1]
+
+                                        if(led_linear_log.value === "Linear")
+                                            pwmLinearLog.checked = true
+                                        else  pwmLinearLog.checked = false
+                                    }
+
+
+                                    property var led_linear_log_caption: platformInterface.led_linear_log_caption.caption
+                                    onLed_linear_log_captionChanged: {
+                                        pwmLinearLogLabel.text = led_linear_log_caption
+                                    }
+
+                                    property var led_linear_log_state: platformInterface.led_linear_log_state.state
+                                    onLed_linear_log_stateChanged: {
+                                        if(led_linear_log_state === "enabled" ) {
+                                            pwmLinearLog.enabled = true
+                                            pwmLinearLog.opacity = 1.0
+
+                                        }
+                                        else if(led_linear_log_state === "disabled") {
+                                            pwmLinearLog.enabled = false
+                                            pwmLinearLog.opacity = 1.0
+                                        }
+                                        else {
+                                            pwmLinearLog.enabled = false
+                                            pwmLinearLog.opacity = 0.5
+
+                                        }
+                                    }
+
+                                    property var led_linear_log_values: platformInterface.led_linear_log_values.values
+                                    onLed_linear_log_valuesChanged: {
+                                        pwmLinearLog.checkedLabel = led_linear_log_values[0]
+                                        pwmLinearLog.uncheckedLabel = led_linear_log_values[1]
+                                    }
+
+                                    property var led_linear_log_value: platformInterface.led_linear_log_value.value
+                                    onLed_linear_log_valueChanged: {
+                                        if(led_linear_log_value === "Linear")
+                                            pwmLinearLog.checked = true
+                                        else  pwmLinearLog.checked = false
+
+                                    }
+                                }
+                            }
+                        }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id: pwmFrequencyLabel
+                                target: pwmFrequency
+                                // text: "PWM Frequency (Hz)"
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors {
+                                    left: parent.left
+                                    verticalCenter: parent.verticalCenter
+
+                                }
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold : true
+
+                                SGComboBox {
+                                    id: pwmFrequency
+                                    fontSizeMultiplier: ratioCalc
+
+                                    onActivated: {
+                                        platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
+                                                                                  platformInterface.pwm_lin_state,
+                                                                                  [platformInterface.outputDuty0,
+                                                                                   platformInterface.outputDuty1,
+                                                                                   platformInterface.outputDuty2,
+                                                                                   platformInterface.outputDuty3,
+                                                                                   platformInterface.outputDuty4,
+                                                                                   platformInterface.outputDuty5,
+                                                                                   platformInterface.outputDuty6,
+                                                                                   platformInterface.outputDuty7,
+                                                                                   platformInterface.outputDuty8,
+                                                                                   platformInterface.outputDuty9,
+                                                                                   platformInterface.outputDuty10,
+                                                                                   platformInterface.outputDuty11
+
+                                                                                  ], [
+                                                                                      platformInterface.outputPwm0,
+                                                                                      platformInterface.outputPwm1,
+                                                                                      platformInterface.outputPwm2,
+                                                                                      platformInterface.outputPwm3,
+                                                                                      platformInterface.outputPwm4,
+                                                                                      platformInterface.outputPwm5,
+                                                                                      platformInterface.outputPwm6,
+                                                                                      platformInterface.outputPwm7,
+                                                                                      platformInterface.outputPwm8,
+                                                                                      platformInterface.outputPwm9,
+                                                                                      platformInterface.outputPwm10,
+                                                                                      platformInterface.outputPwm11])
+                                    }
+
+                                    property var led_pwm_freq: platformInterface.led_pwm_freq
+                                    onLed_pwm_freqChanged: {
+                                        pwmFrequencyLabel.text = led_pwm_freq.caption
+
+                                        if(led_pwm_freq.state === "enabled" ) {
+                                            pwmFrequency.enabled = true
+                                            pwmFrequency.opacity = 1.0
+
+                                        }
+                                        else if(led_pwm_freq.state === "disabled") {
+                                            pwmFrequency.enabled = false
+                                            pwmFrequency.opacity = 1.0
+                                        }
+                                        else {
+                                            pwmFrequency.enabled = false
+                                            pwmFrequency.opacity = 0.5
+
+                                        }
+
+                                        pwmFrequency.model = led_pwm_freq.values
+
+                                        for(var a = 0; a < pwmFrequency.model.length; ++a) {
+                                            if(led_pwm_freq.value === pwmFrequency.model[a].toString()){
+                                                pwmFrequency.currentIndex = a
+                                            }
+                                        }
+                                    }
+
+                                    property var led_pwm_freq_caption: platformInterface.led_pwm_freq_caption.caption
+                                    onLed_pwm_freq_captionChanged: {
+                                        pwmFrequencyLabel.text = led_pwm_freq_caption
+                                    }
+
+                                    property var led_pwm_freq_state: platformInterface.led_pwm_freq_state.state
+                                    onLed_pwm_freq_stateChanged: {
+                                        if(led_pwm_freq_state === "enabled" ) {
+                                            pwmFrequency.enabled = true
+                                            pwmFrequency.opacity = 1.0
+
+                                        }
+                                        else if(led_pwm_freq_state === "disabled") {
+                                            pwmFrequency.enabled = false
+                                            pwmFrequency.opacity = 1.0
+                                        }
+                                        else {
+                                            pwmFrequency.enabled = false
+                                            pwmFrequency.opacity = 0.5
+
+                                        }
+                                    }
+
+                                    property var led_pwm_freq_values: platformInterface.led_pwm_freq_values.values
+                                    onLed_pwm_freq_valuesChanged: {
+                                        pwmFrequency.model = led_pwm_freq_values
+                                    }
+
+                                    property var led_pwm_freq_value: platformInterface.led_pwm_freq_value.value
+                                    onLed_pwm_freq_valueChanged: {
+                                        for(var a = 0; a < pwmFrequency.model.length; ++a) {
+                                            if(led_pwm_freq_value === pwmFrequency.model[a].toString()){
+                                                pwmFrequency.currentIndex = a
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                     }
                 }
-
                 Rectangle {
-                    Layout.fillHeight: true
+                    Layout.preferredHeight: parent.height/5
                     Layout.fillWidth: true
-                    SGAlignedLabel {
-                        id: openLoadLabel
-                        target: openLoadDiagnostic
-                        //text: "I2C Open Load\nDiagnostic"
-                        alignment: SGAlignedLabel.SideLeftCenter
+                    color: "transparent"
+                    ColumnLayout{
+                        anchors.fill: parent
 
-                        anchors {
-                            right: parent.right
-                            verticalCenter: parent.verticalCenter
-                            rightMargin: 60
+                        Rectangle{
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: parent.height/9
+                            color: "transparent"
+
+                            Text {
+                                id: diagHeading
+                                text: "Diagnostic"
+                                font.bold: true
+                                font.pixelSize: ratioCalc * 20
+                                color: "#696969"
+                                anchors {
+                                    top: parent.top
+                                    topMargin: 5
+                                }
+                            }
+
+                            Rectangle {
+                                id: line3
+                                height: 1.5
+                                Layout.alignment: Qt.AlignCenter
+                                width: parent.width
+                                border.color: "lightgray"
+                                radius: 2
+                                anchors {
+                                    top: diagHeading.bottom
+                                    topMargin: 7
+                                }
+                            }
                         }
 
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        font.bold : true
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            RowLayout {
+                                anchors.fill: parent
 
-                        SGComboBox {
-                            id: openLoadDiagnostic
-                            fontSizeMultiplier: ratioCalc
-                            // model: ["No Diagnostic", "Auto Retry", "Detect Only", "No Regulations\nChange"]
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                    color: "transparent"
 
-                            onActivated: {
-                                platformInterface.set_led_diag_mode.update(currentText)
-                            }
+                                    SGAlignedLabel {
+                                        id: diagLabel
+                                        target: diag
 
-                            property var led_open_load_diagnostic: platformInterface.led_open_load_diagnostic
-                            onLed_open_load_diagnosticChanged: {
-                                openLoadLabel.text = led_open_load_diagnostic.caption
+                                        font.bold: true
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        fontSizeMultiplier: ratioCalc
+                                        anchors.centerIn: parent
 
-                                if(led_open_load_diagnostic.state === "enabled" ) {
-                                    openLoadDiagnostic.enabled = true
-                                    openLoadDiagnostic.opacity = 1.0
+                                        SGStatusLight {
+                                            id: diag
+                                            width: 30
 
-                                }
-                                else if(led_open_load_diagnostic.state === "disabled") {
-                                    openLoadDiagnostic.enabled = false
-                                    openLoadDiagnostic.opacity = 1.0
-                                }
-                                else {
-                                    openLoadDiagnostic.enabled = false
-                                    openLoadDiagnostic.opacity = 0.5
+                                            property var led_diag: platformInterface.led_diag
+                                            onLed_diagChanged: {
+                                                diagLabel.text =  led_diag_caption
+                                            }
 
-                                }
+                                            property var led_diag_caption: platformInterface.led_diag_caption.caption
+                                            onLed_diag_captionChanged: {
+                                                diagLabel.text =  led_diag.caption
 
-                                openLoadDiagnostic.model = led_open_load_diagnostic.values
+                                                if(led_diag.state === "enabled") {
+                                                    diagLabel.enabled = true
+                                                    diagLabel.opacity = 1.0
+                                                }
+                                                else if (led_diag.state === "disabled") {
+                                                    diagLabel.enabled = false
+                                                    diagLabel.opacity = 1.0
+                                                }
+                                                else  {
+                                                    diagLabel.enabled = false
+                                                    diagLabel.opacity = 0.5
+                                                }
 
-                                for(var a = 0; a < openLoadDiagnostic.model.length; ++a) {
-                                    if(led_open_load_diagnostic.value === openLoadDiagnostic.model[a].toString()){
-                                        openLoadDiagnostic.currentIndex = a
+                                                if(led_diag.value === false)
+                                                    diag.status = SGStatusLight.Off
+
+                                                else  diag.status = SGStatusLight.Red
+                                            }
+
+                                            property var led_diag_state: platformInterface.led_diag_state.state
+                                            onLed_diag_stateChanged: {
+                                                if(led_diag_state === "enabled") {
+                                                    diagLabel.enabled = true
+                                                    diagLabel.opacity = 1.0
+                                                }
+                                                else if (led_diag_state === "disabled") {
+                                                    diagLabel.enabled = false
+                                                    diagLabel.opacity = 1.0
+                                                }
+                                                else  {
+                                                    diagLabel.enabled = false
+                                                    diagLabel.opacity = 0.5
+                                                }
+                                            }
+
+                                            property var led_diag_value: platformInterface.led_diag_value.value
+                                            onLed_diag_valueChanged: {
+                                                if(led_diag_value === false) {
+                                                    diag.status = SGStatusLight.Off
+                                                }
+                                                else  diag.status = SGStatusLight.Red
+                                            }
+                                        }
                                     }
                                 }
-                            }
 
-                            property var led_open_load_diagnostic_caption: platformInterface.led_open_load_diagnostic_caption.caption
-                            onLed_open_load_diagnostic_captionChanged: {
-                                openLoadLabel.text = led_open_load_diagnostic_caption
-                            }
+                                Rectangle {
+                                    Layout.fillHeight: true
+                                    Layout.preferredWidth: parent.width/1.5
+                                    color: "transparent"
+                                    SGAlignedLabel {
+                                        id: openLoadLabel
+                                        target: openLoadDiagnostic
+                                        //text: "I2C Open Load\nDiagnostic"
+                                        alignment: SGAlignedLabel.SideTopCenter
 
-                            property var led_open_load_diagnostic_state: platformInterface.led_open_load_diagnostic_state.state
-                            onLed_open_load_diagnostic_stateChanged: {
-                                if(led_open_load_diagnostic_state === "enabled" ) {
-                                    openLoadDiagnostic.enabled = true
-                                    openLoadDiagnostic.opacity = 1.0
+                                        anchors {
+                                            left: parent.left
+                                            verticalCenter: parent.verticalCenter
 
-                                }
-                                else if(led_open_load_diagnostic_state === "disabled") {
-                                    openLoadDiagnostic.enabled = false
-                                    openLoadDiagnostic.opacity = 1.0
-                                }
-                                else {
-                                    openLoadDiagnostic.enabled = false
-                                    openLoadDiagnostic.opacity = 0.5
+                                        }
 
-                                }
-                            }
+                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        font.bold : true
 
-                            property var led_open_load_diagnostic_values: platformInterface.led_open_load_diagnostic_values.values
-                            onLed_open_load_diagnostic_valuesChanged: {
-                                openLoadDiagnostic.model = led_open_load_diagnostic_values
-                            }
+                                        SGComboBox {
+                                            id: openLoadDiagnostic
+                                            fontSizeMultiplier: ratioCalc
+                                            // model: ["No Diagnostic", "Auto Retry", "Detect Only", "No Regulations\nChange"]
 
-                            property var led_open_load_diagnostic_value: platformInterface.led_open_load_diagnostic_value.value
-                            onLed_open_load_diagnostic_valueChanged: {
-                                for(var a = 0; a < openLoadDiagnostic.model.length; ++a) {
-                                    if(led_open_load_diagnostic_value === openLoadDiagnostic.model[a].toString()){
-                                        openLoadDiagnostic.currentIndex = a
+                                            onActivated: {
+                                                platformInterface.set_led_diag_mode.update(currentText)
+                                            }
+
+                                            property var led_open_load_diagnostic: platformInterface.led_open_load_diagnostic
+                                            onLed_open_load_diagnosticChanged: {
+                                                openLoadLabel.text = led_open_load_diagnostic.caption
+
+                                                if(led_open_load_diagnostic.state === "enabled" ) {
+                                                    openLoadDiagnostic.enabled = true
+                                                    openLoadDiagnostic.opacity = 1.0
+
+                                                }
+                                                else if(led_open_load_diagnostic.state === "disabled") {
+                                                    openLoadDiagnostic.enabled = false
+                                                    openLoadDiagnostic.opacity = 1.0
+                                                }
+                                                else {
+                                                    openLoadDiagnostic.enabled = false
+                                                    openLoadDiagnostic.opacity = 0.5
+
+                                                }
+
+                                                openLoadDiagnostic.model = led_open_load_diagnostic.values
+
+                                                for(var a = 0; a < openLoadDiagnostic.model.length; ++a) {
+                                                    if(led_open_load_diagnostic.value === openLoadDiagnostic.model[a].toString()){
+                                                        openLoadDiagnostic.currentIndex = a
+                                                    }
+                                                }
+                                            }
+
+                                            property var led_open_load_diagnostic_caption: platformInterface.led_open_load_diagnostic_caption.caption
+                                            onLed_open_load_diagnostic_captionChanged: {
+                                                openLoadLabel.text = led_open_load_diagnostic_caption
+                                            }
+
+                                            property var led_open_load_diagnostic_state: platformInterface.led_open_load_diagnostic_state.state
+                                            onLed_open_load_diagnostic_stateChanged: {
+                                                if(led_open_load_diagnostic_state === "enabled" ) {
+                                                    openLoadDiagnostic.enabled = true
+                                                    openLoadDiagnostic.opacity = 1.0
+
+                                                }
+                                                else if(led_open_load_diagnostic_state === "disabled") {
+                                                    openLoadDiagnostic.enabled = false
+                                                    openLoadDiagnostic.opacity = 1.0
+                                                }
+                                                else {
+                                                    openLoadDiagnostic.enabled = false
+                                                    openLoadDiagnostic.opacity = 0.5
+
+                                                }
+                                            }
+
+                                            property var led_open_load_diagnostic_values: platformInterface.led_open_load_diagnostic_values.values
+                                            onLed_open_load_diagnostic_valuesChanged: {
+                                                openLoadDiagnostic.model = led_open_load_diagnostic_values
+                                            }
+
+                                            property var led_open_load_diagnostic_value: platformInterface.led_open_load_diagnostic_value.value
+                                            onLed_open_load_diagnostic_valueChanged: {
+                                                for(var a = 0; a < openLoadDiagnostic.model.length; ++a) {
+                                                    if(led_open_load_diagnostic_value === openLoadDiagnostic.model[a].toString()){
+                                                        openLoadDiagnostic.currentIndex = a
+                                                    }
+                                                }
+                                            }
+
+                                        }
                                     }
                                 }
+
                             }
 
                         }
                     }
                 }
+
             }
         }
 
@@ -2023,28 +2245,58 @@ Item {
             Layout.fillWidth: true
             color: "transparent"
 
-            ColumnLayout{
+            ColumnLayout {
                 anchors.fill: parent
                 anchors.right: parent.right
-                anchors.rightMargin: 15
+                anchors.rightMargin: 20
 
+                Rectangle{
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: parent.height/20
+                    color: "transparent"
+
+                    Text {
+                        id: channelHeading
+                        text: "Individual Channel Configuration"
+                        font.bold: true
+                        font.pixelSize: ratioCalc * 20
+                        color: "#696969"
+                        anchors {
+                            top: parent.top
+                            topMargin: 5
+                        }
+                    }
+
+                    Rectangle {
+                        id: line4
+                        height: 1.5
+                        Layout.alignment: Qt.AlignCenter
+                        width: parent.width
+                        border.color: "lightgray"
+                        radius: 2
+                        anchors {
+                            top: channelHeading.bottom
+                            topMargin: 7
+                        }
+                    }
+                }
 
                 Rectangle {
-                    Layout.preferredHeight: parent.height/1.2
+                    Layout.preferredHeight: parent.height/1.37
                     Layout.fillWidth: true
-                    //color: "red"
+                    color: "transparent"
+
                     ColumnLayout {
                         anchors.fill: parent
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            //color: "grey"
+                            color: "transparent"
                             RowLayout {
                                 anchors.fill: parent
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.preferredWidth: parent.width/12
-                                    //color: "blue"
                                     ColumnLayout {
                                         anchors.fill: parent
                                         Rectangle {
@@ -5378,94 +5630,36 @@ Item {
                             }
                         }
 
-                        Rectangle {
-                            id: gobalCurrentSetContainer
-                            Layout.preferredHeight: parent.height/10
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id: gobalCurrentSetLabel
-                                target: gobalCurrentSetSlider
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                font.bold : true
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.left: parent.left
-                                //text: "Gobal Current Set (ISET)"
-                                SGSlider {
-                                    id: gobalCurrentSetSlider
-                                    width: gobalCurrentSetContainer.width/1.5
-                                    live: false
-                                    fontSizeMultiplier: ratioCalc * 1.2
 
-                                }
+                    }
+                }
 
-                                property var led_iset: platformInterface.led_iset
-                                onLed_isetChanged:{
-                                    gobalCurrentSetLabel.text = led_iset.caption
+                Rectangle{
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: parent.height/20
+                    color: "transparent"
+                    Text {
+                        id: i2cStatusHeading
+                        text: "I2C Status Registers"
+                        font.bold: true
+                        font.pixelSize: ratioCalc * 20
+                        color: "#696969"
+                        anchors {
+                            top: parent.top
+                            topMargin: 5
+                        }
+                    }
 
-                                    gobalCurrentSetSlider.toText.text = led_iset.scales[0] + "mA"
-                                    gobalCurrentSetSlider.to = led_iset.scales[0]
-                                    gobalCurrentSetSlider.fromText.text = led_iset.scales[1] + "mA"
-                                    gobalCurrentSetSlider.from = led_iset.scales[1]
-                                    gobalCurrentSetSlider.stepSize = led_iset.scales[2]
-
-                                    if(led_iset.state === "enabled") {
-                                        gobalCurrentSetLabel.enabled = true
-                                        gobalCurrentSetLabel.opacity = 1.0
-                                    }
-                                    else if (led_iset.state === "disabled") {
-                                        gobalCurrentSetLabel.enabled = false
-                                        gobalCurrentSetLabel.opacity = 1.0
-                                    }
-                                    else  {
-                                        gobalCurrentSetLabel.enabled = false
-                                        gobalCurrentSetLabel.opacity = 0.5
-                                    }
-
-                                    gobalCurrentSetSlider.value = led_iset.value
-                                }
-
-                                property var led_iset_caption: platformInterface.led_iset_caption.caption
-                                onLed_iset_captionChanged:{
-                                    gobalCurrentSetLabel.text = led_iset_caption
-                                }
-
-                                property var led_iset_scales: platformInterface.led_iset_scales.scales
-                                onLed_iset_scalesChanged: {
-                                    gobalCurrentSetSlider.toText.text = led_iset_scales[0] + "mA"
-                                    gobalCurrentSetSlider.to = led_iset_scales[0]
-                                    gobalCurrentSetSlider.fromText.text = led_iset_scales[1] + "mA"
-                                    gobalCurrentSetSlider.from = led_iset_scales[1]
-                                    gobalCurrentSetSlider.stepSize = led_iset_scales[2]
-
-                                }
-
-                                property var led_iset_state: platformInterface.led_iset_state.state
-                                onLed_iset_stateChanged:{
-                                    if(led_iset_state === "enabled") {
-                                        gobalCurrentSetLabel.enabled = true
-                                        gobalCurrentSetLabel.opacity = 1.0
-                                    }
-                                    else if (led_iset_state === "disabled") {
-                                        gobalCurrentSetLabel.enabled = false
-                                        gobalCurrentSetLabel.opacity = 1.0
-                                    }
-                                    else  {
-                                        gobalCurrentSetLabel.enabled = false
-                                        gobalCurrentSetLabel.opacity = 0.5
-                                    }
-
-                                }
-
-
-                                property var led_iset_value: platformInterface.led_iset_value.value
-                                onLed_iset_valueChanged: {
-                                    gobalCurrentSetSlider.value = led_iset_value
-                                }
-
-
-
-                            }
+                    Rectangle {
+                        id: line5
+                        height: 1.5
+                        Layout.alignment: Qt.AlignCenter
+                        width: parent.width
+                        border.color: "lightgray"
+                        radius: 2
+                        anchors {
+                            top: i2cStatusHeading.bottom
+                            topMargin: 7
                         }
                     }
                 }
@@ -5475,101 +5669,14 @@ Item {
                     id: i2cStatusSettingContainer
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    //  color: "red"
-
-                    SGText{
-                        id: i2cStatusLable
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        text: "I2C Status Registers"
-                        font.bold: true
-                        anchors.top: parent. top
-                        anchors.left: parent.left
-                        anchors.leftMargin: 20
-                    }
-
+                    color: "transparent"
                     Rectangle {
                         id: i2cLEDS
-                        anchors.top: i2cStatusLable.bottom
-                        anchors.centerIn: parent
-                        width: parent.width - 100
-                        height: parent.height - i2cStatusLable.contentHeight
+                        anchors.fill: parent
                         color: "transparent"
 
                         RowLayout{
                             anchors.fill: parent
-
-                            Rectangle {
-                                Layout.fillHeight: true
-                                Layout.fillWidth: true
-                                color: "transparent"
-
-                                SGAlignedLabel {
-                                    id: diagLabel
-                                    target: diag
-
-                                    font.bold: true
-                                    alignment: SGAlignedLabel.SideTopCenter
-                                    fontSizeMultiplier: ratioCalc
-                                    anchors.centerIn: parent
-
-                                    SGStatusLight {
-                                        id: diag
-                                        width: 30
-
-                                        property var led_diag: platformInterface.led_diag
-                                        onLed_diagChanged: {
-                                            diagLabel.text =  led_diag_caption
-                                        }
-
-                                        property var led_diag_caption: platformInterface.led_diag_caption.caption
-                                        onLed_diag_captionChanged: {
-                                            diagLabel.text =  led_diag.caption
-
-                                            if(led_diag.state === "enabled") {
-                                                diagLabel.enabled = true
-                                                diagLabel.opacity = 1.0
-                                            }
-                                            else if (led_diag.state === "disabled") {
-                                                diagLabel.enabled = false
-                                                diagLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                diagLabel.enabled = false
-                                                diagLabel.opacity = 0.5
-                                            }
-
-                                            if(led_diag.value === false)
-                                                diag.status = SGStatusLight.Off
-
-                                            else  diag.status = SGStatusLight.Red
-                                        }
-
-                                        property var led_diag_state: platformInterface.led_diag_state.state
-                                        onLed_diag_stateChanged: {
-                                            if(led_diag_state === "enabled") {
-                                                diagLabel.enabled = true
-                                                diagLabel.opacity = 1.0
-                                            }
-                                            else if (led_diag_state === "disabled") {
-                                                diagLabel.enabled = false
-                                                diagLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                diagLabel.enabled = false
-                                                diagLabel.opacity = 0.5
-                                            }
-                                        }
-
-                                        property var led_diag_value: platformInterface.led_diag_value.value
-                                        onLed_diag_valueChanged: {
-                                            if(led_diag_value === false) {
-                                                diag.status = SGStatusLight.Off
-                                            }
-                                            else  diag.status = SGStatusLight.Red
-                                        }
-                                    }
-                                }
-                            }
                             Rectangle {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
