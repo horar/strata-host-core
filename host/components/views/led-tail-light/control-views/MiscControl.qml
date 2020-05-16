@@ -13,6 +13,22 @@ Item {
     height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
+    function setStatesForControls (theId, index){
+        if(index !== null && index !== undefined)  {
+            if(index === 0) {
+                theId.enabled = true
+                theId.opacity = 1.0
+            }
+            else if(index === 1) {
+                theId.enabled = false
+                theId.opacity = 1.0
+            }
+            else {
+                theId.enabled = false
+                theId.opacity = 0.5
+            }
+        }
+    }
 
     Rectangle {
         width: parent.width/2
@@ -52,18 +68,20 @@ Item {
                             property var misc_id_vers_1: platformInterface.misc_id_vers_1
                             onMisc_id_vers_1Changed: {
                                 idVers1Label.text = misc_id_vers_1.caption
-                                if(misc_id_vers_1.state === "enabled"){
-                                    idVers1.opacity = 1.0
-                                    idVers1.enabled = true
-                                }
-                                else if (misc_id_vers_1.state === "disabled") {
-                                    idVers1.opacity = 1.0
-                                    idVers1.enabled = false
-                                }
-                                else {
-                                    idVers1.opacity = 0.5
-                                    idVers1.enabled = false
-                                }
+                                setStatesForControls(idVers1,misc_id_vers_1.states[0])
+
+//                                if(misc_id_vers_1.state === "enabled"){
+//                                    idVers1.opacity = 1.0
+//                                    idVers1.enabled = true
+//                                }
+//                                else if (misc_id_vers_1.state === "disabled") {
+//                                    idVers1.opacity = 1.0
+//                                    idVers1.enabled = false
+//                                }
+//                                else {
+//                                    idVers1.opacity = 0.5
+//                                    idVers1.enabled = false
+//                                }
                                 idVers1.text = misc_id_vers_1.value
 
                             }
@@ -73,20 +91,9 @@ Item {
                                 idVers1Label.text = misc_id_vers_1_caption
                             }
 
-                            property var misc_id_vers_1_state: platformInterface.misc_id_vers_1_state.state
+                            property var misc_id_vers_1_state: platformInterface.misc_id_vers_1_state.states
                             onMisc_id_vers_1_stateChanged: {
-                                if(misc_id_vers_1_state === "enabled"){
-                                    idVers1.opacity = 1.0
-                                    idVers1.enabled = true
-                                }
-                                else if (misc_id_vers_1_state === "disabled") {
-                                    idVers1.opacity = 1.0
-                                    idVers1.enabled = false
-                                }
-                                else {
-                                    idVers1.opacity = 0.5
-                                    idVers1.enabled = false
-                                }
+                                 setStatesForControls(idVers1,misc_id_vers_1_state[0])
                             }
 
                             property var misc_id_vers_1_value: platformInterface.misc_id_vers_1_value.value
@@ -116,18 +123,19 @@ Item {
                             property var misc_odd_ch_error: platformInterface.misc_odd_ch_error
                             onMisc_odd_ch_errorChanged: {
                                 oddChannelErrorLabel.text = misc_odd_ch_error.caption
-                                if(misc_odd_ch_error.state === "enabled"){
-                                    oddChannelError.opacity = 1.0
-                                    oddChannelError.enabled = true
-                                }
-                                else if (misc_odd_ch_error.state === "disabled") {
-                                    oddChannelError.opacity = 1.0
-                                    oddChannelError.enabled = false
-                                }
-                                else {
-                                    oddChannelError.opacity = 0.5
-                                    oddChannelError.enabled = false
-                                }
+                                setStatesForControls(oddChannelError,misc_odd_ch_error.states[0])
+//                                if(misc_odd_ch_error.state === "enabled"){
+//                                    oddChannelError.opacity = 1.0
+//                                    oddChannelError.enabled = true
+//                                }
+//                                else if (misc_odd_ch_error.state === "disabled") {
+//                                    oddChannelError.opacity = 1.0
+//                                    oddChannelError.enabled = false
+//                                }
+//                                else {
+//                                    oddChannelError.opacity = 0.5
+//                                    oddChannelError.enabled = false
+//                                }
                                 if(misc_odd_ch_error.value === true){
                                     oddChannelError.status = SGStatusLight.Red
                                 }
@@ -139,20 +147,9 @@ Item {
                                 oddChannelErrorLabel.text = misc_odd_ch_error_caption
                             }
 
-                            property var misc_odd_ch_error_state: platformInterface.misc_odd_ch_error_state.state
+                            property var misc_odd_ch_error_state: platformInterface.misc_odd_ch_error_state.states
                             onMisc_odd_ch_error_stateChanged: {
-                                if(misc_odd_ch_error_state === "enabled"){
-                                    oddChannelError.opacity = 1.0
-                                    oddChannelError.enabled = true
-                                }
-                                else if (misc_odd_ch_error_state === "disabled") {
-                                    oddChannelError.opacity = 1.0
-                                    oddChannelError.enabled = false
-                                }
-                                else {
-                                    oddChannelError.opacity = 0.5
-                                    oddChannelError.enabled = false
-                                }
+                                setStatesForControls(oddChannelError,misc_odd_ch_error_state[0])
                             }
 
                             property var misc_odd_ch_error_value: platformInterface.misc_odd_ch_error_value.value
@@ -201,18 +198,19 @@ Item {
                             property var misc_id_vers_2: platformInterface.misc_id_vers_2
                             onMisc_id_vers_2Changed: {
                                 idVers2Label.text = misc_id_vers_2.caption
-                                if(misc_id_vers_2.state === "enabled"){
-                                    idVers2.opacity = 1.0
-                                    idVers2.enabled = true
-                                }
-                                else if (misc_id_vers_2.state === "disabled") {
-                                    idVers2.opacity = 1.0
-                                    idVers2.enabled = false
-                                }
-                                else {
-                                    idVers2.opacity = 0.5
-                                    idVers2.enabled = false
-                                }
+                                setStatesForControls(idVers2,misc_id_vers_2.states[0])
+//                                if(misc_id_vers_2.state === "enabled"){
+//                                    idVers2.opacity = 1.0
+//                                    idVers2.enabled = true
+//                                }
+//                                else if (misc_id_vers_2.state === "disabled") {
+//                                    idVers2.opacity = 1.0
+//                                    idVers2.enabled = false
+//                                }
+//                                else {
+//                                    idVers2.opacity = 0.5
+//                                    idVers2.enabled = false
+//                                }
                                 idVers2.text = misc_id_vers_2.value
 
                             }
@@ -222,20 +220,9 @@ Item {
                                 idVers2Label.text = misc_id_vers_2_caption
                             }
 
-                            property var misc_id_vers_2_state: platformInterface.misc_id_vers_2_state.state
+                            property var misc_id_vers_2_state: platformInterface.misc_id_vers_2_state.states
                             onMisc_id_vers_2_stateChanged: {
-                                if(misc_id_vers_2_state === "enabled"){
-                                    idVers2.opacity = 1.0
-                                    idVers2.enabled = true
-                                }
-                                else if (misc_id_vers_2_state === "disabled") {
-                                    idVers2.opacity = 1.0
-                                    idVers2.enabled = false
-                                }
-                                else {
-                                    idVers2.opacity = 0.5
-                                    idVers2.enabled = false
-                                }
+                                setStatesForControls(idVers2,misc_id_vers_2_state[0])
                             }
 
                             property var misc_id_vers_2_value: platformInterface.misc_id_vers_2_value.value
@@ -264,18 +251,7 @@ Item {
                             property var misc_even_ch_error: platformInterface.misc_even_ch_error
                             onMisc_even_ch_errorChanged: {
                                 evenChannelErrorLabel.text = misc_even_ch_error.caption
-                                if(misc_even_ch_error.state === "enabled"){
-                                    evenChannelError.opacity = 1.0
-                                    evenChannelError.enabled = true
-                                }
-                                else if (misc_even_ch_error.state === "disabled") {
-                                    evenChannelError.opacity = 1.0
-                                    evenChannelError.enabled = false
-                                }
-                                else {
-                                    evenChannelError.opacity = 0.5
-                                    evenChannelError.enabled = false
-                                }
+                                setStatesForControls(evenChannelError,misc_even_ch_error.states[0])
                                 if(misc_even_ch_error.value === true){
                                     evenChannelError.status = SGStatusLight.Red
                                 }
@@ -288,20 +264,9 @@ Item {
                                 evenChannelErrorLabel.text = misc_even_ch_error_caption
                             }
 
-                            property var misc_even_ch_error_state: platformInterface.misc_even_ch_error_state.state
+                            property var misc_even_ch_error_state: platformInterface.misc_even_ch_error_state.states
                             onMisc_even_ch_error_stateChanged: {
-                                if(misc_even_ch_error_state === "enabled"){
-                                    evenChannelError.opacity = 1.0
-                                    evenChannelError.enabled = true
-                                }
-                                else if (misc_even_ch_error_state === "disabled") {
-                                    evenChannelError.opacity = 1.0
-                                    evenChannelError.enabled = false
-                                }
-                                else {
-                                    evenChannelError.opacity = 0.5
-                                    evenChannelError.enabled = false
-                                }
+                                setStatesForControls(evenChannelError,misc_even_ch_error_state[0])
                             }
 
                             property var misc_even_ch_error_value: platformInterface.misc_even_ch_error_value.value

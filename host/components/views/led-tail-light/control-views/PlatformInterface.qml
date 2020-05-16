@@ -25,13 +25,13 @@ Item {
     //
 
     property var control_props: ({
-                                "cmd":"control_props",
-                                update: function () {
-                                    CorePlatformInterface.send(this)
-                                },
-                                send: function () { CorePlatformInterface.send(this) },
-                                show: function () { CorePlatformInterface.show(this) }
-                            })
+                                     "cmd":"control_props",
+                                     update: function () {
+                                         CorePlatformInterface.send(this)
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+                                 })
 
     //Mode commands
     property var mode : ({
@@ -73,12 +73,12 @@ Item {
         "caption":"Part Number"
     }
 
-    property var led_part_number_value_states: {
-       "states":[0]
+    property var led_part_number_value_state: {
+        "states":[0]
     }
 
     property var led_part_number_value_value: {
-         "value":"NCV7685"
+        "value":"NCV7685"
     }
 
     property var led_out_en: {
@@ -93,8 +93,9 @@ Item {
         "caption":"OUT EN"
     }
 
-    property var led_out_en_states: {
-        "states": [0,0,0,0,0,0,0,0,0,0,0,0]
+    property var led_out_en_state: {
+        //"states": [0,0,0,0,0,0,0,0,0,0,0,0]
+        "states" : [0]
     }
     property var led_out_en_values: {
         "values": [true,true,true,true,true,true,true,true,true,true,true,true]
@@ -104,7 +105,7 @@ Item {
     property var led_ext: {
         "caption":"External LED",
         "scales":[],
-        "states":[0,0,0,0,0,0,0,0,0,0,0,0],
+        "states":[0],
         "value":"",
         "values":[false,false,false,false,false,false,false,false,false,false,false,false]
     }
@@ -114,8 +115,8 @@ Item {
         "caption":"External LED"
     }
 
-    property var led_ext_states: {
-         "states":[0,0,0,0,0,0,0,0,0,0,0,0]
+    property var led_ext_state: {
+        "states":[0]
     }
     property var led_ext_values: {
         "values": [false,false,false,false,false,false,false,false,false,false,false,false]
@@ -124,7 +125,7 @@ Item {
     property var led_fault_status: {
         "caption":"Fault Status",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":"",
         "values":[false,false,false,false,false,false,false,false,false,false,false,false]
     }
@@ -134,10 +135,10 @@ Item {
         "caption":"Fault Status"
     }
 
-
     property var led_fault_status_state: {
-        "state":"disabled"
+        "states": [1]
     }
+
     property var led_fault_status_values: {
         "values": [false,false,false,false,false,false,false,false,false,false,false,false]
     }
@@ -145,7 +146,7 @@ Item {
     property var led_pwm_enables: {
         "caption":"PWM Enable",
         "scales":[],
-        "state":"enabled",
+        "states":[2],
         "value":"",
         "values":[true,true,true,true,true,true,true,true,true,true,true,true]
     }
@@ -156,7 +157,7 @@ Item {
     }
 
     property var led_pwm_enables_state: {
-        "state":"enabled"
+        "states":[2]
     }
 
     property var led_pwm_enables_values: {
@@ -181,7 +182,7 @@ Item {
         "scales":[127,0,1]
     }
 
-    property var led_pwm_duty_states: {
+    property var led_pwm_duty_state: {
         "states":[0,0,0,0,0,0,0,0,0,0,0,0]
     }
 
@@ -193,7 +194,7 @@ Item {
     property var led_iset: {
         "caption":"Global Current Set (ISET)",
         "scales":[60,0,1],
-        "state":"enabled",
+        "states":[0],
         "value":30,
         "values":[]
     }
@@ -208,7 +209,7 @@ Item {
     }
 
     property var led_iset_state: {
-        "state":"enabled"
+        "states": [0]
     }
 
     property var led_iset_value: {
@@ -218,7 +219,7 @@ Item {
     property var led_diag: {
         "caption":"DIAG",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":false,
         "values":[]
     }
@@ -228,7 +229,7 @@ Item {
     }
 
     property var led_diag_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var led_diag_value: {
@@ -239,7 +240,7 @@ Item {
     property var led_sc_iset: {
         "caption":"SC_Iset",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":false,
         "values":[]
     }
@@ -249,7 +250,7 @@ Item {
     }
 
     property var led_sc_iset_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var led_sc_iset_value: {
@@ -260,7 +261,7 @@ Item {
     property var led_i2cerr: {
         "caption":"I2Cerr",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":false,
         "values":[]
     }
@@ -270,7 +271,7 @@ Item {
     }
 
     property var led_i2cerr_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var led_i2cerr_value: {
@@ -280,7 +281,7 @@ Item {
     property var led_uv: {
         "caption":"UV",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":false,
         "values":[]
     }
@@ -290,7 +291,7 @@ Item {
     }
 
     property var led_uv_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var led_uv_value: {
@@ -300,7 +301,7 @@ Item {
     property var led_diagrange: {
         "caption":"diagRange",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":false,
         "values":[]
     }
@@ -310,7 +311,7 @@ Item {
     }
 
     property var led_diagrange_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var led_diagrange_value: {
@@ -320,7 +321,7 @@ Item {
     property var led_tw: {
         "caption":"TW",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":false,
         "values":[]
     }
@@ -330,7 +331,7 @@ Item {
     }
 
     property var led_tw_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var led_tw_value: {
@@ -340,7 +341,7 @@ Item {
     property var led_tsd: {
         "caption":"TSD",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":false,
         "values":[]
     }
@@ -350,7 +351,7 @@ Item {
     }
 
     property var led_tsd_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var led_tsd_value: {
@@ -360,7 +361,7 @@ Item {
     property var led_diagerr: {
         "caption":"DIAGERR",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":false,
         "values":[]
     }
@@ -370,7 +371,7 @@ Item {
     }
 
     property var led_diagerr_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var led_diagerr_value: {
@@ -381,7 +382,7 @@ Item {
     property var led_ol: {
         "caption":"OL",
         "scales":[],
-        "state":"disabled",
+        "states": [1],
         "value":false,
         "values":[]
     }
@@ -391,7 +392,7 @@ Item {
     }
 
     property var led_ol_state: {
-        "state":"disabled"
+       "states": [1]
     }
 
     property var led_ol_value: {
@@ -401,7 +402,7 @@ Item {
     property var led_oen: {
         "caption":"Output EN (OEN)",
         "scales":[],
-        "state":"enabled",
+        "states":[2],
         "value":true,
         "values":[]
     }
@@ -411,7 +412,7 @@ Item {
     }
 
     property var led_oen_state: {
-        "state":"enabled"
+        "states":[2]
     }
 
     property var led_oen_value: {
@@ -421,7 +422,7 @@ Item {
     property var led_pwm_enable: {
         "caption":"PWM Enable",
         "scales":[],
-        "state":"enabled",
+        "states":[0],
         "value":true,
         "values":[]
     }
@@ -431,7 +432,7 @@ Item {
     }
 
     property var led_pwm_enable_state: {
-        "state":"enabled"
+        "states": [0]
     }
 
     property var led_pwm_enable_value: {
@@ -441,7 +442,7 @@ Item {
     property var led_pwm_duty_lock: {
         "caption":"Lock PWM Duty Together",
         "scales":[],
-        "state":"enabled",
+        "states":[2],
         "value":true,
         "values":[]
     }
@@ -451,7 +452,7 @@ Item {
     }
 
     property var led_pwm_duty_lock_state: {
-        "state":"enabled"
+        "states": [2]
     }
 
     property var led_pwm_duty_lock_value: {
@@ -461,7 +462,7 @@ Item {
     property var led_pwm_en_lock: {
         "caption":"Lock PWM EN Together",
         "scales":[],
-        "state":"enabled",
+        "states":[2],
         "value":true,
         "values":[]
     }
@@ -471,7 +472,7 @@ Item {
     }
 
     property var led_pwm_en_lock_state: {
-        "state":"enabled"
+        "states":[2]
     }
 
     property var led_pwm_en_lock_value: {
@@ -481,7 +482,7 @@ Item {
     property var led_linear_log: {
         "caption":"PWM Linear/Log",
         "scales":[],
-        "state":"enabled",
+        "states":[0],
         "value":"Linear",
         "values":["Linear","Log"]
     }
@@ -491,7 +492,7 @@ Item {
     }
 
     property var led_linear_log_state: {
-        "state":"enabled"
+        "states":[0]
     }
 
     property var led_linear_log_value: {
@@ -505,7 +506,7 @@ Item {
     property var led_pwm_freq: {
         "caption":"PWM Frequency (Hz)",
         "scales":[],
-        "state":"enabled",
+        "states":[0],
         "value":"125 Hz",
         "values":["150 Hz","300 Hz","600 Hz","1200 Hz"]
     }
@@ -515,7 +516,7 @@ Item {
     }
 
     property var led_pwm_freq_state: {
-        "state":"enabled"
+       "states":[0]
     }
 
     property var led_pwm_freq_value: {
@@ -529,7 +530,7 @@ Item {
     property var led_open_load_diagnostic: {
         "caption":"I2C Open Load Diagnostic",
         "scales":[],
-        "state":"enabled",
+        "states":[0],
         "value":"No Diagnostic",
         "values":["No Diagnostic","Auto Retry","Diagnostic Only"]
     }
@@ -539,7 +540,7 @@ Item {
     }
 
     property var led_open_load_diagnostic_state: {
-        "state":"enabled"
+        "states":[0]
     }
 
     property var led_open_load_diagnostic_value: {
@@ -761,7 +762,7 @@ Item {
     property var power_vled_type: {
         "caption":"VLED Input Voltage Type",
         "scales":[],
-        "state":"enabled",
+        "states":[0],
         "value":"Boost",
         "values":["Boost","Buck","Bypass"]
     }
@@ -771,7 +772,7 @@ Item {
     }
 
     property var power_vled_type_state: {
-        "state":"enabled"
+       "states":[0]
     }
 
     property var power_vled_type_value: {
@@ -785,7 +786,7 @@ Item {
     property var power_boost_ocp: {
         "caption":"Boost OCP",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":false,
         "values":[]
     }
@@ -795,7 +796,7 @@ Item {
     }
 
     property var power_boost_ocp_state: {
-        "state":"disabled"
+        "states": [1]
     }
 
     property var power_boost_ocp_value: {
@@ -805,7 +806,7 @@ Item {
     property var power_voltage_set: {
         "caption":"Boost Voltage Set",
         "scales":[12.0,5.5,0.1],
-        "state":"enabled",
+        "states":[0],
         "value":8.0,
         "values":[]
     }
@@ -819,7 +820,7 @@ Item {
     }
 
     property var power_voltage_set_state: {
-        "state":"enabled"
+        "states":[0]
     }
 
     property var power_voltage_set_value: {
@@ -829,7 +830,7 @@ Item {
 
     property var power_vs_select: {
         "caption":"VS Voltage Select",
-        "scales":[],
+        "states":[0],
         "state":"enabled",
         "value":"5V_USB",
         "values":["5V_USB","VLED"]
@@ -840,7 +841,7 @@ Item {
     }
 
     property var power_vs_select_state: {
-        "state":"enabled"
+        "states":[0]
     }
 
     property var power_vs_select_value: {
@@ -854,7 +855,7 @@ Item {
     property var power_vled: {
         "caption":"LED Voltage (VLED)",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":0,
         "values":[]
     }
@@ -864,7 +865,7 @@ Item {
     }
 
     property var power_vled_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var power_vled_value: {
@@ -874,7 +875,7 @@ Item {
     property var power_vs: {
         "caption":"Supply Voltage (VS)",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":0,
         "values":[]
     }
@@ -884,7 +885,7 @@ Item {
     }
 
     property var power_vs_state: {
-        "state":"disabled"
+       "states":[1]
     }
 
     property var power_vs_value: {
@@ -894,7 +895,7 @@ Item {
     property var power_vdd: {
         "caption":"Digital Voltage (VDD)",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":0,
         "values":[]
     }
@@ -904,7 +905,7 @@ Item {
     }
 
     property var power_vdd_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var power_vdd_value: {
@@ -914,7 +915,7 @@ Item {
     property var power_vconn: {
         "caption":"Battery Voltage\n(VBAT)",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":0,
         "values":[]
     }
@@ -924,7 +925,7 @@ Item {
     }
 
     property var power_vconn_state: {
-        "state":"disabled"
+       "states":[1]
     }
 
     property var power_vconn_value: {
@@ -934,7 +935,7 @@ Item {
     property var power_iled: {
         "caption":"LED Current\n(ILED)",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":0,
         "values":[]
     }
@@ -944,7 +945,7 @@ Item {
     }
 
     property var power_iled_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var power_iled_value: {
@@ -954,7 +955,7 @@ Item {
     property var power_is: {
         "caption":"Supply Current mA \n(IS)",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":0,
         "values":[]
     }
@@ -964,7 +965,7 @@ Item {
     }
 
     property var power_is_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var power_is_value: {
@@ -976,7 +977,7 @@ Item {
     property var power_vcc: {
         "caption":"Reference Voltage (VCC)",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":0,
         "values":[]
     }
@@ -986,7 +987,7 @@ Item {
     }
 
     property var power_vcc_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var power_vcc_value: {
@@ -996,7 +997,7 @@ Item {
     property var power_led_driver_temp_top: {
         "caption":"LED Driver Temp Top (°C)",
         "scales":[150,0,1],
-        "state":"disabled",
+        "states":[1],
         "value":0,
         "values":[]
     }
@@ -1007,7 +1008,7 @@ Item {
     }
 
     property var power_led_driver_temp_top_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var power_led_driver_temp_top_scales: {
@@ -1022,7 +1023,7 @@ Item {
     property var power_led_driver_temp_bottom: {
         "caption":"LED Driver Temp Bottom (°C)",
         "scales":[150,0,10],
-        "state":"disabled",
+        "states":[1],
         "value":0,
         "values":[]
     }
@@ -1033,7 +1034,7 @@ Item {
     }
 
     property var power_led_driver_temp_bottom_state: {
-        "state":"disabled"
+      "states":[1]
     }
 
     property var power_led_driver_temp_bottom_scales: {
@@ -1047,7 +1048,7 @@ Item {
     property var power_led_temp: {
         "caption":"LED Temperature (°C)",
         "scales":[150,0,10],
-        "state":"disabled",
+        "states":[1],
         "value":0,
         "values":[]
     }
@@ -1057,7 +1058,7 @@ Item {
     }
 
     property var power_led_temp_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var power_led_temp_scales: {
@@ -1071,7 +1072,7 @@ Item {
     property var power_total_power: {
         "caption":"Total Power Loss (W)",
         "scales":[5.00,0.00,0.50],
-        "state":"disabled",
+        "states":[1],
         "value":0,
         "values":[]
     }
@@ -1082,7 +1083,7 @@ Item {
     }
 
     property var power_total_power_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var power_total_power_scales: {
@@ -1152,7 +1153,7 @@ Item {
     property var soc_diag: {
         "caption":"DIAG",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value": false,
         "values":[]
     }
@@ -1162,7 +1163,7 @@ Item {
     }
 
     property var soc_diag_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var soc_diag_value: {
@@ -1172,7 +1173,7 @@ Item {
     property var soc_crc: {
         "caption":"I2C CRC",
         "scales":[],
-        "state":"enabled",
+        "states":[0],
         "value":false,
         "values":[]
     }
@@ -1182,7 +1183,7 @@ Item {
     }
 
     property var soc_crc_state: {
-        "state":"enabled"
+        "states":[0]
     }
 
     property var soc_crc_value: {
@@ -1192,7 +1193,7 @@ Item {
     property var soc_vdd_disconnect: {
         "caption":"VDD Voltage",
         "scales":[],
-        "state":"enabled",
+        "states":[0],
         "value":"Connect",
         "values":["Connect","Disconnect"]
     }
@@ -1202,7 +1203,7 @@ Item {
     }
 
     property var soc_vdd_disconnect_state: {
-        "state":"enabled"
+       "states":[0]
     }
 
     property var soc_vdd_disconnect_value: {
@@ -1216,7 +1217,7 @@ Item {
     property var soc_mode: {
         "caption":"Mode (I2CFLAG)",
         "scales":[],
-        "state":"enabled",
+        "states":[0],
         "value":"I2C",
         "values":["I2C","SAM"]
     }
@@ -1226,7 +1227,7 @@ Item {
     }
 
     property var soc_mode_state: {
-        "state":"enabled"
+       "states":[0]
     }
 
     property var soc_mode_value: {
@@ -1240,7 +1241,7 @@ Item {
     property var soc_conf: {
         "caption":"SAM Configuration",
         "scales":[],
-        "state":"enabled",
+        "states":[0],
         "value":"SAM1",
         "values":["SAM1","SAM2"]
     }
@@ -1250,7 +1251,7 @@ Item {
     }
 
     property var soc_conf_state: {
-        "state":"enabled"
+        "states":[0]
     }
 
     property var soc_conf_value: {
@@ -1264,7 +1265,7 @@ Item {
     property var soc_sam_open_load_diagnostic: {
         "caption":"SAM Open Load Diagnostic",
         "scales":[],
-        "state":"enabled",
+        "states":[0],
         "value":"No Diagnostic",
         "values":["No Diagnostic","Auto Retry","Diagnostic Only"]
     }
@@ -1274,7 +1275,7 @@ Item {
     }
 
     property var soc_sam_open_load_diagnostic_state: {
-        "state":"enabled"
+       "states":[0]
     }
 
     property var soc_sam_open_load_diagnostic_value: {
@@ -1288,7 +1289,7 @@ Item {
     property var soc_sam_conf_1: {
         "caption":"SAM_CONF_1",
         "scales":[],
-        "state":"enabled",
+         "states":[0],
         "value":"",
         "values":[false,false,false,false,false,false,false,false,false,false,false,false]
     }
@@ -1298,7 +1299,7 @@ Item {
     }
 
     property var soc_sam_conf_1_state: {
-        "state":"enabled"
+       "states":[0]
     }
 
     property var soc_sam_conf_1_values: {
@@ -1306,9 +1307,9 @@ Item {
     }
 
     property var soc_sam_conf_2: {
-        "caption":"SAM_CONF_1",
+        "caption":"SAM_CONF_2",
         "scales":[],
-        "state":"enabled",
+        "states":[0],
         "value":"",
         "values":[true,true,true,true,true,true,true,true,true,true,true,true]
     }
@@ -1318,7 +1319,7 @@ Item {
     }
 
     property var soc_sam_conf_2_state: {
-        "state":"enabled"
+       "states":[0]
     }
 
     property var soc_sam_conf_2_values: {
@@ -1329,7 +1330,7 @@ Item {
     property var soc_addr_curr: {
         "caption":"Current 7-bit I2C Address",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":"60",
         "values":[]
     }
@@ -1339,7 +1340,7 @@ Item {
     }
 
     property var soc_addr_curr_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var soc_addr_curr_value: {
@@ -1349,7 +1350,7 @@ Item {
     property var soc_addr_new: {
         "caption":"New 7-bit I2C Address",
         "scales":[127,96,1],
-        "state":"enabled",
+        "states":[0],
         "value":96,
         "values":[]
     }
@@ -1363,7 +1364,7 @@ Item {
     }
 
     property var soc_addr_new_state: {
-        "state":"enabled"
+        "states":[0]
     }
 
     property var soc_addr_new_value: {
@@ -1373,7 +1374,7 @@ Item {
     property var soc_otp: {
         "caption":"One Time Program (zap)",
         "scales":[],
-        "state":"enabled",
+        "states":[0],
         "value":"",
         "values":[]
     }
@@ -1383,7 +1384,7 @@ Item {
     }
 
     property var soc_otp_state: {
-        "state":"enabled"
+        "states":[0]
     }
 
     //Commands
@@ -1488,7 +1489,7 @@ Item {
     property var misc_id_vers_1: {
         "caption":"ID_VERS_1",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":67,
         "values":[]
     }
@@ -1498,7 +1499,7 @@ Item {
     }
 
     property var misc_id_vers_1_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var misc_id_vers_1_value: {
@@ -1508,7 +1509,7 @@ Item {
     property var misc_id_vers_2: {
         "caption":"ID_VERS_2",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":4,
         "values":[]
     }
@@ -1518,7 +1519,7 @@ Item {
     }
 
     property var misc_id_vers_2_state: {
-        "state":"disabled"
+       "states":[1]
     }
 
     property var misc_id_vers_2_value: {
@@ -1528,7 +1529,7 @@ Item {
     property var misc_odd_ch_error: {
         "caption":"Odd Channel Error",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":false,
         "values":[]
     }
@@ -1538,7 +1539,7 @@ Item {
     }
 
     property var misc_odd_ch_error_state: {
-        "state":"disabled"
+       "states":[1]
     }
 
     property var misc_odd_ch_error_value: {
@@ -1548,7 +1549,7 @@ Item {
     property var misc_even_ch_error: {
         "caption":"Even Channel Error",
         "scales":[],
-        "state":"disabled",
+        "states":[1],
         "value":false,
         "values":[]
     }
@@ -1558,7 +1559,7 @@ Item {
     }
 
     property var misc_even_ch_error_state: {
-        "state":"disabled"
+        "states":[1]
     }
 
     property var misc_even_ch_error_value: {

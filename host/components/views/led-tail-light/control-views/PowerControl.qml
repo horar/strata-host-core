@@ -14,6 +14,22 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     property string voltageType: "Boost"
 
+    function setStatesForControls (theId, index){
+        if(index !== null && index !== undefined)  {
+            if(index === 0) {
+                theId.enabled = true
+                theId.opacity = 1.0
+            }
+            else if(index === 1) {
+                theId.enabled = false
+                theId.opacity = 1.0
+            }
+            else {
+                theId.enabled = false
+                theId.opacity = 0.5
+            }
+        }
+    }
     RowLayout {
         width: parent.width - 20
         height: parent.height/1.3
@@ -91,18 +107,19 @@ Item {
                                     property var power_vled_type: platformInterface.power_vled_type
                                     onPower_vled_typeChanged: {
                                         vedInputVoltageTypeLabel.text = power_vled_type.caption
-                                        if(power_vled_type.state === "enabled") {
-                                            vedInputVoltageType.opacity = 1.0
-                                            vedInputVoltageType.enabled = true
-                                        }
-                                        else if (power_vled_type.state === "disabled") {
-                                            vedInputVoltageType.opacity = 1.0
-                                            vedInputVoltageType.enabled = false
-                                        }
-                                        else  {
-                                            vedInputVoltageType.opacity = 0.5
-                                            vedInputVoltageType.enabled = false
-                                        }
+                                        setStatesForControls(vedInputVoltageType,power_vled_type.states[0])
+                                        //                                        if(power_vled_type.state === "enabled") {
+                                        //                                            vedInputVoltageType.opacity = 1.0
+                                        //                                            vedInputVoltageType.enabled = true
+                                        //                                        }
+                                        //                                        else if (power_vled_type.state === "disabled") {
+                                        //                                            vedInputVoltageType.opacity = 1.0
+                                        //                                            vedInputVoltageType.enabled = false
+                                        //                                        }
+                                        //                                        else  {
+                                        //                                            vedInputVoltageType.opacity = 0.5
+                                        //                                            vedInputVoltageType.enabled = false
+                                        //                                        }
 
                                         vedInputVoltageType.model = power_vled_type.values
 
@@ -120,20 +137,9 @@ Item {
                                         vedInputVoltageTypeLabel.text = power_vled_type_caption
                                     }
 
-                                    property var power_vled_type_state: platformInterface.power_vled_type_state.state
+                                    property var power_vled_type_state: platformInterface.power_vled_type_state.states
                                     onPower_vled_type_stateChanged: {
-                                        if(power_vled_type_state === "enabled") {
-                                            vedInputVoltageType.opacity = 1.0
-                                            vedInputVoltageType.enabled = true
-                                        }
-                                        else if (power_vled_type_state === "disabled") {
-                                            vedInputVoltageType.opacity = 1.0
-                                            vedInputVoltageType.enabled = false
-                                        }
-                                        else  {
-                                            vedInputVoltageType.opacity = 0.5
-                                            vedInputVoltageType.enabled = false
-                                        }
+                                        setStatesForControls(vedInputVoltageType,power_vled_type_state[0])
                                     }
 
                                     property var power_vled_type_values: platformInterface.power_vled_type_values.values
@@ -180,18 +186,7 @@ Item {
                                 property var power_boost_ocp: platformInterface.power_boost_ocp
                                 onPower_boost_ocpChanged: {
                                     boostOCPLabel.text = power_boost_ocp.caption
-                                    if(power_boost_ocp.state === "enabled") {
-                                        boostOCP.opacity = 1.0
-                                        boostOCP.enabled = true
-                                    }
-                                    else if (power_boost_ocp.state === "disabled") {
-                                        boostOCP.opacity = 1.0
-                                        boostOCP.enabled = false
-                                    }
-                                    else  {
-                                        boostOCP.opacity = 0.5
-                                        boostOCP.enabled = false
-                                    }
+                                    setStatesForControls(boostOCP,power_boost_ocp.states[0])
                                     if(power_boost_ocp.value === true)
                                         boostOCP.status = SGStatusLight.Red
                                     else boostOCP.status = SGStatusLight.Off
@@ -202,20 +197,9 @@ Item {
                                     boostOCPLabel.text = power_boost_ocp_caption
                                 }
 
-                                property var power_boost_ocp_state: platformInterface.power_boost_ocp_state.state
+                                property var power_boost_ocp_state: platformInterface.power_boost_ocp_state.states
                                 onPower_boost_ocp_stateChanged: {
-                                    if(power_boost_ocp_state === "enabled") {
-                                        boostOCP.opacity = 1.0
-                                        boostOCP.enabled = true
-                                    }
-                                    else if (power_boost_ocp_state === "disabled") {
-                                        boostOCP.opacity = 1.0
-                                        boostOCP.enabled = false
-                                    }
-                                    else  {
-                                        boostOCP.opacity = 0.5
-                                        boostOCP.enabled = false
-                                    }
+                                    setStatesForControls(boostOCP,power_boost_ocp_state[0])
                                 }
 
                                 property var power_boost_ocp_value: platformInterface.power_boost_ocp_value.value
@@ -250,7 +234,7 @@ Item {
                             live: false
                             fontSizeMultiplier: ratioCalc * 1.2
                             onUserSet: {
-                                platformInterface.set_power_voltage_set.update(value.toFixed(1))
+                                platformInterface.set_power_voltage_set.update(parseFloat(value.toFixed(1)))
                             }
                         }
 
@@ -263,19 +247,7 @@ Item {
                             voltageSet.toText.text = power_voltage_set.scales[0] + "V"
                             voltageSet.fromText.text = power_voltage_set.scales[1] + "V"
                             voltageSet.stepSize = power_voltage_set.scales[2]
-
-                            if(power_voltage_set.state === "enabled") {
-                                voltageSet.opacity = 1.0
-                                voltageSet.enabled = true
-                            }
-                            else if (power_voltage_set.state === "disabled") {
-                                voltageSet.opacity = 1.0
-                                voltageSet.enabled = false
-                            }
-                            else  {
-                                voltageSet.opacity = 0.5
-                                voltageSet.enabled = false
-                            }
+                            setStatesForControls(voltageSet,power_voltage_set.states[0])
 
                             voltageSet.value =  power_voltage_set.value
 
@@ -295,20 +267,9 @@ Item {
                             voltageSet.stepSize = power_voltage_set_scales[2]
                         }
 
-                        property var power_voltage_set_state: platformInterface.power_voltage_set_state.state
+                        property var power_voltage_set_state: platformInterface.power_voltage_set_state.states
                         onPower_voltage_set_stateChanged: {
-                            if(power_voltage_set_state === "enabled") {
-                                voltageSet.opacity = 1.0
-                                voltageSet.enabled = true
-                            }
-                            else if (power_voltage_set_state === "disabled") {
-                                voltageSet.opacity = 1.0
-                                voltageSet.enabled = false
-                            }
-                            else  {
-                                voltageSet.opacity = 0.5
-                                voltageSet.enabled = false
-                            }
+                            setStatesForControls(voltageSet,power_voltage_set_state[0])
                         }
                         property var power_voltage_set_value: platformInterface.power_voltage_set_value.value
                         onPower_voltage_set_valueChanged: {
@@ -362,19 +323,8 @@ Item {
                         property var power_vs_select: platformInterface.power_vs_select
                         onPower_vs_selectChanged: {
                             vsVoltageSelectLabel.text = power_vs_select.caption
+                            setStatesForControls(vsVoltageSelect,power_vs_select.states[0])
 
-                            if(power_vs_select.state === "enabled") {
-                                vsVoltageSelect.opacity = 1.0
-                                vsVoltageSelect.enabled = true
-                            }
-                            else if (power_vs_select.state === "disabled") {
-                                vsVoltageSelect.opacity = 1.0
-                                vsVoltageSelect.enabled = false
-                            }
-                            else  {
-                                vsVoltageSelect.opacity = 0.5
-                                vsVoltageSelect.enabled = false
-                            }
 
                             vsVoltageSelect.checkedLabel = power_vs_select.values[0]
                             vsVoltageSelect.uncheckedLabel = power_vs_select.values[1]
@@ -389,20 +339,9 @@ Item {
                             vsVoltageSelectLabel.text = power_vs_select_caption
                         }
 
-                        property var power_vs_select_state: platformInterface.power_vs_select_state.state
+                        property var power_vs_select_state: platformInterface.power_vs_select_state.states
                         onPower_vs_select_stateChanged: {
-                            if(power_vs_select_state === "enabled") {
-                                vsVoltageSelect.opacity = 1.0
-                                vsVoltageSelect.enabled = true
-                            }
-                            else if (power_vs_select_state === "disabled") {
-                                vsVoltageSelect.opacity = 1.0
-                                vsVoltageSelect.enabled = false
-                            }
-                            else  {
-                                vsVoltageSelect.opacity = 0.5
-                                vsVoltageSelect.enabled = false
-                            }
+                            setStatesForControls(vsVoltageSelect,power_vs_select_state[0])
                         }
 
                         property var power_vs_select_values: platformInterface.power_vs_select_values.values
@@ -509,19 +448,20 @@ Item {
                                         property var power_vled: platformInterface.power_vled
                                         onPower_vledChanged: {
                                             vLEDLabel.text = power_vled.caption
+                                            setStatesForControls(vLED,power_vled.states[0])
 
-                                            if(power_vled_state === "enabled") {
-                                                vLED.opacity = 1.0
-                                                vLED.enabled = true
-                                            }
-                                            else if (power_vled.state === "disabled") {
-                                                vLED.opacity = 1.0
-                                                vLED.enabled = false
-                                            }
-                                            else  {
-                                                vLED.opacity = 0.5
-                                                vLED.enabled = false
-                                            }
+                                            //                                            if(power_vled_state === "enabled") {
+                                            //                                                vLED.opacity = 1.0
+                                            //                                                vLED.enabled = true
+                                            //                                            }
+                                            //                                            else if (power_vled.state === "disabled") {
+                                            //                                                vLED.opacity = 1.0
+                                            //                                                vLED.enabled = false
+                                            //                                            }
+                                            //                                            else  {
+                                            //                                                vLED.opacity = 0.5
+                                            //                                                vLED.enabled = false
+                                            //                                            }
 
                                             vLED.text = power_vled.value
                                             vLED.unit = "<b>V</b>"
@@ -534,20 +474,9 @@ Item {
                                             vLEDLabel.text = power_vled_caption
                                         }
 
-                                        property var power_vled_state: platformInterface.power_vled_state.state
+                                        property var power_vled_state: platformInterface.power_vled_state.states
                                         onPower_vled_stateChanged: {
-                                            if(power_vled_state === "enabled") {
-                                                vLED.opacity = 1.0
-                                                vLED.enabled = true
-                                            }
-                                            else if (power_vled_state === "disabled") {
-                                                vLED.opacity = 1.0
-                                                vLED.enabled = false
-                                            }
-                                            else  {
-                                                vLED.opacity = 0.5
-                                                vLED.enabled = false
-                                            }
+                                            setStatesForControls(vLED,power_vled_state[0])
                                         }
 
                                         property var power_vled_value: platformInterface.power_vled_value.value
@@ -590,19 +519,20 @@ Item {
                                         property var power_vs: platformInterface.power_vs
                                         onPower_vsChanged: {
                                             supplyVoltageLabel.text = power_vs.caption
+                                            setStatesForControls(supplyVoltage,power_vs.states[0])
 
-                                            if(power_vs.state === "enabled") {
-                                                supplyVoltage.opacity = 1.0
-                                                supplyVoltage.enabled = true
-                                            }
-                                            else if (power_vs.state === "disabled") {
-                                                supplyVoltage.opacity = 1.0
-                                                supplyVoltage.enabled = false
-                                            }
-                                            else  {
-                                                supplyVoltage.opacity = 0.5
-                                                supplyVoltage.enabled = false
-                                            }
+                                            //                                            if(power_vs.state === "enabled") {
+                                            //                                                supplyVoltage.opacity = 1.0
+                                            //                                                supplyVoltage.enabled = true
+                                            //                                            }
+                                            //                                            else if (power_vs.state === "disabled") {
+                                            //                                                supplyVoltage.opacity = 1.0
+                                            //                                                supplyVoltage.enabled = false
+                                            //                                            }
+                                            //                                            else  {
+                                            //                                                supplyVoltage.opacity = 0.5
+                                            //                                                supplyVoltage.enabled = false
+                                            //                                            }
 
                                             supplyVoltage.text = power_vs.value
 
@@ -613,20 +543,9 @@ Item {
                                             supplyVoltageLabel.text = power_vs_caption
                                         }
 
-                                        property var power_vs_state: platformInterface.power_vs_state.state
+                                        property var power_vs_state: platformInterface.power_vs_state.states
                                         onPower_vs_stateChanged: {
-                                            if(power_vs_state === "enabled") {
-                                                supplyVoltage.opacity = 1.0
-                                                supplyVoltage.enabled = true
-                                            }
-                                            else if (power_vs_state === "disabled") {
-                                                supplyVoltage.opacity = 1.0
-                                                supplyVoltage.enabled = false
-                                            }
-                                            else  {
-                                                supplyVoltage.opacity = 0.5
-                                                supplyVoltage.enabled = false
-                                            }
+                                            setStatesForControls(supplyVoltage,power_vs_state[0])
                                         }
 
                                         property var power_vs_value: platformInterface.power_vs_value.value
@@ -635,6 +554,7 @@ Item {
                                         }
                                     }
                                 }
+
                                 Rectangle {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
@@ -665,19 +585,20 @@ Item {
                                         property var power_vdd: platformInterface.power_vdd
                                         onPower_vddChanged: {
                                             digitalVoltageLabel.text = power_vdd.caption
+                                            setStatesForControls(digitalVoltage,power_vdd.states[0])
 
-                                            if(power_vdd.state === "enabled") {
-                                                digitalVoltage.opacity = 1.0
-                                                digitalVoltage.enabled = true
-                                            }
-                                            else if (power_vdd.state === "disabled") {
-                                                digitalVoltage.opacity = 1.0
-                                                digitalVoltage.enabled = false
-                                            }
-                                            else  {
-                                                digitalVoltage.opacity = 0.5
-                                                digitalVoltage.enabled = false
-                                            }
+                                            //                                            if(power_vdd.state === "enabled") {
+                                            //                                                digitalVoltage.opacity = 1.0
+                                            //                                                digitalVoltage.enabled = true
+                                            //                                            }
+                                            //                                            else if (power_vdd.state === "disabled") {
+                                            //                                                digitalVoltage.opacity = 1.0
+                                            //                                                digitalVoltage.enabled = false
+                                            //                                            }
+                                            //                                            else  {
+                                            //                                                digitalVoltage.opacity = 0.5
+                                            //                                                digitalVoltage.enabled = false
+                                            //                                            }
 
                                             digitalVoltage.text = power_vdd.value
 
@@ -688,20 +609,9 @@ Item {
                                             digitalVoltageLabel.text = power_vdd_caption
                                         }
 
-                                        property var power_vdd_state: platformInterface.power_vdd_state.state
+                                        property var power_vdd_state: platformInterface.power_vdd_state.states
                                         onPower_vdd_stateChanged: {
-                                            if(power_vdd_state === "enabled") {
-                                                digitalVoltage.opacity = 1.0
-                                                digitalVoltage.enabled = true
-                                            }
-                                            else if (power_vdd_state === "disabled") {
-                                                digitalVoltage.opacity = 1.0
-                                                digitalVoltage.enabled = false
-                                            }
-                                            else  {
-                                                digitalVoltage.opacity = 0.5
-                                                digitalVoltage.enabled = false
-                                            }
+                                            setStatesForControls(digitalVoltage,power_vdd_state[0])
                                         }
 
                                         property var power_vdd_value: platformInterface.power_vdd_value.value
@@ -739,18 +649,19 @@ Item {
                                         property var power_vconn: platformInterface.power_vconn
                                         onPower_vconnChanged: {
                                             batteryVoltageLabel.text = power_vconn.caption
-                                            if(power_vconn.state === "enabled") {
-                                                batteryVoltage.opacity = 1.0
-                                                batteryVoltage.enabled = true
-                                            }
-                                            else if (power_vconn.state === "disabled") {
-                                                batteryVoltage.opacity = 1.0
-                                                batteryVoltage.enabled = false
-                                            }
-                                            else  {
-                                                batteryVoltage.opacity = 0.5
-                                                batteryVoltage.enabled = false
-                                            }
+                                            setStatesForControls(batteryVoltage,power_vconn.states[0])
+//                                            if(power_vconn.state === "enabled") {
+//                                                batteryVoltage.opacity = 1.0
+//                                                batteryVoltage.enabled = true
+//                                            }
+//                                            else if (power_vconn.state === "disabled") {
+//                                                batteryVoltage.opacity = 1.0
+//                                                batteryVoltage.enabled = false
+//                                            }
+//                                            else  {
+//                                                batteryVoltage.opacity = 0.5
+//                                                batteryVoltage.enabled = false
+//                                            }
                                             batteryVoltage.text = power_vconn.value
                                         }
 
@@ -759,20 +670,9 @@ Item {
                                             batteryVoltageLabel.text = power_vconn_caption
                                         }
 
-                                        property var power_vconn_state: platformInterface.power_vconn_state.state
+                                        property var power_vconn_state: platformInterface.power_vconn_state.states
                                         onPower_vconn_stateChanged: {
-                                            if(power_vconn_state === "enabled") {
-                                                batteryVoltage.opacity = 1.0
-                                                batteryVoltage.enabled = true
-                                            }
-                                            else if (power_vconn_state === "disabled") {
-                                                batteryVoltage.opacity = 1.0
-                                                batteryVoltage.enabled = false
-                                            }
-                                            else  {
-                                                batteryVoltage.opacity = 0.5
-                                                batteryVoltage.enabled = false
-                                            }
+                                           setStatesForControls(batteryVoltage,power_vconn_state[0])
                                         }
 
                                         property var power_vconn_value: platformInterface.power_vconn_value.value
@@ -816,18 +716,19 @@ Item {
                                         property var power_iled: platformInterface.power_iled
                                         onPower_iledChanged: {
                                             ledCurrentLabel.text = power_iled.caption
-                                            if(power_iled.state === "enabled") {
-                                                ledCurrent.opacity = 1.0
-                                                ledCurrent.enabled = true
-                                            }
-                                            else if (power_iled.state === "disabled") {
-                                                ledCurrent.opacity = 1.0
-                                                ledCurrent.enabled = false
-                                            }
-                                            else  {
-                                                ledCurrent.opacity = 0.5
-                                                ledCurrent.enabled = false
-                                            }
+                                            setStatesForControls(ledCurrent,power_iled.states[0])
+//                                            if(power_iled.state === "enabled") {
+//                                                ledCurrent.opacity = 1.0
+//                                                ledCurrent.enabled = true
+//                                            }
+//                                            else if (power_iled.state === "disabled") {
+//                                                ledCurrent.opacity = 1.0
+//                                                ledCurrent.enabled = false
+//                                            }
+//                                            else  {
+//                                                ledCurrent.opacity = 0.5
+//                                                ledCurrent.enabled = false
+//                                            }
                                             ledCurrent.text = power_iled.value
 
                                         }
@@ -837,20 +738,9 @@ Item {
                                             ledCurrentLabel.text = power_iled_caption
                                         }
 
-                                        property var power_iled_state: platformInterface.power_iled_state.state
+                                        property var power_iled_state: platformInterface.power_iled_state.states
                                         onPower_iled_stateChanged: {
-                                            if(power_iled_state === "enabled") {
-                                                ledCurrent.opacity = 1.0
-                                                ledCurrent.enabled = true
-                                            }
-                                            else if (power_iled_state === "disabled") {
-                                                ledCurrent.opacity = 1.0
-                                                ledCurrent.enabled = false
-                                            }
-                                            else  {
-                                                ledCurrent.opacity = 0.5
-                                                ledCurrent.enabled = false
-                                            }
+                                            setStatesForControls(ledCurrent,power_iled_state[0])
                                         }
 
                                         property var power_iled_value: platformInterface.power_iled_value.value
@@ -883,18 +773,19 @@ Item {
                                         property var power_is: platformInterface.power_is
                                         onPower_isChanged: {
                                             supplyCurrentLabel.text = power_is.caption
-                                            if(power_is.state === "enabled") {
-                                                supplyCurrent.opacity = 1.0
-                                                supplyCurrent.enabled = true
-                                            }
-                                            else if (power_is.state === "disabled") {
-                                                supplyCurrent.opacity = 1.0
-                                                supplyCurrent.enabled = false
-                                            }
-                                            else  {
-                                                supplyCurrent.opacity = 0.5
-                                                supplyCurrent.enabled = false
-                                            }
+                                            setStatesForControls(supplyCurrent,power_is.states[0])
+//                                            if(power_is.state === "enabled") {
+//                                                supplyCurrent.opacity = 1.0
+//                                                supplyCurrent.enabled = true
+//                                            }
+//                                            else if (power_is.state === "disabled") {
+//                                                supplyCurrent.opacity = 1.0
+//                                                supplyCurrent.enabled = false
+//                                            }
+//                                            else  {
+//                                                supplyCurrent.opacity = 0.5
+//                                                supplyCurrent.enabled = false
+//                                            }
                                             supplyCurrent.text = power_is.value
 
                                         }
@@ -904,20 +795,9 @@ Item {
                                             supplyCurrentLabel.text = power_is_caption
                                         }
 
-                                        property var power_is_state: platformInterface.power_is_state.state
+                                        property var power_is_state: platformInterface.power_is_state.states
                                         onPower_is_stateChanged: {
-                                            if(power_is_state === "enabled") {
-                                                supplyCurrent.opacity = 1.0
-                                                supplyCurrent.enabled = true
-                                            }
-                                            else if (power_is_state === "disabled") {
-                                                supplyCurrent.opacity = 1.0
-                                                supplyCurrent.enabled = false
-                                            }
-                                            else  {
-                                                supplyCurrent.opacity = 0.5
-                                                supplyCurrent.enabled = false
-                                            }
+                                           setStatesForControls(supplyCurrent,power_is_state[0])
                                         }
 
                                         property var power_is_value: platformInterface.power_is_value.value
@@ -951,18 +831,19 @@ Item {
                                         property var power_vcc: platformInterface.power_vcc
                                         onPower_vccChanged: {
                                             voltageLabel.text = power_vcc.caption
-                                            if(power_vcc.state === "enabled") {
-                                                voltage.opacity = 1.0
-                                                voltage.enabled = true
-                                            }
-                                            else if (power_vcc.state === "disabled") {
-                                                voltage.opacity = 1.0
-                                                voltage.enabled = false
-                                            }
-                                            else  {
-                                                voltage.opacity = 0.5
-                                                voltage.enabled = false
-                                            }
+                                            setStatesForControls(voltage,power_vcc.states[0])
+//                                            if(power_vcc.state === "enabled") {
+//                                                voltage.opacity = 1.0
+//                                                voltage.enabled = true
+//                                            }
+//                                            else if (power_vcc.state === "disabled") {
+//                                                voltage.opacity = 1.0
+//                                                voltage.enabled = false
+//                                            }
+//                                            else  {
+//                                                voltage.opacity = 0.5
+//                                                voltage.enabled = false
+//                                            }
                                             voltage.text = power_vcc.value
 
                                         }
@@ -972,20 +853,9 @@ Item {
                                             voltageLabel.text = power_vcc_caption
                                         }
 
-                                        property var power_vcc_state: platformInterface.power_vcc_state.state
+                                        property var power_vcc_state: platformInterface.power_vcc_state.states
                                         onPower_vcc_stateChanged: {
-                                            if(power_vcc_state === "enabled") {
-                                                voltage.opacity = 1.0
-                                                voltage.enabled = true
-                                            }
-                                            else if (power_vcc_state === "disabled") {
-                                                voltage.opacity = 1.0
-                                                voltage.enabled = false
-                                            }
-                                            else  {
-                                                voltage.opacity = 0.5
-                                                voltage.enabled = false
-                                            }
+                                            setStatesForControls(voltage,power_vcc_state[0])
                                         }
 
                                         property var power_vcc_value: platformInterface.power_vcc_value.value
@@ -1057,18 +927,19 @@ Item {
                                 property var power_led_driver_temp_top: platformInterface.power_led_driver_temp_top
                                 onPower_led_driver_temp_topChanged: {
                                     ledDriverTempTopLabel.text = power_led_driver_temp_top.caption
-                                    if(power_led_driver_temp_top.state === "enabled") {
-                                        ledDriverTempTop.opacity = 1.0
-                                        ledDriverTempTop.enabled = true
-                                    }
-                                    else if (power_led_driver_temp_top.state === "disabled") {
-                                        ledDriverTempTop.opacity = 1.0
-                                        ledDriverTempTop.enabled = false
-                                    }
-                                    else  {
-                                        ledDriverTempTop.opacity = 0.5
-                                        ledDriverTempTop.enabled = false
-                                    }
+                                    setStatesForControls(ledDriverTempTop,power_led_driver_temp_top.states[0])
+//                                    if(power_led_driver_temp_top.state === "enabled") {
+//                                        ledDriverTempTop.opacity = 1.0
+//                                        ledDriverTempTop.enabled = true
+//                                    }
+//                                    else if (power_led_driver_temp_top.state === "disabled") {
+//                                        ledDriverTempTop.opacity = 1.0
+//                                        ledDriverTempTop.enabled = false
+//                                    }
+//                                    else  {
+//                                        ledDriverTempTop.opacity = 0.5
+//                                        ledDriverTempTop.enabled = false
+//                                    }
 
                                     ledDriverTempTop.maximumValue = power_led_driver_temp_top.scales[0]
                                     ledDriverTempTop.minimumValue = power_led_driver_temp_top.scales[1]
@@ -1083,20 +954,9 @@ Item {
                                     ledDriverTempTopLabel.text = power_led_driver_temp_top_caption
                                 }
 
-                                property var power_led_driver_temp_top_state: platformInterface.power_led_driver_temp_top_state.state
+                                property var power_led_driver_temp_top_state: platformInterface.power_led_driver_temp_top_state.states
                                 onPower_led_driver_temp_top_stateChanged: {
-                                    if(power_led_driver_temp_top_state === "enabled") {
-                                        ledDriverTempTop.opacity = 1.0
-                                        ledDriverTempTop.enabled = true
-                                    }
-                                    else if (power_led_driver_temp_top_state === "disabled") {
-                                        ledDriverTempTop.opacity = 1.0
-                                        ledDriverTempTop.enabled = false
-                                    }
-                                    else  {
-                                        ledDriverTempTop.opacity = 0.5
-                                        ledDriverTempTop.enabled = false
-                                    }
+                                    setStatesForControls(ledDriverTempTop,power_led_driver_temp_top_state[0])
                                 }
 
                                 property var power_led_driver_temp_top_scales: platformInterface.power_led_driver_temp_top_scales.scales
@@ -1157,18 +1017,19 @@ Item {
                                 property var power_led_driver_temp_bottom: platformInterface.power_led_driver_temp_bottom
                                 onPower_led_driver_temp_bottomChanged: {
                                     ledDriverTempBottomLabel.text = power_led_driver_temp_bottom.caption
-                                    if(power_led_driver_temp_bottom.state === "enabled") {
-                                        ledDriverTempBottom.opacity = 1.0
-                                        ledDriverTempBottom.enabled = true
-                                    }
-                                    else if (power_led_driver_temp_bottom.state === "disabled") {
-                                        ledDriverTempBottom.opacity = 1.0
-                                        ledDriverTempBottom.enabled = false
-                                    }
-                                    else  {
-                                        ledDriverTempBottom.opacity = 0.5
-                                        ledDriverTempBottom.enabled = false
-                                    }
+                                    setStatesForControls(ledDriverTempBottom,power_led_driver_temp_bottom.states[0])
+//                                    if(power_led_driver_temp_bottom.state === "enabled") {
+//                                        ledDriverTempBottom.opacity = 1.0
+//                                        ledDriverTempBottom.enabled = true
+//                                    }
+//                                    else if (power_led_driver_temp_bottom.state === "disabled") {
+//                                        ledDriverTempBottom.opacity = 1.0
+//                                        ledDriverTempBottom.enabled = false
+//                                    }
+//                                    else  {
+//                                        ledDriverTempBottom.opacity = 0.5
+//                                        ledDriverTempBottom.enabled = false
+//                                    }
                                     ledDriverTempBottom.maximumValue = power_led_driver_temp_bottom.scales[0]
                                     ledDriverTempBottom.minimumValue = power_led_driver_temp_bottom.scales[1]
                                     ledDriverTempBottom.tickmarkStepSize = power_led_driver_temp_bottom.scales[2]
@@ -1181,20 +1042,9 @@ Item {
                                     ledDriverTempBottomLabel.text = power_led_driver_temp_bottom_caption
                                 }
 
-                                property var power_led_driver_temp_bottom_state: platformInterface.power_led_driver_temp_bottom_state.state
+                                property var power_led_driver_temp_bottom_state: platformInterface.power_led_driver_temp_bottom_state.states
                                 onPower_led_driver_temp_bottom_stateChanged: {
-                                    if(power_led_driver_temp_bottom_state === "enabled") {
-                                        ledDriverTempBottom.opacity = 1.0
-                                        ledDriverTempBottom.enabled = true
-                                    }
-                                    else if (power_led_driver_temp_bottom_state === "disabled") {
-                                        ledDriverTempBottom.opacity = 1.0
-                                        ledDriverTempBottom.enabled = false
-                                    }
-                                    else  {
-                                        ledDriverTempBottom.opacity = 0.5
-                                        ledDriverTempBottom.enabled = false
-                                    }
+                                   setStatesForControls(ledDriverTempBottom,power_led_driver_temp_bottom_state[0])
                                 }
 
                                 property var power_led_driver_temp_bottom_scales: platformInterface.power_led_driver_temp_bottom_scales.scales
@@ -1252,18 +1102,19 @@ Item {
                                     property var power_led_temp: platformInterface.power_led_temp
                                     onPower_led_tempChanged: {
                                         tempGaugeLabel.text = power_led_temp.caption
-                                        if(power_led_temp.state === "enabled") {
-                                            tempGauge.opacity = 1.0
-                                            tempGauge.enabled = true
-                                        }
-                                        else if (power_led_temp.state === "disabled") {
-                                            tempGauge.opacity = 1.0
-                                            tempGauge.enabled = false
-                                        }
-                                        else  {
-                                            tempGauge.opacity = 0.5
-                                            tempGauge.enabled = false
-                                        }
+                                        setStatesForControls(tempGauge,power_led_temp.states[0])
+//                                        if(power_led_temp.state === "enabled") {
+//                                            tempGauge.opacity = 1.0
+//                                            tempGauge.enabled = true
+//                                        }
+//                                        else if (power_led_temp.state === "disabled") {
+//                                            tempGauge.opacity = 1.0
+//                                            tempGauge.enabled = false
+//                                        }
+//                                        else  {
+//                                            tempGauge.opacity = 0.5
+//                                            tempGauge.enabled = false
+//                                        }
 
                                         tempGauge.maximumValue = power_led_temp.scales[0]
                                         tempGauge.minimumValue = power_led_temp.scales[1]
@@ -1276,20 +1127,9 @@ Item {
                                         tempGaugeLabel.text = power_led_temp_caption
                                     }
 
-                                    property var power_led_temp_state: platformInterface.power_led_temp_state.state
+                                    property var power_led_temp_state: platformInterface.power_led_temp_state.states
                                     onPower_led_temp_stateChanged: {
-                                        if(power_led_temp_state === "enabled") {
-                                            tempGauge.opacity = 1.0
-                                            tempGauge.enabled = true
-                                        }
-                                        else if (power_led_temp_state === "disabled") {
-                                            tempGauge.opacity = 1.0
-                                            tempGauge.enabled = false
-                                        }
-                                        else  {
-                                            tempGauge.opacity = 0.5
-                                            tempGauge.enabled = false
-                                        }
+                                        setStatesForControls(tempGauge,power_led_temp_state[0])
                                     }
 
                                     property var power_led_temp_scales: platformInterface.power_led_temp_scales.scales
@@ -1353,18 +1193,19 @@ Item {
                                     property var power_total_power: platformInterface.power_total_power
                                     onPower_total_powerChanged: {
                                         powerLossGaugeLabel.text = power_total_power.caption
-                                        if(power_total_power.state === "enabled") {
-                                            powerLoss.opacity = 1.0
-                                            powerLoss.enabled = true
-                                        }
-                                        else if (power_total_power.state === "disabled") {
-                                            powerLoss.opacity = 1.0
-                                            powerLoss.enabled = false
-                                        }
-                                        else  {
-                                            powerLoss.opacity = 0.5
-                                            powerLoss.enabled = false
-                                        }
+                                        setStatesForControls(powerLoss,power_total_power.states[0])
+//                                        if(power_total_power.state === "enabled") {
+//                                            powerLoss.opacity = 1.0
+//                                            powerLoss.enabled = true
+//                                        }
+//                                        else if (power_total_power.state === "disabled") {
+//                                            powerLoss.opacity = 1.0
+//                                            powerLoss.enabled = false
+//                                        }
+//                                        else  {
+//                                            powerLoss.opacity = 0.5
+//                                            powerLoss.enabled = false
+//                                        }
                                         powerLoss.maximumValue = power_total_power.scales[0]
                                         powerLoss.minimumValue = power_total_power.scales[1]
                                         powerLoss.tickmarkStepSize = power_total_power.scales[2]
@@ -1377,20 +1218,9 @@ Item {
                                         powerLossGaugeLabel.text = power_total_power_caption
                                     }
 
-                                    property var power_total_power_state: platformInterface.power_total_power_state.state
+                                    property var power_total_power_state: platformInterface.power_total_power_state.states
                                     onPower_total_power_stateChanged: {
-                                        if(power_total_power_state === "enabled") {
-                                            powerLoss.opacity = 1.0
-                                            powerLoss.enabled = true
-                                        }
-                                        else if (power_total_power_state === "disabled") {
-                                            powerLoss.opacity = 1.0
-                                            powerLoss.enabled = false
-                                        }
-                                        else  {
-                                            powerLoss.opacity = 0.5
-                                            powerLoss.enabled = false
-                                        }
+                                       setStatesForControls(powerLoss,power_total_power_state[0])
                                     }
 
                                     property var power_total_power_scales: platformInterface.power_total_power_scales.scales

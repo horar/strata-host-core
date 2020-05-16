@@ -132,21 +132,37 @@ Item {
 
     }
 
-    property var led_out_en_states: platformInterface.led_out_en_states.states
+    property var led_out_en_states: platformInterface.led_out_en_state.states
     onLed_out_en_statesChanged: {
 
+        console.log("inside led_out_en_states ")
+        //        setOutEnState(out0ENLED,led_out_en_states[0])
+        //        setOutEnState(out1ENLED,led_out_en_states[1])
+        //        setOutEnState(out2ENLED,led_out_en_states[2])
+        //        setOutEnState(out3ENLED,led_out_en_states[3])
+        //        setOutEnState(out4ENLED,led_out_en_states[4])
+        //        setOutEnState(out5ENLED,led_out_en_states[5])
+        //        setOutEnState(out6ENLED,led_out_en_states[6])
+        //        setOutEnState(out7ENLED,led_out_en_states[7])
+        //        setOutEnState(out8ENLED,led_out_en_states[8])
+        //        setOutEnState(out9ENLED,led_out_en_states[9])
+        //        setOutEnState(out10ENLED,led_out_en_states[10])
+        //        setOutEnState(out11ENLED,led_out_en_states[11])
+
         setOutEnState(out0ENLED,led_out_en_states[0])
-        setOutEnState(out1ENLED,led_out_en_states[1])
-        setOutEnState(out2ENLED,led_out_en_states[2])
-        setOutEnState(out3ENLED,led_out_en_states[3])
-        setOutEnState(out4ENLED,led_out_en_states[4])
-        setOutEnState(out5ENLED,led_out_en_states[5])
-        setOutEnState(out6ENLED,led_out_en_states[6])
-        setOutEnState(out7ENLED,led_out_en_states[7])
-        setOutEnState(out8ENLED,led_out_en_states[8])
-        setOutEnState(out9ENLED,led_out_en_states[9])
-        setOutEnState(out10ENLED,led_out_en_states[10])
-        setOutEnState(out11ENLED,led_out_en_states[11])
+        setOutEnState(out1ENLED,led_out_en_states[0])
+        setOutEnState(out2ENLED,led_out_en_states[0])
+        setOutEnState(out3ENLED,led_out_en_states[0])
+        setOutEnState(out4ENLED,led_out_en_states[0])
+        setOutEnState(out5ENLED,led_out_en_states[0])
+        setOutEnState(out6ENLED,led_out_en_states[0])
+        setOutEnState(out7ENLED,led_out_en_states[0])
+        setOutEnState(out8ENLED,led_out_en_states[0])
+        setOutEnState(out9ENLED,led_out_en_states[0])
+        setOutEnState(out10ENLED,led_out_en_states[0])
+        setOutEnState(out11ENLED,led_out_en_states[0])
+
+
     }
 
     property var led_out_en_values: platformInterface.led_out_en_values.values
@@ -320,20 +336,20 @@ Item {
         else out11interExterLED.checked = false
     }
 
-    property var led_ext_states: platformInterface.led_ext_states.states
+    property var led_ext_states: platformInterface.led_ext_state.states
     onLed_ext_statesChanged: {
         setStatesForControls(out0interExterLED,led_ext_states[0])
-        setStatesForControls(out1interExterLED,led_ext_states[1])
-        setStatesForControls(out2interExterLED,led_ext_states[2])
-        setStatesForControls(out3interExterLED,led_ext_states[3])
-        setStatesForControls(out4interExterLED,led_ext_states[4])
-        setStatesForControls(out5interExterLED,led_ext_states[5])
-        setStatesForControls(out6interExterLED,led_ext_states[6])
-        setStatesForControls(out7interExterLED,led_ext_states[7])
-        setStatesForControls(out8interExterLED,led_ext_states[8])
-        setStatesForControls(out9interExterLED,led_ext_states[9])
-        setStatesForControls(out10interExterLED,led_ext_states[10])
-        setStatesForControls(out11interExterLED,led_ext_states[11])
+        setStatesForControls(out1interExterLED,led_ext_states[0])
+        setStatesForControls(out2interExterLED,led_ext_states[0])
+        setStatesForControls(out3interExterLED,led_ext_states[0])
+        setStatesForControls(out4interExterLED,led_ext_states[0])
+        setStatesForControls(out5interExterLED,led_ext_states[0])
+        setStatesForControls(out6interExterLED,led_ext_states[0])
+        setStatesForControls(out7interExterLED,led_ext_states[0])
+        setStatesForControls(out8interExterLED,led_ext_states[0])
+        setStatesForControls(out9interExterLED,led_ext_states[0])
+        setStatesForControls(out10interExterLED,led_ext_states[0])
+        setStatesForControls(out11interExterLED,led_ext_states[0])
 
 
     }
@@ -390,86 +406,18 @@ Item {
             out11faultStatusLED.status = SGStatusLight.Off
         else  out11faultStatusLED.status = SGStatusLight.Red
 
-        if(led_fault_status.state === "enabled") {
-            out0faultStatusLED.enabled = true
-            out0faultStatusLED.opacity = 1.0
-            out1faultStatusLED.enabled = true
-            out1faultStatusLED.opacity = 1.0
-            out2faultStatusLED.enabled = true
-            out2faultStatusLED.opacity = 1.0
-            out3faultStatusLED.enabled = true
-            out3faultStatusLED.opacity = 1.0
-            out4faultStatusLED.enabled = true
-            out4faultStatusLED.opacity = 1.0
-            out5faultStatusLED.enabled = true
-            out5faultStatusLED.opacity = 1.0
-            out6faultStatusLED.enabled = true
-            out6faultStatusLED.opacity = 1.0
-            out7faultStatusLED.enabled = true
-            out7faultStatusLED.opacity = 1.0
-            out8faultStatusLED.enabled = true
-            out8faultStatusLED.opacity = 1.0
-            out9faultStatusLED.enabled = true
-            out9faultStatusLED.opacity = 1.0
-            out10faultStatusLED.enabled = true
-            out10faultStatusLED.opacity = 1.0
-            out11faultStatusLED.enabled = true
-            out11faultStatusLED.opacity = 1.0
-
-        }
-        else if (led_fault_status.state === "disabled") {
-            out0faultStatusLED.enabled = false
-            out0faultStatusLED.opacity = 1.0
-            out1faultStatusLED.enabled = false
-            out1faultStatusLED.opacity = 1.0
-            out2faultStatusLED.enabled = false
-            out2faultStatusLED.opacity = 1.0
-            out3faultStatusLED.enabled = false
-            out3faultStatusLED.opacity = 1.0
-            out4faultStatusLED.enabled = false
-            out4faultStatusLED.opacity = 1.0
-            out5faultStatusLED.enabled = false
-            out5faultStatusLED.opacity = 1.0
-            out6faultStatusLED.enabled = false
-            out6faultStatusLED.opacity = 1.0
-            out7faultStatusLED.enabled = false
-            out7faultStatusLED.opacity = 1.0
-            out8faultStatusLED.enabled = false
-            out8faultStatusLED.opacity = 1.0
-            out9faultStatusLED.enabled = false
-            out9faultStatusLED.opacity = 1.0
-            out10faultStatusLED.enabled = false
-            out10faultStatusLED.opacity = 1.0
-            out11faultStatusLED.enabled = false
-            out11faultStatusLED.opacity = 1.0
-
-        }
-        else {
-            out0faultStatusLED.enabled = false
-            out0faultStatusLED.opacity = 0.5
-            out1faultStatusLED.enabled = false
-            out1faultStatusLED.opacity = 0.5
-            out2faultStatusLED.enabled = false
-            out2faultStatusLED.opacity = 0.5
-            out3faultStatusLED.enabled = false
-            out3faultStatusLED.opacity = 0.5
-            out4faultStatusLED.enabled = false
-            out4faultStatusLED.opacity = 0.5
-            out5faultStatusLED.enabled = false
-            out5faultStatusLED.opacity = 0.5
-            out6faultStatusLED.enabled = false
-            out6faultStatusLED.opacity = 0.5
-            out7faultStatusLED.enabled = false
-            out7faultStatusLED.opacity = 0.5
-            out8faultStatusLED.enabled = false
-            out8faultStatusLED.opacity = 0.5
-            out9faultStatusLED.enabled = false
-            out9faultStatusLED.opacity = 0.5
-            out10faultStatusLED.enabled = false
-            out10faultStatusLED.opacity = 0.5
-            out11faultStatusLED.enabled = false
-            out11faultStatusLED.opacity = 0.5
-        }
+        setStatesForControls(out0faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out1faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out2faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out3faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out4faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out5faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out6faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out7faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out8faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out9faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out10faultStatusLED,led_fault_status.states[0])
+        setStatesForControls(out11faultStatusLED,led_fault_status.states[0])
 
     }
 
@@ -527,88 +475,23 @@ Item {
     }
 
 
-    property var led_fault_status_state: platformInterface.led_fault_status_state.state
-    onLed_fault_status_stateChanged: {
-        if(led_fault_status_state === "enabled") {
-            out0faultStatusLED.enabled = true
-            out0faultStatusLED.opacity = 1.0
-            out1faultStatusLED.enabled = true
-            out1faultStatusLED.opacity = 1.0
-            out2faultStatusLED.enabled = true
-            out2faultStatusLED.opacity = 1.0
-            out3faultStatusLED.enabled = true
-            out3faultStatusLED.opacity = 1.0
-            out4faultStatusLED.enabled = true
-            out4faultStatusLED.opacity = 1.0
-            out5faultStatusLED.enabled = true
-            out5faultStatusLED.opacity = 1.0
-            out6faultStatusLED.enabled = true
-            out6faultStatusLED.opacity = 1.0
-            out7faultStatusLED.enabled = true
-            out7faultStatusLED.opacity = 1.0
-            out8faultStatusLED.enabled = true
-            out8faultStatusLED.opacity = 1.0
-            out9faultStatusLED.enabled = true
-            out9faultStatusLED.opacity = 1.0
-            out10faultStatusLED.enabled = true
-            out10faultStatusLED.opacity = 1.0
-            out11faultStatusLED.enabled = true
-            out11faultStatusLED.opacity = 1.0
+    property var led_fault_status_states: platformInterface.led_fault_status_state.states
+    onLed_fault_status_statesChanged: {
 
-        }
-        else if (led_fault_status_state === "disabled") {
-            out0faultStatusLED.enabled = false
-            out0faultStatusLED.opacity = 1.0
-            out1faultStatusLED.enabled = false
-            out1faultStatusLED.opacity = 1.0
-            out2faultStatusLED.enabled = false
-            out2faultStatusLED.opacity = 1.0
-            out3faultStatusLED.enabled = false
-            out3faultStatusLED.opacity = 1.0
-            out4faultStatusLED.enabled = false
-            out4faultStatusLED.opacity = 1.0
-            out5faultStatusLED.enabled = false
-            out5faultStatusLED.opacity = 1.0
-            out6faultStatusLED.enabled = false
-            out6faultStatusLED.opacity = 1.0
-            out7faultStatusLED.enabled = false
-            out7faultStatusLED.opacity = 1.0
-            out8faultStatusLED.enabled = false
-            out8faultStatusLED.opacity = 1.0
-            out9faultStatusLED.enabled = false
-            out9faultStatusLED.opacity = 1.0
-            out10faultStatusLED.enabled = false
-            out10faultStatusLED.opacity = 1.0
-            out11faultStatusLED.enabled = false
-            out11faultStatusLED.opacity = 1.0
+        setStatesForControls(out0faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out1faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out2faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out3faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out4faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out5faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out6faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out7faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out8faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out9faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out10faultStatusLED,led_fault_status_states[0])
+        setStatesForControls(out11faultStatusLED,led_fault_status_states[0])
 
-        }
-        else {
-            out0faultStatusLED.enabled = false
-            out0faultStatusLED.opacity = 0.5
-            out1faultStatusLED.enabled = false
-            out1faultStatusLED.opacity = 0.5
-            out2faultStatusLED.enabled = false
-            out2faultStatusLED.opacity = 0.5
-            out3faultStatusLED.enabled = false
-            out3faultStatusLED.opacity = 0.5
-            out4faultStatusLED.enabled = false
-            out4faultStatusLED.opacity = 0.5
-            out5faultStatusLED.enabled = false
-            out5faultStatusLED.opacity = 0.5
-            out6faultStatusLED.enabled = false
-            out6faultStatusLED.opacity = 0.5
-            out7faultStatusLED.enabled = false
-            out7faultStatusLED.opacity = 0.5
-            out8faultStatusLED.enabled = false
-            out8faultStatusLED.opacity = 0.5
-            out9faultStatusLED.enabled = false
-            out9faultStatusLED.opacity = 0.5
-            out10faultStatusLED.enabled = false
-            out10faultStatusLED.opacity = 0.5
-            out11faultStatusLED.enabled = false
-            out11faultStatusLED.opacity = 0.5
-        }
+
     }
 
     property var led_pwm_enables: platformInterface.led_pwm_enables
@@ -663,86 +546,99 @@ Item {
             out11pwmEnableLED.checked = true
         else out11pwmEnableLED.checked = false
 
-        if(led_pwm_enables.state === "enabled") {
-            out0pwmEnableLED.enabled = true
-            out0pwmEnableLED.opacity = 1.0
-            out1pwmEnableLED.enabled = true
-            out1pwmEnableLED.opacity = 1.0
-            out2pwmEnableLED.enabled = true
-            out2pwmEnableLED.opacity = 1.0
-            out3pwmEnableLED.enabled = true
-            out3pwmEnableLED.opacity = 1.0
-            out4pwmEnableLED.enabled = true
-            out4pwmEnableLED.opacity = 1.0
-            out5pwmEnableLED.enabled = true
-            out5pwmEnableLED.opacity = 1.0
-            out6pwmEnableLED.enabled = true
-            out6pwmEnableLED.opacity = 1.0
-            out7pwmEnableLED.enabled = true
-            out7pwmEnableLED.opacity = 1.0
-            out8pwmEnableLED.enabled = true
-            out8pwmEnableLED.opacity = 1.0
-            out9pwmEnableLED.enabled = true
-            out9pwmEnableLED.opacity = 1.0
-            out10pwmEnableLED.enabled = true
-            out10pwmEnableLED.opacity = 1.0
-            out11pwmEnableLED.enabled = true
-            out11pwmEnableLED.opacity = 1.0
+        setStatesForControls(out0pwmEnableLED,led_pwm_enables.states[0])
+        setStatesForControls(out1pwmEnableLED,led_pwm_enables.states[0])
+        setStatesForControls(out2pwmEnableLED,led_pwm_enables.states[0])
+        setStatesForControls(out3pwmEnableLED,led_pwm_enables.states[0])
+        setStatesForControls(out4pwmEnableLED,led_pwm_enables.states[0])
+        setStatesForControls(out5pwmEnableLED,led_pwm_enables.states[0])
+        setStatesForControls(out6pwmEnableLED,led_pwm_enables.states[0])
+        setStatesForControls(out7pwmEnableLED,led_pwm_enables.states[0])
+        setStatesForControls(out8pwmEnableLED,led_pwm_enables.states[0])
+        setStatesForControls(out9pwmEnableLED,led_pwm_enables.states[0])
+        setStatesForControls(out10pwmEnableLED,led_pwm_enables.states[0])
+        setStatesForControls(out11pwmEnableLED,led_pwm_enables.states[0])
 
-        }
-        else if (led_pwm_enables.state === "disabled") {
-            out0pwmEnableLED.enabled = false
-            out0pwmEnableLED.opacity = 1.0
-            out1pwmEnableLED.enabled = false
-            out1pwmEnableLED.opacity = 1.0
-            out2pwmEnableLED.enabled = false
-            out2pwmEnableLED.opacity = 1.0
-            out3pwmEnableLED.enabled = false
-            out3pwmEnableLED.opacity = 1.0
-            out4pwmEnableLED.enabled = false
-            out4pwmEnableLED.opacity = 1.0
-            out5pwmEnableLED.enabled = false
-            out5pwmEnableLED.opacity = 1.0
-            out6pwmEnableLED.enabled = false
-            out6pwmEnableLED.opacity = 1.0
-            out7pwmEnableLED.enabled = false
-            out7pwmEnableLED.opacity = 1.0
-            out8pwmEnableLED.enabled = false
-            out8pwmEnableLED.opacity = 1.0
-            out9pwmEnableLED.enabled = false
-            out9pwmEnableLED.opacity = 1.0
-            out10pwmEnableLED.enabled = false
-            out10pwmEnableLED.opacity = 1.0
-            out11pwmEnableLED.enabled = false
-            out11pwmEnableLED.opacity = 1.0
+        //        if(led_pwm_enables.state === "enabled") {
+        //            out0pwmEnableLED.enabled = true
+        //            out0pwmEnableLED.opacity = 1.0
+        //            out1pwmEnableLED.enabled = true
+        //            out1pwmEnableLED.opacity = 1.0
+        //            out2pwmEnableLED.enabled = true
+        //            out2pwmEnableLED.opacity = 1.0
+        //            out3pwmEnableLED.enabled = true
+        //            out3pwmEnableLED.opacity = 1.0
+        //            out4pwmEnableLED.enabled = true
+        //            out4pwmEnableLED.opacity = 1.0
+        //            out5pwmEnableLED.enabled = true
+        //            out5pwmEnableLED.opacity = 1.0
+        //            out6pwmEnableLED.enabled = true
+        //            out6pwmEnableLED.opacity = 1.0
+        //            out7pwmEnableLED.enabled = true
+        //            out7pwmEnableLED.opacity = 1.0
+        //            out8pwmEnableLED.enabled = true
+        //            out8pwmEnableLED.opacity = 1.0
+        //            out9pwmEnableLED.enabled = true
+        //            out9pwmEnableLED.opacity = 1.0
+        //            out10pwmEnableLED.enabled = true
+        //            out10pwmEnableLED.opacity = 1.0
+        //            out11pwmEnableLED.enabled = true
+        //            out11pwmEnableLED.opacity = 1.0
 
-        }
-        else {
-            out0pwmEnableLED.enabled = false
-            out0pwmEnableLED.opacity = 0.5
-            out1pwmEnableLED.enabled = false
-            out1pwmEnableLED.opacity = 0.5
-            out2pwmEnableLED.enabled = false
-            out2pwmEnableLED.opacity = 0.5
-            out3pwmEnableLED.enabled = false
-            out3pwmEnableLED.opacity = 0.5
-            out4pwmEnableLED.enabled = false
-            out4pwmEnableLED.opacity = 0.5
-            out5pwmEnableLED.enabled = false
-            out5pwmEnableLED.opacity = 0.5
-            out6pwmEnableLED.enabled = false
-            out6pwmEnableLED.opacity = 0.5
-            out7pwmEnableLED.enabled = false
-            out7pwmEnableLED.opacity = 0.5
-            out8pwmEnableLED.enabled = false
-            out8pwmEnableLED.opacity = 0.5
-            out9pwmEnableLED.enabled = false
-            out9pwmEnableLED.opacity = 0.5
-            out10pwmEnableLED.enabled = false
-            out10pwmEnableLED.opacity = 0.5
-            out11pwmEnableLED.enabled = false
-            out11pwmEnableLED.opacity = 0.5
-        }
+        //        }
+        //        else if (led_pwm_enables.state === "disabled") {
+        //            out0pwmEnableLED.enabled = false
+        //            out0pwmEnableLED.opacity = 1.0
+        //            out1pwmEnableLED.enabled = false
+        //            out1pwmEnableLED.opacity = 1.0
+        //            out2pwmEnableLED.enabled = false
+        //            out2pwmEnableLED.opacity = 1.0
+        //            out3pwmEnableLED.enabled = false
+        //            out3pwmEnableLED.opacity = 1.0
+        //            out4pwmEnableLED.enabled = false
+        //            out4pwmEnableLED.opacity = 1.0
+        //            out5pwmEnableLED.enabled = false
+        //            out5pwmEnableLED.opacity = 1.0
+        //            out6pwmEnableLED.enabled = false
+        //            out6pwmEnableLED.opacity = 1.0
+        //            out7pwmEnableLED.enabled = false
+        //            out7pwmEnableLED.opacity = 1.0
+        //            out8pwmEnableLED.enabled = false
+        //            out8pwmEnableLED.opacity = 1.0
+        //            out9pwmEnableLED.enabled = false
+        //            out9pwmEnableLED.opacity = 1.0
+        //            out10pwmEnableLED.enabled = false
+        //            out10pwmEnableLED.opacity = 1.0
+        //            out11pwmEnableLED.enabled = false
+        //            out11pwmEnableLED.opacity = 1.0
+
+        //        }
+        //        else {
+        //            out0pwmEnableLED.enabled = false
+        //            out0pwmEnableLED.opacity = 0.5
+        //            out1pwmEnableLED.enabled = false
+        //            out1pwmEnableLED.opacity = 0.5
+        //            out2pwmEnableLED.enabled = false
+        //            out2pwmEnableLED.opacity = 0.5
+        //            out3pwmEnableLED.enabled = false
+        //            out3pwmEnableLED.opacity = 0.5
+        //            out4pwmEnableLED.enabled = false
+        //            out4pwmEnableLED.opacity = 0.5
+        //            out5pwmEnableLED.enabled = false
+        //            out5pwmEnableLED.opacity = 0.5
+        //            out6pwmEnableLED.enabled = false
+        //            out6pwmEnableLED.opacity = 0.5
+        //            out7pwmEnableLED.enabled = false
+        //            out7pwmEnableLED.opacity = 0.5
+        //            out8pwmEnableLED.enabled = false
+        //            out8pwmEnableLED.opacity = 0.5
+        //            out9pwmEnableLED.enabled = false
+        //            out9pwmEnableLED.opacity = 0.5
+        //            out10pwmEnableLED.enabled = false
+        //            out10pwmEnableLED.opacity = 0.5
+        //            out11pwmEnableLED.enabled = false
+        //            out11pwmEnableLED.opacity = 0.5
+        //        }
     }
 
 
@@ -797,88 +693,21 @@ Item {
         else out11pwmEnableLED.checked = false
     }
 
-    property var led_pwm_enables_state: platformInterface.led_pwm_enables_state.state
-    onLed_pwm_enables_stateChanged: {
-        if(led_pwm_enables_state === "enabled") {
-            out0pwmEnableLED.enabled = true
-            out0pwmEnableLED.opacity = 1.0
-            out1pwmEnableLED.enabled = true
-            out1pwmEnableLED.opacity = 1.0
-            out2pwmEnableLED.enabled = true
-            out2pwmEnableLED.opacity = 1.0
-            out3pwmEnableLED.enabled = true
-            out3pwmEnableLED.opacity = 1.0
-            out4pwmEnableLED.enabled = true
-            out4pwmEnableLED.opacity = 1.0
-            out5pwmEnableLED.enabled = true
-            out5pwmEnableLED.opacity = 1.0
-            out6pwmEnableLED.enabled = true
-            out6pwmEnableLED.opacity = 1.0
-            out7pwmEnableLED.enabled = true
-            out7pwmEnableLED.opacity = 1.0
-            out8pwmEnableLED.enabled = true
-            out8pwmEnableLED.opacity = 1.0
-            out9pwmEnableLED.enabled = true
-            out9pwmEnableLED.opacity = 1.0
-            out10pwmEnableLED.enabled = true
-            out10pwmEnableLED.opacity = 1.0
-            out11pwmEnableLED.enabled = true
-            out11pwmEnableLED.opacity = 1.0
+    property var led_pwm_enables_states: platformInterface.led_pwm_enables_state.states
+    onLed_pwm_enables_statesChanged: {
 
-        }
-        else if (led_pwm_enables_state === "disabled") {
-            out0pwmEnableLED.enabled = false
-            out0pwmEnableLED.opacity = 1.0
-            out1pwmEnableLED.enabled = false
-            out1pwmEnableLED.opacity = 1.0
-            out2pwmEnableLED.enabled = false
-            out2pwmEnableLED.opacity = 1.0
-            out3pwmEnableLED.enabled = false
-            out3pwmEnableLED.opacity = 1.0
-            out4pwmEnableLED.enabled = false
-            out4pwmEnableLED.opacity = 1.0
-            out5pwmEnableLED.enabled = false
-            out5pwmEnableLED.opacity = 1.0
-            out6pwmEnableLED.enabled = false
-            out6pwmEnableLED.opacity = 1.0
-            out7pwmEnableLED.enabled = false
-            out7pwmEnableLED.opacity = 1.0
-            out8pwmEnableLED.enabled = false
-            out8pwmEnableLED.opacity = 1.0
-            out9pwmEnableLED.enabled = false
-            out9pwmEnableLED.opacity = 1.0
-            out10pwmEnableLED.enabled = false
-            out10pwmEnableLED.opacity = 1.0
-            out11pwmEnableLED.enabled = false
-            out11pwmEnableLED.opacity = 1.0
-
-        }
-        else {
-            out0pwmEnableLED.enabled = false
-            out0pwmEnableLED.opacity = 0.5
-            out1pwmEnableLED.enabled = false
-            out1pwmEnableLED.opacity = 0.5
-            out2pwmEnableLED.enabled = false
-            out2pwmEnableLED.opacity = 0.5
-            out3pwmEnableLED.enabled = false
-            out3pwmEnableLED.opacity = 0.5
-            out4pwmEnableLED.enabled = false
-            out4pwmEnableLED.opacity = 0.5
-            out5pwmEnableLED.enabled = false
-            out5pwmEnableLED.opacity = 0.5
-            out6pwmEnableLED.enabled = false
-            out6pwmEnableLED.opacity = 0.5
-            out7pwmEnableLED.enabled = false
-            out7pwmEnableLED.opacity = 0.5
-            out8pwmEnableLED.enabled = false
-            out8pwmEnableLED.opacity = 0.5
-            out9pwmEnableLED.enabled = false
-            out9pwmEnableLED.opacity = 0.5
-            out10pwmEnableLED.enabled = false
-            out10pwmEnableLED.opacity = 0.5
-            out11pwmEnableLED.enabled = false
-            out11pwmEnableLED.opacity = 0.5
-        }
+        setStatesForControls(out0pwmEnableLED,led_pwm_enables_states[0])
+        setStatesForControls(out1pwmEnableLED,led_pwm_enables_states[0])
+        setStatesForControls(out2pwmEnableLED,led_pwm_enables_states[0])
+        setStatesForControls(out3pwmEnableLED,led_pwm_enables_states[0])
+        setStatesForControls(out4pwmEnableLED,led_pwm_enables_states[0])
+        setStatesForControls(out5pwmEnableLED,led_pwm_enables_states[0])
+        setStatesForControls(out6pwmEnableLED,led_pwm_enables_states[0])
+        setStatesForControls(out7pwmEnableLED,led_pwm_enables_states[0])
+        setStatesForControls(out8pwmEnableLED,led_pwm_enables_states[0])
+        setStatesForControls(out9pwmEnableLED,led_pwm_enables_states[0])
+        setStatesForControls(out10pwmEnableLED,led_pwm_enables_states[0])
+        setStatesForControls(out11pwmEnableLED,led_pwm_enables_states[0])
     }
 
 
@@ -976,7 +805,7 @@ Item {
         Rectangle {
             id: leftSetting
             Layout.fillHeight: true
-            Layout.preferredWidth: root.width/3
+            Layout.preferredWidth: root.width/3.5
             color: "transparent"
             ColumnLayout {
                 anchors.fill: parent
@@ -1042,20 +871,7 @@ Item {
                                 property var led_part_number_value: platformInterface.led_part_number_value
                                 onLed_part_number_valueChanged: {
                                     partNumberLabel.text = led_part_number_value.caption
-                                    if(led_part_number_value.states === 0) {
-                                        partNumber.enabled = true
-                                        partNumber.opacity = 1.0
-
-                                    }
-                                    else if(led_part_number_value.states === 1) {
-                                        partNumber.enabled = false
-                                        partNumber.opacity = 1.0
-                                    }
-                                    else {
-                                        partNumber.enabled = false
-                                        partNumber.opacity = 0.5
-
-                                    }
+                                    setStatesForControls(partNumber,led_part_number_value.states[0])
 
                                     partNumber.text = led_part_number_value.value
                                 }
@@ -1065,9 +881,9 @@ Item {
                                     partNumberLabel.text = led_part_number_value_caption
                                 }
 
-                                property var led_part_number_value_states: platformInterface.led_part_number_value_states.states
-                                onLed_part_number_value_statesChanged: {
-                                    setStatesForControls(partNumber,led_part_number_value_states[0])
+                                property var led_part_number_value_state: platformInterface.led_part_number_value_state.states
+                                onLed_part_number_value_stateChanged: {
+                                    setStatesForControls(partNumber,led_part_number_value_state[0])
                                 }
 
                                 property var led_part_number_value_value: platformInterface.led_part_number_value_value.value
@@ -1108,20 +924,21 @@ Item {
                                     property var led_oen: platformInterface.led_oen
                                     onLed_oenChanged: {
                                         enableOutputLabel.text = led_oen.caption
-                                        if(led_oen.state === "enabled" ) {
-                                            enableOutput.enabled = true
-                                            enableOutput.opacity = 1.0
+                                        setStatesForControls(enableOutput,led_oen.states[0])
+                                        //                                        if(led_oen.state === "enabled" ) {
+                                        //                                            enableOutput.enabled = true
+                                        //                                            enableOutput.opacity = 1.0
 
-                                        }
-                                        else if(led_oen.state === "disabled") {
-                                            enableOutput.enabled = false
-                                            enableOutput.opacity = 1.0
-                                        }
-                                        else {
-                                            enableOutput.enabled = false
-                                            enableOutput.opacity = 0.5
+                                        //                                        }
+                                        //                                        else if(led_oen.state === "disabled") {
+                                        //                                            enableOutput.enabled = false
+                                        //                                            enableOutput.opacity = 1.0
+                                        //                                        }
+                                        //                                        else {
+                                        //                                            enableOutput.enabled = false
+                                        //                                            enableOutput.opacity = 0.5
 
-                                        }
+                                        //                                        }
                                         if(led_oen.value === true)
                                             enableOutput.checked = true
                                         else  enableOutput.checked = false
@@ -1132,22 +949,9 @@ Item {
                                         enableOutputLabel.text = led_oen_caption
                                     }
 
-                                    property var led_oen_state: platformInterface.led_oen_state.state
-                                    onLed_oen_stateChanged : {
-                                        if(led_oen_state === "enabled" ) {
-                                            enableOutput.enabled = true
-                                            enableOutput.opacity = 1.0
-
-                                        }
-                                        else if(led_oen_state === "disabled") {
-                                            enableOutput.enabled = false
-                                            enableOutput.opacity = 1.0
-                                        }
-                                        else {
-                                            enableOutput.enabled = false
-                                            enableOutput.opacity = 0.5
-
-                                        }
+                                    property var led_oen_states: platformInterface.led_oen_state.states
+                                    onLed_oen_statesChanged : {
+                                        setStatesForControls(enableOutput,led_oen_states[0])
                                     }
 
                                     property var led_oen_value: platformInterface.led_oen_value.value
@@ -1197,18 +1001,8 @@ Item {
                                     gobalCurrentSetSlider.from = led_iset.scales[1]
                                     gobalCurrentSetSlider.stepSize = led_iset.scales[2]
 
-                                    if(led_iset.state === "enabled") {
-                                        gobalCurrentSetLabel.enabled = true
-                                        gobalCurrentSetLabel.opacity = 1.0
-                                    }
-                                    else if (led_iset.state === "disabled") {
-                                        gobalCurrentSetLabel.enabled = false
-                                        gobalCurrentSetLabel.opacity = 1.0
-                                    }
-                                    else  {
-                                        gobalCurrentSetLabel.enabled = false
-                                        gobalCurrentSetLabel.opacity = 0.5
-                                    }
+                                    setStatesForControls(gobalCurrentSetLabel,led_iset.states[0])
+
 
                                     gobalCurrentSetSlider.value = led_iset.value
                                 }
@@ -1228,20 +1022,9 @@ Item {
 
                                 }
 
-                                property var led_iset_state: platformInterface.led_iset_state.state
-                                onLed_iset_stateChanged:{
-                                    if(led_iset_state === "enabled") {
-                                        gobalCurrentSetLabel.enabled = true
-                                        gobalCurrentSetLabel.opacity = 1.0
-                                    }
-                                    else if (led_iset_state === "disabled") {
-                                        gobalCurrentSetLabel.enabled = false
-                                        gobalCurrentSetLabel.opacity = 1.0
-                                    }
-                                    else  {
-                                        gobalCurrentSetLabel.enabled = false
-                                        gobalCurrentSetLabel.opacity = 0.5
-                                    }
+                                property var led_iset_states: platformInterface.led_iset_state.states
+                                onLed_iset_statesChanged:{
+                                    setStatesForControls(gobalCurrentSetLabel,led_iset_states[0])
 
                                 }
 
@@ -1251,8 +1034,6 @@ Item {
                                 }
                             }
                         }
-
-
 
                     }
                 } // end of first column
@@ -1326,21 +1107,7 @@ Item {
                                     property var led_pwm_enable: platformInterface.led_pwm_enable
                                     onLed_pwm_enableChanged: {
                                         pwmenableOutputLabel.text = led_pwm_enable.caption
-
-                                        if(led_pwm_enable.state === "enabled" ) {
-                                            pwmenableOutput.enabled = true
-                                            pwmenableOutput.opacity = 1.0
-
-                                        }
-                                        else if(led_pwm_enable.state === "disabled") {
-                                            pwmenableOutput.enabled = false
-                                            pwmenableOutput.opacity = 1.0
-                                        }
-                                        else {
-                                            pwmenableOutput.enabled = false
-                                            enableOutput.opacity = 0.5
-                                        }
-
+                                        setStatesForControls(pwmenableOutput,led_pwm_enable.states[0])
                                         if(led_pwm_enable.value === true)
                                             pwmenableOutput.checked = true
                                         else  pwmenableOutput.checked = false
@@ -1351,22 +1118,9 @@ Item {
                                         pwmenableOutputLabel.text = led_pwm_enable_caption
                                     }
 
-                                    property var led_pwm_enable_state: platformInterface.led_pwm_enable_state.state
-                                    onLed_pwm_enable_stateChanged : {
-                                        if(led_pwm_enable_state === "enabled" ) {
-                                            pwmenableOutput.enabled = true
-                                            pwmenableOutput.opacity = 1.0
-
-                                        }
-                                        else if(led_pwm_enable_state === "disabled") {
-                                            pwmenableOutput.enabled = false
-                                            pwmenableOutput.opacity = 1.0
-                                        }
-                                        else {
-                                            pwmenableOutput.enabled = false
-                                            enableOutput.opacity = 0.5
-
-                                        }
+                                    property var led_pwm_enable_states: platformInterface.led_pwm_enable_state.states
+                                    onLed_pwm_enable_statesChanged : {
+                                        setStatesForControls(pwmenableOutput,led_pwm_enable_states[0])
                                     }
 
                                     property var led_pwm_enable_value: platformInterface.led_pwm_enable_value.value
@@ -1413,21 +1167,7 @@ Item {
                                     property var led_pwm_duty_lock: platformInterface.led_pwm_duty_lock
                                     onLed_pwm_duty_lockChanged: {
                                         lockPWMDutyLabel.text = led_pwm_duty_lock.caption
-
-                                        if(led_pwm_duty_lock.state === "enabled" ) {
-                                            lockPWMDuty.enabled = true
-                                            lockPWMDuty.opacity = 1.0
-
-                                        }
-                                        else if(led_pwm_duty_lock.state === "disabled") {
-                                            lockPWMDuty.enabled = false
-                                            lockPWMDuty.opacity = 1.0
-                                        }
-                                        else {
-                                            lockPWMDuty.enabled = false
-                                            lockPWMDuty.opacity = 0.5
-
-                                        }
+                                        setStatesForControls(lockPWMDuty,led_pwm_duty_lock.states[0])
                                         if(led_pwm_duty_lock.value === true)
                                             lockPWMDuty.checked = true
                                         else  lockPWMDuty.checked = false
@@ -1438,22 +1178,9 @@ Item {
                                         lockPWMDutyLabel.text = led_pwm_duty_lock_caption
                                     }
 
-                                    property var led_pwm_duty_lock_state: platformInterface.led_pwm_duty_lock_state.state
-                                    onLed_pwm_duty_lock_stateChanged : {
-                                        if(led_pwm_duty_lock_state === "enabled" ) {
-                                            lockPWMDuty.enabled = true
-                                            lockPWMDuty.opacity = 1.0
-
-                                        }
-                                        else if(led_pwm_duty_lock_state === "disabled") {
-                                            lockPWMDuty.enabled = false
-                                            lockPWMDuty.opacity = 1.0
-                                        }
-                                        else {
-                                            lockPWMDuty.enabled = false
-                                            lockPWMDuty.opacity = 0.5
-
-                                        }
+                                    property var led_pwm_duty_lock_states: platformInterface.led_pwm_duty_lock_state.states
+                                    onLed_pwm_duty_lock_statesChanged : {
+                                        setStatesForControls(lockPWMDuty,led_pwm_duty_lock_states[0])
                                     }
 
                                     property var led_pwm_duty_lock_value: platformInterface.led_pwm_duty_lock_value.value
@@ -1502,20 +1229,21 @@ Item {
                                     property var led_pwm_en_lock: platformInterface.led_pwm_en_lock
                                     onLed_pwm_en_lockChanged: {
                                         lockPWMDutyENLabel.text = led_pwm_en_lock.caption
-                                        if(led_pwm_en_lock.state === "enabled" ) {
-                                            lockPWMDutyEN.enabled = true
-                                            lockPWMDutyEN.opacity = 1.0
+                                        setStatesForControls(lockPWMDutyEN,led_pwm_en_lock.states[0])
+                                        //                                        if(led_pwm_en_lock.state === "enabled" ) {
+                                        //                                            lockPWMDutyEN.enabled = true
+                                        //                                            lockPWMDutyEN.opacity = 1.0
 
-                                        }
-                                        else if(led_pwm_en_lock.state === "disabled") {
-                                            lockPWMDutyEN.enabled = false
-                                            lockPWMDutyEN.opacity = 1.0
-                                        }
-                                        else {
-                                            lockPWMDutyEN.enabled = false
-                                            lockPWMDutyEN.opacity = 0.5
+                                        //                                        }
+                                        //                                        else if(led_pwm_en_lock.state === "disabled") {
+                                        //                                            lockPWMDutyEN.enabled = false
+                                        //                                            lockPWMDutyEN.opacity = 1.0
+                                        //                                        }
+                                        //                                        else {
+                                        //                                            lockPWMDutyEN.enabled = false
+                                        //                                            lockPWMDutyEN.opacity = 0.5
 
-                                        }
+                                        //                                        }
                                         if(led_pwm_en_lock.value === true)
                                             lockPWMDutyEN.checked = true
                                         else  lockPWMDutyEN.checked = false
@@ -1528,22 +1256,9 @@ Item {
 
                                     }
 
-                                    property var led_pwm_en_lock_state: platformInterface.led_pwm_en_lock_state.state
-                                    onLed_pwm_en_lock_stateChanged : {
-                                        if(led_pwm_en_lock_state === "enabled" ) {
-                                            lockPWMDutyEN.enabled = true
-                                            lockPWMDutyEN.opacity = 1.0
-
-                                        }
-                                        else if(led_pwm_en_lock_state === "disabled") {
-                                            lockPWMDutyEN.enabled = false
-                                            lockPWMDutyEN.opacity = 1.0
-                                        }
-                                        else {
-                                            lockPWMDutyEN.enabled = false
-                                            lockPWMDutyEN.opacity = 0.5
-
-                                        }
+                                    property var led_pwm_en_lock_states: platformInterface.led_pwm_en_lock_state.states
+                                    onLed_pwm_en_lock_statesChanged : {
+                                        setStatesForControls(lockPWMDutyEN,led_pwm_en_lock_states[0])
                                     }
 
                                     property var led_pwm_en_lock_value: platformInterface.led_pwm_en_lock_value.value
@@ -1615,20 +1330,7 @@ Item {
                                     property var led_linear_log: platformInterface.led_linear_log
                                     onLed_linear_logChanged: {
                                         pwmLinearLogLabel.text = led_linear_log.caption
-                                        if(led_linear_log.state === "enabled" ) {
-                                            pwmLinearLog.enabled = true
-                                            pwmLinearLog.opacity = 1.0
-
-                                        }
-                                        else if(led_linear_log.state === "disabled") {
-                                            pwmLinearLog.enabled = false
-                                            pwmLinearLog.opacity = 1.0
-                                        }
-                                        else {
-                                            pwmLinearLog.enabled = false
-                                            pwmLinearLog.opacity = 0.5
-
-                                        }
+                                        setStatesForControls(pwmLinearLog,led_linear_log.states[0])
                                         pwmLinearLog.checkedLabel = led_linear_log.values[0]
                                         pwmLinearLog.uncheckedLabel = led_linear_log.values[1]
 
@@ -1643,22 +1345,9 @@ Item {
                                         pwmLinearLogLabel.text = led_linear_log_caption
                                     }
 
-                                    property var led_linear_log_state: platformInterface.led_linear_log_state.state
-                                    onLed_linear_log_stateChanged: {
-                                        if(led_linear_log_state === "enabled" ) {
-                                            pwmLinearLog.enabled = true
-                                            pwmLinearLog.opacity = 1.0
-
-                                        }
-                                        else if(led_linear_log_state === "disabled") {
-                                            pwmLinearLog.enabled = false
-                                            pwmLinearLog.opacity = 1.0
-                                        }
-                                        else {
-                                            pwmLinearLog.enabled = false
-                                            pwmLinearLog.opacity = 0.5
-
-                                        }
+                                    property var led_linear_log_states: platformInterface.led_linear_log_state.states
+                                    onLed_linear_log_statesChanged: {
+                                        setStatesForControls(pwmLinearLog,led_linear_log_states[0])
                                     }
 
                                     property var led_linear_log_values: platformInterface.led_linear_log_values.values
@@ -1732,21 +1421,7 @@ Item {
                                     property var led_pwm_freq: platformInterface.led_pwm_freq
                                     onLed_pwm_freqChanged: {
                                         pwmFrequencyLabel.text = led_pwm_freq.caption
-
-                                        if(led_pwm_freq.state === "enabled" ) {
-                                            pwmFrequency.enabled = true
-                                            pwmFrequency.opacity = 1.0
-
-                                        }
-                                        else if(led_pwm_freq.state === "disabled") {
-                                            pwmFrequency.enabled = false
-                                            pwmFrequency.opacity = 1.0
-                                        }
-                                        else {
-                                            pwmFrequency.enabled = false
-                                            pwmFrequency.opacity = 0.5
-
-                                        }
+                                        setStatesForControls(pwmFrequency,led_pwm_freq.states[0])
 
                                         pwmFrequency.model = led_pwm_freq.values
 
@@ -1762,22 +1437,9 @@ Item {
                                         pwmFrequencyLabel.text = led_pwm_freq_caption
                                     }
 
-                                    property var led_pwm_freq_state: platformInterface.led_pwm_freq_state.state
-                                    onLed_pwm_freq_stateChanged: {
-                                        if(led_pwm_freq_state === "enabled" ) {
-                                            pwmFrequency.enabled = true
-                                            pwmFrequency.opacity = 1.0
-
-                                        }
-                                        else if(led_pwm_freq_state === "disabled") {
-                                            pwmFrequency.enabled = false
-                                            pwmFrequency.opacity = 1.0
-                                        }
-                                        else {
-                                            pwmFrequency.enabled = false
-                                            pwmFrequency.opacity = 0.5
-
-                                        }
+                                    property var led_pwm_freq_states: platformInterface.led_pwm_freq_state.states
+                                    onLed_pwm_freq_statesChanged: {
+                                        setStatesForControls(pwmFrequency,led_pwm_freq_states[0])
                                     }
 
                                     property var led_pwm_freq_values: platformInterface.led_pwm_freq_values.values
@@ -1865,24 +1527,8 @@ Item {
                                             property var led_diag: platformInterface.led_diag
                                             onLed_diagChanged: {
                                                 diagLabel.text =  led_diag_caption
-                                            }
+                                                setStatesForControls(diagLabel,led_diag.states[0])
 
-                                            property var led_diag_caption: platformInterface.led_diag_caption.caption
-                                            onLed_diag_captionChanged: {
-                                                diagLabel.text =  led_diag.caption
-
-                                                if(led_diag.state === "enabled") {
-                                                    diagLabel.enabled = true
-                                                    diagLabel.opacity = 1.0
-                                                }
-                                                else if (led_diag.state === "disabled") {
-                                                    diagLabel.enabled = false
-                                                    diagLabel.opacity = 1.0
-                                                }
-                                                else  {
-                                                    diagLabel.enabled = false
-                                                    diagLabel.opacity = 0.5
-                                                }
 
                                                 if(led_diag.value === false)
                                                     diag.status = SGStatusLight.Off
@@ -1890,20 +1536,28 @@ Item {
                                                 else  diag.status = SGStatusLight.Red
                                             }
 
-                                            property var led_diag_state: platformInterface.led_diag_state.state
-                                            onLed_diag_stateChanged: {
-                                                if(led_diag_state === "enabled") {
-                                                    diagLabel.enabled = true
-                                                    diagLabel.opacity = 1.0
-                                                }
-                                                else if (led_diag_state === "disabled") {
-                                                    diagLabel.enabled = false
-                                                    diagLabel.opacity = 1.0
-                                                }
-                                                else  {
-                                                    diagLabel.enabled = false
-                                                    diagLabel.opacity = 0.5
-                                                }
+                                            property var led_diag_caption: platformInterface.led_diag_caption.caption
+                                            onLed_diag_captionChanged: {
+                                                diagLabel.text =  led_diag.caption
+
+
+                                            }
+
+                                            property var led_diag_states: platformInterface.led_diag_state.states
+                                            onLed_diag_statesChanged: {
+                                                setStatesForControls(diagLabel,led_diag_states[0])
+                                                //                                                if(led_diag_state === "enabled") {
+                                                //                                                    diagLabel.enabled = true
+                                                //                                                    diagLabel.opacity = 1.0
+                                                //                                                }
+                                                //                                                else if (led_diag_state === "disabled") {
+                                                //                                                    diagLabel.enabled = false
+                                                //                                                    diagLabel.opacity = 1.0
+                                                //                                                }
+                                                //                                                else  {
+                                                //                                                    diagLabel.enabled = false
+                                                //                                                    diagLabel.opacity = 0.5
+                                                //                                                }
                                             }
 
                                             property var led_diag_value: platformInterface.led_diag_value.value
@@ -1948,21 +1602,7 @@ Item {
                                             property var led_open_load_diagnostic: platformInterface.led_open_load_diagnostic
                                             onLed_open_load_diagnosticChanged: {
                                                 openLoadLabel.text = led_open_load_diagnostic.caption
-
-                                                if(led_open_load_diagnostic.state === "enabled" ) {
-                                                    openLoadDiagnostic.enabled = true
-                                                    openLoadDiagnostic.opacity = 1.0
-
-                                                }
-                                                else if(led_open_load_diagnostic.state === "disabled") {
-                                                    openLoadDiagnostic.enabled = false
-                                                    openLoadDiagnostic.opacity = 1.0
-                                                }
-                                                else {
-                                                    openLoadDiagnostic.enabled = false
-                                                    openLoadDiagnostic.opacity = 0.5
-
-                                                }
+                                                setStatesForControls(openLoadDiagnostic,led_open_load_diagnostic.states[0])
 
                                                 openLoadDiagnostic.model = led_open_load_diagnostic.values
 
@@ -1978,22 +1618,9 @@ Item {
                                                 openLoadLabel.text = led_open_load_diagnostic_caption
                                             }
 
-                                            property var led_open_load_diagnostic_state: platformInterface.led_open_load_diagnostic_state.state
-                                            onLed_open_load_diagnostic_stateChanged: {
-                                                if(led_open_load_diagnostic_state === "enabled" ) {
-                                                    openLoadDiagnostic.enabled = true
-                                                    openLoadDiagnostic.opacity = 1.0
-
-                                                }
-                                                else if(led_open_load_diagnostic_state === "disabled") {
-                                                    openLoadDiagnostic.enabled = false
-                                                    openLoadDiagnostic.opacity = 1.0
-                                                }
-                                                else {
-                                                    openLoadDiagnostic.enabled = false
-                                                    openLoadDiagnostic.opacity = 0.5
-
-                                                }
+                                            property var led_open_load_diagnostic_states: platformInterface.led_open_load_diagnostic_state.states
+                                            onLed_open_load_diagnostic_statesChanged: {
+                                                setStatesForControls(openLoadDiagnostic,led_open_load_diagnostic_states[0])
                                             }
 
                                             property var led_open_load_diagnostic_values: platformInterface.led_open_load_diagnostic_values.values
@@ -2095,7 +1722,7 @@ Item {
                                                 //text: "<b>" + qsTr("OUT EN") + "</b>"
                                                 font.bold: true
                                                 fontSizeMultiplier: ratioCalc * 1.2
-                                                anchors.right: parent.right
+                                                anchors.left: parent.left
                                                 anchors.verticalCenter: parent.verticalCenter
 
                                                 property var led_out_en_caption: platformInterface.led_out_en_caption.caption
@@ -2114,7 +1741,7 @@ Item {
                                                 horizontalAlignment: Text.AlignHCenter
                                                 font.bold: true
                                                 fontSizeMultiplier: ratioCalc * 1.2
-                                                anchors.right: parent.right
+                                                anchors.left: parent.left
                                                 anchors.verticalCenter: parent.verticalCenter
 
 
@@ -2132,7 +1759,7 @@ Item {
                                                 // text: "<b>" + qsTr("PWM Enable") + "</b>"
                                                 font.bold: true
                                                 fontSizeMultiplier: ratioCalc * 1.2
-                                                anchors.right: parent.right
+                                                anchors.left: parent.left
                                                 anchors.verticalCenter: parent.verticalCenter
 
                                                 property var led_pwm_enables_caption: platformInterface.led_pwm_enables_caption.caption
@@ -2149,7 +1776,7 @@ Item {
                                                 id:faultText
                                                 // text: "<b>" + qsTr("Fault Status") + "</b>"
                                                 fontSizeMultiplier: ratioCalc * 1.2
-                                                anchors.right: parent.right
+                                                anchors.left: parent.left
                                                 anchors.verticalCenter: parent.verticalCenter
                                                 font.bold: true
 
@@ -2169,7 +1796,7 @@ Item {
                                                 font.bold: true
                                                 //text: "<b>" + qsTr("PWM Duty (%)") + "</b>"
                                                 fontSizeMultiplier: ratioCalc * 1.2
-                                                anchors.right: parent.right
+                                                anchors.left: parent.left
                                                 anchors.verticalCenter: parent.verticalCenter
 
                                                 property var led_pwm_duty_caption: platformInterface.led_pwm_duty_caption.caption
@@ -2403,7 +2030,7 @@ Item {
                                                     out0duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states0: platformInterface.led_pwm_duty_states.states
+                                                property var led_pwm_duty_states0: platformInterface.led_pwm_duty_state.states
                                                 onLed_pwm_duty_states0Changed: {
                                                     console.log(led_pwm_duty_states0[0])
                                                     setStateForPWMDuty(out0duty,led_pwm_duty_states0[0])
@@ -2666,7 +2293,7 @@ Item {
                                                     out1duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states1: platformInterface.led_pwm_duty_states.states
+                                                property var led_pwm_duty_states1: platformInterface.led_pwm_duty_state.states
                                                 onLed_pwm_duty_states1Changed: {
                                                     setStateForPWMDuty(out1duty,led_pwm_duty_states1[1])
                                                 }
@@ -2921,7 +2548,7 @@ Item {
                                                     out2duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states2: platformInterface.led_pwm_duty_states.states
+                                                property var led_pwm_duty_states2: platformInterface.led_pwm_duty_state.states
                                                 onLed_pwm_duty_states2Changed: {
                                                     setStateForPWMDuty(out2duty,led_pwm_duty_states2[2])
                                                 }
@@ -3180,7 +2807,7 @@ Item {
                                                     out3duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states3: platformInterface.led_pwm_duty_states.states
+                                                property var led_pwm_duty_states3: platformInterface.led_pwm_duty_state.states
                                                 onLed_pwm_duty_states3Changed: {
                                                     setStateForPWMDuty(out3duty,led_pwm_duty_states3[3])
                                                 }
@@ -3443,7 +3070,7 @@ Item {
                                                     out4duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states4: platformInterface.led_pwm_duty_states.states
+                                                property var led_pwm_duty_states4: platformInterface.led_pwm_duty_state.states
                                                 onLed_pwm_duty_states4Changed: {
                                                     setStateForPWMDuty(out4duty,led_pwm_duty_states4[4])
                                                 }
@@ -3701,7 +3328,7 @@ Item {
                                                     out5duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states5: platformInterface.led_pwm_duty_states.states
+                                                property var led_pwm_duty_states5: platformInterface.led_pwm_duty_state.states
                                                 onLed_pwm_duty_states5Changed: {
                                                     setStateForPWMDuty(out5duty,led_pwm_duty_states5[5])
                                                 }
@@ -3958,7 +3585,7 @@ Item {
                                                     out6duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states6: platformInterface.led_pwm_duty_states.states
+                                                property var led_pwm_duty_states6: platformInterface.led_pwm_duty_state.states
                                                 onLed_pwm_duty_states6Changed: {
                                                     setStateForPWMDuty(out6duty,led_pwm_duty_states6[6])
                                                 }
@@ -4218,7 +3845,7 @@ Item {
                                                     out7duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states7: platformInterface.led_pwm_duty_states.states
+                                                property var led_pwm_duty_states7: platformInterface.led_pwm_duty_state.states
                                                 onLed_pwm_duty_states7Changed: {
                                                     setStateForPWMDuty(out7duty,led_pwm_duty_states7[7])
                                                 }
@@ -4472,7 +4099,7 @@ Item {
                                                     out8duty.to = led_pwm_duty_scales[0]
                                                     out8duty.value = led_pwm_duty_scales[2]
                                                 }
-                                                property var led_pwm_duty_states8: platformInterface.led_pwm_duty_states.states
+                                                property var led_pwm_duty_states8: platformInterface.led_pwm_duty_state.states
                                                 onLed_pwm_duty_states8Changed: {
                                                     setStateForPWMDuty(out8duty,led_pwm_duty_states8[8])
                                                 }
@@ -4729,7 +4356,7 @@ Item {
                                                     out9duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states9: platformInterface.led_pwm_duty_states.states
+                                                property var led_pwm_duty_states9: platformInterface.led_pwm_duty_state.states
                                                 onLed_pwm_duty_states9Changed: {
                                                     setStateForPWMDuty(out9duty,led_pwm_duty_states9[9])
                                                 }
@@ -4985,7 +4612,7 @@ Item {
                                                     out10duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states10: platformInterface.led_pwm_duty_states.states
+                                                property var led_pwm_duty_states10: platformInterface.led_pwm_duty_state.states
                                                 onLed_pwm_duty_states10Changed: {
                                                     setStateForPWMDuty(out10duty,led_pwm_duty_states10[10])
                                                 }
@@ -5244,7 +4871,7 @@ Item {
                                                     out11duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states11: platformInterface.led_pwm_duty_states.states
+                                                property var led_pwm_duty_states11: platformInterface.led_pwm_duty_state.states
                                                 onLed_pwm_duty_states11Changed: {
                                                     setStateForPWMDuty(out11duty,led_pwm_duty_states11[11])
                                                 }
@@ -5365,18 +4992,7 @@ Item {
                                         onLed_sc_iset_captionChanged: {
                                             scIsetLabel.text =  led_sc_iset_caption
 
-                                            if(led_sc_iset.state === "enabled") {
-                                                scIsetLabel.enabled = true
-                                                scIsetLabel.opacity = 1.0
-                                            }
-                                            else if (led_sc_iset.state === "disabled") {
-                                                scIsetLabel.enabled = false
-                                                scIsetLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                scIsetLabel.enabled = false
-                                                scIsetLabel.opacity = 0.5
-                                            }
+                                            setStatesForControls(scIsetLabel,led_sc_iset.states[0])
 
                                             if(led_sc_iset.value === false) {
                                                 scIset.status = SGStatusLight.Off
@@ -5384,20 +5000,10 @@ Item {
                                             else  scIset.status = SGStatusLight.Red
                                         }
 
-                                        property var led_sc_iset_state: platformInterface.led_sc_iset_state.state
-                                        onLed_sc_iset_stateChanged: {
-                                            if(led_sc_iset_state === "enabled") {
-                                                scIsetLabel.enabled = true
-                                                scIsetLabel.opacity = 1.0
-                                            }
-                                            else if (led_sc_iset_state === "disabled") {
-                                                scIsetLabel.enabled = false
-                                                scIsetLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                scIsetLabel.enabled = false
-                                                scIsetLabel.opacity = 0.5
-                                            }
+                                        property var led_sc_iset_states: platformInterface.led_sc_iset_state.states
+                                        onLed_sc_iset_statesChanged: {
+                                            setStatesForControls(scIsetLabel,led_sc_iset_states[0])
+                                            //
                                         }
 
                                         property var led_sc_iset_value: platformInterface.led_sc_iset_value.value
@@ -5408,12 +5014,10 @@ Item {
                                             else  scIset.status = SGStatusLight.Red
                                         }
 
-
-
                                     }
                                 }
-
                             }
+
                             Rectangle {
                                 Layout.fillHeight: true
                                 Layout.fillWidth: true
@@ -5434,18 +5038,19 @@ Item {
                                         property var led_i2cerr: platformInterface.led_i2cerr
                                         onLed_i2cerrChanged: {
                                             i2CerrLabel.text =  led_i2cerr.caption
-                                            if(led_i2cerr.state === "enabled") {
-                                                i2CerrLabel.enabled = true
-                                                i2CerrLabel.opacity = 1.0
-                                            }
-                                            else if (led_i2cerr.state === "disabled") {
-                                                i2CerrLabel.enabled = false
-                                                i2CerrLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                i2CerrLabel.enabled = false
-                                                i2CerrLabel.opacity = 0.5
-                                            }
+                                            setStatesForControls(i2CerrLabel,led_i2cerr.states[0])
+                                            //                                            if(led_i2cerr.state === "enabled") {
+                                            //                                                i2CerrLabel.enabled = true
+                                            //                                                i2CerrLabel.opacity = 1.0
+                                            //                                            }
+                                            //                                            else if (led_i2cerr.state === "disabled") {
+                                            //                                                i2CerrLabel.enabled = false
+                                            //                                                i2CerrLabel.opacity = 1.0
+                                            //                                            }
+                                            //                                            else  {
+                                            //                                                i2CerrLabel.enabled = false
+                                            //                                                i2CerrLabel.opacity = 0.5
+                                            //                                            }
 
                                             if(led_i2cerr.value === false) {
                                                 i2Cerr.status = SGStatusLight.Off
@@ -5460,20 +5065,9 @@ Item {
 
                                         }
 
-                                        property var led_i2cerr_state: platformInterface.led_i2cerr_state.state
-                                        onLed_i2cerr_stateChanged: {
-                                            if(led_i2cerr_state === "enabled") {
-                                                i2CerrLabel.enabled = true
-                                                i2CerrLabel.opacity = 1.0
-                                            }
-                                            else if (led_i2cerr_state === "disabled") {
-                                                i2CerrLabel.enabled = false
-                                                i2CerrLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                i2CerrLabel.enabled = false
-                                                i2CerrLabel.opacity = 0.5
-                                            }
+                                        property var led_i2cerr_states: platformInterface.led_i2cerr_state.states
+                                        onLed_i2cerr_statesChanged: {
+                                            setStatesForControls(i2CerrLabel,led_i2cerr_states[0])
                                         }
 
                                         property var led_i2cerr_value: platformInterface.led_i2cerr_value.value
@@ -5506,18 +5100,7 @@ Item {
                                         property var led_uv: platformInterface.led_uv
                                         onLed_uvChanged: {
                                             uvLabel.text =  led_uv_caption
-                                            if(led_uv.state === "enabled") {
-                                                uvLabel.enabled = true
-                                                uvLabel.opacity = 1.0
-                                            }
-                                            else if (led_uv.state === "disabled") {
-                                                uvLabel.enabled = false
-                                                uvLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                uvLabel.enabled = false
-                                                uvLabel.opacity = 0.5
-                                            }
+                                            setStatesForControls(uvLabel,led_uv.states[0])
                                             if(led_uv.value === false)
                                                 uv.status = SGStatusLight.Off
 
@@ -5529,20 +5112,9 @@ Item {
                                             uvLabel.text =  led_uv_caption
                                         }
 
-                                        property var led_uv_state: platformInterface.led_uv_state.state
-                                        onLed_uv_stateChanged: {
-                                            if(led_uv_state === "enabled") {
-                                                uvLabel.enabled = true
-                                                uvLabel.opacity = 1.0
-                                            }
-                                            else if (led_uv_state === "disabled") {
-                                                uvLabel.enabled = false
-                                                uvLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                uvLabel.enabled = false
-                                                uvLabel.opacity = 0.5
-                                            }
+                                        property var led_uv_states: platformInterface.led_uv_state.states
+                                        onLed_uv_statesChanged: {
+                                            setStatesForControls(uvLabel,led_uv_states[0])
                                         }
 
                                         property var led_uv_value: platformInterface.led_uv_value.value
@@ -5577,19 +5149,20 @@ Item {
                                         property var led_diagrange: platformInterface.led_diagrange
                                         onLed_diagrangeChanged: {
                                             diagRangeLabel.text =  led_diagrange.caption
+                                            setStatesForControls(diagRangeLabel,led_diagrange.states[0])
 
-                                            if(led_diagrange.state === "enabled") {
-                                                diagRangeLabel.enabled = true
-                                                diagRangeLabel.opacity = 1.0
-                                            }
-                                            else if (led_diagrange.state === "disabled") {
-                                                diagRangeLabel.enabled = false
-                                                diagRangeLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                diagRangeLabel.enabled = false
-                                                diagRangeLabel.opacity = 0.5
-                                            }
+                                            //                                            if(led_diagrange.state === "enabled") {
+                                            //                                                diagRangeLabel.enabled = true
+                                            //                                                diagRangeLabel.opacity = 1.0
+                                            //                                            }
+                                            //                                            else if (led_diagrange.state === "disabled") {
+                                            //                                                diagRangeLabel.enabled = false
+                                            //                                                diagRangeLabel.opacity = 1.0
+                                            //                                            }
+                                            //                                            else  {
+                                            //                                                diagRangeLabel.enabled = false
+                                            //                                                diagRangeLabel.opacity = 0.5
+                                            //                                            }
 
                                             if(led_diagrange.value === false)
                                                 diagRange.status = SGStatusLight.Off
@@ -5602,20 +5175,9 @@ Item {
                                             diagRangeLabel.text =  led_diagrange_caption
                                         }
 
-                                        property var led_diagrange_state: platformInterface.led_diagrange_state.state
-                                        onLed_diagrange_stateChanged: {
-                                            if(led_diagrange_state === "enabled") {
-                                                diagRangeLabel.enabled = true
-                                                diagRangeLabel.opacity = 1.0
-                                            }
-                                            else if (led_diagrange_state === "disabled") {
-                                                diagRangeLabel.enabled = false
-                                                diagRangeLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                diagRangeLabel.enabled = false
-                                                diagRangeLabel.opacity = 0.5
-                                            }
+                                        property var led_diagrange_states: platformInterface.led_diagrange_state.states
+                                        onLed_diagrange_statesChanged: {
+                                            setStatesForControls(diagRangeLabel,led_diagrange_states[0])
                                         }
 
                                         property var led_diagrange_value: platformInterface.led_diagrange_value.value
@@ -5647,20 +5209,22 @@ Item {
 
                                         property var led_tw: platformInterface.led_tw
                                         onLed_twChanged:{
-                                            twLabel.text =  led_tw_caption
 
-                                            if(led_tw.state === "enabled") {
-                                                twLabel.enabled = true
-                                                twLabel.opacity = 1.0
-                                            }
-                                            else if (led_tw.state === "disabled") {
-                                                twLabel.enabled = false
-                                                twLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                twLabel.enabled = false
-                                                twLabel.opacity = 0.5
-                                            }
+                                            twLabel.text =  led_tw_caption
+                                            setStatesForControls(twLabel,led_tw.states[0])
+
+                                            //                                            if(led_tw.state === "enabled") {
+                                            //                                                twLabel.enabled = true
+                                            //                                                twLabel.opacity = 1.0
+                                            //                                            }
+                                            //                                            else if (led_tw.state === "disabled") {
+                                            //                                                twLabel.enabled = false
+                                            //                                                twLabel.opacity = 1.0
+                                            //                                            }
+                                            //                                            else  {
+                                            //                                                twLabel.enabled = false
+                                            //                                                twLabel.opacity = 0.5
+                                            //                                            }
 
                                             if(led_tw.value === false)
                                                 tw.status = SGStatusLight.Off
@@ -5673,20 +5237,9 @@ Item {
                                             twLabel.text =  led_tw_caption
                                         }
 
-                                        property var led_tw_state: platformInterface.led_tw_state.state
-                                        onLed_tw_stateChanged: {
-                                            if(led_tw_state === "enabled") {
-                                                twLabel.enabled = true
-                                                twLabel.opacity = 1.0
-                                            }
-                                            else if (led_tw_state === "disabled") {
-                                                twLabel.enabled = false
-                                                twLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                twLabel.enabled = false
-                                                twLabel.opacity = 0.5
-                                            }
+                                        property var led_tw_states: platformInterface.led_tw_state.states
+                                        onLed_tw_statesChanged: {
+                                            setStatesForControls(twLabel,led_tw_states[0])
                                         }
 
                                         property var led_tw_value: platformInterface.led_tw_value.value
@@ -5720,18 +5273,19 @@ Item {
                                         property var led_tsd: platformInterface.led_tsd
                                         onLed_tsdChanged: {
                                             tsdLabel.text =  led_tsd_caption
-                                            if(led_tsd.state === "enabled") {
-                                                tsdLabel.enabled = true
-                                                tsdLabel.opacity = 1.0
-                                            }
-                                            else if (led_tsd.state === "disabled") {
-                                                tsdLabel.enabled = false
-                                                tsdLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                tsdLabel.enabled = false
-                                                tsdLabel.opacity = 0.5
-                                            }
+                                            setStatesForControls(tsdLabel,led_tsd.states[0])
+                                            //                                            if(led_tsd.state === "enabled") {
+                                            //                                                tsdLabel.enabled = true
+                                            //                                                tsdLabel.opacity = 1.0
+                                            //                                            }
+                                            //                                            else if (led_tsd.state === "disabled") {
+                                            //                                                tsdLabel.enabled = false
+                                            //                                                tsdLabel.opacity = 1.0
+                                            //                                            }
+                                            //                                            else  {
+                                            //                                                tsdLabel.enabled = false
+                                            //                                                tsdLabel.opacity = 0.5
+                                            //                                            }
                                             if(led_tsd.value === false)
                                                 tsd.status = SGStatusLight.Off
 
@@ -5743,20 +5297,9 @@ Item {
                                             tsdLabel.text =  led_tsd_caption
                                         }
 
-                                        property var led_tsd_state: platformInterface.led_tsd_state.state
-                                        onLed_tsd_stateChanged: {
-                                            if(led_tsd_state === "enabled") {
-                                                tsdLabel.enabled = true
-                                                tsdLabel.opacity = 1.0
-                                            }
-                                            else if (led_tsd_state === "disabled") {
-                                                tsdLabel.enabled = false
-                                                tsdLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                tsdLabel.enabled = false
-                                                tsdLabel.opacity = 0.5
-                                            }
+                                        property var led_tsd_states: platformInterface.led_tsd_state.states
+                                        onLed_tsd_statesChanged: {
+                                            setStatesForControls(tsdLabel,led_tsd_states[0])
                                         }
 
                                         property var led_tsd_value: platformInterface.led_tsd_value.value
@@ -5789,19 +5332,20 @@ Item {
                                         property var led_diagerr: platformInterface.led_diagerr
                                         onLed_diagerrChanged: {
                                             diagerrLabel.text =  led_diagerr.caption
+                                            setStatesForControls(diagerrLabel,led_diagerr.states[0])
 
-                                            if(led_diagerr.state === "enabled") {
-                                                diagerrLabel.enabled = true
-                                                diagerrLabel.opacity = 1.0
-                                            }
-                                            else if (led_diagerr.state === "disabled") {
-                                                diagerrLabel.enabled = false
-                                                diagerrLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                diagerrLabel.enabled = false
-                                                diagerrLabel.opacity = 0.5
-                                            }
+                                            //                                            if(led_diagerr.state === "enabled") {
+                                            //                                                diagerrLabel.enabled = true
+                                            //                                                diagerrLabel.opacity = 1.0
+                                            //                                            }
+                                            //                                            else if (led_diagerr.state === "disabled") {
+                                            //                                                diagerrLabel.enabled = false
+                                            //                                                diagerrLabel.opacity = 1.0
+                                            //                                            }
+                                            //                                            else  {
+                                            //                                                diagerrLabel.enabled = false
+                                            //                                                diagerrLabel.opacity = 0.5
+                                            //                                            }
 
                                             if(led_diagerr.value === false)
                                                 diagerr.status = SGStatusLight.Off
@@ -5815,20 +5359,9 @@ Item {
                                             diagerrLabel.text =  led_diagerr_caption
                                         }
 
-                                        property var led_diagerr_state: platformInterface.led_tsd_state.state
-                                        onLed_diagerr_stateChanged: {
-                                            if(led_diagerr_state === "enabled") {
-                                                diagerrLabel.enabled = true
-                                                diagerrLabel.opacity = 1.0
-                                            }
-                                            else if (led_diagerr_state === "disabled") {
-                                                diagerrLabel.enabled = false
-                                                diagerrLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                diagerrLabel.enabled = false
-                                                diagerrLabel.opacity = 0.5
-                                            }
+                                        property var led_diagerr_states: platformInterface.led_tsd_state.states
+                                        onLed_diagerr_statesChanged: {
+                                            setStatesForControls(diagerrLabel,led_diagerr_states[0])
                                         }
 
                                         property var led_diagerr_value: platformInterface.led_diagerr_value.value
@@ -5861,18 +5394,19 @@ Item {
                                         property var led_ol: platformInterface.led_ol
                                         onLed_olChanged: {
                                             olLabel.text =  led_ol.caption
-                                            if(led_ol.state === "enabled") {
-                                                olLabel.enabled = true
-                                                olLabel.opacity = 1.0
-                                            }
-                                            else if (led_ol.state === "disabled") {
-                                                olLabel.enabled = false
-                                                olLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                olLabel.enabled = false
-                                                olLabel.opacity = 0.5
-                                            }
+                                            setStatesForControls(olLabel,led_ol.states[0])
+                                            //                                            if(led_ol.state === "enabled") {
+                                            //                                                olLabel.enabled = true
+                                            //                                                olLabel.opacity = 1.0
+                                            //                                            }
+                                            //                                            else if (led_ol.state === "disabled") {
+                                            //                                                olLabel.enabled = false
+                                            //                                                olLabel.opacity = 1.0
+                                            //                                            }
+                                            //                                            else  {
+                                            //                                                olLabel.enabled = false
+                                            //                                                olLabel.opacity = 0.5
+                                            //                                            }
                                             if(led_ol.value === false)
                                                 ol.status = SGStatusLight.Off
 
@@ -5884,20 +5418,9 @@ Item {
                                             olLabel.text =  led_ol_caption
                                         }
 
-                                        property var led_ol_state: platformInterface.led_ol_state.state
-                                        onLed_ol_stateChanged: {
-                                            if(led_ol_state === "enabled") {
-                                                olLabel.enabled = true
-                                                olLabel.opacity = 1.0
-                                            }
-                                            else if (led_ol_state === "disabled") {
-                                                olLabel.enabled = false
-                                                olLabel.opacity = 1.0
-                                            }
-                                            else  {
-                                                olLabel.enabled = false
-                                                olLabel.opacity = 0.5
-                                            }
+                                        property var led_ol_states: platformInterface.led_ol_state.states
+                                        onLed_ol_statesChanged: {
+                                            setStatesForControls(olLabel,led_ol_states[0])
                                         }
 
                                         property var led_ol_value: platformInterface.led_ol_value.value
