@@ -2,18 +2,14 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
-import MqttClient 1.0
+import tech.strata.commoncpp 1.0
 
-Window {
-    id: root
-    visible: true
-    width: 640
-    height: 480
-    title: qsTr("MQTT Client")
+Item {
+    anchors.fill: parent
 
     property var tempSubscription: 0
 
-    MqttClient {
+    SGMqttClient {
             id: client
             hostname: hostnameField.text
             port: portField.text
@@ -38,38 +34,36 @@ Window {
 
         Label {
             text: "Hostname:"
-            enabled: client.state === MqttClient.Disconnected
+            enabled: client.state === SGMqttClient.Disconnected
         }
 
         TextField {
             id: hostnameField
-            Layout.fillWidth: true
             text: "test.mosquitto.org"
             placeholderText: "<Enter host running MQTT broker>"
-            enabled: client.state === MqttClient.Disconnected
+            enabled: client.state === SGMqttClient.Disconnected
         }
 
         Label {
             text: "Port:"
-            enabled: client.state === MqttClient.Disconnected
+            enabled: client.state === SGMqttClient.Disconnected
         }
 
         TextField {
             id: portField
-            Layout.fillWidth: true
             text: "1883"
             placeholderText: "<Port>"
             inputMethodHints: Qt.ImhDigitsOnly
-            enabled: client.state === MqttClient.Disconnected
+            enabled: client.state === SGMqttClient.Disconnected
         }
 
         Button {
             id: connectButton
             Layout.columnSpan: 2
             Layout.fillWidth: true
-            text: client.state === MqttClient.Connected ? "Disconnect" : "Connect"
+            text: client.state === SGMqttClient.Connected ? "Disconnect" : "Connect"
             onClicked: {
-                if (client.state === MqttClient.Connected) {
+                if (client.state === SGMqttClient.Connected) {
                     client.disconnectFromHost()
                     messageModel.clear()
                     tempSubscription = 0
@@ -80,9 +74,8 @@ Window {
         }
 
         GridLayout {
-            enabled: client.state === MqttClient.Connected
+            enabled: client.state === SGMqttClient.Connected
             Layout.columnSpan: 2
-            Layout.fillWidth: true
             columns: 4
 
             Label {
@@ -91,7 +84,6 @@ Window {
 
             TextField {
                 id: pubField
-                Layout.fillWidth: true
                 placeholderText: "<Publication topic>"
             }
 
@@ -101,7 +93,6 @@ Window {
 
             TextField {
                 id: msgField
-                Layout.fillWidth: true
                 placeholderText: "<Publication message>"
             }
 
@@ -111,7 +102,6 @@ Window {
 
             ComboBox {
                 id: qosItems
-                Layout.fillWidth: true
                 editable: false
                 model: [0, 1, 2]
             }
@@ -124,7 +114,6 @@ Window {
 
             Button {
                 id: pubButton
-                Layout.fillWidth: true
                 text: "Publish"
                 onClicked: {
                     if (pubField.text.length === 0) {
@@ -138,9 +127,8 @@ Window {
         }
 
         RowLayout {
-                    enabled: client.state === MqttClient.Connected
+                    enabled: client.state === SGMqttClient.Connected
                     Layout.columnSpan: 2
-                    Layout.fillWidth: true
 
                     Label {
                         text: "Topic:"
@@ -149,7 +137,6 @@ Window {
                     TextField {
                         id: subField
                         placeholderText: "<Subscription topic>"
-                        Layout.fillWidth: true
                         enabled: tempSubscription === 0
                     }
 
@@ -177,8 +164,6 @@ Window {
             model: messageModel
             height: 300
             width: 200
-            Layout.fillHeight: true
-            Layout.fillWidth: true
             Layout.columnSpan: 2
             clip: true
             delegate: Rectangle {
@@ -206,10 +191,9 @@ Window {
             }
 
             Layout.columnSpan: 2
-            Layout.fillWidth: true
             color: "#333333"
             text: "Status:" + stateToString(client.state)
-            enabled: client.state === MqttClient.Connected
+            enabled: client.state === SGMqttClient.Connected
         }
     }
 }

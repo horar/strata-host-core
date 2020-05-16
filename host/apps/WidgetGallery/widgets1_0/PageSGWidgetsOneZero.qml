@@ -96,6 +96,11 @@ FocusScope {
             name: "SGTextField"
             page: "ExSGTextField.qml"
         }
+
+        ListElement {
+            name: "SGMqttClient"
+            page: "ExSGMqttClient.qml"
+        }
     }
 
     Component.onCompleted: {

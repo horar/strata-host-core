@@ -4,7 +4,7 @@ project(component-commoncpp
 )
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Quick Widgets
+    COMPONENTS Core Quick Widgets mqtt
     REQUIRED
 )
 
@@ -32,6 +32,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Qml
     Qt5::Widgets
     qwt::qwt
+    Qt5::Mqtt
     QtLogger
     )
 
