@@ -34,7 +34,7 @@ Item {
                                  })
 
     //Mode commands
-    property var mode : ({
+    property var set_mode : ({
                              "cmd" : "mode",
                              "payload": {
                                  "value":"Car Demo"
@@ -733,19 +733,17 @@ Item {
                                          "left":true,
                                          "right":false,
                                          "brake":true,
-                                         "hazard":true,
                                          "reverse":false
                                      },
 
-                                     update: function (left,right,brake,hazard,reverse) {
-                                         this.set(left,right,brake,hazard,reverse)
+                                     update: function (left,right,brake,reverse) {
+                                         this.set(left,right,brake,reverse)
                                          this.send(this)
                                      },
-                                     set: function (left,right,brake,hazard,reverse) {
+                                     set: function (left,right,brake,reverse) {
                                          this.payload.left = left
                                          this.payload.right = right
                                          this.payload.brake = brake
-                                         this.payload.hazard = hazard
                                          this.payload.reverse = reverse
                                      },
                                      send: function () { CorePlatformInterface.send(this) },
@@ -792,7 +790,7 @@ Item {
     }
 
     property var power_boost_ocp_caption: {
-        "caption":"Boost\nOCP"
+        "caption":"Boost OCP"
     }
 
     property var power_boost_ocp_state: {
@@ -1658,7 +1656,7 @@ Item {
     property bool soc_sam_conf_2_out12: true
 
     property bool soc_crcValue: false
-    property bool soc_otpValue: false
+    //property bool soc_otpValue: false
 
     property real addr_curr: 0
     property real addr_curr_apply: 0

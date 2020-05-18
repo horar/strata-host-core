@@ -30,9 +30,14 @@ Rectangle{
         property var car_demo_brightness_headlights: platformInterface.car_demo_brightness.headlights
         onCar_demo_brightness_headlightsChanged: {
             if(car_demo_brightness_headlights === true){
+
                 headlights.visible = true
+                runningLight.visible = true
             }
-            else  headlights.visible = false
+            else {
+                headlights.visible = false
+                runningLight.visible = false
+            }
         }
 
 
@@ -112,6 +117,14 @@ Rectangle{
 
                 }
 
+                Image {
+                    id: runningLight
+                    source: "car-Images/running.png"
+                    anchors.fill: parent
+                    visible: false
+                    fillMode: Image.PreserveAspectFit
+                }
+
             }
 
             Rectangle {
@@ -147,10 +160,10 @@ Rectangle{
                                         brake.visible = true
                                         brakeLights.visible = true
                                         platformInterface.brake_value = true
+
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
                                                                               platformInterface.brake_value,
-                                                                              platformInterface.hazard_value,
                                                                               platformInterface.reverse_value
 
                                                                               )
@@ -164,7 +177,6 @@ Rectangle{
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
                                                                               platformInterface.brake_value,
-                                                                              platformInterface.hazard_value,
                                                                               platformInterface.reverse_value
 
                                                                               )
@@ -196,7 +208,6 @@ Rectangle{
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
                                                                               platformInterface.brake_value,
-                                                                              platformInterface.hazard_value,
                                                                               platformInterface.reverse_value
 
                                                                               )
@@ -210,7 +221,6 @@ Rectangle{
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
                                                                               platformInterface.brake_value,
-                                                                              platformInterface.hazard_value,
                                                                               platformInterface.reverse_value
 
                                                                               )
@@ -255,14 +265,15 @@ Rectangle{
                                     if(platformInterface.hazard_value === false) {
                                         leftSignal.visible = true
                                         rightSignal.visible = true
+
                                         hazard.visible = true
                                         noHazard.visible = false
                                         platformInterface.hazard_value = true
                                         blinkerContainer.enabled = false
-                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                              platformInterface.right_value,
+                                        //hazard on send true for right and left
+                                        platformInterface.set_car_demo.update(true,
+                                                                              true,
                                                                               platformInterface.brake_value,
-                                                                              platformInterface.hazard_value,
                                                                               platformInterface.reverse_value
                                                                               )
                                     }
@@ -273,17 +284,15 @@ Rectangle{
                                         rightSignal.visible = false
                                         platformInterface.hazard_value = false
                                         blinkerContainer.enabled = true
+
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
                                                                               platformInterface.brake_value,
-                                                                              platformInterface.hazard_value,
                                                                               platformInterface.reverse_value
                                                                               )
 
                                     }
                                 }
-
-
 
                             }
 
@@ -307,10 +316,10 @@ Rectangle{
                                         noHazard.visible = false
                                         blinkerContainer.enabled = false
                                         platformInterface.hazard_value = true
-                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                              platformInterface.right_value,
+                                        //hazard on send true for right and left
+                                        platformInterface.set_car_demo.update(true,
+                                                                              true,
                                                                               platformInterface.brake_value,
-                                                                              platformInterface.hazard_value,
                                                                               platformInterface.reverse_value
                                                                               )
                                     }
@@ -327,7 +336,6 @@ Rectangle{
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
                                                                               platformInterface.brake_value,
-                                                                              platformInterface.hazard_value,
                                                                               platformInterface.reverse_value
                                                                               )
 
@@ -360,7 +368,6 @@ Rectangle{
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
                                                                               platformInterface.brake_value,
-                                                                              platformInterface.hazard_value,
                                                                               platformInterface.reverse_value
 
                                                                               )
@@ -372,7 +379,6 @@ Rectangle{
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
                                                                               platformInterface.brake_value,
-                                                                              platformInterface.hazard_value,
                                                                               platformInterface.reverse_value
 
                                                                               )
@@ -399,7 +405,6 @@ Rectangle{
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
                                                                               platformInterface.brake_value,
-                                                                              platformInterface.hazard_value,
                                                                               platformInterface.reverse_value
 
                                                                               )
@@ -411,7 +416,6 @@ Rectangle{
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
                                                                               platformInterface.brake_value,
-                                                                              platformInterface.hazard_value,
                                                                               platformInterface.reverse_value
 
                                                                               )
@@ -473,7 +477,6 @@ Rectangle{
                                             platformInterface.set_car_demo.update(true,
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.hazard_value,
                                                                                   platformInterface.reverse_value
                                                                                   )
                                         }
@@ -484,7 +487,6 @@ Rectangle{
                                             platformInterface.set_car_demo.update(false,
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.hazard_value,
                                                                                   platformInterface.reverse_value
                                                                                   )
                                         }
@@ -514,7 +516,6 @@ Rectangle{
                                             platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.hazard_value,
                                                                                   platformInterface.reverse_value
                                                                                   )
                                         }
@@ -525,7 +526,6 @@ Rectangle{
                                             platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                                   platformInterface.right_value,
                                                                                   platformInterface.brake_value,
-                                                                                  platformInterface.hazard_value,
                                                                                   platformInterface.reverse_value
                                                                                   )
                                         }
@@ -538,274 +538,20 @@ Rectangle{
                         property var car_demo_left: platformInterface.car_demo.left
                         onCar_demo_leftChanged: {
                             leftSignal.visible = car_demo_left
-                            console.log("left pn", car_demo_left)
+                            console.log("left on", car_demo_left)
                         }
 
                         property var car_demo_right: platformInterface.car_demo.right
                         onCar_demo_rightChanged: {
-                            console.log("right pn", car_demo_right)
+                            console.log("right on", car_demo_right)
                             rightSignal.visible = car_demo_right
 
                         }
                     }
 
-
-                    //                    Rectangle {
-                    //                        Layout.fillHeight: true
-                    //                        Layout.fillWidth: true
-                    //                        color: "light gray"
-
-                    //                        Image{
-                    //                            id: leftSignalIcon
-                    //                            source: "car-icon/left-signal.svg"
-                    //                            anchors.fill: parent
-                    //                            visible: false
-                    //                            MouseArea {
-                    //                                id: leftClickIcon
-                    //                                width: parent.width/2
-                    //                                height: parent.height
-                    //                                onClicked: {
-                    //                                    console.log("left on click")
-                    //                                    if(!leftSignal.visible) {
-                    //                                        leftSignal.visible = true
-                    //                                        leftSignalIcon.visible = true
-                    //                                        noSignaliconOn.visible = false
-                    //                                        platformInterface.left_value = true
-                    //                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                    //                                                                              platformInterface.right_value,
-                    //                                                                              platformInterface.brake_value,
-                    //                                                                              platformInterface.hazard_value,
-                    //                                                                              platformInterface.reverse_value
-                    //                                                                              )
-                    //                                    }
-                    //                                    else {
-                    //                                        leftSignal.visible = false
-                    //                                        leftSignalIcon.visible = false
-                    //                                        noSignaliconOn.visible = true
-                    //                                        platformInterface.left_value = false
-                    //                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                    //                                                                              platformInterface.right_value,
-                    //                                                                              platformInterface.brake_value,
-                    //                                                                              platformInterface.hazard_value,
-                    //                                                                              platformInterface.reverse_value
-                    //                                                                              )
-                    //                                    }
-                    //                                }
-
-                    //                            }
-
-                    //                            MouseArea{
-                    //                                width: parent.width/2
-                    //                                height: parent.height
-                    //                                anchors.right: parent.right
-                    //                                anchors.left:  leftClickIcon.right
-                    //                                onClicked: {
-                    //                                    console.log("right on click")
-                    //                                    if(!rightSignal.visible) {
-                    //                                        rightSignal.visible = true
-                    //                                        rightSignalIcon.visible = true
-                    //                                        noSignaliconOn.visible = false
-                    //                                        platformInterface.right_value = true
-                    //                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                    //                                                                              platformInterface.right_value,
-                    //                                                                              platformInterface.brake_value,
-                    //                                                                              platformInterface.hazard_value,
-                    //                                                                              platformInterface.reverse_value
-                    //                                                                              )
-                    //                                    }
-                    //                                    else {
-                    //                                        rightSignal.visible = false
-                    //                                        rightSignalIcon.visible = false
-                    //                                        noSignaliconOn.visible = true
-                    //                                        platformInterface.right_value = false
-                    //                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                    //                                                                              platformInterface.right_value,
-                    //                                                                              platformInterface.brake_value,
-                    //                                                                              platformInterface.hazard_value,
-                    //                                                                              platformInterface.reverse_value
-                    //                                                                              )
-                    //                                    }
-                    //                                }
-
-                    //                            }
-                    //                        }
-
-                    //                        Image {
-                    //                            id: rightSignalIcon
-                    //                            source: "car-icon/right-signal.svg"
-                    //                            anchors.fill: parent
-
-                    //                            MouseArea {
-                    //                                anchors.left: parent.left
-                    //                                width: parent.width/2
-                    //                                height: parent.height
-                    //                                onClicked: {
-                    //                                    console.log("left on click")
-                    //                                    if(!leftSignal.visible) {
-                    //                                        leftSignal.visible = true
-                    //                                        leftSignalIcon.visible = true
-                    //                                        noSignaliconOn.visible = false
-                    //                                        platformInterface.left_value = true
-                    //                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                    //                                                                              platformInterface.right_value,
-                    //                                                                              platformInterface.brake_value,
-                    //                                                                              platformInterface.hazard_value,
-                    //                                                                              platformInterface.reverse_value
-                    //                                                                              )
-                    //                                    }
-                    //                                    else {
-                    //                                        leftSignal.visible = false
-                    //                                        leftSignalIcon.visible = false
-                    //                                        noSignaliconOn.visible = true
-                    //                                        platformInterface.left_value = false
-                    //                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                    //                                                                              platformInterface.right_value,
-                    //                                                                              platformInterface.brake_value,
-                    //                                                                              platformInterface.hazard_value,
-                    //                                                                              platformInterface.reverse_value
-                    //                                                                              )
-                    //                                    }
-                    //                                }
-                    //                            }
-
-                    //                            MouseArea {
-                    //                                id: rightClickIcon
-                    //                                anchors.right: parent.right
-                    //                                width: parent.width/2
-                    //                                height: parent.height
-                    //                                onClicked: {
-                    //                                    console.log("right on click")
-                    //                                    if(!rightSignal.visible) {
-                    //                                        rightSignal.visible = true
-                    //                                        rightSignalIcon.visible = true
-                    //                                        noSignaliconOn.visible = false
-                    //                                        platformInterface.right_value = true
-                    //                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                    //                                                                              platformInterface.right_value,
-                    //                                                                              platformInterface.brake_value,
-                    //                                                                              platformInterface.hazard_value,
-                    //                                                                              platformInterface.reverse_value
-                    //                                                                              )
-                    //                                    }
-                    //                                    else {
-                    //                                        rightSignal.visible = false
-                    //                                        rightSignalIcon.visible = false
-                    //                                        noSignaliconOn.visible = true
-                    //                                        platformInterface.right_value = false
-                    //                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                    //                                                                              platformInterface.right_value,
-                    //                                                                              platformInterface.brake_value,
-                    //                                                                              platformInterface.hazard_value,
-                    //                                                                              platformInterface.reverse_value
-                    //                                                                              )
-                    //                                    }
-                    //                                }
-                    //                            }
-                    //                        }
-
-                    //                        Image {
-                    //                            id: noSignaliconOn
-                    //                            source: "car-icon/no-signal.svg"
-                    //                            anchors.fill: parent
-                    //                            MouseArea {
-                    //                                id: leftClick
-                    //                                width: parent.width/2
-                    //                                height: parent.height
-                    //                                onClicked: {
-                    //                                    console.log("left on click")
-                    //                                    if(!leftSignal.visible) {
-                    //                                        leftSignal.visible = true
-                    //                                        leftSignalIcon.visible = true
-                    //                                        noSignaliconOn.visible = false
-                    //                                        platformInterface.left_value = true
-                    //                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                    //                                                                              platformInterface.right_value,
-                    //                                                                              platformInterface.brake_value,
-                    //                                                                              platformInterface.hazard_value,
-                    //                                                                              platformInterface.reverse_value
-                    //                                                                              )
-                    //                                    }
-                    //                                    else {
-                    //                                        leftSignal.visible = false
-                    //                                        leftSignalIcon.visible = false
-                    //                                        noSignaliconOn.visible = true
-                    //                                        platformInterface.left_value = false
-                    //                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                    //                                                                              platformInterface.right_value,
-                    //                                                                              platformInterface.brake_value,
-                    //                                                                              platformInterface.hazard_value,
-                    //                                                                              platformInterface.reverse_value
-                    //                                                                              )
-                    //                                    }
-                    //                                }
-
-                    //                            }
-
-                    //                            Rectangle{
-                    //                                anchors.left: leftClick.right
-                    //                                width: parent.width/2
-                    //                                height: parent.height
-                    //                                color: "transparent"
-                    //                                MouseArea {
-                    //                                    id: right
-                    //                                    anchors.fill: parent
-                    //                                    z: 4
-
-                    //                                    onClicked: {
-                    //                                        console.log("right on click", rightSignal.visible)
-                    //                                        if(!rightSignal.visible) {
-                    //                                            console.log("right on click","not visible")
-                    //                                            rightSignal.visible = true
-                    //                                            rightSignalIcon.visible = true
-                    //                                            noSignaliconOn.visible = false
-                    //                                            platformInterface.right_value = true
-                    //                                            platformInterface.set_car_demo.update(platformInterface.left_value,
-                    //                                                                                  platformInterface.right_value,
-                    //                                                                                  platformInterface.brake_value,
-                    //                                                                                  platformInterface.hazard_value,
-                    //                                                                                  platformInterface.reverse_value
-                    //                                                                                  )
-                    //                                        }
-                    //                                        else {
-                    //                                            console.log("right on click","yes visible")
-                    //                                            rightSignal.visible = false
-                    //                                            rightSignalIcon.visible = false
-                    //                                            noSignaliconOn.visible = true
-                    //                                            platformInterface.right_value = false
-                    //                                            platformInterface.set_car_demo.update(platformInterface.left_value,
-                    //                                                                                  platformInterface.right_value,
-                    //                                                                                  platformInterface.brake_value,
-                    //                                                                                  platformInterface.hazard_value,
-                    //                                                                                  platformInterface.reverse_value
-                    //                                                                                  )
-                    //                                        }
-                    //                                    }
-                    //                                }
-                    //                            }
-
-                    //                            property var car_demo_left: platformInterface.car_demo.left
-                    //                            onCar_demo_leftChanged: {
-                    //                                //console.log("left", car_demo_left)
-                    //                                leftSignal.visible = car_demo_left
-                    //                                platformInterface.left_value = car_demo_left
-                    //                            }
-
-                    //                            property var car_demo_right: platformInterface.car_demo.right
-                    //                            onCar_demo_rightChanged: {
-                    //                                //console.log(car_demo_right)
-                    //                                rightSignal.visible = car_demo_right
-                    //                                platformInterface.right_value = car_demo_right
-                    //                            }
-
-
-                    //                        }
-                    //                    }
-
-
                 }
             }
         }
-
     }
 }
 

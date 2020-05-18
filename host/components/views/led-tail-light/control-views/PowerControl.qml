@@ -185,7 +185,9 @@ Item {
 
                                 property var power_boost_ocp: platformInterface.power_boost_ocp
                                 onPower_boost_ocpChanged: {
+                                    console.log(power_boost_ocp.caption)
                                     boostOCPLabel.text = power_boost_ocp.caption
+                                    console.log(boostOCPLabel.text)
                                     setStatesForControls(boostOCP,power_boost_ocp.states[0])
                                     if(power_boost_ocp.value === true)
                                         boostOCP.status = SGStatusLight.Red

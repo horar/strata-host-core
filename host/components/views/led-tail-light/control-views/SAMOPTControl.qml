@@ -395,9 +395,9 @@ Item {
 
                     onClicked: {
                         warningPopup.close()
-                        platformInterface.soc_otpValue = true
+                       // platformInterface.soc_otpValue = true
                         platformInterface.set_soc_write.update(
-                                    platformInterface.soc_otpValue,
+                                    true,
                                     [platformInterface.soc_sam_conf_1_out1,
                                      platformInterface.soc_sam_conf_1_out2,
                                      platformInterface.soc_sam_conf_1_out3,
@@ -426,7 +426,7 @@ Item {
                                      platformInterface.soc_sam_conf_2_out12
                                     ],
                                     samOpenLoadDiagnostic.currentText,
-                                    platformInterface.soc_otpValue,
+                                    platformInterface.soc_crcValue,
                                     platformInterface.addr_curr_apply)
                     }
                 }
@@ -525,9 +525,9 @@ Item {
                             fontSizeMultiplier: ratioCalc * 1.2
                             //checked: false
                             onToggled: {
-                                platformInterface.soc_otpValue = checked
+                                platformInterface.soc_crcValue = checked
                                 platformInterface.set_soc_write.update(
-                                            platformInterface.soc_otpValue,
+                                            false,
                                             [platformInterface.soc_sam_conf_1_out1,
                                              platformInterface.soc_sam_conf_1_out2,
                                              platformInterface.soc_sam_conf_1_out3,
@@ -556,7 +556,7 @@ Item {
                                              platformInterface.soc_sam_conf_2_out12
                                             ],
                                             samOpenLoadDiagnostic.currentText,
-                                            platformInterface.soc_otpValue,
+                                            platformInterface.soc_crcValue,
                                             platformInterface.addr_curr)
 
                             }
@@ -785,7 +785,7 @@ Item {
                             cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                             onClicked: {
                                 platformInterface.set_soc_write.update(
-                                            platformInterface.soc_otpValue,
+                                            false,
                                             [platformInterface.soc_sam_conf_1_out1,
                                              platformInterface.soc_sam_conf_1_out2,
                                              platformInterface.soc_sam_conf_1_out3,
@@ -1179,7 +1179,7 @@ Item {
                                     onToggled: {
                                         platformInterface.soc_sam_conf_1_out1 = checked
                                         platformInterface.set_soc_write.update(
-                                                    platformInterface.soc_otpValue,
+                                                    false,
                                                     [platformInterface.soc_sam_conf_1_out1,
                                                      platformInterface.soc_sam_conf_1_out2,
                                                      platformInterface.soc_sam_conf_1_out3,
@@ -1208,7 +1208,7 @@ Item {
                                                      platformInterface.soc_sam_conf_2_out12
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_otpValue,
+                                                    platformInterface.soc_crcValue,
                                                     platformInterface.addr_curr)
                                     }
                                 }
@@ -1238,7 +1238,7 @@ Item {
                                     onToggled: {
                                         platformInterface.soc_sam_conf_1_out2 = checked
                                         platformInterface.set_soc_write.update(
-                                                    platformInterface.soc_otpValue,
+                                                    false,
                                                     [platformInterface.soc_sam_conf_1_out1,
                                                      platformInterface.soc_sam_conf_1_out2,
                                                      platformInterface.soc_sam_conf_1_out3,
@@ -1267,7 +1267,7 @@ Item {
                                                      platformInterface.soc_sam_conf_2_out12
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_otpValue,
+                                                    platformInterface.soc_crcValue,
                                                     platformInterface.addr_curr)
                                     }
                                 }
@@ -1297,7 +1297,7 @@ Item {
                                     onToggled: {
                                         platformInterface.soc_sam_conf_1_out3 = checked
                                         platformInterface.set_soc_write.update(
-                                                    platformInterface.soc_otpValue,
+                                                    false,
                                                     [platformInterface.soc_sam_conf_1_out1,
                                                      platformInterface.soc_sam_conf_1_out2,
                                                      platformInterface.soc_sam_conf_1_out3,
@@ -1326,7 +1326,7 @@ Item {
                                                      platformInterface.soc_sam_conf_2_out12
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_otpValue,
+                                                    platformInterface.soc_crcValue,
                                                     platformInterface.addr_curr)
                                     }
                                 }
@@ -1356,7 +1356,7 @@ Item {
                                     onToggled: {
                                         platformInterface.soc_sam_conf_1_out4 = checked
                                         platformInterface.set_soc_write.update(
-                                                    platformInterface.soc_otpValue,
+                                                   false,
                                                     [platformInterface.soc_sam_conf_1_out1,
                                                      platformInterface.soc_sam_conf_1_out2,
                                                      platformInterface.soc_sam_conf_1_out3,
@@ -1385,7 +1385,7 @@ Item {
                                                      platformInterface.soc_sam_conf_2_out12
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_otpValue,
+                                                    platformInterface.soc_crcValue,
                                                     platformInterface.addr_curr)
                                     }
                                 }
@@ -1415,7 +1415,7 @@ Item {
                                     onToggled: {
                                         platformInterface.soc_sam_conf_1_out5 = checked
                                         platformInterface.set_soc_write.update(
-                                                    platformInterface.soc_otpValue,
+                                                    false,
                                                     [platformInterface.soc_sam_conf_1_out1,
                                                      platformInterface.soc_sam_conf_1_out2,
                                                      platformInterface.soc_sam_conf_1_out3,
@@ -1444,7 +1444,7 @@ Item {
                                                      platformInterface.soc_sam_conf_2_out12
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_otpValue,
+                                                    platformInterface.soc_crcValue,
                                                     platformInterface.addr_curr)
                                     }
                                 }
@@ -1474,7 +1474,7 @@ Item {
                                     onToggled: {
                                         platformInterface.soc_sam_conf_1_out6 = checked
                                         platformInterface.set_soc_write.update(
-                                                    platformInterface.soc_otpValue,
+                                                    false,
                                                     [platformInterface.soc_sam_conf_1_out1,
                                                      platformInterface.soc_sam_conf_1_out2,
                                                      platformInterface.soc_sam_conf_1_out3,
@@ -1503,7 +1503,7 @@ Item {
                                                      platformInterface.soc_sam_conf_2_out12
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_otpValue,
+                                                    platformInterface.soc_crcValue,
                                                     platformInterface.addr_curr)
                                     }
                                 }
@@ -1533,7 +1533,7 @@ Item {
                                     onToggled: {
                                         platformInterface.soc_sam_conf_1_out7 = checked
                                         platformInterface.set_soc_write.update(
-                                                    platformInterface.soc_otpValue,
+                                                    false,
                                                     [platformInterface.soc_sam_conf_1_out1,
                                                      platformInterface.soc_sam_conf_1_out2,
                                                      platformInterface.soc_sam_conf_1_out3,
@@ -1562,7 +1562,7 @@ Item {
                                                      platformInterface.soc_sam_conf_2_out12
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_otpValue,
+                                                    platformInterface.soc_crcValue,
                                                     platformInterface.addr_curr)
                                     }
                                 }
@@ -1591,7 +1591,7 @@ Item {
                                     onToggled: {
                                         platformInterface.soc_sam_conf_1_out8 = checked
                                         platformInterface.set_soc_write.update(
-                                                    platformInterface.soc_otpValue,
+                                                    false,
                                                     [platformInterface.soc_sam_conf_1_out1,
                                                      platformInterface.soc_sam_conf_1_out2,
                                                      platformInterface.soc_sam_conf_1_out3,
@@ -1620,7 +1620,7 @@ Item {
                                                      platformInterface.soc_sam_conf_2_out12
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_otpValue,
+                                                    platformInterface.soc_crcValue,
                                                     platformInterface.addr_curr)
                                     }
                                 }
@@ -1650,7 +1650,7 @@ Item {
                                     onToggled: {
                                         platformInterface.soc_sam_conf_1_out9 = checked
                                         platformInterface.set_soc_write.update(
-                                                    platformInterface.soc_otpValue,
+                                                    false,
                                                     [platformInterface.soc_sam_conf_1_out1,
                                                      platformInterface.soc_sam_conf_1_out2,
                                                      platformInterface.soc_sam_conf_1_out3,
@@ -1679,7 +1679,7 @@ Item {
                                                      platformInterface.soc_sam_conf_2_out12
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_otpValue,
+                                                    platformInterface.soc_crcValue,
                                                     platformInterface.addr_curr)
                                     }
                                 }
@@ -1709,7 +1709,7 @@ Item {
                                     onToggled: {
                                         platformInterface.soc_sam_conf_1_out10 = checked
                                         platformInterface.set_soc_write.update(
-                                                    platformInterface.soc_otpValue,
+                                                    false,
                                                     [platformInterface.soc_sam_conf_1_out1,
                                                      platformInterface.soc_sam_conf_1_out2,
                                                      platformInterface.soc_sam_conf_1_out3,
@@ -1738,7 +1738,7 @@ Item {
                                                      platformInterface.soc_sam_conf_2_out12
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_otpValue,
+                                                    platformInterface.soc_crcValue,
                                                     platformInterface.addr_curr)
                                     }
                                 }
@@ -1768,7 +1768,7 @@ Item {
                                     onToggled: {
                                         platformInterface.soc_sam_conf_1_out11 = checked
                                         platformInterface.set_soc_write.update(
-                                                    platformInterface.soc_otpValue,
+                                                   false,
                                                     [platformInterface.soc_sam_conf_1_out1,
                                                      platformInterface.soc_sam_conf_1_out2,
                                                      platformInterface.soc_sam_conf_1_out3,
@@ -1797,7 +1797,7 @@ Item {
                                                      platformInterface.soc_sam_conf_2_out12
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_otpValue,
+                                                    platformInterface.soc_crcValue,
                                                     platformInterface.addr_curr)
                                     }
                                 }
@@ -1826,7 +1826,7 @@ Item {
                                     onToggled: {
                                         platformInterface.soc_sam_conf_1_out12 = checked
                                         platformInterface.set_soc_write.update(
-                                                    platformInterface.soc_otpValue,
+                                                    false,
                                                     [platformInterface.soc_sam_conf_1_out1,
                                                      platformInterface.soc_sam_conf_1_out2,
                                                      platformInterface.soc_sam_conf_1_out3,
@@ -1855,7 +1855,7 @@ Item {
                                                      platformInterface.soc_sam_conf_2_out12
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_otpValue,
+                                                    platformInterface.soc_crcValue,
                                                     platformInterface.addr_curr)
                                     }
                                 }
@@ -1906,7 +1906,7 @@ Item {
                                 onToggled: {
                                     platformInterface.soc_sam_conf_2_out1 = checked
                                     platformInterface.set_soc_write.update(
-                                                platformInterface.soc_otpValue,
+                                                false,
                                                 [platformInterface.soc_sam_conf_1_out1,
                                                  platformInterface.soc_sam_conf_1_out2,
                                                  platformInterface.soc_sam_conf_1_out3,
@@ -1935,7 +1935,7 @@ Item {
                                                  platformInterface.soc_sam_conf_2_out12
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_otpValue,
+                                                platformInterface.soc_crcValue,
                                                 platformInterface.addr_curr)
                                 }
                             }
@@ -1954,7 +1954,7 @@ Item {
                                 onToggled: {
                                     platformInterface.soc_sam_conf_2_out2 = checked
                                     platformInterface.set_soc_write.update(
-                                                platformInterface.soc_otpValue,
+                                                false,
                                                 [platformInterface.soc_sam_conf_1_out1,
                                                  platformInterface.soc_sam_conf_1_out2,
                                                  platformInterface.soc_sam_conf_1_out3,
@@ -1983,7 +1983,7 @@ Item {
                                                  platformInterface.soc_sam_conf_2_out12
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_otpValue,
+                                                platformInterface.soc_crcValue,
                                                 platformInterface.addr_curr)
                                 }
                             }
@@ -2003,7 +2003,7 @@ Item {
                                 onToggled: {
                                     platformInterface.soc_sam_conf_2_out3 = checked
                                     platformInterface.set_soc_write.update(
-                                                platformInterface.soc_otpValue,
+                                                false,
                                                 [platformInterface.soc_sam_conf_1_out1,
                                                  platformInterface.soc_sam_conf_1_out2,
                                                  platformInterface.soc_sam_conf_1_out3,
@@ -2032,7 +2032,7 @@ Item {
                                                  platformInterface.soc_sam_conf_2_out12
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_otpValue,
+                                                platformInterface.soc_crcValue,
                                                 platformInterface.addr_curr)
                                 }
                             }
@@ -2052,7 +2052,7 @@ Item {
                                 onToggled: {
                                     platformInterface.soc_sam_conf_2_out4 = checked
                                     platformInterface.set_soc_write.update(
-                                                platformInterface.soc_otpValue,
+                                                false,
                                                 [platformInterface.soc_sam_conf_1_out1,
                                                  platformInterface.soc_sam_conf_1_out2,
                                                  platformInterface.soc_sam_conf_1_out3,
@@ -2081,7 +2081,7 @@ Item {
                                                  platformInterface.soc_sam_conf_2_out12
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_otpValue,
+                                                platformInterface.soc_crcValue,
                                                 platformInterface.addr_curr)
                                 }
                             }
@@ -2101,7 +2101,7 @@ Item {
                                 onToggled: {
                                     platformInterface.soc_sam_conf_2_out5 = checked
                                     platformInterface.set_soc_write.update(
-                                                platformInterface.soc_otpValue,
+                                               false,
                                                 [platformInterface.soc_sam_conf_1_out1,
                                                  platformInterface.soc_sam_conf_1_out2,
                                                  platformInterface.soc_sam_conf_1_out3,
@@ -2130,7 +2130,7 @@ Item {
                                                  platformInterface.soc_sam_conf_2_out12
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_otpValue,
+                                                platformInterface.soc_crcValue,
                                                 platformInterface.addr_curr)
                                 }
                             }
@@ -2150,7 +2150,7 @@ Item {
                                 onToggled: {
                                     platformInterface.soc_sam_conf_2_out6 = checked
                                     platformInterface.set_soc_write.update(
-                                                platformInterface.soc_otpValue,
+                                                false,
                                                 [platformInterface.soc_sam_conf_1_out1,
                                                  platformInterface.soc_sam_conf_1_out2,
                                                  platformInterface.soc_sam_conf_1_out3,
@@ -2179,7 +2179,7 @@ Item {
                                                  platformInterface.soc_sam_conf_2_out12
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_otpValue,
+                                                platformInterface.soc_crcValue,
                                                 platformInterface.addr_curr)
                                 }
                             }
@@ -2199,7 +2199,7 @@ Item {
                                 onToggled: {
                                     platformInterface.soc_sam_conf_2_out7 = checked
                                     platformInterface.set_soc_write.update(
-                                                platformInterface.soc_otpValue,
+                                                false,
                                                 [platformInterface.soc_sam_conf_1_out1,
                                                  platformInterface.soc_sam_conf_1_out2,
                                                  platformInterface.soc_sam_conf_1_out3,
@@ -2228,7 +2228,7 @@ Item {
                                                  platformInterface.soc_sam_conf_2_out12
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_otpValue,
+                                                platformInterface.soc_crcValue,
                                                 platformInterface.addr_curr)
                                 }
                             }
@@ -2248,7 +2248,7 @@ Item {
                                 onToggled: {
                                     platformInterface.soc_sam_conf_2_out8 = checked
                                     platformInterface.set_soc_write.update(
-                                                platformInterface.soc_otpValue,
+                                                false,
                                                 [platformInterface.soc_sam_conf_1_out1,
                                                  platformInterface.soc_sam_conf_1_out2,
                                                  platformInterface.soc_sam_conf_1_out3,
@@ -2277,7 +2277,7 @@ Item {
                                                  platformInterface.soc_sam_conf_2_out12
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_otpValue,
+                                                platformInterface.soc_crcValue,
                                                 platformInterface.addr_curr)
                                 }
                             }
@@ -2297,7 +2297,7 @@ Item {
                                 onToggled: {
                                     platformInterface.soc_sam_conf_2_out9 = checked
                                     platformInterface.set_soc_write.update(
-                                                platformInterface.soc_otpValue,
+                                                false,
                                                 [platformInterface.soc_sam_conf_1_out1,
                                                  platformInterface.soc_sam_conf_1_out2,
                                                  platformInterface.soc_sam_conf_1_out3,
@@ -2326,7 +2326,7 @@ Item {
                                                  platformInterface.soc_sam_conf_2_out12
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_otpValue,
+                                                platformInterface.soc_crcValue,
                                                 platformInterface.addr_curr)
                                 }
                             }
@@ -2346,7 +2346,7 @@ Item {
                                 onToggled: {
                                     platformInterface.soc_sam_conf_2_out10 = checked
                                     platformInterface.set_soc_write.update(
-                                                platformInterface.soc_otpValue,
+                                                false,
                                                 [platformInterface.soc_sam_conf_1_out1,
                                                  platformInterface.soc_sam_conf_1_out2,
                                                  platformInterface.soc_sam_conf_1_out3,
@@ -2375,7 +2375,7 @@ Item {
                                                  platformInterface.soc_sam_conf_2_out12
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_otpValue,
+                                                platformInterface.soc_crcValue,
                                                 platformInterface.addr_curr)
                                 }
                             }
@@ -2395,7 +2395,7 @@ Item {
                                 onToggled: {
                                     platformInterface.soc_sam_conf_2_out11 = checked
                                     platformInterface.set_soc_write.update(
-                                                platformInterface.soc_otpValue,
+                                               false,
                                                 [platformInterface.soc_sam_conf_1_out1,
                                                  platformInterface.soc_sam_conf_1_out2,
                                                  platformInterface.soc_sam_conf_1_out3,
@@ -2424,7 +2424,7 @@ Item {
                                                  platformInterface.soc_sam_conf_2_out12
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_otpValue,
+                                                platformInterface.soc_crcValue,
                                                 platformInterface.addr_curr)
                                 }
                             }
@@ -2443,7 +2443,7 @@ Item {
                                 onToggled: {
                                     platformInterface.soc_sam_conf_2_out12 = checked
                                     platformInterface.set_soc_write.update(
-                                                platformInterface.soc_otpValue,
+                                                false,
                                                 [platformInterface.soc_sam_conf_1_out1,
                                                  platformInterface.soc_sam_conf_1_out2,
                                                  platformInterface.soc_sam_conf_1_out3,
@@ -2472,7 +2472,7 @@ Item {
                                                  platformInterface.soc_sam_conf_2_out12
                                                 ],
                                                 samOpenLoadDiagnostic.currentText,
-                                                platformInterface.soc_otpValue,
+                                                platformInterface.soc_crcValue,
                                                 platformInterface.addr_curr)
                                 }
                             }
@@ -2690,7 +2690,7 @@ Item {
                                     //model: ["No Diagnostic", "Auto Retry", "Detect Only", "No Regulation Change"]
                                     onActivated: {
                                         platformInterface.set_soc_write.update(
-                                                    platformInterface.soc_otpValue,
+                                                    false,
                                                     [platformInterface.soc_sam_conf_1_out1,
                                                      platformInterface.soc_sam_conf_1_out2,
                                                      platformInterface.soc_sam_conf_1_out3,
@@ -2717,7 +2717,7 @@ Item {
                                                      platformInterface.soc_sam_conf_2_out11
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
-                                                    platformInterface.soc_otpValue,
+                                                    platformInterface.soc_crcValue,
                                                     platformInterface.addr_curr)
                                     }
                                 }

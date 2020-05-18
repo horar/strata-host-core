@@ -20,7 +20,7 @@ Item {
 
     Component.onCompleted: {
         platformInterface.control_props.update()
-        platformInterface.mode.update("Car Demo")
+        platformInterface.set_mode.update("Car Demo")
 
     }
 
@@ -36,7 +36,7 @@ Item {
             id: carDemoButton
             text: qsTr("Car Demo Mode")
             onClicked: {
-                platformInterface.mode.update("Car Demo")
+                platformInterface.set_mode.update("Car Demo")
                 carDemoMode.visible = true
                 ledControl.visible = false
                 powerControl.visible = false
@@ -49,7 +49,7 @@ Item {
             id: ledControlButton
             text: qsTr("LED Control")
             onClicked: {
-                platformInterface.mode.update("LED Driver")
+                platformInterface.set_mode.update("LED Driver")
                 carDemoMode.visible = false
                 ledControl.visible = true
                 powerControl.visible = false
@@ -62,7 +62,7 @@ Item {
             id: powerControlButton
             text: qsTr("Power")
             onClicked: {
-                platformInterface.mode.update("Power")
+                platformInterface.set_mode.update("Power")
                 carDemoMode.visible = false
                 ledControl.visible = false
                 powerControl.visible = true
@@ -75,7 +75,7 @@ Item {
             id: samOptControlButton
             text: qsTr("SAM, OTP, and CRC")
             onClicked: {
-                platformInterface.mode.update("LED Driver")
+                platformInterface.set_mode.update("LED Driver")
                 carDemoMode.visible = false
                 ledControl.visible = false
                 powerControl.visible = false
@@ -88,7 +88,7 @@ Item {
             id: miscControlButton
             text: qsTr("Miscellaneous")
             onClicked: {
-                platformInterface.mode.update("LED Driver")
+                platformInterface.set_mode.update("LED Driver")
                 carDemoMode.visible = false
                 ledControl.visible = false
                 powerControl.visible = false
