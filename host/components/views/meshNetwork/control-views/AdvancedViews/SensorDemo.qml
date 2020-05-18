@@ -10,28 +10,34 @@ import tech.strata.sgwidgets 1.0
 Rectangle {
     id: root
 
+    property int switchNodeID:0
     property int sensorNodeID:0
 
     onVisibleChanged: {
         if (visible){
-            resetThermostatBar.start()
+            resetUI();
             root.updateNodeIDs();
             }
      }
 
     function updateNodeIDs(){
-        //start at node 2, the node after the provisioner
-        var alpha = 2;
-        var sensorNodeFound = false
-        while (alpha < root.availableNodes.length && !sensorNodeFound){
+        var nodeCount = 0;
+
+        switchNodeID = sensorNodeID = 0; //clear previous values
+        for (var alpha = 1;  alpha < root.availableNodes.length  ; alpha++){
             //for each node that is marked visible set the visibilty of the node appropriately
             //console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
             if (root.availableNodes[alpha] !== 0){
-                root.sensorNodeID = alpha
-                console.log("sensor node set to",root.sensorNodeID)
-                sensorNodeFound = true;
+                nodeCount++;
+                if (nodeCount === 1){
+                    root.switchNodeID = alpha
+                    //console.log("switch node set to",root.switchNodeID)
+                }
+                else if (nodeCount === 2){
+                    root.sensorNodeID = alpha
+                    //console.log("sensor node set to",root.sensorNodeID)
+                }
             }
-            alpha++;
         }
     }
 
@@ -87,18 +93,317 @@ Rectangle {
         font.pixelSize: 72
     }
 
-    Button{
-        id:getTemperatureButton
+
+    Rectangle{
+        id:nodeRectangle
+        width: switchOutline.width + 100
+        height:switchOutline.height + 200
+        anchors.horizontalCenter: switchOutline.horizontalCenter
+        anchors.verticalCenter: switchOutline.verticalCenter
+        radius:10
+        border.color:"black"
+
+        Text{
+            id:nodeText
+            anchors.top:parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            text:"node 1"
+            font.pixelSize: 18
+        }
+
+        Text{
+            property int address: root.switchNodeID
+            id:nodeAddressText
+            anchors.bottom:parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            text:{
+                if (address != 0)
+                  return  "uaddr " + address
+                else
+                  return "uaddr -"
+            }
+
+            font.pixelSize: 18
+        }
+
+        Rectangle{
+            id:primaryElementRectangle
+            anchors.left:parent.left
+            anchors.leftMargin:15
+            anchors.right:parent.right
+            anchors.rightMargin: 15
+            anchors.top:parent.top
+            anchors.topMargin:25
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:25
+            radius:10
+            border.color:"black"
+
+            Text{
+                id:primaryElementText
+                anchors.top:parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
+                text:"Primary Element "
+                font.pixelSize: 18
+            }
+
+            Text{
+                property int address: root.switchNodeID
+                id:primaryElementAddressText
+                anchors.bottom:parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                text:{
+                    if (address != 0)
+                      return  "uaddr " + address
+                    else
+                      return "uaddr -"
+                }
+                font.pixelSize: 18
+            }
+
+            Rectangle{
+                id:modelRectangle
+                anchors.left:parent.left
+                anchors.leftMargin:15
+                anchors.right:parent.right
+                anchors.rightMargin: 15
+                anchors.top:parent.top
+                anchors.topMargin:25
+                anchors.bottom:parent.bottom
+                anchors.bottomMargin:25
+                radius:10
+                border.color:"black"
+
+                Text{
+                    id:modelText
+                    anchors.top:parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text:"Client Model"
+                    font.pixelSize: 12
+                }
+
+                Text{
+                    property int address: 1309
+                    id:modelAddressText
+                    anchors.bottom:parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text:"Model ID 0x" + address
+                    font.pixelSize: 15
+                }
+            }
+        }
+
+    }
+
+    MSwitch{
+        id:switchOutline
+        height:parent.height * .2
+        width:height * .6
         anchors.left:parent.left
-        anchors.leftMargin: parent.width * .2
+        anchors.leftMargin:parent.width*.1
         anchors.verticalCenter: parent.verticalCenter
-        text:"Get Temperature"
+
+        property var demo: platformInterface.one_to_one_demo
+        onDemoChanged:{
+            if (platformInterface.one_to_one_demo.light === "on"){
+                switchOutline.isOn = true;
+            }
+            else{
+                switchOutline.isOn = false;
+            }
+
+        }
+
+        onClicked:{
+            if (!isOn){     //turning the lightbulb on
+                platformInterface.light_hsl_set.update(49633,0,0,50);  //set color to white
+                switchOutline.isOn = true
+              }
+              else{         //turning the lightbulb off
+                platformInterface.light_hsl_set.update(49633,0,0,0);  //set color to black
+                switchOutline.isOn = false
+              }
+        }
+    }
+
+
+
+
+
+    Image{
+        id:arrowImage
+        anchors.left:nodeRectangle.right
+        anchors.leftMargin: 10
+        anchors.right:bulbNodeRectangle.left
+        anchors.rightMargin: 10
+        anchors.verticalCenter: parent.verticalCenter
+        source: "qrc:/views/meshNetwork/images/rightArrow.svg"
+        height:25
+        //sourceSize: Qt.size(width, height)
+        fillMode: Image.PreserveAspectFit
+        mipmap:true
+
+        Text{
+            property int address: root.sensorNodeID
+            id:messageText
+            anchors.top:parent.bottom
+            anchors.topMargin: 10
+            anchors.horizontalCenter: parent.horizontalCenter
+            text:{
+                if (address != 0)
+                  return  "Message to uaddr " + address
+                else
+                  return "Message to uaddr -"
+            }
+            font.pixelSize: 18
+        }
+
+        Text{
+            id:temperatureText
+            anchors.top: messageText.bottom
+            anchors.topMargin: 40
+            anchors.horizontalCenter: messageText.horizontalCenter
+            font.pixelSize: 24
+            text:""
+            visible:false
+
+            property var sensorData: platformInterface.sensor_status
+            onSensorDataChanged:{
+                if (platformInterface.sensor_status.uaddr === root.sensorNodeID)
+                    if (platformInterface.sensor_status.sensor_type === "temperature"){
+                        temperatureText.visible = true
+                        temperatureText.text = "current temperature is " + platformInterface.sensor_status.data + "°C"
+                    }
+            }
+        }
+
+    }
+
+    Rectangle{
+        id:bulbNodeRectangle
+        width: lightBulb.width + 100
+        height:lightBulb.height + 200
+        anchors.horizontalCenter: lightBulb.horizontalCenter
+        anchors.verticalCenter: lightBulb.verticalCenter
+        radius:10
+        border.color:"black"
+
+        Text{
+            property int nodeNumber: 2
+            id:blubNodeText
+            anchors.top:parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            text:"node " + nodeNumber
+            font.pixelSize: 18
+        }
+
+        Text{
+            property int address: root.sensorNodeID
+            id:bulbNodeAddressText
+            anchors.bottom:parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            text:{
+                if (address != 0)
+                  return  "uaddr " + address
+                else
+                  return "uaddr -"
+            }
+            font.pixelSize: 18
+        }
+
+        Rectangle{
+            id:bulbPrimaryElementRectangle
+            anchors.left:parent.left
+            anchors.leftMargin:15
+            anchors.right:parent.right
+            anchors.rightMargin: 15
+            anchors.top:parent.top
+            anchors.topMargin:25
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin:25
+            radius:10
+            border.color:"black"
+
+            Text{
+                id:bulbPrimaryElementText
+                anchors.top:parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
+                text:"Primary Element"
+                font.pixelSize: 18
+            }
+
+            Text{
+                property int address: root.sensorNodeID
+                id:bulbPrimaryElementAddressText
+                anchors.bottom:parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                text:{
+                    if (address != 0)
+                      return  "uaddr " + address
+                    else
+                      return "uaddr -"
+                }
+                font.pixelSize: 18
+            }
+
+            Rectangle{
+                id:bulbModelRectangle
+                anchors.left:parent.left
+                anchors.leftMargin:15
+                anchors.right:parent.right
+                anchors.rightMargin: 15
+                anchors.top:parent.top
+                anchors.topMargin:25
+                anchors.bottom:parent.bottom
+                anchors.bottomMargin:25
+                radius:10
+                border.color:"black"
+
+                Text{
+                    id:bulbModelText
+                    anchors.top:parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text:"Server Model"
+                    font.pixelSize: 12
+                }
+
+                Text{
+                    property int address: 1307
+                    id:bulbModelAddressText
+                    anchors.bottom:parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text:"Model ID 0x" + address
+                    font.pixelSize: 15
+                }
+            }
+        }
+
+    }
+
+    Image{
+        id:lightBulb
+        height:parent.height * .2
+        anchors.right:parent.right
+        anchors.rightMargin:parent.width*.1
+        anchors.verticalCenter: parent.verticalCenter
+        source: "qrc:/views/meshNetwork/images/sensorIcon.svg"
+        fillMode: Image.PreserveAspectFit
+        mipmap:true
+    }
+
+    Button{
+        id:resetButton
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom:parent.bottom
+        anchors.bottomMargin: 20
+        text:"Configure"
+        visible:false
 
         contentItem: Text {
-                text: getTemperatureButton.text
-                font.pixelSize: 24
+                text: resetButton.text
+                font.pixelSize: 20
                 opacity: enabled ? 1.0 : 0.3
-                color: "black"
+                color: "grey"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
@@ -107,107 +412,20 @@ Rectangle {
             background: Rectangle {
                 implicitWidth: 100
                 implicitHeight: 40
-                color: getTemperatureButton.down ? "lightgrey" : "transparent"
-                border.color: "black"
+                color: resetButton.down ? "lightgrey" : "transparent"
+                border.color: "grey"
                 border.width: 2
                 radius: 10
             }
 
             onClicked: {
-                platformInterface.get_sensor.update(root.sensorNodeID,"temperature")
-                growThermostatBar.start()
+                platformInterface.set_onetoone_demo.update()
+                root.resetUI()
             }
     }
 
-    Text{
-        id:temperatureText
-        anchors.top: getTemperatureButton.bottom
-        anchors.topMargin: 40
-        anchors.left: getTemperatureButton.left
-        font.pixelSize: 24
-        text:""
-        visible:false
-
-        property var sensorData: platformInterface.sensor_status
-        onSensorDataChanged:{
-            if (platformInterface.sensor_status.uaddr === root.sensorNodeID)
-                if (platformInterface.sensor_status.sensor_type === "temperature"){
-                    temperatureText.visible = true
-                    temperatureText.text = "current temperature is " + platformInterface.sensor_status.data + "°C"
-                }
-        }
-    }
-
-    Image{
-        id:arrowImage
-        anchors.left:getTemperatureButton.right
-        anchors.leftMargin: 10
-        anchors.right:sensorImage.left
-        anchors.verticalCenter: parent.verticalCenter
-        source: "qrc:/views/meshNetwork/images/leftArrow.svg"
-        height:25
-        fillMode: Image.PreserveAspectFit
-        mipmap:true
-    }
-
-    Image{
-        id:sensorImage
-        anchors.right:parent.right
-        anchors.rightMargin:parent.width*.1
-        anchors.verticalCenter: parent.verticalCenter
-        source: "qrc:/views/meshNetwork/images/sensorIcon.svg"
-        height:400
-        fillMode: Image.PreserveAspectFit
-        mipmap:true
-
-        Rectangle{
-            id:thermostatBar
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.horizontalCenterOffset: -30
-            anchors.bottom:parent.bottom
-            anchors.bottomMargin: 100
-            width:25
-            height:10
-            color:"#f5a623"
-        }
-    }
-
-    PropertyAnimation{
-        id:growThermostatBar
-        target: thermostatBar;
-        property: "height";
-        to: 225;
-        duration: 1000
-        running:false
-    }
-
-    PropertyAnimation{
-        id:resetThermostatBar
-        target: thermostatBar;
-        property: "height";
-        to: 10;
-        duration: 0
-        running:false
-    }
-
-    Text{
-        property int address: root.sensorNodeID
-        id:primaryElementAddressText
-        anchors.top:sensorImage.bottom
-        anchors.topMargin: 20
-        anchors.horizontalCenter: sensorImage.horizontalCenter
-        anchors.horizontalCenterOffset: -sensorImage.width * .15
-
-        text:{
-            if (address != 0)
-              return  "uaddr " + address
-            else
-              return "uaddr -"
-        }
-        font.pixelSize: 24
-    }
-
     function resetUI(){
-        resetThermostatBar.start()
+        switchOutline.isOn = false
     }
+
 }
