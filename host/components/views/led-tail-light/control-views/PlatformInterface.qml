@@ -73,7 +73,7 @@ Item {
         "caption":"Part Number"
     }
 
-    property var led_part_number_value_state: {
+    property var led_part_number_value_states: {
         "states":[0]
     }
 
@@ -93,7 +93,7 @@ Item {
         "caption":"OUT EN"
     }
 
-    property var led_out_en_state: {
+    property var led_out_en_states: {
         //"states": [0,0,0,0,0,0,0,0,0,0,0,0]
         "states" : [0]
     }
@@ -115,7 +115,7 @@ Item {
         "caption":"External LED"
     }
 
-    property var led_ext_state: {
+    property var led_ext_states: {
         "states":[0]
     }
     property var led_ext_values: {
@@ -135,7 +135,7 @@ Item {
         "caption":"Fault Status"
     }
 
-    property var led_fault_status_state: {
+    property var led_fault_status_states: {
         "states": [1]
     }
 
@@ -156,7 +156,7 @@ Item {
         "caption": "PWM Enable"
     }
 
-    property var led_pwm_enables_state: {
+    property var led_pwm_enables_states: {
         "states":[2]
     }
 
@@ -182,7 +182,7 @@ Item {
         "scales":[127,0,1]
     }
 
-    property var led_pwm_duty_state: {
+    property var led_pwm_duty_states: {
         "states":[0,0,0,0,0,0,0,0,0,0,0,0]
     }
 
@@ -208,7 +208,7 @@ Item {
         "scales":[60,0,1]
     }
 
-    property var led_iset_state: {
+    property var led_iset_states: {
         "states": [0]
     }
 
@@ -228,7 +228,7 @@ Item {
         "caption": "DIAG"
     }
 
-    property var led_diag_state: {
+    property var led_diag_states: {
         "states":[1]
     }
 
@@ -249,7 +249,7 @@ Item {
         "caption": "SC_Iset"
     }
 
-    property var led_sc_iset_state: {
+    property var led_sc_iset_states: {
         "states":[1]
     }
 
@@ -270,7 +270,7 @@ Item {
         "caption": "I2Cerr"
     }
 
-    property var led_i2cerr_state: {
+    property var led_i2cerr_states: {
         "states":[1]
     }
 
@@ -290,7 +290,7 @@ Item {
         "caption": "UV"
     }
 
-    property var led_uv_state: {
+    property var led_uv_states: {
         "states":[1]
     }
 
@@ -310,7 +310,7 @@ Item {
         "caption": "diagRange"
     }
 
-    property var led_diagrange_state: {
+    property var led_diagrange_states: {
         "states":[1]
     }
 
@@ -330,7 +330,7 @@ Item {
         "caption": "TW"
     }
 
-    property var led_tw_state: {
+    property var led_tw_states: {
         "states":[1]
     }
 
@@ -350,7 +350,7 @@ Item {
         "caption": "TSD"
     }
 
-    property var led_tsd_state: {
+    property var led_tsd_states: {
         "states":[1]
     }
 
@@ -370,7 +370,7 @@ Item {
         "caption": "DIAGERR"
     }
 
-    property var led_diagerr_state: {
+    property var led_diagerr_states: {
         "states":[1]
     }
 
@@ -391,7 +391,7 @@ Item {
         "caption": "OL"
     }
 
-    property var led_ol_state: {
+    property var led_ol_states: {
        "states": [1]
     }
 
@@ -411,7 +411,7 @@ Item {
         "caption": "Output EN (OEN)"
     }
 
-    property var led_oen_state: {
+    property var led_oen_states: {
         "states":[2]
     }
 
@@ -431,7 +431,7 @@ Item {
         "caption": "PWM Enable"
     }
 
-    property var led_pwm_enable_state: {
+    property var led_pwm_enable_states: {
         "states": [0]
     }
 
@@ -451,7 +451,7 @@ Item {
         "caption":"Lock PWM Duty Together"
     }
 
-    property var led_pwm_duty_lock_state: {
+    property var led_pwm_duty_lock_states: {
         "states": [2]
     }
 
@@ -471,7 +471,7 @@ Item {
         "caption":"Lock PWM EN Together"
     }
 
-    property var led_pwm_en_lock_state: {
+    property var led_pwm_en_lock_states: {
         "states":[2]
     }
 
@@ -491,7 +491,7 @@ Item {
         "caption":"PWM Linear/Log"
     }
 
-    property var led_linear_log_state: {
+    property var led_linear_log_states: {
         "states":[0]
     }
 
@@ -515,7 +515,7 @@ Item {
         "caption":"PWM Frequency (Hz)"
     }
 
-    property var led_pwm_freq_state: {
+    property var led_pwm_freq_states: {
        "states":[0]
     }
 
@@ -539,7 +539,7 @@ Item {
         "caption":"I2C Open Load \n Diagnostic"
     }
 
-    property var led_open_load_diagnostic_state: {
+    property var led_open_load_diagnostic_states: {
         "states":[0]
     }
 
@@ -769,7 +769,7 @@ Item {
         "caption":"VLED Input Voltage\nType"
     }
 
-    property var power_vled_type_state: {
+    property var power_vled_type_states: {
        "states":[0]
     }
 
@@ -793,7 +793,7 @@ Item {
         "caption":"Boost OCP"
     }
 
-    property var power_boost_ocp_state: {
+    property var power_boost_ocp_states: {
         "states": [1]
     }
 
@@ -817,7 +817,7 @@ Item {
         "scales":[12.0,5.5,0.1]
     }
 
-    property var power_voltage_set_state: {
+    property var power_voltage_set_states: {
         "states":[0]
     }
 
@@ -838,7 +838,7 @@ Item {
         "caption":"VS Voltage Select"
     }
 
-    property var power_vs_select_state: {
+    property var power_vs_select_states: {
         "states":[0]
     }
 
@@ -862,7 +862,7 @@ Item {
         "caption":"LED Voltage\n(VLED)"
     }
 
-    property var power_vled_state: {
+    property var power_vled_states: {
         "states":[1]
     }
 
@@ -882,7 +882,7 @@ Item {
         "caption":"Supply Voltage\n(VS)"
     }
 
-    property var power_vs_state: {
+    property var power_vs_states: {
        "states":[1]
     }
 
@@ -902,7 +902,7 @@ Item {
         "caption": "Digital Voltage\n(VDD)"
     }
 
-    property var power_vdd_state: {
+    property var power_vdd_states: {
         "states":[1]
     }
 
@@ -922,7 +922,7 @@ Item {
         "caption": "Battery Voltage\n(VBAT)"
     }
 
-    property var power_vconn_state: {
+    property var power_vconn_states: {
        "states":[1]
     }
 
@@ -942,7 +942,7 @@ Item {
         "caption": "LED Current\n(ILED)"
     }
 
-    property var power_iled_state: {
+    property var power_iled_states: {
         "states":[1]
     }
 
@@ -962,7 +962,7 @@ Item {
         "caption": "Supply Current mA \n(IS)"
     }
 
-    property var power_is_state: {
+    property var power_is_states: {
         "states":[1]
     }
 
@@ -984,7 +984,7 @@ Item {
         "caption": "Reference Voltage\n(VCC)"
     }
 
-    property var power_vcc_state: {
+    property var power_vcc_states: {
         "states":[1]
     }
 
@@ -1005,7 +1005,7 @@ Item {
         "caption": "LED Driver Temp Top \n (°C)"
     }
 
-    property var power_led_driver_temp_top_state: {
+    property var power_led_driver_temp_top_states: {
         "states":[1]
     }
 
@@ -1031,7 +1031,7 @@ Item {
         "caption": "LED Driver Temp Bottom \n (°C)"
     }
 
-    property var power_led_driver_temp_bottom_state: {
+    property var power_led_driver_temp_bottom_states: {
       "states":[1]
     }
 
@@ -1055,7 +1055,7 @@ Item {
         "caption": "LED Temperature \n (°C)"
     }
 
-    property var power_led_temp_state: {
+    property var power_led_temp_states: {
         "states":[1]
     }
 
@@ -1080,7 +1080,7 @@ Item {
         "caption": "Total Power Loss \n (W)"
     }
 
-    property var power_total_power_state: {
+    property var power_total_power_states: {
         "states":[1]
     }
 
@@ -1160,7 +1160,7 @@ Item {
         "caption":"DIAG"
     }
 
-    property var soc_diag_state: {
+    property var soc_diag_states: {
         "states":[1]
     }
 
@@ -1180,7 +1180,7 @@ Item {
         "caption":"I2C\nCRC"
     }
 
-    property var soc_crc_state: {
+    property var soc_crc_states: {
         "states":[0]
     }
 
@@ -1200,7 +1200,7 @@ Item {
         "caption":"VDD\nVoltage"
     }
 
-    property var soc_vdd_disconnect_state: {
+    property var soc_vdd_disconnect_states: {
        "states":[0]
     }
 
@@ -1224,7 +1224,7 @@ Item {
         "caption":"Mode\n(I2CFLAG)"
     }
 
-    property var soc_mode_state: {
+    property var soc_mode_states: {
        "states":[0]
     }
 
@@ -1248,7 +1248,7 @@ Item {
         "caption":"SAM\nConfiguration"
     }
 
-    property var soc_conf_state: {
+    property var soc_conf_states: {
         "states":[0]
     }
 
@@ -1272,7 +1272,7 @@ Item {
         "caption":"SAM Open Load\nDiagnostic"
     }
 
-    property var soc_sam_open_load_diagnostic_state: {
+    property var soc_sam_open_load_diagnostic_states: {
        "states":[0]
     }
 
@@ -1296,7 +1296,7 @@ Item {
         "caption":"SAM_CONF_1"
     }
 
-    property var soc_sam_conf_1_state: {
+    property var soc_sam_conf_1_states: {
        "states":[0]
     }
 
@@ -1316,7 +1316,7 @@ Item {
         "caption":"SAM_CONF_2"
     }
 
-    property var soc_sam_conf_2_state: {
+    property var soc_sam_conf_2_states: {
        "states":[0]
     }
 
@@ -1337,7 +1337,7 @@ Item {
         "caption":"Current 7-bit I2C Address"
     }
 
-    property var soc_addr_curr_state: {
+    property var soc_addr_curr_states: {
         "states":[1]
     }
 
@@ -1361,7 +1361,7 @@ Item {
         "scales":[127,96,1]
     }
 
-    property var soc_addr_new_state: {
+    property var soc_addr_new_states: {
         "states":[0]
     }
 
@@ -1381,7 +1381,7 @@ Item {
         "caption": "One Time\nProgram (zap)"
     }
 
-    property var soc_otp_state: {
+    property var soc_otp_states: {
         "states":[0]
     }
 

@@ -132,23 +132,8 @@ Item {
 
     }
 
-    property var led_out_en_states: platformInterface.led_out_en_state.states
+    property var led_out_en_states: platformInterface.led_out_en_states.states
     onLed_out_en_statesChanged: {
-
-        console.log("inside led_out_en_states ")
-        //        setOutEnState(out0ENLED,led_out_en_states[0])
-        //        setOutEnState(out1ENLED,led_out_en_states[1])
-        //        setOutEnState(out2ENLED,led_out_en_states[2])
-        //        setOutEnState(out3ENLED,led_out_en_states[3])
-        //        setOutEnState(out4ENLED,led_out_en_states[4])
-        //        setOutEnState(out5ENLED,led_out_en_states[5])
-        //        setOutEnState(out6ENLED,led_out_en_states[6])
-        //        setOutEnState(out7ENLED,led_out_en_states[7])
-        //        setOutEnState(out8ENLED,led_out_en_states[8])
-        //        setOutEnState(out9ENLED,led_out_en_states[9])
-        //        setOutEnState(out10ENLED,led_out_en_states[10])
-        //        setOutEnState(out11ENLED,led_out_en_states[11])
-
         setOutEnState(out0ENLED,led_out_en_states[0])
         setOutEnState(out1ENLED,led_out_en_states[0])
         setOutEnState(out2ENLED,led_out_en_states[0])
@@ -161,8 +146,6 @@ Item {
         setOutEnState(out9ENLED,led_out_en_states[0])
         setOutEnState(out10ENLED,led_out_en_states[0])
         setOutEnState(out11ENLED,led_out_en_states[0])
-
-
     }
 
     property var led_out_en_values: platformInterface.led_out_en_values.values
@@ -336,7 +319,7 @@ Item {
         else out11interExterLED.checked = false
     }
 
-    property var led_ext_states: platformInterface.led_ext_state.states
+    property var led_ext_states: platformInterface.led_ext_states.states
     onLed_ext_statesChanged: {
         setStatesForControls(out0interExterLED,led_ext_states[0])
         setStatesForControls(out1interExterLED,led_ext_states[0])
@@ -475,7 +458,7 @@ Item {
     }
 
 
-    property var led_fault_status_states: platformInterface.led_fault_status_state.states
+    property var led_fault_status_states: platformInterface.led_fault_status_states.states
     onLed_fault_status_statesChanged: {
 
         setStatesForControls(out0faultStatusLED,led_fault_status_states[0])
@@ -693,7 +676,7 @@ Item {
         else out11pwmEnableLED.checked = false
     }
 
-    property var led_pwm_enables_states: platformInterface.led_pwm_enables_state.states
+    property var led_pwm_enables_states: platformInterface.led_pwm_enables_states.states
     onLed_pwm_enables_statesChanged: {
 
         setStatesForControls(out0pwmEnableLED,led_pwm_enables_states[0])
@@ -881,7 +864,7 @@ Item {
                                     partNumberLabel.text = led_part_number_value_caption
                                 }
 
-                                property var led_part_number_value_state: platformInterface.led_part_number_value_state.states
+                                property var led_part_number_value_state: platformInterface.led_part_number_value_states.states
                                 onLed_part_number_value_stateChanged: {
                                     setStatesForControls(partNumber,led_part_number_value_state[0])
                                 }
@@ -949,7 +932,7 @@ Item {
                                         enableOutputLabel.text = led_oen_caption
                                     }
 
-                                    property var led_oen_states: platformInterface.led_oen_state.states
+                                    property var led_oen_states: platformInterface.led_oen_states.states
                                     onLed_oen_statesChanged : {
                                         setStatesForControls(enableOutput,led_oen_states[0])
                                     }
@@ -1022,7 +1005,7 @@ Item {
 
                                 }
 
-                                property var led_iset_states: platformInterface.led_iset_state.states
+                                property var led_iset_states: platformInterface.led_iset_states.states
                                 onLed_iset_statesChanged:{
                                     setStatesForControls(gobalCurrentSetLabel,led_iset_states[0])
 
@@ -1118,7 +1101,7 @@ Item {
                                         pwmenableOutputLabel.text = led_pwm_enable_caption
                                     }
 
-                                    property var led_pwm_enable_states: platformInterface.led_pwm_enable_state.states
+                                    property var led_pwm_enable_states: platformInterface.led_pwm_enable_states.states
                                     onLed_pwm_enable_statesChanged : {
                                         setStatesForControls(pwmenableOutput,led_pwm_enable_states[0])
                                     }
@@ -1178,7 +1161,7 @@ Item {
                                         lockPWMDutyLabel.text = led_pwm_duty_lock_caption
                                     }
 
-                                    property var led_pwm_duty_lock_states: platformInterface.led_pwm_duty_lock_state.states
+                                    property var led_pwm_duty_lock_states: platformInterface.led_pwm_duty_lock_states.states
                                     onLed_pwm_duty_lock_statesChanged : {
                                         setStatesForControls(lockPWMDuty,led_pwm_duty_lock_states[0])
                                     }
@@ -1256,7 +1239,7 @@ Item {
 
                                     }
 
-                                    property var led_pwm_en_lock_states: platformInterface.led_pwm_en_lock_state.states
+                                    property var led_pwm_en_lock_states: platformInterface.led_pwm_en_lock_states.states
                                     onLed_pwm_en_lock_statesChanged : {
                                         setStatesForControls(lockPWMDutyEN,led_pwm_en_lock_states[0])
                                     }
@@ -1345,7 +1328,7 @@ Item {
                                         pwmLinearLogLabel.text = led_linear_log_caption
                                     }
 
-                                    property var led_linear_log_states: platformInterface.led_linear_log_state.states
+                                    property var led_linear_log_states: platformInterface.led_linear_log_states.states
                                     onLed_linear_log_statesChanged: {
                                         setStatesForControls(pwmLinearLog,led_linear_log_states[0])
                                     }
@@ -1437,7 +1420,7 @@ Item {
                                         pwmFrequencyLabel.text = led_pwm_freq_caption
                                     }
 
-                                    property var led_pwm_freq_states: platformInterface.led_pwm_freq_state.states
+                                    property var led_pwm_freq_states: platformInterface.led_pwm_freq_states.states
                                     onLed_pwm_freq_statesChanged: {
                                         setStatesForControls(pwmFrequency,led_pwm_freq_states[0])
                                     }
@@ -1543,7 +1526,7 @@ Item {
 
                                             }
 
-                                            property var led_diag_states: platformInterface.led_diag_state.states
+                                            property var led_diag_states: platformInterface.led_diag_states.states
                                             onLed_diag_statesChanged: {
                                                 setStatesForControls(diagLabel,led_diag_states[0])
                                                 //                                                if(led_diag_state === "enabled") {
@@ -1618,7 +1601,7 @@ Item {
                                                 openLoadLabel.text = led_open_load_diagnostic_caption
                                             }
 
-                                            property var led_open_load_diagnostic_states: platformInterface.led_open_load_diagnostic_state.states
+                                            property var led_open_load_diagnostic_states: platformInterface.led_open_load_diagnostic_states.states
                                             onLed_open_load_diagnostic_statesChanged: {
                                                 setStatesForControls(openLoadDiagnostic,led_open_load_diagnostic_states[0])
                                             }
@@ -2030,7 +2013,7 @@ Item {
                                                     out0duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states0: platformInterface.led_pwm_duty_state.states
+                                                property var led_pwm_duty_states0: platformInterface.led_pwm_duty_states.states
                                                 onLed_pwm_duty_states0Changed: {
                                                     console.log(led_pwm_duty_states0[0])
                                                     setStateForPWMDuty(out0duty,led_pwm_duty_states0[0])
@@ -2293,7 +2276,7 @@ Item {
                                                     out1duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states1: platformInterface.led_pwm_duty_state.states
+                                                property var led_pwm_duty_states1: platformInterface.led_pwm_duty_states.states
                                                 onLed_pwm_duty_states1Changed: {
                                                     setStateForPWMDuty(out1duty,led_pwm_duty_states1[1])
                                                 }
@@ -2548,7 +2531,7 @@ Item {
                                                     out2duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states2: platformInterface.led_pwm_duty_state.states
+                                                property var led_pwm_duty_states2: platformInterface.led_pwm_duty_states.states
                                                 onLed_pwm_duty_states2Changed: {
                                                     setStateForPWMDuty(out2duty,led_pwm_duty_states2[2])
                                                 }
@@ -2807,7 +2790,7 @@ Item {
                                                     out3duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states3: platformInterface.led_pwm_duty_state.states
+                                                property var led_pwm_duty_states3: platformInterface.led_pwm_duty_states.states
                                                 onLed_pwm_duty_states3Changed: {
                                                     setStateForPWMDuty(out3duty,led_pwm_duty_states3[3])
                                                 }
@@ -3070,7 +3053,7 @@ Item {
                                                     out4duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states4: platformInterface.led_pwm_duty_state.states
+                                                property var led_pwm_duty_states4: platformInterface.led_pwm_duty_states.states
                                                 onLed_pwm_duty_states4Changed: {
                                                     setStateForPWMDuty(out4duty,led_pwm_duty_states4[4])
                                                 }
@@ -3328,7 +3311,7 @@ Item {
                                                     out5duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states5: platformInterface.led_pwm_duty_state.states
+                                                property var led_pwm_duty_states5: platformInterface.led_pwm_duty_states.states
                                                 onLed_pwm_duty_states5Changed: {
                                                     setStateForPWMDuty(out5duty,led_pwm_duty_states5[5])
                                                 }
@@ -3585,7 +3568,7 @@ Item {
                                                     out6duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states6: platformInterface.led_pwm_duty_state.states
+                                                property var led_pwm_duty_states6: platformInterface.led_pwm_duty_states.states
                                                 onLed_pwm_duty_states6Changed: {
                                                     setStateForPWMDuty(out6duty,led_pwm_duty_states6[6])
                                                 }
@@ -3845,7 +3828,7 @@ Item {
                                                     out7duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states7: platformInterface.led_pwm_duty_state.states
+                                                property var led_pwm_duty_states7: platformInterface.led_pwm_duty_states.states
                                                 onLed_pwm_duty_states7Changed: {
                                                     setStateForPWMDuty(out7duty,led_pwm_duty_states7[7])
                                                 }
@@ -4099,7 +4082,7 @@ Item {
                                                     out8duty.to = led_pwm_duty_scales[0]
                                                     out8duty.value = led_pwm_duty_scales[2]
                                                 }
-                                                property var led_pwm_duty_states8: platformInterface.led_pwm_duty_state.states
+                                                property var led_pwm_duty_states8: platformInterface.led_pwm_duty_states.states
                                                 onLed_pwm_duty_states8Changed: {
                                                     setStateForPWMDuty(out8duty,led_pwm_duty_states8[8])
                                                 }
@@ -4356,7 +4339,7 @@ Item {
                                                     out9duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states9: platformInterface.led_pwm_duty_state.states
+                                                property var led_pwm_duty_states9: platformInterface.led_pwm_duty_states.states
                                                 onLed_pwm_duty_states9Changed: {
                                                     setStateForPWMDuty(out9duty,led_pwm_duty_states9[9])
                                                 }
@@ -4612,7 +4595,7 @@ Item {
                                                     out10duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states10: platformInterface.led_pwm_duty_state.states
+                                                property var led_pwm_duty_states10: platformInterface.led_pwm_duty_states.states
                                                 onLed_pwm_duty_states10Changed: {
                                                     setStateForPWMDuty(out10duty,led_pwm_duty_states10[10])
                                                 }
@@ -4871,7 +4854,7 @@ Item {
                                                     out11duty.value = led_pwm_duty_scales[2]
                                                 }
 
-                                                property var led_pwm_duty_states11: platformInterface.led_pwm_duty_state.states
+                                                property var led_pwm_duty_states11: platformInterface.led_pwm_duty_states.states
                                                 onLed_pwm_duty_states11Changed: {
                                                     setStateForPWMDuty(out11duty,led_pwm_duty_states11[11])
                                                 }
@@ -5000,7 +4983,7 @@ Item {
                                             else  scIset.status = SGStatusLight.Red
                                         }
 
-                                        property var led_sc_iset_states: platformInterface.led_sc_iset_state.states
+                                        property var led_sc_iset_states: platformInterface.led_sc_iset_states.states
                                         onLed_sc_iset_statesChanged: {
                                             setStatesForControls(scIsetLabel,led_sc_iset_states[0])
                                             //
@@ -5065,7 +5048,7 @@ Item {
 
                                         }
 
-                                        property var led_i2cerr_states: platformInterface.led_i2cerr_state.states
+                                        property var led_i2cerr_states: platformInterface.led_i2cerr_states.states
                                         onLed_i2cerr_statesChanged: {
                                             setStatesForControls(i2CerrLabel,led_i2cerr_states[0])
                                         }
@@ -5112,7 +5095,7 @@ Item {
                                             uvLabel.text =  led_uv_caption
                                         }
 
-                                        property var led_uv_states: platformInterface.led_uv_state.states
+                                        property var led_uv_states: platformInterface.led_uv_states.states
                                         onLed_uv_statesChanged: {
                                             setStatesForControls(uvLabel,led_uv_states[0])
                                         }
@@ -5175,7 +5158,7 @@ Item {
                                             diagRangeLabel.text =  led_diagrange_caption
                                         }
 
-                                        property var led_diagrange_states: platformInterface.led_diagrange_state.states
+                                        property var led_diagrange_states: platformInterface.led_diagrange_states.states
                                         onLed_diagrange_statesChanged: {
                                             setStatesForControls(diagRangeLabel,led_diagrange_states[0])
                                         }
@@ -5237,7 +5220,7 @@ Item {
                                             twLabel.text =  led_tw_caption
                                         }
 
-                                        property var led_tw_states: platformInterface.led_tw_state.states
+                                        property var led_tw_states: platformInterface.led_tw_states.states
                                         onLed_tw_statesChanged: {
                                             setStatesForControls(twLabel,led_tw_states[0])
                                         }
@@ -5297,7 +5280,7 @@ Item {
                                             tsdLabel.text =  led_tsd_caption
                                         }
 
-                                        property var led_tsd_states: platformInterface.led_tsd_state.states
+                                        property var led_tsd_states: platformInterface.led_tsd_states.states
                                         onLed_tsd_statesChanged: {
                                             setStatesForControls(tsdLabel,led_tsd_states[0])
                                         }
@@ -5359,7 +5342,7 @@ Item {
                                             diagerrLabel.text =  led_diagerr_caption
                                         }
 
-                                        property var led_diagerr_states: platformInterface.led_tsd_state.states
+                                        property var led_diagerr_states: platformInterface.led_tsd_states.states
                                         onLed_diagerr_statesChanged: {
                                             setStatesForControls(diagerrLabel,led_diagerr_states[0])
                                         }
@@ -5418,7 +5401,7 @@ Item {
                                             olLabel.text =  led_ol_caption
                                         }
 
-                                        property var led_ol_states: platformInterface.led_ol_state.states
+                                        property var led_ol_states: platformInterface.led_ol_states.states
                                         onLed_ol_statesChanged: {
                                             setStatesForControls(olLabel,led_ol_states[0])
                                         }

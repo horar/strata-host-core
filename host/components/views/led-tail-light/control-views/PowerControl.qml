@@ -137,7 +137,7 @@ Item {
                                         vedInputVoltageTypeLabel.text = power_vled_type_caption
                                     }
 
-                                    property var power_vled_type_state: platformInterface.power_vled_type_state.states
+                                    property var power_vled_type_state: platformInterface.power_vled_type_states.states
                                     onPower_vled_type_stateChanged: {
                                         setStatesForControls(vedInputVoltageType,power_vled_type_state[0])
                                     }
@@ -199,7 +199,7 @@ Item {
                                     boostOCPLabel.text = power_boost_ocp_caption
                                 }
 
-                                property var power_boost_ocp_state: platformInterface.power_boost_ocp_state.states
+                                property var power_boost_ocp_state: platformInterface.power_boost_ocp_states.states
                                 onPower_boost_ocp_stateChanged: {
                                     setStatesForControls(boostOCP,power_boost_ocp_state[0])
                                 }
@@ -269,7 +269,7 @@ Item {
                             voltageSet.stepSize = power_voltage_set_scales[2]
                         }
 
-                        property var power_voltage_set_state: platformInterface.power_voltage_set_state.states
+                        property var power_voltage_set_state: platformInterface.power_voltage_set_states.states
                         onPower_voltage_set_stateChanged: {
                             setStatesForControls(voltageSet,power_voltage_set_state[0])
                         }
@@ -341,7 +341,7 @@ Item {
                             vsVoltageSelectLabel.text = power_vs_select_caption
                         }
 
-                        property var power_vs_select_state: platformInterface.power_vs_select_state.states
+                        property var power_vs_select_state: platformInterface.power_vs_select_states.states
                         onPower_vs_select_stateChanged: {
                             setStatesForControls(vsVoltageSelect,power_vs_select_state[0])
                         }
@@ -476,7 +476,7 @@ Item {
                                             vLEDLabel.text = power_vled_caption
                                         }
 
-                                        property var power_vled_state: platformInterface.power_vled_state.states
+                                        property var power_vled_state: platformInterface.power_vled_states.states
                                         onPower_vled_stateChanged: {
                                             setStatesForControls(vLED,power_vled_state[0])
                                         }
@@ -545,7 +545,7 @@ Item {
                                             supplyVoltageLabel.text = power_vs_caption
                                         }
 
-                                        property var power_vs_state: platformInterface.power_vs_state.states
+                                        property var power_vs_state: platformInterface.power_vs_states.states
                                         onPower_vs_stateChanged: {
                                             setStatesForControls(supplyVoltage,power_vs_state[0])
                                         }
@@ -611,7 +611,7 @@ Item {
                                             digitalVoltageLabel.text = power_vdd_caption
                                         }
 
-                                        property var power_vdd_state: platformInterface.power_vdd_state.states
+                                        property var power_vdd_state: platformInterface.power_vdd_states.states
                                         onPower_vdd_stateChanged: {
                                             setStatesForControls(digitalVoltage,power_vdd_state[0])
                                         }
@@ -672,7 +672,7 @@ Item {
                                             batteryVoltageLabel.text = power_vconn_caption
                                         }
 
-                                        property var power_vconn_state: platformInterface.power_vconn_state.states
+                                        property var power_vconn_state: platformInterface.power_vconn_states.states
                                         onPower_vconn_stateChanged: {
                                            setStatesForControls(batteryVoltage,power_vconn_state[0])
                                         }
@@ -740,7 +740,7 @@ Item {
                                             ledCurrentLabel.text = power_iled_caption
                                         }
 
-                                        property var power_iled_state: platformInterface.power_iled_state.states
+                                        property var power_iled_state: platformInterface.power_iled_states.states
                                         onPower_iled_stateChanged: {
                                             setStatesForControls(ledCurrent,power_iled_state[0])
                                         }
@@ -797,7 +797,7 @@ Item {
                                             supplyCurrentLabel.text = power_is_caption
                                         }
 
-                                        property var power_is_state: platformInterface.power_is_state.states
+                                        property var power_is_state: platformInterface.power_is_states.states
                                         onPower_is_stateChanged: {
                                            setStatesForControls(supplyCurrent,power_is_state[0])
                                         }
@@ -855,7 +855,7 @@ Item {
                                             voltageLabel.text = power_vcc_caption
                                         }
 
-                                        property var power_vcc_state: platformInterface.power_vcc_state.states
+                                        property var power_vcc_state: platformInterface.power_vcc_states.states
                                         onPower_vcc_stateChanged: {
                                             setStatesForControls(voltage,power_vcc_state[0])
                                         }
@@ -956,7 +956,7 @@ Item {
                                     ledDriverTempTopLabel.text = power_led_driver_temp_top_caption
                                 }
 
-                                property var power_led_driver_temp_top_state: platformInterface.power_led_driver_temp_top_state.states
+                                property var power_led_driver_temp_top_state: platformInterface.power_led_driver_temp_top_states.states
                                 onPower_led_driver_temp_top_stateChanged: {
                                     setStatesForControls(ledDriverTempTop,power_led_driver_temp_top_state[0])
                                 }
@@ -1044,7 +1044,7 @@ Item {
                                     ledDriverTempBottomLabel.text = power_led_driver_temp_bottom_caption
                                 }
 
-                                property var power_led_driver_temp_bottom_state: platformInterface.power_led_driver_temp_bottom_state.states
+                                property var power_led_driver_temp_bottom_state: platformInterface.power_led_driver_temp_bottom_states.states
                                 onPower_led_driver_temp_bottom_stateChanged: {
                                    setStatesForControls(ledDriverTempBottom,power_led_driver_temp_bottom_state[0])
                                 }
@@ -1129,7 +1129,7 @@ Item {
                                         tempGaugeLabel.text = power_led_temp_caption
                                     }
 
-                                    property var power_led_temp_state: platformInterface.power_led_temp_state.states
+                                    property var power_led_temp_state: platformInterface.power_led_temp_states.states
                                     onPower_led_temp_stateChanged: {
                                         setStatesForControls(tempGauge,power_led_temp_state[0])
                                     }
@@ -1220,7 +1220,7 @@ Item {
                                         powerLossGaugeLabel.text = power_total_power_caption
                                     }
 
-                                    property var power_total_power_state: platformInterface.power_total_power_state.states
+                                    property var power_total_power_state: platformInterface.power_total_power_states.states
                                     onPower_total_power_stateChanged: {
                                        setStatesForControls(powerLoss,power_total_power_state[0])
                                     }

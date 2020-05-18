@@ -111,7 +111,7 @@ Item {
 
     }
 
-    property var soc_sam_conf_1_state: platformInterface.soc_sam_conf_1_state.states
+    property var soc_sam_conf_1_state: platformInterface.soc_sam_conf_1_states.states
     onSoc_sam_conf_1_stateChanged: {
         setStatesForControls(out1,soc_sam_conf_1_state[0])
         setStatesForControls(out2,soc_sam_conf_1_state[0])
@@ -285,7 +285,7 @@ Item {
 
     }
 
-    property var soc_sam_conf_2_state: platformInterface.soc_sam_conf_2_state.states
+    property var soc_sam_conf_2_state: platformInterface.soc_sam_conf_2_states.states
     onSoc_sam_conf_2_stateChanged: {
         setStatesForControls(samOut1,soc_sam_conf_2_state[0])
         setStatesForControls(samOut2,soc_sam_conf_2_state[0])
@@ -586,7 +586,7 @@ Item {
                             enableCRCLabel.text = soc_crc_caption
                         }
 
-                        property var soc_crc_state: platformInterface.soc_crc_state.states
+                        property var soc_crc_state: platformInterface.soc_crc_states.states
                         onSoc_crc_stateChanged: {
                             setStatesForControls(enableCRC,soc_crc_state[0])
                         }
@@ -653,7 +653,7 @@ Item {
                             text = soc_addr_curr_caption
                         }
 
-                        property var soc_addr_curr_state: platformInterface.soc_addr_curr_state.states
+                        property var soc_addr_curr_state: platformInterface.soc_addr_curr_states.states
                         onSoc_addr_curr_stateChanged: {
                             setStatesForControls(current7bit,soc_addr_curr_state[0])
                         }
@@ -739,21 +739,10 @@ Item {
                             new7bitLabel.text = soc_addr_new_caption
                         }
 
-                        property var soc_addr_new_state: platformInterface.soc_addr_new_state.states
+                        property var soc_addr_new_state: platformInterface.soc_addr_new_states.states
                         onSoc_addr_new_stateChanged: {
                             setStatesForControls(new7bit,soc_addr_new_state[0])
-                            //                            if(soc_addr_new_state === "enabled") {
-                            //                                new7bit.enabled = true
-                            //                                new7bit.opacity = 1.0
-                            //                            }
-                            //                            else if (soc_addr_new_state === "disabled") {
-                            //                                new7bit.enabled = false
-                            //                                new7bit.opacity = 1.0
-                            //                            }
-                            //                            else {
-                            //                                new7bit.enabled = false
-                            //                                new7bit.opacity = 0.5
-                            //                            }
+
                         }
 
                         property var soc_addr_new_value: platformInterface.soc_addr_new_value.value
@@ -922,7 +911,7 @@ Item {
                                     i2cStandaloneLabel.text = soc_mode_caption
                                 }
 
-                                property var soc_mode_state: platformInterface.soc_mode_state.states
+                                property var soc_mode_state: platformInterface.soc_mode_states.states
                                 onSoc_mode_stateChanged: {
                                     setStatesForControls(i2cStandalone,soc_mode_state[0])
                                 }
@@ -1010,7 +999,7 @@ Item {
                                         samConfigLabel.text = soc_conf_caption
                                     }
 
-                                    property var soc_conf_state: platformInterface.soc_conf_state.states
+                                    property var soc_conf_state: platformInterface.soc_conf_states.states
                                     onSoc_conf_stateChanged: {
                                         setStatesForControls(samConfig,soc_conf_state[0])
                                     }
@@ -1100,7 +1089,7 @@ Item {
                                     vDDVoltageDisconnectLabel.text = soc_vdd_disconnect_caption
                                 }
 
-                                property var soc_vdd_disconnect_state: platformInterface.soc_vdd_disconnect_state.states
+                                property var soc_vdd_disconnect_state: platformInterface.soc_vdd_disconnect_states.states
                                 onSoc_vdd_disconnect_stateChanged: {
                                     setStatesForControls(vDDVoltageDisconnect,soc_vdd_disconnect_state[0])
                                 }
@@ -2559,7 +2548,7 @@ Item {
                                 text = soc_otp_caption
                             }
 
-                            property var soc_otp_state: platformInterface.soc_otp_state.states
+                            property var soc_otp_state: platformInterface.soc_otp_states.states
                             onSoc_otp_stateChanged: {
                                 setStatesForControls(zapButton,soc_otp_state[0])
                             }
@@ -2656,7 +2645,7 @@ Item {
                                     diagLabel.text = soc_diag_caption
                                 }
 
-                                property var soc_diag_state: platformInterface.soc_diag_state.states
+                                property var soc_diag_state: platformInterface.soc_diag_states.states
                                 onSoc_diag_stateChanged: {
                                     setStatesForControls(diag,soc_diag_state[0])
                                 }
@@ -2740,7 +2729,7 @@ Item {
                                     samOpenLoadLabel.text = soc_sam_open_load_diagnostic_caption
                                 }
 
-                                property var soc_sam_open_load_diagnostic_state: platformInterface.soc_sam_open_load_diagnostic_state.states
+                                property var soc_sam_open_load_diagnostic_state: platformInterface.soc_sam_open_load_diagnostic_states.states
                                 onSoc_sam_open_load_diagnostic_stateChanged: {
                                     setStatesForControls(samOpenLoadDiagnostic,soc_sam_open_load_diagnostic_state[0])
                                 }
