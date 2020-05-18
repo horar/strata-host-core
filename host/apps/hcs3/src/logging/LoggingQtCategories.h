@@ -5,5 +5,6 @@
 Q_DECLARE_LOGGING_CATEGORY(logCategoryHcs)
 Q_DECLARE_LOGGING_CATEGORY(logCategoryHcsDownloader)
 Q_DECLARE_LOGGING_CATEGORY(logCategoryHcsStorage)
+Q_DECLARE_LOGGING_CATEGORY(logCategoryHcsStorageCache)
 Q_DECLARE_LOGGING_CATEGORY(logCategoryHcsPlatformDocument)
 Q_DECLARE_LOGGING_CATEGORY(logCategoryHcsBoard)
