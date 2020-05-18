@@ -69,7 +69,16 @@
         <file>images/smartHome_windowOpen.jpg</file>
         <file>images/smartHome_orange.jpg</file>
         <file>images/smartHome_doorOpenWindowOpen.jpg</file>
-        <file>images/mesh_help.html</file>
         <file>images/question-circle-white.svg</file>
+        <file>images/HTML/Quick Reference Functionality_files/colorschememapping.xml</file>
+        <file>images/HTML/Quick Reference Functionality_files/filelist.xml</file>
+        <file>images/HTML/Quick Reference Functionality_files/header.html</file>
+        <file>images/HTML/Quick Reference Functionality_files/image001.jpg</file>
+        <file>images/HTML/Quick Reference Functionality_files/image002.jpg</file>
+        <file>images/HTML/Quick Reference Functionality_files/image003.jpg</file>
+        <file>images/HTML/Quick Reference Functionality_files/item0009.xml</file>
+        <file>images/HTML/Quick Reference Functionality_files/props010.xml</file>
+        <file>images/HTML/Quick Reference Functionality_files/themedata.thmx</file>
+        <file>images/HTML/mesh_help.html</file>
     </qresource>
 </RCC>

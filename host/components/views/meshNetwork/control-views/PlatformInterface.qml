@@ -550,24 +550,24 @@ Item {
 //                                  show: function () { CorePlatformInterface.show(this) }
 //                              })
 
-//    property var get_sensor_data : ({
-//                                   "cmd" : "sensor_get",
-//                                   "payload": {
-//                                       "uaddr": 1000,  // in dec (16 bit uint)
-//                                       "sensor_type": "temperature"  // ambient_light, magnetic_rotation, magnetic_detection, strata, default (string)
-//                                   },
+    property var get_sensor : ({
+                                   "cmd" : "sensor_get",
+                                   "payload": {
+                                       "uaddr": 1000,  // in dec (16 bit uint)
+                                       "sensor_type": "temperature"  // ambient_light, magnetic_rotation, magnetic_detection, strata, default (string)
+                                   },
 
-//                                   update: function (address,sensor_type) {
-//                                       this.set(address,sensor_type)
-//                                       this.send(this)
-//                                   },
-//                                   set: function (inAddress,inSensorType) {
-//                                       this.payload.uaddr = inAddress;
-//                                       this.payload.sensor_type = inSensorType;
-//                                   },
-//                                   send: function () { CorePlatformInterface.send(this) },
-//                                   show: function () { CorePlatformInterface.show(this) }
-//                               })
+                                   update: function (address,sensor_type) {
+                                       this.set(address,sensor_type)
+                                       this.send(this)
+                                   },
+                                   set: function (inAddress,inSensorType) {
+                                       this.payload.uaddr = inAddress;
+                                       this.payload.sensor_type = inSensorType;
+                                   },
+                                   send: function () { CorePlatformInterface.send(this) },
+                                   show: function () { CorePlatformInterface.show(this) }
+                               })
 
     property var get_all_sensor_data : ({
                                    "cmd" : "sensors_get_all",
@@ -779,10 +779,12 @@ Item {
                                               "daddr":2
                                         },
 
-                                        update: function () {
+                                        update: function (bulbAddress) {
+                                            this.set(bulbAddress)
                                             this.send(this)
                                         },
-                                        set: function () {
+                                        set: function (inAddress) {
+                                            this.payload.daddr = inAddress
                                         },
                                         send: function () { CorePlatformInterface.send(this) },
                                         show: function () { CorePlatformInterface.show(this) }
@@ -805,6 +807,26 @@ Item {
                                             this.payload.demo = inDemoName;
                                             this.payload.button = inButtonName;
                                             this.payload.value = inValue;
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+
+    property var switch_views : ({
+                                        "cmd" : "switch_views",
+                                        "payload": {
+                                              "uaddr":[],                           // array of node addresses
+                                              "mode":[]                             // relay, high_power, charging, door, alarm, security_camera, hvac, doorbell,
+                                                                                    // buzzer, robotic_arm, window_shade, smarthome_door, smarthome_lights, default
+                                        },
+
+                                        update: function (address,mode) {
+                                            this.set(address,mode)
+                                            this.send(this)
+                                        },
+                                        set: function (inAddress,inMode) {
+                                            this.payload.uaddr = inAddress;
+                                            this.payload.mode = inMode;
                                         },
                                         send: function () { CorePlatformInterface.send(this) },
                                         show: function () { CorePlatformInterface.show(this) }

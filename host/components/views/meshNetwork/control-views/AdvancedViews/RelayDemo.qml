@@ -15,31 +15,78 @@ Rectangle {
     property int node3ID: 0
 
     onVisibleChanged: {
-        if (visible)
+        if (visible){
             resetUI();
-        //configure the firmware
-        platformInterface.set_node_mode.update(65535, "default", true)
+            root.updateNodeIDs();
 
+            platformInterface.set_node_mode.update( "default",65535, true)  //configure the firmware
+        }
+    }
+
+    function updateNodeIDs(){
         var nodeCount = 0;
-        for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+        node1ID = node2ID = node3ID = 0;      //clear previous values
+
+        for (var alpha = 0;  alpha < root.availableNodes.length  ; alpha++){
             //for each node that is marked visible set the visibilty of the node appropriately
-            console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
-            if (platformInterface.network_notification.nodes[alpha].ready !== 0){
+            //console.log("looking at node",alpha, platformInterface.network_notification.nodes[alpha].index, platformInterface.network_notification.nodes[alpha].ready)
+            if (root.availableNodes[alpha] !== 0){
                 nodeCount++;
                 if (nodeCount === 1){
-                    root.node1ID = platformInterface.network_notification.nodes[alpha].index
-                    console.log("node 1 set to",root.node1ID)
+                    root.node1ID = alpha
+                    //console.log("node 1 set to",root.node1ID)
                 }
                 else if (nodeCount === 2){
-                    root.node2ID = platformInterface.network_notification.nodes[alpha].index
-                    console.log("node 2 set to",root.node2ID)
+                    root.node2ID = alpha
+                    //console.log("node 2 set to",root.node2ID)
                 }
                 else if (nodeCount === 3){
-                    root.node3ID = platformInterface.network_notification.nodes[alpha].index
-                    console.log("node 3 set to",root.node3ID)
+                    root.node3ID = alpha
+                    //console.log("node 3 set to",root.node3ID)
                 }
             }
         }
+    }
+
+    //an array to hold the available nodes that can be used in this demo
+    //values will be 0 if not available, or 1 if available.
+    //node 0 is never used in the network, and node 1 is always the provisioner
+    property var availableNodes: [0, 0, 0 ,0, 0, 0, 0, 0, 0, 0];
+    onAvailableNodesChanged: {
+        root.updateNodeIDs();
+    }
+
+    property var network: platformInterface.network_notification
+    onNetworkChanged:{
+
+        for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+            if (platformInterface.network_notification.nodes[alpha].ready === 0){
+                root.availableNodes[alpha] = 0;
+                }
+            else{
+                root.availableNodes[alpha] = 1;
+            }
+        }
+        availableNodesChanged();
+    }
+
+    property var newNodeAdded: platformInterface.node_added
+    onNewNodeAddedChanged: {
+        //console.log("new node added",platformInterface.node_added.index)
+        var theNodeNumber = platformInterface.node_added.index
+        if (root.availableNodes[theNodeNumber] !== undefined){
+            root.availableNodes[theNodeNumber] = 1;
+            }
+        availableNodesChanged();
+    }
+
+    property var nodeRemoved: platformInterface.node_removed
+    onNodeRemovedChanged: {
+        var theNodeNumber = platformInterface.node_removed.node_id
+        if(root.availableNodes[theNodeNumber] !== undefined ){
+            root.availableNodes[theNodeNumber] = 0
+        }
+        availableNodesChanged();
     }
 
     Text{
@@ -47,7 +94,7 @@ Rectangle {
         anchors.top:parent.top
         anchors.topMargin: 40
         anchors.horizontalCenter: parent.horizontalCenter
-        text:"relay"
+        text:"Relay"
         font.pixelSize: 72
     }
 
@@ -65,7 +112,7 @@ Rectangle {
             id:nodeText
             anchors.top:parent.top
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"node " + nodeNumber
+            text:"Node " + nodeNumber
             font.pixelSize: 15
         }
 
@@ -100,7 +147,7 @@ Rectangle {
                 id:primaryElementText
                 anchors.top:parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                text:"primary element "
+                text:"Primary Element "
                 font.pixelSize: 15
             }
 
@@ -135,7 +182,7 @@ Rectangle {
                     id:modelText
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"light hsl client model"
+                    text:"Light HSL Client Model"
                     font.pixelSize: 10
                 }
 
@@ -144,7 +191,7 @@ Rectangle {
                     id:modelAddressText
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"model id 0x" + address
+                    text:"Model ID 0x" + address
                     font.pixelSize: 10
                 }
             }
@@ -160,22 +207,20 @@ Rectangle {
         anchors.leftMargin:parent.width*.05
         anchors.verticalCenter: parent.verticalCenter
 
-//        property var button: platformInterface.demo_click_notification
-//        onButtonChanged:{
-//            if (platformInterface.demo_click_notification.demo === "relay")
-//                if (platformInterface.demo_click_notification.button === "switch1")
-//                    if (platformInterface.demo_click_notification.value === "on"){
-//                        switchOutline.isOn = true;
-//                        if(relaySwitch.checked)
-//                            lightBulb.onOpacity = 1
-//                    }
-//                       else{
-//                        switchOutline.isOn = false;
-//                        if(relaySwitch.checked)
-//                            lightBulb.onOpacity = 0
-//                    }
-
-//        }
+        property var demo: platformInterface.one_to_many_demo
+        //Tejashree says a message from the platform should turn both lights on or off.
+        onDemoChanged:{
+            if (platformInterface.one_to_many_demo.light === "on"){
+                switchOutline.isOn = true;
+                lightBulb1.onOpacity = 1
+                lightBulb2.onOpacity = 1
+                }
+            else{
+                switchOutline.isOn = false;
+                lightBulb1.onOpacity = 0
+                lightBulb2.onOpacity = 0
+                }
+        }
 
         //this switch should have no effect on the lightbulb if the relay switch is off
         onClicked:{
@@ -196,18 +241,6 @@ Rectangle {
 
             switchOutline.isOn = !switchOutline.isOn
         }
-
-
-//        onIsOnChanged: {
-//            if (isOn && relaySwitch.checked){
-//                lightBulb.onOpacity = 1
-//                platformInterface.demo_click.update("relay","switch1","on")
-//            }
-//              else if (!isOn && relaySwitch.checked){
-//                lightBulb.onOpacity = 0
-//                platformInterface.demo_click.update("relay","switch1","off")
-//            }
-//        }
     }
 
     Image{
@@ -224,17 +257,11 @@ Rectangle {
         mipmap:true
 
         Text{
-            property int address: root.node2ID
             id:messageText
             anchors.top:parent.bottom
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
-            text:{
-                if (address != 0)
-                  return  "message \nto uaddr " + address
-                else
-                  return "message \nto uaddr -"
-            }
+            text:"message to \nuaddr 0xFFFF"
             font.pixelSize: 15
         }
     }
@@ -254,7 +281,7 @@ Rectangle {
             id:nodeText2
             anchors.top:parent.top
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"node " + nodeNumber
+            text:"Node " + nodeNumber
             font.pixelSize: 15
         }
 
@@ -289,7 +316,7 @@ Rectangle {
                 id:primaryElementText2
                 anchors.top:parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                text:"primary element "
+                text:"Primary Element "
                 font.pixelSize: 15
             }
 
@@ -324,7 +351,7 @@ Rectangle {
                     id:modelText2
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"light hsl server model"
+                    text:"Light HSL Server Model"
                     font.pixelSize: 10
                 }
 
@@ -332,7 +359,7 @@ Rectangle {
                     id:modelAddressText2
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"model id 0x1307"
+                    text:"Model ID 0x1307"
                     font.pixelSize: 10
                 }
             }
@@ -348,24 +375,13 @@ Rectangle {
             grooveFillColor: "limegreen"
             grooveColor:"lightgrey"
 
-//            property var button: platformInterface.demo_click_notification
-//            onButtonChanged:{
-//                if (platformInterface.demo_click_notification.demo === "relay")
-//                    if (platformInterface.demo_click_notification.button === "relay_switch")
-//                        if (platformInterface.demo_click_notification.value === "on")
-//                            relaySwitch.isOn = true;
-//                           else
-//                            relaySwitch.isOn = false;
-
-//            }
-
             onToggled: {
                 //note that turning on or off the relay doesn't change the state of the light
                 if (checked){
-                    platformInterface.set_node_mode.update(node2ID,"relay",true)
+                    platformInterface.set_node_mode.update("relay", node2ID,true)
                 }
                 else{
-                    platformInterface.demo_click.update(node2ID,"relay",false)
+                    platformInterface.set_node_mode.update("relay",node2ID, false)
                 }
             }
         }
@@ -375,7 +391,7 @@ Rectangle {
             anchors.top:relaySwitch.bottom
             anchors.topMargin: 0
             anchors.horizontalCenter: relaySwitch.horizontalCenter
-            text:"relay"
+            text:"Relay"
             font.pixelSize: 24
         }
 
@@ -415,7 +431,7 @@ Rectangle {
             anchors.top:parent.bottom
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"relay \nmessage"
+            text:"Relay \nMessage"
             font.pixelSize: 15
         }
     }
@@ -434,7 +450,7 @@ Rectangle {
             id:blubNodeText
             anchors.top:parent.top
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"node " + nodeNumber
+            text:"Node " + nodeNumber
             font.pixelSize: 15
         }
 
@@ -469,7 +485,7 @@ Rectangle {
                 id:bulbPrimaryElementText
                 anchors.top:parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                text:"primary element"
+                text:"Primary Element"
                 font.pixelSize: 15
             }
 
@@ -504,7 +520,7 @@ Rectangle {
                     id:bulbModelText
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"light hsl server model"
+                    text:"Light HSL Server Model"
                     font.pixelSize: 10
                 }
 
@@ -513,7 +529,7 @@ Rectangle {
                     id:bulbModelAddressText
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"model id 0x" + address
+                    text:"Model ID 0x" + address
                     font.pixelSize: 10
                 }
             }
@@ -539,7 +555,8 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:parent.bottom
         anchors.bottomMargin: 20
-        text:"configure"
+        text:"Configure"
+        visible:false
 
         contentItem: Text {
                 text: resetButton.text
