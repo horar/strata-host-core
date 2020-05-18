@@ -191,6 +191,7 @@ Rectangle{
 
 
 
+
         StackLayout {
             id: demoStackLayout
             anchors {
@@ -226,6 +227,16 @@ Rectangle{
         }
 
         Rectangle{
+            id:demoTabDivider
+            anchors.left:parent.left
+            anchors.leftMargin: 0
+            anchors.top:parent.top
+            anchors.bottom:parent.bottom
+            width:1
+            color:"grey"
+        }
+
+        Rectangle{
             id:demoConsoleDivider
             anchors.right:parent.right
             anchors.rightMargin: 1
@@ -233,9 +244,7 @@ Rectangle{
             anchors.bottom:parent.bottom
             width:1
             color:"grey"
-
         }
-
     }
 
     Widget09.SGSegmentedButtonStrip {
