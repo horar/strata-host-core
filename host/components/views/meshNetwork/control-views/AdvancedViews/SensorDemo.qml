@@ -215,20 +215,10 @@ Rectangle {
         }
 
         onClicked:{
-            if (!isOn){     //turning the lightbulb on
-                platformInterface.light_hsl_set.update(49633,0,0,50);  //set color to white
-                switchOutline.isOn = true
-              }
-              else{         //turning the lightbulb off
-                platformInterface.light_hsl_set.update(49633,0,0,0);  //set color to black
-                switchOutline.isOn = false
-              }
+            platformInterface.get_sensor(root.sensorNodeID,"temperature")
+            switchOutline.isOn = ! switchOutline.isOn
         }
     }
-
-
-
-
 
     Image{
         id:arrowImage
@@ -276,7 +266,6 @@ Rectangle {
                     }
             }
         }
-
     }
 
     Rectangle{
