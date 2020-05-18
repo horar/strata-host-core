@@ -94,8 +94,8 @@ Item {
     }
 
     property var led_out_en_states: {
-        //"states": [0,0,0,0,0,0,0,0,0,0,0,0]
-        "states" : [0]
+        "states": [0,0,0,0,0,0,0,0,0,0,0,0]
+
     }
     property var led_out_en_values: {
         "values": [true,true,true,true,true,true,true,true,true,true,true,true]
@@ -1496,7 +1496,7 @@ Item {
         "caption":"ID_VERS_1"
     }
 
-    property var misc_id_vers_1_state: {
+    property var misc_id_vers_1_states: {
         "states":[1]
     }
 
@@ -1516,7 +1516,7 @@ Item {
         "caption":"ID_VERS_2"
     }
 
-    property var misc_id_vers_2_state: {
+    property var misc_id_vers_2_states: {
        "states":[1]
     }
 
@@ -1536,7 +1536,7 @@ Item {
         "caption":"Odd Channel Error"
     }
 
-    property var misc_odd_ch_error_state: {
+    property var misc_odd_ch_error_states: {
        "states":[1]
     }
 
@@ -1556,7 +1556,7 @@ Item {
         "caption":"Even Channel Error"
     }
 
-    property var misc_even_ch_error_state: {
+    property var misc_even_ch_error_states: {
         "states":[1]
     }
 

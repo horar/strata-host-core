@@ -8,7 +8,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 Item {
     id: root
     property real ratioCalc: root.width / 1200
-    property real initialAspectRatio: 1300/820
+    property real initialAspectRatio: 1400/820
     anchors.centerIn: parent
     height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
@@ -135,17 +135,17 @@ Item {
     property var led_out_en_states: platformInterface.led_out_en_states.states
     onLed_out_en_statesChanged: {
         setOutEnState(out0ENLED,led_out_en_states[0])
-        setOutEnState(out1ENLED,led_out_en_states[0])
-        setOutEnState(out2ENLED,led_out_en_states[0])
-        setOutEnState(out3ENLED,led_out_en_states[0])
-        setOutEnState(out4ENLED,led_out_en_states[0])
-        setOutEnState(out5ENLED,led_out_en_states[0])
-        setOutEnState(out6ENLED,led_out_en_states[0])
-        setOutEnState(out7ENLED,led_out_en_states[0])
-        setOutEnState(out8ENLED,led_out_en_states[0])
-        setOutEnState(out9ENLED,led_out_en_states[0])
-        setOutEnState(out10ENLED,led_out_en_states[0])
-        setOutEnState(out11ENLED,led_out_en_states[0])
+        setOutEnState(out1ENLED,led_out_en_states[1])
+        setOutEnState(out2ENLED,led_out_en_states[2])
+        setOutEnState(out3ENLED,led_out_en_states[3])
+        setOutEnState(out4ENLED,led_out_en_states[4])
+        setOutEnState(out5ENLED,led_out_en_states[5])
+        setOutEnState(out6ENLED,led_out_en_states[6])
+        setOutEnState(out7ENLED,led_out_en_states[7])
+        setOutEnState(out8ENLED,led_out_en_states[8])
+        setOutEnState(out9ENLED,led_out_en_states[9])
+        setOutEnState(out10ENLED,led_out_en_states[10])
+        setOutEnState(out11ENLED,led_out_en_states[11])
     }
 
     property var led_out_en_values: platformInterface.led_out_en_values.values
@@ -841,13 +841,16 @@ Item {
                                 target: partNumber
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.verticalCenter: parent.verticalCenter
+                                anchors.verticalCenterOffset: 5
                                 anchors.left: parent.left
                                 fontSizeMultiplier: ratioCalc * 1.2
+
                                 font.bold : true
                                 SGInfoBox{
                                     id: partNumber
                                     height:  35 * ratioCalc
                                     width: 120 * ratioCalc
+
                                     fontSizeMultiplier: ratioCalc * 1.2
                                 }
 
@@ -1682,6 +1685,7 @@ Item {
 
                     ColumnLayout {
                         anchors.fill: parent
+                        spacing: 15
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
@@ -1690,7 +1694,7 @@ Item {
                                 anchors.fill: parent
                                 Rectangle {
                                     Layout.fillHeight: true
-                                    Layout.preferredWidth: parent.width/11
+                                    Layout.preferredWidth: parent.width/8
                                     ColumnLayout {
                                         anchors.fill: parent
                                         Rectangle {

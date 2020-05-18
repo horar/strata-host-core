@@ -912,7 +912,7 @@ Item {
                                     gaugeFillColor2: "red"
                                     unitText: "°C"
                                     unitTextFontSizeMultiplier: ratioCalc * 2.5
-                                    // valueDecimalPlaces: 0
+                                    //valueDecimalPlaces: 2
                                     function lerpColor (color1, color2, x){
                                         if (Qt.colorEqual(color1, color2)){
                                             return color1;
@@ -930,18 +930,6 @@ Item {
                                 onPower_led_driver_temp_topChanged: {
                                     ledDriverTempTopLabel.text = power_led_driver_temp_top.caption
                                     setStatesForControls(ledDriverTempTop,power_led_driver_temp_top.states[0])
-//                                    if(power_led_driver_temp_top.state === "enabled") {
-//                                        ledDriverTempTop.opacity = 1.0
-//                                        ledDriverTempTop.enabled = true
-//                                    }
-//                                    else if (power_led_driver_temp_top.state === "disabled") {
-//                                        ledDriverTempTop.opacity = 1.0
-//                                        ledDriverTempTop.enabled = false
-//                                    }
-//                                    else  {
-//                                        ledDriverTempTop.opacity = 0.5
-//                                        ledDriverTempTop.enabled = false
-//                                    }
 
                                     ledDriverTempTop.maximumValue = power_led_driver_temp_top.scales[0]
                                     ledDriverTempTop.minimumValue = power_led_driver_temp_top.scales[1]
@@ -1020,18 +1008,6 @@ Item {
                                 onPower_led_driver_temp_bottomChanged: {
                                     ledDriverTempBottomLabel.text = power_led_driver_temp_bottom.caption
                                     setStatesForControls(ledDriverTempBottom,power_led_driver_temp_bottom.states[0])
-//                                    if(power_led_driver_temp_bottom.state === "enabled") {
-//                                        ledDriverTempBottom.opacity = 1.0
-//                                        ledDriverTempBottom.enabled = true
-//                                    }
-//                                    else if (power_led_driver_temp_bottom.state === "disabled") {
-//                                        ledDriverTempBottom.opacity = 1.0
-//                                        ledDriverTempBottom.enabled = false
-//                                    }
-//                                    else  {
-//                                        ledDriverTempBottom.opacity = 0.5
-//                                        ledDriverTempBottom.enabled = false
-//                                    }
                                     ledDriverTempBottom.maximumValue = power_led_driver_temp_bottom.scales[0]
                                     ledDriverTempBottom.minimumValue = power_led_driver_temp_bottom.scales[1]
                                     ledDriverTempBottom.tickmarkStepSize = power_led_driver_temp_bottom.scales[2]

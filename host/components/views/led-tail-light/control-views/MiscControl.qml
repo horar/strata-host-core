@@ -91,7 +91,7 @@ Item {
                                 idVers1Label.text = misc_id_vers_1_caption
                             }
 
-                            property var misc_id_vers_1_state: platformInterface.misc_id_vers_1_state.states
+                            property var misc_id_vers_1_state: platformInterface.misc_id_vers_1_states.states
                             onMisc_id_vers_1_stateChanged: {
                                  setStatesForControls(idVers1,misc_id_vers_1_state[0])
                             }
@@ -147,7 +147,7 @@ Item {
                                 oddChannelErrorLabel.text = misc_odd_ch_error_caption
                             }
 
-                            property var misc_odd_ch_error_state: platformInterface.misc_odd_ch_error_state.states
+                            property var misc_odd_ch_error_state: platformInterface.misc_odd_ch_error_states.states
                             onMisc_odd_ch_error_stateChanged: {
                                 setStatesForControls(oddChannelError,misc_odd_ch_error_state[0])
                             }
@@ -220,7 +220,7 @@ Item {
                                 idVers2Label.text = misc_id_vers_2_caption
                             }
 
-                            property var misc_id_vers_2_state: platformInterface.misc_id_vers_2_state.states
+                            property var misc_id_vers_2_state: platformInterface.misc_id_vers_2_states.states
                             onMisc_id_vers_2_stateChanged: {
                                 setStatesForControls(idVers2,misc_id_vers_2_state[0])
                             }
@@ -264,7 +264,7 @@ Item {
                                 evenChannelErrorLabel.text = misc_even_ch_error_caption
                             }
 
-                            property var misc_even_ch_error_state: platformInterface.misc_even_ch_error_state.states
+                            property var misc_even_ch_error_state: platformInterface.misc_even_ch_error_states.states
                             onMisc_even_ch_error_stateChanged: {
                                 setStatesForControls(evenChannelError,misc_even_ch_error_state[0])
                             }
