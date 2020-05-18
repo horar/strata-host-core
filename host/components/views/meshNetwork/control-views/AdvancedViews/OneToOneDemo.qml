@@ -35,11 +35,11 @@ Rectangle {
                 nodeCount++;
                 if (nodeCount === 1){
                     root.node1ID = alpha
-                    console.log("node 1 set to",root.node1ID)
+                    //console.log("node 1 set to",root.node1ID)
                 }
                 else if (nodeCount === 2){
                     root.node2ID = alpha
-                    console.log("node 1 set to",root.node2ID)
+                    //console.log("node 1 set to",root.node2ID)
                 }
             }
         }
@@ -183,7 +183,7 @@ Rectangle {
                     id:modelAddressText
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"Model id 0x" + address
+                    text:"Model ID 0x" + address
                     font.pixelSize: 15
                 }
             }
@@ -361,7 +361,7 @@ Rectangle {
                     id:bulbModelAddressText
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"Model id 0x" + address
+                    text:"Model ID 0x" + address
                     font.pixelSize: 15
                 }
             }

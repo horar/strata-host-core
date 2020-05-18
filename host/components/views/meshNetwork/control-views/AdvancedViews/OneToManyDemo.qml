@@ -195,7 +195,7 @@ Rectangle {
                     id:modelAddressText
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"Model id 0x1309"
+                    text:"Model ID 0x1309"
                     font.pixelSize: 15
                 }
             }

@@ -426,12 +426,12 @@ Rectangle {
 
                 if (theNodeNumber !== 1 && (targetArray[theNodeNumber].color != "transparent")){
                     emptySlot = findEmptySlot(theNodeNumber)
-                    console.log("node not empty, adding in position",emptySlot)
+                    //console.log("node not empty, adding in position",emptySlot)
                 }
 
                 targetArray[emptySlot].nodeNumber = platformInterface.node_added.index
                 targetArray[emptySlot].color = platformInterface.node_added.color
-                console.log("new node added",theNodeNumber,"to role",targetArray[theNodeNumber].nodeType)
+                //console.log("new node added",theNodeNumber,"to role",targetArray[theNodeNumber].nodeType)
             }
 
             property var nodeRemoved: platformInterface.node_removed

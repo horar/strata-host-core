@@ -219,7 +219,7 @@ Rectangle {
 
         property var triggered: platformInterface.alarm_triggered
         onTriggeredChanged: {
-            console.log("alarm triggered=",platformInterface.alarm_triggered.triggered)
+            //console.log("alarm triggered=",platformInterface.alarm_triggered.triggered)
             if (platformInterface.alarm_triggered.triggered === "true"){
                 alarmTimer.start()
             }
@@ -405,19 +405,19 @@ Rectangle {
 
                 if (theNodeNumber !== 1 && (targetArray[theNodeNumber].color != "transparent")){
                     emptySlot = findEmptySlot(theNodeNumber)
-                    console.log("node not empty, adding in position",emptySlot)
+                    //console.log("node not empty, adding in position",emptySlot)
                 }
 
                 targetArray[emptySlot].nodeNumber = platformInterface.node_added.index
                 targetArray[emptySlot].color = platformInterface.node_added.color
-                console.log("new node added",theNodeNumber,"to role",targetArray[theNodeNumber].nodeType)
+                //console.log("new node added",theNodeNumber,"to role",targetArray[theNodeNumber].nodeType)
             }
 
 
             property var nodeRemoved: platformInterface.node_removed
             onNodeRemovedChanged: {
                 var theNodeNumber = platformInterface.node_removed.node_id
-                console.log("removing node",theNodeNumber)
+                //console.log("removing node",theNodeNumber)
                 targetArray[theNodeNumber].nodeNumber = ""
                 targetArray[theNodeNumber].color = "transparent"
             }
@@ -448,7 +448,6 @@ Rectangle {
             DragTarget{
                 //security camera upper left
                 id:target1
-                //objectName:"target1"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * 0.05
                 anchors.top:parent.top
@@ -461,7 +460,6 @@ Rectangle {
             DragTarget{
                 //left of the back door
                 id:target2
-                //objectName:"target2"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * .16
                 anchors.top:parent.top
@@ -474,7 +472,6 @@ Rectangle {
             DragTarget{
                 //on the back door
                 id:target3
-                //objectName:"target3"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * .30
                 anchors.top:parent.top
@@ -517,7 +514,6 @@ Rectangle {
             DragTarget{
                 //robot arm
                 id:target6
-                //objectName:"target6"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * .63
                 anchors.top:parent.top
@@ -529,7 +525,6 @@ Rectangle {
             DragTarget{
                 //roof fan
                 id:target7
-                //objectName:"target7"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * .80
                 anchors.top:parent.top
@@ -541,7 +536,6 @@ Rectangle {
             DragTarget{
                 //solar panel
                 id:target8
-                //objectName:"target8"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * .80
                 anchors.top:parent.top
