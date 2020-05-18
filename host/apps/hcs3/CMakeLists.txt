@@ -43,10 +43,13 @@ add_library(${PROJECT_NAME}Lib STATIC
     src/PlatformDocument.cpp
     src/LoggingAdapter.cpp
 
+    src/RunGuard.cpp
+
     src/logging/LoggingQtCategories.cpp
 )
 
 generate_app_version(GITTAG_PREFIX "hcs3_" MACBUNDLE OFF)
+generate_app_build_timestamp()
 
 set_target_properties(${PROJECT_NAME}Lib PROPERTIES
     AUTOMOC ON
