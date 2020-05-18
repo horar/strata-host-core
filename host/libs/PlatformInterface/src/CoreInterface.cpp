@@ -232,7 +232,7 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
 void CoreInterface::connectToPlatform(QString class_id)
 {
     QJsonObject cmdPayloadObject;
-    cmdPayloadObject.insert("platform_uuid",class_id);
+    cmdPayloadObject.insert("class_id",class_id);
 
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("cmd", "platform_select");

@@ -16,6 +16,7 @@ Rectangle{
     border.width: height > 100 ? 5 : 2
 
     property bool isOn:false
+    signal clicked
 
 
     onIsOnChanged: {
@@ -101,25 +102,14 @@ Rectangle{
         }
     }
     MouseArea{
-        id:switchOnMouseArea
-        height:parent.height/2
+        id:toggleMouseAreea
+        height:parent.height
         width:parent.width
 
         onClicked: {
-            root.isOn = true
+            //root.isOn = !root.isOn
+            root.clicked()
         }
     }
 
-    MouseArea{
-        id:switchOffMouseArea
-        x:0
-        y:parent.height/2
-        height:parent.height/2
-        width:parent.width
-
-        onClicked: {
-            root.isOn = false
-
-        }
-    }
 }

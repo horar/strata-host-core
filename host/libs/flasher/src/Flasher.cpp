@@ -74,28 +74,37 @@ void Flasher::cancel() {
     operation_->cancelOperation();
 }
 
-void Flasher::handleOperationFinished(int operation, int data) {
-    DeviceOperations::Operation op = static_cast<DeviceOperations::Operation>(operation);
-    switch (op) {
-    case DeviceOperations::Operation::SwitchToBootloader :
+void Flasher::handleOperationFinished(DeviceOperation operation, int data) {
+    switch (operation) {
+    case DeviceOperation::SwitchToBootloader :
         emit switchToBootloader(true);
-        (action_ == Action::Flash) ? handleFlashFirmware(data) : handleBackupFirmware(data);
+        if (data != 1) {
+            // Operation SwitchToBootloader has data set to 1 if board was already in
+            // bootloader mode, otherwise data has default value INT_MIN.
+            emit devicePropertiesChanged();
+        }
+        // negative value (-1) means that no chunk was flashed / backed up yet
+        (action_ == Action::Flash) ? handleFlashFirmware(-1) : handleBackupFirmware(-1);
         break;
-    case DeviceOperations::Operation::FlashFirmwareChunk :
+    case DeviceOperation::FlashFirmwareChunk :
         handleFlashFirmware(data);
         break;
-    case DeviceOperations::Operation::BackupFirmwareChunk :
+    case DeviceOperation::BackupFirmwareChunk :
         handleBackupFirmware(data);
         break;
-    case DeviceOperations::Operation::StartApplication :
+    case DeviceOperation::StartApplication :
+        operation_->refreshPlatformId();
+        break;
+    case DeviceOperation::RefreshPlatformId :
         qCInfo(logCategoryFlasher) << this << "Firmware is ready for use.";
+        emit devicePropertiesChanged();
         finish(Result::Ok);
         break;
-    case DeviceOperations::Operation::Timeout :
+    case DeviceOperation::Timeout :
         qCCritical(logCategoryFlasher) << this << "Timeout during firmware operation.";
         finish(Result::Timeout);
         break;
-    case DeviceOperations::Operation::Cancel :
+    case DeviceOperation::Cancel :
         qCWarning(logCategoryFlasher) << this << "Firmware operation was cancelled.";
         finish(Result::Cancelled);
         break;
@@ -122,7 +131,7 @@ void Flasher::handleFlashFirmware(int lastFlashedChunk) {
         }
         return;
     }
-    if (lastFlashedChunk > 0) {  // operation SwitchToBootloader has this value set to -1
+    if (lastFlashedChunk > 0) {  // if no chunk was flashed yet, 'lastFlashedChunk' is negative number (-1)
         if (lastFlashedChunk == chunkProgress_) { // this is faster than modulo
             chunkProgress_ += FLASH_PROGRESS_STEP;
             qCInfo(logCategoryFlasher) << this << "Flashed chunk " << dec << lastFlashedChunk << " of " << chunkCount_;
@@ -151,11 +160,8 @@ void Flasher::handleFlashFirmware(int lastFlashedChunk) {
 }
 
 void Flasher::handleBackupFirmware(int chunkNumber) {
-    bool firstChunk = false;
-    if (chunkNumber < 0) {  // operation SwitchToBootloader has this value set to -1
-        firstChunk = true;
-    } else {
-        QVector<quint8> chunk = operation_->recentFirmwareChunk();
+    if (chunkNumber >= 0) {  // if no chunk was backed up yet, 'chunkNumber' is negative number (-1)
+        QVector<quint8> chunk = operation_->recentBackupChunk();
         qint64 bytesWritten = fwFile_.write(reinterpret_cast<char*>(chunk.data()), chunk.size());
         if (bytesWritten != chunk.size()) {
             qCCritical(logCategoryFlasher).noquote().nospace() << this << "Cannot write to file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
@@ -185,7 +191,7 @@ void Flasher::handleBackupFirmware(int chunkNumber) {
             return;
         }
     }
-    operation_->backupFirmwareChunk(firstChunk);
+    operation_->backupFirmwareChunk();
 }
 
 void Flasher::handleOperationError(QString errStr) {

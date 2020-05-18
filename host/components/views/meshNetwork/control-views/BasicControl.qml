@@ -6,6 +6,7 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as Widget09
+import QtWebEngine 1.0
 import "BasicViews"
 
 Rectangle {
@@ -14,15 +15,25 @@ Rectangle {
     //anchors.fill:parent
 
 
+    Text{
+        id:viewComboLabel
+        anchors.left: parent.left
+        anchors.leftMargin: 20
+        anchors.top: parent.top
+        anchors.topMargin: 20
+        text: "Virtual environment:"
+        font.pixelSize: 24
+
+    }
 
    SGComboBox{
        id:basicViewCombo
-       anchors.top:parent.top
-       anchors.topMargin: 20
-       anchors.left:parent.left
-       anchors.leftMargin: 20
+       anchors.verticalCenter: viewComboLabel.verticalCenter
+       anchors.left:viewComboLabel.right
+       anchors.leftMargin: 5
        width: 200
        model: [ "Office", "Smart home"]
+       fontSizeMultiplier: 1.75
 
        onCurrentIndexChanged: {
            if (currentIndex === 0){
@@ -35,6 +46,37 @@ Rectangle {
             }
 
        }
+   }
+
+   Image{
+       id:drawerToggleButton2
+       property bool drawerIsOpen: consoleDrawer.visible
+       anchors.top:parent.top
+       anchors.topMargin: 10
+       anchors.right:drawerToggleButton.left
+       anchors.rightMargin: 10
+       height:30
+       width:30
+       source: "qrc:/sgimages/question-circle.svg"
+       fillMode: Image.PreserveAspectFit
+       mipmap:true
+       opacity:.3
+
+       MouseArea{
+           id:toggleDrawerMouseArea2
+           anchors.fill:parent
+
+           onClicked:{
+               if (drawerToggleButton2.drawerIsOpen)
+                   consoleDrawer.close()
+               else{
+                   consoleDrawer.showConsole = false;
+                   consoleDrawer.open()
+               }
+
+           }
+       }
+
    }
 
    Image{
@@ -58,8 +100,10 @@ Rectangle {
            onClicked:{
                if (drawerToggleButton.drawerIsOpen)
                    consoleDrawer.close()
-               else
+               else{
+                   consoleDrawer.showConsole = true;
                    consoleDrawer.open()
+               }
            }
        }
 
@@ -93,6 +137,20 @@ Rectangle {
            height: root.height
            edge: Qt.RightEdge
 
+           property bool showConsole: true
+
+           Rectangle{
+               id:helpViewContainer
+               anchors.fill:parent
+               color:"pink"
+
+               WebEngineView {
+                    id: webView
+                    anchors.fill: parent
+                    url: "qrc:/views/meshNetwork/images/mesh_help.html"   //doesn't render html
+                   }
+           }
+
            Rectangle{
                id:consoleTextContainer
                anchors.left: parent.left
@@ -100,6 +158,7 @@ Rectangle {
                anchors.right:parent.right
                height:25
                color:"white"
+               visible: consoleDrawer.showConsole
 
                Text {
                    id: consoleText
@@ -110,10 +169,6 @@ Rectangle {
                    color:"black"
                    anchors.horizontalCenter: parent.horizontalCenter
                    anchors.verticalCenter: parent.verticalCenter
-                   //        anchors {
-                   //            horizontalCenter: parent.horizontalCenter
-                   //            top:parent.top
-                   //        }
                }
            }
 
@@ -124,6 +179,7 @@ Rectangle {
                anchors.top:consoleTextContainer.bottom
                anchors.bottom: parent.bottom
                anchors.right:parent.right
+               visible:consoleDrawer.showConsole
 
 
                minimumHeight: 800
@@ -153,12 +209,13 @@ Rectangle {
                    color: "white"
 
                    Rectangle {
+                       id:debugMessageRectangle
                        width: parent.width
                        height: (parent.height)
                        anchors.left:parent.left
-                       anchors.leftMargin: 20
+                       anchors.leftMargin: 10
                        anchors.right:parent.right
-                       anchors.rightMargin: 20
+                       anchors.rightMargin: 10
                        anchors.top:parent.top
                        //anchors.topMargin: 50
                        anchors.bottom:parent.bottom
@@ -172,7 +229,7 @@ Rectangle {
                            //statusTextColor: "white"
                            //statusBoxColor: "black"
                            statusBoxBorderColor: "white"
-                           fontSizeMultiplier: 1
+                           fontSizeMultiplier: .9
 
                            listElementTemplate : {
                                "message": "",
@@ -226,6 +283,7 @@ Rectangle {
                anchors.rightMargin: 20
                anchors.top:consoleTextContainer.bottom
                anchors.topMargin: 10
+               visible: consoleDrawer.showConsole
 
                text:"clear"
 

@@ -23,14 +23,6 @@ Rectangle {
         font.pixelSize: 72
     }
 
-//    Image{
-//            source: "qrc:/views/meshNetwork/images/sensorDemo.png"
-//            height:parent.height *.4
-//            anchors.centerIn: parent
-//            fillMode: Image.PreserveAspectFit
-//            mipmap:true
-//        }
-
     Button{
         id:getTemperatureButton
         anchors.left:parent.left
@@ -72,20 +64,21 @@ Rectangle {
         text:"current temperature is"
         visible:false
 
-        property var sensorData: platformInterface.demo_click_notification
-        onSensorDataChanged:{
-            if (platformInterface.demo_click_notification.demo === "sensor")
-                if (platformInterface.demo_click_notification.button === "get_sensor_data"){
-                    temperatureText.visible = true
-                    temperatureText.text += latformInterface.demo_click_notification.value + "°C"
-                }
+//        property var sensorData: platformInterface.demo_click_notification
+//        onSensorDataChanged:{
+//            if (platformInterface.demo_click_notification.demo === "sensor")
+//                if (platformInterface.demo_click_notification.button === "get_sensor_data"){
+//                    temperatureText.visible = true
+//                    temperatureText.text += latformInterface.demo_click_notification.value + "°C"
+//                }
 
-        }
+//        }
     }
 
     Image{
         id:arrowImage
         anchors.left:getTemperatureButton.right
+        anchors.leftMargin: 10
         anchors.right:sensorImage.left
         anchors.verticalCenter: parent.verticalCenter
         source: "qrc:/views/meshNetwork/images/leftArrow.svg"

@@ -140,6 +140,13 @@ Rectangle {
                     theHomeHue = 0;
                     theHomeSaturation = 0;
                     }
+                //special case for orange, because the straight HSL conversion of orange can't be
+                //shown well on the node LEDs.
+                if (theColor == "orange"){
+                    theHomeHue = 5;
+                    theHomeSaturation = 100;
+                    theHomeLightness = 50;
+                }
                 console.log("current smarthome color is",theHomeHue,theHomeSaturation,theHomeLightness)
                 platformInterface.light_hsl_set.update(65535,theHomeHue,theHomeSaturation,theHomeLightness);
                 //this should be handled by the firmware, but isn't

@@ -17,12 +17,17 @@
 
 namespace strata {
 
+    class SerialDevice;
+
+    typedef std::shared_ptr<SerialDevice> SerialDevicePtr;
+
     class SerialDevice : public QObject
     {
         Q_OBJECT
         Q_DISABLE_COPY(SerialDevice)
 
     friend class DeviceOperations;
+    friend class BaseDeviceCommand;
 
     public:
         /**
@@ -134,7 +139,7 @@ namespace strata {
     private:
         bool writeData(const QByteArray data, quintptr lockId);
         ErrorCode translateQSerialPortError(QSerialPort::SerialPortError error);
-        // *** functions used by friend class DeviceOperations:
+        // *** functions used by friend classes DeviceOperations and BaseDeviceCommand:
         void setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer);
         bool lockDeviceForOperation(quintptr lockId);
         void unlockDevice(quintptr lockId);
@@ -160,8 +165,6 @@ namespace strata {
         QString bootloaderVer_;
         QString applicationVer_;
     };
-
-    typedef std::shared_ptr<SerialDevice> SerialDevicePtr;
 
 }  // namespace
 

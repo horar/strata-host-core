@@ -2,7 +2,6 @@
     <qresource prefix="/views/XDFN-LDO">
         <file>AdvancedControl.qml</file>
         <file>BasicControl.qml</file>
-        <file>Content.qml</file>
         <file>Control.qml</file>
         <file>MultiplePlatform.qml</file>
         <file>PlatformInterface.qml</file>

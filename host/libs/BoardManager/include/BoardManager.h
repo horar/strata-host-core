@@ -20,6 +20,7 @@
 namespace strata {
 
     class DeviceOperations;
+    enum class DeviceOperation: int;
 
     class BoardManager : public QObject
     {
@@ -133,7 +134,7 @@ namespace strata {
     private slots:
         void checkNewSerialDevices();
         void handleNewMessage(QString message);  // DEPRECATED
-        void handleOperationFinished(int operation, int);
+        void handleOperationFinished(DeviceOperation operation, int);
         void handleOperationError(QString message);
         void handleSerialDeviceError(SerialDevice::ErrorCode errCode, QString errStr);
 

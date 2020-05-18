@@ -274,7 +274,7 @@ void BoardManager::logInvalidDeviceId(const QString& message, const int deviceId
     qCWarning(logCategoryBoardManager).nospace() << message << ", invalid device ID: 0x" << hex << static_cast<uint>(deviceId);
 }
 
-void BoardManager::handleOperationFinished(int operation, int) {
+void BoardManager::handleOperationFinished(DeviceOperation operation, int) {
     DeviceOperations *devOp = qobject_cast<DeviceOperations*>(QObject::sender());
     if (devOp == nullptr) {
         return;
@@ -282,7 +282,7 @@ void BoardManager::handleOperationFinished(int operation, int) {
 
     int deviceId = devOp->deviceId();
     bool boardRecognized = false;
-    if (operation == static_cast<int>(DeviceOperations::Operation::Identify)) {
+    if (operation == DeviceOperation::Identify) {
         boardRecognized = true;
     }
 

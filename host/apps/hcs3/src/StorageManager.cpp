@@ -1,4 +1,5 @@
 #include "StorageManager.h"
+#include "StorageInfo.h"
 #include "DownloadManager.h"
 #include "PlatformDocument.h"
 #include "Dispatcher.h"
@@ -54,6 +55,9 @@ void StorageManager::init()
         qCCritical(logCategoryHcsStorage) << "Base URL is empty.";
         return;
     }
+
+    StorageInfo info(nullptr, baseFolder_);
+    info.calculateSize();
 
     downloadManager_.reset(new DownloadManager);
     downloadManager_->setBaseUrl(baseUrl_);
@@ -115,7 +119,14 @@ void StorageManager::singleDownloadFinishedHandler(const QString &groupId, const
 
 void StorageManager::groupDownloadProgressHandler(const QString &groupId, int filesCompleted, int filesTotal)
 {
-    qDebug() << groupId << filesCompleted << filesTotal;
+    DownloadRequest *request = downloadRequests_.value(groupId, nullptr);
+    if (request == nullptr) {
+        return;
+    }
+
+    if (request->type == RequestType::PlatformDocuments) {
+        emit downloadPlatformDocumentsProgress(request->clientId, filesCompleted, filesTotal);
+    }
 }
 
 void StorageManager::groupDownloadFinishedHandler(const QString &groupId, const QString &errorString)
@@ -335,6 +346,7 @@ void StorageManager::requestPlatformDocuments(
 
     DownloadManager::Settings settings;
     settings.keepOriginalName = true;
+    settings.notifyGroupDownloadProgress = true;
 
     request->groupId = downloadManager_->download(downloadList, settings);
 

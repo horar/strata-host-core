@@ -114,6 +114,7 @@ Item {
     }
 
 //    onNetwork_notificationChanged: {
+//        console.log("new network notification")
 //         for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
 //            console.log("index=",platformInterface.network_notification.nodes[alpha].index,
 //                        "ready=",platformInterface.network_notification.nodes[alpha].ready,
@@ -138,10 +139,18 @@ Item {
 //                "location": "alarm" //string, with possible values: "doorbell", "alarm", "switch", "temperature", "light", "voltage", "security"
 //    }
 
-    property var demo_click_notification : {
-        "demo": "",             //"one_to_one"or "one_to_many", "relay", "multiple_models","sensor","cloud"
-        "button": "",           //"switch" or "switch1","switch2","relay_switch", "bulb1","bulb2","bulb3" "get_sensor_data"
-        "value":"on"
+//    property var demo_click_notification : {
+//        "demo": "",             //"one_to_one"or "one_to_many", "relay", "multiple_models","sensor","cloud"
+//        "button": "",           //"switch" or "switch1","switch2","relay_switch", "bulb1","bulb2","bulb3" "get_sensor_data"
+//        "value":"on"
+//    }
+
+    property var one_to_one_demo:{
+                "light": "on"  //or off
+    }
+
+    property var one_to_many_demo:{
+                "lights": "on"  //or off
     }
 
     property var msg_cli:{      //console message strings
@@ -577,52 +586,74 @@ Item {
                                    show: function () { CorePlatformInterface.show(this) }
                                })
 
+    property var set_groupid : ({
+                                   "cmd" : "set_groupid",
+                                   "payload": {
+                                        "group_id": 49633,            // in dec (16 bit),
+                                        "uaddr": 1,
+                                        "model": "battery_server",    // battery_server, light_hsl_server, sensor_server, onoff_server, nothing, default
+                                        "subscribe":true              // or false to desubscribe
+                                   },
 
-    property var bind_elements : ({
-                                      "cmd" : "bind_elements",
-                                      "payload": {
-                                          "grp_id": 9864,               // in dec (16 bit),
-                                          "ele_addr":[                 // More than one element addresses can be bound at a time
-                                              0002,        // in dec (16 bit),
-                                              0004,        // in dec (16 bit),
-                                              0006         // in dec (16 bit),
-                                          ]
-                                      },
+                                   update: function (group_id,address, model, subscribe) {
+                                       this.set(group_id,address, model, subscribe)
+                                       this.send(this)
+                                   },
+                                   set: function (inGroup, inAddress, inModel, inSubscribe) {
+                                       this.payload.group_id = inGroup;
+                                       this.payload.uaddr = inAddress;
+                                       this.payload.model = inModel;
+                                       this.payload.subscribe = inSubscribe;
+                                   },
+                                   send: function () { CorePlatformInterface.send(this) },
+                                   show: function () { CorePlatformInterface.show(this) }
+                               })
 
-                                      update: function (groupID, addresses) {
-                                          this.set(groupID, addresses)
-                                          this.send(this)
-                                      },
-                                      set: function (inGroupID, inAddresses) {
-                                          this.payload.grp_id = groupID;
-                                          this.payload.ele_addr = inAddresses;
-                                      },
-                                      send: function () { CorePlatformInterface.send(this) },
-                                      show: function () { CorePlatformInterface.show(this) }
-                                  })
+//    property var bind_elements : ({
+//                                      "cmd" : "bind_elements",
+//                                      "payload": {
+//                                          "grp_id": 9864,               // in dec (16 bit),
+//                                          "ele_addr":[                 // More than one element addresses can be bound at a time
+//                                              0002,        // in dec (16 bit),
+//                                              0004,        // in dec (16 bit),
+//                                              0006         // in dec (16 bit),
+//                                          ]
+//                                      },
 
-    property var unbind_elements : ({
-                                        "cmd" : "unbind_elements",
-                                        "payload": {
-                                            "grp_id": 9864,               // in dec (16 bit),
-                                            "ele_addr":[                 // More than one element addresses can be unbound at a time
-                                                0002,        // in dec (16 bit),
-                                                0004,        // in dec (16 bit),
-                                                0006         // in dec (16 bit),
-                                            ]
-                                        },
+//                                      update: function (groupID, addresses) {
+//                                          this.set(groupID, addresses)
+//                                          this.send(this)
+//                                      },
+//                                      set: function (inGroupID, inAddresses) {
+//                                          this.payload.grp_id = groupID;
+//                                          this.payload.ele_addr = inAddresses;
+//                                      },
+//                                      send: function () { CorePlatformInterface.send(this) },
+//                                      show: function () { CorePlatformInterface.show(this) }
+//                                  })
 
-                                        update: function (groupID, addresses) {
-                                            this.set(groupID, addresses)
-                                            this.send(this)
-                                        },
-                                        set: function (inGroupID, inAddresses) {
-                                            this.payload.grp_id = groupID;
-                                            this.payload.ele_addr = inAddresses;
-                                        },
-                                        send: function () { CorePlatformInterface.send(this) },
-                                        show: function () { CorePlatformInterface.show(this) }
-                                    })
+//    property var unbind_elements : ({
+//                                        "cmd" : "unbind_elements",
+//                                        "payload": {
+//                                            "grp_id": 9864,               // in dec (16 bit),
+//                                            "ele_addr":[                 // More than one element addresses can be unbound at a time
+//                                                0002,        // in dec (16 bit),
+//                                                0004,        // in dec (16 bit),
+//                                                0006         // in dec (16 bit),
+//                                            ]
+//                                        },
+
+//                                        update: function (groupID, addresses) {
+//                                            this.set(groupID, addresses)
+//                                            this.send(this)
+//                                        },
+//                                        set: function (inGroupID, inAddresses) {
+//                                            this.payload.grp_id = groupID;
+//                                            this.payload.ele_addr = inAddresses;
+//                                        },
+//                                        send: function () { CorePlatformInterface.send(this) },
+//                                        show: function () { CorePlatformInterface.show(this) }
+//                                    })
 
 //    property var location_clicked : ({
 //                                          "cmd" : "location_clicked",
@@ -724,22 +755,39 @@ Item {
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
 
-    property var set_demo : ({
-                                        "cmd" : "set_demo",
+//    property var set_demo : ({
+//                                        "cmd" : "set_demo",
+//                                        "payload": {
+//                                            "demo":"demo"
+//                                        },
+
+//                                        update: function (demoName) {
+//                                            this.set(demoName)
+//                                            this.send(this)
+//                                        },
+//                                        set: function (inDemoName) {
+//                                            this.payload.demo = inDemoName;
+//                                        },
+//                                        send: function () { CorePlatformInterface.send(this) },
+//                                        show: function () { CorePlatformInterface.show(this) }
+//                                    })
+
+    property var set_onetoone_demo : ({
+                                        "cmd" : "set_onetoone_demo",
                                         "payload": {
-                                            "demo":"demo"
+                                              "uaddr":65535,
+                                              "daddr":2
                                         },
 
-                                        update: function (demoName) {
-                                            this.set(demoName)
+                                        update: function () {
                                             this.send(this)
                                         },
-                                        set: function (inDemoName) {
-                                            this.payload.demo = inDemoName;
+                                        set: function () {
                                         },
                                         send: function () { CorePlatformInterface.send(this) },
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
+
 
     property var demo_click : ({
                                         "cmd" : "demo_click",

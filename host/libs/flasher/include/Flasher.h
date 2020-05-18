@@ -11,6 +11,7 @@
 namespace strata {
 
 class DeviceOperations;
+enum class DeviceOperation: int;
 
 class Flasher : public QObject
 {
@@ -94,8 +95,13 @@ class Flasher : public QObject
          */
         void backupProgress(int chunk, bool last);
 
+        /*!
+         * This signal is emitted when device properties are changed (e.g. board switched to/from bootloader).
+         */
+        void devicePropertiesChanged();
+
     private slots:
-        void handleOperationFinished(int operation, int data);
+        void handleOperationFinished(DeviceOperation operation, int data);
         void handleOperationError(QString errStr);
 
     private:
