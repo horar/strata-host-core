@@ -413,9 +413,6 @@ if(NOT WIN32)
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-C
 
-        # Must add dependencies to avoid conflict with CouchbaseLiteCPP or Qwt builds
-        DEPENDS strata::CouchbaseLiteCPP qwt::qwt
-
         # Apply patches
         PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/.. && git submodule --quiet update --force --recursive extern/couchbase-lite-C
         COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-c.patch ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-core.patch
@@ -461,9 +458,6 @@ else()
     ExternalProject_Add(cb-lite-c
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-C
-
-        # Must add dependencies to avoid conflict with CouchbaseLiteCPP or Qwt builds
-        DEPENDS strata::CouchbaseLiteCPP qwt::qwt
 
         # Apply patches
         PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/.. && git submodule --quiet update --force --recursive extern/couchbase-lite-C
@@ -573,7 +567,6 @@ set_target_properties(cb-lite-c::LiteCoreWebSocket PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include-CBL-official-API"
     IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreWebSocket-O${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
-# add_dependencies(cb-lite-c::LiteCoreWebSocket DEPENDS LiteCore mbedtls mbedcrypto mbedx509 Lite zlib)
 
 add_library(cb-lite-c::sockpp STATIC IMPORTED GLOBAL)
 set_target_properties(cb-lite-c::sockpp PROPERTIES
