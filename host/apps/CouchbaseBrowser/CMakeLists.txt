@@ -1,5 +1,5 @@
 project(CouchbaseBrowser
-    DESCRIPTION "CouchbaseBrowser"
+    DESCRIPTION "Couchbase Browser"
     LANGUAGES CXX
 )
 

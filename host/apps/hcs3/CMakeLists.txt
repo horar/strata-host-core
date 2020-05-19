@@ -1,5 +1,5 @@
 project(HostControllerService
-    DESCRIPTION "Host Controller Service"
+    DESCRIPTION "Strata Host Controller Service"
     LANGUAGES CXX
 )
 

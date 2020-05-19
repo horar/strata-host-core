@@ -1,4 +1,5 @@
 project(flasher-cli
+    DESCRIPTION "Flasher CLI"
     LANGUAGES CXX
 )
 
