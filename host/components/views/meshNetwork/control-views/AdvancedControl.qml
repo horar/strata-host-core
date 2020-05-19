@@ -436,6 +436,7 @@ Rectangle{
         anchors.rightMargin: 20
         anchors.bottom:consoleScrollView.bottom
         anchors.bottomMargin: 10
+        visible:showConsole
 
         text:"Clear"
 
@@ -469,6 +470,7 @@ Rectangle{
         anchors.top:consoleScrollView.bottom
         anchors.bottom: parent.bottom
         anchors.right:parent.right
+        visible:showConsole
 
         SGSubmitInfoBox{
             id:commandLineInput
