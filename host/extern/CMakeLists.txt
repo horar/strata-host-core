@@ -413,6 +413,9 @@ if(NOT WIN32)
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-C
 
+        # Must add dependency to avoid conflict with CouchbaseLiteCPP build
+        DEPENDS strata::CouchbaseLiteCPP
+
         # Apply patches
         PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/.. && git submodule --quiet update --force --recursive extern/couchbase-lite-C
         COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-c.patch ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-core.patch
@@ -458,6 +461,9 @@ else()
     ExternalProject_Add(cb-lite-c
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-C
+
+        # Must add dependency to avoid conflict with CouchbaseLiteCPP build
+        DEPENDS strata::CouchbaseLiteCPP
 
         # Apply patches
         PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/.. && git submodule --quiet update --force --recursive extern/couchbase-lite-C
