@@ -2,17 +2,14 @@ project(flasher-cli
     LANGUAGES CXX
 )
 
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Core SerialPort
     REQUIRED
 )
-
-# LC: this is temporary hack; other PR solve shared resources
-set(PROJECT_WIN32_ICO ../hcs3/resources/icons/app/on.ico)
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
-# LC: end of hack
-
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_executable(${PROJECT_NAME}
     src/main.cpp
