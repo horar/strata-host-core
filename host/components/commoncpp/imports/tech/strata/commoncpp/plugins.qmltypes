@@ -242,5 +242,11 @@ Module {
             type: "string"
             Parameter { name: "bytes"; type: "qlonglong" }
         }
+        Method {
+            name: "formatDateTimeWithOffsetFromUtc"
+            type: "string"
+            Parameter { name: "dateTime"; type: "QDateTime" }
+            Parameter { name: "format"; type: "string" }
+        }
     }
 }

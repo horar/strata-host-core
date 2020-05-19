@@ -310,7 +310,7 @@ Item {
             onTextChanged: {
                 searchingMode = true
                 primaryLogView.height = contentView.height/1.5
-                if (searchInput.text == ""){
+                if (searchInput.text === ""){
                     searchingMode = false
                     primaryLogView.height = contentView.height
                     secondaryLogView.currentIndex = -1
