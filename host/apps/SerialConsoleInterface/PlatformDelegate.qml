@@ -35,6 +35,25 @@ FocusScope {
         id: mainPageComponent
 
         FocusScope {
+            id: mainPage
+
+            Shortcut {
+                id: clearShortcut
+                sequence: "Ctrl+D"
+                onActivated: mainPage.clearScrollback()
+            }
+
+            Shortcut {
+                id: followShortcut
+                sequence: "Ctrl+F"
+                onActivated: mainPage.toggleFollow()
+            }
+
+            Shortcut {
+                id: expandShortcut
+                sequence: "Ctrl+E"
+                onActivated: mainPage.toggleExpand()
+            }
 
             CommonCpp.SGSortFilterProxyModel {
                 id: scrollbackFilterModel
@@ -326,26 +345,21 @@ FocusScope {
                     spacing: 10
 
                     SGWidgets.SGIconButton {
-                        hintText: qsTr("Clear scrollback")
+                        text: "Clear"
+                        hintText: prettifyHintText("Clear scrollback", clearShortcut.nativeText)
                         icon.source: "qrc:/images/broom.svg"
                         iconSize: toolButtonRow.iconHeight
-                        onClicked: {
-                            scrollbackModel.clear()
-                        }
+                        onClicked: mainPage.clearScrollback()
                     }
 
                     SGWidgets.SGIconButton {
                         id: automaticScrollButton
-                        hintText: qsTr("Automatically scroll to the last message")
+                        text: "Follow"
+                        hintText: prettifyHintText("Auto scroll down when new message arrives", followShortcut.nativeText)
                         icon.source: "qrc:/sgimages/arrow-list-bottom.svg"
                         iconSize: toolButtonRow.iconHeight
                         checkable: true
-                        onClicked: {
-                            automaticScroll = !automaticScroll
-                            if (automaticScroll) {
-                                scrollbackView.positionViewAtEnd()
-                            }
-                        }
+                        onClicked: mainPage.toggleFollow()
 
                         Binding {
                             target: automaticScrollButton
@@ -355,22 +369,28 @@ FocusScope {
                     }
 
                     SGWidgets.SGIconButton {
-                        hintText: scrollbackModel.condensedMode ? qsTr("Expand all commands") : qsTr("Collapse all commands")
+                        text: scrollbackModel.condensedMode ? "Expand" : "Collapse"
+                        minimumWidthText: "Collapse"
+                        hintText: {
+                            if (scrollbackModel.condensedMode) {
+                                var t = qsTr("Expand all commands")
+                            } else {
+                                t = qsTr("Collapse all commands")
+                            }
+
+                            return prettifyHintText(t, expandShortcut.nativeText)
+                        }
                         icon.source: scrollbackModel.condensedMode ? "qrc:/images/list-expand.svg" : "qrc:/images/list-collapse.svg"
                         iconSize: toolButtonRow.iconHeight
-                        onClicked: {
-                            scrollbackModel.condensedMode = ! scrollbackModel.condensedMode
-                            scrollbackModel.setAllCondensed(scrollbackModel.condensedMode)
-                        }
+                        onClicked: mainPage.toggleExpand()
                     }
 
                     SGWidgets.SGIconButton {
-                        hintText: qsTr("Filter")
+                        text: "Filter"
+                        hintText: qsTr("Filter messages")
                         icon.source: "qrc:/sgimages/funnel.svg"
                         iconSize: toolButtonRow.iconHeight
-                        onClicked: {
-                            openFilterDialog()
-                        }
+                        onClicked: openFilterDialog()
                     }
 
                     VerticalDivider {
@@ -378,25 +398,23 @@ FocusScope {
                     }
 
                     SGWidgets.SGIconButton {
+                        text: "Export"
                         hintText: qsTr("Export to file")
                         icon.source: "qrc:/sgimages/file-export.svg"
                         iconSize: toolButtonRow.iconHeight
-                        onClicked: {
-                            showFileExportDialog()
-                        }
+                        onClicked: showFileExportDialog()
                     }
 
                     SGWidgets.SGIconButton {
-                        hintText: qsTr("Program Device")
+                        text: "Program"
+                        hintText: qsTr("Program device with new firmware")
                         icon.source: "qrc:/sgimages/chip-flash.svg"
                         iconSize: toolButtonRow.iconHeight
-                        onClicked: {
-                            stackView.push(programDeviceComponent)
-                        }
+                        onClicked: showProgramPage()
                     }
 
                     SGWidgets.SGIconButton {
-                        hintText: qsTr("Platform Info")
+                        hintText: qsTr("Platform info")
                         icon.source: "qrc:/sgimages/info-circle.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: {
@@ -519,6 +537,22 @@ FocusScope {
                     cmdInput.clear()
                 }
             }
+
+            function clearScrollback() {
+                scrollbackModel.clear()
+            }
+
+            function toggleFollow() {
+                automaticScroll = !automaticScroll
+                if (automaticScroll) {
+                    scrollbackView.positionViewAtEnd()
+                }
+            }
+
+            function toggleExpand() {
+                scrollbackModel.condensedMode = ! scrollbackModel.condensedMode
+                scrollbackModel.setAllCondensed(scrollbackModel.condensedMode)
+            }
         }
     }
 
@@ -576,6 +610,10 @@ FocusScope {
         dialog.open();
     }
 
+    function showProgramPage() {
+        stackView.push(programDeviceComponent)
+    }
+
     function prettifyJson(message, condensed) {
         if (condensed === undefined) {
             condensed = true
@@ -617,5 +655,9 @@ FocusScope {
         })
 
         dialog.open()
+    }
+
+    function prettifyHintText(hintText, shortcut) {
+        return hintText + " - " + shortcut
     }
 }

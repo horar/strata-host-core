@@ -1,4 +1,5 @@
 #include "StorageManager.h"
+#include "StorageInfo.h"
 #include "DownloadManager.h"
 #include "PlatformDocument.h"
 #include "Dispatcher.h"
@@ -54,6 +55,9 @@ void StorageManager::init()
         qCCritical(logCategoryHcsStorage) << "Base URL is empty.";
         return;
     }
+
+    StorageInfo info(nullptr, baseFolder_);
+    info.calculateSize();
 
     downloadManager_.reset(new DownloadManager);
     downloadManager_->setBaseUrl(baseUrl_);

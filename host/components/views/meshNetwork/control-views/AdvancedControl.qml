@@ -40,7 +40,7 @@ Rectangle{
 
             Text {
                 id: demoTabTitle
-                text: "demos"
+                text: "Demos"
                 font {
                     pixelSize: 24
                 }
@@ -69,7 +69,7 @@ Rectangle{
                     id:demo1Button
                     width: parent.width
                     height: 130
-                    text:"one-to-one"
+                    text:"One-to-One"
                     fontSizeMultiplier:1.5
                     color:"white"
                     icon.source: "qrc:/views/meshNetwork/images/oneToOneDemo.png"
@@ -89,7 +89,7 @@ Rectangle{
                     id:demo2Button
                     width: parent.width
                     height: 130
-                    text:"one-to-many"
+                    text:"One-to-Many"
                     fontSizeMultiplier:1.5
                     color:"white"
                     icon.source: "qrc:/views/meshNetwork/images/oneToManyDemo.png"
@@ -107,7 +107,7 @@ Rectangle{
                     id:demo3Button
                     width: parent.width
                     height: 130
-                    text:"relay"
+                    text:"Relay"
                     fontSizeMultiplier:1.5
                     color:"white"
                     icon.source: "qrc:/views/meshNetwork/images/relayDemo.png"
@@ -125,7 +125,7 @@ Rectangle{
 //                    id:demo4Button
 //                    width: parent.width
 //                    height: 130
-//                    text:"multiple model"
+//                    text:"Multiple Model"
 //                    fontSizeMultiplier:1.5
 //                    color:"white"
 //                    icon.source: "qrc:/views/meshNetwork/images/multipleModelsDemo.png"
@@ -143,7 +143,7 @@ Rectangle{
                     id:demo5Button
                     width: parent.width
                     height: 130
-                    text:"sensor"
+                    text:"Sensor"
                     fontSizeMultiplier:1.5
                     color:"white"
                     icon.source: "qrc:/views/meshNetwork/images/sensorIconFullBar.svg"
@@ -191,6 +191,7 @@ Rectangle{
 
 
 
+
         StackLayout {
             id: demoStackLayout
             anchors {
@@ -226,6 +227,16 @@ Rectangle{
         }
 
         Rectangle{
+            id:demoTabDivider
+            anchors.left:parent.left
+            anchors.leftMargin: 0
+            anchors.top:parent.top
+            anchors.bottom:parent.bottom
+            width:1
+            color:"grey"
+        }
+
+        Rectangle{
             id:demoConsoleDivider
             anchors.right:parent.right
             anchors.rightMargin: 1
@@ -233,9 +244,7 @@ Rectangle{
             anchors.bottom:parent.bottom
             width:1
             color:"grey"
-
         }
-
     }
 
     Widget09.SGSegmentedButtonStrip {
@@ -262,7 +271,7 @@ Rectangle{
 
             Widget09.SGSegmentedButton{
                 id:nodeCommunicationsSegmentedButton
-                text: qsTr("node communications")
+                text: qsTr("Node Communications")
                 activeColor: "dimgrey"
                 inactiveColor: "gainsboro"
                 textActiveColor: "white"
@@ -282,10 +291,6 @@ Rectangle{
 
                 Image{
                     id:questionMarkImage
-//                    anchors.top:parent.top
-//                    anchors.topMargin: 10
-//                    anchors.right:drawerToggleButton.left
-//                    anchors.rightMargin: 10
                     anchors.centerIn: parent
                     height:25
                     width:25
@@ -314,7 +319,7 @@ Rectangle{
         WebEngineView {
              id: webView
              anchors.fill: parent
-             url: "qrc:/views/meshNetwork/images/mesh_help.html"   //doesn't render html
+             url: "qrc:/views/meshNetwork/images/HTML/mesh_help.html"
             }
     }
 
@@ -337,7 +342,7 @@ Rectangle{
         property var message_array : []
         property var message_log: platformInterface.msg_cli.msg
         onMessage_logChanged: {
-            console.log("debug:",message_log)
+            //console.log("debug:",message_log)
             if(message_log !== "") {
                 for(var j = 0; j < messageList.model.count; j++){
                     messageList.model.get(j).color = "black"
@@ -432,7 +437,7 @@ Rectangle{
         anchors.bottom:consoleScrollView.bottom
         anchors.bottomMargin: 10
 
-        text:"clear"
+        text:"Clear"
 
         contentItem: Text {
                 text: clearButton.text
@@ -478,7 +483,7 @@ Rectangle{
             horizontalAlignment: Text.AlignLeft
 
             onAccepted: {
-                console.log("sending:",commandLineInput.text)
+                //console.log("sending:",commandLineInput.text)
                 let object = JSON.parse(commandLineInput.text)
                 try{
                     if (!object) throw "incorrect JSON";

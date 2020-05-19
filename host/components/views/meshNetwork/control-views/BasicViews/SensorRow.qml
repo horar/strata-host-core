@@ -68,7 +68,7 @@ Item {
                 anchors.top: signalStrengthButton.bottom
                 anchors.horizontalCenter: signalStrengthButton.horizontalCenter
                 anchors.topMargin: 10
-                text: "signal strength"
+                text: "Signal strength"
                 font.pixelSize: 18
                 visible: signalStrengthButton.hovered
             }
@@ -107,7 +107,7 @@ Item {
                 anchors.top: ambientLightButton.bottom
                 anchors.horizontalCenter: ambientLightButton.horizontalCenter
                 anchors.topMargin: 10
-                text: "ambient light"
+                text: "Ambient light"
                 font.pixelSize: 18
                 visible: ambientLightButton.hovered
             }
@@ -146,7 +146,7 @@ Item {
                 anchors.top: batteryChargeButton.bottom
                 anchors.horizontalCenter: batteryChargeButton.horizontalCenter
                 anchors.topMargin: 10
-                text: "battery"
+                text: "Battery"
                 font.pixelSize: 18
                 visible: batteryChargeButton.hovered
             }
@@ -185,7 +185,7 @@ Item {
                 anchors.top: temperatureButton.bottom
                 anchors.horizontalCenter: temperatureButton.horizontalCenter
                 anchors.topMargin: 10
-                text: "temperature"
+                text: "Temperature"
                 font.pixelSize: 18
                 visible: temperatureButton.hovered
             }
@@ -227,7 +227,7 @@ Item {
                 anchors.top: meshButton.bottom
                 anchors.horizontalCenter: meshButton.horizontalCenter
                 anchors.topMargin: 10
-                text: "node connections"
+                text: "Node connections"
                 font.pixelSize: 18
                 visible: meshButton.hovered
             }
@@ -264,7 +264,7 @@ Item {
                 anchors.top: clearButton.bottom
                 anchors.horizontalCenter: clearButton.horizontalCenter
                 anchors.topMargin: 10
-                text: "clear"
+                text: "Clear"
                 font.pixelSize: 18
                 visible: clearButton.hovered
             }
