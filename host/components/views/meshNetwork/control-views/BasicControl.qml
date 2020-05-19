@@ -14,6 +14,11 @@ Rectangle {
     visible: true
     //anchors.fill:parent
 
+    Component.onDestruction: {
+        console.log("closing platform")
+        consoleDrawer.exit.enabled = false
+        consoleDrawer.close();
+    }
 
     Text{
         id:viewComboLabel
@@ -21,9 +26,8 @@ Rectangle {
         anchors.leftMargin: 20
         anchors.top: parent.top
         anchors.topMargin: 20
-        text: "Virtual environment:"
+        text: "Virtual Environment:"
         font.pixelSize: 24
-
     }
 
    SGComboBox{
@@ -137,6 +141,14 @@ Rectangle {
            height: root.height
            edge: Qt.RightEdge
 
+           Overlay.modal: Rectangle {
+               color: "#66222222"
+               Component.onDestruction: {
+                   visible = false
+                   opacity = 0
+               }
+           }
+
            property bool showConsole: true
 
            Rectangle{
@@ -147,7 +159,7 @@ Rectangle {
                WebEngineView {
                     id: webView
                     anchors.fill: parent
-                    url: "qrc:/views/meshNetwork/images/mesh_help.html"   //doesn't render html
+                    url: "qrc:/views/meshNetwork/images/HTML/mesh_help.html"
                    }
            }
 
@@ -189,7 +201,7 @@ Rectangle {
                property var message_array : []
                property var message_log: platformInterface.msg_cli.msg
                onMessage_logChanged: {
-                   console.log("debug:",message_log)
+                   //console.log("debug:",message_log)
                    if(message_log !== "") {
                        for(var j = 0; j < messageList.model.count; j++){
                            messageList.model.get(j).color = "black"

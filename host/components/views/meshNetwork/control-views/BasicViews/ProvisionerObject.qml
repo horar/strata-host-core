@@ -153,9 +153,9 @@ Rectangle {
 
         property var batteryValue: platformInterface.battery_status
         onBatteryValueChanged: {
-            console.log("provisioner received battery value change",platformInterface.battery_status.uaddr,platformInterface.battery_status.battery_voltage)
+            //console.log("provisioner received battery value change",platformInterface.battery_status.uaddr,platformInterface.battery_status.battery_voltage)
             if (platformInterface.battery_status.uaddr == provisionerObject.uaddr){
-                console.log("changing batteryText for provisioner node")
+                //console.log("changing batteryText for provisioner node")
                 battery_vtg = parseFloat(platformInterface.battery_status.battery_voltage)
                 battery_lvl = parseInt(platformInterface.battery_status.battery_level)
                 if (battery_vtg !== NaN || battery_lvl !== NaN)

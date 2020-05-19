@@ -11,22 +11,6 @@ Rectangle {
     id: root
     visible: true
 
-    onVisibleChanged: {
-        if (visible){
-            console.log("smart home is now visible")
-            //deactivate all the nodes from their previous roles when switching
-            //this is a kludge, as it means nodes will not function in the roles they appear in until they're moved
-            platformInterface.set_node_mode.update("default",65535,true)
-            //iterate over the meshArray, and send role and node numbers for each
-            //meshObjectRow.meshArray.forEach(function(item, index, array){
-                //removed temporarily to stop overloading the network when changing views
-                //platformInterface.set_node_mode.update(item.pairingModel,item.nodeNumber,true)
-            //    })
-        }
-
-    }
-
-
     property int objectWidth: 50
     property int objectHeight: 50
     property int nodeWidth: 32
@@ -38,6 +22,38 @@ Rectangle {
     property int meshObjectCount:0
     property variant meshObjects
     property var dragTargets:[]
+
+    property var activeNodes:[]     //nodes which are currently populated to be used for the switch_views command
+    property var activeNodeRoles:[] //the corresponding role for each node in activeNodes
+
+    onVisibleChanged: {
+        if (visible){
+            //console.log("smart home is now visible")
+            root.getActiveNodesAndRoles();
+            platformInterface.switch_views.update(activeNodes,activeNodeRoles)
+        }
+    }
+
+    function getActiveNodesAndRoles(){
+        var currentNode = 0;
+
+        //iterate over the meshArray, but start at 2, since the node 0 is never used, and node 1 is always a provisioner
+        for(var alpha=2; alpha < meshObjectRow.meshArray.length; alpha++){
+            //check to see if this mesh object has been assigned to a numbered node
+            if (meshObjectRow.meshArray[alpha] !== undefined && meshObjectRow.meshArray[alpha].nodeNumber !== ""){
+                //console.log("looking at node",alpha,"node number is",meshObjectRow.meshArray[alpha].nodeNumber,"role is",meshObjectRow.meshArray[alpha].pairingModel);
+                //put the node number in the next spot in the activeNodes array
+                root.activeNodes[currentNode] = parseInt(meshObjectRow.meshArray[alpha].nodeNumber);
+                //put the pairing model in the next spot in the activeNodeRoles array
+                //if the node has no pairing model, use "default"
+                root.activeNodeRoles[currentNode] = meshObjectRow.meshArray[alpha].pairingModel;
+                if (root.activeNodeRoles[currentNode] === ""){
+                    root.activeNodeRoles[currentNode] = "default"
+                }
+                currentNode++;
+            }
+        }
+    }
 
 
     Row{
@@ -91,28 +107,28 @@ Rectangle {
                 for(var beta = 1; beta < meshArray.length; beta++){
                     //console.log("comparing",platformInterface.network_notification.nodes[alpha].index, meshArray[beta].nodeNumber)
                     if (meshArray[beta].nodeNumber !== "" && meshArray[beta].nodeNumber == platformInterface.network_notification.nodes[alpha].index){
-                        console.log("found node",platformInterface.network_notification.nodes[alpha].index, "at location",beta)
+                        //console.log("found node",platformInterface.network_notification.nodes[alpha].index, "at location",beta)
                         if (platformInterface.network_notification.nodes[alpha].ready === 0){
                             //remove the item from the meshArray. It's not in the network anymore
                             nodeFoundInMeshArray = true;
                             meshArray[beta].objectColor = "#d3d3d3"
                             meshArray[beta].nodeNumber = ""
-                            console.log("Removing. Node not ready")
+                            //console.log("Removing. Node not ready")
                         }
                         else if (platformInterface.network_notification.nodes[alpha].ready !== 0){
                             //the node is in both the notification and in the meshArray, no need to update anything
                             //unless this is the provisioner, in which case we'll update the color, as it doesn't start as a grey node
                             if (alpha === 1){
-                                console.log("updating provisioner color to",platformInterface.network_notification.nodes[alpha].color)
+                                //console.log("updating provisioner color to",platformInterface.network_notification.nodes[alpha].color)
                                 meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
                             }
 
-                            console.log("node",platformInterface.network_notification.nodes[alpha].index,"found in meshArray")
+                            //console.log("node",platformInterface.network_notification.nodes[alpha].index,"found in meshArray")
                             nodeFoundInMeshArray = true;
                         }
                     }   //if node numbers match
                 }   //beta for loop
-                console.log("finished looking for node",platformInterface.network_notification.nodes[alpha].index,"found=",nodeFoundInMeshArray,"ready=",platformInterface.network_notification.nodes[alpha].ready)
+                //console.log("finished looking for node",platformInterface.network_notification.nodes[alpha].index,"found=",nodeFoundInMeshArray,"ready=",platformInterface.network_notification.nodes[alpha].ready)
                 if (!nodeFoundInMeshArray && platformInterface.network_notification.nodes[alpha].ready !== 0){
                     //we looked through the whole meshArray, and didn't find the nodeNumber that was in the notification
                     //so we should add this node in an empty slot
@@ -143,7 +159,7 @@ Rectangle {
             var theNodeNumber = platformInterface.node_added.index
             var emptySlot = theNodeNumber
 
-            console.log("adding new node",platformInterface.node_added.index)
+            //console.log("adding new node",platformInterface.node_added.index)
             if (theNodeNumber !== 1 && (meshArray[theNodeNumber].objectColor != "lightgrey")){
                 emptySlot = findEmptySlot(theNodeNumber)
                 console.log("node not empty, adding in position",emptySlot)
@@ -191,6 +207,57 @@ Rectangle {
         fillMode: Image.PreserveAspectFit
         mipmap:true
         opacity:1
+
+        function toggleWindow(){
+           if (platformInterface.window_shade.value === "open")
+                platformInterface.window_shade.value = "closed"
+              else
+                platformInterface.window_shade.value = "open"
+
+           var doorState = platformInterface.smarthome_door.value
+           var windowState = platformInterface.window_shade.value
+           if (doorState === "open" && windowState === "open")
+                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpenWindowOpen.jpg"
+             else if (doorState === "open" && windowState === "closed")
+                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
+             else if (doorState === "closed" && windowState === "open")
+               mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
+             else if (doorState === "closed" && windowState === "closed")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+        }
+
+        function setColor(inColor){
+            if (inColor === "white")
+              mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+            else if (inColor === "black")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOff.jpg"
+            else if (inColor === "blue")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_blue.jpg"
+            else if (inColor === "green")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_green.jpg"
+            else if (inColor === "purple")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_purple.jpg"
+            else if (inColor === "orange")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_orange.jpg"
+        }
+
+        function toggleDoor(){
+            if (platformInterface.smarthome_door.value === "open")
+                 platformInterface.smarthome_door.value = "closed"
+               else
+                 platformInterface.smarthome_door.value = "open"
+
+            var doorState = platformInterface.smarthome_door.value
+            var windowState = platformInterface.window_shade.value
+            if (doorState === "open" && windowState === "open")
+                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpenWindowOpen.jpg"
+              else if (doorState === "open" && windowState === "closed")
+                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
+              else if (doorState === "closed" && windowState === "open")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
+              else if (doorState === "closed" && windowState === "closed")
+                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+        }
 
         property var color: platformInterface.room_color_notification
         onColorChanged: {
@@ -321,7 +388,7 @@ Rectangle {
                             else if (platformInterface.network_notification.nodes[alpha].ready !== 0){
                                 //the node is in both the notification and in the targetArray, no need to update anything
                                 if (alpha === 1){
-                                    console.log("updating provisioner color to",platformInterface.network_notification.nodes[alpha].color)
+                                    //console.log("updating provisioner color to",platformInterface.network_notification.nodes[alpha].color)
                                     targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
                                 }
                                 nodeFoundInTargetArray = true;
@@ -354,12 +421,17 @@ Rectangle {
 
             property var newNodeAdded: platformInterface.node_added
             onNewNodeAddedChanged: {
-
                 var theNodeNumber = platformInterface.node_added.index
+                var emptySlot = theNodeNumber
 
-                targetArray[theNodeNumber].nodeNumber = platformInterface.node_added.index
-                targetArray[theNodeNumber].color = platformInterface.node_added.color
-                console.log("new node added",theNodeNumber,"to role",targetArray[theNodeNumber].nodeType)
+                if (theNodeNumber !== 1 && (targetArray[theNodeNumber].color != "transparent")){
+                    emptySlot = findEmptySlot(theNodeNumber)
+                    //console.log("node not empty, adding in position",emptySlot)
+                }
+
+                targetArray[emptySlot].nodeNumber = platformInterface.node_added.index
+                targetArray[emptySlot].color = platformInterface.node_added.color
+                //console.log("new node added",theNodeNumber,"to role",targetArray[theNodeNumber].nodeType)
             }
 
             property var nodeRemoved: platformInterface.node_removed
@@ -407,6 +479,8 @@ Rectangle {
                 nodeType:"window_shade"
                 scene:"smart_home"
                 nodeNumber:""
+
+                onToggleWindow: mainImage.toggleWindow();
             }
 
             DragTarget{
@@ -420,6 +494,8 @@ Rectangle {
                 scene:"smart_home"
                 nodeType: "smarthome_door"
                 nodeNumber:""
+
+                onToggleDoor: mainImage.toggleDoor();
             }
 
             DragTarget{
@@ -433,6 +509,8 @@ Rectangle {
                 scene:"smart_home"
                 nodeType:"smarthome_lights"
                 nodeNumber:""
+
+                onSetRoomColor: mainImage.setColor(inColor)
             }
             DragTarget{
                 id:target4

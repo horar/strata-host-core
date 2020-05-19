@@ -324,63 +324,23 @@ Rectangle {
                 }
             }
 
-            Button {
-                id: networkPlusDimmer
-                text: "network+doorbell"
+                        Button {
+                            id: temperature
+                            text: "temperature"
 
-                onClicked: {
+                            onClicked: {
 
-                    CorePlatformInterface.data_source_handler('{
-                                            "value":"network_notification",
-                                            "payload":{
-                                                "nodes":[{
-                                                    "index":0,
-                                                    "ready":0,
-                                                    "color":"#0000FF"
-                                                    },
-                                                    {
-                                                    "index":1,
-                                                    "ready":1,
-                                                    "color":"#0000FF"
-                                                    },
-                                                    {
-                                                    "index":2,
-                                                    "ready":1,
-                                                    "color":"#FF00FF"
-                                                    },
-                                                    {"index":3,
-                                                    "ready":1,
-                                                    "color":"#00FFFF"
-                                                    },{
-                                                    "index":4,
-                                                    "ready":0,
-                                                    "color":"#7BFF00"
-                                                    },{
-                                                    "index":5,
-                                                    "ready":0,
-                                                    "color":"#FFFF00"
-                                                    },{
-                                                    "index":6,
-                                                    "ready":0,
-                                                    "color":"#7B00FF"
-                                                    },{
-                                                    "index":7,
-                                                    "ready":0,
-                                                    "color":"#00FF52"
-                                                    },{
-                                                    "index":8,
-                                                    "ready":0,
-                                                    "color":"#FF5200"
-                                                    },{
-                                                    "index":9,
-                                                    "ready":0,
-                                                    "color":"#FFFFFF"
-                                                    }]
-                                                }
-                                            }')
+                                CorePlatformInterface.data_source_handler('{
+                                "value":"sensor_status",
+                                "payload":{
+                                    "uaddr":2,
+                                    "sensor_type":"temperature",
+                                    "data": '+ ((Math.random() * 200).toFixed(0)) +'
+                                    }
+                                }')
+                                }
+                        }
 
-                }
-            }
 
 //            Button {
 //                id: rssi
