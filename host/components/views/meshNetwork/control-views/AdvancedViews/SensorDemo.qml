@@ -210,7 +210,7 @@ Rectangle {
     }
 
     Image{
-        id:arrowImage
+        id:rightArrowImage
         anchors.left:nodeRectangle.right
         anchors.leftMargin: 10
         anchors.right:bulbNodeRectangle.left
@@ -225,8 +225,8 @@ Rectangle {
         Text{
             property int address: root.sensorNodeID
             id:messageText
-            anchors.top:parent.bottom
-            anchors.topMargin: 10
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin: 30
             anchors.horizontalCenter: parent.horizontalCenter
             text:{
                 if (address != 0)
@@ -236,13 +236,25 @@ Rectangle {
             }
             font.pixelSize: 18
         }
+    }
+
+    Image{
+        id:leftArrowImage
+        anchors.top:rightArrowImage.bottom
+        anchors.topMargin: 10
+        anchors.horizontalCenter : rightArrowImage.horizontalCenter
+        source: "qrc:/views/meshNetwork/images/leftArrow.svg"
+        height:25
+        sourceSize: Qt.size(width, height)
+        fillMode: Image.PreserveAspectFit
+        mipmap:true
 
         Text{
             id:temperatureText
-            anchors.top: messageText.bottom
-            anchors.topMargin: 40
-            anchors.horizontalCenter: messageText.horizontalCenter
-            font.pixelSize: 24
+            anchors.top: parent.bottom
+            anchors.topMargin: 20
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.pixelSize: 18
             text:""
             visible:false
 
@@ -251,10 +263,12 @@ Rectangle {
                 if (platformInterface.sensor_status.uaddr === root.sensorNodeID)
                     if (platformInterface.sensor_status.sensor_type === "temperature"){
                         temperatureText.visible = true
-                        temperatureText.text = "current temperature is " + platformInterface.sensor_status.data + "°C"
+                        temperatureText.text = "Current temperature is " + platformInterface.sensor_status.data + "°C"
                     }
             }
         }
+
+
     }
 
     Rectangle{
