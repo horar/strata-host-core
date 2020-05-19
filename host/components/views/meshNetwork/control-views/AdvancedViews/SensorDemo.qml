@@ -203,19 +203,8 @@ Rectangle {
         anchors.leftMargin:parent.width*.1
         anchors.verticalCenter: parent.verticalCenter
 
-        property var demo: platformInterface.one_to_one_demo
-        onDemoChanged:{
-            if (platformInterface.one_to_one_demo.light === "on"){
-                switchOutline.isOn = true;
-            }
-            else{
-                switchOutline.isOn = false;
-            }
-
-        }
-
         onClicked:{
-            platformInterface.get_sensor(root.sensorNodeID,"temperature")
+            platformInterface.get_sensor.update(root.sensorNodeID,"temperature")
             switchOutline.isOn = ! switchOutline.isOn
         }
     }

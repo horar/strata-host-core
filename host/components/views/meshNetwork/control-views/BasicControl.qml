@@ -36,7 +36,7 @@ Rectangle {
        anchors.left:viewComboLabel.right
        anchors.leftMargin: 5
        width: 200
-       model: [ "Office", "Smart home"]
+       model: [ "Office", "Smart Home"]
        fontSizeMultiplier: 1.75
 
        onCurrentIndexChanged: {
