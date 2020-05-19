@@ -1,24 +1,15 @@
-#include "SerialDevice.h"
+#include <Device/Serial/SerialDevice.h>
 #include "SerialDeviceConstants.h"
 
 #include "logging/LoggingQtCategories.h"
-
-#include <rapidjson/document.h>
-#include <rapidjson/error/en.h>
-#include <rapidjson/writer.h>
 
 #include <QMutexLocker>
 #include <QReadLocker>
 #include <QWriteLocker>
 
-namespace strata {
+namespace strata::device::serial {
 
-QDebug operator<<(QDebug dbg, const SerialDevice* d) {
-    return dbg.nospace() << "Serial device 0x" << hex << static_cast<uint>(d->deviceId_) << ": ";
-}
-
-SerialDevice::SerialDevice(const int deviceId, const QString& name) :
-    deviceId_(deviceId), portName_(name), operationLock_(0)
+SerialDevice::SerialDevice(const int deviceId, const QString& name) : Device(deviceId, name, Type::SerialDevice)
 {
     readBuffer_.reserve(READ_BUFFER_SIZE);
 
@@ -27,7 +18,7 @@ SerialDevice::SerialDevice(const int deviceId, const QString& name) :
     connect(this, &SerialDevice::writeToPort, this, &SerialDevice::handleWriteToPort);
 
     qCDebug(logCategorySerialDevice).nospace() << "Created new serial device 0x" << hex << static_cast<uint>(deviceId_)
-                                               << ", name: " << portName_ << ", unique ID: 0x" << reinterpret_cast<quintptr>(this);
+                                               << ", name: " << deviceName_ << ", unique ID: 0x" << reinterpret_cast<quintptr>(this);
 }
 
 SerialDevice::~SerialDevice() {
@@ -42,7 +33,7 @@ bool SerialDevice::open() {
         return true;
     }
 
-    serialPort_.setPortName(portName_);
+    serialPort_.setPortName(deviceName_);
     serialPort_.setBaudRate(QSerialPort::Baud115200);
     serialPort_.setDataBits(QSerialPort::Data8);
     serialPort_.setParity(QSerialPort::NoParity);
@@ -115,12 +106,12 @@ bool SerialDevice::writeData(const QByteArray data, quintptr lockId) {
     } else {
         QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
         qCWarning(logCategorySerialDevice).noquote() << this << errMsg;
-        emit serialDeviceError(ErrorCode::DeviceBusy, errMsg);
+        emit deviceError(ErrorCode::DeviceBusy, errMsg);
         return false;
     }
 }
 
-SerialDevice::ErrorCode SerialDevice::translateQSerialPortError(QSerialPort::SerialPortError error) {
+Device::ErrorCode SerialDevice::translateQSerialPortError(QSerialPort::SerialPortError error) {
     switch (error) {
         case QSerialPort::SerialPortError::NoError :
             return ErrorCode::NoError;
@@ -167,7 +158,7 @@ void SerialDevice::handleWriteToPort(const QByteArray data) {
     } else {
         QString errMsg(QStringLiteral("Cannot write whole data to device."));
         qCCritical(logCategorySerialDevice).noquote() << this << errMsg;
-        emit serialDeviceError(ErrorCode::SendMessageError, errMsg);
+        emit deviceError(ErrorCode::SendMessageError, errMsg);
     }
 }
 
@@ -182,10 +173,11 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
         else {
             qCCritical(logCategorySerialDevice).noquote() << this << errMsg;
         }
-        emit serialDeviceError(translateQSerialPortError(error), serialPort_.errorString());
+        emit deviceError(translateQSerialPortError(error), serialPort_.errorString());
     }
 }
 
+// DEPRECATED
 QVariantMap SerialDevice::getDeviceInfo() {
     QReadLocker rLock(&properiesLock_);
     QVariantMap result;
@@ -199,55 +191,5 @@ QVariantMap SerialDevice::getDeviceInfo() {
     return result;
 }
 
-QString SerialDevice::property(DeviceProperties property) {
-    QReadLocker rLock(&properiesLock_);
-    switch (property) {
-        case DeviceProperties::deviceName:
-            return portName_;
-        case DeviceProperties::verboseName :
-            return verboseName_;
-        case DeviceProperties::platformId :
-            return platformId_;
-        case DeviceProperties::classId :
-            return classId_;
-        case DeviceProperties::bootloaderVer :
-            return bootloaderVer_;
-        case DeviceProperties::applicationVer :
-            return applicationVer_;
-    }
-    return QString();
-}
-
-int SerialDevice::deviceId() const {
-    return deviceId_;
-}
-
-void SerialDevice::setProperties(const char* verboseName, const char* platformId, const char* classId, const char* btldrVer, const char* applVer) {
-    QWriteLocker wLock(&properiesLock_);
-    if (verboseName) { verboseName_ = verboseName; }
-    if (platformId)  { platformId_ = platformId; }
-    if (classId)     { classId_ = classId; }
-    if (btldrVer)    { bootloaderVer_ = btldrVer; }
-    if (applVer)     { applicationVer_ = applVer; }
-}
-
-bool SerialDevice::lockDeviceForOperation(quintptr lockId) {
-    QMutexLocker lock(&operationMutex_);
-    if (operationLock_ == 0 && lockId != 0) {
-        operationLock_ = lockId;
-        return true;
-    }
-    if (operationLock_ == lockId && lockId != 0) {
-        return true;
-    }
-    return false;
-}
-
-void SerialDevice::unlockDevice(quintptr lockId) {
-    QMutexLocker lock(&operationMutex_);
-    if (operationLock_ == lockId) {
-        operationLock_ = 0;
-    }
-}
-
 }  // namespace
+

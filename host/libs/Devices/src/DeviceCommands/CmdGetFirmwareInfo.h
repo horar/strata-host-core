@@ -7,7 +7,7 @@ namespace strata {
 
 class CmdGetFirmwareInfo : public BaseDeviceCommand {
 public:
-    CmdGetFirmwareInfo(const SerialDevicePtr& device, bool requireResponse);
+    CmdGetFirmwareInfo(const device::DevicePtr& device, bool requireResponse);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
     void onTimeout() override;

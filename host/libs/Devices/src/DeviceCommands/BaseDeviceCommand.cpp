@@ -4,7 +4,7 @@
 
 namespace strata {
 
-BaseDeviceCommand::BaseDeviceCommand(const SerialDevicePtr& device, const QString& commandName) :
+BaseDeviceCommand::BaseDeviceCommand(const device::DevicePtr& device, const QString& commandName) :
     cmdName_(commandName), device_(device), ackReceived_(false), result_(CommandResult::InProgress) { }
 
 BaseDeviceCommand::~BaseDeviceCommand() { }

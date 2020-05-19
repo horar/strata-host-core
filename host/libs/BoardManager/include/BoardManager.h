@@ -13,8 +13,8 @@
 #include <QSharedPointer>
 #include <QMutex>
 
-#include <SerialDevice.h>
-#include <DeviceProperties.h>
+#include <Device/Device.h>
+#include <Device/DeviceProperties.h>
 
 
 namespace strata {
@@ -66,7 +66,7 @@ namespace strata {
          * Get smart pointer to the device.
          * @param deviceId device ID
          */
-        SerialDevicePtr device(const int deviceId);
+        device::DevicePtr device(const int deviceId);
 
         /**
          * Get information about connected device (platform ID, bootloader version, ...).
@@ -89,7 +89,7 @@ namespace strata {
          * @return QString filled with value of required property
          */
         [[deprecated("Do not use this function anymore, it will be deleted soon.")]]
-        QString getDeviceProperty(const int connectionId, const DeviceProperties property);
+        QString getDeviceProperty(const int connectionId, const device::DeviceProperties property);
 
     signals:
         /**
@@ -136,7 +136,7 @@ namespace strata {
         void handleNewMessage(QString message);  // DEPRECATED
         void handleOperationFinished(DeviceOperation operation, int);
         void handleOperationError(QString message);
-        void handleSerialDeviceError(SerialDevice::ErrorCode errCode, QString errStr);
+        void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
 
     private:
         void computeListDiff(std::set<int>& list, std::set<int>& added_ports, std::set<int>& removed_ports);
@@ -154,9 +154,9 @@ namespace strata {
         // and deadlock can occur if from QML is called another function which uses same mutex).
         std::set<int> serialPortsList_;
         QHash<int, QString> serialIdToName_;
-        QHash<int, SerialDevicePtr> openedSerialPorts_;
+        QHash<int, device::DevicePtr> openedSerialPorts_;
 
-        QHash<int, QSharedPointer<DeviceOperations>> serialDeviceOperations_;
+        QHash<int, QSharedPointer<DeviceOperations>> deviceOperations_;
 
         // flag if require response to get_firmware_info command
         bool reqFwInfoResp_;

@@ -9,7 +9,7 @@
 #include <QTimer>
 #include <QVector>
 
-#include <SerialDevice.h>
+#include <Device/Device.h>
 
 #include <DeviceOperationsFinished.h>
 
@@ -44,7 +44,7 @@ public:
      * DeviceOperations constructor.
      * \param device device which will be used by DeviceOperations
      */
-    DeviceOperations(const SerialDevicePtr& device);
+    DeviceOperations(const device::DevicePtr& device);
 
     /*!
      * DeviceOperations destructor.
@@ -125,7 +125,7 @@ private slots:
     void handleSendCommand();
     void handleDeviceResponse(const QByteArray& data);
     void handleResponseTimeout();
-    void handleSerialDeviceError(SerialDevice::ErrorCode errCode, QString msg);
+    void handleDeviceError(device::Device::ErrorCode errCode, QString msg);
 
 private:
     bool startOperation(DeviceOperation operation);
@@ -133,7 +133,7 @@ private:
     void finishOperation(DeviceOperation operation, int data = OPERATION_DEFAULT_DATA);
     void reset();
 
-    SerialDevicePtr device_;
+    device::DevicePtr device_;
     uint deviceId_;
 
     QTimer responseTimer_;

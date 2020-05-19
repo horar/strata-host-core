@@ -7,7 +7,7 @@ namespace strata {
 
 class CmdRequestPlatformId : public BaseDeviceCommand {
 public:
-    CmdRequestPlatformId(const SerialDevicePtr& device, uint maxRetries = 0);
+    CmdRequestPlatformId(const device::DevicePtr& device, uint maxRetries = 0);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
     void onTimeout() override;

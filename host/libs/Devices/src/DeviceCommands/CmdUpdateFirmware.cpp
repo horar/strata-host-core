@@ -7,7 +7,7 @@
 
 namespace strata {
 
-CmdUpdateFirmware::CmdUpdateFirmware(const SerialDevicePtr& device) :
+CmdUpdateFirmware::CmdUpdateFirmware(const device::DevicePtr& device) :
     BaseDeviceCommand(device, QStringLiteral("update_firmware")) { }
 
 QByteArray CmdUpdateFirmware::message() {
@@ -25,7 +25,7 @@ bool CmdUpdateFirmware::processNotification(rapidjson::Document& doc) {
 }
 
 bool CmdUpdateFirmware::skip() {
-    if (device_->property(DeviceProperties::verboseName) == QSTR_BOOTLOADER) {
+    if (device_->property(device::DeviceProperties::verboseName) == QSTR_BOOTLOADER) {
         qCInfo(logCategoryDeviceOperations) << device_.get() << "Platform already in bootloader mode. Ready for firmware operations.";
         result_ = CommandResult::FinaliseOperation;
         return true;

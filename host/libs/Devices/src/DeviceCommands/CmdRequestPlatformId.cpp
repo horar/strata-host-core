@@ -7,7 +7,7 @@
 
 namespace strata {
 
-CmdRequestPlatformId::CmdRequestPlatformId(const SerialDevicePtr& device, uint maxRetries) :
+CmdRequestPlatformId::CmdRequestPlatformId(const device::DevicePtr& device, uint maxRetries) :
     BaseDeviceCommand(device, QStringLiteral("request_platform_id")), maxRetries_(maxRetries), retriesCount_(0) { }
 
 QByteArray CmdRequestPlatformId::message() {

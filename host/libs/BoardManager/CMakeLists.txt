@@ -25,7 +25,7 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC Qt5::SerialPort
     PUBLIC QtLogger
-    PUBLIC SerialDevice
+    PUBLIC Device
     PRIVATE DeviceOperations
 )
 

@@ -8,7 +8,7 @@
 
 #include <rapidjson/document.h>
 
-#include <SerialDevice.h>
+#include <Device/Device.h>
 
 namespace strata {
 
@@ -28,7 +28,7 @@ public:
      * \param name command name
      * \param device the device on which the operation is performed
      */
-    BaseDeviceCommand(const SerialDevicePtr& device, const QString& name);
+    BaseDeviceCommand(const device::DevicePtr& device, const QString& name);
 
     /*!
      * BaseDeviceCommand destructor.
@@ -114,7 +114,7 @@ public:
 protected:
     virtual void setDeviceProperties(const char* name, const char* platformId, const char* classId, const char* btldrVer, const char* applVer) final;
     const QString cmdName_;
-    const SerialDevicePtr& device_;
+    const device::DevicePtr& device_;
     bool ackReceived_;
     CommandResult result_;
 };

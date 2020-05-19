@@ -1,7 +1,6 @@
 #include "Flasher.h"
 #include "FlasherConstants.h"
 
-#include <SerialDevice.h>
 #include <DeviceProperties.h>
 #include <DeviceOperations.h>
 #include <DeviceOperationsFinished.h>
@@ -14,7 +13,7 @@ QDebug operator<<(QDebug dbg, const Flasher* f) {
     return dbg.nospace() << "Device 0x" << hex << f->deviceId_ << ": ";
 }
 
-Flasher::Flasher(const SerialDevicePtr& device, const QString& firmwareFilename) :
+Flasher::Flasher(const device::DevicePtr& device, const QString& firmwareFilename) :
     device_(device), fwFile_(firmwareFilename)
 {
     deviceId_ = static_cast<uint>(device_->deviceId());

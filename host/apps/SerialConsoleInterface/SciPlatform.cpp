@@ -1,5 +1,5 @@
 #include "SciPlatform.h"
-#include <DeviceProperties.h>
+#include <Device/DeviceProperties.h>
 #include "logging/LoggingQtCategories.h"
 
 #include <QJsonDocument>
@@ -34,7 +34,7 @@ int SciPlatform::deviceId()
     return deviceId_;
 }
 
-void SciPlatform::setDevice(strata::SerialDevicePtr device)
+void SciPlatform::setDevice(strata::device::DevicePtr device)
 {
     if (device == nullptr) {
         if (status_ == PlatformStatus::Disconnected) {
@@ -49,9 +49,9 @@ void SciPlatform::setDevice(strata::SerialDevicePtr device)
         device_ = device;
         deviceId_ = device_->deviceId();
 
-        connect(device_.get(), &strata::SerialDevice::msgFromDevice, this, &SciPlatform::messageFromDeviceHandler);
-        connect(device_.get(), &strata::SerialDevice::messageSent, this, &SciPlatform::messageToDeviceHandler);
-        connect(device_.get(), &strata::SerialDevice::serialDeviceError, this, &SciPlatform::deviceErrorHandler);
+        connect(device_.get(), &strata::device::Device::msgFromDevice, this, &SciPlatform::messageFromDeviceHandler);
+        connect(device_.get(), &strata::device::Device::messageSent, this, &SciPlatform::messageToDeviceHandler);
+        connect(device_.get(), &strata::device::Device::deviceError, this, &SciPlatform::deviceErrorHandler);
 
         setStatus(PlatformStatus::Connected);
     }
@@ -143,9 +143,9 @@ void SciPlatform::resetPropertiesFromDevice()
         return;
     }
 
-    QString verboseName = device_->property(strata::DeviceProperties::verboseName);
-    QString appVersion = device_->property(strata::DeviceProperties::applicationVer);
-    QString bootloaderVersion = device_->property(strata::DeviceProperties::bootloaderVer);
+    QString verboseName = device_->property(strata::device::DeviceProperties::verboseName);
+    QString appVersion = device_->property(strata::device::DeviceProperties::applicationVer);
+    QString bootloaderVersion = device_->property(strata::device::DeviceProperties::bootloaderVer);
 
     if (verboseName.isEmpty()) {
         if (appVersion.isEmpty() == false) {
@@ -255,7 +255,7 @@ void SciPlatform::messageToDeviceHandler(QByteArray message)
     scrollbackModel_->append(message, SciScrollbackModel::MessageType::Request);
 }
 
-void SciPlatform::deviceErrorHandler(strata::SerialDevice::ErrorCode errorCode, QString errorString)
+void SciPlatform::deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString)
 {
     Q_UNUSED(errorCode);
     setErrorString(errorString);

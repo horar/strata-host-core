@@ -5,7 +5,7 @@
 
 namespace strata {
 
-CmdStartApplication::CmdStartApplication(const SerialDevicePtr& device) :
+CmdStartApplication::CmdStartApplication(const device::DevicePtr& device) :
     BaseDeviceCommand(device, QStringLiteral("start_application")) { }
 
 QByteArray CmdStartApplication::message() {

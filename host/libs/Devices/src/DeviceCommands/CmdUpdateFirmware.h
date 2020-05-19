@@ -7,7 +7,7 @@ namespace strata {
 
 class CmdUpdateFirmware : public BaseDeviceCommand {
 public:
-    CmdUpdateFirmware(const SerialDevicePtr& device);
+    CmdUpdateFirmware(const device::DevicePtr& device);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
     bool skip() override;

@@ -7,7 +7,7 @@ namespace strata {
 
 class CmdStartApplication : public BaseDeviceCommand {
 public:
-    CmdStartApplication(const SerialDevicePtr& device);
+    CmdStartApplication(const device::DevicePtr& device);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
 };

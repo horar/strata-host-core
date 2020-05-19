@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include <SerialDevice.h>
+#include <Device/Device.h>
 
 namespace strata {
 
@@ -36,7 +36,7 @@ class Flasher : public QObject
          * \param device device which will be used by Flasher
          * \param firmwareFilename path to firmware file
          */
-        Flasher(const SerialDevicePtr& device, const QString& firmwareFilename);
+        Flasher(const device::DevicePtr& device, const QString& firmwareFilename);
 
         /*!
          * Flasher destructor.
@@ -110,7 +110,7 @@ class Flasher : public QObject
         void handleBackupFirmware(int chunkNumber);
         void finish(Result result);
 
-        SerialDevicePtr device_;
+        device::DevicePtr device_;
 
         QFile fwFile_;
 

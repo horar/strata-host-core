@@ -1,7 +1,8 @@
 #include "Commands.h"
 #include "SerialPortList.h"
 #include "logging/LoggingQtCategories.h"
-#include <SerialDevice.h>
+#include <Device/Device.h>
+#include <Device/Serial/SerialDevice.h>
 #include <Flasher.h>
 
 #include <cstdlib>
@@ -86,8 +87,9 @@ void FirmwareCommand::process() {
         return;
     }
 
-    SerialDevicePtr device = std::make_shared<SerialDevice>(static_cast<int>(qHash(name)), name);
-    if (device->open() == false) {
+    device::DevicePtr device = std::make_shared<device::serial::SerialDevice>(static_cast<int>(qHash(name)), name);
+    device::serial::SerialDevice *serialDevice = dynamic_cast<device::serial::SerialDevice*>(device.get());
+    if (serialDevice == nullptr || serialDevice->open() == false) {
         qCCritical(logCategoryFlasherCli) << "Cannot open board (serial device)" << name;
         emit finished(EXIT_FAILURE);
         return;

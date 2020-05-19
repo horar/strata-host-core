@@ -13,7 +13,7 @@
 
 namespace strata {
 
-CmdFlashFirmware::CmdFlashFirmware(const SerialDevicePtr& device) :
+CmdFlashFirmware::CmdFlashFirmware(const device::DevicePtr& device) :
     BaseDeviceCommand(device, QStringLiteral("flash_firmware")),
     chunkNumber_(0), maxRetries_(MAX_CHUNK_RETRIES), retriesCount_(0) { }
 

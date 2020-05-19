@@ -15,7 +15,7 @@ QDebug operator<<(QDebug dbg, const DeviceOperations* devOp) {
     return dbg.nospace().noquote() << "Device 0x" << hex << devOp->deviceId_ << ": ";
 }
 
-DeviceOperations::DeviceOperations(const SerialDevicePtr& device) :
+DeviceOperations::DeviceOperations(const device::DevicePtr& device) :
     device_(device), responseTimer_(this), operation_(DeviceOperation::None)
 {
     deviceId_ = static_cast<uint>(device_->deviceId());
@@ -26,8 +26,8 @@ DeviceOperations::DeviceOperations(const SerialDevicePtr& device) :
     currentCommand_ = commandList_.end();
 
     connect(this, &DeviceOperations::sendCommand, this, &DeviceOperations::handleSendCommand, Qt::QueuedConnection);
-    connect(device_.get(), &SerialDevice::msgFromDevice, this, &DeviceOperations::handleDeviceResponse);
-    connect(device_.get(), &SerialDevice::serialDeviceError, this, &DeviceOperations::handleSerialDeviceError);
+    connect(device_.get(), &device::Device::msgFromDevice, this, &DeviceOperations::handleDeviceResponse);
+    connect(device_.get(), &device::Device::deviceError, this, &DeviceOperations::handleDeviceError);
     connect(&responseTimer_, &QTimer::timeout, this, &DeviceOperations::handleResponseTimeout);
 
     qCDebug(logCategoryDeviceOperations) << this << "Created object for device operations.";
@@ -219,7 +219,7 @@ void DeviceOperations::handleResponseTimeout() {
     }
 }
 
-void DeviceOperations::handleSerialDeviceError(SerialDevice::ErrorCode errCode, QString msg) {
+void DeviceOperations::handleDeviceError(device::Device::ErrorCode errCode, QString msg) {
     Q_UNUSED(errCode)
     responseTimer_.stop();
     reset();

@@ -116,14 +116,14 @@ void PlatformIdentificationTest::flashCompletedHandler(bool exitedNormally) {
 }
 
 void PlatformIdentificationTest::identifyPlatform(bool deviceRecognized) {
-    strata::SerialDevicePtr testDevice = boardManager_.device(testDeviceId_);
+    strata::device::DevicePtr testDevice = boardManager_.device(testDeviceId_);
     // determine if the test passed or not
     bool testPassed = false;
     
     // if device not recognized, doesn't have name, or doesn't have class id then it fails.
     if ( deviceRecognized == false
-         || testDevice->property(strata::DeviceProperties::classId).isEmpty()
-         || testDevice->property(strata::DeviceProperties::verboseName).isEmpty()) {
+         || testDevice->property(strata::device::DeviceProperties::classId).isEmpty()
+         || testDevice->property(strata::device::DeviceProperties::verboseName).isEmpty()) {
         testPassed = false;
     } else {
         testPassed = true;
@@ -131,22 +131,22 @@ void PlatformIdentificationTest::identifyPlatform(bool deviceRecognized) {
 
     if (testDevice != nullptr) {
         std::cout << "bin name: " << binaryFileNameList_[currentBinaryFileIndex_].toStdString() << std::endl;
-        std::cout << "class id: " << testDevice->property(strata::DeviceProperties::classId).toStdString() << std::endl;
-        std::cout << "device name: " << testDevice->property(strata::DeviceProperties::deviceName).toStdString() << std::endl;
-        std::cout << "platform id: " << testDevice->property(strata::DeviceProperties::platformId).toStdString() << std::endl;
-        std::cout << "verbose name: " << testDevice->property(strata::DeviceProperties::verboseName).toStdString() << std::endl;
-        std::cout << "bootloader version: " << testDevice->property(strata::DeviceProperties::bootloaderVer).toStdString() << std::endl;
-        std::cout << "application version: " << testDevice->property(strata::DeviceProperties::applicationVer).toStdString() << std::endl;
+        std::cout << "class id: " << testDevice->property(strata::device::DeviceProperties::classId).toStdString() << std::endl;
+        std::cout << "device name: " << testDevice->property(strata::device::DeviceProperties::deviceName).toStdString() << std::endl;
+        std::cout << "platform id: " << testDevice->property(strata::device::DeviceProperties::platformId).toStdString() << std::endl;
+        std::cout << "verbose name: " << testDevice->property(strata::device::DeviceProperties::verboseName).toStdString() << std::endl;
+        std::cout << "bootloader version: " << testDevice->property(strata::device::DeviceProperties::bootloaderVer).toStdString() << std::endl;
+        std::cout << "application version: " << testDevice->property(strata::device::DeviceProperties::applicationVer).toStdString() << std::endl;
 
         // Append to the test summary list
         testSummaryList_.push_back({
                                        binaryFileNameList_[currentBinaryFileIndex_],
-                                       testDevice->property(strata::DeviceProperties::deviceName),
-                                       testDevice->property(strata::DeviceProperties::verboseName),
-                                       testDevice->property(strata::DeviceProperties::classId),
-                                       testDevice->property(strata::DeviceProperties::platformId),
-                                       testDevice->property(strata::DeviceProperties::bootloaderVer),
-                                       testDevice->property(strata::DeviceProperties::applicationVer),
+                                       testDevice->property(strata::device::DeviceProperties::deviceName),
+                                       testDevice->property(strata::device::DeviceProperties::verboseName),
+                                       testDevice->property(strata::device::DeviceProperties::classId),
+                                       testDevice->property(strata::device::DeviceProperties::platformId),
+                                       testDevice->property(strata::device::DeviceProperties::bootloaderVer),
+                                       testDevice->property(strata::device::DeviceProperties::applicationVer),
                                        deviceRecognized,
                                        testPassed
                                    });

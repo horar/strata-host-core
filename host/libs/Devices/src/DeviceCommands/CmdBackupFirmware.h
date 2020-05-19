@@ -9,7 +9,7 @@ namespace strata {
 
 class CmdBackupFirmware : public BaseDeviceCommand {
 public:
-    CmdBackupFirmware(const SerialDevicePtr& device, QVector<quint8>& chunk);
+    CmdBackupFirmware(const device::DevicePtr& device, QVector<quint8>& chunk);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
     bool logSendMessage() const override;

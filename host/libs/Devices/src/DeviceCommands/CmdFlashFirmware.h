@@ -9,7 +9,7 @@ namespace strata {
 
 class CmdFlashFirmware : public BaseDeviceCommand {
 public:
-    CmdFlashFirmware(const SerialDevicePtr& device);
+    CmdFlashFirmware(const device::DevicePtr& device);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
     bool logSendMessage() const override;

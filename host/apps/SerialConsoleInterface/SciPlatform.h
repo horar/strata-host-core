@@ -38,7 +38,7 @@ public:
     Q_ENUM(PlatformStatus)
 
     int deviceId();
-    void setDevice(strata::SerialDevicePtr device);
+    void setDevice(strata::device::DevicePtr device);
     QString verboseName();
     void setVerboseName(const QString &verboseName);
     QString appVersion();
@@ -79,7 +79,7 @@ signals:
 private slots:
     void messageFromDeviceHandler(QByteArray message);
     void messageToDeviceHandler(QByteArray message);
-    void deviceErrorHandler(strata::SerialDevice::ErrorCode errorCode, QString errorString);
+    void deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString);
     void flasherProgramProgressHandler(int chunk, int total);
     void flasherBackupProgressHandler(int chunk);
 
@@ -91,7 +91,7 @@ private slots:
     void flasherFinishedHandler(strata::FlasherConnector::Result result);
 
 private:
-    strata::SerialDevicePtr device_;
+    strata::device::DevicePtr device_;
     int deviceId_;
     QString verboseName_;
     QString appVersion_;

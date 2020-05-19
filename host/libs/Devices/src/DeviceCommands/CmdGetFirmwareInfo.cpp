@@ -5,7 +5,7 @@
 
 namespace strata {
 
-CmdGetFirmwareInfo::CmdGetFirmwareInfo(const SerialDevicePtr& device, bool requireResponse) :
+CmdGetFirmwareInfo::CmdGetFirmwareInfo(const device::DevicePtr& device, bool requireResponse) :
     BaseDeviceCommand(device, QStringLiteral("get_firmware_info")), requireResponse_(requireResponse) { }
 
 QByteArray CmdGetFirmwareInfo::message() {
