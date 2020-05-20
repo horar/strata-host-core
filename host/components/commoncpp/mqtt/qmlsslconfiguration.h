@@ -10,8 +10,8 @@ class QmlSslConfiguration : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString rootCertificate READ getCaCertificate WRITE setCaCertificate NOTIFY caCertificateChanged)
-    Q_PROPERTY(QString localCertificate READ getLocalCertificate WRITE setLocalCertificate NOTIFY localCertificateChanged)
-    Q_PROPERTY(QString privateKey READ getPrivateKey WRITE setPrivateKey NOTIFY privateKeyChanged)
+    Q_PROPERTY(QString clientCertificate READ getLocalCertificate WRITE setLocalCertificate NOTIFY localCertificateChanged)
+    Q_PROPERTY(QString clientKey READ getPrivateKey WRITE setPrivateKey NOTIFY privateKeyChanged)
 
 public:
     QmlSslConfiguration(QObject *parent = nullptr);

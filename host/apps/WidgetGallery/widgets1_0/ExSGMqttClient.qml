@@ -6,13 +6,18 @@ import tech.strata.commoncpp 1.0
 
 Item {
     anchors.fill: parent
-
     property var tempSubscription: 0
 
     SGMqttClient {
             id: client
             hostname: hostnameField.text
             port: portField.text
+//            encrypted connection configuration (not working properly yet, a bug has been filed)
+//            sslConfiguration: SGSslConfiguration {
+//                rootCertificate: "PATH_TO_ROOT_CERTIFICATE" // file extension crt
+//                clientCertificate: "PATH_TO_CLIENT_CERTIFICATE" // file extension crt or pem
+//                clientKey: "PATH_TO_CLEINT_PRIVATE_KEY" // file extension key
+//            }
     }
 
     ListModel {
@@ -39,6 +44,7 @@ Item {
 
         TextField {
             id: hostnameField
+            Layout.fillWidth: true
             text: "test.mosquitto.org"
             placeholderText: "<Enter host running MQTT broker>"
             enabled: client.state === SGMqttClient.Disconnected
@@ -51,6 +57,7 @@ Item {
 
         TextField {
             id: portField
+            Layout.fillWidth: true
             text: "1883"
             placeholderText: "<Port>"
             inputMethodHints: Qt.ImhDigitsOnly
@@ -66,9 +73,12 @@ Item {
                 if (client.state === SGMqttClient.Connected) {
                     client.disconnectFromHost()
                     messageModel.clear()
-                    tempSubscription = 0
+                    if (tempSubscription) {
+                        tempSubscription.destroy()
+                        tempSubscription = 0
+                    }
                 } else {
-                    client.connectToHost()
+                    client.sslConfiguration ? client.connectToHostSsl() : client.connectToHost()
                 }
             }
         }
@@ -115,9 +125,10 @@ Item {
             Button {
                 id: pubButton
                 text: "Publish"
+                Layout.fillWidth: true
                 onClicked: {
                     if (pubField.text.length === 0) {
-                        console.log("No payload to send. Skipping publish...")
+                        console.info("No payload to send. Skipping publish...")
                         return
                     }
                     client.publish(pubField.text, msgField.text, qosItems.currentText, retain.checked)
@@ -137,16 +148,18 @@ Item {
                     TextField {
                         id: subField
                         placeholderText: "<Subscription topic>"
+                        Layout.preferredWidth: 289
                         enabled: tempSubscription === 0
                     }
 
                     Button {
                         id: subButton
                         text: "Subscribe"
-                        visible: tempSubscription === 0
+                        Layout.fillWidth: true
+                        enabled: tempSubscription === 0
                         onClicked: {
                             if (subField.text.length === 0) {
-                                console.log("No topic specified to subscribe to.")
+                                console.info("No topic specified to subscribe to.")
                                 return
                             }
                             tempSubscription = client.subscribe(subField.text)
@@ -163,7 +176,7 @@ Item {
             id: messageView
             model: messageModel
             height: 300
-            width: 200
+            width: 600
             Layout.columnSpan: 2
             clip: true
             delegate: Rectangle {
