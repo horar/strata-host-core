@@ -172,9 +172,14 @@ Rectangle {
 
         property var nodeRemoved: platformInterface.node_removed
         onNodeRemovedChanged: {
-            var theNodeNumber = platformInterface.node_removed.node_id
-            if(meshArray[theNodeNumber] !== undefined ){
-                meshArray[theNodeNumber].opacity = 0
+            var theNodeNumber = platformInterface.node_removed.index
+            for (var alpha=0; alpha < meshArray.length; alpha++){
+                //console.log("looking at node",alpha);
+                if(meshArray[alpha].nodeNumber !== undefined  && meshArray[alpha].nodeNumber == theNodeNumber){
+                    //console.log("removing node",alpha);
+                    meshArray[alpha].objectColor = "lightgrey"
+                    meshArray[alpha].nodeNumber = ""
+                }
             }
         }
 
@@ -436,10 +441,15 @@ Rectangle {
 
             property var nodeRemoved: platformInterface.node_removed
             onNodeRemovedChanged: {
-                var theNodeNumber = platformInterface.node_removed.node_id
-                //console.log("removing node",theNodeNumber)
-                targetArray[theNodeNumber].nodeNumber = ""
-                targetArray[theNodeNumber].color = "transparent"
+                var theNodeNumber = platformInterface.node_removed.index
+                for (var alpha=0; alpha < targetArray.length; alpha++){
+                    //console.log("looking for node node",theNodeNumber)
+                    if (targetArray[alpha] !== undefined && targetArray[alpha].nodeNumber == theNodeNumber){
+                        //console.log("removing node",theNodeNumber)
+                        targetArray[alpha].nodeNumber = ""
+                        targetArray[alpha].color = "transparent"
+                    }
+                }
             }
 
             //this is called when the user drags a node in the row at the top to a new location.
