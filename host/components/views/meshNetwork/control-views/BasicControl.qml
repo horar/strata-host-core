@@ -154,7 +154,7 @@ Rectangle {
            Rectangle{
                id:helpViewContainer
                anchors.fill:parent
-               color:"pink"
+               color:"white"
 
                WebEngineView {
                     id: webView
