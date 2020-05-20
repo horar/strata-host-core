@@ -11,22 +11,6 @@ Rectangle {
     id: root
     visible: true
 
-    onVisibleChanged: {
-        if (visible){
-            console.log("smart home is now visible")
-            //deactivate all the nodes from their previous roles when switching
-            //this is a kludge, as it means nodes will not function in the roles they appear in until they're moved
-            platformInterface.set_node_mode.update("default",65535,true)
-            //iterate over the meshArray, and send role and node numbers for each
-            //meshObjectRow.meshArray.forEach(function(item, index, array){
-                //removed temporarily to stop overloading the network when changing views
-                //platformInterface.set_node_mode.update(item.pairingModel,item.nodeNumber,true)
-            //    })
-        }
-
-    }
-
-
     property int objectWidth: 50
     property int objectHeight: 50
     property int nodeWidth: 32
@@ -38,6 +22,38 @@ Rectangle {
     property int meshObjectCount:0
     property variant meshObjects
     property var dragTargets:[]
+
+    property var activeNodes:[]     //nodes which are currently populated to be used for the switch_views command
+    property var activeNodeRoles:[] //the corresponding role for each node in activeNodes
+
+    onVisibleChanged: {
+        if (visible){
+            //console.log("smart home is now visible")
+            root.getActiveNodesAndRoles();
+            platformInterface.switch_views.update(activeNodes,activeNodeRoles)
+        }
+    }
+
+    function getActiveNodesAndRoles(){
+        var currentNode = 0;
+
+        //iterate over the meshArray, but start at 2, since the node 0 is never used, and node 1 is always a provisioner
+        for(var alpha=2; alpha < meshObjectRow.meshArray.length; alpha++){
+            //check to see if this mesh object has been assigned to a numbered node
+            if (meshObjectRow.meshArray[alpha] !== undefined && meshObjectRow.meshArray[alpha].nodeNumber !== ""){
+                //console.log("looking at node",alpha,"node number is",meshObjectRow.meshArray[alpha].nodeNumber,"role is",meshObjectRow.meshArray[alpha].pairingModel);
+                //put the node number in the next spot in the activeNodes array
+                root.activeNodes[currentNode] = parseInt(meshObjectRow.meshArray[alpha].nodeNumber);
+                //put the pairing model in the next spot in the activeNodeRoles array
+                //if the node has no pairing model, use "default"
+                root.activeNodeRoles[currentNode] = meshObjectRow.meshArray[alpha].pairingModel;
+                if (root.activeNodeRoles[currentNode] === ""){
+                    root.activeNodeRoles[currentNode] = "default"
+                }
+                currentNode++;
+            }
+        }
+    }
 
 
     Row{
@@ -54,53 +70,104 @@ Rectangle {
             mesh3.pairingModel = ""
         }
 
-        property var meshArray: [0,provisioner,mesh2, mesh1,mesh4, mesh3,mesh6,mesh5, mesh7,mesh8]
-        property var initialNodeVisibilityColors: platformInterface.network_notification
-        onInitialNodeVisibilityColorsChanged:{
+        property var meshArray: [0,provisioner,mesh2, mesh1,mesh3, mesh4,mesh6,mesh5, mesh7,mesh8]
 
-            //iterate over the nodes in the notification
-            console.log("updating nodes",platformInterface.network_notification.nodes.length)
-            for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
-                //for each node that is marked visible set the visibilty of the node appropriately
-                if (platformInterface.network_notification.nodes[alpha].ready === 0){
-                    meshArray[alpha].objectColor = "lightgrey"
-                    meshArray[alpha].nodeNumber = ""
-
-                    //special case because sometimes the 0th element of the notification array
-                    //really represents the first element
-                    if (alpha === 1){
-                        if (platformInterface.network_notification.nodes[0].ready === 1 ){
-                            meshArray[alpha].opacity = 1.0
-                            meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
-                        }
-                    }
-
-                }
-                else {
-                    meshArray[alpha].opacity = 1.0
-                    meshArray[alpha].enabled = true
-                    meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
-                    meshArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
-
-                    //special case because sometimes the 0th element of the notification array
-                    //really represents the first element
-                    if (alpha == 0){
-                        if (meshArray[alpha.enabled == true])
-                            meshArray[1] = true;
-                    }
-                }
-            }
+        function findEmptySlot(inCurrentSlot){
+            //console.log("emptyslot starting search in position",inCurrentSlot,"array length is",meshArray.length)
+            for(var beta = inCurrentSlot; beta < meshArray.length; beta++){
+               if ( meshArray[beta].nodeNumber == ""){
+                    //console.log(" found emptyslot in position",beta)
+                   return beta;
+                   }
+                 }
+            //we didn't find an empty slot? try again from the start
+            for(beta = 1; beta < inCurrentSlot; beta++){
+               if ( meshArray[beta].nodeNumber == ""){
+                   //console.log(" found emptyslot in position",beta)
+                   return beta;
+                   }
+                 }
+            //still here? Return the 0th slot, it's always open
+            //console.log(" NO emptyslot found, returning 0")
+            return 0;
         }
 
+        property var network: platformInterface.network_notification
+        onNetworkChanged:{
 
+            //iterate over the nodes in the notification, and over the meshArray nodes for each node in the
+            //notification. If the node exists in the meshArray, but not in the notification, the node has been lost without a notification
+            //coming through, so remove the node from the meshArray
+            //console.log("updating nodes",platformInterface.network_notification.nodes.length)
+            var nodeFoundInMeshArray = false;
+
+            for (var alpha = 1;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+                //console.log("looking for node number",platformInterface.network_notification.nodes[alpha].index,"in meshArray")
+                //we can skip the first element in the nodeArray, as it's awlays null
+                for(var beta = 1; beta < meshArray.length; beta++){
+                    //console.log("comparing",platformInterface.network_notification.nodes[alpha].index, meshArray[beta].nodeNumber)
+                    if (meshArray[beta].nodeNumber !== "" && meshArray[beta].nodeNumber == platformInterface.network_notification.nodes[alpha].index){
+                        //console.log("found node",platformInterface.network_notification.nodes[alpha].index, "at location",beta)
+                        if (platformInterface.network_notification.nodes[alpha].ready === 0){
+                            //remove the item from the meshArray. It's not in the network anymore
+                            nodeFoundInMeshArray = true;
+                            meshArray[beta].objectColor = "#d3d3d3"
+                            meshArray[beta].nodeNumber = ""
+                            //console.log("Removing. Node not ready")
+                        }
+                        else if (platformInterface.network_notification.nodes[alpha].ready !== 0){
+                            //the node is in both the notification and in the meshArray, no need to update anything
+                            //unless this is the provisioner, in which case we'll update the color, as it doesn't start as a grey node
+                            if (alpha === 1){
+                                //console.log("updating provisioner color to",platformInterface.network_notification.nodes[alpha].color)
+                                meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+                            }
+
+                            //console.log("node",platformInterface.network_notification.nodes[alpha].index,"found in meshArray")
+                            nodeFoundInMeshArray = true;
+                        }
+                    }   //if node numbers match
+                }   //beta for loop
+                //console.log("finished looking for node",platformInterface.network_notification.nodes[alpha].index,"found=",nodeFoundInMeshArray,"ready=",platformInterface.network_notification.nodes[alpha].ready)
+                if (!nodeFoundInMeshArray && platformInterface.network_notification.nodes[alpha].ready !== 0){
+                    //we looked through the whole meshArray, and didn't find the nodeNumber that was in the notification
+                    //so we should add this node in an empty slot
+                    var emptySlot = alpha;
+
+                    //check to see if the the node already has an object there before adding a new one
+                    if (meshArray[alpha].objectColor != "lightgrey"){
+                        emptySlot = findEmptySlot(alpha)
+                        //console.log("Conflict. node",platformInterface.network_notification.nodes[alpha].index,"not found in meshArray. Adding in slot",emptySlot)
+                        meshArray[emptySlot].opacity = 1.0
+                        meshArray[emptySlot].objectColor = platformInterface.network_notification.nodes[alpha].color
+                        meshArray[emptySlot].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+                    }
+                    else{
+                        //console.log("no conflict. Adding in position",alpha)
+                        meshArray[alpha].opacity = 1.0
+                        meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+                        meshArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+                    }
+                }
+                nodeFoundInMeshArray = false; //reset for next iteration notification node
+            }
+       }
 
         property var newNodeAdded: platformInterface.node_added
         onNewNodeAddedChanged: {
             //console.log("new node added",platformInterface.node_added.index)
             var theNodeNumber = platformInterface.node_added.index
-            meshArray[theNodeNumber].opacity = 1;
-            meshArray[theNodeNumber].objectColor = platformInterface.node_added.color
-            meshArray[theNodeNumber].nodeNumber = theNodeNumber
+            var emptySlot = theNodeNumber
+
+            //console.log("adding new node",platformInterface.node_added.index)
+            if (theNodeNumber !== 1 && (meshArray[theNodeNumber].objectColor != "lightgrey")){
+                emptySlot = findEmptySlot(theNodeNumber)
+                console.log("node not empty, adding in position",emptySlot)
+            }
+
+            meshArray[emptySlot].opacity = 1;
+            meshArray[emptySlot].objectColor = platformInterface.node_added.color
+            meshArray[emptySlot].nodeNumber = theNodeNumber
         }
 
         property var nodeRemoved: platformInterface.node_removed
@@ -111,22 +178,22 @@ Rectangle {
             }
         }
 
-        MeshObject{ id: mesh7; scene:"smart_home"; pairingModel:""; subName:"";nodeNumber: "8";
+        MeshObject{ id: mesh7; scene:"smart_home"; pairingModel:""; subName:"";nodeNumber: "";
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
-        MeshObject{ id: mesh6; scene:"smart_home"; pairingModel:"" ;nodeNumber: "6";
+        MeshObject{ id: mesh6; scene:"smart_home"; pairingModel:"" ;nodeNumber: "";
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
-        MeshObject{ id: mesh4; scene:"smart_home"; pairingModel:"";nodeNumber: "4";
+        MeshObject{ id: mesh4; scene:"smart_home"; pairingModel:"";nodeNumber: "";
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
-        MeshObject{ id: mesh2; scene:"smart_home"; displayName:"Window"; pairingModel:"window_shade";nodeNumber: "2";
+        MeshObject{ id: mesh2; scene:"smart_home"; displayName:"Window"; pairingModel:"window_shade";nodeNumber: "";    //was 2
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         ProvisionerObject{ id: provisioner; nodeNumber:"1" }
-        MeshObject{ id: mesh1; scene:"smart_home"; displayName:"Door"; pairingModel:"smarthome_door";nodeNumber: "3"
+        MeshObject{ id: mesh1; scene:"smart_home"; displayName:"Door"; pairingModel:"smarthome_door";nodeNumber: ""     //was 3
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
-        MeshObject{ id: mesh3; scene:"smart_home"; displayName:"Lights"; pairingModel:"smarthome_lights";nodeNumber: "5";
+        MeshObject{ id: mesh3; scene:"smart_home"; displayName:"Lights"; pairingModel:"smarthome_lights";nodeNumber: "";    //was 5
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
-        MeshObject{ id: mesh5; scene:"smart_home"; pairingModel:""; subName:""; nodeNumber: "7"
+        MeshObject{ id: mesh5; scene:"smart_home"; pairingModel:""; subName:""; nodeNumber: ""
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
-        MeshObject{ id: mesh8; scene:"smart_home"; pairingModel:"";nodeNumber: "9"
+        MeshObject{ id: mesh8; scene:"smart_home"; pairingModel:"";nodeNumber: ""
              onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
     }
 
@@ -140,6 +207,57 @@ Rectangle {
         fillMode: Image.PreserveAspectFit
         mipmap:true
         opacity:1
+
+        function toggleWindow(){
+           if (platformInterface.window_shade.value === "open")
+                platformInterface.window_shade.value = "closed"
+              else
+                platformInterface.window_shade.value = "open"
+
+           var doorState = platformInterface.smarthome_door.value
+           var windowState = platformInterface.window_shade.value
+           if (doorState === "open" && windowState === "open")
+                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpenWindowOpen.jpg"
+             else if (doorState === "open" && windowState === "closed")
+                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
+             else if (doorState === "closed" && windowState === "open")
+               mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
+             else if (doorState === "closed" && windowState === "closed")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+        }
+
+        function setColor(inColor){
+            if (inColor === "white")
+              mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+            else if (inColor === "black")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOff.jpg"
+            else if (inColor === "blue")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_blue.jpg"
+            else if (inColor === "green")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_green.jpg"
+            else if (inColor === "purple")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_purple.jpg"
+            else if (inColor === "orange")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_orange.jpg"
+        }
+
+        function toggleDoor(){
+            if (platformInterface.smarthome_door.value === "open")
+                 platformInterface.smarthome_door.value = "closed"
+               else
+                 platformInterface.smarthome_door.value = "open"
+
+            var doorState = platformInterface.smarthome_door.value
+            var windowState = platformInterface.window_shade.value
+            if (doorState === "open" && windowState === "open")
+                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpenWindowOpen.jpg"
+              else if (doorState === "open" && windowState === "closed")
+                  mainImage.source = "qrc:/views/meshNetwork/images/smartHome_doorOpen.jpg"
+              else if (doorState === "closed" && windowState === "open")
+                mainImage.source = "qrc:/views/meshNetwork/images/smartHome_windowOpen.jpg"
+              else if (doorState === "closed" && windowState === "closed")
+                 mainImage.source = "qrc:/views/meshNetwork/images/smartHome_lightsOn.jpg"
+        }
 
         property var color: platformInterface.room_color_notification
         onColorChanged: {
@@ -228,45 +346,92 @@ Rectangle {
 
             }
 
-            property var targetArray: [0, 0, target1, target2, 0, target3,0,0,0,0]
+            property var targetArray: [0, 0, target1, target2,target3,target4, target5,target6,target7,target8]
+
+            function findEmptySlot(inCurrentSlot){
+                //console.log("emptyslot starting search in position",inCurrentSlot,"array length is",targetArray.length)
+                for(var beta = inCurrentSlot; beta < targetArray.length; beta++){
+                   if ( targetArray[beta].nodeNumber == ""){
+                        //console.log(" found emptyslot in position",beta)
+                       return beta;
+                       }
+                     }
+                //we didn't find an empty slot? try again from the start
+                for(beta = 1; beta < inCurrentSlot; beta++){
+                   if ( targetArray[beta].nodeNumber == ""){
+                       //console.log(" found emptyslot in position",beta)
+                       return beta;
+                       }
+                     }
+                //still here? Return the 0th slot, it's always open
+                //console.log(" NO emptyslot found, returning 0")
+                return 0;
+            }
+
 
             property var network: platformInterface.network_notification
             onNetworkChanged:{
 
-                //iterate over the nodes in the notification
-                console.log("updating nodes",platformInterface.network_notification.nodes.length)
-                for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
-                    //for each node that is marked visible set the visibilty of the node appropriately
-                    if (platformInterface.network_notification.nodes[alpha].ready === 0){
-                        targetArray[alpha].color = "transparent"
-                        targetArray[alpha].nodeNumber = ""
+                var nodeFoundInTargetArray = false;
 
-                        //special case because sometimes the 0th element of the notification array
-                        //really represents the first element
-                        if (alpha === 1){
-                            if (platformInterface.network_notification.nodes[0].ready === 1 ){
-                                targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
-
+                for (var alpha = 2;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+                    for(var beta = 2; beta < targetArray.length; beta++){
+                        //console.log("TargetArray: comparing",platformInterface.network_notification.nodes[alpha].index, targetArray[beta].nodeNumber)
+                        if (targetArray[beta].nodeNumber !== "" && targetArray[beta].nodeNumber == platformInterface.network_notification.nodes[alpha].index){
+                            //console.log("found node",platformInterface.network_notification.nodes[alpha].index, "at location",beta)
+                            if (platformInterface.network_notification.nodes[alpha].ready === 0){
+                                //remove the item from the meshArray. It's not in the network anymore
+                                nodeFoundInTargetArray = true;
+                                targetArray[beta].color = "transparent"
+                                targetArray[beta].nodeNumber = ""
                             }
+                            else if (platformInterface.network_notification.nodes[alpha].ready !== 0){
+                                //the node is in both the notification and in the targetArray, no need to update anything
+                                if (alpha === 1){
+                                    //console.log("updating provisioner color to",platformInterface.network_notification.nodes[alpha].color)
+                                    targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+                                }
+                                nodeFoundInTargetArray = true;
+                            }
+                        }   //if node numbers match
+                    }   //beta for loop
+                    //console.log("finished looking for node",platformInterface.network_notification.nodes[alpha].index,"found=",nodeFoundInTargetArray,"ready=",platformInterface.network_notification.nodes[alpha].ready)
+                    if (!nodeFoundInTargetArray && platformInterface.network_notification.nodes[alpha].ready !== 0){
+                        //we looked through the whole meshArray, and didn't find the nodeNumber that was in the notification
+                        //so we should add this node in an empty slot
+                        var emptySlot = alpha;
+
+                        //check to see if the the node already has an object there before adding a new one
+                        if (targetArray[alpha].nodeNumber != ""){
+                            emptySlot = findEmptySlot(alpha)
+                            //console.log("conflict. Adding in position",emptySlot,"current node number was",targetArray[alpha].nodeNumber)
+                            //console.log("node",platformInterface.network_notification.nodes[alpha].index,"not found in meshArray. Adding in slot",emptySlot)
+                            targetArray[emptySlot].color = platformInterface.network_notification.nodes[alpha].color
+                            targetArray[emptySlot].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+                        }
+                        else{
+                            //console.log("no conflict. Adding in position",alpha)
+                            targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+                            targetArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
                         }
                     }
-                    else {
-                        targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
-                        targetArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
-
-
-                    }
+                    nodeFoundInTargetArray = false; //reset for next iteration notification node
                 }
-            }
+           }
 
             property var newNodeAdded: platformInterface.node_added
             onNewNodeAddedChanged: {
-
                 var theNodeNumber = platformInterface.node_added.index
+                var emptySlot = theNodeNumber
 
-                targetArray[theNodeNumber].nodeNumber = platformInterface.node_added.index
-                targetArray[theNodeNumber].color = platformInterface.node_added.color
-                console.log("new node added",theNodeNumber,"to role",targetArray[theNodeNumber].nodeType)
+                if (theNodeNumber !== 1 && (targetArray[theNodeNumber].color != "transparent")){
+                    emptySlot = findEmptySlot(theNodeNumber)
+                    //console.log("node not empty, adding in position",emptySlot)
+                }
+
+                targetArray[emptySlot].nodeNumber = platformInterface.node_added.index
+                targetArray[emptySlot].color = platformInterface.node_added.color
+                //console.log("new node added",theNodeNumber,"to role",targetArray[theNodeNumber].nodeType)
             }
 
             property var nodeRemoved: platformInterface.node_removed
@@ -314,6 +479,8 @@ Rectangle {
                 nodeType:"window_shade"
                 scene:"smart_home"
                 nodeNumber:""
+
+                onToggleWindow: mainImage.toggleWindow();
             }
 
             DragTarget{
@@ -327,6 +494,8 @@ Rectangle {
                 scene:"smart_home"
                 nodeType: "smarthome_door"
                 nodeNumber:""
+
+                onToggleDoor: mainImage.toggleDoor();
             }
 
             DragTarget{
@@ -339,11 +508,35 @@ Rectangle {
                 anchors.topMargin: parent.height * .22
                 scene:"smart_home"
                 nodeType:"smarthome_lights"
-                nodeNumber:"="
+                nodeNumber:""
+
+                onSetRoomColor: mainImage.setColor(inColor)
             }
-
-
-
+            DragTarget{
+                id:target4
+                nodeNumber:""
+                visible:false
+            }
+            DragTarget{
+                id:target5
+                nodeNumber:""
+                visible:false
+            }
+            DragTarget{
+                id:target6
+                nodeNumber:""
+                visible:false
+            }
+            DragTarget{
+                id:target7
+                nodeNumber:""
+                visible:false
+            }
+            DragTarget{
+                id:target8
+                nodeNumber:""
+                visible:false
+            }
         }
 
     SensorRow{

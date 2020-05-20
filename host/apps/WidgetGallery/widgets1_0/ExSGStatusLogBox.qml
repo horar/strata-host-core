@@ -3,22 +3,14 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import tech.strata.sgwidgets 1.0
 
-Rectangle {
+ColumnLayout {
     id: root
-    width: 500
-    height: 200
-    property int count: 0
 
     SGStatusLogBox {
         id: logBox
         enabled: editEnabledCheckBox.checkState
 
-        // Example Anchors
-        anchors {
-            top: root.top
-            left: root.left
-            right: parent.right
-        }
+        property int count: 0
 
         // Optional configuration:
         title: "Default Status Logs"               // Default: "" (title bar will not be visible when empty string)
@@ -31,6 +23,7 @@ Rectangle {
         // filterEnabled: true             // Default: true (can disable filtration)
         // fontSizeMultiplier: 2           // Default: 1
         // scrollToEnd: false              // Default: true (determines if view scrolls to end when new messages appended)
+        copyEnabled: false                 // Default: true (can disable copy key shortcut)
 
         // Debug options:
         showMessageIds: true           // Default: false (shows internal message ids, for debugging)
@@ -44,20 +37,14 @@ Rectangle {
     RowLayout {
         // Example use buttons:
         id: row
-        anchors {
-            top: logBox.bottom
-            topMargin: 5
-            left: root.left
-            right: root.right
-        }
-        spacing: 1
+        spacing: 5
         enabled: editEnabledCheckBox.checkState
 
         SGButton {
             text: "Add \n Message"
             Layout.alignment: Qt.AlignCenter
             onClicked: {
-                var messageID = logBox.append("Message " + count++)
+                var messageID = logBox.append("Message " + logBox.count++)
                 console.info("Added message:", messageID)
             }
         }
@@ -81,21 +68,49 @@ Rectangle {
         }
     }
 
+    /*
+        This version of SGStatusLogBox shows how it can be customized for selectable delegates.
+    */
+    SGStatusLogBoxSelectableDelegates {
+        id: logBoxDelegates
+        title: "Selectable Status Logs"
+        filterEnabled: false
+        copyEnabled: false
+
+        Component.onCompleted: {
+            for (let i = 0; i < 10; i++){
+                logBoxDelegates.append("Message " + i)
+            }
+        }
+    }
+
+    /*
+        This version of SGStatusLogBox shows how it can be customized for delegates made up of selectable text.
+
+        This is more efficient for things like output logs (1000+ lines) than a single text component as listView caches out-of-view delegates.
+    */
+    SGStatusLogBoxSelectableText {
+        id: logBoxText
+        title: "Selectable Text Status Logs"
+        filterEnabled: false
+
+        Component.onCompleted: {
+            for (let i = 0; i < 10; i++){
+                logBoxText.append("Message " + i)
+            }
+        }
+    }
+
     SGCheckBox {
         id: editEnabledCheckBox
-        anchors {
-            top: row.bottom
-            topMargin: 20
-        }
-
         text: "Everything enabled"
         checked: true
+
         onCheckedChanged:  {
             if(checked)
                 logBox.opacity = 1.0
             else logBox.opacity = 0.5
         }
-
     }
-
 }
+

@@ -1,11 +1,10 @@
-#ifndef DEVICE_COMMANDS_H
-#define DEVICE_COMMANDS_H
+#ifndef BASE_DEVICE_COMMAND_H
+#define BASE_DEVICE_COMMAND_H
 
 #include <chrono>
 
 #include <QByteArray>
 #include <QString>
-#include <QVector>
 
 #include <rapidjson/document.h>
 
@@ -14,10 +13,11 @@
 namespace strata {
 
 enum class CommandResult {
-    Undone,
-    Done,
-    Repeat,
-    Retry
+    InProgress,        // waiting for proper response from device
+    Done,              // successfully done (received device response is OK)
+    Repeat,            // repeat - send command again again with new data, e.g. when flashing firmware
+    Retry,             // retry - send command again with same data
+    FinaliseOperation  // finish operation (there is no point in continuing)
 };
 
 class BaseDeviceCommand {
@@ -94,7 +94,7 @@ public:
 
     /*!
      * Returns specific data for finished() signal (e.g. chunk number).
-     * \return data for finished() signal or -1 if not used
+     * \return data for finished() signal or INT_MIN if not used (by default)
      */
     virtual int dataForFinish() const;
 
@@ -116,72 +116,6 @@ protected:
     const SerialDevicePtr& device_;
     bool ackReceived_;
     CommandResult result_;
-};
-
-class CmdGetFirmwareInfo : public BaseDeviceCommand {
-public:
-    CmdGetFirmwareInfo(const SerialDevicePtr& device, bool requireResponse);
-    QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc) override;
-    void onTimeout() override;
-private:
-    bool requireResponse_;
-};
-
-class CmdRequestPlatformId : public BaseDeviceCommand {
-public:
-    CmdRequestPlatformId(const SerialDevicePtr& device);
-    QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc) override;
-};
-
-class CmdUpdateFirmware : public BaseDeviceCommand {
-public:
-    CmdUpdateFirmware(const SerialDevicePtr& device);
-    QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc) override;
-    bool skip() override;
-    std::chrono::milliseconds waitBeforeNextCommand() const override;
-};
-
-class CmdFlashFirmware : public BaseDeviceCommand {
-public:
-    CmdFlashFirmware(const SerialDevicePtr& device);
-    QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc) override;
-    bool logSendMessage() const override;
-    void prepareRepeat() override;
-    int dataForFinish() const override;
-    void setChunk(const QVector<quint8>& chunk, int chunkNumber);
-private:
-    QVector<quint8> chunk_;
-    int chunkNumber_;
-    const uint maxRetries_;
-    uint retriesCount_;
-};
-
-class CmdBackupFirmware : public BaseDeviceCommand {
-public:
-    CmdBackupFirmware(const SerialDevicePtr& device, QVector<quint8>& chunk);
-    QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc) override;
-    bool logSendMessage() const override;
-    void prepareRepeat() override;
-    int dataForFinish() const override;
-    QVector<quint8> chunk() const;
-private:
-    QVector<quint8>& chunk_;
-    int chunkNumber_;
-    bool firstBackupChunk_;
-    const uint maxRetries_;
-    uint retriesCount_;
-};
-
-class CmdStartApplication : public BaseDeviceCommand {
-public:
-    CmdStartApplication(const SerialDevicePtr& device);
-    QByteArray message() override;
-    bool processNotification(rapidjson::Document& doc) override;
 };
 
 }  // namespace

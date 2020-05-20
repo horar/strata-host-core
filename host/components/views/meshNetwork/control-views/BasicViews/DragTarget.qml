@@ -10,6 +10,11 @@ Rectangle {
     border.color: "white"
     border.width: 5
 
+    signal alarmTriggered()
+    signal toggleWindow()
+    signal toggleDoor()
+    signal setRoomColor(string inColor)
+
     property string scene:""
     property string nodeType: "light"
     property string nodeNumber: ""
@@ -33,7 +38,6 @@ Rectangle {
         property bool dimmerEnabled: true
         property int counter : 0
         property bool highPowerMode: true
-        property bool windowOpen:true
         property bool doorOpen:true
         property var roomColors:["blue","green","purple","orange","black","white"]
         property int currentRoomColor:0
@@ -63,16 +67,10 @@ Rectangle {
 
 
             else if (nodeType === "door"){
-                //platformInterface.sensor_set.update(65535,"strata",4)
                 platformInterface.set_node_mode.update("alarm",65535,true)
-                //the firmware should send a notification to let other parts of the UI know that the alarm is on
-                //but it is not. In the meantime, I'll inject the JSON here
-                CorePlatformInterface.data_source_handler('{
-                   "value":"alarm_triggered",
-                    "payload":{
-                        "triggered": "true"
-                     }
-                     } ')
+
+                 //broadcast the alarm triggered event
+                 root.alarmTriggered();
             }
             else if (nodeType === "hvac"){
                 platformInterface.light_hsl_set.update(65535,theHue, theSaturation, theLightness)
@@ -109,21 +107,8 @@ Rectangle {
 
             //smarthome nodes
             else if (nodeType == "window_shade"){
-                var theWindow = "closed";
-                if (windowOpen)
-                    theWindow = "open"
-                  else
-                    theWindow = "closed"
-                //platformInterface.toggle_window_shade.update(theWindow)
-                windowOpen = !windowOpen;
-                //this notification should come from the firmware, but doesn't
-                CorePlatformInterface.data_source_handler('{
-                   "value":"window_shade",
-                    "payload":{
-                        "value": "'+theWindow+'"
-                     }
-
-                     } ')
+                //tell the main image to switch
+                root.toggleWindow()
 
             }
             else if (nodeType == "smarthome_lights"){
@@ -140,36 +125,26 @@ Rectangle {
                     theHomeHue = 0;
                     theHomeSaturation = 0;
                     }
+                //special case for orange, because the straight HSL conversion of orange can't be
+                //shown well on the node LEDs.
+                if (theColor == "orange"){
+                    theHomeHue = 5;
+                    theHomeSaturation = 100;
+                    theHomeLightness = 50;
+                }
                 console.log("current smarthome color is",theHomeHue,theHomeSaturation,theHomeLightness)
                 platformInterface.light_hsl_set.update(65535,theHomeHue,theHomeSaturation,theHomeLightness);
-                //this should be handled by the firmware, but isn't
-                CorePlatformInterface.data_source_handler('{
-                   "value":"room_color_notification",
-                    "payload":{
-                        "color": "'+roomColors[currentRoomColor]+'"
-                     }
 
-                     } ')
+                //tell the room image that the color has changed
+                root.setRoomColor(roomColors[currentRoomColor])
+
                 currentRoomColor++;
                 if (currentRoomColor == roomColors.length)
                     currentRoomColor = 0;
             }
             else if (nodeType == "smarthome_door"){
-                var theDoor;
-                if (doorOpen)
-                    theDoor = "open"
-                  else
-                    theDoor = "closed"
-                //platformInterface.toggle_door.update(theDoor)
-                doorOpen = !doorOpen;
-                //this should be handled by the firmware, but isn't
-                CorePlatformInterface.data_source_handler('{
-                   "value":"smarthome_door",
-                    "payload":{
-                        "value": "'+theDoor+'"
-                     }
-
-                     } ')
+                //tell the main image to change the state of the door
+                root.toggleDoor()
             }
 
         }//on clicked

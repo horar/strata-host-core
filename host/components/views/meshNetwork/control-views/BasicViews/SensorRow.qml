@@ -19,39 +19,38 @@ Item {
     signal showPairing()
     signal hidePairing()
 
-
-
-    ButtonGroup{
-        id:sensorButtonGroup
-        exclusive: true
-    }
-
     Row{
         id:sensorRow
         height:parent.height
         spacing: 20.0
 
+        function clearAllText(){
+            sensorRowRoot.hideSignalStrength();
+            sensorRowRoot.hideAmbientLightValue();
+            sensorRowRoot.hideBatteryCharge();
+            sensorRowRoot.hideTemperature();
+            sensorRowRoot.showPairing();
+            sensorRowRoot.hideMesh();
+        }
 
         Button{
             id:signalStrengthButton
             height:parent.height
             width:height
-            checkable:true
-            ButtonGroup.group: sensorButtonGroup
+            hoverEnabled: true
 
             background: Rectangle {
                     color:"transparent"
                     radius: height/10
                 }
 
-            onCheckedChanged: {
-                if (checked){
+            onPressedChanged: {
+                if (pressed){
                     //ask the platform for the signal strength of each node
                     platformInterface.get_all_sensor_data.update("rssi");
+                    sensorRow.clearAllText();
                     sensorRowRoot.showSignalStrength();
                 }
-                  else
-                    sensorRowRoot.hideSignalStrength();
             }
 
             Image{
@@ -61,7 +60,17 @@ Item {
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
-                opacity:signalStrengthButton.checked ? .75 : .2
+                opacity:signalStrengthButton.pressed ? .75 : .2
+            }
+
+            Text{
+                id:signalStrengthLabel
+                anchors.top: signalStrengthButton.bottom
+                anchors.horizontalCenter: signalStrengthButton.horizontalCenter
+                anchors.topMargin: 10
+                text: "Signal strength"
+                font.pixelSize: 18
+                visible: signalStrengthButton.hovered
             }
         }
 
@@ -69,21 +78,18 @@ Item {
             id:ambientLightButton
             height:parent.height
             width:height
-            checkable:true
-            ButtonGroup.group: sensorButtonGroup
 
             background: Rectangle {
                     color:"transparent"
                     radius: height/10
                 }
 
-            onCheckedChanged: {
-                if (checked){
+            onPressedChanged: {
+                if (pressed){
                     platformInterface.get_all_sensor_data.update("ambient_light");
+                    sensorRow.clearAllText();
                     sensorRowRoot.showAmbientLightValue();
                 }
-                  else
-                    sensorRowRoot.hideAmbientLightValue();
             }
 
             Image{
@@ -93,7 +99,17 @@ Item {
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
-                opacity:ambientLightButton.checked ? .75 : .2
+                opacity:ambientLightButton.pressed ? .75 : .2
+            }
+
+            Text{
+                id:ambientLightLabel
+                anchors.top: ambientLightButton.bottom
+                anchors.horizontalCenter: ambientLightButton.horizontalCenter
+                anchors.topMargin: 10
+                text: "Ambient light"
+                font.pixelSize: 18
+                visible: ambientLightButton.hovered
             }
         }
 
@@ -101,22 +117,17 @@ Item {
             id:batteryChargeButton
             height:parent.height
             width:height
-            checkable:true
-            ButtonGroup.group: sensorButtonGroup
 
             background: Rectangle {
                     color:"transparent"
                     radius: height/10
                 }
 
-            onCheckedChanged: {
-                if (checked){
+            onPressedChanged: {
+                if (pressed){
                     platformInterface.get_all_sensor_data.update("battery");
+                    sensorRow.clearAllText();
                     sensorRowRoot.showBatteryCharge();
-                }
-                  else{
-                    sensorRowRoot.hideBatteryCharge();
-                    console.log("hiding battery level ")
                 }
             }
 
@@ -127,7 +138,17 @@ Item {
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
-                opacity:batteryChargeButton.checked ? .75 : .2
+                opacity:batteryChargeButton.pressed ? .75 : .2
+            }
+
+            Text{
+                id:batteryChargeLabel
+                anchors.top: batteryChargeButton.bottom
+                anchors.horizontalCenter: batteryChargeButton.horizontalCenter
+                anchors.topMargin: 10
+                text: "Battery"
+                font.pixelSize: 18
+                visible: batteryChargeButton.hovered
             }
         }
 
@@ -135,21 +156,18 @@ Item {
             id:temperatureButton
             height:parent.height
             width:height
-            checkable:true
-            ButtonGroup.group: sensorButtonGroup
 
             background: Rectangle {
                     color:"transparent"
                     radius: height/10
                 }
 
-            onCheckedChanged: {
-                if (checked){
+            onPressedChanged: {
+                if (pressed){
                     platformInterface.get_all_sensor_data.update("temperature");
+                    sensorRow.clearAllText();
                     sensorRowRoot.showTemperature();
                 }
-                  else
-                    sensorRowRoot.hideTemperature();
             }
 
             Image{
@@ -159,7 +177,17 @@ Item {
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
-                opacity:temperatureButton.checked ? .75 : .2
+                opacity:temperatureButton.pressed ? .75 : .2
+            }
+
+            Text{
+                id:temperatureButtonLabel
+                anchors.top: temperatureButton.bottom
+                anchors.horizontalCenter: temperatureButton.horizontalCenter
+                anchors.topMargin: 10
+                text: "Temperature"
+                font.pixelSize: 18
+                visible: temperatureButton.hovered
             }
         }
 
@@ -167,8 +195,6 @@ Item {
             id:meshButton
             height:parent.height
             width:height
-            checkable:true
-            ButtonGroup.group: sensorButtonGroup
             visible:true
 
             background: Rectangle {
@@ -176,14 +202,14 @@ Item {
                     radius: height/10
                 }
 
-            onCheckedChanged: {
-                if (checked){
-                    sensorRowRoot.showMesh();
+            onPressedChanged: {
+                if (pressed){
+
                     console.log("asking for network configuration");
+                    sensorRow.clearAllText();
+                    sensorRowRoot.showMesh();
                     platformInterface.get_network.update();
                     }
-                  else
-                    sensorRowRoot.hideMesh();
             }
 
             Image{
@@ -193,7 +219,17 @@ Item {
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
-                opacity:meshButton.checked ? .75 : .2
+                opacity:meshButton.pressed ? .75 : .2
+            }
+
+            Text{
+                id:meshButtonLabel
+                anchors.top: meshButton.bottom
+                anchors.horizontalCenter: meshButton.horizontalCenter
+                anchors.topMargin: 10
+                text: "Node connections"
+                font.pixelSize: 18
+                visible: meshButton.hovered
             }
         }
 
@@ -201,39 +237,36 @@ Item {
             id:clearButton
             height:parent.height
             width:height
-            checkable:true
-            checked:true
-            ButtonGroup.group: sensorButtonGroup
 
             background: Rectangle {
                     color:"transparent"
                     radius: height/10
                 }
 
-            onCheckedChanged: {
-                if (checked){
-                    sensorRowRoot.hideSignalStrength();
-                    sensorRowRoot.hideAmbientLightValue();
-                    sensorRowRoot.hideBatteryCharge();
-                    sensorRowRoot.hideTemperature();
-                    sensorRowRoot.showPairing();
+            onPressedChanged: {
+                if (pressed){
+                    sensorRow.clearAllText();
                     }
-                  else{
-                    sensorRowRoot.hidePairing();
-                    }
-
-
             }
 
             Image{
                 id:clearImage
                 source: "qrc:/views/meshNetwork/images/clearIcon.svg"
-                //source:"qrc:images/clearIcon.svg"
                 fillMode: Image.PreserveAspectFit
                 height:parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
                 mipmap:true
-                opacity:clearButton.checked ? .75 : .2
+                opacity:clearButton.pressed ? .75 : .2
+            }
+
+            Text{
+                id:clearButtonLabel
+                anchors.top: clearButton.bottom
+                anchors.horizontalCenter: clearButton.horizontalCenter
+                anchors.topMargin: 10
+                text: "Clear"
+                font.pixelSize: 18
+                visible: clearButton.hovered
             }
         }
 

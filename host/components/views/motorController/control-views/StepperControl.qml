@@ -362,7 +362,6 @@ Widget09.SGResponsiveScrollView {
                         property variant stepOptions: ["0.9", "1.8", "3.6", "3.75", "7.5", "15", "18"]
                         enabled: ! container.inOverCurrentProtection
                         model: stepOptions
-                        textColor: enabled ? "black" : "grey"
 
                         boxColor:"white"
                         //comboBoxHeight: 25
