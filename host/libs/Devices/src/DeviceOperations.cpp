@@ -98,7 +98,7 @@ void DeviceOperations::startApplication() {
 
 void DeviceOperations::refreshPlatformId() {
     if (startOperation(DeviceOperation::RefreshPlatformId)) {
-        commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
+        commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_, MAX_PLATFORM_ID_RETRIES));
         currentCommand_ = commandList_.begin();
         emit sendCommand(QPrivateSignal());
     }
