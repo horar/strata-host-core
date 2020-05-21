@@ -46,7 +46,7 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
 
     let component = Qt.createComponent("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml");
     if (component.status === QtQuickModule.Component.Error) {
-        console.error(LoggerModule.Logger.devStudioHelpCategory, "ERROR: Cannot createComponent ", component.errorString());
+        console.error(LoggerModule.Logger.devStudioHelpCategory, "Cannot createComponent ", component.errorString());
     }
     let tourStop = component.createObject(window);
     tourStop.index = index
