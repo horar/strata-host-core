@@ -22,6 +22,7 @@ Rectangle{
         property int transformX:0;
         property int transformY:0;
 
+
         property var car_demo_brightness: platformInterface.car_demo_brightness.value
         onCar_demo_brightnessChanged: {
             baseCar.brightness = car_demo_brightness
@@ -30,7 +31,6 @@ Rectangle{
         property var car_demo_brightness_headlights: platformInterface.car_demo_brightness.headlights
         onCar_demo_brightness_headlightsChanged: {
             if(car_demo_brightness_headlights === true){
-
                 headlights.visible = true
                 runningLight.visible = true
             }
@@ -76,8 +76,8 @@ Rectangle{
                     id: brakeLights
                     source: "car-Images/brakes.png"
                     anchors.fill: parent
-                    visible: false
                     fillMode: Image.PreserveAspectFit
+                    visible: false
 
                 }
 
@@ -156,12 +156,12 @@ Rectangle{
                                 id: withbrakes
                                 anchors.fill: parent
                                 onClicked: {
-                                    if(!brakeLights.visible) {
+                                    console.log("withBrakes")
+                                    if(platformInterface.brake_value === false) {
                                         noBrake.visible = false
                                         brake.visible = true
                                         brakeLights.visible = true
                                         platformInterface.brake_value = true
-
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
                                                                               platformInterface.brake_value,
@@ -194,14 +194,13 @@ Rectangle{
                             source: "car-icon/no-brake.svg"
                             anchors.fill: parent
                             fillMode: Image.PreserveAspectFit
-                            visible: true
-                            z:2
+                            visible: false
 
                             MouseArea {
                                 id: nobrakes
                                 anchors.fill: parent
                                 onClicked: {
-                                    if(!brakeLights.visible) {
+                                    if(platformInterface.brake_value === false) {
                                         noBrake.visible = false
                                         brake.visible = true
                                         brakeLights.visible = true
@@ -231,6 +230,7 @@ Rectangle{
                             }
                             property var car_demo_brake: platformInterface.car_demo.brake
                             onCar_demo_brakeChanged: {
+                                console.log("car_demo_brake", car_demo_brake)
                                 if(car_demo_brake === false) {
                                     brakeLights.visible = false
                                     noBrake.visible = true
@@ -242,7 +242,6 @@ Rectangle{
                                     brake.visible = true
                                 }
                                 platformInterface.brake_value = car_demo_brake
-                                //console.log(platformInterface.brake_value)
                             }
 
                         }
@@ -307,7 +306,7 @@ Rectangle{
                             source: "car-icon/no-hazard.svg"
                             anchors.fill: parent
                             fillMode: Image.PreserveAspectFit
-                             visible: false
+                            visible: false
                             MouseArea {
                                 id: noHazards
                                 anchors.fill: parent
@@ -548,6 +547,17 @@ Rectangle{
                             rightSignal.visible = car_demo_right
 
                         }
+
+//                        property var car_demo: platformInterface.car_demo
+//                        onCar_demoChanged: {
+//                            if(car_demo.left === false && car_demo.right === false) {
+//                                noHazard.visible = true
+//                                hazard.visible = false
+//                                leftSignal.visible = false
+//                                rightSignal.visible = false
+//                            }
+
+//                        }
                     }
 
                 }

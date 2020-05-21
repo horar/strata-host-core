@@ -563,7 +563,7 @@ Item {
     //Car demo Notification
 
     property var car_demo_brightness: {
-        "headlights":true,
+        "headlights":false,
         "value": "0.18"
     }
 
