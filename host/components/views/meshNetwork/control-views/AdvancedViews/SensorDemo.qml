@@ -77,7 +77,7 @@ Rectangle {
 
     property var nodeRemoved: platformInterface.node_removed
     onNodeRemovedChanged: {
-        var theNodeNumber = platformInterface.node_removed.node_id
+        var theNodeNumber = platformInterface.node_removed.index
         if(root.availableNodes[theNodeNumber] !== undefined ){
             root.availableNodes[theNodeNumber] = 0
         }
@@ -178,12 +178,12 @@ Rectangle {
                     id:modelText
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"Client Model"
+                    text:"Sensor Client Model"
                     font.pixelSize: 12
                 }
 
                 Text{
-                    property int address: 1309
+                    property int address: 1100
                     id:modelAddressText
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -355,12 +355,12 @@ Rectangle {
                     id:bulbModelText
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"Server Model"
+                    text:"Sensor Server Model"
                     font.pixelSize: 12
                 }
 
                 Text{
-                    property int address: 1307
+                    property int address: 1102
                     id:bulbModelAddressText
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
