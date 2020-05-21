@@ -130,6 +130,21 @@ Item {
             out11ENLED.checked = true
         else out11ENLED.checked = false
 
+        platformInterface.outputEnable0 = led_out_en.values[0]
+        platformInterface.outputEnable1 = led_out_en.values[1]
+        platformInterface.outputEnable2 = led_out_en.values[2]
+        platformInterface.outputEnable3 = led_out_en.values[3]
+        platformInterface.outputEnable4 = led_out_en.values[4]
+        platformInterface.outputEnable5 = led_out_en.values[5]
+        platformInterface.outputEnable6 = led_out_en.values[6]
+        platformInterface.outputEnable7 = led_out_en.values[7]
+        platformInterface.outputEnable8 = led_out_en.values[8]
+        platformInterface.outputEnable9 = led_out_en.values[9]
+        platformInterface.outputEnable10 = led_out_en.values[10]
+        platformInterface.outputEnable11 = led_out_en.values[11]
+
+
+
     }
 
     property var led_out_en_states: platformInterface.led_out_en_states.states
@@ -150,7 +165,7 @@ Item {
 
     property var led_out_en_values: platformInterface.led_out_en_values.values
     onLed_out_en_valuesChanged:  {
-        console.log(platformInterface.led_out_en_values.values)
+
         if(led_out_en_values[0] === true)
             out0ENLED.checked = true
         else out0ENLED.checked = false
@@ -198,6 +213,19 @@ Item {
         if(led_out_en_values[11] === true)
             out11ENLED.checked = true
         else out11ENLED.checked = false
+
+        platformInterface.outputEnable0 =led_out_en_values[0]
+        platformInterface.outputEnable1 = led_out_en_values[1]
+        platformInterface.outputEnable2 =led_out_en_values[2]
+        platformInterface.outputEnable3 = led_out_en_values[3]
+        platformInterface.outputEnable4 = led_out_en_values[4]
+        platformInterface.outputEnable5 = led_out_en_values[5]
+        platformInterface.outputEnable6 = led_out_en_values[6]
+        platformInterface.outputEnable7 = led_out_en_values[7]
+        platformInterface.outputEnable8 = led_out_en_values[8]
+        platformInterface.outputEnable9 = led_out_en_values[9]
+        platformInterface.outputEnable10 = led_out_en_values[10]
+        platformInterface.outputEnable11 = led_out_en_values[11]
     }
 
 
@@ -251,6 +279,21 @@ Item {
         if(led_ext.values[11] === true)
             out11interExterLED.checked = true
         else out11interExterLED.checked = false
+
+        platformInterface.outputExt0 = led_ext.values[0]
+        platformInterface.outputExt1 = led_ext.values[1]
+        platformInterface.outputExt2 = led_ext.values[2]
+        platformInterface.outputExt3 = led_ext.values[3]
+        platformInterface.outputExt4 = led_ext.values[4]
+        platformInterface.outputExt5 = led_ext.values[5]
+        platformInterface.outputExt6 = led_ext.values[6]
+        platformInterface.outputExt7 = led_ext.values[7]
+        platformInterface.outputExt8 = led_ext.values[8]
+        platformInterface.outputExt9 = led_ext.values[9]
+        platformInterface.outputExt10 = led_ext.values[10]
+        platformInterface.outputExt11 = led_ext.values[11]
+
+
 
         setStatesForControls(out0interExterLED,led_ext.states[0])
         setStatesForControls(out1interExterLED,led_ext.states[1])
@@ -317,6 +360,19 @@ Item {
         if(led_ext_values[11] === true)
             out11interExterLED.checked = true
         else out11interExterLED.checked = false
+
+        platformInterface.outputExt0 = led_ext_values[0]
+        platformInterface.outputExt1 = led_ext_values[1]
+        platformInterface.outputExt2 = led_ext_values[2]
+        platformInterface.outputExt3 = led_ext_values[3]
+        platformInterface.outputExt4 = led_ext_values[4]
+        platformInterface.outputExt5 = led_ext_values[5]
+        platformInterface.outputExt6 = led_ext_values[6]
+        platformInterface.outputExt7 = led_ext_values[7]
+        platformInterface.outputExt8 = led_ext_values[8]
+        platformInterface.outputExt9 = led_ext_values[9]
+        platformInterface.outputExt10 = led_ext_values[10]
+        platformInterface.outputExt11 = led_ext_values[11]
     }
 
     property var led_ext_states: platformInterface.led_ext_states.states

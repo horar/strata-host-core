@@ -1638,7 +1638,7 @@ Item {
     property bool left_value: false
     property bool right_value: false
     property bool brake_value: false
-    property bool hazard_value: false
+    property bool hazard_value: true
     property bool reverse_value: false
 
     property bool soc_sam_conf_1_out1: false

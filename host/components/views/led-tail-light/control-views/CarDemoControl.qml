@@ -258,6 +258,7 @@ Rectangle{
                             source: "car-icon/hazard.svg"
                             anchors.fill: parent
                             fillMode: Image.PreserveAspectFit
+                            visible: true
                             MouseArea {
                                 id: hazards
                                 anchors.fill: parent
@@ -305,6 +306,7 @@ Rectangle{
                             source: "car-icon/no-hazard.svg"
                             anchors.fill: parent
                             fillMode: Image.PreserveAspectFit
+                             visible: false
                             MouseArea {
                                 id: noHazards
                                 anchors.fill: parent

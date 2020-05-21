@@ -573,19 +573,8 @@ Item {
                         onSoc_crcChanged: {
                             enableCRCLabel.text = soc_crc.caption
                             setStatesForControls(enableCRC,soc_crc.states[0])
-                            //                            if(soc_crc.state === "enabled"){
-                            //                                enableCRC.enabled = true
-                            //                                enableCRC.opacity = 1.0
-                            //                            }
-                            //                            else if (soc_crc.state === "disabled") {
-                            //                                enableCRC.enabled = false
-                            //                                enableCRC.opacity = 1.0
-                            //                            }
-                            //                            else {
-                            //                                enableCRC.enabled = false
-                            //                                enableCRC.opacity = 0.5
-                            //                            }
                             enableCRC.checked = soc_crc.value
+                            platformInterface.soc_crcValue = soc_crc.value
                         }
 
                         property var soc_crc_caption: platformInterface.soc_crc_caption.caption
@@ -601,6 +590,7 @@ Item {
                         property var soc_crc_value: platformInterface.soc_crc_value.value
                         onSoc_crc_valueChanged: {
                             enableCRC.checked = soc_crc_value
+                            platformInterface.soc_crcValue = soc_crc_value
                         }
 
                     }
@@ -714,18 +704,7 @@ Item {
                         onSoc_addr_newChanged: {
                             new7bitLabel.text = soc_addr_new.caption
                             setStatesForControls(new7bit,soc_addr_new.states[0])
-                            //                            if(soc_addr_new.state === "enabled") {
-                            //                                new7bit.enabled = true
-                            //                                new7bit.opacity = 1.0
-                            //                            }
-                            //                            else if (soc_addr_new.state === "disabled") {
-                            //                                new7bit.enabled = false
-                            //                                new7bit.opacity = 1.0
-                            //                            }
-                            //                            else {
-                            //                                new7bit.enabled = false
-                            //                                new7bit.opacity = 0.5
-                            //                            }
+
                             new7bit.text =  toHex(soc_addr_new.value)
                             platformInterface.addr_curr_apply = parseInt(new7bit.text , 16)
                         }
