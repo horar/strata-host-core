@@ -330,10 +330,8 @@ Rectangle{
                                         leftSignal.visible = false
                                         rightSignal.visible = false
                                         hazard.visible = false
-
                                         noHazard.visible = true
                                         blinkerContainer.enabled = true
-
                                         platformInterface.hazard_value = false
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,

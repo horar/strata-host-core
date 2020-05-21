@@ -570,8 +570,8 @@ Item {
     property var car_demo: {
         "brake":false,
         "left":false,
-        "reverse":true,
-        "right":true
+        "reverse":false,
+        "right":false
     }
 
     //----------- ---
