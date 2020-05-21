@@ -2693,7 +2693,7 @@ Item {
 
                                 SGComboBox {
                                     id: samOpenLoadDiagnostic
-                                    fontSizeMultiplier: ratioCalc
+                                    fontSizeMultiplier: ratioCalc.toFixed(1)
                                     onActivated: {
                                         platformInterface.set_soc_write.update(
                                                     false,
