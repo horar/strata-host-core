@@ -529,6 +529,19 @@ Item {
             out11pwmEnableLED.checked = true
         else out11pwmEnableLED.checked = false
 
+        platformInterface.outputPwm0 = led_pwm_enables.values[0]
+        platformInterface.outputPwm1 = led_pwm_enables.values[1]
+        platformInterface.outputPwm2 = led_pwm_enables.values[2]
+        platformInterface.outputPwm3 = led_pwm_enables.values[3]
+        platformInterface.outputPwm4 = led_pwm_enables.values[4]
+        platformInterface.outputPwm5 = led_pwm_enables.values[5]
+        platformInterface.outputPwm6 = led_pwm_enables.values[6]
+        platformInterface.outputPwm7 = led_pwm_enables.values[7]
+        platformInterface.outputPwm8 = led_pwm_enables.values[8]
+        platformInterface.outputPwm9 = led_pwm_enables.values[9]
+        platformInterface.outputPwm10 = led_pwm_enables.values[10]
+        platformInterface.outputPwm11 = led_pwm_enables.values[11]
+
         setStatesForControls(out0pwmEnableLED,led_pwm_enables.states[0])
         setStatesForControls(out1pwmEnableLED,led_pwm_enables.states[1])
         setStatesForControls(out2pwmEnableLED,led_pwm_enables.states[2])
@@ -595,6 +608,19 @@ Item {
         if(led_pwm_enables_values[11] === true)
             out11pwmEnableLED.checked = true
         else out11pwmEnableLED.checked = false
+
+        platformInterface.outputPwm0 = led_pwm_enables_values[0]
+        platformInterface.outputPwm1 = led_pwm_enables_values[1]
+        platformInterface.outputPwm2 = led_pwm_enables_values[2]
+        platformInterface.outputPwm3 = led_pwm_enables_values[3]
+        platformInterface.outputPwm4 = led_pwm_enables_values[4]
+        platformInterface.outputPwm5 = led_pwm_enables_values[5]
+        platformInterface.outputPwm6 = led_pwm_enables_values[6]
+        platformInterface.outputPwm7 = led_pwm_enables_values[7]
+        platformInterface.outputPwm8 = led_pwm_enables_values[8]
+        platformInterface.outputPwm9 = led_pwm_enables_values[9]
+        platformInterface.outputPwm10 = led_pwm_enables_values[10]
+        platformInterface.outputPwm11 = led_pwm_enables_values[11]
     }
 
     property var led_pwm_enables_states: platformInterface.led_pwm_enables_states.states
