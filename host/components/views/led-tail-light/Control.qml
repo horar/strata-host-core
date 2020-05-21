@@ -36,6 +36,7 @@ Item {
     onStartupChanged: {
         if(startup.value === false)
             startupWarningPopup.open()
+        else startupWarningPopup.close()
     }
 
     Popup {
@@ -205,6 +206,7 @@ Item {
                             roundedLeft: true
                             roundedRight: true
                             onClicked: {
+
                                 var hexTodecimal = parseInt(new7bit.text, 16)
                                 console.log(new7bit.text)
                                 console.log(hexTodecimal)
