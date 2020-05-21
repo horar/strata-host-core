@@ -5,24 +5,15 @@ import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 
 Item {
     id: platformInterface
-
-    // -------------------------------------------------------------------
-    // UI Control States
-    //
-    // EXAMPLE:
-    //    1) Create control state:
-    //          property bool _motor_running_control: false
-    //
-    //    2) Control in UI is bound to _motor_running_control so it will follow
-    //       the state, but can also set it. Like so:
-    //          checked: platformInterface._motor_running_control
-    //          onCheckedChanged: platformInterface._motor_running_control = checked
-    //
-    //    3) This state can optionally be sent as a command when controls set it:
-    //          on_Motor_running_controlChanged: {
-    //              motor_running_command.update(_motor_running_control)
-    //          }
-    //
+    //Start up and error handling check cmds and notification section
+    property var set_startup: ({
+                                     "cmd":"startup",
+                                     update: function () {
+                                         CorePlatformInterface.send(this)
+                                     },
+                                     send: function () { CorePlatformInterface.send(this) },
+                                     show: function () { CorePlatformInterface.show(this) }
+                                 })
 
     property var control_props: ({
                                      "cmd":"control_props",
@@ -32,6 +23,12 @@ Item {
                                      send: function () { CorePlatformInterface.send(this) },
                                      show: function () { CorePlatformInterface.show(this) }
                                  })
+
+    property var startup: {
+        "value": true
+    }
+
+
 
     //Mode commands
     property var set_mode : ({
@@ -146,7 +143,7 @@ Item {
     property var led_pwm_enables: {
         "caption":"PWM Enable",
         "scales":[],
-        "states":[2],
+        "states":[0,1,1,1,1,1,1,1,1,1,1,1],
         "value":"",
         "values":[true,true,true,true,true,true,true,true,true,true,true,true]
     }
@@ -157,7 +154,7 @@ Item {
     }
 
     property var led_pwm_enables_states: {
-        "states":[2]
+        "states":[0,1,1,1,1,1,1,1,1,1,1,1]
     }
 
     property var led_pwm_enables_values: {
@@ -456,7 +453,7 @@ Item {
     }
 
     property var led_pwm_duty_lock_value: {
-        "value": false
+        "value": true
     }
 
     property var led_pwm_en_lock: {
@@ -570,20 +567,22 @@ Item {
 
     //----------- ---
 
-    // -------------------------------------------------------------------
-    // Outgoing Commands For Car Demo
-    //
-    // Define and document platform commands here.
-    //
-    // Built-in functions:
-    //   update(): sets properties and sends command in one call
-    //   set():    can set single or multiple properties before sending to platform
-    //   send():   sends current command
-    //   show():   console logs current command and properties
+    property var set_led_iset: ({
+                                    "cmd" : "led_iset",
+                                    "payload": {
+                                        "value": 30
+                                    },
 
-    // @command: led_i2c_enable_commands
-    // @description: sends LED I2C enable command to platform
-
+                                    update: function (value) {
+                                        this.set(value)
+                                        this.send(this)
+                                    },
+                                    set: function (value) {
+                                        this.payload.value = value
+                                    },
+                                    send: function () { CorePlatformInterface.send(this) },
+                                    show: function () { CorePlatformInterface.show(this) }
+                                })
 
     property var set_led_out_en : ({
                                        "cmd" : "led_out_en",
@@ -1148,6 +1147,10 @@ Item {
 
    //** SAMOPTControl notification & cmds  **/
 
+    property var soc_otped: {
+        "value": false
+    }
+
     property var soc_diag: {
         "caption":"DIAG",
         "scales":[],
@@ -1287,7 +1290,7 @@ Item {
     property var soc_sam_conf_1: {
         "caption":"SAM_CONF_1",
         "scales":[],
-         "states":[0],
+         "states":[0,0,0,0,0,0,0,0,0,0,0,0],
         "value":"",
         "values":[false,false,false,false,false,false,false,false,false,false,false,false]
     }
@@ -1297,7 +1300,7 @@ Item {
     }
 
     property var soc_sam_conf_1_states: {
-       "states":[0]
+       "states":[0,0,0,0,0,0,0,0,0,0,0,0]
     }
 
     property var soc_sam_conf_1_values: {
@@ -1307,7 +1310,7 @@ Item {
     property var soc_sam_conf_2: {
         "caption":"SAM_CONF_2",
         "scales":[],
-        "states":[0],
+        "states":[0,0,0,0,0,0,0,0,0,0,0,0],
         "value":"",
         "values":[true,true,true,true,true,true,true,true,true,true,true,true]
     }
@@ -1317,7 +1320,7 @@ Item {
     }
 
     property var soc_sam_conf_2_states: {
-       "states":[0]
+       "states":[0,0,0,0,0,0,0,0,0,0,0,0]
     }
 
     property var soc_sam_conf_2_values: {

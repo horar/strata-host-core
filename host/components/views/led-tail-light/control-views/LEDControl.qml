@@ -530,98 +530,19 @@ Item {
         else out11pwmEnableLED.checked = false
 
         setStatesForControls(out0pwmEnableLED,led_pwm_enables.states[0])
-        setStatesForControls(out1pwmEnableLED,led_pwm_enables.states[0])
-        setStatesForControls(out2pwmEnableLED,led_pwm_enables.states[0])
-        setStatesForControls(out3pwmEnableLED,led_pwm_enables.states[0])
-        setStatesForControls(out4pwmEnableLED,led_pwm_enables.states[0])
-        setStatesForControls(out5pwmEnableLED,led_pwm_enables.states[0])
-        setStatesForControls(out6pwmEnableLED,led_pwm_enables.states[0])
-        setStatesForControls(out7pwmEnableLED,led_pwm_enables.states[0])
-        setStatesForControls(out8pwmEnableLED,led_pwm_enables.states[0])
-        setStatesForControls(out9pwmEnableLED,led_pwm_enables.states[0])
-        setStatesForControls(out10pwmEnableLED,led_pwm_enables.states[0])
-        setStatesForControls(out11pwmEnableLED,led_pwm_enables.states[0])
+        setStatesForControls(out1pwmEnableLED,led_pwm_enables.states[1])
+        setStatesForControls(out2pwmEnableLED,led_pwm_enables.states[2])
+        setStatesForControls(out3pwmEnableLED,led_pwm_enables.states[3])
+        setStatesForControls(out4pwmEnableLED,led_pwm_enables.states[4])
+        setStatesForControls(out5pwmEnableLED,led_pwm_enables.states[5])
+        setStatesForControls(out6pwmEnableLED,led_pwm_enables.states[6])
+        setStatesForControls(out7pwmEnableLED,led_pwm_enables.states[7])
+        setStatesForControls(out8pwmEnableLED,led_pwm_enables.states[8])
+        setStatesForControls(out9pwmEnableLED,led_pwm_enables.states[9])
+        setStatesForControls(out10pwmEnableLED,led_pwm_enables.states[10])
+        setStatesForControls(out11pwmEnableLED,led_pwm_enables.states[11])
 
-        //        if(led_pwm_enables.state === "enabled") {
-        //            out0pwmEnableLED.enabled = true
-        //            out0pwmEnableLED.opacity = 1.0
-        //            out1pwmEnableLED.enabled = true
-        //            out1pwmEnableLED.opacity = 1.0
-        //            out2pwmEnableLED.enabled = true
-        //            out2pwmEnableLED.opacity = 1.0
-        //            out3pwmEnableLED.enabled = true
-        //            out3pwmEnableLED.opacity = 1.0
-        //            out4pwmEnableLED.enabled = true
-        //            out4pwmEnableLED.opacity = 1.0
-        //            out5pwmEnableLED.enabled = true
-        //            out5pwmEnableLED.opacity = 1.0
-        //            out6pwmEnableLED.enabled = true
-        //            out6pwmEnableLED.opacity = 1.0
-        //            out7pwmEnableLED.enabled = true
-        //            out7pwmEnableLED.opacity = 1.0
-        //            out8pwmEnableLED.enabled = true
-        //            out8pwmEnableLED.opacity = 1.0
-        //            out9pwmEnableLED.enabled = true
-        //            out9pwmEnableLED.opacity = 1.0
-        //            out10pwmEnableLED.enabled = true
-        //            out10pwmEnableLED.opacity = 1.0
-        //            out11pwmEnableLED.enabled = true
-        //            out11pwmEnableLED.opacity = 1.0
 
-        //        }
-        //        else if (led_pwm_enables.state === "disabled") {
-        //            out0pwmEnableLED.enabled = false
-        //            out0pwmEnableLED.opacity = 1.0
-        //            out1pwmEnableLED.enabled = false
-        //            out1pwmEnableLED.opacity = 1.0
-        //            out2pwmEnableLED.enabled = false
-        //            out2pwmEnableLED.opacity = 1.0
-        //            out3pwmEnableLED.enabled = false
-        //            out3pwmEnableLED.opacity = 1.0
-        //            out4pwmEnableLED.enabled = false
-        //            out4pwmEnableLED.opacity = 1.0
-        //            out5pwmEnableLED.enabled = false
-        //            out5pwmEnableLED.opacity = 1.0
-        //            out6pwmEnableLED.enabled = false
-        //            out6pwmEnableLED.opacity = 1.0
-        //            out7pwmEnableLED.enabled = false
-        //            out7pwmEnableLED.opacity = 1.0
-        //            out8pwmEnableLED.enabled = false
-        //            out8pwmEnableLED.opacity = 1.0
-        //            out9pwmEnableLED.enabled = false
-        //            out9pwmEnableLED.opacity = 1.0
-        //            out10pwmEnableLED.enabled = false
-        //            out10pwmEnableLED.opacity = 1.0
-        //            out11pwmEnableLED.enabled = false
-        //            out11pwmEnableLED.opacity = 1.0
-
-        //        }
-        //        else {
-        //            out0pwmEnableLED.enabled = false
-        //            out0pwmEnableLED.opacity = 0.5
-        //            out1pwmEnableLED.enabled = false
-        //            out1pwmEnableLED.opacity = 0.5
-        //            out2pwmEnableLED.enabled = false
-        //            out2pwmEnableLED.opacity = 0.5
-        //            out3pwmEnableLED.enabled = false
-        //            out3pwmEnableLED.opacity = 0.5
-        //            out4pwmEnableLED.enabled = false
-        //            out4pwmEnableLED.opacity = 0.5
-        //            out5pwmEnableLED.enabled = false
-        //            out5pwmEnableLED.opacity = 0.5
-        //            out6pwmEnableLED.enabled = false
-        //            out6pwmEnableLED.opacity = 0.5
-        //            out7pwmEnableLED.enabled = false
-        //            out7pwmEnableLED.opacity = 0.5
-        //            out8pwmEnableLED.enabled = false
-        //            out8pwmEnableLED.opacity = 0.5
-        //            out9pwmEnableLED.enabled = false
-        //            out9pwmEnableLED.opacity = 0.5
-        //            out10pwmEnableLED.enabled = false
-        //            out10pwmEnableLED.opacity = 0.5
-        //            out11pwmEnableLED.enabled = false
-        //            out11pwmEnableLED.opacity = 0.5
-        //        }
     }
 
 
@@ -680,17 +601,17 @@ Item {
     onLed_pwm_enables_statesChanged: {
 
         setStatesForControls(out0pwmEnableLED,led_pwm_enables_states[0])
-        setStatesForControls(out1pwmEnableLED,led_pwm_enables_states[0])
-        setStatesForControls(out2pwmEnableLED,led_pwm_enables_states[0])
-        setStatesForControls(out3pwmEnableLED,led_pwm_enables_states[0])
-        setStatesForControls(out4pwmEnableLED,led_pwm_enables_states[0])
-        setStatesForControls(out5pwmEnableLED,led_pwm_enables_states[0])
-        setStatesForControls(out6pwmEnableLED,led_pwm_enables_states[0])
-        setStatesForControls(out7pwmEnableLED,led_pwm_enables_states[0])
-        setStatesForControls(out8pwmEnableLED,led_pwm_enables_states[0])
-        setStatesForControls(out9pwmEnableLED,led_pwm_enables_states[0])
-        setStatesForControls(out10pwmEnableLED,led_pwm_enables_states[0])
-        setStatesForControls(out11pwmEnableLED,led_pwm_enables_states[0])
+        setStatesForControls(out1pwmEnableLED,led_pwm_enables_states[1])
+        setStatesForControls(out2pwmEnableLED,led_pwm_enables_states[2])
+        setStatesForControls(out3pwmEnableLED,led_pwm_enables_states[3])
+        setStatesForControls(out4pwmEnableLED,led_pwm_enables_states[4])
+        setStatesForControls(out5pwmEnableLED,led_pwm_enables_states[5])
+        setStatesForControls(out6pwmEnableLED,led_pwm_enables_states[6])
+        setStatesForControls(out7pwmEnableLED,led_pwm_enables_states[7])
+        setStatesForControls(out8pwmEnableLED,led_pwm_enables_states[8])
+        setStatesForControls(out9pwmEnableLED,led_pwm_enables_states[9])
+        setStatesForControls(out10pwmEnableLED,led_pwm_enables_states[10])
+        setStatesForControls(out11pwmEnableLED,led_pwm_enables_states[11])
     }
 
 
@@ -963,16 +884,20 @@ Item {
                                 target: gobalCurrentSetSlider
                                 fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
-                                alignment: SGAlignedLabel.SideLeftCenter
+                                alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
                                 //text: "Gobal Current Set (ISET)"
                                 SGSlider {
                                     id: gobalCurrentSetSlider
-                                    width: gobalCurrentSetContainer.width - gobalCurrentSetLabel.contentWidth - 10
+                                    width: gobalCurrentSetContainer.width - 20
                                     live: false
                                     fontSizeMultiplier: ratioCalc * 1.2
                                     showInputBox: false
+
+                                    onUserSet: {
+                                        platformInterface.set_led_iset.update(value)
+                                    }
 
                                 }
 
@@ -1146,7 +1071,7 @@ Item {
                                     checked: false
 
                                     onToggled: {
-                                        platformInterface.set_led_pwm_duty_lock.update(checke)
+                                        platformInterface.set_led_pwm_duty_lock.update(checked)
                                     }
 
 
@@ -1216,20 +1141,6 @@ Item {
                                     onLed_pwm_en_lockChanged: {
                                         lockPWMDutyENLabel.text = led_pwm_en_lock.caption
                                         setStatesForControls(lockPWMDutyEN,led_pwm_en_lock.states[0])
-                                        //                                        if(led_pwm_en_lock.state === "enabled" ) {
-                                        //                                            lockPWMDutyEN.enabled = true
-                                        //                                            lockPWMDutyEN.opacity = 1.0
-
-                                        //                                        }
-                                        //                                        else if(led_pwm_en_lock.state === "disabled") {
-                                        //                                            lockPWMDutyEN.enabled = false
-                                        //                                            lockPWMDutyEN.opacity = 1.0
-                                        //                                        }
-                                        //                                        else {
-                                        //                                            lockPWMDutyEN.enabled = false
-                                        //                                            lockPWMDutyEN.opacity = 0.5
-
-                                        //                                        }
                                         if(led_pwm_en_lock.value === true)
                                             lockPWMDutyEN.checked = true
                                         else  lockPWMDutyEN.checked = false
@@ -1344,9 +1255,16 @@ Item {
 
                                     property var led_linear_log_value: platformInterface.led_linear_log_value.value
                                     onLed_linear_log_valueChanged: {
-                                        if(led_linear_log_value === "Linear")
+                                        if(led_linear_log_value === "Linear") {
                                             pwmLinearLog.checked = true
-                                        else  pwmLinearLog.checked = false
+                                            platformInterface.pwm_lin_state = true
+                                        }
+                                        else  {
+
+                                            pwmLinearLog.checked = false
+                                            platformInterface.pwm_lin_state = false
+                                        }
+
 
                                     }
                                 }
@@ -2360,7 +2278,7 @@ Item {
 
                                                 onToggled: {
                                                     if(checked) {
-                                                        platformInterface.set_led_ext.update(
+                                                        platformInterface.set_led_out_en.update(
                                                                     [platformInterface.outputEnable0,
                                                                      platformInterface.outputEnable1,
                                                                      true,
@@ -2378,7 +2296,7 @@ Item {
                                                         platformInterface.outputEnable2 = true
                                                     }
                                                     else {
-                                                        platformInterface.set_led_ext.update(
+                                                        platformInterface.set_led_out_en.update(
                                                                     [platformInterface.outputEnable0,
                                                                      platformInterface.outputEnable1,
                                                                      false,
@@ -3729,7 +3647,7 @@ Item {
                                                                      platformInterface.outputExt11
 
                                                                     ] )
-                                                        platformInterface.outputExt7 = false
+                                                        platformInterface.outputExt7 = true
                                                     }
                                                     else {
                                                         platformInterface.set_led_ext.update(

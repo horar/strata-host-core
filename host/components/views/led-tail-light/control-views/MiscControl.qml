@@ -13,6 +13,10 @@ Item {
     height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
+    function toHex(d) {
+        return  ("0"+(Number(d).toString(16))).slice(-2).toUpperCase()
+    }
+
     function setStatesForControls (theId, index){
         if(index !== null && index !== undefined)  {
             if(index === 0) {
@@ -38,6 +42,7 @@ Item {
         RowLayout {
             anchors.fill: parent
 
+
             Rectangle {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
@@ -53,7 +58,7 @@ Item {
                             id: idVers1Label
                             //text: "ID_VERS_1"
                             target: idVers1
-                            alignment: SGAlignedLabel.SideTopLeft
+                            alignment: SGAlignedLabel.SideTopCenter
                             anchors.centerIn: parent
                             fontSizeMultiplier: ratioCalc * 1.2
                             font.bold : true
@@ -62,7 +67,16 @@ Item {
                                 height:  35 * ratioCalc
                                 width: 140 * ratioCalc
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                boxFont.family: Fonts.digitalseven
+
+                            }
+
+                            SGText{
+                                id: idVers1Text
+                                text: "0x"
+                                anchors.right: idVers1.left
+                                anchors.rightMargin: 10
+                                anchors.verticalCenter: idVers1.verticalCenter
+                                font.bold: true
                             }
 
                             property var misc_id_vers_1: platformInterface.misc_id_vers_1
@@ -70,19 +84,9 @@ Item {
                                 idVers1Label.text = misc_id_vers_1.caption
                                 setStatesForControls(idVers1,misc_id_vers_1.states[0])
 
-//                                if(misc_id_vers_1.state === "enabled"){
-//                                    idVers1.opacity = 1.0
-//                                    idVers1.enabled = true
-//                                }
-//                                else if (misc_id_vers_1.state === "disabled") {
-//                                    idVers1.opacity = 1.0
-//                                    idVers1.enabled = false
-//                                }
-//                                else {
-//                                    idVers1.opacity = 0.5
-//                                    idVers1.enabled = false
-//                                }
-                                idVers1.text = misc_id_vers_1.value
+
+                                //convert the text to hex
+                                idVers1.text =  toHex(misc_id_vers_1.value)
 
                             }
 
@@ -98,7 +102,7 @@ Item {
 
                             property var misc_id_vers_1_value: platformInterface.misc_id_vers_1_value.value
                             onMisc_id_vers_1_valueChanged: {
-                                idVers1.text = misc_id_vers_1_value
+                                idVers1.text = toHex(misc_id_vers_1_value)
                             }
 
                         }
@@ -179,9 +183,8 @@ Item {
 
                         SGAlignedLabel {
                             id: idVers2Label
-                            // text: "ID_VERS_2"
                             target: idVers2
-                            alignment: SGAlignedLabel.SideTopLeft
+                            alignment: SGAlignedLabel.SideTopCenter
                             anchors.centerIn: parent
                             fontSizeMultiplier: ratioCalc * 1.2
                             font.bold : true
@@ -190,28 +193,23 @@ Item {
                                 height:  35 * ratioCalc
                                 width: 140 * ratioCalc
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                // unit: "<b>V</b>"
-                                // text: "0x04"
                                 boxFont.family: Fonts.digitalseven
+                            }
+
+                            SGText{
+                                id: idVers2Text
+                                text: "0x"
+                                anchors.right: idVers2.left
+                                anchors.rightMargin: 10
+                                anchors.verticalCenter: idVers2.verticalCenter
+                                font.bold: true
                             }
 
                             property var misc_id_vers_2: platformInterface.misc_id_vers_2
                             onMisc_id_vers_2Changed: {
                                 idVers2Label.text = misc_id_vers_2.caption
                                 setStatesForControls(idVers2,misc_id_vers_2.states[0])
-//                                if(misc_id_vers_2.state === "enabled"){
-//                                    idVers2.opacity = 1.0
-//                                    idVers2.enabled = true
-//                                }
-//                                else if (misc_id_vers_2.state === "disabled") {
-//                                    idVers2.opacity = 1.0
-//                                    idVers2.enabled = false
-//                                }
-//                                else {
-//                                    idVers2.opacity = 0.5
-//                                    idVers2.enabled = false
-//                                }
-                                idVers2.text = misc_id_vers_2.value
+                                idVers2.text = toHex(misc_id_vers_2.value)
 
                             }
 
@@ -227,7 +225,7 @@ Item {
 
                             property var misc_id_vers_2_value: platformInterface.misc_id_vers_2_value.value
                             onMisc_id_vers_2_valueChanged: {
-                                idVers2.text = misc_id_vers_2_value
+                                idVers2.text = toHex(misc_id_vers_2_value)
                             }
                         }
                     }

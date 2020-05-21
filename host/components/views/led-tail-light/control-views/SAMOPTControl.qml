@@ -13,6 +13,15 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
+    MouseArea {
+        id: containMouseArea
+        anchors.fill:root
+        onClicked: {
+            forceActiveFocus()
+        }
+    }
+
+
     function toHex(d) {
         return  ("0"+(Number(d).toString(16))).slice(-2).toUpperCase()
     }
@@ -64,17 +73,17 @@ Item {
         platformInterface.soc_sam_conf_1_out12 = soc_sam_conf_1.values[11]
 
         setStatesForControls(out1,soc_sam_conf_1.states[0])
-        setStatesForControls(out2,soc_sam_conf_1.states[0])
-        setStatesForControls(out3,soc_sam_conf_1.states[0])
-        setStatesForControls(out4,soc_sam_conf_1.states[0])
-        setStatesForControls(out5,soc_sam_conf_1.states[0])
-        setStatesForControls(out6,soc_sam_conf_1.states[0])
-        setStatesForControls(out7,soc_sam_conf_1.states[0])
-        setStatesForControls(out8,soc_sam_conf_1.states[0])
-        setStatesForControls(out9,soc_sam_conf_1.states[0])
-        setStatesForControls(out10,soc_sam_conf_1.states[0])
-        setStatesForControls(out11,soc_sam_conf_1.states[0])
-        setStatesForControls(out12,soc_sam_conf_1.states[0])
+        setStatesForControls(out2,soc_sam_conf_1.states[1])
+        setStatesForControls(out3,soc_sam_conf_1.states[2])
+        setStatesForControls(out4,soc_sam_conf_1.states[3])
+        setStatesForControls(out5,soc_sam_conf_1.states[4])
+        setStatesForControls(out6,soc_sam_conf_1.states[5])
+        setStatesForControls(out7,soc_sam_conf_1.states[6])
+        setStatesForControls(out8,soc_sam_conf_1.states[7])
+        setStatesForControls(out9,soc_sam_conf_1.states[8])
+        setStatesForControls(out10,soc_sam_conf_1.states[9])
+        setStatesForControls(out11,soc_sam_conf_1.states[10])
+        setStatesForControls(out12,soc_sam_conf_1.states[11])
     }
 
     property var soc_sam_conf_1_values: platformInterface.soc_sam_conf_1_values.values
@@ -114,17 +123,17 @@ Item {
     property var soc_sam_conf_1_state: platformInterface.soc_sam_conf_1_states.states
     onSoc_sam_conf_1_stateChanged: {
         setStatesForControls(out1,soc_sam_conf_1_state[0])
-        setStatesForControls(out2,soc_sam_conf_1_state[0])
-        setStatesForControls(out3,soc_sam_conf_1_state[0])
-        setStatesForControls(out4,soc_sam_conf_1_state[0])
-        setStatesForControls(out5,soc_sam_conf_1_state[0])
-        setStatesForControls(out6,soc_sam_conf_1_state[0])
-        setStatesForControls(out7,soc_sam_conf_1_state[0])
-        setStatesForControls(out8,soc_sam_conf_1_state[0])
-        setStatesForControls(out9,soc_sam_conf_1_state[0])
-        setStatesForControls(out10,soc_sam_conf_1_state[0])
-        setStatesForControls(out11,soc_sam_conf_1_state[0])
-        setStatesForControls(out12,soc_sam_conf_1_state[0])
+        setStatesForControls(out2,soc_sam_conf_1_state[1])
+        setStatesForControls(out3,soc_sam_conf_1_state[2])
+        setStatesForControls(out4,soc_sam_conf_1_state[3])
+        setStatesForControls(out5,soc_sam_conf_1_state[4])
+        setStatesForControls(out6,soc_sam_conf_1_state[5])
+        setStatesForControls(out7,soc_sam_conf_1_state[6])
+        setStatesForControls(out8,soc_sam_conf_1_state[7])
+        setStatesForControls(out9,soc_sam_conf_1_state[8])
+        setStatesForControls(out10,soc_sam_conf_1_state[9])
+        setStatesForControls(out11,soc_sam_conf_1_state[10])
+        setStatesForControls(out12,soc_sam_conf_1_state[11])
     }
 
     property var soc_sam_conf_2: platformInterface.soc_sam_conf_2
@@ -158,99 +167,17 @@ Item {
         platformInterface.soc_sam_conf_2_out12 = soc_sam_conf_2.values[11]
 
         setStatesForControls(samOut1,soc_sam_conf_2.states[0])
-        setStatesForControls(samOut2,soc_sam_conf_2.states[0])
-        setStatesForControls(samOut3,soc_sam_conf_2.states[0])
-        setStatesForControls(samOut4,soc_sam_conf_2.states[0])
-        setStatesForControls(samOut5,soc_sam_conf_2.states[0])
-        setStatesForControls(samOut6,soc_sam_conf_2.states[0])
-        setStatesForControls(samOut7,soc_sam_conf_2.states[0])
-        setStatesForControls(samOut8,soc_sam_conf_2.states[0])
-        setStatesForControls(samOut9,soc_sam_conf_2.states[0])
-        setStatesForControls(samOut10,soc_sam_conf_2.states[0])
-        setStatesForControls(samOut11,soc_sam_conf_2.states[0])
-        setStatesForControls(samOut12,soc_sam_conf_2.states[0])
-
-
-        //        if(soc_sam_conf_2.state === "enabled") {
-        //            samOut1.enabled = true
-        //            samOut1.opacity = 1.0
-        //            samOut2.enabled = true
-        //            samOut2.opacity = 1.0
-        //            samOut3.enabled = true
-        //            samOut3.opacity = 1.0
-        //            samOut4.enabled = true
-        //            samOut4.opacity = 1.0
-        //            samOut5.enabled = true
-        //            samOut5.opacity = 1.0
-        //            samOut6.enabled = true
-        //            samOut6.opacity = 1.0
-        //            samOut7.enabled = true
-        //            samOut7.opacity = 1.0
-        //            samOut8.enabled = true
-        //            samOut8.opacity = 1.0
-        //            samOut9.enabled = true
-        //            samOut9.opacity = 1.0
-        //            samOut10.enabled = true
-        //            samOut10.opacity = 1.0
-        //            samOut11.enabled = true
-        //            samOut11.opacity = 1.0
-        //            samOut12.enabled = true
-        //            samOut12.opacity = 1.0
-
-        //        }
-        //        else if (soc_sam_conf_2.state === "disabled") {
-        //            samOut1.enabled = false
-        //            samOut1.opacity = 1.0
-        //            samOut2.enabled = false
-        //            samOut2.opacity = 1.0
-        //            samOut3.enabled = false
-        //            samOut3.opacity = 1.0
-        //            samOut4.enabled = false
-        //            samOut4.opacity = 1.0
-        //            samOut5.enabled = false
-        //            samOut5.opacity = 1.0
-        //            samOut6.enabled = false
-        //            samOut6.opacity = 1.0
-        //            samOut7.enabled = false
-        //            samOut7.opacity = 1.0
-        //            samOut8.enabled = false
-        //            samOut8.opacity = 1.0
-        //            samOut9.enabled = false
-        //            samOut9.opacity = 1.0
-        //            samOut10.enabled = false
-        //            samOut10.opacity = 1.0
-        //            samOut11.enabled = false
-        //            samOut11.opacity = 1.0
-        //            samOut12.enabled = false
-        //            samOut12.opacity = 1.0
-
-        //        }
-        //        else {
-        //            samOut1.enabled = false
-        //            samOut1.opacity = 0.5
-        //            samOut2.enabled = false
-        //            samOut2.opacity = 0.5
-        //            samOut3.enabled = false
-        //            samOut3.opacity = 0.5
-        //            samOut4.enabled = false
-        //            samOut4.opacity = 0.5
-        //            samOut5.enabled = false
-        //            samOut5.opacity = 0.5
-        //            samOut6.enabled = false
-        //            samOut6.opacity = 0.5
-        //            samOut7.enabled = false
-        //            samOut7.opacity = 0.5
-        //            samOut8.enabled = false
-        //            samOut8.opacity = 0.5
-        //            samOut9.enabled = false
-        //            samOut9.opacity = 0.5
-        //            samOut10.enabled = false
-        //            samOut10.opacity = 0.5
-        //            samOut11.enabled = false
-        //            samOut11.opacity = 0.5
-        //            samOut12.enabled = false
-        //            samOut12.opacity = 0.5
-        //        }
+        setStatesForControls(samOut2,soc_sam_conf_2.states[1])
+        setStatesForControls(samOut3,soc_sam_conf_2.states[2])
+        setStatesForControls(samOut4,soc_sam_conf_2.states[3])
+        setStatesForControls(samOut5,soc_sam_conf_2.states[4])
+        setStatesForControls(samOut6,soc_sam_conf_2.states[5])
+        setStatesForControls(samOut7,soc_sam_conf_2.states[6])
+        setStatesForControls(samOut8,soc_sam_conf_2.states[7])
+        setStatesForControls(samOut9,soc_sam_conf_2.states[8])
+        setStatesForControls(samOut10,soc_sam_conf_2.states[9])
+        setStatesForControls(samOut11,soc_sam_conf_2.states[10])
+        setStatesForControls(samOut12,soc_sam_conf_2.states[11])
     }
 
     property var soc_sam_conf_2_values: platformInterface.soc_sam_conf_2_values.values
@@ -288,20 +215,112 @@ Item {
     property var soc_sam_conf_2_state: platformInterface.soc_sam_conf_2_states.states
     onSoc_sam_conf_2_stateChanged: {
         setStatesForControls(samOut1,soc_sam_conf_2_state[0])
-        setStatesForControls(samOut2,soc_sam_conf_2_state[0])
-        setStatesForControls(samOut3,soc_sam_conf_2_state[0])
-        setStatesForControls(samOut4,soc_sam_conf_2_state[0])
-        setStatesForControls(samOut5,soc_sam_conf_2_state[0])
-        setStatesForControls(samOut6,soc_sam_conf_2_state[0])
-        setStatesForControls(samOut7,soc_sam_conf_2_state[0])
-        setStatesForControls(samOut8,soc_sam_conf_2_state[0])
-        setStatesForControls(samOut9,soc_sam_conf_2_state[0])
-        setStatesForControls(samOut10,soc_sam_conf_2_state[0])
-        setStatesForControls(samOut11,soc_sam_conf_2_state[0])
-        setStatesForControls(samOut12,soc_sam_conf_2_state[0])
+        setStatesForControls(samOut2,soc_sam_conf_2_state[1])
+        setStatesForControls(samOut3,soc_sam_conf_2_state[2])
+        setStatesForControls(samOut4,soc_sam_conf_2_state[3])
+        setStatesForControls(samOut5,soc_sam_conf_2_state[4])
+        setStatesForControls(samOut6,soc_sam_conf_2_state[5])
+        setStatesForControls(samOut7,soc_sam_conf_2_state[6])
+        setStatesForControls(samOut8,soc_sam_conf_2_state[7])
+        setStatesForControls(samOut9,soc_sam_conf_2_state[8])
+        setStatesForControls(samOut10,soc_sam_conf_2_state[9])
+        setStatesForControls(samOut11,soc_sam_conf_2_state[10])
+        setStatesForControls(samOut12,soc_sam_conf_2_state[11])
     }
 
-    Popup{
+    //    property var soc_otped: platformInterface.soc_otped
+    //    onSoc_otpedChanged: {
+    //        if(soc_otped.value === true)
+    //            warningPopupOTP.open()
+    //    }
+
+
+
+    Popup {
+        id: warningPopupOTP
+        width: parent.width/2
+        height: parent.height/4
+        anchors.centerIn: parent
+        modal: true
+        focus: true
+        closePolicy: Popup.NoAutoClose
+        background: Rectangle{
+            id: warningPopupContainerOTP
+            width: warningPopupOTP.width
+            height: warningPopupOTP.height
+            color: "#dcdcdc"
+            border.color: "grey"
+            border.width: 2
+            radius: 10
+        }
+
+        Rectangle {
+            id: warningPopupBoxOTP
+            color: "transparent"
+            anchors {
+                top: parent.top
+                // topMargin: 5
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: warningPopupContainerOTP.width - 50
+            height: warningPopupContainerOTP.height - 50
+
+            Rectangle {
+                id: messageContainerForPopupOTP
+                anchors {
+                    top: parent.top
+                    topMargin: 10
+                    centerIn:  parent.Center
+                }
+                color: "transparent"
+                width: parent.width
+                height:  parent.height - selectionContainerForPopupOTP.height
+                Text {
+                    id: warningTextForPopupOTP
+                    anchors.fill:parent
+                    text: "Cannot OTP the part as it has been previously OTP’ed."
+                    verticalAlignment:  Text.AlignVCenter
+                    wrapMode: Text.WordWrap
+                    fontSizeMode: Text.Fit
+                    width: parent.width
+                    font.family: "Helvetica Neue"
+                    font.pixelSize: ratioCalc * 15
+                    font.bold: true
+                }
+            }
+
+
+            Rectangle {
+                id: selectionContainerForPopupOTP
+                width: parent.width/2
+                height: parent.height/4.5
+                anchors{
+                    top: messageContainerForPopupOTP.bottom
+                    topMargin: 10
+                    right: parent.right
+                }
+                color: "transparent"
+
+                SGButton {
+                    id: continueButton
+                    width: parent.width/3
+                    height:parent.height
+                    anchors.right: parent.right
+                    anchors.rightMargin: 20
+                    text: "Continue"
+                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                    roundedLeft: true
+                    roundedRight: true
+
+                    onClicked: {
+                        warningPopupOTP.close()
+                    }
+                }
+            }
+        }
+    }
+
+    Popup {
         id: warningPopup
         width: parent.width/2
         height: parent.height/4
@@ -317,23 +336,6 @@ Item {
             border.color: "grey"
             border.width: 2
             radius: 10
-            Rectangle {
-                id:topBorder
-                width: parent.width
-                height: parent.height/7
-                anchors{
-                    top: parent.top
-                    topMargin: 2
-                    right: parent.right
-                    rightMargin: 2
-                    left: parent.left
-                    leftMargin: 2
-                }
-                radius: 5
-                color: "#c0c0c0"
-                border.color: "#c0c0c0"
-                border.width: 2
-            }
         }
 
         Rectangle {
@@ -341,7 +343,7 @@ Item {
             color: "transparent"
             anchors {
                 top: parent.top
-                topMargin: 5
+                // topMargin: 5
                 horizontalCenter: parent.horizontalCenter
             }
             width: warningPopupContainer.width - 50
@@ -360,13 +362,14 @@ Item {
                 Text {
                     id: warningTextForPopup
                     anchors.fill:parent
-                    text: "The part will be permanently OTP’ed. The registers on this page will become read-only. Do you want to continue?”"
+                    text: "The part will be permanently OTP’ed. The non-volatile registers settings in ID_LOCK_OTP cannot be changed again! The volatile register settings in ID_SET_OTP can still be modified to illustrate SAM configuration."
                     verticalAlignment:  Text.AlignVCenter
                     wrapMode: Text.WordWrap
                     fontSizeMode: Text.Fit
                     width: parent.width
                     font.family: "Helvetica Neue"
                     font.pixelSize: ratioCalc * 15
+                    font.bold: true
                 }
             }
 
@@ -382,10 +385,27 @@ Item {
                 color: "transparent"
 
                 SGButton {
-                    id: continueButton
+                    id: cancelButton
                     width: parent.width/3
                     height:parent.height
                     anchors.left: parent.left
+                    text: "Cancel"
+                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                    roundedLeft: true
+                    roundedRight: true
+
+                    onClicked: {
+                        warningPopup.close()
+
+                    }
+                }
+
+                SGButton {
+                    id: continueButtonOPT
+                    width: parent.width/3
+                    height:parent.height
+                    anchors.left: cancelButton.right
+                    anchors.leftMargin: 20
                     //anchors.leftMargin: 20
                     //anchors.centerIn: parent
                     text: "Continue"
@@ -395,7 +415,7 @@ Item {
 
                     onClicked: {
                         warningPopup.close()
-                       // platformInterface.soc_otpValue = true
+
                         platformInterface.set_soc_write.update(
                                     true,
                                     [platformInterface.soc_sam_conf_1_out1,
@@ -428,30 +448,17 @@ Item {
                                     samOpenLoadDiagnostic.currentText,
                                     platformInterface.soc_crcValue,
                                     platformInterface.addr_curr_apply)
+
+                        if(platformInterface.soc_otped.value === true) {
+                            warningPopupOTP.open()
+                        }
                     }
                 }
-
-                SGButton {
-                    id: cancelButton
-                    width: parent.width/3
-                    height:parent.height
-                    anchors.left: continueButton.right
-                    anchors.leftMargin: 20
-                    //anchors.centerIn: parent
-                    text: "Cancel"
-                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
-                    roundedLeft: true
-                    roundedRight: true
-
-                    onClicked: {
-                        warningPopup.close()
-
-                    }
-                }
-
             }
         }
     }
+
+
 
 
     ColumnLayout {
@@ -523,7 +530,7 @@ Item {
                             grooveColor: "#ccc"             // Default: "#ccc"
                             grooveFillColor: "#0cf"         // Default: "#0cf"
                             fontSizeMultiplier: ratioCalc * 1.2
-                            //checked: false
+
                             onToggled: {
                                 platformInterface.soc_crcValue = checked
                                 platformInterface.set_soc_write.update(
@@ -631,18 +638,6 @@ Item {
                         onSoc_addr_currChanged: {
                             text = soc_addr_curr.caption
                             setStatesForControls(current7bit,soc_addr_curr.states[0])
-                            //                            if(soc_addr_curr.state === "enabled") {
-                            //                                current7bit.enabled = true
-                            //                                current7bit.opacity = 1.0
-                            //                            }
-                            //                            else if (soc_addr_curr.state === "disabled") {
-                            //                                current7bit.enabled = false
-                            //                                current7bit.opacity = 1.0
-                            //                            }
-                            //                            else {
-                            //                                current7bit.enabled = false
-                            //                                current7bit.opacity = 0.5
-                            //                            }
                             current7bit.text = toHex(soc_addr_curr.value)
                             platformInterface.addr_curr = soc_addr_curr.value
 
@@ -702,6 +697,7 @@ Item {
                                     platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
                                 }
                             }
+
                         }
 
                         SGText{
@@ -773,6 +769,24 @@ Item {
                             anchors.fill: parent
                             cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                             onClicked: {
+                                var hexTodecimal = parseInt(new7bit.text, 16)
+                                console.log(new7bit.text)
+                                console.log(hexTodecimal)
+                                if(hexTodecimal > platformInterface.soc_addr_new.scales[0]) {
+                                    console.log(new7bit.text.toString(16))
+                                    new7bit.text = toHex(platformInterface.soc_addr_new.scales[0])
+                                    platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
+                                }
+
+                                else if(hexTodecimal < platformInterface.soc_addr_new.scales[1]){
+                                    new7bit.text = toHex(platformInterface.soc_addr_new.scales[1])
+                                    platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
+                                }
+                                else if(hexTodecimal <= platformInterface.soc_addr_new.scales[0] && hexTodecimal >= platformInterface.soc_addr_new.scales[1]){
+                                    new7bit.text = new7bit.text
+                                    platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
+                                }
+
                                 platformInterface.set_soc_write.update(
                                             false,
                                             [platformInterface.soc_sam_conf_1_out1,
@@ -785,7 +799,8 @@ Item {
                                              platformInterface.soc_sam_conf_1_out8,
                                              platformInterface.soc_sam_conf_1_out9,
                                              platformInterface.soc_sam_conf_1_out10,
-                                             platformInterface.soc_sam_conf_1_out11
+                                             platformInterface.soc_sam_conf_1_out11,
+                                             platformInterface.soc_sam_conf_1_out12
                                             ],
                                             [platformInterface.soc_sam_conf_2_out1,
                                              platformInterface.soc_sam_conf_2_out2,
@@ -797,7 +812,8 @@ Item {
                                              platformInterface.soc_sam_conf_2_out8,
                                              platformInterface.soc_sam_conf_2_out9,
                                              platformInterface.soc_sam_conf_2_out10,
-                                             platformInterface.soc_sam_conf_2_out11
+                                             platformInterface.soc_sam_conf_2_out11,
+                                             platformInterface.soc_sam_conf_2_out12
                                             ],
                                             samOpenLoadDiagnostic.currentText,
                                             platformInterface.soc_otpValue,
@@ -1345,7 +1361,7 @@ Item {
                                     onToggled: {
                                         platformInterface.soc_sam_conf_1_out4 = checked
                                         platformInterface.set_soc_write.update(
-                                                   false,
+                                                    false,
                                                     [platformInterface.soc_sam_conf_1_out1,
                                                      platformInterface.soc_sam_conf_1_out2,
                                                      platformInterface.soc_sam_conf_1_out3,
@@ -1757,7 +1773,7 @@ Item {
                                     onToggled: {
                                         platformInterface.soc_sam_conf_1_out11 = checked
                                         platformInterface.set_soc_write.update(
-                                                   false,
+                                                    false,
                                                     [platformInterface.soc_sam_conf_1_out1,
                                                      platformInterface.soc_sam_conf_1_out2,
                                                      platformInterface.soc_sam_conf_1_out3,
@@ -2090,7 +2106,7 @@ Item {
                                 onToggled: {
                                     platformInterface.soc_sam_conf_2_out5 = checked
                                     platformInterface.set_soc_write.update(
-                                               false,
+                                                false,
                                                 [platformInterface.soc_sam_conf_1_out1,
                                                  platformInterface.soc_sam_conf_1_out2,
                                                  platformInterface.soc_sam_conf_1_out3,
@@ -2384,7 +2400,7 @@ Item {
                                 onToggled: {
                                     platformInterface.soc_sam_conf_2_out11 = checked
                                     platformInterface.set_soc_write.update(
-                                               false,
+                                                false,
                                                 [platformInterface.soc_sam_conf_1_out1,
                                                  platformInterface.soc_sam_conf_1_out2,
                                                  platformInterface.soc_sam_conf_1_out3,
@@ -2487,7 +2503,7 @@ Item {
 
                     Text {
                         id: oneTimeProgramHeading
-                        text: "One Time Program"
+                        text: "One Time Program (OTP)"
                         font.bold: true
                         font.pixelSize: ratioCalc * 20
                         color: "#696969"
@@ -2495,6 +2511,7 @@ Item {
                             top: parent.top
                             topMargin: 5
                         }
+                        horizontalAlignment: Text.AlignHCenter
                     }
 
                     Rectangle {
@@ -2662,6 +2679,7 @@ Item {
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+                            color: "transparent"
 
                             SGAlignedLabel {
                                 id: samOpenLoadLabel
@@ -2676,7 +2694,6 @@ Item {
                                 SGComboBox {
                                     id: samOpenLoadDiagnostic
                                     fontSizeMultiplier: ratioCalc
-                                    //model: ["No Diagnostic", "Auto Retry", "Detect Only", "No Regulation Change"]
                                     onActivated: {
                                         platformInterface.set_soc_write.update(
                                                     false,
@@ -2703,7 +2720,8 @@ Item {
                                                      platformInterface.soc_sam_conf_2_out8,
                                                      platformInterface.soc_sam_conf_2_out9,
                                                      platformInterface.soc_sam_conf_2_out10,
-                                                     platformInterface.soc_sam_conf_2_out11
+                                                     platformInterface.soc_sam_conf_2_out11,
+                                                     platformInterface.soc_sam_conf_1_out12
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
                                                     platformInterface.soc_crcValue,

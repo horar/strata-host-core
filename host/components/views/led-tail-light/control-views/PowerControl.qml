@@ -825,7 +825,7 @@ Item {
                                             height:  35 * ratioCalc
                                             width: 160 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                            unit: "<b>mA</b>"
+                                            unit: "<b>V</b>"
                                             // text: "500"
                                             boxFont.family: Fonts.digitalseven
                                         }
