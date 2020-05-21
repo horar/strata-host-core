@@ -69,6 +69,7 @@ Rectangle{
                     source: "car-Images/headlights.png"
                     anchors.fill: parent
                     fillMode: Image.PreserveAspectFit
+                    visible: false
                 }
 
                 Image {
