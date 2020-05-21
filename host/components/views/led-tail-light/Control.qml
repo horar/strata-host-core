@@ -19,11 +19,15 @@ Item {
         id: platformInterface
     }
 
+    function toHex(d) {
+        return  ("0"+(Number(d).toString(16))).slice(-2).toUpperCase()
+    }
+
 
 
     Component.onCompleted: {
-        platformInterface.set_startup.update()
-        platformInterface.control_props.update()
+        platformInterface.set_startup.update(96,false)
+       // platformInterface.control_props.update()
         platformInterface.set_mode.update("Car Demo")
 
     }
@@ -131,6 +135,7 @@ Item {
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 height:  35 * ratioCalc
                                 width: 50 * ratioCalc
+                                text: toHex(96)
                                 onAccepted: {
                                     var hexTodecimal = parseInt(text, 16)
                                     console.log(text)
@@ -179,6 +184,7 @@ Item {
                                 grooveColor: "#ccc"             // Default: "#ccc"
                                 grooveFillColor: "#0cf"         // Default: "#0cf"
                                 fontSizeMultiplier: ratioCalc * 1.2
+                                checked: false
 
                             }
                         }
@@ -190,13 +196,35 @@ Item {
                         color: "transparent"
                         SGButton {
                             id: continueButton
-                            width: parent.width - 30
-                            height:parent.height - 20
+                            width: parent.width/2
+                            height:parent.height - 10
                             anchors.right: parent.right
+                            anchors.centerIn: parent
                             text: "Continue"
                             color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
                             roundedLeft: true
                             roundedRight: true
+                            onClicked: {
+                                var hexTodecimal = parseInt(new7bit.text, 16)
+                                console.log(new7bit.text)
+                                console.log(hexTodecimal)
+                                if(hexTodecimal > platformInterface.soc_addr_new.scales[0]) {
+                                    console.log(new7bit.text.toString(16))
+                                    new7bit.text = toHex(platformInterface.soc_addr_new.scales[0])
+                                    platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
+                                }
+
+                                else if(hexTodecimal < platformInterface.soc_addr_new.scales[1]){
+                                    new7bit.text = toHex(platformInterface.soc_addr_new.scales[1])
+                                    platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
+                                }
+                                else if(hexTodecimal <= platformInterface.soc_addr_new.scales[0] && hexTodecimal >= platformInterface.soc_addr_new.scales[1]){
+                                    new7bit.text = new7bit.text
+                                    platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
+                                }
+                                platformInterface.set_startup.update(hexTodecimal,enableCRC.checked)
+
+                            }
                         }
                     }
                 }

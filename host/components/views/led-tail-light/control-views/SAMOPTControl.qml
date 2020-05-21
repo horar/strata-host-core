@@ -228,11 +228,11 @@ Item {
         setStatesForControls(samOut12,soc_sam_conf_2_state[11])
     }
 
-    //    property var soc_otped: platformInterface.soc_otped
-    //    onSoc_otpedChanged: {
-    //        if(soc_otped.value === true)
-    //            warningPopupOTP.open()
-    //    }
+    property var soc_otped: platformInterface.soc_otped
+    onSoc_otpedChanged: {
+        if(soc_otped.value === true)
+            warningPopupOTP.open()
+    }
 
 
 
@@ -449,9 +449,9 @@ Item {
                                     platformInterface.soc_crcValue,
                                     platformInterface.addr_curr_apply)
 
-                        if(platformInterface.soc_otped.value === true) {
-                            warningPopupOTP.open()
-                        }
+                        //                        if(platformInterface.soc_otped.value === true) {
+                        //                            warningPopupOTP.open()
+                        //                        }
                     }
                 }
             }

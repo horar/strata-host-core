@@ -7,13 +7,22 @@ Item {
     id: platformInterface
     //Start up and error handling check cmds and notification section
     property var set_startup: ({
-                                     "cmd":"startup",
-                                     update: function () {
-                                         CorePlatformInterface.send(this)
-                                     },
-                                     send: function () { CorePlatformInterface.send(this) },
-                                     show: function () { CorePlatformInterface.show(this) }
-                                 })
+                                   "cmd":"startup",
+                                   "payload": {
+                                       "addr":96,
+                                       "crc_en":false
+                                   },
+                                   update: function (addr,crc_en) {
+                                       this.set(addr,crc_en)
+                                       this.send(this)
+                                   },
+                                   set: function (addr,crc_en) {
+                                       this.payload.addr = addr
+                                       this.payload.crc_en = crc_en
+                                   },
+                                   send: function () { CorePlatformInterface.send(this) },
+                                   show: function () { CorePlatformInterface.show(this) }
+                               })
 
     property var control_props: ({
                                      "cmd":"control_props",
@@ -32,21 +41,21 @@ Item {
 
     //Mode commands
     property var set_mode : ({
-                             "cmd" : "mode",
-                             "payload": {
-                                 "value":"Car Demo"
-                             },
+                                 "cmd" : "mode",
+                                 "payload": {
+                                     "value":"Car Demo"
+                                 },
 
-                             update: function (value) {
-                                 this.set(value)
-                                 this.send(this)
-                             },
-                             set: function (value) {
-                                 this.payload.value = value
-                             },
-                             send: function () { CorePlatformInterface.send(this) },
-                             show: function () { CorePlatformInterface.show(this) }
-                         })
+                                 update: function (value) {
+                                     this.set(value)
+                                     this.send(this)
+                                 },
+                                 set: function (value) {
+                                     this.payload.value = value
+                                 },
+                                 send: function () { CorePlatformInterface.send(this) },
+                                 show: function () { CorePlatformInterface.show(this) }
+                             })
 
 
 
@@ -389,7 +398,7 @@ Item {
     }
 
     property var led_ol_states: {
-       "states": [1]
+        "states": [1]
     }
 
     property var led_ol_value: {
@@ -513,7 +522,7 @@ Item {
     }
 
     property var led_pwm_freq_states: {
-       "states":[0]
+        "states":[0]
     }
 
     property var led_pwm_freq_value: {
@@ -769,7 +778,7 @@ Item {
     }
 
     property var power_vled_type_states: {
-       "states":[0]
+        "states":[0]
     }
 
     property var power_vled_type_value: {
@@ -882,7 +891,7 @@ Item {
     }
 
     property var power_vs_states: {
-       "states":[1]
+        "states":[1]
     }
 
     property var power_vs_value: {
@@ -922,7 +931,7 @@ Item {
     }
 
     property var power_vconn_states: {
-       "states":[1]
+        "states":[1]
     }
 
     property var power_vconn_value: {
@@ -1031,7 +1040,7 @@ Item {
     }
 
     property var power_led_driver_temp_bottom_states: {
-      "states":[1]
+        "states":[1]
     }
 
     property var power_led_driver_temp_bottom_scales: {
@@ -1204,7 +1213,7 @@ Item {
     }
 
     property var soc_vdd_disconnect_states: {
-       "states":[0]
+        "states":[0]
     }
 
     property var soc_vdd_disconnect_value: {
@@ -1228,7 +1237,7 @@ Item {
     }
 
     property var soc_mode_states: {
-       "states":[0]
+        "states":[0]
     }
 
     property var soc_mode_value: {
@@ -1276,7 +1285,7 @@ Item {
     }
 
     property var soc_sam_open_load_diagnostic_states: {
-       "states":[0]
+        "states":[0]
     }
 
     property var soc_sam_open_load_diagnostic_value: {
@@ -1290,7 +1299,7 @@ Item {
     property var soc_sam_conf_1: {
         "caption":"SAM_CONF_1",
         "scales":[],
-         "states":[0,0,0,0,0,0,0,0,0,0,0,0],
+        "states":[0,0,0,0,0,0,0,0,0,0,0,0],
         "value":"",
         "values":[false,false,false,false,false,false,false,false,false,false,false,false]
     }
@@ -1300,7 +1309,7 @@ Item {
     }
 
     property var soc_sam_conf_1_states: {
-       "states":[0,0,0,0,0,0,0,0,0,0,0,0]
+        "states":[0,0,0,0,0,0,0,0,0,0,0,0]
     }
 
     property var soc_sam_conf_1_values: {
@@ -1320,7 +1329,7 @@ Item {
     }
 
     property var soc_sam_conf_2_states: {
-       "states":[0,0,0,0,0,0,0,0,0,0,0,0]
+        "states":[0,0,0,0,0,0,0,0,0,0,0,0]
     }
 
     property var soc_sam_conf_2_values: {
@@ -1520,7 +1529,7 @@ Item {
     }
 
     property var misc_id_vers_2_states: {
-       "states":[1]
+        "states":[1]
     }
 
     property var misc_id_vers_2_value: {
@@ -1540,7 +1549,7 @@ Item {
     }
 
     property var misc_odd_ch_error_states: {
-       "states":[1]
+        "states":[1]
     }
 
     property var misc_odd_ch_error_value: {
