@@ -162,12 +162,21 @@ Rectangle{
                                         brake.visible = true
                                         brakeLights.visible = true
                                         platformInterface.brake_value = true
-                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                              platformInterface.right_value,
-                                                                              platformInterface.brake_value,
-                                                                              platformInterface.reverse_value
+                                        if(platformInterface.hazard_value === true) {
+                                            platformInterface.set_car_demo.update(true,
+                                                                                  true,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.reverse_value
+                                                                                  )
+                                        }
 
-                                                                              )
+                                        else {
+                                            platformInterface.set_car_demo.update(platformInterface.left_value,
+                                                                                  platformInterface.right_value,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.reverse_value
+                                                                                  )
+                                        }
 
                                     }
                                     else {
@@ -175,12 +184,21 @@ Rectangle{
                                         brake.visible = false
                                         brakeLights.visible = false
                                         platformInterface.brake_value = false
-                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                              platformInterface.right_value,
-                                                                              platformInterface.brake_value,
-                                                                              platformInterface.reverse_value
+                                        if(platformInterface.hazard_value === true) {
+                                            platformInterface.set_car_demo.update(true,
+                                                                                  true,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.reverse_value
 
-                                                                              )
+                                                                                  )
+                                        }
+                                        else {
+                                            platformInterface.set_car_demo.update(platformInterface.left_value,
+                                                                                  platformInterface.right_value,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.reverse_value
+                                                                                  )
+                                        }
                                     }
                                 }
 
@@ -200,17 +218,27 @@ Rectangle{
                                 id: nobrakes
                                 anchors.fill: parent
                                 onClicked: {
+                                    console.log("No Brakes")
                                     if(platformInterface.brake_value === false) {
                                         noBrake.visible = false
                                         brake.visible = true
                                         brakeLights.visible = true
                                         platformInterface.brake_value = true
-                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                              platformInterface.right_value,
-                                                                              platformInterface.brake_value,
-                                                                              platformInterface.reverse_value
+                                        if(platformInterface.hazard_value === true) {
+                                            platformInterface.set_car_demo.update(true,
+                                                                                  true,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.reverse_value
+                                                                                  )
+                                        }
 
-                                                                              )
+                                        else {
+                                            platformInterface.set_car_demo.update(platformInterface.left_value,
+                                                                                  platformInterface.right_value,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.reverse_value
+                                                                                  )
+                                        }
 
                                     }
                                     else {
@@ -218,14 +246,24 @@ Rectangle{
                                         brake.visible = false
                                         brakeLights.visible = false
                                         platformInterface.brake_value = false
-                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                              platformInterface.right_value,
-                                                                              platformInterface.brake_value,
-                                                                              platformInterface.reverse_value
+                                        if(platformInterface.hazard_value === true) {
+                                            platformInterface.set_car_demo.update(true,
+                                                                                  true,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.reverse_value
 
-                                                                              )
+                                                                                  )
+                                        }
+                                        else {
+                                            platformInterface.set_car_demo.update(platformInterface.left_value,
+                                                                                  platformInterface.right_value,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.reverse_value
+                                                                                  )
+                                        }
                                     }
                                 }
+
 
                             }
                             property var car_demo_brake: platformInterface.car_demo.brake
@@ -266,12 +304,10 @@ Rectangle{
                                     if(platformInterface.hazard_value === false) {
                                         leftSignal.visible = true
                                         rightSignal.visible = true
-
                                         hazard.visible = true
                                         noHazard.visible = false
                                         platformInterface.hazard_value = true
                                         blinkerContainer.enabled = false
-                                        //hazard on send true for right and left
                                         platformInterface.set_car_demo.update(true,
                                                                               true,
                                                                               platformInterface.brake_value,
@@ -285,7 +321,6 @@ Rectangle{
                                         rightSignal.visible = false
                                         platformInterface.hazard_value = false
                                         blinkerContainer.enabled = true
-
                                         platformInterface.set_car_demo.update(platformInterface.left_value,
                                                                               platformInterface.right_value,
                                                                               platformInterface.brake_value,
@@ -365,23 +400,43 @@ Rectangle{
                                         reverseIcon.visible = false
                                         noReverseIcon.visible = true
                                         platformInterface.reverse_value = true
-                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                              platformInterface.right_value,
-                                                                              platformInterface.brake_value,
-                                                                              platformInterface.reverse_value
+                                        if(platformInterface.hazard_value === true) {
+                                            platformInterface.set_car_demo.update(true,
+                                                                                  true,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.reverse_value
 
-                                                                              )
+                                                                                  )
+                                        }
+                                        else{
+
+                                            platformInterface.set_car_demo.update(platformInterface.left_value,
+                                                                                  platformInterface.right_value,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.reverse_value
+
+                                                                                  )
+                                        }
                                     }
                                     else {
                                         reverseIcon.visible = true
                                         noReverseIcon.visible = false
                                         platformInterface.reverse_value = false
-                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                              platformInterface.right_value,
-                                                                              platformInterface.brake_value,
-                                                                              platformInterface.reverse_value
+                                        if(platformInterface.hazard_value === true) {
+                                            platformInterface.set_car_demo.update(true,
+                                                                                  true,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.reverse_value
 
-                                                                              )
+                                                                                  )
+                                        }
+                                        else  {
+                                            platformInterface.set_car_demo.update(platformInterface.left_value,
+                                                                                  platformInterface.right_value,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.reverse_value
+                                                                                  )
+                                        }
                                     }
                                 }
 
@@ -402,23 +457,43 @@ Rectangle{
                                         reverseIcon.visible = false
                                         noReverseIcon.visible = true
                                         platformInterface.reverse_value = true
-                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                              platformInterface.right_value,
-                                                                              platformInterface.brake_value,
-                                                                              platformInterface.reverse_value
+                                        if(platformInterface.hazard_value === true) {
+                                            platformInterface.set_car_demo.update(true,
+                                                                                  true,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.reverse_value
 
-                                                                              )
+                                                                                  )
+                                        }
+                                        else{
+
+                                            platformInterface.set_car_demo.update(platformInterface.left_value,
+                                                                                  platformInterface.right_value,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.reverse_value
+
+                                                                                  )
+                                        }
                                     }
                                     else {
                                         reverseIcon.visible = true
                                         noReverseIcon.visible = false
                                         platformInterface.reverse_value = false
-                                        platformInterface.set_car_demo.update(platformInterface.left_value,
-                                                                              platformInterface.right_value,
-                                                                              platformInterface.brake_value,
-                                                                              platformInterface.reverse_value
+                                        if(platformInterface.hazard_value === true) {
+                                            platformInterface.set_car_demo.update(true,
+                                                                                  true,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.reverse_value
 
-                                                                              )
+                                                                                  )
+                                        }
+                                        else  {
+                                            platformInterface.set_car_demo.update(platformInterface.left_value,
+                                                                                  platformInterface.right_value,
+                                                                                  platformInterface.brake_value,
+                                                                                  platformInterface.reverse_value
+                                                                                  )
+                                        }
                                     }
                                 }
 
@@ -548,16 +623,12 @@ Rectangle{
 
                         }
 
-//                        property var car_demo: platformInterface.car_demo
-//                        onCar_demoChanged: {
-//                            if(car_demo.left === false && car_demo.right === false) {
-//                                noHazard.visible = true
-//                                hazard.visible = false
-//                                leftSignal.visible = false
-//                                rightSignal.visible = false
-//                            }
+                        //                        property var car_demo: platformInterface.car_demo
+                        //                        onCar_demoChanged: {
+                        //                            if(car_demo.left === false && car_demo.right === false) {
 
-//                        }
+                        //                            }
+                        //                        }
                     }
 
                 }
