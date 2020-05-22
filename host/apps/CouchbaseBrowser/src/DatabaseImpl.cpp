@@ -67,11 +67,13 @@ void DatabaseImpl::openDB(const QString &file_path)
     setDBName(dir_name);
     setDBPath(dir.path() + QDir::separator());
 
-    CBLDatabaseConfiguration db_config = {db_path_.toStdString().c_str(), kCBLDatabase_Create};
+    QByteArray db_path_ba = db_path_.toLocal8Bit();
+    const char *db_path_c = db_path_ba.data();
+    CBLDatabaseConfiguration db_config = {db_path_c, kCBLDatabase_Create};
 
     // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
     try {
-        sg_db_ = make_unique<Database>(db_name_.toStdString().c_str(), db_config);
+        sg_db_ = make_unique<Database>(db_name_.toLocal8Bit().data(), db_config);
     }
     catch (CBLError) {
         setMessageAndStatus(MessageType::Error, "Problem with initialization of database.");
@@ -226,7 +228,7 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
         folder_path.remove(0, 1);
     }
 
-    folder_path.replace("/", QDir::separator());
+    folder_path = QDir::fromNativeSeparators(folder_path);
     QDir dir(folder_path);
 
     if (!dir.isAbsolute() || !dir.mkpath(folder_path)) {
@@ -256,11 +258,13 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
     setDBName(db_name);
     setDBPath(folder_path);
 
-    CBLDatabaseConfiguration db_config = {db_path_.toStdString().c_str(), kCBLDatabase_Create};
+    QByteArray db_path_ba = db_path_.toLocal8Bit();
+    const char *db_path_c = db_path_ba.data();
+    CBLDatabaseConfiguration db_config = {db_path_c, kCBLDatabase_Create};
 
     // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
     try {
-        sg_db_ = make_unique<Database>(db_name.toStdString().c_str(), db_config);
+        sg_db_ = make_unique<Database>(db_name.toLocal8Bit().data(), db_config);
     }
     catch (CBLError) {
         setMessageAndStatus(MessageType::Error, "Problem with initialization of database.");
@@ -689,12 +693,14 @@ void DatabaseImpl::saveAs(QString path, const QString &db_name)
         return;
     }
 
-    CBLDatabaseConfiguration db_config = {db_path_.toStdString().c_str(), kCBLDatabase_Create};
+    QByteArray db_path_ba = db_path_.toLocal8Bit();
+    const char *db_path_c = db_path_ba.data();
+    CBLDatabaseConfiguration db_config = {db_path_c, kCBLDatabase_Create};
 
     // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
     unique_ptr<Database> temp_db;
     try {
-        temp_db = make_unique<Database>(db_name.toStdString(), db_config);
+        temp_db = make_unique<Database>(db_name.toLocal8Bit().data(), db_config);
     }
     catch (CBLError) {
         setMessageAndStatus(MessageType::Error, "Problem saving database.");
