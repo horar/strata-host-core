@@ -183,7 +183,7 @@ Rectangle {
                 }
 
                 Text{
-                    property int address: 1100
+                    property int address: 1102
                     id:modelAddressText
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -360,7 +360,7 @@ Rectangle {
                 }
 
                 Text{
-                    property int address: 1102
+                    property int address: 1100
                     id:bulbModelAddressText
                     anchors.bottom:parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
