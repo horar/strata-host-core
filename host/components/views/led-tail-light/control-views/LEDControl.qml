@@ -3740,7 +3740,7 @@ Item {
                                                                      platformInterface.outputExt4,
                                                                      platformInterface.outputExt5,
                                                                      platformInterface.outputExt6,
-                                                                     true,
+                                                                     false,
                                                                      platformInterface.outputExt8,
                                                                      platformInterface.outputExt9,
                                                                      platformInterface.outputExt10,

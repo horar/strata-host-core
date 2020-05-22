@@ -141,17 +141,17 @@ Item {
                                     var hexTodecimal = parseInt(text, 16)
                                     console.log(text)
                                     console.log(hexTodecimal)
-                                    if(hexTodecimal > platformInterface.soc_addr_new.scales[0]) {
+                                    if(hexTodecimal > 127) {
                                         console.log(text.toString(16))
-                                        new7bit.text = toHex(platformInterface.soc_addr_new.scales[0])
+                                        new7bit.text = toHex(127)
                                         platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
                                     }
 
-                                    else if(hexTodecimal < platformInterface.soc_addr_new.scales[1]){
-                                        new7bit.text = toHex(platformInterface.soc_addr_new.scales[1])
+                                    else if(hexTodecimal < 96){
+                                        new7bit.text = toHex(96)
                                         platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
                                     }
-                                    else if(hexTodecimal <= platformInterface.soc_addr_new.scales[0] && hexTodecimal >= platformInterface.soc_addr_new.scales[1]){
+                                    else if(hexTodecimal <= 127 && hexTodecimal >= 96){
                                         new7bit.text = text
                                         platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
                                     }
