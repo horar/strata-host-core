@@ -100,17 +100,26 @@ Item {
         "load_switch_status" :"freeze"
     }
 
+//    property var reset_status: {
+//        "en_210": "off",                   //on or off
+//        "en_211": "off",                  //on or off
+//        "en_213": "off",                  //on or off
+//        "en_214": "off",                  //on or off
+//        "en_333": "off",                  //on or off
+//        "low_load_en": "off",                  //on or off
+//        "mid_load_en": "off",                 //on or off
+//        "high_load_en": "off",                //on or off
+//        "load_fault" : "off",
+//        "switch_status" : ""
+
+//    }
+
     property var reset_status: {
-        "en_210": "off",                   //on or off
-        "en_211": "off",                  //on or off
-        "en_213": "off",                  //on or off
-        "en_214": "off",                  //on or off
-        "en_333": "off",                  //on or off
-        "low_load_en": "off",                  //on or off
-        "mid_load_en": "off",                 //on or off
-        "high_load_en": "off",                //on or off
+        "switch_en_state":"off",// for the 5 en switches, turn them all off
+        "switch_load_state":"off", // for the 3 load enable switches
         "load_fault" : "off",
-        "switch_status" : ""
+        "switch_status" : "unfreeze",
+        "load_switch_status":"freeze"
 
     }
 

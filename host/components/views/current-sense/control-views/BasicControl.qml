@@ -263,37 +263,32 @@ Item {
 
     property var reset_status: platformInterface.reset_status
     onReset_statusChanged: {
-        if(reset_status.en_210 === "on")
-            enable3.checked = true
-        else enable3.checked = false
-
-        if (reset_status.en_211 === "on")
-            enable4.checked = true
-        else  enable4.checked = false
-
-        if(reset_status.en_213 === "on")
+        if(reset_status.switch_en_state === "on"){
             enable1.checked = true
-        else enable1.checked = false
-
-        if(reset_status.en_214 === "on")
             enable2.checked = true
-        else enable2.checked = false
-
-        if(reset_status.en_333 === "on")
+            enable3.checked = true
+            enable4.checked = true
             enable5.checked = true
-        else enable5.checked = false
+        }
+        else {
+            enable1.checked = false
+            enable2.checked = false
+            enable3.checked = false
+            enable4.checked = false
+            enable5.checked = false
+        }
 
-        if(reset_status.low_load_en === "on")
-            lowLoadEnable.checked = true
-        else lowLoadEnable.checked = false
+        if(reset_status.switch_load_state === "on"){
+             lowLoadEnable.checked = true
+             midCurrentEnable.checked = true
+             midCurrentEnable.checked = true
+        }
+        else {
+            lowLoadEnable.checked = false
+            midCurrentEnable.checked = false
+            midCurrentEnable.checked = false
+        }
 
-        if(reset_status.mid_load_en === "on")
-            midCurrentEnable.checked = true
-        else midCurrentEnable.checked = false
-
-        if(reset_status.high_load_en === "on")
-            highCurrentEnable.checked = true
-        else highCurrentEnable.checked = false
 
         if (reset_status.load_fault === "on")
             loadFault.status = SGStatusLight.Red
@@ -316,11 +311,21 @@ Item {
                 enable3.enabled = true
                 enable4.enabled = true
                 enable5.enabled = true
-//                lowLoadEnable.enabled = true
-//                midCurrentEnable.enabled = true
-//                highCurrentEnable.enabled = true
             }
         }
+        if(reset_status.load_switch_status !== ""){
+            if(reset_status.load_switch_status === "freeze"){
+                lowLoadEnable.enabled = false
+                midCurrentEnable.enabled = false
+                highCurrentEnable.enabled = false
+            }
+            else {
+                lowLoadEnable.enabled = true
+                midCurrentEnable.enabled = true
+                highCurrentEnable.enabled = true
+            }
+        }
+
 
 
     }
