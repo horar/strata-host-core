@@ -95,9 +95,9 @@ Item {
                 enable3.enabled = true
                 enable4.enabled = true
                 enable5.enabled = true
-                lowLoadEnable.enabled = true
-                midCurrentEnable.enabled = true
-                highCurrentEnable.enabled = true
+//                lowLoadEnable.enabled = true
+//                midCurrentEnable.enabled = true
+//                highCurrentEnable.enabled = true
             }
         }
     }
@@ -121,9 +121,9 @@ Item {
                 enable3.enabled = true
                 enable4.enabled = true
                 enable5.enabled = true
-                lowLoadEnable.enabled = true
-                midCurrentEnable.enabled = true
-                highCurrentEnable.enabled = true
+//                lowLoadEnable.enabled = true
+//                midCurrentEnable.enabled = true
+//                highCurrentEnable.enabled = true
             }
         }
     }
@@ -163,9 +163,9 @@ Item {
                 enable3.enabled = true
                 enable4.enabled = true
                 enable5.enabled = true
-                lowLoadEnable.enabled = true
-                midCurrentEnable.enabled = true
-                highCurrentEnable.enabled = true
+//                lowLoadEnable.enabled = true
+//                midCurrentEnable.enabled = true
+//                highCurrentEnable.enabled = true
             }
         }
     }
@@ -316,9 +316,9 @@ Item {
                 enable3.enabled = true
                 enable4.enabled = true
                 enable5.enabled = true
-                lowLoadEnable.enabled = true
-                midCurrentEnable.enabled = true
-                highCurrentEnable.enabled = true
+//                lowLoadEnable.enabled = true
+//                midCurrentEnable.enabled = true
+//                highCurrentEnable.enabled = true
             }
         }
 
