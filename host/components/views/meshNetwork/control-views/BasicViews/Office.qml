@@ -28,11 +28,15 @@ Rectangle {
 
     onVisibleChanged: {
         if (visible){
-            //console.log("office is now visible")
-            root.getActiveNodesAndRoles();
-            platformInterface.switch_views.update(activeNodes,activeNodeRoles)
+            console.log("office is now visible")
+            root.sendNodeSwitchCommand();
             }
         }
+
+    function sendNodeSwitchCommand(){
+        root.getActiveNodesAndRoles();
+        platformInterface.switch_views.update(activeNodes,activeNodeRoles)
+    }
 
     function getActiveNodesAndRoles(){
         var currentNode = 0;

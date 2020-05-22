@@ -29,9 +29,13 @@ Rectangle {
     onVisibleChanged: {
         if (visible){
             //console.log("smart home is now visible")
-            root.getActiveNodesAndRoles();
-            platformInterface.switch_views.update(activeNodes,activeNodeRoles)
+            root.sendNodeSwitchCommand();
         }
+    }
+
+    function sendNodeSwitchCommand(){
+        root.getActiveNodesAndRoles();
+        platformInterface.switch_views.update(activeNodes,activeNodeRoles)
     }
 
     function getActiveNodesAndRoles(){
