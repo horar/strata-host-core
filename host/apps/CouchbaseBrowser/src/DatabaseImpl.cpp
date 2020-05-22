@@ -174,7 +174,7 @@ QStringList DatabaseImpl::getChannelSuggestions()
 
     // Get channels from each document in the current DB
     for (const string &document_key : document_keys_) {
-        Document doc = sg_db_.get()->getMutableDocument(document_key);
+        Document doc = sg_db_.get()->getDocument(document_key);
         fleece::Dict read_dict = doc.properties();
         QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8());
 
@@ -595,7 +595,7 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
     else {
         // If the given body is empty, use the body of the old document
         if (body.isEmpty()) {
-            Document doc = sg_db_->getMutableDocument(oldId.toStdString());
+            Document doc = sg_db_->getDocument(oldId.toStdString());
             body = QString::fromStdString(doc.propertiesAsJSON());
         }
 
@@ -637,7 +637,7 @@ void DatabaseImpl::deleteDoc(const QString &id)
         return;
     }
 
-    Document doc = sg_db_->getMutableDocument(id.toStdString());
+    Document doc = sg_db_->getDocument(id.toStdString());
 
     if (!docExistsInDB(id)) {
         setMessageAndStatus(MessageType::Error, "Document with ID = '" + id + "' does not exist. Cannot delete.");
@@ -714,7 +714,7 @@ void DatabaseImpl::saveAs(QString path, const QString &db_name)
 
     for (const string &iter : document_keys_) {
         MutableDocument temp_doc(iter);
-        Document existing_doc = sg_db_->getMutableDocument(iter);
+        Document existing_doc = sg_db_->getDocument(iter);
         temp_doc.setPropertiesAsJSON(existing_doc.propertiesAsJSON());
         temp_db->saveDocument(temp_doc);
     }
@@ -749,7 +749,7 @@ void DatabaseImpl::setJSONResponse(vector<string> &docs)
     QJsonObject total_json_message;
 
     for (const string &iter : docs) {
-        Document doc = sg_db_.get()->getMutableDocument(iter);
+        Document doc = sg_db_.get()->getDocument(iter);
         fleece::Dict read_dict = doc.properties();
         document_json = QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8());
         total_json_message.insert(QString::fromStdString(iter), document_json.object());
@@ -819,7 +819,7 @@ void DatabaseImpl::searchDocByChannel(const std::vector<QString> &channels)
 
     // Need to return a JSON response corresponding only to the channels requested
     for (const string &document_key : document_keys_) {
-        Document doc = sg_db_->getMutableDocument(document_key);
+        Document doc = sg_db_->getDocument(document_key);
         QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(doc.propertiesAsJSON()).toUtf8());
 
         if (json_doc.isNull() || json_doc.isEmpty()) {
