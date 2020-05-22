@@ -36,7 +36,7 @@ Rectangle {
        anchors.left:viewComboLabel.right
        anchors.leftMargin: 5
        width: 200
-       model: [ "Office", "Smart home"]
+       model: [ "Office", "Smart Home"]
        fontSizeMultiplier: 1.75
 
        onCurrentIndexChanged: {
@@ -50,6 +50,40 @@ Rectangle {
             }
 
        }
+   }
+
+   Button{
+       id:synchronizeButton
+
+       anchors.left: basicViewCombo.right
+       anchors.leftMargin: 10
+       anchors.verticalCenter: basicViewCombo.verticalCenter
+
+       text:"Synchronize"
+
+       contentItem: Text {
+               text: synchronizeButton.text
+               font.pixelSize: 24
+               color: "black"
+               horizontalAlignment: Text.AlignHCenter
+               verticalAlignment: Text.AlignVCenter
+               elide: Text.ElideRight
+           }
+
+           background: Rectangle {
+               implicitWidth: 50
+               implicitHeight: 25
+               color: clearButton.down ? "grey" : "transparent"
+               border.color: "black"
+               border.width: 2
+               radius: 10
+           }
+
+          onClicked: {
+              if (basicViewCombo.currentIndex == 0)
+                  officeView.sendNodeSwitchCommand();
+              else
+                  smartHomeView.sendNodeSwitchCommand();          }
    }
 
    Image{
@@ -154,7 +188,7 @@ Rectangle {
            Rectangle{
                id:helpViewContainer
                anchors.fill:parent
-               color:"pink"
+               color:"white"
 
                WebEngineView {
                     id: webView

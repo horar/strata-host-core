@@ -324,6 +324,25 @@ Rectangle {
                 }
             }
 
+
+            Button {
+                id: removeNode2
+                text: "remove door"
+
+
+                onClicked: {
+
+                    CorePlatformInterface.data_source_handler('{
+                    "value":"node_removed",
+                    "payload":{
+                        "index":2
+                        }
+                    }')
+
+
+                }
+            }
+
                         Button {
                             id: temperature
                             text: "temperature"
@@ -363,32 +382,32 @@ Rectangle {
 //                }
 //            }
 
-            Button {
-                id: windowShade
-                text: "shade"
+//            Button {
+//                id: windowShade
+//                text: "shade"
 
-                property var state: "open";
+//                property var state: "open";
 
-                onClicked: {
+//                onClicked: {
 
-                    CorePlatformInterface.data_source_handler('{
-                    "value":"window_shade",
-                    "payload":{
-                        "value":"'+state+'"
-                        }
-                    }')
+//                    CorePlatformInterface.data_source_handler('{
+//                    "value":"window_shade",
+//                    "payload":{
+//                        "value":"'+state+'"
+//                        }
+//                    }')
 
-                    if (state === "open"){
-                        console.log("closing window")
-                        state = "closed"
-                    }
-                      else{
-                        console.log("opening window")
-                        state = "open"
-                    }
+//                    if (state === "open"){
+//                        console.log("closing window")
+//                        state = "closed"
+//                    }
+//                      else{
+//                        console.log("opening window")
+//                        state = "open"
+//                    }
 
-                }
-            }
+//                }
+//            }
 
             Button {
                 id: smarthomeDoor
