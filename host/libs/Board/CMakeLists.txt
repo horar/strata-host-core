@@ -18,7 +18,6 @@ add_library(${DEVICE}
 
     #AUTOMOC wont find header if it is in different directory
     Device/Device.h
-    Device/DeviceProperties.h
     Device/Serial/SerialDevice.h
 )
 

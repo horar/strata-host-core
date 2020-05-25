@@ -2,7 +2,6 @@
 #include "DeviceOperationsConstants.h"
 #include "DeviceCommands/DeviceCommands.h"
 
-#include <DeviceProperties.h>
 #include <CommandValidator.h>
 
 #include "logging/LoggingQtCategories.h"

@@ -1,5 +1,4 @@
 #include "SciPlatform.h"
-#include <Device/DeviceProperties.h>
 #include "logging/LoggingQtCategories.h"
 
 #include <QJsonDocument>

@@ -1,7 +1,6 @@
 #include "Flasher.h"
 #include "FlasherConstants.h"
 
-#include <DeviceProperties.h>
 #include <DeviceOperations.h>
 #include <DeviceOperationsFinished.h>
 

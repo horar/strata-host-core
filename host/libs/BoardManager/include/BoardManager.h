@@ -14,8 +14,6 @@
 #include <QMutex>
 
 #include <Device/Device.h>
-#include <Device/DeviceProperties.h>
-
 
 namespace strata {
 

@@ -9,8 +9,6 @@
 #include <QMutex>
 #include <QReadWriteLock>
 
-#include <Device/DeviceProperties.h>
-
 namespace strata {
 
 class DeviceOperations;
@@ -23,6 +21,15 @@ namespace strata::device {
     class Device;
 
     typedef std::shared_ptr<Device> DevicePtr;
+
+    enum class DeviceProperties {
+        deviceName,
+        verboseName,
+        platformId,
+        classId,
+        bootloaderVer,
+        applicationVer
+    };
 
     class Device : public QObject
     {
