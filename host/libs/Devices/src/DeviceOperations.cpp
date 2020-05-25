@@ -98,7 +98,7 @@ void DeviceOperations::startApplication() {
 
 void DeviceOperations::refreshPlatformId() {
     if (startOperation(DeviceOperation::RefreshPlatformId)) {
-        commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
+        commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_, MAX_PLATFORM_ID_RETRIES));
         currentCommand_ = commandList_.begin();
         emit sendCommand(QPrivateSignal());
     }
@@ -189,6 +189,10 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
                 }
                 qCDebug(logCategoryDeviceOperations) << this << "Processed '" << command->name() << "' notification.";
 
+                if (command->result() == CommandResult::Failure) {
+                    qCWarning(logCategoryDeviceOperations) << this << "Received faulty notification: '" << data << "'.";
+                }
+
                 QTimer::singleShot(command->waitBeforeNextCommand(), this, [this](){ nextCommand(); });
             }
         }
@@ -275,6 +279,9 @@ void DeviceOperations::nextCommand() {
         break;
     case CommandResult::Retry :
         emit sendCommand(QPrivateSignal());  // send same command again
+        break;
+    case CommandResult::Failure :
+        finishOperation(DeviceOperation::Failure);
         break;
     case CommandResult::FinaliseOperation :
         finishOperation(operation_, command->dataForFinish());

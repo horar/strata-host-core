@@ -9,6 +9,8 @@ namespace strata {
 constexpr std::chrono::milliseconds RESPONSE_TIMEOUT(1000);
 constexpr std::chrono::milliseconds IDENTIFY_LAUNCH_DELAY(500);
 
+constexpr uint MAX_PLATFORM_ID_RETRIES(5);
+
 constexpr uint MAX_CHUNK_RETRIES(1);
 
 constexpr const char* const JSON_ACK = "ack";
@@ -33,7 +35,9 @@ constexpr const char* const JSON_STATUS = "status";
 constexpr const char* const JSON_OK = "ok";
 constexpr const char* const JSON_RESEND_CHUNK = "resend_chunk";
 
-const QString BOOTLOADER_STR("Bootloader");
+const QString QSTR_BOOTLOADER("Bootloader");
+
+constexpr const char* const CSTR_NO_FIRMWARE = "no_firmware";
 
 }  // namespace
 

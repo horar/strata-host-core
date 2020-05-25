@@ -53,6 +53,7 @@ add_library(${DEVICE_OPERATIONS}
 
     #AUTOMOC wont find header if it is in different directory
     include/DeviceOperations.h
+    include/DeviceOperationsFinished.h
 )
 
 target_include_directories(${DEVICE_OPERATIONS}
