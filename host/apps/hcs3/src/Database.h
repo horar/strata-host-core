@@ -4,6 +4,7 @@
 
 #include <string>
 #include <set>
+#include <QObject>
 
 namespace Strata {
     class SGDatabase;
@@ -18,13 +19,15 @@ namespace Strata {
 class HCS_Dispatcher;
 class LoggingAdapter;
 
-class Database final
+class Database final: public QObject
 {
+    Q_OBJECT
+    Q_DISABLE_COPY(Database)
+
 public:
-    Database(const std::string dbPath);
+    Database(const std::string dbPath, QObject *parent = nullptr);
     ~Database();
 
-    void setDispatcher(HCS_Dispatcher* dispatcher);
     void setLogAdapter(LoggingAdapter* adapter);
 
     /**
@@ -66,6 +69,9 @@ public:
      */
     bool getDocument(const std::string& doc_id, std::string& result);
 
+signals:
+    void documentUpdated(QString documentId);
+
 private:
     void onDocumentEnd(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
 
@@ -85,7 +91,6 @@ private:
 
     Strata::SGBasicAuthenticator *basic_authenticator_{nullptr};
 
-    HCS_Dispatcher* dispatcher_{nullptr};
     LoggingAdapter* logAdapter_{nullptr};
 
     std::set<std::string> channels_;

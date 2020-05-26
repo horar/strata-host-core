@@ -14,6 +14,11 @@ Rectangle {
     visible: true
     //anchors.fill:parent
 
+    Component.onDestruction: {
+        console.log("closing platform")
+        consoleDrawer.exit.enabled = false
+        consoleDrawer.close();
+    }
 
     Text{
         id:viewComboLabel
@@ -21,9 +26,8 @@ Rectangle {
         anchors.leftMargin: 20
         anchors.top: parent.top
         anchors.topMargin: 20
-        text: "Virtual environment:"
+        text: "Virtual Environment:"
         font.pixelSize: 24
-
     }
 
    SGComboBox{
@@ -32,7 +36,7 @@ Rectangle {
        anchors.left:viewComboLabel.right
        anchors.leftMargin: 5
        width: 200
-       model: [ "Office", "Smart home"]
+       model: [ "Office", "Smart Home"]
        fontSizeMultiplier: 1.75
 
        onCurrentIndexChanged: {
@@ -46,6 +50,40 @@ Rectangle {
             }
 
        }
+   }
+
+   Button{
+       id:synchronizeButton
+
+       anchors.left: basicViewCombo.right
+       anchors.leftMargin: 10
+       anchors.verticalCenter: basicViewCombo.verticalCenter
+
+       text:"Synchronize"
+
+       contentItem: Text {
+               text: synchronizeButton.text
+               font.pixelSize: 24
+               color: "black"
+               horizontalAlignment: Text.AlignHCenter
+               verticalAlignment: Text.AlignVCenter
+               elide: Text.ElideRight
+           }
+
+           background: Rectangle {
+               implicitWidth: 50
+               implicitHeight: 25
+               color: clearButton.down ? "grey" : "transparent"
+               border.color: "black"
+               border.width: 2
+               radius: 10
+           }
+
+          onClicked: {
+              if (basicViewCombo.currentIndex == 0)
+                  officeView.sendNodeSwitchCommand();
+              else
+                  smartHomeView.sendNodeSwitchCommand();          }
    }
 
    Image{
@@ -137,17 +175,25 @@ Rectangle {
            height: root.height
            edge: Qt.RightEdge
 
+           Overlay.modal: Rectangle {
+               color: "#66222222"
+               Component.onDestruction: {
+                   visible = false
+                   opacity = 0
+               }
+           }
+
            property bool showConsole: true
 
            Rectangle{
                id:helpViewContainer
                anchors.fill:parent
-               color:"pink"
+               color:"white"
 
                WebEngineView {
                     id: webView
                     anchors.fill: parent
-                    url: "qrc:/views/meshNetwork/images/mesh_help.html"   //doesn't render html
+                    url: "qrc:/views/meshNetwork/images/HTML/mesh_help.html"
                    }
            }
 
@@ -189,7 +235,7 @@ Rectangle {
                property var message_array : []
                property var message_log: platformInterface.msg_cli.msg
                onMessage_logChanged: {
-                   console.log("debug:",message_log)
+                   //console.log("debug:",message_log)
                    if(message_log !== "") {
                        for(var j = 0; j < messageList.model.count; j++){
                            messageList.model.get(j).color = "black"

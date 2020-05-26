@@ -6,6 +6,11 @@
   Send Feedback information to server
 */
 function feedbackInfo(feedback_info, success, error){
+    let headers = {
+        "app": "strata",
+        "version": Rest.versionNumber(),
+    }
+
     var data = {"email": feedback_info.email, "name": feedback_info.name, "comment" : feedback_info.comment };
-    Rest.xhr("post", "feedbacks", data, success, error, null);
+    Rest.xhr("post", "feedbacks", data, success, error, null, headers);
 }

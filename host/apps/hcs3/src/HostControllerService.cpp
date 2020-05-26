@@ -58,8 +58,6 @@ bool HostControllerService::initialize(const QString& config)
         return false;
     }
 
-    db_.setDispatcher(&dispatcher_);
-
     // TODO: Will resolved in SCT-517
     //db_.addReplChannel("platform_list");
 
@@ -79,7 +77,10 @@ bool HostControllerService::initialize(const QString& config)
     connect(this, &HostControllerService::platformDocumentsRequested, storageManager_, &StorageManager::requestPlatformDocuments, Qt::QueuedConnection);
     connect(this, &HostControllerService::downloadPlatformFilesRequested, storageManager_, &StorageManager::requestDownloadPlatformFiles, Qt::QueuedConnection);
     connect(this, &HostControllerService::cancelPlatformDocumentRequested, storageManager_, &StorageManager::requestCancelAllDownloads, Qt::QueuedConnection);
-    connect(this, &HostControllerService::updatePlatformDocRequested, storageManager_, &StorageManager::updatePlatformDoc, Qt::QueuedConnection);
+
+    connect(&boards_, &BoardManagerWrapper::boardConnected, this, &HostControllerService::platformConnected);
+    connect(&boards_, &BoardManagerWrapper::boardDisconnected, this, &HostControllerService::platformDisconnected);
+    connect(&boards_, &BoardManagerWrapper::boardMessage, this, &HostControllerService::sendMessageToClients);
 
     QString baseUrl = QString::fromStdString( db_cfg["file_server"].GetString() );
     storageManager_->setBaseUrl(baseUrl);
@@ -87,7 +88,7 @@ bool HostControllerService::initialize(const QString& config)
 
     db_.initReplicator(db_cfg["gateway_sync"].GetString(), replicator_username, replicator_password);
 
-    boards_.initialize(&dispatcher_);
+    boards_.initialize();
 
     rapidjson::Value& hcs_cfg = config_["host_controller_service"];
 
@@ -297,12 +298,7 @@ void HostControllerService::handleMessage(const PlatformMessage& msg)
 {
     switch(msg.msg_type)
     {
-        case PlatformMessage::eMsgPlatformConnected:            platformConnected(msg); break;
-        case PlatformMessage::eMsgPlatformDisconnected:         platformDisconnected(msg); break;
-        case PlatformMessage::eMsgPlatformMessage:              sendMessageToClients(msg); break;
-
         case PlatformMessage::eMsgClientMessage:                handleClientMsg(msg); break;
-        case PlatformMessage::eMsgCouchbaseMessage:             handleCouchbaseMsg(msg); break;
 
         default:
             assert(false);
@@ -310,22 +306,14 @@ void HostControllerService::handleMessage(const PlatformMessage& msg)
     }
 }
 
-void HostControllerService::platformConnected(const PlatformMessage& item)
+void HostControllerService::platformConnected(const QString &classId, const QString &platformId)
 {
-    if (item.from_connectionId.is_set == false) {
-        qCWarning(logCategoryHcs) << "Missing platform connection Id.";
-        return;
-    }
+    Q_UNUSED(platformId)
 
-    std::string classId = boards_.getClassId(item.from_connectionId.conn_id);
-
-    if (classId.empty()) {
+    if (classId.isEmpty()) {
         qCWarning(logCategoryHcs) << "Connected platform doesn't have class Id.";
         return;
     }
-
-    // TODO: Logic will be changed in SCT-517
-    //db_.addReplChannel(classId);
 
     //send update to all clients
     std::string platformList;
@@ -333,45 +321,27 @@ void HostControllerService::platformConnected(const PlatformMessage& item)
     broadcastMessage(platformList);
 }
 
-void HostControllerService::platformDisconnected(const PlatformMessage& item)
+void HostControllerService::platformDisconnected(const QString &classId, const QString &platformId)
 {
-    rapidjson::Document doc;
-    if (doc.Parse<rapidjson::kParseCommentsFlag>(item.message.data()).HasParseError()) {
-        qCWarning(logCategoryHcs) << "Parse error!";
-        return;
-    }
+    Q_UNUSED(classId)
 
-    if (doc.HasMember("class_id") == false || doc.HasMember("platform_id") == false) {
-        qCWarning(logCategoryHcs) << "Parse error! no members";
-        return;
-    }
-
-    std::string platformId = doc["platform_id"].GetString();
-    HCS_Client* client = findClientByPlatformId(platformId);
+    HCS_Client* client = findClientByPlatformId(platformId.toStdString());
     if (client != nullptr) {
         client->resetPlatformId();
         emit cancelPlatformDocumentRequested(QByteArray::fromStdString(client->getClientId()));
     }
 
-    std::string classId = doc["class_id"].GetString();
-    if (!classId.empty()) {
-        // TODO: Logic will be changed in SCT-517
-        //db_.remReplChannel(classId);
-    }
-
     //send update to all clients
     std::string platformList;
     boards_.createPlatformsList(platformList);
     broadcastMessage(platformList);
 }
 
-void HostControllerService::sendMessageToClients(const PlatformMessage& msg)
+void HostControllerService::sendMessageToClients(const QString &platformId, const QString &message)
 {
-    if (msg.from_connectionId.is_set) {
-        std::string clientId = boards_.getClientId(msg.from_connectionId.conn_id);
-        if (clientId.empty() == false) {
-            clients_.sendMessage(clientId, msg.message);
-        }
+    HCS_Client* client = findClientByPlatformId(platformId.toStdString());
+    if (client != nullptr) {
+        clients_.sendMessage(client->getClientId(), message.toStdString());
     }
 }
 
@@ -436,7 +406,7 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
     if (int device_id; boards_.getFirstDeviceIdByClassId(classId.toStdString(), device_id) ) {
         std::string platformId = boards_.getPlatformId(device_id);
         if (platformId.empty()) {
-            qCWarning(logCategoryHcs) << "Board doesn't have platfomId!";
+            qCWarning(logCategoryHcs) << "Board doesn't have platformId!";
             return;
         }
         if (boards_.setClientId(client->getClientId(), device_id) == false) {
@@ -558,10 +528,6 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)  //const
     }
 }
 
-void HostControllerService::handleCouchbaseMsg(const PlatformMessage& msg)
-{
-    emit updatePlatformDocRequested(QString::fromStdString(msg.from_client));
-}
 
 bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer_id, const std::string& message )
 {

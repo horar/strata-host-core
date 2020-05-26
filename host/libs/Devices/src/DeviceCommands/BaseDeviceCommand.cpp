@@ -1,5 +1,7 @@
 #include "BaseDeviceCommand.h"
 
+#include <DeviceOperationsFinished.h>
+
 namespace strata {
 
 BaseDeviceCommand::BaseDeviceCommand(const SerialDevicePtr& device, const QString& commandName) :
@@ -34,7 +36,7 @@ std::chrono::milliseconds BaseDeviceCommand::waitBeforeNextCommand() const {
 void BaseDeviceCommand::prepareRepeat() { }
 
 int BaseDeviceCommand::dataForFinish() const {
-    return INT_MIN;  // default value for finished() signal
+    return OPERATION_DEFAULT_DATA;  // default value for finished() signal
 }
 
 const QString BaseDeviceCommand::name() const {
