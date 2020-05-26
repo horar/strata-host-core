@@ -35,6 +35,17 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
 generate_app_version(GITTAG_PREFIX "sci_" MACBUNDLE ON)
 
 if(APPLE)
+    find_library(FOUNDATION_LIB Foundation REQUIRED)
+    if (NOT FOUNDATION_LIB)
+        message(FATAL_ERROR "Foundation framework not found")
+    endif()
+
+    target_link_libraries(${PROJECT_NAME}
+        ${FOUNDATION_LIB}
+    )
+endif()
+
+if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE
         resources/icons/app/sci-logo.icns
     )
