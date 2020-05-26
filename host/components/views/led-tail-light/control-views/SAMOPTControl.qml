@@ -239,7 +239,7 @@ Item {
     Popup {
         id: warningPopupOTP
         width: parent.width/2
-        height: parent.height/4
+        height: parent.height/2.5
         anchors.centerIn: parent
         modal: true
         focus: true
@@ -272,9 +272,9 @@ Item {
                     topMargin: 10
                     centerIn:  parent.Center
                 }
-                color: "transparent"
+                color:  "red"//"transparent"
                 width: parent.width
-                height:  parent.height - selectionContainerForPopupOTP.height
+                height:  parent.height - selectionContainerForPopupOTP.height - 10
                 Text {
                     id: warningTextForPopupOTP
                     anchors.fill:parent
@@ -292,28 +292,49 @@ Item {
 
             Rectangle {
                 id: selectionContainerForPopupOTP
-                width: parent.width/2
-                height: parent.height/4.5
+                width: parent.width
+                height: parent.height/3
                 anchors{
-                    top: messageContainerForPopupOTP.bottom
-                    topMargin: 10
-                    right: parent.right
+                    top: warningPopupBoxOTP.bottom
+                    topMargin: 15
+                    bottom: messageContainerForPopupOTP.Bottom
+                    bottomMargin: 10
                 }
                 color: "transparent"
 
-                SGButton {
-                    id: continueButton
-                    width: parent.width/3
-                    height:parent.height
-                    anchors.right: parent.right
-                    anchors.rightMargin: 20
-                    text: "Continue"
-                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
-                    roundedLeft: true
-                    roundedRight: true
+                RowLayout {
+                    anchors.fill: parent
+                    Rectangle{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "transparent"
+                    }
 
-                    onClicked: {
-                        warningPopupOTP.close()
+                    Rectangle{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "transparent"
+
+                    }
+                    Rectangle{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "transparent"
+
+                        SGButton {
+                            id: continueButton
+                            width: parent.width/2
+                            height:parent.height/2
+                            anchors.right: parent.right
+                            anchors.centerIn: parent
+                            text: "Continue"
+                            color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                            roundedLeft: true
+                            roundedRight: true
+                            onClicked: {
+                                warningPopupOTP.close()
+                            }
+                        }
                     }
                 }
             }
@@ -668,24 +689,26 @@ Item {
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                             height:  35 * ratioCalc
                             width: 50 * ratioCalc
-                            onAccepted: {
+                            validator: RegExpValidator { regExp: /[0-9A-F]+/ }
+                            onEditingFinished: {
                                 var hexTodecimal = parseInt(text, 16)
                                 console.log(text)
                                 console.log(hexTodecimal)
                                 if(hexTodecimal > platformInterface.soc_addr_new.scales[0]) {
-                                    console.log(text.toString(16))
-                                    new7bit.text = toHex(platformInterface.soc_addr_new.scales[0])
+                                    console.log(text.toString(16).toUpperCase())
+                                    new7bit.text = toHex(platformInterface.soc_addr_new.scales[0]).toUpperCase()
                                     platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
                                 }
 
                                 else if(hexTodecimal < platformInterface.soc_addr_new.scales[1]){
-                                    new7bit.text = toHex(platformInterface.soc_addr_new.scales[1])
+                                    new7bit.text = toHex(platformInterface.soc_addr_new.scales[1]).toUpperCase()
                                     platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
                                 }
                                 else if(hexTodecimal <= platformInterface.soc_addr_new.scales[0] && hexTodecimal >= platformInterface.soc_addr_new.scales[1]){
                                     new7bit.text = text
                                     platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
                                 }
+
                             }
 
                         }
@@ -749,20 +772,20 @@ Item {
                             cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                             onClicked: {
                                 var hexTodecimal = parseInt(new7bit.text, 16)
-                                console.log(new7bit.text)
+                                console.log(new7bit.text.toUpperCase())
                                 console.log(hexTodecimal)
                                 if(hexTodecimal > platformInterface.soc_addr_new.scales[0]) {
                                     console.log(new7bit.text.toString(16))
-                                    new7bit.text = toHex(platformInterface.soc_addr_new.scales[0])
+                                    new7bit.text = toHex(platformInterface.soc_addr_new.scales[0]).toUpperCase()
                                     platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
                                 }
 
                                 else if(hexTodecimal < platformInterface.soc_addr_new.scales[1]){
-                                    new7bit.text = toHex(platformInterface.soc_addr_new.scales[1])
+                                    new7bit.text = toHex(platformInterface.soc_addr_new.scales[1]).toUpperCase()
                                     platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
                                 }
                                 else if(hexTodecimal <= platformInterface.soc_addr_new.scales[0] && hexTodecimal >= platformInterface.soc_addr_new.scales[1]){
-                                    new7bit.text = new7bit.text
+                                    new7bit.text = new7bit.text.toUpperCase()
                                     platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
                                 }
 

@@ -1157,7 +1157,7 @@ Item {
    //** SAMOPTControl notification & cmds  **/
 
     property var soc_otped: {
-        "value": false
+        "value": true
     }
 
     property var soc_diag: {
