@@ -4,7 +4,7 @@ project(component-commoncpp
 )
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Quick Widgets mqtt
+    COMPONENTS Core Quick Widgets
     REQUIRED
 )
 
