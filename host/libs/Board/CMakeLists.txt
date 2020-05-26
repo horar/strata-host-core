@@ -4,6 +4,7 @@ project(Board
 )
 
 set(DEVICE "Device")
+set(DEVICE_OPERATIONS "DeviceOperations")
 
 find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Core SerialPort
@@ -34,5 +35,43 @@ target_link_libraries(${DEVICE}
 )
 
 set_target_properties(${DEVICE} PROPERTIES
+    AUTOMOC ON
+)
+
+# DeviceOperations
+add_library(${DEVICE_OPERATIONS}
+    Device/DeviceOperations/src/DeviceOperations.cpp
+    Device/src/logging/LoggingQtCategories.cpp
+    Device/DeviceOperations/src/DeviceCommands/BaseDeviceCommand.cpp
+    Device/DeviceOperations/src/DeviceCommands/CmdGetFirmwareInfo.cpp
+    Device/DeviceOperations/src/DeviceCommands/CmdRequestPlatformId.cpp
+    Device/DeviceOperations/src/DeviceCommands/CmdUpdateFirmware.cpp
+    Device/DeviceOperations/src/DeviceCommands/CmdFlashFirmware.cpp
+    Device/DeviceOperations/src/DeviceCommands/CmdBackupFirmware.cpp
+    Device/DeviceOperations/src/DeviceCommands/CmdStartApplication.cpp
+
+    #AUTOMOC wont find header if it is in different directory
+    Device/DeviceOperations.h
+    Device/DeviceOperations/include/DeviceOperationsFinished.h
+)
+
+target_include_directories(${DEVICE_OPERATIONS}
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Device/DeviceOperations/include
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Device/src
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Device/DeviceOperations/src
+)
+
+target_link_libraries(${DEVICE_OPERATIONS}
+    PUBLIC Qt5::Core
+    PUBLIC Device
+    PUBLIC rapidjson::rapidjson
+    PUBLIC QtLogger
+    PRIVATE CommandValidator
+    PRIVATE base64
+    PRIVATE crc16
+)
+
+set_target_properties(${DEVICE_OPERATIONS} PROPERTIES
     AUTOMOC ON
 )

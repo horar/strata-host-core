@@ -112,6 +112,7 @@ namespace strata::device {
         virtual Type deviceType() const final;
 
         friend QDebug operator<<(QDebug dbg, const Device* d);
+        friend QDebug operator<<(QDebug dbg, const DevicePtr& d);
 
     signals:
         /**

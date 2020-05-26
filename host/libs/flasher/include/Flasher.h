@@ -60,8 +60,6 @@ class Flasher : public QObject
          */
         void cancel();
 
-        friend QDebug operator<<(QDebug dbg, const Flasher* f);
-
     signals:
         /*!
          * This signal is emitted when Flasher finishes.
@@ -115,8 +113,6 @@ class Flasher : public QObject
         QFile fwFile_;
 
         std::unique_ptr<DeviceOperations> operation_;
-
-        uint deviceId_;
 
         int chunkNumber_;
         int chunkCount_;

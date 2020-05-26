@@ -68,10 +68,10 @@ bool CmdFlashFirmware::processNotification(rapidjson::Document& doc) {
             if (status == JSON_RESEND_CHUNK) {
                 if (retriesCount_ < maxRetries_) {
                     ++retriesCount_;
-                    qCInfo(logCategoryDeviceOperations) << device_.get() << "Going to retry to flash firmware chunk.";
+                    qCInfo(logCategoryDeviceOperations) << device_ << "Going to retry to flash firmware chunk.";
                     result_ = CommandResult::Retry;
                 } else {
-                    qCWarning(logCategoryDeviceOperations) << device_.get() << "Reached maximum retries for flash firmware chunk.";
+                    qCWarning(logCategoryDeviceOperations) << device_ << "Reached maximum retries for flash firmware chunk.";
                 }
             }
         }

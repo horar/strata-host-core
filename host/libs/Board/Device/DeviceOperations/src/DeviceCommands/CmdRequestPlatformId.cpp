@@ -31,7 +31,7 @@ bool CmdRequestPlatformId::processNotification(rapidjson::Document& doc) {
 void CmdRequestPlatformId::onTimeout() {
     if (retriesCount_ < maxRetries_) {
         ++retriesCount_;
-        qCInfo(logCategoryDeviceOperations) << device_.get() << "Going to retry to get platform ID.";
+        qCInfo(logCategoryDeviceOperations) << device_ << "Going to retry to get platform ID.";
         result_ = CommandResult::Retry;
     } else {
         result_ = CommandResult::InProgress;

@@ -26,7 +26,7 @@ bool CmdUpdateFirmware::processNotification(rapidjson::Document& doc) {
 
 bool CmdUpdateFirmware::skip() {
     if (device_->property(device::DeviceProperties::verboseName) == QSTR_BOOTLOADER) {
-        qCInfo(logCategoryDeviceOperations) << device_.get() << "Platform already in bootloader mode. Ready for firmware operations.";
+        qCInfo(logCategoryDeviceOperations) << device_ << "Platform already in bootloader mode. Ready for firmware operations.";
         result_ = CommandResult::FinaliseOperation;
         return true;
     } else {
@@ -39,7 +39,7 @@ std::chrono::milliseconds CmdUpdateFirmware::waitBeforeNextCommand() const {
     // Platform and bootloader uses the same setting for clock source.
     // Clock source for bootloader and application must match. Otherwise when application jumps to bootloader,
     // it will have a hardware fault which requires board to be reset.
-    qCInfo(logCategoryDeviceOperations) << device_.get() << "Waiting 5 seconds for bootloader to start.";
+    qCInfo(logCategoryDeviceOperations) << device_ << "Waiting 5 seconds for bootloader to start.";
     return std::chrono::milliseconds(5500);
 }
 

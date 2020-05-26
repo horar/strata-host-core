@@ -29,7 +29,7 @@ SerialDevice::~SerialDevice() {
 
 bool SerialDevice::open() {
     if (serialPort_.isOpen()) {
-        qCDebug(logCategorySerialDevice).nospace() << this << "Attempt to open already opened serial port.";
+        qCDebug(logCategorySerialDevice) << this << "Attempt to open already opened serial port.";
         return true;
     }
 
@@ -63,7 +63,7 @@ void SerialDevice::readMessage() {
         readBuffer_.append(data.data() + from, static_cast<size_t>(end - from));
         from = end + 1;  // +1 due to skip '\n'
 
-        // qCDebug(logCategorySerialDevice).nospace().noquote() << this << ": received message: " << QString::fromStdString(readBuffer_);
+        // qCDebug(logCategorySerialDevice) << this << ": received message: " << QString::fromStdString(readBuffer_);
         emit msgFromDevice(QByteArray::fromStdString(readBuffer_));
         readBuffer_.clear();
         // std::string keeps allocated memory after clear(), this is why read_buffer_ is std::string
@@ -105,7 +105,7 @@ bool SerialDevice::writeData(const QByteArray data, quintptr lockId) {
         return true;
     } else {
         QString errMsg(QStringLiteral("Cannot write to device because device is busy."));
-        qCWarning(logCategorySerialDevice).noquote() << this << errMsg;
+        qCWarning(logCategorySerialDevice) << this << errMsg;
         emit deviceError(ErrorCode::DeviceBusy, errMsg);
         return false;
     }
@@ -157,7 +157,7 @@ void SerialDevice::handleWriteToPort(const QByteArray data) {
         emit messageSent(data);
     } else {
         QString errMsg(QStringLiteral("Cannot write whole data to device."));
-        qCCritical(logCategorySerialDevice).noquote() << this << errMsg;
+        qCCritical(logCategorySerialDevice) << this << errMsg;
         emit deviceError(ErrorCode::SendMessageError, errMsg);
     }
 }
@@ -168,10 +168,10 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
         QString errMsg = "Serial port error (" + QString::number(error) + "): " + serialPort_.errorString();
         if (error == QSerialPort::ResourceError) {
             // board was unconnected from computer (cable was unplugged)
-            qCWarning(logCategorySerialDevice).noquote() << this << ": " << errMsg << " (Probably unexpectedly disconnected device.)";
+            qCWarning(logCategorySerialDevice) << this << ": " << errMsg << " (Probably unexpectedly disconnected device.)";
         }
         else {
-            qCCritical(logCategorySerialDevice).noquote() << this << errMsg;
+            qCCritical(logCategorySerialDevice) << this << errMsg;
         }
         emit deviceError(translateQSerialPortError(error), serialPort_.errorString());
     }

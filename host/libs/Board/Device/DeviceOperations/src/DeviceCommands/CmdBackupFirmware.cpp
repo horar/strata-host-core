@@ -32,7 +32,7 @@ bool CmdBackupFirmware::processNotification(rapidjson::Document& doc) {
         if (payload.HasMember(JSON_STATUS)) {
             const rapidjson::Value& status = payload[JSON_STATUS];
             if (status == CSTR_NO_FIRMWARE) {
-                qCWarning(logCategoryDeviceOperations) << device_.get() << "Nothing to backup, board has no firmware.";
+                qCWarning(logCategoryDeviceOperations) << device_ << "Nothing to backup, board has no firmware.";
                 result_ = CommandResult::FinaliseOperation;
             } else {
                 result_ = CommandResult::Failure;
@@ -58,10 +58,10 @@ bool CmdBackupFirmware::processNotification(rapidjson::Document& doc) {
                     if (crc.GetUint() == crc16::buypass(chunk_.data(), static_cast<uint32_t>(chunk_.size()))) {
                         ok = true;
                     } else {
-                        qCCritical(logCategoryDeviceOperations) << device_.get() << "Wrong CRC of firmware chunk.";
+                        qCCritical(logCategoryDeviceOperations) << device_ << "Wrong CRC of firmware chunk.";
                     }
                 } else {
-                    qCCritical(logCategoryDeviceOperations) << device_.get() << "Wrong SIZE of firmware chunk.";
+                    qCCritical(logCategoryDeviceOperations) << device_ << "Wrong SIZE of firmware chunk.";
                 }
 
                 if (ok) {
@@ -69,10 +69,10 @@ bool CmdBackupFirmware::processNotification(rapidjson::Document& doc) {
                 } else {
                     if (retriesCount_ < maxRetries_) {
                         ++retriesCount_;
-                        qCInfo(logCategoryDeviceOperations) << device_.get() << "Going to retry to backup firmware chunk.";
+                        qCInfo(logCategoryDeviceOperations) << device_ << "Going to retry to backup firmware chunk.";
                         result_ = CommandResult::Retry;
                     } else {
-                        qCWarning(logCategoryDeviceOperations) << device_.get() << "Reached maximum retries for backup firmware chunk.";
+                        qCWarning(logCategoryDeviceOperations) << device_ << "Reached maximum retries for backup firmware chunk.";
                         result_ = CommandResult::Failure;
                     }
                 }

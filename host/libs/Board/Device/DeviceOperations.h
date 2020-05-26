@@ -101,8 +101,6 @@ public:
      */
     QVector<quint8> recentBackupChunk() const;
 
-    friend QDebug operator<<(QDebug dbg, const DeviceOperations* devOp);
-
 signals:
     /*!
      * This signal is emitted when DeviceOperations finishes.

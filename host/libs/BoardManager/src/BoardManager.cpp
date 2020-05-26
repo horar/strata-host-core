@@ -2,7 +2,7 @@
 #include "BoardManagerConstants.h"
 #include "logging/LoggingQtCategories.h"
 #include <Device/Serial/SerialDevice.h>
-#include <DeviceOperations.h>
+#include <Device/DeviceOperations.h>
 
 #include <QSerialPortInfo>
 #include <QMutexLocker>
