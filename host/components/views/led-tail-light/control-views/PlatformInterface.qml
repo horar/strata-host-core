@@ -37,6 +37,10 @@ Item {
         "value": true
     }
 
+    property var soc_otped: {
+        "value": false
+    }
+
 
 
     //Mode commands
@@ -1156,9 +1160,7 @@ Item {
 
    //** SAMOPTControl notification & cmds  **/
 
-    property var soc_otped: {
-        "value": true
-    }
+
 
     property var soc_diag: {
         "caption":"DIAG",

@@ -4576,9 +4576,7 @@ Item {
                                             SGStatusLight {
                                                 id: out10faultStatusLED
                                                 width: 30
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 5
-                                                anchors.verticalCenter: parent.verticalCenter
+                                                 anchors.centerIn: parent
                                             }
                                         }
 

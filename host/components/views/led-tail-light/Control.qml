@@ -104,7 +104,7 @@ Item {
             Rectangle {
                 id: selectionContainerForPopup
                 width: parent.width
-                height: parent.height/3
+                height: parent.height/4
                 anchors{
                     top: messageContainerForPopup.bottom
                     topMargin: 15
@@ -146,14 +146,8 @@ Item {
                                 height:  35 * ratioCalc
                                 width: 50 * ratioCalc
                                 text: toHex(96)
-                                //font.capitalization: Font.AllLowercase
-                                validator: RegExpValidator { regExp: /[0-9A-F]+/ }
-
-
-                                onFocusChanged:  {
-                                    if(!focus)
-                                        deselect()
-                                }
+                                infoBoxObject.boxFont.capitalization: Font.AllUppercase
+                                validator: RegExpValidator { regExp: /[0-9A-Fa-f]+/ }
 
                                 onEditingFinished: {
                                     var hexTodecimal = parseInt(text, 16)
@@ -223,7 +217,7 @@ Item {
                         SGButton {
                             id: continueButton
                             width: parent.width/2
-                            height:parent.height/2
+                            height:parent.height/1.7
                             anchors.right: parent.right
                             anchors.centerIn: parent
                             text: "Continue"

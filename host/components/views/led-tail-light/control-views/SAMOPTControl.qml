@@ -239,7 +239,7 @@ Item {
     Popup {
         id: warningPopupOTP
         width: parent.width/2
-        height: parent.height/2.5
+        height: parent.height/4
         anchors.centerIn: parent
         modal: true
         focus: true
@@ -272,9 +272,9 @@ Item {
                     topMargin: 10
                     centerIn:  parent.Center
                 }
-                color:  "red"//"transparent"
+                color: "transparent"
                 width: parent.width
-                height:  parent.height - selectionContainerForPopupOTP.height - 10
+                height:  parent.height - (parent.height/2) - 10
                 Text {
                     id: warningTextForPopupOTP
                     anchors.fill:parent
@@ -293,11 +293,11 @@ Item {
             Rectangle {
                 id: selectionContainerForPopupOTP
                 width: parent.width
-                height: parent.height/3
+                height: parent.height/2
                 anchors{
-                    top: warningPopupBoxOTP.bottom
+                    top: messageContainerForPopupOTP.bottom
                     topMargin: 15
-                    bottom: messageContainerForPopupOTP.Bottom
+                    bottom: warningPopupBoxOTP.bottom
                     bottomMargin: 10
                 }
                 color: "transparent"
@@ -324,8 +324,8 @@ Item {
                         SGButton {
                             id: continueButton
                             width: parent.width/2
-                            height:parent.height/2
-                            anchors.right: parent.right
+                            height:parent.height
+
                             anchors.centerIn: parent
                             text: "Continue"
                             color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
@@ -379,7 +379,7 @@ Item {
                 }
                 color: "transparent"
                 width: parent.width
-                height:  parent.height - selectionContainerForPopup.height
+                height:  parent.height - (parent.height/2) - 10
                 Text {
                     id: warningTextForPopup
                     anchors.fill:parent
@@ -396,85 +396,107 @@ Item {
 
             Rectangle {
                 id: selectionContainerForPopup
-                width: parent.width/2
-                height: parent.height/4.5
+                width: parent.width
+                height: parent.height/2
                 anchors{
                     top: messageContainerForPopup.bottom
-                    topMargin: 10
-                    right: parent.right
+                    topMargin: 20
+                    bottom: warningPopupBox.bottom
+                    bottomMargin: 10
                 }
                 color: "transparent"
 
-                SGButton {
-                    id: cancelButton
-                    width: parent.width/3
-                    height:parent.height
-                    anchors.left: parent.left
-                    text: "Cancel"
-                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
-                    roundedLeft: true
-                    roundedRight: true
+                RowLayout {
+                    anchors.fill: parent
+                    Rectangle{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "transparent"
+                    }
+                    Rectangle{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "transparent"
+                        SGButton {
+                            id: cancelButton
+                            width: parent.width/2
+                            height:parent.height
+                            anchors.centerIn: parent
+                            text: "Cancel"
+                            color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                            roundedLeft: true
+                            roundedRight: true
 
-                    onClicked: {
-                        warningPopup.close()
+                            onClicked: {
+                                warningPopup.close()
+
+                            }
+                        }
 
                     }
-                }
+                    Rectangle{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "transparent"
 
-                SGButton {
-                    id: continueButtonOPT
-                    width: parent.width/3
-                    height:parent.height
-                    anchors.left: cancelButton.right
-                    anchors.leftMargin: 20
-                    //anchors.leftMargin: 20
-                    //anchors.centerIn: parent
-                    text: "Continue"
-                    color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
-                    roundedLeft: true
-                    roundedRight: true
+                        SGButton {
+                            id: continueButtonOPT
+                            width: parent.width/2
+                            height:parent.height
+                            anchors.centerIn: parent
 
-                    onClicked: {
-                        warningPopup.close()
+                            text: "Continue"
+                            color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                            roundedLeft: true
+                            roundedRight: true
 
-                        platformInterface.set_soc_write.update(
-                                    true,
-                                    [platformInterface.soc_sam_conf_1_out1,
-                                     platformInterface.soc_sam_conf_1_out2,
-                                     platformInterface.soc_sam_conf_1_out3,
-                                     platformInterface.soc_sam_conf_1_out4,
-                                     platformInterface.soc_sam_conf_1_out5,
-                                     platformInterface.soc_sam_conf_1_out6,
-                                     platformInterface.soc_sam_conf_1_out7,
-                                     platformInterface.soc_sam_conf_1_out8,
-                                     platformInterface.soc_sam_conf_1_out9,
-                                     platformInterface.soc_sam_conf_1_out10,
-                                     platformInterface.soc_sam_conf_1_out11,
-                                     platformInterface.soc_sam_conf_1_out12
+                            onClicked: {
+                                warningPopup.close()
 
-                                    ],
-                                    [platformInterface.soc_sam_conf_2_out1,
-                                     platformInterface.soc_sam_conf_2_out2,
-                                     platformInterface.soc_sam_conf_2_out3,
-                                     platformInterface.soc_sam_conf_2_out4,
-                                     platformInterface.soc_sam_conf_2_out5,
-                                     platformInterface.soc_sam_conf_2_out6,
-                                     platformInterface.soc_sam_conf_2_out7,
-                                     platformInterface.soc_sam_conf_2_out8,
-                                     platformInterface.soc_sam_conf_2_out9,
-                                     platformInterface.soc_sam_conf_2_out10,
-                                     platformInterface.soc_sam_conf_2_out11,
-                                     platformInterface.soc_sam_conf_2_out12
-                                    ],
-                                    samOpenLoadDiagnostic.currentText,
-                                    platformInterface.soc_crcValue,
-                                    platformInterface.addr_curr_apply)
+                                platformInterface.set_soc_write.update(
+                                            true,
+                                            [platformInterface.soc_sam_conf_1_out1,
+                                             platformInterface.soc_sam_conf_1_out2,
+                                             platformInterface.soc_sam_conf_1_out3,
+                                             platformInterface.soc_sam_conf_1_out4,
+                                             platformInterface.soc_sam_conf_1_out5,
+                                             platformInterface.soc_sam_conf_1_out6,
+                                             platformInterface.soc_sam_conf_1_out7,
+                                             platformInterface.soc_sam_conf_1_out8,
+                                             platformInterface.soc_sam_conf_1_out9,
+                                             platformInterface.soc_sam_conf_1_out10,
+                                             platformInterface.soc_sam_conf_1_out11,
+                                             platformInterface.soc_sam_conf_1_out12
 
-                        //                        if(platformInterface.soc_otped.value === true) {
-                        //                            warningPopupOTP.open()
-                        //                        }
+                                            ],
+                                            [platformInterface.soc_sam_conf_2_out1,
+                                             platformInterface.soc_sam_conf_2_out2,
+                                             platformInterface.soc_sam_conf_2_out3,
+                                             platformInterface.soc_sam_conf_2_out4,
+                                             platformInterface.soc_sam_conf_2_out5,
+                                             platformInterface.soc_sam_conf_2_out6,
+                                             platformInterface.soc_sam_conf_2_out7,
+                                             platformInterface.soc_sam_conf_2_out8,
+                                             platformInterface.soc_sam_conf_2_out9,
+                                             platformInterface.soc_sam_conf_2_out10,
+                                             platformInterface.soc_sam_conf_2_out11,
+                                             platformInterface.soc_sam_conf_2_out12
+                                            ],
+                                            samOpenLoadDiagnostic.currentText,
+                                            platformInterface.soc_crcValue,
+                                            platformInterface.addr_curr_apply)
+
+
+                            }
+                        }
+
                     }
+
                 }
+
+
+
+
             }
         }
     }
@@ -689,7 +711,8 @@ Item {
                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                             height:  35 * ratioCalc
                             width: 50 * ratioCalc
-                            validator: RegExpValidator { regExp: /[0-9A-F]+/ }
+                            infoBoxObject.boxFont.capitalization: Font.AllUppercase
+                            validator: RegExpValidator { regExp: /[0-9A-Fa-f]+/ }
                             onEditingFinished: {
                                 var hexTodecimal = parseInt(text, 16)
                                 console.log(text)
@@ -2639,20 +2662,6 @@ Item {
                                 onSoc_diagChanged: {
                                     diagLabel.text = soc_diag.caption
                                     setStatesForControls(diag,soc_diag.states[0])
-
-                                    //                                    if(soc_diag.state === "enabled"){
-                                    //                                        diag.enabled = true
-                                    //                                        diag.opacity = 1.0
-                                    //                                    }
-                                    //                                    else if (soc_diag.state === "disabled") {
-                                    //                                        diag.enabled = false
-                                    //                                        diag.opacity = 1.0
-                                    //                                    }
-                                    //                                    else {
-                                    //                                        diag.enabled = false
-                                    //                                        diag.opacity = 0.5
-                                    //                                    }
-
                                     if(soc_diag.value === true)
                                         diag.status = SGStatusLight.Red
                                     else  diag.status = SGStatusLight.Off
@@ -2764,6 +2773,7 @@ Item {
                                     for(var a = 0; a < samOpenLoadDiagnostic.model.length; ++a) {
                                         if(soc_sam_open_load_diagnostic_values === samOpenLoadDiagnostic.model[a].toString()){
                                             samOpenLoadDiagnostic.currentIndex = a
+                                            samOpenLoadDiagnostic.currentText = soc_sam_open_load_diagnostic_values
                                         }
                                     }
                                 }
