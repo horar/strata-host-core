@@ -5,6 +5,7 @@ project(Board
 
 set(DEVICE "Device")
 set(DEVICE_OPERATIONS "DeviceOperations")
+set(BOARD_MANAGER "BoardManager")
 
 find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Core SerialPort
@@ -73,5 +74,31 @@ target_link_libraries(${DEVICE_OPERATIONS}
 )
 
 set_target_properties(${DEVICE_OPERATIONS} PROPERTIES
+    AUTOMOC ON
+)
+
+# BoardManager
+add_library(${BOARD_MANAGER}
+    BoardManager/src/BoardManager.cpp
+    BoardManager/src/logging/LoggingQtCategories.cpp
+
+    #AUTOMOC wont find header if it is in different directory
+    BoardManager/include/BoardManager.h
+)
+
+target_include_directories(${BOARD_MANAGER}
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/BoardManager/src
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/BoardManager/include
+)
+
+target_link_libraries(${BOARD_MANAGER}
+    PUBLIC Qt5::Core
+    PUBLIC Qt5::SerialPort
+    PUBLIC QtLogger
+    PUBLIC Device
+    PRIVATE DeviceOperations
+)
+
+set_target_properties(${BOARD_MANAGER} PROPERTIES
     AUTOMOC ON
 )
