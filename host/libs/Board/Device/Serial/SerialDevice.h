@@ -32,12 +32,12 @@ public:
      * Open serial port.
      * @return true if port was opened, otherwise false
      */
-    bool open();
+    virtual bool open() override;
 
     /**
      * Close serial port.
      */
-    void close();
+    virtual void close() override;
 
     /**
      * Send message to serial device. Emits deviceError in case of failure.

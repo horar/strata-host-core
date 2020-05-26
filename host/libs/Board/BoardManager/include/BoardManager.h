@@ -152,7 +152,7 @@ namespace strata {
         // and deadlock can occur if from QML is called another function which uses same mutex).
         std::set<int> serialPortsList_;
         QHash<int, QString> serialIdToName_;
-        QHash<int, device::DevicePtr> openedSerialPorts_;
+        QHash<int, device::DevicePtr> openedDevices_;
 
         QHash<int, QSharedPointer<DeviceOperations>> deviceOperations_;
 

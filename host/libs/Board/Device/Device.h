@@ -86,6 +86,17 @@ namespace strata::device {
         virtual ~Device();
 
         /**
+         * Open device communication channel.
+         * @return true if device was opened, otherwise false
+         */
+        virtual bool open() = 0;
+
+        /**
+         * Close device communication channel.
+         */
+        virtual void close() = 0;
+
+        /**
          * Send message to  device. Emits deviceError() signal in case of failure.
          * @param msg message to be written to device
          * @return true if message can be sent, otherwise false

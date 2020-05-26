@@ -88,8 +88,7 @@ void FirmwareCommand::process() {
     }
 
     device::DevicePtr device = std::make_shared<device::serial::SerialDevice>(static_cast<int>(qHash(name)), name);
-    device::serial::SerialDevice *serialDevice = dynamic_cast<device::serial::SerialDevice*>(device.get());
-    if (serialDevice == nullptr || serialDevice->open() == false) {
+    if (device->open() == false) {
         qCCritical(logCategoryFlasherCli) << "Cannot open board (serial device)" << name;
         emit finished(EXIT_FAILURE);
         return;
