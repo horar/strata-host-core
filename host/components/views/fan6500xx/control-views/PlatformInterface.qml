@@ -144,6 +144,7 @@ Item {
 
                                })
 
+
     property var set_soft_start: ({
                                       "cmd" : "set_soft_start",
                                       "payload": {

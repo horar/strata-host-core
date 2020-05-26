@@ -799,7 +799,7 @@ ColumnLayout {
                                             toText.text: "28 V"
                                             from: 2
                                             to: 28
-                                            stepSize: 0.1
+                                            stepSize: 0.05
                                             live: false
 
                                             inputBox.validator: DoubleValidator {
