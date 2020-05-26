@@ -324,63 +324,42 @@ Rectangle {
                 }
             }
 
+
             Button {
-                id: networkPlusDimmer
-                text: "network+doorbell"
+                id: removeNode2
+                text: "remove door"
+
 
                 onClicked: {
 
                     CorePlatformInterface.data_source_handler('{
-                                            "value":"network_notification",
-                                            "payload":{
-                                                "nodes":[{
-                                                    "index":0,
-                                                    "ready":0,
-                                                    "color":"#0000FF"
-                                                    },
-                                                    {
-                                                    "index":1,
-                                                    "ready":1,
-                                                    "color":"#0000FF"
-                                                    },
-                                                    {
-                                                    "index":2,
-                                                    "ready":1,
-                                                    "color":"#FF00FF"
-                                                    },
-                                                    {"index":3,
-                                                    "ready":1,
-                                                    "color":"#00FFFF"
-                                                    },{
-                                                    "index":4,
-                                                    "ready":0,
-                                                    "color":"#7BFF00"
-                                                    },{
-                                                    "index":5,
-                                                    "ready":0,
-                                                    "color":"#FFFF00"
-                                                    },{
-                                                    "index":6,
-                                                    "ready":0,
-                                                    "color":"#7B00FF"
-                                                    },{
-                                                    "index":7,
-                                                    "ready":0,
-                                                    "color":"#00FF52"
-                                                    },{
-                                                    "index":8,
-                                                    "ready":0,
-                                                    "color":"#FF5200"
-                                                    },{
-                                                    "index":9,
-                                                    "ready":0,
-                                                    "color":"#FFFFFF"
-                                                    }]
-                                                }
-                                            }')
+                    "value":"node_removed",
+                    "payload":{
+                        "index":2
+                        }
+                    }')
+
 
                 }
             }
+
+                        Button {
+                            id: temperature
+                            text: "temperature"
+
+                            onClicked: {
+
+                                CorePlatformInterface.data_source_handler('{
+                                "value":"sensor_status",
+                                "payload":{
+                                    "uaddr":2,
+                                    "sensor_type":"temperature",
+                                    "data": '+ ((Math.random() * 200).toFixed(0)) +'
+                                    }
+                                }')
+                                }
+                        }
+
 
 //            Button {
 //                id: rssi
@@ -403,32 +382,32 @@ Rectangle {
 //                }
 //            }
 
-            Button {
-                id: windowShade
-                text: "shade"
+//            Button {
+//                id: windowShade
+//                text: "shade"
 
-                property var state: "open";
+//                property var state: "open";
 
-                onClicked: {
+//                onClicked: {
 
-                    CorePlatformInterface.data_source_handler('{
-                    "value":"window_shade",
-                    "payload":{
-                        "value":"'+state+'"
-                        }
-                    }')
+//                    CorePlatformInterface.data_source_handler('{
+//                    "value":"window_shade",
+//                    "payload":{
+//                        "value":"'+state+'"
+//                        }
+//                    }')
 
-                    if (state === "open"){
-                        console.log("closing window")
-                        state = "closed"
-                    }
-                      else{
-                        console.log("opening window")
-                        state = "open"
-                    }
+//                    if (state === "open"){
+//                        console.log("closing window")
+//                        state = "closed"
+//                    }
+//                      else{
+//                        console.log("opening window")
+//                        state = "open"
+//                    }
 
-                }
-            }
+//                }
+//            }
 
             Button {
                 id: smarthomeDoor

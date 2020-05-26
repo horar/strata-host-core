@@ -21,7 +21,6 @@ Rectangle{
 
     onIsOnChanged: {
         if (isOn){
-            console.log("calling turning on animation")
             turningOnAnimation.start()
         }
         else

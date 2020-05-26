@@ -245,10 +245,10 @@ Rectangle {
 
             property var batteryValue: platformInterface.battery_status
             onBatteryValueChanged: {
-                console.log("node",nodeNumber, " received battery value change",platformInterface.battery_status.battery_voltage)
+                //console.log("node",nodeNumber, " received battery value change",platformInterface.battery_status.battery_voltage)
                 //console.log("comparing ",platformInterface.battery_status.uaddr, "and",meshObject.nodeNumber);
                 if (platformInterface.battery_status.uaddr == meshObject.nodeNumber){
-                    console.log("updating battery value for node", meshObject.nodeNumber);
+                    //console.log("updating battery value for node", meshObject.nodeNumber);
                     battery_vtg = parseFloat(platformInterface.battery_status.battery_voltage)
                     battery_lvl = parseInt(platformInterface.battery_status.battery_level)
                     if (battery_vtg !== NaN || battery_lvl !== NaN)

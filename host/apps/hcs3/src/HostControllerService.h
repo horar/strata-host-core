@@ -52,7 +52,6 @@ signals:
     void platformDocumentsRequested(QByteArray clientId, QString classId);
     void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
-    void updatePlatformDocRequested(QString classId);
 
 public slots:
     void onAboutToQuit();
@@ -95,8 +94,7 @@ private:
     void handleMessage(const PlatformMessage& msg);
 
     void handleClientMsg(const PlatformMessage& msg);
-    void handleCouchbaseMsg(const PlatformMessage& msg);
-    void sendMessageToClients(const PlatformMessage& msg);
+    void sendMessageToClients(const QString &platformId, const QString& message);
     bool disptachMessageToPlatforms(const std::string& dealer_id, const std::string& read_message);
 
     bool broadcastMessage(const std::string& message);
@@ -113,9 +111,8 @@ private:
     void onCmdHostDownloadFiles(const rapidjson::Value* );      //from UI
     void onCmdDynamicPlatformList(const rapidjson::Value* );
 
-    //called from Platform manager to handle platforms connect/disconnect
-    void platformConnected(const PlatformMessage& item);
-    void platformDisconnected(const PlatformMessage& item);
+    void platformConnected(const QString &classId, const QString &platformId);
+    void platformDisconnected(const QString &classId, const QString &platformId);
 
     HCS_Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 

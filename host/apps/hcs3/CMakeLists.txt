@@ -1,11 +1,9 @@
 project(HostControllerService
-    DESCRIPTION "Host Controller Service"
+    DESCRIPTION "Strata Host Controller Service"
     LANGUAGES CXX
 )
 
-set(PROJECT_WIN32_ICO resources/icons/app/on.ico)
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
-
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

@@ -59,17 +59,15 @@ QByteArray CmdFlashFirmware::message() {
 }
 
 bool CmdFlashFirmware::processNotification(rapidjson::Document& doc) {
-    bool ok = false;
     if (CommandValidator::validate(CommandValidator::JsonType::flashFwRes, doc)) {
         const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
         if (status == JSON_OK) {
-            ok = true;
             result_ = (chunkNumber_ == 0) ? CommandResult::Done : CommandResult::Repeat;
         } else {
+            result_ = CommandResult::Failure;
             if (status == JSON_RESEND_CHUNK) {
                 if (retriesCount_ < maxRetries_) {
                     ++retriesCount_;
-                    ok = true;
                     qCInfo(logCategoryDeviceOperations) << device_.get() << "Going to retry to flash firmware chunk.";
                     result_ = CommandResult::Retry;
                 } else {
@@ -77,8 +75,10 @@ bool CmdFlashFirmware::processNotification(rapidjson::Document& doc) {
                 }
             }
         }
+        return true;
+    } else {
+        return false;
     }
-    return ok;
 }
 
 bool CmdFlashFirmware::logSendMessage() const {
