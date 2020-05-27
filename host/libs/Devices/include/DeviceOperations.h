@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <memory>
-#include <climits>
 
 #include <QObject>
 #include <QByteArray>
@@ -11,6 +10,8 @@
 #include <QVector>
 
 #include <SerialDevice.h>
+
+#include <DeviceOperationsFinished.h>
 
 namespace strata {
 
@@ -27,9 +28,10 @@ enum class DeviceOperation: int {
     BackupFirmwareChunk,
     StartApplication,
     RefreshPlatformId,
-    // special values for finished signal:
-    Cancel,
-    Timeout
+    // special values for finished signal (operation was not finished successfully):
+    Cancel,   // operation was cancelled
+    Timeout,  // no response from device
+    Failure   // faulty response from device
 };
 
 class DeviceOperations : public QObject
@@ -107,7 +109,7 @@ signals:
      * \param operation value from DeviceOperation enum (opertion identificator or special value, e.g. Timeout)
      * \param data data related to finished operation (INT_MIN by default)
      */
-    void finished(DeviceOperation operation, int data = INT_MIN);
+    void finished(DeviceOperation operation, int data = OPERATION_DEFAULT_DATA);
 
     /*!
      * This signal is emitted when error occurres.
@@ -128,7 +130,7 @@ private slots:
 private:
     bool startOperation(DeviceOperation operation);
     void nextCommand();
-    void finishOperation(DeviceOperation operation, int data = INT_MIN);
+    void finishOperation(DeviceOperation operation, int data = OPERATION_DEFAULT_DATA);
     void reset();
 
     SerialDevicePtr device_;

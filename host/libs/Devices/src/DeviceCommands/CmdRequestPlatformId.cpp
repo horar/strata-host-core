@@ -3,10 +3,12 @@
 
 #include <CommandValidator.h>
 
+#include "logging/LoggingQtCategories.h"
+
 namespace strata {
 
-CmdRequestPlatformId::CmdRequestPlatformId(const SerialDevicePtr& device) :
-    BaseDeviceCommand(device, QStringLiteral("request_platform_id")) { }
+CmdRequestPlatformId::CmdRequestPlatformId(const SerialDevicePtr& device, uint maxRetries) :
+    BaseDeviceCommand(device, QStringLiteral("request_platform_id")), maxRetries_(maxRetries), retriesCount_(0) { }
 
 QByteArray CmdRequestPlatformId::message() {
     return QByteArray("{\"cmd\":\"request_platform_id\"}");
@@ -21,8 +23,19 @@ bool CmdRequestPlatformId::processNotification(rapidjson::Document& doc) {
         setDeviceProperties(name, platformId, classId, nullptr, nullptr);
         result_ = CommandResult::Done;
         return true;
+    } else {
+        return false;
     }
-    return false;
+}
+
+void CmdRequestPlatformId::onTimeout() {
+    if (retriesCount_ < maxRetries_) {
+        ++retriesCount_;
+        qCInfo(logCategoryDeviceOperations) << device_.get() << "Going to retry to get platform ID.";
+        result_ = CommandResult::Retry;
+    } else {
+        result_ = CommandResult::InProgress;
+    }
 }
 
 }  // namespace

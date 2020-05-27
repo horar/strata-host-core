@@ -26,6 +26,7 @@ public:
     Q_INVOKABLE QByteArray fromBase64(const QByteArray &text);
     Q_INVOKABLE QString joinFilePath(const QString &path, const QString &fileName);
     Q_INVOKABLE QString formattedDataSize(qint64 bytes, int precision = 1);
+    Q_INVOKABLE QString formatDateTimeWithOffsetFromUtc(const QDateTime &dateTime, const QString &format=QString("yyyy-MM-dd hh:mm:ss.zzz t"));
 
 private:
     const QStringList fileSizePrefixList_;

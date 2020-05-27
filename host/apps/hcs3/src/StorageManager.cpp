@@ -1,4 +1,5 @@
 #include "StorageManager.h"
+#include "StorageInfo.h"
 #include "DownloadManager.h"
 #include "PlatformDocument.h"
 #include "Dispatcher.h"
@@ -33,6 +34,8 @@ StorageManager::~StorageManager()
 void StorageManager::setDatabase(Database* db)
 {
     db_ = db;
+
+    connect(db_, &Database::documentUpdated, this, &StorageManager::updatePlatformDoc);
 }
 
 void StorageManager::setBaseUrl(const QString& url)
@@ -54,6 +57,9 @@ void StorageManager::init()
         qCCritical(logCategoryHcsStorage) << "Base URL is empty.";
         return;
     }
+
+    StorageInfo info(nullptr, baseFolder_);
+    info.calculateSize();
 
     downloadManager_.reset(new DownloadManager);
     downloadManager_->setBaseUrl(baseUrl_);
