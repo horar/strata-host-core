@@ -49,6 +49,18 @@ Item {
     property var vout_below_threshold:  {
         "vout_below_status":"false"
     }
+    property var initial_status_0: {
+        "enable_status":"off",            // "on" slide switch
+        "soft_start_status":"1.2ms",      // "2.4ms" dropdown
+        "pgood_status":"bad",             // "good" LED good=>green, bad=>red
+        "operating_mode_status":"dcm",    // "fccm" drop down
+        "vcc_select_status":"external",   // "pvcc" drop down
+        "vout_setting_status":1.00,       // slider from 1V to 30V in steps of 0.5V
+        "switching_frequency_status":668, // in KHz slider from 100KHz to 1000KHz
+        "sync_mode_status":"master",      // "slave" dropdown
+        "ocp_status":5,                   // in A from 3.5A to 23A
+        "variant":"FAN65004B"             // used to change the title and OCP limits
+    }
 
     // -------------------  end notification messages
 
@@ -61,7 +73,14 @@ Item {
     // TO SYNCHRONIZE THE SPEED ON ALL THE VIEW DO THE FOLLOWING:
     // EXAMPLE: platformInterface.enabled
 
-
+    property var read_initial_status: ({
+                                           "cmd":"read_initial_status",
+                                           update: function () {
+                                               CorePlatformInterface.send(this)
+                                           },
+                                           send: function () { CorePlatformInterface.send(this) },
+                                           show: function () { CorePlatformInterface.show(this) }
+                                       })
 
     property var set_enable: ({
                                   "cmd" : "set_enable",
@@ -265,24 +284,44 @@ Item {
                            })
 
     property var vout_warning_response: ({
-                               "cmd" : "vout_warning_response",
-                               "payload": {
-                                   "response": "on"
-                               },
+                                             "cmd" : "vout_warning_response",
+                                             "payload": {
+                                                 "response": "on"
+                                             },
 
-                               // Update will set and send in one shot
-                               update: function (response) {
-                                   this.set(response)
-                                   CorePlatformInterface.send(this)
-                               },
-                               // Set can set single or multiple properties before sending to platform
-                               set: function (response) {
-                                   this.payload.response = response;
-                               },
-                               send: function () { CorePlatformInterface.send(this) },
-                               show: function () { CorePlatformInterface.show(this) }
+                                             // Update will set and send in one shot
+                                             update: function (response) {
+                                                 this.set(response)
+                                                 CorePlatformInterface.send(this)
+                                             },
+                                             // Set can set single or multiple properties before sending to platform
+                                             set: function (response) {
+                                                 this.payload.response = response;
+                                             },
+                                             send: function () { CorePlatformInterface.send(this) },
+                                             show: function () { CorePlatformInterface.show(this) }
 
-                           })
+                                         })
+
+    property var set_dlt_connected: ({
+                                         "cmd" : "dlt_connected",
+                                         "payload": {
+                                             "value": false
+                                         },
+
+                                         // Update will set and send in one shot
+                                         update: function (value) {
+                                             this.set(value)
+                                             CorePlatformInterface.send(this)
+                                         },
+                                         // Set can set single or multiple properties before sending to platform
+                                         set: function (value) {
+                                             this.payload.value = value;
+                                         },
+                                         send: function () { CorePlatformInterface.send(this) },
+                                         show: function () { CorePlatformInterface.show(this) }
+
+                                     })
 
 
 

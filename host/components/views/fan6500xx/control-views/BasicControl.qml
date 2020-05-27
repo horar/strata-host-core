@@ -21,14 +21,71 @@ ColumnLayout {
     spacing: 10
     property string popup_message: ""
 
-    //For demo
 
-    //    Component.onCompleted:  {
-    //        Help.registerTarget(filterHelpContainer, "Help layout test 1.", 1,"basicFan65Help")
-    //        Help.registerTarget(filterHelp2Container, "Help layout test 2.", 2,"basicFan65Help")
-    //        Help.registerTarget(filterHelp3Container, "Help layout test 3.", 3,"basicFan65Help")
-    //    }
+    property var initial_status_0: platformInterface.initial_status_0
+    onInitial_status_0Changed: {
+        if(initial_status_0.enable_status === "on")
+            enableSwitch.checked = true
+        else  enableSwitch.checked = false
 
+        if(initial_status_0.soft_start_status === "3ms")
+            softStartCombo.currentIndex = 0
+        else  softStartCombo.currentIndex = 1
+
+        if(initial_status_0.pgood_status === "bad")
+            pgoodLight.status = SGStatusLight.Red
+        else  pgoodLight.status = SGStatusLight.Green
+
+        if(initial_status_0.operating_mode_status === "dcm" || initial_status_0.operating_mode_status === "DCM" )
+            modeCombo.currentIndex = 0
+        else  modeCombo.currentIndex = 1
+
+        if(initial_status_0.vcc_select_status === "external")
+            vccCombo.currentIndex = 1
+        else  vccCombo.currentIndex = 0
+
+
+
+        if(initial_status_0.sync_mode_status === "master" || initial_status_0.sync_mode_status === "Master")
+            syncCombo.currentIndex = 0
+        else syncCombo.currentIndex = 1
+
+        frequencySlider.value = initial_status_0.switching_frequency_status
+        selectOutputSlider.value = initial_status_0.vout_setting_status
+        ocpSlider.value = initial_status_0.ocp_status
+        boardTitle.text = initial_status_0.variant
+
+        if(initial_status_0.variant === "FAN65004B"){
+            ocpSlider.to = 15
+            ocpSlider.from = 3.5
+            ocpSlider.toText.text = "15 A"
+            ocpSlider.fromText.text = "3.5 A"
+
+        }
+        else if(initial_status_0.variant === "FAN65004C"){
+            ocpSlider.to = 16.5
+            ocpSlider.from = 4.5
+            ocpSlider.toText.text = "16.5 A"
+            ocpSlider.fromText.text = "4.5 A"
+
+        }
+        else if(initial_status_0.variant === "FAN65005A"){
+            ocpSlider.to = 15
+            ocpSlider.from = 3.5
+            ocpSlider.toText.text = "15 A"
+            ocpSlider.fromText.text = "3.5 A"
+
+        }
+        else if(initial_status_0.variant === "FAN65008B"){
+            ocpSlider.to = 23
+            ocpSlider.from = 5
+            ocpSlider.toText.text = "23 A"
+            ocpSlider.fromText.text = "5 A"
+
+        }
+
+
+    }
 
     Component.onCompleted:  {
         Help.registerTarget(vinLEDLabelContainer, "This LED indicates whether the input voltage is above the required 4.5 V for proper operation. Green indicates above 4.5 V and red indicates below 4.5 V.", 0,"basicFan65Help")
@@ -49,7 +106,7 @@ ColumnLayout {
         Help.registerTarget(tempGaugeContainer, "This gauge shows the board temperature near the ground pad of the regulator.", 15,"basicFan65Help")
         Help.registerTarget(osAlertLabel, "This indicator will be red when the temperature sensor detects a board temperature near the ground pad of the regulator of 80°C.", 16,"basicFan65Help")
         Help.registerTarget(enableSwitchLabel, "This switch enables the regulator..", 17,"basicFan65Help")
-        Help.registerTarget(hiccupLabel, "This switch enables the hiccup feature.", 18,"basicFan65Help")
+        Help.registerTarget(dltConnectedLabel, "??", 18,"basicFan65Help")
         Help.registerTarget(syncLabel, "This box allows the regulator to be set into master and slave mode. In slave mode, entering a value into the box will set the switching frequency in kHz.", 19,"basicFan65Help")
         Help.registerTarget(modeLabel, "DCM (Discontinuous conduction mode) is a power saving mode that is built into the regulator. It will save power at lower current levels. FCCM (Forced continuous conduction mode) will maintain the set switching frequency, regardless of power.", 20,"basicFan65Help")
         Help.registerTarget(softStartLabel, "This control allows the soft start time to be adjusted.", 21,"basicFan65Help")
@@ -264,7 +321,7 @@ ColumnLayout {
     Text {
         id: boardTitle
         Layout.alignment: Qt.AlignHCenter
-        text: multiplePlatform.partNumber
+        // text: multiplePlatform.partNumber
         font.bold: true
         font.pixelSize: ratioCalc * 30
         topPadding: 5
@@ -646,7 +703,7 @@ ColumnLayout {
                                             SGAlignedLabel {
                                                 id: pgoodLabel
                                                 target: pgoodLight
-                                                text:  "PGood"
+                                                text:  "PGOOD"
                                                 alignment: SGAlignedLabel.SideTopCenter
                                                 anchors.verticalCenter: parent.verticalCenter
                                                 fontSizeMultiplier: ratioCalc
@@ -747,8 +804,8 @@ ColumnLayout {
                                         SGSlider{
                                             id: frequencySlider
                                             fontSizeMultiplier: ratioCalc * 0.8
-                                            fromText.text: "100 Khz"
-                                            toText.text: "1.2 Mhz"
+                                            fromText.text: "100 kHz"
+                                            toText.text: "1.2 MHz"
                                             from: 100
                                             to: 1200
                                             live: false
@@ -1223,36 +1280,45 @@ ColumnLayout {
                                             }
                                         }
                                         Rectangle {
-                                            id:hiccupContainer
+                                            id: dltConnectedContainer
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
 
                                             SGAlignedLabel {
-                                                id: hiccupLabel
-                                                target: hiccupSwitch
-                                                text: "Hiccup Enable"
-                                                alignment:  SGAlignedLabel.SideTopLeft
+                                                id: dltConnectedLabel
+                                                target: dltConnected
+                                                text: "DLT Connected"
+                                                alignment:  SGAlignedLabel.SideTopCenter
                                                 anchors.verticalCenter: parent.verticalCenter
                                                 fontSizeMultiplier: ratioCalc
                                                 font.bold : true
-                                                SGSwitch {
-                                                    id: hiccupSwitch
-                                                    labelsInside: true
-                                                    checkedLabel: "On"
-                                                    uncheckedLabel:   "Off"
-                                                    textColor: "black"              // Default: "black"
-                                                    handleColor: "white"            // Default: "white"
-                                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                    fontSizeMultiplier: ratioCalc
-                                                    onToggled: {
-                                                        if(checked){
-                                                            platformInterface.enable_hiccup_mode.update("on")
-                                                        }
-                                                        else platformInterface.enable_hiccup_mode.update("off")
+                                                CheckBox{
+                                                    id: dltConnected
+                                                    width: 25
+                                                    height: 25
+                                                    onCheckedChanged: {
+                                                        platformInterface.set_dlt_connected.update(checked)
                                                     }
-
                                                 }
+
+                                                //                                                SGSwitch {
+                                                //                                                    id: hiccupSwitch
+                                                //                                                    labelsInside: true
+                                                //                                                    checkedLabel: "On"
+                                                //                                                    uncheckedLabel:   "Off"
+                                                //                                                    textColor: "black"              // Default: "black"
+                                                //                                                    handleColor: "white"            // Default: "white"
+                                                //                                                    grooveColor: "#ccc"             // Default: "#ccc"
+                                                //                                                    grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                //                                                    fontSizeMultiplier: ratioCalc
+                                                //                                                    onToggled: {
+                                                //                                                        if(checked){
+                                                //                                                            platformInterface.enable_hiccup_mode.update("on")
+                                                //                                                        }
+                                                //                                                        else platformInterface.enable_hiccup_mode.update("off")
+                                                //                                                    }
+
+                                                //                                                }
                                             }
                                         }
                                         Rectangle {
@@ -1279,15 +1345,11 @@ ColumnLayout {
                                                         SGComboBox {
                                                             id:  syncCombo
                                                             fontSizeMultiplier: ratioCalc
-                                                            //borderColor: "black"
-                                                            //textColor: "black"          // Default: "black"
-                                                            //indicatorColor: "black"
+
                                                             model: [ "Master", "Slave" ]
                                                             onActivated: {
                                                                 platformInterface.set_sync_mode.update(currentText.toLowerCase())
-                                                                //if(syncCombo.currentText === "Slave") {
-                                                                //    platformInterface.set_sync_slave_frequency.update(platformInterface.switchFrequency)
-                                                                //}
+
                                                             }
                                                         }
 
@@ -1353,9 +1415,6 @@ ColumnLayout {
                                                 fontSizeMultiplier: ratioCalc
                                                 SGComboBox {
                                                     id:  softStartCombo
-                                                    //                                                    borderColor: "black"
-                                                    //                                                    textColor: "black"          // Default: "black"
-                                                    //                                                    indicatorColor: "black"
                                                     model: [ "3ms" , "6ms"]
                                                     fontSizeMultiplier: ratioCalc
                                                     onActivated: {

@@ -24,6 +24,9 @@ Item {
     MultiplePlatform {
         id: multiplePlatform
     }
+    Component.onCompleted: {
+        platformInterface.read_initial_status.update()
+    }
 
 
 
