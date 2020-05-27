@@ -26,7 +26,8 @@ Rectangle {
         clip: true
 
         Column {
-            width: parent.width
+            id:rightColumn
+            width: parent.width/2
 
             Rectangle {
                 id: header
@@ -43,15 +44,6 @@ Rectangle {
                     }
                 }
 
-                Button {
-                    text: "X"
-                    height: 30
-                    width: height
-                    onClicked: root.visible = false
-                    anchors {
-                        right: header.right
-                    }
-                }
             }
 
 
@@ -82,41 +74,391 @@ Rectangle {
                 onClicked: {
 
                     CorePlatformInterface.data_source_handler('{
-                                "value":"console_message",
+                                "value":"msg_cli",
                                 "payload":{
-                                    "msg": "console message"
+                                    "msg": "12345678901234567890123456789012345678901234567890123456789012345"
                                 }
                         }')
 
                 }
             }
 
+
+
+            Button {
+                id: tempSensor
+                text: "temperature"
+
+                onClicked: {
+
+                    CorePlatformInterface.data_source_handler('{
+                    "value":"sensor_status",
+                    "payload":{
+                         "uaddr": 2,
+                         "sensor_type": "temperature",
+                         "data":  100
+                    }
+                    }')
+
+                }
+            }
+            Button {
+                id: batterySensor
+                text: "battery"
+
+                onClicked: {
+
+                    var sensorID = ((Math.random() *8) +1).toFixed(0) ;
+                    var voltage = ((Math.random() *5)).toFixed(1) ;
+                    var level = ((Math.random() *100)).toFixed(0) ;
+
+                    CorePlatformInterface.data_source_handler('{
+                    "value":"battery_status",
+                    "payload":{
+                        "uaddr":'+sensorID+',
+                        "battery_level":'+level+',
+                        "battery_voltage":'+voltage+',
+                        "battery_state":"charging"
+                    }
+                    }')
+
+                }
+            }
+        }
+
+        Column{
+            id:leftColumn
+            anchors.left: rightColumn.right
+            anchors.top:rightColumn.top
+            width: parent.width/2
+
+            Rectangle {
+                id: buttonheader
+                color: "#eee"
+                width: parent.width
+                height: 40
+
+                Button {
+                    text: "X"
+                    height: 30
+                    width: height
+                    onClicked: root.visible = false
+                    anchors {
+                        right: buttonheader.right
+                    }
+                }
+            }
+
 //            Button {
-//                id: motorRunningFalse
-//                text: "Send motor_running_notification, 'running': false"
-//                onClicked: {
-//                    CorePlatformInterface.data_source_handler('{
-//                                "value":"motor_running_notification",
+//                            id: network
+//                            text: "network"
+
+//                            onClicked: {
+
+//                                CorePlatformInterface.data_source_handler('{
+//                                "value":"network_notification",
 //                                "payload":{
-//                                         "running": false
-//                                }
-//                        }')
+//                                    "nodes":[{
+//                                        "index":0,
+//                                        "ready":0,
+//                                        "color":"#0000FF"
+//                                        },
+//                                        {
+//                                        "index":1,
+//                                        "ready":1,
+//                                        "color":"#00FF00"
+//                                        },
+//                                        {
+//                                        "index":2,
+//                                        "ready":0,
+//                                        "color":"#FF00FF"
+//                                        },
+//                                        {"index":3,
+//                                        "ready":0,
+//                                        "color":"#00FFFF"
+//                                        },{
+//                                        "index":4,
+//                                        "ready":0,
+//                                        "color":"#7BFF00"
+//                                        },{
+//                                        "index":5,
+//                                        "ready":0,
+//                                        "color":"#FFFF00"
+//                                        },{
+//                                        "index":6,
+//                                        "ready":0,
+//                                        "color":"#7B00FF"
+//                                        },{
+//                                        "index":7,
+//                                        "ready":0,
+//                                        "color":"#00FF52"
+//                                        },{
+//                                        "index":8,
+//                                        "ready":0,
+//                                        "color":"#FF5200"
+//                                        },{
+//                                        "index":9,
+//                                        "ready":0,
+//                                        "color":"#FFFFFF"
+//                                        }]
+//                                    }
+//                                }')
+
+//                            }
+//                        }
+
+            Button {
+                id: network
+                text: "network"
+
+                onClicked: {
+
+                    CorePlatformInterface.data_source_handler('{
+                    "value":"network_notification",
+                    "payload":{
+                        "nodes":[{
+                              "index": 0,
+                              "ready": 0,
+                              "color": "#000000"
+                              },{
+                              "index": 1,
+                              "ready": 1,
+                              "color": "#00FF00"
+                              },
+                              {
+                              "index": 2,
+                              "ready": '+ ((Math.random() *2)-1).toFixed(0) +',
+                              "color": "#000088"
+                              },
+                              {
+                              "index": 3,
+                              "ready": '+ ((Math.random() *2)-1).toFixed(0) +',
+                              "color": "#0000ff"
+                              },
+                              {
+                              "index": 4,
+                              "ready": '+ ((Math.random() *2)-1).toFixed(0) +',
+                              "color": "#008800"
+                              },
+                              {
+                              "index": 5,
+                              "ready": '+ ((Math.random() *2)-1).toFixed(0) +',
+                              "color": "#008888"
+                              },
+                              {
+                              "index": 6,
+                              "ready": '+ ((Math.random() *2)-1).toFixed(0) +',
+                              "color": "#0088ff"
+                              },
+                              {
+                              "index": 7,
+                              "ready": '+ ((Math.random() *2)-1).toFixed(0) +',
+                              "color": "#00ffff"
+                              },
+                              {
+                              "index": 8,
+                              "ready": '+ ((Math.random() *2)-1).toFixed(0) +',
+                              "color": "#880000"
+                              }]
+                            }
+                    }')
+
+                }
+            }
+
+            Button {
+                id: networkPlusDoor
+                text: "network+door"
+
+                onClicked: {
+
+                    CorePlatformInterface.data_source_handler('{
+                                            "value":"network_notification",
+                                            "payload":{
+                                                "nodes":[{
+                                                    "index":0,
+                                                    "ready":0,
+                                                    "color":"#0000FF"
+                                                    },
+                                                    {
+                                                    "index":1,
+                                                    "ready":1,
+                                                    "color":"#00FF00"
+                                                    },
+                                                    {
+                                                    "index":2,
+                                                    "ready":1,
+                                                    "color":"#FF00FF"
+                                                    },
+                                                    {"index":3,
+                                                    "ready":0,
+                                                    "color":"#00FFFF"
+                                                    },{
+                                                    "index":4,
+                                                    "ready":0,
+                                                    "color":"#7BFF00"
+                                                    },{
+                                                    "index":5,
+                                                    "ready":0,
+                                                    "color":"#FFFF00"
+                                                    },{
+                                                    "index":6,
+                                                    "ready":0,
+                                                    "color":"#7B00FF"
+                                                    },{
+                                                    "index":7,
+                                                    "ready":0,
+                                                    "color":"#00FF52"
+                                                    },{
+                                                    "index":8,
+                                                    "ready":0,
+                                                    "color":"#FF5200"
+                                                    },{
+                                                    "index":9,
+                                                    "ready":0,
+                                                    "color":"#FFFFFF"
+                                                    }]
+                                                }
+                                            }')
+
+                }
+            }
+
+
+            Button {
+                id: removeNode2
+                text: "remove door"
+
+
+                onClicked: {
+
+                    CorePlatformInterface.data_source_handler('{
+                    "value":"node_removed",
+                    "payload":{
+                        "index":2
+                        }
+                    }')
+
+
+                }
+            }
+
+                        Button {
+                            id: temperature
+                            text: "temperature"
+
+                            onClicked: {
+
+                                CorePlatformInterface.data_source_handler('{
+                                "value":"sensor_status",
+                                "payload":{
+                                    "uaddr":2,
+                                    "sensor_type":"temperature",
+                                    "data": '+ ((Math.random() * 200).toFixed(0)) +'
+                                    }
+                                }')
+                                }
+                        }
+
+
+//            Button {
+//                id: rssi
+//                text: "rssi"
+
+//                onClicked: {
+
+//                    var sensorID = ((Math.random() *8) +1).toFixed(0) ;
+//                    var rssiValue = ((Math.random() *-70) -30).toFixed(0) ;
+
+//                    CorePlatformInterface.data_source_handler('{
+//                    "value":"sensor_status",
+//                    "payload":{
+//                        "uaddr":'+sensorID+',
+//                        "sensor_type":"rssi",
+//                        "data": "'+rssiValue+'"
+//                    }
+//                    }')
+
 //                }
 //            }
 
 //            Button {
-//                id: motorSpeed
-//                text: "Send motor_speed_notification, 'speed': random"
+//                id: windowShade
+//                text: "shade"
+
+//                property var state: "open";
+
 //                onClicked: {
+
 //                    CorePlatformInterface.data_source_handler('{
-//                                "value":"motor_speed_notification",
-//                                "payload":{
-//                                         "speed": ' + (Math.random()*100).toFixed(2) + '
-//                                }
-//                        }')
+//                    "value":"window_shade",
+//                    "payload":{
+//                        "value":"'+state+'"
+//                        }
+//                    }')
+
+//                    if (state === "open"){
+//                        console.log("closing window")
+//                        state = "closed"
+//                    }
+//                      else{
+//                        console.log("opening window")
+//                        state = "open"
+//                    }
+
 //                }
 //            }
+
+            Button {
+                id: smarthomeDoor
+                text: "door"
+
+                property var state: "open";
+
+                onClicked: {
+                    CorePlatformInterface.data_source_handler('{
+                    "value":"smarthome_door",
+                    "payload":{
+                        "value":"'+state+'"
+                        }
+                    }')
+
+                    if (state === "open")
+                        state = "closed"
+                      else
+                        state = "open"
+                }
+            }
         }
+
+
+
+        //            Button {
+        //                id: motorRunningFalse
+        //                text: "Send motor_running_notification, 'running': false"
+        //                onClicked: {
+        //                    CorePlatformInterface.data_source_handler('{
+        //                                "value":"motor_running_notification",
+        //                                "payload":{
+        //                                         "running": false
+        //                                }
+        //                        }')
+        //                }
+        //            }
+
+        //            Button {
+        //                id: motorSpeed
+        //                text: "Send motor_speed_notification, 'speed': random"
+        //                onClicked: {
+        //                    CorePlatformInterface.data_source_handler('{
+        //                                "value":"motor_speed_notification",
+        //                                "payload":{
+        //                                         "speed": ' + (Math.random()*100).toFixed(2) + '
+        //                                }
+        //                        }')
+        //                }
+        //            }
+
     }
 
     Rectangle {

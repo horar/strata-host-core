@@ -1,7 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
-import tech.strata.fonts 1.0 as StrataFonts
+import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.logviewer.models 1.0 as LogViewModels
 
 Item {
@@ -14,7 +14,6 @@ Item {
     property int checkBoxSpacer: 60
     property int handleSpacer: 5
     property int searchResultCount: model.count
-    property bool indexColumnVisible: true
     property bool timestampColumnVisible: true
     property bool pidColumnVisible: true
     property bool tidColumnVisible: true
@@ -51,7 +50,7 @@ Item {
     TextMetrics {
         id: textMetricsTs
         font: timestampHeaderText.font
-        text: Qt.platform.os === "windows" ? "9999-99-99 99:99.99.999 Central Europe Standard Time" : "9999-99-99 99:99.99.999 CEST"
+        text: "9999-99-99 99:99.99.999 +UTC99:99"
     }
 
     TextMetrics {
@@ -84,12 +83,6 @@ Item {
         text: "Timestamp"
     }
 
-    TextMetrics {
-        id: textMetricsIndex
-        font: timestampHeaderText.font
-        text: "99999"
-    }
-
     Item {
         id: header
         anchors.top: parent.top
@@ -115,28 +108,6 @@ Item {
             height: messageHeaderText.contentHeight
             leftPadding: handleSpacer
             spacing: 8
-
-            Item {
-                id: indexHeader
-                anchors.verticalCenter: parent.verticalCenter
-                height: indexHeaderText.contentHeight + cellHeightSpacer
-                width: textMetricsIndex.boundingRect.width + cellWidthSpacer
-                visible: indexColumnVisible
-
-                SGWidgets.SGText {
-                    id: indexHeaderText
-                    anchors {
-                        left: indexHeader.left
-                        verticalCenter: parent.verticalCenter
-                    }
-                    font.family: "monospace"
-                    text: qsTr("Row")
-                }
-            }
-
-            Divider {
-                visible: indexColumnVisible
-            }
 
             Item {
                 id: tsHeader
@@ -216,7 +187,6 @@ Item {
                     anchors {
                         left: levelHeader.left
                         centerIn: parent
-                        //verticalCenter: parent.verticalCenter
                     }
                     font.family: "monospace"
                     text: qsTr("Level")
@@ -360,7 +330,7 @@ Item {
                 SequentialAnimation {
                     ParallelAnimation {
                         ColorAnimation {
-                            targets: [indexColumn,ts,pid,tid,msg]
+                            targets: [ts,pid,tid,msg]
                             properties: "color"
                             from: "black"
                             to: "white"
@@ -377,7 +347,7 @@ Item {
                     }
                     ParallelAnimation {
                         ColorAnimation {
-                            targets: [indexColumn,ts,pid,tid,msg]
+                            targets: [ts,pid,tid,msg]
                             properties: "color"
                             from: "white"
                             to: "black"
@@ -434,15 +404,6 @@ Item {
                 spacing: 18
 
                 SGWidgets.SGText {
-                    id: indexColumn
-                    width: indexHeader.width
-                    color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: "monospace"
-                    text: visible ? model.rowIndex : ""
-                    visible: indexColumnVisible
-                }
-
-                SGWidgets.SGText {
                     id: ts
                     width: tsHeader.width
                     color: delegate.ListView.isCurrentItem ? "white" : "black"
@@ -450,9 +411,9 @@ Item {
                     text: {
                         if (visible) {
                             if (timestampSimpleFormat == false) {
-                                return Qt.formatDateTime(model.timestamp, "yyyy-MM-dd hh:mm:ss.zzz t")
+                                return CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(model.timestamp, timestampFormat)
                             } else {
-                                return Qt.formatDateTime(model.timestamp, "hh:mm:ss.zzz")
+                                return Qt.formatDateTime(model.timestamp, simpleTimestampFormat)
                             }
                         } else {
                             return ""

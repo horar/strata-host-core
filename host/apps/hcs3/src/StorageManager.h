@@ -58,6 +58,7 @@ signals:
 
     void downloadPlatformSingleFileProgress(QByteArray clientId, QString filePath, qint64 bytesReceived, qint64 bytesTotal);
     void downloadPlatformSingleFileFinished(QByteArray clientId, QString filePath, QString errorString);
+    void downloadPlatformDocumentsProgress(QByteArray clientId, int filesCompleted, int filesTotal);
     void downloadPlatformFilesFinished(QByteArray clientId, QString errorString);
 
     void platformListResponseRequested(QByteArray clientId, QJsonArray documentList);

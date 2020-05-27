@@ -40,7 +40,8 @@ function populatePlatforms(platform_list_json) {
         platform_list = JSON.parse(platform_list_json)
     } catch(err) {
         console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Error parsing platform list:", err.toString())
-        insertErrorListing()
+        platformListModel.clear()
+        platformListModel.platformListStatus = "error"
     }
 
     if (platform_list.list.length < 1) {
@@ -79,44 +80,19 @@ function populatePlatforms(platform_list_json) {
         }
 
         // Parse list of text filters and gather complete filter info from PlatformFilters
-        // Support both intermediate and planned Deployment Portal API
         if (platform.hasOwnProperty("filters")) {
-            // platform matches new API
             let filterModel = []
             for (let filter of platform.filters) {
                 let filterListItem = PlatformFilters.findFilter(filter)
                 if (filterListItem) {
                     filterModel.push(filterListItem)
                 } else {
-                    // filter from Deployment Portal unknown to UI; update Strata
+                    console.warn(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Ignoring unimplemented filter:", filter);
                 }
             }
             platform.filters = filterModel
         } else {
             platform.filters = []
-            // platform matches old API - TODO [Faller]: remove once deployment portal supports new API, also remove oldNewMap from platformFilters
-            if (platform.hasOwnProperty("application_icons")) {
-                for (let application_icon of platform.application_icons) {
-                    if (PlatformFilters.oldNewMap.hasOwnProperty(application_icon)){
-                        let filter = PlatformFilters.oldNewMap[application_icon]
-                        let filterListItem = PlatformFilters.findFilter(filter)
-                        if (filterListItem) {
-                            platform.filters.push(filterListItem)
-                        }
-                    }
-                }
-            }
-            if (platform.hasOwnProperty("product_icons")) {
-                for (let product_icon of platform.product_icons) {
-                    if (PlatformFilters.oldNewMap.hasOwnProperty(product_icon)){
-                        let filter = PlatformFilters.oldNewMap[product_icon]
-                        let filterListItem = PlatformFilters.findFilter(filter)
-                        if (filterListItem) {
-                            platform.filters.push(filterListItem)
-                        }
-                    }
-                }
-            }
         }
 
         // Add to the model
@@ -210,13 +186,8 @@ function parseConnectedPlatforms (connected_platform_list_json) {
 }
 
 function selectPlatform(class_id){
-    // Get docs if no views are currently open (only one set of docs supported at this time)
-    if (platformViewModel.count === 0) {
-        coreInterface.connectToPlatform(class_id)
-    }
-
     let index = platformMap[String(class_id)].index
-    let data = { "class_id": class_id }
+    let data = { "class_id": class_id, "name": platformListModel.get(index).verbose_name }
     if (platformListModel.get(index).connection === "view" || platformMap[String(class_id)].ui_exists === false) {
         NavigationControl.updateState(NavigationControl.events.VIEW_COLLATERAL_EVENT, data)
     } else { // connection is "connected"
@@ -255,31 +226,14 @@ function emptyListRetry() {
     }
 }
 
-function insertErrorListing () {
-    platformListModel.clear()
-    let platform_info = {
-        "verbose_name": "Platform List Unavailable",
-        "connection": "view",
-        "class_id": "",
-        "opn": "",
-        "description": "There was a problem loading the platform list",
-        "image": "file:/", // Assigns 'not found' image
-        "available": { "control": false, "documents": false },
-        "filters":[],
-        "error": true,
-    }
-    platformListModel.append(platform_info)
-    platformMap = {}
-}
-
 function insertUnknownListing (platform) {
     let platform_info = {
-        "verbose_name" : "Unknown Platform Connected: " + platform.verbose_name,
+        "verbose_name" : "Unknown Platform",
         "connection" : "connected",
         "class_id" : platform.class_id,
         "opn": "Class id: " + platform.class_id,
         "description": "Strata does not recognize this class_id. Updating Strata may fix this problem.",
-        "image": "file:/", // Assigns 'not found' image
+        "image": "", // Assigns 'not found' image
         "available": { "control": false, "documents": false },  // Don't allow control or docs for unknown platform
         "filters":[],
         "error": true
@@ -297,12 +251,12 @@ function insertUnlistedListing (platform) {
     let class_id_string = String(platform.class_id)
 
     let platform_info = {
-        "verbose_name" : "Unlisted Platform Connected: " + platform.verbose_name,
+        "verbose_name" : "Unknown Platform",
         "connection" : "connected",
         "class_id" : platform.class_id,
         "opn": "Class id: " + platform.class_id,
         "description": "No information to display.",
-        "image": "file:/", // Assigns 'not found' image
+        "image": "", // Assigns 'not found' image
         "available": { "control": true, "documents": true },  // If UI exists and customer has physical platform, allow access
         "filters":[],
         "name": UuidMap.uuid_map[class_id_string],

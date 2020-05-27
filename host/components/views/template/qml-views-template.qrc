@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/views/template">
-        <file>Content.qml</file>
         <file>Control.qml</file>
         <file>control-views/AdvancedControl.qml</file>
         <file>control-views/BasicControl.qml</file>

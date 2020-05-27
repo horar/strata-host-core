@@ -23,15 +23,40 @@ Rectangle {
     property variant meshObjects
     property var dragTargets:[]
 
+    property var activeNodes:[]     //nodes which are currently populated to be used for the switch_views command
+    property var activeNodeRoles:[] //the corresponding role for each node in activeNodes
+
     onVisibleChanged: {
         if (visible){
             console.log("office is now visible")
-            //iterate over the meshArray, and send role and node numbers for each
-            meshObjectRow.meshArray.forEach(function(item, index, array){
-                platformInterface.set_node_mode.update(item.pairingModel,item.nodeNumber,true)
-                })
+            root.sendNodeSwitchCommand();
+            }
         }
 
+    function sendNodeSwitchCommand(){
+        root.getActiveNodesAndRoles();
+        platformInterface.switch_views.update(activeNodes,activeNodeRoles)
+    }
+
+    function getActiveNodesAndRoles(){
+        var currentNode = 0;
+
+        //iterate over the meshArray, but start at 2, since the node 0 is never used, and node 1 is always a provisioner
+        for(var alpha=2; alpha < meshObjectRow.meshArray.length; alpha++){
+            //check to see if this mesh object has been assigned to a numbered node
+            if (meshObjectRow.meshArray[alpha] !== undefined && meshObjectRow.meshArray[alpha].nodeNumber !== ""){
+                //console.log("looking at node",alpha,"node number is",meshObjectRow.meshArray[alpha].nodeNumber,"role is",meshObjectRow.meshArray[alpha].pairingModel);
+                //put the node number in the next spot in the activeNodes array
+                root.activeNodes[currentNode] = parseInt(meshObjectRow.meshArray[alpha].nodeNumber);
+                //put the pairing model in the next spot in the activeNodeRoles array
+                root.activeNodeRoles[currentNode] = meshObjectRow.meshArray[alpha].pairingModel;
+                //if the node has no pairing model, use "default"
+                if (root.activeNodeRoles[currentNode] === ""){
+                    root.activeNodeRoles[currentNode] = "default"
+                }
+                currentNode++;
+            }
+        }
     }
 
     Row{
@@ -53,50 +78,87 @@ Rectangle {
             mesh8.pairingModel = ""
         }
 
-        property var meshArray: [0,provisioner,mesh2, mesh1,mesh4, mesh3,mesh6,mesh5, mesh7,mesh8]
-        //property var targetArray: [0, target5, target4,target1,target2, target3, target6, target7, target8]
-        property var initialNodeVisibilityColors: platformInterface.network_notification
-        onInitialNodeVisibilityColorsChanged:{
+        property var meshArray: [0,provisioner,mesh4, mesh6, mesh1, mesh2, mesh3,mesh5, mesh7,mesh8]
 
-            //iterate over the nodes in the notification
-            console.log("updating nodes",platformInterface.network_notification.nodes.length)
-            for (var alpha = 0;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
-                //for each node that is marked visible set the visibilty of the node appropriately
-                if (platformInterface.network_notification.nodes[alpha].ready === 0){
-                    meshArray[alpha].opacity = 0.5
-                    meshArray[alpha].enabled = false
-                    meshArray[alpha].objectColor = "lightgrey"
-                    //targetArray[alpha].color = "transparent"
-
-                    //special case because sometimes the 0th element of the notification array
-                    //really represents the first element
-                    if (alpha === 1){
-                        if (platformInterface.network_notification.nodes[0].ready === 1 ){
-                            meshArray[alpha].opacity = 1.0
-                            meshArray[alpha].enabled = true
-                            meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
-                        }
-                    }
-
-
-
-                }
-                else {
-                    meshArray[alpha].opacity = 1.0
-                    meshArray[alpha].enabled = true
-                    meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
-
-                    //special case because sometimes the 0th element of the notification array
-                    //really represents the first element
-                    if (alpha == 0){
-                        if (meshArray[alpha.enabled == true])
-                            meshArray[1] = true;
-                    }
-
-                    //targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
-                }
-            }
+        function findEmptySlot(inCurrentSlot){
+            //console.log("emptyslot starting search in position",inCurrentSlot,"array length is",meshArray.length)
+            for(var beta = inCurrentSlot; beta < meshArray.length; beta++){
+               if ( meshArray[beta].nodeNumber == ""){
+                    //console.log(" found emptyslot in position",beta)
+                   return beta;
+                   }
+                 }
+            //we didn't find an empty slot? try again from the start
+            for(beta = 1; beta < inCurrentSlot; beta++){
+               if ( meshArray[beta].nodeNumber == ""){
+                   //console.log(" found emptyslot in position",beta)
+                   return beta;
+                   }
+                 }
+            //still here? Return the 0th slot, it's always open
+            //console.log(" NO emptyslot found, returning 0")
+            return 0;
         }
+
+        property var network: platformInterface.network_notification
+        onNetworkChanged:{
+
+            //iterate over the nodes in the notification, and over the meshArray nodes for each node in the
+            //notification. If the node exists in the meshArray, but not in the notification, the node has been lost without a notification
+            //coming through, so remove the node from the meshArray
+            //console.log("updating nodes",platformInterface.network_notification.nodes.length)
+            var nodeFoundInMeshArray = false;
+
+            for (var alpha = 1;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+                //console.log("looking for node number",platformInterface.network_notification.nodes[alpha].index,"in meshArray")
+                //we can skip the first element in the nodeArray, as it's awlays null
+                for(var beta = 1; beta < meshArray.length; beta++){
+                    //console.log("comparing",platformInterface.network_notification.nodes[alpha].index, meshArray[beta].nodeNumber)
+                    if (meshArray[beta].nodeNumber !== "" && meshArray[beta].nodeNumber == platformInterface.network_notification.nodes[alpha].index){
+                        //console.log("found node",platformInterface.network_notification.nodes[alpha].index, "at location",beta)
+                        if (platformInterface.network_notification.nodes[alpha].ready === 0){
+                            //remove the item from the meshArray. It's not in the network anymore
+                            nodeFoundInMeshArray = true;
+                            meshArray[beta].objectColor = "#d3d3d3"
+                            meshArray[beta].nodeNumber = ""
+                            //console.log("Removing. Node not ready")
+                        }
+                        else if (platformInterface.network_notification.nodes[alpha].ready !== 0){
+                            //the node is in both the notification and in the meshArray, no need to update anything
+                            //unless this is the provisioner, which doesn't start as a grey node
+                            if (alpha === 1){
+                                //console.log("updating provisioner color to",platformInterface.network_notification.nodes[alpha].color)
+                                meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+                            }
+                            //console.log("node",platformInterface.network_notification.nodes[alpha].index,"found in meshArray")
+                            nodeFoundInMeshArray = true;
+                        }
+                    }   //if node numbers match
+                }   //beta for loop
+                //console.log("finished looking for node",platformInterface.network_notification.nodes[alpha].index,"found=",nodeFoundInMeshArray,"ready=",platformInterface.network_notification.nodes[alpha].ready)
+                if (!nodeFoundInMeshArray && platformInterface.network_notification.nodes[alpha].ready !== 0){
+                    //we looked through the whole meshArray, and didn't find the nodeNumber that was in the notification
+                    //so we should add this node in an empty slot
+                    var emptySlot = alpha;
+
+                    //check to see if the the node already has an object there before adding a new one
+                    if (meshArray[alpha].objectColor != "lightgrey"){
+                        emptySlot = findEmptySlot(alpha)
+                        //console.log("node",platformInterface.network_notification.nodes[alpha].index,"not found in meshArray. Adding in slot",emptySlot)
+                        meshArray[emptySlot].opacity = 1.0
+                        meshArray[emptySlot].objectColor = platformInterface.network_notification.nodes[alpha].color
+                        meshArray[emptySlot].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+                    }
+                    else{
+                        //console.log("adding node",platformInterface.network_notification.nodes[alpha].index,"in position",alpha)
+                        meshArray[alpha].opacity = 1.0
+                        meshArray[alpha].objectColor = platformInterface.network_notification.nodes[alpha].color
+                        meshArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+                    }
+                }
+                nodeFoundInMeshArray = false; //reset for next iteration notification node
+            }
+       }
 
 
 
@@ -104,21 +166,33 @@ Rectangle {
         onNewNodeAddedChanged: {
             //console.log("new node added",platformInterface.node_added.index)
             var theNodeNumber = platformInterface.node_added.index
-            meshArray[theNodeNumber].opacity = 1;
-            //console.log("set the opacity of node",theNodeNumber, "to 1");
-            meshArray[theNodeNumber].nodeNumber = platformInterface.node_added.index
-            meshArray[theNodeNumber].objectColor = platformInterface.node_added.color
+            var emptySlot = theNodeNumber
+
+            //console.log("adding new node",platformInterface.node_added.index)
+            if (theNodeNumber !== 1 && (meshArray[theNodeNumber].objectColor != "lightgrey")){
+                emptySlot = findEmptySlot(theNodeNumber)
+                //console.log("node not empty, adding in position",emptySlot)
+            }
+
+            meshArray[emptySlot].opacity = 1;
+            meshArray[emptySlot].objectColor = platformInterface.node_added.color
+            meshArray[emptySlot].nodeNumber = theNodeNumber
         }
 
         property var nodeRemoved: platformInterface.node_removed
         onNodeRemovedChanged: {
-            var theNodeNumber = platformInterface.node_removed.node_id
-            if(meshArray[theNodeNumber] !== undefined ){
-                meshArray[theNodeNumber].opacity = 0
+            var theNodeNumber = platformInterface.node_removed.index
+            for (var alpha=0; alpha < meshArray.length; alpha++){
+                //console.log("looking at node",alpha);
+                if(meshArray[alpha].nodeNumber !== undefined  && meshArray[alpha].nodeNumber == theNodeNumber){
+                    //console.log("removing node",alpha);
+                    meshArray[alpha].objectColor = "lightgrey"
+                    meshArray[alpha].nodeNumber = ""
+                }
             }
         }
 
-        MeshObject{ id: mesh7; scene:"office"; displayName:"Security Camera";pairingModel:"security"; nodeNumber: "";
+        MeshObject{ id: mesh7; scene:"office"; displayName:"Security Camera";pairingModel:"security_camera"; nodeNumber: "";
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor) }
         MeshObject{ id: mesh6; scene:"office"; displayName:"Doorbell"; pairingModel:"doorbell";nodeNumber: ""
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
@@ -128,9 +202,9 @@ Rectangle {
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         ProvisionerObject{ id: provisioner; nodeNumber:"1" }
         //
-        MeshObject{ id: mesh1; scene:"office"; displayName:"Robotic Arm"; pairingModel:"robot_arm"; nodeNumber: ""
+        MeshObject{ id: mesh1; scene:"office"; displayName:"Robotic Arm"; pairingModel:"robotic_arm"; nodeNumber: ""
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
-        MeshObject{ id: mesh3; scene:"office"; displayName:"Solar Panel"; subName:"(Relay)"; pairingModel:"solar_panel"; nodeNumber: ""
+        MeshObject{ id: mesh3; scene:"office"; displayName:"Solar Panel"; subName:"(Relay)"; pairingModel:"relay"; nodeNumber: ""
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
         MeshObject{ id: mesh5; scene:"office"; displayName:"HVAC"; subName:"(Remote)";pairingModel:"hvac"; nodeNumber: ""
             onNodeActivated:dragTargetContainer.nodeActivated(scene, pairingModel, nodeNumber, nodeColor)}
@@ -143,16 +217,18 @@ Rectangle {
     Image{
         id:mainImage
         source:"qrc:/views/meshNetwork/images/office.jpg"
-        //anchors.left:parent.left
-        height:parent.height*.70
+        height:parent.height*.60
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: 20
         fillMode: Image.PreserveAspectFit
         mipmap:true
         opacity:1
 
+        property alias alarm: alarmTimer
+
         property var triggered: platformInterface.alarm_triggered
         onTriggeredChanged: {
-            console.log("alarm triggered=",platformInterface.alarm_triggered.triggered)
+            //console.log("alarm triggered=",platformInterface.alarm_triggered.triggered)
             if (platformInterface.alarm_triggered.triggered === "true"){
                 alarmTimer.start()
             }
@@ -259,34 +335,115 @@ Rectangle {
                 target8.color = "transparent"
             }
 
-            property var targetArray: [0, target5, target4,target6,target3, target8, target2, target7, target1, 0]
+            property var targetArray: [0, target5,target3 ,target2,target6 , target4,target8 , target7, target1, 0]
+
+            function findEmptySlot(inCurrentSlot){
+                //console.log("emptyslot starting search in position",inCurrentSlot,"array length is",targetArray.length)
+                for(var beta = inCurrentSlot; beta < targetArray.length; beta++){
+                   if ( targetArray[beta].nodeNumber == ""){
+                        //console.log(" found emptyslot in position",beta)
+                       return beta;
+                       }
+                     }
+                //we didn't find an empty slot? try again from the start
+                for(beta = 1; beta < inCurrentSlot; beta++){
+                   if ( targetArray[beta].nodeNumber == ""){
+                       //console.log(" found emptyslot in position",beta)
+                       return beta;
+                       }
+                     }
+                //still here? Return the 0th slot, it's always open
+                //console.log(" NO emptyslot found, returning 0")
+                return 0;
+            }
+
+
+            property var network: platformInterface.network_notification
+            onNetworkChanged:{
+
+                var nodeFoundInMeshArray = false;
+
+                for (var alpha = 1;  alpha < platformInterface.network_notification.nodes.length  ; alpha++){
+                    for(var beta = 1; beta < targetArray.length; beta++){
+                        //console.log("comparing",platformInterface.network_notification.nodes[alpha].index, targetArray[beta].nodeNumber)
+                        if (targetArray[beta].nodeNumber !== "" && targetArray[beta].nodeNumber == platformInterface.network_notification.nodes[alpha].index){
+                            //console.log("found node",platformInterface.network_notification.nodes[alpha].index, "at location",beta)
+                            if (platformInterface.network_notification.nodes[alpha].ready === 0){
+                                //remove the item from the meshArray. It's not in the network anymore
+                                nodeFoundInMeshArray = true;
+                                targetArray[beta].color = "transparent"
+                                targetArray[beta].nodeNumber = ""
+                            }
+                            else if (platformInterface.network_notification.nodes[alpha].ready !== 0){
+                                //the node is in both the notification and in the targetArray, no need to update anything
+                                //unless this is the provisioner, which doesn't start as a grey node
+                                if (alpha === 1){
+                                    //console.log("updating provisioner color to",platformInterface.network_notification.nodes[alpha].color)
+                                    targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+                                }
+                                nodeFoundInMeshArray = true;
+                            }
+                        }   //if node numbers match
+                    }   //beta for loop
+                    //console.log("finished looking for node",platformInterface.network_notification.nodes[alpha].index,"found=",nodeFoundInMeshArray,"ready=",platformInterface.network_notification.nodes[alpha].ready)
+                    if (!nodeFoundInMeshArray && platformInterface.network_notification.nodes[alpha].ready !== 0){
+                        //we looked through the whole meshArray, and didn't find the nodeNumber that was in the notification
+                        //so we should add this node in an empty slot
+                        var emptySlot = alpha;
+
+                        //check to see if the the node already has an object there before adding a new one
+                        if (targetArray[alpha].color != "transparent"){
+                            emptySlot = findEmptySlot(alpha)
+                            //console.log("node",platformInterface.network_notification.nodes[alpha].index,"not found in meshArray. Adding in slot",emptySlot)
+                            targetArray[emptySlot].color = platformInterface.network_notification.nodes[alpha].color
+                            targetArray[emptySlot].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+                        }
+                        else{
+                            targetArray[alpha].color = platformInterface.network_notification.nodes[alpha].color
+                            targetArray[alpha].nodeNumber = platformInterface.network_notification.nodes[alpha].index
+                        }
+                    }
+                    nodeFoundInMeshArray = false; //reset for next iteration notification node
+                }
+           }
 
             property var newNodeAdded: platformInterface.node_added
             onNewNodeAddedChanged: {
-
                 var theNodeNumber = platformInterface.node_added.index
+                var emptySlot = theNodeNumber
 
-                targetArray[theNodeNumber].nodeNumber = platformInterface.node_added.index
-                targetArray[theNodeNumber].color = platformInterface.node_added.color
-                console.log("new node added",theNodeNumber,"to role",targetArray[theNodeNumber].nodeType)
+                if (theNodeNumber !== 1 && (targetArray[theNodeNumber].color != "transparent")){
+                    emptySlot = findEmptySlot(theNodeNumber)
+                    //console.log("node not empty, adding in position",emptySlot)
+                }
+
+                targetArray[emptySlot].nodeNumber = platformInterface.node_added.index
+                targetArray[emptySlot].color = platformInterface.node_added.color
+                //console.log("new node added",theNodeNumber,"to role",targetArray[theNodeNumber].nodeType)
             }
+
 
             property var nodeRemoved: platformInterface.node_removed
             onNodeRemovedChanged: {
-                var theNodeNumber = platformInterface.node_removed.node_id
-                console.log("removing node",theNodeNumber)
-                targetArray[theNodeNumber].nodeNumber = ""
-                targetArray[theNodeNumber].color = "transparent"
+                var theNodeNumber = platformInterface.node_removed.index
+                for (var alpha=0; alpha < targetArray.length; alpha++){
+                    //console.log("looking for node node",theNodeNumber)
+                    if (targetArray[alpha] !== undefined && targetArray[alpha].nodeNumber == theNodeNumber){
+                        //console.log("removing node",theNodeNumber)
+                        targetArray[alpha].nodeNumber = ""
+                        targetArray[alpha].color = "transparent"
+                    }
+                }
             }
 
             function nodeActivated( scene,  pairingModel,  inNodeNumber,  nodeColor){
-                //console.log("nodeActivated with scene=",scene,"model=",pairingModel,"node=",inNodeNumber,"and color",nodeColor)
+                console.log("nodeActivated with scene=",scene,"model=",pairingModel,"node=",inNodeNumber,"and color",nodeColor)
                 if (scene === "office"){
                     //the node must have come from somewhere, so iterate over the nodes, and find the node that previously had
                     //this node number, and set it back to transparent
                     targetArray.forEach(function(item, index, array){
                         if (item.nodeNumber === inNodeNumber){
-                            //console.log("removing node from role",item.nodeType)
+                            console.log("removing node",item.nodeNumber," from role",item.nodeType)
                             item.nodeNumber = ""
                             item.color = "transparent"
                             }
@@ -294,7 +451,7 @@ Rectangle {
 
                     targetArray.forEach(function(item, index, array){
                         if (item.nodeType === pairingModel){
-                            //console.log("assigning",item.nodeType,"node",inNodeNumber)
+                            console.log("assigning",item.nodeType,"node",inNodeNumber)
                             item.nodeNumber = inNodeNumber
                             item.color = nodeColor
                         }
@@ -305,24 +462,22 @@ Rectangle {
             DragTarget{
                 //security camera upper left
                 id:target1
-                //objectName:"target1"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * 0.05
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .32
                 scene:"office"
-                nodeType:"security"
+                nodeType:"security_camera"
                 nodeNumber:""
             }
 
             DragTarget{
                 //left of the back door
                 id:target2
-                //objectName:"target2"
                 anchors.left:parent.left
-                anchors.leftMargin: parent.width * .19
+                anchors.leftMargin: parent.width * .16
                 anchors.top:parent.top
-                anchors.topMargin: parent.height * .67
+                anchors.topMargin: parent.height * .69
                 scene:"office"
                 nodeType: "doorbell"
                 nodeNumber:""
@@ -331,7 +486,6 @@ Rectangle {
             DragTarget{
                 //on the back door
                 id:target3
-                //objectName:"target3"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * .30
                 anchors.top:parent.top
@@ -339,6 +493,12 @@ Rectangle {
                 scene:"office"
                 nodeType:"door"
                 nodeNumber:""
+
+                onAlarmTriggered:{
+                    console.log("alarm triggerd caught for target 3")
+                    mainImage.alarm.start()
+                }
+
             }
             DragTarget{
                 //right of front door
@@ -360,7 +520,7 @@ Rectangle {
                 anchors.leftMargin: parent.width * .65
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .37
-                nodeType:"provisioner"
+                nodeType:"high_power"
                 color:"green"
             }
             //—————————————————————————————————————
@@ -368,19 +528,17 @@ Rectangle {
             DragTarget{
                 //robot arm
                 id:target6
-                //objectName:"target6"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * .63
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .53
                 scene:"office"
-                nodeType:"robot_arm"
+                nodeType:"robotic_arm"
             }
 
             DragTarget{
                 //roof fan
                 id:target7
-                //objectName:"target7"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * .80
                 anchors.top:parent.top
@@ -392,13 +550,12 @@ Rectangle {
             DragTarget{
                 //solar panel
                 id:target8
-                //objectName:"target8"
                 anchors.left:parent.left
                 anchors.leftMargin: parent.width * .80
                 anchors.top:parent.top
                 anchors.topMargin: parent.height * .47
                 scene:"office"
-                nodeType:"solar_panel"
+                nodeType:"relay"
                 nodeNumber:""
             }
 

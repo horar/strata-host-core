@@ -7,6 +7,7 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QDir>
+#include <QDateTime>
 #include <cmath>
 
 SGUtilsCpp::SGUtilsCpp(QObject *parent)
@@ -46,6 +47,12 @@ QString SGUtilsCpp::fileAbsolutePath(const QString &file)
 {
     QFileInfo fi(file);
     return fi.absolutePath();
+}
+
+QString SGUtilsCpp::dirName(const QString &path)
+{
+    QDir dir(path);
+    return dir.dirName();
 }
 
 QUrl SGUtilsCpp::pathToUrl(const QString &path, const QString &scheme)
@@ -126,4 +133,9 @@ QString SGUtilsCpp::formattedDataSize(qint64 bytes, int precision)
     QString number = QString::number(bytes / (pow(double(base), power)), 'f', precision);
 
     return number + " " + fileSizePrefixList_.at(power);
+}
+
+QString SGUtilsCpp::formatDateTimeWithOffsetFromUtc(const QDateTime &dateTime, const QString &format)
+{
+    return dateTime.toOffsetFromUtc(dateTime.offsetFromUtc()).toString(format);
 }

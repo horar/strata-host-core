@@ -1,0 +1,25 @@
+#include "CmdStartApplication.h"
+#include "DeviceOperationsConstants.h"
+
+#include <CommandValidator.h>
+
+namespace strata {
+
+CmdStartApplication::CmdStartApplication(const SerialDevicePtr& device) :
+    BaseDeviceCommand(device, QStringLiteral("start_application")) { }
+
+QByteArray CmdStartApplication::message() {
+    return QByteArray("{\"cmd\":\"start_application\"}");
+}
+
+bool CmdStartApplication::processNotification(rapidjson::Document& doc) {
+    if (CommandValidator::validate(CommandValidator::JsonType::startAppRes, doc)) {
+        const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
+        result_ = (status == JSON_OK) ? CommandResult::Done : CommandResult::Failure;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+}  // namespace

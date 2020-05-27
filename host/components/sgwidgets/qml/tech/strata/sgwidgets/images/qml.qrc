@@ -10,10 +10,12 @@
         <file>chip-flash.svg</file>
         <file>clock.svg</file>
         <file>cog.svg</file>
+        <file>drop-file.svg</file>
         <file>edit.svg</file>
         <file>exclamation.svg</file>
         <file>exclamation-triangle.svg</file>
         <file>file-add.svg</file>
+        <file>file-blank.svg</file>
         <file>file-export.svg</file>
         <file>file-import.svg</file>
         <file>folder-open.svg</file>

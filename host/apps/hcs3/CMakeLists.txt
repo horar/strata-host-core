@@ -1,16 +1,14 @@
 project(HostControllerService
-    DESCRIPTION "Host Controller Service"
+    DESCRIPTION "Strata Host Controller Service"
     LANGUAGES CXX
 )
 
-set(PROJECT_WIN32_ICO resources/icons/app/on.ico)
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
-
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-        COMPONENTS Core Network
+        COMPONENTS Core Network Concurrent
         REQUIRED
 )
 
@@ -39,13 +37,17 @@ add_library(${PROJECT_NAME}Lib STATIC
     src/Database.cpp
     src/DownloadManager.cpp
     src/StorageManager.cpp
+    src/StorageInfo.cpp
     src/PlatformDocument.cpp
     src/LoggingAdapter.cpp
+
+    src/RunGuard.cpp
 
     src/logging/LoggingQtCategories.cpp
 )
 
 generate_app_version(GITTAG_PREFIX "hcs3_" MACBUNDLE OFF)
+generate_app_build_timestamp()
 
 set_target_properties(${PROJECT_NAME}Lib PROPERTIES
     AUTOMOC ON
@@ -56,6 +58,8 @@ set_target_properties(${PROJECT_NAME}Lib PROPERTIES
 target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     Qt5::Core
     Qt5::Network
+    Qt5::Concurrent
+
     BoardManager
     connector
     EventsMgr

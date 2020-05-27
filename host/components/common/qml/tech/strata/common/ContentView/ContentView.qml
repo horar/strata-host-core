@@ -223,7 +223,7 @@ Rectangle {
                 centerIn: loading
                 verticalCenterOffset: -height/4
             }
-            playing: totalDocuments === 0 && documentManager.errorString.length === 0
+            playing: documentManager.loading
             height: 200
             width: 200
         }
@@ -244,8 +244,8 @@ Rectangle {
                     return "Error: " + documentManager.errorString
                 }
 
-                if (totalDocuments === 0) {
-                    return "Downloading Documents..."
+                if (documentManager.loading) {
+                    return "Downloading\n" + documentManager.loadingProgressPercentage + "% completed"
                 }
 
                 return ""

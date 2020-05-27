@@ -18,8 +18,8 @@ void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
 
     const auto resources = {
-        QStringLiteral("component-fonts.rcc"),
-        QStringLiteral("component-sgwidgets.rcc")};
+        QStringLiteral("component-sgwidgets.rcc")
+    };
 
 #ifdef Q_OS_MACOS
     applicationDir.cdUp();
@@ -82,6 +82,11 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SciDatabaseConnector>("tech.strata.sci", 1, 0, "DatabaseConnector", "can not instantiate DatabaseConnector in qml");
 
     qmlRegisterSingletonType(QUrl("qrc:/SciSettings.qml"), "tech.strata.sci", 1, 0, "Settings");
+
+    qmlRegisterUncreatableType<strata::FlasherConnector>("tech.strata.flasherConnector", 1, 0, "FlasherConnector", "can not instantiate FlasherConnector in qml");
+    qRegisterMetaType<strata::FlasherConnector::Operation>();
+    qRegisterMetaType<strata::FlasherConnector::State>();
+    qRegisterMetaType<strata::FlasherConnector::Result>();
 
     loadResources();
 
