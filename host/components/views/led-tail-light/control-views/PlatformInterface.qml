@@ -158,7 +158,7 @@ Item {
         "scales":[],
         "states":[0,1,1,1,1,1,1,1,1,1,1,1],
         "value":"",
-        "values":[true,true,true,true,true,true,true,true,true,true,true,true]
+        "values":[1,1,1,1,1,1,1,1,1,1,1,1]
     }
 
 
@@ -171,7 +171,7 @@ Item {
     }
 
     property var led_pwm_enables_values: {
-        "values": [true,true,true,true,true,true,true,true,true,true,true,true]
+        "values": [1,1,1,1,1,1,1,1,1,1,1,1]
     }
 
 

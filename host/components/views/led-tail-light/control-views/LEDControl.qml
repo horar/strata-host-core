@@ -537,66 +537,113 @@ Item {
     onLed_pwm_enablesChanged: {
         pwmEnableText.text = led_pwm_enables.caption
 
-        if(led_pwm_enables.values[0] === true)
+        if(led_pwm_enables.values[0] === 1) {
             out0pwmEnableLED.checked = true
-        else out0pwmEnableLED.checked = false
+            platformInterface.outputPwm0 = true
+        }
+        else {
 
-        if(led_pwm_enables.values[1] === true)
+            out0pwmEnableLED.checked = false
+            platformInterface.outputPwm0 = false
+        }
+
+        if(led_pwm_enables.values[1] === 1) {
+            platformInterface.outputPwm1 = true
             out1pwmEnableLED.checked = true
-        else out1pwmEnableLED.checked = false
+        }
+        else {
+            platformInterface.outputPwm1 = false
+            out1pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables.values[2] === true)
+        if(led_pwm_enables.values[2] === 1) {
             out2pwmEnableLED.checked = true
-        else out2pwmEnableLED.checked = false
+            platformInterface.outputPwm2 = true
+        }
+        else {
+            platformInterface.outputPwm2 = false
+            out2pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables.values[3] === true)
+        if(led_pwm_enables.values[3] === 1) {
+            platformInterface.outputPwm3 = true
             out3pwmEnableLED.checked = true
-        else out3pwmEnableLED.checked = false
+        }
+        else  {
+            platformInterface.outputPwm3 = false
+            out3pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables.values[4] === true)
+        if(led_pwm_enables.values[4] === 1) {
+            platformInterface.outputPwm4 = true
             out4pwmEnableLED.checked = true
-        else out4pwmEnableLED.checked = false
+        }
+        else{
+            platformInterface.outputPwm4 = false
+            out4pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables.values[5] === true)
+        if(led_pwm_enables.values[5] === 1) {
+            platformInterface.outputPwm5 = true
             out5pwmEnableLED.checked = true
-        else out5pwmEnableLED.checked = false
+        }
+        else {
+            platformInterface.outputPwm5 = false
+            out5pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables.values[6] === true)
+        if(led_pwm_enables.values[6] === 1) {
+            platformInterface.outputPwm6 = true
             out6pwmEnableLED.checked = true
-        else out6pwmEnableLED.checked = false
+        }
+        else {
+            platformInterface.outputPwm6 = false
+            out6pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables.values[7] === true)
+        if(led_pwm_enables.values[7] === 1) {
+            platformInterface.outputPwm7 = true
             out7pwmEnableLED.checked = true
-        else out7pwmEnableLED.checked = false
-
-        if(led_pwm_enables.values[8] === true)
+        }
+        else {
+            platformInterface.outputPwm7 = false
+            out7pwmEnableLED.checked = false
+        }
+        if(led_pwm_enables.values[8] === 1) {
+            platformInterface.outputPwm8 = true
             out8pwmEnableLED.checked = true
-        else out8pwmEnableLED.checked = false
+        }
+        else {
+            platformInterface.outputPwm8 = false
+            out8pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables.values[9] === true)
+        if(led_pwm_enables.values[9] === 1) {
+            platformInterface.outputPwm9 = true
             out9pwmEnableLED.checked = true
-        else out9pwmEnableLED.checked = false
+        }
+        else {
+            platformInterface.outputPwm9 = true
+            out9pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables.values[10] === true)
+        if(led_pwm_enables.values[10] === 1) {
+            platformInterface.outputPwm10 = true
             out10pwmEnableLED.checked = true
-        else out10pwmEnableLED.checked = false
+        }
+        else {
+            platformInterface.outputPwm10 = false
+            out10pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables.values[11] === true)
+        if(led_pwm_enables.values[11] === 1) {
+            platformInterface.outputPwm11 = true
             out11pwmEnableLED.checked = true
-        else out11pwmEnableLED.checked = false
-
-        platformInterface.outputPwm0 = led_pwm_enables.values[0]
-        platformInterface.outputPwm1 = led_pwm_enables.values[1]
-        platformInterface.outputPwm2 = led_pwm_enables.values[2]
-        platformInterface.outputPwm3 = led_pwm_enables.values[3]
-        platformInterface.outputPwm4 = led_pwm_enables.values[4]
-        platformInterface.outputPwm5 = led_pwm_enables.values[5]
-        platformInterface.outputPwm6 = led_pwm_enables.values[6]
-        platformInterface.outputPwm7 = led_pwm_enables.values[7]
-        platformInterface.outputPwm8 = led_pwm_enables.values[8]
-        platformInterface.outputPwm9 = led_pwm_enables.values[9]
-        platformInterface.outputPwm10 = led_pwm_enables.values[10]
-        platformInterface.outputPwm11 = led_pwm_enables.values[11]
+        }
+        else  {
+            platformInterface.outputPwm11 = false
+            out11pwmEnableLED.checked = false
+        }
 
         setStatesForControls(out0pwmEnableLED,led_pwm_enables.states[0])
         setStatesForControls(out1pwmEnableLED,led_pwm_enables.states[1])
@@ -617,66 +664,116 @@ Item {
 
     property var led_pwm_enables_values: platformInterface.led_pwm_enables_values.values
     onLed_pwm_enables_valuesChanged: {
-        if(led_pwm_enables_values[0] === true)
+        if(led_pwm_enables_values[0] === 1) {
             out0pwmEnableLED.checked = true
-        else out0pwmEnableLED.checked = false
+            platformInterface.outputPwm0 = true
+        }
+        else {
 
-        if(led_pwm_enables_values[1] === true)
+            out0pwmEnableLED.checked = false
+            platformInterface.outputPwm0 = false
+        }
+
+        if(led_pwm_enables_values[1] === 1) {
+            platformInterface.outputPwm1 = true
             out1pwmEnableLED.checked = true
-        else out1pwmEnableLED.checked = false
+        }
+        else {
+            platformInterface.outputPwm1 = false
+            out1pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables_values[2] === true)
+        if(led_pwm_enables_values[2] === 1) {
             out2pwmEnableLED.checked = true
-        else out2pwmEnableLED.checked = false
+            platformInterface.outputPwm2 = true
+        }
+        else {
+            platformInterface.outputPwm2 = false
+            out2pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables_values[3] === true)
+        if(led_pwm_enables_values[3] === 1) {
+            platformInterface.outputPwm3 = true
             out3pwmEnableLED.checked = true
-        else out3pwmEnableLED.checked = false
+        }
+        else  {
+            platformInterface.outputPwm3 = false
+            out3pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables_values[4] === true)
+        if(led_pwm_enables_values[4] === 1) {
+            platformInterface.outputPwm4 = true
             out4pwmEnableLED.checked = true
-        else out4pwmEnableLED.checked = false
+        }
+        else{
+            platformInterface.outputPwm4 = false
+            out4pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables_values[5] === true)
+        if(led_pwm_enables_values[5] === 1) {
+            platformInterface.outputPwm5 = true
             out5pwmEnableLED.checked = true
-        else out5pwmEnableLED.checked = false
+        }
+        else {
+            platformInterface.outputPwm5 = false
+            out5pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables_values[6] === true)
+        if(led_pwm_enables_values[6] === 1) {
+            platformInterface.outputPwm6 = true
             out6pwmEnableLED.checked = true
-        else out6pwmEnableLED.checked = false
+        }
+        else {
+            platformInterface.outputPwm6 = false
+            out6pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables_values[7] === true)
+        if(led_pwm_enables_values[7] === 1) {
+            platformInterface.outputPwm7 = true
             out7pwmEnableLED.checked = true
-        else out7pwmEnableLED.checked = false
+        }
+        else {
+            platformInterface.outputPwm7 = false
+            out7pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables_values[8] === true)
+        if(led_pwm_enables_values[8] === 1) {
+            platformInterface.outputPwm8 = true
             out8pwmEnableLED.checked = true
-        else out8pwmEnableLED.checked = false
+        }
+        else {
+            platformInterface.outputPwm8 = false
+            out8pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables_values[9] === true)
+        if(led_pwm_enables_values[9] === 1) {
+            platformInterface.outputPwm9 = true
             out9pwmEnableLED.checked = true
-        else out9pwmEnableLED.checked = false
+        }
+        else {
+            platformInterface.outputPwm9 = true
+            out9pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables_values[10] === true)
+        if(led_pwm_enables_values[10] === 1) {
+            platformInterface.outputPwm10 = true
             out10pwmEnableLED.checked = true
-        else out10pwmEnableLED.checked = false
+        }
+        else {
+            platformInterface.outputPwm10 = false
+            out10pwmEnableLED.checked = false
+        }
 
-        if(led_pwm_enables_values[11] === true)
+        if(led_pwm_enables_values[11] === 1) {
+            platformInterface.outputPwm11 = true
             out11pwmEnableLED.checked = true
-        else out11pwmEnableLED.checked = false
+        }
+        else  {
+            platformInterface.outputPwm11 = false
+            out11pwmEnableLED.checked = false
+        }
 
-        platformInterface.outputPwm0 = led_pwm_enables_values[0]
-        platformInterface.outputPwm1 = led_pwm_enables_values[1]
-        platformInterface.outputPwm2 = led_pwm_enables_values[2]
-        platformInterface.outputPwm3 = led_pwm_enables_values[3]
-        platformInterface.outputPwm4 = led_pwm_enables_values[4]
-        platformInterface.outputPwm5 = led_pwm_enables_values[5]
-        platformInterface.outputPwm6 = led_pwm_enables_values[6]
-        platformInterface.outputPwm7 = led_pwm_enables_values[7]
-        platformInterface.outputPwm8 = led_pwm_enables_values[8]
-        platformInterface.outputPwm9 = led_pwm_enables_values[9]
-        platformInterface.outputPwm10 = led_pwm_enables_values[10]
-        platformInterface.outputPwm11 = led_pwm_enables_values[11]
+
     }
 
     property var led_pwm_enables_states: platformInterface.led_pwm_enables_states.states
@@ -846,7 +943,7 @@ Item {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.verticalCenterOffset: 5
                                 anchors.left: parent.left
-                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
 
                                 font.bold : true
                                 SGInfoBox{
@@ -893,7 +990,7 @@ Item {
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
-                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
 
                                 SGSwitch {
@@ -1149,7 +1246,7 @@ Item {
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
-                                   fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
 
                                     onToggled: {
@@ -1371,7 +1468,7 @@ Item {
 
                                 SGComboBox {
                                     id: pwmFrequency
-                                   fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
 
                                     onActivated: {
                                         platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
@@ -1578,7 +1675,7 @@ Item {
 
                                         SGComboBox {
                                             id: openLoadDiagnostic
-                                           fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                             // model: ["No Diagnostic", "Auto Retry", "Detect Only", "No Regulations\nChange"]
 
                                             onActivated: {
@@ -1947,7 +2044,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -2154,7 +2251,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -2214,7 +2311,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -2354,7 +2451,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -2611,7 +2708,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -2854,7 +2951,7 @@ Item {
                                             Layout.preferredHeight: parent.height/10
                                             SGText {
                                                 text: "<b>" + qsTr("OUT4") + "</b>"
-                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
 
@@ -3113,7 +3210,7 @@ Item {
                                             //color: "red"
                                             SGText {
                                                 text: "<b>" + qsTr("OUT5") + "</b>"
-                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                             }
@@ -3191,7 +3288,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -3370,7 +3467,7 @@ Item {
                                             Layout.preferredHeight: parent.height/10
                                             SGText {
                                                 text: "<b>" + qsTr("OUT6") + "</b>"
-                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                             }
@@ -3448,7 +3545,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -3648,7 +3745,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -3907,7 +4004,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -4576,7 +4673,7 @@ Item {
                                             SGStatusLight {
                                                 id: out10faultStatusLED
                                                 width: 30
-                                                 anchors.centerIn: parent
+                                                anchors.centerIn: parent
                                             }
                                         }
 
@@ -5013,7 +5110,7 @@ Item {
                                     //text:  "I2Cerr"
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
-                                   fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     anchors.centerIn: parent
 
                                     SGStatusLight {
@@ -5307,7 +5404,7 @@ Item {
 
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
-                                   fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     anchors.centerIn: parent
 
                                     SGStatusLight {
@@ -5369,7 +5466,7 @@ Item {
 
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
-                                   fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     anchors.centerIn: parent
 
                                     SGStatusLight {
