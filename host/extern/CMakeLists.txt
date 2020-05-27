@@ -404,3 +404,40 @@ else()
     )
 endif()
 add_dependencies(qwt::qwt DEPENDS qwt)
+
+#
+# QtMqtt
+#
+
+if(NOT DEFINED QT_QMAKE_EXECUTABLE OR QT_QMAKE_EXECUTABLE STREQUAL "")
+    find_program(QT_QMAKE_EXECUTABLE "qmake")
+    if(QT_QMAKE_EXECUTABLE MATCHES "NOTFOUND$") # regex to match 'QT_QMAKE_EXECUTABLE-NOTFOUND'
+        unset(QT_QMAKE_EXECUTABLE CACHE) # reset QT_QMAKE_EXECUTABLE so it is not cached as 'QT_QMAKE_EXECUTABLE-NOTFOUND'
+        message(FATAL_ERROR "QT_QMAKE_EXECUTABLE not defined & not found. Define with -DQT_QMAKE_EXECUTABLE=<QT directory>/5.XX.X/clang_64/bin/qmake" )
+    endif()
+    message(STATUS "Found qmake: ${QT_QMAKE_EXECUTABLE}")
+endif()
+
+find_package(Qt5 COMPONENTS Core)
+message(STATUS "Qt5Core_VERSION_STRING is: ${Qt5Core_VERSION_STRING}")
+message(STATUS "QT_QMAKE_EXECUTABLE is: ${QT_QMAKE_EXECUTABLE}")
+
+
+if(NOT WIN32)
+    ExternalProject_Add(mqtt
+        INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
+        SOURCE_DIR ${SOURCE_DIR_EXTERN}/qtmqtt
+        CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${SOURCE_DIR_EXTERN}/qtmqtt/qtmqtt.pro
+        COMMAND ${GIT_EXECUTABLE} --git-dir=${SOURCE_DIR_EXTERN}/qtmqtt/.git checkout ${Qt5Core_VERSION_STRING}
+
+    )
+endif()
+
+add_library(mqtt::mqtt STATIC IMPORTED GLOBAL)
+if(NOT WIN32)
+    set_target_properties(mqtt::mqtt PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include"
+        IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}mqtt${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    )
+endif()
+add_dependencies(mqtt::mqtt DEPENDS mqtt)
