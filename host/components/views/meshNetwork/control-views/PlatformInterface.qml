@@ -128,7 +128,7 @@ Item {
     }
 
     property var node_removed : {
-        "node_id": 0,  // in dec (16 bit)
+        "index": 0,  // in dec (16 bit)
     }
 
     property var alarm_triggered:{

@@ -17,16 +17,15 @@ QByteArray CmdUpdateFirmware::message() {
 bool CmdUpdateFirmware::processNotification(rapidjson::Document& doc) {
     if (CommandValidator::validate(CommandValidator::JsonType::updateFwRes, doc)) {
         const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
-        if (status == JSON_OK) {
-            result_ = CommandResult::Done;
-            return true;
-        }
+        result_ = (status == JSON_OK) ? CommandResult::Done : CommandResult::Failure;
+        return true;
+    } else {
+        return false;
     }
-    return false;
 }
 
 bool CmdUpdateFirmware::skip() {
-    if (device_->property(DeviceProperties::verboseName) == BOOTLOADER_STR) {
+    if (device_->property(DeviceProperties::verboseName) == QSTR_BOOTLOADER) {
         qCInfo(logCategoryDeviceOperations) << device_.get() << "Platform already in bootloader mode. Ready for firmware operations.";
         result_ = CommandResult::FinaliseOperation;
         return true;

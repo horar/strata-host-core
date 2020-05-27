@@ -17,6 +17,7 @@ enum class CommandResult {
     Done,              // successfully done (received device response is OK)
     Repeat,            // repeat - send command again again with new data, e.g. when flashing firmware
     Retry,             // retry - send command again with same data
+    Failure,           // response to command is not successful
     FinaliseOperation  // finish operation (there is no point in continuing)
 };
 
