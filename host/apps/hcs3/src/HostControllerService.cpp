@@ -410,7 +410,7 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
             return;
         }
         if (boards_.setClientId(client->getClientId(), device_id) == false) {
-            qCWarning(logCategoryHcs) << "Board is allready assigned to some client!";
+            qCWarning(logCategoryHcs) << "Board is already assigned to some client!";
             return;
         }
         client->setPlatformId(platformId);
@@ -510,6 +510,7 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)  //const
         auto findIt = hostCmdHandler_.find(cmd_name);
         if (findIt == hostCmdHandler_.end()) {
             //TODO: error handling...
+            qCWarning(logCategoryHcs()) << "Unhandled command" <<  "Client:" << clientId << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
             return;
         }
 
@@ -525,6 +526,10 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)  //const
         }
 
         findIt->second(payload);
+    }
+    else {
+        qCWarning(logCategoryHcs()) << "Unhandled command type" <<  "Client:" << clientId << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
+        return;
     }
 }
 
