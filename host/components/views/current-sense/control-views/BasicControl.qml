@@ -38,28 +38,22 @@ Item {
         }
     }
 
-
-
     Component.onCompleted:  {
-        //currentSenseMaxReading
         Help.registerTarget(filterHelpContainer, "These 5 switches enable/disable the 5 current sense circuits supplied on the board. Only 1 circuit may be enabled at a time. The current rating given is the range for accurate readings from each of the circuits throughout the entire range of input voltages from 0 - 26V. The exception is the NCS333A circuit which operates from 0 - 5V. Safety features will prevent the user from turning the NCS333A circuit on if the input voltage is too high. Do not exceed 26V on the input to the board.", 0, "currentSenseHelp")
         Help.registerTarget(currentSenseMaxLabel, "This LED will let the user know if the current range through the enabled circuit has been exceeded and therefore the measurements are no longer accurate.", 1, "currentSenseHelp")
         Help.registerTarget(vinReading, "Input voltage to the 5 parallel circuits are measured here. This measurement is taken after the input current sense circuit.", 2, "currentSenseHelp")
-        Help.registerTarget(recalibrateContainer, "This will recalibrate all 5 circuits so set the new offset reading. It is recommended to recalibrate before measurements or anytime the input voltage is changed. Measurements may be negative if this is used under load.", 4, "currentSenseHelp")
+        Help.registerTarget(recalibrateContainer, "This will recalibrate all 5 circuits to set the new offset reading. It is recommended to recalibrate before measurements or anytime the input voltage is changed. Measurements may be negative if this is used under load.", 4, "currentSenseHelp")
         Help.registerTarget(activeDischargeLabel, "This switch enables/disables the active discharge on the output of the board. When this switch is enabled the output will actively discharge the output capacitance.", 3,"currentSenseHelp")
         Help.registerTarget(reset, "This will reset the board by turning all circuitry off. If an interrupt occurred, the parameters that caused the interrupt will need to be fixed in order for the board to reset itself.", 5, "currentSenseHelp")
         Help.registerTarget(onBoardColumn, "These are the controls for the programmable load included on the board. The load is split into 3 circuits each with independent controls. Only 1 load circuit may be on at a time. The ranges for each load circuit are given by the labels below the sliders, and the sliders can be adjusted to draw the desired load. The switches enable and disable the circuit.", 6, "currentSenseHelp")
-        // Help.registerTarget(ledSection, "The 3 LEDs on the left give the status of the board's individual interrupts. On-Board Load is for the load circuits provided on the board and the input current is the total current travelling through the input of the entire board. The Fault LED is the general indicator that an interrupt occurred and as long as this LED is on the board will not be able to turn on. In order to clear the Fault, first make sure the cause of the interrupt is solved and then use the Reset button in the Settings section.", 7, "currentSenseHelp")
-
-        Help.registerTarget(voltageStatusLabel, "This LED indicates that the input voltage is higher than the set point for the input voltage interrupt. While in Auto mode, this set point is a constant 26V for all current sense amplifiers except the NCS333A, where it is set to 5.1V. While in Manual mode, this set point is determined by the user using the "  + "\"" +"Set Max Input Voltage" + "\"" + " slider in the Manual Mode Set section." , 7 , "currentSenseHelp" )
-        Help.registerTarget(currentStatusLabel," This LED indicates that the current going through the On-Board Programmable Load is too high. The set point value is calculated by measuring the input voltage and determining the maximum amount of current that can travel through the load. For low voltages, the maximum amount of current is 10A.",  8 , "currentSenseHelp" )
+        Help.registerTarget(voltageStatusLabel,"This LED indicates that the input voltage is higher than the set point for the input voltage interrupt. While in Auto mode, this set point is a constant 26V for all current sense amplifiers except the NCS333A, where it is set to 5.1V. While in Manual mode, this set point is determined by the user using the "  + "\"" + "Set Max Input Voltage" + "\"" + " slider in the Manual Mode Set section." , 7 , "currentSenseHelp" )
+        Help.registerTarget(currentStatusLabel,"This LED indicates that the current going through the On-Board Programmable Load is too high. The set point value is calculated by measuring the input voltage and determining the maximum amount of current that can travel through the load. The maximum current through the load regardless of the total power being drawn is 10A.",  8 , "currentSenseHelp" )
         Help.registerTarget(loadCurrentStatusLabel,"This LED indicates the input current to the board is too high. When in Auto mode, this threshold is set automatically depending on which current sense amplifier circuit is enabled. When in Manual Mode, the user may set this value lower than the automatically set value but not higher.", 9 , "currentSenseHelp" )
         Help.registerTarget(loadFaultLabel ,"This LED indicates that one of the previous three interrupts occurred and the board is placed in a protected state where none of the loads or current sense amplifiers can be enabled. The Reset button must be used to use the board again, and the cause of the interrupt must be resolved by the user in order to reset the board.",10 , "currentSenseHelp" )
-
-        Help.registerTarget(interruptBox, "These readings will let the user know where the interrupt thresholds are and will change depending on which circuit is on as well as input voltage/current through the board is. If these thresholds are exceeded an interrupt will occur.", 11, "currentSenseHelp")
-        Help.registerTarget(powerGaugeContainer, "This gauge lets the user know how much power is being drawn by the high current on-board load circuit in relation to its maximum power capability. If maximum power is exceeded, an interrupt will trigger. Refer to "+ " Max Input Voltage " + " and " + "Max On-Board Load Current " + "above to know what the load circuits capabilities are given the current input voltage and load being drawn.", 12, "currentSenseHelp")
-        Help.registerTarget(statusListContainer,  "This will contain any interrupt messages or warnings for the user to diagnose any problems.", 13, "currentSenseHelp")
-        Help.registerTarget(manualModeSection,  "This section is for if the user would like to set customizable input voltage and current limits. While in " + "\"" + "Auto" + "\""  +" mode, the limits are determined by the max capabilities of whatever circuit is enabled. While in " + "\"" + "Manual" + "\"" + " mode the limits are determined by the user, but will still be limited by the max capabilities of whatever circuit is enabled.", 14, "currentSenseHelp")
+        Help.registerTarget(interruptBox,"These readings will let the user know where the interrupt thresholds are. They will change depending on which circuit is enabled as well as what the input voltage/current through the board is. If these thresholds are exceeded an interrupt will occur.", 11, "currentSenseHelp")
+        Help.registerTarget(powerGaugeContainer,"This gauge lets the user know how much power is being drawn by the high current on-board load circuit in relation to its maximum power capability. If maximum power is exceeded, an interrupt will trigger. Refer to "+ "\""+ "Max Input Voltage" + "\"" + " and " + "\"" +"Max On-Board Load Current" + "\"" + " above to know what the load circuits' capabilities are.", 12, "currentSenseHelp")
+        Help.registerTarget(statusListContainer, "This will contain any interrupt messages or warnings for the user to diagnose any problems.", 13, "currentSenseHelp")
+        Help.registerTarget(manualModeSection, "This section is for if the user would like to set customizable input voltage and current limits. While in " + "\"" + "Auto" + "\""  +" mode, the limits are determined by the max capabilities of whatever circuit is enabled. While in " + "\"" + "Manual" + "\"" + " mode the limits are determined by the user, but will still be limited by the max capabilities of whatever circuit is enabled.", 14, "currentSenseHelp")
     }
 
     onWidthChanged: {
@@ -1237,10 +1231,10 @@ Item {
                                                     width: maxInputCurrentContainer.width
                                                     live: false
                                                     from: 0.0
-                                                    to: 30
+                                                    to: 30.5
                                                     stepSize: 0.1
                                                     fromText.text: "0A"
-                                                    toText.text: "30A"
+                                                    toText.text: "30.5A"
 
                                                     inputBoxWidth: maxInputCurrentContainer.width/5
                                                     fontSizeMultiplier: ratioCalc
@@ -1249,6 +1243,7 @@ Item {
                                                     inputBox.unit: " A"
                                                     inputBox.unitFont.bold: true
                                                     inputBox.unitOverrideWidth: 30 * ratioCalc
+
 
 
 
@@ -1263,9 +1258,7 @@ Item {
                                                         inputBox.text = value.toFixed(1)
 
                                                         platformInterface.set_i_in_dac.update(value.toFixed(1))
-
                                                     }
-
                                                     onValueChanged: {
                                                         inputBox.text = value
                                                     }
@@ -1280,7 +1273,6 @@ Item {
                                                     property var enable_status_in_set: platformInterface.switch_enable_status.i_in_set
                                                     onEnable_status_in_setChanged:  {
                                                         maxInputCurrent.stepSize = 0.1
-
                                                         maxInputCurrent.value = parseFloat(enable_status_in_set)
                                                         console.log("b", maxInputCurrent.value)
 

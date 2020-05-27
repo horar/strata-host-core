@@ -35,8 +35,8 @@ Item {
         "en_213": "off",       //on or off
         "en_214": "off",       //on or off
         "en_333": "off" ,      //on or off
-        "i_in_max" : "30",
-        "i_in_set" : "30",
+        "i_in_max" : "30.5",
+        "i_in_set" : "30.5",
         "low_load_en" : "off",
         "load_switch_status":""
 
@@ -91,7 +91,7 @@ Item {
         "en_214": "off",                  //on or off
         "en_333": "off",                  //on or off
         "manual_mode": "auto",            //auto or manual
-        "max_input_current": 30,          //float
+        "max_input_current": 30.5,          //float
         "max_input_voltage": 26,          //float
         "low_load_en": "off",             //on or off
         "mid_load_en": "off",             //on or off
