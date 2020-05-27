@@ -345,9 +345,18 @@ else()
 endif()
 
 if(APPLE)
+    find_library(IOKIT_LIB IOKit REQUIRED)
+    if (NOT IOKIT_LIB)
+        message(FATAL_ERROR "IOKit framework not found")
+    endif()
+    find_library(FOUNDATION_LIB Foundation REQUIRED)
+    if (NOT FOUNDATION_LIB)
+        message(FATAL_ERROR "Foundation framework not found")
+    endif()
+
     target_link_libraries(strata::CouchbaseLiteCPP INTERFACE
-        ${IOKIT_LIBRARY}
-        ${FOUNDATION_LIBRARY}
+        ${IOKIT_LIB}
+        ${FOUNDATION_LIB}
     )
 endif()
 
