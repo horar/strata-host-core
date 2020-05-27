@@ -846,7 +846,7 @@ Item {
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.verticalCenterOffset: 5
                                 anchors.left: parent.left
-                                fontSizeMultiplier: ratioCalc * 1.2
+                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
 
                                 font.bold : true
                                 SGInfoBox{
@@ -854,7 +854,7 @@ Item {
                                     height:  35 * ratioCalc
                                     width: 120 * ratioCalc
 
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 }
 
                                 property var led_part_number_value: platformInterface.led_part_number_value
@@ -893,7 +893,7 @@ Item {
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
-                                fontSizeMultiplier: ratioCalc * 1.2
+                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
 
                                 SGSwitch {
@@ -901,7 +901,7 @@ Item {
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
 
                                     onToggled: {
@@ -964,7 +964,7 @@ Item {
                             SGAlignedLabel {
                                 id: gobalCurrentSetLabel
                                 target: gobalCurrentSetSlider
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
@@ -974,7 +974,7 @@ Item {
                                     id: gobalCurrentSetSlider
                                     width: gobalCurrentSetContainer.width - 20
                                     live: false
-                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     showInputBox: false
 
                                     onUserSet: {
@@ -1081,7 +1081,7 @@ Item {
                                     left: parent.left
                                     verticalCenter: parent.verticalCenter
                                 }
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
 
                                 SGSwitch {
@@ -1089,7 +1089,7 @@ Item {
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
                                     onToggled: {
                                         if(checked)
@@ -1136,7 +1136,7 @@ Item {
                             SGAlignedLabel {
                                 id: lockPWMDutyLabel
                                 target: lockPWMDuty
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors {
@@ -1149,7 +1149,7 @@ Item {
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc
+                                   fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
 
                                     onToggled: {
@@ -1203,7 +1203,7 @@ Item {
                                     verticalCenter: parent.verticalCenter
 
                                 }
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 horizontalAlignment: Text.AlignHCenter
 
@@ -1212,7 +1212,7 @@ Item {
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
 
                                     onToggled: {
@@ -1264,13 +1264,13 @@ Item {
                                     verticalCenter: parent.verticalCenter
 
                                 }
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
 
 
                                 SGSwitch {
                                     id: pwmLinearLog
-                                    fontSizeMultiplier: ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
 
                                     onToggled:  {
                                         platformInterface.pwm_lin_state = checked
@@ -1366,12 +1366,12 @@ Item {
                                     verticalCenter: parent.verticalCenter
 
                                 }
-                                fontSizeMultiplier: ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
 
                                 SGComboBox {
                                     id: pwmFrequency
-                                    fontSizeMultiplier: ratioCalc
+                                   fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
 
                                     onActivated: {
                                         platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
@@ -1503,7 +1503,7 @@ Item {
 
                                         font.bold: true
                                         alignment: SGAlignedLabel.SideTopCenter
-                                        fontSizeMultiplier: ratioCalc
+                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                         anchors.centerIn: parent
 
                                         SGStatusLight {
@@ -1573,12 +1573,12 @@ Item {
 
                                         }
 
-                                        fontSizeMultiplier: ratioCalc * 1.2
+                                        fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                         font.bold : true
 
                                         SGComboBox {
                                             id: openLoadDiagnostic
-                                            fontSizeMultiplier: ratioCalc
+                                           fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                             // model: ["No Diagnostic", "Auto Retry", "Detect Only", "No Regulations\nChange"]
 
                                             onActivated: {
@@ -1708,7 +1708,7 @@ Item {
                                                 id: ledoutEnLabel
                                                 //text: "<b>" + qsTr("OUT EN") + "</b>"
                                                 font.bold: true
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.left: parent.left
                                                 anchors.verticalCenter: parent.verticalCenter
 
@@ -1727,7 +1727,7 @@ Item {
                                                 //text: "Internal \n External LED"
                                                 horizontalAlignment: Text.AlignHCenter
                                                 font.bold: true
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.left: parent.left
                                                 anchors.verticalCenter: parent.verticalCenter
 
@@ -1745,7 +1745,7 @@ Item {
                                                 id: pwmEnableText
                                                 // text: "<b>" + qsTr("PWM Enable") + "</b>"
                                                 font.bold: true
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.left: parent.left
                                                 anchors.verticalCenter: parent.verticalCenter
 
@@ -1762,7 +1762,7 @@ Item {
                                             SGText {
                                                 id:faultText
                                                 // text: "<b>" + qsTr("Fault Status") + "</b>"
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.left: parent.left
                                                 anchors.verticalCenter: parent.verticalCenter
                                                 font.bold: true
@@ -1782,7 +1782,7 @@ Item {
                                                 id: pwmDutyText
                                                 font.bold: true
                                                 //text: "<b>" + qsTr("PWM Duty (%)") + "</b>"
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.left: parent.left
                                                 anchors.verticalCenter: parent.verticalCenter
 
@@ -1808,7 +1808,7 @@ Item {
                                             SGText {
                                                 id: text1
                                                 text: "<b>" + qsTr("OUT0") + "</b>"
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                             }
@@ -1829,7 +1829,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -1889,7 +1889,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -1947,7 +1947,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -2073,7 +2073,7 @@ Item {
 
                                             SGText {
                                                 text: "<b>" + qsTr("OUT1") + "</b>"
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                             }
@@ -2092,7 +2092,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -2154,7 +2154,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -2214,7 +2214,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -2335,7 +2335,7 @@ Item {
                                             //color: "red"
                                             SGText {
                                                 text: "<b>" + qsTr("OUT2") + "</b>"
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                             }
@@ -2354,7 +2354,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -2413,7 +2413,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -2469,7 +2469,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -2591,7 +2591,7 @@ Item {
                                             //color: "red"
                                             SGText {
                                                 text: "<b>" + qsTr("OUT3") + "</b>"
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                             }
@@ -2611,7 +2611,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -2730,7 +2730,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -2854,7 +2854,7 @@ Item {
                                             Layout.preferredHeight: parent.height/10
                                             SGText {
                                                 text: "<b>" + qsTr("OUT4") + "</b>"
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
 
@@ -2874,7 +2874,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -2933,7 +2933,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -2990,7 +2990,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -3113,7 +3113,7 @@ Item {
                                             //color: "red"
                                             SGText {
                                                 text: "<b>" + qsTr("OUT5") + "</b>"
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                             }
@@ -3132,7 +3132,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -3191,7 +3191,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -3248,7 +3248,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -3370,7 +3370,7 @@ Item {
                                             Layout.preferredHeight: parent.height/10
                                             SGText {
                                                 text: "<b>" + qsTr("OUT6") + "</b>"
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                             }
@@ -3390,7 +3390,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -3448,7 +3448,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -3505,7 +3505,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -3629,7 +3629,7 @@ Item {
                                             //color: "red"
                                             SGText {
                                                 text: "<b>" + qsTr("OUT7") + "</b>"
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                             }
@@ -3648,7 +3648,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -3708,7 +3708,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -3765,7 +3765,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -3888,7 +3888,7 @@ Item {
                                             Layout.preferredHeight: parent.height/10
                                             SGText {
                                                 text: "<b>" + qsTr("OUT8") + "</b>"
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                             }
@@ -3907,7 +3907,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                               fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -3966,7 +3966,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -4023,7 +4023,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -4144,7 +4144,7 @@ Item {
                                             //color: "red"
                                             SGText {
                                                 text: "<b>" + qsTr("OUT9") + "</b>"
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                             }
@@ -4163,7 +4163,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -4222,7 +4222,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -4279,7 +4279,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -4397,7 +4397,7 @@ Item {
                                             Layout.preferredHeight: parent.height/10
                                             SGText {
                                                 text: "<b>" + qsTr("OUT10") + "</b>"
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                             }
@@ -4416,7 +4416,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -4475,7 +4475,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -4532,7 +4532,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -4652,7 +4652,7 @@ Item {
                                             //color: "red"
                                             SGText {
                                                 text: "<b>" + qsTr("OUT11") + "</b>"
-                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.bottom: parent.bottom
                                                 anchors.horizontalCenter: parent.horizontalCenter
                                             }
@@ -4671,7 +4671,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
 
@@ -4731,7 +4731,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -4789,7 +4789,7 @@ Item {
                                                 handleColor: "white"            // Default: "white"
                                                 grooveColor: "#ccc"             // Default: "#ccc"
                                                 grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                fontSizeMultiplier: ratioCalc
+                                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                                 checked: false
                                                 anchors.centerIn: parent
                                                 onToggled: {
@@ -4959,7 +4959,7 @@ Item {
                                     //text:  "SC_Iset"
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
-                                    fontSizeMultiplier: ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     anchors.centerIn: parent
 
                                     SGStatusLight {
@@ -5013,7 +5013,7 @@ Item {
                                     //text:  "I2Cerr"
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
-                                    fontSizeMultiplier: ratioCalc
+                                   fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     anchors.centerIn: parent
 
                                     SGStatusLight {
@@ -5075,7 +5075,7 @@ Item {
                                     //text:  "UV"
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
-                                    fontSizeMultiplier: ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     anchors.centerIn: parent
 
                                     SGStatusLight {
@@ -5124,7 +5124,7 @@ Item {
                                     //text:  "diagRange"
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
-                                    fontSizeMultiplier: ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     anchors.centerIn: parent
 
                                     SGStatusLight {
@@ -5185,7 +5185,7 @@ Item {
 
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
-                                    fontSizeMultiplier: ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     anchors.centerIn: parent
 
                                     SGStatusLight {
@@ -5247,7 +5247,7 @@ Item {
 
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
-                                    fontSizeMultiplier: ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     anchors.centerIn: parent
 
                                     SGStatusLight {
@@ -5307,7 +5307,7 @@ Item {
 
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
-                                    fontSizeMultiplier: ratioCalc
+                                   fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     anchors.centerIn: parent
 
                                     SGStatusLight {
@@ -5369,7 +5369,7 @@ Item {
 
                                     font.bold: true
                                     alignment: SGAlignedLabel.SideTopCenter
-                                    fontSizeMultiplier: ratioCalc
+                                   fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     anchors.centerIn: parent
 
                                     SGStatusLight {
