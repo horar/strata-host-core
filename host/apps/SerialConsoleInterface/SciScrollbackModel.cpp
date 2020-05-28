@@ -126,6 +126,11 @@ void SciScrollbackModel::clearAutoExportError()
 
 QString SciScrollbackModel::exportToFile(QString filePath)
 {
+    if (filePath.isEmpty()) {
+        qCCritical(logCategorySci) << "No file name specified";
+        return "No file name specified";
+    }
+
     QSaveFile file(filePath);
     bool ret = file.open(QIODevice::WriteOnly | QIODevice::Text);
     if (ret == false) {
@@ -154,17 +159,28 @@ QString SciScrollbackModel::exportToFile(QString filePath)
 
 bool SciScrollbackModel::startAutoExport(const QString &filePath)
 {
+    QString errorString;
+
     if (autoExportIsActive_) {
+        errorString = "Export already active";
+        qCCritical(logCategorySci) << errorString;
+        setAutoExportErrorString(errorString);
         return false;
     }
 
-    setAutoExportErrorString("");
+    if (filePath.isEmpty()) {
+        errorString = "No file name specified";
+        qCCritical(logCategorySci) << errorString;
+        setAutoExportErrorString(errorString);
+        return false;
+    }
 
     exportFile_.setFileName(filePath);
-    bool ret = exportFile_.open(QIODevice::WriteOnly | QIODevice::Text);
+    bool ret = exportFile_.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
     if (ret == false ) {
-        qCCritical(logCategorySci) << "open fiiled" << filePath << exportFile_.errorString();
-        setAutoExportErrorString(exportFile_.errorString());
+        errorString = exportFile_.errorString();
+        qCCritical(logCategorySci) << "open failed" << filePath << errorString;
+        setAutoExportErrorString(errorString);
         return false;
     }
 
@@ -172,6 +188,7 @@ bool SciScrollbackModel::startAutoExport(const QString &filePath)
     setAutoExportFilePath(filePath);
 
     setAutoExportIsActive(true);
+    setAutoExportErrorString("");
     return true;
 }
 
