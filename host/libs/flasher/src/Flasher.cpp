@@ -31,7 +31,7 @@ void Flasher::flash(bool startApplication) {
             chunkNumber_ = 0;
             chunkCount_ = static_cast<int>((fwFile_.size() - 1 + CHUNK_SIZE) / CHUNK_SIZE);
             chunkProgress_ = FLASH_PROGRESS_STEP;
-            qCInfo(logCategoryFlasher) << device_ << "Preparing for flashing " << dec << chunkCount_ << " chunks of firmware.";
+            qCInfo(logCategoryFlasher) << device_ << "Preparing for flashing " << chunkCount_ << " chunks of firmware.";
             emit switchToBootloader(false);
             operation_->switchToBootloader();
         } else {
@@ -127,7 +127,7 @@ void Flasher::handleOperationFinished(device::DeviceOperation operation, int dat
 void Flasher::handleFlashFirmware(int lastFlashedChunk) {
     if (lastFlashedChunk == 0) {  // the last chunk
         fwFile_.close();
-        qCInfo(logCategoryFlasher) << device_ << "Flashed chunk " << dec << chunkCount_ << " of " << chunkCount_ << " - firmware is flashed.";
+        qCInfo(logCategoryFlasher) << device_ << "Flashed chunk " << chunkCount_ << " of " << chunkCount_ << " - firmware is flashed.";
         emit flashProgress(chunkCount_, chunkCount_);
         if (startApp_) {
             operation_->startApplication();
@@ -139,10 +139,10 @@ void Flasher::handleFlashFirmware(int lastFlashedChunk) {
     if (lastFlashedChunk > 0) {  // if no chunk was flashed yet, 'lastFlashedChunk' is negative number (-1)
         if (lastFlashedChunk == chunkProgress_) { // this is faster than modulo
             chunkProgress_ += FLASH_PROGRESS_STEP;
-            qCInfo(logCategoryFlasher) << device_ << "Flashed chunk " << dec << lastFlashedChunk << " of " << chunkCount_;
+            qCInfo(logCategoryFlasher) << device_ << "Flashed chunk " << lastFlashedChunk << " of " << chunkCount_;
             emit flashProgress(lastFlashedChunk, chunkCount_);
         } else {
-            qCDebug(logCategoryFlasher) << device_ << "Flashed chunk " << dec << lastFlashedChunk << " of " << chunkCount_;
+            qCDebug(logCategoryFlasher) << device_ << "Flashed chunk " << lastFlashedChunk << " of " << chunkCount_;
         }
     }
     ++chunkNumber_;
@@ -178,15 +178,15 @@ void Flasher::handleBackupFirmware(int chunkNumber) {
             chunkCount_ = chunkNumber;
             if (chunkNumber == chunkProgress_) { // this is faster than modulo
                 chunkProgress_ += BACKUP_PROGRESS_STEP;
-                qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << dec << chunkNumber;
+                qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber;
                 emit backupProgress(chunkNumber, false);
             } else {
-                qCDebug(logCategoryFlasher) << device_ << "Backed up chunk " << dec << chunkNumber;
+                qCDebug(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber;
             }
         } else {  // chunkNumber is 0 => the last chunk
             ++chunkCount_;
             fwFile_.close();
-            qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << dec << chunkCount_ << " - firmware backup is done.";
+            qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << chunkCount_ << " - firmware backup is done.";
             emit backupProgress(chunkCount_, true);
             if (startApp_) {
                 operation_->startApplication();

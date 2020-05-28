@@ -9,7 +9,7 @@
 namespace strata::device {
 
 QDebug operator<<(QDebug dbg, const Device* d) {
-    return dbg.nospace().noquote() << "Device 0x" << hex << static_cast<uint>(d->deviceId_) << ": ";
+    return dbg.nospace().noquote() << "Device 0x" << hex << static_cast<uint>(d->deviceId_) << ": " << dec;
 }
 
 QDebug operator<<(QDebug dbg, const DevicePtr& d) {
