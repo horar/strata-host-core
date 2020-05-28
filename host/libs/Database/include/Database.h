@@ -56,12 +56,10 @@ public:
 
     QStringList getAllDocumentKeys();
 
-    bool isOpen();
-
     /********************************************
      * REPLICATOR API *
      *******************************************/
-    Database* cp;
+
     /**
      * Initializes and starts the DB replicator
      * @param url replicator / sync-gateway URL to connect to
@@ -81,14 +79,6 @@ public:
                          const QString &conflict_resolution_policy = "",
                          const QString &reconnection_policy = ""
                          );
-
-    // static void signalReceiver(Strata::SGReplicator::ActivityLevel l);
-
-    static void signalReceiver(Strata::SGReplicator::ActivityLevel l, Database* db_ptr);
-
-    // void signalReceiver(Strata::SGReplicator::ActivityLevel l, Database* db_ptr);
-
-    void emitter();
 
 signals:
     void replicationFinished(Database* db, std::string str);

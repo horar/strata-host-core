@@ -35,7 +35,7 @@ generate_app_version(GITTAG_PREFIX "cbdb" MACBUNDLE OFF)
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC Qt5::Network
-    PUBLIC strata::CouchbaseLiteCPP
+    PUBLIC strata::Couchbase-Lite-C
     PUBLIC QtLogger
     rapidjson::rapidjson
 )
