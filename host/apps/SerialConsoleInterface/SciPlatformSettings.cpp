@@ -91,6 +91,10 @@ void SciPlatformSettings::rearrangeAndSave(int index)
 
 void SciPlatformSettings::loadData()
 {
+    if (QFile::exists(boardStoragePath_) == false) {
+        return;
+    }
+
     QFile file(boardStoragePath_);
     if (file.open(QFile::ReadOnly | QFile::Text) == false) {
         qCCritical(logCategorySci) << "cannot load data" << boardStoragePath_ << file.errorString();
