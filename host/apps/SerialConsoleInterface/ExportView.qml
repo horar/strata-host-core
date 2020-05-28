@@ -160,31 +160,18 @@ FocusScope {
                 color: SGWidgets.SGColorsJS.ERROR_COLOR
             }
 
-            Row {
+            SGWidgets.SGButton {
                 anchors {
                     top: autoExportErrorTag.bottom
                     topMargin: baseSpacing
                 }
 
-                spacing: baseSpacing
-
-                SGWidgets.SGButton {
-
-                    text: model.platform.scrollbackModel.autoExportIsActive ? "Stop" : "Start"
-                    onClicked: {
-                        if (model.platform.scrollbackModel.autoExportIsActive) {
-                            model.platform.scrollbackModel.stopAutoExport()
-                        } else {
-                            model.platform.scrollbackModel.startAutoExport(autoExportPathSelector.filePath)
-                        }
-                    }
-                }
-
-                SGWidgets.SGButton {
-                    text: "Clear Error"
-                    visible: autoExportErrorTag.text
-                    onClicked: {
-                        model.platform.scrollbackModel.clearAutoExportError()
+                text: model.platform.scrollbackModel.autoExportIsActive ? "Stop" : "Start"
+                onClicked: {
+                    if (model.platform.scrollbackModel.autoExportIsActive) {
+                        model.platform.scrollbackModel.stopAutoExport()
+                    } else {
+                        model.platform.scrollbackModel.startAutoExport(autoExportPathSelector.filePath)
                     }
                 }
             }
@@ -216,6 +203,7 @@ FocusScope {
     }
 
     function closeView() {
+        model.platform.scrollbackModel.clearAutoExportError()
         StackView.view.pop();
     }
 }
