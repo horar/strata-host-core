@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QPointer>
 
+
 class SciPlatform: public QObject {
     Q_OBJECT
     Q_DISABLE_COPY(SciPlatform)
@@ -55,9 +56,12 @@ public:
 
     void resetPropertiesFromDevice();
     Q_INVOKABLE bool sendMessage(const QByteArray &message);
-    Q_INVOKABLE bool exportScrollback(QString filePath) const;
-    Q_INVOKABLE void removeCommandFromHistoryAt(int index);
     Q_INVOKABLE bool programDevice(QString filePath, bool doBackup=true);
+
+    //settings handlers
+    void storeCommandHistory(const QStringList &list);
+    void storeExportPath(const QString &exportPath);
+    void storeAutoExportPath(const QString &autoExportPath);
 
 signals:
     void verboseNameChanged();

@@ -1,14 +1,20 @@
 #include "SciScrollbackModel.h"
 #include "logging/LoggingQtCategories.h"
+#include "SciPlatform.h"
+#include <QSaveFile>
 
-SciScrollbackModel::SciScrollbackModel(QObject *parent)
-    : QAbstractListModel(parent)
+SciScrollbackModel::SciScrollbackModel(SciPlatform *platform)
+    : QAbstractListModel(platform),
+      platform_(platform)
 {
     setModelRoles();
 }
 
 SciScrollbackModel::~SciScrollbackModel()
 {
+    if (autoExportIsActive_) {
+        stopAutoExport();
+    }
 }
 
 QVariant SciScrollbackModel::data(const QModelIndex &index, int role) const
@@ -66,6 +72,15 @@ void SciScrollbackModel::append(const QByteArray &message, MessageType type)
 
     emit countChanged();
 
+    if (autoExportIsActive_) {
+        qint64 bytesWritten = exportFile_.write(stringify(data_.last()));
+        if (bytesWritten <= 0) {
+            qCCritical(logCategorySci)  << "write failed" << exportFile_.errorString();
+            setAutoExportErrorString(exportFile_.errorString());
+            stopAutoExport();
+        }
+    }
+
     sanitize();
 }
 
@@ -104,16 +119,87 @@ void SciScrollbackModel::clear()
     emit countChanged();
 }
 
-QString SciScrollbackModel::getTextForExport() const
+void SciScrollbackModel::clearAutoExportError()
 {
-    QString text;
-    for (const auto &item : data_) {
-        QString line = QString("%1 %2 %3")
-                .arg(item.timestamp.toString(Qt::ISODate))
-                .arg(item.type == MessageType::Request ? "request" : "response")
-                .arg(QString::fromUtf8(item.message));
+    setAutoExportErrorString("");
+}
 
-        text.append(line+"\n");
+QString SciScrollbackModel::exportToFile(QString filePath)
+{
+    QSaveFile file(filePath);
+    bool ret = file.open(QIODevice::WriteOnly | QIODevice::Text);
+    if (ret == false) {
+        qCCritical(logCategorySci) << "open failed:" << file.errorString() << filePath;
+        return file.errorString();
+    }
+
+    platform_->storeExportPath(filePath);
+    setExportFilePath(filePath);
+
+    qint64 bytesWritten = file.write(getTextForExport());
+    if (bytesWritten <= 0) {
+        QString errorString = exportFile_.errorString();
+        qCCritical(logCategorySci) << "write failed" << file.errorString() << filePath;
+        return file.errorString();
+    }
+
+    bool committed = file.commit();
+    if (committed == false) {
+        qCCritical(logCategorySci) << "commit failed:" << file.errorString() << filePath;
+        return file.errorString();
+    }
+
+    return QString();
+}
+
+bool SciScrollbackModel::startAutoExport(const QString &filePath)
+{
+    if (autoExportIsActive_) {
+        return false;
+    }
+
+    setAutoExportErrorString("");
+
+    exportFile_.setFileName(filePath);
+    bool ret = exportFile_.open(QIODevice::WriteOnly | QIODevice::Text);
+    if (ret == false ) {
+        qCCritical(logCategorySci) << "open fiiled" << filePath << exportFile_.errorString();
+        setAutoExportErrorString(exportFile_.errorString());
+        return false;
+    }
+
+    platform_->storeAutoExportPath(filePath);
+    setAutoExportFilePath(filePath);
+
+    setAutoExportIsActive(true);
+    return true;
+}
+
+void SciScrollbackModel::stopAutoExport()
+{
+    exportFile_.close();
+    setAutoExportIsActive(false);
+}
+
+QByteArray SciScrollbackModel::stringify(const ScrollbackModelItem &item) const
+{
+    QByteArray line;
+
+    line += item.timestamp.toString(Qt::ISODate).toUtf8();
+    line += " ";
+    line += item.type == MessageType::Request ? "request" : "response";
+    line += " ";
+    line += item.message;
+    line += "\n";
+
+    return line;
+}
+
+QByteArray SciScrollbackModel::getTextForExport() const
+{
+    QByteArray text;
+    for (const auto &item : data_) {
+        text.append(stringify(item));
     }
 
     return text;
@@ -143,6 +229,42 @@ void SciScrollbackModel::setMaximumCount(int maximumCount)
         maximumCount_ = maximumCount;
         sanitize();
     }
+}
+
+QString SciScrollbackModel::exportFilePath() const
+{
+    return exportFilePath_;
+}
+
+void SciScrollbackModel::setExportFilePath(const QString &filePath)
+{
+    if (exportFilePath_ != filePath) {
+        exportFilePath_ = filePath;
+        emit exportFilePathChanged();
+    }
+}
+
+bool SciScrollbackModel::autoExportIsActive() const
+{
+    return autoExportIsActive_;
+}
+
+QString SciScrollbackModel::autoExportFilePath() const
+{
+    return autoExportFilePath_;
+}
+
+void SciScrollbackModel::setAutoExportFilePath(const QString &filePath)
+{
+    if (autoExportFilePath_ != filePath) {
+        autoExportFilePath_ = filePath;
+        emit autoExportFilePathChanged();
+    }
+}
+
+QString SciScrollbackModel::autoExportErrorString() const
+{
+    return autoExportErrorString_;
 }
 
 QHash<int, QByteArray> SciScrollbackModel::roleNames() const
@@ -177,5 +299,21 @@ void SciScrollbackModel::sanitize()
 
         endRemoveRows();
         emit countChanged();
+    }
+}
+
+void SciScrollbackModel::setAutoExportIsActive(bool exportIsActive)
+{
+    if (autoExportIsActive_ != exportIsActive) {
+        autoExportIsActive_ = exportIsActive;
+        emit autoExportIsActiveChanged();
+    }
+}
+
+void SciScrollbackModel::setAutoExportErrorString(const QString &errorString)
+{
+    if (autoExportErrorString_ != errorString) {
+        autoExportErrorString_ = errorString;
+        emit autoExportErrorStringChanged();
     }
 }
