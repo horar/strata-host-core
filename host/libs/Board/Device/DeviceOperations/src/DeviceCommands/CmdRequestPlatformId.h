@@ -3,7 +3,7 @@
 
 #include "BaseDeviceCommand.h"
 
-namespace strata {
+namespace strata::device::command {
 
 class CmdRequestPlatformId : public BaseDeviceCommand {
 public:

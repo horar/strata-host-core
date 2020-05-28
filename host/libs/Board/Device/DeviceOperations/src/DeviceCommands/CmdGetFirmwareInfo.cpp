@@ -3,7 +3,7 @@
 
 #include <CommandValidator.h>
 
-namespace strata {
+namespace strata::device::command {
 
 CmdGetFirmwareInfo::CmdGetFirmwareInfo(const device::DevicePtr& device, bool requireResponse) :
     BaseDeviceCommand(device, QStringLiteral("get_firmware_info")), requireResponse_(requireResponse) { }

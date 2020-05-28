@@ -11,7 +11,7 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
-namespace strata {
+namespace strata::device::command {
 
 CmdFlashFirmware::CmdFlashFirmware(const device::DevicePtr& device) :
     BaseDeviceCommand(device, QStringLiteral("flash_firmware")),

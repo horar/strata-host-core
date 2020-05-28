@@ -5,7 +5,7 @@
 
 #include <QVector>
 
-namespace strata {
+namespace strata::device::command {
 
 class CmdFlashFirmware : public BaseDeviceCommand {
 public:

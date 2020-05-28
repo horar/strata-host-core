@@ -3,7 +3,7 @@
 
 #include "BaseDeviceCommand.h"
 
-namespace strata {
+namespace strata::device::command {
 
 class CmdUpdateFirmware : public BaseDeviceCommand {
 public:

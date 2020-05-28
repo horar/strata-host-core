@@ -243,10 +243,10 @@ bool BoardManager::addSerialPort(const int deviceId) {
 
         // QSharedPointer because QScopedPointer does not have custom deleter.
         // We need deleteLater() because DeviceOperations object is deleted in slot connected to signal from it.
-        auto operation = QSharedPointer<DeviceOperations>(new DeviceOperations(device), &QObject::deleteLater);
+        auto operation = QSharedPointer<device::DeviceOperations>(new device::DeviceOperations(device), &QObject::deleteLater);
 
-        connect(operation.get(), &DeviceOperations::finished, this, &BoardManager::handleOperationFinished);
-        connect(operation.get(), &DeviceOperations::error, this, &BoardManager::handleOperationError);
+        connect(operation.get(), &device::DeviceOperations::finished, this, &BoardManager::handleOperationFinished);
+        connect(operation.get(), &device::DeviceOperations::error, this, &BoardManager::handleOperationError);
 
         operation->identify(reqFwInfoResp_);
 
@@ -277,15 +277,15 @@ void BoardManager::logInvalidDeviceId(const QString& message, const int deviceId
     qCWarning(logCategoryBoardManager).nospace() << message << ", invalid device ID: 0x" << hex << static_cast<uint>(deviceId);
 }
 
-void BoardManager::handleOperationFinished(DeviceOperation operation, int) {
-    DeviceOperations *devOp = qobject_cast<DeviceOperations*>(QObject::sender());
+void BoardManager::handleOperationFinished(device::DeviceOperation operation, int) {
+    device::DeviceOperations *devOp = qobject_cast<device::DeviceOperations*>(QObject::sender());
     if (devOp == nullptr) {
         return;
     }
 
     int deviceId = devOp->deviceId();
     bool boardRecognized = false;
-    if (operation == DeviceOperation::Identify) {
+    if (operation == device::DeviceOperation::Identify) {
         boardRecognized = true;
     }
 
@@ -296,7 +296,7 @@ void BoardManager::handleOperationFinished(DeviceOperation operation, int) {
 }
 
 void BoardManager::handleOperationError(QString errMsg) {
-    DeviceOperations *devOp = qobject_cast<DeviceOperations*>(QObject::sender());
+    device::DeviceOperations *devOp = qobject_cast<device::DeviceOperations*>(QObject::sender());
     if (devOp == nullptr) {
         return;
     }

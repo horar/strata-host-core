@@ -15,10 +15,14 @@
 
 #include <Device/Device.h>
 
-namespace strata {
+namespace strata::device {
 
     class DeviceOperations;
     enum class DeviceOperation: int;
+
+}
+
+namespace strata {
 
     class BoardManager : public QObject
     {
@@ -132,7 +136,7 @@ namespace strata {
     private slots:
         void checkNewSerialDevices();
         void handleNewMessage(QString message);  // DEPRECATED
-        void handleOperationFinished(DeviceOperation operation, int);
+        void handleOperationFinished(device::DeviceOperation operation, int);
         void handleOperationError(QString message);
         void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
 
@@ -154,7 +158,7 @@ namespace strata {
         QHash<int, QString> serialIdToName_;
         QHash<int, device::DevicePtr> openedDevices_;
 
-        QHash<int, QSharedPointer<DeviceOperations>> deviceOperations_;
+        QHash<int, QSharedPointer<device::DeviceOperations>> deviceOperations_;
 
         // flag if require response to get_firmware_info command
         bool reqFwInfoResp_;

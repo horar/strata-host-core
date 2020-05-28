@@ -10,7 +10,7 @@
 
 #include <Device/Device.h>
 
-namespace strata {
+namespace strata::device::command {
 
 enum class CommandResult {
     InProgress,        // waiting for proper response from device

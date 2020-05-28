@@ -1,11 +1,12 @@
 #include "CmdUpdateFirmware.h"
 #include "DeviceOperationsConstants.h"
+#include <DeviceOperationsFinished.h>
 
 #include <CommandValidator.h>
 
 #include "logging/LoggingQtCategories.h"
 
-namespace strata {
+namespace strata::device::command {
 
 CmdUpdateFirmware::CmdUpdateFirmware(const device::DevicePtr& device) :
     BaseDeviceCommand(device, QStringLiteral("update_firmware")) { }
@@ -44,8 +45,8 @@ std::chrono::milliseconds CmdUpdateFirmware::waitBeforeNextCommand() const {
 }
 
 int CmdUpdateFirmware::dataForFinish() const {
-    // If this command was skipped, return 1 instead of default value INT_MIN.
-    return (result_ == CommandResult::FinaliseOperation) ? 1 : INT_MIN;
+    // If this command was skipped, return 1 instead of default value OPERATION_DEFAULT_DATA (INT_MIN).
+    return (result_ == CommandResult::FinaliseOperation) ? 1 : OPERATION_DEFAULT_DATA;
 }
 
 }  // namespace

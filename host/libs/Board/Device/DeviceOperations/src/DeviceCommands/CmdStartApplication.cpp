@@ -3,7 +3,7 @@
 
 #include <CommandValidator.h>
 
-namespace strata {
+namespace strata::device::command {
 
 CmdStartApplication::CmdStartApplication(const device::DevicePtr& device) :
     BaseDeviceCommand(device, QStringLiteral("start_application")) { }

@@ -2,7 +2,7 @@
 
 #include <DeviceOperationsFinished.h>
 
-namespace strata {
+namespace strata::device::command {
 
 BaseDeviceCommand::BaseDeviceCommand(const device::DevicePtr& device, const QString& commandName) :
     cmdName_(commandName), device_(device), ackReceived_(false), result_(CommandResult::InProgress) { }

@@ -10,7 +10,7 @@
 #include <CodecBase64.h>
 #include <Buypass.h>
 
-namespace strata {
+namespace strata::device::command {
 
 CmdBackupFirmware::CmdBackupFirmware(const device::DevicePtr& device, QVector<quint8>& chunk) :
     BaseDeviceCommand(device, QStringLiteral("backup_firmware")),

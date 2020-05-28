@@ -13,9 +13,13 @@
 
 #include <DeviceOperationsFinished.h>
 
-namespace strata {
+namespace strata::device::command {
 
 class BaseDeviceCommand;
+
+}
+
+namespace strata::device {
 
 /*!
  * The DeviceOperation enum for DeviceOperations::finished() signal.
@@ -138,8 +142,8 @@ private:
 
     DeviceOperation operation_;
 
-    std::vector<std::unique_ptr<BaseDeviceCommand>> commandList_;
-    std::vector<std::unique_ptr<BaseDeviceCommand>>::iterator currentCommand_;
+    std::vector<std::unique_ptr<command::BaseDeviceCommand>> commandList_;
+    std::vector<std::unique_ptr<command::BaseDeviceCommand>>::iterator currentCommand_;
 
     QVector<quint8> backupChunk_;
 };

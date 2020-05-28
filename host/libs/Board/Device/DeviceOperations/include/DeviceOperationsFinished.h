@@ -3,7 +3,7 @@
 
 #include <climits>
 
-namespace strata {
+namespace strata::device {
 
 // special values for DeviceOperations finished() signal
 constexpr int OPERATION_DEFAULT_DATA(INT_MIN);

@@ -9,11 +9,12 @@
 #include <QMutex>
 #include <QReadWriteLock>
 
-namespace strata {
+namespace strata::device {
+    class DeviceOperations;
 
-class DeviceOperations;
-class BaseDeviceCommand;
-
+    namespace command {
+        class BaseDeviceCommand;
+    }
 }
 
 namespace strata::device {
@@ -36,8 +37,8 @@ namespace strata::device {
         Q_OBJECT
         Q_DISABLE_COPY(Device)
 
-    friend class strata::DeviceOperations;
-    friend class strata::BaseDeviceCommand;
+    friend class strata::device::DeviceOperations;
+    friend class strata::device::command::BaseDeviceCommand;
 
     public:
         /**

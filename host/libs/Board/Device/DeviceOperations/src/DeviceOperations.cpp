@@ -8,7 +8,7 @@
 
 #include <rapidjson/document.h>
 
-namespace strata {
+namespace strata::device {
 
 DeviceOperations::DeviceOperations(const device::DevicePtr& device) :
     device_(device), responseTimer_(this), operation_(DeviceOperation::None)
@@ -35,8 +35,8 @@ DeviceOperations::~DeviceOperations() {
 
 void DeviceOperations::identify(bool requireFwInfoResponse) {
     if (startOperation(DeviceOperation::Identify)) {
-        commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, requireFwInfoResponse));
-        commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
+        commandList_.emplace_back(std::make_unique<command::CmdGetFirmwareInfo>(device_, requireFwInfoResponse));
+        commandList_.emplace_back(std::make_unique<command::CmdRequestPlatformId>(device_));
         currentCommand_ = commandList_.begin();
         // Some boards need time for booting
         QTimer::singleShot(IDENTIFY_LAUNCH_DELAY, this, [this](){ emit sendCommand(QPrivateSignal()); });
@@ -47,9 +47,9 @@ void DeviceOperations::switchToBootloader() {
     if (startOperation(DeviceOperation::SwitchToBootloader)) {
         // If board is already in bootloader mode, CmdUpdateFirmware is skipped
         // and whole operation ends. Finished() signal will be sent with data set to 1 then.
-        commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
-        commandList_.emplace_back(std::make_unique<CmdUpdateFirmware>(device_));
-        commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
+        commandList_.emplace_back(std::make_unique<command::CmdRequestPlatformId>(device_));
+        commandList_.emplace_back(std::make_unique<command::CmdUpdateFirmware>(device_));
+        commandList_.emplace_back(std::make_unique<command::CmdRequestPlatformId>(device_));
         currentCommand_ = commandList_.begin();
         emit sendCommand(QPrivateSignal());
     }
@@ -58,11 +58,11 @@ void DeviceOperations::switchToBootloader() {
 void DeviceOperations::flashFirmwareChunk(const QVector<quint8>& chunk, int chunkNumber) {
     if (startOperation(DeviceOperation::FlashFirmwareChunk)) {
         if (commandList_.empty()) {
-            commandList_.emplace_back(std::make_unique<CmdFlashFirmware>(device_));
+            commandList_.emplace_back(std::make_unique<command::CmdFlashFirmware>(device_));
             currentCommand_ = commandList_.begin();
         }
         if (currentCommand_ != commandList_.end()) {
-            CmdFlashFirmware *cmdFlash = dynamic_cast<CmdFlashFirmware*>(currentCommand_->get());
+            command::CmdFlashFirmware *cmdFlash = dynamic_cast<command::CmdFlashFirmware*>(currentCommand_->get());
             if (cmdFlash != nullptr) {
                 cmdFlash->setChunk(chunk, chunkNumber);
                 emit sendCommand(QPrivateSignal());
@@ -74,7 +74,7 @@ void DeviceOperations::flashFirmwareChunk(const QVector<quint8>& chunk, int chun
 void DeviceOperations::backupFirmwareChunk() {
     if (startOperation(DeviceOperation::BackupFirmwareChunk)) {
         if (commandList_.empty()) {
-            commandList_.emplace_back(std::make_unique<CmdBackupFirmware>(device_, backupChunk_));
+            commandList_.emplace_back(std::make_unique<command::CmdBackupFirmware>(device_, backupChunk_));
             currentCommand_ = commandList_.begin();
         }
         if (currentCommand_ != commandList_.end()) {
@@ -85,7 +85,7 @@ void DeviceOperations::backupFirmwareChunk() {
 
 void DeviceOperations::startApplication() {
     if (startOperation(DeviceOperation::StartApplication)) {
-        commandList_.emplace_back(std::make_unique<CmdStartApplication>(device_));
+        commandList_.emplace_back(std::make_unique<command::CmdStartApplication>(device_));
         currentCommand_ = commandList_.begin();
         emit sendCommand(QPrivateSignal());
     }
@@ -93,7 +93,7 @@ void DeviceOperations::startApplication() {
 
 void DeviceOperations::refreshPlatformId() {
     if (startOperation(DeviceOperation::RefreshPlatformId)) {
-        commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_, MAX_PLATFORM_ID_RETRIES));
+        commandList_.emplace_back(std::make_unique<command::CmdRequestPlatformId>(device_, MAX_PLATFORM_ID_RETRIES));
         currentCommand_ = commandList_.begin();
         emit sendCommand(QPrivateSignal());
     }
@@ -116,7 +116,7 @@ void DeviceOperations::handleSendCommand() {
     if (currentCommand_ == commandList_.end()) {
         return;
     }
-    BaseDeviceCommand *command = currentCommand_->get();
+    command::BaseDeviceCommand *command = currentCommand_->get();
     if (command->skip()) {
         qCDebug(logCategoryDeviceOperations) << device_ << "Skipping '" << command->name() << "' command.";
         QTimer::singleShot(0, this, [this](){ nextCommand(); });
@@ -165,7 +165,7 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
         if (CommandValidator::validate(CommandValidator::JsonType::ack, doc)) {
             const QString ackStr = doc[JSON_ACK].GetString();
             qCDebug(logCategoryDeviceOperations) << device_ << "Received '" << ackStr << "' ACK.";
-            BaseDeviceCommand *command = currentCommand_->get();
+            command::BaseDeviceCommand *command = currentCommand_->get();
             if (ackStr == command->name()) {
                 command->setAckReceived();
             } else {
@@ -175,7 +175,7 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
         }
     } else {
         if (doc.HasMember(JSON_NOTIFICATION)) {
-            BaseDeviceCommand *command = currentCommand_->get();
+            command::BaseDeviceCommand *command = currentCommand_->get();
             if (command->processNotification(doc)) {
                 responseTimer_.stop();
                 ok = true;
@@ -184,7 +184,7 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
                 }
                 qCDebug(logCategoryDeviceOperations) << device_ << "Processed '" << command->name() << "' notification.";
 
-                if (command->result() == CommandResult::Failure) {
+                if (command->result() == command::CommandResult::Failure) {
                     qCWarning(logCategoryDeviceOperations) << device_ << "Received faulty notification: '" << data << "'.";
                 }
 
@@ -202,11 +202,11 @@ void DeviceOperations::handleResponseTimeout() {
     if (currentCommand_ == commandList_.end()) {
         return;
     }
-    BaseDeviceCommand *command = currentCommand_->get();
+    command::BaseDeviceCommand *command = currentCommand_->get();
     qCWarning(logCategoryDeviceOperations) << device_ << "Command '" << command->name() << "' timed out.";
     command->onTimeout();  // This can change command result.
     // Some commands can timeout - result is other than 'InProgress' then.
-    if (command->result() == CommandResult::InProgress) {
+    if (command->result() == command::CommandResult::InProgress) {
         finishOperation(DeviceOperation::Timeout);
     } else {
         // In this case we move to next command (or do retry).
@@ -251,13 +251,13 @@ void DeviceOperations::nextCommand() {
     if (currentCommand_ == commandList_.end()) {
         return;
     }
-    BaseDeviceCommand *command = currentCommand_->get();
-    CommandResult result = command->result();
+    command::BaseDeviceCommand *command = currentCommand_->get();
+    command::CommandResult result = command->result();
     switch (result) {
-    case CommandResult::InProgress :
+    case command::CommandResult::InProgress :
         //qCDebug(logCategoryDeviceOperations) << device_ << "Waiting for valid notification to '" << command->name() << "' command.";
         break;
-    case CommandResult::Done :
+    case command::CommandResult::Done :
         ++currentCommand_;  // move to next command
         if (currentCommand_ == commandList_.end()) {  // end of command list - finish operation
             finishOperation(operation_, command->dataForFinish());
@@ -265,20 +265,20 @@ void DeviceOperations::nextCommand() {
             emit sendCommand(QPrivateSignal());  // send next command
         }
         break;
-    case CommandResult::Repeat :
+    case command::CommandResult::Repeat :
         // Only prepare for repeat, do not send command. Command will be
         // sent by calling function from DeviceOperations class (flash/backup FW chunk).
         command->prepareRepeat();
         // Operation is not finished yet, so emit only signal and do not call function finishOperation().
         emit finished(operation_, command->dataForFinish());
         break;
-    case CommandResult::Retry :
+    case command::CommandResult::Retry :
         emit sendCommand(QPrivateSignal());  // send same command again
         break;
-    case CommandResult::Failure :
+    case command::CommandResult::Failure :
         finishOperation(DeviceOperation::Failure);
         break;
-    case CommandResult::FinaliseOperation :
+    case command::CommandResult::FinaliseOperation :
         finishOperation(operation_, command->dataForFinish());
         break;
     }
