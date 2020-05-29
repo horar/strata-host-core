@@ -1140,34 +1140,71 @@ ColumnLayout {
                                         }
                                     }
                                 }
-
-                                Rectangle {
-                                    Layout.fillHeight: parent.height
+                                Rectangle{
+                                    Layout.preferredHeight: parent.height/1.5
                                     Layout.preferredWidth: parent.width/7
 
-                                    SGAlignedLabel {
-                                        id: osAlertLabel
-                                        target: osALERT
-                                        text:  "OS/ALERT"
-                                        alignment: SGAlignedLabel.SideTopCenter
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        fontSizeMultiplier: ratioCalc
-                                        font.bold : true
-                                        SGStatusLight {
-                                            id: osALERT
-                                            height: 40 * ratioCalc
-                                            width: 40 * ratioCalc
+                                    ColumnLayout{
+                                        anchors.fill: parent
+                                        Rectangle {
+                                            id: dltConnectedContainer
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
 
-                                            property var status_os_alert: platformInterface.status_os_alert.os_alert
-                                            onStatus_os_alertChanged: {
-                                                if(osALERT === true)
-                                                    osALERT.status = SGStatusLight.Red
-                                                else  osALERT.status = SGStatusLight.Off
+                                            SGAlignedLabel {
+                                                id: dltConnectedLabel
+                                                target: dltConnected
+                                                text: "DLT \n Connected"
+                                                alignment:  SGAlignedLabel.SideTopCenter
+                                                anchors.verticalCenter: parent
+                                                fontSizeMultiplier: ratioCalc
+                                                horizontalAlignment: Text.AlignHCenter
+                                                font.bold : true
+                                                CheckBox{
+                                                    id: dltConnected
+                                                    width: 25
+                                                    height: 25
+                                                    onCheckedChanged: {
+                                                        platformInterface.set_dlt_connected.update(checked)
+                                                    }
+                                                }
+
+
+                                            }
+                                        }
+
+                                        Rectangle {
+
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
+                                            SGAlignedLabel {
+                                                id: osAlertLabel
+                                                target: osALERT
+                                                text:  "OS/ALERT"
+                                                alignment: SGAlignedLabel.SideTopCenter
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                fontSizeMultiplier: ratioCalc
+                                                font.bold : true
+                                                SGStatusLight {
+                                                    id: osALERT
+                                                    height: 40 * ratioCalc
+                                                    width: 40 * ratioCalc
+
+                                                    property var status_os_alert: platformInterface.status_os_alert.os_alert
+                                                    onStatus_os_alertChanged: {
+                                                        if(osALERT === true)
+                                                            osALERT.status = SGStatusLight.Red
+                                                        else  osALERT.status = SGStatusLight.Off
+                                                    }
+
+                                                }
                                             }
 
                                         }
                                     }
                                 }
+
+
                             }
                         }
 
@@ -1279,48 +1316,7 @@ ColumnLayout {
                                                 }
                                             }
                                         }
-                                        Rectangle {
-                                            id: dltConnectedContainer
-                                            Layout.fillHeight: true
-                                            Layout.fillWidth: true
 
-                                            SGAlignedLabel {
-                                                id: dltConnectedLabel
-                                                target: dltConnected
-                                                text: "DLT Connected"
-                                                alignment:  SGAlignedLabel.SideTopCenter
-                                                anchors.verticalCenter: parent.verticalCenter
-                                                fontSizeMultiplier: ratioCalc
-                                                font.bold : true
-                                                CheckBox{
-                                                    id: dltConnected
-                                                    width: 25
-                                                    height: 25
-                                                    onCheckedChanged: {
-                                                        platformInterface.set_dlt_connected.update(checked)
-                                                    }
-                                                }
-
-                                                //                                                SGSwitch {
-                                                //                                                    id: hiccupSwitch
-                                                //                                                    labelsInside: true
-                                                //                                                    checkedLabel: "On"
-                                                //                                                    uncheckedLabel:   "Off"
-                                                //                                                    textColor: "black"              // Default: "black"
-                                                //                                                    handleColor: "white"            // Default: "white"
-                                                //                                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                                //                                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                                //                                                    fontSizeMultiplier: ratioCalc
-                                                //                                                    onToggled: {
-                                                //                                                        if(checked){
-                                                //                                                            platformInterface.enable_hiccup_mode.update("on")
-                                                //                                                        }
-                                                //                                                        else platformInterface.enable_hiccup_mode.update("off")
-                                                //                                                    }
-
-                                                //                                                }
-                                            }
-                                        }
                                         Rectangle {
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
@@ -1358,6 +1354,11 @@ ColumnLayout {
 
 
                                             }
+                                        }
+
+                                        Rectangle{
+                                            Layout.fillHeight: true
+                                            Layout.fillWidth: true
                                         }
 
                                     }
