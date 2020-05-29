@@ -6,7 +6,7 @@
 
 namespace strata {
 
-FlasherConnector::FlasherConnector(const SerialDevicePtr& device, const QString& firmwarePath, QObject* parent) :
+FlasherConnector::FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, QObject* parent) :
     QObject(parent), device_(device), filePath_(firmwarePath),
     tmpBackupFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("firmware_backup"))), action_(Action::None) { }
 

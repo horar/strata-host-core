@@ -6,12 +6,16 @@
 
 #include <memory>
 
-#include <SerialDevice.h>
+#include <Device/Device.h>
 
-namespace strata {
+namespace strata::device {
 
 class DeviceOperations;
 enum class DeviceOperation: int;
+
+}
+
+namespace strata {
 
 class Flasher : public QObject
 {
@@ -36,7 +40,7 @@ class Flasher : public QObject
          * \param device device which will be used by Flasher
          * \param firmwareFilename path to firmware file
          */
-        Flasher(const SerialDevicePtr& device, const QString& firmwareFilename);
+        Flasher(const device::DevicePtr& device, const QString& firmwareFilename);
 
         /*!
          * Flasher destructor.
@@ -59,8 +63,6 @@ class Flasher : public QObject
          * Cancel flash firmware operation.
          */
         void cancel();
-
-        friend QDebug operator<<(QDebug dbg, const Flasher* f);
 
     signals:
         /*!
@@ -102,7 +104,7 @@ class Flasher : public QObject
         void devicePropertiesChanged();
 
     private slots:
-        void handleOperationFinished(DeviceOperation operation, int data);
+        void handleOperationFinished(device::DeviceOperation operation, int data);
         void handleOperationError(QString errStr);
 
     private:
@@ -110,13 +112,11 @@ class Flasher : public QObject
         void handleBackupFirmware(int chunkNumber);
         void finish(Result result);
 
-        SerialDevicePtr device_;
+        device::DevicePtr device_;
 
         QFile fwFile_;
 
-        std::unique_ptr<DeviceOperations> operation_;
-
-        uint deviceId_;
+        std::unique_ptr<device::DeviceOperations> operation_;
 
         int chunkNumber_;
         int chunkCount_;
