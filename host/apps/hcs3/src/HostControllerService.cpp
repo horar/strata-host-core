@@ -441,10 +441,15 @@ void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
         boards_.clearClientId(device_id);
     }
 
+    emit cancelPlatformDocumentRequested(QByteArray::fromStdString(client->getClientId()));
+
     client->resetPlatformId();
 
     // Remove the client from the mapping
+    QByteArray clientId = QByteArray::fromStdString(client->getClientId());
+    current_client_ = nullptr;
     clientList_.remove(client);
+    qCInfo(logCategoryHcs()) << "Client unregistered: " << clientId.toHex();
 }
 
 void HostControllerService::onCmdHostDownloadFiles(const rapidjson::Value* payload)
