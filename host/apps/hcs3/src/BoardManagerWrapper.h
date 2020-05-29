@@ -122,8 +122,8 @@ private:
     inline QString logDeviceId(const int deviceId) const;
 
     struct Board {
-        Board(const strata::SerialDevicePtr& devPtr);
-        strata::SerialDevicePtr device;
+        Board(const strata::device::DevicePtr& devPtr);
+        strata::device::DevicePtr device;
         std::string clientId;
     };
 

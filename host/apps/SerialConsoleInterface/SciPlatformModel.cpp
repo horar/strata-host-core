@@ -195,7 +195,7 @@ int SciPlatformModel::findPlatform(int deviceId) const
 
 void SciPlatformModel::appendNewPlatform(int deviceId)
 {
-    strata::SerialDevicePtr device = boardManager_->device(deviceId);
+    strata::device::DevicePtr device = boardManager_->device(deviceId);
     if (device == nullptr) {
         qCCritical(logCategorySci()) << "device not found by its id";
         return;
