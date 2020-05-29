@@ -375,11 +375,8 @@ void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
     HCS_Client* client = getSenderClient();
     Q_ASSERT(client);
 
-    if (int device_id; boards_.getDeviceIdByClientId(client->getClientId(), device_id)) {
-        boards_.clearClientId(device_id);
-    }
-
-    client->resetPlatformId();
+    qCWarning(logCategoryHcs()) << "Deprecated command: \"cmd\":\"unregister\", use \"hcs::cmd\":\"unregister\" instead.";
+    onCmdHostUnregister(nullptr);
 }
 
 void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
