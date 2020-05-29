@@ -1,4 +1,3 @@
-
 #include "ClientsController.h"
 #include <Connector.h>
 #include <rapidjson/document.h>
@@ -47,13 +46,13 @@ bool ClientsController::initialize(HCS_Dispatcher* dispatcher, rapidjson::Value&
     return true;
 }
 
-bool ClientsController::sendMessage(const std::string& clientId, const std::string& message)
+bool ClientsController::sendMessage(const QByteArray& clientId, const QString& message)
 {
-    assert(clientId.empty() == false);
-    assert(message.empty() == false);
+    assert(clientId.isEmpty() == false);
+    assert(message.isEmpty() == false);
 
-    client_connector_->setDealerID(clientId);
-    return client_connector_->send(message);
+    client_connector_->setDealerID(clientId.toStdString());
+    return client_connector_->send(message.toStdString());
 }
 
 void ClientsController::onDescriptorHandle(spyglass::EvEventBase*, int)
@@ -67,7 +66,7 @@ void ClientsController::onDescriptorHandle(spyglass::EvEventBase*, int)
         }
 
         msg.msg_type = PlatformMessage::eMsgClientMessage;
-        msg.from_client = client_connector_->getDealerID();
+        msg.from_client = QByteArray::fromStdString(client_connector_->getDealerID());
         msg.message = read_message;
         msg.msg_document = nullptr;
 

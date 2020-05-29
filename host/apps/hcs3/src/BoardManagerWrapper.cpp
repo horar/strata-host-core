@@ -21,14 +21,14 @@ void BoardManagerWrapper::initialize() {
     boardManager_.init(false);
 }
 
-void BoardManagerWrapper::sendMessage(const int deviceId, const std::string& message) {
+void BoardManagerWrapper::sendMessage(const int deviceId, const QByteArray& message) {
     auto it = boards_.constFind(deviceId);
     if (it == boards_.constEnd()) {
         qCWarning(logCategoryHcsBoard).noquote() << "Cannot send message, board was not found." << logDeviceId(deviceId);
         return;
     }
     qCDebug(logCategoryHcsBoard).noquote() << "Sending message to board." << logDeviceId(deviceId);
-    it.value().device->sendMessage(QByteArray::fromStdString(message));
+    it.value().device->sendMessage(message);
 }
 
 void BoardManagerWrapper::newConnection(int deviceId, bool recognized) {
@@ -41,8 +41,8 @@ void BoardManagerWrapper::newConnection(int deviceId, bool recognized) {
         connect(device.get(), &Device::msgFromDevice, this, &BoardManagerWrapper::messageFromBoard);
         boards_.insert(deviceId, Board(device));
 
-        QString classId = QString::fromStdString(getClassId(deviceId));
-        QString platformId = QString::fromStdString(getPlatformId(deviceId));
+        QString classId = getClassId(deviceId);
+        QString platformId = getPlatformId(deviceId);
 
         qCInfo(logCategoryHcsBoard).noquote() << "Connected new board." << logDeviceId(deviceId);
 
@@ -79,14 +79,14 @@ void BoardManagerWrapper::messageFromBoard(QString message)
     }
 
     int deviceId = device->deviceId();
-    QString platformId = QString::fromStdString(getPlatformId(deviceId));
+    QString platformId = getPlatformId(deviceId);
 
     qCDebug(logCategoryHcsBoard).noquote() << "New board message." << logDeviceId(deviceId);
 
     emit boardMessage(platformId, message);
 }
 
-void BoardManagerWrapper::createPlatformsList(std::string& result) {
+QString BoardManagerWrapper::createPlatformsList() {
     QJsonArray arr;
     for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
         QJsonObject item {
@@ -103,34 +103,34 @@ void BoardManagerWrapper::createPlatformsList(std::string& result) {
     };
     QJsonDocument doc(msg);
 
-    result = doc.toJson(QJsonDocument::Compact).toStdString();
+    return doc.toJson(QJsonDocument::Compact);
 }
 
-std::string BoardManagerWrapper::getClientId(const int deviceId) const {
+QByteArray BoardManagerWrapper::getClientId(const int deviceId) const {
     auto it = boards_.constFind(deviceId);
     if (it != boards_.constEnd()) {
         return it.value().clientId;
     }
-    return std::string();
+    return QByteArray();
 }
 
-std::string BoardManagerWrapper::getClassId(const int deviceId) const {
+QString BoardManagerWrapper::getClassId(const int deviceId) const {
     auto it = boards_.constFind(deviceId);
     if (it != boards_.constEnd()) {
-        return it.value().device->property(DeviceProperties::classId).toStdString();
+        return it.value().device->property(DeviceProperties::classId);
     }
-    return std::string();
+    return QString();
 }
 
-std::string BoardManagerWrapper::getPlatformId(const int deviceId) const {
+QString BoardManagerWrapper::getPlatformId(const int deviceId) const {
     auto it = boards_.constFind(deviceId);
     if (it != boards_.constEnd()) {
-        return it.value().device->property(DeviceProperties::platformId).toStdString();
+        return it.value().device->property(DeviceProperties::platformId);
     }
-    return std::string();
+    return QString();
 }
 
-bool BoardManagerWrapper::getDeviceIdByClientId(const std::string& clientId, int& deviceId) const {
+bool BoardManagerWrapper::getDeviceIdByClientId(const QByteArray& clientId, int& deviceId) const {
 // Original implementation in BoardsController class iterated through boards (PlatformBoard objects)
 // and returned first board which had desired client ID.
     for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
@@ -142,12 +142,11 @@ bool BoardManagerWrapper::getDeviceIdByClientId(const std::string& clientId, int
     return false;
 }
 
-bool BoardManagerWrapper::getFirstDeviceIdByClassId(const std::string& classId, int& deviceId) const {
+bool BoardManagerWrapper::getFirstDeviceIdByClassId(const QString& classId, int& deviceId) const {
 // Original implementation in BoardsController class iterated through boards (PlatformBoard objects)
 // and returned first board which had desired class ID.
-    QString class_id = QString::fromStdString(classId);
     for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
-        if (class_id == it.value().device->property(DeviceProperties::classId)) {
+        if (classId == it.value().device->property(DeviceProperties::classId)) {
             deviceId = it.key();
             return true;
         }
@@ -155,17 +154,16 @@ bool BoardManagerWrapper::getFirstDeviceIdByClassId(const std::string& classId, 
     return false;
 }
 
-bool BoardManagerWrapper::setClientId(const std::string& clientId, const int deviceId) {
-    QString clientIdStr(QByteArray::fromRawData(clientId.data(), static_cast<int>(clientId.size())).toHex());
+bool BoardManagerWrapper::setClientId(const QByteArray& clientId, const int deviceId) {
     auto it = boards_.find(deviceId);
     if (it != boards_.end()) {
-        if (it.value().clientId.empty()) {
+        if (it.value().clientId.isEmpty()) {
             it.value().clientId = clientId;
-            qCDebug(logCategoryHcsBoard).noquote() << logDeviceId(deviceId) << ": Assigned client '" << clientIdStr << "' to device";
+            qCDebug(logCategoryHcsBoard).noquote() << logDeviceId(deviceId) << ": Assigned client '" << clientId.toHex() << "' to device";
             return true;
         }
     }
-    qCWarning(logCategoryHcsBoard).noquote() << logDeviceId(deviceId) << ": Cannot assign client '" << clientIdStr << "' to device";
+    qCWarning(logCategoryHcsBoard).noquote() << logDeviceId(deviceId) << ": Cannot assign client '" << clientId.toHex() << "' to device";
     return false;
 }
 

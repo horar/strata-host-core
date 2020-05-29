@@ -10,6 +10,8 @@
 #include <set>
 
 #include <QObject>
+#include <QString>
+#include <QByteArray>
 #include "Dispatcher.h"
 #include "ClientsController.h"
 #include "Database.h"
@@ -95,9 +97,9 @@ private:
 
     void handleClientMsg(const PlatformMessage& msg);
     void sendMessageToClients(const QString &platformId, const QString& message);
-    bool disptachMessageToPlatforms(const std::string& dealer_id, const std::string& read_message);
+    bool disptachMessageToPlatforms(const QByteArray& dealer_id, const std::string& read_message);
 
-    bool broadcastMessage(const std::string& message);
+    bool broadcastMessage(const QString& message);
 
     ///////
     //handlers for client (UI)
@@ -116,8 +118,8 @@ private:
 
     HCS_Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 
-    HCS_Client* getClientById(const std::string& client_id);
-    HCS_Client* findClientByPlatformId(const std::string& platformId);
+    HCS_Client* getClientById(const QByteArray& client_id);
+    HCS_Client* findClientByPlatformId(const QString& platformId);
 
     bool parseConfig(const QString& config);
 

@@ -2,6 +2,7 @@
 #define HCS_BOARDMANAGERWRAPPER_H__
 
 #include <QObject>
+#include <QString>
 #include <QHash>
 
 #include <BoardManager.h>
@@ -46,34 +47,34 @@ public:
      * @param deviceId
      * @param message
      */
-    void sendMessage(const int deviceId, const std::string& message);
+    void sendMessage(const int deviceId, const QByteArray& message);
 
     /**
      * Creates JSON with list of platforms
-     * @param[out] result
+     * @return list of platforms in JSON format
      */
-    void createPlatformsList(std::string& result);
+    QString createPlatformsList();
 
     /**
      * Gets client ID of board specified by device ID
      * @param deviceId
      * @return client ID
      */
-    std::string getClientId(const int deviceId) const;
+    QByteArray getClientId(const int deviceId) const;
 
     /**
      * Gets class ID of board specified by device ID
      * @param deviceId
      * @return class ID
      */
-    std::string getClassId(const int deviceId) const;
+    QString getClassId(const int deviceId) const;
 
     /**
      * Gets platform ID of board specified by device ID
      * @param deviceId
      * @return platform ID
      */
-    std::string getPlatformId(const int deviceId) const;
+    QString getPlatformId(const int deviceId) const;
 
     /**
      * Gets device ID for board with specified client ID
@@ -81,7 +82,7 @@ public:
      * @param[out] deviceId
      * @return true if operation was successful, otherwise false (invalid clientId)
      */
-    bool getDeviceIdByClientId(const std::string& clientId, int& deviceId) const;
+    bool getDeviceIdByClientId(const QByteArray& clientId, int& deviceId) const;
 
     /**
      * Gets device ID for board with specified class ID
@@ -89,7 +90,7 @@ public:
      * @param[out] deviceId
      * @return true if operation was successful, otherwise false (invalid deviceId)
      */
-    bool getFirstDeviceIdByClassId(const std::string& classId, int& deviceId) const;
+    bool getFirstDeviceIdByClassId(const QString& classId, int& deviceId) const;
 
     /**
      * Sets client ID for board specified by device ID
@@ -97,7 +98,7 @@ public:
      * @param deviceId
      * @return true if operation was successful, otherwise false
      */
-    bool setClientId(const std::string& clientId, const int deviceId);
+    bool setClientId(const QByteArray& clientId, const int deviceId);
 
     /**
      * Clears client ID for board specified by device ID
@@ -124,7 +125,7 @@ private:
     struct Board {
         Board(const strata::device::DevicePtr& devPtr);
         strata::device::DevicePtr device;
-        std::string clientId;
+        QByteArray clientId;
     };
 
     strata::BoardManager boardManager_;
