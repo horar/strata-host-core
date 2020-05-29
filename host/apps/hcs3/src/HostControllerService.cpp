@@ -17,7 +17,6 @@
 #include <QDir>
 #include <QDebug>
 
-#include <iostream> // Remove this -- for testing only
 
 HostControllerService::HostControllerService(QObject* parent) : QObject(parent)
     , db_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString())
@@ -539,14 +538,6 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)  //const
         qCWarning(logCategoryHcs()) << "Unhandled command type" <<  "Client:" << clientId << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
         return;
     }
-
-    // TODO: Remove this -- this is for testing only..
-    // get a list of connected clients
-    std::cout << "clients count: " << clientList_.size() << std::endl;
-    std::cout << "clients list:" << std::endl;
-    std::for_each(clientList_.begin(), clientList_.end(), [&](HCS_Client* client) {
-        std::cout << "client id: " << QByteArray(client->getClientId().c_str(),client->getClientId().size()).toHex().toStdString() << std::endl; // The print
-    });
 }
 
 
