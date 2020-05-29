@@ -11,6 +11,11 @@
 
 namespace strata {
 
+using device::Device;
+using device::DevicePtr;
+using device::DeviceOperation;
+using device::DeviceOperations;
+
 BoardManager::BoardManager() {
     connect(&timer_, &QTimer::timeout, this, &BoardManager::checkNewSerialDevices);
 }
@@ -91,7 +96,7 @@ bool BoardManager::reconnect(const int deviceId) {
     return ok;
 }
 
-device::DevicePtr BoardManager::device(const int deviceId) {
+DevicePtr BoardManager::device(const int deviceId) {
     QMutexLocker lock(&mutex_);
     auto it = openedDevices_.constFind(deviceId);
     if (it != openedDevices_.constEnd()) {
@@ -231,22 +236,22 @@ void BoardManager::computeListDiff(std::set<int>& list, std::set<int>& added_por
 bool BoardManager::addSerialPort(const int deviceId) {
     const QString name = serialIdToName_.value(deviceId);
 
-    device::DevicePtr device = std::make_shared<device::serial::SerialDevice>(deviceId, name);
+    DevicePtr device = std::make_shared<device::serial::SerialDevice>(deviceId, name);
 
     if (device->open()) {
         openedDevices_.insert(deviceId, device);
 
         qCInfo(logCategoryBoardManager).nospace() << "Added new serial device: ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " << name;
 
-        connect(device.get(), &device::Device::msgFromDevice, this, &BoardManager::handleNewMessage);  // DEPRECATED
-        connect(device.get(), &device::Device::deviceError, this, &BoardManager::handleDeviceError);
+        connect(device.get(), &Device::msgFromDevice, this, &BoardManager::handleNewMessage);  // DEPRECATED
+        connect(device.get(), &Device::deviceError, this, &BoardManager::handleDeviceError);
 
         // QSharedPointer because QScopedPointer does not have custom deleter.
         // We need deleteLater() because DeviceOperations object is deleted in slot connected to signal from it.
-        auto operation = QSharedPointer<device::DeviceOperations>(new device::DeviceOperations(device), &QObject::deleteLater);
+        auto operation = QSharedPointer<DeviceOperations>(new DeviceOperations(device), &QObject::deleteLater);
 
-        connect(operation.get(), &device::DeviceOperations::finished, this, &BoardManager::handleOperationFinished);
-        connect(operation.get(), &device::DeviceOperations::error, this, &BoardManager::handleOperationError);
+        connect(operation.get(), &DeviceOperations::finished, this, &BoardManager::handleOperationFinished);
+        connect(operation.get(), &DeviceOperations::error, this, &BoardManager::handleOperationError);
 
         operation->identify(reqFwInfoResp_);
 
@@ -277,15 +282,15 @@ void BoardManager::logInvalidDeviceId(const QString& message, const int deviceId
     qCWarning(logCategoryBoardManager).nospace() << message << ", invalid device ID: 0x" << hex << static_cast<uint>(deviceId);
 }
 
-void BoardManager::handleOperationFinished(device::DeviceOperation operation, int) {
-    device::DeviceOperations *devOp = qobject_cast<device::DeviceOperations*>(QObject::sender());
+void BoardManager::handleOperationFinished(DeviceOperation operation, int) {
+    DeviceOperations *devOp = qobject_cast<DeviceOperations*>(QObject::sender());
     if (devOp == nullptr) {
         return;
     }
 
     int deviceId = devOp->deviceId();
     bool boardRecognized = false;
-    if (operation == device::DeviceOperation::Identify) {
+    if (operation == DeviceOperation::Identify) {
         boardRecognized = true;
     }
 
@@ -296,7 +301,7 @@ void BoardManager::handleOperationFinished(device::DeviceOperation operation, in
 }
 
 void BoardManager::handleOperationError(QString errMsg) {
-    device::DeviceOperations *devOp = qobject_cast<device::DeviceOperations*>(QObject::sender());
+    DeviceOperations *devOp = qobject_cast<DeviceOperations*>(QObject::sender());
     if (devOp == nullptr) {
         return;
     }
@@ -309,21 +314,21 @@ void BoardManager::handleOperationError(QString errMsg) {
 
 // this slot is deprecated, it will be deleted
 void BoardManager::handleNewMessage(QString message) {
-    device::Device *device = qobject_cast<device::Device*>(QObject::sender());
+    Device *device = qobject_cast<Device*>(QObject::sender());
     if (device == nullptr) {
         return;
     }
     emit newMessage(device->deviceId(), message);
 }
 
-void BoardManager::handleDeviceError(device::Device::ErrorCode errCode, QString errStr) {
+void BoardManager::handleDeviceError(Device::ErrorCode errCode, QString errStr) {
     Q_UNUSED(errStr)
-    device::Device *device = qobject_cast<device::Device*>(QObject::sender());
+    Device *device = qobject_cast<Device*>(QObject::sender());
     if (device == nullptr) {
         return;
     }
     // if serial device is unexpectedly disconnected, remove it
-    if (errCode == device::Device::ErrorCode::SP_ResourceError) {
+    if (errCode == Device::ErrorCode::SP_ResourceError) {
         int deviceId = device->deviceId();
         qCWarning(logCategoryBoardManager).nospace() << "Interrupted connection with device 0x" << hex << static_cast<uint>(deviceId);
         // Device cannot be removed in this slot (this slot is connected to signal emitted by device).

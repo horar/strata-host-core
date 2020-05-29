@@ -1,5 +1,9 @@
 #include "PlatformIdentificationTest.h"
 
+using strata::BoardManager;
+using strata::device::DevicePtr;
+using strata::device::DeviceProperties;
+
 PlatformIdentificationTest::PlatformIdentificationTest(QObject *parent)
     : QObject(parent),
       testDeviceId_{0},
@@ -21,11 +25,11 @@ PlatformIdentificationTest::PlatformIdentificationTest(QObject *parent)
 
 void PlatformIdentificationTest::enableBoardManagerSignals(bool enable) {
     if (enable) {
-        connect(&boardManager_, &strata::BoardManager::boardReady, this, &PlatformIdentificationTest::newConnectionHandler);
-        connect(&boardManager_, &strata::BoardManager::boardDisconnected, this, &PlatformIdentificationTest::closeConnectionHandler);
+        connect(&boardManager_, &BoardManager::boardReady, this, &PlatformIdentificationTest::newConnectionHandler);
+        connect(&boardManager_, &BoardManager::boardDisconnected, this, &PlatformIdentificationTest::closeConnectionHandler);
     } else {
-        disconnect(&boardManager_, &strata::BoardManager::boardReady, this, &PlatformIdentificationTest::newConnectionHandler);
-        disconnect(&boardManager_, &strata::BoardManager::boardDisconnected, this, &PlatformIdentificationTest::closeConnectionHandler);
+        disconnect(&boardManager_, &BoardManager::boardReady, this, &PlatformIdentificationTest::newConnectionHandler);
+        disconnect(&boardManager_, &BoardManager::boardDisconnected, this, &PlatformIdentificationTest::closeConnectionHandler);
     }
 }
 
@@ -116,14 +120,14 @@ void PlatformIdentificationTest::flashCompletedHandler(bool exitedNormally) {
 }
 
 void PlatformIdentificationTest::identifyPlatform(bool deviceRecognized) {
-    strata::device::DevicePtr testDevice = boardManager_.device(testDeviceId_);
+    DevicePtr testDevice = boardManager_.device(testDeviceId_);
     // determine if the test passed or not
     bool testPassed = false;
     
     // if device not recognized, doesn't have name, or doesn't have class id then it fails.
     if ( deviceRecognized == false
-         || testDevice->property(strata::device::DeviceProperties::classId).isEmpty()
-         || testDevice->property(strata::device::DeviceProperties::verboseName).isEmpty()) {
+         || testDevice->property(DeviceProperties::classId).isEmpty()
+         || testDevice->property(DeviceProperties::verboseName).isEmpty()) {
         testPassed = false;
     } else {
         testPassed = true;
@@ -131,22 +135,22 @@ void PlatformIdentificationTest::identifyPlatform(bool deviceRecognized) {
 
     if (testDevice != nullptr) {
         std::cout << "bin name: " << binaryFileNameList_[currentBinaryFileIndex_].toStdString() << std::endl;
-        std::cout << "class id: " << testDevice->property(strata::device::DeviceProperties::classId).toStdString() << std::endl;
-        std::cout << "device name: " << testDevice->property(strata::device::DeviceProperties::deviceName).toStdString() << std::endl;
-        std::cout << "platform id: " << testDevice->property(strata::device::DeviceProperties::platformId).toStdString() << std::endl;
-        std::cout << "verbose name: " << testDevice->property(strata::device::DeviceProperties::verboseName).toStdString() << std::endl;
-        std::cout << "bootloader version: " << testDevice->property(strata::device::DeviceProperties::bootloaderVer).toStdString() << std::endl;
-        std::cout << "application version: " << testDevice->property(strata::device::DeviceProperties::applicationVer).toStdString() << std::endl;
+        std::cout << "class id: " << testDevice->property(DeviceProperties::classId).toStdString() << std::endl;
+        std::cout << "device name: " << testDevice->property(DeviceProperties::deviceName).toStdString() << std::endl;
+        std::cout << "platform id: " << testDevice->property(DeviceProperties::platformId).toStdString() << std::endl;
+        std::cout << "verbose name: " << testDevice->property(DeviceProperties::verboseName).toStdString() << std::endl;
+        std::cout << "bootloader version: " << testDevice->property(DeviceProperties::bootloaderVer).toStdString() << std::endl;
+        std::cout << "application version: " << testDevice->property(DeviceProperties::applicationVer).toStdString() << std::endl;
 
         // Append to the test summary list
         testSummaryList_.push_back({
                                        binaryFileNameList_[currentBinaryFileIndex_],
-                                       testDevice->property(strata::device::DeviceProperties::deviceName),
-                                       testDevice->property(strata::device::DeviceProperties::verboseName),
-                                       testDevice->property(strata::device::DeviceProperties::classId),
-                                       testDevice->property(strata::device::DeviceProperties::platformId),
-                                       testDevice->property(strata::device::DeviceProperties::bootloaderVer),
-                                       testDevice->property(strata::device::DeviceProperties::applicationVer),
+                                       testDevice->property(DeviceProperties::deviceName),
+                                       testDevice->property(DeviceProperties::verboseName),
+                                       testDevice->property(DeviceProperties::classId),
+                                       testDevice->property(DeviceProperties::platformId),
+                                       testDevice->property(DeviceProperties::bootloaderVer),
+                                       testDevice->property(DeviceProperties::applicationVer),
                                        deviceRecognized,
                                        testPassed
                                    });

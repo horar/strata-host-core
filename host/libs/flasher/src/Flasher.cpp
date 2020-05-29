@@ -7,13 +7,17 @@
 
 namespace strata {
 
-Flasher::Flasher(const device::DevicePtr& device, const QString& firmwareFilename) :
+using device::DevicePtr;
+using device::DeviceOperations;
+using device::DeviceOperation;
+
+Flasher::Flasher(const DevicePtr& device, const QString& firmwareFilename) :
     device_(device), fwFile_(firmwareFilename)
 {
-    operation_ = std::make_unique<device::DeviceOperations>(device_);
+    operation_ = std::make_unique<DeviceOperations>(device_);
 
-    connect(operation_.get(), &device::DeviceOperations::finished, this, &Flasher::handleOperationFinished);
-    connect(operation_.get(), &device::DeviceOperations::error, this, &Flasher::handleOperationError);
+    connect(operation_.get(), &DeviceOperations::finished, this, &Flasher::handleOperationFinished);
+    connect(operation_.get(), &DeviceOperations::error, this, &Flasher::handleOperationError);
 
     qCDebug(logCategoryFlasher) << device_ << "Flasher created (unique ID: 0x" << reinterpret_cast<quintptr>(this) << ").";
 }
@@ -67,9 +71,9 @@ void Flasher::cancel() {
     operation_->cancelOperation();
 }
 
-void Flasher::handleOperationFinished(device::DeviceOperation operation, int data) {
+void Flasher::handleOperationFinished(DeviceOperation operation, int data) {
     switch (operation) {
-    case device::DeviceOperation::SwitchToBootloader :
+    case DeviceOperation::SwitchToBootloader :
         emit switchToBootloader(true);
         if (data != 1) {
             // Operation SwitchToBootloader has data set to 1 if board was already in
@@ -79,33 +83,33 @@ void Flasher::handleOperationFinished(device::DeviceOperation operation, int dat
         // negative value (-1) means that no chunk was flashed / backed up yet
         (action_ == Action::Flash) ? handleFlashFirmware(-1) : handleBackupFirmware(-1);
         break;
-    case device::DeviceOperation::FlashFirmwareChunk :
+    case DeviceOperation::FlashFirmwareChunk :
         handleFlashFirmware(data);
         break;
-    case device::DeviceOperation::BackupFirmwareChunk :
+    case DeviceOperation::BackupFirmwareChunk :
         if (data == device::OPERATION_BACKUP_NO_FIRMWARE) {
             finish(Result::NoFirmware);
         } else {
             handleBackupFirmware(data);
         }
         break;
-    case device::DeviceOperation::StartApplication :
+    case DeviceOperation::StartApplication :
         operation_->refreshPlatformId();
         break;
-    case device::DeviceOperation::RefreshPlatformId :
+    case DeviceOperation::RefreshPlatformId :
         qCInfo(logCategoryFlasher) << device_ << "Firmware is ready for use.";
         emit devicePropertiesChanged();
         finish(Result::Ok);
         break;
-    case device::DeviceOperation::Timeout :
+    case DeviceOperation::Timeout :
         qCCritical(logCategoryFlasher) << device_ << "Timeout during firmware operation.";
         finish(Result::Timeout);
         break;
-    case device::DeviceOperation::Cancel :
+    case DeviceOperation::Cancel :
         qCWarning(logCategoryFlasher) << device_ << "Firmware operation was cancelled.";
         finish(Result::Cancelled);
         break;
-    case device::DeviceOperation::Failure :
+    case DeviceOperation::Failure :
         {
             QString errStr(QStringLiteral("Firmware operation has failed (faulty response from device)."));
             qCCritical(logCategoryFlasher) << device_ << errStr;
