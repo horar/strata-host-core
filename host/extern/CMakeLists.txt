@@ -427,17 +427,17 @@ if(NOT WIN32)
     ExternalProject_Add(mqtt
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/qtmqtt
-        CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${SOURCE_DIR_EXTERN}/qtmqtt/qtmqtt.pro
+        CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} "CONFIG+=qt_no_install_library" "target.path=${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}" "INSTALLS+=target" ${SOURCE_DIR_EXTERN}/qtmqtt/qtmqtt.pro
         COMMAND ${GIT_EXECUTABLE} --git-dir=${SOURCE_DIR_EXTERN}/qtmqtt/.git checkout ${Qt5Core_VERSION_STRING}
 
     )
 endif()
 
-add_library(mqtt::mqtt STATIC IMPORTED GLOBAL)
+add_library(mqtt::mqtt SHARED IMPORTED GLOBAL)
 if(NOT WIN32)
     set_target_properties(mqtt::mqtt PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include"
-        IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}mqtt${CMAKE_STATIC_LIBRARY_SUFFIX}"
+        INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/QtMqtt.framework/Headers"
+        IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/QtMqtt.framework.dSYM"
     )
 endif()
 add_dependencies(mqtt::mqtt DEPENDS mqtt)
