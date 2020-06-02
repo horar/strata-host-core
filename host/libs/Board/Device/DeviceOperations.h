@@ -129,7 +129,7 @@ private slots:
     void handleResponseTimeout();
     void handleDeviceError(device::Device::ErrorCode errCode, QString msg);
 
-private:
+protected:
     bool startOperation(DeviceOperation operation);
     void nextCommand();
     void finishOperation(DeviceOperation operation, int data = OPERATION_DEFAULT_DATA);

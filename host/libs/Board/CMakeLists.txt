@@ -102,3 +102,7 @@ target_link_libraries(${BOARD_MANAGER}
 set_target_properties(${BOARD_MANAGER} PROPERTIES
     AUTOMOC ON
 )
+
+if(BUILD_TESTING)
+    add_subdirectory(BoardManager/test)
+endif()

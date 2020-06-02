@@ -33,13 +33,13 @@ namespace strata {
 
     public:
         BoardManager();
-        ~BoardManager();
+        virtual ~BoardManager();
 
         /**
          * Initialize BoardManager (start managing connected devices).
          * @param requireFwInfoResponse if true require response to get_firmware_info command during device identification
          */
-        void init(bool requireFwInfoResponse = true);
+        virtual void init(bool requireFwInfoResponse = true);
 
         /**
          * Send a message to the device.
@@ -133,17 +133,19 @@ namespace strata {
          */
         void readyDeviceIdsChanged();
 
-    private slots:
-        void checkNewSerialDevices();
-        void handleNewMessage(QString message);  // DEPRECATED
-        void handleOperationFinished(device::DeviceOperation operation, int);
-        void handleOperationError(QString message);
-        void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
+    protected slots:
+        virtual void checkNewSerialDevices();
+        virtual void handleNewMessage(QString message);  // DEPRECATED
+        virtual void handleOperationFinished(device::DeviceOperation operation, int);
+        virtual void handleOperationError(QString message);
+        virtual void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
 
-    private:
+    protected:
         void computeListDiff(std::set<int>& list, std::set<int>& added_ports, std::set<int>& removed_ports);
         bool addSerialPort(const int deviceId);
-        bool removeSerialPort(const int deviceId);
+        bool openDevice(const int deviceId, const device::DevicePtr newDevice);
+        void startDeviceOperations(const int deviceId, const device::DevicePtr device);
+        bool closeDevice(const int deviceId);
 
         void logInvalidDeviceId(const QString& message, const int deviceId) const;
 
