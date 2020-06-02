@@ -30,7 +30,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 add_library(${PROJECT_NAME}Lib STATIC
     src/HostControllerService.cpp
-    src/BoardManagerWrapper.cpp
+    src/BoardController.cpp
     src/Dispatcher.cpp
     src/HCS_Client.cpp
     src/ClientsController.cpp

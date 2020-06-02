@@ -78,9 +78,9 @@ bool HostControllerService::initialize(const QString& config)
     connect(this, &HostControllerService::downloadPlatformFilesRequested, storageManager_, &StorageManager::requestDownloadPlatformFiles, Qt::QueuedConnection);
     connect(this, &HostControllerService::cancelPlatformDocumentRequested, storageManager_, &StorageManager::requestCancelAllDownloads, Qt::QueuedConnection);
 
-    connect(&boards_, &BoardManagerWrapper::boardConnected, this, &HostControllerService::platformConnected);
-    connect(&boards_, &BoardManagerWrapper::boardDisconnected, this, &HostControllerService::platformDisconnected);
-    connect(&boards_, &BoardManagerWrapper::boardMessage, this, &HostControllerService::sendMessageToClients);
+    connect(&boards_, &BoardController::boardConnected, this, &HostControllerService::platformConnected);
+    connect(&boards_, &BoardController::boardDisconnected, this, &HostControllerService::platformDisconnected);
+    connect(&boards_, &BoardController::boardMessage, this, &HostControllerService::sendMessageToClients);
 
     QString baseUrl = QString::fromStdString( db_cfg["file_server"].GetString() );
     storageManager_->setBaseUrl(baseUrl);

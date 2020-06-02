@@ -16,7 +16,7 @@
 #include "ClientsController.h"
 #include "Database.h"
 #include "LoggingAdapter.h"
-#include "BoardManagerWrapper.h"
+#include "BoardController.h"
 #include <QJsonArray>
 
 
@@ -123,7 +123,7 @@ private:
 
     bool parseConfig(const QString& config);
 
-    BoardManagerWrapper boards_;
+    BoardController boards_;
     ClientsController clients_;     //UI or other clients
     Database db_;
     LoggingAdapter dbLogAdapter_;
