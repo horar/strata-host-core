@@ -9,10 +9,15 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOMOC ON)
 
-enable_testing(true)
-
-file(GLOB sources "*.cpp")
-add_executable(${PROJECT_NAME}-test ${sources})
+add_executable(${PROJECT_NAME}-test
+    BoardManagerDerivate.cpp
+    BoardManagerIntegrationTest.cpp
+    BoardManagerTest.cpp
+    DeviceMock.cpp
+    DeviceOperationsDerivate.cpp
+    DeviceOperationsTest.cpp
+    main.cpp
+)
 
 target_link_libraries(${PROJECT_NAME}-test
     PRIVATE Qt5::Test

@@ -8,7 +8,7 @@ using strata::device::Device;
 using strata::device::DeviceOperations;
 using strata::device::DevicePtr;
 
-BoardManagerDerivate::BoardManagerDerivate() : strata::BoardManager()
+BoardManagerDerivate::BoardManagerDerivate() : BoardManager()
 {
 }
 

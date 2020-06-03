@@ -33,6 +33,18 @@ private slots:
     void connectMultipleTest();
     void sendMessageTest();
 
+    //signals tests
+    void boardConnectedSignalTest();
+    void boardDisconnected();
+    void boardReady();
+    void boardError();
+    void readyDeviceIdsChanged();
+
+    //slots tests
+    void handleOperationFinished();
+    void handleOperationError();
+    void handleDeviceError();
+
 protected slots:
     void onBoardDisconnected(int deviceId);
 

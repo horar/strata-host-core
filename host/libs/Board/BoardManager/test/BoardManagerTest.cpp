@@ -144,13 +144,51 @@ void BoardManagerTest::connectMultipleTest()
 }
 
 // TODO tests for BoardManager signals:
-// boardConnected
-// boardDisconnected
-// boardReady
-// boardError
-// readyDeviceIdsChanged
+void BoardManagerTest::boardConnectedSignalTest()
+{
+    QEXPECT_FAIL("", "TODO", Continue);
+    QVERIFY(false);
+}
+
+void BoardManagerTest::boardDisconnected()
+{
+    QEXPECT_FAIL("", "TODO", Continue);
+    QVERIFY(false);
+}
+
+void BoardManagerTest::boardReady()
+{
+    QEXPECT_FAIL("", "TODO", Continue);
+    QVERIFY(false);
+}
+
+void BoardManagerTest::boardError()
+{
+    QEXPECT_FAIL("", "TODO", Continue);
+    QVERIFY(false);
+}
+
+void BoardManagerTest::readyDeviceIdsChanged()
+{
+    QEXPECT_FAIL("", "TODO", Continue);
+    QVERIFY(false);
+}
 
 // TODO tests for BoardManager slots:
-// handleOperationFinished
-// handleOperationError
-// handleDeviceError
+void BoardManagerTest::handleOperationFinished()
+{
+    QEXPECT_FAIL("", "TODO", Continue);
+    QVERIFY(false);
+}
+
+void BoardManagerTest::handleOperationError()
+{
+    QEXPECT_FAIL("", "TODO", Continue);
+    QVERIFY(false);
+}
+
+void BoardManagerTest::handleDeviceError()
+{
+    QEXPECT_FAIL("", "TODO", Continue);
+    QVERIFY(false);
+}
