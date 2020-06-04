@@ -66,6 +66,8 @@ public:
     Q_INVOKABLE void sendCommand(QString cmd);
     Q_INVOKABLE void disconnectPlatform();
 
+    void setNotificationThreadRunning(bool running);
+
 signals:
     // ---
     // Core Framework Signals

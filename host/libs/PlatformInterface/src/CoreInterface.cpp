@@ -49,10 +49,16 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
 
 CoreInterface::~CoreInterface()
 {
-    //qCDebug(logCategoryCoreInterface) << "CoreInterface::~CoreInterface() DTOR\n";
+    setNotificationThreadRunning(false);
+    bool closed = hcc->close();
 
-    delete(hcc);
-    notification_thread_.detach();
+    if (closed && notification_thread_.joinable()) {
+        notification_thread_.join();
+    } else {
+        notification_thread_.detach();
+    }
+
+    delete hcc;
 }
 
 // @f notificationsThreadHandle
@@ -91,6 +97,10 @@ void CoreInterface::notificationsThread()
         // TODO [ian] need to avoid uneeded std::string to QString conversion
         // TODO [ian] need to error check/validate json messages
         string message = hcc->receiveNotification();  // Host Controller Service
+
+        if (message.length() == 0 ) {
+            continue;
+        }
 
         QString n(message.c_str());
 
@@ -259,6 +269,11 @@ void CoreInterface::disconnectPlatform()
 {
     std::string cmd= "{\"hcs::cmd\":\"disconnect_platform\",\"payload\":{}}";
     hcc->sendCmd(cmd);
+}
+
+void CoreInterface::setNotificationThreadRunning(bool running)
+{
+    notification_thread_running_ = running;
 }
 
 // @f unregisterClient
