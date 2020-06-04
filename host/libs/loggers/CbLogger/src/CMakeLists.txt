@@ -4,17 +4,11 @@ find_package(Qt5 ${VERSION_QT5}
 )
 
 add_library(${PROJECT_NAME} STATIC
-    QtLoggerSetup.cpp
-    LoggingQtCategories.cpp
-)
-
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    AUTOMOC ON
+    CbLoggerSetup.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
-    PUBLIC SpdLogger
 
     PRIVATE strata::CouchbaseLiteCPP
 )
