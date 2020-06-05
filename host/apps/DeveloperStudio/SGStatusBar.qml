@@ -222,7 +222,7 @@ Rectangle {
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                         Authenticator.logout()
                         PlatformSelection.logout()
-                        coreInterface.disconnectPlatform()
+                        sdsModel.coreInterface.disconnectPlatform()
                     }
                     width: profileMenu.width
                 }

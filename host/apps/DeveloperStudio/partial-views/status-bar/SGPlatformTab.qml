@@ -41,8 +41,8 @@ Rectangle {
             dropDownPopup.close()
 
             if (selection.view === "close"){
-                coreInterface.disconnectPlatform() // cancels any active collateral downloads
-                documentManager.clearDocuments();
+                sdsModel.coreInterface.disconnectPlatform() // cancels any active collateral downloads
+                sdsModel.documentManager.clearDocuments();
 
                 let data = {"class_id": platformTabRoot.class_id}
                 NavigationControl.updateState(NavigationControl.events.CLOSE_PLATFORM_VIEW_EVENT, data)  // must call last - model entry/delegate begins destruction

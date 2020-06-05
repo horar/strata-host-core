@@ -10,6 +10,7 @@ import "qrc:/js/login_utilities.js" as SessionUtils
 import "qrc:/partial-views"
 import "qrc:/partial-views/debug-bar"
 import "qrc:/partial-views/platform-view"
+import "qrc:/js/platform_filters.js" as PlatformFilters
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
@@ -29,7 +30,9 @@ SGWidgets.SGMainWindow {
         console.log(Logger.devStudioCategory, "Initializing")
         NavigationControl.init(statusBarContainer, stackContainer)
         Help.registerWindow(mainWindow)
-        if (!PlatformSelection.isInitialized) { PlatformSelection.initialize(coreInterface, documentManager, stackContainer.platformViewModel) }
+        if (!PlatformSelection.isInitialized) {
+            PlatformSelection.initialize(sdsModel.coreInterface, sdsModel.documentManager, stackContainer.platformViewModel)
+        }
         initialized()
     }
 
@@ -37,12 +40,26 @@ SGWidgets.SGMainWindow {
         SessionUtils.close_session()
 
         // End session with HCS
-        coreInterface.unregisterClient();
+        sdsModel.coreInterface.unregisterClient();
 
         // Destruct components dynamically created by NavigationControl
         NavigationControl.removeView(statusBarContainer)
         NavigationControl.removeView(mainContainer)
         platformViewModel.clear()
+    }
+
+    Connections {
+        target: sdsModel
+        onHcsConnectedChanged: {
+
+            if (sdsModel.hcsConnected) {
+                NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
+            } else {
+                PlatformFilters.clearActiveFilters()
+                PlatformSelection.logout()
+                NavigationControl.updateState(NavigationControl.events.CONNECTION_LOST_EVENT)
+            }
+        }
     }
 
     ColumnLayout {
@@ -85,7 +102,7 @@ SGWidgets.SGMainWindow {
 
     Connections {
         id: coreInterfaceConnection
-        target: coreInterface
+        target: sdsModel.coreInterface
 
         onPlatformListChanged: {
 //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)

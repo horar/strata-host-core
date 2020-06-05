@@ -18,6 +18,7 @@ var context = {
   Mapping of verbose_name to file directory structure.
 */
 var screens = {
+    SPLASH_SCREEN: "qrc:/SplashScreen.qml",
     LOGIN_SCREEN: "qrc:/SGLogin.qml",
     PLATFORM_SELECTOR : "qrc:/SGPlatformSelector.qml",
     PLATFORM_VIEW : "qrc:/partial-views/platform-view/SGPlatformView.qml",
@@ -31,8 +32,9 @@ var screens = {
 */
 var states = {
     UNINITIALIZED: 1,       // Init() has not been called
-    LOGIN_STATE: 2,         // User needs to login
-    CONTROL_STATE: 3,       // Platform is connected and we are ready for control
+    NOT_CONNECTED_STATE : 2,// HCS not connected
+    LOGIN_STATE: 3,         // User needs to login
+    CONTROL_STATE: 4,       // Platform is connected and we are ready for control
 }
 
 /*
@@ -47,6 +49,9 @@ var events = {
     PLATFORM_CONNECTED_EVENT:       7,
     CLOSE_PLATFORM_VIEW_EVENT:      8,
     SWITCH_VIEW_EVENT:              9,
+    CONNECTION_LOST_EVENT:          10,
+    CONNECTION_ESTABLISHED_EVENT:   11,
+    PROMPT_SPLASH_SCREEN_EVENT:     12,
 }
 
 /*
@@ -72,7 +77,7 @@ function init(status_bar_container, stack_container)
     platform_view_repeater_ = stack_container.platformViewRepeater
     platform_view_model_ = stack_container.platformViewModel
     stack_container_ = stack_container
-    updateState(events.PROMPT_LOGIN_EVENT)
+    updateState(events.PROMPT_SPLASH_SCREEN_EVENT)
 }
 
 /*
@@ -176,6 +181,15 @@ function globalEventHandler(event,data)
 
     switch(event)
     {
+    case events.PROMPT_SPLASH_SCREEN_EVENT:
+        navigation_state_ = states.NOT_CONNECTED_STATE
+        createView(screens.SPLASH_SCREEN, main_container_)
+
+        // Remove StatusBar
+        removeView(status_bar_container_)
+        status_bar_container_.visible = false
+
+        break;
     case events.PROMPT_LOGIN_EVENT:
         //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Updated state to Login:", states.LOGIN_STATE)
         navigation_state_ = states.LOGIN_STATE
@@ -202,6 +216,16 @@ function globalEventHandler(event,data)
         // Show Login Screen
         navigation_state_ = states.LOGIN_STATE
         updateState(events.PROMPT_LOGIN_EVENT)
+        break;
+
+    case events.CONNECTION_LOST_EVENT:
+        // Reset stack, remove all platform views
+        stack_container_.currentIndex = 0
+        while (platform_view_model_.count > 0) {
+            platform_view_model_.remove(0)
+        }
+
+        updateState(events.PROMPT_SPLASH_SCREEN_EVENT)
         break;
 
     default:
@@ -241,6 +265,17 @@ function updateState(event, data)
 
         break;
 
+        case states.NOT_CONNECTED_STATE:
+            switch(event) {
+            case events.CONNECTION_ESTABLISHED_EVENT:
+                updateState(events.PROMPT_LOGIN_EVENT)
+                break;
+            default:
+                globalEventHandler(event,data)
+            break;
+            }
+
+            break;
         case states.LOGIN_STATE:
             switch(event)
             {
