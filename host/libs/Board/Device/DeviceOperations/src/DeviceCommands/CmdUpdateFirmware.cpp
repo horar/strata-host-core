@@ -45,8 +45,8 @@ std::chrono::milliseconds CmdUpdateFirmware::waitBeforeNextCommand() const {
 }
 
 int CmdUpdateFirmware::dataForFinish() const {
-    // If this command was skipped, return 1 instead of default value OPERATION_DEFAULT_DATA (INT_MIN).
-    return (result_ == CommandResult::FinaliseOperation) ? 1 : OPERATION_DEFAULT_DATA;
+    // If this command was skipped, return OPERATION_ALREADY_IN_BOOTLOADER (1) instead of default value OPERATION_DEFAULT_DATA (INT_MIN).
+    return (result_ == CommandResult::FinaliseOperation) ? OPERATION_ALREADY_IN_BOOTLOADER : OPERATION_DEFAULT_DATA;
 }
 
 }  // namespace
