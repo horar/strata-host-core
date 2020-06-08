@@ -161,8 +161,10 @@ void SciPlatformModel::boardReadyHandler(int deviceId, bool recognized)
         SciPlatformSettingsItem *settingsItem = sciSettings_.getBoardData(platform->verboseName());
         if (settingsItem != nullptr) {
             platform->commandHistoryModel()->populate(settingsItem->commandHistoryList);
-        }
+            platform->scrollbackModel()->setExportFilePath(settingsItem->exportPath);
+            platform->scrollbackModel()->setAutoExportFilePath(settingsItem->autoExportPath);
 
+        }
         platform->setStatus(SciPlatform::PlatformStatus::Ready);
     } else {
         platform->setStatus(SciPlatform::PlatformStatus::NotRecognized);
@@ -195,7 +197,7 @@ int SciPlatformModel::findPlatform(int deviceId) const
 
 void SciPlatformModel::appendNewPlatform(int deviceId)
 {
-    strata::SerialDevicePtr device = boardManager_->device(deviceId);
+    strata::device::DevicePtr device = boardManager_->device(deviceId);
     if (device == nullptr) {
         qCCritical(logCategorySci()) << "device not found by its id";
         return;

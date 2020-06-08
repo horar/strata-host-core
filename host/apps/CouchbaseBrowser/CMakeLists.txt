@@ -26,7 +26,7 @@ target_link_libraries("${PROJECT_NAME}Library"
     Qt5::Core
     Qt5::Qml
 
-    strata::CouchbaseLiteCPP
+    strata::Couchbase-Lite-C
     QtLogger
 )
 
@@ -49,17 +49,6 @@ target_link_libraries(${PROJECT_NAME}
 
     "${PROJECT_NAME}Library"
 )
-
-if(APPLE)
-    find_library(FOUNDATION_LIB Foundation REQUIRED)
-    if (NOT FOUNDATION_LIB)
-        message(FATAL_ERROR "Foundation framework not found")
-    endif()
-
-    target_link_libraries(${PROJECT_NAME}
-        ${FOUNDATION_LIB}
-    )
-endif()
 
 if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE

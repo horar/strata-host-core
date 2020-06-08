@@ -14,7 +14,7 @@ Window {
     minimumWidth: 800
     minimumHeight: 600
 
-    title: qsTr("Couchbase Browser") + (openedFile ? " - " + dbName : "")
+    title: qsTr("Couchbase Browser") + (openedFile ? " - " + dbName : "") + (startedListening ? " - " + (loginPopup.username === "" ? "guest" : loginPopup.username) + " @ " + loginPopup.url : "")
     flags: Qt.Window | Qt.WindowFullscreenButtonHint
     visible: true
 
@@ -166,6 +166,9 @@ Window {
             if (startedListening) {
                 loginPopup.close()
                 waitingForStartListening = false;
+            }
+            else {
+                loginPopup.submit()
             }
         }
 

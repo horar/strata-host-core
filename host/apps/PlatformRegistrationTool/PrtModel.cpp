@@ -25,7 +25,7 @@ QString PrtModel::deviceFirmwareVersion() const
         return "";
     }
 
-    return platformList_.first()->property(strata::DeviceProperties::applicationVer);
+    return platformList_.first()->property(strata::device::DeviceProperties::applicationVer);
 }
 
 QString PrtModel::deviceFirmwareVerboseName() const
@@ -34,7 +34,7 @@ QString PrtModel::deviceFirmwareVerboseName() const
         return "";
     }
 
-    return platformList_.first()->property(strata::DeviceProperties::verboseName);
+    return platformList_.first()->property(strata::device::DeviceProperties::verboseName);
 }
 
 void PrtModel::boardReadyHandler(int deviceId, bool recognized)
