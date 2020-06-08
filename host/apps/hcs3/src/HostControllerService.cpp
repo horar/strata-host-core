@@ -482,7 +482,7 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
     //check the client's ID (dealer_id) is in list
     HCS_Client* client = getClientById(clientId);
     if (client == nullptr) {
-        qCInfo(logCategoryHcs) << "new Client:" << clientId;
+        qCInfo(logCategoryHcs) << "new Client:" << clientId.toHex();
 
         client = new HCS_Client(clientId);
         clientList_.push_back(client);
@@ -492,7 +492,7 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
 
     rapidjson::Document service_command;
     if (service_command.Parse(msg.message.c_str()).HasParseError()) {
-        qCWarning(logCategoryHcs) << "Client:" << clientId << "parse error!";
+        qCWarning(logCategoryHcs) << "Client:" << clientId.toHex() << "parse error!";
         return;
     }
 
@@ -505,14 +505,14 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
     }
 
     std::string cmd_name = firstIt->value.GetString();
-    qCInfo(logCategoryHcs) << "Client:" << clientId << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
+    qCInfo(logCategoryHcs) << "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
 
     if (msg_type == "hcs::cmd") {
 
         auto findIt = hostCmdHandler_.find(cmd_name);
         if (findIt == hostCmdHandler_.end()) {
             //TODO: error handling...
-            qCWarning(logCategoryHcs()) << "Unhandled command" <<  "Client:" << clientId << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
+            qCWarning(logCategoryHcs()) << "Unhandled command" <<  "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
             return;
         }
 
@@ -530,7 +530,7 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
         findIt->second(payload);
     }
     else {
-        qCWarning(logCategoryHcs()) << "Unhandled command type" <<  "Client:" << clientId << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
+        qCWarning(logCategoryHcs()) << "Unhandled command type" <<  "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
         return;
     }
 }
