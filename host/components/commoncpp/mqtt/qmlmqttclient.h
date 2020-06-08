@@ -1,8 +1,8 @@
 #ifndef QMLMQTTCLIENT_H
 #define QMLMQTTCLIENT_H
 
-#include <mqtt/qmqttclient.h>
-#include <mqtt/qmqttsubscription.h>
+#include <QtMqtt/qmqttclient.h>
+#include <QtMqtt/qmqttsubscription.h>
 #include "qmlsslconfiguration.h"
 
 class QmlMqttClient;

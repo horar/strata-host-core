@@ -418,26 +418,30 @@ if(NOT DEFINED QT_QMAKE_EXECUTABLE OR QT_QMAKE_EXECUTABLE STREQUAL "")
     message(STATUS "Found qmake: ${QT_QMAKE_EXECUTABLE}")
 endif()
 
+# to get Qt version for git checkout command
 find_package(Qt5 COMPONENTS Core)
-message(STATUS "Qt5Core_VERSION_STRING is: ${Qt5Core_VERSION_STRING}")
-message(STATUS "QT_QMAKE_EXECUTABLE is: ${QT_QMAKE_EXECUTABLE}")
-
-
 if(NOT WIN32)
     ExternalProject_Add(mqtt
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/qtmqtt
-        CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} "CONFIG+=qt_no_install_library" "target.path=${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}" "INSTALLS+=target" ${SOURCE_DIR_EXTERN}/qtmqtt/qtmqtt.pro
+        CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${SOURCE_DIR_EXTERN}/qtmqtt/qtmqtt.pro
         COMMAND ${GIT_EXECUTABLE} --git-dir=${SOURCE_DIR_EXTERN}/qtmqtt/.git checkout ${Qt5Core_VERSION_STRING}
+        BUILD_COMMAND make #needed to do the build before copying the lib to 3p dir
+        INSTALL_COMMAND
 
+        COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/lib/QtMqtt.framework/Headers <INSTALL_DIR>/include/QtMqtt
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/lib/QtMqtt.framework/Versions/5/QtMqtt <BINARY_DIR>/lib/QtMqtt.framework/Versions/5/QtMqtt_debug <INSTALL_DIR>/lib
     )
 endif()
 
-add_library(mqtt::mqtt SHARED IMPORTED GLOBAL)
+add_library(mqtt::mqtt STATIC IMPORTED GLOBAL)
+
 if(NOT WIN32)
     set_target_properties(mqtt::mqtt PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/QtMqtt.framework/Headers"
-        IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/QtMqtt.framework.dSYM"
+        INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include"
+        IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/QtMqtt"
+        IMPORTED_LOCATION_DEBUG "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/QtMqtt_debug"
     )
 endif()
+
 add_dependencies(mqtt::mqtt DEPENDS mqtt)

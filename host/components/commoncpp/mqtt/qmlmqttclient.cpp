@@ -37,5 +37,7 @@ void QmlMqttSubscription::handleMessage(const QMqttMessage &message)
 
 void QmlMqttClient::connectToHostSsl()
 {
-    connectToHostEncrypted(qmlSslConfiguration_->getQsslConfigurationObject());
+    #if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR == 14
+        connectToHostEncrypted(qmlSslConfiguration_->getQsslConfigurationObject());
+    #endif
 }
