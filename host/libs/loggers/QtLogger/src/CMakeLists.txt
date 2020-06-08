@@ -15,8 +15,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC SpdLogger
-
-    PRIVATE strata::CouchbaseLiteCPP
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
