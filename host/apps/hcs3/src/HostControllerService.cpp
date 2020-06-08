@@ -432,12 +432,12 @@ void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
         boards_.clearClientId(device_id);
     }
 
-    emit cancelPlatformDocumentRequested(QByteArray::fromStdString(client->getClientId()));
+    emit cancelPlatformDocumentRequested(client->getClientId());
 
     client->resetPlatformId();
 
     // Remove the client from the mapping
-    QByteArray clientId = QByteArray::fromStdString(client->getClientId());
+    QByteArray clientId = client->getClientId();
     current_client_ = nullptr;
     clientList_.remove(client);
     qCInfo(logCategoryHcs()) << "Client unregistered: " << clientId.toHex();
