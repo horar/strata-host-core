@@ -20,7 +20,7 @@ bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc) {
 
         result_ = CommandResult::Failure;
         if (bootloader.MemberCount() > 0) {  // JSON_BOOTLOADER object has some members -> it is not empty
-            setDeviceProperties(nullptr, nullptr, nullptr, bootloader[JSON_VERSION].GetString(), nullptr);
+            setDeviceProperties(nullptr, nullptr, nullptr, bootloader[JSON_VERSION].GetString(), "");
             result_ = CommandResult::Done;
         }
         if (application.MemberCount() > 0) {  // JSON_APPLICATION object has some members -> it is not empty
@@ -34,7 +34,12 @@ bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc) {
 }
 
 void CmdGetFirmwareInfo::onTimeout() {
-    result_ = (requireResponse_) ? CommandResult::InProgress : CommandResult::Done;
+    if (requireResponse_) {
+        result_ = CommandResult::InProgress;
+    } else {
+        setDeviceProperties(nullptr, nullptr, nullptr, nullptr, "");
+        result_ = CommandResult::Done;
+    }
 }
 
 }  // namespace

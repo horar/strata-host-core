@@ -10,6 +10,7 @@ namespace strata {
 using device::DevicePtr;
 using device::DeviceOperations;
 using device::DeviceOperation;
+using device::DeviceProperties;
 
 Flasher::Flasher(const DevicePtr& device, const QString& firmwareFilename) :
     device_(device), fwFile_(firmwareFilename)
@@ -75,9 +76,11 @@ void Flasher::handleOperationFinished(DeviceOperation operation, int data) {
     switch (operation) {
     case DeviceOperation::SwitchToBootloader :
         emit switchToBootloader(true);
-        if (data != 1) {
-            // Operation SwitchToBootloader has data set to 1 if board was already in
-            // bootloader mode, otherwise data has default value INT_MIN.
+        qCInfo(logCategoryFlasher) << device_ << "Switched to bootloader (version '"
+                                   << device_->property(DeviceProperties::bootloaderVer) << "').";
+        if (data == device::OPERATION_DEFAULT_DATA) {
+            // Operation SwitchToBootloader has data set to OPERATION_ALREADY_IN_BOOTLOADER (1) if board was
+            // already in bootloader mode, otherwise data has default value OPERATION_DEFAULT_DATA (INT_MIN).
             emit devicePropertiesChanged();
         }
         // negative value (-1) means that no chunk was flashed / backed up yet
@@ -94,10 +97,9 @@ void Flasher::handleOperationFinished(DeviceOperation operation, int data) {
         }
         break;
     case DeviceOperation::StartApplication :
-        operation_->refreshPlatformId();
-        break;
-    case DeviceOperation::RefreshPlatformId :
-        qCInfo(logCategoryFlasher) << device_ << "Firmware is ready for use.";
+        qCInfo(logCategoryFlasher) << device_ << "Firmware is ready for use. Name: '"
+                                   << device_->property(DeviceProperties::verboseName) << "', version: '"
+                                   << device_->property(DeviceProperties::applicationVer) << "'.";
         emit devicePropertiesChanged();
         finish(Result::Ok);
         break;

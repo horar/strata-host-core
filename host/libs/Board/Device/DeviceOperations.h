@@ -31,7 +31,6 @@ enum class DeviceOperation: int {
     FlashFirmwareChunk,
     BackupFirmwareChunk,
     StartApplication,
-    RefreshPlatformId,
     // special values for finished signal (operation was not finished successfully):
     Cancel,   // operation was cancelled
     Timeout,  // no response from device
@@ -56,7 +55,7 @@ public:
     ~DeviceOperations();
 
     /*!
-     * Identify board operation.
+     * Identify board operation - get information about device (name, platform Id, class ID, bootloader/application version).
      * \param requireFwInfoResponse true if response to 'get_firmware_info' command is required
      */
     void identify(bool requireFwInfoResponse = true);
@@ -82,11 +81,6 @@ public:
      * Start Application operation.
      */
     void startApplication();
-
-    /*!
-     * Refresh information about device (name, platform Id, class ID).
-     */
-    void refreshPlatformId();
 
     /*!
      * Cancel operation - terminate running operation.
@@ -129,7 +123,7 @@ private slots:
     void handleResponseTimeout();
     void handleDeviceError(device::Device::ErrorCode errCode, QString msg);
 
-private:
+protected:
     bool startOperation(DeviceOperation operation);
     void nextCommand();
     void finishOperation(DeviceOperation operation, int data = OPERATION_DEFAULT_DATA);

@@ -161,8 +161,10 @@ void SciPlatformModel::boardReadyHandler(int deviceId, bool recognized)
         SciPlatformSettingsItem *settingsItem = sciSettings_.getBoardData(platform->verboseName());
         if (settingsItem != nullptr) {
             platform->commandHistoryModel()->populate(settingsItem->commandHistoryList);
-        }
+            platform->scrollbackModel()->setExportFilePath(settingsItem->exportPath);
+            platform->scrollbackModel()->setAutoExportFilePath(settingsItem->autoExportPath);
 
+        }
         platform->setStatus(SciPlatform::PlatformStatus::Ready);
     } else {
         platform->setStatus(SciPlatform::PlatformStatus::NotRecognized);

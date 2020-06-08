@@ -1,9 +1,11 @@
-
 #ifndef HOST_HCS_CLIENTSCONTROLER_H__
 #define HOST_HCS_CLIENTSCONTROLER_H__
 
 #include <memory>
 #include <EvEventsMgr.h>
+
+#include <QString>
+#include <QByteArray>
 
 #include <rapidjson/document.h>
 
@@ -37,7 +39,7 @@ public:
      * @param message
      * @return returns true when succceeded otherwise false
      */
-    bool sendMessage(const std::string& clientId, const std::string& message);
+    bool sendMessage(const QByteArray& clientId, const QString& message);
 
 private:
     void onDescriptorHandle(spyglass::EvEventBase*, int);

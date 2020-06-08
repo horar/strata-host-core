@@ -9,6 +9,7 @@
 #include <QDir>
 #include <QSaveFile>
 
+
 SciPlatform::SciPlatform(
         SciPlatformSettings *settings,
         QObject *parent)
@@ -193,30 +194,6 @@ bool SciPlatform::sendMessage(const QByteArray &message)
     return result;
 }
 
-bool SciPlatform::exportScrollback(QString filePath) const
-{
-    QSaveFile file(filePath);
-    bool ret = file.open(QIODevice::WriteOnly | QIODevice::Text);
-    if (ret == false) {
-        qCCritical(logCategorySci) << "cannot open file" << filePath << file.errorString();
-        return false;
-    }
-
-    QTextStream out(&file);
-
-    out << scrollbackModel_->getTextForExport();
-
-    return file.commit();
-}
-
-void SciPlatform::removeCommandFromHistoryAt(int index)
-{
-    bool isRemoved = commandHistoryModel_->removeAt(index);
-    if (isRemoved) {
-        settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
-    }
-}
-
 bool SciPlatform::programDevice(QString filePath, bool doBackup)
 {
     if (status_ != PlatformStatus::Ready
@@ -242,6 +219,21 @@ bool SciPlatform::programDevice(QString filePath, bool doBackup)
     setProgramInProgress(true);
 
     return true;
+}
+
+void SciPlatform::storeCommandHistory(const QStringList &list)
+{
+    settings_->setCommandHistory(verboseName_, list);
+}
+
+void SciPlatform::storeExportPath(const QString &exportPath)
+{
+    settings_->setExportPath(verboseName_, exportPath);
+}
+
+void SciPlatform::storeAutoExportPath(const QString &autoExportPath)
+{
+    settings_->setAutoExportPath(verboseName_, autoExportPath);
 }
 
 void SciPlatform::messageFromDeviceHandler(QByteArray message)

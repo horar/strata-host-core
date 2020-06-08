@@ -17,7 +17,7 @@ Item {
     property alias mask: metrics.text
 
     property int horizontalPadding: 4
-    property int verticalPadding: 4
+    property int verticalPadding: 2
 
     TextMetrics {
         id: metrics

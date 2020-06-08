@@ -140,7 +140,7 @@ QString BoardManager::getDeviceProperty(const int deviceId, const device::Device
     return QString();
 }
 
-void BoardManager::checkNewSerialDevices() {
+void BoardManager::checkNewSerialDevices() { //TODO refactoring, take serial port functionality out from this class
 #if defined(Q_OS_MACOS)
     const QString usbKeyword("usb");
     const QString cuKeyword("cu");
@@ -195,7 +195,7 @@ void BoardManager::checkNewSerialDevices() {
 
         // Do not emit boardDisconnected and boardConnected signals in this locked block of code.
         for (auto deviceId : removed) {
-            if (removeSerialPort(deviceId)) {  // modifies openedDevices_
+            if (closeDevice(deviceId)) {  // modifies openedDevices_
                 deleted.emplace_back(deviceId);
             }
         }
@@ -234,38 +234,59 @@ void BoardManager::computeListDiff(std::set<int>& list, std::set<int>& added_por
 
 // mutex_ must be locked before calling this function (due to modification openedDevices_ and using serialIdToName_)
 bool BoardManager::addSerialPort(const int deviceId) {
+    // 1. construct the serial device
+    // 2. open the device
+    // 3. attach DeviceOperations object
+
     const QString name = serialIdToName_.value(deviceId);
 
     DevicePtr device = std::make_shared<device::serial::SerialDevice>(deviceId, name);
 
-    if (device->open()) {
-        openedDevices_.insert(deviceId, device);
-
-        qCInfo(logCategoryBoardManager).nospace() << "Added new serial device: ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " << name;
-
-        connect(device.get(), &Device::msgFromDevice, this, &BoardManager::handleNewMessage);  // DEPRECATED
-        connect(device.get(), &Device::deviceError, this, &BoardManager::handleDeviceError);
-
-        // QSharedPointer because QScopedPointer does not have custom deleter.
-        // We need deleteLater() because DeviceOperations object is deleted in slot connected to signal from it.
-        auto operation = QSharedPointer<DeviceOperations>(new DeviceOperations(device), &QObject::deleteLater);
-
-        connect(operation.get(), &DeviceOperations::finished, this, &BoardManager::handleOperationFinished);
-        connect(operation.get(), &DeviceOperations::error, this, &BoardManager::handleOperationError);
-
-        operation->identify(reqFwInfoResp_);
-
-        deviceOperations_.insert(deviceId, operation);
-
-        return true;
-    } else {
-        qCWarning(logCategoryBoardManager).nospace() << "Cannot open device: ID: 0x" << hex << static_cast<uint>(deviceId) << ", name: " << name;
+    if (openDevice(deviceId, device) == false) {
+        qCWarning(logCategoryBoardManager).nospace()
+            << "Cannot open device: ID: 0x" << hex << static_cast<uint>(deviceId)
+            << ", name: " << name;
         return false;
     }
+    qCInfo(logCategoryBoardManager).nospace() << "Added new serial device: ID: 0x" << hex
+                                              << static_cast<uint>(deviceId) << ", name: " << name;
+    startDeviceOperations(deviceId, device);
+    return true;
 }
 
 // mutex_ must be locked before calling this function (due to modification openedDevices_)
-bool BoardManager::removeSerialPort(const int deviceId) {
+bool BoardManager::openDevice(const int deviceId, const DevicePtr device) {
+    if (device->open() == false) {
+        return false;
+    }
+    openedDevices_.insert(deviceId, device);
+
+    connect(device.get(), &Device::msgFromDevice, this,
+            &BoardManager::handleNewMessage);  // DEPRECATED
+    connect(device.get(), &Device::deviceError, this, &BoardManager::handleDeviceError);
+
+    return true;
+}
+
+// mutex_ must be locked before calling this function (due to modification deviceOperations_)
+void BoardManager::startDeviceOperations(const int deviceId, const DevicePtr device) {
+    // QSharedPointer because QScopedPointer does not have custom deleter.
+    // We need deleteLater() because DeviceOperations object is deleted in slot connected to signal
+    // from it.
+    auto operation =
+        QSharedPointer<DeviceOperations>(new DeviceOperations(device), &QObject::deleteLater);
+
+    connect(operation.get(), &DeviceOperations::finished, this,
+            &BoardManager::handleOperationFinished);
+    connect(operation.get(), &DeviceOperations::error, this, &BoardManager::handleOperationError);
+
+    operation->identify(reqFwInfoResp_);
+
+    deviceOperations_.insert(deviceId, operation);
+}
+
+// mutex_ must be locked before calling this function (due to modification openedDevices_)
+bool BoardManager::closeDevice(const int deviceId) {
     deviceOperations_.remove(deviceId);
     auto it = openedDevices_.find(deviceId);
     if (it != openedDevices_.end()) {
@@ -337,7 +358,7 @@ void BoardManager::handleDeviceError(Device::ErrorCode errCode, QString errStr) 
             bool removed = false;
             {
                 QMutexLocker lock(&mutex_);
-                removed = removeSerialPort(deviceId);  // modifies openedDevices_ - call it while mutex_ is locked
+                removed = closeDevice(deviceId);  // modifies openedDevices_ - call it while mutex_ is locked
             }
             if (removed) {
                 emit boardDisconnected(deviceId);

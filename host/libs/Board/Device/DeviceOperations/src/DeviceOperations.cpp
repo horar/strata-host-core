@@ -59,6 +59,7 @@ void DeviceOperations::switchToBootloader() {
         commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
         commandList_.emplace_back(std::make_unique<CmdUpdateFirmware>(device_));
         commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
+        commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, false));
         currentCommand_ = commandList_.begin();
         emit sendCommand(QPrivateSignal());
     }
@@ -95,14 +96,8 @@ void DeviceOperations::backupFirmwareChunk() {
 void DeviceOperations::startApplication() {
     if (startOperation(DeviceOperation::StartApplication)) {
         commandList_.emplace_back(std::make_unique<CmdStartApplication>(device_));
-        currentCommand_ = commandList_.begin();
-        emit sendCommand(QPrivateSignal());
-    }
-}
-
-void DeviceOperations::refreshPlatformId() {
-    if (startOperation(DeviceOperation::RefreshPlatformId)) {
         commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_, MAX_PLATFORM_ID_RETRIES));
+        commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, false));
         currentCommand_ = commandList_.begin();
         emit sendCommand(QPrivateSignal());
     }
