@@ -65,6 +65,7 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     EventsMgr
     strata::CouchbaseLiteCPP
     QtLogger
+    CbLogger
 )
 
 target_include_directories(${PROJECT_NAME}Lib

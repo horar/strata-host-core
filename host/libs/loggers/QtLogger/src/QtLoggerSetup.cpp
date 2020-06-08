@@ -74,6 +74,11 @@ QtLoggerSetup::~QtLoggerSetup()
     qCInfo(logCategoryQtLogger) << "...Qt logging finished";
 }
 
+QtMessageHandler QtLoggerSetup::getQtLogCallback() const
+{
+    return &qtLogCallback;
+}
+
 void QtLoggerSetup::generateDefaultSettings() const
 {
     QSettings settings;
