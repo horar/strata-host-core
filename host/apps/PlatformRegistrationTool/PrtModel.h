@@ -31,7 +31,7 @@ private slots:
 
 private:
     strata::BoardManager boardManager_;
-    QList<strata::SerialDevicePtr> platformList_;
+    QList<strata::device::DevicePtr> platformList_;
 };
 
 #endif  // PRTMODEL_H

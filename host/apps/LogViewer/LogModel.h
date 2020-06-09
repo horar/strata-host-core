@@ -29,6 +29,7 @@ public:
         LevelRole,
         MessageRole,
         RowIndexRole,
+        FileHashRole,
     };
 
     enum LogLevel {
@@ -40,6 +41,7 @@ public:
     };
     Q_ENUM(LogLevel)
     Q_INVOKABLE QString followFile(const QString &path);
+    Q_INVOKABLE void removeFile(const QString &path);
 
     QString getRotatedFilePath(const QString &path) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -49,6 +51,7 @@ public:
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     FileModel *fileModel();
+    void removeRowsFromModel(const uint &pathHash);
 
 public slots:
     void checkFile();
@@ -94,6 +97,7 @@ struct LogItem {
     QString message;
     LogModel::LogLevel level;
     int rowIndex;
+    uint filehash;
 };
 
 #endif

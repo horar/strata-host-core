@@ -27,7 +27,7 @@ QString LogModel::populateModel(const QString &path, const qint64 &lastPosition)
     QFile file(path);
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text) == false) {
-        qCWarning(logCategoryLogViewer) << "cannot open " + path + " " + file.errorString();
+        qCWarning(logCategoryLogViewer) << "cannot open file with path " + path + " " + file.errorString();
         return file.errorString();
     }
     if (fileModel_.containsFilePath(path) == false) {
@@ -47,6 +47,7 @@ QString LogModel::populateModel(const QString &path, const qint64 &lastPosition)
             item.message.chop(1);
         }
         item.rowIndex = data_.length() + 1;
+        item.filehash = qHash(path);
 
         QList<LogItem>::iterator up = std::upper_bound(data_.begin(), data_.end(), item);
         beginInsertRows(QModelIndex(), up - data_.begin(), up - data_.begin());
@@ -71,10 +72,21 @@ QString LogModel::populateModel(const QString &path, const qint64 &lastPosition)
 QString LogModel::followFile(const QString &path)
 {
     if (fileModel_.containsFilePath(path)) {
-        qCWarning(logCategoryLogViewer) << "cannot open " + path + " " + "Already following";
-        return "Already following file";
+        qCWarning(logCategoryLogViewer) << "cannot open file with path " + path + " " + "file is already opened";
+        return "file is already opened";
     } else {
         return populateModel(path, 0);
+    }
+}
+
+void LogModel::removeFile(const QString &path)
+{
+    int removedAt = fileModel_.remove(path);
+    if (removedAt >= 0) {
+        lastPositions_.removeAt(removedAt);
+        removeRowsFromModel(qHash(path));
+    } else {
+        qCCritical(logCategoryLogViewer) << "path not found";
     }
 }
 
@@ -125,6 +137,12 @@ void LogModel::updateTimestamps() {
     if (lastLogItem != data_.crend()) {
         setNewestTimestamp((*lastLogItem).timestamp);
     }
+
+    if (data_.isEmpty()) {
+        setNewestTimestamp(QDateTime());
+        setOldestTimestamp(QDateTime());
+        previousTimestamp_ = QDateTime();
+    }
 }
 
 int LogModel::rowCount(const QModelIndex &) const
@@ -153,6 +171,8 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
         return item.message;
     case RowIndexRole:
         return item.rowIndex;
+    case FileHashRole:
+        return item.filehash;
     }
     return QVariant();
 }
@@ -166,6 +186,7 @@ QHash<int, QByteArray> LogModel::roleNames() const
     names[LevelRole] = "level";
     names[MessageRole] = "message";
     names[RowIndexRole] = "rowIndex";
+    names[FileHashRole] = "filehash";
     return names;
 }
 
@@ -205,6 +226,22 @@ void LogModel::parseLine(const QString &line, LogItem &item)
     if (item.timestamp.isNull()) {
         item.timestamp = previousTimestamp_;
     }
+}
+
+void LogModel::removeRowsFromModel(const uint &pathHash)
+{
+    int i = 0;
+    while (i < data_.length()) {
+        if (data_[i].filehash == pathHash) {
+            beginRemoveRows(QModelIndex(),i,i);
+            data_.removeAt(i);
+            endRemoveRows();
+        } else {
+            i++;
+        }
+    }
+    emit countChanged();
+    updateTimestamps();
 }
 
 void LogModel::checkFile()

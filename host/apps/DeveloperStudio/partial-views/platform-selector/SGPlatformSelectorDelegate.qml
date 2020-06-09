@@ -51,10 +51,10 @@ Item {
             }
 
             Component.onCompleted: {
-                if (model.image === "file:/") {
+                if (model.image.length === 0) {
                     console.error(Logger.devStudioCategory, "Platform Selector Delegate: No image source supplied by platform list")
                     source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
-                } else if (SGUtilsCpp.isFile(model.image.replace("file:/",""))) {
+                } else if (SGUtilsCpp.isFile(SGUtilsCpp.urlToLocalFile(model.image))) {
                     source = Qt.binding(function(){ return model.image })
                 } else {
                     imageCheck.start()
@@ -70,7 +70,7 @@ Item {
                 onTriggered: {
                     interval += interval
                     if (interval < 32000) {
-                        if (SGUtilsCpp.isFile(model.image.replace("file:/",""))){
+                        if (SGUtilsCpp.isFile(SGUtilsCpp.urlToLocalFile(model.image))){
                             image.source = Qt.binding(function(){ return model.image })
                             return
                         }

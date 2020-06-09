@@ -8,6 +8,7 @@ var url = productionAuthServer;
 var jwt = '';
 var session = '';
 var cachedState
+var version_ = ""
 
 // Attempt to read authentication server endpoint from QtSettings/INI file ("Login" category)
 // Use default (production) endpoint if variable 'authentication_server' is undefined/empty
@@ -111,4 +112,15 @@ var xhr = function(method, endpoint, data, callback, errorCallback, signals, hea
     }
 
     xhr.send(JSON.stringify(data));
+}
+
+function versionNumber() {
+    if (version_ === ""){
+        let versionNumberList = Qt.application.version.split(".")
+        if (versionNumberList[0].startsWith("v")) {
+            versionNumberList[0] = versionNumberList[0].substring(1)
+        }
+        version_ ="%1.%2.%3".arg(versionNumberList[0]).arg(versionNumberList[1]).arg(versionNumberList[2])
+    }
+    return version_
 }

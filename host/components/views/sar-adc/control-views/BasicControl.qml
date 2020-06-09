@@ -15,6 +15,7 @@ Rectangle {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     color: "#a9a9a9"
+    property real graphPlottedCount: 0
     
     property var dataArray: []
     property int time_maxValue: 10
@@ -112,6 +113,8 @@ Rectangle {
         curve3.appendList(dataArray2)
         warningPopup.close()
         acquireButtonContainer.enabled = true
+
+        graphPlottedCount++;
         
         //DEBUG
         // console.log("Done Plotting........................................")
@@ -980,10 +983,12 @@ Rectangle {
                             warningBox.visible = true
                             barContainer.visible = true
                             graphTitle.visible = false
-                            //Clear the graph
-                            graph.removeCurve(0)
-                            graph2.removeCurve(0)
-                            graph3.removeCurve(0)
+                            //Clear the graph if the graph is plotted before (!=0)
+                            if(graphPlottedCount != 0) {
+                                graph.removeCurve(0)
+                                graph2.removeCurve(0)
+                                graph3.removeCurve(0)
+                            }
                             //set back all the graph initial x & y axises
                             graph2.xMax = (clock/32)
                             graph2.yMax = 1

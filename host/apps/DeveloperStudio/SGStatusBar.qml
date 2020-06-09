@@ -34,9 +34,7 @@ Rectangle {
     Component.onCompleted: {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
         Help.setClassId("strataMain")
-        Help.registerTarget(helpTab.close, "When a platform view is open use this button to close it and return to the platform selection view.", 2, "selectorHelp")
-        Help.registerTarget(helpTab.control, "When a platform view is open and platform is connected, this button will show the control view.", 3, "selectorHelp")
-        Help.registerTarget(helpTab.content, "When a platform view is open, this button will show the the content view.", 4, "selectorHelp")
+        Help.registerTarget(helpTab, "When a platform has been selected, this button will allow you to navigate between its control and content views.", 2, "selectorHelp")
     }
 
     // Navigation_control calls this after login when statusbar AND platformSelector are all complete
@@ -84,13 +82,12 @@ Rectangle {
             view: "control"
             index: 0
             connected: true
+            name: "Help Example"
 
             Connections {
                 target: Help.utility
                 onInternal_tour_indexChanged:{
-                    if (Help.current_tour_targets[index]["target"] === helpTab.close ||
-                            Help.current_tour_targets[index]["target"] === helpTab.control ||
-                            Help.current_tour_targets[index]["target"] === helpTab.content ) {
+                    if (Help.current_tour_targets[index]["target"] === helpTab) {
                         helpTab.visible = true
                     } else {
                         helpTab.visible = false

@@ -6,7 +6,7 @@
 
 // define the schemas
 
-// this support platform id v1 and v2
+// this support platform id v2 only.
 const rapidjson::SchemaDocument CommandValidator::requestPlatformIdResSchema(
     CommandValidator::parseSchema(
         R"(
@@ -15,68 +15,49 @@ const rapidjson::SchemaDocument CommandValidator::requestPlatformIdResSchema(
             "type": "object",
             "properties": {
                 "notification": {
-                "type": "object",
-                "properties": {
-                    "value": {
-                    "pattern":"^platform_id$"
-                    },
-                    "payload": {
-                        "anyOf":[
-                            {
-                                "type": "object",
-                                "properties": {
-                                    "name": {
+                    "type": "object",
+                    "properties": {
+                        "value": {
+                            "pattern": "^platform_id$"
+                        },
+                        "payload": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
                                     "type": "string"
-                                    },
-                                    "platform_id": {
-                                    "type": "string"
-                                    },
-                                    "class_id": {
-                                    "type": "string"
-                                    },
-                                    "count": {
-                                    "type": ["string", "integer"]
-                                    },
-                                    "platform_id_version": {
-                                    "type": "string"
-                                    }
                                 },
-                                "required": [
-                                    "name",
-                                    "platform_id",
-                                    "class_id",
-                                    "count",
-                                    "platform_id_version"
-                                ]
+                                "verbose_name": {
+                                    "type": "string"
+                                },
+                                "platform_id": {
+                                    "type": "string"
+                                },
+                                "class_id": {
+                                    "type": "string"
+                                },
+                                "count": {
+                                    "type": [
+                                        "string",
+                                        "integer"
+                                    ]
+                                },
+                                "platform_id_version": {
+                                    "type": "string"
+                                }
                             },
-                            {
-                                "type": "object",
-                                "properties": {
-                                    "verbose_name": {
-                                    "type": "string"
-                                    },
-                                    "verbose_name_error": {
-                                    "type": "string"
-                                    },
-                                    "platform_id_error": {
-                                    "type": "string"
-                                    },
-                                    "platform_id": {
-                                    "type": "string"
-                                    }
-                                },
-                                "required": [
-                                    "verbose_name",
-                                    "platform_id"
-                                ]
-                            }
-                        ]
-                    }
-                },
-                "required": [
-                    "value",
-                    "payload"
-                ]
+                            "required": [
+                                "name",
+                                "platform_id",
+                                "class_id",
+                                "count",
+                                "platform_id_version"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "value",
+                        "payload"
+                    ]
                 }
             },
             "required": [
@@ -303,20 +284,31 @@ const rapidjson::SchemaDocument CommandValidator::backupFWResSchema(
                   "pattern": "^backup_firmware$"
                 },
                 "payload": {
-                  "type": "object",
-                  "properties": {
-                    "chunk": {
+                  "oneOf": [
+                    {
                       "type": "object",
                       "properties": {
-                        "number": {"type": "number"},
-                        "size": {"type": "number"},
-                        "crc": {"type": "number"},
-                        "data": {"type": "string"}
+                        "chunk": {
+                          "type": "object",
+                          "properties": {
+                            "number": {"type": "number"},
+                            "size": {"type": "number"},
+                            "crc": {"type": "number"},
+                            "data": {"type": "string"}
+                          },
+                          "required": ["number", "size", "crc", "data"]
+                        }
                       },
-                      "required": ["number", "size", "crc", "data"]
+                      "required": ["chunk"]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "status": {"type": "string"}
+                      },
+                      "required": ["status"]
                     }
-                  },
-                  "required": ["chunk"]
+                  ]
                 }
               },
               "required": ["value", "payload"]
