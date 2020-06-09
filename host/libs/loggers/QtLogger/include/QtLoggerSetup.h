@@ -27,6 +27,8 @@ public:
     explicit QtLoggerSetup(const QCoreApplication& app);
     ~QtLoggerSetup();
 
+    QtMessageHandler getQtLogCallback() const;
+
 private:
     void reload();
 
