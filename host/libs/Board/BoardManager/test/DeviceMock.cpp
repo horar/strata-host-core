@@ -3,14 +3,12 @@
 
 using strata::device::Device;
 
-DeviceMock::DeviceMock()
-    : Device(0, "Mock Device",
-             Device::Type::SerialDevice)  // TODO maybe other type than SerialDevice?
+DeviceMock::DeviceMock(const int deviceId, const QString &name)
+    : Device(deviceId, name, Device::Type::SerialDevice)
 {
 }
 
-DeviceMock::DeviceMock(const int deviceId, const QString &name)
-    : Device(deviceId, name, Device::Type::SerialDevice)
+DeviceMock::~DeviceMock()
 {
 }
 
@@ -27,19 +25,30 @@ void DeviceMock::close()
     opened_ = false;
 }
 
+void DeviceMock::mockEmitResponses(const QByteArray msg)
+{
+    auto responses = commandResponseMock_.getResponses(msg);
+    for (auto response : responses) {
+        QTimer::singleShot(
+            10, this, [=]() {  // deferred emit (if emitted in the same loop, may cause trouble)
+                emit msgFromDevice(response);
+            });
+    }
+}
+
 bool DeviceMock::sendMessage(const QByteArray msg)
 {
-    lastMsg_ = msg;
-    msgCount_++;
+    recordedMessages_.push_back(msg);
     emit messageSent(msg);
+    if (autoResponse_) {
+        mockEmitResponses(msg);
+    }
     return true;
 }
 
 bool DeviceMock::sendMessage(const QByteArray msg, quintptr)
 {
-    lastMsg_ = msg;
-    msgCount_++;
-    return true;
+    return sendMessage(msg);
 }
 
 void DeviceMock::mockEmitMessage(std::string message)

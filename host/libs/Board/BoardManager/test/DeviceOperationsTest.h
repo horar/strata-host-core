@@ -20,13 +20,16 @@ private slots:
     // tests
     void connectTest();
     void identifyTest();
+    void switchToBootloaderAndBackTest();
+    void cancelOperationTest();
 
 protected slots:
     void handleOperationFinished(strata::device::DeviceOperation operation, int data);
     void handleOperationError(QString message);
 
 private:
-    void printJsonDoc(rapidjson::Document &doc);
+    static void printJsonDoc(rapidjson::Document &doc);
+    static void verifyMessage(const QByteArray &msg, const QByteArray &expectedJson);
 
     std::shared_ptr<DeviceMock> device_;
     QSharedPointer<DeviceOperationsDerivate> deviceOperations_;

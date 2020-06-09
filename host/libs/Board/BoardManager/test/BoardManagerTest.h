@@ -12,19 +12,19 @@ class BoardManagerTest : public QObject
 private slots:
     // test init/teardown
     /*!
-     * \brief Run before each test.
+     * \brief Run before test suite.
      */
     void initTestCase();
     /*!
-     * \brief Run after each test.
+     * \brief Run after test suite.
      */
     void cleanupTestCase();
     /*!
-     * \brief Run before test suite.
+     * \brief Run before each test.
      */
     void init();
     /*!
-     * \brief Run after test suite.
+     * \brief Run after each test.
      */
     void cleanup();
 
@@ -33,14 +33,14 @@ private slots:
     void connectMultipleTest();
     void sendMessageTest();
 
-    //signals tests
+    // signals tests
     void boardConnectedSignalTest();
     void boardDisconnected();
     void boardReady();
     void boardError();
     void readyDeviceIdsChanged();
 
-    //slots tests
+    // slots tests
     void handleOperationFinished();
     void handleOperationError();
     void handleDeviceError();
