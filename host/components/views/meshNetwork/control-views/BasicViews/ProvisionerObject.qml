@@ -26,7 +26,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom:provisionerCircle.top
         anchors.bottomMargin: 0
-        text:"(Provisioner)"
+        text:"(Gateway)"
         font.pixelSize: 12
         color:"grey"
     }

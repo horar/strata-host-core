@@ -135,7 +135,7 @@ function createView(name, parent)
         removeView(parent)
     }
     catch(err){
-        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "ERROR: Could not destroy child")
+        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Could not destroy child")
     }
 
     var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
@@ -205,7 +205,7 @@ function globalEventHandler(event,data)
         break;
 
     default:
-        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Unhandled signal, ", event, " in state ", navigation_state_)
+        console.warn(LoggerModule.Logger.devStudioNavigationControlCategory, "Unhandled signal, ", event, " in state ", navigation_state_)
         break;
     }
 }

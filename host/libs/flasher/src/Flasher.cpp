@@ -1,33 +1,31 @@
 #include "Flasher.h"
 #include "FlasherConstants.h"
 
-#include <SerialDevice.h>
-#include <DeviceProperties.h>
-#include <DeviceOperations.h>
+#include <Device/DeviceOperations.h>
 
 #include "logging/LoggingQtCategories.h"
 
 namespace strata {
 
-QDebug operator<<(QDebug dbg, const Flasher* f) {
-    return dbg.nospace() << "Device 0x" << hex << f->deviceId_ << ": ";
-}
+using device::DevicePtr;
+using device::DeviceOperations;
+using device::DeviceOperation;
+using device::DeviceProperties;
 
-Flasher::Flasher(const SerialDevicePtr& device, const QString& firmwareFilename) :
+Flasher::Flasher(const DevicePtr& device, const QString& firmwareFilename) :
     device_(device), fwFile_(firmwareFilename)
 {
-    deviceId_ = static_cast<uint>(device_->deviceId());
     operation_ = std::make_unique<DeviceOperations>(device_);
 
     connect(operation_.get(), &DeviceOperations::finished, this, &Flasher::handleOperationFinished);
     connect(operation_.get(), &DeviceOperations::error, this, &Flasher::handleOperationError);
 
-    qCDebug(logCategoryFlasher) << this << "Flasher created (unique ID: 0x" << reinterpret_cast<quintptr>(this) << ").";
+    qCDebug(logCategoryFlasher) << device_ << "Flasher created (unique ID: 0x" << reinterpret_cast<quintptr>(this) << ").";
 }
 
 Flasher::~Flasher() {
     // Destructor must be defined due to unique pointer to incomplete type.
-    qCDebug(logCategoryFlasher) << this << "Flasher deleted (unique ID: 0x" << reinterpret_cast<quintptr>(this) << ").";
+    qCDebug(logCategoryFlasher) << device_ << "Flasher deleted (unique ID: 0x" << reinterpret_cast<quintptr>(this) << ").";
 }
 
 void Flasher::flash(bool startApplication) {
@@ -38,17 +36,17 @@ void Flasher::flash(bool startApplication) {
             chunkNumber_ = 0;
             chunkCount_ = static_cast<int>((fwFile_.size() - 1 + CHUNK_SIZE) / CHUNK_SIZE);
             chunkProgress_ = FLASH_PROGRESS_STEP;
-            qCInfo(logCategoryFlasher) << this << "Preparing for flashing " << dec << chunkCount_ << " chunks of firmware.";
+            qCInfo(logCategoryFlasher) << device_ << "Preparing for flashing " << chunkCount_ << " chunks of firmware.";
             emit switchToBootloader(false);
             operation_->switchToBootloader();
         } else {
             QString errStr = QStringLiteral("File '") + fwFile_.fileName() + QStringLiteral("' is empty.");
-            qCCritical(logCategoryFlasher).noquote() << this << errStr;
+            qCCritical(logCategoryFlasher) << device_ << errStr;
             emit error(errStr);
             finish(Result::Error);
         }
     } else {
-        qCCritical(logCategoryFlasher).noquote().nospace() << this << "Cannot open file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
+        qCCritical(logCategoryFlasher) << device_ << "Cannot open file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
         emit error(fwFile_.errorString());
         finish(Result::Error);
     }
@@ -60,11 +58,11 @@ void Flasher::backup(bool startApplication) {
         action_ = Action::Backup;
         chunkCount_ = 0;
         chunkProgress_ = BACKUP_PROGRESS_STEP;
-        qCInfo(logCategoryFlasher) << this << "Preparing for firmware backup.";
+        qCInfo(logCategoryFlasher) << device_ << "Preparing for firmware backup.";
         emit switchToBootloader(false);
         operation_->switchToBootloader();
     } else {
-        qCCritical(logCategoryFlasher).noquote().nospace() << this << "Cannot open file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
+        qCCritical(logCategoryFlasher) << device_ << "Cannot open file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
         emit error(fwFile_.errorString());
         finish(Result::Error);
     }
@@ -78,9 +76,11 @@ void Flasher::handleOperationFinished(DeviceOperation operation, int data) {
     switch (operation) {
     case DeviceOperation::SwitchToBootloader :
         emit switchToBootloader(true);
-        if (data != 1) {
-            // Operation SwitchToBootloader has data set to 1 if board was already in
-            // bootloader mode, otherwise data has default value INT_MIN.
+        qCInfo(logCategoryFlasher) << device_ << "Switched to bootloader (version '"
+                                   << device_->property(DeviceProperties::bootloaderVer) << "').";
+        if (data == device::OPERATION_DEFAULT_DATA) {
+            // Operation SwitchToBootloader has data set to OPERATION_ALREADY_IN_BOOTLOADER (1) if board was
+            // already in bootloader mode, otherwise data has default value OPERATION_DEFAULT_DATA (INT_MIN).
             emit devicePropertiesChanged();
         }
         // negative value (-1) means that no chunk was flashed / backed up yet
@@ -90,28 +90,39 @@ void Flasher::handleOperationFinished(DeviceOperation operation, int data) {
         handleFlashFirmware(data);
         break;
     case DeviceOperation::BackupFirmwareChunk :
-        handleBackupFirmware(data);
+        if (data == device::OPERATION_BACKUP_NO_FIRMWARE) {
+            finish(Result::NoFirmware);
+        } else {
+            handleBackupFirmware(data);
+        }
         break;
     case DeviceOperation::StartApplication :
-        operation_->refreshPlatformId();
-        break;
-    case DeviceOperation::RefreshPlatformId :
-        qCInfo(logCategoryFlasher) << this << "Firmware is ready for use.";
+        qCInfo(logCategoryFlasher) << device_ << "Firmware is ready for use. Name: '"
+                                   << device_->property(DeviceProperties::verboseName) << "', version: '"
+                                   << device_->property(DeviceProperties::applicationVer) << "'.";
         emit devicePropertiesChanged();
         finish(Result::Ok);
         break;
     case DeviceOperation::Timeout :
-        qCCritical(logCategoryFlasher) << this << "Timeout during firmware operation.";
+        qCCritical(logCategoryFlasher) << device_ << "Timeout during firmware operation.";
         finish(Result::Timeout);
         break;
     case DeviceOperation::Cancel :
-        qCWarning(logCategoryFlasher) << this << "Firmware operation was cancelled.";
+        qCWarning(logCategoryFlasher) << device_ << "Firmware operation was cancelled.";
         finish(Result::Cancelled);
+        break;
+    case DeviceOperation::Failure :
+        {
+            QString errStr(QStringLiteral("Firmware operation has failed (faulty response from device)."));
+            qCCritical(logCategoryFlasher) << device_ << errStr;
+            emit error(errStr);
+            finish(Result::Error);
+        }
         break;
     default :
         {
             QString errStr = QStringLiteral("Unsupported operation.");
-            qCCritical(logCategoryFlasher) << this << errStr;
+            qCCritical(logCategoryFlasher) << device_ << errStr;
             emit error(errStr);
             finish(Result::Error);
         }
@@ -122,7 +133,7 @@ void Flasher::handleOperationFinished(DeviceOperation operation, int data) {
 void Flasher::handleFlashFirmware(int lastFlashedChunk) {
     if (lastFlashedChunk == 0) {  // the last chunk
         fwFile_.close();
-        qCInfo(logCategoryFlasher) << this << "Flashed chunk " << dec << chunkCount_ << " of " << chunkCount_ << " - firmware is flashed.";
+        qCInfo(logCategoryFlasher) << device_ << "Flashed chunk " << chunkCount_ << " of " << chunkCount_ << " - firmware is flashed.";
         emit flashProgress(chunkCount_, chunkCount_);
         if (startApp_) {
             operation_->startApplication();
@@ -134,10 +145,10 @@ void Flasher::handleFlashFirmware(int lastFlashedChunk) {
     if (lastFlashedChunk > 0) {  // if no chunk was flashed yet, 'lastFlashedChunk' is negative number (-1)
         if (lastFlashedChunk == chunkProgress_) { // this is faster than modulo
             chunkProgress_ += FLASH_PROGRESS_STEP;
-            qCInfo(logCategoryFlasher) << this << "Flashed chunk " << dec << lastFlashedChunk << " of " << chunkCount_;
+            qCInfo(logCategoryFlasher) << device_ << "Flashed chunk " << lastFlashedChunk << " of " << chunkCount_;
             emit flashProgress(lastFlashedChunk, chunkCount_);
         } else {
-            qCDebug(logCategoryFlasher) << this << "Flashed chunk " << dec << lastFlashedChunk << " of " << chunkCount_;
+            qCDebug(logCategoryFlasher) << device_ << "Flashed chunk " << lastFlashedChunk << " of " << chunkCount_;
         }
     }
     ++chunkNumber_;
@@ -153,7 +164,7 @@ void Flasher::handleFlashFirmware(int lastFlashedChunk) {
     if (bytesRead == chunkSize) {
         operation_->flashFirmwareChunk(chunk, chunkNumber_);
     } else {
-        qCCritical(logCategoryFlasher).noquote().nospace() << this << "Cannot read from file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
+        qCCritical(logCategoryFlasher) << device_ << "Cannot read from file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
         emit error(QStringLiteral("File read error. ") + fwFile_.errorString());
         finish(Result::Error);
     }
@@ -164,7 +175,7 @@ void Flasher::handleBackupFirmware(int chunkNumber) {
         QVector<quint8> chunk = operation_->recentBackupChunk();
         qint64 bytesWritten = fwFile_.write(reinterpret_cast<char*>(chunk.data()), chunk.size());
         if (bytesWritten != chunk.size()) {
-            qCCritical(logCategoryFlasher).noquote().nospace() << this << "Cannot write to file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
+            qCCritical(logCategoryFlasher) << device_ << "Cannot write to file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
             emit error(QStringLiteral("File write error. ") + fwFile_.errorString());
             finish(Result::Error);
             return;
@@ -173,15 +184,15 @@ void Flasher::handleBackupFirmware(int chunkNumber) {
             chunkCount_ = chunkNumber;
             if (chunkNumber == chunkProgress_) { // this is faster than modulo
                 chunkProgress_ += BACKUP_PROGRESS_STEP;
-                qCInfo(logCategoryFlasher) << this << "Backed up chunk " << dec << chunkNumber;
+                qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber;
                 emit backupProgress(chunkNumber, false);
             } else {
-                qCDebug(logCategoryFlasher) << this << "Backed up chunk " << dec << chunkNumber;
+                qCDebug(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber;
             }
         } else {  // chunkNumber is 0 => the last chunk
             ++chunkCount_;
             fwFile_.close();
-            qCInfo(logCategoryFlasher) << this << "Backed up chunk " << dec << chunkCount_ << " - firmware backup is done.";
+            qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << chunkCount_ << " - firmware backup is done.";
             emit backupProgress(chunkCount_, true);
             if (startApp_) {
                 operation_->startApplication();
@@ -195,7 +206,7 @@ void Flasher::handleBackupFirmware(int chunkNumber) {
 }
 
 void Flasher::handleOperationError(QString errStr) {
-    qCCritical(logCategoryFlasher).noquote() << this << "Error during flashing: " << errStr;
+    qCCritical(logCategoryFlasher) << device_ << "Error during flashing: " << errStr;
     emit error(errStr);
     finish(Result::Error);
 }

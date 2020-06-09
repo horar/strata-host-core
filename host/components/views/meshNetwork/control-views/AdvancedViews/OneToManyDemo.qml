@@ -87,7 +87,7 @@ Rectangle {
 
     property var nodeRemoved: platformInterface.node_removed
     onNodeRemovedChanged: {
-        var theNodeNumber = platformInterface.node_removed.node_id
+        var theNodeNumber = platformInterface.node_removed.index
         if(root.availableNodes[theNodeNumber] !== undefined ){
             root.availableNodes[theNodeNumber] = 0
         }
@@ -279,21 +279,25 @@ Rectangle {
         anchors.top:parent.top
         anchors.topMargin: 100
         anchors.bottom:parent.bottom
-        anchors.bottomMargin: 100
+        anchors.bottomMargin: 50
         width:200
         color:"transparent"
         border.color:"transparent"
         border.width: 3
 
+
+
         Column{
             id:bulbColumn
             anchors.fill:parent
             topPadding: 10
-            spacing:10//(parent.height - (bulbNodeRectangle.height*3) -topPadding*2)/2
+            spacing:10
+
+            property var spacerHeight: 50
 
             Rectangle{
                 id:bulbNodeRectangle
-                height:bulbColumn.height/3 - bulbColumn.spacing*2
+                height:bulbColumn.height/3 - bulbColumn.spacing*2 - bulbColumn.spacerHeight
                 width:parent.width-10
                 anchors.horizontalCenter: parent.horizontalCenter
                 radius:10
@@ -410,7 +414,7 @@ Rectangle {
 
             Rectangle{
                 id:bulbNodeRectangle2
-                height:bulbColumn.height/3 - bulbColumn.spacing*2
+                height:bulbColumn.height/3 - bulbColumn.spacing*2 - bulbColumn.spacerHeight
                 width:parent.width-10
                 anchors.horizontalCenter: parent.horizontalCenter
                 radius:10
@@ -525,8 +529,25 @@ Rectangle {
             }
 
             Rectangle{
+                id:spacer
+                height:bulbColumn.spacerHeight
+                width:parent.width-10
+                color:"transparent"
+
+                Text{
+                    id:elipsisText
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.verticalCenterOffset: -10
+                    text:"..."
+                    font.pixelSize: 36
+
+                }
+            }
+
+            Rectangle{
                 id:bulbNodeRectangle3
-                height:bulbColumn.height/3 - bulbColumn.spacing*2
+                height:bulbColumn.height/3 - bulbColumn.spacing*2 - bulbColumn.spacerHeight
                 width:parent.width-10
                 anchors.horizontalCenter: parent.horizontalCenter
                 radius:10
@@ -537,7 +558,7 @@ Rectangle {
                     id:blubNodeText3
                     anchors.top:parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text:"Node " + nodeNumber
+                    text:"Node n"
                     font.pixelSize: 15
                 }
 

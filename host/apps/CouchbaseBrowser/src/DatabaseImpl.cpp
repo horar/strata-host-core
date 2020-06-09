@@ -67,11 +67,13 @@ void DatabaseImpl::openDB(const QString &file_path)
     setDBName(dir_name);
     setDBPath(dir.path() + QDir::separator());
 
-    CBLDatabaseConfiguration db_config = {db_path_.toStdString().c_str(), kCBLDatabase_Create};
+    QByteArray db_path_ba = db_path_.toLocal8Bit();
+    const char *db_path_c = db_path_ba.data();
+    CBLDatabaseConfiguration db_config = {db_path_c, kCBLDatabase_Create};
 
     // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
     try {
-        sg_db_ = make_unique<Database>(db_name_.toStdString().c_str(), db_config);
+        sg_db_ = make_unique<Database>(db_name_.toLocal8Bit().data(), db_config);
     }
     catch (CBLError) {
         setMessageAndStatus(MessageType::Error, "Problem with initialization of database.");
@@ -172,7 +174,7 @@ QStringList DatabaseImpl::getChannelSuggestions()
 
     // Get channels from each document in the current DB
     for (const string &document_key : document_keys_) {
-        Document doc = sg_db_.get()->getMutableDocument(document_key);
+        Document doc = sg_db_.get()->getDocument(document_key);
         fleece::Dict read_dict = doc.properties();
         QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8());
 
@@ -226,7 +228,7 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
         folder_path.remove(0, 1);
     }
 
-    folder_path.replace("/", QDir::separator());
+    folder_path = QDir::fromNativeSeparators(folder_path);
     QDir dir(folder_path);
 
     if (!dir.isAbsolute() || !dir.mkpath(folder_path)) {
@@ -256,11 +258,13 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
     setDBName(db_name);
     setDBPath(folder_path);
 
-    CBLDatabaseConfiguration db_config = {db_path_.toStdString().c_str(), kCBLDatabase_Create};
+    QByteArray db_path_ba = db_path_.toLocal8Bit();
+    const char *db_path_c = db_path_ba.data();
+    CBLDatabaseConfiguration db_config = {db_path_c, kCBLDatabase_Create};
 
     // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
     try {
-        sg_db_ = make_unique<Database>(db_name.toStdString().c_str(), db_config);
+        sg_db_ = make_unique<Database>(db_name.toLocal8Bit().data(), db_config);
     }
     catch (CBLError) {
         setMessageAndStatus(MessageType::Error, "Problem with initialization of database.");
@@ -591,7 +595,7 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
     else {
         // If the given body is empty, use the body of the old document
         if (body.isEmpty()) {
-            Document doc = sg_db_->getMutableDocument(oldId.toStdString());
+            Document doc = sg_db_->getDocument(oldId.toStdString());
             body = QString::fromStdString(doc.propertiesAsJSON());
         }
 
@@ -633,7 +637,7 @@ void DatabaseImpl::deleteDoc(const QString &id)
         return;
     }
 
-    Document doc = sg_db_->getMutableDocument(id.toStdString());
+    Document doc = sg_db_->getDocument(id.toStdString());
 
     if (!docExistsInDB(id)) {
         setMessageAndStatus(MessageType::Error, "Document with ID = '" + id + "' does not exist. Cannot delete.");
@@ -689,12 +693,14 @@ void DatabaseImpl::saveAs(QString path, const QString &db_name)
         return;
     }
 
-    CBLDatabaseConfiguration db_config = {db_path_.toStdString().c_str(), kCBLDatabase_Create};
+    QByteArray db_path_ba = db_path_.toLocal8Bit();
+    const char *db_path_c = db_path_ba.data();
+    CBLDatabaseConfiguration db_config = {db_path_c, kCBLDatabase_Create};
 
     // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
     unique_ptr<Database> temp_db;
     try {
-        temp_db = make_unique<Database>(db_name.toStdString(), db_config);
+        temp_db = make_unique<Database>(db_name.toLocal8Bit().data(), db_config);
     }
     catch (CBLError) {
         setMessageAndStatus(MessageType::Error, "Problem saving database.");
@@ -708,7 +714,7 @@ void DatabaseImpl::saveAs(QString path, const QString &db_name)
 
     for (const string &iter : document_keys_) {
         MutableDocument temp_doc(iter);
-        Document existing_doc = sg_db_->getMutableDocument(iter);
+        Document existing_doc = sg_db_->getDocument(iter);
         temp_doc.setPropertiesAsJSON(existing_doc.propertiesAsJSON());
         temp_db->saveDocument(temp_doc);
     }
@@ -743,7 +749,7 @@ void DatabaseImpl::setJSONResponse(vector<string> &docs)
     QJsonObject total_json_message;
 
     for (const string &iter : docs) {
-        Document doc = sg_db_.get()->getMutableDocument(iter);
+        Document doc = sg_db_.get()->getDocument(iter);
         fleece::Dict read_dict = doc.properties();
         document_json = QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8());
         total_json_message.insert(QString::fromStdString(iter), document_json.object());
@@ -813,7 +819,7 @@ void DatabaseImpl::searchDocByChannel(const std::vector<QString> &channels)
 
     // Need to return a JSON response corresponding only to the channels requested
     for (const string &document_key : document_keys_) {
-        Document doc = sg_db_->getMutableDocument(document_key);
+        Document doc = sg_db_->getDocument(document_key);
         QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(doc.propertiesAsJSON()).toUtf8());
 
         if (json_doc.isNull() || json_doc.isEmpty()) {

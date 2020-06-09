@@ -7,6 +7,7 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QDir>
+#include <QDateTime>
 #include <cmath>
 
 SGUtilsCpp::SGUtilsCpp(QObject *parent)
@@ -132,4 +133,9 @@ QString SGUtilsCpp::formattedDataSize(qint64 bytes, int precision)
     QString number = QString::number(bytes / (pow(double(base), power)), 'f', precision);
 
     return number + " " + fileSizePrefixList_.at(power);
+}
+
+QString SGUtilsCpp::formatDateTimeWithOffsetFromUtc(const QDateTime &dateTime, const QString &format)
+{
+    return dateTime.toOffsetFromUtc(dateTime.offsetFromUtc()).toString(format);
 }

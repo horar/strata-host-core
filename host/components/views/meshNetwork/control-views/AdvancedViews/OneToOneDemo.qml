@@ -83,7 +83,7 @@ Rectangle {
 
     property var nodeRemoved: platformInterface.node_removed
     onNodeRemovedChanged: {
-        var theNodeNumber = platformInterface.node_removed.node_id
+        var theNodeNumber = platformInterface.node_removed.index
         if(root.availableNodes[theNodeNumber] !== undefined ){
             root.availableNodes[theNodeNumber] = 0
         }
