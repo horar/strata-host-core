@@ -368,7 +368,7 @@ void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
     HCS_Client* client = getSenderClient();
     Q_ASSERT(client);
 
-    qCWarning(logCategoryHcs()) << "Deprecated command: \"cmd\":\"unregister\", use \"hcs::cmd\":\"unregister\" instead.";
+    qCWarning(logCategoryHcs) << "Deprecated command: \"cmd\":\"unregister\", use \"hcs::cmd\":\"unregister\" instead.";
     onCmdHostUnregister(nullptr);
 }
 
@@ -440,7 +440,7 @@ void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
     QByteArray clientId = client->getClientId();
     current_client_ = nullptr;
     clientList_.remove(client);
-    qCInfo(logCategoryHcs()) << "Client unregistered: " << clientId.toHex();
+    qCInfo(logCategoryHcs) << "Client unregistered: " << clientId.toHex();
 }
 
 void HostControllerService::onCmdHostDownloadFiles(const rapidjson::Value* payload)
@@ -450,13 +450,13 @@ void HostControllerService::onCmdHostDownloadFiles(const rapidjson::Value* paylo
 
     QString destinationDir = QString::fromStdString((*payload)["destination_dir"].GetString());
     if (destinationDir.isEmpty()) {
-        qCWarning(logCategoryHcs()) << "destinationDir attribute is empty";
+        qCWarning(logCategoryHcs) << "destinationDir attribute is empty";
         return;
     }
 
     const rapidjson::Value& files = (*payload)["files"];
     if (files.IsArray() == false) {
-        qCWarning(logCategoryHcs()) << "files attribute is not an array";
+        qCWarning(logCategoryHcs) << "files attribute is not an array";
         return;
     }
 
@@ -512,7 +512,7 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
         auto findIt = hostCmdHandler_.find(cmd_name);
         if (findIt == hostCmdHandler_.end()) {
             //TODO: error handling...
-            qCWarning(logCategoryHcs()) << "Unhandled command" <<  "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
+            qCWarning(logCategoryHcs) << "Unhandled command" <<  "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
             return;
         }
 
@@ -530,7 +530,7 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
         findIt->second(payload);
     }
     else {
-        qCWarning(logCategoryHcs()) << "Unhandled command type" <<  "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
+        qCWarning(logCategoryHcs) << "Unhandled command type" <<  "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
         return;
     }
 }
