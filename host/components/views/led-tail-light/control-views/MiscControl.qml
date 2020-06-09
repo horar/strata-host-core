@@ -97,7 +97,7 @@ Item {
 
                             property var misc_id_vers_1_state: platformInterface.misc_id_vers_1_states.states
                             onMisc_id_vers_1_stateChanged: {
-                                 setStatesForControls(idVers1,misc_id_vers_1_state[0])
+                                setStatesForControls(idVers1,misc_id_vers_1_state[0])
                             }
 
                             property var misc_id_vers_1_value: platformInterface.misc_id_vers_1_value.value
@@ -121,6 +121,7 @@ Item {
 
                             SGStatusLight {
                                 id: oddChannelError
+                                width : 40
 
                             }
 
@@ -128,18 +129,18 @@ Item {
                             onMisc_odd_ch_errorChanged: {
                                 oddChannelErrorLabel.text = misc_odd_ch_error.caption
                                 setStatesForControls(oddChannelError,misc_odd_ch_error.states[0])
-//                                if(misc_odd_ch_error.state === "enabled"){
-//                                    oddChannelError.opacity = 1.0
-//                                    oddChannelError.enabled = true
-//                                }
-//                                else if (misc_odd_ch_error.state === "disabled") {
-//                                    oddChannelError.opacity = 1.0
-//                                    oddChannelError.enabled = false
-//                                }
-//                                else {
-//                                    oddChannelError.opacity = 0.5
-//                                    oddChannelError.enabled = false
-//                                }
+                                //                                if(misc_odd_ch_error.state === "enabled"){
+                                //                                    oddChannelError.opacity = 1.0
+                                //                                    oddChannelError.enabled = true
+                                //                                }
+                                //                                else if (misc_odd_ch_error.state === "disabled") {
+                                //                                    oddChannelError.opacity = 1.0
+                                //                                    oddChannelError.enabled = false
+                                //                                }
+                                //                                else {
+                                //                                    oddChannelError.opacity = 0.5
+                                //                                    oddChannelError.enabled = false
+                                //                                }
                                 if(misc_odd_ch_error.value === true){
                                     oddChannelError.status = SGStatusLight.Red
                                 }
@@ -243,6 +244,7 @@ Item {
 
                             SGStatusLight {
                                 id: evenChannelError
+                                width : 40
 
                             }
 

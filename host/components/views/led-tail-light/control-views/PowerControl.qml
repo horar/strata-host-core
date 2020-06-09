@@ -180,6 +180,7 @@ Item {
 
                                 SGStatusLight {
                                     id: boostOCP
+                                      width : 40
 
                                 }
 
