@@ -10,7 +10,7 @@ class CommandResponseMock
 public:
     CommandResponseMock();
 
-    static std::vector<QByteArray> replacePlaceholders(const std::vector<QByteArray> responses,
+    static std::vector<QByteArray> replacePlaceholders(const std::vector<QByteArray> &responses,
                                                        const rapidjson::Document &requestDoc);
     static QString getPlaceholderValue(const QString placeholder,
                                        const rapidjson::Document &requestDoc);

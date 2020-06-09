@@ -30,7 +30,7 @@ QString CommandResponseMock::getPlaceholderValue(const QString placeholder,
 }
 
 std::vector<QByteArray> CommandResponseMock::replacePlaceholders(
-    const std::vector<QByteArray> responses, const rapidjson::Document &requestDoc)
+    const std::vector<QByteArray> &responses, const rapidjson::Document &requestDoc)
 {
     std::vector<QByteArray> retVal;
     std::map<QString, QString> replacements;
