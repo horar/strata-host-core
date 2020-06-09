@@ -58,8 +58,6 @@ bool HostControllerService::initialize(const QString& config)
         return false;
     }
 
-    db_.setDispatcher(&dispatcher_);
-
     // TODO: Will resolved in SCT-517
     //db_.addReplChannel("platform_list");
 
@@ -70,6 +68,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(storageManager_, &StorageManager::downloadPlatformSingleFileFinished, this, &HostControllerService::sendDownloadPlatformSingleFileFinishedMessage);
     connect(storageManager_, &StorageManager::downloadPlatformFilesFinished, this, &HostControllerService::sendDownloadPlatformFilesFinishedMessage);
     connect(storageManager_, &StorageManager::platformListResponseRequested, this, &HostControllerService::sendPlatformListMessage);
+    connect(storageManager_, &StorageManager::downloadPlatformDocumentsProgress, this, &HostControllerService::sendPlatformDocumentsProgressMessage);
     connect(storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
 
     /* We dont want to call these StorageManager methods directly
@@ -78,7 +77,10 @@ bool HostControllerService::initialize(const QString& config)
     connect(this, &HostControllerService::platformDocumentsRequested, storageManager_, &StorageManager::requestPlatformDocuments, Qt::QueuedConnection);
     connect(this, &HostControllerService::downloadPlatformFilesRequested, storageManager_, &StorageManager::requestDownloadPlatformFiles, Qt::QueuedConnection);
     connect(this, &HostControllerService::cancelPlatformDocumentRequested, storageManager_, &StorageManager::requestCancelAllDownloads, Qt::QueuedConnection);
-    connect(this, &HostControllerService::updatePlatformDocRequested, storageManager_, &StorageManager::updatePlatformDoc, Qt::QueuedConnection);
+
+    connect(&boards_, &BoardController::boardConnected, this, &HostControllerService::platformConnected);
+    connect(&boards_, &BoardController::boardDisconnected, this, &HostControllerService::platformDisconnected);
+    connect(&boards_, &BoardController::boardMessage, this, &HostControllerService::sendMessageToClients);
 
     QString baseUrl = QString::fromStdString( db_cfg["file_server"].GetString() );
     storageManager_->setBaseUrl(baseUrl);
@@ -86,7 +88,7 @@ bool HostControllerService::initialize(const QString& config)
 
     db_.initReplicator(db_cfg["gateway_sync"].GetString(), replicator_username, replicator_password);
 
-    boards_.initialize(&dispatcher_);
+    boards_.initialize();
 
     rapidjson::Value& hcs_cfg = config_["host_controller_service"];
 
@@ -139,7 +141,7 @@ void HostControllerService::sendDownloadPlatformFilePathChangedMessage(
 
     doc.setObject(message);
 
-    clients_.sendMessage(clientId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
+    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
 void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
@@ -161,7 +163,7 @@ void HostControllerService::sendDownloadPlatformSingleFileProgressMessage(
 
     doc.setObject(message);
 
-    clients_.sendMessage(clientId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
+    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
 void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
@@ -181,7 +183,7 @@ void HostControllerService::sendDownloadPlatformSingleFileFinishedMessage(
 
     doc.setObject(message);
 
-    clients_.sendMessage(clientId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
+    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
 void HostControllerService::sendDownloadPlatformFilesFinishedMessage(const QByteArray &clientId, const QString &errorString)
@@ -199,7 +201,7 @@ void HostControllerService::sendDownloadPlatformFilesFinishedMessage(const QByte
 
     doc.setObject(message);
 
-    clients_.sendMessage(clientId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
+    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
 void HostControllerService::sendPlatformListMessage(
@@ -216,7 +218,23 @@ void HostControllerService::sendPlatformListMessage(
     message.insert("hcs::notification", payload);
     doc.setObject(message);
 
-    clients_.sendMessage(clientId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
+    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+}
+
+void HostControllerService::sendPlatformDocumentsProgressMessage(const QByteArray &clientId, int filesCompleted, int filesTotal)
+{
+    QJsonDocument doc;
+    QJsonObject message;
+    QJsonObject payload;
+
+    payload.insert("type", "document_progress");
+    payload.insert("files_completed", filesCompleted);
+    payload.insert("files_total", filesTotal);
+
+    message.insert("cloud::notification", payload);
+    doc.setObject(message);
+
+    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
 void HostControllerService::sendPlatformDocumentsMessage(
@@ -239,7 +257,7 @@ void HostControllerService::sendPlatformDocumentsMessage(
     message.insert("cloud::notification", payload);
     doc.setObject(message);
 
-    clients_.sendMessage(clientId.toStdString(), doc.toJson(QJsonDocument::Compact).toStdString());
+    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
 bool HostControllerService::parseConfig(const QString& config)
@@ -280,14 +298,7 @@ void HostControllerService::handleMessage(const PlatformMessage& msg)
 {
     switch(msg.msg_type)
     {
-        case PlatformMessage::eMsgPlatformConnected:            platformConnected(msg); break;
-        case PlatformMessage::eMsgPlatformDisconnected:         platformDisconnected(msg); break;
-        case PlatformMessage::eMsgPlatformMessage:              sendMessageToClients(msg); break;
-
         case PlatformMessage::eMsgClientMessage:                handleClientMsg(msg); break;
-        case PlatformMessage::eMsgCouchbaseMessage:             handleCouchbaseMsg(msg); break;
-
-        case PlatformMessage::eMsgStorageRequest:               handleStorageRequest(msg); break;
 
         default:
             assert(false);
@@ -295,68 +306,38 @@ void HostControllerService::handleMessage(const PlatformMessage& msg)
     }
 }
 
-void HostControllerService::platformConnected(const PlatformMessage& item)
+void HostControllerService::platformConnected(const QString &classId, const QString &platformId)
 {
-    if (item.from_connectionId.is_set == false) {
-        qCWarning(logCategoryHcs) << "Missing platform connection Id.";
-        return;
-    }
+    Q_UNUSED(platformId)
 
-    std::string classId = boards_.getClassId(item.from_connectionId.conn_id);
-
-    if (classId.empty()) {
+    if (classId.isEmpty()) {
         qCWarning(logCategoryHcs) << "Connected platform doesn't have class Id.";
         return;
     }
 
-    // TODO: Logic will be changed in SCT-517
-    //db_.addReplChannel(classId);
-
     //send update to all clients
-    std::string platformList;
-    boards_.createPlatformsList(platformList);
-    broadcastMessage(platformList);
+    broadcastMessage(boards_.createPlatformsList());
 }
 
-void HostControllerService::platformDisconnected(const PlatformMessage& item)
+void HostControllerService::platformDisconnected(const QString &classId, const QString &platformId)
 {
-    rapidjson::Document doc;
-    if (doc.Parse<rapidjson::kParseCommentsFlag>(item.message.data()).HasParseError()) {
-        qCWarning(logCategoryHcs) << "Parse error!";
-        return;
-    }
+    Q_UNUSED(classId)
 
-    if (doc.HasMember("class_id") == false || doc.HasMember("platform_id") == false) {
-        qCWarning(logCategoryHcs) << "Parse error! no members";
-        return;
-    }
-
-    std::string platformId = doc["platform_id"].GetString();
     HCS_Client* client = findClientByPlatformId(platformId);
     if (client != nullptr) {
         client->resetPlatformId();
-        emit cancelPlatformDocumentRequested(QByteArray::fromStdString(client->getClientId()));
-    }
-
-    std::string classId = doc["class_id"].GetString();
-    if (!classId.empty()) {
-        // TODO: Logic will be changed in SCT-517
-        //db_.remReplChannel(classId);
+        emit cancelPlatformDocumentRequested(client->getClientId());
     }
 
     //send update to all clients
-    std::string platformList;
-    boards_.createPlatformsList(platformList);
-    broadcastMessage(platformList);
+    broadcastMessage(boards_.createPlatformsList());
 }
 
-void HostControllerService::sendMessageToClients(const PlatformMessage& msg)
+void HostControllerService::sendMessageToClients(const QString &platformId, const QString &message)
 {
-    if (msg.from_connectionId.is_set) {
-        std::string clientId = boards_.getClientId(msg.from_connectionId.conn_id);
-        if (clientId.empty() == false) {
-            clients_.sendMessage(clientId, msg.message);
-        }
+    HCS_Client* client = findClientByPlatformId(platformId);
+    if (client != nullptr) {
+        clients_.sendMessage(client->getClientId(), message);
     }
 }
 
@@ -379,9 +360,7 @@ void HostControllerService::onCmdHCSStatus(const rapidjson::Value* )
 
 void HostControllerService::onCmdDynamicPlatformList(const rapidjson::Value * )
 {
-    std::string clientId = getSenderClient()->getClientId();
-
-    emit platformListRequested(QByteArray::fromStdString(clientId));
+    emit platformListRequested(getSenderClient()->getClientId());
 }
 
 void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
@@ -389,8 +368,8 @@ void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
     HCS_Client* client = getSenderClient();
     Q_ASSERT(client);
 
-    if (int device_id; boards_.getDeviceIdByClientId(client->getClientId(), device_id)) {
-        boards_.clearClientId(device_id);
+    if (int deviceId; boards_.getDeviceIdByClientId(client->getClientId(), deviceId)) {
+        boards_.clearClientId(deviceId);
     }
 
     client->resetPlatformId();
@@ -398,43 +377,33 @@ void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
 
 void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
 {
-    if (!payload->HasMember("platform_uuid")) {
-        return;
-    }
-
     HCS_Client* client = getSenderClient();
-    assert(client);
-
-    std::string classId = (*payload)["platform_uuid"].GetString();
-    if (classId.empty()) {
+    if (client == nullptr) {
+        qCCritical(logCategoryHcs) << "sender client is missing";
         return;
     }
 
-    QString clientId = QByteArray::fromRawData(client->getClientId().data(), static_cast<int>(client->getClientId().size()) ).toHex();
-    qCInfo(logCategoryHcs) << "Client:" << clientId <<  " Selected platform:" << QString::fromStdString(classId);
+    if (!payload->HasMember("class_id")) {
+        qCCritical(logCategoryHcs) << "class_id key is missing";
+        return;
+    }
 
-    rapidjson::Document* request = new rapidjson::Document();
-    request->SetObject();
-    rapidjson::Document::AllocatorType& allocator = request->GetAllocator();
-    request->AddMember("cmd", "request", allocator);
-    request->AddMember("class_id", rapidjson::Value(classId.c_str(), allocator), allocator);
-    request->AddMember("client_id", rapidjson::Value(client->getClientId().c_str(), allocator), allocator);
+    QString classId = QString::fromStdString((*payload)["class_id"].GetString());
+    if (classId.isEmpty()) {
+        qCCritical(logCategoryHcs) << "class_id is empty";
+        return;
+    }
 
-    PlatformMessage msg;
-    msg.msg_type = PlatformMessage::eMsgStorageRequest;
-    msg.from_client = client->getClientId();
-    msg.message = std::string();
-    msg.msg_document = request;
+    QByteArray clientId = client->getClientId();
+    emit platformDocumentsRequested(clientId, classId);
 
-    dispatcher_.addMessage(msg);
-
-    if (int device_id; boards_.getFirstDeviceIdByClassId(classId, device_id) ) {
-        std::string platformId = boards_.getPlatformId(device_id);
-        if (platformId.empty()) {
-            qCWarning(logCategoryHcs) << "Board doesn't have platfomId!";
+    if (int deviceId; boards_.getFirstDeviceIdByClassId(classId, deviceId) ) {
+        QString platformId = boards_.getPlatformId(deviceId);
+        if (platformId.isEmpty()) {
+            qCWarning(logCategoryHcs) << "Board doesn't have platformId!";
             return;
         }
-        if (boards_.setClientId(client->getClientId(), device_id) == false) {
+        if (boards_.setClientId(client->getClientId(), deviceId) == false) {
             qCWarning(logCategoryHcs) << "Board is allready assigned to some client!";
             return;
         }
@@ -451,7 +420,7 @@ void HostControllerService::onCmdHostDisconnectPlatform(const rapidjson::Value* 
         boards_.clearClientId(device_id);
     }
 
-    emit cancelPlatformDocumentRequested(QByteArray::fromStdString(client->getClientId()));
+    emit cancelPlatformDocumentRequested(client->getClientId());
 
     client->resetPlatformId();
 }
@@ -468,7 +437,7 @@ void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
 
 void HostControllerService::onCmdHostDownloadFiles(const rapidjson::Value* payload)
 {
-    QByteArray clientId = QByteArray::fromStdString(getSenderClient()->getClientId());
+    QByteArray clientId = getSenderClient()->getClientId();
     QStringList partialUriList;
 
     QString destinationDir = QString::fromStdString((*payload)["destination_dir"].GetString());
@@ -490,7 +459,7 @@ void HostControllerService::onCmdHostDownloadFiles(const rapidjson::Value* paylo
     emit downloadPlatformFilesRequested(clientId, partialUriList, destinationDir);
 }
 
-HCS_Client* HostControllerService::getClientById(const std::string& client_id)
+HCS_Client* HostControllerService::getClientById(const QByteArray& client_id)
 {
     auto findIt = std::find_if(clientList_.begin(), clientList_.end(),
                                [&](HCS_Client* val) { return client_id == val->getClientId(); }  );
@@ -498,16 +467,16 @@ HCS_Client* HostControllerService::getClientById(const std::string& client_id)
     return (findIt != clientList_.end()) ? *findIt : nullptr;
 }
 
-void HostControllerService::handleClientMsg(const PlatformMessage& msg)  //const std::string& read_message, const std::string& dealer_id
+void HostControllerService::handleClientMsg(const PlatformMessage& msg)
 {
-    QString clientId = QByteArray::fromRawData(msg.from_client.data(), static_cast<int>(msg.from_client.size()) ).toHex();
+    QByteArray clientId = msg.from_client;
 
     //check the client's ID (dealer_id) is in list
-    HCS_Client* client = getClientById(msg.from_client);
+    HCS_Client* client = getClientById(clientId);
     if (client == nullptr) {
         qCInfo(logCategoryHcs) << "new Client:" << clientId;
 
-        client = new HCS_Client(msg.from_client);
+        client = new HCS_Client(clientId);
         clientList_.push_back(client);
     }
 
@@ -553,26 +522,8 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)  //const
     }
 }
 
-void HostControllerService::handleCouchbaseMsg(const PlatformMessage& msg)
-{
-    emit updatePlatformDocRequested(QString::fromStdString(msg.from_client));
-}
 
-void HostControllerService::handleStorageRequest(const PlatformMessage& msg)
-{
-    assert(msg.msg_document != nullptr);
-
-    rapidjson::Document* request_doc = msg.msg_document;
-
-    QString classId = QString::fromStdString((*request_doc)["class_id"].GetString());
-    QByteArray clientId = QByteArray::fromStdString(msg.from_client);
-
-    emit platformDocumentsRequested(clientId, classId);
-
-    delete msg.msg_document;
-}
-
-bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer_id, const std::string& message )
+bool HostControllerService::disptachMessageToPlatforms(const QByteArray& dealer_id, const std::string& message )
 {
     int device_id;
     if (boards_.getDeviceIdByClientId(dealer_id, device_id) == false) {
@@ -580,22 +531,22 @@ bool HostControllerService::disptachMessageToPlatforms(const std::string& dealer
         return false;
     }
 
-    boards_.sendMessage(device_id, message);
+    boards_.sendMessage(device_id, QByteArray::fromStdString(message));
     return true;
 }
 
-bool HostControllerService::broadcastMessage(const std::string& message)
+bool HostControllerService::broadcastMessage(const QString& message)
 {
-    qCInfo(logCategoryHcs) << "broadcast msg:" << QString::fromStdString(message);
+    qCInfo(logCategoryHcs) << "broadcast msg:" << message;
     for(auto item : clientList_) {
-        std::string clientId = item->getClientId();
+        QByteArray clientId = item->getClientId();
         clients_.sendMessage(clientId, message);
     }
 
     return false;
 }
 
-HCS_Client* HostControllerService::findClientByPlatformId(const std::string& platformId)
+HCS_Client* HostControllerService::findClientByPlatformId(const QString& platformId)
 {
     for(HCS_Client* item : clientList_) {
         if (item->getPlatformId() == platformId) {

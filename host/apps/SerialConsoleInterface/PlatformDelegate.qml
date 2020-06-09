@@ -17,8 +17,6 @@ FocusScope {
     property var filterList: []
     property bool automaticScroll: true
 
-    signal programDeviceRequested()
-
     StackView {
         id: stackView
         anchors.fill: parent
@@ -35,6 +33,25 @@ FocusScope {
         id: mainPageComponent
 
         FocusScope {
+            id: mainPage
+
+            Shortcut {
+                id: clearShortcut
+                sequence: "Ctrl+D"
+                onActivated: mainPage.clearScrollback()
+            }
+
+            Shortcut {
+                id: followShortcut
+                sequence: "Ctrl+F"
+                onActivated: mainPage.toggleFollow()
+            }
+
+            Shortcut {
+                id: expandShortcut
+                sequence: "Ctrl+E"
+                onActivated: mainPage.toggleExpand()
+            }
 
             CommonCpp.SGSortFilterProxyModel {
                 id: scrollbackFilterModel
@@ -326,26 +343,21 @@ FocusScope {
                     spacing: 10
 
                     SGWidgets.SGIconButton {
-                        hintText: qsTr("Clear scrollback")
+                        text: "Clear"
+                        hintText: prettifyHintText("Clear scrollback", clearShortcut.nativeText)
                         icon.source: "qrc:/images/broom.svg"
                         iconSize: toolButtonRow.iconHeight
-                        onClicked: {
-                            scrollbackModel.clear()
-                        }
+                        onClicked: mainPage.clearScrollback()
                     }
 
                     SGWidgets.SGIconButton {
                         id: automaticScrollButton
-                        hintText: qsTr("Automatically scroll to the last message")
+                        text: "Follow"
+                        hintText: prettifyHintText("Auto scroll down when new message arrives", followShortcut.nativeText)
                         icon.source: "qrc:/sgimages/arrow-list-bottom.svg"
                         iconSize: toolButtonRow.iconHeight
                         checkable: true
-                        onClicked: {
-                            automaticScroll = !automaticScroll
-                            if (automaticScroll) {
-                                scrollbackView.positionViewAtEnd()
-                            }
-                        }
+                        onClicked: mainPage.toggleFollow()
 
                         Binding {
                             target: automaticScrollButton
@@ -355,22 +367,28 @@ FocusScope {
                     }
 
                     SGWidgets.SGIconButton {
-                        hintText: scrollbackModel.condensedMode ? qsTr("Expand all commands") : qsTr("Collapse all commands")
+                        text: scrollbackModel.condensedMode ? "Expand" : "Collapse"
+                        minimumWidthText: "Collapse"
+                        hintText: {
+                            if (scrollbackModel.condensedMode) {
+                                var t = qsTr("Expand all commands")
+                            } else {
+                                t = qsTr("Collapse all commands")
+                            }
+
+                            return prettifyHintText(t, expandShortcut.nativeText)
+                        }
                         icon.source: scrollbackModel.condensedMode ? "qrc:/images/list-expand.svg" : "qrc:/images/list-collapse.svg"
                         iconSize: toolButtonRow.iconHeight
-                        onClicked: {
-                            scrollbackModel.condensedMode = ! scrollbackModel.condensedMode
-                            scrollbackModel.setAllCondensed(scrollbackModel.condensedMode)
-                        }
+                        onClicked: mainPage.toggleExpand()
                     }
 
                     SGWidgets.SGIconButton {
-                        hintText: qsTr("Filter")
+                        text: "Filter"
+                        hintText: qsTr("Filter messages")
                         icon.source: "qrc:/sgimages/funnel.svg"
                         iconSize: toolButtonRow.iconHeight
-                        onClicked: {
-                            openFilterDialog()
-                        }
+                        onClicked: openFilterDialog()
                     }
 
                     VerticalDivider {
@@ -378,25 +396,23 @@ FocusScope {
                     }
 
                     SGWidgets.SGIconButton {
+                        text: "Export"
                         hintText: qsTr("Export to file")
                         icon.source: "qrc:/sgimages/file-export.svg"
                         iconSize: toolButtonRow.iconHeight
-                        onClicked: {
-                            showFileExportDialog()
-                        }
+                        onClicked: showExportView()
                     }
 
                     SGWidgets.SGIconButton {
-                        hintText: qsTr("Program Device")
+                        text: "Program"
+                        hintText: qsTr("Program device with new firmware")
                         icon.source: "qrc:/sgimages/chip-flash.svg"
                         iconSize: toolButtonRow.iconHeight
-                        onClicked: {
-                            stackView.push(programDeviceComponent)
-                        }
+                        onClicked: showProgramView()
                     }
 
                     SGWidgets.SGIconButton {
-                        hintText: qsTr("Platform Info")
+                        hintText: qsTr("Platform info")
                         icon.source: "qrc:/sgimages/info-circle.svg"
                         iconSize: toolButtonRow.iconHeight
                         onClicked: {
@@ -407,19 +423,48 @@ FocusScope {
                     }
                 }
 
-                SGWidgets.SGTag {
+                Column {
                     anchors {
-                        verticalCenter: toolButtonRow.verticalCenter
+                        top: toolButtonRow.top
                         right: parent.right
                         rightMargin: 6
                     }
 
-                    sizeByMask: true
-                    mask: "Filtered notifications: " + "9".repeat(filteredCount.toString().length)
-                    text: "Filtered notifications: " + filteredCount
-                    visible: filteredCount > 0
+                    spacing: 4
 
-                    property int filteredCount: scrollbackModel.count - scrollbackFilterModel.count
+                    SGWidgets.SGTag {
+                        anchors.right: parent.right
+                        sizeByMask: true
+                        mask: "Filtered: " + "9".repeat(filteredCount.toString().length)
+                        text: "Filtered: " + filteredCount
+                        font.bold: true
+                        visible: filteredCount > 0
+
+                        property int filteredCount: scrollbackModel.count - scrollbackFilterModel.count
+                    }
+
+                    SGWidgets.SGTag {
+                        anchors.right: parent.right
+                        text: {
+                            if (model.platform.scrollbackModel.autoExportErrorString.length > 0) {
+                                return "EXPORT FAILED"
+                            } else if (model.platform.scrollbackModel.autoExportIsActive) {
+                                return "Export"
+                            }
+
+                            return ""
+                        }
+
+                        font.bold: true
+                        textColor: "white"
+                        color: {
+                            if (model.platform.scrollbackModel.autoExportErrorString.length > 0) {
+                                return SGWidgets.SGColorsJS.ERROR_COLOR
+                            }
+
+                            return SGWidgets.SGColorsJS.TANGO_PLUM1
+                        }
+                    }
                 }
 
                 SGWidgets.SGTag {
@@ -491,7 +536,7 @@ FocusScope {
                     }
 
                     onSuggestionDelegateRemoveRequested: {
-                        model.platform.removeCommandFromHistoryAt(index)
+                        model.platform.commandHistoryModel.removeAt(index)
                     }
                 }
 
@@ -519,6 +564,47 @@ FocusScope {
                     cmdInput.clear()
                 }
             }
+
+            function clearScrollback() {
+                scrollbackModel.clear()
+            }
+
+            function toggleFollow() {
+                automaticScroll = !automaticScroll
+                if (automaticScroll) {
+                    scrollbackView.positionViewAtEnd()
+                }
+            }
+
+            function toggleExpand() {
+                scrollbackModel.condensedMode = ! scrollbackModel.condensedMode
+                scrollbackModel.setAllCondensed(scrollbackModel.condensedMode)
+            }
+
+            function openFilterDialog() {
+                var dialog = SGWidgets.SGDialogJS.createDialog(
+                            root,
+                            "qrc:/FilterDialog.qml",
+                            {
+                                "disableAllFiltering": disableAllFiltering,
+                            })
+
+                var list = []
+
+                dialog.populateFilterData(filterList)
+
+                dialog.accepted.connect(function() {
+                    filterList = JSON.parse(JSON.stringify(dialog.getFilterData()))
+                    disableAllFiltering = dialog.disableAllFiltering
+
+                    console.log(Logger.sciCategory, "filters:", JSON.stringify(filterList))
+                    console.log(Logger.sciCategory, "disableAllFiltering", disableAllFiltering)
+
+                    scrollbackFilterModel.invalidate()
+                })
+
+                dialog.open()
+            }
         }
     }
 
@@ -537,44 +623,22 @@ FocusScope {
         id: programDeviceComponent
 
         ProgramDeviceView {
-            onCloseProgramDeviceViewRequested: {
-                sciModel.platformModel.reconnect(index)
-                stackView.pop();
-            }
         }
     }
 
-    function showFileExportDialog() {
-        var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(
-                    platformDelegate,
-                    fileDialogComponent,
-                    {
-                        "title": "Select File to Export",
-                        "selectExisting": false,
-                        "defaultSuffix": "log",
-                    })
+    Component {
+        id: exportComponent
 
-        dialog.accepted.connect(function() {
-            var result = model.platform.exportScrollback(CommonCpp.SGUtilsCpp.urlToLocalFile(dialog.fileUrl))
-            if (result === false) {
-                console.error(Logger.sciCategory, "failed to export content into", dialog.fileUrl)
+        ExportView {
+        }
+    }
 
-                SGWidgets.SGDialogJS.showMessageDialog(
-                            rootItem,
-                            SGWidgets.SGMessageDialog.Error,
-                            "Export Failed",
-                            "Writting into selected file failed.")
-            } else {
-                console.log(Logger.sciCategory, "content exported into", dialog.fileUrl)
-            }
+    function showProgramView() {
+        stackView.push(programDeviceComponent)
+    }
 
-            dialog.destroy()})
-
-        dialog.rejected.connect(function() {
-            dialog.destroy()
-        })
-
-        dialog.open();
+    function showExportView() {
+        stackView.push(exportComponent)
     }
 
     function prettifyJson(message, condensed) {
@@ -595,28 +659,8 @@ FocusScope {
         return JSON.stringify(messageObj, undefined, 4)
     }
 
-    function openFilterDialog() {
-        var dialog = SGWidgets.SGDialogJS.createDialog(
-                    root,
-                    "qrc:/FilterDialog.qml",
-                    {
-                        "disableAllFiltering": disableAllFiltering,
-                    })
 
-        var list = []
-
-        dialog.populateFilterData(filterList)
-
-        dialog.accepted.connect(function() {
-            filterList = JSON.parse(JSON.stringify(dialog.getFilterData()))
-            disableAllFiltering = dialog.disableAllFiltering
-
-            console.log(Logger.sciCategory, "filters:", JSON.stringify(filterList))
-            console.log(Logger.sciCategory, "disableAllFiltering", disableAllFiltering)
-
-            scrollbackFilterModel.invalidate()
-        })
-
-        dialog.open()
+    function prettifyHintText(hintText, shortcut) {
+        return hintText + " - " + shortcut
     }
 }

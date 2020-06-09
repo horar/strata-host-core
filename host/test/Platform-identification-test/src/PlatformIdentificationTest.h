@@ -6,7 +6,7 @@
 
 #include <BoardManager.h>
 #include <SGJLinkConnector.h>
-#include <SerialDevice.h>
+#include <Device/Device.h>
 
 #include <iostream>
 

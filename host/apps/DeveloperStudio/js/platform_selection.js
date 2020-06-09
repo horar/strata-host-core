@@ -186,13 +186,8 @@ function parseConnectedPlatforms (connected_platform_list_json) {
 }
 
 function selectPlatform(class_id){
-    // Get docs if no views are currently open (only one set of docs supported at this time)
-    if (platformViewModel.count === 0) {
-        coreInterface.connectToPlatform(class_id)
-    }
-
     let index = platformMap[String(class_id)].index
-    let data = { "class_id": class_id }
+    let data = { "class_id": class_id, "name": platformListModel.get(index).verbose_name }
     if (platformListModel.get(index).connection === "view" || platformMap[String(class_id)].ui_exists === false) {
         NavigationControl.updateState(NavigationControl.events.VIEW_COLLATERAL_EVENT, data)
     } else { // connection is "connected"
@@ -233,7 +228,7 @@ function emptyListRetry() {
 
 function insertUnknownListing (platform) {
     let platform_info = {
-        "verbose_name" : "Unknown Platform Connected: " + platform.verbose_name,
+        "verbose_name" : "Unknown Platform",
         "connection" : "connected",
         "class_id" : platform.class_id,
         "opn": "Class id: " + platform.class_id,
@@ -256,7 +251,7 @@ function insertUnlistedListing (platform) {
     let class_id_string = String(platform.class_id)
 
     let platform_info = {
-        "verbose_name" : "Unlisted Platform Connected: " + platform.verbose_name,
+        "verbose_name" : "Unknown Platform",
         "connection" : "connected",
         "class_id" : platform.class_id,
         "opn": "Class id: " + platform.class_id,

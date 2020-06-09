@@ -22,8 +22,6 @@ FocusScope {
                             || processingStatus === ProgramDeviceView.ProgramSucceed
                             || processingStatus === ProgramDeviceView.ProgramFailed
 
-    signal closeProgramDeviceViewRequested()
-
     enum ProcessingStatus {
         Setup,
         Preparation,
@@ -272,7 +270,7 @@ FocusScope {
                 icon.source: "qrc:/sgimages/chevron-left.svg"
                 enabled: programDeviceView.editable
                 onClicked: {
-                    closeProgramDeviceViewRequested()
+                    closeView()
                 }
             }
 
@@ -370,5 +368,9 @@ FocusScope {
         })
 
         dialog.open();
+    }
+
+    function closeView() {
+        StackView.view.pop();
     }
 }

@@ -6,7 +6,7 @@
 
 namespace strata {
 
-FlasherConnector::FlasherConnector(const SerialDevicePtr& device, const QString& firmwarePath, QObject* parent) :
+FlasherConnector::FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, QObject* parent) :
     QObject(parent), device_(device), filePath_(firmwarePath),
     tmpBackupFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("firmware_backup"))), action_(Action::None) { }
 
@@ -79,6 +79,7 @@ void FlasherConnector::flashFirmware(bool flashOld) {
     connect(flasher_.get(), &Flasher::error, this, &FlasherConnector::handleFlasherError);
     connect(flasher_.get(), &Flasher::flashProgress, this, &FlasherConnector::flashProgress);
     connect(flasher_.get(), &Flasher::switchToBootloader, this, &FlasherConnector::handleSwitchToBootloader);
+    connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 
     if (operation_ != Operation::Preparation) {
         startOperation();
@@ -97,6 +98,7 @@ void FlasherConnector::backupFirmware(bool backupOld) {
     connect(flasher_.get(), &Flasher::error, this, &FlasherConnector::handleFlasherError);
     connect(flasher_.get(), &Flasher::backupProgress, this, &FlasherConnector::backupProgress);
     connect(flasher_.get(), &Flasher::switchToBootloader, this, &FlasherConnector::handleSwitchToBootloader);
+    connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 
     if (operation_ != Operation::Preparation) {
         startOperation();
@@ -138,6 +140,7 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult) {
     State result;
     switch (flasherResult) {
     case Flasher::Result::Ok :
+    case Flasher::Result::NoFirmware :
         result = State::Finished;
         break;
     case Flasher::Result::Cancelled :
@@ -156,6 +159,7 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult) {
     }
     if (result == State::Failed) {
         emit operationStateChanged(operation_, result, errorString_);
+        errorString_.clear();
     } else {
         emit operationStateChanged(operation_, result);
     }
@@ -176,11 +180,17 @@ void FlasherConnector::handleFlasherFinished(Flasher::Result flasherResult) {
             action_ = Action::FlashNew;
             flashFirmware(false);
         } else {
-            if (flasherResult != Flasher::Result::Cancelled) {
-                qCCritical(logCategoryFlasherConnector) << "Failed to backup original firmware.";
+            if (flasherResult == Flasher::Result::NoFirmware) {
+                qCInfo(logCategoryFlasherConnector) << "Board has no firmware, cannot backup. Going to flash new firmware.";
+                action_ = Action::Flash;
+                flashFirmware(false);
+            } else {
+                if (flasherResult != Flasher::Result::Cancelled) {
+                    qCCritical(logCategoryFlasherConnector) << "Failed to backup original firmware.";
+                }
+                action_ = Action::None;
+                emit finished(Result::Unsuccess);
             }
-            action_ = Action::None;
-            emit finished(Result::Unsuccess);
         }
         break;
     case Action::FlashNew :

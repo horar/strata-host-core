@@ -3,6 +3,7 @@ import QtQuick.Controls 2.2
 import QtGraphicalEffects 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.theme 1.0
+import tech.strata.commoncpp 1.0
 
 Rectangle {
     id: root
@@ -13,6 +14,7 @@ Rectangle {
     }
     implicitHeight: 200
     implicitWidth: 300
+    clip: true
 
     property string title: qsTr("")
     property color titleTextColor: "black"
@@ -22,7 +24,6 @@ Rectangle {
     property color statusBoxColor: "white"
     property color statusBoxBorderColor: "#D9D9D9"
     property bool showMessageIds: false
-    property bool filterEnabled: true
     property variant model: listModel           // you may use your own model in advanced use cases, this can break the built-in model manipulation functions
     property string filterRole: "message"       // this role is what is cmd/ctrl-f filters on
     property string copyRole: ""
@@ -32,6 +33,9 @@ Rectangle {
     property alias listView: listView
     property alias listViewMouse: listViewMouse
     property alias delegate: listView.delegate
+    property alias filterEnabled: findShortcut.enabled
+    property alias copyEnabled: copyShortcut.enabled
+    property alias filterModel: filterModel
 
     //  A listElement template that allows manipulation by id (see functions at bottom)
     //  as well as enablement of mouse element selection ability
@@ -83,7 +87,7 @@ Rectangle {
             margins: 10
         }
         clip: true
-        model: root.model
+        model: filterModel
 
         ScrollBar.vertical: ScrollBar { z: 1 }
         ScrollBar.horizontal: ScrollBar { z: 1 }
@@ -152,12 +156,14 @@ Rectangle {
         visible: true
         clip: true
 
+        property real openHeight: filterBox.height + filterBox.anchors.bottomMargin *2
+
         PropertyAnimation {
             id: openFilter
             target: filterContainer
             property: "height"
             from: 0
-            to: filterBox.height + filterBox.anchors.bottomMargin *2
+            to: filterContainer.openHeight
             duration: 100
         }
 
@@ -165,7 +171,7 @@ Rectangle {
             id: closeFilter
             target: filterContainer
             property: "height"
-            from: filterBox.height + filterBox.anchors.bottomMargin *2
+            from: filterContainer.openHeight
             to: 0
             duration: 100
         }
@@ -182,25 +188,36 @@ Rectangle {
             placeholderText: "Filter..."
             horizontalAlignment: Text.AlignLeft
             fontSizeMultiplier: root.fontSizeMultiplier
+            width: 100
 
-            ListModel {
-                id: filterModel
-            }
+            property string lowerCaseText: text.toLowerCase()
 
             onAccepted: {
-                filterModel.clear()
-                if (text.length >0) {
-                    var caseInsensitiveFilter = new RegExp(text, 'i')
-                    for (var i = 0; i < root.model.count; i++) {
-                        var listElement = root.model.get(i);
-                        onFilter(listElement)
-                        if (caseInsensitiveFilter.test (listElement[root.filterRole])) {
-                            filterModel.append(listElement)
+                filterModel.invalidate()
+            }
+
+            SGSortFilterProxyModel {
+                id: filterModel
+                sourceModel: root.model
+                sortEnabled: false
+                invokeCustomFilter: true
+
+                function filterAcceptsRow(row) {
+                    var item = sourceModel.get(row)
+                    return contains_text(item)
+                }
+
+                function contains_text(item) {
+                    if (filterBox.text !== ""){
+                        var keywords = item[root.filterRole]
+                        if (keywords.toLowerCase().includes(filterBox.lowerCaseText)) {
+                            return true
+                        } else {
+                            return false
                         }
+                    } else {
+                        return true
                     }
-                    listView.model = filterModel
-                } else {
-                    listView.model = root.model
                 }
             }
         }
@@ -285,8 +302,8 @@ Rectangle {
     }
 
     Shortcut {
+        id: findShortcut
         sequence: StandardKey.Find
-        enabled: filterEnabled
         onActivated: {
             if ( filterContainer.height === 0 ){
                 openFilter.start()
@@ -299,7 +316,7 @@ Rectangle {
         sequence: StandardKey.Cancel
         enabled: filterEnabled
         onActivated: {
-            if ( filterContainer.height === 30 ){
+            if ( filterContainer.height === filterContainer.openHeight ){
                 closeFilter.start()
             }
             filterBox.text = ""
@@ -308,6 +325,7 @@ Rectangle {
     }
 
     Shortcut {
+        id: copyShortcut
         sequence: StandardKey.Copy
         onActivated: {
             var stringToCopy = ""

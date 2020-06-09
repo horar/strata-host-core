@@ -18,15 +18,9 @@ var signals = createObject("qrc:/partial-views/login/LoginSignals.qml", null)
 function login(login_info){
     var data = {"username":login_info.user, "password":login_info.password, "timezone": login_info.timezone};
 
-    let versionNumberList = Qt.application.version.split(".")
-    if (versionNumberList[0].startsWith("v")) {
-        versionNumberList[0] = versionNumberList[0].substring(1)
-    }
-    let versionNumber = "%1.%2.%3".arg(versionNumberList[0]).arg(versionNumberList[1]).arg(versionNumberList[2])
-
     let headers = {
         "app": "strata",
-        "version": versionNumber,
+        "version": Rest.versionNumber(),
     }
 
     Rest.xhr("post", "login", data, login_result, login_error, signals, headers)
@@ -227,7 +221,7 @@ function createObject(name, parent) {
     var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
 
     if (component.status === QtQuickModule.Component.Error) {
-        console.error(LoggerModule.Logger.devStudioLoginCategory, "Cannot createComponent:", name);
+        console.error(LoggerModule.Logger.devStudioLoginCategory, "Cannot createComponent:", name, "; err=", component.errorString());
     }
 
     var object = component.createObject(parent)

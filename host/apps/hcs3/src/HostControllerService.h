@@ -10,11 +10,13 @@
 #include <set>
 
 #include <QObject>
+#include <QString>
+#include <QByteArray>
 #include "Dispatcher.h"
 #include "ClientsController.h"
 #include "Database.h"
 #include "LoggingAdapter.h"
-#include "BoardManagerWrapper.h"
+#include "BoardController.h"
 #include <QJsonArray>
 
 
@@ -52,7 +54,6 @@ signals:
     void platformDocumentsRequested(QByteArray clientId, QString classId);
     void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
-    void updatePlatformDocRequested(QString classId);
 
 public slots:
     void onAboutToQuit();
@@ -81,6 +82,11 @@ public slots:
             const QByteArray &clientId,
             const QJsonArray &platformList);
 
+    void sendPlatformDocumentsProgressMessage(
+            const QByteArray &clientId,
+            int filesCompleted,
+            int filesTotal);
+
     void sendPlatformDocumentsMessage(
             const QByteArray &clientId,
             const QJsonArray &documentList,
@@ -90,12 +96,10 @@ private:
     void handleMessage(const PlatformMessage& msg);
 
     void handleClientMsg(const PlatformMessage& msg);
-    void handleCouchbaseMsg(const PlatformMessage& msg);
-    void handleStorageRequest(const PlatformMessage& msg);
-    void sendMessageToClients(const PlatformMessage& msg);
-    bool disptachMessageToPlatforms(const std::string& dealer_id, const std::string& read_message);
+    void sendMessageToClients(const QString &platformId, const QString& message);
+    bool disptachMessageToPlatforms(const QByteArray& dealer_id, const std::string& read_message);
 
-    bool broadcastMessage(const std::string& message);
+    bool broadcastMessage(const QString& message);
 
     ///////
     //handlers for client (UI)
@@ -109,18 +113,17 @@ private:
     void onCmdHostDownloadFiles(const rapidjson::Value* );      //from UI
     void onCmdDynamicPlatformList(const rapidjson::Value* );
 
-    //called from Platform manager to handle platforms connect/disconnect
-    void platformConnected(const PlatformMessage& item);
-    void platformDisconnected(const PlatformMessage& item);
+    void platformConnected(const QString &classId, const QString &platformId);
+    void platformDisconnected(const QString &classId, const QString &platformId);
 
     HCS_Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 
-    HCS_Client* getClientById(const std::string& client_id);
-    HCS_Client* findClientByPlatformId(const std::string& platformId);
+    HCS_Client* getClientById(const QByteArray& client_id);
+    HCS_Client* findClientByPlatformId(const QString& platformId);
 
     bool parseConfig(const QString& config);
 
-    BoardManagerWrapper boards_;
+    BoardController boards_;
     ClientsController clients_;     //UI or other clients
     Database db_;
     LoggingAdapter dbLogAdapter_;

@@ -15,11 +15,23 @@ FileModel::~FileModel()
 void FileModel::append(const QString &path)
 {
     beginInsertRows(QModelIndex(),data_.length(),data_.length());
-
     data_.append(path);
-
     endInsertRows();
     emit countChanged();
+}
+
+int FileModel::remove(const QString &path)
+{
+    for (int i = 0; i < data_.length(); i++) {
+        if (data_.at(i) == path) {
+            beginRemoveRows(QModelIndex(), i,i);
+            data_.removeAt(i);
+            endRemoveRows();
+            emit countChanged();
+            return i;
+        }
+    }
+    return -1;
 }
 
 QVariant FileModel::data(const QModelIndex &index, int role) const

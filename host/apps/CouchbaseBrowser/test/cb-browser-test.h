@@ -4,7 +4,6 @@
 
 #include <gtest/gtest.h>
 
-
 class DatabaseImplTest : public ::testing::Test
 {
 public:
@@ -14,7 +13,10 @@ public:
 
     QString DB_folder_path_;
 
+    // Info for replication tests:
     const QString url_ = "ws://localhost:4984/db";
+    const QString username_ = "";
+    const QString password_ = "";
 
 protected:
     void SetUp() override;

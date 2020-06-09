@@ -11,6 +11,8 @@ ComboBox {
     implicitWidth: modelWidth + height + contentItem.leftPadding
     font.pixelSize: SGSettings.fontPixelSize * fontSizeMultiplier
     model: ["First", "Second", "Third"]
+    opacity: enabled ? 1 : 0.5
+    layer.enabled: true
 
     property color textColor: "black"
     property color indicatorColor: "#B3B3B3"
