@@ -8,7 +8,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 Item {
     id: root
     property real ratioCalc: root.width / 1200
-    property real initialAspectRatio: 961/657
+    property real initialAspectRatio: 1400/900
     anchors.centerIn: parent
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
@@ -19,6 +19,12 @@ Item {
         onClicked: {
             forceActiveFocus()
         }
+    }
+    onWidthChanged: {
+        console.log(width)
+    }
+    onHeightChanged: {
+        console.log(height)
     }
 
     function toHex(d) {

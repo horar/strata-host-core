@@ -8,7 +8,7 @@ import tech.strata.fonts 1.0
 Item {
     id: root
     property real ratioCalc: root.width / 1200
-    property real initialAspectRatio: 1200/820
+property real initialAspectRatio: 1400/900
     anchors.centerIn: parent
     height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
