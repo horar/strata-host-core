@@ -12,9 +12,11 @@ FocusScope {
     property alias label: textEdit.label
     property alias inputValidation: textEdit.inputValidation
     property alias hasHelperText: textEdit.hasHelperText
+    property alias placeholderText: textEdit.placeholderText
     property string dialogLabel: "Select File"
     property bool dialogSelectExisting: true
     property string dialogDefaultSuffix: ""
+    property variant dialogNameFilters: []
 
 
     function inputValidationErrorMsg() {
@@ -71,7 +73,8 @@ FocusScope {
                         "title": dialogLabel,
                         "selectExisting": dialogSelectExisting,
                         "defaultSuffix": dialogDefaultSuffix,
-                        "folderRequested": resolveAbsoluteFileUrl(textEdit.text)
+                        "folderRequested": resolveAbsoluteFileUrl(textEdit.text),
+                        "nameFilters": dialogNameFilters,
                     })
 
         dialog.accepted.connect(function() {
