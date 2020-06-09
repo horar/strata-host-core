@@ -76,14 +76,18 @@ public:
                          const QString &password = "",
                          const QStringList &channels = QStringList(),
                          const QString &replicator_type = "",
-                         const QString &conflict_resolution_policy = "",
-                         const QString &reconnection_policy = ""
+                         std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener = nullptr,
+                         std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr
                          );
-
-signals:
-    void replicationFinished(Database* db, std::string str);
 
 private:
     std::unique_ptr<CouchbaseDatabase> database_;
 
+    std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback = nullptr;
+
+    std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback = nullptr;
+
+    void default_changeListener(cbl::Replicator, const CBLReplicatorStatus &status);
+
+    void default_documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents);
 };

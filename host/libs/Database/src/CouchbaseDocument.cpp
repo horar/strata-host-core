@@ -6,7 +6,7 @@ CouchbaseDocument::CouchbaseDocument(const std::string id) {
 }
 
 bool CouchbaseDocument::setBody(const std::string &body) {
-    fleece::Doc fleece_doc = fleece::Doc::fromJSON(body);
+    auto fleece_doc = fleece::Doc::fromJSON(body);
     if (!fleece_doc) {
         qCCritical(logCategoryCouchbaseDatabase) << "Error setting document. Verify the body is valid JSON.";
         return false;

@@ -30,8 +30,6 @@ target_include_directories(${PROJECT_NAME}
     logging
 )
 
-generate_app_version(GITTAG_PREFIX "cbdb" MACBUNDLE OFF)
-
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC Qt5::Network
@@ -42,9 +40,9 @@ target_link_libraries(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
+    AUTORCC ON
 )
 
 if(BUILD_TESTING)
     add_subdirectory(sample-app)
-    # add_subdirectory(test)
 endif()

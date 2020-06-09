@@ -65,81 +65,64 @@ public:
 
     std::vector<std::string> getAllDocumentKeys();
 
-//     /********************************************
-//      * REPLICATOR API *
-//      *******************************************/
+    /********************************************
+     * REPLICATOR API *
+     *******************************************/
 
-//     enum class ReplicatorType {
-//         kPull,
-//         kPush,
-//         kPushAndPull
-//     };
+    enum class ReplicatorType {
+        kPull,
+        kPush,
+        kPushAndPull
+    };
 
-//     enum class ConflictResolutionPolicy {
-//         kDefaultBehavior,
-//         kResolveToRemoteRevision
-//     };
+    enum class ConflictResolutionPolicy {
+        kDefaultBehavior,
+        kResolveToRemoteRevision
+    };
 
-//     enum class ReconnectionPolicy {
-//         kDefaultBehavior,
-//         kAutomaticallyReconnect
-//     };
+    enum class ReconnectionPolicy {
+        kDefaultBehavior,
+        kAutomaticallyReconnect
+    };
 
-//     // void setReplicatorStatusChangeListener(std::function<void(Strata::SGReplicator::ActivityLevel)> on_replicator_status_changed_callback);
-
-//     // void setReplicatorStatusChangeListener(std::function<void(Strata::SGReplicator::ActivityLevel)> on_replicator_status_changed_callback, Database* db);
-
-//     void setReplicatorStatusChangeListener(std::function<void(Strata::SGReplicator::ActivityLevel, Database* db)> on_replicator_status_changed_callback, Database* db);
-
-//     void setDocumentStatusChangeListener(std::function<void(bool, std::string, std::string, bool, bool)> on_document_status_changed_callback);
-
-//     /**
-//      * Initializes and starts the DB replicator
-//      * @param url replicator / sync-gateway URL to connect to
-//      * @param username sync-gateway username (optional)
-//      * @param password sync-gateway password (optional)
-//      * @param channels replication channels (optional)
-//      * @param type push/pull/push and pull (optional)
-//      * @param conflict_resolution_policy default behavior or always resolve to remote revision (optional)
-//      * @param reconnection_policy default behavior or automatically try to reconnect (optional)
-//      * @return true when succeeded, otherwise false
-//      */
-//     bool startReplicator(const std::string &url,
-//                          const std::string &username = "",
-//                          const std::string &password = "",
-//                          const std::vector<std::string> &channels = std::vector<std::string>(),
-//                          const ReplicatorType &replicator_type = ReplicatorType::kPull,
-//                          const ConflictResolutionPolicy &conflict_resolution_policy = ConflictResolutionPolicy::kDefaultBehavior,
-//                          const ReconnectionPolicy &reconnection_policy = ReconnectionPolicy::kDefaultBehavior
-//                          );
+    /**
+     * Initializes and starts the DB replicator
+     * @param url replicator / sync-gateway URL to connect to
+     * @param username sync-gateway username (optional)
+     * @param password sync-gateway password (optional)
+     * @param channels replication channels (optional)
+     * @param type push/pull/push and pull (optional)
+     * @param conflict_resolution_policy default behavior or always resolve to remote revision (optional)
+     * @param reconnection_policy default behavior or automatically try to reconnect (optional)
+     * @return true when succeeded, otherwise false
+     */
+    bool startReplicator(const std::string &url,
+                         const std::string &username = "",
+                         const std::string &password = "",
+                         const std::vector<std::string> &channels = std::vector<std::string>(),
+                         const ReplicatorType &replicator_type = ReplicatorType::kPull,
+                         std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback = nullptr,
+                         std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback = nullptr
+                        );
 
 //     bool stopReplicator();
 
-//     Strata::SGReplicator::ActivityLevel getReplicatorActivityLevel();
-
 private:
-//     void replicatorStatusChanged(const Strata::SGReplicator::ActivityLevel &level);
+    void replicatorStatusChanged(cbl::Replicator rep, const CBLReplicatorStatus &status);
 
-//     void documentStatusChanged(const bool &pushing, const std::string &doc_id, const std::string &error_message, const bool &is_error, const bool &error_is_transient);
+    void documentStatusChanged(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents);
 
     std::string database_name_;
     std::string database_path_;
 
-//     std::unique_ptr<Strata::SGDatabase> database_;
     std::unique_ptr<cbl::Database> database_;
 
+    std::unique_ptr<cbl::ReplicatorConfiguration> replicator_configuration_;
+    std::unique_ptr<cbl::Replicator> replicator_;
 
-//     std::unique_ptr<Strata::SGURLEndpoint> url_endpoint_;
-//     std::unique_ptr<Strata::SGReplicatorConfiguration> sg_replicator_configuration_;
-//     std::unique_ptr<Strata::SGReplicator> sg_replicator_;
-//     std::unique_ptr<Strata::SGBasicAuthenticator> basic_authenticator_;
+    std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback_;
+    std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback_;
 
-//     std::vector<std::string> channels_;
-
-//     // std::function<void(Strata::SGReplicator::ActivityLevel)> on_replicator_status_changed_callback_;
-//     std::function<void(Strata::SGReplicator::ActivityLevel, Database* db)> on_replicator_status_changed_callback_;
-
-//     std::function<void(bool, std::string, std::string, bool, bool)> on_document_status_changed_callback_;
-
-//     Strata::SGReplicator::ActivityLevel activity_level_;
+    std::unique_ptr<cbl::Replicator::ChangeListener> ctoken_ = nullptr;
+    std::unique_ptr<cbl::Replicator::DocumentListener> dtoken_ = nullptr;
 };

@@ -1,4 +1,4 @@
- #include <iostream>
+#include <iostream>
 #include "logging/LoggingQtCategories.h"
 #include "Database.h"
 
@@ -36,7 +36,7 @@ QString Database::getDatabasePath() {
 }
 
 QStringList Database::getAllDocumentKeys() {
-    std::vector<std::string> key_vector = database_->getAllDocumentKeys();
+    auto key_vector = database_->getAllDocumentKeys();
     QStringList list;
     for (const auto key : key_vector) {
         list << QString::fromStdString(key);
@@ -44,66 +44,57 @@ QStringList Database::getAllDocumentKeys() {
     return list;
 }
 
-// bool Database::startReplicator(const QString &url, const QString &username, const QString &password, const QStringList &channels,
-//                                const QString &replicator_type, const QString &conflict_resolution_policy, const QString &reconnection_policy) {
-    
-//     std::string _url = url.toStdString();
+bool Database::startReplicator(const QString &url, const QString &username, const QString &password, const QStringList &channels,
+                               const QString &replicator_type, std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> changeListener,
+                               std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener) {
 
-//     std::string _username = username.toStdString();
+    auto _url = url.toStdString();
+    auto _username = username.toStdString();
+    auto _password = password.toStdString();
 
-//     std::string _password = password.toStdString();
-    
-//     std::vector<std::string> _channels;
-//     for (const auto channel : channels) {
-//         _channels.push_back(channel.toStdString());
-//     }
+    std::vector<std::string> _channels;
+    for (const auto channel : channels) {
+        _channels.push_back(channel.toStdString());
+    }
 
-//     CouchbaseDatabase::ReplicatorType _replicator_type;
-//     if (replicator_type.isEmpty() || replicator_type == "pull") {
-//         _replicator_type = CouchbaseDatabase::ReplicatorType::kPull;
-//     } else if (replicator_type == "push") {
-//         _replicator_type = CouchbaseDatabase::ReplicatorType::kPush;
-//     } else if (replicator_type == "pushandpull") {
-//         _replicator_type = CouchbaseDatabase::ReplicatorType::kPushAndPull;
-//     } else {
-//         qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to start replicator, invalid replicator type provided.";
-//     }
+    CouchbaseDatabase::ReplicatorType _replicator_type;
+    if (replicator_type.isEmpty() || replicator_type == "pull") {
+        _replicator_type = CouchbaseDatabase::ReplicatorType::kPull;
+    } else if (replicator_type == "push") {
+        _replicator_type = CouchbaseDatabase::ReplicatorType::kPush;
+    } else if (replicator_type == "pushandpull") {
+        _replicator_type = CouchbaseDatabase::ReplicatorType::kPushAndPull;
+    } else {
+        qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to start replicator, invalid replicator type provided.";
+    }
 
-//     CouchbaseDatabase::ConflictResolutionPolicy _conflict_resolution_policy;
-//     if (conflict_resolution_policy.isEmpty() || conflict_resolution_policy == "defaultbehavior") {
-//         _conflict_resolution_policy = CouchbaseDatabase::ConflictResolutionPolicy::kDefaultBehavior;
-//     } else if (replicator_type == "resolvetoremoterevision") {
-//         _conflict_resolution_policy = CouchbaseDatabase::ConflictResolutionPolicy::kResolveToRemoteRevision;
-//     } else {
-//         qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to start replicator, invalid conflict resolution policy provided.";
-//     }
+    if (changeListener) {
+        change_listener_callback = changeListener;
+    } else {
+        change_listener_callback = std::bind(&Database::default_changeListener, this, std::placeholders::_1, std::placeholders::_2);
+    }
 
-//     CouchbaseDatabase::ReconnectionPolicy _reconnection_policy;
-//     if (reconnection_policy.isEmpty() || reconnection_policy == "defaultbehavior") {
-//         _reconnection_policy = CouchbaseDatabase::ReconnectionPolicy::kDefaultBehavior;
-//     } else if (reconnection_policy == "automaticallyreconnect") {
-//         _reconnection_policy = CouchbaseDatabase::ReconnectionPolicy::kAutomaticallyReconnect;
-//     } else {
-//         qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to start replicator, invalid reconnection policy provided.";
-//     }
+    if (documentListener) {
+        document_listener_callback = documentListener;
+    } else {
+        document_listener_callback = std::bind(&Database::default_documentListener, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    }
 
-//     database_->setReplicatorStatusChangeListener(signalReceiver, this);
+    if (database_->startReplicator(_url, _username, _password, _channels, _replicator_type, change_listener_callback, document_listener_callback)) {
+        return true;
+    }
 
-//     // database_->setReplicatorStatusChangeListener(signalReceiver, cp);
+    return false;
+}
 
-//     // cp = this;
+void Database::default_changeListener(cbl::Replicator, const CBLReplicatorStatus &status) {
+    std::cout << "--- PROGRESS: status=" << status.activity << ", fraction=" << status.progress.fractionComplete << ", err=" << status.error.domain << "/" << status.error.code << "\n";
+}
 
-//     if (database_->startReplicator(_url, _username, _password, _channels, _replicator_type, _conflict_resolution_policy, _reconnection_policy)) {
-//         emit replicationFinished(this,"victor");
-
-//         // emit this->replicationFinished(this);
-
-//         // Database* x = this;
-
-//         // emit x->replicationFinished(this, "abc");
-//         // emit cp->replicationFinished(cp, "shared db");
-//         return true;
-//     }
-
-//     return false;
-// }
+void Database::default_documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents) {
+    std::cout << "--- " << documents.size() << " docs " << (isPush ? "pushed" : "pulled") << ":";
+    for (unsigned i = 0; i < documents.size(); ++i) {
+        std::cout << " " << documents[i].ID;
+    }
+    std::cout << "\n";
+}

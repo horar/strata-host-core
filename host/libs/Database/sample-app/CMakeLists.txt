@@ -5,13 +5,8 @@ add_executable(Database-sampleapp
 )
 
 target_link_libraries(Database-sampleapp
-    PRIVATE Database
-    PUBLIC Qt5::Core
-    PUBLIC Qt5::Network
-)
-
-set_target_properties(Database-sampleapp PROPERTIES
-    AUTOMOC ON
+    PUBLIC
+    Database
 )
 
 if (APPLE)
