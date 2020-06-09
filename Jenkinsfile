@@ -8,9 +8,10 @@ pipeline {
         } 
     }
     stages {
-        stage('build') {
+        stage('Build') {
             steps {
                 echo "Building installer"
+                echo "${env.workspace}/deployment/Strata/deploy_strata_windows.sh"
                 sh "${env.workspace}/deployment/Strata/deploy_strata_windows.sh"
             }
         }           
