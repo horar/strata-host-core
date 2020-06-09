@@ -65,7 +65,7 @@ Item {
                             SGInfoBox {
                                 id: idVers1
                                 height:  35 * ratioCalc
-                                width: 140 * ratioCalc
+                                width: 50 * ratioCalc
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
 
                             }
@@ -191,9 +191,9 @@ Item {
                             SGInfoBox {
                                 id: idVers2
                                 height:  35 * ratioCalc
-                                width: 140 * ratioCalc
+                                width: 50 * ratioCalc
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                boxFont.family: Fonts.digitalseven
+                                //boxFont.family: Fonts.digitalseven
                             }
 
                             SGText{

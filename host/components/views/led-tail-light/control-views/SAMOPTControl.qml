@@ -20,18 +20,6 @@ Item {
             forceActiveFocus()
         }
     }
-    onWidthChanged: {
-        if(root.width < 961) {
-           root.width = 961
-        }
-        console.log("width",width)
-    }
-    onHeightChanged: {
-        if(root.height < 655)
-            height = 655
-        console.log("height",height)
-    }
-
 
     function toHex(d) {
         return  ("0"+(Number(d).toString(16))).slice(-2).toUpperCase()
@@ -390,7 +378,7 @@ Item {
                 }
                 color: "transparent"
                 width: parent.width
-                height:  parent.height - (parent.height/2) - 10
+                height:  parent.height - (parent.height/2) - 7
                 Text {
                     id: warningTextForPopup
                     anchors.fill:parent
@@ -420,11 +408,7 @@ Item {
 
                 RowLayout {
                     anchors.fill: parent
-                    Rectangle{
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        color: "transparent"
-                    }
+
                     Rectangle{
                         Layout.fillHeight: true
                         Layout.fillWidth: true
@@ -441,11 +425,17 @@ Item {
 
                             onClicked: {
                                 warningPopup.close()
-
                             }
                         }
 
                     }
+
+                    Rectangle{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "transparent"
+                    }
+
                     Rectangle{
                         Layout.fillHeight: true
                         Layout.fillWidth: true
@@ -741,6 +731,7 @@ Item {
                                 var hexTodecimal = parseInt(text, 16)
                                 console.log(text)
                                 console.log(hexTodecimal)
+
                                 if(hexTodecimal > platformInterface.soc_addr_new.scales[0]) {
                                     console.log(text.toString(16).toUpperCase())
                                     new7bit.text = toHex(platformInterface.soc_addr_new.scales[0]).toUpperCase()
@@ -818,6 +809,7 @@ Item {
                             anchors.fill: parent
                             cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                             onClicked: {
+                               // controlNavigation.i2cAddressText = new7bit.text
                                 var hexTodecimal = parseInt(new7bit.text, 16)
                                 console.log(new7bit.text.toUpperCase())
                                 console.log(hexTodecimal)

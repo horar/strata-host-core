@@ -18,6 +18,9 @@ Rectangle{
         height: parent.height
         width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
+        Component.onCompleted: {
+            blinkerContainer.enabled = false
+        }
 
         property int transformX:0;
         property int transformY:0;
@@ -25,7 +28,8 @@ Rectangle{
 
         property var car_demo_brightness: platformInterface.car_demo_brightness.value
         onCar_demo_brightnessChanged: {
-            baseCar.brightness = car_demo_brightness
+            if(car_demo_brightness !== undefined)
+                baseCar.brightness = car_demo_brightness
         }
 
         property var car_demo_brightness_headlights: platformInterface.car_demo_brightness.headlights

@@ -15,8 +15,9 @@ Item {
     }
 
     property real ratioCalc: controlNavigation.width / 1200
-    property string i2cAddressText: "0x60"
+    property string i2cAddressText : "0x60"
     property string i2cCRCText: "Off"
+    property int startUpPopupCount: 0
 
 
     PlatformInterface {
@@ -25,6 +26,16 @@ Item {
 
     function toHex(d) {
         return  ("0"+(Number(d).toString(16))).slice(-2).toUpperCase()
+    }
+
+    function toSetThelof()
+    {
+
+        for(var j = 0; j < statusLog.model.count; j++){
+            statusLog.model.get(j).color = "black"
+        }
+        statusLog.insert("I2C communication failed with 7-bit I2C Address = " + i2cAddressText + " and I2C CRC state = " + i2cCRCText, 0 , "red")
+
     }
 
     Component.onCompleted: {
@@ -36,9 +47,16 @@ Item {
 
     property var startup: platformInterface.startup
     onStartupChanged: {
-        if(startup.value === false)
+        if(startup.value === false){
+            console.log("i2cAddressText",i2cAddressText)
+            if(startUpPopupCount != 0){
+            toSetThelof()
+            }
             startupWarningPopup.open()
+            startUpPopupCount++
+        }
         else startupWarningPopup.close()
+
     }
 
     Popup {
@@ -224,8 +242,8 @@ Item {
                             color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
                             roundedLeft: true
                             roundedRight: true
-                            onClicked: {
 
+                            onClicked: {
                                 var hexTodecimal = parseInt(new7bit.text, 16)
                                 console.log(new7bit.text)
                                 console.log(hexTodecimal)
@@ -249,12 +267,9 @@ Item {
                                     platformInterface.addr_curr_apply = parseInt(new7bit.text, 16)
                                 }
                                 platformInterface.set_startup.update(parseInt(new7bit.text, 16),enableCRC.checked)
-                                for(var j = 0; j < statusLog.model.count; j++){
-                                    statusLog.model.get(j).color = "black"
-                                }
-                                statusLog.insert("I2C communication failed with 7-bit I2C Address = " + i2cAddressText + " and I2C CRC state = " + i2cCRCText, 0 , "red")
-
                             }
+
+
                         }
                     }
                 }
