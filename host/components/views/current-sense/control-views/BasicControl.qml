@@ -1299,16 +1299,16 @@ Item {
                                                     width: maxInputVoltageContainer.width
                                                     live: false
                                                     from: 0
-                                                    to: 26
+                                                    to: 26.5
                                                     stepSize: 0.1
                                                     fromText.text: "0V"
-                                                    toText.text: "26V"
+                                                    toText.text: "26.5V"
                                                     inputBoxWidth: maxInputVoltageContainer.width/5
                                                     inputBox.unit: " V"
                                                     inputBox.unitFont.bold: true
                                                     fontSizeMultiplier: ratioCalc
                                                     inputBox.unitOverrideWidth: 30 * ratioCalc
-                                                    inputBox.validator: DoubleValidator { top: 26; bottom: 0}
+                                                    inputBox.validator: DoubleValidator { top: 26.5; bottom: 0}
 
                                                     onUserSet:{
                                                         var valueSet = parseInt(value)

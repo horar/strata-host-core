@@ -92,7 +92,7 @@ Item {
         "en_333": "off",                  //on or off
         "manual_mode": "auto",            //auto or manual
         "max_input_current": 30.5,          //float
-        "max_input_voltage": 26,          //float
+        "max_input_voltage": 26.5,          //float
         "low_load_en": "off",             //on or off
         "mid_load_en": "off",             //on or off
         "high_load_en": "off",            //on or off
