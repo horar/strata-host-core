@@ -705,14 +705,10 @@ Item {
         setStatesForControls(out9pwmEnableLED,led_pwm_enables.states[9])
         setStatesForControls(out10pwmEnableLED,led_pwm_enables.states[10])
         setStatesForControls(out11pwmEnableLED,led_pwm_enables.states[11])
-
-
     }
-
 
     property var led_pwm_enables_values: platformInterface.led_pwm_enables_values.values
     onLed_pwm_enables_valuesChanged: {
-
         out0pwmEnableLED.checked = led_pwm_enables_values[0]
         platformInterface.outputPwm0 = led_pwm_enables_values[0]
 
@@ -748,7 +744,6 @@ Item {
 
         platformInterface.outputPwm11 = led_pwm_enables_values[11]
         out11pwmEnableLED.checked = led_pwm_enables_values[11]
-
 
     }
 
@@ -829,11 +824,9 @@ Item {
         out2duty.value = led_pwm_duty_values[2]
         out3duty.value = led_pwm_duty_values[3]
         out4duty.value = led_pwm_duty_values[4]
-
         out5duty.value = led_pwm_duty_values[5]
         out6duty.value = led_pwm_duty_values[6]
         out7duty.value = led_pwm_duty_values[7]
-
         out8duty.value = led_pwm_duty_values[8]
         out9duty.value = led_pwm_duty_values[9]
         out10duty.value = led_pwm_duty_values[10]
@@ -876,12 +869,10 @@ Item {
                     color: "transparent"
                     ColumnLayout{
                         anchors.fill: parent
-
                         Rectangle{
                             Layout.fillWidth: true
                             Layout.preferredHeight: parent.height/9
                             color: "transparent"
-
                             Text {
                                 id: generalSettingHeading
                                 text: "General Settings"
@@ -976,7 +967,6 @@ Item {
                                     uncheckedLabel: "Off"
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
-
                                     onToggled: {
                                         if(checked)
                                             platformInterface.set_led_oen.update(true)
@@ -987,20 +977,7 @@ Item {
                                     onLed_oenChanged: {
                                         enableOutputLabel.text = led_oen.caption
                                         setStatesForControls(enableOutput,led_oen.states[0])
-                                        //                                        if(led_oen.state === "enabled" ) {
-                                        //                                            enableOutput.enabled = true
-                                        //                                            enableOutput.opacity = 1.0
 
-                                        //                                        }
-                                        //                                        else if(led_oen.state === "disabled") {
-                                        //                                            enableOutput.enabled = false
-                                        //                                            enableOutput.opacity = 1.0
-                                        //                                        }
-                                        //                                        else {
-                                        //                                            enableOutput.enabled = false
-                                        //                                            enableOutput.opacity = 0.5
-
-                                        //                                        }
                                         if(led_oen.value === true)
                                             enableOutput.checked = true
                                         else  enableOutput.checked = false
@@ -1025,7 +1002,6 @@ Item {
 
                                     }
 
-
                                 }
                             }
                         }
@@ -1049,7 +1025,6 @@ Item {
                                     live: false
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                     showInputBox: false
-
                                     onUserSet: {
                                         platformInterface.set_led_iset.update(value)
                                     }
@@ -1060,16 +1035,12 @@ Item {
                                 property var led_iset: platformInterface.led_iset
                                 onLed_isetChanged:{
                                     gobalCurrentSetLabel.text = led_iset.caption
-
                                     gobalCurrentSetSlider.toText.text = led_iset.scales[0] + "mA"
                                     gobalCurrentSetSlider.to = led_iset.scales[0]
                                     gobalCurrentSetSlider.fromText.text = led_iset.scales[1] + "mA"
                                     gobalCurrentSetSlider.from = led_iset.scales[1]
                                     gobalCurrentSetSlider.stepSize = led_iset.scales[2]
-
                                     setStatesForControls(gobalCurrentSetLabel,led_iset.states[0])
-
-
                                     gobalCurrentSetSlider.value = led_iset.value
                                 }
 
@@ -1100,7 +1071,6 @@ Item {
                                 }
                             }
                         }
-
                     }
                 } // end of first column
 
@@ -1197,8 +1167,6 @@ Item {
 
 
                                     }
-
-
                                 }
                             }
                         }
@@ -1224,11 +1192,9 @@ Item {
                                     uncheckedLabel: "Off"
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
-
                                     onToggled: {
                                         platformInterface.set_led_pwm_duty_lock.update(checked)
                                     }
-
 
                                     property var led_pwm_duty_lock: platformInterface.led_pwm_duty_lock
                                     onLed_pwm_duty_lockChanged: {
@@ -1287,7 +1253,6 @@ Item {
                                     uncheckedLabel: "Off"
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
-
                                     onToggled: {
                                         platformInterface.set_led_pwm_en_lock.update(checked)
                                     }
@@ -1305,7 +1270,6 @@ Item {
                                     property var led_pwm_en_lock_caption: platformInterface.led_pwm_en_lock_caption.caption
                                     onLed_pwm_en_lock_captionChanged : {
                                         lockPWMDutyENLabel.text = led_pwm_en_lock_caption
-
                                     }
 
                                     property var led_pwm_en_lock_states: platformInterface.led_pwm_en_lock_states.states
@@ -1330,21 +1294,17 @@ Item {
                             SGAlignedLabel {
                                 id: pwmLinearLogLabel
                                 target: pwmLinearLog
-                                // text: "PWM Linear/Log"
                                 alignment: SGAlignedLabel.SideLeftCenter
                                 anchors {
                                     left: parent.left
                                     verticalCenter: parent.verticalCenter
-
                                 }
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
 
-
                                 SGSwitch {
                                     id: pwmLinearLog
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-
                                     onToggled:  {
                                         platformInterface.pwm_lin_state = checked
                                         platformInterface.set_led_pwm_conf.update(pwmFrequency.currentText,
@@ -1437,7 +1397,6 @@ Item {
                                 anchors {
                                     left: parent.left
                                     verticalCenter: parent.verticalCenter
-
                                 }
                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
