@@ -747,7 +747,7 @@ Item {
         out10pwmEnableLED.checked = led_pwm_enables_values[10]
 
         platformInterface.outputPwm11 = led_pwm_enables_values[11]
-        out11pwmEnableLED.checked = led_pwm_enables_values[10]
+        out11pwmEnableLED.checked = led_pwm_enables_values[11]
 
 
     }
