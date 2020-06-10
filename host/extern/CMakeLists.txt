@@ -432,6 +432,18 @@ if(NOT WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/lib/QtMqtt.framework/Headers <INSTALL_DIR>/include/QtMqtt
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/lib/QtMqtt.framework/Versions/5/QtMqtt <BINARY_DIR>/lib/QtMqtt.framework/Versions/5/QtMqtt_debug <INSTALL_DIR>/lib
     )
+else()
+    ExternalProject_Add(mqtt
+        INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
+        SOURCE_DIR ${SOURCE_DIR_EXTERN}/qtmqtt
+        CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${SOURCE_DIR_EXTERN}/qtmqtt/qtmqtt.pro -spec win32-msvc
+        COMMAND ${GIT_EXECUTABLE} --git-dir=${SOURCE_DIR_EXTERN}/qtmqtt/.git checkout ${Qt5Core_VERSION_STRING}
+        BUILD_COMMAND
+        INSTALL_COMMAND
+
+        COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/include/QtMqtt <INSTALL_DIR>/include
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/lib/Qt5Mqtt.lib <BINARY_DIR>/lib/Qt5Mqttd.lib <INSTALL_DIR>/lib
+    )
 endif()
 
 add_library(mqtt::mqtt STATIC IMPORTED GLOBAL)
@@ -441,6 +453,12 @@ if(NOT WIN32)
         INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include"
         IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/QtMqtt"
         IMPORTED_LOCATION_DEBUG "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/QtMqtt_debug"
+    )
+else()
+    set_target_properties(mqtt::mqtt PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include"
+        IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/Qt5Mqtt.lib"
+        IMPORTED_LOCATION_DEBUG "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/Qt5Mqttd.lib"
     )
 endif()
 

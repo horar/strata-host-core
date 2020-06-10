@@ -78,7 +78,8 @@ Item {
                         tempSubscription = 0
                     }
                 } else {
-                    client.sslConfiguration ? client.connectToHostSsl() : client.connectToHost()
+                    //client.sslConfiguration ? client.connectToHostSsl() : client.connectToHost()
+                    client.connectToHost()
                 }
             }
         }
