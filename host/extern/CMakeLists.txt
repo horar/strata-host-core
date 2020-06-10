@@ -441,8 +441,8 @@ else()
         BUILD_COMMAND
         INSTALL_COMMAND
 
-        COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/include/QtMqtt <INSTALL_DIR>/include
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/lib/Qt5Mqtt.lib <BINARY_DIR>/lib/Qt5Mqttd.lib <INSTALL_DIR>/lib
+        COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/include/QtMqtt <INSTALL_DIR>/include/QtMqtt
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/lib/Qt5Mqtt.lib <BINARY_DIR>/lib/Qt5Mqttd.lib <BINARY_DIR>/lib/Qt5Mqttd.pdb <INSTALL_DIR>/lib
     )
 endif()
 
