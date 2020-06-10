@@ -171,8 +171,8 @@ function findFilter (filter) {
 }
 
 function initialize () {
-    for (let i=0; i< mapping.length; i++) {
-        mapping[i].inUse = false
+    for (let property in mapping) {
+        mapping[property].inUse = false
     }
     categoryFilterModel.clear()
     segmentFilterModel.clear()

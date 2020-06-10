@@ -7,7 +7,7 @@
 #include <QString>
 #include <QTemporaryFile>
 
-#include <SerialDevice.h>
+#include <Device/Device.h>
 #include <Flasher.h>
 
 namespace strata {
@@ -23,7 +23,7 @@ public:
      * \param device device which will be used by FlasherConnector
      * \param firmwarePath path to firmware file
      */
-    FlasherConnector(const SerialDevicePtr& device, const QString& firmwarePath, QObject* parent = nullptr);
+    FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, QObject* parent = nullptr);
 
     /*!
      * FlasherConnector destructor.
@@ -131,7 +131,7 @@ private:
     void startOperation();
     void processStartupError(const QString& errorString);
 
-    SerialDevicePtr device_;
+    device::DevicePtr device_;
     std::unique_ptr<Flasher> flasher_;
     QString filePath_;
     QTemporaryFile tmpBackupFile_;

@@ -17,8 +17,6 @@ FocusScope {
     property var filterList: []
     property bool automaticScroll: true
 
-    signal programDeviceRequested()
-
     StackView {
         id: stackView
         anchors.fill: parent
@@ -402,7 +400,7 @@ FocusScope {
                         hintText: qsTr("Export to file")
                         icon.source: "qrc:/sgimages/file-export.svg"
                         iconSize: toolButtonRow.iconHeight
-                        onClicked: showFileExportDialog()
+                        onClicked: showExportView()
                     }
 
                     SGWidgets.SGIconButton {
@@ -410,7 +408,7 @@ FocusScope {
                         hintText: qsTr("Program device with new firmware")
                         icon.source: "qrc:/sgimages/chip-flash.svg"
                         iconSize: toolButtonRow.iconHeight
-                        onClicked: showProgramPage()
+                        onClicked: showProgramView()
                     }
 
                     SGWidgets.SGIconButton {
@@ -425,19 +423,48 @@ FocusScope {
                     }
                 }
 
-                SGWidgets.SGTag {
+                Column {
                     anchors {
-                        verticalCenter: toolButtonRow.verticalCenter
+                        top: toolButtonRow.top
                         right: parent.right
                         rightMargin: 6
                     }
 
-                    sizeByMask: true
-                    mask: "Filtered notifications: " + "9".repeat(filteredCount.toString().length)
-                    text: "Filtered notifications: " + filteredCount
-                    visible: filteredCount > 0
+                    spacing: 4
 
-                    property int filteredCount: scrollbackModel.count - scrollbackFilterModel.count
+                    SGWidgets.SGTag {
+                        anchors.right: parent.right
+                        sizeByMask: true
+                        mask: "Filtered: " + "9".repeat(filteredCount.toString().length)
+                        text: "Filtered: " + filteredCount
+                        font.bold: true
+                        visible: filteredCount > 0
+
+                        property int filteredCount: scrollbackModel.count - scrollbackFilterModel.count
+                    }
+
+                    SGWidgets.SGTag {
+                        anchors.right: parent.right
+                        text: {
+                            if (model.platform.scrollbackModel.autoExportErrorString.length > 0) {
+                                return "EXPORT FAILED"
+                            } else if (model.platform.scrollbackModel.autoExportIsActive) {
+                                return "Export"
+                            }
+
+                            return ""
+                        }
+
+                        font.bold: true
+                        textColor: "white"
+                        color: {
+                            if (model.platform.scrollbackModel.autoExportErrorString.length > 0) {
+                                return SGWidgets.SGColorsJS.ERROR_COLOR
+                            }
+
+                            return SGWidgets.SGColorsJS.TANGO_PLUM1
+                        }
+                    }
                 }
 
                 SGWidgets.SGTag {
@@ -509,7 +536,7 @@ FocusScope {
                     }
 
                     onSuggestionDelegateRemoveRequested: {
-                        model.platform.removeCommandFromHistoryAt(index)
+                        model.platform.commandHistoryModel.removeAt(index)
                     }
                 }
 
@@ -553,6 +580,31 @@ FocusScope {
                 scrollbackModel.condensedMode = ! scrollbackModel.condensedMode
                 scrollbackModel.setAllCondensed(scrollbackModel.condensedMode)
             }
+
+            function openFilterDialog() {
+                var dialog = SGWidgets.SGDialogJS.createDialog(
+                            root,
+                            "qrc:/FilterDialog.qml",
+                            {
+                                "disableAllFiltering": disableAllFiltering,
+                            })
+
+                var list = []
+
+                dialog.populateFilterData(filterList)
+
+                dialog.accepted.connect(function() {
+                    filterList = JSON.parse(JSON.stringify(dialog.getFilterData()))
+                    disableAllFiltering = dialog.disableAllFiltering
+
+                    console.log(Logger.sciCategory, "filters:", JSON.stringify(filterList))
+                    console.log(Logger.sciCategory, "disableAllFiltering", disableAllFiltering)
+
+                    scrollbackFilterModel.invalidate()
+                })
+
+                dialog.open()
+            }
         }
     }
 
@@ -571,47 +623,22 @@ FocusScope {
         id: programDeviceComponent
 
         ProgramDeviceView {
-            onCloseProgramDeviceViewRequested: {
-                stackView.pop();
-            }
         }
     }
 
-    function showFileExportDialog() {
-        var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(
-                    platformDelegate,
-                    fileDialogComponent,
-                    {
-                        "title": "Select File to Export",
-                        "selectExisting": false,
-                        "defaultSuffix": "log",
-                    })
+    Component {
+        id: exportComponent
 
-        dialog.accepted.connect(function() {
-            var result = model.platform.exportScrollback(CommonCpp.SGUtilsCpp.urlToLocalFile(dialog.fileUrl))
-            if (result === false) {
-                console.error(Logger.sciCategory, "failed to export content into", dialog.fileUrl)
-
-                SGWidgets.SGDialogJS.showMessageDialog(
-                            rootItem,
-                            SGWidgets.SGMessageDialog.Error,
-                            "Export Failed",
-                            "Writting into selected file failed.")
-            } else {
-                console.log(Logger.sciCategory, "content exported into", dialog.fileUrl)
-            }
-
-            dialog.destroy()})
-
-        dialog.rejected.connect(function() {
-            dialog.destroy()
-        })
-
-        dialog.open();
+        ExportView {
+        }
     }
 
-    function showProgramPage() {
+    function showProgramView() {
         stackView.push(programDeviceComponent)
+    }
+
+    function showExportView() {
+        stackView.push(exportComponent)
     }
 
     function prettifyJson(message, condensed) {
@@ -632,30 +659,6 @@ FocusScope {
         return JSON.stringify(messageObj, undefined, 4)
     }
 
-    function openFilterDialog() {
-        var dialog = SGWidgets.SGDialogJS.createDialog(
-                    root,
-                    "qrc:/FilterDialog.qml",
-                    {
-                        "disableAllFiltering": disableAllFiltering,
-                    })
-
-        var list = []
-
-        dialog.populateFilterData(filterList)
-
-        dialog.accepted.connect(function() {
-            filterList = JSON.parse(JSON.stringify(dialog.getFilterData()))
-            disableAllFiltering = dialog.disableAllFiltering
-
-            console.log(Logger.sciCategory, "filters:", JSON.stringify(filterList))
-            console.log(Logger.sciCategory, "disableAllFiltering", disableAllFiltering)
-
-            scrollbackFilterModel.invalidate()
-        })
-
-        dialog.open()
-    }
 
     function prettifyHintText(hintText, shortcut) {
         return hintText + " - " + shortcut

@@ -11,7 +11,9 @@
 
 using namespace Strata;
 
-Database::Database(const std::string dbPath) : sgDatabasePath_{std::move(dbPath)}
+Database::Database(const std::string dbPath, QObject *parent)
+    : QObject(parent),
+      sgDatabasePath_{std::move(dbPath)}
 {
 }
 
@@ -27,11 +29,6 @@ Database::~Database()
     delete basic_authenticator_;
 
     delete sg_database_;
-}
-
-void Database::setDispatcher(HCS_Dispatcher* dispatcher)
-{
-    dispatcher_ = dispatcher;
 }
 
 void Database::setLogAdapter(LoggingAdapter* adapter)
@@ -148,7 +145,7 @@ bool Database::getDocument(const std::string& doc_id, std::string& result)
 
 bool Database::initReplicator(const std::string& replUrl, const std::string& username, const std::string& password)
 {
-    if (url_endpoint_ != nullptr || dispatcher_ == nullptr) {
+    if (url_endpoint_ != nullptr) {
         return false;
     }
 
@@ -197,12 +194,5 @@ bool Database::initReplicator(const std::string& replUrl, const std::string& use
 
 void Database::onDocumentEnd(bool /*pushing*/, std::string doc_id, std::string /*error_message*/, bool /*is_error*/, bool /*error_is_transient*/)
 {
-    PlatformMessage msg;
-    msg.msg_type = PlatformMessage::eMsgCouchbaseMessage;
-    msg.from_client = doc_id;
-    msg.message = "update_doc";
-
-    if (dispatcher_) {
-        dispatcher_->addMessage(msg);
-    }
+    emit documentUpdated(QString::fromStdString(doc_id));
 }

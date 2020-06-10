@@ -1,18 +1,13 @@
-#include "DatabaseImpl.h"
-#include "ConfigManager.h"
-
+#include <thread>
 #include <QDir>
 #include <QJsonArray>
 
-#include <couchbaselitecpp/SGFleece.h>
-#include <couchbaselitecpp/SGCouchBaseLite.h>
+#include "DatabaseImpl.h"
 
-using namespace fleece;
-using namespace fleece::impl;
 using namespace std;
-using namespace Strata;
+using namespace cbl;
 
-DatabaseImpl::DatabaseImpl(QObject *parent, const bool &mgr) : QObject (parent), cb_browser_("cb_browser")
+DatabaseImpl::DatabaseImpl(QObject *parent, const bool &mgr) : QObject(parent), cb_browser_("cb_browser")
 {
     if (mgr) {
         config_mgr_ = make_unique<ConfigManager>();
@@ -29,8 +24,8 @@ DatabaseImpl::~DatabaseImpl()
 
 void DatabaseImpl::openDB(const QString &file_path)
 {
-    if (file_path.isEmpty()) {
-        qCCritical(cb_browser_) << "Attempted to open database but received empty file path.";
+    if (file_path.length() < 2) {
+        qCCritical(cb_browser_) << "Attempted to open database but received invalid file path.";
         return;
     }
 
@@ -52,15 +47,16 @@ void DatabaseImpl::openDB(const QString &file_path)
 
     if (info.fileName() != "db.sqlite3" || !dir.cdUp()) {
         qCCritical(cb_browser_) << "Problem with path to database file: " << file_path_;
-        setMessageAndStatus(MessageType::Error, "Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\".");
+        setMessageAndStatus(MessageType::Error, "Problem with path to database file. The file must be located according to: \".../[DB name].cblite2/db.sqlite3\".");
         return;
     }
 
     QString dir_name = dir.dirName();
+    dir_name.replace(".cblite2", "");
 
-    if (!dir.cdUp() || !dir.cdUp()) {
+    if (!dir.cdUp()) {
         qCCritical(cb_browser_) << "Problem with path to database file: " << file_path_;
-        setMessageAndStatus(MessageType::Error, "Problem with path to database file. The file must be located according to: \".../db/(db_name)/db.sqlite3\".");
+        setMessageAndStatus(MessageType::Error, "Problem with path to database file. The file must be located according to: \".../[DB name].cblite2/db.sqlite3\".");
         return;
     }
 
@@ -71,26 +67,36 @@ void DatabaseImpl::openDB(const QString &file_path)
     setDBName(dir_name);
     setDBPath(dir.path() + QDir::separator());
 
-    sg_db_ = make_unique<SGDatabase>(db_name_.toStdString(), db_path_.toStdString());
+    QByteArray db_path_ba = db_path_.toLocal8Bit();
+    const char *db_path_c = db_path_ba.data();
+    CBLDatabaseConfiguration db_config = {db_path_c, kCBLDatabase_Create};
 
-    setDBstatus(false);
-    setRepstatus(false);
-    listened_channels_.clear();
-
-    if (!sg_db_ || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
-        setMessageAndStatus(MessageType::Error,"Problem with initialization of database.");
+    // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
+    try {
+        sg_db_ = make_unique<Database>(db_name_.toLocal8Bit().data(), db_config);
+    }
+    catch (CBLError) {
+        setMessageAndStatus(MessageType::Error, "Problem with initialization of database.");
         return;
     }
 
+    if (!sg_db_ || !sg_db_->valid()) {
+        setMessageAndStatus(MessageType::Error, "Problem with initialization of database.");
+        return;
+    }
+
+    setDBstatus(false);
+    setRepstatus(false);
+    latest_replication_.reset();
     setDBstatus(true);
     getChannelSuggestions();
     setAllChannelsStr();
     emitUpdate();
 
-   if (config_mgr_) {
-       config_mgr_->addDBToConfig(getDBName(), file_path_);
-       emit jsonConfigChanged();
-   }
+    if (config_mgr_) {
+        config_mgr_->addDBToConfig(getDBName(), file_path_);
+        emit jsonConfigChanged();
+    }
 
     setMessageAndStatus(MessageType::Success, "Successfully opened database '" + getDBName() + "'.");
 }
@@ -141,7 +147,7 @@ QStringList DatabaseImpl::getChannelSuggestions()
         QJsonDocument config_doc = QJsonDocument::fromJson(config_mgr_->getConfigJson().toUtf8());
 
         if (config_doc.isNull() || config_doc.isEmpty()) {
-            qCCritical(cb_browser_) << "Received empty list of previously used channels from the Config DB.";
+            qCWarning(cb_browser_) << "Received empty list of previously used channels from the Config DB.";
             return suggestions;
         }
 
@@ -149,7 +155,7 @@ QStringList DatabaseImpl::getChannelSuggestions()
         QJsonObject db_entry_obj = config_obj.value(getDBName()).toObject();
 
         if (db_entry_obj.isEmpty()) {
-            qCCritical(cb_browser_) << "Received empty list of previously used channels from the Config DB.";
+            qCWarning(cb_browser_) << "Received empty list of previously used channels from the Config DB.";
             return suggestions;
         }
 
@@ -168,8 +174,9 @@ QStringList DatabaseImpl::getChannelSuggestions()
 
     // Get channels from each document in the current DB
     for (const string &document_key : document_keys_) {
-        SGDocument doc(sg_db_.get(), document_key);
-        QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(doc.getBody()).toUtf8());
+        Document doc = sg_db_.get()->getDocument(document_key);
+        fleece::Dict read_dict = doc.properties();
+        QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8());
 
         if (json_doc.isNull() || json_doc.isEmpty()) {
             qCCritical(cb_browser_) << "Received empty or invalid JSON message.";
@@ -177,7 +184,6 @@ QStringList DatabaseImpl::getChannelSuggestions()
         }
 
         QJsonObject db_entry_obj = json_doc.object();
-
         if (db_entry_obj.contains("channels")) {
             QJsonValue channels_val = db_entry_obj.value("channels");
 
@@ -210,8 +216,8 @@ QStringList DatabaseImpl::getChannelSuggestions()
 
 void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
 {
-    if (folder_path.isEmpty() || db_name.simplified().isEmpty()) {
-        setMessageAndStatus(MessageType::Error, "Attempted to create new database, but received empty folder path or database name.");
+    if (folder_path.length() < 2 || db_name.simplified().isEmpty()) {
+        setMessageAndStatus(MessageType::Error, "Attempted to create new database, but received invalid folder path or database name.");
         return;
     }
 
@@ -222,9 +228,8 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
         folder_path.remove(0, 1);
     }
 
-    folder_path.replace("/", QDir::separator());
+    folder_path = QDir::fromNativeSeparators(folder_path);
     QDir dir(folder_path);
-    folder_path += QDir::separator();
 
     if (!dir.isAbsolute() || !dir.mkpath(folder_path)) {
         qCCritical(cb_browser_) << "Problem with path to database file: " + file_path_;
@@ -232,7 +237,8 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
         return;
     }
 
-    file_path_ = folder_path + "db" + QDir::separator() + db_name + QDir::separator() + "db.sqlite3";
+    file_path_ = folder_path + QDir::separator() + db_name + ".cblite2" + QDir::separator() + "db.sqlite3";
+
     QFileInfo file(file_path_);
 
     if (file.exists()) {
@@ -252,18 +258,26 @@ void DatabaseImpl::createNewDB(QString folder_path, const QString &db_name)
     setDBName(db_name);
     setDBPath(folder_path);
 
-    sg_db_ = make_unique<SGDatabase>(db_name_.toStdString(), db_path_.toStdString());
+    QByteArray db_path_ba = db_path_.toLocal8Bit();
+    const char *db_path_c = db_path_ba.data();
+    CBLDatabaseConfiguration db_config = {db_path_c, kCBLDatabase_Create};
 
-    setDBstatus(false);
-    setRepstatus(false);
+    // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
+    try {
+        sg_db_ = make_unique<Database>(db_name.toLocal8Bit().data(), db_config);
+    }
+    catch (CBLError) {
+        setMessageAndStatus(MessageType::Error, "Problem with initialization of database.");
+        return;
+    }
 
-    if (!sg_db_ || sg_db_->open() != SGDatabaseReturnStatus::kNoError || !sg_db_->isOpen()) {
+    if (!sg_db_ || !sg_db_->valid()) {
         setMessageAndStatus(MessageType::Error, "Problem with initialization of database.");
         return;
     }
 
     document_keys_.clear();
-    listened_channels_.clear();
+    latest_replication_.reset();
     suggested_channels_.clear();
     setDBstatus(true);
     emitUpdate();
@@ -287,9 +301,9 @@ void DatabaseImpl::closeDB()
     setDBstatus(false);
     stopListening();
     document_keys_.clear();
-    listened_channels_.clear();
+    latest_replication_.reset();
     suggested_channels_.clear();
-    setMessageAndStatus(MessageType::Success,"Successfully closed database '" + getDBName() + "'.");
+    setMessageAndStatus(MessageType::Success, "Successfully closed database '" + getDBName() + "'.");
     setDBName("");
     JsonDBContents_ = "{}";
     emit jsonDBContentsChanged();
@@ -309,15 +323,19 @@ bool DatabaseImpl::stopListening()
 {
     if (sg_replicator_) {
         manual_replicator_stop_ = true;
+        if (ctoken_) {
+            ctoken_->remove();
+            ctoken_.reset();
+        }
         sg_replicator_->stop();
     }
 
+    sg_replicator_configuration_.reset();
+    is_retry_ = false;
     setRepstatus(false);
-    suggested_channels_ += listened_channels_;
+    suggested_channels_ += latest_replication_.channels;
     suggested_channels_.removeDuplicates();
-    listened_channels_.clear();
     setAllChannelsStr();
-
     return true;
 }
 
@@ -333,26 +351,26 @@ void DatabaseImpl::createNewDoc(const QString &id, const QString &body)
         return;
     }
 
-    SGMutableDocument newDoc(sg_db_.get(), id.toStdString());
-
-    if (newDoc.exist()) {
+    if (docExistsInDB(id)) {
         setMessageAndStatus(MessageType::Error, "A document with ID '" + id + "' already exists. Modify the ID and try again.");
         return;
     }
 
-    if (!newDoc.setBody(body.toStdString())) {
-        setMessageAndStatus(MessageType::Error, "Error setting content of created document. Body must be in JSON format.");
+    fleece::Doc fleece_doc = fleece::Doc::fromJSON(body.toStdString());
+
+    if (!fleece_doc) {
+        setMessageAndStatus(MessageType::Error, "Error setting document '" + id + "'. Verify the body is valid JSON.");
         return;
     }
 
-    if (sg_db_->save(&newDoc) != SGDatabaseReturnStatus::kNoError) {
-        setMessageAndStatus(MessageType::Error, "Error saving document to database.");
-        return;
+    MutableDocument newDoc(id.toStdString());
+    newDoc.setProperties(fleece_doc);
+    sg_db_->saveDocument(newDoc);
+
+    if (!getListenStatus()) {
+        updateContents();
     }
 
-    getChannelSuggestions();
-    setAllChannelsStr();
-    searchDocByChannel(toggled_channels_);
     setMessageAndStatus(MessageType::Success, "Successfully created document '" + id + "'.");
 }
 
@@ -373,131 +391,146 @@ bool DatabaseImpl::startListening(QString url, QString username, QString passwor
         return false;
     }
 
-    url_ = url;
-    username_ = username;
-    password_ = password;
-    rep_type_ = rep_type;
-    listened_channels_.clear();
+    sg_replicator_configuration_ = make_unique<ReplicatorConfiguration>(*sg_db_.get());
+    sg_replicator_configuration_->endpoint.setURL(url.toUtf8());
 
-    for (const QString &chan : channels) {
-        listened_channels_ << chan;
-    }
-
-    url_endpoint_ = make_unique<SGURLEndpoint>(url_.toStdString());
-
-    if (!url_endpoint_ || !url_endpoint_->init()) {
-        setMessageAndStatus(MessageType::Error, "Invalid URL endpoint.");
-        return false;
-    }
-
-    sg_replicator_configuration_ = make_unique<SGReplicatorConfiguration>(sg_db_.get(), url_endpoint_.get());
-
-    if (!sg_replicator_configuration_) {
-        setMessageAndStatus(MessageType::Error, "Problem with start of replicator.");
-        return false;
-    }
-
-    if (rep_type_ == "pull") {
-        sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPull);
-    } else if (rep_type_ == "push") {
-        sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPush);
-    } else if (rep_type_ == "pushpull") {
-        sg_replicator_configuration_->setReplicatorType(SGReplicatorConfiguration::ReplicatorType::kPushAndPull);
+    // Set replicator type (pull / push / push and pull)
+    if (rep_type == "pull") {
+        sg_replicator_configuration_->replicatorType = kCBLReplicatorTypePull;
+    } else if (rep_type == "push") {
+        sg_replicator_configuration_->replicatorType = kCBLReplicatorTypePush;
+    } else if (rep_type == "pushpull") {
+        sg_replicator_configuration_->replicatorType = kCBLReplicatorTypePushAndPull;
     } else {
         setMessageAndStatus(MessageType::Error, "Unidentified replicator type selected.");
         return false;
     }
 
-    if (!username_.isEmpty() && !password_.isEmpty()) {
-        sg_basic_authenticator_ = make_unique<SGBasicAuthenticator>(username_.toStdString(),password_.toStdString());
-        if (!sg_basic_authenticator_) {
-            setMessageAndStatus(MessageType::Error, "Problem with authentication.");
-            return false;
+    // Set basic replicator authentication (username / password)
+    if (!username.isEmpty() && !password.isEmpty()) {
+        sg_replicator_configuration_->authenticator.setBasic(username.toUtf8(), password.toUtf8());
+    }
+
+    if (!channels.empty()) {
+        fleece::MutableArray channels_mutablearray = fleece::MutableArray::newArray();
+        for (const auto &chan : channels) {
+            channels_mutablearray.append(chan.toStdString());
         }
-        sg_replicator_configuration_->setAuthenticator(sg_basic_authenticator_.get());
+        sg_replicator_configuration_->channels = channels_mutablearray;
     }
 
-    if (!sg_replicator_configuration_->isValid()) {
-        setMessageAndStatus(MessageType::Error, "Problem with authentication.");
-        return false;
+    sg_replicator_configuration_->continuous = true;
+
+    // Official CBL API: Replicator CTOR can throw so this is wrapped in try/catch
+    try {
+        sg_replicator_ = make_unique<Replicator>(*sg_replicator_configuration_);
     }
-
-    vector<string> chan_strvec{};
-
-    for (const QString &chan : listened_channels_) {
-        chan_strvec.push_back(chan.toStdString());
-    }
-
-    if (!chan_strvec.empty()) {
-        sg_replicator_configuration_->setChannels(chan_strvec);
-    }
-
-    sg_replicator_ = make_unique<SGReplicator>(sg_replicator_configuration_.get());
-
-    if (!sg_replicator_) {
+    catch (CBLError) {
         setMessageAndStatus(MessageType::Error, "Problem with start of replicator.");
         return false;
     }
 
-    // Set replicator to resolve to the remote revision in case of conflict
-    sg_replicator_configuration_->setConflictResolutionPolicy(SGReplicatorConfiguration::ConflictResolutionPolicy::kResolveToRemoteRevision);
+    if (!sg_replicator_ || !sg_replicator_->valid()) {
+        setMessageAndStatus(MessageType::Error, "Problem with start of replicator.");
+        return false;
+    }
 
-    // Set replicator to automatically attempt reconnection in case of unexpected disconnection
-    sg_replicator_configuration_->setReconnectionPolicy(SGReplicatorConfiguration::ReconnectionPolicy::kAutomaticallyReconnect);
-    sg_replicator_configuration_->setReconnectionTimer(REPLICATOR_RECONNECTION_INTERVAL);
+    ctoken_ = make_unique<Replicator::ChangeListener>(sg_replicator_->addChangeListener(bind(&DatabaseImpl::repStatusChanged, this, placeholders::_1, placeholders::_2)));
 
-    sg_replicator_->addChangeListener(bind(&DatabaseImpl::repStatusChanged, this, placeholders::_1));
+    if (!ctoken_) {
+        setMessageAndStatus(MessageType::Error, "Problem with start of replicator.");
+        return false;
+    }
+
+    latest_replication_.url = url;
+    latest_replication_.username = username;
+    latest_replication_.password = password;
+    latest_replication_.rep_type = rep_type;
+    latest_replication_.channels.clear();
+
+    for (const auto &chan : channels) {
+        latest_replication_.channels << chan;
+    }
+
     manual_replicator_stop_ = false;
     replicator_first_connection_ = true;
 
-    if (sg_replicator_->start() != SGReplicatorReturnStatus::kNoError) {
-        setMessageAndStatus(MessageType::Error, "Problem with start of replicator.");
-        return false;
+    // Start replicator and check return status
+    unsigned int retries = 0;
+    sg_replicator_->start();
+    while (sg_replicator_->status().activity != kCBLReplicatorStopped && sg_replicator_->status().activity != kCBLReplicatorIdle) {
+        ++retries;
+        this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
+        if (sg_replicator_->status().error.code != 0) {
+            if(is_retry_) {
+                stopListening();
+                return false;
+            }
+            stopListening();
+            setMessageAndStatus(MessageType::Error, "Problem with start of replicator.");
+            qCCritical(cb_browser_) << "Problem with start of replicator. Received replicator error code:" << sg_replicator_->status().error.code <<
+                ", domain:" << sg_replicator_->status().error.domain << ", info:" << sg_replicator_->status().error.internal_info;
+            return false;
+        }
+        if (retries >= REPLICATOR_RETRY_MAX) {
+            stopListening();
+            setMessageAndStatus(MessageType::Error, "Problem with start of replicator (out of retries).");
+            qCCritical(cb_browser_) << "Problem with start of replicator (out of retries)";
+            return false;
+        }
     }
 
     if (config_mgr_) {
-        config_mgr_->addRepToConfigDB(db_name_, url_, username_, rep_type_, chan_strvec);
+        vector<string> chan_strvec{};
+        for (const auto &chan : channels) {
+            chan_strvec.push_back(chan.toStdString());
+        }
+        config_mgr_->addRepToConfigDB(db_name_, url, username, rep_type, chan_strvec);
     }
 
     emit jsonConfigChanged();
     return true;
 }
 
-void DatabaseImpl::repStatusChanged(const SGReplicator::ActivityLevel &level)
+void DatabaseImpl::repStatusChanged(Replicator, const CBLReplicatorStatus &level)
 {
     if (!sg_replicator_ || !isDBOpen()) {
         qCCritical(cb_browser_) << "Attempted to update status of replicator, but replicator is not running.";
         return;
     }
 
-    switch(level) {
-        case SGReplicator::ActivityLevel::kStopped:
+    // Check status for error, set retry flag
+    if (sg_replicator_->status().error.code != 0) {
+        qCCritical(cb_browser_) << "Received replicator error code:" << sg_replicator_->status().error.code <<
+            ", domain:" << sg_replicator_->status().error.domain << ", info:" << sg_replicator_->status().error.internal_info;
+        if (sg_replicator_->status().error.domain == 2 && sg_replicator_->status().error.code == 5) {
+            is_retry_ = true;
+            return;
+        }
+    }
+
+    switch (level.activity) {
+        case kCBLReplicatorStopped:
             activity_level_ = "Stopped";
 
-            if (manual_replicator_stop_ == false) {
+            if (!manual_replicator_stop_) {
                 setMessageAndStatus(MessageType::Error, "Problems connecting with replication service.");
-                if (replicator_first_connection_ == true) {
-                    sg_replicator_->stop();
-                }
-            }
-            else {
+            } else {
                 setMessageAndStatus(MessageType::Success, "Successfully stopped replicator.");
-                sg_replicator_->stop();
-                setRepstatus(false);
             }
 
             manual_replicator_stop_ = false;
-            listened_channels_.clear();
+            sg_replicator_->stop();
+            setRepstatus(false);
             break;
-        case SGReplicator::ActivityLevel::kIdle:
+        case kCBLReplicatorIdle:
             activity_level_ = "Idle";
             setRepstatus(true);
             qCInfo(cb_browser_) << "Replicator activity level changed to 'Idle'";
             setMessageAndStatus(MessageType::Success, "Successfully received updates.");
-            getChannelSuggestions();
-            setAllChannelsStr();
+            updateContents();
             break;
-        case SGReplicator::ActivityLevel::kBusy:
+        case kCBLReplicatorBusy:
             activity_level_ = "Busy";
             setRepstatus(true);
             qCInfo(cb_browser_) << "Replicator activity level changed to 'Busy'";
@@ -506,7 +539,7 @@ void DatabaseImpl::repStatusChanged(const SGReplicator::ActivityLevel &level)
             qCCritical(cb_browser_) << "Received unknown activity level.";
     }
 
-    if (level != SGReplicator::ActivityLevel::kStopped && replicator_first_connection_) {
+    if (level.activity != kCBLReplicatorStopped && replicator_first_connection_) {
         setMessageAndStatus(MessageType::Success, "Successfully started replicator.");
     }
 
@@ -523,41 +556,50 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
     }
 
     if (oldId.isEmpty()) {
-        setMessageAndStatus(MessageType::Error, "Received empty existing document ID, cannot edit.");
+        setMessageAndStatus(MessageType::Error, "Received empty existing document ID. Cannot edit.");
         return;
     }
 
-    if (find(document_keys_.begin(), document_keys_.end(), oldId.toStdString()) == document_keys_.end()) {
-        setMessageAndStatus(MessageType::Error, "Attempted to edit document '" + oldId + "' but it does not exist in the database.");
+    if (!docExistsInDB(oldId)) {
+        setMessageAndStatus(MessageType::Error, "Document with ID = '" + oldId + "' does not exist. Cannot edit.");
         return;
+    }
+
+    if (!body.isEmpty()) {
+        fleece::Doc fleece_doc = fleece::Doc::fromJSON(body.toStdString());
+        if (!fleece_doc) {
+            setMessageAndStatus(MessageType::Error, "Error editing document '" + oldId + "'. Verify the body is valid JSON.");
+            return;
+        }
     }
 
     oldId = oldId.simplified();
     newId = newId.simplified();
 
     if (newId.isEmpty() && body.isEmpty()) {
-        setMessageAndStatus(MessageType::Error, "Received empty new ID and body, nothing to edit.");
+        setMessageAndStatus(MessageType::Error, "Received empty new ID and body. Cannot edit.");
         return;
     }
 
     // Only need to edit body (no need to re-create document)
     if (newId.isEmpty() || newId == oldId) {
-        SGMutableDocument doc(sg_db_.get(),oldId.toStdString());
-        doc.setBody(body.toStdString());
-        if (sg_db_->save(&doc) != SGDatabaseReturnStatus::kNoError) {
-            setMessageAndStatus(MessageType::Error, "Error saving document to database.");
-            return;
+        MutableDocument doc = sg_db_->getMutableDocument(oldId.toStdString());
+        doc.setPropertiesAsJSON(body.toStdString());
+        sg_db_->saveDocument(doc);
+
+        if (!getListenStatus()) {
+            updateContents();
         }
     }
     // Other case: need to edit ID
     else {
         // If the given body is empty, use the body of the old document
         if (body.isEmpty()) {
-            SGDocument doc(sg_db_.get(),oldId.toStdString());
-            body = QString::fromStdString(doc.getBody());
+            Document doc = sg_db_->getDocument(oldId.toStdString());
+            body = QString::fromStdString(doc.propertiesAsJSON());
         }
 
-        // Create new doc with new ID and body, then delete old doc
+        // Create new document with new ID and body, then delete old document
         createNewDoc(newId, body);
         if (current_status_ == MessageType::Error) {
             setMessageAndStatus(MessageType::Error, "Error editing document " + oldId + ".");
@@ -571,10 +613,6 @@ void DatabaseImpl::editDoc(QString oldId, QString newId, QString body)
             return;
         }
     }
-
-    getChannelSuggestions();
-    setAllChannelsStr();
-    searchDocByChannel(toggled_channels_);
 
     if (newId.isEmpty() || newId == oldId) {
         setMessageAndStatus(MessageType::Success, "Successfully edited document '" + oldId + "'.");
@@ -599,32 +637,29 @@ void DatabaseImpl::deleteDoc(const QString &id)
         return;
     }
 
-    SGDocument doc(sg_db_.get(), id.toStdString());
+    Document doc = sg_db_->getDocument(id.toStdString());
 
-    if (!doc.exist()) {
+    if (!docExistsInDB(id)) {
         setMessageAndStatus(MessageType::Error, "Document with ID = '" + id + "' does not exist. Cannot delete.");
         return;
     }
 
-    if (sg_db_->deleteDocument(&doc) != SGDatabaseReturnStatus::kNoError) {
+    if (!doc.deleteDoc()) {
         setMessageAndStatus(MessageType::Error, "Error deleting document " + id + ".");
         return;
     }
 
-    getChannelSuggestions();
-    setAllChannelsStr();
-    searchDocByChannel(toggled_channels_);
-
     if (!getListenStatus()) {
+        updateContents();
         setMessageAndStatus(MessageType::Success, "Successfully deleted document '" + id + "'.");
     } else {
         setMessageAndStatus(MessageType::Warning, "Successfully deleted document '" + id + "'. Local changes (document deletion) may not reflect on remote server.");
     }
 }
 
-void DatabaseImpl::saveAs(QString path, QString db_name)
+void DatabaseImpl::saveAs(QString path, const QString &db_name)
 {
-    if (path.isEmpty() || db_name.isEmpty()) {
+    if (path.length() < 2 || db_name.isEmpty()) {
         setMessageAndStatus(MessageType::Error, "Received empty ID or path, unable to save.");
         return;
     }
@@ -646,26 +681,46 @@ void DatabaseImpl::saveAs(QString path, QString db_name)
     path = dir.path() + QDir::separator();
 
     if (!dir.exists() || !dir.isAbsolute()) {
-        setMessageAndStatus(MessageType::Error,"Received invalid path, unable to save.");
+        setMessageAndStatus(MessageType::Error, "Received invalid path, unable to save.");
         return;
     }
 
-    SGDatabase temp_db(db_name.toStdString(), path.toStdString());
+    QString file_path = path + db_name + ".cblite2" + QDir::separator() + "db.sqlite3";
+    QFileInfo file(file_path);
 
-    if (temp_db.open() != SGDatabaseReturnStatus::kNoError || !temp_db.isOpen()) {
+    if (file.exists()) {
+        setMessageAndStatus(MessageType::Error, "Database '" + db_name + "' already exists in the selected location.");
+        return;
+    }
+
+    QByteArray db_path_ba = db_path_.toLocal8Bit();
+    const char *db_path_c = db_path_ba.data();
+    CBLDatabaseConfiguration db_config = {db_path_c, kCBLDatabase_Create};
+
+    // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
+    unique_ptr<Database> temp_db;
+    try {
+        temp_db = make_unique<Database>(db_name.toLocal8Bit().data(), db_config);
+    }
+    catch (CBLError) {
+        setMessageAndStatus(MessageType::Error, "Problem saving database.");
+        return;
+    }
+
+    if (!temp_db->valid()) {
         setMessageAndStatus(MessageType::Error, "Problem saving database.");
         return;
     }
 
     for (const string &iter : document_keys_) {
-        SGMutableDocument temp_doc(&temp_db, iter);
-        SGDocument existing_doc(sg_db_.get(), iter);
-        temp_doc.setBody(existing_doc.getBody());
-        temp_db.save(&temp_doc);
+        MutableDocument temp_doc(iter);
+        Document existing_doc = sg_db_->getDocument(iter);
+        temp_doc.setPropertiesAsJSON(existing_doc.propertiesAsJSON());
+        temp_db->saveDocument(temp_doc);
     }
 
     if (config_mgr_) {
-        path += QString("db") + QDir::separator() + db_name + QDir::separator() + "db.sqlite3";
+        path += QDir::separator() + db_name + ".cblite2" +  QDir::separator() + "db.sqlite3";
         config_mgr_->addDBToConfig(db_name, path);
         emit jsonConfigChanged();
     }
@@ -676,10 +731,13 @@ void DatabaseImpl::saveAs(QString path, QString db_name)
 bool DatabaseImpl::setDocumentKeys()
 {
     document_keys_.clear();
+    Query query(*sg_db_, kCBLN1QLLanguage, "SELECT _id");
+    ResultSet results = query.execute();
 
-    if (!sg_db_->getAllDocumentsKey(document_keys_)) {
-        qCCritical(cb_browser_) << "Failed to run getAllDocumentsKey().";
-        return false;
+    for (ResultSetIterator it = results.begin(); it != results.end(); ++it) {
+        Result r = *it;
+        fleece::slice value_sl = r.valueAtIndex(0).asString();
+        document_keys_.push_back(string(value_sl));
     }
 
     return true;
@@ -691,8 +749,9 @@ void DatabaseImpl::setJSONResponse(vector<string> &docs)
     QJsonObject total_json_message;
 
     for (const string &iter : docs) {
-        SGDocument usbPDDocument(sg_db_.get(), iter);
-        document_json = QJsonDocument::fromJson(QString::fromStdString(usbPDDocument.getBody()).toUtf8());
+        Document doc = sg_db_.get()->getDocument(iter);
+        fleece::Dict read_dict = doc.properties();
+        document_json = QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8());
         total_json_message.insert(QString::fromStdString(iter), document_json.object());
     }
 
@@ -718,7 +777,7 @@ void DatabaseImpl::searchDocById(QString id)
         return;
     }
 
-    vector <string> searchMatches{};
+    vector<string> searchMatches{};
     id = id.simplified().toLower();
 
     for (const string &iter : document_keys_) {
@@ -756,12 +815,12 @@ void DatabaseImpl::searchDocByChannel(const std::vector<QString> &channels)
         return;
     }
 
-    vector <string> channelMatches{};
+    vector<string> channelMatches{};
 
     // Need to return a JSON response corresponding only to the channels requested
     for (const string &document_key : document_keys_) {
-        SGDocument doc(sg_db_.get(), document_key);
-        QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(doc.getBody()).toUtf8());
+        Document doc = sg_db_->getDocument(document_key);
+        QJsonDocument json_doc = QJsonDocument::fromJson(QString::fromStdString(doc.propertiesAsJSON()).toUtf8());
 
         if (json_doc.isNull() || json_doc.isEmpty()) {
             qCCritical(cb_browser_) << "Received empty or invalid JSON message.";
@@ -842,7 +901,7 @@ void DatabaseImpl::setMessageAndStatus(const MessageType &status, QString msg)
 
     QJsonObject json_message;
 
-    switch(status) {
+    switch (status) {
         case MessageType::Error:
             current_status_ = MessageType::Error;
             json_message.insert("status", "error");
@@ -901,18 +960,18 @@ bool DatabaseImpl::getListenStatus() const
 void DatabaseImpl::setAllChannelsStr()
 {
     QJsonObject json_message;
-    QStringList listened_channels_copy = listened_channels_;
+    QStringList listened_channels_copy = latest_replication_.channels;
 
     if (getListenStatus() && listened_channels_copy.empty() && !suggested_channels_.empty()) {
         listened_channels_copy << suggested_channels_;
     }
 
-    // Add channels to the active channel list (listened_channels_)
+    // Add channels to the active channel list
     for (const QString &iter : listened_channels_copy) {
         json_message.insert(iter, "active");
     }
 
-    // Add channels to the suggested channel list (suggested_channels_)
+    // Add channels to the suggested channel list
     for (const QString &iter : suggested_channels_) {
         if (!listened_channels_copy.contains(iter)) {
             json_message.insert(iter, "suggested");
@@ -945,5 +1004,23 @@ MessageType DatabaseImpl::getCurrentStatus() const
 
 bool DatabaseImpl::isDBOpen() const
 {
-    return sg_db_ && sg_db_->isOpen() && getDBStatus();
+    return sg_db_ && sg_db_->valid() && getDBStatus();
+}
+
+bool DatabaseImpl::docExistsInDB(const QString &doc_id) const
+{
+    if (!sg_db_ || doc_id.isEmpty()) {
+        return false;
+    }
+
+    Query query(*sg_db_, kCBLN1QLLanguage, "SELECT _id WHERE _id = '" + doc_id.toUtf8() + "'");
+    ResultSet results = query.execute();
+    return results.begin() != results.end();
+}
+
+void DatabaseImpl::updateContents()
+{
+    getChannelSuggestions();
+    setAllChannelsStr();
+    searchDocByChannel(toggled_channels_);
 }

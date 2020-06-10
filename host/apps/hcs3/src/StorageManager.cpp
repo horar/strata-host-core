@@ -34,6 +34,8 @@ StorageManager::~StorageManager()
 void StorageManager::setDatabase(Database* db)
 {
     db_ = db;
+
+    connect(db_, &Database::documentUpdated, this, &StorageManager::updatePlatformDoc);
 }
 
 void StorageManager::setBaseUrl(const QString& url)
