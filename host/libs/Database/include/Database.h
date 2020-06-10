@@ -80,6 +80,11 @@ public:
                          std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> documentListener = nullptr
                          );
 
+    void stopReplicator();
+
+    QString getReplicatorStatus();
+    int getReplicatorError();
+
 private:
     std::unique_ptr<CouchbaseDatabase> database_;
 

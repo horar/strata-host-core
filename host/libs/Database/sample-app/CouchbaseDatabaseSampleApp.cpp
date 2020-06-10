@@ -8,7 +8,7 @@
 #include <QDebug>
 #include <QStandardPaths>
 
-#define DEBUG(...) printf("\n    Database: "); printf(__VA_ARGS__); printf("\n");
+#define DEBUG(...) printf("Database: "); printf(__VA_ARGS__); printf("\n");
 
 // Replicator URL endpoint
 const QString replicator_url = "ws://localhost:4984/strata-db";
@@ -142,11 +142,11 @@ int main() {
 
     // Start replicator on DB 3 with all non-default options
     auto changeListener = [](cbl::Replicator, const CBLReplicatorStatus) {
-        std::cout << "\nCouchbaseDatabaseSampleApp changeListener -> replication status changed!" << std::endl;
+        std::cout << "CouchbaseDatabaseSampleApp changeListener -> replication status changed!" << std::endl;
     };
 
     auto documentListener = [](cbl::Replicator, bool, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>>) {
-        std::cout << "\nCouchbaseDatabaseSampleApp documentListener -> document status changed!" << std::endl;
+        std::cout << "CouchbaseDatabaseSampleApp documentListener -> document status changed!" << std::endl;
     };
 
     if (DB_3.startReplicator(replicator_url, replicator_username, replicator_password, replicator_channels, "pull", changeListener, documentListener)) {
@@ -156,11 +156,23 @@ int main() {
     }
 
     // Wait until replication is finished
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    unsigned int retries = 0;
+    const unsigned int REPLICATOR_RETRY_MAX = 50;
+    const std::chrono::milliseconds REPLICATOR_RETRY_INTERVAL = std::chrono::milliseconds(200);
+    while (DB_3.getReplicatorStatus() != "Stopped" && DB_3.getReplicatorStatus() != "Idle") {
+        ++retries;
+        std::this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
+        if (DB_3.getReplicatorError() != 0 || retries >= REPLICATOR_RETRY_MAX) {
+            DB_3.stopReplicator();
+            DEBUG("Error with execution of replicator.");
+            break;
+        }
+    }
 
     // Display all document keys
     document_keys = DB_3.getAllDocumentKeys();
-    qDebug() << "\nAll document keys of DB 3 after replication: " << document_keys << "\n";
+    qDebug() << "\nAll document keys of DB 3 after replication: " << document_keys << "(" << document_keys.size() << "documents in total).\n";
 
+    DB_3.stopReplicator();
     return 0;
 }

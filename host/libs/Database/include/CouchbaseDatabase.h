@@ -105,24 +105,49 @@ public:
                          std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback = nullptr
                         );
 
-//     bool stopReplicator();
+    void stopReplicator();
+
+    std::string getReplicatorStatus();
+    int getReplicatorError();
 
 private:
+    struct LatestReplicationInformation {
+        std::string url;
+        std::string username;
+        std::string password;
+        std::vector<std::string> channels;
+        ReplicatorType replicator_type;
+        std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback;
+        std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback;
+
+        void reset () {
+            url = "";
+            username = "";
+            password = "";
+            channels.clear();
+            replicator_type = ReplicatorType::kPull;
+            change_listener_callback = nullptr;
+            document_listener_callback = nullptr;
+        }
+    };
+
     void replicatorStatusChanged(cbl::Replicator rep, const CBLReplicatorStatus &status);
 
     void documentStatusChanged(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents);
 
     std::string database_name_;
     std::string database_path_;
+    std::string status_;
+    int error_code_ = 0;
 
     std::unique_ptr<cbl::Database> database_;
 
     std::unique_ptr<cbl::ReplicatorConfiguration> replicator_configuration_;
     std::unique_ptr<cbl::Replicator> replicator_;
 
-    std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback_;
-    std::function<void(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback_;
-
     std::unique_ptr<cbl::Replicator::ChangeListener> ctoken_ = nullptr;
     std::unique_ptr<cbl::Replicator::DocumentListener> dtoken_ = nullptr;
+
+    LatestReplicationInformation latest_replication_;
+    bool is_retry_ = false;
 };

@@ -87,8 +87,20 @@ bool Database::startReplicator(const QString &url, const QString &username, cons
     return false;
 }
 
+void Database::stopReplicator() {
+    database_->stopReplicator();
+}
+
+QString Database::getReplicatorStatus() {
+    return QString::fromStdString(database_->getReplicatorStatus());
+}
+
+int Database::getReplicatorError() {
+    return database_->getReplicatorError();
+}
+
 void Database::default_changeListener(cbl::Replicator, const CBLReplicatorStatus &status) {
-    std::cout << "--- PROGRESS: status=" << status.activity << ", fraction=" << status.progress.fractionComplete << ", err=" << status.error.domain << "/" << status.error.code << "\n";
+    std::cout << "--- PROGRESS: status=" << status.activity << ", fraction=" << status.progress.fractionComplete << ", err=" << status.error.domain << "/" << status.error.code << std::endl;
 }
 
 void Database::default_documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents) {
@@ -96,5 +108,5 @@ void Database::default_documentListener(cbl::Replicator, bool isPush, const std:
     for (unsigned i = 0; i < documents.size(); ++i) {
         std::cout << " " << documents[i].ID;
     }
-    std::cout << "\n";
+    std::cout << std::endl;
 }
