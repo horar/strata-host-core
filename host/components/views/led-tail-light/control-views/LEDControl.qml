@@ -597,8 +597,8 @@ Item {
             out4pwmEnableLED.checked = false
         }
         else {
-             platformInterface.outputPwm4 = led_pwm_enables.values[4]
-             out4pwmEnableLED.checked = led_pwm_enables.values[4]
+            platformInterface.outputPwm4 = led_pwm_enables.values[4]
+            out4pwmEnableLED.checked = led_pwm_enables.values[4]
         }
 
         if(led_pwm_enables.values[5] === 1) {
@@ -712,113 +712,42 @@ Item {
 
     property var led_pwm_enables_values: platformInterface.led_pwm_enables_values.values
     onLed_pwm_enables_valuesChanged: {
-        if(led_pwm_enables_values[0] === 1) {
-            out0pwmEnableLED.checked = true
-            platformInterface.outputPwm0 = true
-        }
-        else {
-            out0pwmEnableLED.checked = false
-            platformInterface.outputPwm0 = false
-        }
 
-        if(led_pwm_enables_values[1] === 1) {
-            platformInterface.outputPwm1 = true
-            out1pwmEnableLED.checked = true
-        }
-        else {
-            platformInterface.outputPwm1 = false
-            out1pwmEnableLED.checked = false
-        }
+        out0pwmEnableLED.checked = led_pwm_enables_values[0]
+        platformInterface.outputPwm0 = led_pwm_enables_values[0]
 
-        if(led_pwm_enables_values[2] === 1) {
-            out2pwmEnableLED.checked = true
-            platformInterface.outputPwm2 = true
-        }
-        else {
-            platformInterface.outputPwm2 = false
-            out2pwmEnableLED.checked = false
-        }
+        platformInterface.outputPwm1 = ed_pwm_enables_values[1]
+        out1pwmEnableLED.checked = ed_pwm_enables_values[1]
 
-        if(led_pwm_enables_values[3] === 1) {
-            platformInterface.outputPwm3 = true
-            out3pwmEnableLED.checked = true
-        }
-        else  {
-            platformInterface.outputPwm3 = false
-            out3pwmEnableLED.checked = false
-        }
+        out2pwmEnableLED.checked = led_pwm_enables_values[2]
+        platformInterface.outputPwm2 = led_pwm_enables_values[2]
 
-        if(led_pwm_enables_values[4] === 1) {
-            platformInterface.outputPwm4 = true
-            out4pwmEnableLED.checked = true
-        }
-        else{
-            platformInterface.outputPwm4 = false
-            out4pwmEnableLED.checked = false
-        }
+        platformInterface.outputPwm3 = led_pwm_enables_values[3]
+        out3pwmEnableLED.checked = led_pwm_enables_values[3]
 
-        if(led_pwm_enables_values[5] === 1) {
-            platformInterface.outputPwm5 = true
-            out5pwmEnableLED.checked = true
-        }
-        else {
-            platformInterface.outputPwm5 = false
-            out5pwmEnableLED.checked = false
-        }
+        platformInterface.outputPwm4 = led_pwm_enables_values[4]
+        out4pwmEnableLED.checked = led_pwm_enables_values[4]
 
-        if(led_pwm_enables_values[6] === 1) {
-            platformInterface.outputPwm6 = true
-            out6pwmEnableLED.checked = true
-        }
-        else {
-            platformInterface.outputPwm6 = false
-            out6pwmEnableLED.checked = false
-        }
+        platformInterface.outputPwm5 = led_pwm_enables_values[5]
+        out5pwmEnableLED.checked = led_pwm_enables_values[5]
 
-        if(led_pwm_enables_values[7] === 1) {
-            platformInterface.outputPwm7 = true
-            out7pwmEnableLED.checked = true
-        }
-        else {
-            platformInterface.outputPwm7 = false
-            out7pwmEnableLED.checked = false
-        }
+        platformInterface.outputPwm6 = led_pwm_enables_values[6]
+        out6pwmEnableLED.checked = led_pwm_enables_values[6]
 
-        if(led_pwm_enables_values[8] === 1) {
-            platformInterface.outputPwm8 = true
-            out8pwmEnableLED.checked = true
-        }
-        else {
-            platformInterface.outputPwm8 = false
-            out8pwmEnableLED.checked = false
-        }
+        platformInterface.outputPwm7 = led_pwm_enables_values[7]
+        out7pwmEnableLED.checked = led_pwm_enables_values[7]
 
-        if(led_pwm_enables_values[9] === 1) {
-            platformInterface.outputPwm9 = true
-            out9pwmEnableLED.checked = true
-        }
-        else {
-            platformInterface.outputPwm9 = true
-            out9pwmEnableLED.checked = false
-        }
+        platformInterface.outputPwm8 = led_pwm_enables_values[8]
+        out8pwmEnableLED.checked = led_pwm_enables_values[8]
 
-        if(led_pwm_enables_values[10] === 1) {
-            platformInterface.outputPwm10 = true
-            out10pwmEnableLED.checked = true
-        }
-        else {
-            platformInterface.outputPwm10 = false
-            out10pwmEnableLED.checked = false
-        }
+        platformInterface.outputPwm9 = led_pwm_enables_values[9]
+        out9pwmEnableLED.checked = led_pwm_enables_values[9]
 
-        if(led_pwm_enables_values[11] === 1) {
-            platformInterface.outputPwm11 = true
-            out11pwmEnableLED.checked = true
-        }
-        else  {
-            platformInterface.outputPwm11 = false
-            out11pwmEnableLED.checked = false
-        }
+        platformInterface.outputPwm10 = led_pwm_enables_values[10]
+        out10pwmEnableLED.checked = led_pwm_enables_values[10]
+
+        platformInterface.outputPwm11 = led_pwm_enables_values[11]
+        out11pwmEnableLED.checked = led_pwm_enables_values[10]
 
 
     }
