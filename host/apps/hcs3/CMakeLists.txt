@@ -44,6 +44,11 @@ add_library(${PROJECT_NAME}Lib STATIC
 
     src/logging/LoggingQtCategories.cpp
 )
+if(NOT WIN32)
+    target_sources(${PROJECT_NAME}Lib PRIVATE
+        src/unix/SignalHandlers.cpp
+    )
+endif()
 
 generate_app_version(GITTAG_PREFIX "hcs3_" MACBUNDLE OFF)
 generate_app_build_timestamp()

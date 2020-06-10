@@ -203,7 +203,10 @@ int main(int argc, char *argv[])
         }
     }
 #endif // windows check to kill hcs3
-    qCDebug(logCategoryStrataDevStudio) << "terminating HCS result: " << hcsProcess->state() << "(error:" << hcsProcess->errorString() << ")";
+    qCInfo(logCategoryStrataDevStudio) << "terminating HCS result:" << hcsProcess->exitStatus();
+    if (hcsProcess->error() != QProcess::UnknownError) {
+        qCWarning(logCategoryStrataDevStudio) << "terminating HCS failed:" << hcsProcess->errorString();
+    }
 #endif // start services
 
     return appResult;

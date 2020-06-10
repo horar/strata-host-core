@@ -20,6 +20,9 @@
 #include <EventsMgr/win32/EvEventsMgrInstance.h> // Windows WSA
 #endif
 
+#if !defined(Q_OS_WIN)
+#include "unix/SignalHandlers.h"
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -87,6 +90,10 @@ int main(int argc, char *argv[])
 
 #if defined(Q_OS_WIN)
     strata::events_mgr::EvEventsMgrInstance instance;
+#endif
+
+#if !defined(Q_OS_WIN)
+    SignalHandlers sh(&app);
 #endif
 
     QScopedPointer<HostControllerService> hcs(new HostControllerService);

@@ -582,4 +582,3 @@ HCS_Client* HostControllerService::findClientByPlatformId(const QString& platfor
 
     return nullptr;
 }
-
