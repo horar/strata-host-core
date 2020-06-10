@@ -38,8 +38,12 @@ void StorageManager::setDatabase(Database* db)
     connect(db_, &Database::documentUpdated, this, &StorageManager::updatePlatformDoc);
 }
 
-void StorageManager::setBaseUrl(const QString& url)
+void StorageManager::setBaseUrl(const QUrl &url)
 {
+    if (url.scheme().isEmpty()) {
+        qCCritical(logCategoryHcsStorage) << "Base url does not have scheme";
+    }
+
     baseUrl_ = url;
     init();
 }
@@ -52,11 +56,6 @@ void StorageManager::init()
 
     baseFolder_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     Q_ASSERT(baseFolder_.isEmpty() == false);
-
-    if (baseUrl_.isEmpty()) {
-        qCCritical(logCategoryHcsStorage) << "Base URL is empty.";
-        return;
-    }
 
     StorageInfo info(nullptr, baseFolder_);
     info.calculateSize();
@@ -284,7 +283,7 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
         QString filePath = createFilePathFromItem(platDoc->platformSelector().partialUri, pathPrefix);
 
         DownloadManager::DownloadRequestItem item;
-        item.partialUrl = platDoc->platformSelector().partialUri;
+        item.relativeUrl = platDoc->platformSelector().partialUri;
         item.filePath = filePath;
         item.md5 = platDoc->platformSelector().md5;
         downloadList << item;
@@ -335,7 +334,7 @@ void StorageManager::requestPlatformDocuments(
         QString filePath = createFilePathFromItem(fileItem.partialUri, pathPrefix);
 
         DownloadManager::DownloadRequestItem item;
-        item.partialUrl = fileItem.partialUri;
+        item.relativeUrl = fileItem.partialUri;
         item.filePath = filePath;
         item.md5 = fileItem.md5;
         downloadList << item;
@@ -391,7 +390,7 @@ void StorageManager::requestDownloadPlatformFiles(
         }
 
         DownloadManager::DownloadRequestItem item;
-        item.partialUrl = fileItem.partialUri;
+        item.relativeUrl = fileItem.partialUri;
         item.filePath = dir.filePath(fileItem.prettyName);
         item.md5 = fileItem.md5;
 

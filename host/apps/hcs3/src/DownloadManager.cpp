@@ -26,7 +26,7 @@ DownloadManager::~DownloadManager()
     groupHash_.clear();
 }
 
-void DownloadManager::setBaseUrl(const QString &baseUrl)
+void DownloadManager::setBaseUrl(const QUrl &baseUrl)
 {
     baseUrl_ = baseUrl;
 }
@@ -52,9 +52,14 @@ QString DownloadManager::download(
 
     qCDebug(logCategoryHcsDownloader()) << "new download request" << group->id;
 
+    if (baseUrl_.scheme().isEmpty()) {
+        qCCritical(logCategoryHcsDownloader) << "Base url does not have scheme";
+        return QString();
+    }
+
     for (const auto& requestItem : itemList) {
         DownloadItem item;
-        item.url = baseUrl_ + requestItem.partialUrl;
+        item.url = baseUrl_.resolved(requestItem.relativeUrl);
         item.originalFilePath = requestItem.filePath;
         item.effectiveFilePath = requestItem.filePath;
         item.md5 = requestItem.md5;
@@ -175,7 +180,7 @@ void DownloadManager::readyReadHandler()
 
     DownloadItem *downloadItem = itemHash_.value(reply->url().toString(), nullptr);
     if (downloadItem == nullptr) {
-        qCWarning(logCategoryHcsDownloader) << "cannot find item with url" << reply->url().toString();
+        qCCritical(logCategoryHcsDownloader) << "cannot find item with url" << reply->url().toString();
         return;
     }
 
@@ -198,7 +203,7 @@ void DownloadManager::downloadProgressHandler(qint64 bytesReceived, qint64 bytes
 
     DownloadItem *downloadItem = itemHash_.value(reply->url().toString(), nullptr);
     if (downloadItem == nullptr) {
-        qDebug(logCategoryHcsDownloader) << "cannot find item with url" << reply->url().toString();
+        qCCritical(logCategoryHcsDownloader) << "cannot find item with url" << reply->url().toString();
         return;
     }
 
@@ -206,7 +211,7 @@ void DownloadManager::downloadProgressHandler(qint64 bytesReceived, qint64 bytes
 
     DownloadGroup *group = groupHash_.value(downloadItem->groupId, nullptr);
     if (group == nullptr) {
-        qWarning(logCategoryHcsDownloader) << "cannot find groupId" << downloadItem->groupId;
+        qCCritical(logCategoryHcsDownloader) << "cannot find groupId" << downloadItem->groupId;
         return;
     }
 
@@ -226,7 +231,11 @@ void DownloadManager::finishedHandler()
 
     DownloadItem *downloadItem = itemHash_.value(reply->url().toString(), nullptr);
     if (downloadItem == nullptr) {
-        qCWarning(logCategoryHcsDownloader) << "cannot find item with url" << reply->url().toString();
+        qCCritical(logCategoryHcsDownloader) << "cannot find item with url" << reply->url().toString();
+
+        currentDownloads_.removeAll(reply);
+        reply->deleteLater();
+        startNextDownload();
         return;
     }
 
@@ -264,7 +273,7 @@ void DownloadManager::finishedHandler()
     if (downloadItem->state == DownloadState::FinishedWithError) {
         DownloadGroup *group = groupHash_.value(downloadItem->groupId, nullptr);
         if (group == nullptr) {
-            qWarning(logCategoryHcsDownloader) << "cannot find groupId" << downloadItem->groupId;
+            qCritical(logCategoryHcsDownloader) << "cannot find groupId" << downloadItem->groupId;
         } else if (group->settings.oneFailsAllFail) {
             abortAll(downloadItem->groupId);
         }
@@ -349,9 +358,9 @@ void DownloadManager::createFolderForFile(const QString &filePath)
     basePath.mkpath(info.absolutePath());
 }
 
-QNetworkReply *DownloadManager::postRequest(const QString &url)
+QNetworkReply *DownloadManager::postRequest(const QUrl &url)
 {
-    QNetworkRequest request(QUrl::fromUserInput(url));
+    QNetworkRequest request(url);
     QNetworkReply *reply = accessManager_->get(request);
 
     if (reply == nullptr) {
