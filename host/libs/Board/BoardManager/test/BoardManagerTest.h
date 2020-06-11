@@ -31,7 +31,6 @@ private slots:
     // tests
     void connectDisconnectTest();
     void connectMultipleTest();
-    void sendMessageTest();
 
     //signals tests
     void boardConnectedSignalTest();
