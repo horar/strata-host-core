@@ -12,6 +12,8 @@ Rectangle {
     property alias sliderValue: bandSlider.value
     property color grooveColor: "#353637"
     property color grooveFillColor: "#E4E4E4"
+    property color accentColor: "#86724C"
+
 
     signal eqValueChanged()
 
@@ -28,7 +30,7 @@ Rectangle {
         showLabels: false
         showToolTip: false
         grooveColor: root.grooveColor
-        fillColor: root.grooveFillColor
+        fillColor: hightlightColor
         handleSize: 30
 
         from:-18
@@ -86,7 +88,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
         text:"Band 1"
-        color:"white"
+        color:accentColor
     }
 }
 

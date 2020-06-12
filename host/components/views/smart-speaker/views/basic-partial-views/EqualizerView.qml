@@ -8,12 +8,14 @@ Rectangle {
     id: root
     //width: parent.width
     //height:parent.height
-    color:"dimgray"
+    color:backgroundColor
     opacity:1
     radius: 10
 
+    property color backgroundColor: "#D1DFFB"
+    property color accentColor:"#86724C"
     property int bandWidth: root.width/12
-    property int bandHeight: root.height - (eqText.height + 10)
+    property int bandHeight: root.height -50 - (eqText.height + 10)
 
     onBandWidthChanged: {
         console.log("band width is",bandWidth)
@@ -32,7 +34,7 @@ Rectangle {
     Text{
         id:eqText
         text:"Equalizer"
-        color:"white"
+        color:"black"
         font.pixelSize: 36
         anchors.top:parent.top
         anchors.topMargin:10
@@ -42,10 +44,11 @@ Rectangle {
   Row{
       id:bands
       anchors.top:eqText.bottom
+      anchors.topMargin:10
       anchors.left:root.left
       anchors.leftMargin: 20
       anchors.right:root.right
-      anchors.bottom:root.bottom
+      //anchors.bottom:buttonRow.top
       spacing: 10
 
       EqualizerBand{
@@ -215,6 +218,86 @@ Rectangle {
               platformInterface.set_equalizer_level.update(10, band10.sliderValue);
           }
 
+      }
+
+  }
+  Row{
+      id:buttonRow
+      anchors.top:bands.bottom
+      anchors.left:root.left
+      anchors.leftMargin: 0
+      anchors.right:root.right
+      anchors.bottom:root.bottom
+      spacing: 10
+
+      Rectangle{
+          id:spacerRectangle
+          width: (root.width - (saveEQButton.width + recallEQButton.width + buttonRow.spacing))/2
+          height:20
+          color:"transparent"
+      }
+
+      Button{
+          id:saveEQButton
+          width:75
+          height:30
+          text:"save"
+
+
+          contentItem: Text {
+              text: saveEQButton.text
+              font.pixelSize: 18
+              opacity: enabled ? 1.0 : 0.3
+              color: "black"
+              horizontalAlignment: Text.AlignHCenter
+              verticalAlignment: Text.AlignVCenter
+              elide: Text.ElideRight
+          }
+
+          background: Rectangle {
+              opacity: .8
+              border.color: "black"
+              color: saveEQButton.checked ? "dimgrey": "white"
+              border.width: 1
+              radius: width/2
+          }
+
+          property real unmuttedMasterVolume;
+
+          onClicked:{
+              //save off the EQ to disk
+          }
+      }
+      Button{
+          id:recallEQButton
+          width:75
+          height:30
+          text:"load"
+
+
+          contentItem: Text {
+              text: recallEQButton.text
+              font.pixelSize: 18
+              opacity: enabled ? 1.0 : 0.3
+              color: "black"
+              horizontalAlignment: Text.AlignHCenter
+              verticalAlignment: Text.AlignVCenter
+              elide: Text.ElideRight
+          }
+
+          background: Rectangle {
+              opacity: .8
+              border.color: "black"
+              color: recallEQButton.checked ? "dimgrey": "white"
+              border.width: 1
+              radius: width/2
+          }
+
+          property real unmuttedMasterVolume;
+
+          onClicked:{
+              //load an EQ from disk
+          }
       }
 
   }

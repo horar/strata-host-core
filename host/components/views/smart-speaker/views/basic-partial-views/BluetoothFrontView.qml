@@ -4,14 +4,14 @@ import tech.strata.sgwidgets 0.9
 
 Rectangle {
     id: front
-    width: 250
-    height:100
-    color:"dimgray"
+
+    color:backgroundColor
     opacity:1
     radius: 10
 
     property string pairedDevice
     property var bluetoothPairing: platformInterface.bluetooth_pairing
+    property color backgroundColor: "#D1DFFB"
 
     onBluetoothPairingChanged: {
         console.log("bluetooth pairing changed. New value:", platformInterface.bluetooth_pairing.id);
@@ -41,7 +41,7 @@ Rectangle {
     Text{
         id:connectedDeviceText
         text: front.pairedDevice
-        color:"white"
+        color:"black"
         font.pixelSize: 24
         anchors.left:bluetoothIcon.right
         anchors.leftMargin: 10

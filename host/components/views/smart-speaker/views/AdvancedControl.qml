@@ -1,0 +1,55 @@
+import QtQuick 2.10
+import QtGraphicalEffects 1.0
+import QtQuick.Dialogs 1.3
+import QtQuick.Controls 2.3
+import QtQuick.Layouts 1.3
+import tech.strata.sgwidgets 0.9 as Widget09
+import "../views/basic-partial-views"
+
+Widget09.SGResponsiveScrollView {
+    id: root
+
+    minimumHeight: 900
+    minimumWidth: 1300
+
+    property string borderColor: "#002C74"
+    property string backgroundColor: "white"
+    property string hightlightColor: "#F8BB2C"
+
+    Rectangle {
+        id: container
+        parent: root.contentItem
+        color:borderColor
+        anchors {
+            fill: parent
+        }
+
+        Rectangle{
+            id:deviceBackground
+            color:backgroundColor
+            radius:10
+            height:(7*parent.height)/16
+            anchors.left:parent.left
+            anchors.leftMargin: 12
+            anchors.right: parent.right
+            anchors.rightMargin: 12
+            anchors.top:parent.top
+            anchors.topMargin: 12
+            anchors.bottom:parent.bottom
+            anchors.bottomMargin: 12
+        }
+
+        Text{
+            id:placeholderText
+            text:"advanced controls"
+            font.pixelSize: 72
+            anchors.centerIn: parent
+        }
+
+
+
+
+
+    }
+}
+
