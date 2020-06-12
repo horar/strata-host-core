@@ -59,6 +59,38 @@ Rectangle {
             height: 630
             title: qsTr("Save Log Data")
 
+            ScrollView {
+                             id: frame
+                             clip: true
+                             anchors.fill: parent
+                             //other properties
+                             ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+                             Flickable {
+                                 contentHeight: 2000
+                                 width: parent.width
+                                 Rectangle {
+                                     id : rectangle
+                                     color: "transparent"
+                                     radius: 6
+                                     //visible: !busyIndicator.running
+                                     anchors.fill: parent
+
+                                     TextArea {
+                                         //height: parent.
+                                         width: parent.width*0.99
+                                         height: parent.height*0.85
+                                         id: textEdit
+                                         focus: true
+                                         persistentSelection: true
+                                         selectByMouse: true
+                                         anchors.fill: parent
+                                         text: virtualtextarea.text//
+                                    }
+
+                                 }
+                             }
+                         }
+
             FileDialog {
                 id: openFileDialog
                 nameFilters: ["Text files (*.log)", "All files (*)"]
@@ -88,7 +120,7 @@ Rectangle {
                 }*/
             }
 
-            TextArea {
+           /* TextArea {
                 //height: parent.
                 width: parent.width*0.99
                 height: parent.height*0.85
@@ -97,8 +129,20 @@ Rectangle {
                 persistentSelection: true
                 selectByMouse: true
                 anchors.fill: parent
-                text: virtualtextarea.text//"Hello all..... \n I couldnt save my file from save menu in this dialogue. ki ho"
+                text: virtualtextarea.text//
            }
+
+            ScrollBar {
+                id: vbar
+                hoverEnabled: true
+                active: hovered || pressed
+                orientation: Qt.Vertical
+                size: frame.height / textEdit.height
+                anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+            }*/
+
             Rectangle{
             id:saveopenmenus
             height: 45

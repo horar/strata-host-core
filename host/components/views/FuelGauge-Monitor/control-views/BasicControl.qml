@@ -15,22 +15,17 @@ ColumnLayout {
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
     property alias virtualtextarea: virtualtextarea
-
     property var dataArray_voltage: []
     property var dataArray_temperature: []
     property var print_dataArray: []
-    property var test2: []
-    property var counter: 0
+    property var counterx: 0
+    property  int clear:0 //
+   // property var curve : basicGraph.createCurve("graphCurve")
+    //property var timerLength: 0
     //test2: print_dataArray
     //property var dataArray : []
-
-    function yourVoltageValueHere() {
-       test2.push(print_dataArray)
-       //  return (set_load_current.value) //will collect realtime voltage data from MCU
-     }
     //dataArray_voltage: append(yourVoltageValueHere()) // this will append the individual data from above function
    // dataArray_voltage.push(yourVoltageValueHere())
-
 
     function yourTemperatureValueHere() {
          return (+set_load_current.value*0.2) //will collect realtime temperature data from MCU
@@ -43,7 +38,17 @@ ColumnLayout {
         for(var i=0; i<=dataArray_voltage.length;i++) {
          return (timer_starts+(+virtualtextarea.realtimelog))}
      }
-
+    function clearGraphsData() {
+        if (clear==1){
+    dataArray_temperature=[]
+    dataArray_voltage=[]
+    print_dataArray=[]
+    basicGraph.removeCurve(0)
+    basicGraph1.removeCurve(0)
+    clear=0;
+        }
+        return 0
+}
 
 
     function randomColor() {
@@ -515,17 +520,12 @@ ColumnLayout {
                     }
                     TextArea{ //collect all slider and combo information
                     id:virtualtextarea1//realtimelog
-                    property var collect:[]
-                  // collect.push: virtualtextarea1.text
-                   // collect.append(fool()){}
-                  //  function fool(){
-                  //  return virtualtextarea1.text}
                     visible: false
                     text: "starts.."
                     }
 
                     Rectangle {
-                        id: rect243
+                        id: rectangle_graphs
                         color: "#00000000"; width: parent.width*0.98; height: parent.height*0.92
                         anchors.bottom: parent.bottom
                         //anchors.bottomMargin: 25
@@ -587,23 +587,18 @@ ColumnLayout {
                                       running: false
                                       repeat: true
 
-                                     // property var test2: []
-
                                       onTriggered: {
-
-                                          //id:triggerd
                                           basicGraph.removeCurve(0)
                                          //console.log("in on triggered")
                                           var curve = basicGraph.createCurve("graphCurve")
                                           curve.color = "green"//randomColor()   //for (var j = 0 ; j < 50 ; j++)  dataArray.push({"x":dataArray.length + j,"y":yourDataValueHere(dataArray.length )})
                                           var x_Axis_Timer=0 // time increase in sec for x-axis plots and adds to it till the experiment ends.
                                           var dataArray = []
-                                          for (counter = 0 ; counter <= (dataArray_voltage.length) ;counter++){
+                                          for (var counter = 0 ; counter <= (dataArray_voltage.length) ;counter++){
                                               dataArray.push({"x":x_Axis_Timer,"y":dataArray_voltage[counter]})
                                               x_Axis_Timer=x_Axis_Timer+(+virtualtextarea.realtimelog)
                                               virtualtextarea1.text= ":"+ dataArray_voltage[counter - 1 ]+","+dataArray_temperature[counter -1]+"\n"
                                               print_dataArray[counter - 1]=virtualtextarea1.text  //if(dataArray_voltage[counter - 1] !== undefined)
-
 
                                           }
                                           basicGraph.xMax = x_Axis_Timer
@@ -611,6 +606,44 @@ ColumnLayout {
                                         //  print_dataArray.appendList({test2})  virtualtextarea1.text=“:”
 
                                      }
+
+                                      //PP
+
+                                     /* onTriggered: {
+                                                              var x_Axis_Timer=0 // time increase in sec for x-axis plots and adds to it till the experiment ends.
+                                                              var dataArray = []
+
+                                                              if(dataArray_voltage.length > timerLength && timerLength != 0) {
+                                                                                          for (var counter = timerLength ; counter < dataArray_voltage.length ;counter++){
+                                                                                              console.log(counter, timerLength, dataArray_voltage.length)
+                                                                                              dataArray.push({"x":x_Axis_Timer,"y":dataArray_voltage[counter]})
+                                                                                              x_Axis_Timer = x_Axis_Timer + (+virtualtextarea.realtimelog)
+                                                                                              virtualtextarea1.text += ":"+ dataArray_voltage[counter - 1 ]+","+dataArray_temperature[counter -1]+"\n"
+                                                                                              print_dataArray.push(virtualtextarea1.text)
+                                                                                          }
+                                                                                          basicGraph.xMax = x_Axis_Timer
+                                                                                          curve.appendList(dataArray)
+                                                                                          curve.color = "blue"
+                                                                                      }
+
+
+
+                                                              else {
+                                                                  for (var counter2 = 0 ; counter2 <= (dataArray_voltage.length) ;counter2++){
+                                                                      dataArray.push({"x":x_Axis_Timer,"y":dataArray_voltage[counter2]})
+                                                                      x_Axis_Timer = x_Axis_Timer + (+virtualtextarea.realtimelog)
+                                                                      virtualtextarea1.text += ":"+ dataArray_voltage[counter2 - 1 ]+","+dataArray_temperature[counter2 -1]+"\n"
+                                                                      print_dataArray.push(virtualtextarea1.text)
+                                                                      console.log(counter2, timerLength, dataArray_voltage.length)
+                                                                  }
+                                                                  basicGraph.xMax = x_Axis_Timer
+                                                                  curve.appendList(dataArray)
+                                                                  curve.color = "green"
+                                                              }
+                                                              timerLength = dataArray_voltage.length
+                                                          }  */
+                                      //PP
+
 
                                 }
                             }
@@ -1814,7 +1847,7 @@ ColumnLayout {
                                         anchors.topMargin: parent.height*0.4
                                         infoBoxHeight:35
                                         label: ""
-                                        info: +(set_load_current.value*0.7).toFixed(0) + " V,"+(set_load_current.value*0.01).toFixed(1) + " °C "
+                                        info: +(set_load_current.value*0.7).toFixed(0) + " mV,"+(set_load_current.value*0.01).toFixed(1) + " °C "
                                         //
                                             //+(Math.round(.value*0.325+30)) ////Math.round
                                         // info: +(Math.round(value*0.325+30).toFixed(1)) ////Math.round
@@ -1861,35 +1894,11 @@ ColumnLayout {
                                         textColor: "black"              // Default: "black"
                                         handleColor: "#fff9f4"            // Default: "white"
                                         grooveColor: "#00b82c"    //#00b82c          // Default: "#ccc"
-                                        grooveFillColor: "#ff471a"         // Default: "#0cf"
+                                        grooveFillColor: "#ff471a"  // Default: "#0cf"
 
                                       onClicked: {
-                                          //DialogButtonBox.
-
-                                          //DialogButtonBox("please")
-                                          //console.log("Measurement starts now",100);
-
-                                            /*  FileDialog:{
-                                                  id: fileDialog
-                                                  title: "Please choose a file"
-                                                  folder: shortcuts.home
-                                                 on
-                                              onAcceptedAccepted:{
-                                                      console.log("You chose: " + fileDialog.fileUrls)
-                                                      Qt.quit()
-                                                  }
-                                                  onRejected:{
-                                                      console.log("Canceled");
-                                                      Qt.quit();
-                                                  }
-                                                // Component.onCompleted
-                                                Component.onCompleted= visible=true
-                                                     // rect34a.color:"#f7f7fe"
-                                                      //for (var i = 0; i < 100; i=(i+.1)){
-                                                          //series1.append(i, Math.sin(i)+10)
-                                              }  */
-
-
+                                          clear=1
+                                          clearGraphsData()
 
                                         if(set_load_current.enabled==true)
                                         {
@@ -1951,8 +1960,7 @@ ColumnLayout {
                                                  sgcomboBS.enabled=true
                                                  sgcomboOBL.enabled=true
                                                  }
-                                                 dataArray_voltage = 0
-                                                  dataArray_temperature =0
+
 
                                              }
 
@@ -2094,154 +2102,3 @@ ColumnLayout {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*##^## Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
- ##^##*/

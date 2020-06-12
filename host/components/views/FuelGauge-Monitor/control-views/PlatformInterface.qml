@@ -60,8 +60,8 @@ Item {
         "value" : 0.0
     }
 
-    property var set_dim_en_duty : ({
-                                        "cmd" : "set_dim_en_duty",
+    property var set_capacitance : ({
+                                        "cmd" : "set_capacitance",
                                         "payload": {
                                             "value": 0.0 // default value
                                         },
