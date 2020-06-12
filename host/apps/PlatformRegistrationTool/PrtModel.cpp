@@ -37,6 +37,33 @@ QString PrtModel::deviceFirmwareVerboseName() const
     return platformList_.first()->property(strata::device::DeviceProperties::verboseName);
 }
 
+QString PrtModel::programDevice(QString filePath)
+{
+    QString errorString;
+
+    if (platformList_.isEmpty()) {
+        errorString = "No platform connected";
+    } else if (platformList_.length() > 1) {
+        errorString = "More than one platform is connected";
+    } else if (flasherConnector_.isNull() == false) {
+        errorString = "Programming already in progress";
+    }
+
+    if (errorString.isEmpty() == false) {
+        qCCritical(logCategoryPrt) << errorString;
+        return errorString;
+    }
+
+    flasherConnector_ = new strata::FlasherConnector(platformList_.first(), filePath, this);
+
+    connect(flasherConnector_, &strata::FlasherConnector::operationStateChanged, this, &PrtModel::flasherProgress);
+    connect(flasherConnector_, &strata::FlasherConnector::finished, this, &PrtModel::flasherFinishedHandler);
+
+    flasherConnector_->flash(false);
+
+    return errorString;
+}
+
 void PrtModel::boardReadyHandler(int deviceId, bool recognized)
 {
     Q_UNUSED(recognized)
@@ -60,4 +87,12 @@ void PrtModel::boardDisconnectedHandler(int deviceId)
     }
 
     emit boardDisconnected(deviceId);
+}
+
+void PrtModel::flasherFinishedHandler(strata::FlasherConnector::Result result)
+{
+    emit flasherFinished(result);
+
+    flasherConnector_->disconnect();
+    flasherConnector_->deleteLater();
 }
