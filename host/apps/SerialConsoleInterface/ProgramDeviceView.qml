@@ -36,17 +36,15 @@ FocusScope {
         target: model.platform
 
         onFlasherProgramProgress: {
-            if (processingStatus === ProgramDeviceView.ProgramInProgress) {
-                programProgress = chunk / total
-            } else if (processingStatus === ProgramDeviceView.ProgramBackupInProgress) {
-                programBackupProgress = chunk / total
-            } else {
-                console.warn(Logger.sciCategory, "program progress received outside or correct state")
-            }
+            programProgress = chunk / total
         }
 
         onFlasherBackupProgress: {
             backupChunks = chunk;
+        }
+
+        onFlasherRestoreProgress: {
+            programBackupProgress = chunk / total
         }
 
         onFlasherOperationStateChanged: {
