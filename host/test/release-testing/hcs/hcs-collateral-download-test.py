@@ -105,11 +105,11 @@ print(json.dumps(message, indent=4), file=dyn_plat_list_file)
 # If we've made it this far, delete the HCS documents 'views' folder if exists
 if os.path.exists(os.path.join(hcs_directory, "documents", "views")):
     print("\nDeleting local directory for testing: " + os.path.join(hcs_directory, "documents", "views"))
-    shutil.rmtree(os.path.join(hcs_directory, "documents", "views"))
+    shutil.rmtree(os.path.join(hcs_directory, "documents", "views"), ignore_errors=True)
 # If we've made it this far, delete the HCS documents 'platform_selector' folder if exists
 if os.path.exists(os.path.join(hcs_directory, "documents", "platform_selector")):
     print("\nDeleting local directory for testing: " + os.path.join(hcs_directory, "documents", "platform_selector"))
-    shutil.rmtree(os.path.join(hcs_directory, "documents", "platform_selector"))
+    shutil.rmtree(os.path.join(hcs_directory, "documents", "platform_selector"), ignore_errors=True)
 
 # Start main loop over each platform
 total_failed_tests = 0
