@@ -7,7 +7,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-#include "couchbase-lite-C/CouchbaseLite.hh"
+#include <couchbase-lite-C/CouchbaseLite.hh>
 #include "CouchbaseDocument.h"
 #include "Database.h"
 

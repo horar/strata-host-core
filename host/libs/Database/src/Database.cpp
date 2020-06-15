@@ -1,4 +1,3 @@
-#include <iostream>
 #include "logging/LoggingQtCategories.h"
 #include "Database.h"
 
@@ -100,13 +99,12 @@ int Database::getReplicatorError() {
 }
 
 void Database::default_changeListener(cbl::Replicator, const CBLReplicatorStatus &status) {
-    std::cout << "--- PROGRESS: status=" << status.activity << ", fraction=" << status.progress.fractionComplete << ", err=" << status.error.domain << "/" << status.error.code << std::endl;
+    qCInfo(logCategoryCouchbaseDatabase) << "--- PROGRESS: status=" << status.activity << ", fraction=" << status.progress.fractionComplete << ", err=" << status.error.domain << "/" << status.error.code;
 }
 
 void Database::default_documentListener(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents) {
-    std::cout << "--- " << documents.size() << " docs " << (isPush ? "pushed" : "pulled") << ":";
+    qCInfo(logCategoryCouchbaseDatabase) << "--- " << documents.size() << " docs " << (isPush ? "pushed" : "pulled") << ":";
     for (unsigned i = 0; i < documents.size(); ++i) {
-        std::cout << " " << documents[i].ID;
+        qCInfo(logCategoryCouchbaseDatabase) << " " << documents[i].ID;
     }
-    std::cout << std::endl;
 }

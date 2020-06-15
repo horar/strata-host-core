@@ -19,7 +19,7 @@ CouchbaseDatabase::~CouchbaseDatabase() {
 
 bool CouchbaseDatabase::open() {
     if (database_) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to open database (database may already be open).";
+        qCCritical(logCategoryCouchbaseDatabase) << "Failed to open database (database may already be open).";
         return false;
     }
 
@@ -29,12 +29,12 @@ bool CouchbaseDatabase::open() {
 
     QDir dir(QString::fromStdString(database_path_));
     if (!dir.isAbsolute()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to open database, an absolute path must be provided.";
+        qCCritical(logCategoryCouchbaseDatabase) << "Failed to open database, an absolute path must be provided.";
         return false;
     }
 
     if (!dir.isReadable()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to open database, invalid path provided.";
+        qCCritical(logCategoryCouchbaseDatabase) << "Failed to open database, invalid path provided.";
         return false;
     }
 
@@ -43,8 +43,8 @@ bool CouchbaseDatabase::open() {
     // Official CBL API: Database CTOR can throw so this is wrapped in try/catch
     try {
         database_ = std::make_unique<cbl::Database>(database_name_.c_str(), db_config);
-    } catch (CBLError) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem with initialization of database.";
+    } catch (CBLError err) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Problem with initialization of database. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
         return false;
     }
 
@@ -59,8 +59,8 @@ bool CouchbaseDatabase::save(CouchbaseDocument *doc) {
     // Official CBL API: Save operation can throw so this is wrapped in try/catch
     try {
         database_->saveDocument(*doc->mutable_doc_.get());
-    } catch (CBLError) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Problem saving database.";
+    } catch (CBLError err) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Problem saving database. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
         return false;
     }
     return true;
@@ -104,12 +104,12 @@ bool CouchbaseDatabase::startReplicator(const std::string &url, const std::strin
                                 std::function<void(cbl::Replicator rep, const CBLReplicatorStatus &status)> change_listener_callback,
                                 std::function<void(cbl::Replicator, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents)> document_listener_callback) {
     if (url.empty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: Failed to start replicator, URL endpoint may not be empty.";
+        qCCritical(logCategoryCouchbaseDatabase) << "Failed to start replicator, URL endpoint may not be empty.";
         return false;
     }
 
     if (username.empty() && !password.empty()) {
-        qCCritical(logCategoryCouchbaseDatabase) << "Error: username may not be empty if a password is provided.";
+        qCCritical(logCategoryCouchbaseDatabase) << "Username may not be empty if a password is provided.";
         return false;
     }
 

@@ -24,10 +24,9 @@ add_library(${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME}
-    PUBLIC
-    src
-    include
-    logging
+    PUBLIC include
+    PRIVATE src
+    PRIVATE logging
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -35,7 +34,6 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Network
     PUBLIC strata::Couchbase-Lite-C
     PUBLIC QtLogger
-    rapidjson::rapidjson
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
