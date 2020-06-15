@@ -25,20 +25,20 @@ def messageHCS(message_to_HCS, expected_reply_pattern = None):
             try:
                 message_from_HCS = socket.recv()
             except zmq.Again:
-                print("\nTest fail: HCS reply timed out.\nExiting.\n")
-                sys.exit(-1)
+                print("\nTest fail: HCS reply timed out.\n")
+                return ""
             try:
                 message_from_HCS = json.loads(message_from_HCS)
             except ValueError:
-                print("\nTest fail: received empty or invalid response from HCS, exiting.")
-                sys.exit(-1)
+                print("\nTest fail: received empty or invalid response from HCS.")
+                return ""
             if "hcs::notification" in message_from_HCS and message_from_HCS["hcs::notification"]["type"] == expected_reply_pattern:
                 break
             if "cloud::notification" in message_from_HCS and message_from_HCS["cloud::notification"]["type"] == expected_reply_pattern:
                 break
     if not message_from_HCS:
-        print("\nTest fail: received empty or invalid response from HCS, exiting.")
-        sys.exit(-1)
+        print("\nTest fail: received empty or invalid response from HCS.")
+        return ""
     return message_from_HCS
 
 def generateDownloadFilesCommand(class_id, download_list):
@@ -81,6 +81,10 @@ socket.send_string('{"db::cmd":"connect_data_source","db::payload":{"type":"docu
 print("\nSending 3rd command to HCS (DYNAMIC PLATFORM LIST)", end = '')
 message = messageHCS('{"hcs::cmd":"dynamic_platform_list","payload":{}}', "all_platforms")
 
+if message == "":
+    print("\nError: received empty or invalid response from HCS (dynamic_platform_list command).\nExiting.")
+    sys.exit(-1)
+
 # Extract platform list from notification
 try:
     platform_list = message["hcs::notification"]["list"]
@@ -102,6 +106,10 @@ print(json.dumps(message, indent=4), file=dyn_plat_list_file)
 if os.path.exists(os.path.join(hcs_directory, "documents", "views")):
     print("\nDeleting local directory for testing: " + os.path.join(hcs_directory, "documents", "views"))
     shutil.rmtree(os.path.join(hcs_directory, "documents", "views"))
+# If we've made it this far, delete the HCS documents 'platform_selector' folder if exists
+if os.path.exists(os.path.join(hcs_directory, "documents", "platform_selector")):
+    print("\nDeleting local directory for testing: " + os.path.join(hcs_directory, "documents", "platform_selector"))
+    shutil.rmtree(os.path.join(hcs_directory, "documents", "platform_selector"))
 
 # Start main loop over each platform
 total_failed_tests = 0
@@ -109,16 +117,23 @@ total_passed_platforms = 0
 for platform in platform_list:
     platform_failed_tests = 0
     print("\n" + 80 * "=" + "\n\nSending HCS notification for platform " + str(platform["class_id"]), end = '')
-    message_to_HCS = '{"cmd":"platform_select","payload":{"platform_uuid":"' + str(platform["class_id"]) + '"}}'
+    message_to_HCS = '{"cmd":"platform_select","payload":{"class_id":"' + str(platform["class_id"]) + '"}}'
     message_from_HCS = messageHCS(message_to_HCS, "document")
+
+    if message_from_HCS == "":
+        platform_failed_tests += 1
+        total_failed_tests += 1
+        continue
 
     try:
         file_list = message_from_HCS["cloud::notification"]["documents"]
         view_list = [file for file in file_list if file["category"] == "view"]
         download_list = [file for file in file_list if file["category"] == "download"]
     except KeyError:
-        print("\nError: received empty or invalid response from HCS.\nLast response from HCS:\n\n" + json.dumps(message_from_HCS, indent=4) + "\n\nExiting.")
-        sys.exit(-1)
+        print("\nError: received empty or invalid response from HCS.\nLast response from HCS:\n\n" + json.dumps(message_from_HCS, indent=4) + "\n")
+        platform_failed_tests += 1
+        total_failed_tests += 1
+        continue
     print(", received reply with " + str(len(file_list)) + " files to be automatically downloaded (" +
         str(len(view_list)) + " views, " + str(len(download_list)) + " downloads).\n\nDownloading files and verifying...\n")
 
