@@ -1,5 +1,4 @@
-#ifndef DOWNLOAD_MANAGER_H
-#define DOWNLOAD_MANAGER_H
+#pragma once
 
 #include <QObject>
 #include <QString>
@@ -12,6 +11,7 @@
 #include <QTimerEvent>
 #include <QCryptographicHash>
 
+namespace strata {
 class DownloadManager : public QObject
 {
     Q_OBJECT
@@ -56,13 +56,6 @@ public:
         /* When true and one of downloaded items fails,
          * all remaining are aborted. */
         bool oneFailsAllFail;
-    };
-
-    //we still need a string error, so this is mostly useless
-    enum class CustomError {
-        NoError,
-        OpenFileError,
-        WriteToFileError,
     };
 
     void setBaseUrl(const QUrl &baseUrl);
@@ -174,4 +167,4 @@ private:
     void timerEvent(QTimerEvent * ev);
 };
 
-#endif //DOWNLOAD_MANAGER_H
+}

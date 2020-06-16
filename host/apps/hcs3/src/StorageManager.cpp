@@ -1,6 +1,7 @@
 #include "StorageManager.h"
 #include "StorageInfo.h"
-#include "DownloadManager.h"
+#include <DownloadManager.h>
+
 #include "PlatformDocument.h"
 #include "Dispatcher.h"
 #include "Database.h"
@@ -19,6 +20,8 @@
 
 static const std::string g_document_views("views");
 static const std::string g_platform_selector("platform_selector");
+
+using strata::DownloadManager;
 
 StorageManager::StorageManager(QObject* parent)
     : QObject(parent)
