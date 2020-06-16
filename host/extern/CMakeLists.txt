@@ -443,7 +443,7 @@ else()
         BUILD_COMMAND
         INSTALL_COMMAND
 
-        COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/include/QtMqtt <INSTALL_DIR>/include/QtMqtt
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/bin/Qt5Mqtt.dll <BINARY_DIR>/bin/Qt5Mqttd.dll ${CMAKE_BINARY_DIR}/bin
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/lib/Qt5Mqtt.lib <BINARY_DIR>/lib/Qt5Mqttd.lib <BINARY_DIR>/lib/Qt5Mqttd.pdb <INSTALL_DIR>/lib
     )
 endif()
@@ -458,7 +458,6 @@ if(NOT WIN32)
     )
 else()
     set_target_properties(mqtt::mqtt PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include"
         IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/Qt5Mqtt.lib"
         IMPORTED_LOCATION_DEBUG "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/Qt5Mqttd.lib"
     )
