@@ -1,4 +1,4 @@
-#include "qmlsslconfiguration.h"
+#include "SGSslConfiguration.h"
 
 QmlSslConfiguration::QmlSslConfiguration(QObject *parent) :
     QObject(parent)

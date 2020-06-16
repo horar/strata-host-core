@@ -4,8 +4,8 @@
 #include "SGJLinkConnector.h"
 #include "SGSortFilterProxyModel.h"
 #include "SGQWTPlot.h"
-#include "mqtt/qmlmqttclient.h"
-#include "mqtt/qmlsslconfiguration.h"
+#include "mqtt/SGMqttClient.h"
+#include "mqtt/SGSslConfiguration.h"
 
 #include <QtQml/qqml.h>
 

@@ -1,4 +1,4 @@
-#include "qmlmqttclient.h"
+#include "SGMqttClient.h"
 
 QmlMqttClient::QmlMqttClient(QObject *parent)
     : QMqttClient(parent)

@@ -1,9 +1,9 @@
-#ifndef QMLMQTTCLIENT_H
-#define QMLMQTTCLIENT_H
+#ifndef SGMQTTCLIENT_H
+#define SGMQTTCLIENT_H
 
 #include <QtMqtt/qmqttclient.h>
 #include <QtMqtt/qmqttsubscription.h>
-#include "qmlsslconfiguration.h"
+#include "SGSslconfiguration.h"
 
 class QmlMqttClient;
 
@@ -44,4 +44,4 @@ private:
     QmlSslConfiguration *qmlSslConfiguration_;
 };
 
-#endif // QMLMQTTCLIENT_H
+#endif // SGMQTTCLIENT_H

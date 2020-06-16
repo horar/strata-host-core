@@ -1,5 +1,5 @@
-#ifndef QMLSSLCONFIGURATION_H
-#define QMLSSLCONFIGURATION_H
+#ifndef SGSSLCONFIGURATION_H
+#define SGSSLCONFIGURATION_H
 
 #include <QObject>
 #include <QSslConfiguration>
@@ -42,4 +42,4 @@ private:
 
 };
 
-#endif // QMLSSLCONFIGURATION_H
+#endif // SGSSLCONFIGURATION_H

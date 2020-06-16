@@ -58,6 +58,11 @@ FocusScope {
         }
 
         ListElement {
+            name: "SGMqttClient"
+            page: "ExSGMqttClient.qml"
+        }
+
+        ListElement {
             name: "SGRadioButton"
             page: "ExSGRadioButton.qml"
         }
@@ -97,10 +102,6 @@ FocusScope {
             page: "ExSGTextField.qml"
         }
 
-        ListElement {
-            name: "SGMqttClient"
-            page: "ExSGMqttClient.qml"
-        }
     }
 
     Component.onCompleted: {
