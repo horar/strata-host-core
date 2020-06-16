@@ -429,6 +429,8 @@ if(NOT WIN32)
         BUILD_COMMAND make #needed to do the build before copying the lib to 3p dir
         INSTALL_COMMAND
 
+        COMMAND ${BASH_PROGRAM} -c "install_name_tool -id <INSTALL_DIR>/lib/QtMqtt <BINARY_DIR>/lib/QtMqtt.framework/Versions/5/QtMqtt"
+        COMMAND ${BASH_PROGRAM} -c "install_name_tool -id <INSTALL_DIR>/lib/QtMqtt_debug <BINARY_DIR>/lib/QtMqtt.framework/Versions/5/QtMqtt_debug"
         COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/lib/QtMqtt.framework/Headers <INSTALL_DIR>/include/QtMqtt
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/lib/QtMqtt.framework/Versions/5/QtMqtt <BINARY_DIR>/lib/QtMqtt.framework/Versions/5/QtMqtt_debug <INSTALL_DIR>/lib
     )
