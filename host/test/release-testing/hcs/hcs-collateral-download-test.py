@@ -117,6 +117,13 @@ total_passed_platforms = 0
 for platform in platform_list:
     platform_failed_tests = 0
     print("\n" + 80 * "=" + "\n\nSending HCS notification for platform " + str(platform["class_id"]), end = '')
+
+    # Skip download check for any platforms with "available"/"documents" flag set to false
+    if platform["available"]["documents"] == False:
+        print("\nPlatform has 'documents' flag set to false, skipping...")
+        total_passed_platforms += 1
+        continue
+
     message_to_HCS = '{"cmd":"platform_select","payload":{"class_id":"' + str(platform["class_id"]) + '"}}'
     message_from_HCS = messageHCS(message_to_HCS, "document")
 
