@@ -211,6 +211,7 @@ bool SciPlatform::programDevice(QString filePath, bool doBackup)
 
     connect(flasherConnector_, &strata::FlasherConnector::flashProgress, this, &SciPlatform::flasherProgramProgressHandler);
     connect(flasherConnector_, &strata::FlasherConnector::backupProgress, this, &SciPlatform::flasherBackupProgressHandler);
+    connect(flasherConnector_, &strata::FlasherConnector::restoreProgress, this, &SciPlatform::flasherRestoreProgressHandler);
     connect(flasherConnector_, &strata::FlasherConnector::operationStateChanged, this, &SciPlatform::flasherOperationStateChangedHandler);
     connect(flasherConnector_, &strata::FlasherConnector::finished, this, &SciPlatform::flasherFinishedHandler);
     connect(flasherConnector_, &strata::FlasherConnector::devicePropertiesChanged, this, &SciPlatform::resetPropertiesFromDevice);
@@ -248,7 +249,7 @@ void SciPlatform::messageToDeviceHandler(QByteArray message)
 
 void SciPlatform::deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString)
 {
-    Q_UNUSED(errorCode);
+    Q_UNUSED(errorCode)
     setErrorString(errorString);
 }
 
@@ -260,6 +261,11 @@ void SciPlatform::flasherProgramProgressHandler(int chunk, int total)
 void SciPlatform::flasherBackupProgressHandler(int chunk)
 {
     emit flasherBackupProgress(chunk);
+}
+
+void SciPlatform::flasherRestoreProgressHandler(int chunk, int total)
+{
+    emit flasherRestoreProgress(chunk, total);
 }
 
 void SciPlatform::flasherOperationStateChangedHandler(

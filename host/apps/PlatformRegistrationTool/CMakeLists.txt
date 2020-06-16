@@ -59,6 +59,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Quick
 
     BoardManager
+    FlasherConnector
     QtLogger
 )
 

@@ -6,7 +6,6 @@
 #include <Device/Device.h>
 
 #include <QSerialPort>
-#include <QVariantMap>
 
 namespace strata::device::serial {
 
@@ -45,13 +44,6 @@ public:
      * @return true if message can be sent, otherwise false
      */
     bool sendMessage(const QByteArray msg) override;
-
-    /**
-     * Get information about serial device (platform ID, bootloader version, ...).
-     * @return QVariantMap filled with information about device
-     */
-    [[deprecated("Use deviceId() and property() instead.")]]
-    QVariantMap getDeviceInfo();
 
 signals:
     // signals only for internal use:

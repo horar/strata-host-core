@@ -133,19 +133,6 @@ void BoardManagerTest::connectMultipleTest()
     QCOMPARE(boardManager_->device(6)->property(DeviceProperties::deviceName), "Mock device 6");
 }
 
-[[deprecated]] void BoardManagerTest::sendMessageTest()
-{
-    auto mockDevice = addMockDevice(1234, "Mock device");
-    mockDevice->mockSetAutoResponse(false);
-    QCOMPARE(mockDevice->mockGetMsgCount(), 0);
-    QString message("Some message");
-    boardManager_->sendMessage(1234, message);
-    QCOMPARE(mockDevice->mockGetMsgCount(), 1);
-    std::vector<QByteArray> recordedMessages = mockDevice->mockGetRecordedMessages();
-    QVERIFY(recordedMessages.size() == 1);
-    QCOMPARE(recordedMessages[0], message.toUtf8());
-}
-
 // TODO tests for BoardManager signals:
 void BoardManagerTest::boardConnectedSignalTest()
 {

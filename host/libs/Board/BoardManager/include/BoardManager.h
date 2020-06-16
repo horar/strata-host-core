@@ -42,15 +42,6 @@ namespace strata {
         virtual void init(bool requireFwInfoResponse = true);
 
         /**
-         * Send a message to the device.
-         * @param connectionId device connection ID
-         * @param message message to send to the device
-         * @return true if attempt to send message was successful, otherwise false
-         */
-        [[deprecated("Do not use this function anymore, it will be deleted soon.")]]
-        Q_INVOKABLE bool sendMessage(const int connectionId, const QString& message);
-
-        /**
          * Disconnect from the device.
          * @param deviceId device ID
          * @return true if device was disconnected, otherwise false
@@ -71,27 +62,10 @@ namespace strata {
         device::DevicePtr device(const int deviceId);
 
         /**
-         * Get information about connected device (platform ID, bootloader version, ...).
-         * @param connectionId device connection ID
-         * @return QVariantMap filled with information about device
-         */
-        [[deprecated("Do not use this function anymore, it will be deleted soon.")]]
-        Q_INVOKABLE QVariantMap getConnectionInfo(const int connectionId);
-
-        /**
          * Get list of available device IDs.
          * @return list of available device IDs (those, which have serial port opened)
          */
         QVector<int> readyDeviceIds();
-
-        /**
-         * Get device property.
-         * @param connectionId device connection ID
-         * @param property value from enum DeviceProperties
-         * @return QString filled with value of required property
-         */
-        [[deprecated("Do not use this function anymore, it will be deleted soon.")]]
-        QString getDeviceProperty(const int connectionId, const device::DeviceProperties property);
 
     signals:
         /**
@@ -125,8 +99,6 @@ namespace strata {
          * @param deviceId device ID
          * @param message message from board
          */
-        // DEPRECATED
-        void newMessage(int deviceId, QString message);
 
         /**
          * Emitted when device IDs has changed (available device ID list has changed).
@@ -135,7 +107,6 @@ namespace strata {
 
     protected slots:
         virtual void checkNewSerialDevices();
-        virtual void handleNewMessage(QString message);  // DEPRECATED
         virtual void handleOperationFinished(device::DeviceOperation operation, int);
         virtual void handleOperationError(QString message);
         virtual void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
