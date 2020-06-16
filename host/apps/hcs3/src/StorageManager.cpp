@@ -23,9 +23,10 @@ static const std::string g_platform_selector("platform_selector");
 
 using strata::DownloadManager;
 
-StorageManager::StorageManager(QObject* parent)
-    : QObject(parent)
+StorageManager::StorageManager(DownloadManager* downloadManager, QObject* parent)
+    : QObject(parent), downloadManager_(downloadManager)
 {
+    Q_ASSERT(downloadManager_ != nullptr);
 }
 
 StorageManager::~StorageManager()
@@ -43,19 +44,16 @@ void StorageManager::setDatabase(Database* db)
 
 void StorageManager::setBaseUrl(const QUrl &url)
 {
+    if (baseUrl_.isEmpty() == false) {
+        qCCritical(logCategoryHcsStorage) << "Base url is already set";
+        return;
+    }
+
     if (url.scheme().isEmpty()) {
         qCCritical(logCategoryHcsStorage) << "Base url does not have scheme";
     }
 
     baseUrl_ = url;
-    init();
-}
-
-void StorageManager::init()
-{
-    if (downloadManager_) {
-        return;
-    }
 
     baseFolder_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     Q_ASSERT(baseFolder_.isEmpty() == false);
@@ -63,19 +61,12 @@ void StorageManager::init()
     StorageInfo info(nullptr, baseFolder_);
     info.calculateSize();
 
-    downloadManager_.reset(new DownloadManager);
+    connect(downloadManager_, &DownloadManager::filePathChanged, this, &StorageManager::filePathChangedHandler);
+    connect(downloadManager_, &DownloadManager::singleDownloadProgress, this, &StorageManager::singleDownloadProgressHandler);
+    connect(downloadManager_, &DownloadManager::singleDownloadFinished , this, &StorageManager::singleDownloadFinishedHandler);
 
-    connect(downloadManager_.get(), &DownloadManager::filePathChanged, this, &StorageManager::filePathChangedHandler);
-    connect(downloadManager_.get(), &DownloadManager::singleDownloadProgress, this, &StorageManager::singleDownloadProgressHandler);
-    connect(downloadManager_.get(), &DownloadManager::singleDownloadFinished , this, &StorageManager::singleDownloadFinishedHandler);
-
-    connect(downloadManager_.get(), &DownloadManager::groupDownloadProgress, this, &StorageManager::groupDownloadProgressHandler);
-    connect(downloadManager_.get(), &DownloadManager::groupDownloadFinished, this, &StorageManager::groupDownloadFinishedHandler);
-}
-
-bool StorageManager::isInitialized() const
-{
-    return downloadManager_.isNull() == false;
+    connect(downloadManager_, &DownloadManager::groupDownloadProgress, this, &StorageManager::groupDownloadProgressHandler);
+    connect(downloadManager_, &DownloadManager::groupDownloadFinished, this, &StorageManager::groupDownloadFinishedHandler);
 }
 
 QString StorageManager::createFilePathFromItem(const QString& item, const QString& prefix)
@@ -235,12 +226,6 @@ PlatformDocument* StorageManager::fetchPlatformDoc(const QString &classId)
 
 void StorageManager::requestPlatformList(const QByteArray &clientId)
 {
-    if (isInitialized() == false) {
-        qCCritical(logCategoryHcsStorage) << "StorageManager is not initialized";
-        handlePlatformListResponse(clientId, QJsonArray());
-        return;
-    }
-
     std::string platform_list_body;
     if (db_->getDocument("platform_list", platform_list_body) == false) {
         qCCritical(logCategoryHcsStorage) << "platform_list document not found";
@@ -313,10 +298,6 @@ void StorageManager::requestPlatformDocuments(
         const QByteArray &clientId,
         const QString &classId)
 {
-    if (isInitialized() == false) {
-        return;
-    }
-
     PlatformDocument* platDoc = fetchPlatformDoc(classId);
 
     if (platDoc == nullptr){
