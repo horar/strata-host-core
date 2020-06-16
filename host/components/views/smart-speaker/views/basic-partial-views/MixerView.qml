@@ -104,14 +104,33 @@ Rectangle {
         }  //slider
     } //row
 
+    Row{
+        id:textBoxRow
+        anchors.left: parent.left
+        anchors.leftMargin: 65
+        anchors.right:parent.right
+        anchors.top:sliderRow.bottom
+        anchors.topMargin: -20
+
+        TextField{
+            id:volumeText
+            height:25
+            width:35
+            text: master.value
+
+            onEditingFinished: {
+                master.value = text;
+            }
+        }
+    }
 
     Row{
         id:muteButtonsRow
         anchors.left: parent.left
         anchors.leftMargin: 45
         anchors.right:parent.right
-        anchors.top:sliderRow.bottom
-        anchors.topMargin: -20
+        anchors.top:textBoxRow.bottom
+        anchors.topMargin: 10
         Button{
             id:masterMuteButton
             width:70

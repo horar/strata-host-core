@@ -232,7 +232,7 @@ Rectangle {
 
       Rectangle{
           id:spacerRectangle
-          width: (root.width - (saveEQButton.width + recallEQButton.width + buttonRow.spacing))/2
+          width: (root.width - (saveEQButton.width + reverseButton.width + currentPreset.width + forwardButton.width +buttonRow.spacing))/2
           height:20
           color:"transparent"
       }
@@ -269,36 +269,77 @@ Rectangle {
           }
       }
       Button{
-          id:recallEQButton
-          width:75
-          height:30
-          text:"load"
-
-
-          contentItem: Text {
-              text: recallEQButton.text
-              font.pixelSize: 18
-              opacity: enabled ? 1.0 : 0.3
-              color: "black"
-              horizontalAlignment: Text.AlignHCenter
-              verticalAlignment: Text.AlignVCenter
-              elide: Text.ElideRight
-          }
-
+          id:reverseButton
+          width: 50
+          height:parent.height/2
+          anchors.verticalCenter: saveEQButton.verticalCenter
+          opacity: pressed ? .1 : 1
           background: Rectangle {
-              opacity: .8
-              border.color: "black"
-              color: recallEQButton.checked ? "dimgrey": "white"
-              border.width: 1
-              radius: width/2
+                  color:"transparent"
+              }
+
+          Image {
+              id: reverseIcon
+              fillMode: Image.PreserveAspectFit
+              width:parent.width
+              height:parent.height
+              opacity: 1
+              mipmap:true
+              anchors.centerIn:parent
+              source:"../images/back-icon.svg"
+
           }
 
-          property real unmuttedMasterVolume;
-
-          onClicked:{
-              //load an EQ from disk
+          onClicked: {
+              //send a command to the platform interface
+              console.log("reverse clicked")
+              //platformInterface.changeTrack.update("restart_track");
           }
+          onDoubleClicked: {
+              //platformInterface.changeTrack.update("previous_track")
+          }
+
       }
+
+      Text{
+          id:currentPreset
+          text:"Preset 1"
+          font.pixelSize: 24
+      }
+
+      Button{
+          id:forwardButton
+          width: 50
+          height:parent.height/2
+          anchors.verticalCenter: saveEQButton.verticalCenter
+          opacity: pressed ? .1 : 1
+          background: Rectangle {
+                  color:"transparent"
+              }
+
+          Image {
+              id: forwardIcon
+              fillMode: Image.PreserveAspectFit
+              width:parent.width
+              height:parent.height
+              opacity: 1
+              mipmap:true
+              anchors.centerIn:parent
+              source:"../images/forward-icon.svg"
+
+          }
+
+          onClicked: {
+              //send a command to the platform interface
+              //console.log("reverse clicked")
+              //platformInterface.changeTrack.update("restart_track");
+          }
+          onDoubleClicked: {
+              //platformInterface.changeTrack.update("previous_track")
+          }
+
+      }
+
 
   }
 }

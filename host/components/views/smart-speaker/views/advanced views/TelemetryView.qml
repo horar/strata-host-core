@@ -11,37 +11,14 @@ Rectangle {
     property color backgroundColor: "#D1DFFB"
     property color accentColor:"#86724C"
 
-    Image {
-        id: speakerIcon
-        height:3*parent.height/4
-        fillMode: Image.PreserveAspectFit
-        //width:parent.height/4
-        mipmap:true
-        anchors.top:parent.top
-        anchors.topMargin: 15
-        anchors.left: parent.left
-        anchors.leftMargin: 20
-        source:"../images/speaker-icon.svg"
-
-    }
-
 
 
     Text{
-        id:amplifierText
-        font.pixelSize: 15
-        anchors.left:amplifierModelText.left
-        anchors.bottom: amplifierModelText.top
-        text:"amplifier:"
-        color: accentColor
-    }
-    Text{
-        id:amplifierModelText
+        id:telemetryText
         font.pixelSize: 24
-        anchors.left:speakerIcon.right
-        anchors.leftMargin: 10
-        anchors.verticalCenter: parent.verticalCenter
-        text:"ABC123"
+
+        anchors.centerIn: parent
+        text:"telemetry"
         color: "black"
     }
 }

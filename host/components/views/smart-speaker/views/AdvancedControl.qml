@@ -4,7 +4,7 @@ import QtQuick.Dialogs 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import tech.strata.sgwidgets 0.9 as Widget09
-import "../views/basic-partial-views"
+import "../views/advanced views"
 
 Widget09.SGResponsiveScrollView {
     id: root
@@ -40,16 +40,61 @@ Widget09.SGResponsiveScrollView {
         }
 
         Text{
-            id:placeholderText
+            id:titleText
             text:"advanced controls"
             font.pixelSize: 72
-            anchors.centerIn: parent
+            anchors.top: parent.top
+            anchors.topMargin:10
+            anchors.horizontalCenter: parent.horizontalCenter
         }
 
+        Row{
+            id:topRow
+            anchors.top: titleText.bottom
+            anchors.topMargin: 20
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 20
+
+
+            TelemetryView{
+                id:telemetryView
+                width:300
+                height:400
+            }
+            BatteryView{
+                id:batteryView
+                width:300
+                height:400
+            }
+            AudioPowerView{
+                id:audioPowerView
+                width:300
+                height:400
+            }
+
+        }
+        Row{
+            id:bottomRow
+            anchors.top: topRow.bottom
+            anchors.topMargin: 30
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 20
+
+            ChargerView{
+                id:chargerView
+                width:300
+                height:400
+            }
+            LEDView{
+                id:ledView
+                width:300
+                height:400
+            }
 
 
 
 
+        }
     }
 }
 

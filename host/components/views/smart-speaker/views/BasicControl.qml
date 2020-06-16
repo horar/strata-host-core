@@ -54,10 +54,23 @@ Widget09.SGResponsiveScrollView {
             color:"black"
             font.pixelSize: 75
         }
+        Row{
+            id: vuiRow
+            anchors.top:boardName.bottom
+            anchors.topMargin: 30
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 20
+
+            VoiceUIView{
+                id:voiceUIView
+                height:75
+                width:825
+            }
+        }
 
         Row{
             id:mixerRow
-            anchors.top:boardName.bottom
+            anchors.top:vuiRow.bottom
             anchors.topMargin: 30
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 20
@@ -83,16 +96,16 @@ Widget09.SGResponsiveScrollView {
             anchors.left: mixerRow.left
             spacing: 20
 
-            PlaybackControlView{
-                id:playbackControlView
-                height:100
-                width:250
-            }
-
             BluetoothView{
                 id:bluetoothView
                 height:100
                 width:270
+            }
+
+            PlaybackControlView{
+                id:playbackControlView
+                height:100
+                width:250
             }
 
             AmplifierView{
