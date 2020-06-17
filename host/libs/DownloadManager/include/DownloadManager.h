@@ -49,8 +49,11 @@ public:
         bool notifySingleDownloadFinished;
         bool notifyGroupDownloadProgress;
 
-        /* When true and filePath alredy exists, file is saved
-         * under different name. */
+        /* When true and filePath alredy exists, download is either skipped or
+         * old file is removed before new download starts.
+         *
+         * When false and filePath alrady exists file is downloaded
+         * and saved under different name. */
         bool keepOriginalName;
 
         /* When true and one of downloaded items fails,
