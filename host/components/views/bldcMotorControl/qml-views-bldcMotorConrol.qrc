@@ -7,5 +7,9 @@
         <file>control-views/PlatformInterface.qml</file>
         <file>control-views/question-circle-solid.svg</file>
         <file>control-views/MCSegmentedButton.qml</file>
+        <file>images/icon-clockwise-darkGrey.svg</file>
+        <file>images/icon-clockwise.svg</file>
+        <file>images/icon-counterClockwise-darkGrey.svg</file>
+        <file>images/icon-counterClockwise.svg</file>
     </qresource>
 </RCC>

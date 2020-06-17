@@ -48,6 +48,12 @@ QString SGUtilsCpp::fileAbsolutePath(const QString &file)
     return fi.absolutePath();
 }
 
+QString SGUtilsCpp::dirName(const QString &path)
+{
+    QDir dir(path);
+    return dir.dirName();
+}
+
 QUrl SGUtilsCpp::pathToUrl(const QString &path, const QString &scheme)
 {
     QUrl url;

@@ -13,6 +13,7 @@ Slider {
     from: 0
     to: 255
     opacity: enabled ? 1 : 0.5
+    layer.enabled: true
 
     property string color1: "red"
     property string color2: "green"

@@ -362,7 +362,6 @@ Widget09.SGResponsiveScrollView {
                         property variant stepOptions: ["0.9", "1.8", "3.6", "3.75", "7.5", "15", "18"]
                         enabled: ! container.inOverCurrentProtection
                         model: stepOptions
-                        textColor: enabled ? "black" : "grey"
 
                         boxColor:"white"
                         //comboBoxHeight: 25
@@ -437,18 +436,6 @@ Widget09.SGResponsiveScrollView {
                             }
                             else if (stepUnit === "rpm"){
                                 stepMotorSpeedSlider.to = 500
-                            }
-
-                        }
-
-                        property var stepUnit:  platformInterface.step_speed_notification.unit
-
-                        onStepUnitChanged: {
-                            if (stepUnit === "sps"){
-                                stepMotorSpeedSlider.to = 1000;
-                            }
-                            else if (stepUnit === "rpm"){
-                                stepMotorSpeedSlider.to = 500;
                             }
 
                         }

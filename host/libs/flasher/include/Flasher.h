@@ -11,6 +11,7 @@
 namespace strata {
 
 class DeviceOperations;
+enum class DeviceOperation: int;
 
 class Flasher : public QObject
 {
@@ -23,6 +24,7 @@ class Flasher : public QObject
          */
         enum class Result {
             Ok,
+            NoFirmware,
             Error,
             Timeout,
             Cancelled
@@ -63,10 +65,22 @@ class Flasher : public QObject
     signals:
         /*!
          * This signal is emitted when Flasher finishes.
-         * \param result result of flash operation
-         * \param errorString error description if result is Error
+         * \param result result of firmware operation
          */
-        void finished(Result result, QString errorString);
+        void finished(Result result);
+
+        /*!
+         * This signal is emitted when error occurres.
+         * \param errorString error description
+         */
+        void error(QString errorString);
+
+        /*!
+         * This signal is emitted with request to switch the board to bootloader mode
+         * and when board is successfully switched to bootloader.
+         * \param done true when board was successfully switched to bootloader
+         */
+        void switchToBootloader(bool done);
 
         /*!
          * This signal is emitted during firmware flashing.
@@ -82,14 +96,19 @@ class Flasher : public QObject
          */
         void backupProgress(int chunk, bool last);
 
+        /*!
+         * This signal is emitted when device properties are changed (e.g. board switched to/from bootloader).
+         */
+        void devicePropertiesChanged();
+
     private slots:
-        void handleOperationFinished(int operation, int data);
+        void handleOperationFinished(DeviceOperation operation, int data);
         void handleOperationError(QString errStr);
 
     private:
         void handleFlashFirmware(int lastFlashedChunk);
         void handleBackupFirmware(int chunkNumber);
-        void finish(Result result, QString errStr = QString());
+        void finish(Result result);
 
         SerialDevicePtr device_;
 

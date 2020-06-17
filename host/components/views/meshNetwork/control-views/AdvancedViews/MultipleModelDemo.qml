@@ -10,31 +10,27 @@ import tech.strata.sgwidgets 1.0
 Rectangle {
     id: root
 
+    onVisibleChanged: {
+        if (visible)
+            resetUI();
+    }
+
     Text{
         id:title
         anchors.top:parent.top
         anchors.topMargin: 40
         anchors.horizontalCenter: parent.horizontalCenter
-        text:"multiple model"
+        text:"Multiple Model"
         font.pixelSize: 72
     }
-
-//    Image{
-//            anchors.fill: parent
-//            source: "qrc:/views/meshNetwork/images/multipleModelsDemo.png"
-//            height:parent.height
-//            anchors.centerIn: parent
-//            fillMode: Image.PreserveAspectFit
-//            mipmap:true
-//        }
 
     Column{
         id:column1
         anchors.top:parent.top
         anchors.topMargin: parent.height*.2
         anchors.left:parent.left
-        anchors.leftMargin:parent.width*.1
-        width:200
+        anchors.leftMargin:parent.width*.2
+        width:parent.width * .2
         spacing: -outlineThickness
 
         property int outlineThickness: 5
@@ -50,6 +46,17 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 height:180
                 width:100
+
+                property var button: platformInterface.demo_click_notification
+                onButtonChanged:{
+                    if (platformInterface.demo_click_notification.demo === "multiple_models")
+                        if (platformInterface.demo_click_notification.button === "switch1")
+                            if (platformInterface.demo_click_notification.value === "on")
+                                relaySwitch.isOn = true;
+                               else
+                                relaySwitch.isOn = false;
+
+                }
 
                 onIsOnChanged: {
                     if (isOn){
@@ -75,6 +82,17 @@ Rectangle {
                 height:180
                 width:100
 
+                property var button: platformInterface.demo_click_notification
+                onButtonChanged:{
+                    if (platformInterface.demo_click_notification.demo === "multiple_models")
+                        if (platformInterface.demo_click_notification.button === "switch2")
+                            if (platformInterface.demo_click_notification.value === "on")
+                                relaySwitch.isOn = true;
+                               else
+                                relaySwitch.isOn = false;
+
+                }
+
                 onIsOnChanged: {
                     if (isOn){
                         //this should trigger the buzzer in a node, but not change anything in the UI
@@ -94,7 +112,7 @@ Rectangle {
         anchors.topMargin: parent.height*.2
         anchors.left:column1.right
         //anchors.leftMargin:parent.width*.1
-        width:200
+        width:parent.width * .2
 
 
         Rectangle{
@@ -138,7 +156,7 @@ Rectangle {
         anchors.top:parent.top
         anchors.topMargin: parent.height*.2
         anchors.left:column2.right
-        width:200
+        width:parent.width * .2
         spacing: -outlineThickness
 
         property int outlineThickness: 5
@@ -180,35 +198,9 @@ Rectangle {
         }
     }
 
-    Button{
-        id:resetButton
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom:parent.bottom
-        anchors.bottomMargin: 20
-        text:"reconfigure"
-
-        contentItem: Text {
-                text: resetButton.text
-                font.pixelSize: 20
-                opacity: enabled ? 1.0 : 0.3
-                color: "grey"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
-            }
-
-            background: Rectangle {
-                implicitWidth: 100
-                implicitHeight: 40
-                color: resetButton.down ? "lightgrey" : "transparent"
-                border.color: "grey"
-                border.width: 2
-                radius: 10
-            }
-
-         onClicked: {
-             platformInterface.set_demo.update("multiple_models")
-         }
+    function resetUI(){
+        switchOutline1.isOn = false
+        switchOutline2.isOn = false
     }
 
 }
