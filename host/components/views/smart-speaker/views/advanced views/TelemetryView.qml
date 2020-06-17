@@ -9,16 +9,182 @@ Rectangle {
     radius: 10
 
     property color backgroundColor: "#D1DFFB"
+    property color boxBackground: "#91ABE1"
     property color accentColor:"#86724C"
-
+    property int    boxHeight:75
+    property int    statBoxUnitSize:18
+    property int    statBoxValueSize:36
 
 
     Text{
-        id:telemetryText
+        id:telemetryLabel
+        anchors.top:parent.top
+        anchors.topMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 10
         font.pixelSize: 24
+        text:"Telemetry"
+    }
+    Rectangle{
+        id:underlineRect
+        anchors.left:telemetryLabel.left
+        anchors.top:telemetryLabel.bottom
+        anchors.topMargin: -5
+        anchors.right:parent.right
+        anchors.rightMargin: 10
+        height:1
+        color:"grey"
+    }
 
-        anchors.centerIn: parent
-        text:"telemetry"
-        color: "black"
+    Column{
+        id:leftColumn
+        anchors.top:telemetryLabel.bottom
+        anchors.topMargin: 10
+        anchors.bottomMargin: 20
+        spacing:10
+
+        Row{
+            id:topRow
+            spacing: 10
+            Text{
+                id:usbLabel
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: 18
+                text:"USB"
+                width:70
+                horizontalAlignment: Text.AlignRight
+            }
+
+            PortStatBox{
+                id:usbSpacerBox1
+                width:boxHeight
+                height:boxHeight
+                color:"transparent"
+                label: ""
+                value:""
+                unitColor: "transparent"
+            }
+
+            PortStatBox{
+                id:usbVBUSBox
+                width:boxHeight
+                height:boxHeight
+                label: "VBUS"
+                labelColor: "white"
+                color:boxBackground
+                valueSize:statBoxValueSize
+                unitSize:statBoxUnitSize
+                unitColor: "grey"
+                textColor: "black"
+                bottomMargin:10
+            }
+
+        }
+        Row{
+            id:middleRow
+            spacing: 10
+            Text{
+                id:batteryLabel
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: 18
+                text:"Battery"
+                width:70
+                horizontalAlignment: Text.AlignRight
+            }
+            PortStatBox{
+                id:batteryCurrentBox
+                width:boxHeight
+                height:boxHeight
+                label: "CURRENT"
+                labelColor: "white"
+                color:boxBackground
+                valueSize:statBoxValueSize
+                unitSize:statBoxUnitSize
+                unitColor: "grey"
+                textColor: "black"
+                bottomMargin:10
+                unit:"A"
+            }
+            PortStatBox{
+                id:batteryVoltageBox
+                width:boxHeight
+                height:boxHeight
+                label: "VOLTAGE"
+                labelColor: "white"
+                color:boxBackground
+                valueSize:statBoxValueSize
+                unitSize:statBoxUnitSize
+                unitColor: "grey"
+                textColor: "black"
+                bottomMargin:10
+            }
+            PortStatBox{
+                id:batteryPowerBox
+                width:boxHeight
+                height:boxHeight
+                label: "POWER"
+                labelColor: "white"
+                color:boxBackground
+                valueSize:statBoxValueSize
+                unitSize:statBoxUnitSize
+                unitColor: "grey"
+                textColor: "black"
+                bottomMargin:10
+                unit:"W"
+            }
+        }
+        Row{
+            id:bottomRow
+            spacing: 10
+            Text{
+                id:audioRailLabel
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: 18
+                text:"Audio\nrail"
+                width:70
+                horizontalAlignment: Text.AlignRight
+            }
+            PortStatBox{
+                id:audioCurrentBox
+                width:boxHeight
+                height:boxHeight
+                label: "CURRENT"
+                labelColor: "white"
+                color:boxBackground
+                valueSize:statBoxValueSize
+                unitSize:statBoxUnitSize
+                unitColor: "grey"
+                textColor: "black"
+                bottomMargin:10
+                unit:"A"
+            }
+            PortStatBox{
+                id:audioVoltageBox
+                width:boxHeight
+                height:boxHeight
+                label: "VOLTAGE"
+                labelColor: "white"
+                color:boxBackground
+                valueSize:statBoxValueSize
+                unitSize:statBoxUnitSize
+                unitColor: "grey"
+                textColor: "black"
+                bottomMargin:10
+            }
+            PortStatBox{
+                id:audioPowerBox
+                width:boxHeight
+                height:boxHeight
+                label: "POWER"
+                labelColor: "white"
+                color:boxBackground
+                valueSize:statBoxValueSize
+                unitSize:statBoxUnitSize
+                unitColor: "grey"
+                textColor: "black"
+                bottomMargin:10
+                unit:"W"
+            }
+        }
     }
 }

@@ -34,7 +34,7 @@ Rectangle {
         textColor: "#444"
         activeTextColor: "white"
         radius: buttonHeight/2
-        buttonHeight: 80
+        buttonHeight: 40
         exclusive: true
         buttonImplicitWidth: 100
         hoverEnabled:false
@@ -44,10 +44,11 @@ Rectangle {
             rowSpacing: 2
 
             SGSegmentedButton{
-                text: qsTr("A")
+                text: qsTr("")
                 activeColor: buttonSelectedColor
                 inactiveColor: "white"
                 checked: true
+                height:40
                 onClicked: controlContainer.currentIndex = 0
 
                 Image {
@@ -61,7 +62,7 @@ Rectangle {
             }
 
             SGSegmentedButton{
-                text: qsTr("B")
+                text: qsTr("")
                 activeColor:buttonSelectedColor
                 inactiveColor: "white"
                 height:40
@@ -84,7 +85,7 @@ Rectangle {
         id: controlContainer
         anchors {
             top: audioPowerTitleText.bottom
-            topMargin: 20
+            topMargin: 50
             bottom: parent.bottom
             right: parent.right
             left: parent.left

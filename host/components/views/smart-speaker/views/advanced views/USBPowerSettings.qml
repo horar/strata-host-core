@@ -14,10 +14,65 @@ Rectangle {
 
 
     Text{
-        id:audioPowerTitleText
-        font.pixelSize: 24
-        anchors.centerIn:parent
-        text:"USB power"
+        id:sinkCapLabel
+        font.pixelSize: 18
+        anchors.left:parent.left
+        anchors.leftMargin:10
+        anchors.verticalCenter: parent.verticalCenter
+        text:"Sink capabilities:"
         color: "black"
+    }
+
+    SGSegmentedButtonStrip {
+        id: sinkCapSegmentedButton
+        labelLeft: false
+        anchors.left: sinkCapLabel.right
+        anchors.leftMargin: 10
+        anchors.verticalCenter: parent.verticalCenter
+        textColor: "#444"
+        activeTextColor: "white"
+        radius: buttonHeight/2
+        buttonHeight: 20
+        exclusive: true
+        buttonImplicitWidth: 50
+        hoverEnabled:false
+
+        segmentedButtons: GridLayout {
+            columnSpacing: 2
+            rowSpacing: 2
+
+            SGSegmentedButton{
+                text: qsTr("5V 3A")
+                activeColor: buttonSelectedColor
+                inactiveColor: "white"
+                checked: true
+                //height:40
+                onClicked: {}
+
+
+            }
+
+            SGSegmentedButton{
+                text: qsTr("7V 3A")
+                activeColor:buttonSelectedColor
+                inactiveColor: "white"
+                //height:40
+                onClicked: {}
+            }
+            SGSegmentedButton{
+                text: qsTr("9V 3A")
+                activeColor:buttonSelectedColor
+                inactiveColor: "white"
+                //height:40
+                onClicked: {}
+            }
+            SGSegmentedButton{
+                text: qsTr("12V 3A")
+                activeColor:buttonSelectedColor
+                inactiveColor: "white"
+                //height:40
+                onClicked: {}
+            }
+        }
     }
 }

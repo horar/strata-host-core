@@ -1,5 +1,4 @@
-import QtQuick 2.9
-//import "qrc:/views/led/sgwidgets"
+import QtQuick 2.10
 
 Rectangle {
     id: root
@@ -12,44 +11,32 @@ Rectangle {
     property string value: "20"
     property string unit: "V"
     property alias unitColor: unitText.color
-    property string icon: "../images/icon-voltage.svg"
+//    //property string icon: "../images/icon-voltage.svg"
     property real labelSize: 9
     property real valueSize: 22
     property real unitSize: 12
     property real bottomMargin: 0
     property color textColor: "#555"
-    property color portColor: "#2eb457"
     property alias labelColor: labelText.color
     property alias underlineWidth: underline.width
-    property real imageHeightPercentage: .8
+//    property real imageHeightPercentage: .8
 
 
-    Rectangle{
-        color:"#555"
-        anchors.left:iconImage.left
-        anchors.leftMargin: 1
-        anchors.top:iconImage.top
-        anchors.topMargin: 1
-        anchors.right:iconImage.right
-        anchors.rightMargin:1
-        anchors.bottom:iconImage.bottom
-        anchors.bottomMargin: 1
-        radius:height/2
-    }
 
-    Image {
-        id: iconImage
-        source: root.icon
-        opacity: .5
-        height: root.height * imageHeightPercentage
-        width: height
-        anchors {
-            verticalCenter: root.verticalCenter
-            right: root.right
-            rightMargin: root.height * 0.05
-        }
-        mipmap: true
-    }
+
+//    Image {
+//        id: iconImage
+//        source: root.icon
+//        opacity: .5
+//        height: root.height * imageHeightPercentage
+//        width: height
+//        anchors {
+//            verticalCenter: root.verticalCenter
+//            right: root.right
+//            rightMargin: root.height * 0.05
+//        }
+//        mipmap: true
+//    }
 
     Item {
         id: labelBar
@@ -63,7 +50,8 @@ Rectangle {
             anchors {
                 top: labelBar.top
                 topMargin: 2
-                horizontalCenter: parent.horizontalCenter
+                left:parent.left
+                leftMargin:5
             }
             font {
                 pixelSize: root.labelSize
@@ -77,7 +65,8 @@ Rectangle {
             width: labelText.width + 6
             anchors {
                 bottom: labelBar.bottom
-                horizontalCenter: parent.horizontalCenter
+                left:parent.left
+                leftMargin:5
             }
         }
     }
@@ -106,8 +95,8 @@ Rectangle {
         anchors {
             bottom: valueText.bottom
             bottomMargin: 2
-            right: iconImage.left
-            rightMargin: 10
+            right: parent.right
+            rightMargin: 5
         }
         font {
             pixelSize: root.unitSize

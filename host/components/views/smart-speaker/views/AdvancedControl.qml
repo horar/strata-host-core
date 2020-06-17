@@ -58,7 +58,7 @@ Widget09.SGResponsiveScrollView {
 
             TelemetryView{
                 id:telemetryView
-                width:300
+                width:400
                 height:400
             }
             BatteryView{
@@ -68,7 +68,7 @@ Widget09.SGResponsiveScrollView {
             }
             AudioPowerView{
                 id:audioPowerView
-                width:300
+                width:400
                 height:400
             }
 
