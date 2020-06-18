@@ -20,7 +20,7 @@ int send_register_client()
 
 int send_unregister_client()
 {
-    const std::string msg("{ \"cmd\":\"unregister\" }");
+    const std::string msg("{ \"hcs::cmd\":\"unregister\" }");
 
     hcc->sendCmd(msg);
 //    std::string response = hcc->receiveNotification();

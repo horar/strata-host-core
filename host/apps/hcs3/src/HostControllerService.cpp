@@ -82,7 +82,20 @@ bool HostControllerService::initialize(const QString& config)
     connect(&boards_, &BoardController::boardDisconnected, this, &HostControllerService::platformDisconnected);
     connect(&boards_, &BoardController::boardMessage, this, &HostControllerService::sendMessageToClients);
 
-    QString baseUrl = QString::fromStdString( db_cfg["file_server"].GetString() );
+    QUrl baseUrl = QString::fromStdString(db_cfg["file_server"].GetString());
+
+    qCInfo(logCategoryHcs) << "file_server url:" << baseUrl.toString();
+
+    if (baseUrl.isValid() == false) {
+        qCCritical(logCategoryHcs) << "Provided file_server url is not valid";
+        return false;
+    }
+
+    if (baseUrl.scheme().isEmpty()) {
+        qCCritical(logCategoryHcs) << "file_server url does not have scheme";
+        return false;
+    }
+
     storageManager_->setBaseUrl(baseUrl);
     storageManager_->setDatabase(&db_);
 
@@ -368,11 +381,8 @@ void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
     HCS_Client* client = getSenderClient();
     Q_ASSERT(client);
 
-    if (int deviceId; boards_.getDeviceIdByClientId(client->getClientId(), deviceId)) {
-        boards_.clearClientId(deviceId);
-    }
-
-    client->resetPlatformId();
+    qCWarning(logCategoryHcs) << "Deprecated command: \"cmd\":\"unregister\", use \"hcs::cmd\":\"unregister\" instead.";
+    onCmdHostUnregister(nullptr);
 }
 
 void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
@@ -403,8 +413,9 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
             qCWarning(logCategoryHcs) << "Board doesn't have platformId!";
             return;
         }
+
         if (boards_.setClientId(client->getClientId(), deviceId) == false) {
-            qCWarning(logCategoryHcs) << "Board is allready assigned to some client!";
+            qCWarning(logCategoryHcs) << "Board is already assigned to some client!";
             return;
         }
         client->setPlatformId(platformId);
@@ -433,6 +444,16 @@ void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
     if (int device_id; boards_.getDeviceIdByClientId(client->getClientId(), device_id)) {
         boards_.clearClientId(device_id);
     }
+
+    emit cancelPlatformDocumentRequested(client->getClientId());
+
+    client->resetPlatformId();
+
+    // Remove the client from the mapping
+    QByteArray clientId = client->getClientId();
+    current_client_ = nullptr;
+    clientList_.remove(client);
+    qCInfo(logCategoryHcs) << "Client unregistered: " << clientId.toHex();
 }
 
 void HostControllerService::onCmdHostDownloadFiles(const rapidjson::Value* payload)
@@ -442,13 +463,13 @@ void HostControllerService::onCmdHostDownloadFiles(const rapidjson::Value* paylo
 
     QString destinationDir = QString::fromStdString((*payload)["destination_dir"].GetString());
     if (destinationDir.isEmpty()) {
-        qCWarning(logCategoryHcs()) << "destinationDir attribute is empty";
+        qCWarning(logCategoryHcs) << "destinationDir attribute is empty";
         return;
     }
 
     const rapidjson::Value& files = (*payload)["files"];
     if (files.IsArray() == false) {
-        qCWarning(logCategoryHcs()) << "files attribute is not an array";
+        qCWarning(logCategoryHcs) << "files attribute is not an array";
         return;
     }
 
@@ -474,7 +495,7 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
     //check the client's ID (dealer_id) is in list
     HCS_Client* client = getClientById(clientId);
     if (client == nullptr) {
-        qCInfo(logCategoryHcs) << "new Client:" << clientId;
+        qCInfo(logCategoryHcs) << "new Client:" << clientId.toHex();
 
         client = new HCS_Client(clientId);
         clientList_.push_back(client);
@@ -484,7 +505,7 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
 
     rapidjson::Document service_command;
     if (service_command.Parse(msg.message.c_str()).HasParseError()) {
-        qCWarning(logCategoryHcs) << "Client:" << clientId << "parse error!";
+        qCWarning(logCategoryHcs) << "Client:" << clientId.toHex() << "parse error!";
         return;
     }
 
@@ -497,13 +518,14 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
     }
 
     std::string cmd_name = firstIt->value.GetString();
-    qCInfo(logCategoryHcs) << "Client:" << clientId << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
+    qCInfo(logCategoryHcs) << "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
 
     if (msg_type == "hcs::cmd") {
 
         auto findIt = hostCmdHandler_.find(cmd_name);
         if (findIt == hostCmdHandler_.end()) {
             //TODO: error handling...
+            qCWarning(logCategoryHcs) << "Unhandled command" <<  "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
             return;
         }
 
@@ -519,6 +541,10 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
         }
 
         findIt->second(payload);
+    }
+    else {
+        qCWarning(logCategoryHcs) << "Unhandled command type" <<  "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
+        return;
     }
 }
 

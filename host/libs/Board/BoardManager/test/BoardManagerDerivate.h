@@ -15,7 +15,6 @@ public:
     void mockRemoveDevice(const int deviceId);        // pretend serial port was removed
 private slots:
     virtual void checkNewSerialDevices() override;
-    virtual void handleNewMessage(QString message) override;  // DEPRECATED
     virtual void handleOperationFinished(strata::device::DeviceOperation operation, int) override;
     virtual void handleOperationError(QString message) override;
     virtual void handleDeviceError(strata::device::Device::ErrorCode errCode,
