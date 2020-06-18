@@ -3,6 +3,7 @@
 
 #include <CommandValidator.h>
 #include <rapidjson/writer.h>
+#include "CommandResponseMock.h"
 #include "Device/DeviceOperations.h"
 #include "DeviceMock.h"
 #include "DeviceOperationsDerivate.h"
@@ -12,55 +13,15 @@ using strata::device::DeviceOperation;
 using strata::device::DeviceOperations;
 using strata::device::DeviceProperties;
 
-// TODO split off these string constants, put into separate file and use directly in MockDevice
-
-const std::string get_firmware_info_ = R"({"cmd":"get_firmware_info"})";
-const std::string get_firmware_info_ack_ =
-R"({
-    "ack":"get_firmware_info",
-    "payload":{"return_value":true,"return_string":"command valid"}
-})";
-const std::string get_firmware_info_response_ =
-R"({
-    "notification": {
-        "value":"get_firmware_info",
-        "payload": {
-            "bootloader": {
-                "version":"1.1.1",
-                "date":"20180401_123420"
-            },
-            "application": {
-                "version":"1.1.2",
-                "date":"20180401_131410"
-            }
-        }
-    }
-})";
-
-const std::string request_platform_id_ =
-R"({
-    "cmd":"request_platform_id"
-})";
-const std::string request_platform_id_ack_ =
-R"({
-    "ack":"request_platform_id",
-    "payload":{"return_value":true,"return_string":"command valid"}
-})";
-const std::string request_platform_id_response_ =
-R"({
-   "notification":{
-      "value":"platform_id",
-      "payload":{
-         "name":"ON WaterHeater",
-         "platform_id":"101",
-         "class_id":"201",
-         "count":1,
-         "platform_id_version":"2.0"
-      }
-   }
-})";
-
 void DeviceOperationsTest::initTestCase()
+{
+}
+
+void DeviceOperationsTest::cleanupTestCase()
+{
+}
+
+void DeviceOperationsTest::init()
 {
     operationErrorCount_ = 0;
     operationFinishedCount_ = 0;
@@ -77,7 +38,7 @@ void DeviceOperationsTest::initTestCase()
             &DeviceOperationsTest::handleOperationError);
 }
 
-void DeviceOperationsTest::cleanupTestCase()
+void DeviceOperationsTest::cleanup()
 {
     disconnect(deviceOperations_.get(), &DeviceOperations::finished, this,
                &DeviceOperationsTest::handleOperationFinished);
@@ -91,21 +52,13 @@ void DeviceOperationsTest::cleanupTestCase()
     }
 }
 
-void DeviceOperationsTest::init()
-{
-}
-
-void DeviceOperationsTest::cleanup()
-{
-}
-
 void DeviceOperationsTest::handleOperationFinished(strata::device::DeviceOperation operation, int)
 {
     lastFinishedOperation_ = operation;
     operationFinishedCount_++;
 }
 
-void DeviceOperationsTest::handleOperationError(QString )
+void DeviceOperationsTest::handleOperationError(QString)
 {
     operationErrorCount_++;
 }
@@ -121,6 +74,7 @@ void DeviceOperationsTest::printJsonDoc(rapidjson::Document &doc)
 
 void DeviceOperationsTest::connectTest()
 {
+    device_->mockSetAutoResponse(false);
     QCOMPARE(device_->mockGetMsgCount(), 0);
     QCOMPARE(operationErrorCount_, 0);
     QCOMPARE(operationFinishedCount_, 0);
@@ -128,44 +82,45 @@ void DeviceOperationsTest::connectTest()
     QCOMPARE(deviceOperations_->mockIsExecutingCommand(), false);
 }
 
+void DeviceOperationsTest::verifyMessage(const QByteArray &msg, const QByteArray &expectedJson)
+{
+    rapidjson::Document doc;
+    rapidjson::Document expectedDoc;
+    rapidjson::ParseResult parseResult;
+
+    parseResult = doc.Parse(msg.toStdString().c_str());
+    QVERIFY(!parseResult.IsError());
+    QVERIFY(doc.IsObject());
+    expectedDoc.Parse(expectedJson.toStdString().c_str());
+    if (doc != expectedDoc) {
+        printJsonDoc(doc);
+        printJsonDoc(expectedDoc);
+    }
+    QCOMPARE(doc, expectedDoc);
+}
+
 void DeviceOperationsTest::identifyTest()
 {
     rapidjson::Document doc;
     rapidjson::Document expectedDoc;
     rapidjson::ParseResult parseResult;
+
     deviceOperations_->identify(false);
-
-    // get_firmware_info and response
-    QCOMPARE(deviceOperations_->mockGetOperation(), DeviceOperation::Identify);
-    QTRY_COMPARE_WITH_TIMEOUT(device_->mockGetMsgCount(), 1, 1000);
-    parseResult = doc.Parse(device_->mockGetLastMsg().toStdString().c_str());
-    QVERIFY(!parseResult.IsError());
-    QVERIFY(doc.IsObject());
-    expectedDoc.Parse(get_firmware_info_.c_str());
-    QCOMPARE(doc, expectedDoc);
-    device_->mockEmitMessage(get_firmware_info_ack_);
-    device_->mockEmitMessage(get_firmware_info_response_);
-
-    // request_platform_id and response
-    QTRY_COMPARE_WITH_TIMEOUT(device_->mockGetMsgCount(), 2, 1000);
-    QCOMPARE(deviceOperations_->mockGetOperation(), DeviceOperation::Identify);
-    parseResult = doc.Parse(device_->mockGetLastMsg().toStdString().c_str());
-    QVERIFY(!parseResult.IsError());
-    QVERIFY(doc.IsObject());
-    expectedDoc.Parse(request_platform_id_.c_str());
-    QCOMPARE(doc, expectedDoc);
-    device_->mockEmitMessage(request_platform_id_ack_);
-    device_->mockEmitMessage(request_platform_id_response_);
-
     QTRY_COMPARE_WITH_TIMEOUT(deviceOperations_->mockGetOperation(), DeviceOperation::None, 1000);
-    expectedDoc.Parse(request_platform_id_response_.c_str());
+
+    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    QCOMPARE(recordedMessages.size(), 2);
+    verifyMessage(recordedMessages[0], test_commands::get_firmware_info_request);
+    verifyMessage(recordedMessages[1], test_commands::request_platform_id_request);
+
+    expectedDoc.Parse(test_commands::request_platform_id_response.toStdString().c_str());
     QCOMPARE(device_->property(DeviceProperties::verboseName),
              expectedDoc["notification"]["payload"]["name"].GetString());
     QCOMPARE(device_->property(DeviceProperties::platformId),
              expectedDoc["notification"]["payload"]["platform_id"].GetString());
     QCOMPARE(device_->property(DeviceProperties::classId),
              expectedDoc["notification"]["payload"]["class_id"].GetString());
-    expectedDoc.Parse(get_firmware_info_response_.c_str());
+    expectedDoc.Parse(test_commands::get_firmware_info_response.toStdString().c_str());
     QCOMPARE(device_->property(DeviceProperties::bootloaderVer),
              expectedDoc["notification"]["payload"]["bootloader"]["version"].GetString());
     QCOMPARE(device_->property(DeviceProperties::applicationVer),
@@ -174,15 +129,88 @@ void DeviceOperationsTest::identifyTest()
     // TODO tests for error situations
 }
 
+void DeviceOperationsTest::switchToBootloaderAndBackTest()
+{
+    rapidjson::Document doc;
+    rapidjson::Document expectedDoc;
+    rapidjson::ParseResult parseResult;
+
+    deviceOperations_->switchToBootloader();
+    QTRY_COMPARE_WITH_TIMEOUT(deviceOperations_->mockGetOperation(), DeviceOperation::None, 6000);
+
+    QVERIFY(device_->mockIsBootloader());
+    expectedDoc.Parse(test_commands::request_platform_id_response_bootloader.toStdString().c_str());
+    QCOMPARE(device_->property(DeviceProperties::verboseName),
+             expectedDoc["notification"]["payload"]["name"].GetString());
+    QCOMPARE(device_->property(DeviceProperties::platformId),
+             expectedDoc["notification"]["payload"]["platform_id"].GetString());
+    QCOMPARE(device_->property(DeviceProperties::classId),
+             expectedDoc["notification"]["payload"]["class_id"].GetString());
+    expectedDoc.Parse(test_commands::get_firmware_info_response.toStdString().c_str());
+    QCOMPARE(device_->property(DeviceProperties::bootloaderVer),
+             expectedDoc["notification"]["payload"]["bootloader"]["version"].GetString());
+    QCOMPARE(device_->property(DeviceProperties::applicationVer),
+             expectedDoc["notification"]["payload"]["application"]["version"].GetString());
+
+    deviceOperations_->startApplication();
+    QTRY_COMPARE_WITH_TIMEOUT(deviceOperations_->mockGetOperation(), DeviceOperation::None, 1000);
+
+    QVERIFY(!device_->mockIsBootloader());
+    expectedDoc.Parse(test_commands::request_platform_id_response.toStdString().c_str());
+    QCOMPARE(device_->property(DeviceProperties::verboseName),
+             expectedDoc["notification"]["payload"]["name"].GetString());
+    QCOMPARE(device_->property(DeviceProperties::platformId),
+             expectedDoc["notification"]["payload"]["platform_id"].GetString());
+    QCOMPARE(device_->property(DeviceProperties::classId),
+             expectedDoc["notification"]["payload"]["class_id"].GetString());
+    expectedDoc.Parse(test_commands::get_firmware_info_response.toStdString().c_str());
+    QCOMPARE(device_->property(DeviceProperties::bootloaderVer),
+             expectedDoc["notification"]["payload"]["bootloader"]["version"].GetString());
+    QCOMPARE(device_->property(DeviceProperties::applicationVer),
+             expectedDoc["notification"]["payload"]["application"]["version"].GetString());
+
+    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    QCOMPARE(recordedMessages.size(), 7);
+    verifyMessage(recordedMessages[0], test_commands::request_platform_id_request);
+    verifyMessage(recordedMessages[1], test_commands::update_firmware_request);
+    verifyMessage(recordedMessages[2], test_commands::request_platform_id_request);
+    verifyMessage(recordedMessages[3], test_commands::get_firmware_info_request);
+    verifyMessage(recordedMessages[4], test_commands::start_application_request);
+    verifyMessage(recordedMessages[5], test_commands::request_platform_id_request);
+    verifyMessage(recordedMessages[6], test_commands::get_firmware_info_request);
+}
+
+void DeviceOperationsTest::cancelOperationTest()
+{
+    device_->mockSetAutoResponse(false);
+    rapidjson::Document doc;
+    rapidjson::Document expectedDoc;
+    rapidjson::ParseResult parseResult;
+
+    deviceOperations_->switchToBootloader();
+    QTRY_COMPARE_WITH_TIMEOUT(device_->mockGetMsgCount(), 1, 1000);
+
+    std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
+    QCOMPARE(recordedMessages.size(), 1);
+    verifyMessage(recordedMessages[0], test_commands::request_platform_id_request);
+
+    deviceOperations_->cancelOperation();
+
+    QCOMPARE(deviceOperations_->mockGetOperation(), DeviceOperation::None);
+
+    recordedMessages = device_->mockGetRecordedMessages();
+    QCOMPARE(recordedMessages.size(), 1);
+    verifyMessage(recordedMessages[0], test_commands::request_platform_id_request);
+}
+
 // TODO tests for DeviceOperations:
 // connect to device + init -> done
 // command combos:
 //   identify
 //   switchToBootloader
+//   startApplication
 //   flashFirmwareChunk
 //   backupFirmwareChunk
-//   startApplication
-//   refreshPlatformId
 //   cancelOperation
 // device error handling
 // different command results (nextCommand)
@@ -190,5 +218,7 @@ void DeviceOperationsTest::identifyTest()
 // signals:
 //   finished
 //   error
-
+// TODO test device locking
+// TODO test concurrent operations with more devices (can be the same thread, but overlapping
+// operations)
 // TODO modify response timer (in DeviceOperations) for tests

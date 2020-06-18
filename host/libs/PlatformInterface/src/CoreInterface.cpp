@@ -267,7 +267,7 @@ void CoreInterface::disconnectPlatform()
 void CoreInterface::unregisterClient()
 {
     QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("cmd", "unregister");
+    cmdMessageObject.insert("hcs::cmd", "unregister");
     cmdMessageObject.insert("payload", QJsonObject());
 
     QJsonDocument doc(cmdMessageObject);

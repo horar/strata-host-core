@@ -2,9 +2,6 @@
 #include <thread>
 
 #include "BoardManagerIntegrationTest.h"
-#include "DeviceMock.h"
-
-using strata::device::DeviceProperties;
 
 void BoardManagerIntegrationTest::initTestCase()
 {
@@ -24,7 +21,8 @@ void BoardManagerIntegrationTest::cleanup()
 
 void BoardManagerIntegrationTest::connectTest()
 {
-    // TODO
+    QEXPECT_FAIL("", "TODO", Continue);
+    QVERIFY(false);
 }
 
 // TODO tests for BoardManager + DeviceOperations integration:
