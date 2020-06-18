@@ -18,7 +18,7 @@ Rectangle {
         font.pixelSize: 18
         anchors.left:parent.left
         anchors.leftMargin:10
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.top: parent.top
         text:"Sink capabilities:"
         color: "black"
     }
@@ -28,7 +28,7 @@ Rectangle {
         labelLeft: false
         anchors.left: sinkCapLabel.right
         anchors.leftMargin: 10
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenter: sinkCapLabel.verticalCenter
         textColor: "#444"
         activeTextColor: "white"
         radius: buttonHeight/2

@@ -15,20 +15,29 @@ Rectangle {
 
 
     Text{
-        id:audioPowerTitleText
-        font.pixelSize: 24
+        id:powerModeLabel
         anchors.top:parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        height:0
+        anchors.topMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 10
+        font.pixelSize: 24
         text:"Audio Power Mode"
-        color: "black"
-        visible:false
+    }
+    Rectangle{
+        id:underlineRect
+        anchors.left:powerModeLabel.left
+        anchors.top:powerModeLabel.bottom
+        anchors.topMargin: -5
+        anchors.right:parent.right
+        anchors.rightMargin: 10
+        height:1
+        color:"grey"
     }
 
     SGSegmentedButtonStrip {
         id: usbOrBatteryPowerSegmentedButton
         labelLeft: false
-        anchors.top: audioPowerTitleText.bottom
+        anchors.top: underlineRect.bottom
         anchors.topMargin: 10
         anchors.horizontalCenter: parent.horizontalCenter
         textColor: "#444"
@@ -84,8 +93,8 @@ Rectangle {
     StackLayout {
         id: controlContainer
         anchors {
-            top: audioPowerTitleText.bottom
-            topMargin: 50
+            top: usbOrBatteryPowerSegmentedButton.bottom
+            topMargin: 10
             bottom: parent.bottom
             right: parent.right
             left: parent.left
