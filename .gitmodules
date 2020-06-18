@@ -20,7 +20,7 @@
 	path = extern/couchbase-lite-cpp
 	url = https://github.com/stratadeveloperstudio/couchbase-lite-cpp.git
 	ignore = dirty
-[submodule "host/ext_libs/qtmqtt"]
+[submodule "extern/qtmqtt"]
 	path = extern/qtmqtt
 	url = https://github.com/qt/qtmqtt.git
 [submodule "extern/couchbase-lite-C"]
