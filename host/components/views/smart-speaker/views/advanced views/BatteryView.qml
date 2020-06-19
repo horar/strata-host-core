@@ -44,6 +44,31 @@ Rectangle {
         height:1
         color:"grey"
     }
+
+    Rectangle{
+        id:noBatteryScrim
+        anchors.top:underlineRect.bottom
+        anchors.topMargin: 10
+        anchors.left: parent.left
+        anchors.right:parent.right
+        anchors.bottom:parent.bottom
+        color:backgroundColor
+        z: 10
+        visible:false
+
+        Text{
+            id:noBatteryText
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top:parent.top
+            anchors.topMargin: parent.height/4
+            text:"no \nbattery"
+            horizontalAlignment: Text.AlignHCenter
+            color:hightlightColor
+            font.pixelSize: 72
+            opacity:.75
+        }
+    }
+
     Column{
         id:batteryColumn
         anchors.top: underlineRect.bottom

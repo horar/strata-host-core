@@ -27,12 +27,13 @@ Rectangle {
         anchors.left: audioVoltageLabel.right
         anchors.leftMargin: 5
         anchors.verticalCenter: audioVoltageLabel.verticalCenter
-        anchors.verticalCenterOffset: 10
+        anchors.verticalCenterOffset: 5
         height:25
         from:100
         to:600
         inputBox: true
-        grooveFillColor: accentColor
+        grooveColor: "grey"
+        grooveFillColor: hightlightColor
     }
 
     Text{
@@ -51,7 +52,7 @@ Rectangle {
         anchors.leftMargin: 5
         anchors.verticalCenter: controllerBypassLabel.verticalCenter
         height:25
-        grooveFillColor: accentColor
+        grooveFillColor: hightlightColor
     }
 
     Text{
