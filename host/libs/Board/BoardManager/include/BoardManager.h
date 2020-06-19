@@ -33,7 +33,7 @@ namespace strata {
 
     public:
         BoardManager();
-        virtual ~BoardManager();
+        ~BoardManager();
 
         /**
          * Initialize BoardManager (start managing connected devices).
