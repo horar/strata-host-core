@@ -82,7 +82,20 @@ bool HostControllerService::initialize(const QString& config)
     connect(&boards_, &BoardController::boardDisconnected, this, &HostControllerService::platformDisconnected);
     connect(&boards_, &BoardController::boardMessage, this, &HostControllerService::sendMessageToClients);
 
-    QString baseUrl = QString::fromStdString( db_cfg["file_server"].GetString() );
+    QUrl baseUrl = QString::fromStdString(db_cfg["file_server"].GetString());
+
+    qCInfo(logCategoryHcs) << "file_server url:" << baseUrl.toString();
+
+    if (baseUrl.isValid() == false) {
+        qCCritical(logCategoryHcs) << "Provided file_server url is not valid";
+        return false;
+    }
+
+    if (baseUrl.scheme().isEmpty()) {
+        qCCritical(logCategoryHcs) << "file_server url does not have scheme";
+        return false;
+    }
+
     storageManager_->setBaseUrl(baseUrl);
     storageManager_->setDatabase(&db_);
 
