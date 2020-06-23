@@ -7,8 +7,12 @@
 #include <QMap>
 #include <QJsonArray>
 #include <QDebug>
+#include <QUrl>
 
+namespace strata {
 class DownloadManager;
+}
+
 class PlatformDocument;
 class Database;
 
@@ -31,7 +35,7 @@ public:
      * Sets the base URL for downloads
      * @param url base URL
      */
-    void setBaseUrl(const QString& url);
+    void setBaseUrl(const QUrl &url);
 
 public slots:
     void requestPlatformList(const QByteArray &clientId);
@@ -130,9 +134,9 @@ private:
     QString createFilePathFromItem(const QString& item, const QString& prefix);
 
 
-    QString baseUrl_;       //base part of the URL to download
+    QUrl baseUrl_;       //base part of the URL to download
     QString baseFolder_;    //base folder for store downloaded files
-    QScopedPointer<DownloadManager> downloadManager_;
+    QScopedPointer<strata::DownloadManager> downloadManager_;
     Database* db_{nullptr};
     QHash<QString /*groupId*/, DownloadRequest* > downloadRequests_;
     QMap<QString /*classId*/, PlatformDocument*> documents_;

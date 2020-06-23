@@ -8,6 +8,8 @@
 #include <atomic>
 #include <functional>
 
+#include <QByteArray>
+
 #include <rapidjson/document.h>
 
 struct PlatformMessage
@@ -19,7 +21,7 @@ struct PlatformMessage
     };
 
     MessageType msg_type;
-    std::string from_client;
+    QByteArray from_client;
     std::string message;
     rapidjson::Document* msg_document;
 

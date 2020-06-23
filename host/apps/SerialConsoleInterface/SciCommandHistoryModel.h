@@ -3,6 +3,9 @@
 
 #include <QAbstractListModel>
 
+class SciPlatform;
+
+
 struct SciCommandHistoryModelItem {
     QString message;
 };
@@ -15,7 +18,7 @@ class SciCommandHistoryModel: public QAbstractListModel
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 
 public:
-    explicit SciCommandHistoryModel(QObject *parent = nullptr);
+    explicit SciCommandHistoryModel(SciPlatform *platform);
     virtual ~SciCommandHistoryModel() override;
 
     enum ModelRole {
@@ -34,7 +37,7 @@ public:
     void add(const QString &message);
     void populate(const QStringList &list);
     QStringList getCommandList() const;
-    bool removeAt(int row);
+    Q_INVOKABLE bool removeAt(int row);
 
 signals:
     void countChanged();
@@ -45,6 +48,7 @@ protected:
 private:
     QList<SciCommandHistoryModelItem> commandList_;
     int maximumCount_;
+    SciPlatform *platform_;
 
     void sanitize();
 };

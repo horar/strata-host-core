@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QPointer>
 
+
 class SciPlatform: public QObject {
     Q_OBJECT
     Q_DISABLE_COPY(SciPlatform)
@@ -38,7 +39,7 @@ public:
     Q_ENUM(PlatformStatus)
 
     int deviceId();
-    void setDevice(strata::SerialDevicePtr device);
+    void setDevice(strata::device::DevicePtr device);
     QString verboseName();
     void setVerboseName(const QString &verboseName);
     QString appVersion();
@@ -55,9 +56,12 @@ public:
 
     void resetPropertiesFromDevice();
     Q_INVOKABLE bool sendMessage(const QByteArray &message);
-    Q_INVOKABLE bool exportScrollback(QString filePath) const;
-    Q_INVOKABLE void removeCommandFromHistoryAt(int index);
     Q_INVOKABLE bool programDevice(QString filePath, bool doBackup=true);
+
+    //settings handlers
+    void storeCommandHistory(const QStringList &list);
+    void storeExportPath(const QString &exportPath);
+    void storeAutoExportPath(const QString &autoExportPath);
 
 signals:
     void verboseNameChanged();
@@ -68,6 +72,7 @@ signals:
     void programInProgressChanged();
     void flasherProgramProgress(int chunk, int total);
     void flasherBackupProgress(int chunk);
+    void flasherRestoreProgress(int chunk, int total);
     void flasherOperationStateChanged(
             strata::FlasherConnector::Operation operation,
             strata::FlasherConnector::State state,
@@ -79,9 +84,10 @@ signals:
 private slots:
     void messageFromDeviceHandler(QByteArray message);
     void messageToDeviceHandler(QByteArray message);
-    void deviceErrorHandler(strata::SerialDevice::ErrorCode errorCode, QString errorString);
+    void deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString);
     void flasherProgramProgressHandler(int chunk, int total);
     void flasherBackupProgressHandler(int chunk);
+    void flasherRestoreProgressHandler(int chunk, int total);
 
     void flasherOperationStateChangedHandler(
             strata::FlasherConnector::Operation operation,
@@ -91,7 +97,7 @@ private slots:
     void flasherFinishedHandler(strata::FlasherConnector::Result result);
 
 private:
-    strata::SerialDevicePtr device_;
+    strata::device::DevicePtr device_;
     int deviceId_;
     QString verboseName_;
     QString appVersion_;

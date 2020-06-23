@@ -49,3 +49,4 @@ platform/applications/*/debug/*
 *.autosave
 hs-utils-release
 extern/qwt/*
+extern/couchbase-lite-C

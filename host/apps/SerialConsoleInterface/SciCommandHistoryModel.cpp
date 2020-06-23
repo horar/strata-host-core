@@ -1,8 +1,11 @@
 #include "SciCommandHistoryModel.h"
 #include "logging/LoggingQtCategories.h"
+#include "SciPlatform.h"
 
-SciCommandHistoryModel::SciCommandHistoryModel(QObject *parent)
-    : QAbstractListModel(parent)
+
+SciCommandHistoryModel::SciCommandHistoryModel(SciPlatform *platform)
+    : QAbstractListModel(platform),
+      platform_(platform)
 {
 }
 
@@ -129,6 +132,8 @@ bool SciCommandHistoryModel::removeAt(int row)
     beginRemoveRows(QModelIndex(), row, row);
     commandList_.removeAt(row);
     endRemoveRows();
+
+    platform_->storeCommandHistory(getCommandList());
 
     return true;
 }

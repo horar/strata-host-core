@@ -15,7 +15,7 @@ find_package(Qt5 ${VERSION_QT5}
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     BoardManager
-    SerialDevice
+    Device
     SGJLinkConnector
 )
 

@@ -7,7 +7,7 @@
 #include <QString>
 #include <QTemporaryFile>
 
-#include <SerialDevice.h>
+#include <Device/Device.h>
 #include <Flasher.h>
 
 namespace strata {
@@ -23,7 +23,7 @@ public:
      * \param device device which will be used by FlasherConnector
      * \param firmwarePath path to firmware file
      */
-    FlasherConnector(const SerialDevicePtr& device, const QString& firmwarePath, QObject* parent = nullptr);
+    FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, QObject* parent = nullptr);
 
     /*!
      * FlasherConnector destructor.
@@ -95,7 +95,7 @@ signals:
     void finished(Result result);
 
     /*!
-     * This signal is emitted during firmware flashing.
+     * This signal is emitted during flashing new firmware.
      * \param chunk number of firmware chunks which was flashed
      * \param total total count of firmware chunks
      */
@@ -106,6 +106,13 @@ signals:
      * \param chunk chunk number which was backed up
      */
     void backupProgress(int chunk);
+
+    /*!
+     * This signal is emitted during flashing backed up firmware.
+     * \param chunk number of firmware chunks which was flashed
+     * \param total total count of firmware chunks
+     */
+    void restoreProgress(int chunk, int total);
 
     /*!
      * This signal is emitted when state of FlasherConnector is changed.
@@ -131,7 +138,7 @@ private:
     void startOperation();
     void processStartupError(const QString& errorString);
 
-    SerialDevicePtr device_;
+    device::DevicePtr device_;
     std::unique_ptr<Flasher> flasher_;
     QString filePath_;
     QTemporaryFile tmpBackupFile_;

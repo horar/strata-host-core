@@ -49,6 +49,8 @@ SGWidgets.SGMainWindow {
             fill: parent
             margins: 4
         }
+
+        focus: true
     }
 
     function showAboutWindow() {

@@ -27,7 +27,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::SerialPort
     QtLogger
     Flasher
-    SerialDevice
+    Device
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
