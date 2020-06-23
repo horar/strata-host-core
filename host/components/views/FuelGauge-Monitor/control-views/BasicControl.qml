@@ -20,24 +20,39 @@ ColumnLayout {
     property var print_dataArray: []
     property var counterx: 0
     property  int clear:0 //
-   // property var curve : basicGraph.createCurve("graphCurve")
-    //property var timerLength: 0
-    //test2: print_dataArray
+    property var one_time_clear_all_data: 0
+    property var cell_voltage1: +platformInterface.telemetry.cell_voltage
+    onCell_voltage1Changed:{
+        if(cell_voltage1>1500){
+        dataArray_voltage.push(cell_voltage1)
+        }
+         }
+
+    property var cell_temp1: +platformInterface.telemetry.cell_temp //
+    onCell_temp1Changed:{
+        if(cell_voltage1>1500){
+    dataArray_temperature.push(cell_temp1)
+     //console.log("######@@@@@@@@@@CELL-Temp############",cell_temp1)
+        }
+         }
+    property var estd_test_time_N_log_interval: +virtualtextarea.estd_tst_time
+    onEstd_test_time_N_log_intervalChanged:{
+        platformInterface.set_est_test_time.update(+virtualtextarea.estd_tst_time)
+        platformInterface.set_log_interval.update(+virtualtextarea.realtimelog)
+       //console.log("log time and &&& &&&&&&&&&&&&&&& estd time is",+virtualtextarea.realtimelog,+virtualtextarea.estd_tst_time)
+         }
+    //::
+          // property var curve : basicGraph.createCurve("graphCurve")
+         //property var timerLength: 0
+        //test2: print_dataArray
+        // property var curve : basicGraph.createCurve("graphCurve")
+        // property var timerLength: 0
+        //  property var x_Axis_Timer: 0
+    //::
+
     //property var dataArray : []
     //dataArray_voltage: append(yourVoltageValueHere()) // this will append the individual data from above function
    // dataArray_voltage.push(yourVoltageValueHere())
-
-    function yourTemperatureValueHere() {
-         return (+set_load_current.value*0.2) //will collect realtime temperature data from MCU
-     }
-
-    //dataArray_temperature: append(yourTemperatureValueHere())  //appendList
-
-    function yourTimeValueHere() { //automatically calculates from log-seconds data in UI
-        var timer_starts = -(virtualtextarea.realtimelog) //suppose  starts with 3 sec
-        for(var i=0; i<=dataArray_voltage.length;i++) {
-         return (timer_starts+(+virtualtextarea.realtimelog))}
-     }
     function clearGraphsData() {
         if (clear==1){
     dataArray_temperature=[]
@@ -49,18 +64,29 @@ ColumnLayout {
         }
         return 0
 }
-
-
-    function randomColor() {
-        return Qt.rgba(Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, 1)
-    }
     Component.onCompleted: {
+        //set_onboard_load_en.currentIndex=2
         graphTimerPoints.start()
         graphTimerPoints1.start()
+        platformInterface.set_measurement.update("stop")
+        dataArray_temperature=[]
+        dataArray_voltage=[]
+        print_dataArray=[]
+        basicGraph.removeCurve(0)
+        basicGraph1.removeCurve(0)
+        //Send to FW board on UI Loader
+        platformInterface.set_measurement.update("stop")
+        platformInterface.set_onboard_load_en.update("Disable")
+        platformInterface.set_load_current.update(3000)
+        platformInterface.set_charge_volt.update(4.2)
+        platformInterface.set_cut_off_volt.update(2800)
+        platformInterface.set_b_constant.update(3380)
+        platformInterface.set_apt.update(32530)
+        platformInterface.set_est_test_time.update(240)
+        platformInterface.set_log_interval.update(3)
+        platformInterface.set_fg_initialize.update("")  //Send this at LAST
     }
-
     spacing: 1
-
     anchors {
         fill: parent
         bottom: parent.bottom
@@ -165,7 +191,7 @@ ColumnLayout {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 anchors.bottom: parent.bottom
                                 anchors.bottomMargin: parent.height*0.11
-                                id: set_charge_voltage
+                                id: set_charge_volt
                                 model: ["4.2", "4.35", "4.4"]
                                 //label: "<b>Charging Voltage:</b>"   // Default: "" (if not entered, label will not appear)
                                 labelLeft: false            // Default: true
@@ -176,6 +202,12 @@ ColumnLayout {
                                 boxColor: "#f9f9f9"           // Default: "white"
                                 dividers: true              // Default: false
                                 //popupHeight: 300            // Default: 300 (sets max height for popup if model is lengthy)
+                               onCurrentTextChanged: {
+                               platformInterface.set_charge_volt.update(+set_charge_volt.currentText)
+                               console.log("Set_Charge_Voltage eeeeeeeeeeeee",+set_charge_volt.currentText)
+
+                               }
+
                             }
                             }
                             }
@@ -212,7 +244,7 @@ ColumnLayout {
 
                                 Text {
                                     id: name6
-                                    text: "Typical Capacity"
+                                    text: "Typical Capacity (mAh)"
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     anchors.top: parent.top
                                     anchors.topMargin: 3
@@ -230,7 +262,7 @@ ColumnLayout {
                                      labelLeft: false             // Default: true
                                      width: parent.width*0.9      // Default: 200
                                      stepSize: 1.0                // Default: 1.0
-                                     value: 3000.0                // Default: average of from and to
+                                     value: 1000.0                // Default: average of from and to
                                      from: 20.0                    // Default: 0.0
                                      to: 6000.0                   // Default: 100.0
                                      startLabel: "20 mAh"         // Default: from
@@ -242,12 +274,11 @@ ColumnLayout {
                                      live: false                  // Default: false (will only send valueChanged signal when slider is released)
                                      labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
                                      inputBox: true               // Default: true
-                                     onValueChanged: {
-                                                      dataArray_voltage.push((set_load_current.value))//.toFixed(0))//*0.7
-                                                      dataArray_temperature.push((set_load_current.value*0.01).toFixed(1))
-                                                     // console.log("Array", dataArray_voltage)
-                                                     // console.log("Slider value is now:", value)
-                                                  } //dataArray_voltage.push(set_load_current.value)
+                                     onValueChanged: console.log("set_load_current value is pppppppppppppp:", value)
+                                     onUserSet: {
+                                         platformInterface.set_load_current.update(value)
+                                     }
+
 
 
 
@@ -300,7 +331,7 @@ ColumnLayout {
 
                             Text {
                                 id: name8
-                                text: "Discharge Cut-off Voltage"
+                                text: "Discharge Cut-off Voltage (mV)"
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 anchors.top: parent.top
                                 anchors.topMargin: parent.height*0.03
@@ -330,6 +361,11 @@ ColumnLayout {
                                  live: false                  // Default: false (will only send valueChanged signal when slider is released)
                                  labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
                                  inputBox: true               // Default: true
+                                 onValueChanged: console.log("your-value--cutoff-voltagggggggggggg",value)
+                                 onUserSet: {
+                                     platformInterface.set_cut_off_volt.update(value)
+
+                                 }
 
 
                              }
@@ -387,6 +423,10 @@ ColumnLayout {
                                  live: false                  // Default: false (will only send valueChanged signal when slider is released)
                                  labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
                                  inputBox: true               // Default: true
+                                 onUserSet: {
+                                     platformInterface.set_b_constant.update(value)
+                                 }
+
                              }
                         }
                         }
@@ -427,6 +467,13 @@ ColumnLayout {
                                 infoBoxBorderColor: "white"     // Default: "#cccccc" (light gray)
                                 infoBoxBorderWidth: 1         // Default: 1 (assign 0 for no border)
                                 textColor: "green"              // Default: "black" (colors label as well as text in box
+                                onInfoChanged: {
+                                    console.log("aptttttttttttttt=apt----999999999-->>",info)
+                                    platformInterface.set_apt.update(+info)
+
+
+
+                                }
 
                                 }
 
@@ -464,8 +511,14 @@ ColumnLayout {
                                  live: false                  // Default: false (will only send valueChanged signal when slider is released)
                                  labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
                                  inputBox: true               // Default: true
-                                 onValueChanged: console.log("Slider value is now:", value)
-
+                                 //onValueChanged: console.log("Slider value is now:", value)
+                                 onValueChanged: {
+                                                 // dataArray_voltage.push((set_capacitance.value*30))//.toFixed(0))//*0.7
+                                               //   dataArray_temperature.push((set_capacitance.value*0.01*30).toFixed(1))
+                                     console.log("Slider value is nowWWWWWWWWWWWWWWWWWWWWWWW:", value)
+                                                 // console.log("Array", dataArray_voltage)
+                                                 // console.log("Slider value is now:", value)
+                                              } //dataArray_voltage.push(set_load_current.value)
 
                             }
                             }
@@ -494,17 +547,24 @@ ColumnLayout {
                     TextArea{ //collect all slider and combo information
                     id:virtualtextarea//realtimelog
                     visible: false
-                    property int realtimelog:foo1()
+                    property int realtimelog:foo1() //set_est_test_time3
                     function foo1(){
                     if((qsTr(sgcomboBS.currentText)==="Charge")) {return set_log_interval3.info}
-                    if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(sgcomboOBL.currentText)==="Enable"){return set_log_interval1.info}
-                    if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(sgcomboOBL.currentText)==="Disable"){return set_log_interval2.info}
+                    if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(set_onboard_load_en.currentText)==="Enable"){return set_log_interval1.info}
+                    if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(set_onboard_load_en.currentText)==="Disable"){return set_log_interval2.info}
+                    } //estd_tst_time
 
-                    }
+                    property var estd_tst_time:foo2() //set_est_test_time3
+                    function foo2(){
+                    if((qsTr(sgcomboBS.currentText)==="Charge")) {return set_est_test_time3.info}
+                    if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(set_onboard_load_en.currentText)==="Enable"){return set_est_test_time1.info}
+                    if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(set_onboard_load_en.currentText)==="Disable"){return set_est_test_time2.info}
+                    } //estd_tst_time
+
                     text: "[SystemSpec]\n"+"AppVersion = 1.0.0\n"+"LsiName = LC709204\n"+"[BatterySpec]\n"+"Manufacturer = "+manufacturer_name.text+"\nModelName = "+modal_name.text+
-                          "\nTypicalCapacity = "+set_load_current.value+"\nChargingVoltage = "+set_charge_voltage.currentText+"\nDischargeCut-offVoltage = "+set_cut_off_volt.value +
+                          "\nTypicalCapacity = "+set_load_current.value+"\nChargingVoltage = "+set_charge_volt.currentText+"\nDischargeCut-offVoltage = "+set_cut_off_volt.value +
                           "\n[ThermistorSpec]"+"\nBConstant = "+set_b_constant.value+"\nCapacitance = "+set_capacitance.value*1000+"\nAPT = "+set_apt.info+"\n[MeasurementCondition]"+
-                          "\nBatteryStatus = "+ sgcomboBS.currentText+"\nOn-boardLoad = "+sgcomboOBL.currentText+
+                          "\nBatteryStatus = "+ sgcomboBS.currentText+"\nOn-boardLoad = "+set_onboard_load_en.currentText+
                           "\nLogInterval = "+realtimelog+
                           "\nOn-boardLoadCurrent = "+sgsliderOBLC.value+
                           "\nExternalLoadCurrent = "+sgsliderELC.value+
@@ -515,7 +575,7 @@ ColumnLayout {
                           "\nOverCurrent = "+"off"+
                           "\nOver/UnderTemp = "+"off"+
                           "\nDoubleEstimatedTime = "+sgStatusLight17.status+
-                          "\n[Data]\n"+print_dataArray.join("")+":"+set_load_current.value+","+(set_load_current.value*0.01).toFixed(1)//virtualtextarea1.collect
+                          "\n[Data]\n"+print_dataArray.join("")+":"+platformInterface.telemetry.cell_voltage+","+platformInterface.telemetry.cell_temp//virtualtextarea1.collect
 
                     }
                     TextArea{ //collect all slider and combo information
@@ -548,13 +608,13 @@ ColumnLayout {
                                 //height: parent.height*0.9
                                 title: "Zoom Enabled"
                                 xMin: 0
-                                xMax: 3
+                                xMax: +virtualtextarea.realtimelog
                                 yMin: 0
                                 yMax: 5000
                                 backgroundColor: "#FDEEF4"
                                 foregroundColor: "steelblue"
                                 xTitle: "Time (sec)"
-                                yTitle: "Voltage (mV)"
+                                yTitle: "Cell Voltage (mV)"
 
                                 Button {
                                                 id:resetChartButton
@@ -565,8 +625,8 @@ ColumnLayout {
                                                 }
                                                 text: "set"
                                                 visible: visible//false
-                                                width: 35
-                                                height: 14
+                                                width: 38
+                                                height: 18
                                                 onClicked: {
                                                    basicGraph.resetChart()
                                                 }
@@ -583,65 +643,69 @@ ColumnLayout {
                             }
                            Timer{
                                       id: graphTimerPoints
-                                      interval: +(virtualtextarea.realtimelog*1000)// chang to seconds *1000
+                                      interval: +(virtualtextarea.realtimelog*1000)// chang to seconds *1000 or 3000sec
                                       running: false
                                       repeat: true
 
-                                      onTriggered: {
+                                     onTriggered: {
                                           basicGraph.removeCurve(0)
-                                         //console.log("in on triggered")
                                           var curve = basicGraph.createCurve("graphCurve")
                                           curve.color = "green"//randomColor()   //for (var j = 0 ; j < 50 ; j++)  dataArray.push({"x":dataArray.length + j,"y":yourDataValueHere(dataArray.length )})
-                                          var x_Axis_Timer=0 // time increase in sec for x-axis plots and adds to it till the experiment ends.
+                                          var x_Axis_Timer= (0 - (+virtualtextarea.realtimelog))// time increase in sec for x-axis plots and adds to it till the experiment ends.
                                           var dataArray = []
-                                          for (var counter = 0 ; counter <= (dataArray_voltage.length) ;counter++){
-                                              dataArray.push({"x":x_Axis_Timer,"y":dataArray_voltage[counter]})
-                                              x_Axis_Timer=x_Axis_Timer+(+virtualtextarea.realtimelog)
+                                          for (var counter = 1 ; counter <= (dataArray_voltage.length) ;counter++){
+                                              if((dataArray_voltage[counter - 1]>1500) && (x_Axis_Timer>=0 )){
+                                              dataArray.push({"x":x_Axis_Timer,"y":dataArray_voltage[counter - 1]})
+
                                               virtualtextarea1.text= ":"+ dataArray_voltage[counter - 1 ]+","+dataArray_temperature[counter -1]+"\n"
                                               print_dataArray[counter - 1]=virtualtextarea1.text  //if(dataArray_voltage[counter - 1] !== undefined)
 
+                                              }
+                                             // if(x_Axis_Timer<=0){x_Axis_Timer=+virtualtextarea.realtimelog}
+                                              x_Axis_Timer=x_Axis_Timer+(+virtualtextarea.realtimelog)
+
                                           }
+                                          if(x_Axis_Timer<=0){x_Axis_Timer=+virtualtextarea.realtimelog}
                                           basicGraph.xMax = x_Axis_Timer
                                           curve.appendList(dataArray)
-                                        //  print_dataArray.appendList({test2})  virtualtextarea1.text=“:”
+                                        //  print_dataArray.appendList({test2})  virtualtextarea1.text=Åg:Åh
 
                                      }
 
                                       //PP
 
-                                     /* onTriggered: {
-                                                              var x_Axis_Timer=0 // time increase in sec for x-axis plots and adds to it till the experiment ends.
-                                                              var dataArray = []
-
-                                                              if(dataArray_voltage.length > timerLength && timerLength != 0) {
-                                                                                          for (var counter = timerLength ; counter < dataArray_voltage.length ;counter++){
-                                                                                              console.log(counter, timerLength, dataArray_voltage.length)
-                                                                                              dataArray.push({"x":x_Axis_Timer,"y":dataArray_voltage[counter]})
-                                                                                              x_Axis_Timer = x_Axis_Timer + (+virtualtextarea.realtimelog)
-                                                                                              virtualtextarea1.text += ":"+ dataArray_voltage[counter - 1 ]+","+dataArray_temperature[counter -1]+"\n"
-                                                                                              print_dataArray.push(virtualtextarea1.text)
-                                                                                          }
-                                                                                          basicGraph.xMax = x_Axis_Timer
-                                                                                          curve.appendList(dataArray)
-                                                                                          curve.color = "blue"
-                                                                                      }
-
-
-
-                                                              else {
-                                                                  for (var counter2 = 0 ; counter2 <= (dataArray_voltage.length) ;counter2++){
-                                                                      dataArray.push({"x":x_Axis_Timer,"y":dataArray_voltage[counter2]})
-                                                                      x_Axis_Timer = x_Axis_Timer + (+virtualtextarea.realtimelog)
-                                                                      virtualtextarea1.text += ":"+ dataArray_voltage[counter2 - 1 ]+","+dataArray_temperature[counter2 -1]+"\n"
-                                                                      print_dataArray.push(virtualtextarea1.text)
-                                                                      console.log(counter2, timerLength, dataArray_voltage.length)
-                                                                  }
-                                                                  basicGraph.xMax = x_Axis_Timer
-                                                                  curve.appendList(dataArray)
-                                                                  curve.color = "green"
-                                                              }
-                                                              timerLength = dataArray_voltage.length
-                                                          }  */
+                                     /*      onTriggered: {
+                                            var dataArray = []
+                                            console.log(dataArray_voltage.length,timerLength)
+                                            if(dataArray_voltage.length > timerLength && timerLength != 0) {
+                                                for (var counter = timerLength ; counter < (dataArray_voltage.length) ;counter++){
+                                                    dataArray.push({"x":x_Axis_Timer,"y":dataArray_voltage[counter]})
+                                                    console.log(x_Axis_Timer,dataArray_voltage[counter])
+                                                    curve.append(x_Axis_Timer,dataArray_voltage[counter])
+                                                    x_Axis_Timer = x_Axis_Timer + (+virtualtextarea.realtimelog)
+                                                    virtualtextarea1.text = ":"+ dataArray_voltage[counter]+","+dataArray_temperature[counter]+"\n"
+                                                    console.log("virtualtextarea1.text",virtualtextarea1.text)
+                                                    if(virtualtextarea1.text != undefined)
+                                                        print_dataArray[counter] = virtualtextarea1.text
+                                                }
+                                                basicGraph.xMax = x_Axis_Timer
+                                                curve.color = "blue"
+                                            }
+                                            else if (timerLength == 0){
+                                                for (var counter2 = 0 ; counter2 < (dataArray_voltage.length) ;counter2++){
+                                                    dataArray.push({"x":x_Axis_Timer,"y":dataArray_voltage[counter2]})
+                                                    console.log(x_Axis_Timer,dataArray_voltage[counter2])
+                                                    curve.append(x_Axis_Timer,dataArray_voltage[counter2])
+                                                    x_Axis_Timer = x_Axis_Timer + (+virtualtextarea.realtimelog)
+                                                    virtualtextarea1.text = ":"+ dataArray_voltage[counter2]+","+dataArray_temperature[counter2]+"\n"
+                                                    if(virtualtextarea1.text != undefined)
+                                                        print_dataArray[counter2] = virtualtextarea1.text
+                                                }
+                                                basicGraph.xMax = x_Axis_Timer
+                                                curve.color = "green"
+                                            }
+                                            timerLength = dataArray_voltage.length
+                                        }  */
                                       //PP
 
 
@@ -712,7 +776,7 @@ ColumnLayout {
                                        // anchors.bottomMargin: parent.height*0.12
                                         anchors.centerIn: parent
                                         id: sgcomboBS
-                                        model: ["Discharge", "Charge"]
+                                        model: ["Charge", "Discharge"]
                                         label: "Battery status"   // Default: "" (if not entered, label will not appear)
                                         labelLeft: true            // Default: true
                                         comboBoxWidth: parent.width*0.5          // Default: 120 (set depending on model info length)
@@ -726,16 +790,17 @@ ColumnLayout {
                                         onCurrentTextChanged:  {
 
                                             if(qsTr(sgcomboBS.currentText)==="Charge"){
-                                                sgcomboOBL.currentIndex=0
+                                                set_onboard_load_en.currentIndex=2
                                                 sgsliderELC.enabled=false
                                                 sgsliderOBLC.enabled=false
-                                                sgcomboOBL.enabled=false
+                                                set_onboard_load_en.enabled=false
                                                 labelledInfoBox11.visible=false
                                                 sgsliderCC.enabled=true
                                                 labelledInfoBox11w.visible=false
                                                 rect32a.color="#ffffff"
                                                 rect34a.color="#f7f7fe"
                                                 sgStatusLight16.status= "off"
+                                                platformInterface.set_onboard_load_en.update(qsTr(set_onboard_load_en.currentText))
 
                                               }
 
@@ -743,13 +808,15 @@ ColumnLayout {
                                              if(qsTr(sgcomboBS.currentText)==="Discharge") {
                                                 sgsliderELC.enabled=false
                                                 sgsliderOBLC.enabled=true
-                                                sgcomboOBL.enabled=true
+                                                set_onboard_load_en.enabled=true
+                                                 set_onboard_load_en.currentIndex=0
                                                 labelledInfoBox11.visible=false
                                                 sgsliderCC.enabled=false
                                                 rect32a.color="#f7f7fe"
                                                  rect34a.color="#ffffff"
                                                 labelledInfoBox11w.visible=true
-                                                 sgStatusLight16.status= "red"
+                                                 sgStatusLight16.status= platformInterface.control_states.onboard_load_en//"green"
+                                                 platformInterface.set_onboard_load_en.update(qsTr(set_onboard_load_en.currentText))
 
                                                }
 
@@ -786,8 +853,8 @@ ColumnLayout {
                                     }
                                     Widget09.SGComboBox {
                                         anchors.centerIn: parent
-                                        id: sgcomboOBL
-                                        model: ["Enable", "Disable"]
+                                        id: set_onboard_load_en
+                                        model: ["Enable", "Disable"," "]
                                         label: "On-board Load"   // Default: "" (if not entered, label will not appear)
                                         labelLeft: true            // Default: true
                                         comboBoxWidth: parent.width*0.5    //130      // Default: 120 (set depending on model info length)
@@ -798,30 +865,32 @@ ColumnLayout {
                                         dividers: true              // Default: false
                                         //popupHeight: 300            // Default: 300 (sets max height for popup if model is lengthy)
                                      onCurrentTextChanged:  {
-                                                           if(qsTr(sgcomboOBL.currentText)==="Disable") {
+                                                           if(qsTr(set_onboard_load_en.currentText)==="Disable") {
                                                             sgsliderELC.enabled=true
                                                             sgsliderOBLC.enabled=false
 
                                                             labelledInfoBox11.visible=true
                                                             sgsliderCC.enabled=false
                                                             labelledInfoBox11w.visible=false
-                                                           stateChanged(sgStatusLight16.state="red")
                                                            rect32a.color = "#ffffff"
                                                            rect33a.color="#f7f7fe"
                                                            sgStatusLight16.status= "off"
+                                                           platformInterface.set_onboard_load_en.update(qsTr(set_onboard_load_en.currentText))
 
                                                                }
 
-                                                           if(qsTr(sgcomboOBL.currentText)==="Enable") {
+                                                           if(qsTr(set_onboard_load_en.currentText)==="Enable") {
                                                               sgsliderELC.enabled=false
                                                               sgsliderOBLC.enabled=true
-                                                              sgcomboOBL.enabled=true
+                                                              set_onboard_load_en.enabled=true
                                                               labelledInfoBox11.visible=false
                                                               sgsliderCC.enabled=false
                                                               labelledInfoBox11w.visible=true
                                                               rect32a.color = "#f7f7fe"
                                                               rect33a.color="#ffffff"
-                                                              sgStatusLight16.status= "red"
+                                                              platformInterface.set_onboard_load_en.update(qsTr(set_onboard_load_en.currentText))
+                                                              sgStatusLight16.status= platformInterface.control_states.onboard_load_en//"green"
+
                                                              // value1= +sgsliderELC.value
 
                                                                  }
@@ -928,6 +997,7 @@ ColumnLayout {
                                             color: "transparent"; radius: 4; border.width: 1; border.color: "#f7f7fe"; width: parent.width; height: parent.height*0.49
                                             anchors.top: parent.top; anchors.topMargin: 3
                                            Widget09.SGLabelledInfoBox {
+                                               id: set_est_test_time1
                                                property string height11: +(Math.round((+set_load_current.value)*60/((+sgsliderOBLC.value))))
                                                property int height22: +height11
                                                property int height33:foo()
@@ -937,7 +1007,7 @@ ColumnLayout {
                                                {return height22}
 
                                                }
-                                                id: set_est_test_time1
+
                                                 infoBoxWidth: 48
                                                 //anchors.left: parent.left
                                                 //anchors.leftMargin: 1.6
@@ -1423,13 +1493,13 @@ ColumnLayout {
                                     anchors.leftMargin: 8
                                     //title: ""
                                     xMin: 0
-                                    xMax: 3
+                                    xMax: +virtualtextarea.realtimelog
                                     yMin: 0
                                     yMax: 75
                                     backgroundColor: "#FDEEF4"
                                     foregroundColor: "steelblue"
                                     xTitle: "Time (sec)"
-                                    yTitle: "Cell Temp.(°C)"
+                                    yTitle: "Cell Temp.(° C)"
 
                                     Button {
                                                     id:resetChartButton1
@@ -1438,10 +1508,10 @@ ColumnLayout {
                                                         right: parent.right
                                                         margins: 1
                                                     }
-                                                    text: "set"
+                                                    text: "set" //************
                                                     visible: visible//false
-                                                    width: 35
-                                                    height: 14
+                                                    width: 38
+                                                    height: 18
                                                     onClicked: {
                                                        basicGraph1.resetChart()
                                                     }
@@ -1461,18 +1531,33 @@ ColumnLayout {
                                           repeat: true
                                           onTriggered: {
                                               basicGraph1.removeCurve(0)
-                                             //console.log("in on triggered")
-                                              var curve = basicGraph1.createCurve("graphCurve")
-                                              curve.color = "red"//randomColor()   //for (var j = 0 ; j < 50 ; j++)  dataArray.push({"x":dataArray.length + j,"y":yourDataValueHere(dataArray.length )})
-                                              var x_Axis_Timer=0 // time increase in sec for x-axis plots and adds to it till the experiment ends.
+                                              var curvex = basicGraph1.createCurve("graphCurve")
+                                              curvex.color = "red"//randomColor()   //for (var j = 0 ; j < 50 ; j++)  dataArray.push({"x":dataArray.length + j,"y":yourDataValueHere(dataArray.length )})
+                                              var x_Axis_Timer= (0 - (+virtualtextarea.realtimelog)) // time increase in sec for x-axis plots and adds to it till the experiment ends.
                                               var dataArray1 = []
-                                              for (var counter1 = 0 ; counter1 <= (dataArray_temperature.length) ;counter1++){
+                                              for (var counter1 = 1 ; counter1 <= (dataArray_temperature.length) ;counter1++){
                                                   //console.log(j,yourDataValueHere(dataArray.length ))
-                                                  dataArray1.push({"x":x_Axis_Timer,"y":dataArray_temperature[counter1]})
+                                                  if((dataArray_voltage[counter1 - 1]>1500) && (x_Axis_Timer>=0 )){
+                                                  dataArray1.push({"x":x_Axis_Timer,"y":dataArray_temperature[counter1 - 1]})
+                                                  if(one_time_clear_all_data<=0){
+                                                      dataArray_temperature=[]
+                                                      dataArray_voltage=[]
+                                                      print_dataArray=[]
+                                                      one_time_clear_all_data=1
+                                                  }
+
+
+                                                  }
+                                                 // if(x_Axis_Timer<=0){x_Axis_Timer=0}
                                                   x_Axis_Timer=x_Axis_Timer+(+virtualtextarea.realtimelog)
                                               }
+                                              if(x_Axis_Timer<=0){
+                                                  x_Axis_Timer=+virtualtextarea.realtimelog
+                                              }
                                               basicGraph1.xMax = x_Axis_Timer
-                                              curve.appendList(dataArray1)
+                                              curvex.appendList(dataArray1)
+
+
                                           }
                                       }
 
@@ -1577,7 +1662,7 @@ ColumnLayout {
                                         Widget09.SGStatusLight {
                                              id: sgStatusLight12
                                              anchors.centerIn: parent
-                                             status: "off"           // Default: "off" (other options: "green", "yellow", "orange", "red")
+                                             status: "black"           // Default: "off" (other options: "green", "yellow", "orange", "red")
                                              label: "" // Default: "" (if not entered, label will not appear)
                                              labelLeft: true        // Default: true
                                              lightSize: 30           // Default: 50
@@ -1608,7 +1693,7 @@ ColumnLayout {
                                     //anchors.fill: parent
                                     Rectangle {
                                         id: rect423ab
-                                        color: "#f7f7fe"; width: parent.width*0.93; height: parent.height*.95; anchors.bottom: parent.bottom;anchors.bottomMargin: -3; anchors.right: parent.right;anchors.rightMargin: 2
+                                        color: "#e6e3ff"; width: parent.width*0.93; height: parent.height*.95; anchors.bottom: parent.bottom;anchors.bottomMargin: -3; anchors.right: parent.right;anchors.rightMargin: 2
                                     Rectangle {
                                             id: rect42113
                                             color: "transparent"; width: parent.width*0.3; height: parent.height
@@ -1717,7 +1802,7 @@ ColumnLayout {
                                     //anchors.bottom: parent.bottom
                                     Rectangle{
                                     id: rect426ab
-                                    color: "#f7f7fe"; width: parent.width*0.93; height: parent.height*1.08; anchors.bottom: parent.bottom; anchors.bottomMargin: -2; anchors.right: parent.right;anchors.rightMargin: 2
+                                    color: "#e6e3ff"; width: parent.width*0.93; height: parent.height*1.08; anchors.bottom: parent.bottom; anchors.bottomMargin: -2; anchors.right: parent.right;anchors.rightMargin: 2
 
                                     Rectangle {
                                             id: rect42116
@@ -1754,6 +1839,36 @@ ColumnLayout {
                                 Rectangle {
                                     id: rect427
                                     color: "transparent"; width: parent.width*0.33; height: parent.height*0.33
+
+                                    Rectangle {
+                                            id: rect42116a
+                                            color: "transparent"; width: parent.width*0.3; height: parent.height
+                                            anchors.left: parent.left
+
+                                        Widget09.SGStatusLight {
+                                             id: sgStatusLight17
+                                             anchors.centerIn: parent
+                                             status: "red"           // Default: "off" (other options: "green", "yellow", "orange", "red")
+                                             label: "" // Default: "" (if not entered, label will not appear)
+                                             labelLeft: true        // Default: true
+                                             lightSize: 30           // Default: 50
+                                             textColor: "black"      // Default: "black"
+                                         }
+                                    }
+
+                                    Rectangle {
+                                            id: rect42126a
+                                            color: "transparent"; width: parent.width*0.7; height: parent.height
+                                            anchors.right: parent.right//: rect4221.left
+                                            Text {
+                                                text: "No Battery"
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.left: parent.left
+                                                font.pixelSize: 14
+                                                color: "black"
+                                            }
+
+                                    }
                                 }
                                 Rectangle {
                                     id: rect428
@@ -1764,7 +1879,7 @@ ColumnLayout {
                                             anchors.left: parent.left
 
                                         Widget09.SGStatusLight {
-                                             id: sgStatusLight17
+                                             id: sgStatusLight18
                                              anchors.centerIn: parent
                                              status: "off"           // Default: "off" (other options: "green", "yellow", "orange", "red")
                                              label: "" // Default: "" (if not entered, label will not appear)
@@ -1795,7 +1910,7 @@ ColumnLayout {
                                     color: "transparent"; width: parent.width*0.33; height: parent.height*0.31
                                     Rectangle{
                                     id: rect429ab
-                                    color: "#f7f7fe"; width: parent.width*0.93; height: parent.height; anchors.bottom: parent.bottom; anchors.bottomMargin: 1.5; anchors.right: parent.right;anchors.rightMargin: 2
+                                    color: "#e6e3ff"; width: parent.width*0.93; height: parent.height; anchors.bottom: parent.bottom; anchors.bottomMargin: 1.5; anchors.right: parent.right;anchors.rightMargin: 2
 
                                 }
 
@@ -1827,7 +1942,7 @@ ColumnLayout {
                                     Text {
                                         id: name319
                                         //height: 19
-                                        text: "Status ( Volt, Temp)"
+                                        text: "Status(Volt,Temp)"
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.top: parent.top
                                         anchors.topMargin: parent.height*0.09
@@ -1837,25 +1952,20 @@ ColumnLayout {
                                     }
 
                                     Widget09.SGLabelledInfoBox {
-                                       // horizontalAlignment: Text.AlignHCenter
+                                       //horizontalAlignment: Text.AlignHCenter
                                         id: labelledInfoBox1exr
-                                       // leftJustify: true
-                                        //overrideLabelWidth: 100
-                                        infoBoxWidth: parent.width*0.8
+                                        infoBoxWidth: parent.width*0.48
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.top: parent.top
                                         anchors.topMargin: parent.height*0.4
-                                        infoBoxHeight:35
+                                        infoBoxHeight:38
                                         label: ""
-                                        info: +(set_load_current.value*0.7).toFixed(0) + " mV,"+(set_load_current.value*0.01).toFixed(1) + " °C "
-                                        //
-                                            //+(Math.round(.value*0.325+30)) ////Math.round
-                                        // info: +(Math.round(value*0.325+30).toFixed(1)) ////Math.round
-                                        labelLeft: true                // Default: true (if false, label will be on top)
-                                        infoBoxColor: "transparent"      // Default: "#eeeeee" (light gray)
-                                        infoBoxBorderColor: "#f3f3fe"     // Default: "#cccccc" (light gray)
+                                        info: platformInterface.telemetry.cell_voltage + " mV, "+platformInterface.telemetry.cell_temp + " °C"
+                                        labelLeft: true                    // Default: true (if false, label will be on top)
+                                        infoBoxColor: "lightgray"       // Default: "#eeeeee" (light gray)
+                                        infoBoxBorderColor: "#f3f3fe"    // Default: "#cccccc" (light gray)
                                         infoBoxBorderWidth: 0.5         // Default: 1 (assign 0 for no border)
-                                        textColor: "green"              // Default: "black" (colors label as well as text in box
+                                        textColor: "green"             // Default: "black" (colors label as well as text in box
 
                                                          }
 
@@ -1881,8 +1991,8 @@ ColumnLayout {
 
                                     Widget09.SGSwitch{
                                         id: logSwitch
-                                        switchWidth: 76
-                                        switchHeight: 39
+                                        switchWidth: 105
+                                        switchHeight: 44
                                         checkedLabel: "<b>Start</b>"       // Default: "" (if not entered, label will not appear)
                                         uncheckedLabel: "<b>Stop</b>"    // Default: "" (if not entered, label will not appear)
                                         anchors.horizontalCenter: parent.horizontalCenter
@@ -1895,10 +2005,33 @@ ColumnLayout {
                                         handleColor: "#fff9f4"            // Default: "white"
                                         grooveColor: "#00b82c"    //#00b82c          // Default: "#ccc"
                                         grooveFillColor: "#ff471a"  // Default: "#0cf"
+                                        property var condition1: "start"
+                                        property var condition0: "stop"
+                                        property var start_stop_measure: 0
 
-                                      onClicked: {
-                                          clear=1
-                                          clearGraphsData()
+                                      onToggled: {
+                                          //clear=1
+                                         // clearGraphsData() //call function to clear old graph data
+                                          if(checked){
+                                              //pp
+                                              clear=1
+                                              clearGraphsData()
+                                              //
+                                              sgStatusLight13.status= "green"
+                                              platformInterface.set_measurement.update(condition1)
+                                              sgStatusLight16.status= platformInterface.control_states.onboard_load_en//control_states.onboard_load_en
+                                              console.log("true true true true true true")
+                                                }
+                                          else
+                                          {
+                                           platformInterface.set_measurement.update(condition0)
+                                           platformInterface.set_measurement.update(condition0)
+                                           sgStatusLight13.status= "off"
+                                           //pp
+
+
+                                          } //sgStatusLight13.status= "off";
+                                           //console.log("No-true No-true No-true No-true No-true No-true")
 
                                         if(set_load_current.enabled==true)
                                         {
@@ -1909,7 +2042,7 @@ ColumnLayout {
                                             set_b_constant.enabled=false
                                             set_capacitance.enabled=false
                                             set_cut_off_volt.enabled=false
-                                            set_charge_voltage.enabled=false
+                                            set_charge_volt.enabled=false
 
                                         }
                                         else{
@@ -1922,7 +2055,7 @@ ColumnLayout {
                                                 set_b_constant.enabled=true
                                                 set_capacitance.enabled=true
                                                 set_cut_off_volt.enabled=true
-                                                set_charge_voltage.enabled=true
+                                                set_charge_volt.enabled=true
 
                                             }
 
@@ -1945,89 +2078,45 @@ ColumnLayout {
                                              }
 
 
-                                           if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(sgcomboOBL.currentText)==="Enable")
+                                           if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(set_onboard_load_en.currentText)==="Enable")
                                              {
                                                  if (sgsliderOBLC.enabled==true)
                                                  {
                                                  sgsliderOBLC.enabled=false
                                                  sgcomboBS.enabled=false
-                                                 sgcomboOBL.enabled=false
+                                                 set_onboard_load_en.enabled=false
                                                  }
                                                  else
                                                  if (sgsliderOBLC.enabled==false)
                                                  {
                                                  sgsliderOBLC.enabled=true
                                                  sgcomboBS.enabled=true
-                                                 sgcomboOBL.enabled=true
+                                                 set_onboard_load_en.enabled=true
                                                  }
 
 
                                              }
 
-                                           if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(sgcomboOBL.currentText)==="Disable")
+                                           if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(set_onboard_load_en.currentText)==="Disable")
                                              {
                                                  if (sgsliderELC.enabled==true)
                                                  {
                                                  sgsliderELC.enabled=false
                                                  sgcomboBS.enabled=false
-                                                 sgcomboOBL.enabled=false
+                                                 set_onboard_load_en.enabled=false
                                                  }
                                                  else
                                                  if (sgsliderELC.enabled==false)
                                                  {
                                                  sgsliderELC.enabled=true
                                                  sgcomboBS.enabled=true
-                                                 sgcomboOBL.enabled=true
+                                                 set_onboard_load_en.enabled=true
                                                  }
 
                                              }
 
-
-//
-                                           //  }
-
-
-                                     /*
-                                              manufacturer_name.enable=false
-                                              model_name.enabled=false  }
-                                          else
-                                          {
-
-                                            manufacturer_name.enable=true
-                                            model_name.enabled=true
-
-                                          }*/
-                                          /*  if(sgsliderELC.enabled==true)
-
-                                            {
-                                       sgsliderELC.enabled=false
-                                        name316.visible=0.1 //previous is opacity
-
-                                         //image12w.opacity=0.1
-
-                                       // image12w.visible=false
-
-
-
-                                            }
-                                           else
-                                            {
-                                            sgsliderELC.enabled=true
-                                            name316.visible=true
-
-                                            //image12w.opacity=100
-                                            }  */
-
-
                                      }
-                                       //default { sgsliderELC.enabled=false}
 
-
-
-                                        // 'checked' state is bound to and sets the
-                                        // _motor_running_control property in PlatformInterface
-                                        //checked: platformInterface._motor_running_control
-                                        //onCheckedChanged: platformInterface._motor_running_control = checked
                                     }
 
                                 }
@@ -2046,33 +2135,6 @@ ColumnLayout {
                                         color: "black"
                                     }
 
-                                  /*  Button {
-                                        id: button1
-                                        width: 85
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                        anchors.top: parent.top
-                                        anchors.topMargin: parent.height*0.4
-                                        //radious:12
-                                /*        background: Rectangle {
-                                            radius: 12
-                                            color: "lightgrey"
-                                        }/////////
-                                        height: 37
-                                        text: qsTr("Export Log ")
-                                        //onClicked:rect32a.color="red" //its useful it works
-                                            //rect32a.color:"#ffffff"
-                                            //rect34a.color:"#f7f7fe"
-                                        onClicked: {
-                                           // root2.open
-                                          //  element1.open
-                                            opensavedaialoguemenu.visible=true
-                                           //saveFileDialog.open()
-                                            //openFileDialogj.open()
-
-
-                                        }
-
-                                    }*/
                                     DebugMenu {
 
                                                          anchors.left: parent.left
@@ -2100,6 +2162,120 @@ ColumnLayout {
   }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

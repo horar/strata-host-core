@@ -66,7 +66,7 @@ Rectangle {
                              //other properties
                              ScrollBar.vertical.policy: ScrollBar.AlwaysOn
                              Flickable {
-                                 contentHeight: 2000
+                                 contentHeight: 5000
                                  width: parent.width
                                  Rectangle {
                                      id : rectangle
@@ -100,7 +100,10 @@ Rectangle {
                 id: saveFileDialog
                 selectExisting: false
                 nameFilters: ["Text files (*.log)", "All files (*)"]
-                onAccepted: saveFile(saveFileDialog.fileUrl, textEdit.text) //document.saveFile(fileUrl)
+                onAccepted: { saveFile(saveFileDialog.fileUrl, textEdit.text)
+                           opensavedaialoguemenu.visible=false
+            } //document.saveFile(fileUrl)
+
             }
             menuBar: MenuBar {
              /*   Menu {
@@ -160,7 +163,9 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 16
             text: "Save"//Save
-            onClicked: saveFileDialog.open()
+            onClicked: { saveFileDialog.open()
+            //opensavedaialoguemenu.visible=false
+            }
             }
            /* Button{
             id:openbutton

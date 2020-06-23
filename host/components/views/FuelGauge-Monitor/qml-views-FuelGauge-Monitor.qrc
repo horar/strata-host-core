@@ -6,8 +6,7 @@
         <file>control-views/PlatformInterface.qml</file>
         <file>control-views/question-circle-solid.svg</file>
         <file>control-views/battery12.png</file>
-	<file>control-views/DebugMenu.qml</file>
+        <file>control-views/DebugMenu.qml</file>
         <file>control-views/thermistor.png</file>
-        <file>control-views/plots.png</file>
     </qresource>
 </RCC>

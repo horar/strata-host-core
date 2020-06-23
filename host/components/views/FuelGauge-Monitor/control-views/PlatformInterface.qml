@@ -6,64 +6,36 @@ import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
 Item {
     id: platformInterface
 
-    //TELEMETRY Notification
+    // TELEMETRY Notificatioreceive from MCU (same variables)
+
     property var telemetry : {
-        "ics": "0.0",
-        "iin": "0.0",
+        "cell_voltage": "",
+        "cell_temp": "",
         "vin": "0.00",
         "vout": "0.00",
         "vin_conn": "0.00",
         "vled": "0.00",
-        "temperature": 23.0
+        "temp": 23.0
     }
 
-    property var int_os_alert: {
-        "value" : false
-    }
-
-
-
-    property var foldback_status: ({
-                                       "value": "off"
-                                   })
-
-
+    //value 1  LEDS On/Off Controller commands in GUI send black/off or Red
     property var control_states: ({
-                                      "enable":"off",
-                                      "ext_led_connected":"disconnected",
-                                      "dim_en_duty":"0.0",
-                                      "dim_en_freq":"1.000",
-                                      "led_config":"3 LEDs",
-                                      "os_alert_threshold":"110"
+                                      "cut_off_voltage":"100",
+                                      "over_current":"2000",
+                                      // log enabled not in use
+                                      "over_volt":"4.3",
+                                      "over_under_temp":"100",
+                                      "onboard_load_en":"off",
+                                      "batery_status":"0.0",
+                                      "double_estd_time":"0.0"
+
                                   })
 
-    //ENABLE/DISABLE LED DRIVER
-    property var set_enable : ({
-                                   "cmd" : "set_enable",
-                                   "payload": {
-                                       "value": "off" // default value
-                                   },
-
-                                   update: function (value) {
-                                       this.set(value)
-                                       this.send(this)
-                                   },
-                                   set: function (value) {
-                                       this.payload.value = value
-                                   },
-                                   send: function () { CorePlatformInterface.send(this) },
-                                   show: function () { CorePlatformInterface.show(this) }
-                               })
-
-    //DIM#_EN SETTINGS Notification
-    property var dim_en_duty_state: {
-        "value" : 0.0
-    }
-
-    property var set_capacitance : ({
-                                        "cmd" : "set_capacitance",
+//value 2
+    property var set_measurement : ({
+                                        "cmd" : "set_measurement",
                                         "payload": {
-                                            "value": 0.0 // default value
+                                            "value": "stop" // default value
                                         },
 
                                         update: function (value) {
@@ -76,11 +48,129 @@ Item {
                                         send: function () { CorePlatformInterface.send(this) },
                                         show: function () { CorePlatformInterface.show(this) }
                                     })
-
-    property var set_dim_en_freq : ({
-                                        "cmd" : "set_dim_en_freq",
+    //value 2
+    property var set_load_current : ({
+                                        "cmd" : "set_load_current",
                                         "payload": {
-                                            "value": 1 // default value
+                                            "value": 3000 // default value
+                                        },
+
+                                        update: function (value) {
+                                            this.set(value)
+                                            this.send(this)
+                                        },
+                                        set: function (value) {
+                                            this.payload.value = value
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+    //value3
+    property var set_onboard_load_en : ({
+                                        "cmd" : "set_onboard_load_en",
+                                        "payload": {
+                                            "value": "off" // default value
+                                        },
+
+                                        update: function (value) {
+                                            this.set(value)
+                                            this.send(this)
+                                        },
+                                        set: function (value) {
+                                            this.payload.value = value
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+    //value4
+    property var set_charge_volt : ({
+                                        "cmd" : "set_charge_volt",
+                                        "payload": {
+                                            "value": 4.2 // default value
+                                        },
+
+                                        update: function (value) {
+                                            this.set(value)
+                                            this.send(this)
+                                        },
+                                        set: function (value) {
+                                            this.payload.value = value
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+    //value5
+    property var set_cut_off_volt : ({
+                                        "cmd" : "set_cut_off_volt",
+                                        "payload": {
+                                            "value": 2800 // default value
+                                        },
+
+                                        update: function (value) {
+                                            this.set(value)
+                                            this.send(this)
+                                        },
+                                        set: function (value) {
+                                            this.payload.value = value
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+    //value6
+    property var set_b_constant : ({
+                                        "cmd" : "set_b_constant",
+                                        "payload": {
+                                            "value": 3380 // default value
+                                        },
+
+                                        update: function (value) {
+                                            this.set(value)
+                                            this.send(this)
+                                        },
+                                        set: function (value) {
+                                            this.payload.value = value
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+    //Value7
+    property var set_apt : ({
+                                        "cmd" : "set_apt",
+                                        "payload": {
+                                            "value": 32530 // default value
+                                        },
+
+                                        update: function (value) {
+                                            this.set(value)
+                                            this.send(this)
+                                        },
+                                        set: function (value) {
+                                            this.payload.value = value
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+    //value8
+    property var set_est_test_time : ({
+                                        "cmd" : "set_est_test_time",
+                                        "payload": {
+                                            "value": 240 // default value
+                                        },
+
+                                        update: function (value) {
+                                            this.set(value)
+                                            this.send(this)
+                                        },
+                                        set: function (value) {
+                                            this.payload.value = value
+                                        },
+                                        send: function () { CorePlatformInterface.send(this) },
+                                        show: function () { CorePlatformInterface.show(this) }
+                                    })
+    property var set_log_interval : ({
+                                        "cmd" : "set_log_interval",
+                                        "payload": {
+                                            "value": 3 // default value
                                         },
 
                                         update: function (value) {
@@ -95,10 +185,10 @@ Item {
                                     })
 
     //SET LED CONFIGURATION
-    property var set_led : ({
-                                "cmd" : "set_led_config",
+    property var set_fg_initialize : ({
+                                "cmd" : "set_fg_initialize",
                                 "payload": {
-                                    "value":"3_leds" // default value
+                                    "value":"" // default value
                                 },
 
                                 update: function (value) {
