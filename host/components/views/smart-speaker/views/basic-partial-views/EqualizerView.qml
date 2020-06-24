@@ -3,6 +3,7 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.12
 //import tech.strata.sgwidgets 0.9
 import QtQuick.Controls 2.4
+import QtQuick.Dialogs 1.0
 
 Rectangle {
     id: root
@@ -232,7 +233,7 @@ Rectangle {
 
       Rectangle{
           id:spacerRectangle
-          width: (root.width - (saveEQButton.width + reverseButton.width + currentPreset.width + forwardButton.width +buttonRow.spacing))/2
+          width: (root.width - (saveEQButton.width + loadEQButton.width +buttonRow.spacing))/2
           height:20
           color:"transparent"
       }
@@ -266,82 +267,56 @@ Rectangle {
 
           onClicked:{
               //save off the EQ to disk
+              saveFileDialog.open()
           }
-      }
-      Button{
-          id:reverseButton
-          width: 50
-          height:parent.height/2
-          anchors.verticalCenter: saveEQButton.verticalCenter
-          opacity: pressed ? .1 : 1
-          background: Rectangle {
-                  color:"transparent"
-              }
-
-          Image {
-              id: reverseIcon
-              fillMode: Image.PreserveAspectFit
-              width:parent.width
-              height:parent.height
-              opacity: 1
-              mipmap:true
-              anchors.centerIn:parent
-              source:"../images/back-icon.svg"
-
-          }
-
-          onClicked: {
-              //send a command to the platform interface
-              console.log("reverse clicked")
-              //platformInterface.changeTrack.update("restart_track");
-          }
-          onDoubleClicked: {
-              //platformInterface.changeTrack.update("previous_track")
-          }
-
-      }
-
-      Text{
-          id:currentPreset
-          text:"Preset 1"
-          font.pixelSize: 24
       }
 
       Button{
-          id:forwardButton
-          width: 50
-          height:parent.height/2
-          anchors.verticalCenter: saveEQButton.verticalCenter
-          opacity: pressed ? .1 : 1
+          id:loadEQButton
+          width:75
+          height:30
+          text:"load"
+
+
+          contentItem: Text {
+              text: loadEQButton.text
+              font.pixelSize: 18
+              opacity: enabled ? 1.0 : 0.3
+              color: "black"
+              horizontalAlignment: Text.AlignHCenter
+              verticalAlignment: Text.AlignVCenter
+              elide: Text.ElideRight
+          }
+
           background: Rectangle {
-                  color:"transparent"
-              }
-
-          Image {
-              id: forwardIcon
-              fillMode: Image.PreserveAspectFit
-              width:parent.width
-              height:parent.height
-              opacity: 1
-              mipmap:true
-              anchors.centerIn:parent
-              source:"../images/forward-icon.svg"
-
+              opacity: .8
+              border.color: "black"
+              color: loadEQButton.checked ? "dimgrey": "white"
+              border.width: 1
+              radius: width/2
           }
 
-          onClicked: {
-              //send a command to the platform interface
-              //console.log("reverse clicked")
-              //platformInterface.changeTrack.update("restart_track");
-          }
-          onDoubleClicked: {
-              //platformInterface.changeTrack.update("previous_track")
-          }
+          property real unmuttedMasterVolume;
 
+          onClicked:{
+              //load EQ from disk
+              openFileDialog.open()
+          }
       }
-
-
   }
+
+  FileDialog {
+          id: openFileDialog
+          nameFilters: ["Text files (*.txt)", "All files (*)"]
+          onAccepted: textEdit.text = openFile(openFileDialog.fileUrl)
+      }
+
+  FileDialog {
+          id: saveFileDialog
+          selectExisting: false
+          nameFilters: ["Text files (*.txt)", "All files (*)"]
+          onAccepted: saveFile(saveFileDialog.fileUrl, textEdit.text)
+      }
 }
 
 
