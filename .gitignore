@@ -49,4 +49,5 @@ platform/applications/*/debug/*
 *.autosave
 hs-utils-release
 extern/qwt/*
+extern/qwt-*.zip
 extern/couchbase-lite-C
