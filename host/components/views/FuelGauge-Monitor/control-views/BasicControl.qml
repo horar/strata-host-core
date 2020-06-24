@@ -32,7 +32,6 @@ ColumnLayout {
     onCell_temp1Changed:{
         if(cell_voltage1>1500){
     dataArray_temperature.push(cell_temp1)
-     //console.log("######@@@@@@@@@@CELL-Temp############",cell_temp1)
         }
          }
     property var estd_test_time_N_log_interval: +virtualtextarea.estd_tst_time
@@ -624,7 +623,7 @@ ColumnLayout {
                                                     margins: 1
                                                 }
                                                 text: "set"
-                                                visible: visible//false
+                                                visible: true
                                                 width: 38
                                                 height: 18
                                                 onClicked: {
@@ -1509,7 +1508,7 @@ ColumnLayout {
                                                         margins: 1
                                                     }
                                                     text: "set" //************
-                                                    visible: visible//false
+                                                    visible: true
                                                     width: 38
                                                     height: 18
                                                     onClicked: {
@@ -1848,7 +1847,7 @@ ColumnLayout {
                                         Widget09.SGStatusLight {
                                              id: sgStatusLight17
                                              anchors.centerIn: parent
-                                             status: "red"           // Default: "off" (other options: "green", "yellow", "orange", "red")
+                                             status: "black"           // Default: "off" (other options: "green", "yellow", "orange", "red")
                                              label: "" // Default: "" (if not entered, label will not appear)
                                              labelLeft: true        // Default: true
                                              lightSize: 30           // Default: 50
@@ -2162,6 +2161,8 @@ ColumnLayout {
   }
 
 }
+
+
 
 
 

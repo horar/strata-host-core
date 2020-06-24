@@ -11,24 +11,29 @@ Item {
     property var telemetry : {
         "cell_voltage": "",
         "cell_temp": "",
-        "vin": "0.00",
-        "vout": "0.00",
-        "vin_conn": "0.00",
-        "vled": "0.00",
         "temp": 23.0
     }
 
-    //value 1  LEDS On/Off Controller commands in GUI send black/off or Red
+    // Receive value 1  LEDS On/Off Controller commands in GUI send black/off or Red
     property var control_states: ({
-                                      "cut_off_voltage":"100",
-                                      "over_current":"2000",
-                                      // log enabled not in use
-                                      "over_volt":"4.3",
-                                      "over_under_temp":"100",
+                                      "measurement":"stop",
                                       "onboard_load_en":"off",
-                                      "batery_status":"0.0",
-                                      "double_estd_time":"0.0"
+                                      "load_current":1500,
+                                      "charge_volt":4.35,
+                                      "cut_off_volt":2800,
+                                      "b_constant":3380,
+                                      "apt":30,
+                                      "est_test_time":0,
+                                      "log_interval":1
 
+                                  })
+    //Receive value 2
+    property var int_os_alert: ({
+                                      "cut_off_volt":"black",
+                                      "over_volt":"black",
+                                      "over_current":"2000",
+                                     "over_temp":"black",
+                                      "double_time":"black"
                                   })
 
 //value 2
