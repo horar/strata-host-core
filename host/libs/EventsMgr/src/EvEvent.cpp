@@ -1,9 +1,7 @@
+#include "EventsMgr/EvEventBase.h"
+#include "EventsMgr/EvEvent.h"
+#include "EventsMgr/EvEventsMgr.h"
 
-#include "EvEventBase.h"
-#include "EvEvent.h"
-#include "EvEventsMgr.h"
-
-// libevent library
 #include <event.h>
 #include <event2/event.h>
 #include <event2/thread.h>
@@ -11,21 +9,21 @@
 #include <assert.h>
 
 
-namespace spyglass {
+namespace strata::events_mgr {
 
 
 void evEventsCallback(evutil_socket_t /*fd*/, short what, void *arg)
 {
     assert(arg);
-    spyglass::EvEventBase *ev = static_cast<spyglass::EvEventBase *>(arg);
+    EvEventBase *ev = static_cast<EvEventBase *>(arg);
 
     int flags = 0;
     if (what & EV_READ)
-        flags |= spyglass::EvEventBase::eEvStateRead;
+        flags |= EvEventBase::eEvStateRead;
     if (what & EV_WRITE)
-        flags |= spyglass::EvEventBase::eEvStateWrite;
+        flags |= EvEventBase::eEvStateWrite;
     if (what & EV_TIMEOUT)
-        flags |= spyglass::EvEventBase::eEvStateTimeout;
+        flags |= EvEventBase::eEvStateTimeout;
 
     ev->handle_event(flags);
 }

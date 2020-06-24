@@ -16,7 +16,7 @@
 #include <QStandardPaths>
 #include <QDir>
 
-#include <EvEventsMgr.h>    //for EvEventsMgrInstance (windows WSA)
+#include <EventsMgr/win32/EvEventsMgrInstance.h> // Windows WSA
 
 
 int main(int argc, char *argv[])
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    spyglass::EvEventsMgrInstance instance;
+    strata::events_mgr::EvEventsMgrInstance instance;
 
     QScopedPointer<HostControllerService> hcs(new HostControllerService);
 

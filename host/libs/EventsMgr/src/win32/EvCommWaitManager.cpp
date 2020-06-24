@@ -1,12 +1,12 @@
-
 #if !defined(_WIN32)
 #error "This file is only for Widnows"
 #endif
 
-#include "win32/EvCommWaitManager.h"
-#include "EvEventBase.h"
-#include "win32/EvCommEvent.h"
-#include "win32/EvTimerEvent.h"
+#include "EventsMgr/EvEventBase.h"
+
+#include "EventsMgr/win32/EvCommWaitManager.h"
+#include "EventsMgr/win32/EvCommEvent.h"
+#include "EventsMgr/win32/EvTimerEvent.h"
 
 #include <Windows.h>
 
@@ -14,8 +14,7 @@
 #include <assert.h>
 #include <algorithm>
 
-namespace spyglass
-{
+namespace strata::events_mgr {
 
 unsigned int g_waitTimeout = 5000;  //in ms
 unsigned int g_maxEventMapSize = MAXIMUM_WAIT_OBJECTS-1;
@@ -259,4 +258,4 @@ void EvCommWaitManager::threadMain()
 }
 
 
-} //namespace spyglass
+} //namespace

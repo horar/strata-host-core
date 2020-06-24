@@ -1,14 +1,11 @@
-#ifndef STRATA_EVENTS_MGR_WIN_COMM_EVENT_H__
-#define STRATA_EVENTS_MGR_WIN_COMM_EVENT_H__
+#pragma once
 
-#if defined(_WIN32)
-
-#include "EvEventBase.h"
+#include "EventsMgr/EvEventBase.h"
 
 #include <Windows.h>
 #include <mutex>
 
-namespace spyglass {
+namespace strata::events_mgr {
 
 class EvCommEvent : public EvEventBase
 {
@@ -80,8 +77,3 @@ private:
 };
 
 }; //namespace
-
-
-#endif //_WIN32
-
-#endif //STRATA_EVENTS_MGR_WIN_COMM_EVENT_H__

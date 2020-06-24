@@ -1,9 +1,6 @@
-#ifndef STRATA_EVENTS_MGR_WIN_COMM_WAIT_MANAGER_H__
-#define STRATA_EVENTS_MGR_WIN_COMM_WAIT_MANAGER_H__
+#pragma once
 
-#if defined(_WIN32)
-
-#include "EvEventBase.h"
+#include "EventsMgr/EvEventBase.h"
 
 #include <thread>
 #include <atomic>
@@ -13,8 +10,7 @@
 
 #include <windows.h>
 
-namespace spyglass
-{
+namespace strata::events_mgr {
 
 class EvCommWaitManager
 {
@@ -70,7 +66,3 @@ private:
 };
 
 } //namespace
-
-#endif //_WIN32
-
-#endif //STRATA_EVENTS_MGR_WIN_COMM_WAIT_MANAGER_H__
