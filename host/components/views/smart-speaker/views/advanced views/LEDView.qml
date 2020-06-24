@@ -12,6 +12,14 @@ Rectangle {
     property color accentColor:"#86724C"
     property int labelWidth:200
 
+    property bool topLightsOn
+    property bool bottomLightOn
+    property int theRedValue
+    property int theGreenValue
+    property int theBlueValue
+    property int theBottomLightBrightness
+    property bool touchButtonsOn: platformInterface.touch_button_state.state
+
     Text{
         id:ledLabel
         anchors.top:parent.top
@@ -68,7 +76,7 @@ Rectangle {
                 id:bottomLightsLabel
                 font.pixelSize: 18
                 horizontalAlignment: Text.AlignRight
-                text:"Top light:"
+                text:"Bottom lights:"
                 color: "black"
                 width:labelWidth
             }
@@ -78,6 +86,14 @@ Rectangle {
                 anchors.verticalCenter: bottomLightsLabel.verticalCenter
                 height:25
                 grooveFillColor: hightlightColor
+
+                onToggled:{
+                    var theString = "on"
+                    if (!bottomLightsSwitch.checked)
+                        theString = "off"
+                    platformInterface.set_led_state("lower",theString, )
+                }
+
             }
         }
         Row{
@@ -143,7 +159,7 @@ Rectangle {
                 id:touchButtonsLabel
                 font.pixelSize: 18
                 horizontalAlignment: Text.AlignRight
-                text:"Top light:"
+                text:"Touch buttons:"
                 color: "black"
                 width:labelWidth
             }

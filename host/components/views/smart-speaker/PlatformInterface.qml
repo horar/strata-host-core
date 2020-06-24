@@ -113,7 +113,7 @@ Item {
     }
 
     property var charger_status:{
-        "float_voltage":4.2V,           /* has a range of voltages, but this is only one used*/
+        "float_voltage":4.2,           /* has a range of voltages, but this is only one used*/
         "input_ovp":true,               /* or false */
         "charge_mode":"fast",           /* ‘pre’ or ‘top off' or 'sleep’ */
         "precharge_current":100,        /* (mA) 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800 /
@@ -129,7 +129,7 @@ Item {
         "current":50
     }
 
-    property var bus_current_limit:{
+    property var led_state:{
         "set":"lower",                         /* or ‘upper’ */
         "state":"on",                          /* or ‘off’ */
         "r":128,                                  /* red intensity for lower LEDs, ignore for upper LEDs */

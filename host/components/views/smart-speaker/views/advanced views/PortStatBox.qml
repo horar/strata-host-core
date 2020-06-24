@@ -80,7 +80,7 @@ Rectangle {
             bottom: root.bottom
             bottomMargin: root.bottomMargin
             right: unitText.left
-            rightMargin: 10
+            rightMargin: 0
         }
         font {
             pixelSize: root.valueSize

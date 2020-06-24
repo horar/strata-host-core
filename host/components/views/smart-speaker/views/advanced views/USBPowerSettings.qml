@@ -12,6 +12,28 @@ Rectangle {
     property color backgroundColor: "#D1DFFB"
     property color accentColor:"#86724C"
 
+    property bool isConnected: platformInterface.usb_pd_port_connect.connection_state === "connected"
+
+    Rectangle{
+        id:notConnectedScrim
+        anchors.top:parent.top
+        anchors.left:parent.left
+        anchors.bottom:parent.bottom
+        anchors.right:parent.right
+        color:"transparent"
+        visible:!isConnected
+        Text{
+            id:notConnectedText
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top:parent.top
+            anchors.topMargin: parent.height/8
+            text:"not \nconnected"
+            horizontalAlignment: Text.AlignHCenter
+            color:hightlightColor
+            font.pixelSize: 72
+            opacity:.75
+        }
+    }
 
     Text{
         id:sinkCapLabel
@@ -21,6 +43,7 @@ Rectangle {
         anchors.top: parent.top
         text:"Sink capabilities:"
         color: "black"
+        visible:isConnected
     }
 
     SGSegmentedButtonStrip {
@@ -36,6 +59,7 @@ Rectangle {
         exclusive: true
         buttonImplicitWidth: 50
         hoverEnabled:false
+        visible:isConnected
 
         segmentedButtons: GridLayout {
             columnSpacing: 2

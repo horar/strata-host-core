@@ -71,28 +71,46 @@ Rectangle {
                     columnSpacing: 2
                     rowSpacing: 2
 
+                    property var overVoltage: platformInterface.vbus_ovp_level
+                    onOverVoltageChanged: {
+                        switch(platformInterface.vbus_ovp_level.value){
+                        case 6.5:   overVoltageButton1.checked = true;  break;
+                        case 10.5:  overVoltageButton2.checked = true;  break;
+                        case 13.7:  overVoltageButton3.checked = true;  break;
+                        }
+                    }
+
                     SGSegmentedButton{
+                        id:overVoltageButton1
                         text: qsTr("6.5V")
                         activeColor: buttonSelectedColor
                         inactiveColor: "white"
                         checked: true
                         //height:40
-                        onClicked: {}
+                        onClicked: {
+                            platformInterface.set_vbus_ovp_level.update(6.5);
+                        }
                     }
 
                     SGSegmentedButton{
+                        id:overVoltageButton2
                         text: qsTr("10.5V")
                         activeColor:buttonSelectedColor
                         inactiveColor: "white"
                         //height:40
-                        onClicked: {}
+                        onClicked: {
+                            platformInterface.set_vbus_ovp_level.update(10.5);
+                        }
                     }
                     SGSegmentedButton{
+                        id:overVoltageButton3
                         text: qsTr("13.7V")
                         activeColor:buttonSelectedColor
                         inactiveColor: "white"
                         //height:40
-                        onClicked: {}
+                        onClicked: {
+                            platformInterface.set_vbus_ovp_level.update(13.7);
+                        }
                     }
 
                 }
@@ -120,6 +138,10 @@ Rectangle {
                 inputBox: true
                 grooveColor: "grey"
                 grooveFillColor: hightlightColor
+                value: platformInterface.charger_status.ibus_limit
+                onUserSet: {
+                    platformInterface.set_charger_current.update("set_vbus_current_limit", value);
+                }
             }
             Text{
                 id:busCurrentLimitUnit
@@ -136,7 +158,7 @@ Rectangle {
                 id:fastChargeLabel
                 font.pixelSize: 18
                 width:telemetryTextWidth
-                text:"Fast charge current label:"
+                text:"Fast charge current limit:"
                 horizontalAlignment: Text.Text.AlignRight
                 color: "black"
             }
@@ -150,6 +172,10 @@ Rectangle {
                 inputBox: true
                 grooveColor: "grey"
                 grooveFillColor: hightlightColor
+                value:platformInterface.charger_status.fast_chg_current
+                onUserSet: {
+                    platformInterface.set_charger_current.update("set_fast_current_limit", value);
+                }
             }
             Text{
                 id:fastChargeUnit
@@ -180,6 +206,10 @@ Rectangle {
                 inputBox: true
                 grooveColor: "grey"
                 grooveFillColor: hightlightColor
+                value: platformInterface.charger_status.precharge_current
+                onUserSet: {
+                    platformInterface.set_charger_current.update("set_precharge_current_limit", value);
+                }
             }
 
             Text{
@@ -210,6 +240,10 @@ Rectangle {
                 inputBox: true
                 grooveColor: "grey"
                 grooveFillColor: hightlightColor
+                value: platformInterface.charger_status.termination
+                onUserSet: {
+                    platformInterface.set_charger_current.update("set_termination_current_limit", value);
+                }
             }
 
             Text{
@@ -226,7 +260,7 @@ Rectangle {
                 id:temperatureThresholdLabel
                 font.pixelSize: 18
                 width:telemetryTextWidth
-                text:"Charge mode:"
+                text:"Temperature threshold:"
                 horizontalAlignment: Text.Text.AlignRight
                 color: "black"
             }
@@ -248,41 +282,99 @@ Rectangle {
                     columnSpacing: 2
                     rowSpacing: 2
 
+                    property var protection: platformInterface.thermal_protection_temp
+                    onProtectionChanged: {
+                        switch(platformInterface.thermal_protection_temp.value){
+                            case 70:
+                                thermalProtectionButton1.checked = true;
+                                break;
+                            case 85:
+                                thermalProtectionButton2.checked = true;
+                                break;
+                            case 100:
+                                thermalProtectionButton3.checked = true;
+                                break;
+                            case 120:
+                                thermalProtectionButton4.checked = true;
+                                break;
+                        }
+                    }
+
                     SGSegmentedButton{
+                        id:thermalProtectionButton1
                         text: qsTr("70°C")
                         activeColor: buttonSelectedColor
                         inactiveColor: "white"
                         checked: true
                         //height:40
-                        onClicked: {}
+                        onClicked: {
+                            platformInterface.set_thermal_protection_temp.update(70)
+                        }
                     }
 
                     SGSegmentedButton{
+                        id:thermalProtectionButton2
                         text: qsTr("85°C")
                         activeColor:buttonSelectedColor
                         inactiveColor: "white"
                         //height:40
-                        onClicked: {}
+                        onClicked: {
+                            platformInterface.set_thermal_protection_temp.update(85)
+                        }
                     }
                     SGSegmentedButton{
+                        id:thermalProtectionButton3
                         text: qsTr("100°C")
                         activeColor:buttonSelectedColor
                         inactiveColor: "white"
                         //height:40
-                        onClicked: {}
+                        onClicked: {
+                            platformInterface.set_thermal_protection_temp.update(100)
+                        }
                     }
                     SGSegmentedButton{
+                        id:thermalProtectionButton4
                         text: qsTr("120°C")
                         activeColor:buttonSelectedColor
                         inactiveColor: "white"
                         //height:40
-                        onClicked: {}
+                        onClicked: {
+                            platformInterface.set_thermal_protection_temp.update(120)
+                        }
                     }
 
                 }
             }
 
 
+        }
+        Row{
+            spacing:10
+
+            Text{
+                id:floatVoltageLabel
+                font.pixelSize: 18
+                width:telemetryTextWidth
+                text:"Float voltage:"
+                horizontalAlignment: Text.AlignRight
+                color: "black"
+            }
+
+            Text{
+                id:floatVoltageText
+                anchors.verticalCenter: floatVoltageLabel.verticalCenter
+                font.pixelSize: 15
+                text: platformInterface.charger_status.float_voltage
+                color: "black"
+            }
+
+            Text{
+                id:floatVoltageUnit
+                anchors.verticalCenter: floatVoltageLabel.verticalCenter
+                font.pixelSize: 15
+                text: "V"
+                color: "grey"
+            }
         }
 
 

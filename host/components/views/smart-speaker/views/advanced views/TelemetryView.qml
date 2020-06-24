@@ -36,6 +36,8 @@ Rectangle {
         color:"grey"
     }
 
+
+
     Column{
         id:leftColumn
         anchors.top:telemetryLabel.bottom
@@ -46,6 +48,9 @@ Rectangle {
         Row{
             id:topRow
             spacing: 10
+
+            property bool isConnected: platformInterface.usb_pd_port_connect.connection_state === "connected"
+
             Text{
                 id:usbLabel
                 anchors.verticalCenter: parent.verticalCenter
@@ -63,6 +68,7 @@ Rectangle {
                 label: ""
                 value:""
                 unitColor: "transparent"
+                visible:topRow.isConnected
             }
 
             PortStatBox{
@@ -77,6 +83,35 @@ Rectangle {
                 unitColor: "grey"
                 textColor: "black"
                 bottomMargin:10
+                visible:topRow.isConnected
+                value: platformInterface.request_usb_power_notification.output_voltage
+            }
+
+            PortStatBox{
+                id:usbSpacerBox2
+                width:boxHeight
+                height:boxHeight
+                color:"transparent"
+                label: ""
+                value:""
+                unitColor: "transparent"
+                visible: topRow.isConnected
+            }
+
+            Rectangle{
+                id:notConnectedScrim
+                //width:topRow.width
+                width:boxHeight * 3 + (topRow.spacing *2)
+                height:boxHeight
+                visible:!topRow.isConnected
+                color:"transparent"
+                Text{
+                    anchors.centerIn: parent
+                    text:"not connected"
+                    color:hightlightColor
+                    font.pixelSize: 36
+                    opacity:.75
+                }
             }
 
         }
@@ -104,6 +139,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"A"
+                value:platformInterface.audio_power.battery_current
             }
             PortStatBox{
                 id:batteryVoltageBox
@@ -117,6 +153,7 @@ Rectangle {
                 unitColor: "grey"
                 textColor: "black"
                 bottomMargin:10
+                value: platformInterface.audio_power.battery_voltage
             }
             PortStatBox{
                 id:batteryPowerBox
@@ -131,6 +168,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"W"
+                value:platformInterface.audio_power.battery_power
             }
         }
         Row{
@@ -184,6 +222,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"W"
+                value:platformInterface.audio_power.audio_power
             }
         }
     }

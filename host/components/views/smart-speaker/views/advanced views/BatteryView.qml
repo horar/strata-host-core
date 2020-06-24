@@ -10,19 +10,20 @@ Rectangle {
 
     property color backgroundColor: "#D1DFFB"
     property color accentColor:"#86724C"
+    property int telemetryTextWidth:175
 
-    property int theStateOfHealth: 50
-    property int theRunTime: 27
-    property int theAmbientTemperature: 40
-    property int theBatteryTemperature: 22
+    property int theStateOfHealth: platformInterface.battery_status.state_of_health
+    property int theRunTime: platformInterface.battery_status.total_run_time
+    property int theAmbientTemperature: platformInterface.battery_status.ambient_temp
+    property int theBatteryTemperature: platformInterface.battery_status.battery_temp
     property int theFloatVoltage: 12
-    property string theChargeMode: "fast charge"
+    property string theChargeMode: platformInterface.charger_status.charge_mode
     property string thePowerMode: "battery"
     property bool isInOverCurrentProtection: false
-    property int telemetryTextWidth:175
-    property int theTimeToEmpty:10
-    property int theTimeToFull:60
-    property int theBatteryPercentage:52
+    property int theTimeToEmpty:platformInterface.battery_status.time_to_empty
+    property int theTimeToFull:platformInterface.battery_status.time_to_full
+    property int theBatteryPercentage:platformInterface.battery_status.rsoc
+    property bool batteryIsMissing: platformInterface.battery_status.no_battery_indicator
 
 
     Text{
@@ -54,7 +55,7 @@ Rectangle {
         anchors.bottom:parent.bottom
         color:backgroundColor
         z: 10
-        visible:false
+        visible:batteryIsMissing
 
         Text{
             id:noBatteryText
@@ -92,7 +93,7 @@ Rectangle {
                 id:timeToFullValue
                 font.pixelSize: 13
                 text:theTimeToFull
-                horizontalAlignment: Text.AlighLeft
+                horizontalAlignment: Text.AlignLeft
                 color: "black"
             }
             Text{
@@ -190,14 +191,28 @@ Rectangle {
                             height:batteryRectangle.height/12
                             width:parent.width
                             border.color:"grey"
-                            color: theBatteryPercentage > 20?"green":"transparent"
+                            color:{
+                                if (theBatteryPercentage > 40)
+                                    return "green"
+                                  else if (theBatteryPercentage > 20 && theBatteryPercentage < 40)
+                                    return "yellow"
+                                  else
+                                    return "transparent"
+                            }
                         }
                         Rectangle{
                             id:rectangle5
                             height:batteryRectangle.height/12
                             width:parent.width
                             border.color:"grey"
-                            color: theBatteryPercentage > 0?"green":"transparent"
+                            color:{
+                                if (theBatteryPercentage > 40)
+                                    return "green";
+                                else if (theBatteryPercentage < 40 && theBatteryPercentage > 20)
+                                    return "yellow"
+                                else
+                                    return "red"
+                            }
                         }
                     }
                 }

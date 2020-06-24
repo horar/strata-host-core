@@ -59,7 +59,6 @@ Item {
 
 
     Component.onCompleted: {
-        basicControl.initialAspectRatio = controlContainer.width / controlContainer.height
 
         console.log("Requesting platform Refresh")
         platformInterface.refresh.send() //ask the platform for all the current values
