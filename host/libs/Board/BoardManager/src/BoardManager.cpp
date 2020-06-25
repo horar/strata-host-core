@@ -27,24 +27,6 @@ void BoardManager::init(bool requireFwInfoResponse) {
     timer_.start(DEVICE_CHECK_INTERVAL);
 }
 
-// this method is deprecated, it will be deleted
-bool BoardManager::sendMessage(const int deviceId, const QString &message) {
-    bool sent = false;
-    bool deviceFound = false;
-    {
-        QMutexLocker lock(&mutex_);
-        auto it = openedDevices_.constFind(deviceId);
-        if (it != openedDevices_.constEnd()) {
-            sent = it.value()->sendMessage(message.toUtf8());
-            deviceFound = true;
-        }
-    }
-    if (deviceFound == false) {
-        logInvalidDeviceId(QStringLiteral("Cannot send message"), deviceId);
-    }
-    return sent;
-}
-
 bool BoardManager::disconnect(const int deviceId) {
     bool success = false;
     {
@@ -106,38 +88,9 @@ DevicePtr BoardManager::device(const int deviceId) {
     }
 }
 
-// this method is deprecated, it will be deleted
-QVariantMap BoardManager::getConnectionInfo(const int deviceId) {
-    {
-        QMutexLocker lock(&mutex_);
-        auto it = openedDevices_.constFind(deviceId);
-        if (it != openedDevices_.constEnd()) {
-            device::serial::SerialDevice *serialDevice = dynamic_cast<device::serial::SerialDevice*>(it.value().get());
-            if (serialDevice != nullptr) {
-                return serialDevice->getDeviceInfo();
-            }
-        }
-    }
-    logInvalidDeviceId(QStringLiteral("Cannot get connection info"), deviceId);
-    return QVariantMap();
-}
-
 QVector<int> BoardManager::readyDeviceIds() {
     QMutexLocker lock(&mutex_);
     return QVector<int>::fromList(openedDevices_.keys());
-}
-
-// this method is deprecated, it will be deleted
-QString BoardManager::getDeviceProperty(const int deviceId, const device::DeviceProperties property) {
-    {
-        QMutexLocker lock(&mutex_);
-        auto it = openedDevices_.constFind(deviceId);
-        if (it != openedDevices_.constEnd()) {
-            return it.value()->property(property);
-        }
-    }
-    logInvalidDeviceId(QStringLiteral("Cannot get required device property"), deviceId);
-    return QString();
 }
 
 void BoardManager::checkNewSerialDevices() { //TODO refactoring, take serial port functionality out from this class
@@ -261,8 +214,6 @@ bool BoardManager::openDevice(const int deviceId, const DevicePtr device) {
     }
     openedDevices_.insert(deviceId, device);
 
-    connect(device.get(), &Device::msgFromDevice, this,
-            &BoardManager::handleNewMessage);  // DEPRECATED
     connect(device.get(), &Device::deviceError, this, &BoardManager::handleDeviceError);
 
     return true;
@@ -331,15 +282,6 @@ void BoardManager::handleOperationError(QString errMsg) {
     deviceOperations_.remove(deviceId);
 
     emit boardError(deviceId, errMsg);
-}
-
-// this slot is deprecated, it will be deleted
-void BoardManager::handleNewMessage(QString message) {
-    Device *device = qobject_cast<Device*>(QObject::sender());
-    if (device == nullptr) {
-        return;
-    }
-    emit newMessage(device->deviceId(), message);
 }
 
 void BoardManager::handleDeviceError(Device::ErrorCode errCode, QString errStr) {

@@ -72,6 +72,7 @@ signals:
     void programInProgressChanged();
     void flasherProgramProgress(int chunk, int total);
     void flasherBackupProgress(int chunk);
+    void flasherRestoreProgress(int chunk, int total);
     void flasherOperationStateChanged(
             strata::FlasherConnector::Operation operation,
             strata::FlasherConnector::State state,
@@ -86,6 +87,7 @@ private slots:
     void deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString);
     void flasherProgramProgressHandler(int chunk, int total);
     void flasherBackupProgressHandler(int chunk);
+    void flasherRestoreProgressHandler(int chunk, int total);
 
     void flasherOperationStateChangedHandler(
             strata::FlasherConnector::Operation operation,

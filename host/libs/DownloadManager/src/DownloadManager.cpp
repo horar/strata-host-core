@@ -9,6 +9,8 @@
 #include <QRandomGenerator>
 #include <QTimer>
 
+namespace strata {
+
 DownloadManager::DownloadManager(QObject *parent)
     : QObject(parent)
 {
@@ -26,7 +28,7 @@ DownloadManager::~DownloadManager()
     groupHash_.clear();
 }
 
-void DownloadManager::setBaseUrl(const QString &baseUrl)
+void DownloadManager::setBaseUrl(const QUrl &baseUrl)
 {
     baseUrl_ = baseUrl;
 }
@@ -50,11 +52,16 @@ QString DownloadManager::download(
     group->settings = settings;
     groupHash_.insert(group->id, group);
 
-    qCDebug(logCategoryHcsDownloader()) << "new download request" << group->id;
+    qCDebug(logCategoryDownloadManager) << "new download request" << group->id;
+
+    if (baseUrl_.scheme().isEmpty()) {
+        qCCritical(logCategoryDownloadManager) << "Base url does not have scheme";
+        return QString();
+    }
 
     for (const auto& requestItem : itemList) {
         DownloadItem item;
-        item.url = baseUrl_ + requestItem.partialUrl;
+        item.url = baseUrl_.resolved(requestItem.relativeUrl);
         item.originalFilePath = requestItem.filePath;
         item.effectiveFilePath = requestItem.filePath;
         item.md5 = requestItem.md5;
@@ -64,7 +71,7 @@ QString DownloadManager::download(
         itemList_.append(item);
         itemHash_.insert(item.url, &itemList_.last());
 
-        qCDebug(logCategoryHcsDownloader())
+        qCDebug(logCategoryDownloadManager)
                 << "download item"
                 << item.url << item.originalFilePath;
     }
@@ -175,7 +182,7 @@ void DownloadManager::readyReadHandler()
 
     DownloadItem *downloadItem = itemHash_.value(reply->url().toString(), nullptr);
     if (downloadItem == nullptr) {
-        qCWarning(logCategoryHcsDownloader) << "cannot find item with url" << reply->url().toString();
+        qCCritical(logCategoryDownloadManager) << "cannot find item with url" << reply->url().toString();
         return;
     }
 
@@ -198,7 +205,7 @@ void DownloadManager::downloadProgressHandler(qint64 bytesReceived, qint64 bytes
 
     DownloadItem *downloadItem = itemHash_.value(reply->url().toString(), nullptr);
     if (downloadItem == nullptr) {
-        qDebug(logCategoryHcsDownloader) << "cannot find item with url" << reply->url().toString();
+        qCCritical(logCategoryDownloadManager) << "cannot find item with url" << reply->url().toString();
         return;
     }
 
@@ -206,7 +213,7 @@ void DownloadManager::downloadProgressHandler(qint64 bytesReceived, qint64 bytes
 
     DownloadGroup *group = groupHash_.value(downloadItem->groupId, nullptr);
     if (group == nullptr) {
-        qWarning(logCategoryHcsDownloader) << "cannot find groupId" << downloadItem->groupId;
+        qCCritical(logCategoryDownloadManager) << "cannot find groupId" << downloadItem->groupId;
         return;
     }
 
@@ -222,11 +229,15 @@ void DownloadManager::finishedHandler()
         return;
     }
 
-    qCDebug(logCategoryHcsDownloader) << reply->url().toString();
+    qCDebug(logCategoryDownloadManager) << reply->url().toString();
 
     DownloadItem *downloadItem = itemHash_.value(reply->url().toString(), nullptr);
     if (downloadItem == nullptr) {
-        qCWarning(logCategoryHcsDownloader) << "cannot find item with url" << reply->url().toString();
+        qCCritical(logCategoryDownloadManager) << "cannot find item with url" << reply->url().toString();
+
+        currentDownloads_.removeAll(reply);
+        reply->deleteLater();
+        startNextDownload();
         return;
     }
 
@@ -234,7 +245,7 @@ void DownloadManager::finishedHandler()
     if (reply->error() == QNetworkReply::NoError) {
         if (isHttpRedirect(reply)) {
 
-            qCWarning(logCategoryHcsDownloader)
+            qCWarning(logCategoryDownloadManager)
                     << "Download request redirected"
                     << reply->url().toString();
 
@@ -264,7 +275,7 @@ void DownloadManager::finishedHandler()
     if (downloadItem->state == DownloadState::FinishedWithError) {
         DownloadGroup *group = groupHash_.value(downloadItem->groupId, nullptr);
         if (group == nullptr) {
-            qWarning(logCategoryHcsDownloader) << "cannot find groupId" << downloadItem->groupId;
+            qCritical(logCategoryDownloadManager) << "cannot find groupId" << downloadItem->groupId;
         } else if (group->settings.oneFailsAllFail) {
             abortAll(downloadItem->groupId);
         }
@@ -288,7 +299,7 @@ void DownloadManager::startNextDownload()
 
         DownloadGroup *group = groupHash_.value(nextDownload->groupId, nullptr);
         if (group == nullptr) {
-            qWarning(logCategoryHcsDownloader) << "cannot find groupId" << nextDownload->groupId;
+            qWarning(logCategoryDownloadManager) << "cannot find groupId" << nextDownload->groupId;
             continue;
         }
 
@@ -305,7 +316,7 @@ void DownloadManager::startNextDownload()
                     }
                 } else {
                     //skip download
-                    qCDebug(logCategoryHcsDownloader())
+                    qCDebug(logCategoryDownloadManager)
                             << "file exists => skip" << nextDownload->originalFilePath;
 
                     prepareResponse(nextDownload);
@@ -321,7 +332,7 @@ void DownloadManager::startNextDownload()
 
         QNetworkReply* reply = postRequest(nextDownload->url);
         if (reply != nullptr) {
-            qCDebug(logCategoryHcsDownloader) << "start download " << nextDownload->url << "into" << nextDownload->effectiveFilePath;
+            qCDebug(logCategoryDownloadManager) << "start download " << nextDownload->url << "into" << nextDownload->effectiveFilePath;
 
             nextDownload->state = DownloadState::Running;
             break;
@@ -349,9 +360,9 @@ void DownloadManager::createFolderForFile(const QString &filePath)
     basePath.mkpath(info.absolutePath());
 }
 
-QNetworkReply *DownloadManager::postRequest(const QString &url)
+QNetworkReply *DownloadManager::postRequest(const QUrl &url)
 {
-    QNetworkRequest request(QUrl::fromUserInput(url));
+    QNetworkRequest request(url);
     QNetworkReply *reply = accessManager_->get(request);
 
     if (reply == nullptr) {
@@ -405,20 +416,20 @@ void DownloadManager::prepareResponse(DownloadItem *downloadItem, const QString 
 
     DownloadGroup *group = groupHash_.value(downloadItem->groupId, nullptr);
     if (group == nullptr) {
-        qCCritical(logCategoryHcsDownloader) << "cannot find groupId" << downloadItem->groupId;
+        qCCritical(logCategoryDownloadManager) << "cannot find groupId" << downloadItem->groupId;
         return;
     }
 
     if (errorString.isEmpty()) {
         downloadItem->state = DownloadState::Finished;
     } else {
-        qCWarning(logCategoryHcsDownloader())
+        qCWarning(logCategoryDownloadManager)
                 << errorString
                 << downloadItem->effectiveFilePath
                 << downloadItem->url;
 
         if (downloadItem->state == DownloadState::Running) {
-            qCDebug(logCategoryHcsDownloader) << "removing unfinished file" << downloadItem->effectiveFilePath;
+            qCDebug(logCategoryDownloadManager) << "removing unfinished file" << downloadItem->effectiveFilePath;
             QFile::remove(downloadItem->effectiveFilePath);
         }
 
@@ -440,7 +451,7 @@ void DownloadManager::prepareResponse(DownloadItem *downloadItem, const QString 
     int filesFailed, filesCompleted, filesTotal;
     resolveGroupProgress(downloadItem->groupId, filesFailed, filesCompleted, filesTotal);
 
-    qCDebug(logCategoryHcsDownloader) << downloadItem->groupId
+    qCDebug(logCategoryDownloadManager) << downloadItem->groupId
              << "failed=" << filesFailed
              << "completed=" << filesCompleted
              << "total=" << filesTotal;
@@ -508,14 +519,17 @@ void ReplyTimeout::timerEvent(QTimerEvent *ev)
 
     if (reply->isRunning()){
         if (reply->property("newProgress").toBool()) {
-            qCDebug(logCategoryHcsDownloader) << "Restarting timeout timer for:" << reply->url();
+            qCDebug(logCategoryDownloadManager) << "Restarting timeout timer for:" << reply->url();
             mSec_timer_.start(this->milliseconds_, this);
             reply->setProperty("newProgress", false);
             return;
         } else {
-            qCDebug(logCategoryHcsDownloader) << "Time is up. Manually closing:" << reply->url();
+            qCDebug(logCategoryDownloadManager) << "Time is up. Manually closing:" << reply->url();
             reply->close();
         }
     }
     mSec_timer_.stop();
 }
+
+
+} //namespace

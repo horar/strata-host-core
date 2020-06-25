@@ -77,7 +77,11 @@ void FlasherConnector::flashFirmware(bool flashOld) {
 
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
     connect(flasher_.get(), &Flasher::error, this, &FlasherConnector::handleFlasherError);
-    connect(flasher_.get(), &Flasher::flashProgress, this, &FlasherConnector::flashProgress);
+    if (flashOld) {
+        connect(flasher_.get(), &Flasher::flashProgress, this, &FlasherConnector::restoreProgress);
+    } else {
+        connect(flasher_.get(), &Flasher::flashProgress, this, &FlasherConnector::flashProgress);
+    }
     connect(flasher_.get(), &Flasher::switchToBootloader, this, &FlasherConnector::handleSwitchToBootloader);
     connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 
