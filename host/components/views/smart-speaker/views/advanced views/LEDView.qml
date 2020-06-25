@@ -27,7 +27,7 @@ Rectangle {
         anchors.left: parent.left
         anchors.leftMargin: 10
         font.pixelSize: 24
-        text:"LED and touch"
+        text:"LED and Touch"
     }
     Rectangle{
         id:underlineRect

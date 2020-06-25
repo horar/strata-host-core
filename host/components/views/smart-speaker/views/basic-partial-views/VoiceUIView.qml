@@ -27,7 +27,7 @@ Rectangle {
         anchors.left:wakeRecognizedLight.right
         anchors.leftMargin: -20
         anchors.verticalCenter: wakeRecognizedLight.verticalCenter
-        text:"Wake recognized"
+        text:"Alexa"
         color: "black"
     }
 
@@ -35,8 +35,8 @@ Rectangle {
     Text{
         id:lastCommandLabel
         font.pixelSize: 24
-        anchors.left:wakeRecognizedLight.right
-        anchors.leftMargin: 10
+        anchors.left:amplifierText.left
+        anchors.leftMargin: 0
         anchors.top: wakeRecognizedLight.bottom
         text:"Last voice command:"
         color: "black"

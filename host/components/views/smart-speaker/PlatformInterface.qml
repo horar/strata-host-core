@@ -88,18 +88,12 @@ Item {
 //    }
 
     property var audio_power:{
-        "input_voltage":"16.01",
-        "audio_current":"0.5",
-         "audio_voltage":"11.95",
+        "audio_current":0.5,
+         "audio_voltage":11.95,
          "audio_power":5,
-         "battery_voltage":4.2,
-         "battery_current":1.2,
-         "battery_power": 3.8
     }
 
-    onAudio_powerChanged: {
-        console.log("voltage=",audio_power.input_voltage,"analog current=",audio_power.analog_audio_current,"audio voltage=",audio_power.audio_voltage)
-    }
+
 
     property var battery_status:{
         "ambient_temp":25,       /* degrees C */
@@ -110,18 +104,20 @@ Item {
         "rsoc":75,                       /* percent */
         "total_run_time":350,     /* minutes */
         "no_battery_indicator":true,      /* or false*/
+        "battery_voltage":4.2,
+        "battery_current":1.2,      /* can be positive or negative; negative means charging */
+        "battery_power": 3.8
     }
 
     property var charger_status:{
         "float_voltage":4.2,           /* has a range of voltages, but this is only one used*/
-        "input_ovp":true,               /* or false */
-        "charge_mode":"fast",           /* ‘pre’ or ‘top off' or 'sleep’ */
+        "charge_mode":"fast",           /* ‘pre’ or ‘top off' or 'sleep’ or 'discharge'*/
         "precharge_current":100,        /* (mA) 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800 /
         "termination_current":100,      /* (mA) 100 - 200 in 25mA increments, 200 - 600 in 50mA increments */
         "ibus_limit":50,                 /* (mA) 100-3000 in 25mA increments */
         "fast_chg_current":200,         /* (mA) 200-3200 in 50 mA increments */
-        "charge_complete":true,         /* or false*/
-        "vbus_ovp":6.5                 /*  (V) or 10.5 or 13.7*/
+        "vbus_ovp":6.5,                 /*  (V) or 10.5 or 13.7*/
+        "audio_power_mode":"vbus"       /*or battery*/
     }
 
     property var bus_current_limit:{
@@ -130,8 +126,8 @@ Item {
     }
 
     property var led_state:{
-        "set":"lower",                         /* or ‘upper’ */
-        "state":"on",                          /* or ‘off’ */
+        "lower_on":true,
+        "upper_on":true,
         "r":128,                                  /* red intensity for lower LEDs, ignore for upper LEDs */
         "g":128,                                 /* green intensity for lower LEDs, ignore for upper LEDs */
         "b":128,                                 /* blue intensity  for lower LEDs, ignore for upper LEDs */
@@ -147,19 +143,19 @@ Item {
     }
 
     property var touch_button_state:{
-        "state":"on",               //or off
+        "state":true
     }
 
     property var thermal_protection_temp:{
-        "value":70,               //or 85, 100, 120
+        "value":70               //or 85, 100, 120
     }
 
     property var vbus_ovp_level:{
-        "value":6.5,
+        "value":6.5
     }
 
     property var fet_bypass:{
-        "state":"on",
+        "state":true,
     }
 
     // --------------------------------------------------------------------------------------------
@@ -490,7 +486,7 @@ Item {
     property var set_fet_bypass:({
                  "cmd":"set_fet_bypass",
                  "payload":{
-                    "state":"on"
+                    "state":true
                   },
                  update: function(state){
                    this.set(state)

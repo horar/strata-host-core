@@ -39,19 +39,10 @@ Widget09.SGResponsiveScrollView {
             anchors.bottomMargin: 12
         }
 
-        Text{
-            id:titleText
-            text:"advanced controls"
-            font.pixelSize: 72
-            anchors.top: parent.top
-            anchors.topMargin:10
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-
         Row{
             id:topRow
-            anchors.top: titleText.bottom
-            anchors.topMargin: 20
+            anchors.top: parent.top
+            anchors.topMargin: 50
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 20
 
@@ -83,12 +74,12 @@ Widget09.SGResponsiveScrollView {
             ChargerView{
                 id:chargerView
                 width:500
-                height:400
+                height:300
             }
             LEDView{
                 id:ledView
                 width:400
-                height:400
+                height:300
             }
 
 

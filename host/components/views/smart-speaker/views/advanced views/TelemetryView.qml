@@ -139,7 +139,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"A"
-                value:platformInterface.audio_power.battery_current
+                value:platformInterface.battery_status.battery_current
             }
             PortStatBox{
                 id:batteryVoltageBox
@@ -153,7 +153,7 @@ Rectangle {
                 unitColor: "grey"
                 textColor: "black"
                 bottomMargin:10
-                value: platformInterface.audio_power.battery_voltage
+                value: platformInterface.battery_status.battery_voltage
             }
             PortStatBox{
                 id:batteryPowerBox
@@ -168,7 +168,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"W"
-                value:platformInterface.audio_power.battery_power
+                value:platformInterface.battery_status.battery_power
             }
         }
         Row{

@@ -336,14 +336,13 @@ Rectangle {
           folder:shortcuts.documents
           nameFilters: ["Text files (*.txt)", "All files (*)"]
           onAccepted: {
+              //get the JSON string back from disk
               var theString = openFile(openFileDialog.fileUrl)
-              console.log("string is",theString)
+              //console.log("string is",theString)
+              //then parse the JSON and put the values back in the array
+              //before updating the controls.
               root.eqValues = JSON.parse(theString)
-              //console.log("eq values are",root.eqValues)
-              console.log("eq band 1",root.eqValues.band1)
-              console.log("eq band 2",root.eqValues.band2)
-              console.log("eq band 3",root.eqValues.band3)
-              //then unpack the values?
+
               band1.sliderValue = root.eqValues.band1;
               band2.sliderValue = root.eqValues.band2;
               band3.sliderValue = root.eqValues.band3;
@@ -363,6 +362,7 @@ Rectangle {
           selectExisting: false
           folder:shortcuts.documents
           nameFilters: ["Text files (*.txt)", "All files (*)"]
+          //turn the eq values into a JSON string in order to save them to disk
           onAccepted: saveFile(saveFileDialog.fileUrl, JSON.stringify(root.eqValues))
       }
 }

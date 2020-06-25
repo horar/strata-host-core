@@ -56,9 +56,7 @@ Rectangle {
             SGSegmentedButtonStrip {
                 id: ocpSegmentedButton
                 labelLeft: false
-                anchors.left: sinkCapLabel.right
-                anchors.leftMargin: 10
-                anchors.verticalCenter: sinkCapLabel.verticalCenter
+                anchors.verticalCenter: ocpLabel.verticalCenter
                 textColor: "#444"
                 activeTextColor: "white"
                 radius: buttonHeight/2
@@ -135,6 +133,7 @@ Rectangle {
                 height:25
                 from:100
                 to:3000
+                stepSize: 25
                 inputBox: true
                 grooveColor: "grey"
                 grooveFillColor: hightlightColor
@@ -168,6 +167,7 @@ Rectangle {
                 anchors.verticalCenterOffset: 5
                 height:25
                 from:200
+                stepSize: 50
                 to:3000
                 inputBox: true
                 grooveColor: "grey"
@@ -203,6 +203,7 @@ Rectangle {
                 height:25
                 from:200
                 to:800
+                stepSize: 50
                 inputBox: true
                 grooveColor: "grey"
                 grooveFillColor: hightlightColor
@@ -237,6 +238,7 @@ Rectangle {
                 height:25
                 from:100
                 to:600
+                stepSize: 50
                 inputBox: true
                 grooveColor: "grey"
                 grooveFillColor: hightlightColor
@@ -267,9 +269,7 @@ Rectangle {
             SGSegmentedButtonStrip {
                 id: tempThresholdSegmentedButton
                 labelLeft: false
-                anchors.left: sinkCapLabel.right
-                anchors.leftMargin: 10
-                anchors.verticalCenter: sinkCapLabel.verticalCenter
+                anchors.verticalCenter: temperatureThresholdLabel.verticalCenter
                 textColor: "#444"
                 activeTextColor: "white"
                 radius: buttonHeight/2

@@ -32,14 +32,17 @@ Rectangle {
         grooveColor: root.grooveColor
         fillColor: hightlightColor
         handleSize: 30
-
+        stepSize: 1
         from:-18
         to:18
 
 
         onPressedChanged: {
             if (!pressed){
-                 bandText.text = value.toFixed(0)
+                let fixedValue = value.toFixed(0)
+                if (fixedValue === "-0")
+                    fixedValue = "0"
+                 bandText.text = fixedValue
                  root.eqValueChanged();
             }
         }
