@@ -1,9 +1,8 @@
-#ifndef STRATA_EV_EVENT_BASE_H__
-#define STRATA_EV_EVENT_BASE_H__
+#pragma once
 
 #include <functional>
 
-namespace spyglass {
+namespace strata::events_mgr {
 
 #ifdef _WIN32
     typedef void*  ev_handle_t;
@@ -89,5 +88,3 @@ private:
 };
 
 }; //namespace
-
-#endif //STRATA_EV_EVENT_BASE_H__
