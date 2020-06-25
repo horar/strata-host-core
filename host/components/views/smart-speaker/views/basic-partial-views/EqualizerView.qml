@@ -17,6 +17,16 @@ Rectangle {
     property color accentColor:"#86724C"
     property int bandWidth: root.width/12
     property int bandHeight: root.height -50 - (eqText.height + 10)
+    property var eqValues:{'band1': band1.sliderValue,
+                           'band2':  band2.sliderValue,
+                            'band3':  band3.sliderValue,
+                            'band4':  band4.sliderValue,
+                            'band5':  band5.sliderValue,
+                            'band6':  band6.sliderValue,
+                            'band7':  band7.sliderValue,
+                            'band8':  band8.sliderValue,
+                            'band9':  band9.sliderValue,
+                            'band10':  band10.sliderValue}
 
     onBandWidthChanged: {
         console.log("band width is",bandWidth)
@@ -305,17 +315,55 @@ Rectangle {
       }
   }
 
+  function openFile(fileUrl) {
+          var request = new XMLHttpRequest();
+          request.open("GET", fileUrl, false);
+          request.send(null);
+          return request.responseText;
+      }
+
+      function saveFile(fileUrl, text) {
+          var request = new XMLHttpRequest();
+          request.open("PUT", fileUrl, false);
+          request.send(text);
+          return request.status;
+      }
+
   FileDialog {
           id: openFileDialog
+          title:"Load EQ setting"
+          selectMultiple: false
+          folder:shortcuts.documents
           nameFilters: ["Text files (*.txt)", "All files (*)"]
-          onAccepted: textEdit.text = openFile(openFileDialog.fileUrl)
+          onAccepted: {
+              var theString = openFile(openFileDialog.fileUrl)
+              console.log("string is",theString)
+              root.eqValues = JSON.parse(theString)
+              //console.log("eq values are",root.eqValues)
+              console.log("eq band 1",root.eqValues.band1)
+              console.log("eq band 2",root.eqValues.band2)
+              console.log("eq band 3",root.eqValues.band3)
+              //then unpack the values?
+              band1.sliderValue = root.eqValues.band1;
+              band2.sliderValue = root.eqValues.band2;
+              band3.sliderValue = root.eqValues.band3;
+              band4.sliderValue = root.eqValues.band4;
+              band5.sliderValue = root.eqValues.band5;
+              band6.sliderValue = root.eqValues.band6;
+              band7.sliderValue = root.eqValues.band7;
+              band8.sliderValue = root.eqValues.band8;
+              band9.sliderValue = root.eqValues.band9;
+              band10.sliderValue = root.eqValues.band10;
+          }
       }
 
   FileDialog {
           id: saveFileDialog
+          title:"Save EQ setting"
           selectExisting: false
+          folder:shortcuts.documents
           nameFilters: ["Text files (*.txt)", "All files (*)"]
-          onAccepted: saveFile(saveFileDialog.fileUrl, textEdit.text)
+          onAccepted: saveFile(saveFileDialog.fileUrl, JSON.stringify(root.eqValues))
       }
 }
 
