@@ -4,8 +4,7 @@ import tech.strata.sgwidgets 0.9
 
 Flipable{
     id:root
-    width:200
-    height:200
+
 
     property bool flipped:false
 
@@ -41,6 +40,8 @@ Flipable{
 
     front:BluetoothFrontView{
         id:front
+        width:root.width
+        height:root.height
     }
 
     back:BluetoothBackView {
