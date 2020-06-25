@@ -177,19 +177,5 @@ void SerialDevice::handleError(QSerialPort::SerialPortError error) {
     }
 }
 
-// DEPRECATED
-QVariantMap SerialDevice::getDeviceInfo() {
-    QReadLocker rLock(&properiesLock_);
-    QVariantMap result;
-    result.insert(QStringLiteral("connectionId"), deviceId_);
-    result.insert(QStringLiteral("platformId"), platformId_);
-    result.insert(QStringLiteral("classId"), classId_);
-    result.insert(QStringLiteral("verboseName"), verboseName_);
-    result.insert(QStringLiteral("bootloaderVersion"), bootloaderVer_);
-    result.insert(QStringLiteral("applicationVersion"), applicationVer_);
-
-    return result;
-}
-
 }  // namespace
 
