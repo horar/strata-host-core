@@ -38,7 +38,6 @@ ColumnLayout {
     onEstd_test_time_N_log_intervalChanged:{
         platformInterface.set_est_test_time.update(+virtualtextarea.estd_tst_time)
         platformInterface.set_log_interval.update(+virtualtextarea.realtimelog)
-       //console.log("log time and &&& &&&&&&&&&&&&&&& estd time is",+virtualtextarea.realtimelog,+virtualtextarea.estd_tst_time)
          }
     //::
           // property var curve : basicGraph.createCurve("graphCurve")
@@ -203,7 +202,6 @@ ColumnLayout {
                                 //popupHeight: 300            // Default: 300 (sets max height for popup if model is lengthy)
                                onCurrentTextChanged: {
                                platformInterface.set_charge_volt.update(+set_charge_volt.currentText)
-                               console.log("Set_Charge_Voltage eeeeeeeeeeeee",+set_charge_volt.currentText)
 
                                }
 
@@ -273,7 +271,6 @@ ColumnLayout {
                                      live: false                  // Default: false (will only send valueChanged signal when slider is released)
                                      labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
                                      inputBox: true               // Default: true
-                                     onValueChanged: console.log("set_load_current value is pppppppppppppp:", value)
                                      onUserSet: {
                                          platformInterface.set_load_current.update(value)
                                      }
@@ -360,7 +357,6 @@ ColumnLayout {
                                  live: false                  // Default: false (will only send valueChanged signal when slider is released)
                                  labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
                                  inputBox: true               // Default: true
-                                 onValueChanged: console.log("your-value--cutoff-voltagggggggggggg",value)
                                  onUserSet: {
                                      platformInterface.set_cut_off_volt.update(value)
 
@@ -467,7 +463,6 @@ ColumnLayout {
                                 infoBoxBorderWidth: 1         // Default: 1 (assign 0 for no border)
                                 textColor: "green"              // Default: "black" (colors label as well as text in box
                                 onInfoChanged: {
-                                    console.log("aptttttttttttttt=apt----999999999-->>",info)
                                     platformInterface.set_apt.update(+info)
 
 
@@ -510,14 +505,9 @@ ColumnLayout {
                                  live: false                  // Default: false (will only send valueChanged signal when slider is released)
                                  labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
                                  inputBox: true               // Default: true
-                                 //onValueChanged: console.log("Slider value is now:", value)
                                  onValueChanged: {
-                                                 // dataArray_voltage.push((set_capacitance.value*30))//.toFixed(0))//*0.7
-                                               //   dataArray_temperature.push((set_capacitance.value*0.01*30).toFixed(1))
-                                     console.log("Slider value is nowWWWWWWWWWWWWWWWWWWWWWWW:", value)
-                                                 // console.log("Array", dataArray_voltage)
-                                                 // console.log("Slider value is now:", value)
-                                              } //dataArray_voltage.push(set_load_current.value)
+                                 console.log("Capacitance-Value", value)
+                                 }
 
                             }
                             }
@@ -574,7 +564,7 @@ ColumnLayout {
                           "\nOverCurrent = "+"off"+
                           "\nOver/UnderTemp = "+"off"+
                           "\nDoubleEstimatedTime = "+sgStatusLight17.status+
-                          "\n[Data]\n"+print_dataArray.join("")+":"+platformInterface.telemetry.cell_voltage+","+platformInterface.telemetry.cell_temp//virtualtextarea1.collect
+                          "\n[Data]\n"+print_dataArray.join("")+":"+platformInterface.telemetry.cell_temp+","+platformInterface.telemetry.cell_voltage//virtualtextarea1.collect
 
                     }
                     TextArea{ //collect all slider and combo information
@@ -656,7 +646,7 @@ ColumnLayout {
                                               if((dataArray_voltage[counter - 1]>1500) && (x_Axis_Timer>=0 )){
                                               dataArray.push({"x":x_Axis_Timer,"y":dataArray_voltage[counter - 1]})
 
-                                              virtualtextarea1.text= ":"+ dataArray_voltage[counter - 1 ]+","+dataArray_temperature[counter -1]+"\n"
+                                              virtualtextarea1.text= ":"+dataArray_temperature[counter - 1 ]+","+dataArray_voltage[counter -1]+"\n"
                                               print_dataArray[counter - 1]=virtualtextarea1.text  //if(dataArray_voltage[counter - 1] !== undefined)
 
                                               }
@@ -670,43 +660,6 @@ ColumnLayout {
                                         //  print_dataArray.appendList({test2})  virtualtextarea1.text=Åg:Åh
 
                                      }
-
-                                      //PP
-
-                                     /*      onTriggered: {
-                                            var dataArray = []
-                                            console.log(dataArray_voltage.length,timerLength)
-                                            if(dataArray_voltage.length > timerLength && timerLength != 0) {
-                                                for (var counter = timerLength ; counter < (dataArray_voltage.length) ;counter++){
-                                                    dataArray.push({"x":x_Axis_Timer,"y":dataArray_voltage[counter]})
-                                                    console.log(x_Axis_Timer,dataArray_voltage[counter])
-                                                    curve.append(x_Axis_Timer,dataArray_voltage[counter])
-                                                    x_Axis_Timer = x_Axis_Timer + (+virtualtextarea.realtimelog)
-                                                    virtualtextarea1.text = ":"+ dataArray_voltage[counter]+","+dataArray_temperature[counter]+"\n"
-                                                    console.log("virtualtextarea1.text",virtualtextarea1.text)
-                                                    if(virtualtextarea1.text != undefined)
-                                                        print_dataArray[counter] = virtualtextarea1.text
-                                                }
-                                                basicGraph.xMax = x_Axis_Timer
-                                                curve.color = "blue"
-                                            }
-                                            else if (timerLength == 0){
-                                                for (var counter2 = 0 ; counter2 < (dataArray_voltage.length) ;counter2++){
-                                                    dataArray.push({"x":x_Axis_Timer,"y":dataArray_voltage[counter2]})
-                                                    console.log(x_Axis_Timer,dataArray_voltage[counter2])
-                                                    curve.append(x_Axis_Timer,dataArray_voltage[counter2])
-                                                    x_Axis_Timer = x_Axis_Timer + (+virtualtextarea.realtimelog)
-                                                    virtualtextarea1.text = ":"+ dataArray_voltage[counter2]+","+dataArray_temperature[counter2]+"\n"
-                                                    if(virtualtextarea1.text != undefined)
-                                                        print_dataArray[counter2] = virtualtextarea1.text
-                                                }
-                                                basicGraph.xMax = x_Axis_Timer
-                                                curve.color = "green"
-                                            }
-                                            timerLength = dataArray_voltage.length
-                                        }  */
-                                      //PP
-
 
                                 }
                             }
@@ -1535,7 +1488,6 @@ ColumnLayout {
                                               var x_Axis_Timer= (0 - (+virtualtextarea.realtimelog)) // time increase in sec for x-axis plots and adds to it till the experiment ends.
                                               var dataArray1 = []
                                               for (var counter1 = 1 ; counter1 <= (dataArray_temperature.length) ;counter1++){
-                                                  //console.log(j,yourDataValueHere(dataArray.length ))
                                                   if((dataArray_voltage[counter1 - 1]>1500) && (x_Axis_Timer>=0 )){
                                                   dataArray1.push({"x":x_Axis_Timer,"y":dataArray_temperature[counter1 - 1]})
                                                   if(one_time_clear_all_data<=0){
@@ -1847,7 +1799,7 @@ ColumnLayout {
                                         Widget09.SGStatusLight {
                                              id: sgStatusLight17
                                              anchors.centerIn: parent
-                                             status: "black"           // Default: "off" (other options: "green", "yellow", "orange", "red")
+                                             status: "off"           // Default: "off" (other options: "green", "yellow", "orange", "red")
                                              label: "" // Default: "" (if not entered, label will not appear)
                                              labelLeft: true        // Default: true
                                              lightSize: 30           // Default: 50
@@ -2012,14 +1964,11 @@ ColumnLayout {
                                           //clear=1
                                          // clearGraphsData() //call function to clear old graph data
                                           if(checked){
-                                              //pp
                                               clear=1
                                               clearGraphsData()
-                                              //
                                               sgStatusLight13.status= "green"
                                               platformInterface.set_measurement.update(condition1)
                                               sgStatusLight16.status= platformInterface.control_states.onboard_load_en//control_states.onboard_load_en
-                                              console.log("true true true true true true")
                                                 }
                                           else
                                           {
@@ -2029,8 +1978,8 @@ ColumnLayout {
                                            //pp
 
 
-                                          } //sgStatusLight13.status= "off";
-                                           //console.log("No-true No-true No-true No-true No-true No-true")
+                                          }
+
 
                                         if(set_load_current.enabled==true)
                                         {
@@ -2164,277 +2113,3 @@ ColumnLayout {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*##^## Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
- ##^##*/
