@@ -39,6 +39,14 @@ ColumnLayout {
         platformInterface.set_est_test_time.update(+virtualtextarea.estd_tst_time)
         platformInterface.set_log_interval.update(+virtualtextarea.realtimelog)
          }
+    //inturrupts from MCU
+   property var double_estd_time: platformInterface.int_os_alert.double_time
+    onDouble_estd_timeChanged: {
+        if(double_estd_time==="red"){sgStatusLight18.status="red"}
+    }
+
+
+
     //::
           // property var curve : basicGraph.createCurve("graphCurve")
          //property var timerLength: 0
@@ -539,7 +547,10 @@ ColumnLayout {
                     property var on_board_load: foo3()//set_onboard_load_en.currentText
                     function foo3(){
                         var disable="Disable"
-                    if(set_onboard_load_en.currentText===" "){return disable}
+                    if(set_onboard_load_en.currentText===" "){
+                       set_onboard_load_en.currentIndex=1
+                        return disable
+                    }
                     else return set_onboard_load_en.currentText
                     }
                     property int realtimelog:foo1() //set_est_test_time3
@@ -836,6 +847,10 @@ ColumnLayout {
                                                            platformInterface.set_onboard_load_en.update(qsTr(set_onboard_load_en.currentText))
 
                                                                }
+                                                           if(qsTr(set_onboard_load_en.currentText)===" ")
+                                                           {set_onboard_load_en.currentIndex=1
+                                                           set_onboard_load_en.currentIndex=1
+                                                           }
 
                                                            if(qsTr(set_onboard_load_en.currentText)==="Enable") {
                                                               sgsliderELC.enabled=false
@@ -1842,7 +1857,7 @@ ColumnLayout {
                                         Widget09.SGStatusLight {
                                              id: sgStatusLight18
                                              anchors.centerIn: parent
-                                             status: "off"           // Default: "off" (other options: "green", "yellow", "orange", "red")
+                                             status: "black"           // Default: "off" (other options: "green", "yellow", "orange", "red")
                                              label: "" // Default: "" (if not entered, label will not appear)
                                              labelLeft: true        // Default: true
                                              lightSize: 30           // Default: 50
@@ -2072,6 +2087,7 @@ ColumnLayout {
                                                  }
 
                                              }
+
 
                                      }
 

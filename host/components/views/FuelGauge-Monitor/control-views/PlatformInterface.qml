@@ -33,7 +33,9 @@ Item {
                                       "over_volt":"black",
                                       "over_current":"2000",
                                      "over_temp":"black",
-                                      "double_time":"black"
+                                      "double_time":"black",
+                                      "no_battery":"black"
+
                                   })
 
 //value 2
