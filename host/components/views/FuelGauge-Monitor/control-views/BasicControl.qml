@@ -43,7 +43,16 @@ ColumnLayout {
    property var double_estd_time: platformInterface.int_os_alert.double_time
     onDouble_estd_timeChanged: {
         if(double_estd_time==="red"){sgStatusLight18.status="red"}
+        else
+        if(double_estd_time==="black"){sgStatusLight18.status="black"}
     }
+
+    property var cut_off_voltage: platformInterface.int_os_alert.cut_off_volt
+     onCut_off_voltageChanged: {
+         if(cut_off_voltage==="red"){sgStatusLight1.status="red"}
+         else
+         if(cut_off_voltage==="black"){sgStatusLight1.status="black"}
+     }
 
 
 
@@ -547,12 +556,20 @@ ColumnLayout {
                     property var on_board_load: foo3()//set_onboard_load_en.currentText
                     function foo3(){
                         var disable="Disable"
-                    if(set_onboard_load_en.currentText===" "){
-                       set_onboard_load_en.currentIndex=1
+                    if(qsTr(set_onboard_load_en.currentText===" ")){
                         return disable
                     }
                     else return set_onboard_load_en.currentText
                     }
+                    property var double_time: foo4()
+                    function foo4(){
+                    var lighton="on"
+                    var lightoff="off"
+                    if(sgStatusLight18.status==="red"){return lighton} //cut_off_voltage
+                    else
+                    if(sgStatusLight18.status==="black"){return lightoff}
+                    }
+
                     property int realtimelog:foo1() //set_est_test_time3
                     function foo1(){
                     if((qsTr(sgcomboBS.currentText)==="Charge")) {return set_log_interval3.info}
@@ -580,7 +597,7 @@ ColumnLayout {
                           "\nOverVoltage = "+"off"+
                           "\nOverCurrent = "+"off"+
                           "\nOver/UnderTemp = "+"off"+
-                          "\nDoubleEstimatedTime = "+sgStatusLight17.status+
+                          "\nDoubleEstimatedTime = "+ double_time+
                           "\n[Data]\n"+print_dataArray.join("")+":"+platformInterface.telemetry.cell_temp+","+platformInterface.telemetry.cell_voltage//virtualtextarea1.collect
 
                     }
@@ -1994,7 +2011,11 @@ ColumnLayout {
                                               sgStatusLight13.status= "green"
                                               platformInterface.set_measurement.update(condition1)
                                               sgStatusLight16.status= platformInterface.control_states.onboard_load_en//control_states.onboard_load_en
-                                                }
+                                              if(qsTr(set_onboard_load_en.currentText)===" "){
+                                                  set_onboard_load_en.currentIndex=1 }
+
+
+                                          }
                                           else
                                           {
                                            platformInterface.set_measurement.update(condition0)
@@ -2087,6 +2108,7 @@ ColumnLayout {
                                                  }
 
                                              }
+
 
 
                                      }

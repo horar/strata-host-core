@@ -27,7 +27,7 @@ Item {
                                       "log_interval":1
 
                                   })
-    //Receive value 2
+    //Receive value 2  
     property var int_os_alert: ({
                                       "cut_off_volt":"black",
                                       "over_volt":"black",
