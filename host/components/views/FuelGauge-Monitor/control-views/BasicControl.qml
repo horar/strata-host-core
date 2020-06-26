@@ -569,6 +569,14 @@ ColumnLayout {
                     else
                     if(sgStatusLight18.status==="black"){return lightoff}
                     }
+                    property var cut_off_volt: foo5()
+                    function foo5(){
+                    var lightonn="on"
+                    var lightofff="off"
+                    if(sgStatusLight1.status==="red"){return lightonn} //cut_off_voltage
+                    else
+                    if(sgStatusLight1.status==="black"){return lightofff}
+                    }
 
                     property int realtimelog:foo1() //set_est_test_time3
                     function foo1(){
@@ -593,7 +601,7 @@ ColumnLayout {
                           "\nExternalLoadCurrent = "+sgsliderELC.value+
                           "\nChargingCurrent = "+sgsliderCC.value+
                           "\n[StopCondition]"+
-                          "\nCut-offVoltage = "+"off"+
+                          "\nCut-offVoltage = "+ cut_off_volt+
                           "\nOverVoltage = "+"off"+
                           "\nOverCurrent = "+"off"+
                           "\nOver/UnderTemp = "+"off"+
