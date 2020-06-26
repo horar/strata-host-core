@@ -1,4 +1,5 @@
 Docker container structure to simmulate sub-set of Strata infrastructure on localhost.
+
 - Couchbase, with few pre-defined documents, you can add/modify documents as required
 - Fileserver (nginx), you can add files as required
 
@@ -23,6 +24,7 @@ To inspect the log files:
 ```
 
 Connecting Strata:
+
 0. stop HCS
 1. change HCS config to contain:
 ```
@@ -38,15 +40,21 @@ Connecting Strata:
 6. run HCS
 
 CB server is running at:
+
 - http://localhost:8091
 - un:pass is sync_gateway:sync_gateway
+
 Sync gateway is running at:
+
 - http://localhost:4984
 - ws://localhost:4984
+
 Fileserver is running at:
+
 - http://localhost:8000
 
 Directories:
+
 - ```documents``` - these documents will be put into CB on startup. E.g. 201.json will be under the key "201"
 - ```files``` - files hosted in the fileserver
 - ```conf``` - configuration files for sync gateway and nginx
