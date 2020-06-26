@@ -87,7 +87,17 @@ Item {
                                 const uuids = Object.keys(UuidMap.uuid_map)
                                 for (const uuid of uuids) {
                                     if (UuidMap.uuid_map[uuid] === model.fileName) {
-                                        NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, { "class_id": uuid, "name": model.fileName } )
+                                        let data = {
+                                            "class_id": uuid,
+                                            "name": model.fileName,
+                                            "available": {
+                                                "control": true,
+                                                "documents": true,
+                                                "unlisted": false,
+                                                "order": false
+                                            }
+                                        }
+                                        NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
                                         viewCombobox.currentIndex = index
                                         break
                                     }
