@@ -75,7 +75,7 @@ ColumnLayout {
         //Send to FW board on UI Loader
         platformInterface.set_measurement.update("stop")
         platformInterface.set_onboard_load_en.update("Disable")
-        platformInterface.set_load_current.update(1500)
+        platformInterface.set_load_current.update(750)
         platformInterface.set_charge_volt.update(4.2)
         platformInterface.set_cut_off_volt.update(2800)
         platformInterface.set_b_constant.update(3380)
