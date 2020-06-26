@@ -61,6 +61,17 @@ CoreInterface::~CoreInterface()
     delete hcc;
 }
 
+void CoreInterface::spoofCommand(QString cmd) // todo: remove this debug method
+{
+    QJsonDocument doc = QJsonDocument::fromJson(cmd.toUtf8());
+    QJsonObject notification_json = doc.object();
+    QStringList keys = notification_json.keys();
+    QString notification(keys.at(0));
+    auto handler = notification_handlers_.find(notification.toStdString());
+    // dispatch handler for notification
+    handler->second(notification_json[notification].toObject());
+}
+
 // @f notificationsThreadHandle
 // @b main dispatch thread for notifications from Host Controller Service
 //
@@ -208,6 +219,10 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
         emit downloadPlatformSingleFileFinished(payload);
     } else if (type == "download_platform_files_finished") {
         emit downloadPlatformFilesFinished(payload);
+    } else if (type == "firmware_info") {
+        emit firmwareInfo(payload);
+    } else if (type == "firmware_progress") {
+        emit firmwareProgress(payload);
     } else {
         qCCritical(logCategoryCoreInterface) << "unknown message type" << type;
     }

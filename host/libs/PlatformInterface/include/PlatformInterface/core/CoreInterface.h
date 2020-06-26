@@ -67,6 +67,8 @@ public:
 
     void setNotificationThreadRunning(bool running);
 
+    Q_INVOKABLE void spoofCommand(QString cmd); // todo: remove this debug method
+
 signals:
     // ---
     // Core Framework Signals
@@ -80,6 +82,9 @@ signals:
     void downloadPlatformSingleFileProgress(QJsonObject payload);
     void downloadPlatformSingleFileFinished(QJsonObject payload);
     void downloadPlatformFilesFinished(QJsonObject payload);
+
+    void firmwareInfo(QJsonObject payload);
+    void firmwareProgress(QJsonObject payload);
 
     // Platform Framework Signals
     void notification(QString payload);
