@@ -120,11 +120,6 @@ Item {
         "audio_power_mode":"vbus"       /*or battery*/
     }
 
-    property var bus_current_limit:{
-        "type":"bus_current_limit",     //or fast_current_limit,precharge_current_limit, termination_current_limit
-        "current":50
-    }
-
     property var led_state:{
         "lower_on":true,
         "upper_on":true,
@@ -379,8 +374,8 @@ Item {
     property var set_led_state:({
                  "cmd":"set_led_state",
                  "payload":{
-                    "set":"lower",                        // or 'upper'
-                    "state":"on",
+                    "set":"lower",                        // or false
+                    "state":true,
                     "r":128,
                     "g":128,
                     "b":128

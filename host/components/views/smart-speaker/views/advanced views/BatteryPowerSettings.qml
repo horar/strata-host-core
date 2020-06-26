@@ -80,6 +80,11 @@ Rectangle {
         height:25
         grooveFillColor: hightlightColor
         visible:!batteryIsMissing
+        checked: platformInterface.fet_bypass.state
+
+        onToggled: {
+            platformInterface.set_fet_bypass.update(checked);
+        }
     }
 
     Text{
