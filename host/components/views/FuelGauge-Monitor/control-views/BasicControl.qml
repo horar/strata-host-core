@@ -1905,11 +1905,11 @@ ColumnLayout {
                                     Widget09.SGLabelledInfoBox {
                                        //horizontalAlignment: Text.AlignHCenter
                                         id: labelledInfoBox1exr
-                                        infoBoxWidth: parent.width*0.48
+                                        infoBoxWidth: parent.width*0.52
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.top: parent.top
                                         anchors.topMargin: parent.height*0.4
-                                        infoBoxHeight:38
+                                        infoBoxHeight:40
                                         label: ""
                                         info: platformInterface.telemetry.cell_voltage + " mV, "+platformInterface.telemetry.cell_temp + " °C"
                                         labelLeft: true                    // Default: true (if false, label will be on top)
