@@ -71,7 +71,7 @@ Item {
     // The property name *must* match the associated notification value.
     // Sets UI Control State when changed.
 
-    property var led_part_number_value: {
+    property var led_part_number: {
         "caption":"Part Number",
         "scales":[],
         "states":[0],
@@ -79,15 +79,15 @@ Item {
         "values":[]
     }
 
-    property var led_part_number_value_caption: {
+    property var led_part_number_caption: {
         "caption":"Part Number"
     }
 
-    property var led_part_number_value_states: {
+    property var led_part_number_states: {
         "states":[0]
     }
 
-    property var led_part_number_value_value: {
+    property var led_part_number_value: {
         "value":"NCV7685"
     }
 

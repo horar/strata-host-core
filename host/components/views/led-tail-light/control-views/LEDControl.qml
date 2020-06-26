@@ -712,8 +712,8 @@ Item {
         out0pwmEnableLED.checked = led_pwm_enables_values[0]
         platformInterface.outputPwm0 = led_pwm_enables_values[0]
 
-        platformInterface.outputPwm1 = ed_pwm_enables_values[1]
-        out1pwmEnableLED.checked = ed_pwm_enables_values[1]
+        platformInterface.outputPwm1 = led_pwm_enables_values[1]
+        out1pwmEnableLED.checked = led_pwm_enables_values[1]
 
         out2pwmEnableLED.checked = led_pwm_enables_values[2]
         platformInterface.outputPwm2 = led_pwm_enables_values[2]
@@ -921,7 +921,7 @@ Item {
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 }
 
-                                property var led_part_number_value: platformInterface.led_part_number_value
+                                property var led_part_number_value: platformInterface.led_part_number
                                 onLed_part_number_valueChanged: {
                                     partNumberLabel.text = led_part_number_value.caption
                                     setStatesForControls(partNumber,led_part_number_value.states[0])
@@ -929,19 +929,19 @@ Item {
                                     partNumber.text = led_part_number_value.value
                                 }
 
-                                property var led_part_number_value_caption: platformInterface.led_part_number_value_caption.caption
-                                onLed_part_number_value_captionChanged: {
-                                    partNumberLabel.text = led_part_number_value_caption
+                                property var led_part_number_caption: platformInterface.led_part_number_caption.caption
+                                onLed_part_number_captionChanged: {
+                                    partNumberLabel.text = led_part_number_caption
                                 }
 
-                                property var led_part_number_value_state: platformInterface.led_part_number_value_states.states
-                                onLed_part_number_value_stateChanged: {
-                                    setStatesForControls(partNumber,led_part_number_value_state[0])
+                                property var led_part_number_states: platformInterface.led_part_number_states.states
+                                onLed_part_number_statesChanged: {
+                                    setStatesForControls(partNumber,led_part_number_states[0])
                                 }
 
-                                property var led_part_number_value_value: platformInterface.led_part_number_value_value.value
-                                onLed_part_number_value_valueChanged: {
-                                    partNumber.text = led_part_number_value_value
+                                property var led_part_number_value: platformInterface.led_part_number_value.value
+                                onLed_part_number_valueChanged: {
+                                    partNumber.text = led_part_number_value
                                 }
 
                             }
