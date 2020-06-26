@@ -32,5 +32,21 @@
         <file>views/basic-partial-views/PlaybackControlView.qml</file>
         <file>views/basic-partial-views/SpeakerView.qml</file>
         <file>views/images/pause-icon.svg</file>
+        <file>views/basic-partial-views/AmplifierView.qml</file>
+        <file>views/images/speaker-icon.svg</file>
+        <file>views/AdvancedControl.qml</file>
+        <file>views/basic-partial-views/VoiceUIView.qml</file>
+        <file>views/images/back-icon.svg</file>
+        <file>views/images/forward-icon.svg</file>
+        <file>views/advanced views/TelemetryView.qml</file>
+        <file>views/advanced views/BatteryView.qml</file>
+        <file>views/advanced views/AudioPowerView.qml</file>
+        <file>views/advanced views/ChargerView.qml</file>
+        <file>views/advanced views/LEDView.qml</file>
+        <file>views/advanced views/USBPowerSettings.qml</file>
+        <file>views/advanced views/BatteryPowerSettings.qml</file>
+        <file>views/images/battery-icon.svg</file>
+        <file>views/images/usb-c icon.svg</file>
+        <file>views/advanced views/PortStatBox.qml</file>
     </qresource>
 </RCC>
