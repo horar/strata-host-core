@@ -534,8 +534,14 @@ ColumnLayout {
                          font.pixelSize: 20
                      }
                     TextArea{ //collect all slider and combo information
-                    id:virtualtextarea//realtimelog
+                    id:virtualtextarea//realtimelog   virtualtextarea.on_board_load
                     visible: false
+                    property var on_board_load: foo3()//set_onboard_load_en.currentText
+                    function foo3(){
+                        var disable="Disable"
+                    if(set_onboard_load_en.currentText===" "){return disable}
+                    else return set_onboard_load_en.currentText
+                    }
                     property int realtimelog:foo1() //set_est_test_time3
                     function foo1(){
                     if((qsTr(sgcomboBS.currentText)==="Charge")) {return set_log_interval3.info}
@@ -553,7 +559,7 @@ ColumnLayout {
                     text: "[SystemSpec]\n"+"AppVersion = 1.0.0\n"+"LsiName = LC709204\n"+"[BatterySpec]\n"+"Manufacturer = "+manufacturer_name.text+"\nModelName = "+modal_name.text+
                           "\nTypicalCapacity = "+set_load_current.value+"\nChargingVoltage = "+set_charge_volt.currentText+"\nDischargeCut-offVoltage = "+set_cut_off_volt.value +
                           "\n[ThermistorSpec]"+"\nBConstant = "+set_b_constant.value+"\nCapacitance = "+set_capacitance.value*1000+"\nAPT = "+set_apt.info+"\n[MeasurementCondition]"+
-                          "\nBatteryStatus = "+ sgcomboBS.currentText+"\nOn-boardLoad = "+set_onboard_load_en.currentText+
+                          "\nBatteryStatus = "+ sgcomboBS.currentText+"\nOn-boardLoad = "+on_board_load+
                           "\nLogInterval = "+realtimelog+
                           "\nOn-boardLoadCurrent = "+sgsliderOBLC.value+
                           "\nExternalLoadCurrent = "+sgsliderELC.value+
