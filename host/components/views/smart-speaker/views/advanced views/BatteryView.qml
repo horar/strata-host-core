@@ -16,10 +16,9 @@ Rectangle {
     property int theRunTime: platformInterface.battery_status.total_run_time
     property int theAmbientTemperature: platformInterface.battery_status.ambient_temp
     property int theBatteryTemperature: platformInterface.battery_status.battery_temp
-    property int theFloatVoltage: 12
+    property int theFloatVoltage: platformInterface.charger_status.float_voltage
     property string theChargeMode: platformInterface.charger_status.charge_mode
-    property string thePowerMode: "battery"
-    property bool isInOverCurrentProtection: false
+    property string thePowerMode: platformInterface.charger_status.audio_power_mode
     property int theTimeToEmpty:platformInterface.battery_status.time_to_empty
     property int theTimeToFull:platformInterface.battery_status.time_to_full
     property int theBatteryPercentage:platformInterface.battery_status.rsoc

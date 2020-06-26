@@ -59,6 +59,12 @@ Rectangle {
         grooveColor: "grey"
         grooveFillColor: hightlightColor
         visible:!batteryIsMissing
+        value: platformInterface.audio_power.audio_voltage
+
+        onUserSet: {
+            //there is no set_audio_power API call, so how is this set?
+            //platformInterface.set
+        }
     }
 
     Text{

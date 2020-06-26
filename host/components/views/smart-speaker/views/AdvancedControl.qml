@@ -74,12 +74,12 @@ Widget09.SGResponsiveScrollView {
             ChargerView{
                 id:chargerView
                 width:500
-                height:300
+                height:350
             }
             LEDView{
                 id:ledView
                 width:400
-                height:300
+                height:350
             }
 
 

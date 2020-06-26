@@ -11,8 +11,11 @@ Rectangle {
 
     property color backgroundColor: "#D1DFFB"
     property color accentColor:"#86724C"
-    property int telemetryTextWidth:250
     property color buttonSelectedColor:"#91ABE1"
+    property int telemetryTextWidth:250
+    property int currentLimitTextWidth:100
+    property int currentLimitSliderWidth:300
+
 
     Text{
         id:chargerLabel
@@ -72,11 +75,11 @@ Rectangle {
                     property var overVoltage: platformInterface.vbus_ovp_level
                     onOverVoltageChanged: {
                         switch(platformInterface.vbus_ovp_level.value){
-                        case 6.5:   overVoltageButton1.checked = true;  break;
-                        case 10.5:  overVoltageButton2.checked = true;  break;
-                        case 13.7:  overVoltageButton3.checked = true;  break;
+                            case 6.5:   overVoltageButton1.checked = true;  break;
+                            case 10.5:  overVoltageButton2.checked = true;  break;
+                            case 13.7:  overVoltageButton3.checked = true;  break;
+                            }
                         }
-                    }
 
                     SGSegmentedButton{
                         id:overVoltageButton1
@@ -115,146 +118,7 @@ Rectangle {
             }
 
         }
-        Row{
-            spacing:10
 
-            Text{
-                id:ibusCurrentLabel
-                font.pixelSize: 18
-                width:telemetryTextWidth
-                text:"IBUS current limit:"
-                horizontalAlignment: Text.Text.AlignRight
-                color: "black"
-            }
-            SGSlider{
-                id:ibusCurrentLimitSlider
-                anchors.verticalCenter: ibusCurrentLabel.verticalCenter
-                anchors.verticalCenterOffset: 5
-                height:25
-                from:100
-                to:3000
-                stepSize: 25
-                inputBox: true
-                grooveColor: "grey"
-                grooveFillColor: hightlightColor
-                value: platformInterface.charger_status.ibus_limit
-                onUserSet: {
-                    platformInterface.set_charger_current.update("set_vbus_current_limit", value);
-                }
-            }
-            Text{
-                id:busCurrentLimitUnit
-                font.pixelSize: 15
-                text:"mA"
-                color: "grey"
-            }
-
-        }
-        Row{
-            spacing:10
-
-            Text{
-                id:fastChargeLabel
-                font.pixelSize: 18
-                width:telemetryTextWidth
-                text:"Fast charge current limit:"
-                horizontalAlignment: Text.Text.AlignRight
-                color: "black"
-            }
-            SGSlider{
-                id:fastChargeSlider
-                anchors.verticalCenter: fastChargeLabel.verticalCenter
-                anchors.verticalCenterOffset: 5
-                height:25
-                from:200
-                stepSize: 50
-                to:3000
-                inputBox: true
-                grooveColor: "grey"
-                grooveFillColor: hightlightColor
-                value:platformInterface.charger_status.fast_chg_current
-                onUserSet: {
-                    platformInterface.set_charger_current.update("set_fast_current_limit", value);
-                }
-            }
-            Text{
-                id:fastChargeUnit
-                font.pixelSize: 15
-                text:"mA"
-                color: "grey"
-            }
-
-        }
-        Row{
-            spacing:10
-
-            Text{
-                id:prechargeCurrentLabel
-                font.pixelSize: 18
-                width:telemetryTextWidth
-                text:"Precharge current limit:"
-                horizontalAlignment: Text.Text.AlignRight
-                color: "black"
-            }
-            SGSlider{
-                id:preChargeCurrentSlider
-                anchors.verticalCenter: prechargeCurrentLabel.verticalCenter
-                anchors.verticalCenterOffset: 5
-                height:25
-                from:200
-                to:800
-                stepSize: 50
-                inputBox: true
-                grooveColor: "grey"
-                grooveFillColor: hightlightColor
-                value: platformInterface.charger_status.precharge_current
-                onUserSet: {
-                    platformInterface.set_charger_current.update("set_precharge_current_limit", value);
-                }
-            }
-
-            Text{
-                id:prechargeCurrentLimitUnit
-                font.pixelSize: 15
-                text:"mA"
-                color: "grey"
-            }
-        }
-        Row{
-            spacing:10
-
-            Text{
-                id:terminationCurrentLabel
-                font.pixelSize: 18
-                width:telemetryTextWidth
-                text:"Termination curent limit:"
-                horizontalAlignment: Text.Text.AlignRight
-                color: "black"
-            }
-            SGSlider{
-                id:terminationCurrentLimitSlider
-                anchors.verticalCenter: terminationCurrentLabel.verticalCenter
-                anchors.verticalCenterOffset: 5
-                height:25
-                from:100
-                to:600
-                stepSize: 50
-                inputBox: true
-                grooveColor: "grey"
-                grooveFillColor: hightlightColor
-                value: platformInterface.charger_status.termination
-                onUserSet: {
-                    platformInterface.set_charger_current.update("set_termination_current_limit", value);
-                }
-            }
-
-            Text{
-                id:terminationCurrentLimitUnit
-                font.pixelSize: 15
-                text:"mA"
-                color: "grey"
-            }
-        }
         Row{
             spacing:10
 
@@ -376,6 +240,184 @@ Rectangle {
                 color: "grey"
             }
         }
+
+        GroupBox{
+            id: currentLimitGroupBox
+            title:"Current limits"
+            anchors.left:parent.left
+            anchors.leftMargin: 10
+            anchors.right:parent.right
+            anchors.rightMargin: 10
+
+            label: Label {
+                    x: currentLimitGroupBox.leftPadding
+                    width: currentLimitGroupBox.availableWidth
+                    text: currentLimitGroupBox.title
+                    color: "black"
+                    font.pixelSize:18
+                    elide: Text.ElideRight
+                }
+
+
+            Column{
+                id:currentLimitColumn
+                spacing: 10
+
+                Row{
+                    spacing:10
+
+                    Text{
+                        id:ibusCurrentLabel
+                        font.pixelSize: 18
+                        width:currentLimitTextWidth
+                        text:"IBUS:"
+                        horizontalAlignment: Text.Text.AlignRight
+                        color: "black"
+                    }
+                    SGSlider{
+                        id:ibusCurrentLimitSlider
+                        anchors.verticalCenter: ibusCurrentLabel.verticalCenter
+                        anchors.verticalCenterOffset: 5
+                        height:25
+                        width:currentLimitSliderWidth
+                        from:100
+                        to:3000
+                        stepSize: 25
+                        inputBox: true
+                        grooveColor: "grey"
+                        grooveFillColor: hightlightColor
+                        value: platformInterface.charger_status.ibus_limit
+                        onUserSet: {
+                            platformInterface.set_charger_current.update("set_vbus_current_limit", value);
+                        }
+                    }
+                    Text{
+                        id:busCurrentLimitUnit
+                        anchors.verticalCenter: ibusCurrentLabel.verticalCenter
+                        anchors.verticalCenterOffset: 10
+                        font.pixelSize: 15
+                        text:"mA"
+                        color: "grey"
+                    }
+
+                }
+                Row{
+                    spacing:10
+
+                    Text{
+                        id:fastChargeLabel
+                        font.pixelSize: 18
+                        width:currentLimitTextWidth
+                        text:"Fast charge:"
+                        horizontalAlignment: Text.Text.AlignRight
+                        color: "black"
+                    }
+                    SGSlider{
+                        id:fastChargeSlider
+                        anchors.verticalCenter: fastChargeLabel.verticalCenter
+                        anchors.verticalCenterOffset: 5
+                        height:25
+                        width:currentLimitSliderWidth
+                        from:200
+                        stepSize: 50
+                        to:3000
+                        inputBox: true
+                        grooveColor: "grey"
+                        grooveFillColor: hightlightColor
+                        value:platformInterface.charger_status.fast_chg_current
+                        onUserSet: {
+                            platformInterface.set_charger_current.update("set_fast_current_limit", value);
+                        }
+                    }
+                    Text{
+                        id:fastChargeUnit
+                        anchors.verticalCenter: fastChargeLabel.verticalCenter
+                        anchors.verticalCenterOffset: 10
+                        font.pixelSize: 15
+                        text:"mA"
+                        color: "grey"
+                    }
+
+                }
+                Row{
+                    spacing:10
+
+                    Text{
+                        id:prechargeCurrentLabel
+                        font.pixelSize: 18
+                        width:currentLimitTextWidth
+                        text:"Precharge:"
+                        horizontalAlignment: Text.Text.AlignRight
+                        color: "black"
+                    }
+                    SGSlider{
+                        id:preChargeCurrentSlider
+                        anchors.verticalCenter: prechargeCurrentLabel.verticalCenter
+                        anchors.verticalCenterOffset: 5
+                        height:25
+                        width:currentLimitSliderWidth
+                        from:200
+                        to:800
+                        stepSize: 50
+                        inputBox: true
+                        grooveColor: "grey"
+                        grooveFillColor: hightlightColor
+                        value: platformInterface.charger_status.precharge_current
+                        onUserSet: {
+                            platformInterface.set_charger_current.update("set_precharge_current_limit", value);
+                        }
+                    }
+
+                    Text{
+                        id:prechargeCurrentLimitUnit
+                        anchors.verticalCenter: prechargeCurrentLabel.verticalCenter
+                        anchors.verticalCenterOffset: 10
+                        font.pixelSize: 15
+                        text:"mA"
+                        color: "grey"
+                    }
+                }
+                Row{
+                    spacing:10
+
+                    Text{
+                        id:terminationCurrentLabel
+                        font.pixelSize: 18
+                        width:currentLimitTextWidth
+                        text:"Termination:"
+                        horizontalAlignment: Text.Text.AlignRight
+                        color: "black"
+                    }
+                    SGSlider{
+                        id:terminationCurrentLimitSlider
+                        anchors.verticalCenter: terminationCurrentLabel.verticalCenter
+                        anchors.verticalCenterOffset: 5
+                        height:25
+                        width:currentLimitSliderWidth
+                        from:100
+                        to:600
+                        stepSize: 50
+                        inputBox: true
+                        grooveColor: "grey"
+                        grooveFillColor: hightlightColor
+                        value: platformInterface.charger_status.termination_current
+                        onUserSet: {
+                            platformInterface.set_charger_current.update("set_termination_current_limit", value);
+                        }
+                    }
+
+                    Text{
+                        id:terminationCurrentLimitUnit
+                        anchors.verticalCenter: terminationCurrentLabel.verticalCenter
+                        anchors.verticalCenterOffset: 10
+                        font.pixelSize: 15
+                        text:"mA"
+                        color: "grey"
+                    }
+                }
+            }
+        }
+
 
 
     }

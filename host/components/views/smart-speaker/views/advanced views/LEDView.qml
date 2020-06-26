@@ -1,6 +1,6 @@
 import QtQuick 2.10
 import QtQuick.Controls 2.2
-import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0
 
 Rectangle {
     id: front
@@ -19,6 +19,33 @@ Rectangle {
     property int theBlueValue
     property int theBottomLightBrightness
     property bool touchButtonsOn: platformInterface.touch_button_state.state
+
+    function rgbToHsl(r, g, b) {
+      r /= 255
+      g /= 255
+      b /= 255
+      var max = Math.max(r, g, b), min = Math.min(r, g, b)
+      var h, s, l = (max + min) / 2
+      if (max == min) {
+        h = s = 0
+      } else {
+        var d = max - min
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+        switch (max) {
+        case r:
+          h = (g - b) / d + (g < b ? 6 : 0)
+          break
+        case g:
+          h = (b - r) / d + 2
+          break
+        case b:
+          h = (r - g) / d + 4
+          break
+        }
+        h /= 6;
+      }
+      return {"h":h, "s":s, "l":l};
+    }
 
     Text{
         id:ledLabel
@@ -48,7 +75,7 @@ Rectangle {
         spacing:10
 
         Row{
-            id:timeToFullRow
+            id:topLightRow
             spacing:10
             width:parent.width
 
@@ -66,6 +93,13 @@ Rectangle {
                 anchors.verticalCenter: topLightsLabel.verticalCenter
                 height:25
                 grooveFillColor: hightlightColor
+                checked: platformInterface.led_state.upper_on
+
+                onToggled: {
+                    platformInterface.set_led_state.update("upper",checked,platformInterface.led_state.r,
+                                                                           platformInterface.led_state.g,
+                                                                           platformInterface.led_state.b)
+                }
             }
         }
 
@@ -86,12 +120,12 @@ Rectangle {
                 anchors.verticalCenter: bottomLightsLabel.verticalCenter
                 height:25
                 grooveFillColor: hightlightColor
+                checked: platformInterface.led_state.lower_on
 
                 onToggled:{
-                    var theString = "on"
-                    if (!bottomLightsSwitch.checked)
-                        theString = "off"
-                    platformInterface.set_led_state("lower",theString, )
+                    platformInterface.set_led_state.update("lower",checked,platformInterface.led_state.r,
+                                                                           platformInterface.led_state.g,
+                                                                           platformInterface.led_state.b)
                 }
 
             }
@@ -114,6 +148,27 @@ Rectangle {
                 anchors.verticalCenterOffset: 5
                 height:25
                 width:160
+
+                //still need to write code to set the hsl slider based on rgb changes in the platform
+                value:{
+                    var r = platformInterface.led_state.r
+                    var g = platformInterface.led_state.g
+                    var b = platformInterface.led_state.b
+
+                    //console.log("r,g,b=",r,g,b);
+                    var hsl = rgbToHsl(r, g, b)
+                    //console.log("h,s,v=",hsl.h,hsl.s,hsl.l)
+
+                    //The returned value is between 0 and 1, so scale to match the slider's range
+                    return hsl.h * 255;
+                }
+
+                onMoved: {
+                    platformInterface.set_led_state.update("lower",platformInterface.led_state.lower_on,
+                                                           bottomLightColorlider.rgbArray[0],
+                                                           bottomLightColorlider.rgbArray[1],
+                                                           bottomLightColorlider.rgbArray[2],)
+                }
 
             }
         }
@@ -138,9 +193,9 @@ Rectangle {
                 width:160
                 from:0
                 to:100
-                inputBox: true
+                showInputBox: true
                 grooveColor: "grey"
-                grooveFillColor: hightlightColor
+                fillColor: hightlightColor
             }
             Text{
                 id:bottomLightBrightnessUnitLabel
@@ -169,6 +224,12 @@ Rectangle {
                 anchors.verticalCenter: touchButtonsLabel.verticalCenter
                 height:25
                 grooveFillColor: hightlightColor
+                checked:platformInterface.touch_button_state.state
+
+                onToggled: {
+                    platformInterface.set_touch_button_state.update(checked)
+                }
+
             }
         }
     }
