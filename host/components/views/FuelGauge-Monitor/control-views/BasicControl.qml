@@ -75,7 +75,7 @@ ColumnLayout {
         //Send to FW board on UI Loader
         platformInterface.set_measurement.update("stop")
         platformInterface.set_onboard_load_en.update("Disable")
-        platformInterface.set_load_current.update(3000)
+        platformInterface.set_load_current.update(1500)
         platformInterface.set_charge_volt.update(4.2)
         platformInterface.set_cut_off_volt.update(2800)
         platformInterface.set_b_constant.update(3380)
@@ -272,7 +272,7 @@ ColumnLayout {
                                      labelTopAligned: false       // Default: false (only applies to label on left of slider, decides vertical centering of label)
                                      inputBox: true               // Default: true
                                      onUserSet: {
-                                         platformInterface.set_load_current.update(value)
+                                        // platformInterface.set_load_current.update(value)
                                      }
 
 
@@ -387,7 +387,7 @@ ColumnLayout {
 
                             Text {
                                 id: name41
-                                text: "B Constant"
+                                text: "B Constant (K)"
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 anchors.top: parent.top
                                 anchors.topMargin: parent.height*0.03
@@ -450,8 +450,8 @@ ColumnLayout {
                                 id: set_apt
                                 infoBoxWidth: 45
                                 anchors.right: parent.right
-                                anchors.rightMargin: parent.width*0.002
-                                y:parent.height*0.04
+                                anchors.rightMargin: parent.width*0.018
+                                y:parent.height*0.77
                                 infoBoxHeight:16
                                 labelPixelSize: 10
                                 label: "APT =<b>></b>"
@@ -473,7 +473,7 @@ ColumnLayout {
 
                             Text {
                                 id: name9
-                                text: "Capacitance"
+                                text: "Capacitance (nF)"
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 anchors.top: parent.top
                                 anchors.topMargin: parent.height*0.03
@@ -941,6 +941,10 @@ ColumnLayout {
                                  live: false                  // Default: false (will only send valueChanged signal when slider is released)
                                  labelTopAligned: false      // Default: false (only applies to label on left of slider, decides vertical centering of label)
                                  inputBox: true               // Default: true
+                                 onUserSet: platformInterface.set_load_current.update(value)
+                                 onValueChanged:console.log("Value of load is+=====", value)
+
+
 
                              }
 
@@ -1911,7 +1915,7 @@ ColumnLayout {
                                     Widget09.SGLabelledInfoBox {
                                        //horizontalAlignment: Text.AlignHCenter
                                         id: labelledInfoBox1exr
-                                        infoBoxWidth: parent.width*0.52
+                                        infoBoxWidth: parent.width*0.55
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.top: parent.top
                                         anchors.topMargin: parent.height*0.4
