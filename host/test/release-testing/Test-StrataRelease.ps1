@@ -46,7 +46,7 @@ Set-Variable "HCSTCPEndpoint" "tcp://127.0.0.1:5563"
 Set-Variable "SDSRootDir"    "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
 Set-Variable "HCSAppDataDir" "$Env:AppData\ON Semiconductor\hcs"
 Set-Variable "HCSConfigFile" "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
-Set-Variable "HCSExecFile"   "$SDSRootDir\HCS\hcs.exe"
+Set-Variable "HCSExecFile"   "$SDSRootDir\hcs.exe"
 Set-Variable "SDSExecFile"   "$SDSRootDir\Strata Developer Studio.exe"
 Set-Variable "HCSDbFile"     "$HCSAppDataDir\db\strata_db\db.sqlite3"
 Set-Variable "TestRoot"      $PSScriptRoot
