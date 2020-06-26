@@ -43,4 +43,5 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 if(BUILD_TESTING)
     add_subdirectory(sample-app)
+    add_subdirectory(test)
 endif()

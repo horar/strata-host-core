@@ -131,6 +131,8 @@ private:
         }
     };
 
+    bool documentExistInDB(const std::string &id);
+
     void replicatorStatusChanged(cbl::Replicator rep, const CBLReplicatorStatus &status);
 
     void documentStatusChanged(cbl::Replicator rep, bool isPush, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>> documents);

@@ -56,6 +56,11 @@ bool CouchbaseDatabase::open() {
 }
 
 bool CouchbaseDatabase::save(CouchbaseDocument *doc) {
+    if (!database_) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Problem saving database, database may not be open.";
+        return false;
+    }
+
     // Official CBL API: Save operation can throw so this is wrapped in try/catch
     try {
         database_->saveDocument(*doc->mutable_doc_.get());
@@ -66,13 +71,26 @@ bool CouchbaseDatabase::save(CouchbaseDocument *doc) {
     return true;
 }
 
-std::string CouchbaseDatabase::getDocumentAsStr(const std::string &id)
-{
+bool CouchbaseDatabase::documentExistInDB(const std::string &id) {
+    std::string str = "SELECT _id WHERE _id = '" + id + "'";
+    cbl::Query query(*database_.get(), kCBLN1QLLanguage, str.c_str());
+    auto results = query.execute();
+    return results.begin() != results.end();
+}
+
+std::string CouchbaseDatabase::getDocumentAsStr(const std::string &id) {
+    if (!database_) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Problem reading document, database may not be open.";
+        return "";
+    }
+    if (!documentExistInDB(id)) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Problem reading document: not found in DB.";
+        return "";
+    }
     return database_->getDocument(id).propertiesAsJSON();
 }
 
-QJsonObject CouchbaseDatabase::getDocumentAsJsonObj(const std::string &id)
-{
+QJsonObject CouchbaseDatabase::getDocumentAsJsonObj(const std::string &id) {
     auto d = database_->getMutableDocument(id);
     auto read_dict = d.properties();
     return QJsonDocument::fromJson(QString::fromStdString(read_dict.toJSONString()).toUtf8()).object();
