@@ -48,7 +48,7 @@ int main() {
     }
 
     // Set document body with valid JSON
-    body_string = R"foo({"name": "My Name", "age" : 50, "myobj" : { "myarray" : [1,2,3,4], "mykey" : "myvalue"}})foo";
+    body_string = R"foo({"name": "My Name", "age" : 1, "myobj" : { "myarray" : [1,2,3,4], "mykey" : "myvalue"}})foo";
     if (!Doc_1.setBody(body_string)) {
         DEBUG("Failed to set document contents, body must be in JSON format.");
     } else {
