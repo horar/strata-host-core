@@ -83,6 +83,10 @@ Rectangle {
             index: 0
             connected: true
             name: "Help Example"
+            available: {
+                "documents": true,
+                "control": true
+            }
 
             Connections {
                 target: Help.utility

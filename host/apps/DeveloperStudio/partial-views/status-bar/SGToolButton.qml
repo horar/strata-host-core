@@ -9,7 +9,7 @@ import tech.strata.sgwidgets 1.0
 Rectangle {
     id: buttonRoot
     height: 30
-    width: menu.width
+    implicitWidth: parent.width
     color: {
         if (delegateMouse.containsMouse) {
             return "#2fc238"
