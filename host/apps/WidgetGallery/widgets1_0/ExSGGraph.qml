@@ -286,8 +286,8 @@ Item {
             SGWidgets.SGGraph {
                 id: coloredGraph
                 width: 400
-                height: 150
-                title: "Graph with Customized Colors"
+                height: 300
+                title: "Graph with Customized Colors and Title Scaling"
                 xMin: 1
                 xMax: 100
                 yMin: 0
@@ -296,6 +296,25 @@ Item {
                 yTitle: "Y Axis"
                 backgroundColor: "pink"
                 foregroundColor: "steelblue"
+                fontSizeMultiplier: fontSlider.value
+            }
+
+            Column {
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                }
+
+                Text {
+                    text: "Modify title size:"
+                    font.bold: true
+                }
+
+                Slider {
+                    id: fontSlider
+                    from: .5
+                    to: 2
+                    value: 1
+                }
             }
         }
 

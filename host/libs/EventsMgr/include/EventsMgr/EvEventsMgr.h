@@ -1,20 +1,18 @@
-
-#ifndef STRATA_EVENTS_MGR_H__
-#define STRATA_EVENTS_MGR_H__
+#pragma once
 
 #include <thread>
 #include <mutex>
 #include <atomic>
 
-#include "EvEvent.h"
+#include "EventsMgr/EvEvent.h"
 
 struct event_base;
 
-namespace spyglass
-{
+namespace strata::events_mgr {
 
 /**
- * NOTE: This class is working on Mac,Linux with file descriptors (handles). But on Windows it works only with WinSock handles.
+ * NOTE: This class is working on Mac,Linux with file descriptors (handles).
+ * But on Windows it works only with WinSock handles.
  */
 class EvEventsMgr
 {
@@ -68,20 +66,4 @@ private:
 
 };
 
-
-// class for initializing WSA sockets on Windows
-// on Mac/Linux has no effect
-class EvEventsMgrInstance
-{
-public:
-    EvEventsMgrInstance();
-    ~EvEventsMgrInstance();
-
-private:
-    static bool wsa_init_done;
-};
-
-
 } //end of namespace
-
-#endif //STRATA_EVENTS_MGR_H__
