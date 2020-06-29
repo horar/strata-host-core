@@ -2,6 +2,8 @@
 
 #include "logging/LoggingQtCategories.h"
 
+#include <QCoreApplication>
+
 HcsNode::HcsNode(QObject *parent) : QObject(parent)
 {
     replicaNode_.setHeartbeatInterval(200);
@@ -13,7 +15,6 @@ HcsNode::~HcsNode()
 {
 }
 
-#include <QCoreApplication>
 void HcsNode::initConnections()
 {
     qCDebug(logCategoryStrataDevStudioNode) << "connecting for source node";

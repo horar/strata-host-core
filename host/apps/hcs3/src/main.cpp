@@ -4,6 +4,8 @@
 #include "HostControllerServiceTimestamp.h"
 #include "RunGuard.h"
 
+#include "HostControllerServiceNode.h"
+
 #include "logging/LoggingQtCategories.h"
 
 #include <QtLoggerSetup.h>
@@ -91,6 +93,11 @@ int main(int argc, char *argv[])
 #if defined(Q_OS_WIN)
     strata::events_mgr::EvEventsMgrInstance instance;
 #endif
+
+    HostControllerServiceNode hcsNode;
+    hcsNode.start(QUrl(QStringLiteral("local:hcs3")));
+    QObject::connect(qApp, &QCoreApplication::aboutToQuit,
+                     &hcsNode, &HostControllerServiceNode::stop);
 
 #if !defined(Q_OS_WIN)
     SignalHandlers sh(&app);
