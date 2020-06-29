@@ -15,6 +15,11 @@ HcsNode::~HcsNode()
 {
 }
 
+bool HcsNode::hcsConnected() const
+{
+    return m_hcsConnected;
+}
+
 void HcsNode::initConnections()
 {
     qCDebug(logCategoryStrataDevStudioNode) << "connecting for source node";
@@ -30,7 +35,6 @@ void HcsNode::initConnections()
 
     QObject::connect(replica_.data(), &QRemoteObjectReplica::stateChanged, this,
                      &HcsNode::connectionChanged);
-
 }
 
 void HcsNode::hcsAppInfo(AppInfoPod appInfoPod)
@@ -44,6 +48,8 @@ void HcsNode::connectionChanged(QRemoteObjectReplica::State state,
                                 QRemoteObjectReplica::State oldState)
 {
     qCDebug(logCategoryStrataDevStudioNode) << oldState << "->" << state;
+
+    setHcsConnected(state == QRemoteObjectReplica::Valid);
 }
 
 void HcsNode::shutdownService()
@@ -55,4 +61,14 @@ void HcsNode::shutdownService()
 
     qCDebug(logCategoryStrataDevStudioNode) << "requesting HCS to shut down";
     replica_->shutdown_cb();
+}
+
+void HcsNode::setHcsConnected(bool hcsConnected)
+{
+    if (m_hcsConnected == hcsConnected) {
+        return;
+    }
+
+    m_hcsConnected = hcsConnected;
+    emit hcsConnectedChanged(m_hcsConnected);
 }
