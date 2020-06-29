@@ -53,21 +53,6 @@ ColumnLayout {
          else
          if(cut_off_voltage==="black"){sgStatusLight1.status="black"}
      }
-
-
-
-    //::
-          // property var curve : basicGraph.createCurve("graphCurve")
-         //property var timerLength: 0
-        //test2: print_dataArray
-        // property var curve : basicGraph.createCurve("graphCurve")
-        // property var timerLength: 0
-        //  property var x_Axis_Timer: 0
-    //::
-
-    //property var dataArray : []
-    //dataArray_voltage: append(yourVoltageValueHere()) // this will append the individual data from above function
-   // dataArray_voltage.push(yourVoltageValueHere())
     function clearGraphsData() {
         if (clear==1){
     dataArray_temperature=[]
@@ -101,12 +86,36 @@ ColumnLayout {
         platformInterface.set_log_interval.update(3)
         platformInterface.set_fg_initialize.update("")  //Send this at LAST
     }
+    // inturrupts
     property var no_battery: platformInterface.int_os_alert.no_battery
      onNo_batteryChanged: {
-         if(no_battery==="red"){sgStatusLight17.status="red"} //sgStatusLight17
+         if(no_battery==="red"){sgStatusLight17.status="red"} //over_volt
          else
          if(no_battery==="black"){sgStatusLight17.status="black"}
      }
+     //not log
+     property var over_volt: platformInterface.int_os_alert.over_volt
+      onOver_voltChanged: {
+          if(no_battery==="red"){sgStatusLight_overvoltage.status="red"} //over_volt
+          else
+          if(no_battery==="black"){sgStatusLight_overvoltage.status="black"}
+      }
+//not log
+      property var over_current: platformInterface.int_os_alert.over_current
+      onOver_currentChanged: {
+                if(no_battery==="red"){sgStatusLight_overcurrent.status="red"} //over_current
+                else
+                if(no_battery==="black"){sgStatusLight_overcurrent.status="black"}
+            }
+      //not log
+            property var over_temp: platformInterface.int_os_alert.over_temp
+            onOver_tempChanged: {
+                      if(no_battery==="red"){sgStatusLight_overtemp.status="red"} //over_current
+                      else
+                      if(no_battery==="black"){sgStatusLight_overtemp.status="black"}
+                  }
+
+
 
 
     spacing: 1
@@ -569,6 +578,37 @@ ColumnLayout {
                     }
                     else return set_onboard_load_en.currentText
                     }
+
+                    // Inturrupts for LOG writing over_temperature
+                    property var over_temperature: foo8()
+                    function foo8(){
+                    var lighton="on"
+                    var lightoff="off"
+                    if(sgStatusLight_overtemp.status==="red"){return lighton} //sgStatusLight_overvoltage.status
+                    else
+                    if(sgStatusLight_overtemp.status==="black"){return lightoff}
+                    }
+
+
+                    property var over_currnt: foo7()
+                    function foo7(){
+                    var lighton="on"
+                    var lightoff="off"
+                    if(sgStatusLight_overcurrent.status==="red"){return lighton} //sgStatusLight_overvoltage.status
+                    else
+                    if(sgStatusLight_overcurrent.status==="black"){return lightoff}
+                    }
+
+
+                    property var over_volatage: foo6()
+                    function foo6(){
+                    var lighton="on"
+                    var lightoff="off"
+                    if(sgStatusLight_overvoltage.status==="red"){return lighton} //sgStatusLight_overvoltage.status
+                    else
+                    if(sgStatusLight_overvoltage.status==="black"){return lightoff}
+                    }
+
                     property var double_time: foo4()
                     function foo4(){
                     var lighton="on"
@@ -610,9 +650,9 @@ ColumnLayout {
                           "\nChargingCurrent = "+sgsliderCC.value+
                           "\n[StopCondition]"+
                           "\nCut-offVoltage = "+ cut_off_volt+
-                          "\nOverVoltage = "+"off"+
-                          "\nOverCurrent = "+"off"+
-                          "\nOver/UnderTemp = "+"off"+
+                          "\nOverVoltage = "+ over_volatage+
+                          "\nOverCurrent = "+ over_currnt+
+                          "\nOver/UnderTemp = "+ over_temperature+
                           "\nDoubleEstimatedTime = "+ double_time+
                           "\n[Data]\n"+print_dataArray.join("")+":"+platformInterface.telemetry.cell_temp+","+platformInterface.telemetry.cell_voltage//virtualtextarea1.collect
 
@@ -1669,7 +1709,7 @@ ColumnLayout {
                                             anchors.left: parent.left
 
                                         Widget09.SGStatusLight {
-                                             id: sgStatusLight12
+                                             id: sgStatusLight_overcurrent
                                              anchors.centerIn: parent
                                              status: "black"           // Default: "off" (other options: "green", "yellow", "orange", "red")
                                              label: "" // Default: "" (if not entered, label will not appear)
@@ -1746,7 +1786,7 @@ ColumnLayout {
                                             anchors.left: parent.left
 
                                         Widget09.SGStatusLight {
-                                             id: sgStatusLight14
+                                             id: sgStatusLight_overvoltage
                                              anchors.centerIn: parent
                                              status: "off"           // Default: "off" (other options: "green", "yellow", "orange", "red")
                                              label: "" // Default: "" (if not entered, label will not appear)
@@ -1780,7 +1820,7 @@ ColumnLayout {
                                             anchors.left: parent.left
 
                                         Widget09.SGStatusLight {
-                                             id: sgStatusLight15
+                                             id: sgStatusLight_overtemp
                                              anchors.centerIn: parent
                                              status: "off"           // Default: "off" (other options: "green", "yellow", "orange", "red")
                                              label: "" // Default: "" (if not entered, label will not appear)
@@ -2001,7 +2041,7 @@ ColumnLayout {
                                     Widget09.SGSwitch{
                                         id: logSwitch
                                         switchWidth: 105
-                                        switchHeight: 44
+                                        switchHeight: 46
                                         checkedLabel: "<b>Start</b>"       // Default: "" (if not entered, label will not appear)
                                         uncheckedLabel: "<b>Stop</b>"    // Default: "" (if not entered, label will not appear)
                                         anchors.horizontalCenter: parent.horizontalCenter
