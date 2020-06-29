@@ -193,7 +193,11 @@ if(APPLE)
                 endif()
                 set(SSL_LIB_PATH_MACOS "${HOMEBREW_PREFIX}/opt/openssl@1.1/lib" CACHE STRING "Directory containing OpenSSL libraries" FORCE)
             endif()
+        else()
+            message(FATAL_ERROR "'brew' must be installed to continue installation.")
+
         endif()
+
     endif()
 endif()
 
