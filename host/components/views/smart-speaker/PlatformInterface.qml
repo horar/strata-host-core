@@ -88,16 +88,74 @@ Item {
 //    }
 
     property var audio_power:{
-        "input_voltage":"16.01",
-        "analog_audio_current":"0.5",
-        "digital_audio_current":"0.5",
-         "audio_voltage":"11.95",
-         "board_temperature":"34.0"
-
+        "audio_current":0.5,
+         "audio_voltage":11.95,
+         "audio_power":5,
     }
 
-    onAudio_powerChanged: {
-        console.log("voltage=",audio_power.input_voltage,"analog current=",audio_power.analog_audio_current,"audio voltage=",audio_power.audio_voltage)
+
+
+    property var battery_status:{
+        "ambient_temp":25,       /* degrees C */
+        "battery_temp":35,         /* degrees C */
+        "state_of_health":100,     /* 0-100 */
+        "time_to_empty":150,     /* minutes, does not show a real value until 10% change has occurred */
+        "time_to_full":20,            /* minutes */
+        "rsoc":75,                       /* percent */
+        "total_run_time":350,     /* minutes */
+        "no_battery_indicator":true,      /* or false*/
+        "battery_voltage":4.2,
+        "battery_current":1.2,      /* can be positive or negative; negative means charging */
+        "battery_power": 3.8
+    }
+
+    property var charger_status:{
+        "float_voltage":4.2,           /* has a range of voltages, but this is only one used*/
+        "charge_mode":"fast",           /* ‘pre’ or ‘top off' or 'sleep’ or 'discharge'*/
+        "precharge_current":100,        /* (mA) 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800 /
+        "termination_current":100,      /* (mA) 100 - 200 in 25mA increments, 200 - 600 in 50mA increments */
+        "ibus_limit":50,                 /* (mA) 100-3000 in 25mA increments */
+        "fast_chg_current":200,         /* (mA) 200-3200 in 50 mA increments */
+        "vbus_ovp":6.5,                 /*  (V) or 10.5 or 13.7*/
+        "audio_power_mode":"vbus"       /*or battery*/
+    }
+
+    property var bus_current_limit:{
+        "type":"bus_current_limit",     //or fast_current_limit,precharge_current_limit, termination_current_limit
+        "current":50
+    }
+
+    property var led_state:{
+        "lower_on":true,
+        "upper_on":true,
+        "r":128,                                  /* red intensity for lower LEDs, ignore for upper LEDs */
+        "g":128,                                 /* green intensity for lower LEDs, ignore for upper LEDs */
+        "b":128,                                 /* blue intensity  for lower LEDs, ignore for upper LEDs */
+    }
+
+    property var audio_amp_id:{
+        "dev_id":32,
+        "ver_id":6,
+    }
+
+    property var audio_amp_voltage:{
+        "volts":12,
+    }
+
+    property var touch_button_state:{
+        "state":true
+    }
+
+    property var thermal_protection_temp:{
+        "value":70               //or 85, 100, 120
+    }
+
+    property var vbus_ovp_level:{
+        "value":6.5
+    }
+
+    property var fet_bypass:{
+        "state":true,
     }
 
     // --------------------------------------------------------------------------------------------
@@ -127,15 +185,13 @@ Item {
                  "cmd":"set_volume",
                  "payload":{
                      "master": 0,     // where value is mute =-42, -41, …, 0, 1, 2, …, 41, 42 // dB
-                     "sub": 4       // where value is 0 (mute), 16, 21, 23, 26 // dB
                       },
-                  update: function(inMaster, inSub){
-                      this.set(inMaster, inSub);
+                  update: function(inMaster){
+                      this.set(inMaster);
                       CorePlatformInterface.send(this)
                   },
-                  set:function(inMaster, inSub){
+                  set:function(inMaster){
                       this.payload.master = inMaster;
-                      this.payload.sub = inSub;
                   },
                   send: function(){
                       CorePlatformInterface.send(this);
@@ -300,6 +356,150 @@ Item {
                    CorePlatformInterface.send(this)
                   }
      })
+
+    property var set_charger_current:({
+                 "cmd":"set_charger_current",
+                 "payload":{
+                    "type":"set_vbus_current_limit",       // or set_fast_current_limit, set_precharge_current_limit set_termination_current_limit
+                    "current":50
+                    },
+                 update: function(type,current){
+                   this.set(type,current)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inType, inCurrent){
+                   this.payload.type = inType;
+                   this.payload.current = inCurrent;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var set_led_state:({
+                 "cmd":"set_led_state",
+                 "payload":{
+                    "set":"lower",                        // or 'upper'
+                    "state":"on",
+                    "r":128,
+                    "g":128,
+                    "b":128
+                    },
+                 update: function(set,state,r,g,b){
+                   this.set(set,state,r,g,b)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inSet, inState, inR, inG, inB){
+                   this.payload.set = inSet;
+                     this.payload.state = inState;
+                     this.payload.r = inR;
+                     this.payload.g = inG;
+                     this.payload.b = inB;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var get_audio_amp_id:({
+                 "cmd":"get_audio_amp_id",
+                 "payload":{},
+                 update: function(){
+                   this.set()
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(){
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var set_audio_amp_voltage:({
+                 "cmd":"set_audio_amp_voltage",
+                 "payload":{
+                  "volts":12
+                  },
+                 update: function(volts){
+                   this.set(volts)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inVolts){
+                     this.payload.volts = inVolts;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var set_touch_button_state:({
+                 "cmd":"set_touch_button_state",
+                 "payload":{
+                  "state":"on"
+                  },
+                 update: function(state){
+                   this.set(state)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inState){
+                     this.payload.state = inState;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var set_thermal_protection_temp:({
+                 "cmd":"set_touch_button_state",
+                 "payload":{
+                  "value":70            //or ‘85, 100, 120
+                  },
+                 update: function(value){
+                   this.set(value)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inValue){
+                     this.payload.value = inValue;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var set_vbus_ovp_level:({
+                 "cmd":"set_vbus_ovp_level",
+                 "payload":{
+                    "value":6.5
+                  },
+                 update: function(value){
+                   this.set(value)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inValue){
+                     this.payload.value = inValue;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
+    property var set_fet_bypass:({
+                 "cmd":"set_fet_bypass",
+                 "payload":{
+                    "state":true
+                  },
+                 update: function(state){
+                   this.set(state)
+                   CorePlatformInterface.send(this)
+                 },
+                 set: function(inState){
+                     this.payload.state = inState;
+                  },
+                 send: function(){
+                   CorePlatformInterface.send(this)
+                  }
+     })
+
 
     // -------------------  end commands
 

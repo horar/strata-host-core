@@ -1,15 +1,13 @@
-#ifndef STRATA_EVENTS_MGR_WIN_TIMER_EVENT_H__
-#define STRATA_EVENTS_MGR_WIN_TIMER_EVENT_H__
-
-#if defined(_WIN32)
+#pragma once
 
 #include <functional>
 #include <windows.h>
 #include <mutex>
 
-#include "EvEventBase.h"
+#include "EventsMgr/EvEventBase.h"
 
-namespace spyglass {
+
+namespace strata::events_mgr {
 
 class EvTimerEvent : public EvEventBase
 {
@@ -53,7 +51,3 @@ private:
 };
 
 }; //namespace
-
-#endif //_WIN32
-
-#endif //STRATA_EVENTS_MGR_WIN_TIMER_EVENT_H__

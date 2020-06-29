@@ -1,9 +1,9 @@
 
-#include "EvEventBase.h"
+#include "EventsMgr/EvEventBase.h"
 
 #include <assert.h>
 
-namespace spyglass {
+namespace strata::events_mgr {
 
 EvEventBase::EvEventBase(EvType type) : type_(type)
 {

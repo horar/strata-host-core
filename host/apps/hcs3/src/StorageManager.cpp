@@ -352,6 +352,12 @@ void StorageManager::requestPlatformDocuments(
     settings.keepOriginalName = true;
     settings.notifyGroupDownloadProgress = true;
 
+    if (downloadList.isEmpty()) {
+        qCInfo(logCategoryHcsStorage()) << "No documents to be downloaded";
+        handlePlatformDocumentsResponse(request, QString());
+        return;
+    }
+
     request->groupId = downloadManager_->download(downloadList, settings);
 
     downloadRequests_.insert(request->groupId, request);
