@@ -26,7 +26,7 @@ StackLayout {
     property bool controlLoaded: false
 
     onConnectedChanged: {
-        if (connected) {
+        if (connected && model.available.control) {
             loadControl()
         } else {
             removeControl()
@@ -34,7 +34,7 @@ StackLayout {
     }
 
     Component.onCompleted: {
-        if (model.connected) {
+        if (model.connected && model.available.control) {
             loadControl()  // load control and docs
         } else {
             documentManager.loadPlatformDocuments(model.class_id)

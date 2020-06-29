@@ -609,17 +609,6 @@ FocusScope {
     }
 
     Component {
-        id: fileDialogComponent
-        FileDialog {
-            title: "Select File"
-            //"file:" scheme has length of 5
-            folder: folderRequested.length > 5 ? folderRequested : shortcuts.documents
-
-            property string folderRequested
-        }
-    }
-
-    Component {
         id: programDeviceComponent
 
         ProgramDeviceView {

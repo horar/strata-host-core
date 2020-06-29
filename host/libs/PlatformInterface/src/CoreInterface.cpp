@@ -11,8 +11,8 @@
 
 #include "LoggingQtCategories.h"
 
-using namespace std;
-using namespace Spyglass;
+using std::string;
+using strata::hcc::HostControllerClient;
 
 const char* HOST_CONTROLLER_SERVICE_IN_ADDRESS = "tcp://127.0.0.1:5563";
 
@@ -32,16 +32,16 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
     //
     // from platform TODO [ian] make namespaced platform::notification
     registerNotificationHandler("notification",
-                                bind(&CoreInterface::platformNotificationHandler,
-                                     this, placeholders::_1));
+                                std::bind(&CoreInterface::platformNotificationHandler,
+                                     this, std::placeholders::_1));
 
     registerNotificationHandler("hcs::notification",
-                                bind(&CoreInterface::hcsNotificationHandler,
-                                     this, placeholders::_1));
+                                std::bind(&CoreInterface::hcsNotificationHandler,
+                                     this, std::placeholders::_1));
 
     registerNotificationHandler("cloud::notification",
-                                bind(&CoreInterface::cloudNotificationHandler,
-                                     this, placeholders::_1));
+                                std::bind(&CoreInterface::cloudNotificationHandler,
+                                     this, std::placeholders::_1));
 
     notification_thread_running_ = false;
     notification_thread_= std::thread(&CoreInterface::notificationsThread,this);
@@ -267,7 +267,7 @@ void CoreInterface::disconnectPlatform()
 void CoreInterface::unregisterClient()
 {
     QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("cmd", "unregister");
+    cmdMessageObject.insert("hcs::cmd", "unregister");
     cmdMessageObject.insert("payload", QJsonObject());
 
     QJsonDocument doc(cmdMessageObject);

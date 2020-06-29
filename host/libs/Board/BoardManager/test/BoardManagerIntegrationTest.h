@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QObject>
-#include "DeviceMock.h"
 #include "QtTest.h"
 
 class BoardManagerIntegrationTest : public QObject

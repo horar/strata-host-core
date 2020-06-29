@@ -40,7 +40,8 @@ Item {
         sourceModel: PlatformSelection.platformListModel
         sortEnabled: true
         invokeCustomFilter: true
-        sortRole: "connection"
+        sortRole: "connected"
+        sortAscending: false
 
         property bool filteringCategory: false
         property bool filteringText: false
@@ -49,7 +50,7 @@ Item {
         // Custom filtering functions
         function filterAcceptsRow(row) {
             var item = sourceModel.get(row)
-            return in_category(item) && contains_text(item) && in_segment(item)
+            return in_category(item) && contains_text(item) && in_segment(item) && is_visible(item)
         }
 
         function in_category(item) {
@@ -87,6 +88,14 @@ Item {
                         return true
                     }
                 }
+                return false
+            } else {
+                return true
+            }
+        }
+
+        function is_visible(item) {
+            if (item.available.unlisted){
                 return false
             } else {
                 return true

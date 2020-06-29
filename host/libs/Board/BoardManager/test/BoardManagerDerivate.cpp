@@ -83,11 +83,6 @@ void BoardManagerDerivate::checkNewSerialDevices()
     // empty, disable the BoardManager functionality working with serial ports
 }
 
-void BoardManagerDerivate::handleNewMessage(QString message)
-{
-    BoardManager::handleNewMessage(message);
-}
-
 void BoardManagerDerivate::handleOperationFinished(strata::device::DeviceOperation operation,
                                                    int data)
 {

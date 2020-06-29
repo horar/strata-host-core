@@ -20,11 +20,13 @@ Rectangle {
     property string name: model.name
     property string class_id: model.class_id
     property bool connected: model.connected
+    property var available: model.available
     property int index: model.index
     property bool inView: true
     property string selectedButtonIcon: ""
 
     Component.onCompleted: {
+        populateButtons()
         setControlIcon()
         setSelectedButton()
     }
@@ -55,6 +57,37 @@ Rectangle {
     function bringIntoView() {
         let data = {"index": platformTabRoot.index + 1} // Offset by 1 since index 0 is always platform selector view
         NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
+    }
+
+    function populateButtons() {
+        let buttonData
+        if (available.control) {
+            buttonData = {
+                "text": "Control",
+                "view": "control",
+                "icon": "",
+                "selected": false
+            }
+            buttonModel.append(buttonData)
+        }
+
+        if (available.documents) {
+            buttonData = {
+                "text": "Documents",
+                "view": "collateral",
+                "icon": "qrc:/images/icons/file.svg",
+                "selected": false
+            }
+            buttonModel.append(buttonData)
+        }
+
+        buttonData = {
+            "text": "Close Platform",
+            "view": "close",
+            "icon": "qrc:/images/icons/times.svg",
+            "selected": false
+        }
+        buttonModel.append(buttonData)
     }
 
     function setControlIcon () {
@@ -148,31 +181,12 @@ Rectangle {
             ColumnLayout {
                 id: menuColumn
                 spacing: 1
+                width: parent.width
                 y: 1
 
                 Repeater {
                     model: ListModel {
                         id: buttonModel
-                        ListElement {
-                            text: "Control"
-                            view: "control"
-                            icon: ""
-                            selected: false
-                        }
-
-                        ListElement {
-                            text: "Content"
-                            view: "collateral"
-                            icon: "qrc:/images/icons/file.svg"
-                            selected: false
-                        }
-
-                        ListElement {
-                            text: "Close Platform"
-                            view: "close"
-                            icon: "qrc:/images/icons/times.svg"
-                            selected: false
-                        }
                     }
 
                     delegate: SGToolButton { }

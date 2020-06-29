@@ -275,7 +275,7 @@ function updateState(event, data)
                 console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform connected, class_id:", data.class_id)
                 // Don't connect if a platform view already open (only one allowed at this time)
                 if (platform_view_model_.count === 0) {
-                    platform_view_model_.append({"class_id":data.class_id, "view":"control", "connected":true, "name":data.name})
+                    platform_view_model_.append({"class_id":data.class_id, "view":"control", "connected":true, "name":data.name, "available":data.available})
                     stack_container_.currentIndex = platform_view_model_.count
                 } else {
                     if (platform_view_model_.get(0).class_id === data.class_id) {
@@ -309,7 +309,7 @@ function updateState(event, data)
             case events.VIEW_COLLATERAL_EVENT:
                 // Collateral mode disables control view
                 console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Entering collateral viewing mode for ", data.class_id)
-                platform_view_model_.append({"class_id":data.class_id, "view":"collateral", "connected":false, "name":data.name})
+                platform_view_model_.append({"class_id":data.class_id, "view":"collateral", "connected":false, "name":data.name, "available":data.available})
                 stack_container_.currentIndex = platform_view_model_.count // focus on new view in stack_container_ (offset by 1 due to platform selector occupying index 0)
                 break;
 

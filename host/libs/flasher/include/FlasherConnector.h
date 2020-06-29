@@ -95,7 +95,7 @@ signals:
     void finished(Result result);
 
     /*!
-     * This signal is emitted during firmware flashing.
+     * This signal is emitted during flashing new firmware.
      * \param chunk number of firmware chunks which was flashed
      * \param total total count of firmware chunks
      */
@@ -106,6 +106,13 @@ signals:
      * \param chunk chunk number which was backed up
      */
     void backupProgress(int chunk);
+
+    /*!
+     * This signal is emitted during flashing backed up firmware.
+     * \param chunk number of firmware chunks which was flashed
+     * \param total total count of firmware chunks
+     */
+    void restoreProgress(int chunk, int total);
 
     /*!
      * This signal is emitted when state of FlasherConnector is changed.
