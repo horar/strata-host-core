@@ -1,3 +1,8 @@
+#!/usr/bin/env sh
+
+# Starts the Couchbase and a simple file server
+# Adds documents to the Couchbase
+
 res="1"
 while test "$res" != "0";
 do

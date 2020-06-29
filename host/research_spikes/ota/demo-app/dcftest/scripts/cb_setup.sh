@@ -1,3 +1,7 @@
+#!/usr/bin/env sh
+
+# Sets parameters for the Couchbase server.
+
 echo Initialize Node
 curl -w "%{http_code}\n" -X POST http://127.0.0.1:8091/nodes/self/controller/settings -d 'path=%2Fopt%2Fcouchbase%2Fvar%2Flib%2Fcouchbase%2Fdata&index_path=%2Fopt%2Fcouchbase%2Fvar%2Flib%2Fcouchbase%2Fdata&java_home='
 

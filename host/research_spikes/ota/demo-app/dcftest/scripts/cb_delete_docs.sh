@@ -1,3 +1,7 @@
+#!/usr/bin/env sh
+
+# Deletes all docs from the Couchbase server.
+
 files=./documents/*.json
 
 for file in $files

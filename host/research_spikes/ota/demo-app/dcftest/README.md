@@ -13,9 +13,14 @@ Before startup, update CB documents in ```./documents/``` and hosted files in ``
 ```
 It takes some time for CB to start, the script is retrying connections.
 
-Shut down:
+Shut down and clean:
 ```
     ./clean.sh
+```
+
+Shut down without clean:
+```
+    ./scripts/down.sh
 ```
 
 To inspect the log files:
@@ -26,23 +31,16 @@ To inspect the log files:
 Connecting Strata:
 
 0. stop HCS
-1. change HCS config to contain:
-```
-    "database":{
-        "file_server":"http://localhost:8000",
-        "gateway_sync":"ws://localhost:4984/strata"
-    }
-```
-2. build HCS
-3. run ```host/build/bin/hcs -c``` to clear CB cache
-4. set up ```./documents/``` and ```./files/``` as needed
-5. run ```./start.sh``` and wait for CB to start
-6. run HCS
+1. run ```host/build/bin/hcs -c``` to clear CB cache
+2. set up ```./documents/``` and ```./files/``` as needed
+3. run ```./start.sh``` and wait for CB to start
+4. run HCS with configuration in ```./conf/hcs_local_cloud.config```, i.e. ```<BUILD_DIR>/bin/hcs -f <PATH_TO_CONFIG>/hcs_local.config```
+5. (alternative to previous step) compile Strata with the configuration in ./conf/hcs_local_cloud.config
 
 CB server is running at:
 
 - http://localhost:8091
-- un:pass is sync_gateway:sync_gateway
+- Couchbase credentials (username:password) are sync_gateway:sync_gateway
 
 Sync gateway is running at:
 
