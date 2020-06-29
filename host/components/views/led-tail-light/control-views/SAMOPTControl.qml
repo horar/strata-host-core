@@ -863,7 +863,7 @@ Item {
                                              platformInterface.soc_sam_conf_2_out12
                                             ],
                                             samOpenLoadDiagnostic.currentText,
-                                            platformInterface.soc_otpValue,
+                                            platformInterface.soc_crcValue,
                                             platformInterface.addr_curr_apply)
 
                             }

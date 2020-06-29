@@ -988,7 +988,7 @@ Item {
         "caption":"Reference Voltage (VCC)",
         "scales":[],
         "states":[1],
-        "value":0,
+        "value":0.00,
         "values":[]
     }
 
@@ -1001,8 +1001,10 @@ Item {
     }
 
     property var power_vcc_value: {
-        "value": 0
-    }
+        "value": 0.00
+    }   
+    property real power_vcc_Holder: power_vcc_value.value
+
 
     property var power_led_driver_temp_top: {
         "caption":"LED Driver Temp Top (°C)",

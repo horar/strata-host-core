@@ -921,12 +921,12 @@ Item {
                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 }
 
-                                property var led_part_number_value: platformInterface.led_part_number
-                                onLed_part_number_valueChanged: {
-                                    partNumberLabel.text = led_part_number_value.caption
-                                    setStatesForControls(partNumber,led_part_number_value.states[0])
+                                property var led_part_number: platformInterface.led_part_number
+                                onLed_part_numberChanged: {
+                                    partNumberLabel.text = led_part_number.caption
+                                    setStatesForControls(partNumber,led_part_number.states[0])
 
-                                    partNumber.text = led_part_number_value.value
+                                    partNumber.text = led_part_number.value
                                 }
 
                                 property var led_part_number_caption: platformInterface.led_part_number_caption.caption

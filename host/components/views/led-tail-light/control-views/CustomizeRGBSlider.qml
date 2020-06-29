@@ -9,6 +9,7 @@ Slider {
     height: 28
     width: 300
     live: false
+    stepSize: 1
     property var rgbArray: hToRgb(value)
     property string color: "yellow"
     property int color_value: 0
@@ -16,7 +17,9 @@ Slider {
     property real slider_start_color2 : 1
     signal userSet(real value)
     signal moved()
-    onUserSet: console.log("user set:", value)
+    onUserSet: {
+        console.log("user set:", value)
+    }
     function increase () {
         increase()
     }
@@ -28,23 +31,27 @@ Slider {
     }
     property real lastValue
     onPressedChanged: {
-        if (!live && !pressed) {
-            if (value !== lastValue){
-                userSet(value)
-            }
+        if (!live && !pressed && value.toFixed(0) != lastValue) {
+            userSet(value.toFixed(0))
         } else {
-            lastValue = value
+            lastValue = value.toFixed(0)
         }
+
     }
     onMoved: {
         if (live && value !== lastValue){
             // QML Slider press/release while live results in onMoved calls (despite no movement and no value change)
             // this check filters out those calls and ensure userSet() only called when value changes
-            userSet(value)
-            lastValue = value
+            userSet(value.toFixed(0))
+            lastValue = value.toFixed(0)
         }
         root.moved()
+        console.log("in onmoved",value.toFixed(0))
+
     }
+
+
+
     background: Rectangle {
         y: 4
         x: 5
@@ -60,6 +67,7 @@ Slider {
                 GradientStop { position: 1.0; color: Qt.hsva(0.0,1,0,1) }
             }
         }
+
     }
     // Dumbed down version of hsvToRgb function to match simpler RGB gradient slider
     function hToRgb(h){

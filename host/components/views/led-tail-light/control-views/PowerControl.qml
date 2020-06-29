@@ -108,18 +108,7 @@ property real initialAspectRatio: 1400/900
                                     onPower_vled_typeChanged: {
                                         vedInputVoltageTypeLabel.text = power_vled_type.caption
                                         setStatesForControls(vedInputVoltageType,power_vled_type.states[0])
-                                        //                                        if(power_vled_type.state === "enabled") {
-                                        //                                            vedInputVoltageType.opacity = 1.0
-                                        //                                            vedInputVoltageType.enabled = true
-                                        //                                        }
-                                        //                                        else if (power_vled_type.state === "disabled") {
-                                        //                                            vedInputVoltageType.opacity = 1.0
-                                        //                                            vedInputVoltageType.enabled = false
-                                        //                                        }
-                                        //                                        else  {
-                                        //                                            vedInputVoltageType.opacity = 0.5
-                                        //                                            vedInputVoltageType.enabled = false
-                                        //                                        }
+
 
                                         vedInputVoltageType.model = power_vled_type.values
 
@@ -244,14 +233,12 @@ property real initialAspectRatio: 1400/900
                         property var power_voltage_set: platformInterface.power_voltage_set
                         onPower_voltage_setChanged: {
                             voltageSetLabel.text = power_voltage_set.caption
-
                             voltageSet.to = power_voltage_set.scales[0]
                             voltageSet.from =  power_voltage_set.scales[1]
                             voltageSet.toText.text = power_voltage_set.scales[0] + "V"
                             voltageSet.fromText.text = power_voltage_set.scales[1] + "V"
                             voltageSet.stepSize = power_voltage_set.scales[2]
                             setStatesForControls(voltageSet,power_voltage_set.states[0])
-
                             voltageSet.value =  power_voltage_set.value
 
                         }
@@ -829,24 +816,14 @@ property real initialAspectRatio: 1400/900
                                             unit: "<b>V</b>"
                                             // text: "500"
                                             boxFont.family: Fonts.digitalseven
+
+
                                         }
 
                                         property var power_vcc: platformInterface.power_vcc
                                         onPower_vccChanged: {
                                             voltageLabel.text = power_vcc.caption
                                             setStatesForControls(voltage,power_vcc.states[0])
-//                                            if(power_vcc.state === "enabled") {
-//                                                voltage.opacity = 1.0
-//                                                voltage.enabled = true
-//                                            }
-//                                            else if (power_vcc.state === "disabled") {
-//                                                voltage.opacity = 1.0
-//                                                voltage.enabled = false
-//                                            }
-//                                            else  {
-//                                                voltage.opacity = 0.5
-//                                                voltage.enabled = false
-//                                            }
                                             voltage.text = power_vcc.value
 
                                         }
@@ -861,9 +838,10 @@ property real initialAspectRatio: 1400/900
                                             setStatesForControls(voltage,power_vcc_state[0])
                                         }
 
-                                        property var power_vcc_value: platformInterface.power_vcc_value.value
+                                        property var power_vcc_value: platformInterface.power_vcc_Holder //platformInterface.power_vcc_value.value
                                         onPower_vcc_valueChanged:{
                                             voltage.text = power_vcc_value
+                                            console.log("tanya", voltage.text, power_vcc_value, platformInterface.power_vcc_Holder)
                                         }
                                     }
                                 }
