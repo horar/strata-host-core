@@ -349,15 +349,11 @@ Item {
                         property var power_vs_select_value: platformInterface.power_vs_select_value.value
                         onPower_vs_select_valueChanged: {
                             var valuesOfswitch =  platformInterface.power_vs_select_values.values
-
                             console.log(valuesOfswitch,power_vs_select_value)
                             if(power_vs_select_value === valuesOfswitch[0])
                                 vsVoltageSelect.checked = true
                             else  vsVoltageSelect.checked = false
                         }
-
-
-
                     }
                 }
             }
@@ -403,16 +399,11 @@ Item {
                 Rectangle {
                     Layout.preferredHeight: parent.height/2
                     Layout.fillWidth: true
-                    //color: "red"
-
-
                     ColumnLayout {
                         anchors.fill: parent
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            // color: "gray"
-
                             RowLayout {
                                 anchors.fill: parent
                                 Rectangle {
@@ -420,7 +411,6 @@ Item {
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
                                         id: vLEDLabel
-                                        //text: "LED Voltage\n(VLED)"
                                         target: vLED
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors {
@@ -431,13 +421,12 @@ Item {
                                         }
                                         fontSizeMultiplier: ratioCalc * 1.2
                                         font.bold : true
+
                                         SGInfoBox {
                                             id: vLED
                                             height:  35 * ratioCalc
                                             width: 140 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                            // unit: "<b>V</b>"
-                                            // text: "12.5"
                                             boxFont.family: Fonts.digitalseven
                                         }
 
@@ -445,24 +434,8 @@ Item {
                                         onPower_vledChanged: {
                                             vLEDLabel.text = power_vled.caption
                                             setStatesForControls(vLED,power_vled.states[0])
-
-                                            //                                            if(power_vled_state === "enabled") {
-                                            //                                                vLED.opacity = 1.0
-                                            //                                                vLED.enabled = true
-                                            //                                            }
-                                            //                                            else if (power_vled.state === "disabled") {
-                                            //                                                vLED.opacity = 1.0
-                                            //                                                vLED.enabled = false
-                                            //                                            }
-                                            //                                            else  {
-                                            //                                                vLED.opacity = 0.5
-                                            //                                                vLED.enabled = false
-                                            //                                            }
-
-                                            vLED.text = power_vled.value
+                                            vLED.text = (power_vled.value).toFixed(2)
                                             vLED.unit = "<b>V</b>"
-
-
                                         }
 
                                         property var power_vled_caption: platformInterface.power_vled_caption.caption
@@ -477,13 +450,9 @@ Item {
 
                                         property var power_vled_value: platformInterface.power_vled_value.value
                                         onPower_vled_valueChanged:{
-                                            vLED.text = power_vled_value
+                                            vLED.text = power_vled_value.toFixed(2)
                                             vLED.unit = "<b>V</b>"
                                         }
-
-
-
-
                                     }
                                 }
                                 Rectangle {
@@ -491,7 +460,6 @@ Item {
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
                                         id: supplyVoltageLabel
-                                        //text: "Supply Voltage\n(VS)"
                                         target: supplyVoltage
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors {
@@ -502,13 +470,13 @@ Item {
                                         }
                                         fontSizeMultiplier: ratioCalc * 1.2
                                         font.bold : true
+
                                         SGInfoBox {
                                             id: supplyVoltage
                                             height:  35 * ratioCalc
                                             width: 140 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                             unit: "<b>V</b>"
-                                            // text: "5"
                                             boxFont.family: Fonts.digitalseven
                                         }
 
@@ -516,22 +484,7 @@ Item {
                                         onPower_vsChanged: {
                                             supplyVoltageLabel.text = power_vs.caption
                                             setStatesForControls(supplyVoltage,power_vs.states[0])
-
-                                            //                                            if(power_vs.state === "enabled") {
-                                            //                                                supplyVoltage.opacity = 1.0
-                                            //                                                supplyVoltage.enabled = true
-                                            //                                            }
-                                            //                                            else if (power_vs.state === "disabled") {
-                                            //                                                supplyVoltage.opacity = 1.0
-                                            //                                                supplyVoltage.enabled = false
-                                            //                                            }
-                                            //                                            else  {
-                                            //                                                supplyVoltage.opacity = 0.5
-                                            //                                                supplyVoltage.enabled = false
-                                            //                                            }
-
                                             supplyVoltage.text = power_vs.value
-
                                         }
 
                                         property var power_vs_caption: platformInterface.power_vs_caption.caption
@@ -546,7 +499,7 @@ Item {
 
                                         property var power_vs_value: platformInterface.power_vs_value.value
                                         onPower_vs_valueChanged:{
-                                            supplyVoltage.text = power_vs_value
+                                            supplyVoltage.text = power_vs_value.toFixed(2)
                                         }
                                     }
                                 }
@@ -556,7 +509,6 @@ Item {
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
                                         id: digitalVoltageLabel
-                                        //text: "Digital Voltage\n(VDD)"
                                         target: digitalVoltage
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors {
@@ -582,21 +534,7 @@ Item {
                                         onPower_vddChanged: {
                                             digitalVoltageLabel.text = power_vdd.caption
                                             setStatesForControls(digitalVoltage,power_vdd.states[0])
-
-                                            //                                            if(power_vdd.state === "enabled") {
-                                            //                                                digitalVoltage.opacity = 1.0
-                                            //                                                digitalVoltage.enabled = true
-                                            //                                            }
-                                            //                                            else if (power_vdd.state === "disabled") {
-                                            //                                                digitalVoltage.opacity = 1.0
-                                            //                                                digitalVoltage.enabled = false
-                                            //                                            }
-                                            //                                            else  {
-                                            //                                                digitalVoltage.opacity = 0.5
-                                            //                                                digitalVoltage.enabled = false
-                                            //                                            }
-
-                                            digitalVoltage.text = power_vdd.value
+                                            digitalVoltage.text = (power_vdd.value).toFixed(2)
 
                                         }
 
@@ -612,7 +550,7 @@ Item {
 
                                         property var power_vdd_value: platformInterface.power_vdd_value.value
                                         onPower_vdd_valueChanged:{
-                                            digitalVoltage.text = power_vdd_value
+                                            digitalVoltage.text = power_vdd_value.toFixed(2)
                                         }
                                     }
                                 }
@@ -621,7 +559,6 @@ Item {
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
                                         id: batteryVoltageLabel
-                                        // text: "Battery Voltage\n(VBAT)"
                                         target: batteryVoltage
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors {
@@ -646,19 +583,7 @@ Item {
                                         onPower_vconnChanged: {
                                             batteryVoltageLabel.text = power_vconn.caption
                                             setStatesForControls(batteryVoltage,power_vconn.states[0])
-                                            //                                            if(power_vconn.state === "enabled") {
-                                            //                                                batteryVoltage.opacity = 1.0
-                                            //                                                batteryVoltage.enabled = true
-                                            //                                            }
-                                            //                                            else if (power_vconn.state === "disabled") {
-                                            //                                                batteryVoltage.opacity = 1.0
-                                            //                                                batteryVoltage.enabled = false
-                                            //                                            }
-                                            //                                            else  {
-                                            //                                                batteryVoltage.opacity = 0.5
-                                            //                                                batteryVoltage.enabled = false
-                                            //                                            }
-                                            batteryVoltage.text = power_vconn.value
+                                            batteryVoltage.text = (power_vconn.value).toFixed(2)
                                         }
 
                                         property var power_vconn_caption: platformInterface.power_vconn_caption.caption
@@ -673,7 +598,7 @@ Item {
 
                                         property var power_vconn_value: platformInterface.power_vconn_value.value
                                         onPower_vconn_valueChanged:{
-                                            batteryVoltage.text = power_vconn_value
+                                            batteryVoltage.text = power_vconn_value.toFixed(2)
                                         }
 
 
@@ -713,19 +638,7 @@ Item {
                                         onPower_iledChanged: {
                                             ledCurrentLabel.text = power_iled.caption
                                             setStatesForControls(ledCurrent,power_iled.states[0])
-                                            //                                            if(power_iled.state === "enabled") {
-                                            //                                                ledCurrent.opacity = 1.0
-                                            //                                                ledCurrent.enabled = true
-                                            //                                            }
-                                            //                                            else if (power_iled.state === "disabled") {
-                                            //                                                ledCurrent.opacity = 1.0
-                                            //                                                ledCurrent.enabled = false
-                                            //                                            }
-                                            //                                            else  {
-                                            //                                                ledCurrent.opacity = 0.5
-                                            //                                                ledCurrent.enabled = false
-                                            //                                            }
-                                            ledCurrent.text = power_iled.value
+                                            ledCurrent.text = (power_iled.value).toFixed(2)
 
                                         }
 
@@ -741,7 +654,7 @@ Item {
 
                                         property var power_iled_value: platformInterface.power_iled_value.value
                                         onPower_iled_valueChanged:{
-                                            ledCurrent.text = power_iled_value
+                                            ledCurrent.text = power_iled_value.toFixed(2)
                                         }
                                     }
                                 }
@@ -770,19 +683,7 @@ Item {
                                         onPower_isChanged: {
                                             supplyCurrentLabel.text = power_is.caption
                                             setStatesForControls(supplyCurrent,power_is.states[0])
-                                            //                                            if(power_is.state === "enabled") {
-                                            //                                                supplyCurrent.opacity = 1.0
-                                            //                                                supplyCurrent.enabled = true
-                                            //                                            }
-                                            //                                            else if (power_is.state === "disabled") {
-                                            //                                                supplyCurrent.opacity = 1.0
-                                            //                                                supplyCurrent.enabled = false
-                                            //                                            }
-                                            //                                            else  {
-                                            //                                                supplyCurrent.opacity = 0.5
-                                            //                                                supplyCurrent.enabled = false
-                                            //                                            }
-                                            supplyCurrent.text = power_is.value
+                                            supplyCurrent.text = (power_is.value).toFixed(2)
 
                                         }
 
@@ -798,7 +699,7 @@ Item {
 
                                         property var power_is_value: platformInterface.power_is_value.value
                                         onPower_is_valueChanged:{
-                                            supplyCurrent.text = power_is_value
+                                            supplyCurrent.text = power_is_value.toFixed(2)
                                         }
 
                                     }
@@ -808,7 +709,6 @@ Item {
                                     Layout.fillWidth: true
                                     SGAlignedLabel {
                                         id: voltageLabel
-                                        // text: "Voltage\n(VCC)"
                                         target: voltage
                                         alignment: SGAlignedLabel.SideTopLeft
                                         anchors.centerIn: parent
@@ -830,7 +730,7 @@ Item {
                                         onPower_vccChanged: {
                                             voltageLabel.text = power_vcc.caption
                                             setStatesForControls(voltage,power_vcc.states[0])
-                                            voltage.text = power_vcc.value
+                                            voltage.text = power_vcc.value.toFixed(2)
 
                                         }
 
@@ -845,7 +745,7 @@ Item {
                                         }
                                         property var power_vcc_value: platformInterface.power_vcc_value.value
                                         onPower_vcc_valueChanged:{
-                                            voltage.text = power_vcc_value
+                                            voltage.text = power_vcc_value.toFixed(2)
                                             console.log("testing", voltage.text, power_vcc_value, platformInterface.power_vcc_value.value)
                                         }
                                     }
