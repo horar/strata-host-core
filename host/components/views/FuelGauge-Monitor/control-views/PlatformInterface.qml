@@ -11,7 +11,8 @@ Item {
     property var telemetry : {
         "cell_voltage": "",
         "cell_temp": "",
-        "temp": 23.0
+        "log_indicator": "off",
+        "onboard_indicator": 23.0
     }
 
     // Receive value 1  LEDS On/Off Controller commands in GUI send black/off or Red

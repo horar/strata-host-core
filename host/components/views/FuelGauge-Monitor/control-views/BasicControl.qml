@@ -394,6 +394,7 @@ ColumnLayout {
                                  onUserSet: {
                                      platformInterface.set_cut_off_volt.update(value)
 
+
                                  }
 
 
@@ -567,18 +568,10 @@ ColumnLayout {
                          anchors.verticalCenter: parent.verticalCenter
                          font.pixelSize: 20
                      }
+
                     TextArea{ //collect all slider and combo information
                     id:virtualtextarea//realtimelog   virtualtextarea.on_board_load
                     visible: false
-                    property var on_board_load: foo3()//set_onboard_load_en.currentText
-                    function foo3(){
-                        var disable="Disable"
-                    if(qsTr(set_onboard_load_en.currentText===" ")){
-                        return disable
-                    }
-                    else return set_onboard_load_en.currentText
-                    }
-
                     // Inturrupts for LOG writing over_temperature
                     property var over_temperature: foo8()
                     function foo8(){
@@ -625,6 +618,14 @@ ColumnLayout {
                     else
                     if(sgStatusLight1.status==="black"){return lightofff}
                     }
+                    property var on_board_load_:foo33()//set_onboard_load_en.currentText
+                    function foo33(){
+                    var disable="Disable"
+                    if((set_onboard_load_en.currentText===" ")){
+                        return disable
+                    }
+                    else return(set_onboard_load_en.currentText)
+                    }
 
                     property int realtimelog:foo1() //set_est_test_time3
                     function foo1(){
@@ -643,7 +644,8 @@ ColumnLayout {
                     text: "[SystemSpec]\n"+"AppVersion = 1.0.0\n"+"LsiName = LC709204\n"+"[BatterySpec]\n"+"Manufacturer = "+manufacturer_name.text+"\nModelName = "+modal_name.text+
                           "\nTypicalCapacity = "+set_load_current.value+"\nChargingVoltage = "+set_charge_volt.currentText+"\nDischargeCut-offVoltage = "+set_cut_off_volt.value +
                           "\n[ThermistorSpec]"+"\nBConstant = "+set_b_constant.value+"\nCapacitance = "+set_capacitance.value*1000+"\nAPT = "+set_apt.info+"\n[MeasurementCondition]"+
-                          "\nBatteryStatus = "+ sgcomboBS.currentText+"\nOn-boardLoad = "+on_board_load+
+                          "\nBatteryStatus = "+ sgcomboBS.currentText+
+                          "\nOn-boardLoad = "+ on_board_load_+
                           "\nLogInterval = "+realtimelog+
                           "\nOn-boardLoadCurrent = "+sgsliderOBLC.value+
                           "\nExternalLoadCurrent = "+sgsliderELC.value+
@@ -654,7 +656,8 @@ ColumnLayout {
                           "\nOverCurrent = "+ over_currnt+
                           "\nOver/UnderTemp = "+ over_temperature+
                           "\nDoubleEstimatedTime = "+ double_time+
-                          "\n[Data]\n"+print_dataArray.join("")+":"+platformInterface.telemetry.cell_temp+","+platformInterface.telemetry.cell_voltage//virtualtextarea1.collect
+                          "\n[Data]\n"+print_dataArray.join("")+":"+platformInterface.telemetry.cell_temp+","
+                          +platformInterface.telemetry.cell_voltage//virtualtextarea1.collect
 
                     }
                     TextArea{ //collect all slider and combo information
@@ -920,10 +923,6 @@ ColumnLayout {
                                                            platformInterface.set_onboard_load_en.update(qsTr(set_onboard_load_en.currentText))
 
                                                                }
-                                                           if(qsTr(set_onboard_load_en.currentText)===" ")
-                                                           {set_onboard_load_en.currentIndex=1
-                                                           set_onboard_load_en.currentIndex=1
-                                                           }
 
                                                            if(qsTr(set_onboard_load_en.currentText)==="Enable") {
                                                               sgsliderELC.enabled=false
@@ -1751,12 +1750,15 @@ ColumnLayout {
                                         Widget09.SGStatusLight {
                                              id: sgStatusLight13
                                              anchors.centerIn: parent
-                                             status: "off"           // Default: "off" (other options: "green", "yellow", "orange", "red")
+                                             status: "off"//platformInterface.telemetry.log_indicator///"off"           // Default: "off" (other options: "green", "yellow", "orange", "red")
                                              label: "" // Default: "" (if not entered, label will not appear)
                                              labelLeft: true        // Default: true
                                              lightSize: 30           // Default: 50
                                              textColor: "black"      // Default: "black"
-                                         }
+                                             property var log_indicator: platformInterface.telemetry.log_indicator
+                                             onLog_indicatorChanged:{
+                                                 sgStatusLight13.status=log_indicator                                                 }
+                                        }
                                     }
 
                                     Rectangle {
@@ -2064,10 +2066,10 @@ ColumnLayout {
                                           if(checked){
                                               clear=1
                                               clearGraphsData()
-                                              sgStatusLight13.status= "green"
+                                              //sgStatusLight13.status= platformInterface.telemetry.log_indicator//"green"
                                               platformInterface.set_measurement.update(condition1)
                                               sgStatusLight16.status= platformInterface.control_states.onboard_load_en//control_states.onboard_load_en
-                                              if(qsTr(set_onboard_load_en.currentText)===" "){
+                                            if((qsTr(sgcomboBS.currentText)==="Discharge") && (qsTr(set_onboard_load_en.currentText)===" ")){
                                                   set_onboard_load_en.currentIndex=1 }
 
 
@@ -2076,8 +2078,7 @@ ColumnLayout {
                                           {
                                            platformInterface.set_measurement.update(condition0)
                                            platformInterface.set_measurement.update(condition0)
-                                           sgStatusLight13.status= "off"
-                                           //pp
+                                         //  sgStatusLight13.status= platformInterface.control_states.onboard_load_en//"off"
 
 
                                           }
