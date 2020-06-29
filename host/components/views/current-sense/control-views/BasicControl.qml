@@ -10,16 +10,13 @@ Item {
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
     anchors.centerIn: parent
-
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
-
 
     MouseArea {
         id: containMouseArea
         anchors.fill: parent
         onClicked: {
-            console.log("in mouse area")
             forceActiveFocus()
         }
     }
@@ -89,9 +86,6 @@ Item {
                 enable3.enabled = true
                 enable4.enabled = true
                 enable5.enabled = true
-//                lowLoadEnable.enabled = true
-//                midCurrentEnable.enabled = true
-//                highCurrentEnable.enabled = true
             }
         }
     }
@@ -115,9 +109,6 @@ Item {
                 enable3.enabled = true
                 enable4.enabled = true
                 enable5.enabled = true
-//                lowLoadEnable.enabled = true
-//                midCurrentEnable.enabled = true
-//                highCurrentEnable.enabled = true
             }
         }
     }
@@ -157,9 +148,6 @@ Item {
                 enable3.enabled = true
                 enable4.enabled = true
                 enable5.enabled = true
-//                lowLoadEnable.enabled = true
-//                midCurrentEnable.enabled = true
-//                highCurrentEnable.enabled = true
             }
         }
     }
@@ -204,7 +192,6 @@ Item {
             maxInputCurrentContainer.opacity = 0.5
             maxInputVoltageContainer.enabled = false
             maxInputVoltageContainer.opacity = 0.5
-
         }
 
         maxInputCurrent.value = initial_status.max_input_current
@@ -212,21 +199,15 @@ Item {
 
         if(initial_status.low_load_en === "on")
             lowLoadEnable.checked = true
-
-        else
-            lowLoadEnable.checked = false
+        else lowLoadEnable.checked = false
 
         if(initial_status.mid_load_en === "on")
             midCurrentEnable.checked = true
-
-        else
-            midCurrentEnable.checked = false
+        else midCurrentEnable.checked = false
 
         if(initial_status.high_load_en === "on")
             highCurrentEnable.checked = true
-
-        else
-            highCurrentEnable.checked = false
+        else highCurrentEnable.checked = false
 
         if(initial_status.active_discharge === "on")
             activeDischarge.checked = true
@@ -244,7 +225,6 @@ Item {
                 highCurrentEnable.enabled = true
             }
         }
-
     }
 
     property var ad_status: platformInterface.ad_status.status
@@ -252,7 +232,7 @@ Item {
         if(ad_status === "on"){
             activeDischarge.checked = true
         }
-        else  activeDischarge.checked = false
+        else activeDischarge.checked = false
     }
 
     property var reset_status: platformInterface.reset_status
@@ -273,16 +253,15 @@ Item {
         }
 
         if(reset_status.switch_load_state === "on"){
-             lowLoadEnable.checked = true
-             midCurrentEnable.checked = true
-             midCurrentEnable.checked = true
+            lowLoadEnable.checked = true
+            midCurrentEnable.checked = true
+            midCurrentEnable.checked = true
         }
         else {
             lowLoadEnable.checked = false
             midCurrentEnable.checked = false
             midCurrentEnable.checked = false
         }
-
 
         if (reset_status.load_fault === "on")
             loadFault.status = SGStatusLight.Red
@@ -319,11 +298,7 @@ Item {
                 highCurrentEnable.enabled = true
             }
         }
-
-
-
     }
-
 
     property  var switch_enable_status_en_210: platformInterface.switch_enable_status.en_210
     onSwitch_enable_status_en_210Changed: {
@@ -410,11 +385,7 @@ Item {
     }
 
 
-
-
-
     ColumnLayout {
-        // id: root
         anchors.fill: parent
         spacing: 5
 
@@ -426,9 +397,6 @@ Item {
             setting4Reading.text = periodic_status.ADC_211
             setting5Reading.text = periodic_status.ADC_333
             vinReading.text = periodic_status.ADC_VIN
-
-
-
         }
 
         property var led_status: platformInterface.led_status
@@ -453,7 +421,6 @@ Item {
         onCurrent_sense_interruptChanged:  {
             if(current_sense_interrupt.value === "yes") {
                 currentStatusLight.status = SGStatusLight.Red
-                //  pushMessagesToLog("On-Board Load Current Interrupt")
             }
             else currentStatusLight.status = SGStatusLight.Off
 
@@ -463,13 +430,10 @@ Item {
             else loadFault.status = SGStatusLight.Off
         }
 
-
-
         property var voltage_sense_interrupt: platformInterface.voltage_sense_interrupt
         onVoltage_sense_interruptChanged: {
             if(voltage_sense_interrupt.value === "yes") {
                 voltageStatusLight.status = SGStatusLight.Red
-                //pushMessagesToLog("Input Voltage Interrupt")
             }
             else voltageStatusLight.status = SGStatusLight.Off
 
@@ -482,18 +446,11 @@ Item {
 
         property var i_in_interrupt: platformInterface.i_in_interrupt
         onI_in_interruptChanged: {
-            if(i_in_interrupt.value === "yes") {
-                loadCurrent.status = SGStatusLight.Red
-                // pushMessagesToLog("Input Current Interrupt")
-
-            }
+            if(i_in_interrupt.value === "yes") loadCurrent.status = SGStatusLight.Red
             else loadCurrent.status = SGStatusLight.Off
 
-            if(i_in_interrupt.load_fault === "on")
-                loadFault.status = SGStatusLight.Red
-
+            if(i_in_interrupt.load_fault === "on") loadFault.status = SGStatusLight.Red
             else loadFault.status = SGStatusLight.Off
-
 
         }
 
@@ -511,7 +468,6 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: parent.height - platformName.contentHeight - 40
             Layout.alignment: Qt.AlignCenter
-
 
             RowLayout {
                 anchors.fill:parent
@@ -721,8 +677,6 @@ Item {
                                                 boxFont.family: Fonts.digitalseven
                                                 anchors.left: parent.left
                                                 anchors.verticalCenter: parent.verticalCenter
-                                                //                                                anchors.horizontalCenter: parent.horizontalCenter
-                                                //                                                anchors.horizontalCenterOffset: 5
                                             }
                                         }
 
@@ -762,7 +716,6 @@ Item {
                                                         fontSizeMultiplier: ratioCalc
                                                         color: "red"
                                                     }
-
                                                 }
 
                                             }
@@ -776,8 +729,6 @@ Item {
                                                 id: enable3
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
-                                                // fontSizeMultiplier: ratioCalc
-
                                                 anchors.centerIn: parent
                                                 onToggled:  {
                                                     if(checked)
@@ -791,8 +742,6 @@ Item {
                                         Rectangle{
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
-                                            // color: "red"
-
                                             SGInfoBox {
                                                 id: setting3Reading
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
@@ -855,14 +804,9 @@ Item {
 
                                             SGSwitch {
                                                 id: enable4
-                                                //                                            height: 35 * ratioCalc
-                                                //                                            width: 95 * ratioCalc
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
-                                                // fontSizeMultiplier: ratioCalc
-
                                                 anchors.centerIn: parent
-
                                                 onToggled:  {
                                                     if(checked)
                                                         platformInterface.switch_enables.update("211_on")
@@ -935,11 +879,7 @@ Item {
                                                 id: enable5
                                                 checkedLabel: "On"
                                                 uncheckedLabel: "Off"
-                                                //  fontSizeMultiplier: ratioCalc
-
                                                 anchors.centerIn: parent
-
-
                                                 onToggled:  {
                                                     if(checked)
                                                         platformInterface.switch_enables.update("333_on")
@@ -973,7 +913,6 @@ Item {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
                                     color: "transparent"
-
 
                                     RowLayout {
                                         anchors.fill: parent
@@ -1184,7 +1123,6 @@ Item {
                                             id: enableModeSet
                                             checkedLabel: "Manual"
                                             uncheckedLabel: "Auto"
-                                            //fontSizeMultiplier: ratioCalc * 1.2
                                             onToggled: {
                                                 if(checked) {
                                                     maxInputCurrentContainer.enabled = true
@@ -1235,7 +1173,6 @@ Item {
                                                     stepSize: 0.1
                                                     fromText.text: "0A"
                                                     toText.text: "30.5A"
-
                                                     inputBoxWidth: maxInputCurrentContainer.width/5
                                                     fontSizeMultiplier: ratioCalc
                                                     inputBox.validator: DoubleValidator { }
@@ -1243,9 +1180,6 @@ Item {
                                                     inputBox.unit: " A"
                                                     inputBox.unitFont.bold: true
                                                     inputBox.unitOverrideWidth: 30 * ratioCalc
-
-
-
 
                                                     onUserSet: {
                                                         var valueSet = parseInt(value)
@@ -1324,16 +1258,11 @@ Item {
                                                         platformInterface.set_v_set.update(parseFloat(value.toFixed(1)))
 
                                                     }
-
-
-
                                                 }
                                             }
                                         }
-
                                     }
                                 }
-
                             }
                         }
                     }
@@ -1405,7 +1334,6 @@ Item {
                                                         id: lowLoadEnable
                                                         checkedLabel: "On"
                                                         uncheckedLabel: "Off"
-                                                        // fontSizeMultiplier: ratioCalc * 1.2
                                                         onToggled:  {
                                                             if(checked) {
                                                                 platformInterface.load_enables.update("low_load_on")
@@ -1420,7 +1348,6 @@ Item {
                                                         onLoad_enable_status_low_loadChanged: {
                                                             if(load_enable_status_low_load === "on") {
                                                                 lowLoadEnable.checked = true
-                                                                // platformInterface.set_load_dac_load.update(lowloadSetting.value)
                                                             }
                                                             else {
                                                                 lowLoadEnable.checked = false
@@ -1429,13 +1356,10 @@ Item {
 
                                                         property var switch_enable_status_low_load: platformInterface.switch_enable_status.low_load_en
                                                         onSwitch_enable_status_low_loadChanged: {
-                                                            if(switch_enable_status_low_load === "on") {
+                                                            if(switch_enable_status_low_load === "on")
                                                                 lowLoadEnable.checked = true
-                                                                // platformInterface.set_load_dac_load.update(lowloadSetting.value)
-                                                            }
-                                                            else {
-                                                                lowLoadEnable.checked = false
-                                                            }
+                                                            else lowLoadEnable.checked = false
+
                                                         }
 
                                                     }
@@ -1532,14 +1456,12 @@ Item {
                                                 Layout.fillHeight: true
                                                 Layout.fillWidth: true
 
-
                                                 SGSlider {
                                                     id: midloadSetting
                                                     width: midLoadSettingContainer.width
                                                     live: false
                                                     anchors.verticalCenter: parent.verticalCenter
                                                     anchors.verticalCenterOffset: 10
-
                                                     from: 0.1
                                                     to:  100
                                                     stepSize: 0.1
@@ -1547,17 +1469,13 @@ Item {
                                                     toText.text: "100mA"
                                                     value: 0
                                                     inputBoxWidth: midLoadSettingContainer.width/5
-                                                    // inputBox.overrideWidth: 80
-                                                    //inputBox.fontSizeMultiplier: ratioCalc * 1.1
                                                     fontSizeMultiplier: ratioCalc * 1.1
                                                     inputBox.unit: "mA"
                                                     inputBox.unitFont.bold: true
                                                     inputBox.enabled: true
                                                     inputBox.unitOverrideWidth: 30 * ratioCalc
-
                                                     inputBox.validator: DoubleValidator { top: 100; bottom: 0.1}
                                                     onUserSet: {
-                                                        console.log("inputBoxWidth mid", inputBoxWidth)
                                                         if(midCurrentEnable.checked)
                                                             platformInterface.set_load_dac_load.update(midloadSetting.value.toFixed(2))
                                                     }
@@ -1587,7 +1505,6 @@ Item {
                                                         id: highCurrentEnable
                                                         checkedLabel: "On"
                                                         uncheckedLabel: "Off"
-                                                        // fontSizeMultiplier: ratioCalc
 
                                                         onToggled:  {
                                                             if(checked) {
@@ -1635,23 +1552,17 @@ Item {
                                                     inputBox.enabled: true
                                                     inputBox.unitOverrideWidth: 30 * ratioCalc
 
-                                                    // inputBox.fontSizeMultiplier: ratioCalc * 1.1
                                                     fontSizeMultiplier: ratioCalc * 1.1
                                                     inputBox.validator: DoubleValidator { top: 10;  bottom: 0.01 }
                                                     onUserSet: {
-                                                        console.log("inputBoxWidth High", inputBoxWidth)
                                                         if(highCurrentEnable.checked)
                                                             platformInterface.set_load_dac_load.update(highloadSetting.value.toFixed(2))
                                                     }
                                                 }
-
-
                                             }
                                         }
 
                                     }
-
-
                                 }
                             }
                         }
@@ -1696,7 +1607,6 @@ Item {
                                 Rectangle {
                                     Layout.preferredHeight: parent.height/5
                                     Layout.fillWidth: true
-
                                     RowLayout{
                                         id: ledSection
                                         anchors.fill: parent
@@ -1722,7 +1632,6 @@ Item {
                                         Rectangle {
                                             Layout.fillHeight: true
                                             Layout.fillWidth: true
-
                                             SGAlignedLabel {
                                                 id: currentStatusLabel
                                                 target: currentStatusLight
@@ -1731,7 +1640,6 @@ Item {
                                                 fontSizeMultiplier: ratioCalc * 1.2
                                                 text: "On-Board Load\n Current Status"
                                                 font.bold: true
-
                                                 SGStatusLight {
                                                     id: currentStatusLight
                                                     width: 30
@@ -2004,10 +1912,7 @@ Item {
 
                                     }
 
-
                                 }
-
-
 
                             }
 
