@@ -29,7 +29,7 @@
 int main(int argc, char *argv[])
 {
     QSettings::setDefaultFormat(QSettings::IniFormat);
-    QCoreApplication::setApplicationName(QStringLiteral("hcs"));
+    QCoreApplication::setApplicationName(QStringLiteral("Host Controller Service"));
     QCoreApplication::setApplicationVersion(AppInfo::version.data());
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
