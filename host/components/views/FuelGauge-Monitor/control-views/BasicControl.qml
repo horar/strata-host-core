@@ -101,6 +101,14 @@ ColumnLayout {
         platformInterface.set_log_interval.update(3)
         platformInterface.set_fg_initialize.update("")  //Send this at LAST
     }
+    property var no_battery: platformInterface.int_os_alert.no_battery
+     onNo_batteryChanged: {
+         if(no_battery==="red"){sgStatusLight17.status="red"} //sgStatusLight17
+         else
+         if(no_battery==="black"){sgStatusLight17.status="black"}
+     }
+
+
     spacing: 1
     anchors {
         fill: parent
