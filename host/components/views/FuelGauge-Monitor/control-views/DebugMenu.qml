@@ -48,7 +48,7 @@ Rectangle {
         TextArea{
         id:textcollxnfor
         visible: false
-        text: "Hello man this is test test area"
+        text: "text"
         }
         }
       //  var x-= fot()
@@ -57,7 +57,7 @@ Rectangle {
             visible: false
             width: 560
             height: 630
-            title: qsTr("Save Log Data")
+            title: qsTr("Please save  your log data")
 
             ScrollView {
                              id: frame
