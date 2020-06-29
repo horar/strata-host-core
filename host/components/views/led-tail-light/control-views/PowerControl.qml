@@ -8,7 +8,7 @@ import tech.strata.fonts 1.0
 Item {
     id: root
     property real ratioCalc: root.width / 1200
-property real initialAspectRatio: 1400/900
+    property real initialAspectRatio: 1400/900
     anchors.centerIn: parent
     height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
@@ -169,7 +169,7 @@ property real initialAspectRatio: 1400/900
 
                                 SGStatusLight {
                                     id: boostOCP
-                                      width : 40
+                                    width : 40
 
                                 }
 
@@ -196,9 +196,15 @@ property real initialAspectRatio: 1400/900
 
                                 property var power_boost_ocp_value: platformInterface.power_boost_ocp_value.value
                                 onPower_boost_ocp_valueChanged:{
-                                    if(power_boost_ocp_value === true)
+                                    if(power_boost_ocp_value === true) {
+                                        if(!powerControl.visible) {
+                                            alertViewBadge.opacity = 1.0
+                                        }
                                         boostOCP.status = SGStatusLight.Red
-                                    else boostOCP.status = SGStatusLight.Off
+                                    }
+                                    else {
+                                        boostOCP.status = SGStatusLight.Off
+                                    }
                                 }
 
                             }
@@ -640,18 +646,18 @@ property real initialAspectRatio: 1400/900
                                         onPower_vconnChanged: {
                                             batteryVoltageLabel.text = power_vconn.caption
                                             setStatesForControls(batteryVoltage,power_vconn.states[0])
-//                                            if(power_vconn.state === "enabled") {
-//                                                batteryVoltage.opacity = 1.0
-//                                                batteryVoltage.enabled = true
-//                                            }
-//                                            else if (power_vconn.state === "disabled") {
-//                                                batteryVoltage.opacity = 1.0
-//                                                batteryVoltage.enabled = false
-//                                            }
-//                                            else  {
-//                                                batteryVoltage.opacity = 0.5
-//                                                batteryVoltage.enabled = false
-//                                            }
+                                            //                                            if(power_vconn.state === "enabled") {
+                                            //                                                batteryVoltage.opacity = 1.0
+                                            //                                                batteryVoltage.enabled = true
+                                            //                                            }
+                                            //                                            else if (power_vconn.state === "disabled") {
+                                            //                                                batteryVoltage.opacity = 1.0
+                                            //                                                batteryVoltage.enabled = false
+                                            //                                            }
+                                            //                                            else  {
+                                            //                                                batteryVoltage.opacity = 0.5
+                                            //                                                batteryVoltage.enabled = false
+                                            //                                            }
                                             batteryVoltage.text = power_vconn.value
                                         }
 
@@ -662,7 +668,7 @@ property real initialAspectRatio: 1400/900
 
                                         property var power_vconn_state: platformInterface.power_vconn_states.states
                                         onPower_vconn_stateChanged: {
-                                           setStatesForControls(batteryVoltage,power_vconn_state[0])
+                                            setStatesForControls(batteryVoltage,power_vconn_state[0])
                                         }
 
                                         property var power_vconn_value: platformInterface.power_vconn_value.value
@@ -707,18 +713,18 @@ property real initialAspectRatio: 1400/900
                                         onPower_iledChanged: {
                                             ledCurrentLabel.text = power_iled.caption
                                             setStatesForControls(ledCurrent,power_iled.states[0])
-//                                            if(power_iled.state === "enabled") {
-//                                                ledCurrent.opacity = 1.0
-//                                                ledCurrent.enabled = true
-//                                            }
-//                                            else if (power_iled.state === "disabled") {
-//                                                ledCurrent.opacity = 1.0
-//                                                ledCurrent.enabled = false
-//                                            }
-//                                            else  {
-//                                                ledCurrent.opacity = 0.5
-//                                                ledCurrent.enabled = false
-//                                            }
+                                            //                                            if(power_iled.state === "enabled") {
+                                            //                                                ledCurrent.opacity = 1.0
+                                            //                                                ledCurrent.enabled = true
+                                            //                                            }
+                                            //                                            else if (power_iled.state === "disabled") {
+                                            //                                                ledCurrent.opacity = 1.0
+                                            //                                                ledCurrent.enabled = false
+                                            //                                            }
+                                            //                                            else  {
+                                            //                                                ledCurrent.opacity = 0.5
+                                            //                                                ledCurrent.enabled = false
+                                            //                                            }
                                             ledCurrent.text = power_iled.value
 
                                         }
@@ -764,18 +770,18 @@ property real initialAspectRatio: 1400/900
                                         onPower_isChanged: {
                                             supplyCurrentLabel.text = power_is.caption
                                             setStatesForControls(supplyCurrent,power_is.states[0])
-//                                            if(power_is.state === "enabled") {
-//                                                supplyCurrent.opacity = 1.0
-//                                                supplyCurrent.enabled = true
-//                                            }
-//                                            else if (power_is.state === "disabled") {
-//                                                supplyCurrent.opacity = 1.0
-//                                                supplyCurrent.enabled = false
-//                                            }
-//                                            else  {
-//                                                supplyCurrent.opacity = 0.5
-//                                                supplyCurrent.enabled = false
-//                                            }
+                                            //                                            if(power_is.state === "enabled") {
+                                            //                                                supplyCurrent.opacity = 1.0
+                                            //                                                supplyCurrent.enabled = true
+                                            //                                            }
+                                            //                                            else if (power_is.state === "disabled") {
+                                            //                                                supplyCurrent.opacity = 1.0
+                                            //                                                supplyCurrent.enabled = false
+                                            //                                            }
+                                            //                                            else  {
+                                            //                                                supplyCurrent.opacity = 0.5
+                                            //                                                supplyCurrent.enabled = false
+                                            //                                            }
                                             supplyCurrent.text = power_is.value
 
                                         }
@@ -787,7 +793,7 @@ property real initialAspectRatio: 1400/900
 
                                         property var power_is_state: platformInterface.power_is_states.states
                                         onPower_is_stateChanged: {
-                                           setStatesForControls(supplyCurrent,power_is_state[0])
+                                            setStatesForControls(supplyCurrent,power_is_state[0])
                                         }
 
                                         property var power_is_value: platformInterface.power_is_value.value
@@ -837,11 +843,10 @@ property real initialAspectRatio: 1400/900
                                         onPower_vcc_stateChanged: {
                                             setStatesForControls(voltage,power_vcc_state[0])
                                         }
-
-                                        property var power_vcc_value: platformInterface.power_vcc_Holder //platformInterface.power_vcc_value.value
+                                        property var power_vcc_value: platformInterface.power_vcc_value.value
                                         onPower_vcc_valueChanged:{
                                             voltage.text = power_vcc_value
-                                            console.log("tanya", voltage.text, power_vcc_value, platformInterface.power_vcc_Holder)
+                                            console.log("testing", voltage.text, power_vcc_value, platformInterface.power_vcc_value.value)
                                         }
                                     }
                                 }
@@ -1001,7 +1006,7 @@ property real initialAspectRatio: 1400/900
 
                                 property var power_led_driver_temp_bottom_state: platformInterface.power_led_driver_temp_bottom_states.states
                                 onPower_led_driver_temp_bottom_stateChanged: {
-                                   setStatesForControls(ledDriverTempBottom,power_led_driver_temp_bottom_state[0])
+                                    setStatesForControls(ledDriverTempBottom,power_led_driver_temp_bottom_state[0])
                                 }
 
                                 property var power_led_driver_temp_bottom_scales: platformInterface.power_led_driver_temp_bottom_scales.scales
@@ -1060,18 +1065,18 @@ property real initialAspectRatio: 1400/900
                                     onPower_led_tempChanged: {
                                         tempGaugeLabel.text = power_led_temp.caption
                                         setStatesForControls(tempGauge,power_led_temp.states[0])
-//                                        if(power_led_temp.state === "enabled") {
-//                                            tempGauge.opacity = 1.0
-//                                            tempGauge.enabled = true
-//                                        }
-//                                        else if (power_led_temp.state === "disabled") {
-//                                            tempGauge.opacity = 1.0
-//                                            tempGauge.enabled = false
-//                                        }
-//                                        else  {
-//                                            tempGauge.opacity = 0.5
-//                                            tempGauge.enabled = false
-//                                        }
+                                        //                                        if(power_led_temp.state === "enabled") {
+                                        //                                            tempGauge.opacity = 1.0
+                                        //                                            tempGauge.enabled = true
+                                        //                                        }
+                                        //                                        else if (power_led_temp.state === "disabled") {
+                                        //                                            tempGauge.opacity = 1.0
+                                        //                                            tempGauge.enabled = false
+                                        //                                        }
+                                        //                                        else  {
+                                        //                                            tempGauge.opacity = 0.5
+                                        //                                            tempGauge.enabled = false
+                                        //                                        }
 
                                         tempGauge.maximumValue = power_led_temp.scales[0]
                                         tempGauge.minimumValue = power_led_temp.scales[1]
@@ -1151,18 +1156,18 @@ property real initialAspectRatio: 1400/900
                                     onPower_total_powerChanged: {
                                         powerLossGaugeLabel.text = power_total_power.caption
                                         setStatesForControls(powerLoss,power_total_power.states[0])
-//                                        if(power_total_power.state === "enabled") {
-//                                            powerLoss.opacity = 1.0
-//                                            powerLoss.enabled = true
-//                                        }
-//                                        else if (power_total_power.state === "disabled") {
-//                                            powerLoss.opacity = 1.0
-//                                            powerLoss.enabled = false
-//                                        }
-//                                        else  {
-//                                            powerLoss.opacity = 0.5
-//                                            powerLoss.enabled = false
-//                                        }
+                                        //                                        if(power_total_power.state === "enabled") {
+                                        //                                            powerLoss.opacity = 1.0
+                                        //                                            powerLoss.enabled = true
+                                        //                                        }
+                                        //                                        else if (power_total_power.state === "disabled") {
+                                        //                                            powerLoss.opacity = 1.0
+                                        //                                            powerLoss.enabled = false
+                                        //                                        }
+                                        //                                        else  {
+                                        //                                            powerLoss.opacity = 0.5
+                                        //                                            powerLoss.enabled = false
+                                        //                                        }
                                         powerLoss.maximumValue = power_total_power.scales[0]
                                         powerLoss.minimumValue = power_total_power.scales[1]
                                         powerLoss.tickmarkStepSize = power_total_power.scales[2]
@@ -1177,7 +1182,7 @@ property real initialAspectRatio: 1400/900
 
                                     property var power_total_power_state: platformInterface.power_total_power_states.states
                                     onPower_total_power_stateChanged: {
-                                       setStatesForControls(powerLoss,power_total_power_state[0])
+                                        setStatesForControls(powerLoss,power_total_power_state[0])
                                     }
 
                                     property var power_total_power_scales: platformInterface.power_total_power_scales.scales

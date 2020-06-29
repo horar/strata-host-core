@@ -18,6 +18,7 @@ Item {
     property string i2cAddressText : "0x60"
     property string i2cCRCText: "Off"
     property int startUpPopupCount: 0
+    property alias alertViewBadge: alertViewBadge
 
 
     PlatformInterface {
@@ -50,7 +51,7 @@ Item {
         if(startup.value === false){
             console.log("i2cAddressText",i2cAddressText)
             if(startUpPopupCount != 0){
-            toSetThelof()
+                toSetThelof()
             }
             startupWarningPopup.open()
             startUpPopupCount++
@@ -353,6 +354,8 @@ Item {
                 powerControl.visible = false
                 sAMOPTControl.visible = false
                 miscControl.visible = false
+                if(alertViewBadge.opacity  != 1.0)
+                    alertViewBadge.opacity = 0.0
             }
         }
 
@@ -366,6 +369,8 @@ Item {
                 powerControl.visible = false
                 sAMOPTControl.visible = false
                 miscControl.visible = false
+                if(alertViewBadge.opacity  != 1.0)
+                    alertViewBadge.opacity = 0.0
             }
         }
 
@@ -379,6 +384,13 @@ Item {
                 powerControl.visible = true
                 sAMOPTControl.visible = false
                 miscControl.visible = false
+                alertViewBadge.opacity = 0.0
+            }
+            NotificationBadge{
+                id: alertViewBadge
+                anchors.right: parent.right
+                anchors.top: parent.top
+                opacity: 0
             }
         }
 
@@ -392,6 +404,8 @@ Item {
                 powerControl.visible = false
                 sAMOPTControl.visible = true
                 miscControl.visible = false
+                if(alertViewBadge.opacity  != 1.0)
+                    alertViewBadge.opacity = 0.0
             }
         }
 
@@ -405,6 +419,8 @@ Item {
                 powerControl.visible = false
                 sAMOPTControl.visible = false
                 miscControl.visible = true
+                if(alertViewBadge.opacity  != 1.0)
+                    alertViewBadge.opacity = 0.0
             }
         }
     }

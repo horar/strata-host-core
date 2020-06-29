@@ -1003,9 +1003,6 @@ Item {
     property var power_vcc_value: {
         "value": 0.00
     }   
-    property real power_vcc_Holder: power_vcc_value.value
-
-
     property var power_led_driver_temp_top: {
         "caption":"LED Driver Temp Top (°C)",
         "scales":[150,0,1],
