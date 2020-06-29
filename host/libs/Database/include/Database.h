@@ -34,6 +34,8 @@ public:
 
     bool save(CouchbaseDocument *doc);
 
+    bool deleteDoc(const QString &id);
+
     /**
      * Returns a document by given ID
      * @param id document ID

@@ -98,6 +98,14 @@ int main() {
         qDebug() << "Key =" << key << ", value =" << value;
     }
 
+    // Delete document "Doc_2"
+    DB_1.deleteDoc("Doc_2");
+
+    // Get all document keys in a QStringList
+    document_keys = DB_1.getAllDocumentKeys();
+    DEBUG("All document keys:");
+    qDebug() << document_keys;
+
     /********************************************
      * REPLICATOR API *
      *******************************************/

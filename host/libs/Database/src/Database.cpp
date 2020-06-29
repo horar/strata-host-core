@@ -14,6 +14,10 @@ bool Database::save(CouchbaseDocument *doc) {
     return database_->save(doc);
 }
 
+bool Database::deleteDoc(const QString &id) {
+    return database_->deleteDoc(id.toStdString());
+}
+
 QString Database::getDocumentAsStr(const QString &id) {
     return QString::fromStdString(database_->getDocumentAsStr(id.toStdString()));
 }

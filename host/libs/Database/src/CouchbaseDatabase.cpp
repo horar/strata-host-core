@@ -78,6 +78,22 @@ bool CouchbaseDatabase::documentExistInDB(const std::string &id) {
     return results.begin() != results.end();
 }
 
+bool CouchbaseDatabase::deleteDoc(const std::string &id) {
+    if (!documentExistInDB(id)) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Problem deleting document: not found in DB.";
+        return false;
+    }
+    try {
+        auto temp_doc = database_->getMutableDocument(id);
+        temp_doc.deleteDoc();
+        database_->saveDocument(temp_doc);
+    } catch (CBLError err) {
+        qCCritical(logCategoryCouchbaseDatabase) << "Problem deleting document. Error code: " << err.code << ", domain: " << err.domain << ", info: " << err.internal_info;
+        return false;
+    }
+    return true;
+}
+
 std::string CouchbaseDatabase::getDocumentAsStr(const std::string &id) {
     if (!database_) {
         qCCritical(logCategoryCouchbaseDatabase) << "Problem reading document, database may not be open.";

@@ -43,6 +43,8 @@ public:
 
     bool save(CouchbaseDocument *doc);
 
+    bool deleteDoc(const std::string &id);
+
     /**
      * Returns a document by given ID
      * @param id document ID

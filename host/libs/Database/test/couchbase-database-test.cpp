@@ -84,6 +84,20 @@ TEST_F(CouchbaseDatabaseTest, DOCS) {
     EXPECT_TRUE(keys.contains("Test Doc 1"));
     EXPECT_TRUE(keys.contains("Test Doc 2"));
 
+    // Delete Doc 1, check only Doc 2 exists
+    db->deleteDoc("Test Doc 1");
+    keys = db->getAllDocumentKeys();
+    EXPECT_FALSE(keys.contains("Test Doc 1"));
+    EXPECT_TRUE(keys.contains("Test Doc 2"));
+    EXPECT_EQ(keys.size(), 1);
+
+    // Delete Doc 2, check DB is empty
+    db->deleteDoc("Test Doc 2");
+    keys = db->getAllDocumentKeys();
+    EXPECT_FALSE(keys.contains("Test Doc 1"));
+    EXPECT_FALSE(keys.contains("Test Doc 2"));
+    EXPECT_EQ(keys.size(), 0);
+
     delete doc_1;
     delete doc_2;
     delete db;
