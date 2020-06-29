@@ -73,7 +73,6 @@ var uuid_map = {
     "244": "motorController",
     "245": "bldcMotorControl",
     "246": "meshNetwork",
-    "247": "current-sense",
     "265": "zigbee",
 
     /*****
