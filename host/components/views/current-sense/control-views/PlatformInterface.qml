@@ -9,9 +9,9 @@ Item {
     property var periodic_status: {
         "ADC_210": 0.00,        //current reading of NCS210R in mA (from 0 to 100.00)
         "ADC_211": 0.000,       //current reading of NCS211R in mA (from 0 to 2.000)
-        "ADC_213": 0.00,          //current reading of NCS213R in A (from 0 to 30.00)
-        "ADC_214": 0.000,          //current reading of NCS214R in A (from 0 to 1.000)
-        "ADC_333": 0.0001000,      //current reading of NCS333R in uA (from 0 to 100.0)
+        "ADC_213": 0.00,        //current reading of NCS213R in A (from 0 to 30.00)
+        "ADC_214": 0.000,       //current reading of NCS214R in A (from 0 to 1.000)
+        "ADC_333": 0.0001000,   //current reading of NCS333R in uA (from 0 to 100.0)
         "ADC_VIN": 0 ,
         "max_input_voltage": "00.0",
         "max_OBL_current" : "00.0",
@@ -31,10 +31,10 @@ Item {
 
     property var switch_enable_status: {
         "en_210": "off",        //on or off
-        "en_211": "off",       //on or off
-        "en_213": "off",       //on or off
-        "en_214": "off",       //on or off
-        "en_333": "off" ,      //on or off
+        "en_211": "off",        //on or off
+        "en_213": "off",        //on or off
+        "en_214": "off",        //on or off
+        "en_333": "off" ,       //on or off
         "i_in_max" : "30.5",
         "i_in_set" : "30.5",
         "low_load_en" : "off",
@@ -47,8 +47,8 @@ Item {
     }
 
     property var load_enable_status: {
-        "low_load_en": "on",                  //on or off
-        "mid_load_en": "off",                 //on or off
+        "low_load_en": "on",
+        "mid_load_en": "off",
         "high_load_en": "off",
         "max_input_voltage" : "26",
         "max_current" : "100",
@@ -100,20 +100,6 @@ Item {
         "load_switch_status" :"freeze"
     }
 
-//    property var reset_status: {
-//        "en_210": "off",                   //on or off
-//        "en_211": "off",                  //on or off
-//        "en_213": "off",                  //on or off
-//        "en_214": "off",                  //on or off
-//        "en_333": "off",                  //on or off
-//        "low_load_en": "off",                  //on or off
-//        "mid_load_en": "off",                 //on or off
-//        "high_load_en": "off",                //on or off
-//        "load_fault" : "off",
-//        "switch_status" : ""
-
-//    }
-
     property var reset_status: {
         "switch_en_state":"off",// for the 5 en switches, turn them all off
         "switch_load_state":"off", // for the 3 load enable switches
@@ -126,10 +112,6 @@ Item {
     property var ad_status:{
         "status":"on"
     }
-
-//    property var switch_status_notification: {
-//        "switch_status": ""
-//    }
 
 
     property var set_initial_state_UI : ({
@@ -279,9 +261,6 @@ Item {
                                              send: function () { CorePlatformInterface.send(this) },
                                              show: function () { CorePlatformInterface.show(this) }
                                          })
-
-
-
 
 
     // -------------------------------------------------------------------
