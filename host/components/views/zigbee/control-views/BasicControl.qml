@@ -24,6 +24,37 @@ Rectangle {
     property variant meshObjects
     property var dragTargets:[]
 
+    Image{
+        id:onLogo
+        source:"../images/ON-logo.svg"
+        height:parent.height*.2
+        anchors.left: parent.left
+        anchors.leftMargin: 100
+        anchors.top:parent.top
+        fillMode: Image.PreserveAspectFit
+        mipmap:true
+        opacity:1
+    }
+    Text{
+        id:titleText
+        anchors.top:parent.top
+        anchors.topMargin: 50
+        anchors.horizontalCenter: parent.horizontalCenter
+        text:"NCS36510 Zigbee Smart Home"
+        font.pixelSize: 36
+    }
+
+    Image{
+        id:zigbeeLogo
+        source:"../images/zigbee-logo.png"
+        height:parent.height*.2
+        anchors.right: parent.right
+        anchors.rightMargin: 50
+        anchors.top:parent.top
+        fillMode: Image.PreserveAspectFit
+        mipmap:true
+        opacity:1
+    }
 
     Image{
         id:officeImage
@@ -73,9 +104,99 @@ Rectangle {
             }
 
         }
+        Rectangle{
+            id:doorImageDot
+            color:"lightblue"
+            anchors.left: parent.left
+            anchors.leftMargin:  parent.width*.4
+            anchors.top:parent.top
+            anchors.topMargin: parent.height*.35
+            height:50
+            width:50
+            radius:width/2
+
+            Text{
+                id:doorDot
+                anchors.centerIn: parent
+                text:"2"
+                font.pixelSize: 24
+            }
+        }
+        Rectangle{
+            id:lightImageDot
+            color:"green"
+            anchors.right: parent.right
+            anchors.rightMargin:  parent.width*.2
+            anchors.top:parent.top
+            anchors.topMargin: parent.height*.1
+            height:50
+            width:50
+            radius:width/2
+
+            Text{
+                id:lightDot
+                anchors.centerIn: parent
+                text:"1"
+                font.pixelSize: 24
+            }
+        }
 
 
 
+    }
+
+    Rectangle{
+        id:lightKey
+        color:"green"
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: -200
+        anchors.bottom:parent.bottom
+        anchors.bottomMargin: parent.height*.1
+        height:50
+        width:50
+        radius:width/2
+
+        Text{
+            id:lightNumber
+            anchors.centerIn: parent
+            text:"1"
+            font.pixelSize: 24
+        }
+    }
+    Text{
+        id:bulbText
+        anchors.left: lightKey.right
+        anchors.leftMargin: 10
+        anchors.verticalCenter: lightKey.verticalCenter
+        text:"Smart LED Bulbs"
+        font.pixelSize: 24
+    }
+
+    Rectangle{
+        id:doorKey
+        color:"lightblue"
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: 200
+        anchors.bottom:parent.bottom
+        anchors.bottomMargin: parent.height*.1
+        height:50
+        width:50
+        radius:width/2
+
+        Text{
+            id:doorNumber
+            anchors.centerIn: parent
+            text:"2"
+            font.pixelSize: 24
+        }
+    }
+    Text{
+        id:doorSensorText
+        anchors.left: doorKey.right
+        anchors.leftMargin: 10
+        anchors.verticalCenter: doorKey.verticalCenter
+        text:"Battery-free Door sensor"
+        font.pixelSize: 24
     }
 
 

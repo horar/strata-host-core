@@ -2,7 +2,8 @@
 #define HOST_HCS_CLIENTSCONTROLER_H__
 
 #include <memory>
-#include <EvEventsMgr.h>
+
+#include <EventsMgr/EvEventsMgr.h>
 
 #include <QString>
 #include <QByteArray>
@@ -42,7 +43,7 @@ public:
     bool sendMessage(const QByteArray& clientId, const QString& message);
 
 private:
-    void onDescriptorHandle(spyglass::EvEventBase*, int);
+    void onDescriptorHandle(strata::events_mgr::EvEventBase*, int);
 
 private:
     HCS_Dispatcher* dispatcher_{nullptr};
@@ -50,8 +51,8 @@ private:
 
     std::unique_ptr<Connector> client_connector_ ;  //router
 
-    spyglass::EvEventsMgr events_manager_;
-    spyglass::EvEvent client_event_;
+    strata::events_mgr::EvEventsMgr events_manager_;
+    strata::events_mgr::EvEvent client_event_;
 };
 
 #endif //HOST_HCS_CLIENTSCONTROLER_H__

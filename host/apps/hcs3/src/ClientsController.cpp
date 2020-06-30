@@ -1,7 +1,9 @@
 #include "ClientsController.h"
+
+#include "Dispatcher.h"
+
 #include <Connector.h>
 #include <rapidjson/document.h>
-#include "Dispatcher.h"
 
 ClientsController::ClientsController()
 {
@@ -10,7 +12,7 @@ ClientsController::ClientsController()
 
 ClientsController::~ClientsController()
 {
-
+    events_manager_.stop();
 }
 
 void ClientsController::setLogAdapter(LoggingAdapter* adapter)
@@ -20,6 +22,8 @@ void ClientsController::setLogAdapter(LoggingAdapter* adapter)
 
 bool ClientsController::initialize(HCS_Dispatcher* dispatcher, rapidjson::Value& config)
 {
+    using namespace strata::events_mgr;
+
     if (config.HasMember("subscriber_address") == false) {
         return false;
     }
@@ -34,11 +38,11 @@ bool ClientsController::initialize(HCS_Dispatcher* dispatcher, rapidjson::Value&
     }
 
     dispatcher_ = dispatcher;
-    client_event_.create(spyglass::EvEvent::EvType::eEvTypeHandle, reinterpret_cast<spyglass::ev_handle_t>(client_connector_->getFileDescriptor()), 0);
+    client_event_.create(EvEvent::EvType::eEvTypeHandle, reinterpret_cast<ev_handle_t>(client_connector_->getFileDescriptor()), 0);
     client_event_.setCallback(std::bind(&ClientsController::onDescriptorHandle, this, std::placeholders::_1, std::placeholders::_2));
 
     events_manager_.registerEvent(&client_event_);
-    if (client_event_.activate(spyglass::EvEvent::eEvStateRead) == false) {
+    if (client_event_.activate(EvEvent::eEvStateRead) == false) {
         return false;
     }
 
@@ -55,7 +59,7 @@ bool ClientsController::sendMessage(const QByteArray& clientId, const QString& m
     return client_connector_->send(message.toStdString());
 }
 
-void ClientsController::onDescriptorHandle(spyglass::EvEventBase*, int)
+void ClientsController::onDescriptorHandle(strata::events_mgr::EvEventBase*, int)
 {
     std::string read_message;
     PlatformMessage msg;

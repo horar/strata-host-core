@@ -9,7 +9,10 @@
 #include <QDebug>
 #include <QUrl>
 
+namespace strata {
 class DownloadManager;
+}
+
 class PlatformDocument;
 class Database;
 
@@ -133,7 +136,7 @@ private:
 
     QUrl baseUrl_;       //base part of the URL to download
     QString baseFolder_;    //base folder for store downloaded files
-    QScopedPointer<DownloadManager> downloadManager_;
+    QScopedPointer<strata::DownloadManager> downloadManager_;
     Database* db_{nullptr};
     QHash<QString /*groupId*/, DownloadRequest* > downloadRequests_;
     QMap<QString /*classId*/, PlatformDocument*> documents_;

@@ -18,8 +18,8 @@ Rectangle {
     property real bottomMargin: 0
     property color textColor: "#555"
     property color portColor: "#2eb457"
-    property alias labelColor: labelText.color
-    property alias underlineWidth: underline.width
+    //property alias labelColor: labelText.color
+    //property alias underlineWidth: underline.width
     property real imageHeightPercentage: .8
 
 

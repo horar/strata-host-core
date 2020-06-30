@@ -27,61 +27,7 @@
 #include "DocumentManager.h"
 #include "ResourceLoader.h"
 
-
-void terminateAllRunningHcsInstances()    {
-
-    // Set up the process object and connect it's stdin/out to print to the log
-    QProcess TerminateHcs;
-    QObject::connect(&TerminateHcs, &QProcess::readyReadStandardOutput, [&]() {
-        const QString commandOutput{QString::fromLatin1(TerminateHcs.readAllStandardOutput())};
-        for (const auto& line : commandOutput.split(QRegExp("\n|\r\n|\r"))) {
-            qCDebug(logCategoryStrataDevStudio) << line;
-        }
-    } );
-    QObject::connect(&TerminateHcs, &QProcess::readyReadStandardError, [&]() {
-        const QString commandOutput{QString::fromLatin1(TerminateHcs.readAllStandardError())};
-        for (const auto& line : commandOutput.split(QRegExp("\n|\r\n|\r"))) {
-            qCCritical(logCategoryStrataDevStudio) << line;
-        }
-    });
-
-#ifdef Q_OS_WIN
-    TerminateHcs.start("taskkill /im hcs.exe /f", QIODevice::ReadOnly);
-    TerminateHcs.waitForFinished();
-
-    switch (TerminateHcs.exitCode()) {
-        case 0:
-            qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Previous hcs instances were found and terminated successfully.");
-            break;
-
-        case 128:
-            qCInfo(logCategoryStrataDevStudio) << QStringLiteral("No previous hcs instances were found.");
-            break;
-
-        default:
-            qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Failed to check for running hcs instances.");
-            break;
-    }
-#endif
-#ifdef Q_OS_MACOS
-    TerminateHcs.start("pkill -9 hcs", QIODevice::ReadOnly);
-    TerminateHcs.waitForFinished();
-
-    switch (TerminateHcs.exitCode()) {
-        case 0:
-            qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Previous hcs instances were found and terminated successfully.");
-            break;
-
-        case 1:
-            qCInfo(logCategoryStrataDevStudio) << QStringLiteral("No previous hcs instances were found.");
-            break;
-
-        default:
-            qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Failed to check for running hcs instances.");
-            break;
-    }
-#endif
-}
+#include "HcsNode.h"
 
 int main(int argc, char *argv[])
 {
@@ -122,9 +68,9 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
 
-    // This is just a temporary fix until we have strata monitor ready.
-    // Terminate all running instances of hcs as this will cause communication problems between the UI and the platforms.
-    terminateAllRunningHcsInstances();
+    HcsNode remoteHcsNode; // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
+    QObject::connect(&app, &QGuiApplication::lastWindowClosed,
+                     &remoteHcsNode, &HcsNode::shutdownService/*, Qt::QueuedConnection*/);
 
     ResourceLoader resourceLoader;
 
@@ -178,7 +124,7 @@ int main(int argc, char *argv[])
 
 #ifdef Q_OS_WIN
 #if WINDOWS_INSTALLER_BUILD
-    const QString hcsPath{ QDir::cleanPath(QString("%1/HCS/hcs.exe").arg(app.applicationDirPath())) };
+    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs.exe").arg(app.applicationDirPath())) };
     QString hcsConfigPath;
     TCHAR programDataPath[MAX_PATH];
     if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, programDataPath))) {
@@ -235,6 +181,8 @@ int main(int argc, char *argv[])
 #endif
 
     int appResult = app.exec();
+    // LC: process remaining events i.e. submit remaining events (created by external close request)
+    QCoreApplication::processEvents();
 
 #ifdef START_SERVICES // start services
 #ifdef Q_OS_WIN // windows check to kill hcs3
@@ -262,7 +210,10 @@ int main(int argc, char *argv[])
         }
     }
 #endif // windows check to kill hcs3
-    qCDebug(logCategoryStrataDevStudio) << "terminating HCS result: " << hcsProcess->state() << "(error:" << hcsProcess->errorString() << ")";
+    qCInfo(logCategoryStrataDevStudio) << "terminating HCS result:" << hcsProcess->exitStatus();
+    if (hcsProcess->error() != QProcess::UnknownError) {
+        qCWarning(logCategoryStrataDevStudio) << "terminating HCS failed:" << hcsProcess->errorString();
+    }
 #endif // start services
 
     return appResult;

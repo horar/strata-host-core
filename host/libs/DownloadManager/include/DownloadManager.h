@@ -1,5 +1,4 @@
-#ifndef DOWNLOAD_MANAGER_H
-#define DOWNLOAD_MANAGER_H
+#pragma once
 
 #include <QObject>
 #include <QString>
@@ -12,6 +11,7 @@
 #include <QTimerEvent>
 #include <QCryptographicHash>
 
+namespace strata {
 class DownloadManager : public QObject
 {
     Q_OBJECT
@@ -22,7 +22,7 @@ public:
     ~DownloadManager() override;
 
     struct DownloadRequestItem {
-        QUrl relativeUrl;
+        QUrl url;
         QString filePath;
         QString md5;
     };
@@ -49,8 +49,11 @@ public:
         bool notifySingleDownloadFinished;
         bool notifyGroupDownloadProgress;
 
-        /* When true and filePath alredy exists, file is saved
-         * under different name. */
+        /* When true and filePath alredy exists, download is either skipped or
+         * old file is removed before new download starts.
+         *
+         * When false and filePath alrady exists file is downloaded
+         * and saved under different name. */
         bool keepOriginalName;
 
         /* When true and one of downloaded items fails,
@@ -58,14 +61,6 @@ public:
         bool oneFailsAllFail;
     };
 
-    //we still need a string error, so this is mostly useless
-    enum class CustomError {
-        NoError,
-        OpenFileError,
-        WriteToFileError,
-    };
-
-    void setBaseUrl(const QUrl &baseUrl);
     void setMaxDownloadCount(int maxDownloadCount);
 
     QString download(const QList<DownloadRequestItem> &items,
@@ -121,7 +116,6 @@ private:
     QNetworkAccessManager *accessManager_;
     QList<QNetworkReply*> currentDownloads_;
 
-    QUrl baseUrl_;
     int maxDownloadCount_ = 4;
 
     QList<DownloadItem> itemList_;
@@ -174,4 +168,4 @@ private:
     void timerEvent(QTimerEvent * ev);
 };
 
-#endif //DOWNLOAD_MANAGER_H
+}

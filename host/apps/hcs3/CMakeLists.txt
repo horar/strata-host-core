@@ -8,7 +8,7 @@ set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-        COMPONENTS Core Network Concurrent
+        COMPONENTS Core Concurrent RemoteObjects
         REQUIRED
 )
 
@@ -28,6 +28,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME hcs
 )
 
+qt5_generate_repc(NODE_RO_SRCS ./src/HostControllerService.rep SOURCE)
+
 add_library(${PROJECT_NAME}Lib STATIC
     src/HostControllerService.cpp
     src/BoardController.cpp
@@ -35,7 +37,6 @@ add_library(${PROJECT_NAME}Lib STATIC
     src/HCS_Client.cpp
     src/ClientsController.cpp
     src/Database.cpp
-    src/DownloadManager.cpp
     src/StorageManager.cpp
     src/StorageInfo.cpp
     src/PlatformDocument.cpp
@@ -44,7 +45,15 @@ add_library(${PROJECT_NAME}Lib STATIC
     src/RunGuard.cpp
 
     src/logging/LoggingQtCategories.cpp
+
+    src/HostControllerServiceNode.cpp
+    ${NODE_RO_SRCS}
 )
+if(NOT WIN32)
+    target_sources(${PROJECT_NAME}Lib PRIVATE
+        src/unix/SignalHandlers.cpp
+    )
+endif()
 
 generate_app_version(GITTAG_PREFIX "hcs3_" MACBUNDLE OFF)
 generate_app_build_timestamp()
@@ -57,12 +66,13 @@ set_target_properties(${PROJECT_NAME}Lib PROPERTIES
 
 target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     Qt5::Core
-    Qt5::Network
     Qt5::Concurrent
+    Qt5::RemoteObjects
 
     BoardManager
     connector
     EventsMgr
+    DownloadManager
     strata::CouchbaseLiteCPP
     QtLogger
     CbLogger
