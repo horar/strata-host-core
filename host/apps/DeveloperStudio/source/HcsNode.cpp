@@ -17,7 +17,7 @@ HcsNode::~HcsNode()
 
 bool HcsNode::hcsConnected() const
 {
-    return m_hcsConnected;
+    return hcsConnected_;
 }
 
 void HcsNode::initConnections()
@@ -65,10 +65,10 @@ void HcsNode::shutdownService()
 
 void HcsNode::setHcsConnected(bool hcsConnected)
 {
-    if (m_hcsConnected == hcsConnected) {
+    if (hcsConnected_ == hcsConnected) {
         return;
     }
 
-    m_hcsConnected = hcsConnected;
-    emit hcsConnectedChanged(m_hcsConnected);
+    hcsConnected_ = hcsConnected;
+    emit hcsConnectedChanged(hcsConnected_);
 }

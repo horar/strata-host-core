@@ -9,7 +9,7 @@ class HcsNode : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(HcsNode)
-    Q_PROPERTY(bool hcsConnected READ hcsConnected WRITE setHcsConnected NOTIFY hcsConnectedChanged)
+    Q_PROPERTY(bool hcsConnected READ hcsConnected NOTIFY hcsConnectedChanged)
 
 public:
     explicit HcsNode(QObject* parent = nullptr);
@@ -23,7 +23,6 @@ public slots:
 
     void shutdownService();
 
-    void setHcsConnected(bool hcsConnected);
 
 signals:
     void hcsConnectedChanged(bool hcsConnected);
@@ -31,9 +30,10 @@ signals:
 protected:
 private:
     void initConnections();
+    void setHcsConnected(bool hcsConnected);
 
     QRemoteObjectNode replicaNode_;
     QSharedPointer<HostControllerServiceReplica> replica_;
 
-    bool m_hcsConnected{false};
+    bool hcsConnected_{false};
 };
