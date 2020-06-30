@@ -11,15 +11,15 @@ Item {
     property var telemetry : {
         "cell_voltage": "",
         "cell_temp": "",
-        "log_indicator": "off",
-        "onboard_indicator": 23.0
+        "log_indicator": "black",
+        "onboard_indicator": "black"
     }
 
     // Receive value 1  LEDS On/Off Controller commands in GUI send black/off or Red
     property var control_states: ({
                                       "measurement":"stop",
                                       "onboard_load_en":"off",
-                                      "load_current":1500,
+                                      "load_current":750,
                                       "charge_volt":4.35,
                                       "cut_off_volt":2800,
                                       "b_constant":3380,
@@ -60,7 +60,7 @@ Item {
     property var set_load_current : ({
                                         "cmd" : "set_load_current",
                                         "payload": {
-                                            "value": 3000 // default value
+                                            "value": 3000 //
                                         },
 
                                         update: function (value) {

@@ -844,7 +844,7 @@ ColumnLayout {
                                                 labelledInfoBox11w.visible=false
                                                 rect32a.color="#ffffff"
                                                 rect34a.color="#f7f7fe"
-                                                sgStatusLight16.status= "off"
+
                                                 platformInterface.set_onboard_load_en.update(qsTr(set_onboard_load_en.currentText))
 
                                               }
@@ -860,7 +860,7 @@ ColumnLayout {
                                                 rect32a.color="#f7f7fe"
                                                  rect34a.color="#ffffff"
                                                 labelledInfoBox11w.visible=true
-                                                 sgStatusLight16.status= platformInterface.control_states.onboard_load_en//"green"
+
                                                  platformInterface.set_onboard_load_en.update(qsTr(set_onboard_load_en.currentText))
 
                                                }
@@ -919,7 +919,7 @@ ColumnLayout {
                                                             labelledInfoBox11w.visible=false
                                                            rect32a.color = "#ffffff"
                                                            rect33a.color="#f7f7fe"
-                                                           sgStatusLight16.status= "off"
+
                                                            platformInterface.set_onboard_load_en.update(qsTr(set_onboard_load_en.currentText))
 
                                                                }
@@ -934,7 +934,7 @@ ColumnLayout {
                                                               rect32a.color = "#f7f7fe"
                                                               rect33a.color="#ffffff"
                                                               platformInterface.set_onboard_load_en.update(qsTr(set_onboard_load_en.currentText))
-                                                              sgStatusLight16.status= platformInterface.control_states.onboard_load_en//"green"
+
 
                                                              // value1= +sgsliderELC.value
 
@@ -1757,8 +1757,9 @@ ColumnLayout {
                                              textColor: "black"      // Default: "black"
                                              property var log_indicator: platformInterface.telemetry.log_indicator
                                              onLog_indicatorChanged:{
-                                                 sgStatusLight13.status=log_indicator                                                 }
-                                        }
+                                                 sgStatusLight13.status=log_indicator   }
+
+                                    }
                                     }
 
                                     Rectangle {
@@ -1868,6 +1869,11 @@ ColumnLayout {
                                              labelLeft: true        // Default: true
                                              lightSize: 30           // Default: 50
                                              textColor: "black"      // Default: "black"
+                                             property var on_board_load_led: platformInterface.telemetry.onboard_indicator
+                                             onOn_board_load_ledChanged:{
+                                                 sgStatusLight16.status=on_board_load_led }
+
+
                                          }
                                     }
 
@@ -2068,7 +2074,7 @@ ColumnLayout {
                                               clearGraphsData()
                                               //sgStatusLight13.status= platformInterface.telemetry.log_indicator//"green"
                                               platformInterface.set_measurement.update(condition1)
-                                              sgStatusLight16.status= platformInterface.control_states.onboard_load_en//control_states.onboard_load_en
+
                                             if((qsTr(sgcomboBS.currentText)==="Discharge") && (qsTr(set_onboard_load_en.currentText)===" ")){
                                                   set_onboard_load_en.currentIndex=1 }
 
