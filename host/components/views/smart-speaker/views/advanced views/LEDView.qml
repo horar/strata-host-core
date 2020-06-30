@@ -92,6 +92,7 @@ Rectangle {
 
                 anchors.verticalCenter: topLightsLabel.verticalCenter
                 height:25
+                width:45
                 grooveFillColor: hightlightColor
                 checked: platformInterface.led_state.upper_on
 
@@ -119,6 +120,7 @@ Rectangle {
 
                 anchors.verticalCenter: bottomLightsLabel.verticalCenter
                 height:25
+                width:45
                 grooveFillColor: hightlightColor
                 checked: platformInterface.led_state.lower_on
 
@@ -194,6 +196,7 @@ Rectangle {
                 from:0
                 to:100
                 showInputBox: true
+                handleSize: 20
                 grooveColor: "grey"
                 fillColor: hightlightColor
             }
@@ -223,6 +226,7 @@ Rectangle {
 
                 anchors.verticalCenter: touchButtonsLabel.verticalCenter
                 height:25
+                width:45
                 grooveFillColor: hightlightColor
                 checked:platformInterface.touch_button_state.state
 

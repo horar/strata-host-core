@@ -228,7 +228,7 @@ Rectangle {
                 id:floatVoltageText
                 anchors.verticalCenter: floatVoltageLabel.verticalCenter
                 font.pixelSize: 15
-                text: platformInterface.charger_status.float_voltage
+                text: platformInterface.charger_status.float_voltage.toFixed(1)
                 color: "black"
             }
 
@@ -286,7 +286,7 @@ Rectangle {
                         inputBox: true
                         grooveColor: "grey"
                         grooveFillColor: hightlightColor
-                        value: platformInterface.charger_status.ibus_limit
+                        value: platformInterface.charger_status.ibus_limit.toFixed(0)
                         onUserSet: {
                             platformInterface.set_charger_current.update("set_vbus_current_limit", value);
                         }
@@ -324,7 +324,7 @@ Rectangle {
                         inputBox: true
                         grooveColor: "grey"
                         grooveFillColor: hightlightColor
-                        value:platformInterface.charger_status.fast_chg_current
+                        value:platformInterface.charger_status.fast_chg_current.toFixed(0)
                         onUserSet: {
                             platformInterface.set_charger_current.update("set_fast_current_limit", value);
                         }
@@ -362,7 +362,7 @@ Rectangle {
                         inputBox: true
                         grooveColor: "grey"
                         grooveFillColor: hightlightColor
-                        value: platformInterface.charger_status.precharge_current
+                        value: platformInterface.charger_status.precharge_current.toFixed(0)
                         onUserSet: {
                             platformInterface.set_charger_current.update("set_precharge_current_limit", value);
                         }
@@ -400,7 +400,7 @@ Rectangle {
                         inputBox: true
                         grooveColor: "grey"
                         grooveFillColor: hightlightColor
-                        value: platformInterface.charger_status.termination_current
+                        value: platformInterface.charger_status.termination_current.toFixed(0)
                         onUserSet: {
                             platformInterface.set_charger_current.update("set_termination_current_limit", value);
                         }

@@ -71,7 +71,9 @@ Rectangle {
                 inactiveColor: "white"
                 checked: true
                 //height:40
-                onClicked: {}
+                onClicked: {
+                platformInterface.set_audio_amp_voltage.update(5,0,"usb")
+                }
 
 
             }
@@ -81,21 +83,27 @@ Rectangle {
                 activeColor:buttonSelectedColor
                 inactiveColor: "white"
                 //height:40
-                onClicked: {}
+                onClicked: {
+                platformInterface.set_audio_amp_voltage.update(7,0,"usb")
+                }
             }
             SGSegmentedButton{
                 text: qsTr("9V 3A")
                 activeColor:buttonSelectedColor
                 inactiveColor: "white"
                 //height:40
-                onClicked: {}
+                onClicked: {
+                    platformInterface.set_audio_amp_voltage.update(9,0,"usb")
+                }
             }
             SGSegmentedButton{
                 text: qsTr("12V 3A")
                 activeColor:buttonSelectedColor
                 inactiveColor: "white"
                 //height:40
-                onClicked: {}
+                onClicked: {
+                platformInterface.set_audio_amp_voltage.update(12,0,"usb")
+                }
             }
         }
     }

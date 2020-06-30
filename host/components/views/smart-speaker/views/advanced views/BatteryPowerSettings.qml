@@ -53,8 +53,9 @@ Rectangle {
         anchors.verticalCenter: audioVoltageLabel.verticalCenter
         anchors.verticalCenterOffset: 5
         height:25
-        from:100
-        to:600
+        from:5.5
+        to:14
+        stepSize: .5
         inputBox: true
         grooveColor: "grey"
         grooveFillColor: hightlightColor
@@ -62,8 +63,8 @@ Rectangle {
         value: platformInterface.audio_power.audio_voltage
 
         onUserSet: {
-            //there is no set_audio_power API call, so how is this set?
-            //platformInterface.set
+            //the first parameter is usb volts, which will be ignored
+            platformInterface.set_audio_amp_voltage.update(0,value,"battery")
         }
     }
 
