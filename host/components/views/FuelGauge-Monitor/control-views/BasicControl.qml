@@ -631,7 +631,7 @@ ColumnLayout {
                     else
                     if(sgStatusLight1.status==="black"){return lightofff}
                     }
-                    property var on_board_load_:foo33()//set_onboard_load_en.currentText
+                    property var on_board_load_:foo33()//
                     function foo33(){
                     var disable="Disable"
                     if((set_onboard_load_en.currentText===" ")){
@@ -848,7 +848,7 @@ ColumnLayout {
                                         onCurrentTextChanged:  {
 
                                             if(qsTr(sgcomboBS.currentText)==="Charge"){
-                                                set_onboard_load_en.currentIndex=2
+                                                set_onboard_load_en.currentIndex=1
                                                 sgsliderELC.enabled=false
                                                 sgsliderOBLC.enabled=false
                                                 set_onboard_load_en.enabled=false
@@ -857,11 +857,9 @@ ColumnLayout {
                                                 labelledInfoBox11w.visible=false
                                                 rect32a.color="#ffffff"
                                                 rect34a.color="#f7f7fe"
-
                                                 platformInterface.set_onboard_load_en.update(qsTr(set_onboard_load_en.currentText))
 
                                               }
-
 
                                              if(qsTr(sgcomboBS.currentText)==="Discharge") {
                                                 sgsliderELC.enabled=false
@@ -873,8 +871,7 @@ ColumnLayout {
                                                 rect32a.color="#f7f7fe"
                                                  rect34a.color="#ffffff"
                                                 labelledInfoBox11w.visible=true
-
-                                                 platformInterface.set_onboard_load_en.update(qsTr(set_onboard_load_en.currentText))
+                                                platformInterface.set_onboard_load_en.update(qsTr(set_onboard_load_en.currentText))
 
                                                }
 
@@ -912,7 +909,7 @@ ColumnLayout {
                                     Widget09.SGComboBox {
                                         anchors.centerIn: parent
                                         id: set_onboard_load_en
-                                        model: ["Enable", "Disable"," "]
+                                        model: ["Enable", "Disable"]
                                         label: "On-board Load"   // Default: "" (if not entered, label will not appear)
                                         labelLeft: true            // Default: true
                                         comboBoxWidth: parent.width*0.5    //130      // Default: 120 (set depending on model info length)
@@ -923,7 +920,7 @@ ColumnLayout {
                                         dividers: true              // Default: false
                                         //popupHeight: 300            // Default: 300 (sets max height for popup if model is lengthy)
                                      onCurrentTextChanged:  {
-                                                           if(qsTr(set_onboard_load_en.currentText)==="Disable") {
+                                                           if((qsTr(sgcomboBS.currentText)==="Discharge")&&(qsTr(set_onboard_load_en.currentText)==="Disable")) {
                                                             sgsliderELC.enabled=true
                                                             sgsliderOBLC.enabled=false
 
@@ -932,7 +929,6 @@ ColumnLayout {
                                                             labelledInfoBox11w.visible=false
                                                            rect32a.color = "#ffffff"
                                                            rect33a.color="#f7f7fe"
-
                                                            platformInterface.set_onboard_load_en.update(qsTr(set_onboard_load_en.currentText))
 
                                                                }
@@ -2024,13 +2020,13 @@ ColumnLayout {
                                     Widget09.SGLabelledInfoBox {
                                        //horizontalAlignment: Text.AlignHCenter
                                         id: labelledInfoBox1exr
-                                        infoBoxWidth: parent.width*0.55
+                                        infoBoxWidth: parent.width*0.56
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.top: parent.top
                                         anchors.topMargin: parent.height*0.4
                                         infoBoxHeight:40
                                         label: ""
-                                        info: platformInterface.telemetry.cell_voltage + " mV, "+platformInterface.telemetry.cell_temp + " °C"
+                                        info: platformInterface.telemetry.cell_voltage + " mV, "+platformInterface.telemetry.cell_temp + " °C "
                                         labelLeft: true                    // Default: true (if false, label will be on top)
                                         infoBoxColor: "lightgray"       // Default: "#eeeeee" (light gray)
                                         infoBoxBorderColor: "#f3f3fe"    // Default: "#cccccc" (light gray)
@@ -2080,25 +2076,18 @@ ColumnLayout {
                                         property var start_stop_measure: 0
 
                                       onToggled: {
-                                          //clear=1
-                                         // clearGraphsData() //call function to clear old graph data
                                           if(checked){
                                               clear=1
                                               clearGraphsData()
-                                              //sgStatusLight13.status= platformInterface.telemetry.log_indicator//"green"
                                               platformInterface.set_measurement.update(condition1)
 
-                                            if((qsTr(sgcomboBS.currentText)==="Discharge") && (qsTr(set_onboard_load_en.currentText)===" ")){
-                                                  set_onboard_load_en.currentIndex=1 }
-
-
+                                            //  if((qsTr(sgcomboBS.currentText)==="Discharge") && (qsTr(set_onboard_load_en.currentText)===" ")){
+                                               //   set_onboard_load_en.currentIndex=1 }
                                           }
                                           else
                                           {
                                            platformInterface.set_measurement.update(condition0)
                                            platformInterface.set_measurement.update(condition0)
-                                         //  sgStatusLight13.status= platformInterface.control_states.onboard_load_en//"off"
-
 
                                           }
 

@@ -55,7 +55,7 @@ Rectangle {
         ApplicationWindow {
             id:opensavedaialoguemenu
             visible: false
-            width: 560
+            width: 530
             height: 630
             title: qsTr("Please save  your log data")
 
