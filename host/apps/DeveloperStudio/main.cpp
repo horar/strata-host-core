@@ -27,6 +27,7 @@
 #include "DocumentManager.h"
 #include "ResourceLoader.h"
 
+#include "HcsNode.h"
 
 int main(int argc, char *argv[])
 {
@@ -66,6 +67,10 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Running on %1").arg(QSysInfo::prettyProductName());
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
+
+    HcsNode remoteHcsNode; // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
+    QObject::connect(&app, &QGuiApplication::lastWindowClosed,
+                     &remoteHcsNode, &HcsNode::shutdownService/*, Qt::QueuedConnection*/);
 
     ResourceLoader resourceLoader;
 
@@ -176,6 +181,8 @@ int main(int argc, char *argv[])
 #endif
 
     int appResult = app.exec();
+    // LC: process remaining events i.e. submit remaining events (created by external close request)
+    QCoreApplication::processEvents();
 
 #ifdef START_SERVICES // start services
 #ifdef Q_OS_WIN // windows check to kill hcs3
@@ -203,7 +210,10 @@ int main(int argc, char *argv[])
         }
     }
 #endif // windows check to kill hcs3
-    qCDebug(logCategoryStrataDevStudio) << "terminating HCS result: " << hcsProcess->state() << "(error:" << hcsProcess->errorString() << ")";
+    qCInfo(logCategoryStrataDevStudio) << "terminating HCS result:" << hcsProcess->exitStatus();
+    if (hcsProcess->error() != QProcess::UnknownError) {
+        qCWarning(logCategoryStrataDevStudio) << "terminating HCS failed:" << hcsProcess->errorString();
+    }
 #endif // start services
 
     return appResult;
