@@ -42,14 +42,18 @@ ColumnLayout {
     //inturrupts from MCU
    property var double_estd_time: platformInterface.int_os_alert.double_time
     onDouble_estd_timeChanged: {
-        if(double_estd_time==="red"){sgStatusLight18.status="red"}
+        if(double_estd_time==="red"){sgStatusLight18.status="red"
+        logSwitch.checked = false
+        }
         else
         if(double_estd_time==="black"){sgStatusLight18.status="black"}
     }
 
     property var cut_off_voltage: platformInterface.int_os_alert.cut_off_volt
      onCut_off_voltageChanged: {
-         if(cut_off_voltage==="red"){sgStatusLight1.status="red"}
+         if(cut_off_voltage==="red"){sgStatusLight1.status="red"
+         logSwitch.checked = false
+         }
          else
          if(cut_off_voltage==="black"){sgStatusLight1.status="black"}
      }
@@ -89,30 +93,39 @@ ColumnLayout {
     // inturrupts
     property var no_battery: platformInterface.int_os_alert.no_battery
      onNo_batteryChanged: {
-         if(no_battery==="red"){sgStatusLight17.status="red"} //over_volt
+         if(no_battery==="red"){sgStatusLight17.status="red"
+         logSwitch.checked = false
+            // logSwitch.status=false
+         } //over_volt
          else
          if(no_battery==="black"){sgStatusLight17.status="black"}
      }
      //not log
      property var over_volt: platformInterface.int_os_alert.over_volt
       onOver_voltChanged: {
-          if(no_battery==="red"){sgStatusLight_overvoltage.status="red"} //over_volt
+          if(over_volt==="red"){sgStatusLight_overvoltage.status="red"
+          logSwitch.checked = false
+          } //over_volt
           else
-          if(no_battery==="black"){sgStatusLight_overvoltage.status="black"}
+          if(over_volt==="black"){sgStatusLight_overvoltage.status="black"}
       }
 //not log
       property var over_current: platformInterface.int_os_alert.over_current
       onOver_currentChanged: {
-                if(no_battery==="red"){sgStatusLight_overcurrent.status="red"} //over_current
+                if(over_current==="red"){sgStatusLight_overcurrent.status="red"
+                logSwitch.checked = false
+                } //over_current
                 else
-                if(no_battery==="black"){sgStatusLight_overcurrent.status="black"}
+                if(over_current==="black"){sgStatusLight_overcurrent.status="black"}
             }
       //not log
             property var over_temp: platformInterface.int_os_alert.over_temp
             onOver_tempChanged: {
-                      if(no_battery==="red"){sgStatusLight_overtemp.status="red"} //over_current
+                      if(over_temp==="red"){sgStatusLight_overtemp.status="red"
+                      logSwitch.checked = false
+                      } //over_current
                       else
-                      if(no_battery==="black"){sgStatusLight_overtemp.status="black"}
+                      if(over_temp==="black"){sgStatusLight_overtemp.status="black"}
                   }
 
 
