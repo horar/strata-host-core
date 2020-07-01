@@ -807,7 +807,7 @@ ColumnLayout {
                                 yMax: 5000
                                 backgroundColor: "#FDEEF4"
                                 foregroundColor: "steelblue"
-                                xTitle: "                                         Time (sec)" + "       " + "Estd. : "+ basicGraph1.xMax.toFixed(0) + "  of  "+ virtualtextarea.estd_tst_time*60
+                                xTitle: "                             Time (sec)" + "       " + "Estd. : "+ basicGraph1.xMax.toFixed(0) + "  of  "+ virtualtextarea.estd_tst_time*60
                                 yTitle: "Cell Voltage (mV)"
 
                                 Button {
