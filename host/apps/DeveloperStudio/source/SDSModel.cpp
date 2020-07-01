@@ -74,21 +74,7 @@ bool SDSModel::startHcs()
         connect(hcsProcess_, &QProcess::errorOccurred,
                 this, &SDSModel::handleHcsProcessError);
 
-        // XXX: [LC] temporary solutions until Strata Monitor takeover 'hcs' service management
-        QObject::connect(hcsProcess_, &QProcess::readyReadStandardOutput, [&]() {
-            QByteArray stdOut = hcsProcess_->readAllStandardOutput();
-            const QString hscMsg{QString::fromLatin1(stdOut)};
-            for (const auto& line : hscMsg.split(QRegExp("\n|\r\n|\r"))) {
-                qCDebug(logCategoryHcs) << line;
-            }
-        } );
-        QObject::connect(hcsProcess_, &QProcess::readyReadStandardError, [&]() {
-            const QString hscMsg{QString::fromLatin1(hcsProcess_->readAllStandardError())};
-            for (const auto& line : hscMsg.split(QRegExp("\n|\r\n|\r"))) {
-                qCCritical(logCategoryHcs) << line;
-            }
-        });
-        // XXX: [LC] end
+        forwardHcsOutput();
 
         QStringList arguments;
         arguments << "-f" << hcsConfigPath;
@@ -193,4 +179,23 @@ void SDSModel::setHcsConnected(bool hcsConnected)
     if (hcsConnected == false) {
         documentManager_->clearDocuments();
     }
+}
+
+void SDSModel::forwardHcsOutput()
+{
+    // XXX: [LC] temporary solutions until Strata Monitor takeover 'hcs' service management
+    QObject::connect(hcsProcess_, &QProcess::readyReadStandardOutput, [&]() {
+        QByteArray stdOut = hcsProcess_->readAllStandardOutput();
+        const QString hscMsg{QString::fromLatin1(stdOut)};
+        for (const auto& line : hscMsg.split(QRegExp("\n|\r\n|\r"))) {
+            qCDebug(logCategoryHcs) << line;
+        }
+    } );
+    QObject::connect(hcsProcess_, &QProcess::readyReadStandardError, [&]() {
+        const QString hscMsg{QString::fromLatin1(hcsProcess_->readAllStandardError())};
+        for (const auto& line : hscMsg.split(QRegExp("\n|\r\n|\r"))) {
+            qCCritical(logCategoryHcs) << line;
+        }
+    });
+    // XXX: [LC] end
 }

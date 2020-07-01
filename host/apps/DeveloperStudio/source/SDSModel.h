@@ -47,4 +47,5 @@ private:
     QString configFilename_;
 
     void setHcsConnected(bool hcsConnected);
+    void forwardHcsOutput();
 };
