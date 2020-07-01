@@ -55,6 +55,7 @@ ColumnLayout {
      onCut_off_voltageChanged: {
          if(cut_off_voltage==="red"){sgStatusLight1.status="red"
          logSwitch.checked = false
+         switch_checked_false()
          }
          else
          if(cut_off_voltage==="black"){sgStatusLight1.status="black"}
@@ -193,6 +194,7 @@ ColumnLayout {
      onNo_batteryChanged: {
          if(no_battery==="red"){sgStatusLight17.status="red"
          logSwitch.checked = false
+         switch_checked_false()
             // logSwitch.status=false
          } //over_volt
          else
@@ -203,6 +205,7 @@ ColumnLayout {
       onOver_voltChanged: {
           if(over_volt==="red"){sgStatusLight_overvoltage.status="red"
           logSwitch.checked = false
+          switch_checked_false()
           } //over_volt
           else
           if(over_volt==="black"){sgStatusLight_overvoltage.status="black"}
@@ -212,6 +215,7 @@ ColumnLayout {
       onOver_currentChanged: {
                 if(over_current==="red"){sgStatusLight_overcurrent.status="red"
                 logSwitch.checked = false
+                switch_checked_false()
                 } //over_current
                 else
                 if(over_current==="black"){sgStatusLight_overcurrent.status="black"}
@@ -221,6 +225,7 @@ ColumnLayout {
             onOver_tempChanged: {
                       if(over_temp==="red"){sgStatusLight_overtemp.status="red"
                       logSwitch.checked = false
+                       switch_checked_false()
                       } //over_current
                       else
                       if(over_temp==="black"){sgStatusLight_overtemp.status="black"}
