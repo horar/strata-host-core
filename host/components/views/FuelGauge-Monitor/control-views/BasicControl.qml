@@ -2120,7 +2120,7 @@ ColumnLayout {
                                         anchors.topMargin: parent.height*0.4
                                         infoBoxHeight:40
                                         label: ""
-                                        info: +basicGraph.xMax.toFixed(0) + " Sec, "+ platformInterface.telemetry.cell_voltage + " mV, "+platformInterface.telemetry.cell_temp + " °C "
+                                        info: +basicGraph1.xMax.toFixed(0) + " Sec, "+ platformInterface.telemetry.cell_voltage + " mV, "+platformInterface.telemetry.cell_temp + " °C "
                                         labelLeft: true                    // Default: true (if false, label will be on top)
                                         infoBoxColor: "lightgray"       // Default: "#eeeeee" (light gray)
                                         infoBoxBorderColor: "#f3f3fe"    // Default: "#cccccc" (light gray)
