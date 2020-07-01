@@ -72,9 +72,9 @@ Rectangle {
                     columnSpacing: 2
                     rowSpacing: 2
 
-                    property var overVoltage: platformInterface.vbus_ovp_level
+                    property var overVoltage: platformInterface.charger_status.vbus_ovp
                     onOverVoltageChanged: {
-                        switch(platformInterface.vbus_ovp_level.value){
+                        switch(platformInterface.charger_status.vbus_ovp){
                             case 6.5:   overVoltageButton1.checked = true;  break;
                             case 10.5:  overVoltageButton2.checked = true;  break;
                             case 13.7:  overVoltageButton3.checked = true;  break;
@@ -286,7 +286,7 @@ Rectangle {
                         inputBox: true
                         grooveColor: "grey"
                         grooveFillColor: hightlightColor
-                        value: platformInterface.charger_status.ibus_limit.toFixed(0)
+                        value: platformInterface.charger_status.ibus_limit
                         onUserSet: {
                             platformInterface.set_charger_current.update("set_vbus_current_limit", value);
                         }
@@ -400,7 +400,7 @@ Rectangle {
                         inputBox: true
                         grooveColor: "grey"
                         grooveFillColor: hightlightColor
-                        value: platformInterface.charger_status.termination_current.toFixed(0)
+                        value: platformInterface.charger_status.termination_current
                         onUserSet: {
                             platformInterface.set_charger_current.update("set_termination_current_limit", value);
                         }

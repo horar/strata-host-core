@@ -111,13 +111,25 @@ Item {
     property var charger_status:{
         "float_voltage":4.2,           /* has a range of voltages, but this is only one used*/
         "charge_mode":"fast",           /* ‘pre’ or ‘top off' or 'sleep’ or 'discharge'*/
-        "precharge_current":100,        /* (mA) 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800 /
-        "termination_current":100,      /* (mA) 100 - 200 in 25mA increments, 200 - 600 in 50mA increments */
-        "ibus_limit":50,                 /* (mA) 100-3000 in 25mA increments */
+        "precharge_current":200,        /* (mA) 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800 */
+        "termination_current":200,      /* (mA) 100 - 200 in 25mA increments, 200 - 600 in 50mA increments */
+        "ibus_limit":200,                 /* (mA) 100-3000 in 25mA increments */
         "fast_chg_current":200,         /* (mA) 200-3200 in 50 mA increments */
         "vbus_ovp":6.5,                 /*  (V) or 10.5 or 13.7*/
         "audio_power_mode":"vbus"       /*or battery*/
     }
+
+//    onCharger_statusChanged: {
+//        console.log("float voltage=",charger_status.float_voltage)
+//        console.log("charge mode=",charger_status.charge_mode)
+//        console.log("precharge current=",charger_status.precharge_current)
+//        console.log("termination current=",charger_status.termination_current)
+//        console.log("ibus limit=",charger_status.ibus_limit)
+//        console.log("fast charge current=",charger_status.fast_chg_current)
+//        console.log("vbus ovp=",charger_status.vbus_ovp)
+//        console.log("audio power=",charger_status.audio_power_mode)
+
+//    }
 
     property var led_state:{
         "lower_on":true,
@@ -144,10 +156,10 @@ Item {
     property var thermal_protection_temp:{
         "value":70               //or 85, 100, 120
     }
+//    onThermal_protection_tempChanged: {
+//        console.log("thermal protection temp=",thermal_protection_temp.value)
+//    }
 
-    property var vbus_ovp_level:{
-        "value":6.5
-    }
 
     property var fet_bypass:{
         "state":true,
@@ -374,20 +386,18 @@ Item {
     property var set_led_state:({
                  "cmd":"set_led_state",
                  "payload":{
-                    "set":"lower",                        // or false
-                    "state":true,
+                    "set":"lower",                        // or upper
                     "H":128,
-                    "V":0
+                    "V":0                               //pass 0 if LED is turned off, otherwise brightness
                     },
                  update: function(set,state,h,v){
                    this.set(set,state,h,v)
                    CorePlatformInterface.send(this)
                  },
-                 set: function(inSet, inState, inH, inV){
+                 set: function(inSet, inH, inV){
                    this.payload.set = inSet;
-                     this.payload.state = inState;
-                     this.payload.H = inH;
-                     this.payload.V = inV;
+                   this.payload.H = inH;
+                   this.payload.V = inV;
                   },
                  send: function(){
                    CorePlatformInterface.send(this)

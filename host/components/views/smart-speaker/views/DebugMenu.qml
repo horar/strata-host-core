@@ -376,14 +376,22 @@ Rectangle {
                 property var theChargeMode: "fast";
                 property var theAudioPowerMode: "vbus";
                 property var theVbusOVP: 6.5
+                property var theThermalTemp: 70
 
                 onClicked: {
 
+                    CorePlatformInterface.data_source_handler('{
+                        "value":"thermal_protection_temp",
+                        "payload":{
+                            "value":'+ theThermalTemp +'
+                            }
+                        }')
+
                     var theFloatVoltage = (Math.random() *4);
-                    var thePrechargeCurrent = (Math.random() *600)+200;
-                    var theTerminationCurrent = (Math.random() *500)+100;
-                    var theIbusLimit = (Math.random() *2900)+100;
-                    var theFastChargeCurrent = (Math.random() *3800)+200;
+                    var thePrechargeCurrent = Math.round((Math.random() *12))*50+200;
+                    var theTerminationCurrent = Math.round((Math.random() *10))*50 +100;
+                    var theIbusLimit = Math.round((Math.random() *58))*50+100;
+                    var theFastChargeCurrent = Math.round((Math.random() *56))*50+200;
 
                     CorePlatformInterface.data_source_handler('{
                         "value":"charger_status",
@@ -414,15 +422,53 @@ Rectangle {
                         theVbusOVP = 13.7
                       else
                         theVbusOVP = 6.5
+
+                    if (theThermalTemp === 70)
+                        theThermalTemp = 120
+                      else
+                        theThermalTemp = 70
                 }
             }
+
+
 
             Button {
                 id:rightButton4
                 height: 20
                 text: "LED+touch"
+
+                property var theUpper: true;
+                property var theLower: false;
+                property var theTouch: true;
+
+
                 onClicked: {
 
+                    var theH = Math.round((Math.random() *359));
+                    var theV = Math.round((Math.random() *100));
+
+
+                    CorePlatformInterface.data_source_handler('{
+                        "value":"led_state",
+                        "payload":{
+                            "lower_on":'+ theLower +',
+                            "upper_on":'+ theUpper +',
+                            "H":'+ theH +',
+                            "V":'+ theV +'
+                            }
+                        }')
+
+
+                    CorePlatformInterface.data_source_handler('{
+                        "value":"touch_button_state",
+                        "payload":{
+                            "state":'+ theTouch +'
+                            }
+                        }')
+
+                    theUpper = !theUpper;
+                    theLower = !theLower;
+                    theTouch = !theTouch;
                 }
             }
 

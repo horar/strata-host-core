@@ -152,24 +152,10 @@ Rectangle {
                 width:160
 
                 //still need to write code to set the hsl slider based on rgb changes in the platform
-                value:{
-                    var r = platformInterface.led_state.r
-                    var g = platformInterface.led_state.g
-                    var b = platformInterface.led_state.b
-
-                    //console.log("r,g,b=",r,g,b);
-                    var hsl = rgbToHsl(r, g, b)
-                    //console.log("h,s,v=",hsl.h,hsl.s,hsl.l)
-
-                    //The returned value is between 0 and 1, so scale to match the slider's range
-                    return hsl.h * 255;
-                }
+                value:Math.round((platformInterface.led_state.H / 359) * 255)
 
                 onMoved: {
-                    platformInterface.set_led_state.update("lower",platformInterface.led_state.lower_on,
-                                                           bottomLightColorlider.rgbArray[0],
-                                                           bottomLightColorlider.rgbArray[1],
-                                                           bottomLightColorlider.rgbArray[2],)
+                    platformInterface.set_led_state.update("lower",(value/255)*359,platformInterface.led_state.V);
                 }
 
             }
@@ -199,6 +185,10 @@ Rectangle {
                 handleSize: 20
                 grooveColor: "grey"
                 fillColor: hightlightColor
+                value: platformInterface.led_state.V
+                onUserSet: {
+                    platformInterface.set_led_state.update("lower",platformInterface.led_state.H,value);
+                }
             }
             Text{
                 id:bottomLightBrightnessUnitLabel
