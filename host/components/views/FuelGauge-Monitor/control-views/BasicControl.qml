@@ -2104,7 +2104,7 @@ ColumnLayout {
                                     Text {
                                         id: name319
                                         //height: 19
-                                        text: "Status(Volt,Temp)"
+                                        text: "Log Status(Volt,Temp)"
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.top: parent.top
                                         anchors.topMargin: parent.height*0.09
@@ -2116,7 +2116,7 @@ ColumnLayout {
                                     Widget09.SGLabelledInfoBox {
                                        //horizontalAlignment: Text.AlignHCenter
                                         id: labelledInfoBox1exr
-                                        infoBoxWidth: parent.width*0.56
+                                        infoBoxWidth: parent.width*0.58
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.top: parent.top
                                         anchors.topMargin: parent.height*0.4
@@ -2143,7 +2143,7 @@ ColumnLayout {
                                    Text {
                                         id: name320
                                         //height: 19
-                                        text: "Start Measure"
+                                        text: "Start/Stop/Clear Measure"
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.top: parent.top
                                         anchors.topMargin: parent.height*0.09
@@ -2254,7 +2254,7 @@ ColumnLayout {
                                     Text {
                                         id: name321
                                         //height: 19
-                                        text: "Export Log"
+                                        text: "Log File"
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.top: parent.top
                                         anchors.topMargin: parent.height*0.09
