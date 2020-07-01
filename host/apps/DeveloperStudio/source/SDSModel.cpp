@@ -1,5 +1,6 @@
 #include "SDSModel.h"
 #include "DocumentManager.h"
+#include "HcsNode.h"
 #include <PlatformInterface/core/CoreInterface.h>
 
 #include <QFile>
@@ -25,6 +26,12 @@ void SDSModel::init(const QString &appDirPath, const QString &configFilename)
 {
     appDirPath_ = appDirPath;
     configFilename_ = configFilename;
+
+    remoteHcsNode_ = new HcsNode(this);
+
+    connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged,
+            this, &SDSModel::hcsConnectionStatusHasChanged);
+
 }
 
 bool SDSModel::startHcs()
@@ -148,6 +155,11 @@ CoreInterface *SDSModel::coreInterface() const
     return coreInterface_;
 }
 
+void SDSModel::shutdownService()
+{
+    remoteHcsNode_->shutdownService();
+}
+
 void SDSModel::finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus)
 {
     qCDebug(logCategoryStrataDevStudio)
@@ -165,6 +177,11 @@ void SDSModel::finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus)
 void SDSModel::handleHcsProcessError(QProcess::ProcessError error)
 {
     qCDebug(logCategoryStrataDevStudio) << error << hcsProcess_->errorString();
+}
+
+void SDSModel::hcsConnectionStatusHasChanged()
+{
+    setHcsConnected(remoteHcsNode_->hcsConnected());
 }
 
 void SDSModel::setHcsConnected(bool hcsConnected)

@@ -6,6 +6,7 @@
 
 class DocumentManager;
 class CoreInterface;
+class HcsNode;
 
 class SDSModel: public QObject
 {
@@ -31,17 +32,21 @@ public:
     /*Temporary solution until strata monitor is done*/
     bool killHcsSilently = false;
 
+public slots:
+    void shutdownService();
 signals:
     void hcsConnectedChanged();
 
 private slots:
     void finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus);
     void handleHcsProcessError(QProcess::ProcessError error);
+    void hcsConnectionStatusHasChanged();
 
 private:
     bool hcsConnected_ = false;
     CoreInterface *coreInterface_;
     DocumentManager *documentManager_;
+    HcsNode *remoteHcsNode_;
     QPointer<QProcess> hcsProcess_;
     QString appDirPath_;
     QString configFilename_;
