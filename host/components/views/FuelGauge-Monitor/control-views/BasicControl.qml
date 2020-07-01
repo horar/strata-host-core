@@ -797,8 +797,6 @@ ColumnLayout {
                                 anchors.fill: parent
                                 anchors.left: parent.left
                                 anchors.leftMargin: 8
-                                //width: parent.width*0.98
-                                //height: parent.height*0.9
                                 title: "Zoom Enabled"
                                 xMin: 0
                                 xMax: +virtualtextarea.realtimelog
@@ -839,6 +837,7 @@ ColumnLayout {
                                       interval: +(virtualtextarea.realtimelog*1000)// chang to seconds *1000 or 3000sec
                                       running: false
                                       repeat: true
+                                      property  var display_the_time: +virtualtextarea.realtimelog
 
                                      onTriggered: {
                                           basicGraph.removeCurve(0)
@@ -860,6 +859,7 @@ ColumnLayout {
                                           }
                                           if(x_Axis_Timer<=0){x_Axis_Timer=+virtualtextarea.realtimelog}
                                           basicGraph.xMax = x_Axis_Timer
+                                          display_the_time = x_Axis_Timer
                                           curve.appendList(dataArray)
                                         //  print_dataArray.appendList({test2})  virtualtextarea1.text=Åg:Åh
 
@@ -2104,7 +2104,7 @@ ColumnLayout {
                                     Text {
                                         id: name319
                                         //height: 19
-                                        text: "Log Status(Volt,Temp)"
+                                        text: "Log Status(Time, Volt, Temp)"
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.top: parent.top
                                         anchors.topMargin: parent.height*0.09
@@ -2116,13 +2116,13 @@ ColumnLayout {
                                     Widget09.SGLabelledInfoBox {
                                        //horizontalAlignment: Text.AlignHCenter
                                         id: labelledInfoBox1exr
-                                        infoBoxWidth: parent.width*0.58
+                                        infoBoxWidth: parent.width*0.9//*0.58
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.top: parent.top
                                         anchors.topMargin: parent.height*0.4
                                         infoBoxHeight:40
                                         label: ""
-                                        info: platformInterface.telemetry.cell_voltage + " mV, "+platformInterface.telemetry.cell_temp + " °C "
+                                        info: +graphTimerPoints.display_the_time + " Sec, "+ platformInterface.telemetry.cell_voltage + " mV, "+platformInterface.telemetry.cell_temp + " °C  "
                                         labelLeft: true                    // Default: true (if false, label will be on top)
                                         infoBoxColor: "lightgray"       // Default: "#eeeeee" (light gray)
                                         infoBoxBorderColor: "#f3f3fe"    // Default: "#cccccc" (light gray)
