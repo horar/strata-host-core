@@ -15,6 +15,7 @@ ColumnLayout {
     property real ratioCalc: root.width / 1200
     property real initialAspectRatio: 1200/820
     property alias virtualtextarea: virtualtextarea
+    property alias logSwitch: logSwitch
     property var dataArray_voltage: []
     property var dataArray_temperature: []
     property var print_dataArray: []
@@ -44,6 +45,7 @@ ColumnLayout {
     onDouble_estd_timeChanged: {
         if(double_estd_time==="red"){sgStatusLight18.status="red"
         logSwitch.checked = false
+        switch_checked_false()
         }
         else
         if(double_estd_time==="black"){sgStatusLight18.status="black"}
@@ -68,6 +70,102 @@ ColumnLayout {
         }
         return 0
 }
+    // Handles When start measure switch is ON
+    function switch_checked_true() {
+
+    if(set_load_current.enabled==true)
+    {
+
+        set_load_current.enabled=false
+        manufacturer_name.readOnly=true
+        modal_name.readOnly=true
+        set_b_constant.enabled=false
+        set_capacitance.enabled=false
+        set_cut_off_volt.enabled=false
+        set_charge_volt.enabled=false
+    }
+
+    if((qsTr(sgcomboBS.currentText)==="Charge"))
+      {
+          if (sgsliderCC.enabled==true)
+          {
+          sgsliderCC.enabled=false
+          sgcomboBS.enabled=false
+          }
+
+      }
+
+
+    if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(set_onboard_load_en.currentText)==="Enable")
+      {
+          if (sgsliderOBLC.enabled==true)
+          {
+          sgsliderOBLC.enabled=false
+          sgcomboBS.enabled=false
+          set_onboard_load_en.enabled=false
+          }
+      }
+
+    if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(set_onboard_load_en.currentText)==="Disable")
+      {
+          if (sgsliderELC.enabled==true)
+          {
+          sgsliderELC.enabled=false
+          sgcomboBS.enabled=false
+          set_onboard_load_en.enabled=false
+          }
+      }
+    }
+    //
+
+
+    function switch_checked_false() {
+        if(set_load_current.enabled==false)
+        {
+
+            set_load_current.enabled=true
+            manufacturer_name.readOnly=false
+            modal_name.readOnly=false
+            set_b_constant.enabled=true
+            set_capacitance.enabled=true
+            set_cut_off_volt.enabled=true
+            set_charge_volt.enabled=true
+        }
+
+        if((qsTr(sgcomboBS.currentText)==="Charge"))
+          {
+              if (sgsliderCC.enabled==false)
+              {
+              sgsliderCC.enabled=true
+              sgcomboBS.enabled=true
+              }
+
+          }
+
+        if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(set_onboard_load_en.currentText)==="Enable")
+          {
+              if (sgsliderOBLC.enabled==false)
+              {
+              sgsliderOBLC.enabled=true
+              sgcomboBS.enabled=true
+              set_onboard_load_en.enabled=true
+              }
+
+          }
+
+        if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(set_onboard_load_en.currentText)==="Disable")
+          {
+              if (sgsliderELC.enabled==false)
+              {
+              sgsliderELC.enabled=true
+              sgcomboBS.enabled=true
+              set_onboard_load_en.enabled=true
+              }
+
+          }
+
+}
+
     Component.onCompleted: {
         //set_onboard_load_en.currentIndex=2
         graphTimerPoints.start()
@@ -857,6 +955,7 @@ ColumnLayout {
                                                 labelledInfoBox11w.visible=false
                                                 rect32a.color="#ffffff"
                                                 rect34a.color="#f7f7fe"
+                                                rect33a.color="#ffffff"
                                                 platformInterface.set_onboard_load_en.update(qsTr(set_onboard_load_en.currentText))
 
                                               }
@@ -933,7 +1032,7 @@ ColumnLayout {
 
                                                                }
 
-                                                           if(qsTr(set_onboard_load_en.currentText)==="Enable") {
+                                                           if((qsTr(sgcomboBS.currentText)==="Discharge")&&(qsTr(set_onboard_load_en.currentText)==="Enable")) {
                                                               sgsliderELC.enabled=false
                                                               sgsliderOBLC.enabled=true
                                                               set_onboard_load_en.enabled=true
@@ -943,9 +1042,6 @@ ColumnLayout {
                                                               rect32a.color = "#f7f7fe"
                                                               rect33a.color="#ffffff"
                                                               platformInterface.set_onboard_load_en.update(qsTr(set_onboard_load_en.currentText))
-
-
-                                                             // value1= +sgsliderELC.value
 
                                                                  }
 
@@ -1038,7 +1134,7 @@ ColumnLayout {
                                  labelTopAligned: false      // Default: false (only applies to label on left of slider, decides vertical centering of label)
                                  inputBox: true               // Default: true
                                  onUserSet: platformInterface.set_load_current.update(value)
-                                 onValueChanged:console.log("Value of load is+=====", value)
+                                 //onValueChanged:console.log("Value of load is+=====", value)
 
 
 
@@ -1056,7 +1152,7 @@ ColumnLayout {
                                             anchors.top: parent.top; anchors.topMargin: 3
                                            Widget09.SGLabelledInfoBox {
                                                id: set_est_test_time1
-                                               property string height11: +(Math.round((+set_load_current.value)*60/((+sgsliderOBLC.value))))
+                                               property string height11: +(Math.ceil((+set_load_current.value)*60/((+sgsliderOBLC.value))))
                                                property int height22: +height11
                                                property int height33:foo()
                                                function foo(){
@@ -1213,7 +1309,7 @@ ColumnLayout {
                                             anchors.top: parent.top; anchors.topMargin: 3
                                             //property string height11: +60/((+sgsliderELC.value)))) + " Min"
                                            Widget09.SGLabelledInfoBox {
-                                               property string height11: +(Math.round((set_load_current.value)*60/((+sgsliderELC.value))))
+                                               property string height11: +(Math.ceil((set_load_current.value)*60/((+sgsliderELC.value))))
                                                property int height22: +height11
                                                property int height33:foo()
                                                function foo(){
@@ -2075,52 +2171,23 @@ ColumnLayout {
                                         property var condition0: "stop"
                                         property var start_stop_measure: 0
 
-                                      onToggled: {
-                                          if(checked){
+                                      onClicked: {
+                                          if(logSwitch.checked == true) {
                                               clear=1
                                               clearGraphsData()
                                               platformInterface.set_measurement.update(condition1)
-
-                                            //  if((qsTr(sgcomboBS.currentText)==="Discharge") && (qsTr(set_onboard_load_en.currentText)===" ")){
-                                               //   set_onboard_load_en.currentIndex=1 }
-                                          }
-                                          else
-                                          {
-                                           platformInterface.set_measurement.update(condition0)
-                                           platformInterface.set_measurement.update(condition0)
+                                              //if(logSwitch.checked == true){//
+                                              switch_checked_true()
 
                                           }
+                                          if(logSwitch.checked == false){
+                                           platformInterface.set_measurement.update(condition0)
+                                           platformInterface.set_measurement.update(condition0)
+                                           switch_checked_false()
 
+                                          }
 
-                                        if(set_load_current.enabled==true)
-                                        {
-
-                                            set_load_current.enabled=false
-                                            manufacturer_name.readOnly=true
-                                            modal_name.readOnly=true
-                                            set_b_constant.enabled=false
-                                            set_capacitance.enabled=false
-                                            set_cut_off_volt.enabled=false
-                                            set_charge_volt.enabled=false
-
-                                        }
-                                        else{
-                                            if(set_load_current.enabled==false)
-                                            {
-
-                                                set_load_current.enabled=true
-                                                manufacturer_name.readOnly=false
-                                                modal_name.readOnly=false
-                                                set_b_constant.enabled=true
-                                                set_capacitance.enabled=true
-                                                set_cut_off_volt.enabled=true
-                                                set_charge_volt.enabled=true
-
-                                            }
-
-                                        }
-
-                                           if((qsTr(sgcomboBS.currentText)==="Charge"))
+                                      /*     if((qsTr(sgcomboBS.currentText)==="Charge"))
                                              {
                                                  if (sgsliderCC.enabled==true)
                                                  {
@@ -2153,7 +2220,6 @@ ColumnLayout {
                                                  set_onboard_load_en.enabled=true
                                                  }
 
-
                                              }
 
                                            if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(set_onboard_load_en.currentText)==="Disable")
@@ -2172,7 +2238,7 @@ ColumnLayout {
                                                  set_onboard_load_en.enabled=true
                                                  }
 
-                                             }
+                                             }*/
 
 
 
@@ -2197,21 +2263,17 @@ ColumnLayout {
                                     }
 
                                     DebugMenu {
-
-                                                         anchors.left: parent.left
-                                                        // anchors.leftMargin: 10
-                                                                       anchors.horizontalCenter: parent.horizontalCenter
-                                                                       anchors.top: parent.top
-                                                                       anchors.topMargin: parent.height*0.38
-                                                                       //height: parent.height*0.91
-                                                                       //width: parent.width*0.94
-                                                     }
-
+                                        id:debugmenu
+                                         anchors.left: parent.left
+                                         anchors.horizontalCenter: parent.horizontalCenter
+                                         anchors.top: parent.top
+                                         anchors.topMargin: parent.height*0.38
+                                           }
+                                    }
                                 }
-                            }
 
+                            }
                         }
-                    }
 
                 }
             }

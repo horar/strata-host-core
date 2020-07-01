@@ -8,6 +8,7 @@ import QtQuick.Dialogs 1.2
 Rectangle {
     id: root2
     property  alias opensavedaialoguemenu:opensavedaialoguemenu
+    property alias saving_variable: saving_variable
     height: 350
     color: "transparent"
     width: 300//rect243.width//350     //rect243.height//200
@@ -36,19 +37,19 @@ Rectangle {
 
         clip: true
        Button{
-            id:openshowmenuds
+            id:open_show_menus
         text: "Export Log"
         width: parent.width*0.7
         anchors.horizontalCenter: parent.horizontalCenter
         //height: 37
         onClicked:{
             opensavedaialoguemenu.visible=true
-
+            saving_variable.text="1"
         }
         TextArea{
-        id:textcollxnfor
+        id:saving_variable
         visible: false
-        text: "text"
+        text: "0"
         }
         }
       //  var x-= fot()
@@ -102,6 +103,8 @@ Rectangle {
                 nameFilters: ["Text files (*.log)", "All files (*)"]
                 onAccepted: { saveFile(saveFileDialog.fileUrl, textEdit.text)
                            opensavedaialoguemenu.visible=false
+
+
             } //document.saveFile(fileUrl)
 
             }
