@@ -1,8 +1,8 @@
-#ifndef PRTMODEL_H
-#define PRTMODEL_H
+#pragma once
 
 #include <BoardManager.h>
 #include <FlasherConnector.h>
+#include <DownloadManager.h>
 
 #include <QObject>
 #include <QPointer>
@@ -39,11 +39,21 @@ private slots:
     void boardReadyHandler(int deviceId, bool recognized);
     void boardDisconnectedHandler(int deviceId);
     void flasherFinishedHandler(strata::FlasherConnector::Result result);
+    void downloadFinishedHandler(QString groupId, QString errorString);
 
 private:
     strata::BoardManager boardManager_;
     QList<strata::device::DevicePtr> platformList_;
     QPointer<strata::FlasherConnector> flasherConnector_;
-};
+    strata::DownloadManager downloadManager_;
 
-#endif  // PRTMODEL_H
+    QString downloadJobId_;
+    QPointer<QTemporaryFile> bootloaderFile_;
+    QPointer<QTemporaryFile> firmwareFile_;
+
+    Q_INVOKABLE void downloadBinaries(
+            const QString &bootloaderUrl,
+            const QString &bootloaderChecksum,
+            const QString &firmwareUrl,
+            const QString &firmwareChecksum);
+};
