@@ -837,7 +837,6 @@ ColumnLayout {
                                       interval: +(virtualtextarea.realtimelog*1000)// chang to seconds *1000 or 3000sec
                                       running: false
                                       repeat: true
-                                      property  var display_the_time: +virtualtextarea.realtimelog
 
                                      onTriggered: {
                                           basicGraph.removeCurve(0)
@@ -859,7 +858,6 @@ ColumnLayout {
                                           }
                                           if(x_Axis_Timer<=0){x_Axis_Timer=+virtualtextarea.realtimelog}
                                           basicGraph.xMax = x_Axis_Timer
-                                          display_the_time = x_Axis_Timer
                                           curve.appendList(dataArray)
                                         //  print_dataArray.appendList({test2})  virtualtextarea1.text=Åg:Åh
 
@@ -2122,7 +2120,7 @@ ColumnLayout {
                                         anchors.topMargin: parent.height*0.4
                                         infoBoxHeight:40
                                         label: ""
-                                        info: +graphTimerPoints.display_the_time + " Sec, "+ platformInterface.telemetry.cell_voltage + " mV, "+platformInterface.telemetry.cell_temp + " °C  "
+                                        info: +basicGraph.xMax.toFixed(0) + " Sec, "+ platformInterface.telemetry.cell_voltage + " mV, "+platformInterface.telemetry.cell_temp + " °C "
                                         labelLeft: true                    // Default: true (if false, label will be on top)
                                         infoBoxColor: "lightgray"       // Default: "#eeeeee" (light gray)
                                         infoBoxBorderColor: "#f3f3fe"    // Default: "#cccccc" (light gray)
