@@ -24,10 +24,31 @@
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
 
+#include "SDSModel.h"
 #include "DocumentManager.h"
 #include "ResourceLoader.h"
 
 #include "HcsNode.h"
+
+void addImportPaths(QQmlApplicationEngine *engine)
+{
+    QDir applicationDir(QCoreApplication::applicationDirPath());
+
+#ifdef Q_OS_MACOS
+    applicationDir.cdUp();
+    applicationDir.cdUp();
+    applicationDir.cdUp();
+#endif
+
+    bool status = applicationDir.cd("imports");
+    if (status == false) {
+        qCCritical(logCategoryStrataDevStudio) << "failed to find import path.";
+    }
+
+    engine->addImportPath(applicationDir.path());
+
+    engine->addImportPath("qrc:///");
+}
 
 int main(int argc, char *argv[])
 {
@@ -68,10 +89,6 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
 
-    HcsNode remoteHcsNode; // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
-    QObject::connect(&app, &QGuiApplication::lastWindowClosed,
-                     &remoteHcsNode, &HcsNode::shutdownService/*, Qt::QueuedConnection*/);
-
     ResourceLoader resourceLoader;
 
     qmlRegisterUncreatableType<CoreInterface>("tech.strata.CoreInterface",1,0,"CoreInterface", QStringLiteral("You can't instantiate CoreInterface in QML"));
@@ -79,32 +96,26 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<DownloadDocumentListModel>("tech.strata.DownloadDocumentListModel", 1, 0, "DownloadDocumentListModel", "You can't instantiate DownloadDocumentListModel in QML");
     qmlRegisterUncreatableType<DocumentListModel>("tech.strata.DocumentListModel", 1, 0, "DocumentListModel", "You can't instantiate DocumentListModel in QML");
 
+    qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
 
-    CoreInterface *coreInterface = new CoreInterface();
-    DocumentManager* documentManager = new DocumentManager(coreInterface);
-    //DataCollector* dataCollector = new DataCollector(coreInterface);
+    SDSModel *sdsModel = new SDSModel();
+    sdsModel->init(app.applicationDirPath(), QStringLiteral(HCS_CONFIG));
+
+    // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
+    QObject::connect(&app, &QGuiApplication::lastWindowClosed,
+                     sdsModel, &SDSModel::shutdownService/*, Qt::QueuedConnection*/);
 
     QQmlApplicationEngine engine;
     QQmlFileSelector selector(&engine);
 
-    QDir applicationDir(QCoreApplication::applicationDirPath());
-#ifdef Q_OS_MACOS
-    applicationDir.cdUp();
-    applicationDir.cdUp();
-    applicationDir.cdUp();
-#endif
-    bool status = applicationDir.cd("imports");
-    if (status == false) {
-        qCCritical(logCategoryStrataDevStudio) << "failed to find import path.";
-    }
-    engine.addImportPath(applicationDir.path());
+    addImportPaths(&engine);
 
-    engine.addImportPath(QStringLiteral("qrc:/"));
+    engine.rootContext()->setContextProperty ("sdsModel", sdsModel);
 
-    engine.rootContext()->setContextProperty ("coreInterface", coreInterface);
-    engine.rootContext()->setContextProperty ("documentManager", documentManager);
+    /* deprecated context property, use sdsModel.coreInterface instead */
+    engine.rootContext()->setContextProperty ("coreInterface", sdsModel->coreInterface());
 
-    //engine.rootContext ()->setContextProperty ("dataCollector", dataCollector);
+
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {
         qCCritical(logCategoryStrataDevStudio) << "engine failed to load 'main' qml file; quitting...";
@@ -121,100 +132,24 @@ int main(int argc, char *argv[])
     // [prasanth] : Important note: Start HCS before launching the UI
     // So the service callback works properly
 #ifdef START_SERVICES
-
-#ifdef Q_OS_WIN
-#if WINDOWS_INSTALLER_BUILD
-    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs.exe").arg(app.applicationDirPath())) };
-    QString hcsConfigPath;
-    TCHAR programDataPath[MAX_PATH];
-    if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, programDataPath))) {
-        hcsConfigPath = QDir::cleanPath(QString("%1/ON Semiconductor/Strata Developer Studio/HCS/hcs.config").arg(programDataPath));
-        qCInfo(logCategoryStrataDevStudio) << QStringLiteral("hcsConfigPath:") << hcsConfigPath ;
-    }else{
-        qCCritical(logCategoryStrataDevStudio) << "Failed to get ProgramData path using windows API call...";
-    }
-#else
-    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs.exe").arg(app.applicationDirPath())) };
-    const QString hcsConfigPath{ QDir::cleanPath(QString("%1/../../apps/hcs3/files/conf/%2").arg(app.applicationDirPath(), QStringLiteral(HCS_CONFIG)))};
-#endif
-#endif
-#ifdef Q_OS_MACOS
-    const QString hcsPath{ QDir::cleanPath(QString("%1/../../../hcs").arg(app.applicationDirPath())) };
-    const QString hcsConfigPath{ QDir::cleanPath( QString("%1/../../../../../apps/hcs3/files/conf/%2").arg(app.applicationDirPath(), QStringLiteral(HCS_CONFIG)))};
-#endif
-#ifdef Q_OS_LINUX
-    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs").arg(app.applicationDirPath())) };
-    const QString hcsConfigPath{ QDir::cleanPath(QString("%1/../../apps/hcs3/files/conf/host_controller_service.config").arg(app.applicationDirPath()))};
-#endif
-
-    // Start HCS before handling events for Qt
-    auto hcsProcess{std::make_unique<QProcess>(nullptr)};
-    if (QFile::exists(hcsPath)) {
-        qCDebug(logCategoryStrataDevStudio) << "Starting HCS: " << hcsPath << "(" << hcsConfigPath << ")";
-
-        QStringList arguments;
-        arguments << "-f" << hcsConfigPath;
-
-        // XXX: [LC] temporary solutions until Strata Monitor takeover 'hcs' service management
-        QObject::connect(hcsProcess.get(), &QProcess::readyReadStandardOutput, [&]() {
-            const QString hscMsg{QString::fromLatin1(hcsProcess->readAllStandardOutput())};
-            for (const auto& line : hscMsg.split(QRegExp("\n|\r\n|\r"))) {
-                qCDebug(logCategoryHcs) << line;
-            }
-        } );
-        QObject::connect(hcsProcess.get(), &QProcess::readyReadStandardError, [&]() {
-            const QString hscMsg{QString::fromLatin1(hcsProcess->readAllStandardError())};
-            for (const auto& line : hscMsg.split(QRegExp("\n|\r\n|\r"))) {
-                qCCritical(logCategoryHcs) << line;
-            }
-        });
-        // XXX: [LC] end
-
-        hcsProcess->start(hcsPath, arguments, QIODevice::ReadWrite);
-        if (hcsProcess->waitForStarted() == false) {
-            qCWarning(logCategoryStrataDevStudio) << "Process does not started yet (state:" << hcsProcess->state() << ")";
-        }
-        qCInfo(logCategoryStrataDevStudio) << "HCS started";
-    } else {
-        qCCritical(logCategoryStrataDevStudio) << "Failed to start HCS: does not exist";
-    }
+    bool started = sdsModel->startHcs();
+    qCDebug(logCategoryStrataDevStudio) << "hcs started=" << started;
 #endif
 
     int appResult = app.exec();
     // LC: process remaining events i.e. submit remaining events (created by external close request)
     QCoreApplication::processEvents();
 
-#ifdef START_SERVICES // start services
-#ifdef Q_OS_WIN // windows check to kill hcs3
-    // [PV] : In windows, QProcess terminate will not send any close message to QT non GUI application
-    // Waiting for 10s before kill, if user runs an instance of SDS immediately after closing, hcs3
-    // will not be terminated and new hcs insatnce will start, leaving two instances of hcs.
-    if (hcsProcess->state() == QProcess::Running) {
-        qCDebug(logCategoryStrataDevStudio) << "killing HCS";
-        hcsProcess->kill();
-        if (hcsProcess->waitForFinished() == false) {
-            qCWarning(logCategoryStrataDevStudio) << "Failed to kill HCS server";
-        }
-    }
-#else
-    if (hcsProcess->state() == QProcess::Running) {
-        qCDebug(logCategoryStrataDevStudio) << "terminating HCS";
-        hcsProcess->terminate();
-        QThread::msleep(100);   //This needs to be here, otherwise 'waitForFinished' waits until timeout
-        if (hcsProcess->waitForFinished(10000) == false) {
-            qCDebug(logCategoryStrataDevStudio) << "termination failed, killing HCS";
-            hcsProcess->kill();
-            if (hcsProcess->waitForFinished() == false) {
-                qCWarning(logCategoryStrataDevStudio) << "Failed to kill HCS server";
-            }
-        }
-    }
-#endif // windows check to kill hcs3
-    qCInfo(logCategoryStrataDevStudio) << "terminating HCS result:" << hcsProcess->exitStatus();
-    if (hcsProcess->error() != QProcess::UnknownError) {
-        qCWarning(logCategoryStrataDevStudio) << "terminating HCS failed:" << hcsProcess->errorString();
-    }
-#endif // start services
+#ifdef START_SERVICES
+    /* HCS has to be killed silently so qml is not updated as main event loop
+     * is not running anymore */
+    sdsModel->killHcsSilently = true;
+
+    bool killed = sdsModel->killHcs();
+    qCDebug(logCategoryStrataDevStudio) << "hcs killed=" << killed;
+#endif
+
+    delete sdsModel;
 
     return appResult;
 }

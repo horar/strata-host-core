@@ -13,6 +13,7 @@
         <file>js/restclient.js</file>
         <file>js/uuid_map.js</file>
         <file>main.qml</file>
+        <file>SplashScreen.qml</file>
         <file>partial-views/SGPrivacyPolicyPopUp.qml</file>
         <file>partial-views/help-tour/SGPeekThroughOverlay.qml</file>
         <file>partial-views/help-tour/SGTourControl.qml</file>

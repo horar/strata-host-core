@@ -37,7 +37,7 @@ StackLayout {
         if (model.connected && model.available.control) {
             loadControl()  // load control and docs
         } else {
-            documentManager.loadPlatformDocuments(model.class_id)
+            sdsModel.documentManager.loadPlatformDocuments(model.class_id)
         }
     }
 
@@ -47,7 +47,7 @@ StackLayout {
 
     function loadControl () {
         if (controlLoaded === false){
-            documentManager.loadPlatformDocuments(model.class_id)
+            sdsModel.documentManager.loadPlatformDocuments(model.class_id)
 
             Help.setClassId(model.class_id)
             let qml_control = NavigationControl.getQMLFile(model.class_id, "Control")

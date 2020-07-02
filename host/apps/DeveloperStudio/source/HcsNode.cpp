@@ -6,7 +6,7 @@
 
 HcsNode::HcsNode(QObject *parent) : QObject(parent)
 {
-    replicaNode_.setHeartbeatInterval(200);
+    replicaNode_.setHeartbeatInterval(500);
 
     initConnections();
 }

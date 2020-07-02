@@ -25,8 +25,11 @@ bool ZmqConnector::close()
     if (false == socket_->valid()) {
         return false;
     }
+
     socket_->close();
+    context_->close();
     setConnectionState(false);
+
     return true;
 }
 
