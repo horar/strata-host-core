@@ -10,7 +10,7 @@
 #include "logging/LoggingQtCategories.h"
 
 SDSModel::SDSModel(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), remoteHcsNode_{nullptr}
 {
     coreInterface_ = new CoreInterface(this);
     documentManager_ = new DocumentManager(coreInterface_, this);
@@ -30,7 +30,7 @@ void SDSModel::init(const QString &appDirPath, const QString &configFilename)
     remoteHcsNode_ = new HcsNode(this);
 
     connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged,
-            this, &SDSModel::hcsConnectionStatusHasChanged);
+            this, &SDSModel::setHcsConnected);
 
 }
 
@@ -177,11 +177,6 @@ void SDSModel::finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus)
 void SDSModel::handleHcsProcessError(QProcess::ProcessError error)
 {
     qCDebug(logCategoryStrataDevStudio) << error << hcsProcess_->errorString();
-}
-
-void SDSModel::hcsConnectionStatusHasChanged()
-{
-    setHcsConnected(remoteHcsNode_->hcsConnected());
 }
 
 void SDSModel::setHcsConnected(bool hcsConnected)
