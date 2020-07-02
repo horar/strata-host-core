@@ -181,7 +181,9 @@ void SDSModel::handleHcsProcessError(QProcess::ProcessError error)
 
 void SDSModel::hcsConnectionStatusHasChanged()
 {
-    setHcsConnected(remoteHcsNode_->hcsConnected());
+    //[MM] temporary disabled until HcsNode is fixed - it sometimes repors HCS
+    //as disconnected, even it is not
+    //setHcsConnected(remoteHcsNode_->hcsConnected());
 }
 
 void SDSModel::setHcsConnected(bool hcsConnected)
