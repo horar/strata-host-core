@@ -17,7 +17,7 @@ function Test-Gui() {
         [Parameter(Mandatory = $true)][string]$PythonScriptPath,    # Path to control-view-test.py
         [Parameter(Mandatory = $true)][string]$StrataPath           # Path to Strata executable
     )
-    Start-SDSAndWait -seconds 2
+    Start-SDSAndWait -seconds 5
     $pythonScript = Start-Process "python" -ArgumentList "C:\Users\SEC\Dev2\spyglass\host\test\release-testing\gui-testing\main.py" -NoNewWindow -PassThru -Wait
 
 }
