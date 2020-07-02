@@ -3,7 +3,7 @@
 
 #include <QtMqtt/qmqttclient.h>
 #include <QtMqtt/qmqttsubscription.h>
-#include "SGSslconfiguration.h"
+#include "SGSslConfiguration.h"
 
 class QmlMqttClient;
 

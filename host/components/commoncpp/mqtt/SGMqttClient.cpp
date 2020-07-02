@@ -3,6 +3,7 @@
 QmlMqttClient::QmlMqttClient(QObject *parent)
     : QMqttClient(parent)
 {
+    qmlSslConfiguration_ = nullptr;
 }
 
 int QmlMqttClient::publish(const QString &topic, const QString &message, quint8 qos, bool retain)
@@ -39,5 +40,7 @@ void QmlMqttClient::connectToHostSsl()
 {
     #if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR == 14
         connectToHostEncrypted(qmlSslConfiguration_->getQsslConfigurationObject());
+    #else
+        qWarning() << "Please use Qt 5.14 and above for encrypted connection";
     #endif
 }
