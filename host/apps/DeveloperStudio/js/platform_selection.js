@@ -57,7 +57,6 @@ function populatePlatforms(platform_list_json) {
     let index = 0
     for (let platform of platform_list.list){
         platform.error = false
-        platform.connection = "view"
 
         if (platform.class_id === undefined) {
             console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Platform class_id undefined, skipping");
@@ -65,17 +64,19 @@ function populatePlatforms(platform_list_json) {
         }
 
         let class_id_string = String(platform.class_id)
-        if (UuidMap.uuid_map.hasOwnProperty(class_id_string) && platform.hasOwnProperty("available")) {
+
+        if (platform.hasOwnProperty("available") === false) {
+            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "'available' field missing for class id", platform.class_id, ", skipping");
+            continue
+        }
+        platform.connected = false
+
+        if (UuidMap.uuid_map.hasOwnProperty(class_id_string)) {
             platform.name = UuidMap.uuid_map[class_id_string]   // fetch directory name used to bring up the UI
         } else {
-            if (platform.hasOwnProperty("available")) {
-                if (platform.available.control){
-                    console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Control 'available' flag set but no mapped UI for this class_id; overriding to deny access");
-                    platform.available.control = false
-                }
-            } else {
-                console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "'available' field missing for class id", platform.class_id, ", skipping");
-                continue
+            if (platform.available.control){
+                console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Control 'available' flag set but no mapped UI for this class_id; overriding to deny access");
+                platform.available.control = false
             }
         }
 
@@ -143,13 +144,14 @@ function parseConnectedPlatforms (connected_platform_list_json) {
             } else {
                 // update model
                 let index = platformMap[class_id_string].index
-                platformListModel.get(index).connection = "connected"
+                if (platformMap[class_id_string].available.unlisted) {
+                    let available = Object.assign({}, platformMap[class_id_string].available) // make copy - don't modify original 'available' state
+                    available.unlisted = false // override to show hidden listing when physical board present
+                    platformListModel.get(index).available = available
+                }
+                platformListModel.get(index).connected = true
 
-                if (platformMap[class_id_string].ui_exists) {
-                    platformListModel.get(index).available = {
-                        "documents": true,
-                        "control": true
-                    }
+                if (platformMap[class_id_string].ui_exists && platformListModel.get(index).available.control) {
                     autoConnect(class_id_string)
                 }
             }
@@ -174,8 +176,8 @@ function parseConnectedPlatforms (connected_platform_list_json) {
             platformListModel.remove(index)
         } else {
             // Restore original disconnected state
-            platformListModel.get(index).connection = "view"
             platformListModel.get(index).available = platformMap[class_id].available
+            platformListModel.get(index).connected = false
         }
 
         let data = {"class_id": class_id}
@@ -187,11 +189,11 @@ function parseConnectedPlatforms (connected_platform_list_json) {
 
 function selectPlatform(class_id){
     let index = platformMap[String(class_id)].index
-    let data = { "class_id": class_id, "name": platformListModel.get(index).verbose_name }
-    if (platformListModel.get(index).connection === "view" || platformMap[String(class_id)].ui_exists === false) {
-        NavigationControl.updateState(NavigationControl.events.VIEW_COLLATERAL_EVENT, data)
-    } else { // connection is "connected"
+    let data = { "class_id": class_id, "name": platformListModel.get(index).verbose_name, "available": platformListModel.get(index).available }
+    if (platformListModel.get(index).connected && platformMap[String(class_id)].ui_exists && platformListModel.get(index).available.control) {
         NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT,data)
+    } else { // no connection or no UI exists
+        NavigationControl.updateState(NavigationControl.events.VIEW_COLLATERAL_EVENT, data)
     }
 }
 
@@ -229,13 +231,12 @@ function emptyListRetry() {
 function insertUnknownListing (platform) {
     let platform_info = {
         "verbose_name" : "Unknown Platform",
-        "connection" : "connected",
         "class_id" : platform.class_id,
         "opn": "Class id: " + platform.class_id,
         "description": "Strata does not recognize this class_id. Updating Strata may fix this problem.",
-        "image": "", // Assigns 'not found' image
-        "available": { "control": false, "documents": false },  // Don't allow control or docs for unknown platform
+        "available": { "control": false, "documents": false, "unlisted": false, "order": false},  // Don't allow control or docs for unknown platform
         "filters":[],
+        "connected": true,
         "error": true
     }
     platformListModel.append(platform_info)
@@ -252,14 +253,14 @@ function insertUnlistedListing (platform) {
 
     let platform_info = {
         "verbose_name" : "Unknown Platform",
-        "connection" : "connected",
         "class_id" : platform.class_id,
         "opn": "Class id: " + platform.class_id,
         "description": "No information to display.",
         "image": "", // Assigns 'not found' image
-        "available": { "control": true, "documents": true },  // If UI exists and customer has physical platform, allow access
+        "available": { "control": true, "documents": true, "unlisted": false, "order": false},  // If UI exists and customer has physical platform, allow access
         "filters":[],
         "name": UuidMap.uuid_map[class_id_string],
+        "connected": true,
         "error": true,
     }
     platformListModel.append(platform_info)

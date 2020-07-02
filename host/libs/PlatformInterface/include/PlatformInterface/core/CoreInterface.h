@@ -55,7 +55,7 @@ public:
     bool registerNotificationHandler(std::string notification, NotificationHandler handler);
     bool registerDataSourceHandler(std::string source, DataSourceHandler handler);
 
-    Spyglass::HostControllerClient *hcc;
+    strata::hcc::HostControllerClient *hcc;
     std::thread notification_thread_;
     void notificationsThread();
 

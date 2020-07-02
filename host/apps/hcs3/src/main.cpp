@@ -4,6 +4,8 @@
 #include "HostControllerServiceTimestamp.h"
 #include "RunGuard.h"
 
+#include "HostControllerServiceNode.h"
+
 #include "logging/LoggingQtCategories.h"
 
 #include <QtLoggerSetup.h>
@@ -16,13 +18,18 @@
 #include <QStandardPaths>
 #include <QDir>
 
-#include <EvEventsMgr.h>    //for EvEventsMgrInstance (windows WSA)
+#if defined(Q_OS_WIN)
+#include <EventsMgr/win32/EvEventsMgrInstance.h> // Windows WSA
+#endif
 
+#if !defined(Q_OS_WIN)
+#include "unix/SignalHandlers.h"
+#endif
 
 int main(int argc, char *argv[])
 {
     QSettings::setDefaultFormat(QSettings::IniFormat);
-    QCoreApplication::setApplicationName(QStringLiteral("hcs"));
+    QCoreApplication::setApplicationName(QStringLiteral("Host Controller Service"));
     QCoreApplication::setApplicationVersion(AppInfo::version.data());
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
@@ -83,7 +90,18 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    spyglass::EvEventsMgrInstance instance;
+#if defined(Q_OS_WIN)
+    strata::events_mgr::EvEventsMgrInstance instance;
+#endif
+
+    HostControllerServiceNode hcsNode;
+    hcsNode.start(QUrl(QStringLiteral("local:hcs3")));
+    QObject::connect(qApp, &QCoreApplication::aboutToQuit,
+                     &hcsNode, &HostControllerServiceNode::stop);
+
+#if !defined(Q_OS_WIN)
+    SignalHandlers sh(&app);
+#endif
 
     QScopedPointer<HostControllerService> hcs(new HostControllerService);
 

@@ -11,9 +11,11 @@ set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Gui Widgets Quick Qml WebEngine Charts
+    COMPONENTS Core Gui Widgets Quick Qml WebEngine Charts RemoteObjects
     REQUIRED
 )
+
+qt5_generate_repc(NODE_RO_SRCS ../hcs3/src/HostControllerService.rep REPLICA)
 
 add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     main.cpp
@@ -31,6 +33,9 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     qml-dev-studio-resources.qrc
 
     $<IF:$<CONFIG:Release>, qml-dev-studio-release.qrc, qml-dev-studio-debug.qrc>
+
+    source/HcsNode.cpp
+    ${NODE_RO_SRCS}
 )
 
 generate_app_version(GITTAG_PREFIX "devstudio_" MACBUNDLE ON)
@@ -53,6 +58,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Widgets
     Qt5::Qml
     Qt5::WebEngine
+    Qt5::RemoteObjects
 
     connector
     HostControllerClient

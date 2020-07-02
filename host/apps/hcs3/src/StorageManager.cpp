@@ -64,7 +64,6 @@ void StorageManager::init()
     info.calculateSize();
 
     downloadManager_.reset(new DownloadManager);
-    downloadManager_->setBaseUrl(baseUrl_);
 
     connect(downloadManager_.get(), &DownloadManager::filePathChanged, this, &StorageManager::filePathChangedHandler);
     connect(downloadManager_.get(), &DownloadManager::singleDownloadProgress, this, &StorageManager::singleDownloadProgressHandler);
@@ -286,7 +285,7 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
         QString filePath = createFilePathFromItem(platDoc->platformSelector().partialUri, pathPrefix);
 
         DownloadManager::DownloadRequestItem item;
-        item.relativeUrl = platDoc->platformSelector().partialUri;
+        item.url = baseUrl_.resolved(platDoc->platformSelector().partialUri);
         item.filePath = filePath;
         item.md5 = platDoc->platformSelector().md5;
         downloadList << item;
@@ -337,7 +336,7 @@ void StorageManager::requestPlatformDocuments(
         QString filePath = createFilePathFromItem(fileItem.partialUri, pathPrefix);
 
         DownloadManager::DownloadRequestItem item;
-        item.relativeUrl = fileItem.partialUri;
+        item.url = baseUrl_.resolved(fileItem.partialUri);
         item.filePath = filePath;
         item.md5 = fileItem.md5;
         downloadList << item;
@@ -399,7 +398,7 @@ void StorageManager::requestDownloadPlatformFiles(
         }
 
         DownloadManager::DownloadRequestItem item;
-        item.relativeUrl = fileItem.partialUri;
+        item.url = baseUrl_.resolved(fileItem.partialUri);
         item.filePath = dir.filePath(fileItem.prettyName);
         item.md5 = fileItem.md5;
 

@@ -5,10 +5,11 @@ Rectangle {
     id: root
     width: 200
     height:100
-    color:"dimgray"
+    color:backgroundColor
     opacity:1
     radius: 10
 
+    property color backgroundColor: "#D1DFFB"
 
     Row{
         anchors.verticalCenter: parent.verticalCenter
@@ -31,7 +32,7 @@ Rectangle {
                 fillMode: Image.PreserveAspectFit
                 width:parent.width
                 height:parent.height
-                opacity: .5
+                opacity: 1
                 mipmap:true
                 anchors.centerIn:parent
                 source:"../images/reverse-icon.svg"
@@ -67,7 +68,7 @@ Rectangle {
                 fillMode: Image.PreserveAspectFit
                 width:parent.width
                 height:parent.height
-                opacity: .5
+                opacity: 1
                 mipmap:true
                 anchors.centerIn:parent
                 source: "../images/play-icon.svg"
@@ -115,7 +116,7 @@ Rectangle {
                 fillMode: Image.PreserveAspectFit
                 width:parent.width
                 height:parent.height
-                opacity: .5
+                opacity: 1
                 mipmap:true
                 anchors.centerIn:parent
                 source:"../images/fastForward-icon.svg"

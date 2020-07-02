@@ -1,11 +1,10 @@
-#ifndef STRATA_EVENTS_MGR_EVENT_H
-#define STRATA_EVENTS_MGR_EVENT_H
+#pragma once
 
 #include <mutex>
 #include <functional>
 #include <cstdio>
 
-#include "EvEventBase.h"
+#include "EventsMgr/EvEventBase.h"
 
 #if defined(_WIN32)
 #include <WinSock2.h>
@@ -13,8 +12,7 @@
 
 struct event;
 
-namespace spyglass
-{
+namespace strata::events_mgr {
 
 class EvEventsMgr;
 
@@ -106,5 +104,3 @@ private:
 
 
 } //end of namespace
-
-#endif //STRATA_EVENTS_MGR_EVENT_H
