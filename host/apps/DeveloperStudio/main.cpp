@@ -11,6 +11,7 @@
 #include <QProcess>
 #include <QSettings>
 #include <QSysInfo>
+#include <QSslSocket>
 #ifdef Q_OS_WIN
 #include <Shlwapi.h>
 #include <ShlObj.h>
@@ -86,6 +87,11 @@ int main(int argc, char *argv[])
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("--------------------------------------------------------------------------------");
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("Running on %1").arg(QSysInfo::prettyProductName());
+    if (QSslSocket::supportsSsl()) {
+        qCDebug(logCategoryStrataDevStudio) << QStringLiteral("Using SSL %1 (based on SSL %2)").arg(QSslSocket::sslLibraryVersionString()).arg(QSslSocket::sslLibraryBuildVersionString());
+    } else {
+        qCCritical(logCategoryStrataDevStudio) << QStringLiteral("No SSL support!!");
+    }
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
 
