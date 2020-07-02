@@ -12,10 +12,6 @@
 #include <QSettings>
 #include <QSysInfo>
 #include <QSslSocket>
-#ifdef Q_OS_WIN
-#include <Shlwapi.h>
-#include <ShlObj.h>
-#endif
 
 #include "StrataDeveloperStudioVersion.h"
 #include "StrataDeveloperStudioTimestamp.h"
@@ -30,6 +26,7 @@
 #include "ResourceLoader.h"
 
 #include "HcsNode.h"
+
 
 void addImportPaths(QQmlApplicationEngine *engine)
 {
