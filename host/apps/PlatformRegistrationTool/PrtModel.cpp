@@ -1,6 +1,8 @@
 #include "PrtModel.h"
 #include "logging/LoggingQtCategories.h"
 
+#include <QDir>
+
 PrtModel::PrtModel(QObject *parent)
     : QObject(parent)
 {
@@ -8,6 +10,8 @@ PrtModel::PrtModel(QObject *parent)
 
     connect(&boardManager_, &strata::BoardManager::boardReady, this, &PrtModel::boardReadyHandler);
     connect(&boardManager_, &strata::BoardManager::boardDisconnected, this, &PrtModel::boardDisconnectedHandler);
+
+    connect(&downloadManager_, &strata::DownloadManager::groupDownloadFinished, this, &PrtModel::downloadFinishedHandler);
 }
 
 PrtModel::~PrtModel()
@@ -95,4 +99,68 @@ void PrtModel::flasherFinishedHandler(strata::FlasherConnector::Result result)
 
     flasherConnector_->disconnect();
     flasherConnector_->deleteLater();
+}
+
+void PrtModel::downloadFinishedHandler(QString groupId, QString errorString)
+{
+    if (groupId != downloadJobId_) {
+        return;
+    }
+
+    qCDebug(logCategoryPrt) << groupId << errorString;
+
+    //TODO start flashing loop
+
+    //TODO once all boards are flashed, clean up the files
+    bootloaderFile_->deleteLater();
+    firmwareFile_->deleteLater();
+    downloadJobId_.clear();
+}
+
+void PrtModel::downloadBinaries(
+        const QString &bootloaderUrl,
+        const QString &bootloaderChecksum,
+        const QString &firmwareUrl,
+        const QString &firmwareChecksum)
+{
+    if (downloadJobId_.isEmpty() == false) {
+        return;
+    }
+
+    //we need to open file so it is created on the disk and DownloadManager can use it
+    bootloaderFile_ = new QTemporaryFile(QDir(QDir::tempPath()).filePath("prt-bootloader-XXXXXX.bin"), this);
+    bootloaderFile_->open();
+    bootloaderFile_->close();
+
+    firmwareFile_ = new QTemporaryFile(QDir(QDir::tempPath()).filePath("prt-firmware-XXXXXX.bin"), this);
+    firmwareFile_->open();
+    firmwareFile_->close();
+
+    QList<strata::DownloadManager::DownloadRequestItem> downloadRequestList;
+
+    strata::DownloadManager::DownloadRequestItem bootloaderItem;
+    bootloaderItem.url = bootloaderUrl;
+    bootloaderItem.md5 = bootloaderChecksum;
+    bootloaderItem.filePath = bootloaderFile_->fileName();
+    downloadRequestList << bootloaderItem;
+
+    strata::DownloadManager::DownloadRequestItem firmwareItem;
+    firmwareItem.url = firmwareUrl;
+    firmwareItem.md5 = firmwareChecksum;
+    firmwareItem.filePath = firmwareFile_->fileName();
+    downloadRequestList << firmwareItem;
+
+    strata::DownloadManager::Settings settings;
+    settings.oneFailsAllFail = true;
+    settings.keepOriginalName = true;
+
+    qCDebug(logCategoryPrt) << "download bootloader" << bootloaderItem.url.toString()
+                            << "into" << bootloaderItem.filePath;
+
+    qCDebug(logCategoryPrt) << "download firmware" << firmwareItem.url.toString()
+                            << "into" << firmwareItem.filePath;
+
+    downloadJobId_ = downloadManager_.download(downloadRequestList, settings);
+
+    qCDebug(logCategoryPrt) << "downloadJobId" << downloadJobId_;
 }

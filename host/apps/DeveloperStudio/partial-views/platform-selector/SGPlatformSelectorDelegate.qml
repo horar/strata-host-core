@@ -88,7 +88,7 @@ Item {
                 sourceSize.height: image.sourceSize.height
                 fillMode: Image.PreserveAspectFit
                 source: "images/platform-images/comingsoon.png"
-                visible: !model.available.documents && !model.available.control && !model.error
+                visible: !model.available.documents && !model.available.order && !model.error
             }
 
             Rectangle {
@@ -98,7 +98,7 @@ Item {
                     bottom: image.bottom
                 }
                 height: 25
-                visible: model.connection === "connected"
+                visible: model.connected
                 clip: true
 
                 SGText {
@@ -362,7 +362,7 @@ Item {
         Text {
             id: comingSoonWarn
             text: "This platform is coming soon!"
-            visible: !model.available.documents && !model.available.control && !model.error
+            visible: !model.available.documents && !model.available.order && !model.error && (!model.connected || !model.available.control)//&& !model.available.control
             width: buttonColumn.width
             font.pixelSize: 16
             font.family: Fonts.franklinGothicBold
@@ -375,11 +375,11 @@ Item {
         Button {
             id: select
             // model.name === undefined means no UI found
-            text: model.connection === "connected" && model.name !== undefined ? "Open Platform Controls" : "Browse Documentation"
+            text: model.connected && model.name !== undefined && model.available.control ? "Open Platform Controls" : "Browse Documentation"
             anchors {
                 horizontalCenter: buttonColumn.horizontalCenter
             }
-            visible: model.connection === "connected" && model.name !== undefined ? model.available.control : model.available.documents
+            visible: model.connected && model.name !== undefined && model.available.control ? model.available.control : model.available.documents
 
             contentItem: Text {
                 text: select.text
@@ -417,7 +417,7 @@ Item {
             anchors {
                 horizontalCenter: buttonColumn.horizontalCenter
             }
-            visible: model.available.documents || model.available.control
+            visible: model.available.order
 
             contentItem: Text {
                 text: order.text

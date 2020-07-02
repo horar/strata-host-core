@@ -12,7 +12,7 @@ ClientsController::ClientsController()
 
 ClientsController::~ClientsController()
 {
-
+    events_manager_.stop();
 }
 
 void ClientsController::setLogAdapter(LoggingAdapter* adapter)

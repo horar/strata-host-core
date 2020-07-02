@@ -1,8 +1,5 @@
+#pragma once
 
-#ifndef HOST_HOSTCONTROLLERSERVICE_H__
-#define HOST_HOSTCONTROLLERSERVICE_H__
-
-// rapid json library
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
@@ -12,18 +9,19 @@
 #include <QObject>
 #include <QString>
 #include <QByteArray>
+#include <QJsonArray>
+
 #include "Dispatcher.h"
 #include "ClientsController.h"
 #include "Database.h"
 #include "LoggingAdapter.h"
 #include "BoardController.h"
-#include <QJsonArray>
-
 
 struct PlatformMessage;
 
 class HCS_Client;
 class StorageManager;
+
 
 class HostControllerService : public QObject
 {
@@ -144,5 +142,3 @@ private:
 
     rapidjson::Document config_;
 };
-
-#endif //HOST_HOSTCONTROLLERSERVICE_H__
