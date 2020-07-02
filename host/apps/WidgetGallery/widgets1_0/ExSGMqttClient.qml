@@ -12,7 +12,7 @@ Item {
             id: client
             hostname: hostnameField.text
             port: portField.text
-//            encrypted connection configuration (not working properly yet, a bug has been filed)
+//            encrypted connection configuration (must use 5.14 and above)
 //            sslConfiguration: SGSslConfiguration {
 //                rootCertificate: "PATH_TO_ROOT_CERTIFICATE" // file extension crt
 //                clientCertificate: "PATH_TO_CLIENT_CERTIFICATE" // file extension crt or pem
@@ -78,8 +78,11 @@ Item {
                         tempSubscription = 0
                     }
                 } else {
-                    //client.sslConfiguration ? client.connectToHostSsl() : client.connectToHost()
-                    client.connectToHost()
+                    if (client.sslConfiguration === null) {
+                        client.connectToHost()
+                    } else {
+                        client.connectToHostSsl()
+                    }
                 }
             }
         }
