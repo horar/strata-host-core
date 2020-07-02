@@ -51,12 +51,12 @@ SGWidgets.SGMainWindow {
     Connections {
         target: sdsModel
         onHcsConnectedChanged: {
-
             if (sdsModel.hcsConnected) {
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
             } else {
                 PlatformFilters.clearActiveFilters()
                 PlatformSelection.logout()
+                SessionUtils.initialized = false
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_LOST_EVENT)
             }
         }
