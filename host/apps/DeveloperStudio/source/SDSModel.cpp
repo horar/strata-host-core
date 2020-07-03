@@ -3,11 +3,17 @@
 #include "HcsNode.h"
 #include <PlatformInterface/core/CoreInterface.h>
 
+#include "logging/LoggingQtCategories.h"
+
 #include <QFile>
 #include <QDir>
 #include <QThread>
 
-#include "logging/LoggingQtCategories.h"
+#ifdef Q_OS_WIN
+#include <Shlwapi.h>
+#include <ShlObj.h>
+#endif
+
 
 SDSModel::SDSModel(QObject *parent)
     : QObject(parent), remoteHcsNode_{nullptr}
@@ -46,7 +52,7 @@ bool SDSModel::startHcs()
 
 #ifdef Q_OS_WIN
 #if WINDOWS_INSTALLER_BUILD
-    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs.exe").arg(app.applicationDirPath())) };
+    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs.exe").arg(appDirPath_)) };
     QString hcsConfigPath;
     TCHAR programDataPath[MAX_PATH];
     if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, programDataPath))) {
@@ -54,7 +60,7 @@ bool SDSModel::startHcs()
         qCInfo(logCategoryStrataDevStudio) << QStringLiteral("hcsConfigPath:") << hcsConfigPath ;
     }else{
         qCCritical(logCategoryStrataDevStudio) << "Failed to get ProgramData path using windows API call...";
-        return false
+        return false;
     }
 #else
     const QString hcsPath{ QDir::cleanPath(QString("%1/hcs.exe").arg(appDirPath_)) };
