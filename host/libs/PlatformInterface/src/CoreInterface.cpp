@@ -50,7 +50,7 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
 CoreInterface::~CoreInterface()
 {
     setNotificationThreadRunning(false);
-    bool closed = hcc->close();
+    bool closed = hcc->closeContext();
 
     if (closed && notification_thread_.joinable()) {
         notification_thread_.join();
@@ -144,6 +144,8 @@ void CoreInterface::notificationsThread()
         // dispatch handler for notification
         handler->second(notification_json[notification].toObject());
     }
+
+    hcc->close();
 }
 
 // ---

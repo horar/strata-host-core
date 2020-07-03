@@ -31,11 +31,21 @@ bool ZmqConnector::close()
         return false;
     }
 
-    socket_->close();
-    context_->close();
-    setConnectionState(false);
+    const bool ret = socket_->close();
+    if (ret == true) {
+        setConnectionState(false);
+    }
 
-    return true;
+    return ret;
+}
+
+bool ZmqConnector::closeContext()
+{
+    if (false == context_->valid()) {
+        return false;
+    }
+
+    return context_->close();
 }
 
 connector_handle_t ZmqConnector::getFileDescriptor()
