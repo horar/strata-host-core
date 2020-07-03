@@ -141,7 +141,7 @@ Item {
                 id: alwaysLogin
                 text: "Always Login as Guest"
                 onCheckedChanged: {
-                    if (checked && NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
+                    if (checked && NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE && sdsModel.hcsConnected) {
                         NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
                     }
                 }
@@ -153,9 +153,10 @@ Item {
                 }
 
                 Connections {
-                    target: mainWindow
-                    onInitialized: {
-                        if (alwaysLogin.checked) {
+                    target: sdsModel
+                    onHcsConnectedChanged: {
+                        if (sdsModel.hcsConnected && alwaysLogin.checked) {
+                            NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
                             NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
                         }
                     }
