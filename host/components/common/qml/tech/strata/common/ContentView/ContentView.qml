@@ -11,22 +11,28 @@ Rectangle {
         fill: parent
     }
 
-    property int totalDocuments: sdsModel.documentManager.pdfListModel.count + sdsModel.documentManager.datasheetListModel.count + sdsModel.documentManager.downloadDocumentListModel.count
+    property string class_id: ""
+    property var classDocuments: null
+
+    property int totalDocuments: classDocuments.pdfListModel.count + classDocuments.datasheetListModel.count + classDocuments.downloadDocumentListModel.count
     onTotalDocumentsChanged: {
-        if (sdsModel.documentManager.pdfListModel.count > 0) {
-             pdfViewer.url = "file://localhost/" + sdsModel.documentManager.pdfListModel.getFirstUri();
-        } else if (sdsModel.documentManager.datasheetListModel.count > 0) {
-            pdfViewer.url = sdsModel.documentManager.datasheetListModel.getFirstUri();
+        if (classDocuments.pdfListModel.count > 0) {
+             pdfViewer.url = "file://localhost/" + classDocuments.pdfListModel.getFirstUri();
+        } else if (classDocuments.datasheetListModel.count > 0) {
+            pdfViewer.url = classDocuments.datasheetListModel.getFirstUri();
         } else {
             pdfViewer.url = ""
         }
     }
 
-    Connections {
-        target: sdsModel.documentManager
+    Component.onCompleted: {
+         classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
+    }
 
+    Connections {
+        target: classDocuments
         onErrorStringChanged: {
-            if (sdsModel.documentManager.errorString.length > 0) {
+            if (classDocuments.errorString.length > 0) {
                 pdfViewer.url = ""
                 loadingImage.currentFrame = 0
             }
@@ -100,29 +106,29 @@ Rectangle {
                         id: pdfAccordion
                         title: "Platform Documents"
                         contents: Documents {
-                            model: sdsModel.documentManager.pdfListModel
+                            model: classDocuments.pdfListModel
                         }
                         open: true
-                        visible: sdsModel.documentManager.pdfListModel.count > 0
+                        visible: classDocuments.pdfListModel.count > 0
                     }
 
                     SGAccordionItem {
                         id: datasheetAccordion
                         title: "Part Datasheets"
                         contents: Datasheets {
-                            model: sdsModel.documentManager.datasheetListModel
+                            model: classDocuments.datasheetListModel
                         }
-                        visible: sdsModel.documentManager.datasheetListModel.count > 0
+                        visible: classDocuments.datasheetListModel.count > 0
                     }
 
                     SGAccordionItem {
                         id: downloadAccordion
                         title: "Downloads"
                         contents: Downloads {
-                            model: sdsModel.documentManager.downloadDocumentListModel
+                            model: classDocuments.downloadDocumentListModel
 
                         }
-                        visible: sdsModel.documentManager.downloadDocumentListModel.count > 0
+                        visible: classDocuments.downloadDocumentListModel.count > 0
                     }
                 }
             }
@@ -223,7 +229,7 @@ Rectangle {
                 centerIn: loading
                 verticalCenterOffset: -height/4
             }
-            playing: sdsModel.documentManager.loading
+            playing: classDocuments.loading
             height: 200
             width: 200
         }
@@ -240,12 +246,12 @@ Rectangle {
                 family:  Fonts.franklinGothicBold
             }
             text: {
-                if (sdsModel.documentManager.errorString.length > 0) {
-                    return "Error: " + sdsModel.documentManager.errorString
+                if (classDocuments.errorString.length > 0) {
+                    return "Error: " + classDocuments.errorString
                 }
 
-                if (sdsModel.documentManager.loading) {
-                    return "Downloading\n" + sdsModel.documentManager.loadingProgressPercentage + "% completed"
+                if (classDocuments.loading) {
+                    return "Downloading\n" + classDocuments.loadingProgressPercentage + "% completed"
                 }
 
                 return ""

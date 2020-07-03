@@ -82,11 +82,13 @@ public slots:
 
     void sendPlatformDocumentsProgressMessage(
             const QByteArray &clientId,
+            const QString &classId,
             int filesCompleted,
             int filesTotal);
 
     void sendPlatformDocumentsMessage(
             const QByteArray &clientId,
+            const QString &classId,
             const QJsonArray &documentList,
             const QString &error);
 
@@ -95,7 +97,6 @@ private:
 
     void handleClientMsg(const PlatformMessage& msg);
     void sendMessageToClients(const QString &platformId, const QString& message);
-    bool disptachMessageToPlatforms(const QByteArray& dealer_id, const std::string& read_message);
 
     bool broadcastMessage(const QString& message);
 
@@ -117,7 +118,6 @@ private:
     HCS_Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 
     HCS_Client* getClientById(const QByteArray& client_id);
-    HCS_Client* findClientByPlatformId(const QString& platformId);
 
     bool parseConfig(const QString& config);
 

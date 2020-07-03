@@ -9,13 +9,3 @@ HCS_Client::~HCS_Client()
 {
 
 }
-
-void HCS_Client::setPlatformId(const QString& classId)
-{
-    platformId_ = classId;
-}
-
-void HCS_Client::resetPlatformId()
-{
-    platformId_.clear();
-}

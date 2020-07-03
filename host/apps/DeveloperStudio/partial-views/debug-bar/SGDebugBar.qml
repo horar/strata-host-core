@@ -90,6 +90,9 @@ Item {
                                         let data = {
                                             "class_id": uuid,
                                             "name": model.fileName,
+                                            "device_id": "",
+                                            "view": "control",
+                                            "connected": true,
                                             "available": {
                                                 "control": true,
                                                 "documents": true,
@@ -97,8 +100,9 @@ Item {
                                                 "order": false
                                             }
                                         }
-                                        NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
-                                        viewCombobox.currentIndex = index
+
+                                        NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT, data)
+                                                    viewCombobox.currentIndex = index
                                         break
                                     }
                                 }

@@ -29,9 +29,9 @@ SGWidgets.SGMainWindow {
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")
         NavigationControl.init(statusBarContainer, stackContainer)
-        Help.registerWindow(mainWindow)
+        Help.registerWindow(mainWindow, stackContainer)
         if (!PlatformSelection.isInitialized) {
-            PlatformSelection.initialize(sdsModel.coreInterface, sdsModel.documentManager, stackContainer.platformViewModel)
+            PlatformSelection.initialize(sdsModel.coreInterface)
         }
         initialized()
     }
@@ -107,13 +107,13 @@ SGWidgets.SGMainWindow {
         onPlatformListChanged: {
 //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE) {
-                PlatformSelection.populatePlatforms(list)
+                PlatformSelection.generatePlatformSelectorModel(list)
             }
         }
 
         onConnectedPlatformListChanged: {
 //            console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", list)
-            if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformListModel.platformListStatus === "loaded") {
+            if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformSelectorModel.platformListStatus === "loaded") {
                 Help.closeTour()
                 PlatformSelection.parseConnectedPlatforms(list)
             }

@@ -128,7 +128,7 @@ void StorageManager::groupDownloadProgressHandler(const QString &groupId, int fi
     }
 
     if (request->type == RequestType::PlatformDocuments) {
-        emit downloadPlatformDocumentsProgress(request->clientId, filesCompleted, filesTotal);
+        emit downloadPlatformDocumentsProgress(request->clientId, request->classId, filesCompleted, filesTotal);
     }
 }
 
@@ -204,7 +204,7 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
         }
     }
 
-    emit platformDocumentsResponseRequested(requestItem->clientId, documentList, finalErrorString);
+    emit platformDocumentsResponseRequested(requestItem->clientId, requestItem->classId, documentList, finalErrorString);
 }
 
 PlatformDocument* StorageManager::fetchPlatformDoc(const QString &classId)
@@ -320,7 +320,7 @@ void StorageManager::requestPlatformDocuments(
     PlatformDocument* platDoc = fetchPlatformDoc(classId);
 
     if (platDoc == nullptr){
-        platformDocumentsResponseRequested(clientId, QJsonArray(), "Failed to fetch platform data");
+        platformDocumentsResponseRequested(clientId, classId, QJsonArray(), "Failed to fetch platform data");
         qCCritical(logCategoryHcsStorage) << "Failed to fetch platform data with id:" << classId;
         return;
     }

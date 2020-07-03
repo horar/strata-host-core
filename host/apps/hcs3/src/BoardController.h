@@ -104,6 +104,13 @@ public:
      */
     bool clearClientId(const int deviceId);
 
+    /**
+     * Clears specified client ID from all boards
+     * @param clientId
+     * @return true if operation was successful, otherwise false (clientId not attached to any boards)
+     */
+    bool clearClientIdFromAllDevices(const QByteArray& clientId);
+
 signals:
     void boardConnected(QString classId, QString platformId);
     void boardDisconnected(QString classId, QString platformId);

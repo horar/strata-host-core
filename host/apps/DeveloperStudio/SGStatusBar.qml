@@ -67,6 +67,38 @@ Rectangle {
         anchors {
             left: logoContainer.right
         }
+        spacing: 1
+
+        Rectangle {
+            id: platformSelector
+            height: 40
+            width: 120
+
+            color: platformSelectorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === 0 ? "#33b13b" : "#444"
+
+            property color menuColor: "#33b13b"
+
+            SGText {
+                color: "white"
+                text: "Platform Selector"
+                anchors {
+                    centerIn: parent
+                    verticalCenterOffset: 2
+                }
+                font.family: Fonts.franklinGothicBook
+            }
+
+            MouseArea {
+                id: platformSelectorMouse
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: {
+                    let data = {"index": 0}
+                    NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
+                }
+                cursorShape: Qt.PointingHandCursor
+            }
+        }
 
         Repeater {
             id: platformTabRepeater
@@ -77,12 +109,18 @@ Rectangle {
         SGPlatformTab {
             // demonstration tab set for help tour
             id: helpTab
-            visible: false
             class_id: "0"
+            device_id: ""
             view: "control"
             index: 0
             connected: true
             name: "Help Example"
+            visible: false
+            onXChanged: {
+                if (visible) {
+                    Help.refreshView(Help.internal_tour_index)
+                }
+            }
             available: {
                 "documents": true,
                 "control": true
@@ -222,7 +260,7 @@ Rectangle {
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                         Authenticator.logout()
                         PlatformSelection.logout()
-                        sdsModel.coreInterface.disconnectPlatform()
+                        sdsModel.coreInterface.unregisterClient()
                     }
                     width: profileMenu.width
                 }

@@ -187,10 +187,6 @@ void SDSModel::setHcsConnected(bool hcsConnected)
 
     hcsConnected_ = hcsConnected;
     emit hcsConnectedChanged();
-
-    if (hcsConnected == false) {
-        documentManager_->clearDocuments();
-    }
 }
 
 void SDSModel::forwardHcsOutput()

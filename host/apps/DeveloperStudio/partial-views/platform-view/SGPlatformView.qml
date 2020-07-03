@@ -35,9 +35,7 @@ StackLayout {
 
     Component.onCompleted: {
         if (model.connected && model.available.control) {
-            loadControl()  // load control and docs
-        } else {
-            sdsModel.documentManager.loadPlatformDocuments(model.class_id)
+            loadControl()  // load control
         }
     }
 
@@ -45,15 +43,22 @@ StackLayout {
         removeControl()
     }
 
+    function setArray(index, value) {
+        if (myArray[index]!== value) {
+            myArray[index] = value
+            myArrayChanged() //emit signal
+        }
+    }
+
     function loadControl () {
         if (controlLoaded === false){
-            sdsModel.documentManager.loadPlatformDocuments(model.class_id)
-
-            Help.setClassId(model.class_id)
+            Help.setClassId(model.device_id)
             let qml_control = NavigationControl.getQMLFile(model.class_id, "Control")
             NavigationControl.context.class_id = model.class_id
+            NavigationControl.context.device_id = model.device_id
             let control = NavigationControl.createView(qml_control, controlContainer)
             delete NavigationControl.context.class_id
+            delete NavigationControl.context.device_id
             if (control === null) {
                 NavigationControl.createView(NavigationControl.screens.LOAD_ERROR, controlContainer)
             }
@@ -90,6 +95,8 @@ StackLayout {
         Layout.fillHeight: true
         Layout.fillWidth: true
 
-        ContentView {}
+        ContentView {
+            class_id: model.class_id
+        }
     }
 }

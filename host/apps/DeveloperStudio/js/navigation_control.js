@@ -44,14 +44,14 @@ var events = {
     PROMPT_LOGIN_EVENT:             1,
     LOGIN_SUCCESSFUL_EVENT:         2,
     LOGOUT_EVENT:                   3,
-    PLATFORM_DISCONNECTED_EVENT:    4,
-    VIEW_COLLATERAL_EVENT:          6,
-    PLATFORM_CONNECTED_EVENT:       7,
-    CLOSE_PLATFORM_VIEW_EVENT:      8,
-    SWITCH_VIEW_EVENT:              9,
-    CONNECTION_LOST_EVENT:          10,
-    CONNECTION_ESTABLISHED_EVENT:   11,
-    PROMPT_SPLASH_SCREEN_EVENT:     12,
+    PLATFORM_CONNECTED_EVENT:       4,
+    PLATFORM_DISCONNECTED_EVENT:    5,
+    OPEN_PLATFORM_VIEW_EVENT:       6,
+    CLOSE_PLATFORM_VIEW_EVENT:      7,
+    SWITCH_VIEW_EVENT:              8,
+    CONNECTION_LOST_EVENT:          9,
+    CONNECTION_ESTABLISHED_EVENT:   10,
+    PROMPT_SPLASH_SCREEN_EVENT:     11,
 }
 
 /*
@@ -64,7 +64,8 @@ var main_container_ = null
 var status_bar_container_ = null
 var platform_view_repeater_ = null
 var platform_view_model_ = null
-var stack_container_= null
+var stack_container_ = null
+var platform_list = {}
 
 /*
   Navigation initialized with parent containers
@@ -140,7 +141,7 @@ function createView(name, parent)
         removeView(parent)
     }
     catch(err){
-        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Could not destroy child")
+        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "ERROR: Could not destroy child")
     }
 
     var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
@@ -229,7 +230,7 @@ function globalEventHandler(event,data)
         break;
 
     default:
-        console.warn(LoggerModule.Logger.devStudioNavigationControlCategory, "Unhandled signal, ", event, " in state ", navigation_state_)
+        console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Unhandled signal, ", event, " in state ", navigation_state_)
         break;
     }
 }
@@ -306,46 +307,72 @@ function updateState(event, data)
         case states.CONTROL_STATE:
             switch(event)
             {
-            case events.PLATFORM_CONNECTED_EVENT:
-                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform connected, class_id:", data.class_id)
-                // Don't connect if a platform view already open (only one allowed at this time)
-                if (platform_view_model_.count === 0) {
-                    platform_view_model_.append({"class_id":data.class_id, "view":"control", "connected":true, "name":data.name, "available":data.available})
-                    stack_container_.currentIndex = platform_view_model_.count
-                } else {
-                    if (platform_view_model_.get(0).class_id === data.class_id) {
-                        // if existing view matches connected platform, re-connect status
-                        platform_view_model_.get(0).connected = true
+            case events.OPEN_PLATFORM_VIEW_EVENT:
+                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Opening Platform View for class_id:", data.class_id, "device_id:", data.device_id)
+
+                // If matching view exists, bring it back into focus
+                for (let i = 0; i < platform_view_model_.count; i++) {
+                    let open_view = platform_view_model_.get(i)
+                    if (open_view.class_id === data.class_id && open_view.device_id === data.device_id) {
+                        updateState(events.SWITCH_VIEW_EVENT, {"index": i+1})
+                        return
                     }
+                }
+
+                platform_view_model_.append(data)
+
+                updateState(events.SWITCH_VIEW_EVENT, {"index": platform_view_model_.count}) // focus on new view in stack_container_
+                break;
+
+            case events.PLATFORM_CONNECTED_EVENT:
+                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform connected, class_id:", data.class_id, "device_id:", data.device_id)
+                let view_index = -1
+                let connected_view
+
+                // Find view bound to this device, set connected
+                // OR if none found, find view matching class_id, bind to it, set connected
+                for (let j = 0; j < platform_view_model_.count; j++) {
+                    connected_view = platform_view_model_.get(j)
+                    if (connected_view.class_id === data.class_id){
+                        if (connected_view.device_id === data.device_id) {
+                            view_index = j
+                            break
+                        } else if (connected_view.device_id === ""){
+                            view_index = j
+                        }
+                    }
+                }
+
+                if (view_index !== -1) {
+                    connected_view = platform_view_model_.get(view_index)
+                    connected_view.device_id = data.device_id
+                    connected_view.connected = true
                 }
                 break;
 
             case events.PLATFORM_DISCONNECTED_EVENT:
-                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform disconnected, class_id:", data.class_id)
-                // Disable control view in any matching open platform view
-                for (let i=0; i< platform_view_model_.count; i++) {
-                    if (platform_view_model_.get(i).class_id === data.class_id) {
-                        platform_view_model_.get(i).connected = false
+                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform disconnected, class_id:", data.class_id, "device_id:", data.device_id)
+                // Disconnect any matching open platform view
+                for (let k = 0; k < platform_view_model_.count; k++) {
+                    let disconnected_view = platform_view_model_.get(k)
+                    if (disconnected_view.class_id === data.class_id && disconnected_view.device_id === data.device_id) {
+                        disconnected_view.connected = false
                         break
                     }
                 }
                 break;
 
             case events.CLOSE_PLATFORM_VIEW_EVENT:
-                stack_container_.currentIndex = 0 // focus platform selector in stack_container_
-                for (let i=0; i< platform_view_model_.count; i++) {
-                    if (platform_view_model_.get(i).class_id === data.class_id) {
-                        platform_view_model_.remove(i)
+                let l
+                for (l = 0; l < platform_view_model_.count; l++) {
+                    let closed_view = platform_view_model_.get(l)
+                    if (closed_view.class_id === data.class_id && closed_view.device_id === data.device_id) {
+                        platform_view_model_.remove(l)
                         break
                     }
                 }
-                break;
 
-            case events.VIEW_COLLATERAL_EVENT:
-                // Collateral mode disables control view
-                console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Entering collateral viewing mode for ", data.class_id)
-                platform_view_model_.append({"class_id":data.class_id, "view":"collateral", "connected":false, "name":data.name, "available":data.available})
-                stack_container_.currentIndex = platform_view_model_.count // focus on new view in stack_container_ (offset by 1 due to platform selector occupying index 0)
+                updateState(events.SWITCH_VIEW_EVENT, {"index": l}) // focus on tab to left
                 break;
 
             case events.SWITCH_VIEW_EVENT:
