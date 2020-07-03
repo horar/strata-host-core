@@ -119,14 +119,6 @@ QString BoardController::createPlatformsList() {
     return doc.toJson(QJsonDocument::Compact);
 }
 
-QByteArray BoardController::getClientId(const int deviceId) const {
-    auto it = boards_.constFind(deviceId);
-    if (it != boards_.constEnd()) {
-        return it.value().clientId;
-    }
-    return QByteArray();
-}
-
 QString BoardController::getClassId(const int deviceId) const {
     auto it = boards_.constFind(deviceId);
     if (it != boards_.constEnd()) {
@@ -141,43 +133,6 @@ QString BoardController::getPlatformId(const int deviceId) const {
         return it.value().device->property(DeviceProperties::platformId);
     }
     return QString();
-}
-
-bool BoardController::getDeviceIdByClientId(const QByteArray& clientId, int& deviceId) const {
-// Original implementation in BoardsController class iterated through boards (PlatformBoard objects)
-// and returned first board which had desired client ID.
-    for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
-        if (clientId == it.value().clientId) {
-            deviceId = it.key();
-            return true;
-        }
-    }
-    return false;
-}
-
-bool BoardController::getFirstDeviceIdByClassId(const QString& classId, int& deviceId) const {
-// Original implementation in BoardsController class iterated through boards (PlatformBoard objects)
-// and returned first board which had desired class ID.
-    for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
-        if (classId == it.value().device->property(DeviceProperties::classId)) {
-            deviceId = it.key();
-            return true;
-        }
-    }
-    return false;
-}
-
-bool BoardController::setClientId(const QByteArray& clientId, const int deviceId) {
-    auto it = boards_.find(deviceId);
-    if (it != boards_.end()) {
-        if (it.value().clientId.isEmpty()) {
-            it.value().clientId = clientId;
-            qCDebug(logCategoryHcsBoard).noquote() << logDeviceId(deviceId) << ": Assigned client '" << clientId.toHex() << "' to device";
-            return true;
-        }
-    }
-    qCWarning(logCategoryHcsBoard).noquote() << logDeviceId(deviceId) << ": Cannot assign client '" << clientId.toHex() << "' to device";
-    return false;
 }
 
 bool BoardController::clearClientId(const int deviceId) {
