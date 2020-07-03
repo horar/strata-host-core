@@ -43,7 +43,7 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
                                 std::bind(&CoreInterface::cloudNotificationHandler,
                                      this, std::placeholders::_1));
 
-    notification_thread_running_ = false;
+    notification_thread_running_.store(false);
     notification_thread_= std::thread(&CoreInterface::notificationsThread,this);
 }
 
@@ -68,9 +68,9 @@ CoreInterface::~CoreInterface()
 void CoreInterface::notificationsThread()
 {
     //qDebug () << "CoreInterface::notificationsThread - notification handling.";
-    notification_thread_running_ = true;
+    notification_thread_running_.store(true);
 
-    while(notification_thread_running_) {
+    while(notification_thread_running_.load()) {
         // Notification Message Architecture
         //
         //    {
@@ -96,7 +96,7 @@ void CoreInterface::notificationsThread()
         // TODO [ian] need to error check/validate json messages
         string message = hcc->receiveNotification();  // Host Controller Service
 
-        if (message.length() == 0 ) {
+        if (message.empty()) {
             continue;
         }
 
@@ -256,7 +256,7 @@ void CoreInterface::disconnectPlatform(int device_id)
 
 void CoreInterface::setNotificationThreadRunning(bool running)
 {
-    notification_thread_running_ = running;
+    notification_thread_running_.store(running);
 }
 
 // @f unregisterClient
