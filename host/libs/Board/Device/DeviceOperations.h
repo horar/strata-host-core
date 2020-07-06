@@ -99,6 +99,12 @@ public:
      */
     QVector<quint8> recentBackupChunk() const;
 
+    /*!
+     * Get total count of chunks of backed up firmware.
+     * \return count of backed up firmware chunks
+     */
+    int backupChunksCount() const;
+
 signals:
     /*!
      * This signal is emitted when DeviceOperations finishes.
@@ -140,6 +146,7 @@ protected:
     std::vector<std::unique_ptr<command::BaseDeviceCommand>>::iterator currentCommand_;
 
     QVector<quint8> backupChunk_;
+    int backupChunksCount_;
 };
 
 }  // namespace

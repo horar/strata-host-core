@@ -94,9 +94,9 @@ class Flasher : public QObject
         /*!
          * This signal is emitted during firmware backup.
          * \param chunk chunk number which was backed up
-         * \param last true if backed up chunk is last
+         * \param total total count of firmware chunks
          */
-        void backupProgress(int chunk, bool last);
+        void backupProgress(int chunk, int total);
 
         /*!
          * This signal is emitted when device properties are changed (e.g. board switched to/from bootloader).

@@ -56,7 +56,6 @@ void Flasher::backup(bool startApplication) {
     startApp_ = startApplication;
     if (fwFile_.open(QIODevice::WriteOnly)) {
         action_ = Action::Backup;
-        chunkCount_ = 0;
         chunkProgress_ = BACKUP_PROGRESS_STEP;
         qCInfo(logCategoryFlasher) << device_ << "Preparing for firmware backup.";
         emit switchToBootloader(false);
@@ -173,6 +172,7 @@ void Flasher::handleFlashFirmware(int lastFlashedChunk) {
 void Flasher::handleBackupFirmware(int chunkNumber) {
     if (chunkNumber >= 0) {  // if no chunk was backed up yet, 'chunkNumber' is negative number (-1)
         QVector<quint8> chunk = operation_->recentBackupChunk();
+        int totalChunks = operation_->backupChunksCount();
         qint64 bytesWritten = fwFile_.write(reinterpret_cast<char*>(chunk.data()), chunk.size());
         if (bytesWritten != chunk.size()) {
             qCCritical(logCategoryFlasher) << device_ << "Cannot write to file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
@@ -181,19 +181,17 @@ void Flasher::handleBackupFirmware(int chunkNumber) {
             return;
         }
         if (chunkNumber != 0) {
-            chunkCount_ = chunkNumber;
             if (chunkNumber == chunkProgress_) { // this is faster than modulo
                 chunkProgress_ += BACKUP_PROGRESS_STEP;
-                qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber;
-                emit backupProgress(chunkNumber, false);
+                qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber << " of " << totalChunks;
+                emit backupProgress(chunkNumber, totalChunks);
             } else {
-                qCDebug(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber;
+                qCDebug(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber << " of " << totalChunks;
             }
         } else {  // chunkNumber is 0 => the last chunk
-            ++chunkCount_;
             fwFile_.close();
-            qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << chunkCount_ << " - firmware backup is done.";
-            emit backupProgress(chunkCount_, true);
+            qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << totalChunks << " of " << totalChunks << " - firmware backup is done.";
+            emit backupProgress(totalChunks, totalChunks);
             if (startApp_) {
                 operation_->startApplication();
             } else {
