@@ -27,7 +27,7 @@ Rectangle {
     Image{
         id:onLogo
         source:"../images/ON-logo.svg"
-        height:parent.height*.2
+        height:parent.height*.15
         anchors.left: parent.left
         anchors.leftMargin: 100
         anchors.top:parent.top
@@ -47,7 +47,8 @@ Rectangle {
     Image{
         id:zigbeeLogo
         source:"../images/zigbee-logo.png"
-        height:parent.height*.2
+        height:parent.height*.15
+
         anchors.right: parent.right
         anchors.rightMargin: 50
         anchors.top:parent.top
@@ -77,10 +78,9 @@ Rectangle {
             }
         }
 
-        property var doorToggled: platformInterface.toggle_door
+        property var doorToggled: platformInterface.toggle_door_notification
         onDoorToggledChanged: {
-            if (platformInterface.toggle_door.value === "open"){
-                //switch to image with light on
+            if (platformInterface.toggle_door_notification.value === "open"){
                 officeImage.source = "../images/room_doorOpen.jpg"
             }
             else{
