@@ -42,7 +42,7 @@ Item {
     }
 
     property var popup_mode: {
-        "value": true
+        "value": false
     }
 
 
