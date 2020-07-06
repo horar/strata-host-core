@@ -215,15 +215,16 @@ ColumnLayout {
                                         // warningPop.delegateDownload = download
                                         // warningPop.open()
                                         // todo hook up when device_id works
-//                                        let updateFirmwareCommand = {
-//                                            "hcs::cmd": "update_firmware",
-//                                            "payload": {
-//                                                "device_id": platformStack.device_id,
-//                                                "path": model.file,
-//                                                "md5": model.md5
-//                                            }
-//                                        }
-//                                        coreInterface.sendCommand(JSON.stringify(updateFirmwareCommand));
+                                        console.log("DEVICE:", platformStack.device_id)
+                                        let updateFirmwareCommand = {
+                                            "hcs::cmd": "update_firmware",
+                                            "payload": {
+                                                "device_id": platformStack.device_id,
+                                                "path": "201/fab/351bf129b05fb37797c8d8f0c1e16db5.bin", //model.file,
+                                                "md5": "351bf129b05fb37797c8d8f0c1e16db5"//model.md5
+                                            }
+                                        }
+                                        coreInterface.sendCommand(JSON.stringify(updateFirmwareCommand));
                                         flashStatus.visible = true
                                         activeFirmware = flashStatus
                                     }
@@ -238,6 +239,7 @@ ColumnLayout {
                             Layout.preferredHeight: statusColumn.height
 
                             function parseProgress (payload) {
+                                console.log("RECEIVED PROGRESS", JSON.stringify(payload))
                                 switch (payload.operation) {
                                 case "download":
                                     switch (payload.status) {
