@@ -60,6 +60,62 @@ Item {
 
     }
 
+    property var popup_mode: platformInterface.popup_mode.value
+    onPopup_modeChanged: {
+        if(popup_mode === true)
+            warningPopupMode.open()
+        else warningPopupMode.close()
+    }
+
+    Popup {
+        id: warningPopupMode
+        width: parent.width/2
+        height: parent.height/4
+        anchors.centerIn: parent
+        modal: true
+        focus: false
+        closePolicy: Popup.NoAutoClose
+        background: Rectangle{
+            id: warningPopupModeContainer
+            width: warningPopupMode.width
+            height: warningPopupMode.height
+            color: "#dcdcdc"
+            border.color: "grey"
+            border.width: 2
+            radius: 10
+            MouseArea {
+                id: containMouseAreaForPopUp1
+                anchors.fill:warningPopupModeContainer
+                onClicked: {
+                    forceActiveFocus()
+                }
+            }
+        }
+        Rectangle {
+            id: warningPopupBox
+            color: "transparent"
+            anchors {
+                centerIn: parent
+            }
+            width: warningPopupModeContainer.width - 50
+            height: warningPopupModeContainer.height - 50
+            Text {
+                id: warningTextForPopup
+                anchors.fill:parent
+                text: "Please wait while configuring LED driver mode."
+                verticalAlignment:  Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+                fontSizeMode: Text.Fit
+                width: parent.width
+                font.family: "Helvetica Neue"
+                font.pixelSize: ratioCalc * 15
+                font.bold: true
+            }
+        }
+    }
+
+
     Popup {
         id: startupWarningPopup
         width: parent.width/2

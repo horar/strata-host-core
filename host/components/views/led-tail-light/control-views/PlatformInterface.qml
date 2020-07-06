@@ -41,6 +41,11 @@ Item {
         "value": false
     }
 
+    property var popup_mode: {
+        "value": true
+    }
+
+
 
 
     //Mode commands
