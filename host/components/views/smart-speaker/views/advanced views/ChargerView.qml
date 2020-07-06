@@ -1,7 +1,8 @@
 import QtQuick 2.10
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
-import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 0.9 as SGWidgets09
+import tech.strata.sgwidgets 1.0
 
 Rectangle {
     id: front
@@ -56,7 +57,7 @@ Rectangle {
                 horizontalAlignment: Text.Text.AlignRight
                 color: "black"
             }
-            SGSegmentedButtonStrip {
+            SGWidgets09.SGSegmentedButtonStrip {
                 id: ocpSegmentedButton
                 labelLeft: false
                 anchors.verticalCenter: ocpLabel.verticalCenter
@@ -81,7 +82,7 @@ Rectangle {
                             }
                         }
 
-                    SGSegmentedButton{
+                    SGWidgets09.SGSegmentedButton{
                         id:overVoltageButton1
                         text: qsTr("6.5V")
                         activeColor: buttonSelectedColor
@@ -93,7 +94,7 @@ Rectangle {
                         }
                     }
 
-                    SGSegmentedButton{
+                    SGWidgets09.SGSegmentedButton{
                         id:overVoltageButton2
                         text: qsTr("10.5V")
                         activeColor:buttonSelectedColor
@@ -103,7 +104,7 @@ Rectangle {
                             platformInterface.set_vbus_ovp_level.update(10.5);
                         }
                     }
-                    SGSegmentedButton{
+                    SGWidgets09.SGSegmentedButton{
                         id:overVoltageButton3
                         text: qsTr("13.7V")
                         activeColor:buttonSelectedColor
@@ -130,7 +131,7 @@ Rectangle {
                 horizontalAlignment: Text.Text.AlignRight
                 color: "black"
             }
-            SGSegmentedButtonStrip {
+            SGWidgets09.SGSegmentedButtonStrip {
                 id: tempThresholdSegmentedButton
                 labelLeft: false
                 anchors.verticalCenter: temperatureThresholdLabel.verticalCenter
@@ -164,7 +165,7 @@ Rectangle {
                         }
                     }
 
-                    SGSegmentedButton{
+                    SGWidgets09.SGSegmentedButton{
                         id:thermalProtectionButton1
                         text: qsTr("70°C")
                         activeColor: buttonSelectedColor
@@ -176,7 +177,7 @@ Rectangle {
                         }
                     }
 
-                    SGSegmentedButton{
+                    SGWidgets09.SGSegmentedButton{
                         id:thermalProtectionButton2
                         text: qsTr("85°C")
                         activeColor:buttonSelectedColor
@@ -186,7 +187,7 @@ Rectangle {
                             platformInterface.set_thermal_protection_temp.update(85)
                         }
                     }
-                    SGSegmentedButton{
+                    SGWidgets09.SGSegmentedButton{
                         id:thermalProtectionButton3
                         text: qsTr("100°C")
                         activeColor:buttonSelectedColor
@@ -196,7 +197,7 @@ Rectangle {
                             platformInterface.set_thermal_protection_temp.update(100)
                         }
                     }
-                    SGSegmentedButton{
+                    SGWidgets09.SGSegmentedButton{
                         id:thermalProtectionButton4
                         text: qsTr("120°C")
                         activeColor:buttonSelectedColor
@@ -283,9 +284,10 @@ Rectangle {
                         from:100
                         to:3000
                         stepSize: 25
-                        inputBox: true
+                        showInputBox: true
                         grooveColor: "grey"
-                        grooveFillColor: hightlightColor
+                        fillColor: hightlightColor
+                        handleSize:height*.85
                         value: platformInterface.charger_status.ibus_limit
                         onUserSet: {
                             platformInterface.set_charger_current.update("set_vbus_current_limit", value);
@@ -321,9 +323,10 @@ Rectangle {
                         from:200
                         stepSize: 50
                         to:3000
-                        inputBox: true
+                        showInputBox: true
                         grooveColor: "grey"
-                        grooveFillColor: hightlightColor
+                        handleSize:height*.85
+                        fillColor: hightlightColor
                         value:platformInterface.charger_status.fast_chg_current.toFixed(0)
                         onUserSet: {
                             platformInterface.set_charger_current.update("set_fast_current_limit", value);
@@ -359,9 +362,10 @@ Rectangle {
                         from:200
                         to:800
                         stepSize: 50
-                        inputBox: true
+                        showInputBox: true
                         grooveColor: "grey"
-                        grooveFillColor: hightlightColor
+                        handleSize:height*.85
+                        fillColor: hightlightColor
                         value: platformInterface.charger_status.precharge_current.toFixed(0)
                         onUserSet: {
                             platformInterface.set_charger_current.update("set_precharge_current_limit", value);
@@ -397,9 +401,10 @@ Rectangle {
                         from:100
                         to:600
                         stepSize: 50
-                        inputBox: true
+                        showInputBox: true
                         grooveColor: "grey"
-                        grooveFillColor: hightlightColor
+                        handleSize:height*.85
+                        fillColor: hightlightColor
                         value: platformInterface.charger_status.termination_current
                         onUserSet: {
                             platformInterface.set_charger_current.update("set_termination_current_limit", value);
