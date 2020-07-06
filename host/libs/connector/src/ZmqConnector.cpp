@@ -31,12 +31,12 @@ bool ZmqConnector::close()
         return false;
     }
 
-    const bool ret = socket_->close();
-    if (ret == true) {
+    const bool closed = socket_->close();
+    if (closed) {
         setConnectionState(false);
     }
 
-    return ret;
+    return closed;
 }
 
 bool ZmqConnector::closeContext()
