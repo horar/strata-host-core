@@ -1,4 +1,6 @@
-project(Database-sampleapp)
+project(Database-sampleapp
+    LANGUAGES CXX
+)
 
 add_executable(Database-sampleapp
     CouchbaseDatabaseSampleApp.cpp

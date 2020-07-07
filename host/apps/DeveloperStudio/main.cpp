@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
     QGuiApplication::setApplicationVersion(AppInfo::version.data());
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
-#if QT_VERSION >= 0x051300
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
     QtWebEngine::initialize();
 #endif
 
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 
     const QtLoggerSetup loggerInitialization(app);
 
-#if QT_VERSION < 0x051300
+#if (QT_VERSION < QT_VERSION_CHECK(5, 13, 0))
     QtWebEngine::initialize();
 #endif
     qCInfo(logCategoryStrataDevStudio) << QStringLiteral("================================================================================");
