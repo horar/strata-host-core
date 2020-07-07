@@ -484,11 +484,12 @@ void HostControllerService::onCmdUpdateFirmware(const rapidjson::Value *payload)
     }
     int deviceId = deviceIdValue.GetInt();
 
-    QString firmwareUrl = QString::fromStdString((*payload)["path"].GetString());
-    if (firmwareUrl.isEmpty()) {
+    QString path = QString::fromStdString((*payload)["path"].GetString());
+    if (path.isEmpty()) {
         qCWarning(logCategoryHcs) << "path attribute is empty";
         return;
     }
+    QUrl firmwareUrl = storageManager_->getBaseUrl().resolved(QUrl(path));
 
     QString firmwareMD5 = QString::fromStdString((*payload)["md5"].GetString());
     if (firmwareMD5.isEmpty()) {
@@ -635,6 +636,7 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
     payload.insert("complete", progress.complete);
     payload.insert("total", progress.total);
     payload.insert("download_error", progress.downloadError);
+    payload.insert("prepare_error", progress.prepareError);
     payload.insert("backup_error", progress.backupError);
     payload.insert("flash_error", progress.flashError);
     payload.insert("restore_error", progress.restoreError);

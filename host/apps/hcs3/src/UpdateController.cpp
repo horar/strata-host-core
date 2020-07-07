@@ -84,6 +84,7 @@ void UpdateController::handleUpdateProgress(int deviceId, UpdateOperation operat
             progress->downloadError = errorString;
             break;
         case UpdateOperation::Prepare :
+            progress->prepareError = errorString;
             break;
         case UpdateOperation::Backup :
             progress->backupError = errorString;

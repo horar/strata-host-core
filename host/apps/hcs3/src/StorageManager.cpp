@@ -69,6 +69,11 @@ void StorageManager::setBaseUrl(const QUrl &url)
     connect(downloadManager_, &DownloadManager::groupDownloadFinished, this, &StorageManager::groupDownloadFinishedHandler);
 }
 
+QUrl StorageManager::getBaseUrl() const
+{
+    return baseUrl_;
+}
+
 QString StorageManager::createFilePathFromItem(const QString& item, const QString& prefix)
 {
     QString tmpName = QDir(prefix).filePath( item );

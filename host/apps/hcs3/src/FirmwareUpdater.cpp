@@ -126,7 +126,7 @@ void FirmwareUpdater::handleFlasherFinished(FlasherConnector::Result result)
 
     firmwareFile_.remove();
 
-    UpdateController::UpdateStatus status;
+    UpdateController::UpdateStatus status = UpdateController::UpdateStatus::Failure;
     switch (result) {
     case FlasherConnector::Result::Success :
         status = UpdateController::UpdateStatus::Success;
@@ -149,9 +149,9 @@ void FirmwareUpdater::handleFlashProgress(int chunk, int total)
     emit updateProgress(deviceId_, UpdateController::UpdateOperation::Flash, UpdateController::UpdateStatus::Running, chunk, total);
 }
 
-void FirmwareUpdater::handleBackupProgress(int chunk)
+void FirmwareUpdater::handleBackupProgress(int chunk, int total)
 {
-    emit updateProgress(deviceId_, UpdateController::UpdateOperation::Backup, UpdateController::UpdateStatus::Running, chunk);
+    emit updateProgress(deviceId_, UpdateController::UpdateOperation::Backup, UpdateController::UpdateStatus::Running, chunk, total);
 }
 
 void FirmwareUpdater::handleRestoreProgress(int chunk, int total)

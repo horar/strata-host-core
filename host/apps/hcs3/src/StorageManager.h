@@ -21,7 +21,7 @@ class StorageManager final : public QObject
     Q_DISABLE_COPY(StorageManager)
 
 public:
-    explicit StorageManager(strata::DownloadManager* downloadManager, QObject* parent = nullptr);
+    StorageManager(strata::DownloadManager* downloadManager, QObject* parent = nullptr);
     ~StorageManager();
 
     /**
@@ -35,6 +35,12 @@ public:
      * @param url base URL
      */
     void setBaseUrl(const QUrl &url);
+
+    /**
+     * Gets the base URL for downloads
+     * @return base URL
+     */
+    QUrl getBaseUrl() const;
 
 public slots:
     void requestPlatformList(const QByteArray &clientId);

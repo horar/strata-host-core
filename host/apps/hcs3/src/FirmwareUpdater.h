@@ -53,7 +53,7 @@ private slots:
     // slots for FlasherConnector signals:
     void handleFlasherFinished(strata::FlasherConnector::Result result);
     void handleFlashProgress(int chunk, int total);
-    void handleBackupProgress(int chunk);
+    void handleBackupProgress(int chunk, int total);
     void handleRestoreProgress(int chunk, int total);
     void handleOperationStateChanged(strata::FlasherConnector::Operation operation,
                                      strata::FlasherConnector::State state, QString errorString);

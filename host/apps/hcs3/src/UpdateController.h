@@ -67,6 +67,7 @@ public:
         int complete;
         int total;
         QString downloadError;
+        QString prepareError;
         QString backupError;
         QString flashError;
         QString restoreError;
