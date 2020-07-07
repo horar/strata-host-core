@@ -11,6 +11,7 @@ Item {
     property var telemetry : {
         "cell_voltage": "",
         "cell_temp": "",
+        "total_time":0,
         "log_indicator": "black",
         "onboard_indicator": "black"
     }

@@ -18,9 +18,9 @@ ColumnLayout {
     property alias logSwitch: logSwitch
     property var dataArray_voltage: []
     property var dataArray_temperature: []
-    property var print_dataArray: []
-    property var counterx: 0
+   // property var counterx: 0
     property  int clear:0 //
+
     property var one_time_clear_all_data: 0
     property var cell_voltage1: +platformInterface.telemetry.cell_voltage
     onCell_voltage1Changed:{
@@ -33,6 +33,7 @@ ColumnLayout {
     onCell_temp1Changed:{
         if(cell_voltage1>1500){
     dataArray_temperature.push(cell_temp1)
+
         }
          }
     property var estd_test_time_N_log_interval: +virtualtextarea.estd_tst_time
@@ -106,7 +107,6 @@ ColumnLayout {
         if (clear==1){
     dataArray_temperature=[]
     dataArray_voltage=[]
-    print_dataArray=[]
     basicGraph.removeCurve(0)
     basicGraph1.removeCurve(0)
     clear=0;
@@ -216,7 +216,6 @@ ColumnLayout {
         platformInterface.set_measurement.update("stop")
         dataArray_temperature=[]
         dataArray_voltage=[]
-        print_dataArray=[]
         basicGraph.removeCurve(0)
         basicGraph1.removeCurve(0)
         //Send to FW board on UI Loader
@@ -677,15 +676,17 @@ ColumnLayout {
                          text: qsTr("Smart LiB Gauge Automatic Support Tool")
                          font.bold: true
                          anchors.top:parent.top
-                         anchors.topMargin: 3
+                         anchors.topMargin: 2
                          anchors.horizontalCenter: parent.horizontalCenter
                          anchors.verticalCenter: parent.verticalCenter
-                         font.pixelSize: 20
+                         font.pixelSize: 16
                      }
 
                     TextArea{ //collect all slider and combo information
-                    id:virtualtextarea//realtimelog   virtualtextarea.on_board_load
+                    id:virtualtextarea//realtimelog   .on_board_load
                     visible: false
+                    font.pixelSize: 5
+                    //fontsize: 5
                     // Inturrupts for LOG writing over_temperature
                     property var over_temperature: foo8()
                     function foo8(){
@@ -695,8 +696,6 @@ ColumnLayout {
                     else
                     if(sgStatusLight_overtemp.status==="black"){return lightoff}
                     }
-
-
                     property var over_currnt: foo7()
                     function foo7(){
                     var lighton="on"
@@ -705,8 +704,6 @@ ColumnLayout {
                     else
                     if(sgStatusLight_overcurrent.status==="black"){return lightoff}
                     }
-
-
                     property var over_volatage: foo6()
                     function foo6(){
                     var lighton="on"
@@ -770,14 +767,8 @@ ColumnLayout {
                           "\nOverCurrent = "+ over_currnt+
                           "\nOver/UnderTemp = "+ over_temperature+
                           "\nDoubleEstimatedTime = "+ double_time+
-                          "\n[Data]\n"+print_dataArray.join("")+":"+platformInterface.telemetry.cell_temp+","
-                          +platformInterface.telemetry.cell_voltage//virtualtextarea1.collect
+                          "\n[Data]\n"
 
-                    }
-                    TextArea{ //collect all slider and combo information
-                    id:virtualtextarea1//realtimelog
-                    visible: false
-                    text: "starts.."
                     }
 
                     Rectangle {
@@ -807,7 +798,7 @@ ColumnLayout {
                                 yMax: 5000
                                 backgroundColor: "#FDEEF4"
                                 foregroundColor: "steelblue"
-                                xTitle: "                             Time (sec)" + "           " + "Estd. : "+ basicGraph1.xMax.toFixed(0) + "  of  "+ virtualtextarea.estd_tst_time*60
+                                xTitle: "                             Time (sec)" + "             " + "Estd. : "+ basicGraph1.xMax.toFixed(0) + "  of  "+ virtualtextarea.estd_tst_time*60
                                 yTitle: "Cell Voltage (mV)"
 
                                 Button {
@@ -851,18 +842,14 @@ ColumnLayout {
                                               if((dataArray_voltage[counter - 1]>1500) && (x_Axis_Timer>=0 )){
                                               dataArray.push({"x":x_Axis_Timer,"y":dataArray_voltage[counter - 1]})
 
-                                              virtualtextarea1.text= ":"+dataArray_temperature[counter - 1 ]+","+dataArray_voltage[counter -1]+"\n"
-                                              print_dataArray[counter - 1]=virtualtextarea1.text  //if(dataArray_voltage[counter - 1] !== undefined)
-
                                               }
-                                             // if(x_Axis_Timer<=0){x_Axis_Timer=+virtualtextarea.realtimelog}
+
                                               x_Axis_Timer=x_Axis_Timer+(+virtualtextarea.realtimelog)
 
                                           }
                                           if(x_Axis_Timer<=0){x_Axis_Timer=+virtualtextarea.realtimelog}
                                           basicGraph.xMax = x_Axis_Timer
                                           curve.appendList(dataArray)
-                                        //  print_dataArray.appendList({test2})  virtualtextarea1.text=Åg:Åh
 
                                      }
 
@@ -1696,7 +1683,6 @@ ColumnLayout {
                                                   if(one_time_clear_all_data<=0){
                                                       dataArray_temperature=[]
                                                       dataArray_voltage=[]
-                                                      print_dataArray=[]
                                                       one_time_clear_all_data=1
                                                   }
 
@@ -2105,7 +2091,7 @@ ColumnLayout {
                                     Text {
                                         id: name319
                                         //height: 19
-                                        text: "Log Status(Time, Volt, Temp)"
+                                        text: "Log Status (Time, Temp, Volt)"
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.top: parent.top
                                         anchors.topMargin: parent.height*0.09
@@ -2123,7 +2109,7 @@ ColumnLayout {
                                         anchors.topMargin: parent.height*0.4
                                         infoBoxHeight:40
                                         label: ""
-                                        info: +basicGraph1.xMax.toFixed(0) + " Sec, "+ platformInterface.telemetry.cell_voltage + " mV, "+platformInterface.telemetry.cell_temp + " °C "
+                                        info: +platformInterface.telemetry.total_time + " min, " + platformInterface.telemetry.cell_temp + " °C, "+ platformInterface.telemetry.cell_voltage + " mV "
                                         labelLeft: true                    // Default: true (if false, label will be on top)
                                         infoBoxColor: "lightgray"       // Default: "#eeeeee" (light gray)
                                         infoBoxBorderColor: "#f3f3fe"    // Default: "#cccccc" (light gray)
@@ -2144,7 +2130,7 @@ ColumnLayout {
                                    Text {
                                         id: name320
                                         //height: 19
-                                        text: "Start/Stop/Clear Measure"
+                                        text: "Measure (Start/Stop/Clear)"
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.top: parent.top
                                         anchors.topMargin: parent.height*0.09
@@ -2171,80 +2157,27 @@ ColumnLayout {
                                         property var condition1: "start"
                                         property var condition0: "stop"
                                         property var start_stop_measure: 0
+                                        property var clear_log_data:0
+
 
                                       onClicked: {
                                           if(logSwitch.checked == true) {
                                               clear=1
                                               clearGraphsData()
                                               platformInterface.set_measurement.update(condition1)
-                                              //if(logSwitch.checked == true){//
-                                              switch_checked_true()
+                                              clear_log_data=1 //clear log data
+                                              switch_checked_true() //call On function
 
                                           }
                                           if(logSwitch.checked == false){
                                            platformInterface.set_measurement.update(condition0)
                                            platformInterface.set_measurement.update(condition0)
-                                           switch_checked_false()
-
-                                          }
-
-                                      /*     if((qsTr(sgcomboBS.currentText)==="Charge"))
-                                             {
-                                                 if (sgsliderCC.enabled==true)
-                                                 {
-                                                 sgsliderCC.enabled=false
-                                                 sgcomboBS.enabled=false
-                                                 }
-                                                 else
-                                                 if (sgsliderCC.enabled==false)
-                                                 {
-                                                 sgsliderCC.enabled=true
-                                                 sgcomboBS.enabled=true
-                                                 }
-
-                                             }
+                                           clear_log_data=0
+                                           switch_checked_false() //call off function
 
 
-                                           if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(set_onboard_load_en.currentText)==="Enable")
-                                             {
-                                                 if (sgsliderOBLC.enabled==true)
-                                                 {
-                                                 sgsliderOBLC.enabled=false
-                                                 sgcomboBS.enabled=false
-                                                 set_onboard_load_en.enabled=false
-                                                 }
-                                                 else
-                                                 if (sgsliderOBLC.enabled==false)
-                                                 {
-                                                 sgsliderOBLC.enabled=true
-                                                 sgcomboBS.enabled=true
-                                                 set_onboard_load_en.enabled=true
-                                                 }
-
-                                             }
-
-                                           if((qsTr(sgcomboBS.currentText)==="Discharge") && qsTr(set_onboard_load_en.currentText)==="Disable")
-                                             {
-                                                 if (sgsliderELC.enabled==true)
-                                                 {
-                                                 sgsliderELC.enabled=false
-                                                 sgcomboBS.enabled=false
-                                                 set_onboard_load_en.enabled=false
-                                                 }
-                                                 else
-                                                 if (sgsliderELC.enabled==false)
-                                                 {
-                                                 sgsliderELC.enabled=true
-                                                 sgcomboBS.enabled=true
-                                                 set_onboard_load_en.enabled=true
-                                                 }
-
-                                             }*/
-
-
-
-                                     }
-
+                                        }
+                                      }
                                     }
 
                                 }
@@ -2254,7 +2187,6 @@ ColumnLayout {
 
                                     Text {
                                         id: name321
-                                        //height: 19
                                         text: "Log File"
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         anchors.top: parent.top
@@ -2263,8 +2195,8 @@ ColumnLayout {
                                         color: "black"
                                     }
 
-                                    DebugMenu {
-                                        id:debugmenu
+                                    SaveDialogMenu {
+                                        id:save_dialog_menu
                                          anchors.left: parent.left
                                          anchors.horizontalCenter: parent.horizontalCenter
                                          anchors.top: parent.top
