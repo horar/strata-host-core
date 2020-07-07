@@ -292,11 +292,12 @@ const rapidjson::SchemaDocument CommandValidator::backupFWResSchema(
                           "type": "object",
                           "properties": {
                             "number": {"type": "number"},
+                            "total": {"type": "number"},
                             "size": {"type": "number"},
                             "crc": {"type": "number"},
                             "data": {"type": "string"}
                           },
-                          "required": ["number", "size", "crc", "data"]
+                          "required": ["number", "total", "size", "crc", "data"]
                         }
                       },
                       "required": ["chunk"]
