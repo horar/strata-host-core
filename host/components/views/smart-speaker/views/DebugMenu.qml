@@ -400,8 +400,8 @@ Rectangle {
                             "charge_mode":"'+ theChargeMode +'",
                             "precharge_current":'+ thePrechargeCurrent +',
                             "termination_current":'+ theTerminationCurrent +',
-                            "ibus_limit":'+ theIbusLimit +',
-                            "fast_chg_current":'+ theFastChargeCurrent +',
+                            "bus_current":'+ theIbusLimit +',
+                            "fast_current":'+ theFastChargeCurrent +',
                             "vbus_ovp":'+ theVbusOVP +',
                             "audio_power_mode":"'+theAudioPowerMode+'"
 

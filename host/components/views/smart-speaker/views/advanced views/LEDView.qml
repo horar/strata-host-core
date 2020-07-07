@@ -10,7 +10,8 @@ Rectangle {
 
     property color backgroundColor: "#D1DFFB"
     property color accentColor:"#86724C"
-    property int labelWidth:200
+    property int labelWidth:135
+    property int boxLabelWidth:90
 
     property bool topLightsOn
     property bool bottomLightOn
@@ -20,32 +21,7 @@ Rectangle {
     property int theBottomLightBrightness
     property bool touchButtonsOn: platformInterface.touch_button_state.state
 
-    function rgbToHsl(r, g, b) {
-      r /= 255
-      g /= 255
-      b /= 255
-      var max = Math.max(r, g, b), min = Math.min(r, g, b)
-      var h, s, l = (max + min) / 2
-      if (max == min) {
-        h = s = 0
-      } else {
-        var d = max - min
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
-        switch (max) {
-        case r:
-          h = (g - b) / d + (g < b ? 6 : 0)
-          break
-        case g:
-          h = (b - r) / d + 2
-          break
-        case b:
-          h = (r - g) / d + 4
-          break
-        }
-        h /= 6;
-      }
-      return {"h":h, "s":s, "l":l};
-    }
+
 
     Text{
         id:ledLabel
@@ -67,80 +43,104 @@ Rectangle {
         color:"grey"
     }
 
-    Column{
+
+
+    Row{
+        id:topLightRow
+        spacing:10
+        width:parent.width
         anchors.top: underlineRect.bottom
         anchors.topMargin: 10
         anchors.left:parent.left
         anchors.right:parent.right
-        spacing:10
 
-        Row{
-            id:topLightRow
-            spacing:10
-            width:parent.width
+        Text{
+            id:topLightsLabel
+            font.pixelSize: 18
+            width:labelWidth
+            horizontalAlignment: Text.AlignRight
+            text:"Top light:"
+            color: "black"
+        }
+        SGSwitch{
+            id:topLightsSwitch
 
-            Text{
-                id:topLightsLabel
-                font.pixelSize: 18
-                width:labelWidth
-                horizontalAlignment: Text.AlignRight
-                text:"Top light:"
-                color: "black"
-            }
-            SGSwitch{
-                id:topLightsSwitch
+            anchors.verticalCenter: topLightsLabel.verticalCenter
+            height:25
+            width:45
+            grooveFillColor: hightlightColor
+            checked: platformInterface.led_state.upper_on
 
-                anchors.verticalCenter: topLightsLabel.verticalCenter
-                height:25
-                width:45
-                grooveFillColor: hightlightColor
-                checked: platformInterface.led_state.upper_on
-
-                onToggled: {
-                    platformInterface.set_led_state.update("upper",checked,platformInterface.led_state.r,
-                                                                           platformInterface.led_state.g,
-                                                                           platformInterface.led_state.b)
-                }
+            onToggled: {
+                platformInterface.set_led_state.update(platformInterface.led_state.lower_on,
+                                                       checked,
+                                                       platformInterface.led_state.H,
+                                                       platformInterface.led_state.V)
             }
         }
+    }
 
-        Row{
-            spacing:10
-            width:parent.width
-            Text{
-                id:bottomLightsLabel
-                font.pixelSize: 18
-                horizontalAlignment: Text.AlignRight
-                text:"Bottom lights:"
-                color: "black"
-                width:labelWidth
-            }
-            SGSwitch{
-                id:bottomLightsSwitch
 
-                anchors.verticalCenter: bottomLightsLabel.verticalCenter
-                height:25
-                width:45
-                grooveFillColor: hightlightColor
-                checked: platformInterface.led_state.lower_on
+    SGSwitch{
+        id:bottomLightsSwitch
 
-                onToggled:{
-                    platformInterface.set_led_state.update("lower",checked,platformInterface.led_state.r,
-                                                                           platformInterface.led_state.g,
-                                                                           platformInterface.led_state.b)
-                }
+        anchors.right:bottomLEDGroupBox.right
+        anchors.rightMargin: 200
+        anchors.bottom:bottomLEDGroupBox.top
+        anchors.bottomMargin: -height
+        height:25
+        width:45
+        grooveFillColor: hightlightColor
+        checked: platformInterface.led_state.lower_on ? true : false
+        z:10
 
-            }
+        onToggled:{
+            //this should set the V to 0, and either disable or enable the color and brightness sliders
+            platformInterface.set_led_state.update(platformInterface.led_state.upper_on,
+                                                   checked,
+                                                   platformInterface.led_state.H,
+                                                   platformInterface.led_state.V)
         }
+    }
+
+    GroupBox{
+        id: bottomLEDGroupBox
+        title:"Bottom lights:"
+        anchors.top:topLightRow.bottom
+        anchors.topMargin: 10
+        anchors.left:parent.left
+        anchors.leftMargin: 10
+        anchors.right:parent.right
+        anchors.rightMargin: 10
+        height:125
+
+        label: Label {
+            x: bottomLEDGroupBox.leftPadding
+            width: bottomLEDGroupBox.availableWidth
+            text: bottomLEDGroupBox.title
+            color: "black"
+            font.pixelSize:18
+            elide: Text.ElideRight
+        }
+
+
+
         Row{
+            id:colorRow
+            anchors.top:parent.top
+            anchors.topMargin: 10
+            anchors.left:parent.left
+            anchors.leftMargin: 10
+            anchors.right:parent.right
+            anchors.rightMargin: 10
             spacing:10
             width:parent.width
             Text{
                 id:bottomLightColorLabel
                 font.pixelSize: 18
-                text:"Bottom light color:"
-                color: "black"
-                width:labelWidth
+                text:"Color:"
+                color: bottomLightsSwitch.checked ? "black": "grey"
+                width:boxLabelWidth
                 horizontalAlignment: Text.AlignRight
             }
             SGHueSlider{
@@ -149,28 +149,36 @@ Rectangle {
                 anchors.verticalCenter: bottomLightColorLabel.verticalCenter
                 anchors.verticalCenterOffset: 5
                 height:25
-                width:160
+                width:220
+                enabled: bottomLightsSwitch.checked
 
                 //still need to write code to set the hsl slider based on rgb changes in the platform
                 value:Math.round((platformInterface.led_state.H / 359) * 255)
 
                 onMoved: {
-                    platformInterface.set_led_state.update("lower",(value/255)*359,platformInterface.led_state.V);
+                    platformInterface.set_led_state.update(platformInterface.led_state.upper_on,
+                                                           platformInterface.led_state.lower_on,
+                                                           (value/255)*359,
+                                                           platformInterface.led_state.V);
                 }
 
             }
         }
 
         Row{
+            id:brightnessRow
+            anchors.left:colorRow.left
+            anchors.top:colorRow.bottom
+            anchors.topMargin: 10
             spacing:10
             width:parent.width
             Text{
                 id:bottomLightBrightnessLabel
                 font.pixelSize: 18
                 horizontalAlignment: Text.AlignRight
-                text:"Bottom light brightness:"
-                color: "black"
-                width:labelWidth
+                text:"Brightness:"
+                color: bottomLightsSwitch.checked ? "black": "grey"
+                width:boxLabelWidth
             }
             SGSlider{
                 id:bottomLightBrightnessSlider
@@ -178,16 +186,20 @@ Rectangle {
                 anchors.verticalCenter: bottomLightBrightnessLabel.verticalCenter
                 anchors.verticalCenterOffset: 5
                 height:25
-                width:160
+                width:220
                 from:0
                 to:100
                 showInputBox: true
                 handleSize: 20
                 grooveColor: "grey"
                 fillColor: hightlightColor
+                enabled:  bottomLightsSwitch.checked
                 value: platformInterface.led_state.V
                 onUserSet: {
-                    platformInterface.set_led_state.update("lower",platformInterface.led_state.H,value);
+                    platformInterface.set_led_state.update(platformInterface.led_state.upper_on,
+                                                           platformInterface.led_state.lower_on
+                                                           ,platformInterface.led_state.H,
+                                                           value);
                 }
             }
             Text{
@@ -200,33 +212,45 @@ Rectangle {
                 color: "grey"
             }
         }
-        Row{
-            spacing:10
-            width:parent.width
-            Text{
-                id:touchButtonsLabel
-                font.pixelSize: 18
-                horizontalAlignment: Text.AlignRight
-                text:"Touch buttons:"
-                color: "black"
-                width:labelWidth
+
+    }
+
+    Row{
+        id:spacerRow
+        height:25
+    }
+
+    Row{
+        anchors.top: bottomLEDGroupBox.bottom
+        anchors.topMargin: 50
+        anchors.left:parent.left
+        anchors.right:parent.right
+        spacing:10
+        //width:parent.width
+        Text{
+            id:touchButtonsLabel
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignRight
+            text:"Touch buttons:"
+            color: "black"
+            width:labelWidth
+        }
+        SGSwitch{
+            id:touchButtonsSwitch
+
+            anchors.verticalCenter: touchButtonsLabel.verticalCenter
+            height:25
+            width:45
+            grooveFillColor: hightlightColor
+            checked:platformInterface.touch_button_state.state
+
+            onToggled: {
+                platformInterface.set_touch_button_state.update(checked)
             }
-            SGSwitch{
-                id:touchButtonsSwitch
 
-                anchors.verticalCenter: touchButtonsLabel.verticalCenter
-                height:25
-                width:45
-                grooveFillColor: hightlightColor
-                checked:platformInterface.touch_button_state.state
-
-                onToggled: {
-                    platformInterface.set_touch_button_state.update(checked)
-                }
-
-            }
         }
     }
+
 
 
 }

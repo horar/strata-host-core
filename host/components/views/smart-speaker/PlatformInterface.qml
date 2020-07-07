@@ -113,8 +113,8 @@ Item {
         "charge_mode":"fast",           /* ‘pre’ or ‘top off' or 'sleep’ or 'discharge'*/
         "precharge_current":200,        /* (mA) 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800 */
         "termination_current":200,      /* (mA) 100 - 200 in 25mA increments, 200 - 600 in 50mA increments */
-        "ibus_limit":200,                 /* (mA) 100-3000 in 25mA increments */
-        "fast_chg_current":200,         /* (mA) 200-3200 in 50 mA increments */
+        "bus_current":200,                 /* (mA) 100-3000 in 25mA increments */
+        "fast_current":200,         /* (mA) 200-3200 in 50 mA increments */
         "vbus_ovp":6.5,                 /*  (V) or 10.5 or 13.7*/
         "audio_power_mode":"vbus"       /*or battery*/
     }
@@ -386,7 +386,8 @@ Item {
     property var set_led_state:({
                  "cmd":"set_led_state",
                  "payload":{
-                    "set":"lower",                        // or upper
+                    "lower_on":true,
+                    "upper_on":true,
                     "H":128,
                     "V":0                               //pass 0 if LED is turned off, otherwise brightness
                     },
