@@ -19,6 +19,7 @@ public:
     ~HostControllerClient();
 
     bool close();
+    bool closeContext();
     bool sendCmd(const std::string &cmd);
 
     std::string receiveCommandAck();

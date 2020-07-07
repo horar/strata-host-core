@@ -64,7 +64,7 @@ namespace ConnectorFactory
 {
 Connector* getConnector(const CONNECTOR_TYPE type)
 {
-    CONNECTOR_DEBUG_LOG("ConnectorFactory::getConnector type: %d", type);
+    CONNECTOR_DEBUG_LOG("ConnectorFactory::getConnector type: %d\n", type);
     switch (type) {
 //        case CONNECTOR_TYPE::SERIAL:
 //            return static_cast<Connector*>(new SerialConnector);

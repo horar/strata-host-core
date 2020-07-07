@@ -92,7 +92,7 @@ private:
     QString platform_list_{"{ \"list\":[]}"};
     QString connected_platform_list_{"{ \"list\":[]}"};
     QString hcs_token_;
-    bool notification_thread_running_;
+    std::atomic_bool notification_thread_running_;
 
     // ---
     // notification handling

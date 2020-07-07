@@ -17,6 +17,11 @@ bool HostControllerClient::close()
     return connector_->close();
 }
 
+bool HostControllerClient::closeContext()
+{
+    return connector_->closeContext();
+}
+
 bool HostControllerClient::sendCmd(const std::string& cmd)
 {
     return connector_->send(cmd);
