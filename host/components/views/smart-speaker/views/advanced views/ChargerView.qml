@@ -288,9 +288,9 @@ Rectangle {
                         grooveColor: "grey"
                         fillColor: hightlightColor
                         handleSize:height*.85
-                        value: platformInterface.charger_status.ibus_limit
+                        value: platformInterface.charger_status.bus_current
                         onUserSet: {
-                            platformInterface.set_charger_current.update("set_vbus_current_limit", value);
+                            platformInterface.set_charger_current.update("bus_current", value);
                         }
                     }
                     Text{
@@ -322,14 +322,14 @@ Rectangle {
                         width:currentLimitSliderWidth
                         from:200
                         stepSize: 50
-                        to:3000
+                        to:3200
                         showInputBox: true
                         grooveColor: "grey"
                         handleSize:height*.85
                         fillColor: hightlightColor
-                        value:platformInterface.charger_status.fast_chg_current.toFixed(0)
+                        value:platformInterface.charger_status.fast_current.toFixed(0)
                         onUserSet: {
-                            platformInterface.set_charger_current.update("set_fast_current_limit", value);
+                            platformInterface.set_charger_current.update("fast_current", value);
                         }
                     }
                     Text{
@@ -368,7 +368,7 @@ Rectangle {
                         fillColor: hightlightColor
                         value: platformInterface.charger_status.precharge_current.toFixed(0)
                         onUserSet: {
-                            platformInterface.set_charger_current.update("set_precharge_current_limit", value);
+                            platformInterface.set_charger_current.update("precharge_current", value);
                         }
                     }
 
@@ -407,7 +407,7 @@ Rectangle {
                         fillColor: hightlightColor
                         value: platformInterface.charger_status.termination_current
                         onUserSet: {
-                            platformInterface.set_charger_current.update("set_termination_current_limit", value);
+                            platformInterface.set_charger_current.update("termination_current", value);
                         }
                     }
 

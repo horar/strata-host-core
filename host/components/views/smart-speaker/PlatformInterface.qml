@@ -367,7 +367,7 @@ Item {
     property var set_charger_current:({
                  "cmd":"set_charger_current",
                  "payload":{
-                    "type":"set_vbus_current_limit",       // or set_fast_current_limit, set_precharge_current_limit set_termination_current_limit
+                    "type":"vbus_current_limit",       // or fast_current_limit, precharge_current_limit, termination_current_limit
                     "current":50
                     },
                  update: function(type,current){
