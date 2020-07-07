@@ -49,8 +49,9 @@ public:
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     FileModel *fileModel();
-    void removeRowsFromModel(const uint &pathHash);
+    void removeRowsFromModel(const uint pathHash);
     void insertChunk(QList<LogItem*>::iterator chunkIter, QList<LogItem*> chunk);
+    QList<LogItem*>::iterator removeChunk(QList<LogItem*>::iterator start, QList<LogItem*>::iterator end);
 
 public slots:
     void checkFile();
