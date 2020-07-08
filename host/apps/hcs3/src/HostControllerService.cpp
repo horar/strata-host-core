@@ -498,6 +498,11 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
     }
 
     if (service_command.HasMember("device_id")) {
+        if (service_command["device_id"].IsInt() == false) {
+            qCCritical(logCategoryHcs) << "device_id is not integer";
+            return;
+        }
+
         boards_.sendMessage(service_command["device_id"].GetInt(), QByteArray::fromStdString(msg.message));
         return;
     }

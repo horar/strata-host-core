@@ -51,9 +51,11 @@ function data_source_handler (payload) {
 // Helper functions
 // -------------------------
 function send (command) {
-    command.device_id = device_id
-    console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "send: ", JSON.stringify(command));
-    coreInterface.sendCommand(JSON.stringify(command))
+    if (device_id) {
+        command.device_id = device_id
+        console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "send: ", JSON.stringify(command));
+        coreInterface.sendCommand(JSON.stringify(command))
+    }
 }
 
 function show (command) {
