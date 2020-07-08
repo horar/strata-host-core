@@ -26,6 +26,8 @@ ColumnLayout {
     onCell_voltage1Changed:{
         if(cell_voltage1>1500){
         dataArray_voltage.push(cell_voltage1)
+          //  console.log("Voltage Value",dataArray_voltage )
+            //dataArray1.push({"x":x_Axis_Timer,"y":dataArray_temperature[counter1 - 1]})
         }
          }
 
@@ -493,9 +495,9 @@ ColumnLayout {
                                  //var xcv= sgSlider1.setValue(500)
                                  stepSize: 1.0                // Default: 1.0
                                  value: 2800.0                  // Default: average of from and to
-                                 from: 2500.0                      // Default: 0.0
+                                 from: 2510.0                      // Default: 0.0
                                  to: 3500.0                    // Default: 100.0
-                                 startLabel: "2500 mV"              // Default: from
+                                 startLabel: "2510 mV"              // Default: from
                                  endLabel: "3500 mV"            // Default: to
                                  showToolTip: true            // Default: true
                                  toolTipDecimalPlaces: 0      // Default: 0
@@ -1680,6 +1682,7 @@ ColumnLayout {
                                               for (var counter1 = 1 ; counter1 <= (dataArray_temperature.length) ;counter1++){
                                                   if((dataArray_voltage[counter1 - 1]>1500) && (x_Axis_Timer>=0 )){
                                                   dataArray1.push({"x":x_Axis_Timer,"y":dataArray_temperature[counter1 - 1]})
+                                                   //console.log("its a data arrayyyyyyyy",dataArray1)
                                                   if(one_time_clear_all_data<=0){
                                                       dataArray_temperature=[]
                                                       dataArray_voltage=[]
