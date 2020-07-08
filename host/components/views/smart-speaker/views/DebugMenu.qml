@@ -472,6 +472,54 @@ Rectangle {
                 }
             }
 
+            Button {
+                id:rightButton5
+                height: 20
+                text: "SinkCaps"
+
+                onClicked: {
+
+                    var V1 = Math.round((Math.random() *20));
+                    var A1 = Math.round((Math.random() *7.5));
+                    var V2 = Math.round((Math.random() *20));
+                    var A2 = Math.round((Math.random() *7.5));
+                    var V3 = Math.round((Math.random() *20));
+                    var A3 = Math.round((Math.random() *7.5));
+                    var V4 = Math.round((Math.random() *20));
+                    var A4 = Math.round((Math.random() *7.5));
+                    var V5 = Math.round((Math.random() *20));
+                    var A5 = Math.round((Math.random() *7.5));
+                    var V6 = Math.round((Math.random() *20));
+                    var A6 = Math.round((Math.random() *7.5));
+                    var V7 = Math.round((Math.random() *20));
+                    var A7 = Math.round((Math.random() *7.5));
+
+                    CorePlatformInterface.data_source_handler('{
+                        "value":"usb_pd_advertised_voltages_notification",
+                        "payload":{
+                            "port":0,
+                            "maximum_power":72,
+                            "number_of_settings":7,
+                            "settings":[{"voltage":'+ V1 +',
+                                        "maximum_current":'+ A1 +'},
+                                        {"voltage":'+ V2 +',
+                                        "maximum_current":'+ A2 +'},
+                                        {"voltage":'+ V3 +',
+                                        "maximum_current":'+ A3 +'},
+                                        {"voltage":'+ V4 +',
+                                        "maximum_current":'+ A4 +'},
+                                        {"voltage":'+ V5 +',
+                                        "maximum_current":'+ A5 +'},
+                                        {"voltage":'+ V6 +',
+                                        "maximum_current":'+ A6 +'},
+                                        {"voltage":'+ V7 +',
+                                        "maximum_current":'+ A7 +'}]
+                            }
+                        }')
+
+                }
+            }
+
         }
     }
 

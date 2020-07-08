@@ -46,63 +46,220 @@ Rectangle {
         visible:isConnected
     }
 
+
+
     SGSegmentedButtonStrip {
-        id: sinkCapSegmentedButton
-        labelLeft: false
-        anchors.left: sinkCapLabel.right
-        anchors.leftMargin: 10
-        anchors.verticalCenter: sinkCapLabel.verticalCenter
+        id: sinkCapabilitiesButtonStrip
+
+        anchors.left:parent.left
+        anchors.leftMargin:10
+        anchors.top: sinkCapLabel.bottom
+        anchors.topMargin: 10
+
+        buttonImplicitWidth:0   //minimize width of the buttons
         textColor: "#444"
         activeTextColor: "white"
         radius: buttonHeight/2
         buttonHeight: 20
         exclusive: true
-        buttonImplicitWidth: 50
+        //buttonImplicitWidth: 50
         hoverEnabled:false
         visible:isConnected
 
+        property var sourceCapabilities: platformInterface.usb_pd_advertised_voltages_notification.settings
+
+        onSourceCapabilitiesChanged:{
+
+          if (sinkCapabilitiesButtonStrip.buttonList[0]){
+            //disable all the possibilities
+            sinkCapabilitiesButtonStrip.buttonList[0].children[6].enabled = false;
+            sinkCapabilitiesButtonStrip.buttonList[0].children[5].enabled = false;
+            sinkCapabilitiesButtonStrip.buttonList[0].children[4].enabled = false;
+            sinkCapabilitiesButtonStrip.buttonList[0].children[3].enabled = false;
+            sinkCapabilitiesButtonStrip.buttonList[0].children[2].enabled = false;
+            sinkCapabilitiesButtonStrip.buttonList[0].children[1].enabled = false;
+            sinkCapabilitiesButtonStrip.buttonList[0].children[0].enabled = false;
+
+            var numberOfSettings = platformInterface.usb_pd_advertised_voltages_notification.number_of_settings;
+            if (numberOfSettings >= 7){
+                sinkCapabilitiesButtonStrip.buttonList[0].children[6].enabled = true;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[6].voltage = platformInterface.usb_pd_advertised_voltages_notification.settings[6].voltage;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[6].text = platformInterface.usb_pd_advertised_voltages_notification.settings[6].voltage;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[6].text += "V\n ";
+                sinkCapabilitiesButtonStrip.buttonList[0].children[6].text += platformInterface.usb_pd_advertised_voltages_notification.settings[6].maximum_current;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[6].text += "A";
+            }
+            else{
+                faultProtectionButtonStrip.buttonList[0].children[6].text = "NA";
+            }
+
+            if (numberOfSettings >= 6){
+                sinkCapabilitiesButtonStrip.buttonList[0].children[5].enabled = true;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[5].voltage = platformInterface.usb_pd_advertised_voltages_notification.settings[5].voltage;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[5].text = platformInterface.usb_pd_advertised_voltages_notification.settings[5].voltage;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[5].text += "V\n ";
+                sinkCapabilitiesButtonStrip.buttonList[0].children[5].text += platformInterface.usb_pd_advertised_voltages_notification.settings[5].maximum_current;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[5].text += "A";
+            }
+            else{
+                faultProtectionButtonStrip.buttonList[0].children[5].text = "NA";
+            }
+
+            if (numberOfSettings >= 5){
+                sinkCapabilitiesButtonStrip.buttonList[0].children[4].enabled = true;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[4].voltage = platformInterface.usb_pd_advertised_voltages_notification.settings[4].voltage;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[4].text = platformInterface.usb_pd_advertised_voltages_notification.settings[4].voltage;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[4].text += "V\n ";
+                sinkCapabilitiesButtonStrip.buttonList[0].children[4].text += platformInterface.usb_pd_advertised_voltages_notification.settings[4].maximum_current;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[4].text += "A";
+            }
+            else{
+                sinkCapabilitiesButtonStrip.buttonList[0].children[4].text = "NA";
+            }
+
+            if (numberOfSettings >= 4){
+                sinkCapabilitiesButtonStrip.buttonList[0].children[3].enabled = true;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[3].voltage = platformInterface.usb_pd_advertised_voltages_notification.settings[3].voltage;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[3].text = platformInterface.usb_pd_advertised_voltages_notification.settings[3].voltage;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[3].text += "V\n ";
+                sinkCapabilitiesButtonStrip.buttonList[0].children[3].text += platformInterface.usb_pd_advertised_voltages_notification.settings[3].maximum_current;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[3].text += "A";
+            }
+            else{
+                faultProtectionButtonStrip.buttonList[0].children[3].text = "NA";
+            }
+
+            if (numberOfSettings >= 3){
+                sinkCapabilitiesButtonStrip.buttonList[0].children[2].enabled = true;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[2].voltage = platformInterface.usb_pd_advertised_voltages_notification.settings[2].voltage;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[2].text = platformInterface.usb_pd_advertised_voltages_notification.settings[2].voltage;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[2].text += "V\n ";
+                sinkCapabilitiesButtonStrip.buttonList[0].children[2].text += platformInterface.usb_pd_advertised_voltages_notification.settings[2].maximum_current;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[2].text += "A";
+            }
+            else{
+                sinkCapabilitiesButtonStrip.buttonList[0].children[2].text = "NA";
+            }
+
+            if (numberOfSettings >= 2){
+                sinkCapabilitiesButtonStrip.buttonList[0].children[1].enabled = true;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[1].voltage = platformInterface.usb_pd_advertised_voltages_notification.settings[1].voltage;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[1].text = platformInterface.usb_pd_advertised_voltages_notification.settings[1].voltage;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[1].text += "V\n ";
+                sinkCapabilitiesButtonStrip.buttonList[0].children[1].text += platformInterface.usb_pd_advertised_voltages_notification.settings[1].maximum_current;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[1].text += "A";
+            }
+            else{
+                sinkCapabilitiesButtonStrip.buttonList[0].children[1].text = "NA";
+            }
+
+            if (numberOfSettings >= 1){
+                sinkCapabilitiesButtonStrip.buttonList[0].children[0].enabled = true;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[0].voltage = platformInterface.usb_pd_advertised_voltages_notification.settings[0].voltage;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[0].text = platformInterface.usb_pd_advertised_voltages_notification.settings[0].voltage;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[0].text += "V\n ";
+                sinkCapabilitiesButtonStrip.buttonList[0].children[0].text += platformInterface.usb_pd_advertised_voltages_notification.settings[0].maximum_current;
+                sinkCapabilitiesButtonStrip.buttonList[0].children[0].text += "A";
+            }
+            else{
+                sinkCapabilitiesButtonStrip.buttonList[0].children[1].text = "NA";
+            }
+          }
+
+        }
+
         segmentedButtons: GridLayout {
+            id:advertisedVoltageGridLayout
             columnSpacing: 2
-            rowSpacing: 2
 
             SGSegmentedButton{
-                text: qsTr("5V 3A")
+                id: setting1
                 activeColor: buttonSelectedColor
                 inactiveColor: "white"
                 checked: true
-                //height:40
+                text:"N/A"
+                property double voltage:0;
+
                 onClicked: {
-                platformInterface.set_audio_amp_voltage.update(5,0,"usb")
+                    platformInterface.set_audio_amp_voltage.update(setting1.voltage,0,"usb")
                 }
-
-
             }
 
             SGSegmentedButton{
-                text: qsTr("7V 3A")
-                activeColor:buttonSelectedColor
+                id: setting2
+                activeColor: buttonSelectedColor
                 inactiveColor: "white"
-                //height:40
+                checked: true
+                text:"N/A"
+                property double voltage:0;
+
                 onClicked: {
-                platformInterface.set_audio_amp_voltage.update(7,0,"usb")
+                    platformInterface.set_audio_amp_voltage.update(setting2.voltage,0,"usb")
                 }
             }
+
             SGSegmentedButton{
-                text: qsTr("9V 3A")
-                activeColor:buttonSelectedColor
+                id:setting3
+                activeColor: buttonSelectedColor
                 inactiveColor: "white"
-                //height:40
+                checked: true
+                text:"N/A"
+                property double voltage:0;
+
                 onClicked: {
-                    platformInterface.set_audio_amp_voltage.update(9,0,"usb")
+                    platformInterface.set_audio_amp_voltage.update(setting3.voltage,0,"usb")
                 }
             }
+
             SGSegmentedButton{
-                text: qsTr("12V 3A")
-                activeColor:buttonSelectedColor
+                id:setting4
+                activeColor: buttonSelectedColor
                 inactiveColor: "white"
-                //height:40
+                checked: true
+                text:"N/A"
+                property double voltage:0;
+
                 onClicked: {
-                platformInterface.set_audio_amp_voltage.update(12,0,"usb")
+                    platformInterface.set_audio_amp_voltage.update(setting4.voltage,0,"usb")
+                }
+            }
+
+            SGSegmentedButton{
+                id:setting5
+                activeColor: buttonSelectedColor
+                inactiveColor: "white"
+                checked: true
+                text:"N/A"
+                property double voltage:0;
+
+                onClicked: {
+                    platformInterface.set_audio_amp_voltage.update(setting5.voltage,0,"usb")
+                }
+            }
+
+            SGSegmentedButton{
+                id:setting6
+                activeColor: buttonSelectedColor
+                inactiveColor: "white"
+                checked: true
+                text:"N/A"
+                property double voltage:0;
+
+                onClicked: {
+                    platformInterface.set_audio_amp_voltage.update(setting6.voltage,0,"usb")
+                }
+            }
+
+            SGSegmentedButton{
+                id:setting7
+                activeColor: buttonSelectedColor
+                inactiveColor: "white"
+                checked: true
+                text:"N/A"
+                property double voltage:0;
+
+                onClicked: {
+                    platformInterface.set_audio_amp_voltage.update(setting7.voltage,0,"usb")
                 }
             }
         }
