@@ -5,12 +5,12 @@ function Start-SDSAndWait {
     # Set-Location $SDSRootDir isneeded to resolve the ddl issue when running
     # HCS seperetly so that Windows will look into this directory for dlls
     Set-Location "C:\Program Files\ON Semiconductor\Strata Developer Studio"
+
+
+    Start-Process -FilePath "Strata Developer Studio" -WindowStyle Maximized
     if ($seconds) {
         Start-Sleep -Seconds 1
     }
-
-    Start-Process -FilePath "Strata Developer Studio" -WindowStyle Maximized
-
     Set-Location "C:\Users\SEC\Dev2\spyglass\host\test\release-testing"
 }
 function Start-HCS {
@@ -19,7 +19,7 @@ function Start-HCS {
     Set-Location "C:\Program Files\ON Semiconductor\Strata Developer Studio"
         Start-Sleep -Seconds 1
 
-    Start-Process -FilePath "hcs.exe" -ArgumentList "-f `"\HCS\hcs.config`""
+    Start-Process -FilePath "hcs" -ArgumentList "-f `"\HCS\hcs.config`""
     Set-Location $TestRoot
 }
 
@@ -35,7 +35,8 @@ function Test-Gui() {
         Stop-Process -Name "hcs" -Force
         Start-Sleep -Seconds 1
     }
-
+    Start-HCS
+    Start-SDSAndWait
     Start-Process "python" -ArgumentList "C:\Users\SEC\Dev2\spyglass\host\test\release-testing\gui-testing\main.py" -NoNewWindow -PassThru -Wait
 
     Stop-Process -Name "Strata Developer Studio" -Force

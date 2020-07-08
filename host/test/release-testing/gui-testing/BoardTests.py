@@ -52,7 +52,7 @@ class LoginValidWithBoard(unittest.TestCase):
     '''
     def setUp(self):
 
-        pyautogui.alert(text='Please plug in the Multifunction Logic Gates platform.', title='Important', button='OK')
+        #pyautogui.alert(text='Please plug in the Multifunction Logic Gates platform.', title='Important', button='OK')
         login.setToLoginTab()
 
     def tearDown(self) -> None:

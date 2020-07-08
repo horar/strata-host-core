@@ -5,11 +5,11 @@ def connect(url):
     context = zmq.Context.instance()
 
     client = context.socket(zmq.DEALER)
-    client.RCVTIMEO = 30000  # 10s timeout.
+    client.RCVTIMEO = 10000  # 10s timeout.
     client.connect(url)
     client.send(b'{"cmd":"register_client"}')
 
-    strataId = None #client.recv()
+    strataId = client.recv()
 
     return (client, strataId)
 
@@ -17,7 +17,7 @@ def openPlatform(client, classId, strataId):
     myEncodedStr = bytes(
         "{\"hcs::notification\":{\"list\":[{\"class_id\":\"%s\",\"connection\":\"connected\",\"verbose_name\":\"\"}],\"type\":\"connected_platforms\"}}" % classId, 'utf-8')
 
-    client.send_multipart([myEncodedStr])
+    client.send_multipart([strataId, myEncodedStr])
 
 def closePlatforms(client, strataId):
     myEncodedStr = bytes(
