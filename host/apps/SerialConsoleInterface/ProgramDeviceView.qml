@@ -13,7 +13,7 @@ FocusScope {
     property int processingStatus: ProgramDeviceView.Setup
     property bool doBackup: true
 
-    property int backupChunks: 0
+    property real backupProgress: 0.0
     property real programProgress: 0.0
     property real programBackupProgress: 0.0
     property int baseSpacing: 16
@@ -40,7 +40,7 @@ FocusScope {
         }
 
         onFlasherBackupProgress: {
-            backupChunks = chunk;
+            backupProgress = chunk / total;
         }
 
         onFlasherRestoreProgress: {
@@ -204,7 +204,7 @@ FocusScope {
                 text: {
                     var t = "Backup"
                     if (processingStatus !== ProgramDeviceView.Setup) {
-                        t += " (" + backupChunks + " chunk" + (backupChunks == 1 ? "" : "s")  + " completed)"
+                        t += " (" + Math.floor(backupProgress * 100) + "% completed)"
                     }
                     return t
                 }
@@ -303,7 +303,7 @@ FocusScope {
 
         programBackupNode.visible = false
 
-        backupChunks = 0
+        backupProgress = 0.0
         programProgress = 0.0
         programBackupProgress = 0.0
 

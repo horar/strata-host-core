@@ -7,9 +7,9 @@
     }
   },
   "databases": {
-    "spyglass": {
+    "strata": {
       "server": "http://couchbase:8091",
-      "bucket": "platform-commands",
+      "bucket": "strata",
       "username": "sync_gateway",
       "password": "sync_gateway",
       "enable_shared_bucket_access": true,

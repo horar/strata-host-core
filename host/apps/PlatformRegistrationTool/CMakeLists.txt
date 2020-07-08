@@ -60,6 +60,7 @@ target_link_libraries(${PROJECT_NAME}
 
     BoardManager
     FlasherConnector
+    DownloadManager
     QtLogger
 )
 

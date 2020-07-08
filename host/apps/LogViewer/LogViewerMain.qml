@@ -168,7 +168,7 @@ Item {
         filterPatternSyntax: regExpButton.checked ? CommonCPP.SGSortFilterProxyModel.RegExp : CommonCPP.SGSortFilterProxyModel.FixedString
         caseSensitive: caseSensButton.checked ? true : false
         filterRole: "message"
-        sortRole: "timestamp"
+        sortEnabled: false
     }
 
     Row {

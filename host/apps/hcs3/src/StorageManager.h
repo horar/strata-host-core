@@ -62,11 +62,11 @@ signals:
 
     void downloadPlatformSingleFileProgress(QByteArray clientId, QString filePath, qint64 bytesReceived, qint64 bytesTotal);
     void downloadPlatformSingleFileFinished(QByteArray clientId, QString filePath, QString errorString);
-    void downloadPlatformDocumentsProgress(QByteArray clientId, int filesCompleted, int filesTotal);
+    void downloadPlatformDocumentsProgress(QByteArray clientId, QString classId, int filesCompleted, int filesTotal);
     void downloadPlatformFilesFinished(QByteArray clientId, QString errorString);
 
     void platformListResponseRequested(QByteArray clientId, QJsonArray documentList);
-    void platformDocumentsResponseRequested(QByteArray clientId, QJsonArray documentList, QString error);
+    void platformDocumentsResponseRequested(QByteArray clientId, QString classId, QJsonArray documentList, QString error);
 
 private slots:
     void filePathChangedHandler(QString groupId,

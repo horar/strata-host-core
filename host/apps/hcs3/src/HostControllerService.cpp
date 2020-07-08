@@ -29,7 +29,6 @@ HostControllerService::HostControllerService(QObject* parent) : QObject(parent)
     clientCmdHandler_.insert( { std::string("platform_select"), std::bind(&HostControllerService::onCmdPlatformSelect, this, std::placeholders::_1) } );
 
     hostCmdHandler_.insert( { std::string("disconnect_platform"), std::bind(&HostControllerService::onCmdHostDisconnectPlatform, this, std::placeholders::_1) });
-    hostCmdHandler_.insert( { std::string("unregister"), std::bind(&HostControllerService::onCmdHostUnregister, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("download_files"), std::bind(&HostControllerService::onCmdHostDownloadFiles, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
 }
@@ -234,13 +233,18 @@ void HostControllerService::sendPlatformListMessage(
     clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
-void HostControllerService::sendPlatformDocumentsProgressMessage(const QByteArray &clientId, int filesCompleted, int filesTotal)
+void HostControllerService::sendPlatformDocumentsProgressMessage(
+        const QByteArray &clientId,
+        const QString &classId,
+        int filesCompleted,
+        int filesTotal)
 {
     QJsonDocument doc;
     QJsonObject message;
     QJsonObject payload;
 
     payload.insert("type", "document_progress");
+    payload.insert("class_id", classId);
     payload.insert("files_completed", filesCompleted);
     payload.insert("files_total", filesTotal);
 
@@ -252,6 +256,7 @@ void HostControllerService::sendPlatformDocumentsProgressMessage(const QByteArra
 
 void HostControllerService::sendPlatformDocumentsMessage(
         const QByteArray &clientId,
+        const QString &classId,
         const QJsonArray &documentList,
         const QString &error)
 {
@@ -260,6 +265,7 @@ void HostControllerService::sendPlatformDocumentsMessage(
     QJsonObject payload;
 
     payload.insert("type", "document");
+    payload.insert("class_id", classId);
 
     if (error.isEmpty()) {
         payload.insert("documents", documentList);
@@ -335,12 +341,7 @@ void HostControllerService::platformConnected(const QString &classId, const QStr
 void HostControllerService::platformDisconnected(const QString &classId, const QString &platformId)
 {
     Q_UNUSED(classId)
-
-    HCS_Client* client = findClientByPlatformId(platformId);
-    if (client != nullptr) {
-        client->resetPlatformId();
-        emit cancelPlatformDocumentRequested(client->getClientId());
-    }
+    Q_UNUSED(platformId)
 
     //send update to all clients
     broadcastMessage(boards_.createPlatformsList());
@@ -348,7 +349,8 @@ void HostControllerService::platformDisconnected(const QString &classId, const Q
 
 void HostControllerService::sendMessageToClients(const QString &platformId, const QString &message)
 {
-    HCS_Client* client = findClientByPlatformId(platformId);
+    Q_UNUSED(platformId)
+    HCS_Client* client = getSenderClient();
     if (client != nullptr) {
         clients_.sendMessage(client->getClientId(), message);
     }
@@ -406,34 +408,16 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
 
     QByteArray clientId = client->getClientId();
     emit platformDocumentsRequested(clientId, classId);
-
-    if (int deviceId; boards_.getFirstDeviceIdByClassId(classId, deviceId) ) {
-        QString platformId = boards_.getPlatformId(deviceId);
-        if (platformId.isEmpty()) {
-            qCWarning(logCategoryHcs) << "Board doesn't have platformId!";
-            return;
-        }
-
-        if (boards_.setClientId(client->getClientId(), deviceId) == false) {
-            qCWarning(logCategoryHcs) << "Board is already assigned to some client!";
-            return;
-        }
-        client->setPlatformId(platformId);
-    }
 }
 
-void HostControllerService::onCmdHostDisconnectPlatform(const rapidjson::Value* )
+void HostControllerService::onCmdHostDisconnectPlatform(const rapidjson::Value* payload)
 {
-    HCS_Client* client = getSenderClient();
-    Q_ASSERT(client);
-
-    if (int device_id; boards_.getDeviceIdByClientId(client->getClientId(), device_id)) {
-        boards_.clearClientId(device_id);
+    if (!payload->HasMember("device_id")) {
+        qCCritical(logCategoryHcs) << "device_id key is missing";
+        return;
     }
-
-    emit cancelPlatformDocumentRequested(client->getClientId());
-
-    client->resetPlatformId();
+    int device_id = (*payload)["device_id"].GetInt();
+    boards_.clearClientId(device_id);
 }
 
 void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
@@ -441,16 +425,12 @@ void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
     HCS_Client* client = getSenderClient();
     Q_ASSERT(client);
 
-    if (int device_id; boards_.getDeviceIdByClientId(client->getClientId(), device_id)) {
-        boards_.clearClientId(device_id);
-    }
+    QByteArray clientId = client->getClientId();
 
-    emit cancelPlatformDocumentRequested(client->getClientId());
-
-    client->resetPlatformId();
+    boards_.clearClientIdFromAllDevices(clientId);
+    emit cancelPlatformDocumentRequested(clientId);
 
     // Remove the client from the mapping
-    QByteArray clientId = client->getClientId();
     current_client_ = nullptr;
     clientList_.remove(client);
     qCInfo(logCategoryHcs) << "Client unregistered: " << clientId.toHex();
@@ -517,6 +497,16 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
         payload = &(service_command["payload"]);
     }
 
+    if (service_command.HasMember("device_id")) {
+        if (service_command["device_id"].IsInt() == false) {
+            qCCritical(logCategoryHcs) << "device_id is not integer";
+            return;
+        }
+
+        boards_.sendMessage(service_command["device_id"].GetInt(), QByteArray::fromStdString(msg.message));
+        return;
+    }
+
     std::string cmd_name = firstIt->value.GetString();
     qCInfo(logCategoryHcs) << "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
 
@@ -535,8 +525,7 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
 
         auto findIt = clientCmdHandler_.find(cmd_name);
         if (findIt == clientCmdHandler_.end()) {
-
-            disptachMessageToPlatforms(msg.from_client, msg.message);
+            qCWarning(logCategoryHcs) << "Unhandled command" <<  "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
             return;
         }
 
@@ -546,19 +535,6 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
         qCWarning(logCategoryHcs) << "Unhandled command type" <<  "Client:" << clientId.toHex() << "Type:" << QString::fromStdString(msg_type) << "cmd:" << QString::fromStdString(cmd_name);
         return;
     }
-}
-
-
-bool HostControllerService::disptachMessageToPlatforms(const QByteArray& dealer_id, const std::string& message )
-{
-    int device_id;
-    if (boards_.getDeviceIdByClientId(dealer_id, device_id) == false) {
-        qCWarning(logCategoryHcs) << "No board attached to client.";
-        return false;
-    }
-
-    boards_.sendMessage(device_id, QByteArray::fromStdString(message));
-    return true;
 }
 
 bool HostControllerService::broadcastMessage(const QString& message)
@@ -571,15 +547,3 @@ bool HostControllerService::broadcastMessage(const QString& message)
 
     return false;
 }
-
-HCS_Client* HostControllerService::findClientByPlatformId(const QString& platformId)
-{
-    for(HCS_Client* item : clientList_) {
-        if (item->getPlatformId() == platformId) {
-            return item;
-        }
-    }
-
-    return nullptr;
-}
-

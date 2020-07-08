@@ -22,6 +22,7 @@ public:
 
     bool open(const std::string& ip_address) override;
     bool close() override;
+    bool closeContext() override;
 
     // non-blocking calls
     bool send(const std::string& message) override;
