@@ -16,28 +16,52 @@ ColumnLayout {
     property real initialAspectRatio: 1200/820
     property alias virtualtextarea: virtualtextarea
     property alias logSwitch: logSwitch
-    property var dataArray_voltage: []
-    property var dataArray_temperature: []
+    //property var dataArray_voltage: []
+    //property var dataArray_temperature:[]
    // property var counterx: 0
+    //property var counterx_: 0
+    property var x_Axis_Timer_:0
+    property var x_Axis_Timer_1:0
     property  int clear:0 //
-
+    property var dataArray_temp_graph: []
+    property var dataArray_voltage_graph: []
     property var one_time_clear_all_data: 0
-    property var cell_voltage1: +platformInterface.telemetry.cell_voltage
-    onCell_voltage1Changed:{
-        if(cell_voltage1>1500){
-        dataArray_voltage.push(cell_voltage1)
-          //  console.log("Voltage Value",dataArray_voltage )
-            //dataArray1.push({"x":x_Axis_Timer,"y":dataArray_temperature[counter1 - 1]})
-        }
-         }
+    property var temp_validator:0
+    property var voltage_validator:0
+    property var cell__voltage: +platformInterface.telemetry.cell_voltage
+    onCell__voltageChanged:{
+        if(cell__voltage>1500){
+          //dataArray_voltage.push(cell__voltage)
+            if(voltage_validator>=2){
+           //dataArray_hello.push(x_Axis_Timer_,dataArray_temperature[counterx]) //
+           //dataArray_temp_graph.push({"x":x_Axis_Timer_,"y":dataArray_temperature[counterx]})
+           dataArray_voltage_graph.push({"x":x_Axis_Timer_1,"y":cell__voltage})
+          // counterx_++
+           x_Axis_Timer_1=x_Axis_Timer_1+(+virtualtextarea.realtimelog)
+           basicGraph.xMax = x_Axis_Timer_1
 
-    property var cell_temp1: +platformInterface.telemetry.cell_temp //
-    onCell_temp1Changed:{
-        if(cell_voltage1>1500){
-    dataArray_temperature.push(cell_temp1)
-
+                 }
+              }
+             voltage_validator++
         }
-         }
+
+    property var cell__temp: +platformInterface.telemetry.cell_temp
+    onCell__tempChanged:{
+        if(cell__voltage>1500){
+     //dataArray_temperature.push(cell__temp)
+     if(temp_validator>=2){
+    //dataArray_hello.push(x_Axis_Timer_,dataArray_temperature[counterx]) //
+    //dataArray_temp_graph.push({"x":x_Axis_Timer_,"y":dataArray_temperature[counterx]})
+    dataArray_temp_graph.push({"x":x_Axis_Timer_,"y":cell__temp})
+    //counterx++
+    x_Axis_Timer_=x_Axis_Timer_+(+virtualtextarea.realtimelog)
+    basicGraph1.xMax = x_Axis_Timer_
+
+          }
+
+      }
+    temp_validator++
+    }
     property var estd_test_time_N_log_interval: +virtualtextarea.estd_tst_time
     onEstd_test_time_N_log_intervalChanged:{
         platformInterface.set_est_test_time.update(+virtualtextarea.estd_tst_time)
@@ -107,10 +131,19 @@ ColumnLayout {
 
     function clearGraphsData() {
         if (clear==1){
-    dataArray_temperature=[]
-    dataArray_voltage=[]
+    //dataArray_temperature=[]
+    dataArray_temp_graph=[]
+    dataArray_voltage_graph=[]
+    //dataArray_voltage=[]
     basicGraph.removeCurve(0)
     basicGraph1.removeCurve(0)
+   // counterx=0
+    temp_validator=0
+    voltage_validator=0
+    x_Axis_Timer_=0
+    x_Axis_Timer_1=0
+    basicGraph1.xMax=+virtualtextarea.realtimelog
+    basicGraph.xMax=+virtualtextarea.realtimelog
     clear=0;
         }
         return 0
@@ -216,8 +249,10 @@ ColumnLayout {
         graphTimerPoints.start()
         graphTimerPoints1.start()
         platformInterface.set_measurement.update("stop")
-        dataArray_temperature=[]
-        dataArray_voltage=[]
+        //dataArray_temperature=[]
+        dataArray_temp_graph=[]
+        dataArray_voltage_graph=[]
+        //dataArray_voltage=[]
         basicGraph.removeCurve(0)
         basicGraph1.removeCurve(0)
         //Send to FW board on UI Loader
@@ -820,7 +855,7 @@ ColumnLayout {
                                             }
                                 function resetChart() {
                                                 basicGraph.xMin = 0//somevalue
-                                                basicGraph.xMax = basicGraph.xMax //somevalue
+                                                basicGraph.xMax = x_Axis_Timer_1//basicGraph.xMax //somevalue
                                                 basicGraph.yMin = 0//somevalue
                                                 basicGraph.yMax = 5000//somevalue
                                                 //resetChartButton.visible = false
@@ -837,21 +872,22 @@ ColumnLayout {
                                      onTriggered: {
                                           basicGraph.removeCurve(0)
                                           var curve = basicGraph.createCurve("graphCurve")
-                                          curve.color = "green"//randomColor()   //for (var j = 0 ; j < 50 ; j++)  dataArray.push({"x":dataArray.length + j,"y":yourDataValueHere(dataArray.length )})
-                                          var x_Axis_Timer= (0 - (+virtualtextarea.realtimelog))// time increase in sec for x-axis plots and adds to it till the experiment ends.
-                                          var dataArray = []
-                                          for (var counter = 1 ; counter <= (dataArray_voltage.length) ;counter++){
-                                              if((dataArray_voltage[counter - 1]>1500) && (x_Axis_Timer>=0 )){
-                                              dataArray.push({"x":x_Axis_Timer,"y":dataArray_voltage[counter - 1]})
+                                          curve.color = "green"
+                                          //randomColor()   //for (var j = 0 ; j < 50 ; j++)  dataArray.push({"x":dataArray.length + j,"y":yourDataValueHere(dataArray.length )})
+                                         // var x_Axis_Timer= (0 - (+virtualtextarea.realtimelog))// time increase in sec for x-axis plots and adds to it till the experiment ends.
+                                          //var dataArray = []
+                                         // for (var counter = 1 ; counter <= (dataArray_voltage.length) ;counter++){
+                                          //    if((dataArray_voltage[counter - 1]>1500) && (x_Axis_Timer>=0 )){
+                                           //   dataArray.push({"x":x_Axis_Timer,"y":dataArray_voltage[counter - 1]})
 
-                                              }
+                                             // }
 
-                                              x_Axis_Timer=x_Axis_Timer+(+virtualtextarea.realtimelog)
+                                             // x_Axis_Timer=x_Axis_Timer+(+virtualtextarea.realtimelog)
 
-                                          }
-                                          if(x_Axis_Timer<=0){x_Axis_Timer=+virtualtextarea.realtimelog}
-                                          basicGraph.xMax = x_Axis_Timer
-                                          curve.appendList(dataArray)
+                                         // }
+                                         // if(x_Axis_Timer<=0){x_Axis_Timer=+virtualtextarea.realtimelog}
+                                         // basicGraph.xMax = x_Axis_Timer
+                                          curve.appendList(dataArray_voltage_graph)
 
                                      }
 
@@ -1631,10 +1667,10 @@ ColumnLayout {
                                spacing: 0
                                //*
                                Widget01.SGGraph {
-                                    id: basicGraph1 //graph3
+                                    id: basicGraph1
                                     anchors.fill: parent
                                     anchors.left: parent.left
-                                    anchors.leftMargin: 8
+                                    anchors.leftMargin: 24
                                     //title: ""
                                     xMin: 0
                                     xMax: +virtualtextarea.realtimelog
@@ -1652,7 +1688,7 @@ ColumnLayout {
                                                         right: parent.right
                                                         margins: 1
                                                     }
-                                                    text: "set" //************
+                                                    text: "set"
                                                     visible: true
                                                     width: 38
                                                     height: 18
@@ -1662,7 +1698,7 @@ ColumnLayout {
                                                 }
                                     function resetChart() {
                                                     basicGraph1.xMin = 0//somevalue
-                                                    basicGraph1.xMax = basicGraph1.xMax//somevalue
+                                                    basicGraph1.xMax = x_Axis_Timer_//basicGraph1.xMax//somevalue
                                                     basicGraph1.yMin = 0//somevalue
                                                     basicGraph1.yMax = 75//somevalue
                                                     //resetChartButton.visible = false
@@ -1676,30 +1712,29 @@ ColumnLayout {
                                           onTriggered: {
                                               basicGraph1.removeCurve(0)
                                               var curvex = basicGraph1.createCurve("graphCurve")
-                                              curvex.color = "red"//randomColor()   //for (var j = 0 ; j < 50 ; j++)  dataArray.push({"x":dataArray.length + j,"y":yourDataValueHere(dataArray.length )})
-                                              var x_Axis_Timer= (0 - (+virtualtextarea.realtimelog)) // time increase in sec for x-axis plots and adds to it till the experiment ends.
-                                              var dataArray1 = []
-                                              for (var counter1 = 1 ; counter1 <= (dataArray_temperature.length) ;counter1++){
-                                                  if((dataArray_voltage[counter1 - 1]>1500) && (x_Axis_Timer>=0 )){
-                                                  dataArray1.push({"x":x_Axis_Timer,"y":dataArray_temperature[counter1 - 1]})
-                                                   //console.log("its a data arrayyyyyyyy",dataArray1)
-                                                  if(one_time_clear_all_data<=0){
-                                                      dataArray_temperature=[]
-                                                      dataArray_voltage=[]
-                                                      one_time_clear_all_data=1
-                                                  }
+                                              curvex.color = "red"
+                                              curvex.appendList(dataArray_temp_graph)
+                                              //randomColor()   //for (var j = 0 ; j < 50 ; j++)  dataArray.push({"x":dataArray.length + j,"y":yourDataValueHere(dataArray.length )})
+                                             // var x_Axis_Timer= (0 - (+virtualtextarea.realtimelog)) // time increase in sec for x-axis plots and adds to it till the experiment ends.
+                                             // var dataArray1 = []
+                                             // for (var counter1 = 1 ; counter1 <= (dataArray_temperature.length) ;counter1++){
+                                              //    if((dataArray_voltage[counter1 - 1]>1500) && (x_Axis_Timer>=0 )){
+                                              //    dataArray1.push({"x":x_Axis_Timer,"y":dataArray_temperature[counter1 - 1]})
+                                                 // console.log("its a data arrayyyyyyyy",dataArray1)
+                                              //    if(one_time_clear_all_data<=0){
+                                               //       dataArray_temperature=[]
+                                               //       dataArray_voltage=[]
+                                                //      one_time_clear_all_data=1
+                                                // }
 
 
-                                                  }
-                                                 // if(x_Axis_Timer<=0){x_Axis_Timer=0}
-                                                  x_Axis_Timer=x_Axis_Timer+(+virtualtextarea.realtimelog)
-                                              }
-                                              if(x_Axis_Timer<=0){
-                                                  x_Axis_Timer=+virtualtextarea.realtimelog
-                                              }
-                                              basicGraph1.xMax = x_Axis_Timer
-                                              curvex.appendList(dataArray1)
-
+                                              //  }
+                                                //  x_Axis_Timer=x_Axis_Timer+(+virtualtextarea.realtimelog)
+                                             //   }
+                                             //   if(x_Axis_Timer<=0){
+                                            //      x_Axis_Timer=+virtualtextarea.realtimelog
+                                            //  }
+                                              //basicGraph1.xMax = x_Axis_Timer
 
                                           }
                                       }
