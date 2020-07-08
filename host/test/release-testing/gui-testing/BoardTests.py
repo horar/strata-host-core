@@ -3,57 +3,72 @@ import pyautogui
 import GUIInterface.Login as login
 import GUIInterface.PlatformView as platform
 import GUIInterface.General as general
-
-import time
 import SystemInterface as cleanup
 import TestCommon
+import logging
+import StrataNetworkInterface as strata
+
+__client = None
+__strataId = None
+
+def setUpModule():
+    __client, __strataId = strata.connect(strata.DEFAULT_URL)
+
+def tearDownModule():
+    __client.close()
+
+
+def closePlatforms():
+    strata.closePlatforms(__client, __strataId)
+
+def openLogicGates():
+    strata.openPlatform(__client, TestCommon.LOGIC_GATE_CLASS_ID, __strataId)
 
 class LoginValidNoBoard(unittest.TestCase):
     '''
     Test logging in without a board attached.
     '''
     def setUp(self):
-        pyautogui.sleep(1)
-        pyautogui.alert(text='Please disconnect all platforms from system.', title='Important', button='OK')
         login.setToLoginTab()
 
+        #Wait untill login appears
+        general.tryRepeat(login.findUsernameInput)
+
     def tearDown(self) -> None:
-        platform.logout()
         cleanup.removeLoginInfo()
-        pyautogui.sleep(3)
-        general.deleteTextAt(login.findUsernameInput())
+        platform.logout()
 
     def test_login_submit(self):
+        self.assertIsNotNone(general.tryRepeat(login.findUsernameInput))
+
         login.login(TestCommon.VALID_USERNAME, TestCommon.VALID_PASSWORD)
+        self.assertIsNotNone(general.tryRepeat(platform.findPlatformView))
 
-
-        # Wait for network
-        time.sleep(3)
-
-        self.assertIsNotNone(platform.findPlatformView())
 
 
 class LoginValidWithBoard(unittest.TestCase):
     '''
-    Test logging in with a board attached
+    Test logging in with a board attached and disconnecting it when logged in.
     '''
     def setUp(self):
-        pyautogui.sleep(1)
-        pyautogui.alert(text='Please plug in the Multifunction Logic Gates platform.', title='Important', button='OK')
 
+        pyautogui.alert(text='Please plug in the Multifunction Logic Gates platform.', title='Important', button='OK')
         login.setToLoginTab()
 
     def tearDown(self) -> None:
-        platform.logout()
+        closePlatforms()
         cleanup.removeLoginInfo()
-        pyautogui.sleep(3)
+        platform.logout()
 
-        general.deleteTextAt(login.findUsernameInput())
+    def test_login_with_board_and_disconnect(self):
 
-    def test_login_submit(self):
+        self.assertIsNotNone(general.tryRepeat(login.findUsernameInput))
+
         login.login(TestCommon.VALID_USERNAME, TestCommon.VALID_PASSWORD)
 
-        # Wait for network
-        pyautogui.sleep(3)
+        openLogicGates()
+        self.assertIsNotNone(general.tryRepeat(platform.findLogicGateView))
 
-        self.assertIsNotNone(platform.findLogicGateView())
+        pyautogui.alert(text='Please disconnect all platforms from system.', title='Important', button='OK')
+        self.assertIsNotNone(general.tryRepeat(platform.findPlatformDisconnected))
+

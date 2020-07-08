@@ -2,11 +2,13 @@ import os
 import configparser
 import json
 import requests
-
+import logging
+import wmi
 CONFIG_RELATIVE_PATH = r"ON Semiconductor\Strata Developer Studio.ini"
 
 USERNAME_SECTION = "Usernames"
-USERNAME_OPTION = "userNameStore"
+USERNAME_OPTION = "usernamestore"
+USERNAME_INDEX_OPTION = "usernameindex"
 
 LOGIN_SECTION = "Login"
 TOKEN_OPTION = "token"
@@ -14,6 +16,19 @@ USER_OPTION = "user"
 FIRST_NAME_OPTION = "first_name"
 LAST_NAME_OPTION = "last_name"
 AUTHENTICATION_SERVER_OPTION = "authentication_server"
+def findProcess(name):
+    '''
+    Find a process with the name "name"
+    :param name:
+    :return: None if a process is not found, process information otherwise.
+    '''
+    w = wmi.WMI()
+    for proc in w.Win32_Process():
+        if proc.Name.lower() == name.lower():
+            return proc
+
+    return None
+
 
 def removeLoginInfo():
     '''
@@ -29,6 +44,7 @@ def removeLoginInfo():
             config.read(configPath)
 
             config[USERNAME_SECTION][USERNAME_OPTION] = "[]"
+            config[USERNAME_SECTION][USERNAME_INDEX_OPTION] = "0"
 
             config[LOGIN_SECTION][USER_OPTION] = ""
             config[LOGIN_SECTION][TOKEN_OPTION] = ""
@@ -41,7 +57,7 @@ def removeLoginInfo():
 
 def getCloseAccountInfo():
     '''
-
+    Get the information needed to close the user's account.
     :return: (token, username, auth server url)
     '''
     appdataPath = os.getenv('APPDATA')
@@ -62,11 +78,11 @@ def closeAccount():
     if token != '' and username != '' and authUrl != '':
         result = requests.post(authUrl + "closeAccount", data = json.dumps({"username": username}), headers = {"Content-Type":"application/json","x-access-token" :token})
         if result.status_code == 200:
-            print("Closed account for " + username)
+            logging.info("Closed account for " + username)
         else:
-            print("Could not close account for " + username + " (status code: " + result.status_code + ")")
+            logging.warning("Could not close account for " + username + " (status code: " + result.status_code + ")")
     else:
-        print("Token, username, or authorization server url is empty")
+        logging.warning("Token, username, or authorization server url is empty")
 def deleteLoggedInUser():
     '''
     Delete the currently logged in user from auth server and ini file.

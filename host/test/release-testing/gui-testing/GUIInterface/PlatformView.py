@@ -70,6 +70,19 @@ def findFeedbackOk():
     '''
     return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, "PlatformViewFeedbackOk.PNG"))
 
+def findPlatformDisconnected():
+    '''
+    Find platform disconnected view
+    :return: None if unable to find, coordnates of center otherwise.
+    '''
+    return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, "PlatformViewDisconnected.PNG"))
+
+def findPlatformList():
+    '''
+    Find if the platform list is populated by at least one element.
+    '''
+    return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, "PlatformViewPlatform.PNG"))
+
 def openFeedback():
     '''
     Open feedback. Assumes that the platform view is open and visible.
@@ -86,6 +99,9 @@ def logout():
     '''
     general.clickAt(findUserIcon())
     general.clickAt(findLogout())
+
+    #Wait for start screen animation to play
+    pyautogui.sleep(0.2)
 
 
 

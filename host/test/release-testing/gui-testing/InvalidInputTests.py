@@ -14,10 +14,8 @@ class LoginInvalidTest(unittest.TestCase):
     Test logging in with invalid username/password
     '''
     def setUp(self):
-        pyautogui.sleep(1)
         login.setToLoginTab()
-        pyautogui.sleep(1)
-
+        general.tryRepeat(login.findUsernameInput)
     def tearDown(self) -> None:
         general.deleteTextAt(login.findUsernameInput())
         # Wait for error to dissapear
@@ -39,25 +37,23 @@ class LoginInvalidTest(unittest.TestCase):
         # Submit invalid username/password
         general.clickAt(submitLocation)
 
-        # Wait for network
-        pyautogui.sleep(3)
-
-        self.assertIsNotNone(login.findLoginError())
+        self.assertIsNotNone(general.tryRepeat(login.findLoginError))
 
 class RegisterExisting(unittest.TestCase):
     '''
     Test registering with an existing user.
     '''
     def setUp(self) -> None:
-        pyautogui.sleep(1)
         register.setToRegisterTab()
-        pyautogui.sleep(1)
 
     def tearDown(self) -> None:
         pass
 
     def test_registerexisting(self):
+        #Assert that we are on the register page.
+        self.assertIsNotNone(general.tryRepeat(register.findRegisterAgreeCheckbox))
+
         register.fillRegistration("Testy", "McTest", "ON Semiconductor", "Test Engineer", TestCommon.VALID_PASSWORD, TestCommon.VALID_USERNAME)
         general.clickAt(register.findSubmitEnabled())
-        pyautogui.sleep(3)
-        self.assertIsNotNone(register.findUserAlreadyExists())
+
+        self.assertIsNotNone(general.tryRepeat(register.findUserAlreadyExists))

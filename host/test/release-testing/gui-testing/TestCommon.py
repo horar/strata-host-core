@@ -1,2 +1,4 @@
 VALID_USERNAME = "test@test.com"
 VALID_PASSWORD = "Strata12345"
+
+LOGIC_GATE_CLASS_ID = "201"

@@ -43,8 +43,55 @@ def findPasswordInput():
     '''
     return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, "LoginPasswordInput.PNG"))
 
-def findLoginButtonToolTip():
-    pass
+
+def findResetPassword():
+    '''
+    Find the forgot password button..
+    :return: None if unable to find, coordnates of center otherwise.
+    '''
+    return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, "LoginForgotPassword.PNG"))
+
+def findResetPasswordInput():
+    '''
+    Find the input for the reset password username.
+    :return: None if unable to find, coordnates of center otherwise.
+    '''
+    return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, "LoginResetPasswordInput.PNG"))
+
+def findResetPasswordSubmitDisabled():
+    '''
+    Find the submit button in the reset password dialog, disabled.
+    :return: None if unable to find, coordnates of center otherwise.
+    '''
+    return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, "LoginResetPasswordSubmitDisabled.PNG"))
+
+def findResetPasswordSubmitEnabled():
+    '''
+    Find the submit button in the reset password dialog, enabled.
+    :return: None if unable to find, coordnates of center otherwise.
+    '''
+    return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, "LoginResetPasswordSubmitEnabled.PNG"))
+
+def findResetPasswordSuccess():
+    '''
+    Find the reset password success tooltip.
+    :return: None if unable to find, coordnates of center otherwise.
+    '''
+    return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, "LoginResetPasswordSuccess.PNG"))
+
+def findResetPasswordFail():
+    '''
+    Find the reset password fail tooltip
+    :return: None if unable to find, coordnates of center otherwise.
+    '''
+    return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, "LoginResetPasswordFail.PNG"))
+
+def findResetPasswordClose():
+    '''
+    Find the reset password dialog close button.
+    :return: None if unable to find, coordnates of center otherwise.
+    '''
+    return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, "LoginResetPasswordClose.PNG"))
 
 def findLoginError():
     '''
@@ -52,8 +99,14 @@ def findLoginError():
     :return: None if unable to find, coordnates of center otherwise.
     '''
     return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, "LoginInvalidUsernamePasswordError.PNG"))
-#Manipulation functions
+def findNetworkError():
+    '''
+    Find the error that appears if the network is not connected.
+    :return: None if unable to find, coordnates of center otherwise.
+    '''
+    return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, "LoginNetworkError.PNG"))
 
+#Manipulation functions
 def setToLoginTab():
     '''
     Click on the login tab button.

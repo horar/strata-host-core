@@ -11,32 +11,35 @@ class Feedback(unittest.TestCase):
     Test sending feedback
     '''
     def setUp(self) -> None:
-        pyautogui.sleep(1)
         login.setToLoginTab()
+
+        if general.tryRepeat(login.findUsernameInput) is None:
+            self.fail("Could not get to login tab.")
+
         login.login(TestCommon.VALID_USERNAME, TestCommon.VALID_PASSWORD)
-        pyautogui.sleep(2)
     def tearDown(self) -> None:
+        cleanup.removeLoginInfo()
         platform.logout()
 
-        cleanup.removeLoginInfo()
-        login.setToLoginTab()
-        pyautogui.sleep(1)
-        general.deleteTextAt(login.findUsernameInput())
-
     def test_feedback(self):
-        platform.openFeedback()
+
+        #findUserIcon can seize on something else before the page is fully loaded because of its confidence level.
+        pyautogui.sleep(1)
+        general.clickAt(platform.findUserIcon())
+        general.clickAt(platform.findFeedbackButton())
 
         #Feedback should open and have submit disabled because nothing has been inputted.
-        self.assertIsNotNone(platform.findFeedbackInput())
+        self.assertIsNotNone(general.tryRepeat(platform.findFeedbackInput))
+
+        #Window should be static at this point, no need to repeat tries.
         self.assertIsNotNone(platform.findFeedbackSubmitDisabled())
 
         general.inputTextAt(platform.findFeedbackInput(), "this is a cool product")
-
         self.assertIsNotNone(platform.findFeedbackSubmitEnabled())
 
         general.clickAt(platform.findFeedbackSubmitEnabled())
-        pyautogui.sleep(1)
-        self.assertIsNotNone(platform.findFeedbackSuccess())
+
+        self.assertIsNotNone(general.tryRepeat(platform.findFeedbackSuccess))
 
         general.clickAt(platform.findFeedbackOk())
 

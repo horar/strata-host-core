@@ -18,38 +18,57 @@ def findSplashLogo():
     :return: None if unable to find, coordnates of center of logo if able to find.
     '''
     return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, "SplashLogo.PNG"))
-
-
 def deleteTextAt(location):
     '''
     Click on an input box at the given location and select and remove al text.
     :param location:
-    :return:
+    :return: the location went to.
     '''
     pyautogui.moveTo(location)
     pyautogui.click()
     pyautogui.hotkey('ctrl', 'a')
     pyautogui.press('backspace')
+    return location
 
 def inputTextAt(location, value):
     '''
     Click on an input box at the given location and input value.
     :param location:
     :param value:
-    :return:
+    :return: the location written to.
     '''
     pyautogui.moveTo(location)
     pyautogui.click()
     pyautogui.write(value)
+    return location
 
 def clickAt(location):
     '''
     Click a given location.
     :param location:
-    :return:
+    :return: The location clicked on.
     '''
     if location is not None:
         pyautogui.moveTo(location)
         pyautogui.click()
+    return location
+
+def tryRepeat(f, delay=0.2, maxAttempts=10):
+    '''
+    Attempt f at a period delay for maxAttempts attempts until f returns a value that is not None.
+    :param f: The function to attempt
+    :param delay: How long to wait between attempts
+    :param maxAttempts: How many attempts to do.
+    :return: None if None was returned maxAttempts times, the result of f otherwise.
+    '''
+    for i in range(0, maxAttempts):
+        result = f()
+        if result is not None:
+            return result
+        pyautogui.sleep(delay)
+    return None
+
+
+
 if __name__ == "__main__":
     findSplashscreen()
