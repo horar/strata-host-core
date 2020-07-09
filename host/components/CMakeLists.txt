@@ -2,6 +2,18 @@ option(APPS_CORECOMPONENTS "Build Strata application components" ON)
 add_feature_info(APPS_CORECOMPONENTS APPS_CORECOMPONENTS "Build Strata application components")
 
 if(APPS_CORECOMPONENTS)
+    if (CMAKE_BUILD_TYPE STREQUAL "OTA")
+        project(components
+            DESCRIPTION "Strata components"
+            LANGUAGES NONE
+        )
+
+        set(PROJECT_BUNDLE_ID com.onsemi.strata.components)
+
+        add_custom_target(${PROJECT_NAME})
+        generate_ifw_version(GITTAG_PREFIX "components_")
+    endif()
+
     add_subdirectory(theme)
     add_subdirectory(fonts)
     add_subdirectory(pdfjs)

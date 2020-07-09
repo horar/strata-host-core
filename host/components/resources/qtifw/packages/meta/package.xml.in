@@ -1,0 +1,8 @@
+<?xml version="2.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
+    <Description>@PROJECT_DESCRIPTION@</Description>
+    <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@VERSION_TWEAK@</Version>
+    <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
+    <ForcedInstallation>true</ForcedInstallation>
+</Package>
