@@ -18,6 +18,8 @@ target_sources(${PROJECT_NAME}
     SGSortFilterProxyModel.cpp
     logging/LoggingQtCategories.cpp
     SGQWTPlot.cpp
+    mqtt/SGMqttClient.cpp
+    mqtt/SGSslConfiguration.cpp
 
     imports/tech/strata/commoncpp/qmldir
     imports/tech/strata/commoncpp/plugins.qmltypes
@@ -30,6 +32,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Qml
     Qt5::Widgets
     qwt::qwt
+    mqtt::mqtt
     QtLogger
     )
 

@@ -22,5 +22,6 @@
         <file>widgets1_0/ExSGHueSlider.qml</file>
         <file>widgets1_0/ExSGRGBSlider.qml</file>
         <file>widgets1_0/ExSGAlignedLabel.qml</file>
+        <file>widgets1_0/ExSGMqttClient.qml</file>
     </qresource>
 </RCC>

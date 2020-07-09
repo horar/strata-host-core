@@ -11,7 +11,7 @@
 #define DEBUG(...) printf("Database: "); printf(__VA_ARGS__); printf("\n");
 
 // Replicator URL endpoint
-const QString replicator_url = "wss://qa-api.strata.onsemi.com/spyglass-qa";
+const QString replicator_url = "ws://localhost:4984/strata-db";
 const QString replicator_username = "";
 const QString replicator_password = "";
 const QStringList replicator_channels = {};

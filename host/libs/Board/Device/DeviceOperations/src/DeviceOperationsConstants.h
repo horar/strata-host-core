@@ -28,6 +28,7 @@ constexpr const char* const JSON_PLATFORM_ID = "platform_id";
 constexpr const char* const JSON_CLASS_ID = "class_id";
 constexpr const char* const JSON_CHUNK = "chunk";
 constexpr const char* const JSON_NUMBER = "number";
+constexpr const char* const JSON_TOTAL = "total";
 constexpr const char* const JSON_SIZE = "size";
 constexpr const char* const JSON_CRC = "crc";
 constexpr const char* const JSON_DATA = "data";

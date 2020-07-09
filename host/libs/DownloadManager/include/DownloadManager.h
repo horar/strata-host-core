@@ -22,7 +22,7 @@ public:
     ~DownloadManager() override;
 
     struct DownloadRequestItem {
-        QUrl relativeUrl;
+        QUrl url;
         QString filePath;
         QString md5;
     };
@@ -61,7 +61,6 @@ public:
         bool oneFailsAllFail;
     };
 
-    void setBaseUrl(const QUrl &baseUrl);
     void setMaxDownloadCount(int maxDownloadCount);
 
     QString download(const QList<DownloadRequestItem> &items,
@@ -117,7 +116,6 @@ private:
     QNetworkAccessManager *accessManager_;
     QList<QNetworkReply*> currentDownloads_;
 
-    QUrl baseUrl_;
     int maxDownloadCount_ = 4;
 
     QList<DownloadItem> itemList_;
