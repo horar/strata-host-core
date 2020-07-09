@@ -48,7 +48,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "OTA")
 endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 option(BUILD_TESTING "Build the testing tree" ON)
 add_feature_info(BUILD_TESTING BUILD_TESTING "Build the tsting tree.")
