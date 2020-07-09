@@ -17,6 +17,6 @@
     <MaintenanceToolName>Strata Maintenance Tool</MaintenanceToolName>
     <RemoveTargetDir>false</RemoveTargetDir>
     <AllowNonAsciiCharacters>true</AllowNonAsciiCharacters>
-    <CreateLocalRepository>true</CreateLocalRepository>
+    <CreateLocalRepository>false</CreateLocalRepository>
     <InstallActionColumnVisible>true</InstallActionColumnVisible>
 </Installer>
