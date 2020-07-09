@@ -1658,7 +1658,7 @@ ColumnLayout {
                             border.width: 0; border.color: "#fafafa"
                             Rectangle {
                                 id: rect214
-                                color: "#00000000"; width: parent.width; height: parent.height*1.25
+                                color: "#FDEEF4"; width: parent.width*0.99; height: parent.height*1.25
                                 anchors.bottom:parent.bottom
                                 anchors.bottomMargin: 19
                                 anchors.right: parent.right
@@ -1670,7 +1670,7 @@ ColumnLayout {
                                     id: basicGraph1
                                     anchors.fill: parent
                                     anchors.left: parent.left
-                                    anchors.leftMargin: 24
+                                    anchors.leftMargin: 18
                                     //title: ""
                                     xMin: 0
                                     xMax: +virtualtextarea.realtimelog
