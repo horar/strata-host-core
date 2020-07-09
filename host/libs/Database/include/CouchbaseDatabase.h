@@ -110,6 +110,7 @@ public:
     void stopReplicator();
 
     std::string getReplicatorStatus();
+
     int getReplicatorError();
 
 private:

@@ -128,7 +128,7 @@ int main() {
     if (DB_2.startReplicator(replicator_url)) {
         DEBUG("Replicator successfully started.");
     } else {
-        DEBUG("Replicator failed to start.");
+        qDebug() << "Error: replicator failed to start. Verify endpoint URL" << replicator_url << "is valid.";
     }
 
     // Wait until replication is finished
@@ -160,7 +160,7 @@ int main() {
     if (DB_3.startReplicator(replicator_url, replicator_username, replicator_password, replicator_channels, "pull", changeListener, documentListener)) {
         DEBUG("Replicator successfully started.");
     } else {
-        DEBUG("Replicator failed to start.");
+        qDebug() << "Error: replicator failed to start. Verify endpoint URL" << replicator_url << "is valid.";
     }
 
     // Wait until replication is finished
@@ -172,7 +172,7 @@ int main() {
         std::this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
         if (DB_3.getReplicatorError() != 0 || retries >= REPLICATOR_RETRY_MAX) {
             DB_3.stopReplicator();
-            DEBUG("Error with execution of replicator.");
+            qDebug() << "Error with execution of replicator. Verify endpoint URL" << replicator_url << "is valid.";
             break;
         }
     }

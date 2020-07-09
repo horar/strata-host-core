@@ -6,36 +6,70 @@
 #include <QObject>
 #include <QCoreApplication>
 
+#include <thread>
 #include <iostream>
+
+// Replicator URL endpoint
+const QString replicator_url = "ws://localhost:4984/strata-db";
+const QString replicator_username = "";
+const QString replicator_password = "";
+const QStringList replicator_channels = {};
 
 CouchbaseDatabaseTest::CouchbaseDatabaseTest()
 {
 }
 
 TEST_F(CouchbaseDatabaseTest, OPEN_DB) {
-    Database *db = new Database("Test Database 1");
+    Database *db_1 = new Database("Test Database 1");
+    Database *db_2 = new Database("Test Database 2", "Invalid path");
+    Database *db_3 = new Database("Test Database 3", QDir::currentPath());
+    Database *db_4 = new Database("");
 
     // DB must have valid pointer
-    EXPECT_NE(db, nullptr);
+    EXPECT_NE(db_1, nullptr);
     // Open DB
-    EXPECT_TRUE(db->open());
+    EXPECT_TRUE(db_1->open());
     // Check DB name
-    EXPECT_EQ(db->getDatabaseName(), "Test Database 1");
+    EXPECT_EQ(db_1->getDatabaseName(), "Test Database 1");
     // Get documents of empty DB
-    EXPECT_TRUE(db->getAllDocumentKeys().isEmpty());
+    EXPECT_TRUE(db_1->getAllDocumentKeys().isEmpty());
 
-    delete db;
+    // DB must have valid pointer
+    EXPECT_NE(db_2, nullptr);
+    // Open DB, expect false since path is invalid
+    EXPECT_FALSE(db_2->open());
+
+    // DB must have valid pointer
+    EXPECT_NE(db_3, nullptr);
+    // Open DB
+    EXPECT_TRUE(db_3->open());
+    // Check DB name
+    EXPECT_EQ(db_3->getDatabaseName(), "Test Database 3");
+    // Check DB path
+    EXPECT_EQ(db_3->getDatabasePath(), QDir::currentPath());
+    // Get documents of empty DB
+    EXPECT_TRUE(db_3->getAllDocumentKeys().isEmpty());
+
+    // DB must have valid pointer
+    EXPECT_NE(db_4, nullptr);
+    // Open DB, expect false since name is empty
+    EXPECT_FALSE(db_4->open());
+
+    delete db_1;
+    delete db_2;
+    delete db_3;
+    delete db_4;
 }
 
 TEST_F(CouchbaseDatabaseTest, DOCS) {
-    Database *db = new Database("Test Database 2");
+    Database *db = new Database("Test Database 4");
     EXPECT_TRUE(db->open());
     CouchbaseDocument *doc_1 = new CouchbaseDocument("Test Doc 1");
     CouchbaseDocument *doc_2 = new CouchbaseDocument("Test Doc 2");
 
-    // Doc 1
-    // Doc must have valid pointer
+    // Docs must have valid pointer
     EXPECT_NE(doc_1, nullptr);
+    EXPECT_NE(doc_2, nullptr);
     // Set empty body (fail case)
     QString body = "";
     EXPECT_FALSE(doc_1->setBody(body));
@@ -51,7 +85,7 @@ TEST_F(CouchbaseDatabaseTest, DOCS) {
     // Set valid json
     body = R"foo({"name": "My Name", "age" : 1, "myobj" : { "myarray" : [1,2,3,4], "mykey" : "myvalue"}})foo";
     EXPECT_TRUE(doc_1->setBody(body));
-    // Retrieve values (not saved)
+    // Retrieve values (not saved, so expect empty response)
     auto result_str = db->getDocumentAsStr("Test Doc 1");
     EXPECT_EQ(result_str, "");
     // Save Test Doc 1 to DB and retrieve values
@@ -101,6 +135,69 @@ TEST_F(CouchbaseDatabaseTest, DOCS) {
     delete doc_1;
     delete doc_2;
     delete db;
+}
+
+TEST_F(CouchbaseDatabaseTest, REPLICATOR) {
+    Database *db_1 = new Database("Test Database 5");
+    Database *db_2 = new Database("Test Database 6");
+
+    // Attempt to start replication (DB not open)
+    EXPECT_FALSE(db_1->startReplicator(replicator_url));
+    // Open DB
+    EXPECT_TRUE(db_1->open());
+    // Attempt to start replication (empty endpoint)
+    EXPECT_FALSE(db_1->startReplicator(""));
+    // Attempt to start replication (invalid endpoint)
+    EXPECT_FALSE(db_1->startReplicator("Invalid endpoint"));
+    // Attempt to start replication (valid endpoint)
+    EXPECT_TRUE(db_1->startReplicator(replicator_url));
+    // Wait until replication is finished
+    unsigned int retries = 0;
+    const unsigned int REPLICATOR_RETRY_MAX = 50;
+    const std::chrono::milliseconds REPLICATOR_RETRY_INTERVAL = std::chrono::milliseconds(200);
+    while (db_1->getReplicatorStatus() != "Stopped" && db_1->getReplicatorStatus() != "Idle") {
+        ++retries;
+        std::this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
+        if (db_1->getReplicatorError() != 0 || retries >= REPLICATOR_RETRY_MAX) {
+            db_1->stopReplicator();
+            FAIL();
+            break;
+        }
+    }
+    // Retrieve all document keys, expect at least one document replicated
+    QStringList keys = db_1->getAllDocumentKeys();
+    EXPECT_TRUE(keys.size() > 0);
+
+    // Define custom listeners
+    auto changeListener = [](cbl::Replicator, const CBLReplicatorStatus) {
+        std::cout << "CouchbaseDatabase TEST changeListener -> replication status changed!" << std::endl;
+    };
+
+    auto documentListener = [](cbl::Replicator, bool, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>>) {
+        std::cout << "CouchbaseDatabase TEST documentListener -> document status changed!" << std::endl;
+    };
+
+    // Open DB
+    EXPECT_TRUE(db_2->open());
+    // Attempt to start replication using all possible inputs
+    EXPECT_TRUE(db_2->startReplicator(replicator_url, replicator_username, replicator_password, replicator_channels, "pull", changeListener, documentListener));
+    // Wait until replication is finished
+    retries = 0;
+    while (db_2->getReplicatorStatus() != "Stopped" && db_2->getReplicatorStatus() != "Idle") {
+        ++retries;
+        std::this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
+        if (db_2->getReplicatorError() != 0 || retries >= REPLICATOR_RETRY_MAX) {
+            db_2->stopReplicator();
+            FAIL();
+            break;
+        }
+    }
+    // Retrieve all document keys, expect at least one document replicated
+    keys = db_2->getAllDocumentKeys();
+    EXPECT_TRUE(keys.size() > 0);
+
+    delete db_1;
+    delete db_2;
 }
 
 void CouchbaseDatabaseTest::SetUp() {
