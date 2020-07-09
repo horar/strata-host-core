@@ -9,15 +9,16 @@
 #include <thread>
 #include <iostream>
 
-// Replicator URL endpoint
-const QString replicator_url = "ws://localhost:4984/strata-db";
-const QString replicator_username = "";
-const QString replicator_password = "";
-const QStringList replicator_channels = {};
+// Need valid replicator info to run replication tests
+#define Test_Replication false
 
-CouchbaseDatabaseTest::CouchbaseDatabaseTest()
-{
-}
+// Replicator URL endpoint, username, password, and channels to replicate
+#if Test_Replication
+    const QString replicator_url = "ws://localhost:4984/strata-db";
+    const QString replicator_username = "";
+    const QString replicator_password = "";
+    const QStringList replicator_channels = {};
+#endif
 
 TEST_F(CouchbaseDatabaseTest, OPEN_DB) {
     Database *db_1 = new Database("Test Database 1");
@@ -137,6 +138,8 @@ TEST_F(CouchbaseDatabaseTest, DOCS) {
     delete db;
 }
 
+#if Test_Replication
+// This test is disabled by default, requires valid replicator information
 TEST_F(CouchbaseDatabaseTest, REPLICATOR) {
     Database *db_1 = new Database("Test Database 5");
     Database *db_2 = new Database("Test Database 6");
@@ -199,9 +202,18 @@ TEST_F(CouchbaseDatabaseTest, REPLICATOR) {
     delete db_1;
     delete db_2;
 }
+#endif // end if Test_Replication
+
+CouchbaseDatabaseTest::CouchbaseDatabaseTest()
+{
+}
 
 void CouchbaseDatabaseTest::SetUp() {
 }
 
 void CouchbaseDatabaseTest::TearDown() {
+    #if !Test_Replication
+        std::cout << "\nWARNING:\nTest executed with replication/sync gateway testing disabled. \
+        \nEnter valid replication information and enable replication testing if desired.\n\n";
+    #endif
 }
