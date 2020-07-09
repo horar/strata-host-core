@@ -1670,7 +1670,7 @@ ColumnLayout {
                                     id: basicGraph1
                                     anchors.fill: parent
                                     anchors.left: parent.left
-                                    anchors.leftMargin: 18
+                                    anchors.leftMargin: 21
                                     //title: ""
                                     xMin: 0
                                     xMax: +virtualtextarea.realtimelog
