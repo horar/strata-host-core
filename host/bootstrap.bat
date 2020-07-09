@@ -24,7 +24,7 @@ echo Setting up environment for OpenSSL usage..
 set PATH=C:\dev\Qt\Tools\OpenSSL\Win_x64\bin;%PATH%
 
 echo Setting up environment for Qt IFW usage..
-set PATH=C:\dev\Qt\Tools\QtInstallerFramework\3.1\bin;%PATH%
+set PATH=C:\dev\Qt\Tools\QtInstallerFramework\3.2\bin;%PATH%
 
 echo Setting up environment for 'JOM' usage..
 set PATH="C:\dev\Qt\Tools\QtCreator\bin";%PATH%
