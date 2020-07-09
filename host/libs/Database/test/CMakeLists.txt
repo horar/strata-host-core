@@ -1,13 +1,13 @@
-add_executable(couchbase-database-test
+add_executable(database-test
     main.cpp
     couchbase-database-test.cpp
 )
 
-target_link_libraries(couchbase-database-test
+target_link_libraries(database-test
     PRIVATE Database
     PRIVATE gtest::gtest
 )
 
-add_test(NAME couchbase-database-test
-    COMMAND couchbase-database-test
+add_test(NAME database-test
+    COMMAND database-test
 )

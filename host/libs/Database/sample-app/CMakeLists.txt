@@ -1,16 +1,16 @@
-project(Database-sampleapp)
+project(database-sampleapp)
 
-add_executable(Database-sampleapp
-    CouchbaseDatabaseSampleApp.cpp
+add_executable(database-sampleapp
+    couchbase-database-sampleapp.cpp
 )
 
-target_link_libraries(Database-sampleapp
+target_link_libraries(database-sampleapp
     PUBLIC
     Database
 )
 
 if (APPLE)
-    target_link_libraries(Database-sampleapp
+    target_link_libraries(database-sampleapp
         PRIVATE ${FOUNDATION_LIBRARY}
     )
 endif()
