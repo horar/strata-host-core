@@ -60,7 +60,7 @@ int main() {
 
     // Retrieve contents of "Doc_1" in JSON format (QString)
     QString result_str = DB_1.getDocumentAsStr("Doc_1");
-    DEBUG(("Document contents: " + result_str.toStdString()).c_str());
+    qDebug() << "Document contents: " << result_str;
 
     // Create a document "Doc_2" on DB 1
     CouchbaseDocument Doc_2("Doc_2");
