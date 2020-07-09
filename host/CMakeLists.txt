@@ -42,7 +42,7 @@ include(AddQmlImportPathMacro)
 # common for 'apps' and 'components' that use resource files
 add_qml_import_path(PATH ":/")
 
-if (CMAKE_BUILD_TYPE STREQUAL ota)
+if (CMAKE_BUILD_TYPE STREQUAL "OTA")
     add_custom_target(${PROJECT_NAME})
     generate_ifw_version(GITTAG_PREFIX "ifw_")
 endif()
