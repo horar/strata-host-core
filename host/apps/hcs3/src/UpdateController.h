@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <memory>
+
 #include <QObject>
 #include <QString>
 #include <QUrl>
@@ -32,7 +34,7 @@ public:
      * @param boardController pointer to BoardController
      * @param downloadManager pointer to DownloadManager
      */
-    void initialize(const BoardController* boardController, strata::DownloadManager* downloadManager);
+    void initialize(const BoardController* boardController, const std::shared_ptr<strata::DownloadManager> &downloadManager);
 
     /**
      * The UpdateOperation enum for UpdateProgressInfo struct.
@@ -93,7 +95,7 @@ private slots:
 
 private:
     const BoardController* boardController_;
-    strata::DownloadManager* downloadManager_;
+    std::shared_ptr<strata::DownloadManager> downloadManager_;
 
     struct UpdateData {
         UpdateData(const QByteArray& client, FirmwareUpdater* updater);

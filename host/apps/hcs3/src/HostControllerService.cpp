@@ -39,8 +39,6 @@ HostControllerService::HostControllerService(QObject* parent) : QObject(parent)
 HostControllerService::~HostControllerService()
 {
     stop();
-    delete storageManager_;
-    delete downloadManager_;
 }
 
 bool HostControllerService::initialize(const QString& config)
@@ -64,31 +62,33 @@ bool HostControllerService::initialize(const QString& config)
     // TODO: Will resolved in SCT-517
     //db_.addReplChannel("platform_list");
 
-    downloadManager_ = new strata::DownloadManager(this);
-    storageManager_ = new StorageManager(downloadManager_, this);
+    downloadManager_ = std::make_shared<strata::DownloadManager>();
+    storageManager_ = std::make_unique<StorageManager>(downloadManager_);
 
-    connect(storageManager_, &StorageManager::downloadPlatformFilePathChanged, this, &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
-    connect(storageManager_, &StorageManager::downloadPlatformSingleFileProgress, this, &HostControllerService::sendDownloadPlatformSingleFileProgressMessage);
-    connect(storageManager_, &StorageManager::downloadPlatformSingleFileFinished, this, &HostControllerService::sendDownloadPlatformSingleFileFinishedMessage);
-    connect(storageManager_, &StorageManager::downloadPlatformFilesFinished, this, &HostControllerService::sendDownloadPlatformFilesFinishedMessage);
-    connect(storageManager_, &StorageManager::platformListResponseRequested, this, &HostControllerService::sendPlatformListMessage);
-    connect(storageManager_, &StorageManager::downloadPlatformDocumentsProgress, this, &HostControllerService::sendPlatformDocumentsProgressMessage);
-    connect(storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
+    StorageManager *storageManagerPtr = storageManager_.get();
+
+    connect(storageManagerPtr, &StorageManager::downloadPlatformFilePathChanged, this, &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
+    connect(storageManagerPtr, &StorageManager::downloadPlatformSingleFileProgress, this, &HostControllerService::sendDownloadPlatformSingleFileProgressMessage);
+    connect(storageManagerPtr, &StorageManager::downloadPlatformSingleFileFinished, this, &HostControllerService::sendDownloadPlatformSingleFileFinishedMessage);
+    connect(storageManagerPtr, &StorageManager::downloadPlatformFilesFinished, this, &HostControllerService::sendDownloadPlatformFilesFinishedMessage);
+    connect(storageManagerPtr, &StorageManager::platformListResponseRequested, this, &HostControllerService::sendPlatformListMessage);
+    connect(storageManagerPtr, &StorageManager::downloadPlatformDocumentsProgress, this, &HostControllerService::sendPlatformDocumentsProgressMessage);
+    connect(storageManagerPtr, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
 
     /* We dont want to call these StorageManager methods directly
      * as they should be executed in the main thread. Not in dispatcher's thread. */
-    connect(this, &HostControllerService::platformListRequested, storageManager_, &StorageManager::requestPlatformList, Qt::QueuedConnection);
-    connect(this, &HostControllerService::platformDocumentsRequested, storageManager_, &StorageManager::requestPlatformDocuments, Qt::QueuedConnection);
-    connect(this, &HostControllerService::downloadPlatformFilesRequested, storageManager_, &StorageManager::requestDownloadPlatformFiles, Qt::QueuedConnection);
-    connect(this, &HostControllerService::cancelPlatformDocumentRequested, storageManager_, &StorageManager::requestCancelAllDownloads, Qt::QueuedConnection);
+    connect(this, &HostControllerService::platformListRequested, storageManagerPtr, &StorageManager::requestPlatformList, Qt::QueuedConnection);
+    connect(this, &HostControllerService::platformDocumentsRequested, storageManagerPtr, &StorageManager::requestPlatformDocuments, Qt::QueuedConnection);
+    connect(this, &HostControllerService::downloadPlatformFilesRequested, storageManagerPtr, &StorageManager::requestDownloadPlatformFiles, Qt::QueuedConnection);
+    connect(this, &HostControllerService::cancelPlatformDocumentRequested, storageManagerPtr, &StorageManager::requestCancelAllDownloads, Qt::QueuedConnection);
 
-    connect(this, &HostControllerService::firmwareUpdateRequested, &updateManager_, &UpdateController::updateFirmware, Qt::QueuedConnection);
+    connect(this, &HostControllerService::firmwareUpdateRequested, &updateController_, &UpdateController::updateFirmware, Qt::QueuedConnection);
 
     connect(&boardsController_, &BoardController::boardConnected, this, &HostControllerService::platformConnected);
     connect(&boardsController_, &BoardController::boardDisconnected, this, &HostControllerService::platformDisconnected);
     connect(&boardsController_, &BoardController::boardMessage, this, &HostControllerService::sendMessageToClients);
 
-    connect(&updateManager_, &UpdateController::progressOfUpdate, this, &HostControllerService::handleUpdateProgress);
+    connect(&updateController_, &UpdateController::progressOfUpdate, this, &HostControllerService::handleUpdateProgress);
 
     QUrl baseUrl = QString::fromStdString(db_cfg["file_server"].GetString());
 
@@ -111,7 +111,7 @@ bool HostControllerService::initialize(const QString& config)
 
     boardsController_.initialize();
 
-    updateManager_.initialize(&boardsController_, downloadManager_);
+    updateController_.initialize(&boardsController_, downloadManager_);
 
     rapidjson::Value& hcs_cfg = config_["host_controller_service"];
 

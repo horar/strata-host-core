@@ -23,7 +23,7 @@ UpdateController::~UpdateController()
     }
 }
 
-void UpdateController::initialize(const BoardController* boardController, strata::DownloadManager* downloadManager)
+void UpdateController::initialize(const BoardController* boardController, const std::shared_ptr<strata::DownloadManager> &downloadManager)
 {
     boardController_ = boardController;
     downloadManager_ = downloadManager;

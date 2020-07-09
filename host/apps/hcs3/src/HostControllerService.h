@@ -5,6 +5,7 @@
 #include <rapidjson/stringbuffer.h>
 
 #include <set>
+#include <memory>
 
 #include <QObject>
 #include <QString>
@@ -136,10 +137,10 @@ private:
     LoggingAdapter dbLogAdapter_;
     LoggingAdapter clientsLogAdapter_;
 
-    strata::DownloadManager *downloadManager_{nullptr};
-    StorageManager *storageManager_{nullptr};
+    std::shared_ptr<strata::DownloadManager> downloadManager_;
+    std::unique_ptr<StorageManager> storageManager_;
 
-    UpdateController updateManager_;
+    UpdateController updateController_;
 
     HCS_Dispatcher dispatcher_;
     std::thread dispatcherThread_;

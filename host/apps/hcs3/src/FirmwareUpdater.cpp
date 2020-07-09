@@ -10,7 +10,7 @@
 using strata::DownloadManager;
 using strata::FlasherConnector;
 
-FirmwareUpdater::FirmwareUpdater(const strata::device::DevicePtr& devPtr, DownloadManager* downloadManager, const QUrl& url, const QString& md5) :
+FirmwareUpdater::FirmwareUpdater(const strata::device::DevicePtr& devPtr, const std::shared_ptr<DownloadManager> downloadManager, const QUrl& url, const QString& md5) :
     running_(false), device_(devPtr), deviceId_(devPtr->deviceId()), downloadManager_(downloadManager), firmwareUrl_(url), firmwareMD5_(md5),
     firmwareFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("hcs_new_firmware")))
 {
@@ -63,8 +63,8 @@ void FirmwareUpdater::downloadFirmware()
     settings.keepOriginalName = true;
     settings.oneFailsAllFail = true;
 
-    connect(downloadManager_, &DownloadManager::groupDownloadFinished, this, &FirmwareUpdater::handleDownloadFinished);
-    connect(downloadManager_, &DownloadManager::singleDownloadProgress, this, &FirmwareUpdater::handleSingleDownloadProgress);
+    connect(downloadManager_.get(), &DownloadManager::groupDownloadFinished, this, &FirmwareUpdater::handleDownloadFinished);
+    connect(downloadManager_.get(), &DownloadManager::singleDownloadProgress, this, &FirmwareUpdater::handleSingleDownloadProgress);
 
     downloadId_ = downloadManager_->download(downloadRequestList, settings);
 
@@ -78,7 +78,7 @@ void FirmwareUpdater::handleDownloadFinished(QString downloadId, QString errorSt
         return;
     }
 
-    disconnect(downloadManager_, nullptr, this, nullptr);
+    disconnect(downloadManager_.get(), nullptr, this, nullptr);
 
     if (errorString.isEmpty() == false) {
         emit updateProgress(deviceId_, UpdateController::UpdateOperation::Download, UpdateController::UpdateStatus::Failure, -1, -1, errorString);

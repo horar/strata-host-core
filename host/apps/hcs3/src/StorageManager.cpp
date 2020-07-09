@@ -23,7 +23,7 @@ static const std::string g_platform_selector("platform_selector");
 
 using strata::DownloadManager;
 
-StorageManager::StorageManager(DownloadManager* downloadManager, QObject* parent)
+StorageManager::StorageManager(const std::shared_ptr<DownloadManager> &downloadManager, QObject* parent)
     : QObject(parent), downloadManager_(downloadManager)
 {
     Q_ASSERT(downloadManager_ != nullptr);
@@ -61,12 +61,14 @@ void StorageManager::setBaseUrl(const QUrl &url)
     StorageInfo info(nullptr, baseFolder_);
     info.calculateSize();
 
-    connect(downloadManager_, &DownloadManager::filePathChanged, this, &StorageManager::filePathChangedHandler);
-    connect(downloadManager_, &DownloadManager::singleDownloadProgress, this, &StorageManager::singleDownloadProgressHandler);
-    connect(downloadManager_, &DownloadManager::singleDownloadFinished , this, &StorageManager::singleDownloadFinishedHandler);
+    strata::DownloadManager *downloadManagerPtr = downloadManager_.get();
 
-    connect(downloadManager_, &DownloadManager::groupDownloadProgress, this, &StorageManager::groupDownloadProgressHandler);
-    connect(downloadManager_, &DownloadManager::groupDownloadFinished, this, &StorageManager::groupDownloadFinishedHandler);
+    connect(downloadManagerPtr, &DownloadManager::filePathChanged, this, &StorageManager::filePathChangedHandler);
+    connect(downloadManagerPtr, &DownloadManager::singleDownloadProgress, this, &StorageManager::singleDownloadProgressHandler);
+    connect(downloadManagerPtr, &DownloadManager::singleDownloadFinished , this, &StorageManager::singleDownloadFinishedHandler);
+
+    connect(downloadManagerPtr, &DownloadManager::groupDownloadProgress, this, &StorageManager::groupDownloadProgressHandler);
+    connect(downloadManagerPtr, &DownloadManager::groupDownloadFinished, this, &StorageManager::groupDownloadFinishedHandler);
 }
 
 QUrl StorageManager::getBaseUrl() const

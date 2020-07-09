@@ -1,6 +1,8 @@
 #ifndef STORAGE_MANAGER_H
 #define STORAGE_MANAGER_H
 
+#include <memory>
+
 #include <QObject>
 #include <QStringList>
 #include <QMap>
@@ -21,7 +23,7 @@ class StorageManager final : public QObject
     Q_DISABLE_COPY(StorageManager)
 
 public:
-    StorageManager(strata::DownloadManager* downloadManager, QObject* parent = nullptr);
+    StorageManager(const std::shared_ptr<strata::DownloadManager> &downloadManager, QObject* parent = nullptr);
     ~StorageManager();
 
     /**
@@ -134,7 +136,7 @@ private:
 
     QUrl baseUrl_;       //base part of the URL to download
     QString baseFolder_;    //base folder for store downloaded files
-    strata::DownloadManager* downloadManager_;
+    std::shared_ptr<strata::DownloadManager> downloadManager_;
     Database* db_{nullptr};
     QHash<QString /*groupId*/, DownloadRequest* > downloadRequests_;
     QMap<QString /*classId*/, PlatformDocument*> documents_;
