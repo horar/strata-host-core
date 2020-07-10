@@ -103,5 +103,6 @@ repogen \
 
 
 # how to start/install it..
-#./strata-setup-offline.app/Contents/MacOS/strata-setup-offline --addRepository $PWD/pub/repository/demo/
-
+#   ./strata-setup-offline.app/Contents/MacOS/strata-setup-offline
+# how to update or install other component
+#   ~/ON\ Semiconductor/Strata/Strata\ Maintenance\ Tool.app/Contents/MacOS/Strata\ Maintenance\ Tool --addRepository $PWD/pub/repository/demo/
