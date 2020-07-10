@@ -213,6 +213,7 @@ macro(generate_ifw_version)
                 -DPROJECT_DESCRIPTION=${PROJECT_DESCRIPTION}
                 -DPROJECT_BUNDLE_ID=${PROJECT_BUNDLE_ID}
                 -DPROJECT_VERSION_TWEAK=${BUILD_ID}
+                -DQT5_VERSION=${Qt5Core_VERSION_STRING}
 
 
                 -DGITTAG_PREFIX=${local_GITTAG_PREFIX}
