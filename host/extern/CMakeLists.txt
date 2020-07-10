@@ -417,7 +417,7 @@ if(NOT WIN32)
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/qtmqtt
         CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${SOURCE_DIR_EXTERN}/qtmqtt/qtmqtt.pro
         COMMAND ${GIT_EXECUTABLE} --git-dir=${SOURCE_DIR_EXTERN}/qtmqtt/.git checkout ${Qt5Core_VERSION_STRING}
-        BUILD_COMMAND make #needed to do the build before copying the lib to 3p dir
+        BUILD_COMMAND make # needed to do the build before copying the lib to 3p dir
         INSTALL_COMMAND
 
         COMMAND ${CMAKE_INSTALL_NAME_TOOL} -id <INSTALL_DIR>/lib/QtMqtt <BINARY_DIR>/lib/QtMqtt.framework/Versions/5/QtMqtt
@@ -426,11 +426,34 @@ if(NOT WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/lib/QtMqtt.framework/Versions/5/QtMqtt <BINARY_DIR>/lib/QtMqtt.framework/Versions/5/QtMqtt_debug <INSTALL_DIR>/lib
     )
 else()
+
+    # Search for perl path to add it to the path
+    set(PERL_PATH  "")
+    include(FindPerl)
+    if( NOT PERL_FOUND )
+        set(EXPECTED_PATH_TO_PERL "$ENV{PROGRAMFILES}\\Git\\usr\\bin")
+        find_program(PERL_EXECUTABLE
+            NAMES perl
+            PATHS ${EXPECTED_PATH_TO_PERL}
+        )
+        if(PERL_EXECUTABLE)
+            include(FindPerl)
+        endif()
+    endif()
+
+    if(PERL_FOUND)
+        get_filename_component(PERL_PATH "${PERL_EXECUTABLE}" PATH)
+        separate_arguments(APPEND_PERL_TO_PATH WINDOWS_COMMAND "SET PATH=%PATH%$<SEMICOLON>${PERL_PATH}")
+    else()
+        message(FATAL_ERROR "Perl is missing.")
+    endif()
+
     ExternalProject_Add(mqtt
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/qtmqtt
         CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${SOURCE_DIR_EXTERN}/qtmqtt/qtmqtt.pro -spec win32-msvc
         COMMAND ${GIT_EXECUTABLE} --git-dir=${SOURCE_DIR_EXTERN}/qtmqtt/.git checkout ${Qt5Core_VERSION_STRING}
+        COMMAND ${APPEND_PERL_TO_PATH}
         BUILD_COMMAND
         INSTALL_COMMAND
 
