@@ -41,6 +41,8 @@ add_library(${PROJECT_NAME}Lib STATIC
     src/StorageInfo.cpp
     src/PlatformDocument.cpp
     src/LoggingAdapter.cpp
+    src/FirmwareUpdateController.cpp
+    src/FirmwareUpdater.cpp
 
     src/RunGuard.cpp
 
@@ -70,6 +72,7 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     Qt5::RemoteObjects
 
     BoardManager
+    FlasherConnector
     connector
     EventsMgr
     DownloadManager
