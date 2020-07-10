@@ -415,6 +415,7 @@ if(NOT WIN32)
     ExternalProject_Add(mqtt
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/qtmqtt
+        EXCLUDE_FROM_ALL ON
         CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} "CONFIG+=debug_and_release build_all" ${SOURCE_DIR_EXTERN}/qtmqtt/qtmqtt.pro
         COMMAND ${GIT_EXECUTABLE} --git-dir=${SOURCE_DIR_EXTERN}/qtmqtt/.git checkout ${Qt5Core_VERSION_STRING}
         BUILD_COMMAND make #needed to do the build before copying the lib to 3p dir
@@ -429,6 +430,7 @@ else()
     ExternalProject_Add(mqtt
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/qtmqtt
+        EXCLUDE_FROM_ALL ON
         CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${SOURCE_DIR_EXTERN}/qtmqtt/qtmqtt.pro -spec win32-msvc
         COMMAND ${GIT_EXECUTABLE} --git-dir=${SOURCE_DIR_EXTERN}/qtmqtt/.git checkout ${Qt5Core_VERSION_STRING}
         BUILD_COMMAND
