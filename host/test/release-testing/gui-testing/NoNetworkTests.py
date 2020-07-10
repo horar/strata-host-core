@@ -7,7 +7,8 @@ import pyautogui
 
 class NoNetworkLogin(unittest.TestCase):
     def setUp(self) -> None:
-        login.setToLoginTab()
+        with general.Latency(TestCommon.ANIMATION_LATENCY):
+            login.setToLoginTab()
     def tearDown(self) -> None:
         general.deleteTextAt(login.findUsernameInput())
         # Wait for error to dissapear
@@ -16,17 +17,25 @@ class NoNetworkLogin(unittest.TestCase):
 
         pass
     def test_no_network_login(self):
+
+        #assert on login page
+        self.assertIsNotNone(general.tryRepeat(login.findUsernameInput))
+
         login.login(TestCommon.VALID_USERNAME, TestCommon.VALID_PASSWORD)
         self.assertIsNotNone(general.tryRepeat(login.findNetworkError, 0.5, 10))
 
 class NoNetworkRegister(unittest.TestCase):
     def setUp(self) -> None:
-        register.setToRegisterTab()
+        with general.Latency(TestCommon.ANIMATION_LATENCY):
+            register.setToRegisterTab()
     def tearDown(self) -> None:
         pass
 
     def test_no_network_register(self):
+
+        #assert on register page
         self.assertIsNotNone(general.tryRepeat(register.findRegisterAgreeCheckbox))
+
         register.fillRegistration("Testy", "McTest", "ON Semiconductor", "Test Engineer", TestCommon.VALID_PASSWORD, TestCommon.VALID_USERNAME)
         general.clickAt(general.tryRepeat(register.findSubmitEnabled))
-        self.assertIsNotNone(general.tryRepeat(register.findNetworkError, 0.5, 10))
+        self.assertIsNotNone(general.tryRepeat(register.findNetworkError, 0.5, 15))

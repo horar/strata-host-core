@@ -11,17 +11,19 @@ class Feedback(unittest.TestCase):
     Test sending feedback
     '''
     def setUp(self) -> None:
-        login.setToLoginTab()
+        with general.Latency(TestCommon.ANIMATION_LATENCY):
+            login.setToLoginTab()
 
-        if general.tryRepeat(login.findUsernameInput) is None:
-            self.fail("Could not get to login tab.")
-
-        login.login(TestCommon.VALID_USERNAME, TestCommon.VALID_PASSWORD)
     def tearDown(self) -> None:
         cleanup.removeLoginInfo()
         platform.logout()
 
     def test_feedback(self):
+        #assert on login page
+        self.assertIsNotNone(general.tryRepeat(login.findUsernameInput))
+
+        login.login(TestCommon.VALID_USERNAME, TestCommon.VALID_PASSWORD)
+
 
         #findUserIcon can seize on something else before the page is fully loaded because of its confidence level.
         pyautogui.sleep(1)

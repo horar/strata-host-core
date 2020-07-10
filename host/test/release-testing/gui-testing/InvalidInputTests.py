@@ -14,15 +14,17 @@ class LoginInvalidTest(unittest.TestCase):
     Test logging in with invalid username/password
     '''
     def setUp(self):
-        login.setToLoginTab()
-        general.tryRepeat(login.findUsernameInput)
+
+        with general.Latency(TestCommon.ANIMATION_LATENCY):
+            login.setToLoginTab()
     def tearDown(self) -> None:
         general.deleteTextAt(login.findUsernameInput())
-        # Wait for error to dissapear
-        pyautogui.sleep(0.5)
-        general.deleteTextAt(login.findPasswordInput())
+
+        with general.Latency(TestCommon.ANIMATION_LATENCY, 0):
+            general.deleteTextAt(login.findPasswordInput())
 
     def test_login_submit(self):
+        self.assertIsNotNone(general.tryRepeat(login.findUsernameInput))
         general.inputTextAt(login.findUsernameInput(), INVALID_USERNAME)
 
         # assert that submit is disabled when only one field is filled.
@@ -44,7 +46,10 @@ class RegisterExisting(unittest.TestCase):
     Test registering with an existing user.
     '''
     def setUp(self) -> None:
-        register.setToRegisterTab()
+
+        with general.Latency(TestCommon.ANIMATION_LATENCY):
+            register.setToRegisterTab()
+
 
     def tearDown(self) -> None:
         pass
