@@ -28,8 +28,15 @@ bool BoardController::sendMessage(const int deviceId, const QByteArray& message)
         return false;
     }
     qCDebug(logCategoryHcsBoard).noquote() << "Sending message to board." << logDeviceId(deviceId);
-    it.value().device->sendMessage(message);
-    return true;
+    return it.value().device->sendMessage(message);
+}
+
+DevicePtr BoardController::getDevice(const int deviceId) const {
+    auto it = boards_.constFind(deviceId);
+    if (it != boards_.constEnd()) {
+        return it.value().device;
+    }
+    return nullptr;
 }
 
 void BoardController::newConnection(int deviceId, bool recognized) {
@@ -47,7 +54,7 @@ void BoardController::newConnection(int deviceId, bool recognized) {
 
         qCInfo(logCategoryHcsBoard).noquote() << "Connected new board." << logDeviceId(deviceId);
 
-        emit boardConnected(classId, platformId);
+        emit boardConnected(deviceId, classId, platformId);
     } else {
         qCWarning(logCategoryHcsBoard).noquote() << "Connected unknown (unrecognized) board." << logDeviceId(deviceId);
     }

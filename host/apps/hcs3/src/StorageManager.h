@@ -1,9 +1,10 @@
 #ifndef STORAGE_MANAGER_H
 #define STORAGE_MANAGER_H
 
+#include <memory>
+
 #include <QObject>
 #include <QStringList>
-#include <QScopedPointer>
 #include <QMap>
 #include <QJsonArray>
 #include <QDebug>
@@ -22,7 +23,7 @@ class StorageManager final : public QObject
     Q_DISABLE_COPY(StorageManager)
 
 public:
-    explicit StorageManager(QObject* parent = nullptr);
+    StorageManager(const std::shared_ptr<strata::DownloadManager>& downloadManager, QObject* parent = nullptr);
     ~StorageManager();
 
     /**
@@ -36,6 +37,12 @@ public:
      * @param url base URL
      */
     void setBaseUrl(const QUrl &url);
+
+    /**
+     * Gets the base URL for downloads
+     * @return base URL
+     */
+    QUrl getBaseUrl() const;
 
 public slots:
     void requestPlatformList(const QByteArray &clientId);
@@ -109,13 +116,6 @@ private:
     };
 
     /**
-     * Initialize the DownloadManager, sets internal variables
-     */
-    void init();
-
-    bool isInitialized() const;
-
-    /**
      * fetch and insert the platform document object by given class id to the map
      * @param classId
      * @return returns platform document object or nullptr
@@ -136,7 +136,7 @@ private:
 
     QUrl baseUrl_;       //base part of the URL to download
     QString baseFolder_;    //base folder for store downloaded files
-    QScopedPointer<strata::DownloadManager> downloadManager_;
+    std::shared_ptr<strata::DownloadManager> downloadManager_;
     Database* db_{nullptr};
     QHash<QString /*groupId*/, DownloadRequest* > downloadRequests_;
     QMap<QString /*classId*/, PlatformDocument*> documents_;

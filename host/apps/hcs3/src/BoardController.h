@@ -34,7 +34,7 @@ public:
     BoardController();
 
     /**
-     * Initializes the board manager
+     * Initializes the board controller
      */
     void initialize();
 
@@ -45,6 +45,13 @@ public:
      * @return true if massage can be sent
      */
     bool sendMessage(const int deviceId, const QByteArray& message);
+
+    /**
+     * Gets device specified by device ID
+     * @param deviceId
+     * @return device or nullptr if such device with device ID is not available
+     */
+    strata::device::DevicePtr getDevice(const int deviceId) const;
 
     /**
      * Creates JSON with list of platforms
@@ -81,7 +88,7 @@ public:
     bool clearClientIdFromAllDevices(const QByteArray& clientId);
 
 signals:
-    void boardConnected(QString classId, QString platformId);
+    void boardConnected(int deviceId, QString classId, QString platformId);
     void boardDisconnected(QString classId, QString platformId);
     void boardMessage(QString platformId, QString message);
 
