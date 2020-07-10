@@ -18,15 +18,14 @@ ColumnLayout {
     Connections {
         target: coreInterface
         onFirmwareInfo: {
-            // todo: merge this with CS-681 to pick up device id
-            // if (message.device_id == platformStack.device_id) {
-            FirmwareManager.parseFirmwareInfo(payload)
-            // }
+            if (payload.device_id === platformStack.device_id) {
+                FirmwareManager.parseFirmwareInfo(payload)
+            }
         }
         onFirmwareProgress: {
-            // if (message.device_id == platformStack.device_id) {
-            activeFirmware.parseProgress(payload)
-            // }
+            if (payload.device_id === platformStack.device_id) {
+                activeFirmware.parseProgress(payload)
+            }
         }
     }
 
@@ -220,8 +219,8 @@ ColumnLayout {
                                             "hcs::cmd": "update_firmware",
                                             "payload": {
                                                 "device_id": platformStack.device_id,
-                                                "path": "201/fab/351bf129b05fb37797c8d8f0c1e16db5.bin", //model.file,
-                                                "md5": "351bf129b05fb37797c8d8f0c1e16db5"//model.md5
+                                                "path": model.file,
+                                                "md5": model.md5
                                             }
                                         }
                                         coreInterface.sendCommand(JSON.stringify(updateFirmwareCommand));
@@ -244,8 +243,16 @@ ColumnLayout {
                                 case "download":
                                     switch (payload.status) {
                                     case "running":
-                                        statusText.text = "" + (100 * (payload.complete / payload.total)).toFixed(0) + "% downloaded"
-                                        fillBar.width = (barBackground.width * .5) * (payload.complete / payload.total)
+                                        switch (payload.total) {
+                                        case -1:
+                                            statusText.text = "" + (100 * (payload.complete / 121528)).toFixed(0) + "% downloaded"
+                                            fillBar.width = (barBackground.width * .25) * (payload.complete / 121528)
+                                            break
+                                        default:
+                                            statusText.text = "" + (100 * (payload.complete / payload.total)).toFixed(0) + "% downloaded"
+                                            fillBar.width = (barBackground.width * .25) * (payload.complete / payload.total)
+                                            break
+                                        }
                                         break;
                                     }
                                     break;
@@ -253,27 +260,44 @@ ColumnLayout {
                                     switch (payload.status) {
                                     case "running":
                                         statusText.text = "Preparing..."
-                                        fillBar.width = barBackground.width * (5/8)
+                                        fillBar.width = barBackground.width * .25
                                         break;
                                     }
                                     break;
                                 case "backup":
                                     switch (payload.status) {
                                     case "running":
-                                        statusText.text = "Backing up firmware..."
-                                        fillBar.width = barBackground.width * (6/8)
+                                        statusText.text = "Backing up firmware... "
+                                        switch (payload.total) {
+                                        case -1:
+                                            if (payload.complete > -1 ) {
+                                                statusText.text += payload.complete + " chunks complete"
+                                            }
+                                            fillBar.width = barBackground.width * .5
+                                            break
+                                        default:
+                                            statusText.text += (100 * (payload.complete / payload.total)).toFixed(0) + "% backed up"
+                                            fillBar.width = (barBackground.width * .5) + (barBackground.width * .25) * (payload.complete / payload.total)
+                                            break
+                                        }
                                         break;
                                     }
                                     break;
                                 case "flash":
                                     switch (payload.status) {
                                     case "running":
-                                        statusText.text = "Flashing firmware..."
-                                        fillBar.width = barBackground.width * (7/8)
+                                        statusText.text = "Flashing firmware... "
+                                        if (payload.total > -1) {
+                                            statusText.text += "" + (100 * (payload.complete / payload.total)).toFixed(0) + "% complete"
+                                            fillBar.width = (barBackground.width * .75) + (barBackground.width * .25) * (payload.complete / payload.total)
+                                        } else {
+                                            fillBar.width = barBackground.width * .75
+                                        }
                                         break;
                                     }
                                     break;
                                 case "restore":
+                                    //todo: need to find out this process behavior
                                     break;
                                 case "finished":
                                     switch (payload.status) {
@@ -289,6 +313,20 @@ ColumnLayout {
                                         model.installed = true
                                         flashStatus.visible = false
                                         break;
+                                    case "unsuccess":
+                                        fillBar.color = "red"
+                                        fillBar.width = barBackground.width
+                                        statusText.text = "Firmware installation failed"
+                                        break
+                                    case "failure":
+                                        fillBar.color = "red"
+                                        fillBar.width = barBackground.width
+                                        statusText.text = "Firmware installation failed"
+                                        break
+                                    case "success":
+                                        fillBar.width = 0
+                                        statusText.text = "Firmware installation succeeded"
+                                        break
                                     }
                                     break;
                                 default:

@@ -48,18 +48,25 @@ Rectangle {
                                                                       "version": "1.0.0"
                                                                   },
                                                                   {
-                                                                      "file": "<PATH to firmware>/250mA_LDO.bin",
-                                                                      "md5": "asdfasdfasdfasdfas",
+                                                                      "file": "201/fab/351bf129b05fb37797c8d8f0c1e16db5.bin", /// file from DP
+                                                                      "md5": "351bf129b05fb37797c8d8f0c1e16db5",
                                                                       "name": "firmware",
                                                                       "timestamp": "2019-11-04 17:16:48",
                                                                       "version": "1.1.0"
+                                                                  },
+                                                                  {
+                                                                      "file": "72ddcc10-2d18-4316-8170-5223162e54cf/logic-gates-release.bin", // file on local docker
+                                                                      "md5": "78c8454d2056cdba226b31806bd275fa",
+                                                                      "name": "firmware",
+                                                                      "timestamp": "2019-11-04 17:16:48",
+                                                                      "version": "1.1.1"
                                                                   },
                                                               ],
                                                               "device":{
                                                                   "version": "1.0.0",
                                                                   "timestamp": "20180401_131410"
                                                               },
-                                                              "device_id": -3452345234
+                                                              "device_id": platformStack.device_id
                                                           }
                                                       })
                     coreInterface.spoofCommand(notification)
