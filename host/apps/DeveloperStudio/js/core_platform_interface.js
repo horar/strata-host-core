@@ -32,7 +32,7 @@ function data_source_handler (payload) {
                     platformInterface[notification_key] = Object.create(notification["payload"]);
                     //console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "data_source_handler: signalling -> notification key:", notification_key);
                 } else {
-                    console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Notification Error. Notification is malformed:", JSON.stringify(notification));
+                    console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Notification Error. Notification is malformed:", JSON.stringify(notification));
                 }
             }
         }
@@ -42,7 +42,7 @@ function data_source_handler (payload) {
     }
     catch (e) {
         if (e instanceof SyntaxError){
-            console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Notification Error. Ignoring invalid notification JSON:", payload)
+            console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Notification Error. Ignoring invalid notification JSON:", payload)
         }
     }
 }
@@ -51,9 +51,11 @@ function data_source_handler (payload) {
 // Helper functions
 // -------------------------
 function send (command) {
-    command.device_id = device_id
-    console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "send: ", JSON.stringify(command));
-    coreInterface.sendCommand(JSON.stringify(command))
+    if (device_id) {
+        command.device_id = device_id
+        console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "send: ", JSON.stringify(command));
+        coreInterface.sendCommand(JSON.stringify(command))
+    }
 }
 
 function show (command) {

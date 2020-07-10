@@ -39,6 +39,7 @@ macro(generate_app_version)
     message(STATUS "Creating app version target for ${PROJECT_NAME} (prefix: '${local_GITTAG_PREFIX}')...")
 
     if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.h)
+        message(STATUS "Writting a ${PROJECT_NAME}Version.h...")
         file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.h
             "// WARNING! All changes made in this file will be lost!!\n\n"
             "#pragma once\n\n"
