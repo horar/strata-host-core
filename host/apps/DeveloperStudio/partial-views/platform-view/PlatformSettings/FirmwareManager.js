@@ -1,6 +1,7 @@
 let firmwareListModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string status: 'initialized'; property string deviceVersion: ''; property string deviceTimestamp:''}", Qt.application,"FirmwareListModel")
 
 function parseFirmwareInfo (firmwareInfo) {
+    firmwareListModel.clear()
     firmwareListModel.deviceVersion = firmwareInfo.device.version
     firmwareListModel.deviceTimestamp = firmwareInfo.device.timestamp
 

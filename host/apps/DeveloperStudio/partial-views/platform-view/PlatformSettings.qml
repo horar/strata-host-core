@@ -25,14 +25,6 @@ Rectangle {
         visible: true
 
         Column {
-
-            Button {
-                text: "set connected"
-                onClicked: {
-                    platformStack.setConnected()
-                }
-            }
-
             Button {
                 text: "get firmware info"
                 onClicked: {
@@ -67,55 +59,6 @@ Rectangle {
                                                                   "timestamp": "20180401_131410"
                                                               },
                                                               "device_id": platformStack.device_id
-                                                          }
-                                                      })
-                    coreInterface.spoofCommand(notification)
-                }
-            }
-
-            Button {
-                text: "firmware progress update"
-                property int i:0
-
-                onClicked: {
-                    switch (i) {
-                    case 0:
-                        spoofProgress("download", "running", 10, 100)
-                        break;
-                    case 1:
-                        spoofProgress("download", "running", 33, 100)
-                        break;
-                    case 2:
-                        spoofProgress("download", "running", 66, 100)
-                        break;
-                    case 3:
-                        spoofProgress("download", "running", 90, 100)
-                        break;
-                    case 4:
-                        spoofProgress("prepare", "running", -1, -1)
-                        break;
-                    case 5:
-                        spoofProgress("backup", "running", -1, -1)
-                        break;
-                    case 6:
-                        spoofProgress("flash", "running", -1, -1)
-                        break;
-                    case 7:
-                        spoofProgress("finished", "running", -1, -1)
-                        break;
-                    }
-                    i++
-                }
-
-                function spoofProgress(operation, status, complete, total) {
-                    let notification = JSON.stringify({
-                                                          "hcs::notification":{
-                                                              "type": "firmware_progress",
-                                                              "operation": operation,
-                                                              "status": status,
-                                                              "complete": complete,
-                                                              "total": total,
-                                                              "device_id": -3452345234
                                                           }
                                                       })
                     coreInterface.spoofCommand(notification)

@@ -213,8 +213,8 @@ ColumnLayout {
                                         // if (version < installed version)
                                         // warningPop.delegateDownload = download
                                         // warningPop.open()
-                                        // todo hook up when device_id works
-                                        console.log("DEVICE:", platformStack.device_id)
+                                        flashStatus.resetState()
+
                                         let updateFirmwareCommand = {
                                             "hcs::cmd": "update_firmware",
                                             "payload": {
@@ -237,6 +237,13 @@ ColumnLayout {
                             Layout.fillWidth: true
                             Layout.preferredHeight: statusColumn.height
 
+                            function resetState() {
+                                statusText.text = "Initializing..."
+                                fillBar.width = 0
+                                fillBar.color = "lime"
+                                flashStatus.visible = false
+                            }
+
                             function parseProgress (payload) {
                                 console.log("RECEIVED PROGRESS", JSON.stringify(payload))
                                 switch (payload.operation) {
@@ -245,14 +252,17 @@ ColumnLayout {
                                     case "running":
                                         switch (payload.total) {
                                         case -1:
-                                            statusText.text = "" + (100 * (payload.complete / 121528)).toFixed(0) + "% downloaded"
+                                            statusText.text = "Downloading... " + payload.complete + "bytes downloaded"
                                             fillBar.width = (barBackground.width * .25) * (payload.complete / 121528)
                                             break
                                         default:
-                                            statusText.text = "" + (100 * (payload.complete / payload.total)).toFixed(0) + "% downloaded"
+                                            statusText.text = "Downloading... " + (100 * (payload.complete / payload.total)).toFixed(0) + "% complete"
                                             fillBar.width = (barBackground.width * .25) * (payload.complete / payload.total)
                                             break
                                         }
+                                        break;
+                                    case "failure":
+                                        statusText.text = "Download failed: " + payload.download_error
                                         break;
                                     }
                                     break;
@@ -261,6 +271,9 @@ ColumnLayout {
                                     case "running":
                                         statusText.text = "Preparing..."
                                         fillBar.width = barBackground.width * .25
+                                        break;
+                                    case "failure":
+                                        statusText.text = "Preparation failed: " + payload.prepare_error
                                         break;
                                     }
                                     break;
@@ -276,10 +289,13 @@ ColumnLayout {
                                             fillBar.width = barBackground.width * .5
                                             break
                                         default:
-                                            statusText.text += (100 * (payload.complete / payload.total)).toFixed(0) + "% backed up"
+                                            statusText.text += (100 * (payload.complete / payload.total)).toFixed(0) + "% complete"
                                             fillBar.width = (barBackground.width * .5) + (barBackground.width * .25) * (payload.complete / payload.total)
                                             break
                                         }
+                                        break;
+                                    case "failure":
+                                        statusText.text = "Preparation failed: " + payload.backup_error
                                         break;
                                     }
                                     break;
@@ -294,10 +310,13 @@ ColumnLayout {
                                             fillBar.width = barBackground.width * .75
                                         }
                                         break;
+                                    case "failure":
+                                        statusText.text = "Flash failed: " + payload.flash_error
+                                        break;
                                     }
                                     break;
                                 case "restore":
-                                    //todo: need to find out this process behavior
+                                    // todo: need to determine this process behavior no working case for this
                                     break;
                                 case "finished":
                                     switch (payload.status) {
@@ -314,14 +333,18 @@ ColumnLayout {
                                         flashStatus.visible = false
                                         break;
                                     case "unsuccess":
-                                        fillBar.color = "red"
-                                        fillBar.width = barBackground.width
-                                        statusText.text = "Firmware installation failed"
-                                        break
                                     case "failure":
                                         fillBar.color = "red"
                                         fillBar.width = barBackground.width
                                         statusText.text = "Firmware installation failed"
+
+                                        let keys = Object.keys(payload)
+                                        for (let j = 0; j < keys.length; j++) {
+                                            if (keys[j].endsWith("_error") && payload[keys[j]] !== "") {
+                                                statusText.text += ": " + payload[keys[j]]
+                                                break;
+                                            }
+                                        }
                                         break
                                     case "success":
                                         fillBar.width = 0
@@ -357,6 +380,31 @@ ColumnLayout {
                                         color: "lime"
                                         height: barBackground.height
                                         width: 0
+                                    }
+
+                                    RowLayout {
+                                        // Hash marks separating state progress
+                                        anchors {
+                                            fill: parent
+                                        }
+
+                                        Repeater {
+                                            model: 4
+
+                                            Item {
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+
+                                                Rectangle {
+                                                    height: parent.height
+                                                    width: 2
+                                                    anchors {
+                                                        horizontalCenter: parent.right
+                                                    }
+                                                    visible: index !== 3
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }

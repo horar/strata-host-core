@@ -29,10 +29,6 @@ StackLayout {
     property bool connected: model.connected
     property bool controlLoaded: false
 
-    function setConnected() { //todo remove
-        model.connected = true
-    }
-
     onConnectedChanged: {
         if (connected && model.available.control) {
             loadControl()
