@@ -2,6 +2,6 @@
 <Package>
     <DisplayName>@PROJECT_DESCRIPTION@</DisplayName>
     <Description>@PROJECT_DESCRIPTION@</Description>
-    <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@VERSION_TWEAK@</Version>
+    <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
 </Package>

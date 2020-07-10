@@ -212,7 +212,7 @@ macro(generate_ifw_version)
                 -DPROJECT_COPYRIGHT=${PROJECT_COPYRIGHT}
                 -DPROJECT_DESCRIPTION=${PROJECT_DESCRIPTION}
                 -DPROJECT_BUNDLE_ID=${PROJECT_BUNDLE_ID}
-                -DPROJECT_VERSION_TWEAK=${VERSION_TWEAK}
+                -DPROJECT_VERSION_TWEAK=${BUILD_ID}
 
 
                 -DGITTAG_PREFIX=${local_GITTAG_PREFIX}
