@@ -1,6 +1,6 @@
 #include <QtAlgorithms>
 
-#include "UpdateController.h"
+#include "FirmwareUpdateController.h"
 #include "FirmwareUpdater.h"
 #include "BoardController.h"
 
@@ -8,12 +8,12 @@
 
 #include "logging/LoggingQtCategories.h"
 
-UpdateController::UpdateController() :
+FirmwareUpdateController::FirmwareUpdateController() :
     boardController_(nullptr), downloadManager_(nullptr)
 {
 }
 
-UpdateController::~UpdateController()
+FirmwareUpdateController::~FirmwareUpdateController()
 {
     for (auto it = updates_.constBegin(); it != updates_.constEnd(); ++it) {
         FirmwareUpdater *fwUpdater = it.value()->fwUpdater;
@@ -23,16 +23,16 @@ UpdateController::~UpdateController()
     }
 }
 
-void UpdateController::initialize(const BoardController* boardController, const std::shared_ptr<strata::DownloadManager> &downloadManager)
+void FirmwareUpdateController::initialize(const BoardController* boardController, const std::shared_ptr<strata::DownloadManager>& downloadManager)
 {
     boardController_ = boardController;
     downloadManager_ = downloadManager;
 }
 
-void UpdateController::updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl, const QString& firmwareMD5)
+void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl, const QString& firmwareMD5)
 {
     if (boardController_ == nullptr || downloadManager_ == nullptr) {
-        QString errStr("UpdateController is not properly initialized.");
+        QString errStr("FirmwareUpdateController is not properly initialized.");
         qCCritical(logCategoryHcsFwUpdater).noquote() << errStr;
         emit updaterError(deviceId, errStr);
         return;
@@ -58,13 +58,13 @@ void UpdateController::updateFirmware(const QByteArray& clientId, const int devi
     UpdateData *updateData = new UpdateData(clientId, fwUpdater);
     updates_.insert(deviceId, updateData);
 
-    connect(fwUpdater, &FirmwareUpdater::updateProgress, this, &UpdateController::handleUpdateProgress);
-    connect(fwUpdater, &FirmwareUpdater::updaterError, this, &UpdateController::updaterError);
+    connect(fwUpdater, &FirmwareUpdater::updateProgress, this, &FirmwareUpdateController::handleUpdateProgress);
+    connect(fwUpdater, &FirmwareUpdater::updaterError, this, &FirmwareUpdateController::updaterError);
 
     fwUpdater->updateFirmware();
 }
 
-void UpdateController::handleUpdateProgress(int deviceId, UpdateOperation operation, UpdateStatus status, int complete, int total, QString errorString)
+void FirmwareUpdateController::handleUpdateProgress(int deviceId, UpdateOperation operation, UpdateStatus status, int complete, int total, QString errorString)
 {
     if (updates_.contains(deviceId) == false) {
         return;
@@ -109,7 +109,7 @@ void UpdateController::handleUpdateProgress(int deviceId, UpdateOperation operat
     }
 }
 
-UpdateController::UpdateData::UpdateData(const QByteArray& client, FirmwareUpdater* updater) :
+FirmwareUpdateController::UpdateData::UpdateData(const QByteArray& client, FirmwareUpdater* updater) :
     clientId(client), fwUpdater(updater)
 {
 }

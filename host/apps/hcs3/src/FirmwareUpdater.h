@@ -11,7 +11,7 @@
 #include <FlasherConnector.h>
 #include <Device/Device.h>
 
-#include "UpdateController.h"
+#include "FirmwareUpdateController.h"
 
 namespace strata {
     class DownloadManager;
@@ -29,7 +29,7 @@ public:
      * @param url URL where firmware is located
      * @param md5 MD5 of firmware
      */
-    FirmwareUpdater(const strata::device::DevicePtr& devPtr, const std::shared_ptr<strata::DownloadManager> downloadManager, const QUrl& url, const QString& md5);
+    FirmwareUpdater(const strata::device::DevicePtr& devPtr, const std::shared_ptr<strata::DownloadManager>& downloadManager, const QUrl& url, const QString& md5);
 
     /**
      * FirmwareUpdater destructor
@@ -42,7 +42,7 @@ public:
     void updateFirmware();
 
 signals:
-    void updateProgress(int deviceId, UpdateController::UpdateOperation operation, UpdateController::UpdateStatus status,
+    void updateProgress(int deviceId, FirmwareUpdateController::UpdateOperation operation, FirmwareUpdateController::UpdateStatus status,
                         qint64 complete = -1, qint64 total = -1, QString errorString = QString());
     void updaterError(int deviceId, QString errorString);
     // internal signal:

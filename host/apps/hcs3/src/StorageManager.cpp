@@ -18,12 +18,9 @@
 #include <QJsonObject>
 
 
-static const std::string g_document_views("views");
-static const std::string g_platform_selector("platform_selector");
-
 using strata::DownloadManager;
 
-StorageManager::StorageManager(const std::shared_ptr<DownloadManager> &downloadManager, QObject* parent)
+StorageManager::StorageManager(const std::shared_ptr<DownloadManager>& downloadManager, QObject* parent)
     : QObject(parent), downloadManager_(downloadManager)
 {
     Q_ASSERT(downloadManager_ != nullptr);
@@ -313,8 +310,7 @@ void StorageManager::requestPlatformDocuments(
         return;
     }
 
-    QString pathPrefix("documents/");
-    pathPrefix += QString::fromStdString(g_document_views);
+    QString pathPrefix("documents/views");
 
     QList<PlatformFileItem> viewList = platDoc->getViewList();
 

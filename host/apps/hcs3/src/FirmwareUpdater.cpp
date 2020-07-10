@@ -10,7 +10,7 @@
 using strata::DownloadManager;
 using strata::FlasherConnector;
 
-FirmwareUpdater::FirmwareUpdater(const strata::device::DevicePtr& devPtr, const std::shared_ptr<DownloadManager> downloadManager, const QUrl& url, const QString& md5) :
+FirmwareUpdater::FirmwareUpdater(const strata::device::DevicePtr& devPtr, const std::shared_ptr<DownloadManager>& downloadManager, const QUrl& url, const QString& md5) :
     running_(false), device_(devPtr), deviceId_(devPtr->deviceId()), downloadManager_(downloadManager), firmwareUrl_(url), firmwareMD5_(md5),
     firmwareFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("hcs_new_firmware")))
 {
@@ -81,8 +81,8 @@ void FirmwareUpdater::handleDownloadFinished(QString downloadId, QString errorSt
     disconnect(downloadManager_.get(), nullptr, this, nullptr);
 
     if (errorString.isEmpty() == false) {
-        emit updateProgress(deviceId_, UpdateController::UpdateOperation::Download, UpdateController::UpdateStatus::Failure, -1, -1, errorString);
-        emit updateProgress(deviceId_, UpdateController::UpdateOperation::Finished, UpdateController::UpdateStatus::Unsuccess);
+        emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Download, FirmwareUpdateController::UpdateStatus::Failure, -1, -1, errorString);
+        emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Finished, FirmwareUpdateController::UpdateStatus::Unsuccess);
         running_ = false;
         return;
     }
@@ -95,7 +95,7 @@ void FirmwareUpdater::handleSingleDownloadProgress(QString downloadId, QString f
     Q_UNUSED(filePath)
 
     if (downloadId == downloadId_) {
-        emit updateProgress(deviceId_, UpdateController::UpdateOperation::Download, UpdateController::UpdateStatus::Running, bytesReceived, bytesTotal);
+        emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Download, FirmwareUpdateController::UpdateStatus::Running, bytesReceived, bytesTotal);
     }
 }
 
@@ -104,7 +104,7 @@ void FirmwareUpdater::handleFlashFirmware()
     if (flasherConnector_.isNull() == false) {
         QString errStr("Cannot create firmware flasher, other one already exists.");
         qCCritical(logCategoryHcsFwUpdater) << device_ << errStr;
-        emit updateProgress(deviceId_, UpdateController::UpdateOperation::Finished, UpdateController::UpdateStatus::Unsuccess);
+        emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Finished, FirmwareUpdateController::UpdateStatus::Unsuccess);
         emit updaterError(deviceId_, errStr);
         return;
     }
@@ -126,42 +126,42 @@ void FirmwareUpdater::handleFlasherFinished(FlasherConnector::Result result)
 
     firmwareFile_.remove();
 
-    UpdateController::UpdateStatus status = UpdateController::UpdateStatus::Failure;
+    FirmwareUpdateController::UpdateStatus status = FirmwareUpdateController::UpdateStatus::Failure;
     switch (result) {
     case FlasherConnector::Result::Success :
-        status = UpdateController::UpdateStatus::Success;
+        status = FirmwareUpdateController::UpdateStatus::Success;
         break;
     case FlasherConnector::Result::Unsuccess :
-        status = UpdateController::UpdateStatus::Unsuccess;
+        status = FirmwareUpdateController::UpdateStatus::Unsuccess;
         break;
     case FlasherConnector::Result::Failure :
-        status = UpdateController::UpdateStatus::Failure;
+        status = FirmwareUpdateController::UpdateStatus::Failure;
         break;
     }
 
-    emit updateProgress(deviceId_, UpdateController::UpdateOperation::Finished, status);
+    emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Finished, status);
 
     running_ = false;
 }
 
 void FirmwareUpdater::handleFlashProgress(int chunk, int total)
 {
-    emit updateProgress(deviceId_, UpdateController::UpdateOperation::Flash, UpdateController::UpdateStatus::Running, chunk, total);
+    emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Flash, FirmwareUpdateController::UpdateStatus::Running, chunk, total);
 }
 
 void FirmwareUpdater::handleBackupProgress(int chunk, int total)
 {
-    emit updateProgress(deviceId_, UpdateController::UpdateOperation::Backup, UpdateController::UpdateStatus::Running, chunk, total);
+    emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Backup, FirmwareUpdateController::UpdateStatus::Running, chunk, total);
 }
 
 void FirmwareUpdater::handleRestoreProgress(int chunk, int total)
 {
-    emit updateProgress(deviceId_, UpdateController::UpdateOperation::Restore, UpdateController::UpdateStatus::Running, chunk, total);
+    emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Restore, FirmwareUpdateController::UpdateStatus::Running, chunk, total);
 }
 
 void FirmwareUpdater::handleOperationStateChanged(FlasherConnector::Operation operation, FlasherConnector::State state, QString errorString)
 {
-    UpdateController::UpdateStatus updStatus = UpdateController::UpdateStatus::Running;
+    FirmwareUpdateController::UpdateStatus updStatus = FirmwareUpdateController::UpdateStatus::Running;
 
     switch (state) {
     case FlasherConnector::State::Started :
@@ -174,28 +174,28 @@ void FirmwareUpdater::handleOperationStateChanged(FlasherConnector::Operation op
     case FlasherConnector::State::Finished :
         return;  // We do not care about end of any operation.
     case FlasherConnector::State::Cancelled :
-        updStatus = UpdateController::UpdateStatus::Unsuccess;
+        updStatus = FirmwareUpdateController::UpdateStatus::Unsuccess;
         break;
     case FlasherConnector::State::Failed :
-        updStatus = UpdateController::UpdateStatus::Failure;
+        updStatus = FirmwareUpdateController::UpdateStatus::Failure;
         break;
     }
 
-    UpdateController::UpdateOperation updOperation;
+    FirmwareUpdateController::UpdateOperation updOperation;
 
     switch (operation) {
     case FlasherConnector::Operation::Preparation :
-        updOperation = UpdateController::UpdateOperation::Prepare;
+        updOperation = FirmwareUpdateController::UpdateOperation::Prepare;
         break;
     case FlasherConnector::Operation::Flash :
-        updOperation = UpdateController::UpdateOperation::Flash;
+        updOperation = FirmwareUpdateController::UpdateOperation::Flash;
         break;
     case FlasherConnector::Operation::Backup :
     case FlasherConnector::Operation::BackupBeforeFlash :
-        updOperation = UpdateController::UpdateOperation::Backup;
+        updOperation = FirmwareUpdateController::UpdateOperation::Backup;
         break;
     case FlasherConnector::Operation::RestoreFromBackup :
-        updOperation = UpdateController::UpdateOperation::Restore;
+        updOperation = FirmwareUpdateController::UpdateOperation::Restore;
         break;
     }
 

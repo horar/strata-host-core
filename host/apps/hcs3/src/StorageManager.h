@@ -23,7 +23,7 @@ class StorageManager final : public QObject
     Q_DISABLE_COPY(StorageManager)
 
 public:
-    StorageManager(const std::shared_ptr<strata::DownloadManager> &downloadManager, QObject* parent = nullptr);
+    StorageManager(const std::shared_ptr<strata::DownloadManager>& downloadManager, QObject* parent = nullptr);
     ~StorageManager();
 
     /**

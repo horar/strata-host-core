@@ -82,13 +82,13 @@ bool HostControllerService::initialize(const QString& config)
     connect(this, &HostControllerService::downloadPlatformFilesRequested, storageManagerPtr, &StorageManager::requestDownloadPlatformFiles, Qt::QueuedConnection);
     connect(this, &HostControllerService::cancelPlatformDocumentRequested, storageManagerPtr, &StorageManager::requestCancelAllDownloads, Qt::QueuedConnection);
 
-    connect(this, &HostControllerService::firmwareUpdateRequested, &updateController_, &UpdateController::updateFirmware, Qt::QueuedConnection);
+    connect(this, &HostControllerService::firmwareUpdateRequested, &updateController_, &FirmwareUpdateController::updateFirmware, Qt::QueuedConnection);
 
     connect(&boardsController_, &BoardController::boardConnected, this, &HostControllerService::platformConnected);
     connect(&boardsController_, &BoardController::boardDisconnected, this, &HostControllerService::platformDisconnected);
     connect(&boardsController_, &BoardController::boardMessage, this, &HostControllerService::sendMessageToClients);
 
-    connect(&updateController_, &UpdateController::progressOfUpdate, this, &HostControllerService::handleUpdateProgress);
+    connect(&updateController_, &FirmwareUpdateController::progressOfUpdate, this, &HostControllerService::handleUpdateProgress);
 
     QUrl baseUrl = QString::fromStdString(db_cfg["file_server"].GetString());
 
@@ -588,42 +588,42 @@ bool HostControllerService::broadcastMessage(const QString& message)
     return false;
 }
 
-void HostControllerService::handleUpdateProgress(int deviceId, QByteArray clientId, UpdateController::UpdateProgress progress)
+void HostControllerService::handleUpdateProgress(int deviceId, QByteArray clientId, FirmwareUpdateController::UpdateProgress progress)
 {
     QString operation;
     switch (progress.operation) {
-    case UpdateController::UpdateOperation::Download :
+    case FirmwareUpdateController::UpdateOperation::Download :
         operation = "download";
         break;
-    case UpdateController::UpdateOperation::Prepare :
+    case FirmwareUpdateController::UpdateOperation::Prepare :
         operation = "prepare";
         break;
-    case UpdateController::UpdateOperation::Backup :
+    case FirmwareUpdateController::UpdateOperation::Backup :
         operation = "backup";
         break;
-    case UpdateController::UpdateOperation::Flash :
+    case FirmwareUpdateController::UpdateOperation::Flash :
         operation = "flash";
         break;
-    case UpdateController::UpdateOperation::Restore :
+    case FirmwareUpdateController::UpdateOperation::Restore :
         operation = "restore";
         break;
-    case UpdateController::UpdateOperation::Finished :
+    case FirmwareUpdateController::UpdateOperation::Finished :
         operation = "finished";
         break;
     }
 
     QString status;
     switch (progress.status) {
-    case UpdateController::UpdateStatus::Running :
+    case FirmwareUpdateController::UpdateStatus::Running :
         status = "running";
         break;
-    case UpdateController::UpdateStatus::Success :
+    case FirmwareUpdateController::UpdateStatus::Success :
         status = "success";
         break;
-    case UpdateController::UpdateStatus::Unsuccess :
+    case FirmwareUpdateController::UpdateStatus::Unsuccess :
         status = "unsuccess";
         break;
-    case UpdateController::UpdateStatus::Failure :
+    case FirmwareUpdateController::UpdateStatus::Failure :
         status = "failure";
         break;
     }

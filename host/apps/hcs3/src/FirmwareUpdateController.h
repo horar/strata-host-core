@@ -13,28 +13,28 @@ namespace strata {
 class BoardController;
 class FirmwareUpdater;
 
-class UpdateController final : public QObject
+class FirmwareUpdateController final : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(UpdateController)
+    Q_DISABLE_COPY(FirmwareUpdateController)
 
 public:
     /**
-     * UpdateController constructor.
+     * FirmwareUpdateController constructor.
      */
-    UpdateController();
+    FirmwareUpdateController();
 
     /**
-     * UpdateController destructor.
+     * FirmwareUpdateController destructor.
      */
-    ~UpdateController();
+    ~FirmwareUpdateController();
 
     /**
-     * Initialize Update Controller.
+     * Initialize the Firmware Update Controller.
      * @param boardController pointer to BoardController
-     * @param downloadManager pointer to DownloadManager
+     * @param downloadManager shared pointer to DownloadManager
      */
-    void initialize(const BoardController* boardController, const std::shared_ptr<strata::DownloadManager> &downloadManager);
+    void initialize(const BoardController* boardController, const std::shared_ptr<strata::DownloadManager>& downloadManager);
 
     /**
      * The UpdateOperation enum for UpdateProgressInfo struct.
@@ -90,8 +90,8 @@ public slots:
     void updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl, const QString& firmwareMD5);
 
 private slots:
-    void handleUpdateProgress(int deviceId, UpdateController::UpdateOperation operation,
-                              UpdateController::UpdateStatus status, int complete, int total, QString errorString);
+    void handleUpdateProgress(int deviceId, FirmwareUpdateController::UpdateOperation operation,
+                              FirmwareUpdateController::UpdateStatus status, int complete, int total, QString errorString);
 
 private:
     const BoardController* boardController_;
@@ -107,6 +107,6 @@ private:
     QHash<int, struct UpdateData*> updates_;
 };
 
-Q_DECLARE_METATYPE(UpdateController::UpdateOperation)
-Q_DECLARE_METATYPE(UpdateController::UpdateStatus)
-Q_DECLARE_METATYPE(UpdateController::UpdateProgress)
+Q_DECLARE_METATYPE(FirmwareUpdateController::UpdateOperation)
+Q_DECLARE_METATYPE(FirmwareUpdateController::UpdateStatus)
+Q_DECLARE_METATYPE(FirmwareUpdateController::UpdateProgress)

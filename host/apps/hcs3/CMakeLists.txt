@@ -41,7 +41,7 @@ add_library(${PROJECT_NAME}Lib STATIC
     src/StorageInfo.cpp
     src/PlatformDocument.cpp
     src/LoggingAdapter.cpp
-    src/UpdateController.cpp
+    src/FirmwareUpdateController.cpp
     src/FirmwareUpdater.cpp
 
     src/RunGuard.cpp

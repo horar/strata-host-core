@@ -17,7 +17,7 @@
 #include "Database.h"
 #include "LoggingAdapter.h"
 #include "BoardController.h"
-#include "UpdateController.h"
+#include "FirmwareUpdateController.h"
 
 
 struct PlatformMessage;
@@ -107,7 +107,7 @@ private:
 
     bool broadcastMessage(const QString& message);
 
-    void handleUpdateProgress(int deviceId, QByteArray clientId, UpdateController::UpdateProgress progress);
+    void handleUpdateProgress(int deviceId, QByteArray clientId, FirmwareUpdateController::UpdateProgress progress);
 
     ///////
     //handlers for client (UI)
@@ -140,7 +140,7 @@ private:
     std::shared_ptr<strata::DownloadManager> downloadManager_;
     std::unique_ptr<StorageManager> storageManager_;
 
-    UpdateController updateController_;
+    FirmwareUpdateController updateController_;
 
     HCS_Dispatcher dispatcher_;
     std::thread dispatcherThread_;
