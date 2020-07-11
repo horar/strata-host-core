@@ -1,4 +1,3 @@
-#include <iostream>
 #include <thread>
 
 #include "Database.h"
@@ -150,11 +149,11 @@ int main() {
 
     // Start replicator on DB 3 with all non-default options
     auto changeListener = [](cbl::Replicator, const CBLReplicatorStatus) {
-        std::cout << "CouchbaseDatabaseSampleApp changeListener -> replication status changed!" << std::endl;
+        qDebug() << "CouchbaseDatabaseSampleApp changeListener -> replication status changed!\n";
     };
 
     auto documentListener = [](cbl::Replicator, bool, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>>) {
-        std::cout << "CouchbaseDatabaseSampleApp documentListener -> document status changed!" << std::endl;
+        qDebug() << "CouchbaseDatabaseSampleApp documentListener -> document status changed!\n";
     };
 
     if (DB_3.startReplicator(replicator_url, replicator_username, replicator_password, replicator_channels, "pull", changeListener, documentListener)) {

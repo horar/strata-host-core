@@ -3,7 +3,6 @@
 
 #include <string>
 #include <thread>
-#include <iostream>
 
 #include <QDir>
 #include <QString>
@@ -115,11 +114,11 @@ QJsonObject CouchbaseDatabase::getDocumentAsJsonObj(const std::string &id) {
         qCCritical(logCategoryCouchbaseDatabase) << "Problem reading document, verify database is valid and open.";
         return QJsonObject();
     }
-    if (!documentExistInDB(id)) {
+    auto doc = database_->getMutableDocument(id);
+    if (!doc.valid()) {
         qCCritical(logCategoryCouchbaseDatabase) << "Problem reading document: not found in DB.";
         return QJsonObject();
     }
-    auto doc = database_->getMutableDocument(id);
     auto doc_json = doc.properties();
     return QJsonDocument::fromJson(QString::fromStdString(doc_json.toJSONString()).toUtf8()).object();
 }
