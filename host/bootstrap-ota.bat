@@ -45,8 +45,8 @@ qmake --version
 echo "======================================================================="
 echo " Preparing sandbox.."
 echo "======================================================================="
-REM rd /s /q build
-if not exist build md build
+REM rd /s /q build-ota
+if not exist build-ota md build-ota
 
 echo "-----------------------------------------------------------------------------"
 echo "Actual/local branch list.."
@@ -56,15 +56,23 @@ git branch
 echo "======================================================================="
 echo " Updating Git submodules.."
 echo "======================================================================="
-git submodule update --init --recursive
+echo git submodule update --init --recursive
 
 echo "======================================================================="
 echo " Generating project.."
 echo "======================================================================="
-cd build
+cd build-ota
 cmake -G "NMake Makefiles JOM" ^
-	-DCMAKE_BUILD_TYPE=Debug ^
-	..\
+    -DCMAKE_BUILD_TYPE=OTA ^
+    -DAPPS_CORESW=on ^
+    -DAPPS_CORECOMPONENTS=on ^
+    -DAPPS_TOOLBOX=off ^
+    -DAPPS_UTILS=off ^
+    -DAPPS_VIEWS=off ^
+    -DBUILD_DONT_CLEAN_EXTERNAL=on ^
+    -DBUILD_EXAMPLES=off ^
+    -DBUILD_TESTING=off ^
+	..
 REM cmake -G "Visual Studio 15 2017 Win64" ^
 REM 	-T v141 ^
 REM 	..\
@@ -75,5 +83,43 @@ echo "======================================================================="
 cmake --build .
 REM cmake --build . --config Debug
 
+
+REM -------------------------------------------------------------------------
+REM [LC] WIP
+REM -------------------------------------------------------------------------
+windeployqt "packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.exe" ^
+	--release ^
+	--force ^
+	--no-translations ^
+	--no-compiler-runtime ^
+	--no-webkit2 ^
+	--no-opengl-sw ^
+	--no-angle ^
+	--no-system-d3d-compiler ^
+	--no-compiler-runtime ^
+    --qmldir ..\apps\DeveloperStudio ^
+    --qmldir ..\components ^
+	--libdir packages\com.onsemi.strata.qt\data ^
+	--plugindir packages\com.onsemi.strata.qt\data\plugins ^
+    --verbose 1
+
+binarycreator ^
+    --verbose ^
+    --offline-only ^
+    -c ..\resources\qtifw\config\config.xml ^
+    -p .\packages ^
+    strata-setup-offline
+
+
+binarycreator ^
+    --verbose ^
+    --online-only ^
+    -c ..\resources\qtifw\config\config.xml ^
+    -p .\packages ^
+    strata-setup-online
+
+repogen ^
+    --update-new-components ^
+    -p .\packages pub\repository\demo
 
 endlocal

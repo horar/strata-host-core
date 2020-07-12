@@ -66,33 +66,34 @@ else()
     message(FATAL_ERROR "Not a git cloned project. Can't create version string from git tag!!")
 endif()
 
-message(STATUS "Processing ${PROJECT_NAME} version file...")
-file(READ ${INPUT_DIR}/${INPUT_FILE}.in versionFile_temporary)
-string(CONFIGURE "${versionFile_temporary}" versionFile_updated @ONLY)
-file(WRITE ${OUTPUT_DIR}/${OUTPUT_FILE}.tmp "${versionFile_updated}")
-execute_process(
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${OUTPUT_DIR}/${OUTPUT_FILE}.tmp ${OUTPUT_DIR}/${OUTPUT_FILE}
-)
+function(process_config_file PROJECT_NAME INPUT_DIR WORKING_DIR DEPLOYMENT_DIR CONFIG_FILENAME)
+    message(STATUS "Processing ${PROJECT_NAME} ${CONFIG_FILENAME} file...")
 
-if(APPLE AND PROJECT_MACBUNDLE)
-    message(STATUS "Processing ${PROJECT_NAME} Info.plist file...")
-    file(READ ${INPUT_DIR}/Info.plist.in plistFile_temporary)
-    string(CONFIGURE "${plistFile_temporary}" plistFile_updated @ONLY)
-    file(WRITE ${OUTPUT_DIR}/${PROJECT_NAME}.plist.tmp "${plistFile_updated}")
+    string(TIMESTAMP BUILD_TIMESTAMP "%Y-%m-%d")
+
+    file(READ ${INPUT_DIR}/${CONFIG_FILENAME}.in inFile_original)
+    string(CONFIGURE "${inFile_original}" inFile_updated @ONLY)
+    file(WRITE ${WORKING_DIR}/${CONFIG_FILENAME}.tmp "${inFile_updated}")
     execute_process(
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${OUTPUT_DIR}/${PROJECT_NAME}.plist.tmp ${OUTPUT_DIR}/${PROJECT_NAME}.plist
+        ${WORKING_DIR}/${CONFIG_FILENAME}.tmp
+        ${DEPLOYMENT_DIR}/${CONFIG_FILENAME}
     )
-elseif(WIN32)
-    message(STATUS "Processing ${PROJECT_NAME} application resource file...")
-    file(READ ${INPUT_DIR}/App.rc.in rcFile_temporary)
-    string(CONFIGURE "${rcFile_temporary}" rcFile_updated @ONLY)
-    file(WRITE ${OUTPUT_DIR}/${PROJECT_NAME}.rc.tmp "${rcFile_updated}")
-    execute_process(
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${OUTPUT_DIR}/${PROJECT_NAME}.rc.tmp ${OUTPUT_DIR}/${PROJECT_NAME}.rc
-    )
+endfunction()
+
+if(EXISTS ${PROJECT_DIR}/resources/qtifw/packages/meta/package.xml.in AND CMAKE_BUILD_TYPE STREQUAL "OTA")
+    process_config_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/packages/meta/ ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta package.xml)
 else()
-    message(STATUS "Nothing platform specific to generate on this openrating system.")
+    process_config_file(${PROJECT_NAME} ${INPUT_DIR} ${WORKING_DIR} ${WORKING_DIR} ${VERSION_FILE})
+    if(APPLE AND PROJECT_MACBUNDLE)
+        process_config_file(${PROJECT_NAME} ${INPUT_DIR} ${WORKING_DIR} ${WORKING_DIR} Info.plist)
+    elseif(WIN32)
+        process_config_file(${PROJECT_NAME} ${INPUT_DIR} ${WORKING_DIR} ${WORKING_DIR} App.rc)
+    else()
+        message(STATUS "Nothing platform specific to generate on this openrating system.")
+    endif()
+endif()
+
+if(EXISTS ${PROJECT_DIR}/resources/qtifw/meta/package.xml.in AND CMAKE_BUILD_TYPE STREQUAL "OTA")
+    process_config_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/meta/ ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta package.xml)
 endif()

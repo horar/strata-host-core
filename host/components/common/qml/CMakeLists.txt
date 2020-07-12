@@ -18,6 +18,16 @@ qt5_add_binary_resources(${PROJECT_NAME}
     DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.rcc
 )
 
+if (CMAKE_BUILD_TYPE STREQUAL "OTA")
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.rcc
+            ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>/${PROJECT_NAME}.rcc
+        COMMENT "Deploying '${PROJECT_NAME}.rcc'..."
+        VERBATIM
+    )
+endif()
+
 generate_component_version(GITTAG_PREFIX common_ QRC_NAMESPACE "/tech/strata")
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")

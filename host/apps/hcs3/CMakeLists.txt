@@ -3,6 +3,7 @@ project(HostControllerService
     LANGUAGES CXX
 )
 
+set(PROJECT_BUNDLE_ID com.onsemi.strata.hcs)
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -26,6 +27,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     #AUTORCC_OPTIONS "--compress;9"
 
     OUTPUT_NAME hcs
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>
 )
 
 qt5_generate_repc(NODE_RO_SRCS ./src/HostControllerService.rep SOURCE)
