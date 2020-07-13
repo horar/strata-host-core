@@ -1,7 +1,7 @@
 // WARNING! Generated file.
 // All changes made in this file will be lost!!
 
-#include "@PROJECT_NAME@Version.h"
+#include "Version.h"
 
 using namespace std::literals::string_view_literals;
 
