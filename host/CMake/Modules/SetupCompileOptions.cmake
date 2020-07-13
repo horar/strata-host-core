@@ -68,3 +68,31 @@ endif()
 if(WIN32)
     add_compile_definitions(WIN32_LEAN_AND_MEAN)
 endif()
+
+# OTA CMake build type (LC: just an alias to Release type)
+set(CMAKE_CXX_FLAGS_OTA "${CMAKE_CXX_FLAGS_RELEASE}" CACHE STRING
+    "Flags used by the C++ compiler during OTA builds." FORCE
+)
+set(CMAKE_C_FLAGS_OTA "${CMAKE_C_FLAGS_RELEASE}" CACHE STRING
+    "Flags used by the C compiler during OTA builds." FORCE
+)
+set(CMAKE_EXE_LINKER_FLAGS_OTA "${CMAKE_EXE_LINKER_FLAGS_RELEASE}" CACHE STRING
+    "Flags used for linking binaries during OTA builds." FORCE
+)
+set(CMAKE_SHARED_LINKER_FLAGS_OTA "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}" CACHE STRING
+    "Flags used by the shared libraries linker during OTA builds." FORCE
+)
+set(CMAKE_MODULE_LINKER_FLAGS_OTA "${CMAKE_MODULE_LINKER_FLAGS_RELEASE}" CACHE STRING
+    "Flags used by the module libraries linker during OTA builds." FORCE
+)
+MARK_AS_ADVANCED(
+    CMAKE_CXX_FLAGS_OTA
+    CMAKE_C_FLAGS_OTA
+    CMAKE_EXE_LINKER_FLAGS_OTA
+    CMAKE_SHARED_LINKER_FLAGS_OTA
+    CMAKE_MODULE_LINKER_FLAGS_OTA
+)
+# Update the documentation string of CMAKE_BUILD_TYPE for GUIs
+set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
+    "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel OTA." FORCE
+)

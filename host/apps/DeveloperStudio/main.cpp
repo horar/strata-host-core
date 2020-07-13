@@ -13,7 +13,7 @@
 #include <QSysInfo>
 #include <QSslSocket>
 
-#include "StrataDeveloperStudioVersion.h"
+#include "Version.h"
 #include "StrataDeveloperStudioTimestamp.h"
 
 #include <PlatformInterface/core/CoreInterface.h>
