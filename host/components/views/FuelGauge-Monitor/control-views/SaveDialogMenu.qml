@@ -259,7 +259,7 @@ Rectangle {
     Rectangle {
         id: shadow
         anchors.fill: parent.width*0.99
-        parent: width*0.85
+        //parent: width*0.85
         visible: false
     }
     DropShadow {

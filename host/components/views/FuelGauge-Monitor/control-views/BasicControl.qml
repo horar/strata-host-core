@@ -135,8 +135,14 @@ ColumnLayout {
     dataArray_temp_graph=[]
     dataArray_voltage_graph=[]
     //dataArray_voltage=[]
-    basicGraph.removeCurve(0)
-    basicGraph1.removeCurve(0)
+    //basicGraph.removeCurve(0)
+     if(basicGraph.count > 0) {
+       basicGraph.removeCurve(0)
+              }
+    //basicGraph1.removeCurve(0)
+     if(basicGraph1.count > 0) {
+      basicGraph1.removeCurve(0)
+     }
    // counterx=0
     temp_validator=0
     voltage_validator=0
@@ -253,8 +259,14 @@ ColumnLayout {
         dataArray_temp_graph=[]
         dataArray_voltage_graph=[]
         //dataArray_voltage=[]
-        basicGraph.removeCurve(0)
-        basicGraph1.removeCurve(0)
+        if(basicGraph.count > 0) {
+           basicGraph.removeCurve(0)
+          }
+      //  basicGraph.removeCurve(0)
+        //basicGraph1.removeCurve(0)
+        if(basicGraph1.count > 0) {
+         basicGraph1.removeCurve(0)
+        }
         //Send to FW board on UI Loader
         platformInterface.set_measurement.update("stop")
         platformInterface.set_onboard_load_en.update("Disable")
@@ -870,7 +882,10 @@ ColumnLayout {
                                       repeat: true
 
                                      onTriggered: {
-                                          basicGraph.removeCurve(0)
+                                          //basicGraph.removeCurve(0)
+                                         if(basicGraph.count > 0) {
+                                            basicGraph.removeCurve(0)
+                                           }
                                           var curve = basicGraph.createCurve("graphCurve")
                                           curve.color = "green"
                                           //randomColor()   //for (var j = 0 ; j < 50 ; j++)  dataArray.push({"x":dataArray.length + j,"y":yourDataValueHere(dataArray.length )})
@@ -1710,7 +1725,10 @@ ColumnLayout {
                                           running: false
                                           repeat: true
                                           onTriggered: {
-                                              basicGraph1.removeCurve(0)
+                                             // basicGraph1.removeCurve(0)
+                                              if(basicGraph1.count > 0) {
+                                               basicGraph1.removeCurve(0)
+                                              }
                                               var curvex = basicGraph1.createCurve("graphCurve")
                                               curvex.color = "red"
                                               curvex.appendList(dataArray_temp_graph)
