@@ -451,7 +451,10 @@ else()
 
     if(PERL_FOUND)
         get_filename_component(PERL_PATH "${PERL_EXECUTABLE}" PATH)
-        separate_arguments(APPEND_PERL_TO_PATH WINDOWS_COMMAND "SET PATH=%PATH%$<SEMICOLON>${PERL_PATH}")
+        
+        # Create a cmd command to append Perl's path to the environment PATH
+        string(REPLACE ";" "$<SEMICOLON>" MODIFIED_PATH "$ENV{PATH}")
+        separate_arguments(APPEND_PERL_TO_PATH WINDOWS_COMMAND "SET PATH=${MODIFIED_PATH}$<SEMICOLON>${PERL_PATH}")
     else()
         message(FATAL_ERROR "Perl is missing.")
     endif()
