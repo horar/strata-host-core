@@ -18,6 +18,7 @@ target_sources(${PROJECT_NAME}
     SGSortFilterProxyModel.cpp
     logging/LoggingQtCategories.cpp
     SGQWTPlot.cpp
+    SGUserSettings.cpp
     mqtt/SGMqttClient.cpp
     mqtt/SGSslConfiguration.cpp
 
