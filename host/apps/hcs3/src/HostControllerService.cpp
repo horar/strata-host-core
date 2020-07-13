@@ -337,10 +337,9 @@ void HostControllerService::handleMessage(const PlatformMessage& msg)
     }
 }
 
-void HostControllerService::platformConnected(const int deviceId, const QString &classId, const QString &platformId)
+void HostControllerService::platformConnected(const int deviceId, const QString &classId)
 {
     Q_UNUSED(deviceId)
-    Q_UNUSED(platformId)
 
     if (classId.isEmpty()) {
         qCWarning(logCategoryHcs) << "Connected platform doesn't have class Id.";
@@ -351,10 +350,9 @@ void HostControllerService::platformConnected(const int deviceId, const QString 
     broadcastMessage(boardsController_.createPlatformsList());
 }
 
-void HostControllerService::platformDisconnected(const QString &classId, const QString &platformId)
+void HostControllerService::platformDisconnected(const int deviceId)
 {
-    Q_UNUSED(classId)
-    Q_UNUSED(platformId)
+    Q_UNUSED(deviceId)
 
     //send update to all clients
     broadcastMessage(boardsController_.createPlatformsList());
@@ -579,7 +577,7 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
 
 bool HostControllerService::broadcastMessage(const QString& message)
 {
-    qCInfo(logCategoryHcs) << "broadcast msg:" << message;
+    qCInfo(logCategoryHcs).noquote().nospace() << "broadcast msg: '" << message << "'";
     for(auto item : clientList_) {
         QByteArray clientId = item->getClientId();
         clients_.sendMessage(clientId, message);
@@ -647,4 +645,11 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
     doc.setObject(message);
 
     clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+
+    if (progress.operation == FirmwareUpdateController::UpdateOperation::Finished &&
+            progress.status == FirmwareUpdateController::UpdateStatus::Success) {
+        // If firmware was updated broadcast new platforms list
+        // to indicate the firmware version has changed.
+        broadcastMessage(boardsController_.createPlatformsList());
+    }
 }

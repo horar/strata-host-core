@@ -122,8 +122,8 @@ private:
     void onCmdDynamicPlatformList(const rapidjson::Value* );
     void onCmdUpdateFirmware(const rapidjson::Value* );
 
-    void platformConnected(const int deviceId, const QString &classId, const QString &platformId);
-    void platformDisconnected(const QString &classId, const QString &platformId);
+    void platformConnected(const int deviceId, const QString &classId);
+    void platformDisconnected(const int deviceId);
 
     HCS_Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 
