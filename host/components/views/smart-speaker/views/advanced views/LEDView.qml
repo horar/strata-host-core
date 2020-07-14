@@ -189,6 +189,7 @@ Rectangle {
                 width:220
                 from:0
                 to:100
+                stepSize: 1
                 showInputBox: true
                 handleSize: 20
                 grooveColor: "grey"
