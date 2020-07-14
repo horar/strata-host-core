@@ -400,7 +400,7 @@ Rectangle {
                         width:currentLimitSliderWidth
                         from:100
                         to:600
-                        stepSize: 50
+                        stepSize: 25
                         showInputBox: true
                         grooveColor: "grey"
                         handleSize:height*.85
