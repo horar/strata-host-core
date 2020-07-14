@@ -78,7 +78,7 @@ Rectangle {
                 id:usbVBUSBox
                 width:boxHeight
                 height:boxHeight
-                label: "VBUS"
+                label: "VOLTAGE"
                 labelColor: "white"
                 color:boxBackground
                 valueSize:statBoxValueSize
