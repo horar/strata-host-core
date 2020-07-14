@@ -249,9 +249,9 @@ LogItem* LogModel::parseLine(const QString &line)
 
 void LogModel::removeRowsFromModel(const uint pathHash)
 {
-    QList<LogItem*>::iterator start, end;
+    QList<LogItem*>::iterator chunkStart, chunkEnd;
     QList<LogItem*>::iterator it = data_.begin();
-    bool gotBeginRemoveAt = false;
+    bool chunkForRemoveBegan = false;
     bool gotChunk = false;
 
     while (it != data_.end()) {
@@ -259,43 +259,43 @@ void LogModel::removeRowsFromModel(const uint pathHash)
         LogItem* item = *it;
 
         if (item->filehash == pathHash) {
-            if (gotBeginRemoveAt == false) {
-                gotBeginRemoveAt = true;
-                start = it;
+            if (chunkForRemoveBegan == false) {
+                chunkForRemoveBegan = true;
+                chunkStart = it;
             }
         } else {
-            if (gotBeginRemoveAt) {
-                gotBeginRemoveAt = false;
+            if (chunkForRemoveBegan) {
+                chunkForRemoveBegan = false;
                 gotChunk = true;
-                end = it;
+                chunkEnd = it;
             }
         }
 
         if (gotChunk) {
-            it = removeChunk(start, end);
+            it = removeChunk(chunkStart, chunkEnd);
             gotChunk = false;
         }
         ++it;
     }
 
-    if (gotBeginRemoveAt) {
-        removeChunk(start, data_.end());
+    if (chunkForRemoveBegan) {
+        removeChunk(chunkStart, data_.end());
     }
 
     emit countChanged();
     updateTimestamps();
 }
 
-QList<LogItem*>::iterator LogModel::removeChunk(QList<LogItem*>::iterator start, QList<LogItem*>::iterator end)
+QList<LogItem*>::iterator LogModel::removeChunk(const QList<LogItem*>::iterator &chunkStart, const QList<LogItem*>::iterator &chunkEnd)
 {
-    int first = start - data_.begin();
-    int last = end - data_.begin() - 1;
+    int first = chunkStart - data_.begin();
+    int last = chunkEnd - data_.begin() - 1;
 
     beginRemoveRows(QModelIndex(), first, last);
-    for (auto it = start; it != end; ++it) {
+    for (auto it = chunkStart; it != chunkEnd; ++it) {
         delete *it;
     }
-    QList<LogItem*>::iterator it = data_.erase(start, end);
+    QList<LogItem*>::iterator it = data_.erase(chunkStart, chunkEnd);
     endRemoveRows();
     return it;
 }

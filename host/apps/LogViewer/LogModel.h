@@ -51,7 +51,7 @@ public:
     FileModel *fileModel();
     void removeRowsFromModel(const uint pathHash);
     void insertChunk(QList<LogItem*>::iterator chunkIter, QList<LogItem*> chunk);
-    QList<LogItem*>::iterator removeChunk(QList<LogItem*>::iterator start, QList<LogItem*>::iterator end);
+    QList<LogItem*>::iterator removeChunk(const QList<LogItem*>::iterator &chunkStart, const QList<LogItem*>::iterator &chunkEnd);
 
 public slots:
     void checkFile();
