@@ -118,6 +118,7 @@ function generatePlatform (platform) {
     platform.visible = true
     platform.view_open = false
     platform.ui_exists = (ui_location !== "")
+    platform.firmware_version = ""
 
     // Create entry in classMap
     classMap[class_id_string] = {
@@ -150,6 +151,7 @@ function parseConnectedPlatforms (connected_platform_list_json) {
         }
 
         if (devicePreviouslyConnected(platform.device_id)) {
+            refreshFirmwareVersion(platform)
             continue
         } else {
             addConnectedPlatform(platform)
@@ -162,6 +164,31 @@ function parseConnectedPlatforms (connected_platform_list_json) {
     }
 
     previouslyConnected = currentlyConnected
+}
+
+function refreshFirmwareVersion(platform) {
+    // Upon successful firmware flash, connected platform list resent, check for version changes
+    let class_id_string = String(platform.class_id);
+    let device_id_string = String(platform.device_id);
+
+    if (classMap.hasOwnProperty(class_id_string)) {
+        for (let index of classMap[class_id_string].selector_listings) {
+            let selector_listing = platformSelectorModel.get(index)
+            if (selector_listing.device_id === device_id_string) {
+                if (selector_listing.firmware_version !== platform.firmware_version) {
+                    selector_listing.firmware_version = platform.firmware_version
+                    for (let i = 0; i < NavigationControl.platform_view_model_.count; i++) {
+                        let open_view = NavigationControl.platform_view_model_.get(i)
+                        if (open_view.class_id === class_id_string && open_view.device_id === device_id_string) {
+                            open_view.firmware_version = platform.firmware_version
+                            break
+                        }
+                    }
+                } // else firmware version has not changed
+                break
+            }
+        }
+    }
 }
 
 /*
@@ -187,7 +214,7 @@ function addConnectedPlatform(platform) {
     let device_id_string = String(platform.device_id);
 
     if (classMap.hasOwnProperty(class_id_string)) {
-        connectListing(class_id_string, device_id_string)
+        connectListing(class_id_string, device_id_string, platform.firmware_version)
     } else if (class_id_string !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id_string)) {
         // unlisted platform connected: no entry in DP platform list, but UI found in UuidMap
         console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unlisted platform connected:", class_id_string);
@@ -200,7 +227,8 @@ function addConnectedPlatform(platform) {
 
     let data = {
         "device_id": device_id_string,
-        "class_id": class_id_string
+        "class_id": class_id_string,
+        "firmware_version": platform.firmware_version
     }
     NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
 }
@@ -209,7 +237,7 @@ function addConnectedPlatform(platform) {
     Update existing listing's 'connected' state
     OR add duplicate listing when 2 boards with same class_id connected
 */
-function connectListing(class_id_string, device_id_string) {
+function connectListing(class_id_string, device_id_string, firmware_version) {
     let found_visible = false
     let selector_listing
     let selector_index = -1
@@ -242,6 +270,7 @@ function connectListing(class_id_string, device_id_string) {
     selector_listing = platformSelectorModel.get(selector_index)
     selector_listing.connected = true
     selector_listing.device_id = device_id_string
+    selector_listing.firmware_version = firmware_version
     selector_listing.visible = true
     let available = copyObject(copyObject(selector_listing.available))
     available.unlisted = false // override unlisted to show hidden listing when physical board present
@@ -258,7 +287,8 @@ function openPlatformView(platform) {
         "name": selector_listing.verbose_name,
         "view": "control",
         "connected": true,
-        "available": platform.available
+        "available": platform.available,
+        "firmware_version": platform.firmware_version
     }
 
     if (selector_listing.connected === false || selector_listing.ui_exists === false || platform.device_id === "" || platform.available.control === false) {
@@ -379,7 +409,8 @@ function generateErrorListing (platform) {
         "error": true,
         "visible": true,
         "view_open": false,
-        "ui_exists": false
+        "ui_exists": false,
+        "firmware_version": platform.firmware_version
     }
     return error
 }

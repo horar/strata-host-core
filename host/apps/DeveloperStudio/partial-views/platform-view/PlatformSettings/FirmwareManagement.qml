@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.12
 
 import tech.strata.sgwidgets 1.0
-import "FirmwareManager.js" as FirmwareManager
 
 ColumnLayout {
     id: firmwareColumn
@@ -19,7 +18,7 @@ ColumnLayout {
         target: coreInterface
         onFirmwareInfo: {
             if (payload.device_id === platformStack.device_id) {
-                FirmwareManager.parseFirmwareInfo(payload)
+                parseFirmwareInfo(payload)
             }
         }
         onFirmwareProgress: {
@@ -38,10 +37,35 @@ ColumnLayout {
 
     function loadFirmware() {
         // todo: merge this with CS-681 to pick up device id
-        //        if (platformStack.connected && FirmwareManager.firmwareListModel.status === "initialized") {
+        //        if (platformStack.connected && firmwareListModel.status === "initialized") {
         //            coreInterface.getFirmwareInfo(platformStack.deviceId)
-        FirmwareManager.firmwareListModel.status = "loading"
+        firmwareListModel.status = "loading"
         //        }
+    }
+
+    function parseFirmwareInfo (firmwareInfo) {
+        firmwareListModel.clear()
+
+        for (let i = 0; i < firmwareInfo.list.length; i++) {
+            let firmware = firmwareInfo.list[i]
+            if (firmware.version === platformStack.firmware_version) {
+                firmware.installed = true
+            } else {
+                firmware.installed = false
+            }
+
+            firmwareListModel.append(firmware)
+        }
+
+        if (firmwareListModel.count > 0) {
+            firmwareListModel.status = "loaded"
+        }
+    }
+
+    ListModel {
+        id: firmwareListModel
+        property int currentIndex: 0
+        property string status: 'initialized'
     }
 
     Text {
@@ -90,7 +114,7 @@ ColumnLayout {
                 id: loaderImage
                 height: 40
                 width: 40
-                playing: FirmwareManager.firmwareListModel.status !== "loaded"
+                playing: firmwareListModel.status !== "loaded"
                 visible: playing
                 source: "qrc:/images/loading.gif"
                 opacity: .25
@@ -104,7 +128,7 @@ ColumnLayout {
 
             Text {
                 text: {
-                    switch (FirmwareManager.firmwareListModel.status) {
+                    switch (firmwareListModel.status) {
                     case "loading":
                         return "Detecting device firmware version..."
                     case "loaded":
@@ -120,15 +144,15 @@ ColumnLayout {
         }
 
         Text {
-            text: "v " + FirmwareManager.firmwareListModel.deviceVersion + ", released " + FirmwareManager.firmwareListModel.deviceTimestamp
+            text: "v " + platformStack.firmware_version
             font.bold: true
             font.pixelSize: 18
-            visible: FirmwareManager.firmwareListModel.status === "loaded"
+            visible: firmwareListModel.status === "loaded"
         }
 
         ColumnLayout{
             id: firmwareVersions
-            visible: FirmwareManager.firmwareListModel.status === "loaded"
+            visible: firmwareListModel.status === "loaded"
 
             Text {
                 text: "Firmware versions available:"
@@ -167,7 +191,7 @@ ColumnLayout {
 
             Repeater {
                 id: firmwareRepeater
-                model: FirmwareManager.firmwareListModel
+                model: firmwareListModel
                 width: parent.width
 
                 delegate: Rectangle {
@@ -323,12 +347,12 @@ ColumnLayout {
                                     case "running":
                                         statusText.text = "Firmware installation complete"
                                         fillBar.width = barBackground.width
-                                        for (let i = 0; i < FirmwareManager.firmwareListModel.count; i++) {
-                                            FirmwareManager.firmwareListModel.get(i).installed = false
+                                        for (let i = 0; i < firmwareListModel.count; i++) {
+                                            firmwareListModel.get(i).installed = false
                                         }
                                         // todo: rather than set UI like this, reset firmwareListModel and re-query getFirmwareInfo from HCS???
-                                        FirmwareManager.firmwareListModel.deviceVersion = model.version
-                                        FirmwareManager.firmwareListModel.deviceTimestamp = model.timestamp
+//                                        firmwareListModel.deviceVersion = model.version
+//                                        firmwareListModel.deviceTimestamp = model.timestamp
                                         model.installed = true
                                         flashStatus.visible = false
                                         break;
