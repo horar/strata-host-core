@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 
 import tech.strata.common 1.0
+import tech.strata.commoncpp 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -53,15 +54,20 @@ StackLayout {
     function loadControl () {
         if (controlLoaded === false){
             Help.setClassId(model.device_id)
+            sgUserSettings.classId = model.class_id
             let qml_control = NavigationControl.getQMLFile(model.class_id, "Control")
             NavigationControl.context.class_id = model.class_id
             NavigationControl.context.device_id = model.device_id
+            NavigationControl.context.sgUserSettings = sgUserSettings
+
             let control = NavigationControl.createView(qml_control, controlContainer)
             delete NavigationControl.context.class_id
             delete NavigationControl.context.device_id
+            delete NavigationControl.context.sgUserSettings
             if (control === null) {
                 NavigationControl.createView(NavigationControl.screens.LOAD_ERROR, controlContainer)
             }
+
             controlLoaded = true
         }
     }
@@ -98,5 +104,10 @@ StackLayout {
         ContentView {
             class_id: model.class_id
         }
+    }
+
+    SGUserSettings {
+        id: sgUserSettings
+        classId: model.class_id
     }
 }

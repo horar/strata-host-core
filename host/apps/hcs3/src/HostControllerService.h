@@ -5,6 +5,7 @@
 #include <rapidjson/stringbuffer.h>
 
 #include <set>
+#include <memory>
 
 #include <QObject>
 #include <QString>
@@ -16,12 +17,17 @@
 #include "Database.h"
 #include "LoggingAdapter.h"
 #include "BoardController.h"
+#include "FirmwareUpdateController.h"
+
 
 struct PlatformMessage;
 
 class HCS_Client;
 class StorageManager;
 
+namespace strata {
+class DownloadManager;
+}
 
 class HostControllerService : public QObject
 {
@@ -52,6 +58,7 @@ signals:
     void platformDocumentsRequested(QByteArray clientId, QString classId);
     void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
+    void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5);
 
 public slots:
     void onAboutToQuit();
@@ -100,6 +107,8 @@ private:
 
     bool broadcastMessage(const QString& message);
 
+    void handleUpdateProgress(int deviceId, QByteArray clientId, FirmwareUpdateController::UpdateProgress progress);
+
     ///////
     //handlers for client (UI)
     void onCmdHCSStatus(const rapidjson::Value* );
@@ -111,9 +120,10 @@ private:
     void onCmdHostUnregister(const rapidjson::Value* );
     void onCmdHostDownloadFiles(const rapidjson::Value* );      //from UI
     void onCmdDynamicPlatformList(const rapidjson::Value* );
+    void onCmdUpdateFirmware(const rapidjson::Value* );
 
-    void platformConnected(const QString &classId, const QString &platformId);
-    void platformDisconnected(const QString &classId, const QString &platformId);
+    void platformConnected(const int deviceId, const QString &classId);
+    void platformDisconnected(const int deviceId);
 
     HCS_Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 
@@ -125,10 +135,14 @@ private:
     LoggingAdapter clientsLogAdapter_;  // should be first, so it will be destroyed last (so we can use logs in destructor)
 
     BoardController boards_;
+    BoardController boardsController_;
     ClientsController clients_;     //UI or other clients
     Database db_;
 
-    StorageManager *storageManager_{nullptr};
+    std::shared_ptr<strata::DownloadManager> downloadManager_;
+    std::unique_ptr<StorageManager> storageManager_;
+
+    FirmwareUpdateController updateController_;
 
     HCS_Dispatcher dispatcher_;
     std::thread dispatcherThread_;

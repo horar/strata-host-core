@@ -11,7 +11,7 @@ set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Gui Widgets Quick Qml WebEngine Charts RemoteObjects
+    COMPONENTS Core Gui Widgets Quick Qml WebEngine Charts RemoteObjects Svg
     REQUIRED
 )
 
@@ -61,6 +61,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Qml
     Qt5::WebEngine
     Qt5::RemoteObjects
+    Qt5::Svg
 
     connector
     HostControllerClient
@@ -83,6 +84,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     #AUTORCC_OPTIONS "--compress;9"
 
     OUTPUT_NAME "${PROJECT_DESCRIPTION}"
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>
 )
 
 if(WIN32)

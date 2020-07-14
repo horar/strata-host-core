@@ -41,7 +41,7 @@ public:
               keepOriginalName(false),
               oneFailsAllFail(true)
         {
-        };
+        }
 
         QString id;
 

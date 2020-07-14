@@ -1,7 +1,7 @@
 #include <BoardManager.h>
 #include "SciModel.h"
 #include "SciDatabaseConnector.h"
-#include "SerialConsoleInterfaceVersion.h"
+#include "Version.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>

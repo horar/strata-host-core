@@ -28,8 +28,15 @@ bool BoardController::sendMessage(const int deviceId, const QByteArray& message)
         return false;
     }
     qCDebug(logCategoryHcsBoard).noquote() << "Sending message to board." << logDeviceId(deviceId);
-    it.value().device->sendMessage(message);
-    return true;
+    return it.value().device->sendMessage(message);
+}
+
+DevicePtr BoardController::getDevice(const int deviceId) const {
+    auto it = boards_.constFind(deviceId);
+    if (it != boards_.constEnd()) {
+        return it.value().device;
+    }
+    return nullptr;
 }
 
 void BoardController::newConnection(int deviceId, bool recognized) {
@@ -42,12 +49,11 @@ void BoardController::newConnection(int deviceId, bool recognized) {
         connect(device.get(), &Device::msgFromDevice, this, &BoardController::messageFromBoard);
         boards_.insert(deviceId, Board(device));
 
-        QString classId = getClassId(deviceId);
-        QString platformId = getPlatformId(deviceId);
+        QString classId = device->property(DeviceProperties::classId);
 
         qCInfo(logCategoryHcsBoard).noquote() << "Connected new board." << logDeviceId(deviceId);
 
-        emit boardConnected(classId, platformId);
+        emit boardConnected(deviceId, classId);
     } else {
         qCWarning(logCategoryHcsBoard).noquote() << "Connected unknown (unrecognized) board." << logDeviceId(deviceId);
     }
@@ -62,14 +68,11 @@ void BoardController::closeConnection(int deviceId)
         return;
     }
 
-    QString classId = it.value().device->property(DeviceProperties::classId);
-    QString platformId = it.value().device->property(DeviceProperties::platformId);
-
     boards_.remove(deviceId);
 
     qCInfo(logCategoryHcsBoard).noquote() << "Disconnected board." << logDeviceId(deviceId);
 
-    emit boardDisconnected(classId, platformId);
+    emit boardDisconnected(deviceId);
 }
 
 void BoardController::messageFromBoard(QString message)
@@ -81,17 +84,17 @@ void BoardController::messageFromBoard(QString message)
 
     int deviceId = device->deviceId();
     QJsonObject wrapper {
-        { "message", message },
+        { JSON_MESSAGE, message },
         { JSON_DEVICE_ID, deviceId }
     };
 
     QJsonObject notification {
-        { "notification", wrapper }
+        { JSON_NOTIFICATION, wrapper }
     };
     QJsonDocument wrapperDoc(notification);
     QString wrapperStrJson(wrapperDoc.toJson(QJsonDocument::Compact));
 
-    QString platformId = getPlatformId(deviceId);
+    QString platformId = device->property(DeviceProperties::platformId);
 
     qCDebug(logCategoryHcsBoard).noquote() << "New board message." << logDeviceId(deviceId);
 
@@ -103,7 +106,8 @@ QString BoardController::createPlatformsList() {
     for (auto it = boards_.constBegin(); it != boards_.constEnd(); ++it) {
         QJsonObject item {
             { JSON_CLASS_ID, it.value().device->property(DeviceProperties::classId) },
-            { JSON_DEVICE_ID, it.value().device->deviceId() }
+            { JSON_DEVICE_ID, it.value().device->deviceId() },
+            { JSON_FW_VERSION, it.value().device->property(DeviceProperties::applicationVer) }
         };
         arr.append(item);
     }
@@ -117,22 +121,6 @@ QString BoardController::createPlatformsList() {
     QJsonDocument doc(msg);
 
     return doc.toJson(QJsonDocument::Compact);
-}
-
-QString BoardController::getClassId(const int deviceId) const {
-    auto it = boards_.constFind(deviceId);
-    if (it != boards_.constEnd()) {
-        return it.value().device->property(DeviceProperties::classId);
-    }
-    return QString();
-}
-
-QString BoardController::getPlatformId(const int deviceId) const {
-    auto it = boards_.constFind(deviceId);
-    if (it != boards_.constEnd()) {
-        return it.value().device->property(DeviceProperties::platformId);
-    }
-    return QString();
 }
 
 bool BoardController::clearClientId(const int deviceId) {

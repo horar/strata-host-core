@@ -9,7 +9,7 @@
 #include "Commands.h"
 #include "CliParser.h"
 
-#include "flasher-cliVersion.h"  // CMake generated file
+#include "Version.h"  // CMake generated file
 
 int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);

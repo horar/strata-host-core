@@ -4,6 +4,7 @@
 #include "SGJLinkConnector.h"
 #include "SGSortFilterProxyModel.h"
 #include "SGQWTPlot.h"
+#include "SGUserSettings.h"
 #include "mqtt/SGMqttClient.h"
 #include "mqtt/SGSslConfiguration.h"
 
@@ -22,6 +23,7 @@ void CommonCppPlugin::registerTypes(const char *uri)
     qmlRegisterType<SGSortFilterProxyModel>(uri, 1, 0, "SGSortFilterProxyModel");
     qmlRegisterType<SGQWTPlot>(uri, 1, 0, "SGQWTPlot");
     qmlRegisterType<SGQWTPlotCurve>(uri, 1, 0, "SGQWTPlotCurve");
+    qmlRegisterType<SGUserSettings>(uri, 1, 0, "SGUserSettings");
     qmlRegisterType<QmlMqttClient>(uri, 1, 0, "SGMqttClient");
     qmlRegisterUncreatableType<QmlMqttSubscription>(uri, 1, 0, "SGMqttSubscription", QLatin1String("Subscriptions are read-only"));
     qmlRegisterType<QmlSslConfiguration>(uri, 1, 0, "SGSslConfiguration");
