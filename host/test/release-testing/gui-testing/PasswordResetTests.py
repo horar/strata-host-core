@@ -1,9 +1,17 @@
+'''
+Tests involving resetting user passwords.
+'''
 import unittest
 import GUIInterface.Login as login
 import GUIInterface.General as general
 import TestCommon
 
+INVALID_USER = "bad@bad.com"
+
 class PasswordResetInvalidTest(unittest.TestCase):
+    '''
+    Test resetting the password of a nonexistant user
+    '''
     def setUp(self) -> None:
         with general.Latency(TestCommon.ANIMATION_LATENCY):
             login.setToLoginTab()
@@ -21,7 +29,7 @@ class PasswordResetInvalidTest(unittest.TestCase):
         self.assertIsNotNone(general.tryRepeat(login.findResetPasswordInput))
         self.assertIsNotNone(login.findResetPasswordSubmitDisabled)
 
-        general.inputTextAt(login.findResetPasswordInput(), "bad@bad.com")
+        general.inputTextAt(login.findResetPasswordInput(), INVALID_USER)
 
         self.assertIsNotNone(login.findResetPasswordSubmitEnabled())
         general.clickAt(login.findResetPasswordSubmitEnabled())
@@ -30,6 +38,9 @@ class PasswordResetInvalidTest(unittest.TestCase):
 
 
 class PasswordResetValidTest(unittest.TestCase):
+    '''
+    Test resetting the password of a valid user
+    '''
     def setUp(self) -> None:
         with general.Latency(TestCommon.ANIMATION_LATENCY):
             login.setToLoginTab()

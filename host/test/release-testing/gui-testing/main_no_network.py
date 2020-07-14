@@ -3,6 +3,7 @@ Testing script to be ran under a disconnected network. Strata application must n
 '''
 import NoNetworkTests
 import unittest
+import TestCommon
 
 if __name__ == "__main__":
     suite = unittest.TestSuite([
@@ -10,5 +11,7 @@ if __name__ == "__main__":
                                 ])
 
     runner = unittest.TextTestRunner(verbosity=2)
+    result = runner.run(suite)
 
-    runner.run(suite)
+    TestCommon.writeResults(len(result.errors) + len(result.failures), result.testsRun)
+

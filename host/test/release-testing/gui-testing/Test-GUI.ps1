@@ -1,74 +1,85 @@
-function Start-SDSAndWait {
-    Param (
-        [Parameter(Mandatory = $false)][int]$seconds
-    )
-    # Set-Location $SDSRootDir isneeded to resolve the ddl issue when running
-    # HCS seperetly so that Windows will look into this directory for dlls
-    Set-Location "C:\Program Files\ON Semiconductor\Strata Developer Studio"
+<#
+.SYNOPSIS
+Opens and tests Strata's GUI. Do not touch the mouse or keyboard while this test runs and make sure no application will open in front of Strata while the test is running.
+.DESCRIPTION
+This is part of the automated test script for the master test plan
+https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist
 
+This tests consists of:
+* Logging in with a board connected
+* Logging in with a board disconnected
+* Sending user feedback
+* Attempting to log in with invalid user information
+* Attempting to create a new user with existing information
+* Attempting to create a new user with new information
+* Attempting to login/create a new user when the network is disconnected
+* Attempting to reset the user's password, with invalid and valid usernames.
+* Logging in, closing Strata, and reopening it.
 
-    Start-Process -FilePath "Strata Developer Studio" -WindowStyle Maximized
-    if ($seconds) {
-        Start-Sleep -Seconds 1
-    }
-    Set-Location "C:\Users\SEC\Dev2\spyglass\host\test\release-testing"
-}
-function Start-HCS {
-    # Set-Location $SDSRootDir is needed to resolve the ddl issue when running
-    # HCS seperetly so that Windows will look into this directory for dlls
-    Set-Location "C:\Program Files\ON Semiconductor\Strata Developer Studio"
-        Start-Sleep -Seconds 1
+.INPUTS
+StrataPath: The path to the Strata executable.
+.OUTPUTS
 
-    Start-Process -FilePath "hcs" -ArgumentList "-f `"\HCS\hcs.config`""
-    Set-Location $TestRoot
-}
+.NOTES
+Version:        1.0
+Creation Date:  07/10/2020
+#>
 
 function Test-Gui() {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)][string]$PythonScriptPath,    # Path to control-view-test.py
-        [Parameter(Mandatory = $true)][string]$StrataPath           # Path to Strata executable
-    )
+    Write-Host "Starting GUI testing"
 
-    $DPISetting = (Get-ItemProperty 'HKCU:\Control Panel\Desktop\WindowMetrics' -Name AppliedDPI).AppliedDPI
-    switch ($DPISetting)
-    {
-        96 {$ActualDPI = 100}
-        120 {$ActualDPI = 125}
-        144 {$ActualDPI = 150}
-        192 {$ActualDPI = 200}
-    }
-    Write-Host "Screen DPI is " $ActualDPI
-
-    #Run basic test cases
-    #Start-SDSAndWait -seconds 5
-#    If (Get-Process -Name "hcs" -ErrorAction SilentlyContinue) {
-#        Stop-Process -Name "hcs" -Force
-#        Start-Sleep -Seconds 1
+#    $DPISetting = (Get-ItemProperty 'HKCU:\Control Panel\Desktop\WindowMetrics' -Name AppliedDPI).AppliedDPI
+#    switch ($DPISetting)
+#    {
+#        96 {$ActualDPI = 100}
+#        120 {$ActualDPI = 125}
+#        144 {$ActualDPI = 150}
+#        192 {$ActualDPI = 200}
 #    }
+
+    # Stop any previously running HCS processes
+    Stop-HCS
+    # Stop any previously running SDS processes
+    Stop-SDS
+
+    Write-Host "Running basic tests..."
+
+    #run basic tests
     Start-SDSAndWait
-    Start-Process "python" -ArgumentList "`"C:\Users\SEC\Dev2\spyglass\host\test\release-testing\gui-testing\main.py`"", "`"C:\Program Files\ON Semiconductor\Strata Developer Studio\Strata Developer Studio.exe`"", $ActualDPI -NoNewWindow -PassThru -Wait
+    Start-Process $PythonExec -ArgumentList $PythonGUIMain -NoNewWindow -Wait 
     Stop-Process -Name "Strata Developer Studio" -Force
+
+    Write-Host "Disabling network for Strata..."
+
     #Run tests without network
-    New-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network" -Direction Outbound -Program "C:\Program Files\ON Semiconductor\Strata Developer Studio\Strata Developer Studio.exe" -Action Block
+    #BLock Strata from making outbound requests
+    (New-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network" -Direction Outbound -Program $SDSExecFile -Action Block) | Out-Null
     Start-SDSAndWait -seconds 1
-    Start-Process "python" -ArgumentList "C:\Users\SEC\Dev2\spyglass\host\test\release-testing\gui-testing\main_no_network.py" -NoNewWindow -PassThru -Wait
+
+    Write-Host "Testing Strata with no network connection..."
+    Start-Process $PythonExec -ArgumentList $PythonGUIMainNoNetwork -NoNewWindow -Wait 
 
     Stop-Process -Name "Strata Developer Studio" -Force
+
+    Write-Host "Enabling network for Strata..."
     Remove-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network"
 
-#    Test logging in, closing strata, and reopening it
+    #Test logging in, closing strata, and reopening it
     #Login to strata
+    Write-Host "Testing logging in, closing Strata, reopening Strata..."
+
     Start-SDSAndWait -seconds 1
-    Start-Process "python" -ArgumentList "C:\Users\SEC\Dev2\spyglass\host\test\release-testing\gui-testing\main_login_test_pre.py" -NoNewWindow -PassThru -Wait
+    Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPre -NoNewWindow -Wait 
 
     Stop-Process -Name "Strata Developer Studio" -Force
 
     #Test for Strata automatically going to the platform view
     Start-SDSAndWait -seconds 1
-    Start-Process "python" -ArgumentList "C:\Users\SEC\Dev2\spyglass\host\test\release-testing\gui-testing\main_login_test_post.py" -NoNewWindow -PassThru -Wait
+    Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPost -NoNewWindow -Wait
 
     Stop-Process -Name "Strata Developer Studio" -Force
 
+    $result = (Get-Content "$TestRoot\gui-testing\results.txt") -split ','
+    return $result
+
 }
-Test-Gui -PythonScriptPath="main.py" -StrataPath="C:\Program Files\ON Semiconductor\Strata Developer Studio"

@@ -1,3 +1,6 @@
+'''
+Tests to be ran after logging into Strata and closing it.
+'''
 import unittest
 import GUIInterface.PlatformView as platform
 import GUIInterface.General as general

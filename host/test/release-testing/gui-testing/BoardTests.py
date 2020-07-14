@@ -1,5 +1,7 @@
+'''
+Tests involving logging in with boards attached or disconnected.
+'''
 import unittest
-import pyautogui
 import GUIInterface.Login as login
 import GUIInterface.PlatformView as platform
 import GUIInterface.General as general

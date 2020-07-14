@@ -1,3 +1,6 @@
+'''
+Tests involving the feedback system.
+'''
 import unittest
 import GUIInterface.General as general
 import GUIInterface.Login as login

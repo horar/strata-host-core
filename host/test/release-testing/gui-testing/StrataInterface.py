@@ -4,10 +4,6 @@ Singleton modlue for connecting and sending commands to strata.
 import zmq
 import json
 import threading
-import win32process
-import win32con
-import subprocess
-import os
 DEFAULT_URL = "tcp://127.0.0.1:5563"
 
 __client:zmq.Socket
@@ -16,6 +12,11 @@ __proc = None
 
 
 def bind(url = DEFAULT_URL):
+    '''
+    Bind to the strata instance at url.
+    :param url:
+    :return:
+    '''
     context = zmq.Context.instance()
 
     global __client
@@ -34,13 +35,18 @@ def __init():
     initPlatformList()
 
 def initPlatformList():
+    '''
+    Wait untill Strata requests a platform list and send an empty one.
+    :return:
+    '''
+    global __client
     while __client.recv() != b'{"hcs::cmd":"dynamic_platform_list","payload":{}}':
         pass
     emptyDynamicPlatformList = b'{"hcs::notification":{"list":[{"class_id":"201"}],"type":"all_platforms"}}'
     __client.send_multipart([__strataId, emptyDynamicPlatformList])
 
 
-def bindToStrata(strataPath, url = DEFAULT_URL):
+def bindToStrata(url = DEFAULT_URL):
     '''
     Bind to HCS port and start strata
     :param strataPath:
@@ -97,11 +103,13 @@ def openPlatform(classId):
     global __strataId
 
     __client.send_multipart([__strataId, bytes(json.dumps(command), 'utf-8')])
+
 def cleanup():
-    # global __proc
-    # print(__proc)
+    '''
+    Cleanup open resources
+    :return:
+    '''
     zmq.Context().destroy()
-    # __proc.terminate()
 
 
 def closePlatforms():

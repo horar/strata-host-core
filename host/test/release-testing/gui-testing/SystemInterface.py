@@ -16,6 +16,7 @@ USER_OPTION = "user"
 FIRST_NAME_OPTION = "first_name"
 LAST_NAME_OPTION = "last_name"
 AUTHENTICATION_SERVER_OPTION = "authentication_server"
+
 def findProcess(name):
     '''
     Find a process with the name "name"
@@ -42,14 +43,14 @@ def removeLoginInfo():
         if(os.path.exists(configPath)):
             config = configparser.ConfigParser()
             config.read(configPath)
-
-            config[USERNAME_SECTION][USERNAME_OPTION] = "[]"
-            config[USERNAME_SECTION][USERNAME_INDEX_OPTION] = "0"
-
-            config[LOGIN_SECTION][USER_OPTION] = ""
-            config[LOGIN_SECTION][TOKEN_OPTION] = ""
-            config[LOGIN_SECTION][FIRST_NAME_OPTION] = ""
-            config[LOGIN_SECTION][LAST_NAME_OPTION] = ""
+            if USERNAME_SECTION in config:
+                config[USERNAME_SECTION][USERNAME_OPTION] = "[]"
+                config[USERNAME_SECTION][USERNAME_INDEX_OPTION] = "0"
+            if LOGIN_SECTION in config:
+                config[LOGIN_SECTION][USER_OPTION] = ""
+                config[LOGIN_SECTION][TOKEN_OPTION] = ""
+                config[LOGIN_SECTION][FIRST_NAME_OPTION] = ""
+                config[LOGIN_SECTION][LAST_NAME_OPTION] = ""
 
             with open(configPath, 'w') as configfile:
                 config.write(configfile)
@@ -83,6 +84,7 @@ def closeAccount():
             logging.warning("Could not close account for " + username + " (status code: " + result.status_code + ")")
     else:
         logging.warning("Token, username, or authorization server url is empty")
+
 def deleteLoggedInUser():
     '''
     Delete the currently logged in user from auth server and ini file.

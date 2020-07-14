@@ -2,7 +2,6 @@ import unittest
 import GUIInterface.General as general
 import GUIInterface.Login as login
 import GUIInterface.Register as register
-import pyautogui
 import TestCommon
 
 INVALID_USERNAME = "badusername"
@@ -20,7 +19,8 @@ class LoginInvalidTest(unittest.TestCase):
     def tearDown(self) -> None:
         general.deleteTextAt(login.findUsernameInput())
 
-        with general.Latency(TestCommon.ANIMATION_LATENCY, 0):
+        #Error popup moves the password input when it dissapears
+        with general.Latency(0.7, 0):
             general.deleteTextAt(login.findPasswordInput())
 
     def test_login_submit(self):
