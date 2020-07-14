@@ -20,7 +20,7 @@ function Assert-PythonAndPyzmq {
     # Attempt to run Python and import PyZMQ, display error if operation fails
     Try {
         If ((Start-Process $PythonExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
-            If (!(Start-Process $PythonExec '-c "import zmq"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
+            If (!(Start-Process $PythonExec '-c "import zmq; import pyautogui; import cv2; import requests"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
                 Write-Host -ForegroundColor Red "Error: ZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions.`nAborting."
                 Exit-TestScript -1
             }
