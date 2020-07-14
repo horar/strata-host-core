@@ -33,9 +33,6 @@ QString LogModel::populateModel(const QString &path, const qint64 &lastPosition)
     if (fileModel_.containsFilePath(path) == false) {
         fileModel_.append(path);
     }
-    setNewestTimestamp(QDateTime());
-    setOldestTimestamp(QDateTime());
-    previousTimestamp_ = QDateTime();
 
     QTextStream stream(&file);
     stream.seek(lastPosition);
@@ -147,6 +144,11 @@ QDateTime LogModel::newestTimestamp() const
 }
 
 void LogModel::updateTimestamps() {
+
+    setNewestTimestamp(QDateTime());
+    setOldestTimestamp(QDateTime());
+    previousTimestamp_ = QDateTime();
+
     const auto validTimestamp = [](const LogItem* item) {
         return item->timestamp.isNull() == false;
     };
@@ -162,9 +164,6 @@ void LogModel::updateTimestamps() {
     }
 
     if (data_.isEmpty()) {
-        setNewestTimestamp(QDateTime());
-        setOldestTimestamp(QDateTime());
-        previousTimestamp_ = QDateTime();
         followingInitialized_ = false;
     }
 }
@@ -254,10 +253,6 @@ void LogModel::removeRowsFromModel(const uint pathHash)
     QList<LogItem*>::iterator it = data_.begin();
     bool gotBeginRemoveAt = false;
     bool gotChunk = false;
-
-    setNewestTimestamp(QDateTime());
-    setOldestTimestamp(QDateTime());
-    previousTimestamp_ = QDateTime();
 
     while (it != data_.end()) {
 
