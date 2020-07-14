@@ -66,6 +66,22 @@ function Assert-PythonScripts {
     If (!(Test-Path $PythonPlatformIdentificationTest)) {
         Exit-TestScript -1 "Error: cannot find Python script at $PythonPlatformIdentificationTest.`nAborting."
     }
+    If (!(Test-Path $PythonGUIMain)) {
+        Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMain.`nAborting."
+    }
+    If (!(Test-Path $PythonGUIMainLoginTestPre)) {
+        Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMainLoginTestPre.`nAborting."
+    }
+    If (!(Test-Path $PythonGUIMainLoginTestPost)) {
+        Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMainLoginTestPost.`nAborting."
+    }
+    If (!(Test-Path $PythonGUIMainNoNetwork)) {
+        Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMainNoNetwork.`nAborting."
+    }
+
+
+
+
 }
 
 # Check if PS module 'PSSQLite' is installed
