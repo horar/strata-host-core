@@ -1,4 +1,3 @@
-#include <iostream>
 #include <thread>
 
 #include "Database.h"
@@ -48,7 +47,7 @@ int main() {
     }
 
     // Set document body with valid JSON
-    body_string = R"foo({"name": "My Name", "age" : 50, "myobj" : { "myarray" : [1,2,3,4], "mykey" : "myvalue"}})foo";
+    body_string = R"foo({"name": "My Name", "age" : 1, "myobj" : { "myarray" : [1,2,3,4], "mykey" : "myvalue"}})foo";
     if (!Doc_1.setBody(body_string)) {
         DEBUG("Failed to set document contents, body must be in JSON format.");
     } else {
@@ -60,7 +59,7 @@ int main() {
 
     // Retrieve contents of "Doc_1" in JSON format (QString)
     QString result_str = DB_1.getDocumentAsStr("Doc_1");
-    DEBUG("%s", ("Document contents: " + result_str.toStdString()).c_str());
+    qDebug() << "Document contents: " << result_str;
 
     // Create a document "Doc_2" on DB 1
     CouchbaseDocument Doc_2("Doc_2");
@@ -98,6 +97,14 @@ int main() {
         qDebug() << "Key =" << key << ", value =" << value;
     }
 
+    // Delete document "Doc_2"
+    DB_1.deleteDoc("Doc_2");
+
+    // Get all document keys in a QStringList
+    document_keys = DB_1.getAllDocumentKeys();
+    DEBUG("All document keys:");
+    qDebug() << document_keys;
+
     /********************************************
      * REPLICATOR API *
      *******************************************/
@@ -120,7 +127,7 @@ int main() {
     if (DB_2.startReplicator(replicator_url)) {
         DEBUG("Replicator successfully started.");
     } else {
-        DEBUG("Replicator failed to start.");
+        qDebug() << "Error: replicator failed to start. Verify endpoint URL" << replicator_url << "is valid.";
     }
 
     // Wait until replication is finished
@@ -142,17 +149,17 @@ int main() {
 
     // Start replicator on DB 3 with all non-default options
     auto changeListener = [](cbl::Replicator, const CBLReplicatorStatus) {
-        std::cout << "CouchbaseDatabaseSampleApp changeListener -> replication status changed!" << std::endl;
+        qDebug() << "CouchbaseDatabaseSampleApp changeListener -> replication status changed!\n";
     };
 
     auto documentListener = [](cbl::Replicator, bool, const std::vector<CBLReplicatedDocument, std::allocator<CBLReplicatedDocument>>) {
-        std::cout << "CouchbaseDatabaseSampleApp documentListener -> document status changed!" << std::endl;
+        qDebug() << "CouchbaseDatabaseSampleApp documentListener -> document status changed!\n";
     };
 
     if (DB_3.startReplicator(replicator_url, replicator_username, replicator_password, replicator_channels, "pull", changeListener, documentListener)) {
         DEBUG("Replicator successfully started.");
     } else {
-        DEBUG("Replicator failed to start.");
+        qDebug() << "Error: replicator failed to start. Verify endpoint URL" << replicator_url << "is valid.";
     }
 
     // Wait until replication is finished
@@ -164,7 +171,7 @@ int main() {
         std::this_thread::sleep_for(REPLICATOR_RETRY_INTERVAL);
         if (DB_3.getReplicatorError() != 0 || retries >= REPLICATOR_RETRY_MAX) {
             DB_3.stopReplicator();
-            DEBUG("Error with execution of replicator.");
+            qDebug() << "Error with execution of replicator. Verify endpoint URL" << replicator_url << "is valid.";
             break;
         }
     }

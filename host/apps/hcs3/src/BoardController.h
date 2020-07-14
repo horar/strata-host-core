@@ -60,20 +60,6 @@ public:
     QString createPlatformsList();
 
     /**
-     * Gets class ID of board specified by device ID
-     * @param deviceId
-     * @return class ID
-     */
-    QString getClassId(const int deviceId) const;
-
-    /**
-     * Gets platform ID of board specified by device ID
-     * @param deviceId
-     * @return platform ID
-     */
-    QString getPlatformId(const int deviceId) const;
-
-    /**
      * Clears client ID for board specified by device ID
      * @param connectionId
      * @return true if operation was successful, otherwise false (invalid deviceId)
@@ -88,8 +74,8 @@ public:
     bool clearClientIdFromAllDevices(const QByteArray& clientId);
 
 signals:
-    void boardConnected(int deviceId, QString classId, QString platformId);
-    void boardDisconnected(QString classId, QString platformId);
+    void boardConnected(int deviceId, QString classId);
+    void boardDisconnected(int deviceId);
     void boardMessage(QString platformId, QString message);
 
 private slots:  // slots for signals from BoardManager

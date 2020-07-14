@@ -43,6 +43,8 @@ public:
 
     bool save(CouchbaseDocument *doc);
 
+    bool deleteDoc(const std::string &id);
+
     /**
      * Returns a document by given ID
      * @param id document ID
@@ -108,6 +110,7 @@ public:
     void stopReplicator();
 
     std::string getReplicatorStatus();
+
     int getReplicatorError();
 
 private:
@@ -130,6 +133,8 @@ private:
             document_listener_callback = nullptr;
         }
     };
+
+    bool documentExistInDB(const std::string &id);
 
     void replicatorStatusChanged(cbl::Replicator rep, const CBLReplicatorStatus &status);
 
