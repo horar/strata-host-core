@@ -181,7 +181,7 @@ Rectangle {
                 id:audioRailLabel
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 18
-                text:"Audio\nrail"
+                text:"Audio"
                 width:70
                 horizontalAlignment: Text.AlignRight
             }
