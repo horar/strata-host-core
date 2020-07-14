@@ -267,13 +267,11 @@ Item {
             policy: ScrollBar.AsNeeded
         }
 
-        onMovingVerticallyChanged: {
-            if (movingVertically) {
-                logViewerMain.automaticScroll = false
-            }
-
-            if (movingVertically === false && logListView.atYEnd) {
+        onContentYChanged: {
+            if (logListView.atYEnd) {
                 logViewerMain.automaticScroll = true
+            } else {
+                logViewerMain.automaticScroll = false
             }
         }
 
