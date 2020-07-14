@@ -16,7 +16,6 @@ Rectangle {
     property int theRunTime: platformInterface.battery_status.total_run_time
     property int theAmbientTemperature: platformInterface.battery_status.ambient_temp
     property int theBatteryTemperature: platformInterface.battery_status.battery_temp
-    property int theFloatVoltage: platformInterface.charger_status.float_voltage
     property string theChargeMode: platformInterface.charger_status.charge_mode
     property string thePowerMode: platformInterface.charger_status.audio_power_mode
     property int theTimeToEmpty:platformInterface.battery_status.time_to_empty
@@ -358,32 +357,7 @@ Rectangle {
                 color: "grey"
             }
         }
-        Row{
-            id:floatVoltageRow
-            spacing:10
 
-            Text{
-                id:floatVoltageLabel
-                font.pixelSize: 18
-                width:telemetryTextWidth
-                text:"Float voltage:"
-                horizontalAlignment: Text.Text.AlignRight
-                color: "black"
-            }
-            Text{
-                id:floatVoltageValue
-                font.pixelSize: 18
-                text:theFloatVoltage
-                horizontalAlignment: Text.AlighLeft
-                color: "black"
-            }
-            Text{
-                id:floatVoltageUnit
-                font.pixelSize: 15
-                text:"V"
-                color: "grey"
-            }
-        }
         Row{
             id:chargeModeRow
             spacing:10
