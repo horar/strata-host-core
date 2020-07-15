@@ -133,7 +133,7 @@ Rectangle {
             anchors.leftMargin: 10
             anchors.right:parent.right
             anchors.rightMargin: 10
-            spacing:10
+            spacing:5
             width:parent.width
             Text{
                 id:bottomLightColorLabel
@@ -170,7 +170,7 @@ Rectangle {
             anchors.left:colorRow.left
             anchors.top:colorRow.bottom
             anchors.topMargin: 10
-            spacing:10
+            spacing:5
             width:parent.width
             Text{
                 id:bottomLightBrightnessLabel

@@ -214,7 +214,7 @@ Rectangle {
 
         }
         Row{
-            spacing:10
+            spacing:5
 
             Text{
                 id:floatVoltageLabel
@@ -265,7 +265,7 @@ Rectangle {
                 spacing: 10
 
                 Row{
-                    spacing:10
+                    spacing:5
 
                     Text{
                         id:ibusCurrentLabel
@@ -296,7 +296,7 @@ Rectangle {
                     Text{
                         id:busCurrentLimitUnit
                         anchors.verticalCenter: ibusCurrentLabel.verticalCenter
-                        anchors.verticalCenterOffset: 10
+                        anchors.verticalCenterOffset: 5
                         font.pixelSize: 15
                         text:"mA"
                         color: "grey"
@@ -304,7 +304,7 @@ Rectangle {
 
                 }
                 Row{
-                    spacing:10
+                    spacing:5
 
                     Text{
                         id:fastChargeLabel
@@ -335,7 +335,7 @@ Rectangle {
                     Text{
                         id:fastChargeUnit
                         anchors.verticalCenter: fastChargeLabel.verticalCenter
-                        anchors.verticalCenterOffset: 10
+                        anchors.verticalCenterOffset: 5
                         font.pixelSize: 15
                         text:"mA"
                         color: "grey"
@@ -343,7 +343,7 @@ Rectangle {
 
                 }
                 Row{
-                    spacing:10
+                    spacing:5
 
                     Text{
                         id:prechargeCurrentLabel
@@ -375,14 +375,14 @@ Rectangle {
                     Text{
                         id:prechargeCurrentLimitUnit
                         anchors.verticalCenter: prechargeCurrentLabel.verticalCenter
-                        anchors.verticalCenterOffset: 10
+                        anchors.verticalCenterOffset: 5
                         font.pixelSize: 15
                         text:"mA"
                         color: "grey"
                     }
                 }
                 Row{
-                    spacing:10
+                    spacing:5
 
                     Text{
                         id:terminationCurrentLabel
@@ -414,7 +414,7 @@ Rectangle {
                     Text{
                         id:terminationCurrentLimitUnit
                         anchors.verticalCenter: terminationCurrentLabel.verticalCenter
-                        anchors.verticalCenterOffset: 10
+                        anchors.verticalCenterOffset: 5
                         font.pixelSize: 15
                         text:"mA"
                         color: "grey"

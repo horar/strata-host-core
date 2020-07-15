@@ -76,7 +76,7 @@ Rectangle {
         anchors.right:parent.right
         Row{
             id:timeToFullRow
-            spacing:10
+            spacing:5
             width:parent.width
 
             Text{
@@ -254,7 +254,7 @@ Rectangle {
         anchors.right:parent.right
         Row{
             id:stateOfHealthRow
-            spacing:10
+            spacing:5
             width:parent.width
 
             Text{
@@ -281,7 +281,7 @@ Rectangle {
         }
         Row{
             id:runTimeRow
-            spacing:10
+            spacing:5
 
             Text{
                 id:runTimeLabel
@@ -307,7 +307,7 @@ Rectangle {
         }
         Row{
             id:ambientTemperatureRow
-            spacing:10
+            spacing:5
 
             Text{
                 id:ambientTemperatureLabel
@@ -333,7 +333,7 @@ Rectangle {
         }
         Row{
             id:batteryTemperatureRow
-            spacing:10
+            spacing:5
 
             Text{
                 id:batteryTemperatureLabel
@@ -360,7 +360,7 @@ Rectangle {
 
         Row{
             id:chargeModeRow
-            spacing:10
+            spacing:5
 
             Text{
                 id:chargeModeLabel
@@ -381,7 +381,7 @@ Rectangle {
         }
         Row{
             id:powerModeRow
-            spacing:10
+            spacing:5
 
             Text{
                 id:powerModeLabel

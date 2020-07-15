@@ -11,6 +11,7 @@ Rectangle {
 
     property color backgroundColor: "#D1DFFB"
     property color accentColor:"#86724C"
+    property int   labelWidth: 150      //to keep labels aligned right
 
     property bool batteryIsMissing: platformInterface.battery_status.no_battery_indicator
 
@@ -42,6 +43,8 @@ Rectangle {
         anchors.leftMargin:10
         anchors.top: parent.top
         anchors.topMargin: 10
+        width: labelWidth
+        horizontalAlignment: Text.AlignRight
         text:"Audio voltage:"
         color: "black"
         visible:!batteryIsMissing
@@ -67,6 +70,16 @@ Rectangle {
             platformInterface.set_audio_amp_voltage.update(0,value,"battery")
         }
     }
+    Text{
+        id:audioVoltageSliderUnit
+        anchors.verticalCenter: audioVoltageSlider.verticalCenter
+        anchors.verticalCenterOffset: 0
+        anchors.left: audioVoltageSlider.right
+        anchors.leftMargin: 5
+        font.pixelSize: 15
+        text:"V"
+        color: "grey"
+    }
 
     Text{
         id:controllerBypassLabel
@@ -75,6 +88,8 @@ Rectangle {
         anchors.leftMargin:10
         anchors.top: audioVoltageLabel.bottom
         anchors.topMargin: 20
+        width: labelWidth
+        horizontalAlignment: Text.AlignRight
         text:"Controller bypass:"
         color: "black"
         visible:!batteryIsMissing
@@ -101,6 +116,8 @@ Rectangle {
         anchors.leftMargin:10
         anchors.top: controllerBypassLabel.bottom
         anchors.topMargin: 20
+        width:labelWidth
+        horizontalAlignment: Text.AlignRight
         text:"Sink capabilities:"
         color: "black"
         visible:!batteryIsMissing
