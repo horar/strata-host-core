@@ -5,13 +5,16 @@ Database::Database(const QString &db_name, const QString &db_path, QObject *pare
     database_ = std::make_unique<CouchbaseDatabase>(db_name.toStdString(), db_path.toStdString(), parent);
 }
 
-bool Database::open()
-{
+bool Database::open() {
     return database_->open();
 }
 
 bool Database::save(CouchbaseDocument *doc) {
     return database_->save(doc);
+}
+
+bool Database::deleteDoc(const QString &id) {
+    return database_->deleteDoc(id.toStdString());
 }
 
 QString Database::getDocumentAsStr(const QString &id) {

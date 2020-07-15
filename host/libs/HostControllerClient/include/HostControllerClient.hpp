@@ -18,6 +18,8 @@ public:
     HostControllerClient(const char *net_in_address);
     ~HostControllerClient();
 
+    bool close();
+    bool closeContext();
     bool sendCmd(const std::string &cmd);
 
     std::string receiveCommandAck();

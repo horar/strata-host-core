@@ -84,7 +84,7 @@ void DeviceOperations::flashFirmwareChunk(const QVector<quint8>& chunk, int chun
 void DeviceOperations::backupFirmwareChunk() {
     if (startOperation(DeviceOperation::BackupFirmwareChunk)) {
         if (commandList_.empty()) {
-            commandList_.emplace_back(std::make_unique<CmdBackupFirmware>(device_, backupChunk_));
+            commandList_.emplace_back(std::make_unique<CmdBackupFirmware>(device_, backupChunk_, backupChunksCount_));
             currentCommand_ = commandList_.begin();
         }
         if (currentCommand_ != commandList_.end()) {
@@ -114,6 +114,10 @@ int DeviceOperations::deviceId() const {
 
 QVector<quint8> DeviceOperations::recentBackupChunk() const {
     return backupChunk_;
+}
+
+int DeviceOperations::backupChunksCount() const {
+    return backupChunksCount_;
 }
 
 void DeviceOperations::handleSendCommand() {

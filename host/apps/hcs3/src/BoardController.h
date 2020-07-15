@@ -34,7 +34,7 @@ public:
     BoardController();
 
     /**
-     * Initializes the board manager
+     * Initializes the board controller
      */
     void initialize();
 
@@ -47,55 +47,17 @@ public:
     bool sendMessage(const int deviceId, const QByteArray& message);
 
     /**
+     * Gets device specified by device ID
+     * @param deviceId
+     * @return device or nullptr if such device with device ID is not available
+     */
+    strata::device::DevicePtr getDevice(const int deviceId) const;
+
+    /**
      * Creates JSON with list of platforms
      * @return list of platforms in JSON format
      */
     QString createPlatformsList();
-
-    /**
-     * Gets client ID of board specified by device ID
-     * @param deviceId
-     * @return client ID
-     */
-    QByteArray getClientId(const int deviceId) const;
-
-    /**
-     * Gets class ID of board specified by device ID
-     * @param deviceId
-     * @return class ID
-     */
-    QString getClassId(const int deviceId) const;
-
-    /**
-     * Gets platform ID of board specified by device ID
-     * @param deviceId
-     * @return platform ID
-     */
-    QString getPlatformId(const int deviceId) const;
-
-    /**
-     * Gets device ID for board with specified client ID
-     * @param[in] clientId
-     * @param[out] deviceId
-     * @return true if operation was successful, otherwise false (invalid clientId)
-     */
-    bool getDeviceIdByClientId(const QByteArray& clientId, int& deviceId) const;
-
-    /**
-     * Gets device ID for first board with specified class ID
-     * @param[in] classId
-     * @param[out] deviceId
-     * @return true if operation was successful, otherwise false (invalid deviceId)
-     */
-    bool getFirstDeviceIdByClassId(const QString& classId, int& deviceId) const;
-
-    /**
-     * Sets client ID for board specified by device ID
-     * @param clientId
-     * @param deviceId
-     * @return true if operation was successful, otherwise false
-     */
-    bool setClientId(const QByteArray& clientId, const int deviceId);
 
     /**
      * Clears client ID for board specified by device ID
@@ -104,9 +66,16 @@ public:
      */
     bool clearClientId(const int deviceId);
 
+    /**
+     * Clears specified client ID from all boards
+     * @param clientId
+     * @return true if operation was successful, otherwise false (clientId not attached to any boards)
+     */
+    bool clearClientIdFromAllDevices(const QByteArray& clientId);
+
 signals:
-    void boardConnected(QString classId, QString platformId);
-    void boardDisconnected(QString classId, QString platformId);
+    void boardConnected(int deviceId, QString classId);
+    void boardDisconnected(int deviceId);
     void boardMessage(QString platformId, QString message);
 
 private slots:  // slots for signals from BoardManager

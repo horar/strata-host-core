@@ -17,13 +17,38 @@ Item {
 
     property bool isCurrentItem: false
 
+    Rectangle {
+        width: 50
+        color: "#29e335"//"#33b13b"
+        opacity: 1
+        height: parent.height-1
+        visible: model.connected
+    }
+
     MouseArea{
         anchors{
             fill: parent
         }
         onClicked: {
-            PlatformSelection.platformListModel.currentIndex = index
+            PlatformSelection.platformSelectorModel.currentIndex = index
         }
+    }
+
+    DropShadow {
+        id: dropShadow
+        anchors {
+            centerIn: imageContainer
+        }
+        width: imageContainer.width
+        height: imageContainer.height
+        horizontalOffset: 1
+        verticalOffset: 3
+        radius: 15.0
+        samples: radius*2
+        color: "#cc000000"
+        source: imageContainer
+//        z: -1
+        cached: true
     }
 
     Rectangle {
@@ -43,21 +68,31 @@ Item {
             anchors.fill: imageContainer
             visible: model.image !== undefined && status == Image.Ready
 
-            onStatusChanged: {
-                if (image.status == Image.Error){
-                    console.error(Logger.devStudioCategory, "Platform Selector Delegate: Image failed to load - corrupt or does not exist:", model.image)
-                    source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
-                }
+            property string modelSource: model.image
+
+            onModelSourceChanged: {
+                initialize()
             }
 
             Component.onCompleted: {
+                initialize()
+            }
+
+            function initialize() {
                 if (model.image.length === 0) {
                     console.error(Logger.devStudioCategory, "Platform Selector Delegate: No image source supplied by platform list")
                     source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
                 } else if (SGUtilsCpp.isFile(SGUtilsCpp.urlToLocalFile(model.image))) {
-                    source = Qt.binding(function(){ return model.image })
+                    source = model.image
                 } else {
                     imageCheck.start()
+                }
+            }
+
+            onStatusChanged: {
+                if (image.status == Image.Error){
+                    console.error(Logger.devStudioCategory, "Platform Selector Delegate: Image failed to load - corrupt or does not exist:", model.image)
+                    source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
                 }
             }
 
@@ -71,7 +106,7 @@ Item {
                     interval += interval
                     if (interval < 32000) {
                         if (SGUtilsCpp.isFile(SGUtilsCpp.urlToLocalFile(model.image))){
-                            image.source = Qt.binding(function(){ return model.image })
+                            image.source = model.image
                             return
                         }
                         imageCheck.start()
@@ -91,26 +126,7 @@ Item {
                 visible: !model.available.documents && !model.available.order && !model.error
             }
 
-            Rectangle {
-                color: "#33b13b"
-                width: image.width
-                anchors {
-                    bottom: image.bottom
-                }
-                height: 25
-                visible: model.connected
-                clip: true
 
-                SGText {
-                    color: "white"
-                    anchors {
-                        centerIn: parent
-                    }
-                    text: "CONNECTED"
-                    font.bold: true
-                    fontSizeMultiplier: 1.4
-                }
-            }
         }
 
         AnimatedImage {
@@ -131,7 +147,7 @@ Item {
             id: loadingText
             anchors {
                 top: loaderImage.bottom
-                topMargin: 15
+                topMargin: 10
                 horizontalCenter: loaderImage.horizontalCenter
             }
             visible: loaderImage.visible
@@ -139,23 +155,30 @@ Item {
             text: "Loading..."
             font.family: Fonts.franklinGothicBold
         }
+
+        Rectangle {
+            color: "#33b13b"
+            width: image.width
+            anchors {
+                bottom: image.bottom
+            }
+            height: 25
+            visible: model.connected
+            clip: true
+
+            SGText {
+                color: "white"
+                anchors {
+                    centerIn: parent
+                }
+                text: "CONNECTED"
+                font.bold: true
+                fontSizeMultiplier: 1.4
+            }
+        }
     }
 
-    DropShadow {
-        anchors {
-            centerIn: imageContainer
-        }
-        width: imageContainer.width
-        height: imageContainer.height
-        horizontalOffset: 1
-        verticalOffset: 3
-        radius: 15.0
-        samples: radius*2
-        color: "#cc000000"
-        source: imageContainer
-        z: -1
-        cached: true
-    }
+
 
     Item {
         id: infoColumn
@@ -374,12 +397,11 @@ Item {
 
         Button {
             id: select
-            // model.name === undefined means no UI found
-            text: model.connected && model.name !== undefined && model.available.control ? "Open Platform Controls" : "Browse Documentation"
+            text: model.view_open ? "Return to Platform Tab" : (model.connected && model.ui_exists && model.available.control ) ? "Open Platform Controls" : "Browse Documentation"
             anchors {
                 horizontalCenter: buttonColumn.horizontalCenter
             }
-            visible: model.connected && model.name !== undefined && model.available.control ? model.available.control : model.available.documents
+            visible: model.connected && model.ui_exists && model.available.control ? model.available.control : model.available.documents
 
             contentItem: Text {
                 text: select.text
@@ -400,7 +422,13 @@ Item {
             }
 
             onClicked: {
-                PlatformSelection.selectPlatform(model.class_id)
+                let data = {
+                    "device_id": model.device_id,
+                    "class_id": model.class_id,
+                    "index": filteredPlatformSelectorModel.mapIndexToSource(model.index),
+                    "available": model.available
+                }
+                PlatformSelection.openPlatformView(data)
             }
 
             MouseArea {

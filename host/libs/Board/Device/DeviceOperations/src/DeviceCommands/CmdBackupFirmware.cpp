@@ -12,9 +12,9 @@
 
 namespace strata::device::command {
 
-CmdBackupFirmware::CmdBackupFirmware(const device::DevicePtr& device, QVector<quint8>& chunk) :
-    BaseDeviceCommand(device, QStringLiteral("backup_firmware")),
-    chunk_(chunk), firstBackupChunk_(true), maxRetries_(MAX_CHUNK_RETRIES), retriesCount_(0) { }
+CmdBackupFirmware::CmdBackupFirmware(const device::DevicePtr& device, QVector<quint8>& chunk, int& totalChunks) :
+    BaseDeviceCommand(device, QStringLiteral("backup_firmware")), chunk_(chunk),
+    totalChunks_(totalChunks), firstBackupChunk_(true), maxRetries_(MAX_CHUNK_RETRIES), retriesCount_(0) { }
 
 QByteArray CmdBackupFirmware::message() {
     QByteArray msg;
@@ -40,11 +40,12 @@ bool CmdBackupFirmware::processNotification(rapidjson::Document& doc) {
         } else {
             const rapidjson::Value& chunk = payload[JSON_CHUNK];
             const rapidjson::Value& number = chunk[JSON_NUMBER];
+            const rapidjson::Value& total = chunk[JSON_TOTAL];
             const rapidjson::Value& size = chunk[JSON_SIZE];
             const rapidjson::Value& crc = chunk[JSON_CRC];
             const rapidjson::Value& data = chunk[JSON_DATA];
 
-            if (number.IsInt() && size.IsUint() && crc.IsUint()) {
+            if (number.IsInt() && total.IsInt() && size.IsUint() && crc.IsUint()) {
                 rapidjson::SizeType dataSize = data.GetStringLength();
                 size_t maxDecodedSize = base64::decoded_size(dataSize); // returns max bytes needed to decode a base64 string
                 chunk_.resize(static_cast<int>(maxDecodedSize));
@@ -52,6 +53,7 @@ bool CmdBackupFirmware::processNotification(rapidjson::Document& doc) {
                 auto [realDecodedSize, readChars] = base64::decode(chunk_.data(), dataStr, dataSize);
                 chunk_.resize(static_cast<int>(realDecodedSize));
                 chunkNumber_ = number.GetInt();
+                totalChunks_ = total.GetInt();
 
                 bool ok = false;
                 if (size.GetUint() == realDecodedSize) {

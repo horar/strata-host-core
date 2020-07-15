@@ -1,6 +1,6 @@
 #include "HostControllerService.h"
 
-#include "HostControllerServiceVersion.h"
+#include "Version.h"
 #include "HostControllerServiceTimestamp.h"
 #include "RunGuard.h"
 

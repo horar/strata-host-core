@@ -7,6 +7,11 @@
 ZmqConnector::ZmqConnector(int type)
     : Connector(), context_(new zmq::context_t()), socket_(new zmq::socket_t(*context_, type))
 {
+    int major{0};
+    int minor{0};
+    int patch{0};
+    zmq_version(&major, &minor, &patch);
+    CONNECTOR_DEBUG_LOG("0MQ API version: %d.%d.%d\n", major, minor, patch);
 }
 
 ZmqConnector::~ZmqConnector()
@@ -25,9 +30,22 @@ bool ZmqConnector::close()
     if (false == socket_->valid()) {
         return false;
     }
-    socket_->close();
-    setConnectionState(false);
-    return true;
+
+    const bool closed = socket_->close();
+    if (closed) {
+        setConnectionState(false);
+    }
+
+    return closed;
+}
+
+bool ZmqConnector::closeContext()
+{
+    if (false == context_->valid()) {
+        return false;
+    }
+
+    return context_->close();
 }
 
 connector_handle_t ZmqConnector::getFileDescriptor()
@@ -62,7 +80,7 @@ bool ZmqConnector::read(std::string& message, ReadMode read_mode)
             }
             break;
         default:
-            CONNECTOR_DEBUG_LOG("[Socket] read failed\n",);
+            CONNECTOR_DEBUG_LOG("%s", "[Socket] read failed\n");
             break;           
     }
     return false;

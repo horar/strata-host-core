@@ -41,6 +41,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTORCC ON
 )
 
-if(BUILD_TESTING)
+if(BUILD_EXAMPLES)
     add_subdirectory(sample-app)
+endif()
+
+if(BUILD_TESTING)
+    add_subdirectory(test)
 endif()
