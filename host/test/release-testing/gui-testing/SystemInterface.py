@@ -1,8 +1,12 @@
+'''
+Functions to interface with auth server and ini files.
+'''
 import os
 import configparser
 import json
 import requests
 import logging
+
 CONFIG_RELATIVE_PATH = r"ON Semiconductor\Strata Developer Studio.ini"
 
 USERNAME_SECTION = "Usernames"
@@ -15,7 +19,6 @@ USER_OPTION = "user"
 FIRST_NAME_OPTION = "first_name"
 LAST_NAME_OPTION = "last_name"
 AUTHENTICATION_SERVER_OPTION = "authentication_server"
-
 
 def removeLoginInfo():
     '''
