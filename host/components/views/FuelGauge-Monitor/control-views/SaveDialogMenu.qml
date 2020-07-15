@@ -34,17 +34,15 @@ Rectangle {
     property var fw_cell_voltage: +platformInterface.telemetry.cell_voltage
     onFw_cell_voltageChanged:{
         counter_count++
-        // flickble.contentHeight=(350+counter_count*1.1)
         if(counter_count==2){
-            save_file_dialogbox.text = ""
-            // for(var i =0; i<=5000; i++){ save_file_dialogbox.text = ""/*keeps delay for fast switch on off operation*/}
+             save_file_dialogbox.text = ""
         }
         else
             save_file_dialogbox.text = save_file_dialogbox.text  + ":" +platformInterface.telemetry.cell_temp + "," + platformInterface.telemetry.cell_voltage + "\n"
-    }
+         }
     property var clears_log_data: +logSwitch.clear_log_data
     onClears_log_dataChanged:{
-        if (+logSwitch.clear_log_data==1){save_file_dialogbox.text = ""}
+     if (+logSwitch.clear_log_data==1){save_file_dialogbox.text = ""}
     }
 
     Item {
@@ -55,14 +53,13 @@ Rectangle {
         }
 
         clip: true
-        Button{
+       Button{
             id:open_show_menus
-            text: "Export Log"
-            width: parent.width*0.7
-            anchors.horizontalCenter: parent.horizontalCenter
-            //height: 37
-            onClicked:{
-                opensavedaialoguemenu.visible=true
+        text: "Export Log"
+        width: parent.width*0.7
+        anchors.horizontalCenter: parent.horizontalCenter
+        onClicked:{
+                 opensavedaialoguemenu.visible=true
             }
 
         }
@@ -73,63 +70,45 @@ Rectangle {
             height: 670
             title: qsTr("Please save  your log data")
 
-            /*      TextArea {
-                id:log_info_box
-                anchors.top: parent.top
-                width: parent.width*0.99
-                height: parent.height
-                focus: true
-                persistentSelection: true
-                selectByMouse: true
-                anchors.fill: parent
-                text: virtualtextarea.text //""//save_file_dialogbox.text + ":" +platformInterface.telemetry.cell_temp + "," + platformInterface.telemetry.cell_voltage + "\n"
-
-            } */
-
             ScrollView {
-                id: frame
-                clip: true
-                width: parent.width
-                height: parent.height*0.436// 288
-                anchors.bottom: parent.bottom
-                anchors.top: logs_datas.bottom
-                // anchors.fill: parent
-                //anchors.bottom: parent.bottom
-                ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-                Flickable {
-                    id:flickble
-                    contentHeight: 4000//(350 + counter_count)
-                    width: parent.width
-                    Rectangle {
-                        id : rectangle
-                        color: "transparent"
-                        radius: 6
-                        anchors.top: parent.top
-                        border.width: 5
-                        border.color: "white"
-                        anchors.topMargin: 0
-                        anchors.fill: parent
-                        //z:1
+                     id: frame
+                     clip: true
+                     width: parent.width
+                     height: parent.height*0.436// 288
+                     anchors.bottom: parent.bottom
+                     ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+                     Flickable {
+                         id:flickble
+                         contentHeight: 4000//(350 + counter_count)
+                         width: parent.width
+                         Rectangle {
+                             id : rectangle
+                             color: "transparent"
+                             radius: 6
+                             anchors.top: parent.top
+                             border.width: 5
+                             border.color: "white"
+                             anchors.topMargin: 0
+                             anchors.fill: parent
 
-                        TextArea {
-                            id:save_file_dialogbox
-                            anchors.bottom: parent.bottom
-                            width: parent.width*0.99
-                            height: parent.height*0.4
-                            font.pixelSize: 11
-                            focus: true
-                            persistentSelection: true
-                            selectByMouse: true
-                            anchors.fill: parent
-                            anchors.topMargin: 0
-                            text: ""//save_file_dialogbox.text + ":" +platformInterface.telemetry.cell_temp + "," + platformInterface.telemetry.cell_voltage + "\n"
+                             TextArea {
+                                 id:save_file_dialogbox
+                                 anchors.bottom: parent.bottom
+                                 width: parent.width*0.99
+                                 height: parent.height*0.4
+                                 font.pixelSize: 11
+                                 focus: true
+                                 persistentSelection: true
+                                 selectByMouse: true
+                                 anchors.fill: parent
+                                 anchors.topMargin: 0
+                                 text: ""
 
-                        }
+                                      }
 
-
-                    }
-                }
-            }
+                                 }
+                             }
+                         }
 
             FileDialog {
                 id: openFileDialog
@@ -141,10 +120,10 @@ Rectangle {
                 selectExisting: false
                 nameFilters: ["Text files (*.log)", "All files (*)"]
                 onAccepted: { saveFile(saveFileDialog.fileUrl, (virtualtextarea.text + save_file_dialogbox.text))
-                    opensavedaialoguemenu.visible=false
+                           opensavedaialoguemenu.visible=false
 
 
-                } //document.saveFile(fileUrl)
+                   }
 
             }
             menuBar: MenuBar {
@@ -166,28 +145,6 @@ Rectangle {
                 }*/
             }
 
-            /* TextArea {
-                //height: parent.
-                width: parent.width*0.99
-                height: parent.height*0.85
-                id:
-                focus: true
-                persistentSelection: true
-                selectByMouse: true
-                anchors.fill: parent
-                text: virtualtextarea.text//
-           }
-
-            ScrollBar {
-                id: vbar
-                hoverEnabled: true
-                active: hovered || pressed
-                orientation: Qt.Vertical
-                size: frame.height /
-                anchors.top: parent.top
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-            }*/
             Rectangle{
                 id:logs_datas
                 height: parent.height*0.57// 358
@@ -198,18 +155,13 @@ Rectangle {
                 anchors.top: parent.top
                 //anchors.bottomMargin: 1
 
-                TextArea {
-                    id:log_info_box
-                    anchors.top: parent.top
-                    font.pixelSize: parent.height*0.03// 11
-                    //width: parent.width*0.99
-                    //height: parent.height
-                    //focus: true
-                    // persistentSelection: true
-                    // selectByMouse: true
-                    //   anchors.fill: parent
-                    text: virtualtextarea.text
-                }
+            TextArea {
+                id:log_info_box
+                anchors.top: parent.top
+                font.pixelSize: parent.height*0.03// 11
+                persistentSelection: true
+                text: virtualtextarea.text
+                 }
             }
 
             Rectangle{
@@ -221,55 +173,41 @@ Rectangle {
                 border.color: "lightgray"
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 0
-                Button{
-                    id:savebutton
-                    height: 43
-                    anchors.bottom: parent.bottom
-                    width: parent.width*0.35
-                    anchors.left: parent.left
-                    anchors.leftMargin: 16
-                    text: "Save"//Save
-                    onClicked: { saveFileDialog.open()
-                        //opensavedaialoguemenu.visible=false
-                    }
+            Button{
+                id:savebutton
+                height: 43
+                anchors.bottom: parent.bottom
+                width: parent.width*0.35
+                anchors.left: parent.left
+                anchors.leftMargin: 16
+                text: "Save"//Save
+                onClicked: { saveFileDialog.open()
+                //opensavedaialoguemenu.visible=false
+                     }
                 }
-                /* Button{
-            id:openbutton
-            height: 43
-            anchors.bottom: parent.bottom
-            width: parent.width*0.3
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "Open"//Save
-           onClicked: openFileDialog.open()
-            }*/
-                Button{
-                    id:exitbutton
-                    height: 43
-                    anchors.bottom: parent.bottom
-                    width: parent.width*0.35
-                    anchors.right: parent.right
-                    anchors.rightMargin: 16
-                    text: "Exit"//Save
-                    onClicked:  opensavedaialoguemenu.close()
-                }
+               /* Button{
+                id:openbutton
+                height: 43
+                anchors.bottom: parent.bottom
+                width: parent.width*0.3
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Open"//Save
+               onClicked: openFileDialog.open()
+                }*/
+            Button{
+                id:exitbutton
+                height: 43
+                anchors.bottom: parent.bottom
+                width: parent.width*0.35
+                anchors.right: parent.right
+                anchors.rightMargin: 16
+                text: "Exit"//Save
+                onClicked:  opensavedaialoguemenu.close()
+            }
 
             }
 
         }
     }
-    //No needed. Please check
-    //    Rectangle {
-    //        id: shadow
-    //        anchors.fill: parent.width*0.99
-    //        //parent: width*0.85
-    //        visible: false
-    //    }
-    //    DropShadow {
-    //        anchors.fill: shadow
-    //        radius: 10.0
-    //        samples: 30
-    //        source: shadow
-    //        z: -1
-    //    }
 
 }
