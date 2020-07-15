@@ -6,7 +6,7 @@ import GUIInterface.Login as login
 import GUIInterface.PlatformView as platform
 import GUIInterface.General as general
 import SystemInterface as cleanup
-from Tests import TestCommon
+import Common
 import StrataInterface as strata
 
 
@@ -16,7 +16,7 @@ class LoginValidNoBoard(unittest.TestCase):
     Test logging in without a board attached.
     '''
     def setUp(self):
-        with general.Latency(TestCommon.ANIMATION_LATENCY):
+        with general.Latency(Common.ANIMATION_LATENCY):
             login.setToLoginTab()
 
     def tearDown(self) -> None:
@@ -28,7 +28,7 @@ class LoginValidNoBoard(unittest.TestCase):
         #assert on login page
         self.assertIsNotNone(general.tryRepeat(login.findUsernameInput))
 
-        login.login(TestCommon.VALID_USERNAME, TestCommon.VALID_PASSWORD)
+        login.login(Common.VALID_USERNAME, Common.VALID_PASSWORD)
         self.assertIsNotNone(general.tryRepeat(platform.findPlatformView))
 
 
@@ -38,7 +38,7 @@ class LoginValidWithBoard(unittest.TestCase):
     Test logging in with a board attached and disconnecting it when logged in.
     '''
     def setUp(self):
-        with general.Latency(TestCommon.ANIMATION_LATENCY):
+        with general.Latency(Common.ANIMATION_LATENCY):
             login.setToLoginTab()
     def tearDown(self) -> None:
         cleanup.removeLoginInfo()
@@ -49,11 +49,11 @@ class LoginValidWithBoard(unittest.TestCase):
         #assert on login page
         self.assertIsNotNone(general.tryRepeat(login.findUsernameInput))
 
-        login.login(TestCommon.VALID_USERNAME, TestCommon.VALID_PASSWORD)
+        login.login(Common.VALID_USERNAME, Common.VALID_PASSWORD)
 
         strata.initPlatformList()
 
-        strata.openPlatform(TestCommon.LOGIC_GATE_CLASS_ID)
+        strata.openPlatform(Common.LOGIC_GATE_CLASS_ID)
         self.assertIsNotNone(general.tryRepeat(platform.findLogicGateView))
 
         strata.closePlatforms()

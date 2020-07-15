@@ -1,1 +1,4 @@
 pyzmq
+pyautogui
+opencv-python
+requests

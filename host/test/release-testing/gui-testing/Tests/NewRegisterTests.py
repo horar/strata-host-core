@@ -7,7 +7,7 @@ import GUIInterface.PlatformView as platform
 import GUIInterface.Register as register
 import GUIInterface.Login as login
 import SystemInterface as cleanup
-from Tests import TestCommon
+import Common
 
 # NEW_USERNAME = "bep@bip.com"
 NEW_PASSWORD = "Bepzipbip15"
@@ -23,7 +23,7 @@ class RegisterNew(unittest.TestCase):
     Test registering a new user.
     '''
     def setUp(self) -> None:
-        with general.Latency(TestCommon.ANIMATION_LATENCY):
+        with general.Latency(Common.ANIMATION_LATENCY):
             register.setToRegisterTab()
     def tearDown(self) -> None:
         cleanup.deleteLoggedInUser()

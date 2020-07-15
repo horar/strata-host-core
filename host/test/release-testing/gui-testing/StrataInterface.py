@@ -4,13 +4,11 @@ Singleton modlue for connecting and sending commands to strata.
 import zmq
 import json
 import threading
-DEFAULT_URL = "tcp://127.0.0.1:5563"
-
 __client:zmq.Socket
 __strataId:bytes
 
 
-def __bind(url = DEFAULT_URL):
+def __bind(url):
     '''
     Bind to the strata instance at url.
     :param url:
@@ -45,7 +43,7 @@ def initPlatformList():
     __client.send_multipart([__strataId, emptyDynamicPlatformList])
 
 
-def bindToStrata(url = DEFAULT_URL):
+def bindToStrata(url):
     '''
     Bind to HCS port and start reciving data
     :param strataPath:
@@ -104,7 +102,7 @@ if __name__ == "__main__":
     __client = context.socket(zmq.ROUTER)
     __client.RCVTIMEO = 10000  # 10s timeout.
     __client.setsockopt(zmq.IDENTITY, b'zmqRouterTest')
-    __client.bind(DEFAULT_URL)
+    __client.bind(Common.DEFAULT_URL)
     try:
         __strataId = __client.recv()
     except zmq.Again:

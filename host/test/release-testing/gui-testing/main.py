@@ -4,22 +4,17 @@ Main testing script. Assumes that Strata is open, visible, and maximized
 import unittest
 
 import GUIInterface.PlatformView as platform
-from Tests import InvalidInputTests, TestCommon, PasswordResetTests, NewRegisterTests, FeedbackTests, BoardTests
+from Tests import InvalidInputTests, PasswordResetTests, NewRegisterTests, FeedbackTests, BoardTests
+import Common
 import StrataInterface as strata
 import SystemInterface as cleanup
+import sys
 
 if __name__ == "__main__":
-    #TODO: account for DPI giving different UI elements
-    # if len(sys.argv) < 2:
-    #     #TODO: Help message
-    #     print("Invalid number of arguments")
-    #     sys.exit(0)
-    # else:
-    #     strataPath = sys.argv[1]
-    # if len(sys.argv) > 2:
-    #     prop.LARGE_TEXT = sys.argv[2] == "100" or sys.argv[2] == "125"
+    Common.populateConstants(sys.argv)
 
-    strata.bindToStrata()
+
+    strata.bindToStrata(Common.DEFAULT_URL)
 
     #Logout and remove cached login information if a user was previously logged in to Strata
     cleanup.removeLoginInfo()
@@ -37,9 +32,9 @@ if __name__ == "__main__":
     result = runner.run(suite)
 
     #Write a blank file
-    with open(TestCommon.RESULT_FILE, "w") as resultFile:
+    with open(Common.RESULT_FILE, "w") as resultFile:
         pass
 
-    TestCommon.writeResults(len(result.errors) + len(result.failures), result.testsRun)
+    Common.writeResults(len(result.errors) + len(result.failures), result.testsRun)
 
     strata.cleanup()

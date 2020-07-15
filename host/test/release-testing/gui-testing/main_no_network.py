@@ -1,10 +1,14 @@
 '''
 Testing script to be ran under a disconnected network. Strata application must not be allowed to access the network for a successful test. Assumes Strata is open, visible, and maximized.
 '''
-from Tests import NoNetworkTests, TestCommon
+from Tests import NoNetworkTests
+import Common
 import unittest
+import sys
 
 if __name__ == "__main__":
+    Common.populateConstants(sys.argv)
+
     suite = unittest.TestSuite([
                                 unittest.defaultTestLoader.loadTestsFromModule(NoNetworkTests),
                                 ])
@@ -12,5 +16,5 @@ if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
 
-    TestCommon.writeResults(len(result.errors) + len(result.failures), result.testsRun)
+    Common.writeResults(len(result.errors) + len(result.failures), result.testsRun)
 

@@ -2,7 +2,7 @@ import unittest
 import GUIInterface.General as general
 import GUIInterface.Login as login
 import GUIInterface.Register as register
-from Tests import TestCommon
+import Common
 
 INVALID_USERNAME = "badusername"
 INVALID_PASSWORD = "badpassword"
@@ -14,7 +14,7 @@ class LoginInvalidTest(unittest.TestCase):
     '''
     def setUp(self):
 
-        with general.Latency(TestCommon.ANIMATION_LATENCY):
+        with general.Latency(Common.ANIMATION_LATENCY):
             login.setToLoginTab()
     def tearDown(self) -> None:
         general.deleteTextAt(login.findUsernameInput())
@@ -47,7 +47,7 @@ class RegisterExisting(unittest.TestCase):
     '''
     def setUp(self) -> None:
 
-        with general.Latency(TestCommon.ANIMATION_LATENCY):
+        with general.Latency(Common.ANIMATION_LATENCY):
             register.setToRegisterTab()
 
 
@@ -58,7 +58,7 @@ class RegisterExisting(unittest.TestCase):
         #Assert that we are on the register page.
         self.assertIsNotNone(general.tryRepeat(register.findRegisterAgreeCheckbox))
 
-        register.fillRegistration("Testy", "McTest", "ON Semiconductor", "Test Engineer", TestCommon.VALID_PASSWORD, TestCommon.VALID_USERNAME)
+        register.fillRegistration("Testy", "McTest", "ON Semiconductor", "Test Engineer", Common.VALID_PASSWORD, Common.VALID_USERNAME)
         general.clickAt(register.findSubmitEnabled())
 
         self.assertIsNotNone(general.tryRepeat(register.findUserAlreadyExists))

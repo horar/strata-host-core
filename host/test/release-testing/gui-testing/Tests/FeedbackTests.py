@@ -5,7 +5,7 @@ import unittest
 import GUIInterface.General as general
 import GUIInterface.Login as login
 import GUIInterface.PlatformView as platform
-from Tests import TestCommon
+import Common
 import pyautogui
 import SystemInterface as cleanup
 
@@ -14,7 +14,7 @@ class Feedback(unittest.TestCase):
     Test sending feedback
     '''
     def setUp(self) -> None:
-        with general.Latency(TestCommon.ANIMATION_LATENCY):
+        with general.Latency(Common.ANIMATION_LATENCY):
             login.setToLoginTab()
 
     def tearDown(self) -> None:
@@ -25,7 +25,7 @@ class Feedback(unittest.TestCase):
         #assert on login page
         self.assertIsNotNone(general.tryRepeat(login.findUsernameInput))
 
-        login.login(TestCommon.VALID_USERNAME, TestCommon.VALID_PASSWORD)
+        login.login(Common.VALID_USERNAME, Common.VALID_PASSWORD)
 
 
         #findUserIcon can seize on something else before the page is fully loaded because of its confidence level.
