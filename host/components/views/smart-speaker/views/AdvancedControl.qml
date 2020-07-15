@@ -11,6 +11,7 @@ Widget09.SGResponsiveScrollView {
 
     minimumHeight: 900
     minimumWidth: 1300
+    scrollBarColor: hightlightColor
 
     property string borderColor: "#002C74"
     property string backgroundColor: "white"
@@ -74,12 +75,12 @@ Widget09.SGResponsiveScrollView {
             ChargerView{
                 id:chargerView
                 width:500
-                height:300
+                height:350
             }
             LEDView{
                 id:ledView
                 width:400
-                height:300
+                height:350
             }
 
 

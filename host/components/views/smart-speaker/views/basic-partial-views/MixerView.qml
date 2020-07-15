@@ -94,12 +94,10 @@ Rectangle {
             anchors.bottom:parent.bottom
             anchors.bottomMargin: 25
 
-            onPressedChanged: {
-//            onMoved:{
-//                //send the new value to the platformInterface
-//                console.log("sending new master volume",master.value)
-//                platformInterface.set_volume.update(master.value,
-//                                                    bassChannel.value);
+            onMoved:{
+                //send the new value to the platformInterface
+                console.log("sending new master volume",master.value)
+                platformInterface.set_volume.update(master.value);
             }
         }  //slider
     } //row
@@ -116,7 +114,7 @@ Rectangle {
             id:volumeText
             height:25
             width:35
-            text: master.value
+            text: master.value.toFixed(0)
 
             onEditingFinished: {
                 master.value = text;
@@ -164,13 +162,13 @@ Rectangle {
                        //send message that bass is muted
                        console.log("bass muted")
                        unmuttedMasterVolume = master.value;
-                       platformInterface.set_volume.update(-42,bassChannel.value)
+                       platformInterface.set_volume.update(-42)
 
                    }
                      else{
                        //send message that bass is not muted
                        console.log("bass unmuted")
-                       platformInterface.set_volume.update(unmuttedMasterVolume, bassChannel.value)
+                       platformInterface.set_volume.update(unmuttedMasterVolume)
                        master.value = unmuttedMasterVolume;
                    }
                }
