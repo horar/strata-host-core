@@ -456,7 +456,7 @@ else()
         string(REPLACE ";" "$<SEMICOLON>" MODIFIED_PATH "$ENV{PATH}")
         separate_arguments(APPEND_PERL_TO_PATH WINDOWS_COMMAND "SET PATH=${MODIFIED_PATH}$<SEMICOLON>${PERL_PATH}")
     else()
-        message(FATAL_ERROR "Perl is missing.")
+        message(FATAL_ERROR "Perl NOT found. Please make sure that Perl is installed and added to the path.")
     endif()
 
     ExternalProject_Add(mqtt
