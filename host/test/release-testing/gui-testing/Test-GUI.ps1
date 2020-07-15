@@ -28,15 +28,6 @@ Creation Date:  07/10/2020
 function Test-Gui() {
     Write-Host "Starting GUI testing"
 
-#    $DPISetting = (Get-ItemProperty 'HKCU:\Control Panel\Desktop\WindowMetrics' -Name AppliedDPI).AppliedDPI
-#    switch ($DPISetting)
-#    {
-#        96 {$ActualDPI = 100}
-#        120 {$ActualDPI = 125}
-#        144 {$ActualDPI = 150}
-#        192 {$ActualDPI = 200}
-#    }
-
     # Stop any previously running HCS processes
     Stop-HCS
     # Stop any previously running SDS processes
