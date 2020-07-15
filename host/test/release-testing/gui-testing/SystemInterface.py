@@ -3,7 +3,6 @@ import configparser
 import json
 import requests
 import logging
-import wmi
 CONFIG_RELATIVE_PATH = r"ON Semiconductor\Strata Developer Studio.ini"
 
 USERNAME_SECTION = "Usernames"
@@ -16,19 +15,6 @@ USER_OPTION = "user"
 FIRST_NAME_OPTION = "first_name"
 LAST_NAME_OPTION = "last_name"
 AUTHENTICATION_SERVER_OPTION = "authentication_server"
-
-def findProcess(name):
-    '''
-    Find a process with the name "name"
-    :param name:
-    :return: None if a process is not found, process information otherwise.
-    '''
-    w = wmi.WMI()
-    for proc in w.Win32_Process():
-        if proc.Name.lower() == name.lower():
-            return proc
-
-    return None
 
 
 def removeLoginInfo():
