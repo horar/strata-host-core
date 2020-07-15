@@ -20,8 +20,20 @@ function Assert-PythonAndPyzmq {
     # Attempt to run Python and import PyZMQ, display error if operation fails
     Try {
         If ((Start-Process $PythonExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
-            If (!(Start-Process $PythonExec '-c "import zmq; import pyautogui; import cv2; import requests"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
+            If (!(Start-Process $PythonExec '-c "import zmq"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
                 Write-Host -ForegroundColor Red "Error: ZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions.`nAborting."
+                Exit-TestScript -1
+            }
+            If (!(Start-Process $PythonExec '-c "import pyautogui"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
+                Write-Host -ForegroundColor Red "Error: PyAutoGui library for Python is required, visit https://pyautogui.readthedocs.io/en/latest/index.html for instructions.`nAborting."
+                Exit-TestScript -1
+            }
+            If (!(Start-Process $PythonExec '-c "import cv2"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
+                Write-Host -ForegroundColor Red "Error: opencv-python library for Python is required, visit https://pypi.org/project/opencv-python/ for instructions.`nAborting."
+                Exit-TestScript -1
+            }
+            If (!(Start-Process $PythonExec '-c "import requests"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
+                Write-Host -ForegroundColor Red "Error: requests library for Python is required, visit https://requests.readthedocs.io/en/master/user/install/ for instructions.`nAborting."
                 Exit-TestScript -1
             }
         } Else {
@@ -78,9 +90,6 @@ function Assert-PythonScripts {
     If (!(Test-Path $PythonGUIMainNoNetwork)) {
         Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMainNoNetwork.`nAborting."
     }
-
-
-
 
 }
 

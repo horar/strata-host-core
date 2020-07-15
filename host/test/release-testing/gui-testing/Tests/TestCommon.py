@@ -13,7 +13,7 @@ RESULT_FILE = os.path.join(__dirname, 'results.txt')
 
 def writeResults(totalFails, totalTests):
     '''
-    Write <total successes>, <total tests> to the results file.
+    Write <total successes>,<total tests> to the results file.
     :param totalFails:
     :param totalTests:
     :return:
@@ -29,7 +29,6 @@ def writeResults(totalFails, totalTests):
         results = resultsFile.read()
         if results != "":
             prevSuccesses, prevTotal = int(results.split(",")[0]), int(results.split(",")[1])
-
     newTotal = totalTests + prevTotal
     newSuccesses = (totalTests - totalFails) + prevSuccesses
     with open(RESULT_FILE, "w") as resultsFile:

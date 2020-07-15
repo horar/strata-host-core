@@ -43,7 +43,3 @@ if __name__ == "__main__":
     TestCommon.writeResults(len(result.errors) + len(result.failures), result.testsRun)
 
     strata.cleanup()
-
-    #exit(0)
-
-    #print("Errors\n" + str(result.errors) + "\nFaliures\n" + str(result.failures) + "\nSuccesses\n")

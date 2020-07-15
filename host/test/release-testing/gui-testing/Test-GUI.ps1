@@ -79,7 +79,7 @@ function Test-Gui() {
 
     Stop-Process -Name "Strata Developer Studio" -Force
 
-    $result = (Get-Content "$TestRoot\gui-testing\results.txt") -split ','
+    $result = (Get-Content "$TestRoot\gui-testing\Tests\results.txt") -split ','
     return $result
 
 }
