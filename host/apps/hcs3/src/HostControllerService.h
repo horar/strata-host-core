@@ -97,6 +97,7 @@ public slots:
             const QByteArray &clientId,
             const QString &classId,
             const QJsonArray &documentList,
+            const QJsonArray &firmwareList,
             const QString &error);
 
 private:
