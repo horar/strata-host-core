@@ -31,14 +31,14 @@ The script will automatically clear login information and close accounts of new 
 ##Overview
 All tests are contained in the "Tests" folder. Each test module may contain multiple test classes, and each test class may contain multiple test functions. 
 
-One should group tests by category by placing them in the appropriate module, and group tests that may be run without additional setup by class (each class sets up the test environment, runs tests alphabetically, and tears down the test environment).
+Group tests by category by placing them in the appropriate module, and group tests that may be run without additional setup by class (each class sets up the test environment, runs tests alphabetically, and tears down the test environment).
 
 The Test-GUI script runs tests in the following environments:
 * Network enabled, user logged out previously
 * Network disabled, user logged out previously
 * Network enabled, user logged in previously
 
-One should place test modules into the appropriate main file's TestSuite constructor. One may create new test environments by manipulating the environment in the Powershell script and then running the appropriate main file to run tests in that environment.
+Place test modules into the appropriate main file's TestSuite constructor. Create new test environments by manipulating the environment in the Powershell script and then running the appropriate main file to run tests in that environment.
 
 ##Adding Images
 The test suite uses image recognition to find and verify the operation of GUI elements. The images are placed in the "\GUIInterface\images" folder. It is recommended to convert images to grayscale as much as possible, as they occupy much less space than color images. The script "to_greyscale.py" automatically converts all images in the "/GUIInterface/images" folder to grayscale.
@@ -60,21 +60,21 @@ return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, <image name>), 
 ```
 With \<image name> replaced by the name of the image in the "images" folder.
 
-For UI elements where it is not possible to capture a unique picture (such as the user icon), one may include a `confidence=<confidence rating>` argument to `locateCenterOnScreen()` to find multiple variations of the same picture.
+For UI elements where it is not possible to capture a unique picture (such as the user icon), include a `confidence=<confidence rating>` argument to `locateCenterOnScreen()` to find multiple variations of the same picture.
 
 ##Troubleshooting
 Because the test suite directly interprets the screen to verify and manipulate Strata, delays in animations or the network can cause erroneous inputs or test failures. 
 
-For loading delay, one should use `tryRepeat()` in the General module to repeatedly look for the UI element. This may fail if using the previously mentioned `confidence` argument to `locateCenterOnScreen()`, as loading icons can be misinterpreted as other UI elements. In this case, one may use a hardcoded delay. 
+For loading delay, use `tryRepeat()` in the General module to repeatedly look for the UI element. This may fail if using the previously mentioned `confidence` argument to `locateCenterOnScreen()`, as loading icons can be misinterpreted as other UI elements. In this case, use a hardcoded delay. 
 
 For animation delay or network delay that cannot be solved by `tryRepeat()`, a hardcoded delay may be used. The `Latency` context in the General module may be used to apply a delay to the entry and exit of the context.  
 
-**It is recommended that one add a delay before and after setting up a test class.** This avoids errors from animations caused by previous tests.
+**It is recommended to add a delay before and after setting up a test class.** This avoids errors from animations caused by previous tests.
 
 ###TODO: Accounting for Screen Differences
 Different DPI ("Scaling" in the display settings) settings may cause UI elements to appear different enough to not be recognized. The solution is to detect what the DPI of the screen is, and substitute a different image when searching for UI elements. Currently, this functionality has not been implemented. 
 
-A more stable solution would be to directly interface with UI elements using a window messaging system such as Windows UI Automation or similar.
+A more stable but development heavy solution would be to directly interface with UI elements using a window messaging system such as Windows UI Automation or similar.
 
 ##Additional Functionality
 Functions for interfacing with Strata through the HCS are placed in the StrataInterface singleton. **Run the `bindToStrata()` function as soon as possible if connecting to Strata**. The HCS port needs to be connected to before Strata starts fully. 
