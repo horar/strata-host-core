@@ -13,7 +13,7 @@
     <WizardDefaultWidth>840</WizardDefaultWidth>
     <WizardDefaultHeight>480</WizardDefaultHeight>
     <StartMenuDir>ON Semiconductor</StartMenuDir>
-    <TargetDir>@HomeDir@/ON Semiconductor/Strata</TargetDir>
+    <TargetDir>@ApplicationsDir@/ON Semiconductor/Strata</TargetDir>
     <MaintenanceToolName>Strata Maintenance Tool</MaintenanceToolName>
     <RemoveTargetDir>false</RemoveTargetDir>
     <AllowNonAsciiCharacters>true</AllowNonAsciiCharacters>
