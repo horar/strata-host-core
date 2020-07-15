@@ -154,7 +154,7 @@ void StorageManager::handlePlatformListResponse(const QByteArray &clientId, cons
 
 void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadRequest *requestItem, const QString &errorString)
 {
-    QJsonArray documentList;
+    QJsonArray documentList, firmwareList;
     QString  finalErrorString = errorString;
 
     PlatformDocument *platDoc = fetchPlatformDoc(requestItem->classId);
@@ -197,9 +197,22 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
 
             documentList.append(object);
         }
+
+        QList<FirmwareItem> firmwareItems = platDoc->getFirmwareList();
+        for (const auto &item : firmwareItems) {
+            QJsonObject object {
+                {"uri", item.partialUri},
+                {"md5", item.md5},
+                {"name", item.name},
+                {"timestamp", item.timestamp},
+                {"version", item.version}
+            };
+
+            firmwareList.append(object);
+        }
     }
 
-    emit platformDocumentsResponseRequested(requestItem->clientId, requestItem->classId, documentList, finalErrorString);
+    emit platformDocumentsResponseRequested(requestItem->clientId, requestItem->classId, documentList, firmwareList, finalErrorString);
 }
 
 PlatformDocument* StorageManager::fetchPlatformDoc(const QString &classId)
@@ -305,7 +318,7 @@ void StorageManager::requestPlatformDocuments(
     PlatformDocument* platDoc = fetchPlatformDoc(classId);
 
     if (platDoc == nullptr){
-        platformDocumentsResponseRequested(clientId, classId, QJsonArray(), "Failed to fetch platform data");
+        platformDocumentsResponseRequested(clientId, classId, QJsonArray(), QJsonArray(), "Failed to fetch platform data");
         qCCritical(logCategoryHcsStorage) << "Failed to fetch platform data with id:" << classId;
         return;
     }

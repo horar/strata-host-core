@@ -73,7 +73,7 @@ signals:
     void downloadPlatformFilesFinished(QByteArray clientId, QString errorString);
 
     void platformListResponseRequested(QByteArray clientId, QJsonArray documentList);
-    void platformDocumentsResponseRequested(QByteArray clientId, QString classId, QJsonArray documentList, QString error);
+    void platformDocumentsResponseRequested(QByteArray clientId, QString classId, QJsonArray documentList, QJsonArray firmwareList, QString error);
 
 private slots:
     void filePathChangedHandler(QString groupId,
