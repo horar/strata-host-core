@@ -790,7 +790,7 @@ ColumnLayout {
                                 anchors.fill: parent
                                 anchors.left: parent.left
                                 anchors.leftMargin: 8
-                                title: "Zoom Enabled"
+                                title: "Cell Voltage"
                                 xMin: 0
                                 xMax: +virtualtextarea.realtimelog
                                 yMin: 0
@@ -1065,8 +1065,8 @@ ColumnLayout {
                                  value: 750.0                 // Default: average of from and to
                                  from: 4.0                    // Default: 0.0
                                  to: 1500.0                   // Default: 100.0
-                                 startLabel: "4.0 mA"         // Default: from
-                                 endLabel: "1500.0 mA"        // Default: to
+                                 startLabel: "4.0mA"         // Default: from
+                                 endLabel: "1500.0mA"        // Default: to
                                  showToolTip: true            // Default: true
                                  toolTipDecimalPlaces: 1      // Default: 0
                                  grooveColor: "#ddd"          // Default: "#dddddd"
@@ -1202,8 +1202,8 @@ ColumnLayout {
                                  value: 3000.0                // Default: average of from and to
                                  from: 1.0                    // Default: 0.0
                                  to: 6000.0                  // Default: 100.0
-                                 startLabel: "1.0 mA"        // Default: from
-                                 endLabel: "6000.0 mA"       // Default: to
+                                 startLabel: "1.0mA"        // Default: from
+                                 endLabel: "6000.0mA"       // Default: to
                                  showToolTip: true            // Default: true
                                  toolTipDecimalPlaces: 1      // Default: 0
                                  grooveColor: "#ddd"          // Default: "#dddddd"
@@ -1314,8 +1314,8 @@ ColumnLayout {
                                  value: 3000.0                 // Default: average of from and to
                                  from: 1.0                     // Default: 0.0
                                  to: 6000.0                    // Default: 100.0
-                                 startLabel: "1.0 mA"         // Default: from
-                                 endLabel: "6000.0 mA"        // Default: to
+                                 startLabel: "1.0mA"         // Default: from
+                                 endLabel: "6000.0mA"        // Default: to
                                  showToolTip: true            // Default: true
                                  toolTipDecimalPlaces: 1      // Default: 0
                                  grooveColor: "#ddd"           // Default: "#dddddd"
@@ -1513,7 +1513,7 @@ ColumnLayout {
                                     anchors.fill: parent
                                     anchors.left: parent.left
                                     anchors.leftMargin: 22
-                                    //title: ""
+                                    title: "Cell Temperature"
                                     xMin: 0
                                     xMax: +virtualtextarea.realtimelog
                                     yMin: 0
