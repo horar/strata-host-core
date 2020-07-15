@@ -5,8 +5,7 @@ import GUIInterface.Login as login
 import GUIInterface.General as general
 import GUIInterface.PlatformView as platform
 
-import TestCommon
-
+from Tests import TestCommon
 
 if __name__ == "__main__":
     #set up Strata for the test by logging in

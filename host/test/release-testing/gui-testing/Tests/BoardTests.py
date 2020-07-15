@@ -6,7 +6,7 @@ import GUIInterface.Login as login
 import GUIInterface.PlatformView as platform
 import GUIInterface.General as general
 import SystemInterface as cleanup
-import TestCommon
+from Tests import TestCommon
 import StrataInterface as strata
 
 

@@ -2,13 +2,16 @@
 Testing script to be run after logging into strata and closing it. Assumes Strata is open, visible, and maximized.
 '''
 import unittest
-import StrataRestartTests
-import TestCommon
+from Tests import TestCommon, StrataRestartTests
 
 if __name__ == "__main__":
 
+    suite = unittest.TestSuite([
+                                unittest.defaultTestLoader.loadTestsFromModule(StrataRestartTests),
+                                ])
+
     runner = unittest.TextTestRunner(verbosity=2)
-    result = runner.run(unittest.defaultTestLoader.loadTestsFromModule(StrataRestartTests))
+    result = runner.run(suite)
 
     TestCommon.writeResults(len(result.errors) + len(result.failures), result.testsRun)
 

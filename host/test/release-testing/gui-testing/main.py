@@ -1,19 +1,12 @@
 '''
 Main testing script. Assumes that Strata is open, visible, and maximized
 '''
-import sys
 import unittest
 
-import BoardTests
-import FeedbackTests
 import GUIInterface.PlatformView as platform
-import InvalidInputTests
-import NewRegisterTests
-import PasswordResetTests
+from Tests import InvalidInputTests, TestCommon, PasswordResetTests, NewRegisterTests, FeedbackTests, BoardTests
 import StrataInterface as strata
 import SystemInterface as cleanup
-import TestCommon
-import os
 
 if __name__ == "__main__":
     #TODO: account for DPI giving different UI elements

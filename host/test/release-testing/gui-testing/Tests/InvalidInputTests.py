@@ -2,7 +2,7 @@ import unittest
 import GUIInterface.General as general
 import GUIInterface.Login as login
 import GUIInterface.Register as register
-import TestCommon
+from Tests import TestCommon
 
 INVALID_USERNAME = "badusername"
 INVALID_PASSWORD = "badpassword"

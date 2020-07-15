@@ -1,8 +1,10 @@
 import os
+
 VALID_USERNAME = "test@test.com"
 VALID_PASSWORD = "Strata12345"
 
 LOGIC_GATE_CLASS_ID = "201"
+
 ANIMATION_LATENCY = 0.2
 
 __dirname = os.path.dirname(__file__)

@@ -4,7 +4,7 @@ Tests involving resetting user passwords.
 import unittest
 import GUIInterface.Login as login
 import GUIInterface.General as general
-import TestCommon
+from Tests import TestCommon
 
 INVALID_USER = "bad@bad.com"
 

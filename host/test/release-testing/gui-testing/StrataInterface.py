@@ -8,10 +8,9 @@ DEFAULT_URL = "tcp://127.0.0.1:5563"
 
 __client:zmq.Socket
 __strataId:bytes
-__proc = None
 
 
-def bind(url = DEFAULT_URL):
+def __bind(url = DEFAULT_URL):
     '''
     Bind to the strata instance at url.
     :param url:
@@ -48,40 +47,17 @@ def initPlatformList():
 
 def bindToStrata(url = DEFAULT_URL):
     '''
-    Bind to HCS port and start strata
+    Bind to HCS port and start reciving data
     :param strataPath:
     :param url:
     :return:
     '''
 
-    bind(url)
+    __bind(url)
 
     #Must start attempting to recive data before strata is started
     initThread = threading.Thread(target=__init, daemon= True)
     initThread.start()
-
-    # global __proc
-    # dirname = os.path.dirname(__file__)
-    # path = os.path.join(dirname, 'RunSDS.ps1')
-    # __proc = subprocess.Popen('powershell.exe -ExecutionPolicy Unrestricted ' + path)
-
-    # start_info = win32process.STARTUPINFO()
-    # start_info.dwFlags = win32con.STARTF_USESHOWWINDOW
-    # start_info.wShowWindow = win32con.SW_MAXIMIZE
-    #
-    # hProcess, hThread, dwProcessId, dwThreadId = win32process.CreateProcess(
-    #     strataPath,
-    #     None,
-    #     None,
-    #     None,
-    #     False,
-    #     0,
-    #     None,
-    #     None,
-    #     start_info
-    # )
-    # return hProcess
-
 
 def openPlatform(classId):
     '''
@@ -166,7 +142,6 @@ if __name__ == "__main__":
                 'utf-8')
             __client.send_multipart([__strataId, myEncodedStr])
 
-    import TestCommon
     # bind(DEFAULT_URL)
     # print("bind")
     # time.sleep(10)

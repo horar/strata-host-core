@@ -5,7 +5,7 @@ import unittest
 import GUIInterface.Login as login
 import GUIInterface.General as general
 import GUIInterface.Register as register
-import TestCommon
+from Tests import TestCommon
 import pyautogui
 
 class NoNetworkLogin(unittest.TestCase):

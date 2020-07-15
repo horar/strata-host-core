@@ -7,8 +7,7 @@ import GUIInterface.PlatformView as platform
 import GUIInterface.Register as register
 import GUIInterface.Login as login
 import SystemInterface as cleanup
-import TestCommon
-
+from Tests import TestCommon
 
 # NEW_USERNAME = "bep@bip.com"
 NEW_PASSWORD = "Bepzipbip15"

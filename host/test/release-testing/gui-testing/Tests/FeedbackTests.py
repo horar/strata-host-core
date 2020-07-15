@@ -5,7 +5,7 @@ import unittest
 import GUIInterface.General as general
 import GUIInterface.Login as login
 import GUIInterface.PlatformView as platform
-import TestCommon
+from Tests import TestCommon
 import pyautogui
 import SystemInterface as cleanup
 
