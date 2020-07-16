@@ -62,6 +62,10 @@ echo "======================================================================="
 echo " Generating project.."
 echo "======================================================================="
 cd build-ota
+
+rd /s /q packages
+if not exist packages md packages
+
 cmake -G "NMake Makefiles JOM" ^
     -DCMAKE_BUILD_TYPE=OTA ^
     -DAPPS_CORESW=on ^
@@ -83,43 +87,73 @@ echo "======================================================================="
 cmake --build .
 REM cmake --build . --config Debug
 
+if not exist ..\resources\qtifw\packages_win (
+    echo "======================================================================="
+    echo " Missing packages_win folder"
+    echo "======================================================================="
+    Exit /B 2
+)
+
+rd /s /q packages_win
+md packages_win
+xcopy ..\resources\qtifw\packages_win packages_win /E
+
+if not exist ..\..\deployment\Strata\ftdi_driver_files (
+    echo "======================================================================="
+    echo " Missing ftdi_driver_files folder"
+    echo "======================================================================="
+    Exit /B 2
+)
+
+xcopy ..\..\deployment\Strata\ftdi_driver_files packages_win\com.onsemi.strata.utils.ftdi\data\FTDI /E
 
 REM -------------------------------------------------------------------------
 REM [LC] WIP
 REM -------------------------------------------------------------------------
+REM	--no-compiler-runtime ^ // we need vc_redist exe
 windeployqt "packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.exe" ^
 	--release ^
 	--force ^
 	--no-translations ^
-	--no-compiler-runtime ^
 	--no-webkit2 ^
 	--no-opengl-sw ^
 	--no-angle ^
 	--no-system-d3d-compiler ^
-	--no-compiler-runtime ^
     --qmldir ..\apps\DeveloperStudio ^
     --qmldir ..\components ^
 	--libdir packages\com.onsemi.strata.qt\data ^
 	--plugindir packages\com.onsemi.strata.qt\data\plugins ^
     --verbose 1
 
+
+if not exist packages\com.onsemi.strata.qt\data\vc_redist.x64.exe (
+    echo "======================================================================="
+    echo " Missing vc_redist.x64.exe"
+    echo "======================================================================="
+    Exit /B 2
+)
+
+move packages\com.onsemi.strata.qt\data\vc_redist.x64.exe packages_win\com.onsemi.strata.utils.common.vcredist\data\VC_REDIST\
+
 binarycreator ^
     --verbose ^
     --offline-only ^
     -c ..\resources\qtifw\config\config.xml ^
     -p .\packages ^
+    -p .\packages_win ^
     strata-setup-offline
 
 
-binarycreator ^
-    --verbose ^
-    --online-only ^
-    -c ..\resources\qtifw\config\config.xml ^
-    -p .\packages ^
-    strata-setup-online
+REM	binarycreator ^
+REM	    --verbose ^
+REM	    --online-only ^
+REM	    -c ..\resources\qtifw\config\config.xml ^
+REM	    -p .\packages ^
+REM     -p .\packages_win ^
+REM	    strata-setup-online
 
-repogen ^
-    --update-new-components ^
-    -p .\packages pub\repository\demo
+REM	repogen ^
+REM	    --update-new-components ^
+REM	    -p .\packages pub\repository\demo
 
 endlocal

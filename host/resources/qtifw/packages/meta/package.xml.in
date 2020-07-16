@@ -5,4 +5,7 @@
     <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Checkable>false</Checkable>
+    <Licenses>
+        <License name="ON Semiconductor License Agreement" file="onsemi_license.txt" />
+    </Licenses>
 </Package>

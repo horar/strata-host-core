@@ -13,10 +13,18 @@
     <WizardDefaultWidth>840</WizardDefaultWidth>
     <WizardDefaultHeight>480</WizardDefaultHeight>
     <StartMenuDir>ON Semiconductor</StartMenuDir>
-    <TargetDir>@ApplicationsDir@/ON Semiconductor/Strata</TargetDir>
+    <TargetDir>@ApplicationsDirX64@/ON Semiconductor/Strata</TargetDir>
+    <RemoteRepositories>
+        <Repository>
+            <DisplayName>Strata Repository</DisplayName>
+            <Url>https://localhost:8000/Strata</Url>
+        </Repository>
+    </RemoteRepositories>
+    <RepositorySettingsPageVisible>false</RepositorySettingsPageVisible>
     <MaintenanceToolName>Strata Maintenance Tool</MaintenanceToolName>
     <RemoveTargetDir>false</RemoveTargetDir>
     <AllowNonAsciiCharacters>true</AllowNonAsciiCharacters>
     <CreateLocalRepository>false</CreateLocalRepository>
     <InstallActionColumnVisible>true</InstallActionColumnVisible>
+    <ControlScript>installscript.qs</ControlScript>
 </Installer>

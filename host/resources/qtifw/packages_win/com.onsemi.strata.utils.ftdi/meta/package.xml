@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>FTDI Driver</DisplayName>
+    <Description>Drivers for devices manufactured by Future Technology Devices International</Description>
+    <Version>0.0.1</Version>
+    <ForcedInstallation>true</ForcedInstallation>
+    <RequiresAdminRights>true</RequiresAdminRights>
+    <Script>installscript.js</Script>
+    <ReleaseDate>2019-05-16</ReleaseDate>
+    <Licenses>
+        <License name="FTDI Driver License Agreement" file="ftdi_license.txt" />
+    </Licenses>
+</Package>
