@@ -9,9 +9,43 @@ ColumnLayout {
     id: firmwareColumn
 
     property Item activeFirmware: null
+    property bool flashingInProgress: false
 
     Component.onCompleted: {
         loadFirmware()
+    }
+
+    function spoofCommand() {  // TODO REMOVE
+        let notification = JSON.stringify({
+                                              "hcs::notification":{
+                                                  "type":"firmware_info",
+                                                  "list":[
+                                                      {
+                                                          "file": "201/fab/351bf129b05fb37797c8d8f0c1e16db5.bin", /// file from DP
+                                                          "md5": "351bf129b05fb37797c8d8f0c1e16db5",
+                                                          "name": "firmware",
+                                                          "timestamp": "2019-11-04 17:16:48 -DP",
+                                                          "version": "1.1.0"
+                                                      },
+                                                      {
+                                                          "file": "72ddcc10-2d18-4316-8170-5223162e54cf/logic-gates-debug-1.0.0.bin", // file on local docker
+                                                          "md5": "c235b03d6e0621357c16c49fa5219dac",
+                                                          "name": "firmware",
+                                                          "timestamp": "2019-11-04 17:16:48",
+                                                          "version": "1.0.0"
+                                                      },
+                                                      {
+                                                          "file": "72ddcc10-2d18-4316-8170-5223162e54cf/logic-gates-debug-1.0.1.bin", // file on local docker
+                                                          "md5": "6cab6d69f38b582bda638fe6fb512ba8",
+                                                          "name": "firmware",
+                                                          "timestamp": "2020-11-04 17:16:48",
+                                                          "version": "1.0.1"
+                                                      },
+                                                  ],
+                                                  "device_id": platformStack.device_id
+                                              }
+                                          })
+        coreInterface.spoofCommand(notification)
     }
 
     Connections {
@@ -33,6 +67,16 @@ ColumnLayout {
         onConnectedChanged: {
             loadFirmware()
         }
+        onFirmware_versionChanged: {
+            for (let i = 0; i < firmwareListModel.count; i++) {
+                let firmware = firmwareListModel.get(i)
+                if (firmware.version === platformStack.firmware_version) {
+                    firmware.installed = true
+                } else {
+                    firmware.installed = false
+                }
+            }
+        }
     }
 
     function loadFirmware() {
@@ -40,6 +84,7 @@ ColumnLayout {
         //        if (platformStack.connected && firmwareListModel.status === "initialized") {
         //            coreInterface.getFirmwareInfo(platformStack.deviceId)
         firmwareListModel.status = "loading"
+        spoofCommand() // TODO REMOVE
         //        }
     }
 
@@ -59,6 +104,14 @@ ColumnLayout {
 
         if (firmwareListModel.count > 0) {
             firmwareListModel.status = "loaded"
+        }
+    }
+
+    function clearDescriptions () {
+        for (let i = 0; i < firmwareVersions.children.length; i++) {
+            if (firmwareVersions.children[i].objectName === "firmwareRow") {
+                firmwareVersions.children[i].description = ""
+            }
         }
     }
 
@@ -144,7 +197,7 @@ ColumnLayout {
         }
 
         Text {
-            text: "v " + platformStack.firmware_version
+            text: platformStack.firmware_version
             font.bold: true
             font.pixelSize: 18
             visible: firmwareListModel.status === "loaded"
@@ -192,11 +245,18 @@ ColumnLayout {
             Repeater {
                 id: firmwareRepeater
                 model: firmwareListModel
-                width: parent.width
-
                 delegate: Rectangle {
+                    id: firmwareRow
                     Layout.preferredHeight: column.height
                     Layout.fillWidth: true
+                    objectName: "firmwareRow"
+
+                    property bool flashingInProgress: false
+                    property alias description: description.text
+
+                    onFlashingInProgressChanged: {
+                        firmwareColumn.flashingInProgress = flashingInProgress
+                    }
 
                     ColumnLayout {
                         id: column
@@ -221,35 +281,71 @@ ColumnLayout {
                                 color: "#666"
                             }
 
-                            SGIcon {
-                                source: model.installed ? "qrc:/sgimages/check-circle-solid.svg" : "qrc:/sgimages/download-solid.svg"
+                            Text {
+                                id: description
+                                color: "#bbb"
+                            }
+
+                            Item {
+                                id: imageContainer
                                 Layout.preferredHeight: 30
                                 Layout.preferredWidth: 30
-                                iconColor: model.installed ? "lime" : "#666"
 
-                                MouseArea {
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: model.installed ? Qt.ArrowCursor : Qt.PointingHandCursor
-                                    enabled: model.installed === false
+                                SGIcon {
+                                    id: installIcon
+                                    anchors {
+                                        fill: parent
+                                    }
+                                    source: model.installed ? "qrc:/sgimages/check-circle-solid.svg" : "qrc:/sgimages/download-solid.svg"
+                                    iconColor: model.installed ? "lime" : firmwareColumn.flashingInProgress ? "#ddd" : "#666"
+                                    visible: firmwareRow.flashingInProgress === false
 
-                                    onClicked: {
-                                        // if (version < installed version)
-                                        // warningPop.delegateDownload = download
-                                        // warningPop.open()
-                                        flashStatus.resetState()
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        cursorShape: model.installed || firmwareColumn.flashingInProgress ? Qt.ArrowCursor : Qt.PointingHandCursor
+                                        enabled: model.installed === false && !firmwareColumn.flashingInProgress
 
-                                        let updateFirmwareCommand = {
-                                            "hcs::cmd": "update_firmware",
-                                            "payload": {
-                                                "device_id": platformStack.device_id,
-                                                "path": model.file,
-                                                "md5": model.md5
+                                        onClicked: {
+                                            // if (version < installed version)
+                                            // warningPop.delegateDownload = download
+                                            // warningPop.open()
+                                            if (firmwareColumn.flashingInProgress === false) {
+                                                flashingInProgress = true
+                                                flashStatus.resetState()
+                                                firmwareColumn.clearDescriptions()
+                                                description.text = "Do not unplug your board during this process"
+
+                                                let updateFirmwareCommand = {
+                                                    "hcs::cmd": "update_firmware",
+                                                    "payload": {
+                                                        "device_id": platformStack.device_id,
+                                                        "path": model.file,
+                                                        "md5": model.md5
+                                                    }
+                                                }
+                                                coreInterface.sendCommand(JSON.stringify(updateFirmwareCommand));
+                                                flashStatus.visible = true
+                                                activeFirmware = flashStatus
                                             }
                                         }
-                                        coreInterface.sendCommand(JSON.stringify(updateFirmwareCommand));
-                                        flashStatus.visible = true
-                                        activeFirmware = flashStatus
+                                    }
+                                }
+
+                                AnimatedImage {
+                                    id: indicator
+                                    anchors {
+                                        fill: parent
+                                    }
+                                    source: "qrc:/images/loading.gif"
+                                    visible: !installIcon.visible
+
+                                    onVisibleChanged: {
+                                        if (visible) {
+                                            indicator.playing = true
+                                        } else {
+                                            indicator.playing = false
+                                        }
                                     }
                                 }
                             }
@@ -266,10 +362,10 @@ ColumnLayout {
                                 fillBar.width = 0
                                 fillBar.color = "lime"
                                 flashStatus.visible = false
+                                description.text = ""
                             }
 
                             function parseProgress (payload) {
-                                console.log("RECEIVED PROGRESS", JSON.stringify(payload))
                                 switch (payload.operation) {
                                 case "download":
                                     switch (payload.status) {
@@ -335,7 +431,6 @@ ColumnLayout {
                                         }
                                         break;
                                     case "failure":
-                                        statusText.text = "Flash failed: " + payload.flash_error
                                         break;
                                     }
                                     break;
@@ -344,35 +439,24 @@ ColumnLayout {
                                     break;
                                 case "finished":
                                     switch (payload.status) {
-                                    case "running":
-                                        statusText.text = "Firmware installation complete"
-                                        fillBar.width = barBackground.width
-                                        for (let i = 0; i < firmwareListModel.count; i++) {
-                                            firmwareListModel.get(i).installed = false
-                                        }
-                                        // todo: rather than set UI like this, reset firmwareListModel and re-query getFirmwareInfo from HCS???
-//                                        firmwareListModel.deviceVersion = model.version
-//                                        firmwareListModel.deviceTimestamp = model.timestamp
-                                        model.installed = true
-                                        flashStatus.visible = false
-                                        break;
                                     case "unsuccess":
                                     case "failure":
-                                        fillBar.color = "red"
-                                        fillBar.width = barBackground.width
-                                        statusText.text = "Firmware installation failed"
+                                        resetState()
+                                        description.text = "Firmware installation failed"
 
                                         let keys = Object.keys(payload)
                                         for (let j = 0; j < keys.length; j++) {
                                             if (keys[j].endsWith("_error") && payload[keys[j]] !== "") {
-                                                statusText.text += ": " + payload[keys[j]]
+                                                description.text += ": " + payload[keys[j]]
                                                 break;
                                             }
                                         }
+                                        flashingInProgress = false
                                         break
                                     case "success":
-                                        fillBar.width = 0
-                                        statusText.text = "Firmware installation succeeded"
+                                        resetState()
+                                        description.text = "Firmware installation succeeded"
+                                        flashingInProgress = false
                                         break
                                     }
                                     break;
@@ -389,6 +473,7 @@ ColumnLayout {
                                     id: statusText
                                     Layout.leftMargin: 10
                                     property real percent: fillBar.width/barBackground.width
+                                    color: "#444"
                                     text: "Initializing..."
                                 }
 
