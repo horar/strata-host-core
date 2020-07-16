@@ -8,7 +8,7 @@
 #include <QIcon>
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
-#include "WidgetGalleryVersion.h"
+#include "Version.h"
 
 void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());

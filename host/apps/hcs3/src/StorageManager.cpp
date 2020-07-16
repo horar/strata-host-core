@@ -18,14 +18,12 @@
 #include <QJsonObject>
 
 
-static const std::string g_document_views("views");
-static const std::string g_platform_selector("platform_selector");
-
 using strata::DownloadManager;
 
-StorageManager::StorageManager(QObject* parent)
-    : QObject(parent)
+StorageManager::StorageManager(const std::shared_ptr<DownloadManager>& downloadManager, QObject* parent)
+    : QObject(parent), downloadManager_(downloadManager)
 {
+    Q_ASSERT(downloadManager_ != nullptr);
 }
 
 StorageManager::~StorageManager()
@@ -43,19 +41,16 @@ void StorageManager::setDatabase(Database* db)
 
 void StorageManager::setBaseUrl(const QUrl &url)
 {
+    if (baseUrl_.isEmpty() == false) {
+        qCCritical(logCategoryHcsStorage) << "Base url is already set";
+        return;
+    }
+
     if (url.scheme().isEmpty()) {
         qCCritical(logCategoryHcsStorage) << "Base url does not have scheme";
     }
 
     baseUrl_ = url;
-    init();
-}
-
-void StorageManager::init()
-{
-    if (downloadManager_) {
-        return;
-    }
 
     baseFolder_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     Q_ASSERT(baseFolder_.isEmpty() == false);
@@ -63,19 +58,19 @@ void StorageManager::init()
     StorageInfo info(nullptr, baseFolder_);
     info.calculateSize();
 
-    downloadManager_.reset(new DownloadManager);
+    strata::DownloadManager *downloadManagerPtr = downloadManager_.get();
 
-    connect(downloadManager_.get(), &DownloadManager::filePathChanged, this, &StorageManager::filePathChangedHandler);
-    connect(downloadManager_.get(), &DownloadManager::singleDownloadProgress, this, &StorageManager::singleDownloadProgressHandler);
-    connect(downloadManager_.get(), &DownloadManager::singleDownloadFinished , this, &StorageManager::singleDownloadFinishedHandler);
+    connect(downloadManagerPtr, &DownloadManager::filePathChanged, this, &StorageManager::filePathChangedHandler);
+    connect(downloadManagerPtr, &DownloadManager::singleDownloadProgress, this, &StorageManager::singleDownloadProgressHandler);
+    connect(downloadManagerPtr, &DownloadManager::singleDownloadFinished , this, &StorageManager::singleDownloadFinishedHandler);
 
-    connect(downloadManager_.get(), &DownloadManager::groupDownloadProgress, this, &StorageManager::groupDownloadProgressHandler);
-    connect(downloadManager_.get(), &DownloadManager::groupDownloadFinished, this, &StorageManager::groupDownloadFinishedHandler);
+    connect(downloadManagerPtr, &DownloadManager::groupDownloadProgress, this, &StorageManager::groupDownloadProgressHandler);
+    connect(downloadManagerPtr, &DownloadManager::groupDownloadFinished, this, &StorageManager::groupDownloadFinishedHandler);
 }
 
-bool StorageManager::isInitialized() const
+QUrl StorageManager::getBaseUrl() const
 {
-    return downloadManager_.isNull() == false;
+    return baseUrl_;
 }
 
 QString StorageManager::createFilePathFromItem(const QString& item, const QString& prefix)
@@ -128,7 +123,7 @@ void StorageManager::groupDownloadProgressHandler(const QString &groupId, int fi
     }
 
     if (request->type == RequestType::PlatformDocuments) {
-        emit downloadPlatformDocumentsProgress(request->clientId, filesCompleted, filesTotal);
+        emit downloadPlatformDocumentsProgress(request->clientId, request->classId, filesCompleted, filesTotal);
     }
 }
 
@@ -159,7 +154,7 @@ void StorageManager::handlePlatformListResponse(const QByteArray &clientId, cons
 
 void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadRequest *requestItem, const QString &errorString)
 {
-    QJsonArray documentList;
+    QJsonArray documentList, firmwareList;
     QString  finalErrorString = errorString;
 
     PlatformDocument *platDoc = fetchPlatformDoc(requestItem->classId);
@@ -202,9 +197,22 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
 
             documentList.append(object);
         }
+
+        QList<FirmwareItem> firmwareItems = platDoc->getFirmwareList();
+        for (const auto &item : firmwareItems) {
+            QJsonObject object {
+                {"uri", item.partialUri},
+                {"md5", item.md5},
+                {"name", item.name},
+                {"timestamp", item.timestamp},
+                {"version", item.version}
+            };
+
+            firmwareList.append(object);
+        }
     }
 
-    emit platformDocumentsResponseRequested(requestItem->clientId, documentList, finalErrorString);
+    emit platformDocumentsResponseRequested(requestItem->clientId, requestItem->classId, documentList, firmwareList, finalErrorString);
 }
 
 PlatformDocument* StorageManager::fetchPlatformDoc(const QString &classId)
@@ -235,12 +243,6 @@ PlatformDocument* StorageManager::fetchPlatformDoc(const QString &classId)
 
 void StorageManager::requestPlatformList(const QByteArray &clientId)
 {
-    if (isInitialized() == false) {
-        qCCritical(logCategoryHcsStorage) << "StorageManager is not initialized";
-        handlePlatformListResponse(clientId, QJsonArray());
-        return;
-    }
-
     std::string platform_list_body;
     if (db_->getDocument("platform_list", platform_list_body) == false) {
         qCCritical(logCategoryHcsStorage) << "platform_list document not found";
@@ -313,20 +315,15 @@ void StorageManager::requestPlatformDocuments(
         const QByteArray &clientId,
         const QString &classId)
 {
-    if (isInitialized() == false) {
-        return;
-    }
-
     PlatformDocument* platDoc = fetchPlatformDoc(classId);
 
     if (platDoc == nullptr){
-        platformDocumentsResponseRequested(clientId, QJsonArray(), "Failed to fetch platform data");
+        platformDocumentsResponseRequested(clientId, classId, QJsonArray(), QJsonArray(), "Failed to fetch platform data");
         qCCritical(logCategoryHcsStorage) << "Failed to fetch platform data with id:" << classId;
         return;
     }
 
-    QString pathPrefix("documents/");
-    pathPrefix += QString::fromStdString(g_document_views);
+    QString pathPrefix("documents/views");
 
     QList<PlatformFileItem> viewList = platDoc->getViewList();
 

@@ -16,7 +16,6 @@ Item {
 
     property var volume:{
         "master":0,           // where value is mute =-42, -41, …, 0, 1, 2, …, 41, 42 // dB
-        "sub": 4             // where value is 0 (mute), 16, 21, 23, 26 // dB
     }
 
 
@@ -58,14 +57,14 @@ Item {
          "port":1,
          "device":"none",                      //or "non-PD" or "none" if disconnected
          "advertised_maximum_current":3.00, // amps - maximum available current for the negotiated voltage
-         "negotiated_current":0,              // amps - current specified by the device, will be lower than "target_maximum_current"
-         "negotiated_voltage":0,            // volts - advertised and negotiated voltage
-         "input_voltage":0,                 // volts
-         "output_voltage":0,                 // volts - actual measured output voltage
-         "input_current":0,                  // amps
-         "output_current":0,                 // amps
-         "temperature":0,                      // degrees C
-         "maximum_power":0                     // in watts
+         "negotiated_current":0.0,              // amps - current specified by the device, will be lower than "target_maximum_current"
+         "negotiated_voltage":0.0,            // volts - advertised and negotiated voltage
+         "input_voltage":0.0,                 // volts
+         "output_voltage":0.0,                 // volts - actual measured output voltage
+         "input_current":0.0,                  // amps
+         "output_current":0.0,                 // amps
+         "temperature":0.0,                      // degrees C
+         "maximum_power":0.0                     // in watts
 
      }
 
@@ -112,25 +111,31 @@ Item {
     property var charger_status:{
         "float_voltage":4.2,           /* has a range of voltages, but this is only one used*/
         "charge_mode":"fast",           /* ‘pre’ or ‘top off' or 'sleep’ or 'discharge'*/
-        "precharge_current":100,        /* (mA) 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800 /
-        "termination_current":100,      /* (mA) 100 - 200 in 25mA increments, 200 - 600 in 50mA increments */
-        "ibus_limit":50,                 /* (mA) 100-3000 in 25mA increments */
-        "fast_chg_current":200,         /* (mA) 200-3200 in 50 mA increments */
+        "precharge_current":200,        /* (mA) 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800 */
+        "termination_current":200,      /* (mA) 100 - 200 in 25mA increments, 200 - 600 in 50mA increments */
+        "bus_current":200,                 /* (mA) 100-3000 in 25mA increments */
+        "fast_current":200,         /* (mA) 200-3200 in 50 mA increments */
         "vbus_ovp":6.5,                 /*  (V) or 10.5 or 13.7*/
         "audio_power_mode":"vbus"       /*or battery*/
     }
 
-    property var bus_current_limit:{
-        "type":"bus_current_limit",     //or fast_current_limit,precharge_current_limit, termination_current_limit
-        "current":50
-    }
+//    onCharger_statusChanged: {
+//        console.log("float voltage=",charger_status.float_voltage)
+//        console.log("charge mode=",charger_status.charge_mode)
+//        console.log("precharge current=",charger_status.precharge_current)
+//        console.log("termination current=",charger_status.termination_current)
+//        console.log("ibus limit=",charger_status.ibus_limit)
+//        console.log("fast charge current=",charger_status.fast_chg_current)
+//        console.log("vbus ovp=",charger_status.vbus_ovp)
+//        console.log("audio power=",charger_status.audio_power_mode)
+
+//    }
 
     property var led_state:{
         "lower_on":true,
         "upper_on":true,
-        "r":128,                                  /* red intensity for lower LEDs, ignore for upper LEDs */
-        "g":128,                                 /* green intensity for lower LEDs, ignore for upper LEDs */
-        "b":128,                                 /* blue intensity  for lower LEDs, ignore for upper LEDs */
+        "H":128,                                  /* Hue values are 0 to 359 */
+        "V":128,                                 /* value betwen 0 and 100 */
     }
 
     property var audio_amp_id:{
@@ -139,7 +144,9 @@ Item {
     }
 
     property var audio_amp_voltage:{
-        "volts":12,
+        "usb_volts":12,                             //depending on amp type
+        "battery_volts":14,                         //can be 5.5 to 14V depending on the ONA10
+        "type":"usb"                            //or battery
     }
 
     property var touch_button_state:{
@@ -149,10 +156,10 @@ Item {
     property var thermal_protection_temp:{
         "value":70               //or 85, 100, 120
     }
+//    onThermal_protection_tempChanged: {
+//        console.log("thermal protection temp=",thermal_protection_temp.value)
+//    }
 
-    property var vbus_ovp_level:{
-        "value":6.5
-    }
 
     property var fet_bypass:{
         "state":true,
@@ -360,7 +367,7 @@ Item {
     property var set_charger_current:({
                  "cmd":"set_charger_current",
                  "payload":{
-                    "type":"set_vbus_current_limit",       // or set_fast_current_limit, set_precharge_current_limit set_termination_current_limit
+                    "type":"vbus_current_limit",       // or fast_current_limit, precharge_current_limit, termination_current_limit
                     "current":50
                     },
                  update: function(type,current){
@@ -379,22 +386,19 @@ Item {
     property var set_led_state:({
                  "cmd":"set_led_state",
                  "payload":{
-                    "set":"lower",                        // or 'upper'
-                    "state":"on",
-                    "r":128,
-                    "g":128,
-                    "b":128
+                    "lower_on":true,
+                    "upper_on":true,
+                    "H":128,
+                    "V":0                               //pass 0 if LED is turned off, otherwise brightness
                     },
-                 update: function(set,state,r,g,b){
-                   this.set(set,state,r,g,b)
+                 update: function(set,state,h,v){
+                   this.set(set,state,h,v)
                    CorePlatformInterface.send(this)
                  },
-                 set: function(inSet, inState, inR, inG, inB){
+                 set: function(inSet, inH, inV){
                    this.payload.set = inSet;
-                     this.payload.state = inState;
-                     this.payload.r = inR;
-                     this.payload.g = inG;
-                     this.payload.b = inB;
+                   this.payload.H = inH;
+                   this.payload.V = inV;
                   },
                  send: function(){
                    CorePlatformInterface.send(this)
@@ -418,14 +422,18 @@ Item {
     property var set_audio_amp_voltage:({
                  "cmd":"set_audio_amp_voltage",
                  "payload":{
-                  "volts":12
+                  "usb_volts":12,
+                  "battery_volts":5.5,
+                  "type":"usb"
                   },
-                 update: function(volts){
-                   this.set(volts)
+                 update: function(usb,battery,type){
+                   this.set(usb,battery,type)
                    CorePlatformInterface.send(this)
                  },
-                 set: function(inVolts){
-                     this.payload.volts = inVolts;
+                 set: function(inUSB,inBattery,inType){
+                     this.payload.usb_volts = inUSB;
+                      this.payload.battery_volts = inBattery;
+                      this.payload.type = inType;
                   },
                  send: function(){
                    CorePlatformInterface.send(this)
@@ -523,168 +531,5 @@ Item {
     }
 
 
-/*
 
-        // DEBUG - TODO: Faller - Remove before merging back to Dev
-    Window {
-        id: debug
-        visible: true
-        width: 225
-        height: 200
-
-
-        function makeRandomDeviceName(length) {
-           var result           = '';
-           var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-           var charactersLength = characters.length;
-           for ( var i = 0; i < length; i++ ) {
-              result += characters.charAt(Math.floor(Math.random() * charactersLength));
-           }
-           return result;
-        }
-
-        Button {
-            id: leftButton1
-            text: "mixer"
-            onClicked: {
-
-                CorePlatformInterface.data_source_handler('{
-                                   "value":"volume",
-                                   "payload": {
-                                        "master":"'+ (Math.random()*84 - 42) +'",
-                                        "sub": "'+ (Math.random()*26) +'"
-                                        }
-                                    }')
-
-            }
-        }
-
-        Button {
-            id: button1
-            text: "EQ"
-            anchors.left: leftButton1.right
-            onClicked: {
-
-                CorePlatformInterface.data_source_handler('{
-                                   "value":"equalizer_levels",
-                                   "payload": {
-                                            "band1":"'+ (Math.random()*36-18) +'",
-                                            "band2":"'+ (Math.random()*36-18) +'",
-                                            "band3":"'+ (Math.random()*36-18) +'",
-                                            "band4":"'+ (Math.random()*36-18) +'",
-                                            "band5":"'+ (Math.random()*36-18) +'",
-                                            "band6":"'+ (Math.random()*36-18) +'",
-                                            "band7":"'+ (Math.random()*36-18) +'",
-                                            "band8":"'+ (Math.random()*36-18) +'",
-                                            "band9":"'+ (Math.random()*36-18) +'",
-                                            "band10":"'+ (Math.random()*36-18) +'"
-                                        }
-                                    }')
-            }
-        }
-
-        Button {
-            id: leftButton2
-            anchors { top: button1.bottom }
-            text: "USB Telemetry"
-            onClicked: {
-
-                CorePlatformInterface.data_source_handler('{
-                    "value":"request_usb_power_notification",
-                    "payload":{
-                        "port":1,
-                        "device":"none",
-                        "advertised_maximum_current": "'+ (Math.random() *10) +'",
-                        "negotiated_current": "'+ (Math.random() *10) +'",
-                        "negotiated_voltage":"'+ (Math.random() *10) +'",
-                        "input_voltage":"'+ (Math.random() *10) +'",
-                        "output_voltage":"'+ (Math.random() *10) +'",
-                        "input_current":"'+ (Math.random() *10) +'",
-                        "output_current":"'+ (Math.random() *10) +'",
-                        "temperature":"'+ (Math.random() *10) +'",
-                        "maximum_power":"'+ (Math.random() *10) +'"
-                               }
-                             }')
-            }
-        }
-
-
-         property var bluetooth_pairing:{
-              "value":"not paired",    //or "paired"
-              "id":"device1"            // device identifier, if paired.
-          }
-
-        Button {
-            id: button2
-            anchors.top: button1.bottom
-            anchors.left: leftButton2.right
-            text: "bluetooth"
-            onClicked: {
-                var device1 = debug.makeRandomDeviceName(5);
-                var device2 = debug.makeRandomDeviceName(5);
-                var device3 = debug.makeRandomDeviceName(5);
-                var device4 = debug.makeRandomDeviceName(5);
-                var device5 = debug.makeRandomDeviceName(5);
-                CorePlatformInterface.data_source_handler('{
-                    "value":"bluetooth_devices",
-                    "payload":{
-                                "count":5,
-                                "devices":["'+device1+'",
-                                            "'+device2+'",
-                                            "'+device3+'",
-                                            "'+device4+'",
-                                            "'+device5+'"]
-                               }
-                             }')
-                CorePlatformInterface.data_source_handler('{
-                    "value":"bluetooth_pairing",
-                    "payload":{
-                                "value":"paired",
-                                "id":"'+device3+'"
-                               }
-                             }')
-            }
-        }
-
-
-
-
-        Button {
-            id:button3
-            anchors { top: button2.bottom }
-            text: "sourceCap"
-            onClicked: {
-                CorePlatformInterface.data_source_handler('{
-                    "value":"usb_pd_advertised_voltages_notification",
-                    "payload":{
-                                "port":1,
-                                "maximum_power":60,
-                                "number_of_settings": 7,
-                                "settings":[{"voltage":5,
-                                            "maximum_current":'+ (Math.random() *10).toFixed(0) +'
-                                            },
-                                            {"voltage":7,
-                                            "maximum_current":'+ (Math.random() *10).toFixed(0) +'
-                                            },
-                                            {"voltage":8,
-                                            "maximum_current":'+ (Math.random() *10).toFixed(0) +'
-                                            },
-                                            {"voltage":9,
-                                            "maximum_current":'+ (Math.random() *10).toFixed(0) +'
-                                            },
-                                            {"voltage":12,
-                                            "maximum_current":'+ (Math.random() *10).toFixed(0) +'
-                                            },
-                                            {"voltage":15,
-                                            "maximum_current":'+ (Math.random() *10).toFixed(0) +'
-                                            },
-                                            {"voltage":20,
-                                            "maximum_current":'+ (Math.random() *10).toFixed(0) +'}]
-                               }
-                             }')
-            }
-        }
-
-    }
-*/
 }

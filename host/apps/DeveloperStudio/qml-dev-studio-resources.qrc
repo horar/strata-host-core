@@ -25,5 +25,6 @@
         <file>images/grey-white-fade-background.svg</file>
         <file>images/icons/asterisk-solid.svg</file>
         <file>images/icons/disconnected.svg</file>
+        <file>images/no-hcs-connection.svg</file>
     </qresource>
 </RCC>

@@ -14,14 +14,8 @@ public:
 
     QByteArray getClientId() const { return client_id_; }
 
-    //sets the PlatformId that client is connected to.
-    void setPlatformId(const QString& platformId);
-    void resetPlatformId();
-    QString getPlatformId() const { return platformId_; }
-
 private:
     QByteArray client_id_;    //or dealerId
-    QString platformId_;   //selected platformId by client
 };
 
 #endif //HOST_HCS_CLIENT_H__

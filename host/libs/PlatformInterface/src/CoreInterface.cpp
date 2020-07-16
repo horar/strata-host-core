@@ -43,16 +43,22 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
                                 std::bind(&CoreInterface::cloudNotificationHandler,
                                      this, std::placeholders::_1));
 
-    notification_thread_running_ = false;
+    notification_thread_running_.store(false);
     notification_thread_= std::thread(&CoreInterface::notificationsThread,this);
 }
 
 CoreInterface::~CoreInterface()
 {
-    //qCDebug(logCategoryCoreInterface) << "CoreInterface::~CoreInterface() DTOR\n";
+    setNotificationThreadRunning(false);
+    bool closed = hcc->closeContext();
 
-    delete(hcc);
-    notification_thread_.detach();
+    if (closed && notification_thread_.joinable()) {
+        notification_thread_.join();
+    } else {
+        notification_thread_.detach();
+    }
+
+    delete hcc;
 }
 
 // @f notificationsThreadHandle
@@ -62,17 +68,15 @@ CoreInterface::~CoreInterface()
 void CoreInterface::notificationsThread()
 {
     //qDebug () << "CoreInterface::notificationsThread - notification handling.";
-    notification_thread_running_ = true;
+    notification_thread_running_.store(true);
 
-    while(notification_thread_running_) {
+    while(notification_thread_running_.load()) {
         // Notification Message Architecture
         //
         //    {
         //        "notification": {
-        //            "value": "platform_connection_change_notification",
-        //            "payload": {
-        //                "status": "disconnected"
-        //            }
+        //            "device_id": -1088988335,
+        //            "message":"{\"notification\":{\"value\":\"sensor_value\",\"payload\":{\"value\":\"touch\"}}}"
         //        }
         //    }
         //
@@ -91,6 +95,10 @@ void CoreInterface::notificationsThread()
         // TODO [ian] need to avoid uneeded std::string to QString conversion
         // TODO [ian] need to error check/validate json messages
         string message = hcc->receiveNotification();  // Host Controller Service
+
+        if (message.empty()) {
+            continue;
+        }
 
         QString n(message.c_str());
 
@@ -136,6 +144,8 @@ void CoreInterface::notificationsThread()
         // dispatch handler for notification
         handler->second(notification_json[notification].toObject());
     }
+
+    hcc->close();
 }
 
 // ---
@@ -143,45 +153,22 @@ void CoreInterface::notificationsThread()
 //
 
 // @f platformNotificationHandler
-// @b handle platform notifications
+// @b forward platform notifications to UI
 //
 //  TODO [ian] change "value" to "name" of notification message
 //    {
 //        "notification": {
-//            "value": "platform_connection_change_notification",
-//            "payload": {
-//                "status": "disconnected"
-//            }
+//            "device_id": -1088988335,
+//            "message":"{\"notification\":{\"value\":\"sensor_value\",\"payload\":{\"value\":\"touch\"}}}"
 //        }
 //    }
 
 void CoreInterface::platformNotificationHandler(QJsonObject payload)
 {
-    //qDebug("ImplementationInterfaceBinding::platformmNotificationHandler: CALLED");
+    //qCDebug(logCategoryCoreInterface) << "CoreInterface::platformNotificationHandler: CALLED";
 
-    if( payload.contains("value") == false ) {
-        qCritical("CoreInterface::platformNotificationHandler()"
-                  " ERROR: no name for notification!!");
-        return;
-    }
-
-    if( payload.contains("payload") == false ) {
-        qCritical("CoreInterface::platformNotificationHandler()"
-                  " ERROR: no payload for notification!!");
-        return;
-    }
-
-    QString value = payload["value"].toString();
-    auto handler = notification_handlers_.find(value.toStdString());
-    if( handler == notification_handlers_.end()) {
-        QJsonDocument doc(payload);
-        emit notification( doc.toJson(QJsonDocument::Compact));
-        return;
-    }
-
-    handler->second(payload["payload"].toObject());
     QJsonDocument doc(payload);
-    emit notification( doc.toJson(QJsonDocument::Compact));
+    emit notification(doc.toJson(QJsonDocument::Compact));
 }
 
 // @f initialHandshakeHandler
@@ -255,10 +242,23 @@ void CoreInterface::sendCommand(QString cmd)
 // @f disconnectPlatform
 // @b send disconnect command to HCS
 //
-void CoreInterface::disconnectPlatform()
+void CoreInterface::disconnectPlatform(int device_id)
 {
-    std::string cmd= "{\"hcs::cmd\":\"disconnect_platform\",\"payload\":{}}";
-    hcc->sendCmd(cmd);
+    QJsonObject payloadObject;
+    payloadObject.insert("device_id", device_id);
+
+    QJsonObject cmdMessageObject;
+    cmdMessageObject.insert("hcs::cmd", "disconnect_platform");
+    cmdMessageObject.insert("payload", payloadObject);
+
+    QJsonDocument doc(cmdMessageObject);
+    QString strJson(doc.toJson(QJsonDocument::Compact));
+    hcc->sendCmd(strJson.toStdString());
+}
+
+void CoreInterface::setNotificationThreadRunning(bool running)
+{
+    notification_thread_running_.store(running);
 }
 
 // @f unregisterClient

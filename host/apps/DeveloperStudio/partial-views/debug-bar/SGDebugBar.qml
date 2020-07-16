@@ -90,6 +90,9 @@ Item {
                                         let data = {
                                             "class_id": uuid,
                                             "name": model.fileName,
+                                            "device_id": "",
+                                            "view": "control",
+                                            "connected": true,
                                             "available": {
                                                 "control": true,
                                                 "documents": true,
@@ -97,8 +100,9 @@ Item {
                                                 "order": false
                                             }
                                         }
-                                        NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
-                                        viewCombobox.currentIndex = index
+
+                                        NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT, data)
+                                                    viewCombobox.currentIndex = index
                                         break
                                     }
                                 }
@@ -137,7 +141,7 @@ Item {
                 id: alwaysLogin
                 text: "Always Login as Guest"
                 onCheckedChanged: {
-                    if (checked && NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
+                    if (checked && NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE && sdsModel.hcsConnected) {
                         NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
                     }
                 }
@@ -149,9 +153,10 @@ Item {
                 }
 
                 Connections {
-                    target: mainWindow
-                    onInitialized: {
-                        if (alwaysLogin.checked) {
+                    target: sdsModel
+                    onHcsConnectedChanged: {
+                        if (sdsModel.hcsConnected && alwaysLogin.checked) {
+                            NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
                             NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
                         }
                     }

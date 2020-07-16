@@ -11,7 +11,7 @@ set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Gui Widgets Quick Qml WebEngine Charts RemoteObjects
+    COMPONENTS Core Gui Widgets Quick Qml WebEngine Charts RemoteObjects Svg
     REQUIRED
 )
 
@@ -19,10 +19,12 @@ qt5_generate_repc(NODE_RO_SRCS ../hcs3/src/HostControllerService.rep REPLICA)
 
 add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     main.cpp
+    source/SDSModel.cpp
     source/DocumentManager.cpp
     source/ResourceLoader.cpp
     source/DocumentListModel.cpp
     source/DownloadDocumentListModel.cpp
+    source/ClassDocuments.cpp
     $<IF:$<CONFIG:Release>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
 
     logging/LoggingQtCategories.cpp
@@ -59,20 +61,13 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Qml
     Qt5::WebEngine
     Qt5::RemoteObjects
+    Qt5::Svg
 
     connector
     HostControllerClient
     PlatformInterface
 
     QtLogger
-)
-
-add_dependencies(${PROJECT_NAME}
-    component-common
-    component-fonts
-    component-pdfjs
-    component-sgwidgets
-    component-theme
 )
 
 if(WIN32)
@@ -89,6 +84,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     #AUTORCC_OPTIONS "--compress;9"
 
     OUTPUT_NAME "${PROJECT_DESCRIPTION}"
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>
 )
 
 if(WIN32)
@@ -110,7 +106,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 )
 
 # LC: start 'hcs' process from strata (will be handled by strata monitor in near future)
-set_source_files_properties(main.cpp PROPERTIES
+set_source_files_properties(main.cpp source/SDSModel.cpp PROPERTIES
     COMPILE_DEFINITIONS "START_SERVICES;WINDOWS_INSTALLER_BUILD=$<BOOL:${WINDOWS_INSTALLER_BUILD}>;HCS_CONFIG=$<IF:$<CONFIG:Release>,\"hcs.config\",\"hcs_qa.config\">"
 )
 

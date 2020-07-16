@@ -1,4 +1,5 @@
 .pragma library
+.import tech.strata.logger 1.0 as LoggerModule
 
 var categoryFilterModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {}",Qt.application,"categoryFilterModel")
 var segmentFilterModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {}",Qt.application,"segmentFilterModel")
@@ -168,6 +169,19 @@ function findFilter (filter) {
         return mapping[filter]
     }
     return null
+}
+
+function getFilterList (filters) {
+    let filterModel = []
+    for (let filter of filters) {
+        let filterListItem = findFilter(filter)
+        if (filterListItem) {
+            filterModel.push(filterListItem)
+        } else {
+            console.warn(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Ignoring unimplemented filter:", filter);
+        }
+    }
+    return filterModel
 }
 
 function initialize () {
