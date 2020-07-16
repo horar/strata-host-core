@@ -52,15 +52,10 @@ def populateConstants(argv):
     global VALID_PASSWORD
     global VALID_USERNAME
     global DEFAULT_URL
-    if len(argv) < 3:
-        print("Supply default username and password information. Supply HCS TCP address.")
+    if len(argv) < 4:
+        print("Usage: <valid username> <valid password> <hcs tcp url>")
         sys.exit(0)
     else:
-        loginInfoArgument = argv[1]
-        print("loginInfoArgument " + loginInfoArgument)
-        print("default url" + argv[2])
-        loginInfo = json.loads(loginInfoArgument)
-        VALID_PASSWORD = loginInfo["password"]
-        VALID_USERNAME = loginInfo["username"]
-
-        DEFAULT_URL = argv[2]
+        VALID_USERNAME = argv[1]
+        VALID_PASSWORD = argv[2]
+        DEFAULT_URL = argv[3]

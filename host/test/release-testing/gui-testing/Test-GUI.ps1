@@ -24,14 +24,16 @@ StrataPath: The path to the Strata executable.
 Version:        1.0
 Creation Date:  07/10/2020
 #>
-. "$PSScriptRoot\ConvertTo-ArgvQuoteForPoSh.ps1"
-
 function Test-Gui() {
+    $SDSLoginInfoObj = $SDSLoginInfo | ConvertFrom-Json
 
-    $SDSLoginInfoArg = ConvertTo-ArgvQuoteForPoSh $SDSLoginInfo
+    $Username = $SDSLoginInfoObj.username
+    $Password = $SDSLoginInfoObj.password
 
     Write-Host "Starting GUI testing"
 
+    Write-Host "Username:" $Username
+    Write-Host "Password:" $Password
     # Stop any previously running HCS processes
     Stop-HCS
     # Stop any previously running SDS processes
@@ -41,7 +43,7 @@ function Test-Gui() {
 
     #run basic tests
     Start-SDSAndWait
-    Start-Process $PythonExec -ArgumentList $PythonGUIMain, $SDSLoginInfoArg, $HCSTCPEndpoint -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList $PythonGUIMain, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
     Stop-Process -Name "Strata Developer Studio" -Force
 
     Write-Host "Disabling network for Strata..."
@@ -52,7 +54,7 @@ function Test-Gui() {
     Start-SDSAndWait -seconds 1
 
     Write-Host "Testing Strata with no network connection..."
-    Start-Process $PythonExec -ArgumentList $PythonGUIMainNoNetwork, $SDSLoginInfoArg, $HCSTCPEndpoint -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList $PythonGUIMainNoNetwork, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
 
     Stop-Process -Name "Strata Developer Studio" -Force
 
@@ -64,13 +66,13 @@ function Test-Gui() {
     Write-Host "Testing logging in, closing Strata, reopening Strata..."
 
     Start-SDSAndWait -seconds 1
-    Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPre, $SDSLoginInfoArg, $HCSTCPEndpoint -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPre, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
 
     Stop-Process -Name "Strata Developer Studio" -Force
 
     #Test for Strata automatically going to the platform view
     Start-SDSAndWait -seconds 1
-    Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPost, $SDSLoginInfoArg, $HCSTCPEndpoint -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPost, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
 
     Stop-Process -Name "Strata Developer Studio" -Force
 
