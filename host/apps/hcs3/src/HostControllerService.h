@@ -98,6 +98,7 @@ public slots:
             const QString &classId,
             const QJsonArray &documentList,
             const QJsonArray &firmwareList,
+            const QJsonArray &controlViewList,
             const QString &error);
 
 private:

@@ -270,6 +270,7 @@ void HostControllerService::sendPlatformDocumentsMessage(
         const QString &classId,
         const QJsonArray &documentList,
         const QJsonArray &firmwareList,
+        const QJsonArray &controlViewList,
         const QString &error)
 {
     QJsonDocument doc;
@@ -282,6 +283,7 @@ void HostControllerService::sendPlatformDocumentsMessage(
     if (error.isEmpty()) {
         payload.insert("documents", documentList);
         payload.insert("firmwares", firmwareList);
+        payload.insert("control_views", controlViewList);
     } else {
         payload.insert("error", error);
     }

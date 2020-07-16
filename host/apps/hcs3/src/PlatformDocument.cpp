@@ -97,15 +97,31 @@ bool PlatformDocument::parseDocument(const QString &document)
         // TODO: Nowadays, server does not support firmware object. Return false when it will be supported.
         //return false;
     }
-    else {  // TODO: Remove this else when server will support firmware object.
+    else {  // TODO: Remove this else line when server will support firmware object.
         QJsonValue firmwareValue = jsonDocument.value("firmware");
         if (firmwareValue.isArray()) {
-            populateFirmwareList(firmwareValue.toArray(), firmwareList_);
+            populateVersionedList(firmwareValue.toArray(), firmwareList_);
         } else {
             qCCritical(logCategoryHcsPlatformDocument) << "value of firmware key is not an array";
             return false;
         }
-    }  // TODO: remove this else
+    }  // TODO: remove this else line
+
+    //control view
+    if (jsonDocument.contains("control_view") == false) {
+        qCCritical(logCategoryHcsPlatformDocument) << "control_view key is missing";
+        // TODO: Nowadays, server does not support control_view object. Return false when it will be supported.
+        //return false;
+    }
+    else {  // TODO: Remove this else line when server will support control_view object.
+        QJsonValue controlViewValue = jsonDocument.value("control_view");
+        if (controlViewValue.isArray()) {
+            populateVersionedList(controlViewValue.toArray(), controlViewList_);
+        } else {
+            qCCritical(logCategoryHcsPlatformDocument) << "value of control_view key is not an array";
+            return false;
+        }
+    }  // TODO: remove this else line
 
     return true;
 }
@@ -125,9 +141,14 @@ const QList<PlatformFileItem>& PlatformDocument::getDownloadList()
     return downloadList_;
 }
 
-const QList<FirmwareItem>& PlatformDocument::getFirmwareList()
+const QList<VersionedFileItem>& PlatformDocument::getFirmwareList()
 {
     return firmwareList_;
+}
+
+const QList<VersionedFileItem>& PlatformDocument::getControlViewList()
+{
+    return controlViewList_;
 }
 
 const PlatformFileItem &PlatformDocument::platformSelector()
@@ -157,7 +178,7 @@ bool PlatformDocument::populateFileObject(const QJsonObject &jsonObject, Platfor
     return true;
 }
 
-bool PlatformDocument::populateFirmwareObject(const QJsonObject &jsonObject, FirmwareItem &firmware)
+bool PlatformDocument::populateVersionedObject(const QJsonObject &jsonObject, VersionedFileItem &versionedFile)
 {
     if (jsonObject.contains("file") == false
             || jsonObject.contains("md5") == false
@@ -168,11 +189,11 @@ bool PlatformDocument::populateFirmwareObject(const QJsonObject &jsonObject, Fir
         return false;
     }
 
-    firmware.partialUri = jsonObject.value("file").toString();
-    firmware.md5 = jsonObject.value("md5").toString();
-    firmware.name = jsonObject.value("name").toString();
-    firmware.timestamp = jsonObject.value("timestamp").toString();
-    firmware.version = jsonObject.value("version").toString();
+    versionedFile.partialUri = jsonObject.value("file").toString();
+    versionedFile.md5 = jsonObject.value("md5").toString();
+    versionedFile.name = jsonObject.value("name").toString();
+    versionedFile.timestamp = jsonObject.value("timestamp").toString();
+    versionedFile.version = jsonObject.value("version").toString();
 
     return true;
 }
@@ -190,15 +211,15 @@ void PlatformDocument::populateFileList(const QJsonArray &jsonList, QList<Platfo
     }
 }
 
-void PlatformDocument::populateFirmwareList(const QJsonArray &jsonList, QList<FirmwareItem> &firmwareList)
+void PlatformDocument::populateVersionedList(const QJsonArray &jsonList, QList<VersionedFileItem> &versionedList)
 {
     foreach (const QJsonValue &value, jsonList) {
-        FirmwareItem firmwareItem;
-        if (populateFirmwareObject(value.toObject() , firmwareItem) == false) {
-            qCCritical(logCategoryHcsPlatformDocument) << "firmware object not valid";
+        VersionedFileItem firmwareItem;
+        if (populateVersionedObject(value.toObject() , firmwareItem) == false) {
+            qCCritical(logCategoryHcsPlatformDocument) << "versioned file object not valid";
             continue;
         }
 
-        firmwareList.append(firmwareItem);
+        versionedList.append(firmwareItem);
     }
 }

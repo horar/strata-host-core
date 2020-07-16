@@ -144,6 +144,9 @@ void ClassDocuments::populateModels(QJsonObject data)
     }
     */
 
+    // TODO: CS-831 - Iterate over control views list here.
+    // QJsonArray controlViewArray = data["control_views"].toArray();
+
     pdfModel_.populateModel(pdfList);
     datasheetModel_.populateModel(datasheetList);
     downloadDocumentModel_.populateModel(downloadList);

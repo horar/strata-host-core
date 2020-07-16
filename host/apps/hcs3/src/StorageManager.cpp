@@ -73,7 +73,7 @@ QUrl StorageManager::getBaseUrl() const
     return baseUrl_;
 }
 
-QString StorageManager::createFilePathFromItem(const QString& item, const QString& prefix)
+QString StorageManager::createFilePathFromItem(const QString& item, const QString& prefix) const
 {
     QString tmpName = QDir(prefix).filePath( item );
     return QDir(baseFolder_).filePath(tmpName);
@@ -154,7 +154,7 @@ void StorageManager::handlePlatformListResponse(const QByteArray &clientId, cons
 
 void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadRequest *requestItem, const QString &errorString)
 {
-    QJsonArray documentList, firmwareList;
+    QJsonArray documentList, firmwareList, controlViewList;
     QString  finalErrorString = errorString;
 
     PlatformDocument *platDoc = fetchPlatformDoc(requestItem->classId);
@@ -198,7 +198,8 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
             documentList.append(object);
         }
 
-        QList<FirmwareItem> firmwareItems = platDoc->getFirmwareList();
+        //firmwares
+        QList<VersionedFileItem> firmwareItems = platDoc->getFirmwareList();
         for (const auto &item : firmwareItems) {
             QJsonObject object {
                 {"uri", item.partialUri},
@@ -210,9 +211,34 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
 
             firmwareList.append(object);
         }
+
+        //control views
+        QList<VersionedFileItem> controlViewItems = platDoc->getControlViewList();
+        for (const auto &item : controlViewItems) {
+            QString filePath = createFilePathFromItem(item.partialUri, "documents/control_views");
+            if (downloadManager_->verifyFileChecksum(filePath, item.md5) == false) {
+                filePath.clear();
+            }
+            QJsonObject object {
+                {"uri", item.partialUri},
+                {"md5", item.md5},
+                {"name", item.name},
+                {"timestamp", item.timestamp},
+                {"version", item.version},
+                {"filepath", filePath}
+            };
+
+            controlViewList.append(object);
+        }
+
     }
 
-    emit platformDocumentsResponseRequested(requestItem->clientId, requestItem->classId, documentList, firmwareList, finalErrorString);
+    emit platformDocumentsResponseRequested(requestItem->clientId,
+                                            requestItem->classId,
+                                            documentList,
+                                            firmwareList,
+                                            controlViewList,
+                                            finalErrorString);
 }
 
 PlatformDocument* StorageManager::fetchPlatformDoc(const QString &classId)
@@ -271,7 +297,7 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
     QString pathPrefix = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     pathPrefix.append("/documents/platform_selector/");
 
-    for (const QJsonValue &value : jsonPlatformList) {
+    for (const QJsonValueRef value : jsonPlatformList) {
         QString classId = value.toObject().value("class_id").toString();
         if (classId.isEmpty()) {
             qCCritical(logCategoryHcsStorage) << "class_id key is missing";
@@ -318,7 +344,7 @@ void StorageManager::requestPlatformDocuments(
     PlatformDocument* platDoc = fetchPlatformDoc(classId);
 
     if (platDoc == nullptr){
-        platformDocumentsResponseRequested(clientId, classId, QJsonArray(), QJsonArray(), "Failed to fetch platform data");
+        platformDocumentsResponseRequested(clientId, classId, QJsonArray(), QJsonArray(), QJsonArray(), "Failed to fetch platform data");
         qCCritical(logCategoryHcsStorage) << "Failed to fetch platform data with id:" << classId;
         return;
     }
