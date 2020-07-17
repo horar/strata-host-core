@@ -335,9 +335,7 @@ Rectangle {
         clock_data = 1000
         clock = clock_data
         platformInterface.set_clk_data.update(1000)
-        platformInterface.set_adc_supply.update("3.3", "3.3")
-
-
+        platformInterface.set_adc_supply.update("1.8", "3.3")
         plotSetting2.checked = true
         plotSetting1.checked = false
     }
@@ -383,7 +381,6 @@ Rectangle {
             yMax: 4096
             xMin: 0                    // Default: 0
             xMax: 10                   // Default: 10
-
 
             Component.onCompleted: {
                 startXMin = graph.xMin
@@ -856,7 +853,7 @@ Rectangle {
                                     SGRadioButton {
                                         id: dvdd1
                                         text: "3.3V"
-                                        checked: true
+
                                         onCheckedChanged: {
                                             if(checked){
                                                 if(avddButtonContainer.radioButtons.avdd1.checked) {
@@ -888,6 +885,7 @@ Rectangle {
                                     
                                     SGRadioButton {
                                         id: dvdd2
+                                        checked: true
                                         text: "1.8V"
                                     }
                                 }
