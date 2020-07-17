@@ -330,10 +330,10 @@ Rectangle {
     }
     
     Component.onCompleted: {
-        // platformInterface.get_inital_state.update()
+        //Not using
+        //platformInterface.get_inital_state.update()
         clock_data = 1000
         clock = clock_data
-        console.log(clock_data, clock)
         platformInterface.set_clk_data.update(1000)
         platformInterface.set_adc_supply.update("3.3", "3.3")
 
@@ -1020,8 +1020,6 @@ Rectangle {
                         height: parent.height/1.5
                         text: qsTr("Acquire \n Data")
                         onClicked: {
-                            //platformInterface.set_clk_data.update(clock_data)
-                            //platformInterface.set_adc_supply.update(dvdd_data,avdd_data)
                             progressBar.visible = true
                             warningBox.visible = true
                             barContainer.visible = true
