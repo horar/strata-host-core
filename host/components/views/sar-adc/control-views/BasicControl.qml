@@ -37,6 +37,8 @@ Rectangle {
     property var data_value: platformInterface.get_data.data
 
     property var clock_data: 0
+    property var dvdd_data: 3.3
+    property var avdd_data: 3.3
     onData_valueChanged: {
         if(number_of_notification == 1) {
             warningPopup.open()
@@ -301,16 +303,16 @@ Rectangle {
                 
             }
         }
-        var dvdd_data = initial_data.dvdd
-        if(dvdd_data !== 0) {
-            if(dvdd_data === 3.3) {
+        var dvdd_data_initial = initial_data.dvdd
+        if(dvdd_data_initial !== 0) {
+            if(dvdd_data_initial === 3.3) {
                 dvsButtonContainer.radioButtons.dvdd1.checked = true
             }
             else dvsButtonContainer.radioButtons.dvdd2.checked = true
         }
-        var avdd_data = initial_data.avdd
-        if(avdd_data !== 0) {
-            if(avdd_data === 3.3) {
+        var avdd_data_initial = initial_data.avdd
+        if(avdd_data_initial !== 0) {
+            if(avdd_data_initial === 3.3) {
                 avddButtonContainer.radioButtons.avdd1.checked = true
             }
             else avddButtonContainer.radioButtons.avdd2.checked = true
@@ -330,7 +332,11 @@ Rectangle {
     Component.onCompleted: {
         // platformInterface.get_inital_state.update()
         clock_data = 1000
+        clock = clock_data
+        console.log(clock_data, clock)
         platformInterface.set_clk_data.update(1000)
+        platformInterface.set_adc_supply.update("3.3", "3.3")
+
 
         plotSetting2.checked = true
         plotSetting1.checked = false
@@ -853,14 +859,29 @@ Rectangle {
                                         checked: true
                                         onCheckedChanged: {
                                             if(checked){
-                                                if(avddButtonContainer.radioButtons.avdd1.checked)
+                                                if(avddButtonContainer.radioButtons.avdd1.checked) {
                                                     platformInterface.set_adc_supply.update("3.3","3.3")
-                                                else platformInterface.set_adc_supply.update("3.3","1.8")
+                                                    dvdd_data = "3.3"
+                                                    avdd_data = "3.3"
+                                                }
+                                                else {
+                                                    platformInterface.set_adc_supply.update("3.3","1.8")
+                                                    dvdd_data = "3.3"
+                                                    avdd_data = "1.8"
+                                                }
+
                                             }
                                             else  {
-                                                if(avddButtonContainer.radioButtons.avdd1.checked)
+                                                if(avddButtonContainer.radioButtons.avdd1.checked) {
                                                     platformInterface.set_adc_supply.update("1.8","3.3")
-                                                else platformInterface.set_adc_supply.update("1.8","1.8")
+                                                    dvdd_data = "1.8"
+                                                    avdd_data = "3.3"
+                                                }
+                                                else {
+                                                    platformInterface.set_adc_supply.update("1.8","1.8")
+                                                    dvdd_data = "1.8"
+                                                    avdd_data = "1.8"
+                                                }
                                             }
                                         }
                                     }
@@ -892,14 +913,29 @@ Rectangle {
                                         checked: true
                                         onCheckedChanged: {
                                             if(checked){
-                                                if(dvsButtonContainer.radioButtons.dvdd1.checked)
+                                                if(dvsButtonContainer.radioButtons.dvdd1.checked) {
                                                     platformInterface.set_adc_supply.update("3.3","3.3")
-                                                else platformInterface.set_adc_supply.update("1.8","3.3")
+                                                    dvdd_data = "3.3"
+                                                    avdd_data = "3.3"
+
+                                                }
+                                                else {
+                                                    platformInterface.set_adc_supply.update("1.8","3.3")
+                                                    dvdd_data = "1.8"
+                                                    avdd_data = "3.3"
+
+                                                }
                                             }
                                             else  {
-                                                if(dvsButtonContainer.radioButtons.dvdd1.checked)
+                                                if(dvsButtonContainer.radioButtons.dvdd1.checked) {
                                                     platformInterface.set_adc_supply.update("3.3","1.8")
-                                                else platformInterface.set_adc_supply.update("1.8","1.8")
+                                                    dvdd_data = "3.3"
+                                                    avdd_data = "1.8"
+                                                }
+                                                else { platformInterface.set_adc_supply.update("1.8","1.8")
+                                                    dvdd_data = "1.8"
+                                                    avdd_data = "1.8"
+                                                }
                                             }
                                         }
                                     }
@@ -962,7 +998,6 @@ Rectangle {
                             onActivated: {
                                 clock_data =  parseInt(currentText.substring(0,(currentText.length)-3))
                                 clock = clock_data
-                                console.log(clock_data)
                                 platformInterface.set_clk_data.update(clock_data)
                             }
                         }
@@ -985,7 +1020,8 @@ Rectangle {
                         height: parent.height/1.5
                         text: qsTr("Acquire \n Data")
                         onClicked: {
-                            platformInterface.set_clk_data.update(clock_data)
+                            //platformInterface.set_clk_data.update(clock_data)
+                            //platformInterface.set_adc_supply.update(dvdd_data,avdd_data)
                             progressBar.visible = true
                             warningBox.visible = true
                             barContainer.visible = true
