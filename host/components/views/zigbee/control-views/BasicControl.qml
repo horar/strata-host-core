@@ -52,6 +52,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 50
         anchors.top:parent.top
+        anchors.topMargin:20
         fillMode: Image.PreserveAspectFit
         mipmap:true
         opacity:1
