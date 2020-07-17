@@ -35,6 +35,8 @@ Rectangle {
     
     //Notification to acquire from the evaluation board by using the "get_data" command.
     property var data_value: platformInterface.get_data.data
+
+    property var clock_data: 0
     onData_valueChanged: {
         if(number_of_notification == 1) {
             warningPopup.open()
@@ -326,8 +328,10 @@ Rectangle {
     }
     
     Component.onCompleted: {
-        platformInterface.get_inital_state.update()
+        // platformInterface.get_inital_state.update()
+        clock_data = 1000
         platformInterface.set_clk_data.update(1000)
+
         plotSetting2.checked = true
         plotSetting1.checked = false
     }
@@ -956,8 +960,9 @@ Rectangle {
                             fontSize: 15
                             model : ["250kHz","500kHz","1000kHz","2000kHz","4000kHz","8000kHz","16000kHz","32000kHz"]
                             onActivated: {
-                                var clock_data =  parseInt(currentText.substring(0,(currentText.length)-3))
+                                clock_data =  parseInt(currentText.substring(0,(currentText.length)-3))
                                 clock = clock_data
+                                console.log(clock_data)
                                 platformInterface.set_clk_data.update(clock_data)
                             }
                         }
@@ -980,6 +985,7 @@ Rectangle {
                         height: parent.height/1.5
                         text: qsTr("Acquire \n Data")
                         onClicked: {
+                            platformInterface.set_clk_data.update(clock_data)
                             progressBar.visible = true
                             warningBox.visible = true
                             barContainer.visible = true
