@@ -327,7 +327,7 @@ Rectangle {
     
     Component.onCompleted: {
         platformInterface.get_inital_state.update()
-        platformInterface.set_clk_data.update("1000")
+        platformInterface.set_clk_data.update(1000)
         plotSetting2.checked = true
         plotSetting1.checked = false
     }
@@ -958,7 +958,6 @@ Rectangle {
                             onActivated: {
                                 var clock_data =  parseInt(currentText.substring(0,(currentText.length)-3))
                                 clock = clock_data
-                                console.log(clock_data)
                                 platformInterface.set_clk_data.update(clock_data)
                             }
                         }
