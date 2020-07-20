@@ -81,11 +81,11 @@ function(process_config_file PROJECT_NAME INPUT_DIR WORKING_DIR DEPLOYMENT_DIR C
     )
 endfunction()
 
-function(process_license_file PROJECT_NAME INPUT_DIR WORKING_DIR DEPLOYMENT_DIR LICENSE_FILENAME)
-    message(STATUS "Processing ${PROJECT_NAME} ${LICENSE_FILENAME} file...")
+function(process_resource_file PROJECT_NAME INPUT_DIR WORKING_DIR DEPLOYMENT_DIR RESOURCE_FILENAME)
+    message(STATUS "Processing ${PROJECT_NAME} ${RESOURCE_FILENAME} file...")
 
     execute_process(
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${INPUT_DIR}/${LICENSE_FILENAME} ${DEPLOYMENT_DIR}/${LICENSE_FILENAME}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${INPUT_DIR}/${RESOURCE_FILENAME} ${DEPLOYMENT_DIR}/${RESOURCE_FILENAME}
     )
 endfunction()
 
@@ -109,11 +109,47 @@ endif()
 file(GLOB files "${PROJECT_DIR}/resources/qtifw/packages/meta/*license*")
 foreach(file ${files})
     get_filename_component(filename ${file} NAME)
-    process_license_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/packages/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
+    process_resource_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/packages/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
+endforeach()
+
+file(GLOB files "${PROJECT_DIR}/resources/qtifw/packages/meta/*.js")
+foreach(file ${files})
+    get_filename_component(filename ${file} NAME)
+    process_resource_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/packages/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
+endforeach()
+
+file(GLOB files "${PROJECT_DIR}/resources/qtifw/packages/meta/*.qs")
+foreach(file ${files})
+    get_filename_component(filename ${file} NAME)
+    process_resource_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/packages/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
+endforeach()
+
+file(GLOB files "${PROJECT_DIR}/resources/qtifw/packages/meta/*.ui")
+foreach(file ${files})
+    get_filename_component(filename ${file} NAME)
+    process_resource_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/packages/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
 endforeach()
 
 file(GLOB files "${PROJECT_DIR}/resources/qtifw/meta/*license*")
 foreach(file ${files})
     get_filename_component(filename ${file} NAME)
-    process_license_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
+    process_resource_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
+endforeach()
+
+file(GLOB files "${PROJECT_DIR}/resources/qtifw/meta/*.js")
+foreach(file ${files})
+    get_filename_component(filename ${file} NAME)
+    process_resource_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
+endforeach()
+
+file(GLOB files "${PROJECT_DIR}/resources/qtifw/meta/*.qs")
+foreach(file ${files})
+    get_filename_component(filename ${file} NAME)
+    process_resource_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
+endforeach()
+
+file(GLOB files "${PROJECT_DIR}/resources/qtifw/meta/*.ui")
+foreach(file ${files})
+    get_filename_component(filename ${file} NAME)
+    process_resource_file(${PROJECT_NAME} ${PROJECT_DIR}/resources/qtifw/meta ${WORKING_DIR} ${DEPLOYMENT_DIR}/packages/${PROJECT_BUNDLE_ID}/meta ${filename})
 endforeach()

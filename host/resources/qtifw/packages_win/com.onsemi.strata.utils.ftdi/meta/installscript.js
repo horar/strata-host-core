@@ -34,15 +34,6 @@ function Component()
     }
 }
 
-Component.prototype.createOperationsForArchive = function (archive) 
-{
-    // set the extraction location to be under StrataUtils
-    Component.prototype.extractionLocation = installer.value("TargetDir") + "/StrataUtils";
-
-    // Extract the archive into a custom path 
-    component.addOperation("Extract", archive, Component.prototype.extractionLocation);
-}
-
 Component.prototype.createOperations = function()
 {
     // call default implementation
@@ -54,7 +45,7 @@ Component.prototype.createOperations = function()
         console.log("installing FTDI CDM Drivers...");
         // status code 512 means succefull installaion
         // status code 2 means succefull installation with a device plugged in
-        component.addElevatedOperation("Execute", "{2,512}", Component.prototype.extractionLocation + "/FTDI/dpinst-amd64.exe", "/S", "/SE", "/F");
+        component.addElevatedOperation("Execute", "{2,512}", installer.value("TargetDir") + "/StrataUtils/FTDI/dpinst-amd64.exe", "/S", "/SE", "/F");
     } else {
         console.log("FTDI CDM Drivers already installed");
     }

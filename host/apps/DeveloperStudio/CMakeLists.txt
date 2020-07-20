@@ -25,7 +25,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/DocumentListModel.cpp
     source/DownloadDocumentListModel.cpp
     source/ClassDocuments.cpp
-    $<IF:$<CONFIG:Release>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
+    $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
 
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
@@ -34,7 +34,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     qml-dev-studio-minimal.qrc
     qml-dev-studio-resources.qrc
 
-    $<IF:$<CONFIG:Release>, qml-dev-studio-release.qrc, qml-dev-studio-debug.qrc>
+    $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, qml-dev-studio-release.qrc, qml-dev-studio-debug.qrc>
 
     source/HcsNode.cpp
     ${NODE_RO_SRCS}
@@ -107,7 +107,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 
 # LC: start 'hcs' process from strata (will be handled by strata monitor in near future)
 set_source_files_properties(main.cpp source/SDSModel.cpp PROPERTIES
-    COMPILE_DEFINITIONS "START_SERVICES;WINDOWS_INSTALLER_BUILD=$<BOOL:${WINDOWS_INSTALLER_BUILD}>;HCS_CONFIG=$<IF:$<CONFIG:Release>,\"hcs.config\",\"hcs_qa.config\">"
+    COMPILE_DEFINITIONS "START_SERVICES;WINDOWS_INSTALLER_BUILD=$<BOOL:${WINDOWS_INSTALLER_BUILD}>;HCS_CONFIG=$<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>,\"hcs.config\",\"hcs_qa.config\">"
 )
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")

@@ -1,1 +1,0 @@
-Microsoft Visual C++ 2017 x64 Redistributable

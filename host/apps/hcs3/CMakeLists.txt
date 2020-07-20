@@ -85,5 +85,5 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
 
 target_include_directories(${PROJECT_NAME}Lib
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
-    PRIVATE $<IF:$<CONFIG:Release>, ${CMAKE_CURRENT_SOURCE_DIR}/src/release, ${CMAKE_CURRENT_SOURCE_DIR}/src/debug>
+    PRIVATE $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, ${CMAKE_CURRENT_SOURCE_DIR}/src/release, ${CMAKE_CURRENT_SOURCE_DIR}/src/debug>
 )
