@@ -1,10 +1,7 @@
 #include "HostControllerService.h"
 #include "HCS_Client.h"
-#include "StorageManager.h"
 #include "ReplicatorCredentials.h"
 #include "logging/LoggingQtCategories.h"
-
-#include <DownloadManager.h>
 
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
@@ -20,10 +17,13 @@
 #include <QDebug>
 
 
-HostControllerService::HostControllerService(QObject* parent) : QObject(parent)
-    , db_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString())
-    , dbLogAdapter_("strata.hcs.database")
-    , clientsLogAdapter_("strata.hcs.clients")
+HostControllerService::HostControllerService(QObject* parent)
+    : QObject(parent),
+      db_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString()),
+      dbLogAdapter_("strata.hcs.database"),
+      clientsLogAdapter_("strata.hcs.clients"),
+      downloadManager_(&networkManager_),
+      storageManager_(&downloadManager_)
 {
     //handlers for 'cmd'
     clientCmdHandler_.insert( { std::string("request_hcs_status"), std::bind(&HostControllerService::onCmdHCSStatus, this, std::placeholders::_1) });
@@ -62,25 +62,20 @@ bool HostControllerService::initialize(const QString& config)
     // TODO: Will resolved in SCT-517
     //db_.addReplChannel("platform_list");
 
-    downloadManager_ = std::make_shared<strata::DownloadManager>();
-    storageManager_ = std::make_unique<StorageManager>(downloadManager_);
-
-    StorageManager *storageManagerPtr = storageManager_.get();
-
-    connect(storageManagerPtr, &StorageManager::downloadPlatformFilePathChanged, this, &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
-    connect(storageManagerPtr, &StorageManager::downloadPlatformSingleFileProgress, this, &HostControllerService::sendDownloadPlatformSingleFileProgressMessage);
-    connect(storageManagerPtr, &StorageManager::downloadPlatformSingleFileFinished, this, &HostControllerService::sendDownloadPlatformSingleFileFinishedMessage);
-    connect(storageManagerPtr, &StorageManager::downloadPlatformFilesFinished, this, &HostControllerService::sendDownloadPlatformFilesFinishedMessage);
-    connect(storageManagerPtr, &StorageManager::platformListResponseRequested, this, &HostControllerService::sendPlatformListMessage);
-    connect(storageManagerPtr, &StorageManager::downloadPlatformDocumentsProgress, this, &HostControllerService::sendPlatformDocumentsProgressMessage);
-    connect(storageManagerPtr, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
+    connect(&storageManager_, &StorageManager::downloadPlatformFilePathChanged, this, &HostControllerService::sendDownloadPlatformFilePathChangedMessage);
+    connect(&storageManager_, &StorageManager::downloadPlatformSingleFileProgress, this, &HostControllerService::sendDownloadPlatformSingleFileProgressMessage);
+    connect(&storageManager_, &StorageManager::downloadPlatformSingleFileFinished, this, &HostControllerService::sendDownloadPlatformSingleFileFinishedMessage);
+    connect(&storageManager_, &StorageManager::downloadPlatformFilesFinished, this, &HostControllerService::sendDownloadPlatformFilesFinishedMessage);
+    connect(&storageManager_, &StorageManager::platformListResponseRequested, this, &HostControllerService::sendPlatformListMessage);
+    connect(&storageManager_, &StorageManager::downloadPlatformDocumentsProgress, this, &HostControllerService::sendPlatformDocumentsProgressMessage);
+    connect(&storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
 
     /* We dont want to call these StorageManager methods directly
      * as they should be executed in the main thread. Not in dispatcher's thread. */
-    connect(this, &HostControllerService::platformListRequested, storageManagerPtr, &StorageManager::requestPlatformList, Qt::QueuedConnection);
-    connect(this, &HostControllerService::platformDocumentsRequested, storageManagerPtr, &StorageManager::requestPlatformDocuments, Qt::QueuedConnection);
-    connect(this, &HostControllerService::downloadPlatformFilesRequested, storageManagerPtr, &StorageManager::requestDownloadPlatformFiles, Qt::QueuedConnection);
-    connect(this, &HostControllerService::cancelPlatformDocumentRequested, storageManagerPtr, &StorageManager::requestCancelAllDownloads, Qt::QueuedConnection);
+    connect(this, &HostControllerService::platformListRequested, &storageManager_, &StorageManager::requestPlatformList, Qt::QueuedConnection);
+    connect(this, &HostControllerService::platformDocumentsRequested, &storageManager_, &StorageManager::requestPlatformDocuments, Qt::QueuedConnection);
+    connect(this, &HostControllerService::downloadPlatformFilesRequested, &storageManager_, &StorageManager::requestDownloadPlatformFiles, Qt::QueuedConnection);
+    connect(this, &HostControllerService::cancelPlatformDocumentRequested, &storageManager_, &StorageManager::requestCancelAllDownloads, Qt::QueuedConnection);
 
     connect(this, &HostControllerService::firmwareUpdateRequested, &updateController_, &FirmwareUpdateController::updateFirmware, Qt::QueuedConnection);
 
@@ -104,14 +99,14 @@ bool HostControllerService::initialize(const QString& config)
         return false;
     }
 
-    storageManager_->setBaseUrl(baseUrl);
-    storageManager_->setDatabase(&db_);
+    storageManager_.setBaseUrl(baseUrl);
+    storageManager_.setDatabase(&db_);
 
     db_.initReplicator(db_cfg["gateway_sync"].GetString(), replicator_username, replicator_password);
 
     boardsController_.initialize();
 
-    updateController_.initialize(&boardsController_, downloadManager_);
+    updateController_.initialize(&boardsController_, &downloadManager_);
 
     rapidjson::Value& hcs_cfg = config_["host_controller_service"];
 
@@ -491,7 +486,7 @@ void HostControllerService::onCmdUpdateFirmware(const rapidjson::Value *payload)
         qCWarning(logCategoryHcs) << "path attribute is empty";
         return;
     }
-    QUrl firmwareUrl = storageManager_->getBaseUrl().resolved(QUrl(path));
+    QUrl firmwareUrl = storageManager_.getBaseUrl().resolved(QUrl(path));
 
     QString firmwareMD5 = QString::fromStdString((*payload)["md5"].GetString());
     if (firmwareMD5.isEmpty()) {

@@ -5,11 +5,12 @@
 #include "BoardController.h"
 
 #include <Device/Device.h>
+#include <DownloadManager.h>
 
 #include "logging/LoggingQtCategories.h"
 
-FirmwareUpdateController::FirmwareUpdateController() :
-    boardController_(nullptr), downloadManager_(nullptr)
+FirmwareUpdateController::FirmwareUpdateController(QObject *parent)
+    : QObject(parent)
 {
 }
 
@@ -23,7 +24,7 @@ FirmwareUpdateController::~FirmwareUpdateController()
     }
 }
 
-void FirmwareUpdateController::initialize(const BoardController* boardController, const std::shared_ptr<strata::DownloadManager>& downloadManager)
+void FirmwareUpdateController::initialize(BoardController *boardController, strata::DownloadManager *downloadManager)
 {
     boardController_ = boardController;
     downloadManager_ = downloadManager;
@@ -31,7 +32,7 @@ void FirmwareUpdateController::initialize(const BoardController* boardController
 
 void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const int deviceId, const QUrl& firmwareUrl, const QString& firmwareMD5)
 {
-    if (boardController_ == nullptr || downloadManager_ == nullptr) {
+    if (boardController_.isNull() || downloadManager_.isNull()) {
         QString errStr("FirmwareUpdateController is not properly initialized.");
         qCCritical(logCategoryHcsFwUpdater).noquote() << errStr;
         emit updaterError(deviceId, errStr);
@@ -40,7 +41,7 @@ void FirmwareUpdateController::updateFirmware(const QByteArray& clientId, const 
 
     auto it = updates_.constFind(deviceId);
     if (it != updates_.constEnd()) {
-        QString errStr("Cannot update, another update is running.");
+        QString errStr("Cannot update, another update is running on this device.");
         qCCritical(logCategoryHcsFwUpdater).noquote() << errStr;
         emit updaterError(deviceId, errStr);
         return;

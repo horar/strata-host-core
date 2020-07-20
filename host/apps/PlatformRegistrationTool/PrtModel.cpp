@@ -4,7 +4,8 @@
 #include <QDir>
 
 PrtModel::PrtModel(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      downloadManager_(&networkManager_)
 {
     boardManager_.init();
 

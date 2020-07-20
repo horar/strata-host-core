@@ -11,10 +11,10 @@
 
 namespace strata {
 
-DownloadManager::DownloadManager(QObject *parent)
-    : QObject(parent)
+DownloadManager::DownloadManager(QNetworkAccessManager *manager, QObject *parent)
+    : QObject(parent),
+      networkManager_(manager)
 {
-    accessManager_ = new QNetworkAccessManager(this);
 }
 
 DownloadManager::~DownloadManager()
@@ -370,7 +370,7 @@ void DownloadManager::createFolderForFile(const QString &filePath)
 QNetworkReply *DownloadManager::postRequest(const QUrl &url)
 {
     QNetworkRequest request(url);
-    QNetworkReply *reply = accessManager_->get(request);
+    QNetworkReply *reply = networkManager_->get(request);
 
     if (reply == nullptr) {
         return reply;

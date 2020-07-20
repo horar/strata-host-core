@@ -45,6 +45,7 @@ private:
     strata::BoardManager boardManager_;
     QList<strata::device::DevicePtr> platformList_;
     QPointer<strata::FlasherConnector> flasherConnector_;
+    QNetworkAccessManager networkManager_;
     strata::DownloadManager downloadManager_;
 
     QString downloadJobId_;

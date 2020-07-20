@@ -11,6 +11,7 @@
 #include <QString>
 #include <QByteArray>
 #include <QJsonArray>
+#include <QNetworkAccessManager>
 
 #include "Dispatcher.h"
 #include "ClientsController.h"
@@ -18,6 +19,9 @@
 #include "LoggingAdapter.h"
 #include "BoardController.h"
 #include "FirmwareUpdateController.h"
+#include "StorageManager.h"
+
+#include <DownloadManager.h>
 
 
 struct PlatformMessage;
@@ -138,10 +142,9 @@ private:
     Database db_;
     LoggingAdapter dbLogAdapter_;
     LoggingAdapter clientsLogAdapter_;
-
-    std::shared_ptr<strata::DownloadManager> downloadManager_;
-    std::unique_ptr<StorageManager> storageManager_;
-
+    QNetworkAccessManager networkManager_;
+    strata::DownloadManager downloadManager_;
+    StorageManager storageManager_;
     FirmwareUpdateController updateController_;
 
     HCS_Dispatcher dispatcher_;

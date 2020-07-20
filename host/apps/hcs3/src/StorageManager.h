@@ -9,6 +9,7 @@
 #include <QJsonArray>
 #include <QDebug>
 #include <QUrl>
+#include <QPointer>
 
 namespace strata {
 class DownloadManager;
@@ -23,7 +24,7 @@ class StorageManager final : public QObject
     Q_DISABLE_COPY(StorageManager)
 
 public:
-    StorageManager(const std::shared_ptr<strata::DownloadManager>& downloadManager, QObject* parent = nullptr);
+    StorageManager(strata::DownloadManager *downloadManager, QObject* parent = nullptr);
     ~StorageManager();
 
     /**
@@ -137,7 +138,7 @@ private:
 
     QUrl baseUrl_;       //base part of the URL to download
     QString baseFolder_;    //base folder for store downloaded files
-    std::shared_ptr<strata::DownloadManager> downloadManager_;
+    QPointer<strata::DownloadManager> downloadManager_;
     Database* db_{nullptr};
     QHash<QString /*groupId*/, DownloadRequest* > downloadRequests_;
     QMap<QString /*classId*/, PlatformDocument*> documents_;
