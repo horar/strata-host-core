@@ -24,6 +24,7 @@ def __bind(url):
     __client.bind(url)
 
 
+
 def __init():
     global __strataId
     global __client
@@ -68,7 +69,9 @@ def openPlatform(classId):
             "type": "connected_platforms",
             "list": [
                 {
-                    "class_id":classId
+                    "class_id":classId,
+                    "device_id": -1089402724,
+                    "firmware_version": "1.0.0"
                 }
             ]
         }

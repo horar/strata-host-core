@@ -5,9 +5,12 @@ from Tests import NoNetworkTests
 import Common
 import unittest
 import sys
-
+import StrataInterface as strata
 if __name__ == "__main__":
     Common.populateConstants(sys.argv)
+
+    # strata.bindToStrata(Common.DEFAULT_URL)
+
 
     suite = unittest.TestSuite([
                                 unittest.defaultTestLoader.loadTestsFromModule(NoNetworkTests),
@@ -18,3 +21,4 @@ if __name__ == "__main__":
 
     Common.writeResults(len(result.errors) + len(result.failures), result.testsRun)
 
+    # strata.cleanup()

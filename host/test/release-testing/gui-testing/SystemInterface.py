@@ -35,11 +35,15 @@ def removeLoginInfo():
             if USERNAME_SECTION in config:
                 config[USERNAME_SECTION][USERNAME_OPTION] = "[]"
                 config[USERNAME_SECTION][USERNAME_INDEX_OPTION] = "0"
+            else:
+                logging.warning("Could not find config section: " + USERNAME_OPTION)
             if LOGIN_SECTION in config:
                 config[LOGIN_SECTION][USER_OPTION] = ""
                 config[LOGIN_SECTION][TOKEN_OPTION] = ""
                 config[LOGIN_SECTION][FIRST_NAME_OPTION] = ""
                 config[LOGIN_SECTION][LAST_NAME_OPTION] = ""
+            else:
+                logging.warning("Could not find config section: " + LOGIN_SECTION)
 
             with open(configPath, 'w') as configfile:
                 config.write(configfile)
@@ -56,8 +60,9 @@ def getCloseAccountInfo():
         if(os.path.exists(configPath)):
             config = configparser.ConfigParser()
             config.read(configPath)
-            return (config[LOGIN_SECTION][TOKEN_OPTION], config[LOGIN_SECTION][USER_OPTION], config[LOGIN_SECTION][AUTHENTICATION_SERVER_OPTION])
-
+            if LOGIN_SECTION in config and TOKEN_OPTION in config[LOGIN_SECTION] and USER_OPTION in config[LOGIN_SECTION] and AUTHENTICATION_SERVER_OPTION in config[LOGIN_SECTION]:
+                return (config[LOGIN_SECTION][TOKEN_OPTION], config[LOGIN_SECTION][USER_OPTION], config[LOGIN_SECTION][AUTHENTICATION_SERVER_OPTION])
+    return ("", "", "")
 
 def closeAccount():
     '''

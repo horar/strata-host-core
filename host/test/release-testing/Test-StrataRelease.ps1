@@ -44,13 +44,14 @@ Set-Variable "HCSTCPEndpoint" "tcp://127.0.0.1:5563"
 
 # Define paths
 Set-Variable "SDSRootDir"    "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
-Set-Variable "HCSAppDataDir" "$Env:AppData\ON Semiconductor\hcs"
+Set-Variable "HCSAppDataDir" "$Env:AppData\ON Semiconductor\Host Controller Service"
 Set-Variable "HCSConfigFile" "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
 Set-Variable "HCSExecFile"   "$SDSRootDir\hcs.exe"
 Set-Variable "SDSExecFile"   "$SDSRootDir\Strata Developer Studio.exe"
 Set-Variable "HCSDbFile"     "$HCSAppDataDir\db\strata_db\db.sqlite3"
 Set-Variable "TestRoot"      $PSScriptRoot
 Set-Variable "JLinkExePath"  "${Env:ProgramFiles(x86)}\SEGGER\JLink\JLink.exe"
+Set-Variable "RequirementsFile" "$TestRoot\requirements.txt"
 
 # Define variables for server authentication credentials needed to acquire login token
 Set-Variable "SDSServer"      "http://18.191.108.5/"      # "https://strata.onsemi.com"

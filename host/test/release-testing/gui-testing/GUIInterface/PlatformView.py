@@ -30,12 +30,12 @@ def findLogout():
     path = "PlatformViewLogoutBig.PNG" if prop.LARGE_TEXT else "PlatformViewLogout.PNG"
     return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, path), grayscale = True)
 
-def findLogicGateView():
+def findPlatformConnected():
     '''
     Determines if the Multipurpose Logic Gate view is open.
     :return: None if unable to find, coordnates of center otherwise.
     '''
-    return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, "PlatformLogicGateView.PNG"), grayscale = True)
+    return pyautogui.locateCenterOnScreen(os.path.join(__imagesPath, "PlatformViewPlatformConnected.PNG"), grayscale = True)
 
 def findFeedbackButton():
     '''

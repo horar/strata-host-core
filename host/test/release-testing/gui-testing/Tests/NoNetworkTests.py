@@ -7,6 +7,8 @@ import GUIInterface.General as general
 import GUIInterface.Register as register
 import Common
 import pyautogui
+import SystemInterface as cleanup
+import GUIInterface.PlatformView as platform
 
 class NoNetworkLogin(unittest.TestCase):
     '''
@@ -16,12 +18,18 @@ class NoNetworkLogin(unittest.TestCase):
         with general.Latency(Common.ANIMATION_LATENCY):
             login.setToLoginTab()
     def tearDown(self) -> None:
-        general.deleteTextAt(login.findUsernameInput())
+        #If the network failed to disable the user might be logged in.
+        if platform.findPlatformView():
+            cleanup.removeLoginInfo()
+            platform.logout()
+        else:
+            general.deleteTextAt(login.findUsernameInput())
 
-        # Wait for error to dissapear
-        pyautogui.sleep(0.5)
+            # Wait for error to dissapear
+            pyautogui.sleep(0.5)
 
-        general.deleteTextAt(login.findPasswordInput())
+            general.deleteTextAt(login.findPasswordInput())
+            cleanup.removeLoginInfo()
 
     def test_no_network_login(self):
 
@@ -37,7 +45,11 @@ class NoNetworkRegister(unittest.TestCase):
         with general.Latency(Common.ANIMATION_LATENCY):
             register.setToRegisterTab()
     def tearDown(self) -> None:
-        pass
+        cleanup.removeLoginInfo()
+        with general.Latency(0, Common.ANIMATION_LATENCY):
+            login.setToLoginTab()
+        general.deleteTextAt(login.findUsernameInput())
+        general.deleteTextAt(login.findPasswordInput())
 
     def test_no_network_register(self):
 

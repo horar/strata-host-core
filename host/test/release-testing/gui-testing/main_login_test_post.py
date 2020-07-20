@@ -5,9 +5,14 @@ import unittest
 from Tests import StrataRestartTests
 import Common
 import sys
+import StrataInterface as strata
+
 
 if __name__ == "__main__":
     Common.populateConstants(sys.argv)
+
+    # strata.bindToStrata(Common.DEFAULT_URL)
+
 
     suite = unittest.TestSuite([
                                 unittest.defaultTestLoader.loadTestsFromModule(StrataRestartTests),
@@ -17,4 +22,5 @@ if __name__ == "__main__":
     result = runner.run(suite)
 
     Common.writeResults(len(result.errors) + len(result.failures), result.testsRun)
+    # strata.cleanup()
 

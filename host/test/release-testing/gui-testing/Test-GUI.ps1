@@ -32,31 +32,34 @@ function Test-Gui() {
 
     Write-Host "Starting GUI testing"
 
-    Write-Host "Username:" $Username
-    Write-Host "Password:" $Password
     # Stop any previously running HCS processes
-    Stop-HCS
+#    Stop-HCS
     # Stop any previously running SDS processes
-    Stop-SDS
+#    Stop-SDS
 
     Write-Host "Running basic tests..."
 
     #run basic tests
     Start-SDSAndWait
+
     Start-Process $PythonExec -ArgumentList $PythonGUIMain, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
+
     Stop-Process -Name "Strata Developer Studio" -Force
+    Stop-Process -Name "hcs" -Force
 
     Write-Host "Disabling network for Strata..."
 
     #Run tests without network
     #BLock Strata from making outbound requests
-    (New-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network" -Direction Outbound -Program $SDSExecFile -Action Block) | Out-Null
-    Start-SDSAndWait -seconds 1
+   (New-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network" -Direction Outbound -Program $SDSExecFile -Action Block) | Out-Null
+
+    Start-SDSAndWait
 
     Write-Host "Testing Strata with no network connection..."
     Start-Process $PythonExec -ArgumentList $PythonGUIMainNoNetwork, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
 
     Stop-Process -Name "Strata Developer Studio" -Force
+    Stop-Process -Name "hcs" -Force
 
     Write-Host "Enabling network for Strata..."
     Remove-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network"
@@ -65,16 +68,19 @@ function Test-Gui() {
     #Login to strata
     Write-Host "Testing logging in, closing Strata, reopening Strata..."
 
-    Start-SDSAndWait -seconds 1
+    Start-SDSAndWait
     Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPre, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
 
     Stop-Process -Name "Strata Developer Studio" -Force
+    Stop-Process -Name "hcs" -Force
 
     #Test for Strata automatically going to the platform view
-    Start-SDSAndWait -seconds 1
+    Start-SDSAndWait
+
     Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPost, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
 
     Stop-Process -Name "Strata Developer Studio" -Force
+    Stop-Process -Name "hcs" -Force
 
     $result = (Get-Content "$TestRoot\gui-testing\Tests\results.txt") -split ','
     return $result

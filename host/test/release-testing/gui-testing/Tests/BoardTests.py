@@ -54,8 +54,9 @@ class LoginValidWithBoard(unittest.TestCase):
         strata.initPlatformList()
 
         strata.openPlatform(Common.LOGIC_GATE_CLASS_ID)
-        self.assertIsNotNone(general.tryRepeat(platform.findLogicGateView))
+        self.assertIsNotNone(general.tryRepeat(platform.findPlatformConnected))
 
         strata.closePlatforms()
-        self.assertIsNotNone(general.tryRepeat(platform.findPlatformDisconnected))
+        with general.Latency(Common.ANIMATION_LATENCY, 0):
+            self.assertIsNone(platform.findPlatformConnected())
 
