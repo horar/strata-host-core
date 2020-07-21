@@ -5,6 +5,10 @@
     <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Checkable>false</Checkable>
+    <Script>installscript.js</Script>
+    <UserInterfaces>
+        <UserInterface>shortcutcheckboxwidget.ui</UserInterface>
+    </UserInterfaces>
     <Licenses>
         <License name="ON Semiconductor License Agreement" file="onsemi_license.txt" />
     </Licenses>

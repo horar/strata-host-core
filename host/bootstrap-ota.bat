@@ -119,17 +119,20 @@ if not exist "packages\com.onsemi.strata.hcs\data\hcs.exe" (
 )
 
 REM copy various license files
-xcopy ..\..\deployment\Strata\dependencies\strata packages\com.onsemi.strata.devstudio\data /E
+xcopy ..\..\deployment\Strata\dependencies\strata packages\com.onsemi.strata.devstudio\data /E /Y
+
+REM copy HCS config file
+copy ..\..\deployment\Strata\config\hcs\hcs.config packages\com.onsemi.strata.hcs\data
 
 REM copy mqtt dll
 REM move packages\com.onsemi.strata.qt\data\vc_redist.x64.exe packages_win\com.onsemi.strata.utils.common.vcredist\data\StrataUtils\VC_REDIST\
 
 REM echo "Copying Qt Core\Components resources to packages\com.onsemi.strata.components\data"
-REM xcopy bin\component-*.rcc packages\com.onsemi.strata.components\data
+REM xcopy bin\component-*.rcc packages\com.onsemi.strata.components\data /Y
 
 echo "Copying Qml Views Resources to packages\com.onsemi.strata.components\data\views"
 if not exist packages\com.onsemi.strata.components\data\views md packages\com.onsemi.strata.components\data\views
-xcopy bin\views-*.rcc packages\com.onsemi.strata.components\data\views
+xcopy bin\views-*.rcc packages\com.onsemi.strata.components\data\views /Y
 
 if not exist "bin\Qt5Mqtt.dll" (
     echo "======================================================================="

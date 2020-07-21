@@ -14,6 +14,9 @@
     <WizardDefaultHeight>480</WizardDefaultHeight>
     <StartMenuDir>ON Semiconductor</StartMenuDir>
     <TargetDir>@ApplicationsDirX64@/ON Semiconductor/Strata</TargetDir>
+    <RunProgram>@TargetDir@/Strata Developer Studio.exe</RunProgram>
+    <RunProgramArguments></RunProgramArguments>
+    <RunProgramDescription>Launch Strata Developer Studio</RunProgramDescription>
     <RemoteRepositories>
         <Repository>
             <DisplayName>Strata Repository</DisplayName>

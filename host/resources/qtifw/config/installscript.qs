@@ -2,16 +2,17 @@ var isSilent = (installer.value('isSilent') && installer.isInstaller());
 
 function Controller()
 {
-    installer.autoRejectMessageBoxes;
-    installer.setMessageBoxAutomaticAnswer("OverwriteTargetDirectory", QMessageBox.Yes);
-    installer.setMessageBoxAutomaticAnswer("stopProcessesForUpdates", QMessageBox.Ignore);
-    
     if (isSilent) {
         installer.autoRejectMessageBoxes();
+        installer.setMessageBoxAutomaticAnswer("OverwriteTargetDirectory", QMessageBox.Yes);
+        installer.setMessageBoxAutomaticAnswer("stopProcessesForUpdates", QMessageBox.Ignore);
         installer.installationFinished.connect(function () {
             gui.clickButton(buttons.NextButton);
         })
     }
+    
+    installer.setValue("add_start_menu_shortcut", "true");
+    installer.setValue("add_desktop_shortcut", "false");
 }
 
 Controller.prototype.IntroductionPageCallback = function()
@@ -49,7 +50,7 @@ Controller.prototype.ComponentSelectionPageCallback = function () {
         var widget = gui.currentPageWidget();
 
         // select the ui components
-        //widget.deselectAll();
+        widget.selectAll();
         //widget.selectComponent("com.onsemi.strata.devstudio");
         gui.clickButton(buttons.NextButton);
     }
@@ -60,8 +61,6 @@ Controller.prototype.LicenseAgreementPageCallback = function () {
         gui.currentPageWidget().AcceptLicenseRadioButton.setChecked(true);
         gui.clickButton(buttons.NextButton);
     }
-    //if(!installer.isInstaller())
-    //    installer.setDefaultPageVisible(QInstaller.StartMenuSelection, false);
 }
 
 Controller.prototype.StartMenuDirectoryPageCallback = function () {
@@ -84,8 +83,11 @@ Controller.prototype.FinishedPageCallback = function () {
     if (widget != null) {
         widget.MessageLabel.setText("ON Semiconductor\n\n"
                                     + "Thank you for using ON Semiconductor. If you have any questions or in need of support, please contact your local sales representative.\n\n"
-                                    + "Copyright 2020"
+                                    + "Copyright 2020\n\n"
                                     );
+        if(installer.isInstaller() || installer.isUpdater()) {
+            widget.RunItCheckBox.setChecked(false);        // does not works :/ must be done through component script later
+        }
     }
 
     if (isSilent)

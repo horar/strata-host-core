@@ -32,8 +32,6 @@ function Component()
     if( systemInfo.productType !== "windows" ) {
         installer.componentByName(component.name).setValue("Virtual", "true");
     }
-	
-	installer.installationFinished.connect(this, Component.prototype.restartRequired);
 }
 
 Component.prototype.createOperations = function()
@@ -49,25 +47,12 @@ Component.prototype.createOperations = function()
         // status code 1638 means VC already exist. Therefore, no need to show warnings.
         // status code 3010 means that the oporation is successful but a restart is required
         //component.addOperation("Execute", "{0,1638,3010}", installer.value("TargetDir") + "/StrataUtils/VC_REDIST/vc_redist.x64.exe", "/install", "/quiet", "/norestart");
+		
+		// we need to do it like this to capture the exit code, so we know if we need to restart computer (it will be written in the vc_redist_out.txt)
 		component.addElevatedOperation("Execute", "{0,1638,3010}", installer.value("TargetDir") + "/StrataUtils/VC_REDIST/run_vc_redist.bat");
     } else {
         console.log("Microsoft Visual C++ 2017 X64 Additional Runtime already installed");
     }
-}
-
-Component.prototype.restartRequired = function()
-{
-	if(installer.fileExists(installer.value("TargetDir") + "/StrataUtils/VC_REDIST/vc_redist_out.txt")) {
-		var exit_code = installer.readFile(installer.value("TargetDir") + "/StrataUtils/VC_REDIST/vc_redist_out.txt", "UTF-8");
-		console.log("Microsoft Visual C++ 2017 X64 Additional Runtime return code: '" + exit_code + "'");
-		if(exit_code == "3010 ") {
-			installer.setValue("restart_required", "true");
-			console.log("restart is required");	// TODO
-		}
-		installer.performOperation("Delete", installer.value("TargetDir") + "/StrataUtils/VC_REDIST/vc_redist_out.txt");
-	} else {
-		console.log("vc_redist_out.txt not found");
-	}
 }
 
 Component.prototype.isInstalledWindowsProgram = function(programName)   {
