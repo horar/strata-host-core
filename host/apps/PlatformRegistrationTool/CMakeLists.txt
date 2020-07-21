@@ -20,6 +20,8 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE)
 target_sources(${PROJECT_NAME} PRIVATE
     main.cpp
     PrtModel.cpp
+    RestClient.cpp
+    Authenticator.cpp
     images/images.qrc
     qml.qrc
 
