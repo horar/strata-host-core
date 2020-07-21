@@ -70,7 +70,7 @@ void Authenticator::login(const QString &username, const QString &password)
             qCInfo(logCategoryPrtAuth) << "login success as" << username_;
             emit loginFinished(isOk, "");
         } else {
-            qCInfo(logCategoryPrtAuth) << "login failed" << username_;
+            qCInfo(logCategoryPrtAuth) << "login failed. Cannot parse reply.";
             emit loginFinished(isOk, "Cannot parse reply.");
         }
 
@@ -175,7 +175,6 @@ void Authenticator::setSessionId(const QByteArray &sessionId)
 void Authenticator::setXAccessToken(const QByteArray &xAccessToken)
 {
     if (xAccessToken_ != xAccessToken) {
-        qDebug() << "xAccessToken" << xAccessToken;
         xAccessToken_ = xAccessToken;
         emit xAccessTokenChanged();
     }
@@ -211,7 +210,7 @@ bool Authenticator::parseLoginReply(const QByteArray &data)
     QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
 
     if (parseError.error != QJsonParseError::NoError) {
-        qCritical() << "cannot parse reply" << parseError.errorString();
+        qCCritical(logCategoryPrtAuth) << "cannot parse reply" << parseError.errorString();
         return false;
     }
 
@@ -221,7 +220,7 @@ bool Authenticator::parseLoginReply(const QByteArray &data)
             || doc.object().contains("firstname") == false
             || doc.object().contains("lastname") == false) {
 
-        qCritical() << "wrong reply format, some field is missing";
+        qCCritical(logCategoryPrtAuth) << "wrong reply format, some field is missing";
         return false;
     }
 
@@ -240,7 +239,7 @@ bool Authenticator::parseRenewSessionReply(const QByteArray &data)
     QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
 
     if (parseError.error != QJsonParseError::NoError) {
-        qCritical() << "cannot parse reply" << parseError.errorString();
+        qCCritical(logCategoryPrtAuth) << "cannot parse reply" << parseError.errorString();
         return false;
     }
 
@@ -248,7 +247,7 @@ bool Authenticator::parseRenewSessionReply(const QByteArray &data)
             || doc.object().contains("token") == false
             || doc.object().contains("user") == false) {
 
-        qCritical() << "wrong reply format, some field is missing" << data;
+        qCCritical(logCategoryPrtAuth) << "wrong reply format, some field is missing" << data;
         return false;
     }
 

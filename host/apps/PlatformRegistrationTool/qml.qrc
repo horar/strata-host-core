@@ -2,8 +2,11 @@
 <RCC version="1.0">
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>PrtMain.qml</file>
+        <file>LoginScreen.qml</file>
         <file>PrtAboutWindow.qml</file>
         <file>ProgramDeviceWizard.qml</file>
+        <file>UserMenuButton.qml</file>
         <file>CanvasShapes.js</file>
         <file>FeedbackArrow.qml</file>
         <file>Arrow.qml</file>
