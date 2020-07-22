@@ -20,10 +20,10 @@
     <RemoteRepositories>
         <Repository>
             <DisplayName>Strata Repository</DisplayName>
-            <Url>https://localhost:8000/Strata</Url>
+            <Url>http://localhost/Strata</Url>
         </Repository>
     </RemoteRepositories>
-    <RepositorySettingsPageVisible>false</RepositorySettingsPageVisible>
+    <RepositorySettingsPageVisible>true</RepositorySettingsPageVisible>
     <MaintenanceToolName>Strata Maintenance Tool</MaintenanceToolName>
     <RemoveTargetDir>false</RemoveTargetDir>
     <AllowNonAsciiCharacters>true</AllowNonAsciiCharacters>

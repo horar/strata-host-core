@@ -86,7 +86,7 @@ cmake -G "NMake Makefiles JOM" ^
     -DCMAKE_BUILD_TYPE=OTA ^
     -DWINDOWS_INSTALLER_BUILD:BOOL=1 ^
     ..
-	
+    
 REM    -DAPPS_CORESW=on ^
 REM    -DAPPS_CORECOMPONENTS=on ^
 REM    -DAPPS_TOOLBOX=off ^
@@ -224,6 +224,8 @@ rd /s /q pub
 
 repogen ^
     --update-new-components ^
-    -p .\packages pub\repository\demo
+    -p .\packages ^
+    -p .\packages_win ^
+    pub\repository\demo
 
 endlocal
