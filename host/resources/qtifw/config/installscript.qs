@@ -3,9 +3,10 @@ var isSilent = (installer.value('isSilent') && installer.isInstaller());
 function Controller()
 {
     if (isSilent) {
-        installer.autoRejectMessageBoxes();
-        installer.setMessageBoxAutomaticAnswer("OverwriteTargetDirectory", QMessageBox.Yes);
-        installer.setMessageBoxAutomaticAnswer("stopProcessesForUpdates", QMessageBox.Ignore);
+		// do not use this or it will be impossible to cancel the installer
+        //installer.autoRejectMessageBoxes();
+        //installer.setMessageBoxAutomaticAnswer("OverwriteTargetDirectory", QMessageBox.Yes);
+        //installer.setMessageBoxAutomaticAnswer("stopProcessesForUpdates", QMessageBox.Ignore);
         installer.installationFinished.connect(function () {
             gui.clickButton(buttons.NextButton);
         })
@@ -74,8 +75,8 @@ Controller.prototype.ReadyForInstallationPageCallback = function () {
 }
 
 Controller.prototype.PerformInstallationPageCallback = function () {
-    //if (isSilent)
-    //    gui.clickButton(buttons.CommitButton);
+    if (isSilent)
+        gui.clickButton(buttons.CommitButton);
 }
 
 Controller.prototype.FinishedPageCallback = function () {
@@ -86,10 +87,25 @@ Controller.prototype.FinishedPageCallback = function () {
                                     + "Copyright 2020\n\n"
                                     );
         if(installer.isInstaller() || installer.isUpdater()) {
-            widget.RunItCheckBox.setChecked(false);        // does not works :/ must be done through component script later
+            widget.RunItCheckBox.setChecked(false);
         }
     }
 
     if (isSilent)
         gui.clickButton(buttons.FinishButton);
 }
+
+Controller.prototype.DynamicShortcutCheckBoxWidgetCallback = function()
+{
+	console.log("DynamicShortcutCheckBoxWidgetCallback isSilent : " + isSilent);
+    
+	if (isSilent) {
+		var widget = gui.pageWidgetByObjectName("DynamicShortcutCheckBoxWidget");
+		if (widget != null) {
+			widget.desktopCheckBox.setChecked(true);
+			widget.startMenuCheckBox.setChecked(true);
+		}
+        gui.clickButton(buttons.NextButton);
+	}
+}
+
