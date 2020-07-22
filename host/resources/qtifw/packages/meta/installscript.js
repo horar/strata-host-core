@@ -40,21 +40,22 @@ Component.prototype.createOperations = function()
 {
     // call default implementation to actually install the content
     component.createOperations();
-    
-    var temp_dir = installer.value("TargetDir") + "/shortcuts";
-    
-    component.addOperation("Mkdir", temp_dir);
+	
+	component.addOperation("Mkdir", installer.value("StartMenuDir"));
+					
+	var strata_mt_shortcut_dst = installer.value("StartMenuDir") + "\\Strata Maintenance Tool.lnk";
+	var strata_ds_shortcut_dst1 = installer.value("StartMenuDir") + "\\Strata Developer Studio.lnk";
+	var strata_ds_shortcut_dst2 = installer.value("DesktopDir") + "\\Strata Developer Studio.lnk";
 
-    component.addOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Maintenance Tool.exe", temp_dir + "/Strata Maintenance Tool.lnk",
+    component.addOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Maintenance Tool.exe", strata_mt_shortcut_dst,
 							"workingDirectory=" + installer.value("TargetDir"), "iconPath=%SystemRoot%/system32/SHELL32.dll",
 							"iconId=2", "description=Open Maintenance Tool");
-
-	console.log("creating start menu shortcut, from: " + installer.value("TargetDir") + "/Strata Maintenance Tool.exe, to: " + temp_dir + "/Strata Maintenance Tool.lnk");
-					
-    component.addOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Developer Studio.exe", temp_dir + "/Strata Developer Studio.lnk",
+							
+    component.addOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Developer Studio.exe", strata_ds_shortcut_dst1,
 							"workingDirectory=" + installer.value("TargetDir"), "description=Open Strata Developer Studio");
 
-	console.log("creating desktop shortcut, from: " + installer.value("TargetDir") + "/Strata Developer Studio.exe, to: " + temp_dir + "/Strata Developer Studio.lnk");
+    component.addOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Developer Studio.exe", strata_ds_shortcut_dst2,
+							"workingDirectory=" + installer.value("TargetDir"), "description=Open Strata Developer Studio");
 }
 
 function isRestartRequired()
@@ -85,53 +86,19 @@ Component.prototype.installationFinished = function()
 
     if (installer.isInstaller() && (installer.status == QInstaller.Success)) {
         if (systemInfo.productType === "windows") {
-            var temp_dir = installer.value("TargetDir") + "\\shortcuts";
-			var strata_mt_shortcut_src = temp_dir + "\\Strata Maintenance Tool.lnk";
-			var strata_ds_shortcut_src = temp_dir + "\\Strata Developer Studio.lnk";
+			if(installer.value("add_start_menu_shortcut") == "true") {
+				var strata_mt_shortcut_dst = installer.value("StartMenuDir") + "\\Strata Maintenance Tool.lnk";
+				var strata_ds_shortcut_dst1 = installer.value("StartMenuDir") + "\\Strata Developer Studio.lnk";
 
-            try {
-                if(installer.value("add_start_menu_shortcut") == "true") {
-                    console.log("creating start menu directory: " + installer.value("StartMenuDir"));
-                    installer.performOperation("Mkdir", installer.value("StartMenuDir"));
-					
-					var strata_mt_shortcut_dst = installer.value("StartMenuDir") + "\\Strata Maintenance Tool.lnk";
-					var strata_ds_shortcut_dst1 = installer.value("StartMenuDir") + "\\Strata Developer Studio.lnk";
-					
-					var args1 = [strata_mt_shortcut_src, strata_mt_shortcut_dst + "*"];
-					installer.executeDetached("xcopy", args1);
-					
-					var args2 = [strata_ds_shortcut_src, strata_ds_shortcut_dst1 + "*"];
-					installer.executeDetached("xcopy", args2);
-					
+				installer.performOperation("Delete", strata_mt_shortcut_dst);
+				installer.performOperation("Delete", strata_ds_shortcut_dst1);
+				installer.performOperation("Rmdir", installer.value("StartMenuDir"));
+			}
+			if(installer.value("add_desktop_shortcut") == "true") {
+				var strata_ds_shortcut_dst2 = installer.value("DesktopDir") + "\\Strata Developer Studio.lnk";
 
-					// QTIFW Bug: Copy operation does not works if called through performOperation
-                    //installer.performOperation("Copy", strata_mt_shortcut_src, strata_mt_shortcut_dst);
-                    //installer.performOperation("Copy", strata_mt_shortcut_src, strata_ds_shortcut_dst1);
-
-                    // QTIFW Bug: will crash if CreateShortcut is called through performOperation, it must be done through addOperation and copied later (or through batch script)
-                    //installer.performOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Maintenance Tool.exe", installer.value("StartMenuDir") + "/Strata Maintenance Tool.lnk",
-                    //    "workingDirectory=" + installer.value("TargetDir"), "iconPath=%SystemRoot%/system32/SHELL32.dll",
-                    //    "iconId=2", "description=Open Maintenance Tool");
-                    //installer.performOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Developer Studio.exe", installer.value("StartMenuDir") + "/Strata Developer Studio.lnk",
-                    //"workingDirectory=" + installer.value("TargetDir"), "description=Open Strata Developer Studio");
-                }
-            } catch(e) {
-                console.log(e);
-            }
-            try {
-                if(installer.value("add_desktop_shortcut") == "true") {
-					var strata_ds_shortcut_dst2 = installer.value("DesktopDir") + "\\Strata Developer Studio.lnk";
-					
-					var args3 = [strata_ds_shortcut_src, strata_ds_shortcut_dst2 + "*", "/Y"];
-					installer.executeDetached("xcopy", args3);
-
-                    // QTIFW Bug: will crash if CreateShortcut is called through performOperation, it must be done through addOperation and copied later (or through batch script)
-                    //installer.performOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Developer Studio.exe", installer.value("DesktopDir") + "/Strata Developer Studio.lnk",
-                    //"workingDirectory=" + installer.value("TargetDir"), "description=Open Strata Developer Studio");
-                }
-            } catch(e) {
-                console.log(e);
-            }
+				installer.performOperation("Delete", strata_ds_shortcut_dst2);
+			}
         }
 
         isRestartRequired();

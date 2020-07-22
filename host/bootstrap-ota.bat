@@ -51,12 +51,13 @@ binarycreator --help >nul 2>&1 && (
 )
 
 REM echo " Checking QtIFW repogen..."
-REM repogen --help >nul 2>&1 && (
+REM repogen >nul 2>&1 && (
 REM     echo "QtIFW's repogen found"
 REM ) || (
 REM     echo "QtIFW's repogen is missing from path! Aborting."
 REM     Exit /B 1
 REM )
+
 echo "-----------------------------------------------------------------------------"
 echo " Actual/local branch list.."
 echo "-----------------------------------------------------------------------------"
@@ -211,17 +212,18 @@ binarycreator ^
     -p .\packages_win ^
     strata-setup-offline
 
+binarycreator ^
+    --verbose ^
+    --online-only ^
+    -c ..\resources\qtifw\config\config.xml ^
+    -p .\packages ^
+    -p .\packages_win ^
+    strata-setup-online
 
-REM    binarycreator ^
-REM        --verbose ^
-REM        --online-only ^
-REM        -c ..\resources\qtifw\config\config.xml ^
-REM        -p .\packages ^
-REM     -p .\packages_win ^
-REM        strata-setup-online
+rd /s /q pub
 
-REM    repogen ^
-REM        --update-new-components ^
-REM        -p .\packages pub\repository\demo
+repogen ^
+    --update-new-components ^
+    -p .\packages pub\repository\demo
 
 endlocal
