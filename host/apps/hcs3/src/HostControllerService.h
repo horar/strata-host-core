@@ -63,6 +63,7 @@ signals:
     void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
     void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5);
+    void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5);
 
 public slots:
     void onAboutToQuit();
@@ -105,6 +106,12 @@ public slots:
             const QJsonArray &controlViewList,
             const QString &error);
 
+    void sendDownloadControlViewFinishedMessage(
+            const QByteArray &clientId,
+            const QString &partialUri,
+            const QString &filePath,
+            const QString &errorString);
+
 private:
     void handleMessage(const PlatformMessage& msg);
 
@@ -127,6 +134,7 @@ private:
     void onCmdHostDownloadFiles(const rapidjson::Value* );      //from UI
     void onCmdDynamicPlatformList(const rapidjson::Value* );
     void onCmdUpdateFirmware(const rapidjson::Value* );
+    void onCmdDownloadControlView(const rapidjson::Value* );
 
     void platformConnected(const int deviceId, const QString &classId);
     void platformDisconnected(const int deviceId);

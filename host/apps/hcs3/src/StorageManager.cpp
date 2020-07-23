@@ -30,6 +30,7 @@ StorageManager::~StorageManager()
 {
     qDeleteAll(documents_);
     documents_.clear();
+    qDeleteAll(downloadRequests_);
 }
 
 void StorageManager::setDatabase(Database* db)
@@ -138,11 +139,22 @@ void StorageManager::groupDownloadFinishedHandler(const QString &groupId, const 
         handlePlatformDocumentsResponse(request, errorString);
     } else if (request->type == RequestType::FileDownload) {
         emit downloadPlatformFilesFinished(request->clientId, errorString);
+    } else if (request->type == RequestType::ControlViewDownload) {
+        QList<DownloadManager::DownloadResponseItem> responseList = downloadManager_->getResponseList(groupId);
+        if (responseList.isEmpty() == false) {
+            const DownloadManager::DownloadResponseItem &responseItem = responseList.first();
+            emit downloadControlViewFinished(request->clientId,
+                                             downloadControlViewUris_[groupId],
+                                             responseItem.effectiveFilePath,
+                                             responseItem.errorString);
+        }
+        downloadControlViewUris_.remove(groupId);
     } else {
         qCCritical(logCategoryHcsStorage) << "unknown request type";
     }
 
     downloadRequests_.remove(groupId);
+    delete request;
 }
 
 void StorageManager::handlePlatformListResponse(const QByteArray &clientId, const QJsonArray &platformList)
@@ -441,6 +453,29 @@ void StorageManager::requestDownloadPlatformFiles(
     downloadRequests_.insert(request->groupId, request);
 }
 
+void StorageManager::requestDownloadControlView(const QByteArray &clientId, const QString &partialUri, const QString &md5)
+{
+    DownloadManager::DownloadRequestItem item;
+    item.url = baseUrl_.resolved(partialUri);
+    item.filePath = createFilePathFromItem(partialUri, "documents/control_views");
+    item.md5 = md5;
+
+    QList<DownloadManager::DownloadRequestItem> downloadList({item});
+
+    DownloadRequest *request = new DownloadRequest();
+    request->clientId = clientId;
+    request->type = RequestType::ControlViewDownload;
+
+    DownloadManager::Settings settings;
+    settings.keepOriginalName = true;
+
+    request->groupId = downloadManager_->download(downloadList, settings);
+
+    downloadRequests_.insert(request->groupId, request);
+
+    downloadControlViewUris_[request->groupId] = partialUri;
+}
+
 void StorageManager::requestCancelAllDownloads(const QByteArray &clientId)
 {
     qCInfo(logCategoryHcsStorage) << "clientId" << clientId.toHex();
@@ -453,6 +488,7 @@ void StorageManager::requestCancelAllDownloads(const QByteArray &clientId)
             qCInfo(logCategoryHcsStorage) << "aborting all downloads for groupId" << groupId;
             downloadRequests_.remove(groupId);
             downloadManager_->abortAll(groupId);
+            delete request;
         }
     }
 }

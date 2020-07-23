@@ -34,6 +34,7 @@ HostControllerService::HostControllerService(QObject* parent)
     hostCmdHandler_.insert( { std::string("download_files"), std::bind(&HostControllerService::onCmdHostDownloadFiles, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
     hostCmdHandler_.insert( { std::string("update_firmware"), std::bind(&HostControllerService::onCmdUpdateFirmware, this, std::placeholders::_1) } );
+    hostCmdHandler_.insert( { std::string("download_view"), std::bind(&HostControllerService::onCmdDownloadControlView, this, std::placeholders::_1) });
 }
 
 HostControllerService::~HostControllerService()
@@ -69,6 +70,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(&storageManager_, &StorageManager::platformListResponseRequested, this, &HostControllerService::sendPlatformListMessage);
     connect(&storageManager_, &StorageManager::downloadPlatformDocumentsProgress, this, &HostControllerService::sendPlatformDocumentsProgressMessage);
     connect(&storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
+    connect(&storageManager_, &StorageManager::downloadControlViewFinished, this, &HostControllerService::sendDownloadControlViewFinishedMessage);
 
     /* We dont want to call these StorageManager methods directly
      * as they should be executed in the main thread. Not in dispatcher's thread. */
@@ -76,6 +78,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(this, &HostControllerService::platformDocumentsRequested, &storageManager_, &StorageManager::requestPlatformDocuments, Qt::QueuedConnection);
     connect(this, &HostControllerService::downloadPlatformFilesRequested, &storageManager_, &StorageManager::requestDownloadPlatformFiles, Qt::QueuedConnection);
     connect(this, &HostControllerService::cancelPlatformDocumentRequested, &storageManager_, &StorageManager::requestCancelAllDownloads, Qt::QueuedConnection);
+    connect(this, &HostControllerService::downloadControlViewRequested, &storageManager_, &StorageManager::requestDownloadControlView, Qt::QueuedConnection);
 
     connect(this, &HostControllerService::firmwareUpdateRequested, &updateController_, &FirmwareUpdateController::updateFirmware, Qt::QueuedConnection);
 
@@ -289,6 +292,28 @@ void HostControllerService::sendPlatformDocumentsMessage(
     clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
 
+void HostControllerService::sendDownloadControlViewFinishedMessage(
+        const QByteArray &clientId,
+        const QString &partialUri,
+        const QString &filePath,
+        const QString &errorString)
+{
+    QJsonObject payload {
+        {"type", "download_view_finished"},
+        {"url", partialUri},
+        {"filepath", filePath},
+        {"error_string", errorString}
+    };
+
+    QJsonObject message {
+        {"hcs::notification", payload}
+    };
+
+    QJsonDocument doc(message);
+
+    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+}
+
 bool HostControllerService::parseConfig(const QString& config)
 {
     QString filePath;
@@ -495,6 +520,25 @@ void HostControllerService::onCmdUpdateFirmware(const rapidjson::Value *payload)
     }
 
     emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmwareMD5);
+}
+
+void HostControllerService::onCmdDownloadControlView(const rapidjson::Value* payload)
+{
+    QByteArray clientId = getSenderClient()->getClientId();
+
+    QString partialUri = QString::fromStdString((*payload)["url"].GetString());
+    if (partialUri.isEmpty()) {
+        qCWarning(logCategoryHcs) << "url attribute is empty";
+        return;
+    }
+
+    QString md5 = QString::fromStdString((*payload)["md5"].GetString());
+    if (md5.isEmpty()) {
+        qCWarning(logCategoryHcs) << "md5 attribute is empty";
+        return;
+    }
+
+    emit downloadControlViewRequested(clientId, partialUri, md5);
 }
 
 HCS_Client* HostControllerService::getClientById(const QByteArray& client_id)
