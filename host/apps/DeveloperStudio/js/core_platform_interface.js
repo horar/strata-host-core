@@ -56,6 +56,9 @@ function send (command) {
         console.log(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "send: ", JSON.stringify(command));
         coreInterface.sendCommand(JSON.stringify(command))
     }
+    else {
+        console.warn(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Device_id not set, command not sent: ", JSON.stringify(command));
+    }
 }
 
 function show (command) {
