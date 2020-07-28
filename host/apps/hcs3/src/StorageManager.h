@@ -9,6 +9,7 @@
 #include <QJsonArray>
 #include <QDebug>
 #include <QUrl>
+#include <QPointer>
 
 namespace strata {
 class DownloadManager;
@@ -23,7 +24,7 @@ class StorageManager final : public QObject
     Q_DISABLE_COPY(StorageManager)
 
 public:
-    StorageManager(const std::shared_ptr<strata::DownloadManager>& downloadManager, QObject* parent = nullptr);
+    StorageManager(strata::DownloadManager *downloadManager, QObject* parent = nullptr);
     ~StorageManager();
 
     /**
@@ -56,6 +57,11 @@ public slots:
             const QStringList &partialUriList,
             const QString &destinationDir);
 
+    void requestDownloadControlView(
+            const QByteArray &clientId,
+            const QString &partialUri,
+            const QString &md5);
+
     void requestCancelAllDownloads(const QByteArray &clientId);
 
     /**
@@ -71,9 +77,11 @@ signals:
     void downloadPlatformSingleFileFinished(QByteArray clientId, QString filePath, QString errorString);
     void downloadPlatformDocumentsProgress(QByteArray clientId, QString classId, int filesCompleted, int filesTotal);
     void downloadPlatformFilesFinished(QByteArray clientId, QString errorString);
+    void downloadControlViewFinished(QByteArray clientId, QString partialUri, QString filePath, QString errorString);
 
     void platformListResponseRequested(QByteArray clientId, QJsonArray documentList);
-    void platformDocumentsResponseRequested(QByteArray clientId, QString classId, QJsonArray documentList, QString error);
+    void platformDocumentsResponseRequested(QByteArray clientId, QString classId, QJsonArray documentList,
+                                            QJsonArray firmwareList, QJsonArray controlViewList, QString error);
 
 private slots:
     void filePathChangedHandler(QString groupId,
@@ -105,7 +113,8 @@ private:
     enum class RequestType {
         PlatformList,
         PlatformDocuments,
-        FileDownload
+        FileDownload,
+        ControlViewDownload
     };
 
     struct DownloadRequest {
@@ -131,14 +140,15 @@ private:
      * @param prefix
      * @return returns full filePath
      */
-    QString createFilePathFromItem(const QString& item, const QString& prefix);
+    QString createFilePathFromItem(const QString& item, const QString& prefix) const;
 
 
     QUrl baseUrl_;       //base part of the URL to download
     QString baseFolder_;    //base folder for store downloaded files
-    std::shared_ptr<strata::DownloadManager> downloadManager_;
+    QPointer<strata::DownloadManager> downloadManager_;
     Database* db_{nullptr};
     QHash<QString /*groupId*/, DownloadRequest* > downloadRequests_;
+    QHash<QString /*groupId*/, QString /*partialUri*/ > downloadControlViewUris_;
     QMap<QString /*classId*/, PlatformDocument*> documents_;
 };
 

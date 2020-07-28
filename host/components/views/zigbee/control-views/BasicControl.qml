@@ -27,7 +27,7 @@ Rectangle {
     Image{
         id:onLogo
         source:"../images/ON-logo.svg"
-        height:parent.height*.2
+        height:parent.height*.15
         anchors.left: parent.left
         anchors.leftMargin: 100
         anchors.top:parent.top
@@ -47,10 +47,12 @@ Rectangle {
     Image{
         id:zigbeeLogo
         source:"../images/zigbee-logo.png"
-        height:parent.height*.2
+        height:parent.height*.15
+
         anchors.right: parent.right
         anchors.rightMargin: 50
         anchors.top:parent.top
+        anchors.topMargin:20
         fillMode: Image.PreserveAspectFit
         mipmap:true
         opacity:1
@@ -69,22 +71,40 @@ Rectangle {
         onLightToggledChanged: {
             console.log("light toggled=",platformInterface.toggle_light_notification.value)
             if (platformInterface.toggle_light_notification.value === "on"){
-                //switch to image with light on
-                officeImage.source = "../images/room_lightsOn.jpg"
+                if (platformInterface.toggle_door_notification.value === "open"){
+                    officeImage.source = "../images/room_doorOpen.jpg"          //lights on, door open
+                    }
+                  else{
+                    officeImage.source = "../images/room_lightsOn.jpg"          //lights on, door closed
+                    }
             }
             else{
-                officeImage.source = "../images/room_lightsOff.jpg"
+                if (platformInterface.toggle_door_notification.value === "open"){
+                    officeImage.source = "../images/room_doorOpenLightsOff.png" //lights off, door open
+                    }
+                  else{
+                    officeImage.source = "../images/room_lightsOff.jpg"          //lights off, door closed
+                    }
             }
         }
 
-        property var doorToggled: platformInterface.toggle_door
+        property var doorToggled: platformInterface.toggle_door_notification
         onDoorToggledChanged: {
-            if (platformInterface.toggle_door.value === "open"){
-                //switch to image with light on
-                officeImage.source = "../images/room_doorOpen.jpg"
+            if (platformInterface.toggle_door_notification.value === "open"){
+                if (platformInterface.toggle_light_notification.value === "on"){
+                    officeImage.source = "../images/room_doorOpen.jpg"              //lights on, door open
+                    }
+                  else{
+                    officeImage.source = "../images/room_doorOpenLightsOff.png"     //lights off, door open
+                }
             }
             else{
-                officeImage.source = "../images/room_lightsOn.jpg"
+                if (platformInterface.toggle_light_notification.value === "on"){
+                    officeImage.source = "../images/room_lightsOn.jpg"              //lights on, door closed
+                    }
+                  else{
+                    officeImage.source = "../images/room_lightsOff.jpg"             //lights off, door closed
+                }
             }
         }
 

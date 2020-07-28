@@ -63,7 +63,7 @@ void ClassDocuments::updateLoadingProgress(QJsonObject data)
     int filesCompleted = data["files_completed"].toInt();
     int filesTotal = data["files_total"].toInt();
 
-    int progress = filesCompleted / (float)filesTotal * 100;
+    int progress = 100 * filesCompleted / filesTotal;
 
     setLoadingProgressPercentage(progress);
 }
@@ -85,7 +85,7 @@ void ClassDocuments::populateModels(QJsonObject data)
     }
 
     QJsonArray documentArray = data["documents"].toArray();
-    for (const QJsonValue &documentValue : documentArray) {
+    for (const QJsonValueRef documentValue : documentArray) {
         QJsonObject documentObject = documentValue.toObject();
 
         if (documentObject.contains("category") == false
@@ -123,6 +123,29 @@ void ClassDocuments::populateModels(QJsonObject data)
             qCWarning(logCategoryDocumentManager) << "unknown category" << category;
         }
     }
+
+    // TODO: CS-830 - Iterate over firmware list here.
+    /*
+    QJsonArray firmwareArray = data["firmwares"].toArray();
+    for (const QJsonValueRef firmwareValue : firmwareArray) {
+        QJsonObject documentObject = firmwareValue.toObject();
+
+        if (documentObject.contains("uri") == false
+                || documentObject.contains("md5")  == false
+                || documentObject.contains("name") == false
+                || documentObject.contains("timestamp")  == false
+                || documentObject.contains("version")  == false) {
+
+            qCWarning(logCategoryDocumentManager) << "firmware object is not complete";
+            continue;
+        }
+
+        // TODO: write rest of code
+    }
+    */
+
+    // TODO: CS-831 - Iterate over control views list here.
+    // QJsonArray controlViewArray = data["control_views"].toArray();
 
     pdfModel_.populateModel(pdfList);
     datasheetModel_.populateModel(datasheetList);

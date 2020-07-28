@@ -50,6 +50,9 @@ Rectangle {
             spacing: 10
 
             property bool isConnected: platformInterface.usb_pd_port_connect.connection_state === "connected"
+            onIsConnectedChanged: {
+                console.log("isConnected is now",isConnected)
+            }
 
             Text{
                 id:usbLabel
@@ -75,7 +78,7 @@ Rectangle {
                 id:usbVBUSBox
                 width:boxHeight
                 height:boxHeight
-                label: "VBUS"
+                label: "VOLTAGE"
                 labelColor: "white"
                 color:boxBackground
                 valueSize:statBoxValueSize
@@ -84,7 +87,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 visible:topRow.isConnected
-                value: platformInterface.request_usb_power_notification.output_voltage
+                value: platformInterface.request_usb_power_notification.output_voltage.toFixed(1)
             }
 
             PortStatBox{
@@ -139,7 +142,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"A"
-                value:platformInterface.battery_status.battery_current
+                value:platformInterface.battery_status.battery_current.toFixed(1)
             }
             PortStatBox{
                 id:batteryVoltageBox
@@ -153,7 +156,7 @@ Rectangle {
                 unitColor: "grey"
                 textColor: "black"
                 bottomMargin:10
-                value: platformInterface.battery_status.battery_voltage
+                value: platformInterface.battery_status.battery_voltage.toFixed(1)
             }
             PortStatBox{
                 id:batteryPowerBox
@@ -168,7 +171,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"W"
-                value:platformInterface.battery_status.battery_power
+                value:platformInterface.battery_status.battery_power.toFixed(1)
             }
         }
         Row{
@@ -178,7 +181,7 @@ Rectangle {
                 id:audioRailLabel
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 18
-                text:"Audio\nrail"
+                text:"Audio"
                 width:70
                 horizontalAlignment: Text.AlignRight
             }
@@ -195,6 +198,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"A"
+                value:platformInterface.audio_power.audio_current.toFixed(1)
             }
             PortStatBox{
                 id:audioVoltageBox
@@ -208,6 +212,7 @@ Rectangle {
                 unitColor: "grey"
                 textColor: "black"
                 bottomMargin:10
+                value:platformInterface.audio_power.audio_voltage.toFixed(1)
             }
             PortStatBox{
                 id:audioPowerBox
@@ -222,7 +227,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"W"
-                value:platformInterface.audio_power.audio_power
+                value:platformInterface.audio_power.audio_power.toFixed(1)
             }
         }
     }
