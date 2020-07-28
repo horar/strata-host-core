@@ -64,7 +64,6 @@ public:
     Q_INVOKABLE void connectToPlatform(QString class_id);
     Q_INVOKABLE void unregisterClient();
     Q_INVOKABLE void sendCommand(QString cmd);
-    Q_INVOKABLE void disconnectPlatform(int device_id);
 
     void setNotificationThreadRunning(bool running);
 

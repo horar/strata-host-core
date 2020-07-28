@@ -30,7 +30,6 @@ HostControllerService::HostControllerService(QObject* parent)
     clientCmdHandler_.insert( { std::string("unregister"), std::bind(&HostControllerService::onCmdUnregisterClient, this, std::placeholders::_1) } );
     clientCmdHandler_.insert( { std::string("platform_select"), std::bind(&HostControllerService::onCmdPlatformSelect, this, std::placeholders::_1) } );
 
-    hostCmdHandler_.insert( { std::string("disconnect_platform"), std::bind(&HostControllerService::onCmdHostDisconnectPlatform, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("download_files"), std::bind(&HostControllerService::onCmdHostDownloadFiles, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
     hostCmdHandler_.insert( { std::string("update_firmware"), std::bind(&HostControllerService::onCmdUpdateFirmware, this, std::placeholders::_1) } );
@@ -445,16 +444,6 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
     emit platformDocumentsRequested(clientId, classId);
 }
 
-void HostControllerService::onCmdHostDisconnectPlatform(const rapidjson::Value* payload)
-{
-    if (!payload->HasMember("device_id")) {
-        qCCritical(logCategoryHcs) << "device_id key is missing";
-        return;
-    }
-    int device_id = (*payload)["device_id"].GetInt();
-    boardsController_.clearClientId(device_id);
-}
-
 void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
 {
     HCS_Client* client = getSenderClient();
@@ -462,7 +451,6 @@ void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
 
     QByteArray clientId = client->getClientId();
 
-    boardsController_.clearClientIdFromAllDevices(clientId);
     emit cancelPlatformDocumentRequested(clientId);
 
     // Remove the client from the mapping

@@ -239,23 +239,6 @@ void CoreInterface::sendCommand(QString cmd)
     hcc->sendCmd(cmd.toStdString());
 }
 
-// @f disconnectPlatform
-// @b send disconnect command to HCS
-//
-void CoreInterface::disconnectPlatform(int device_id)
-{
-    QJsonObject payloadObject;
-    payloadObject.insert("device_id", device_id);
-
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("hcs::cmd", "disconnect_platform");
-    cmdMessageObject.insert("payload", payloadObject);
-
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-    hcc->sendCmd(strJson.toStdString());
-}
-
 void CoreInterface::setNotificationThreadRunning(bool running)
 {
     notification_thread_running_.store(running);
