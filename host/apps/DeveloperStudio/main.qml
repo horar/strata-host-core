@@ -11,6 +11,7 @@ import "qrc:/partial-views"
 import "qrc:/partial-views/debug-bar"
 import "qrc:/partial-views/platform-view"
 import "qrc:/js/platform_filters.js" as PlatformFilters
+import "qrc:/js/core_update.js" as CoreUpdate
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
@@ -108,6 +109,9 @@ SGWidgets.SGMainWindow {
 //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE) {
                 PlatformSelection.generatePlatformSelectorModel(list)
+
+                // Trigger check for core update
+                CoreUpdate.getUpdateInformation(sdsModel.coreInterface)
             }
         }
 

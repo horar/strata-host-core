@@ -35,6 +35,7 @@ HostControllerService::HostControllerService(QObject* parent)
     hostCmdHandler_.insert( { std::string("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
     hostCmdHandler_.insert( { std::string("update_firmware"), std::bind(&HostControllerService::onCmdUpdateFirmware, this, std::placeholders::_1) } );
     hostCmdHandler_.insert( { std::string("download_view"), std::bind(&HostControllerService::onCmdDownloadControlView, this, std::placeholders::_1) });
+    hostCmdHandler_.insert( { std::string("get_latest_release_version"), std::bind(&HostControllerService::onCmdGetLatestReleaseVersion, this, std::placeholders::_1) });
 }
 
 HostControllerService::~HostControllerService()
@@ -81,6 +82,8 @@ bool HostControllerService::initialize(const QString& config)
     connect(this, &HostControllerService::downloadControlViewRequested, &storageManager_, &StorageManager::requestDownloadControlView, Qt::QueuedConnection);
 
     connect(this, &HostControllerService::firmwareUpdateRequested, &updateController_, &FirmwareUpdateController::updateFirmware, Qt::QueuedConnection);
+
+    connect(this, &HostControllerService::versionInfoRequested, &coreUpdate_, &CoreUpdate::requestVersionInfo, Qt::QueuedConnection);
 
     connect(&boardsController_, &BoardController::boardConnected, this, &HostControllerService::platformConnected);
     connect(&boardsController_, &BoardController::boardDisconnected, this, &HostControllerService::platformDisconnected);
@@ -695,4 +698,10 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
         // to indicate the firmware version has changed.
         broadcastMessage(boardsController_.createPlatformsList());
     }
+}
+
+void HostControllerService::onCmdGetLatestReleaseVersion(const rapidjson::Value * )
+{
+    qCWarning(logCategoryHcs) << "{VICTOR} Inside HostControllerService::onCmdGetLatestReleaseVersion, emit versionInfoRequested";
+    emit versionInfoRequested(getSenderClient()->getClientId());
 }

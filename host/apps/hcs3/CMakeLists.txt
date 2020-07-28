@@ -45,6 +45,7 @@ add_library(${PROJECT_NAME}Lib STATIC
     src/LoggingAdapter.cpp
     src/FirmwareUpdateController.cpp
     src/FirmwareUpdater.cpp
+    src/CoreUpdate.cpp
 
     src/RunGuard.cpp
 
