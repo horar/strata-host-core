@@ -6,6 +6,7 @@
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <Checkable>false</Checkable>
     <Script>installscript.js</Script>
+    <SortingPriority>100</SortingPriority>
     <UserInterfaces>
         <UserInterface>shortcutcheckboxwidget.ui</UserInterface>
     </UserInterfaces>

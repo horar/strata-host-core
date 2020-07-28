@@ -2,11 +2,15 @@
 <Package>
     <DisplayName>FTDI Driver</DisplayName>
     <Description>Drivers for devices manufactured by Future Technology Devices International</Description>
-    <Version>0.0.1</Version>
+    <!--This version is used also in installscript.js when doing uninstall-->
+    <Version>2.12.28</Version>
+    <!--Is this driver actually required for Strata Developer Studio to work?-->
     <ForcedInstallation>true</ForcedInstallation>
+    <SortingPriority>40</SortingPriority>
+    <!--Needs verification on non-admin account-->
     <RequiresAdminRights>true</RequiresAdminRights>
     <Script>installscript.js</Script>
-    <ReleaseDate>2019-05-16</ReleaseDate>
+    <ReleaseDate>2017-08-16</ReleaseDate>
     <Licenses>
         <License name="FTDI Driver License Agreement" file="ftdi_license.txt" />
     </Licenses>

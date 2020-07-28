@@ -4,7 +4,7 @@
     <Description>@PROJECT_DESCRIPTION@</Description>
     <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
-    <ForcedInstallation>true</ForcedInstallation>
     <Script>installscript.js</Script>
-    <Dependencies>com.onsemi.strata.components, com.onsemi.strata.qt, com.onsemi.strata.utils.common.vcredist, com.onsemi.strata.utils.ftdi</Dependencies>
+    <ForcedInstallation>true</ForcedInstallation>
+    <SortingPriority>80</SortingPriority>
 </Package>

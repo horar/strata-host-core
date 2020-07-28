@@ -2,10 +2,12 @@
 <Package>
     <DisplayName>Visual C++ Redistributable for Visual Studio 2017</DisplayName>
     <Description>The Visual C++ Redistributable Packages install run-time components that are required to run C++ applications built using Visual Studio 2017</Description>
-    <Version>0.0.1</Version>
+    <!--This version is used also in installscript.js when doing uninstall-->
+    <Version>14.16.27033</Version>
     <ForcedInstallation>true</ForcedInstallation>
+    <SortingPriority>50</SortingPriority>
     <Script>installscript.js</Script>
-    <ReleaseDate>2019-05-16</ReleaseDate>
+    <ReleaseDate>2019-07-19</ReleaseDate>
     <Licenses>
         <License name="Microsoft VS 2017 Tools, Add-ONs and Extensions License Agreement" file="vcredist_license.html" />
     </Licenses>

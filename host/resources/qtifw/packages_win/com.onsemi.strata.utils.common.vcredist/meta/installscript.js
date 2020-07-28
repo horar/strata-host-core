@@ -40,31 +40,117 @@ Component.prototype.createOperations = function()
     component.createOperations();
 
     // Install Microsoft Visual C++ 2017 X64 Additional Runtime
-	// TODO: maybe we can check for new version present
-    if(Component.prototype.isInstalledWindowsProgram("Microsoft Visual C++ 2017 X64 Additional Runtime") == false) {
-        console.log("installing Microsoft Visual C++ 2017 X64 Additional Runtime libraries...");
+    if(Component.prototype.isVCRedistInstalled() == false) {
+        console.log("will install Microsoft Visual C++ 2017 X64 Additional Runtime libraries...");
         // status code 0 means succefull installaion
         // status code 1638 means VC already exist. Therefore, no need to show warnings.
         // status code 3010 means that the oporation is successful but a restart is required
         //component.addOperation("Execute", "{0,1638,3010}", installer.value("TargetDir") + "/StrataUtils/VC_REDIST/vc_redist.x64.exe", "/install", "/quiet", "/norestart");
-		
-		// we need to do it like this to capture the exit code, so we know if we need to restart computer (it will be written in the vc_redist_out.txt)
-		component.addElevatedOperation("Execute", "{0,1638,3010}", installer.value("TargetDir") + "/StrataUtils/VC_REDIST/run_vc_redist.bat");
+        
+        // we need to do it like this to capture the exit code, so we know if we need to restart computer (it will be written in the vc_redist_out.txt)
+        component.addElevatedOperation("Execute", "{0,1638,3010}", installer.value("TargetDir") + "/StrataUtils/VC_REDIST/run_vc_redist.bat");
     } else {
         console.log("Microsoft Visual C++ 2017 X64 Additional Runtime already installed");
     }
 }
 
-Component.prototype.isInstalledWindowsProgram = function(programName)   {
-    // check the registry for the installed program then return true if found, and false otherwise
-    powerShellCommand = "(reg query HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall /v DisplayName /s /reg:64 | findstr /c:'" + programName + "') -or "
-    powerShellCommand+= "(reg query HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall /v DisplayName /s /reg:32 | findstr /c:'" + programName + "') -or "
-    powerShellCommand+= "(reg query HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall /v DisplayName /s | findstr /c:'" + programName + "')"
-    isInstalled = installer.execute("powershell", ["-command", powerShellCommand]);
-    if(isInstalled[0].includes("True"))    {
-        return true;
+// Return 1 if a > b
+// Return -1 if a < b
+// Return 0 if a == b
+function compare(a, b) {
+    if (a === b) {
+       return 0;
     }
-    else   {
+
+    var a_components = a.split(".");
+    var b_components = b.split(".");
+
+    var len = Math.min(a_components.length, b_components.length);
+
+    // loop while the components are equal
+    for (var i = 0; i < len; i++) {
+        // A bigger than B
+        if (parseInt(a_components[i]) > parseInt(b_components[i])) {
+            return 1;
+        }
+
+        // B bigger than A
+        if (parseInt(a_components[i]) < parseInt(b_components[i])) {
+            return -1;
+        }
+    }
+
+    // If one's a prefix of the other, the longer one is greater.
+    if (a_components.length > b_components.length) {
+        return 1;
+    }
+
+    if (a_components.length < b_components.length) {
+        return -1;
+    }
+
+    // Otherwise they are the same.
+    return 0;
+}
+
+function getPowershellElement(str, element_name) {
+	var res = [];
+    var x = str.split('\r\n');
+    for(var i = 0; i < x.length; i++){
+        var n = x[i].indexOf(element_name);
+        if(n == 0) {
+            var m = x[i].indexOf(": ", n + element_name.length);
+			res.push(x[i].slice(m + ": ".length));
+        }
+    }
+    return res;
+}
+
+Component.prototype.isVCRedistInstalled = function()
+{
+    var programName = "Microsoft Visual C\\+\\+ 2017 X64 Additional Runtime";
+    var powerShellCommand = "(Get-ChildItem -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall | Get-ItemProperty | Where-Object {$_.DisplayName -match '" + programName + "' })";
+
+    console.log("executing powershell command '" + powerShellCommand + "'");
+    // the installer is 32bit application :/ it will not find 64bit registry entries unless it is forced to open 64bit binary
+    var isInstalled = installer.execute("C:\\Windows\\SysNative\\WindowsPowerShell\\v1.0\\powershell.exe", ["-command", powerShellCommand]);
+    
+    // the output of command is the first item, and the return code is the second
+    // console.log("execution result code: " + isInstalled[1] + ", result: '" + isInstalled[0] + "'");
+    
+    if((isInstalled[0] != null) && (isInstalled[0] != undefined) && (isInstalled[0] != "")) {
+        var up_to_date = false;
+        
+		var display_name = getPowershellElement(isInstalled[0], 'DisplayName');
+		var display_version = getPowershellElement(isInstalled[0], 'DisplayVersion');
+		var uninstall_string = getPowershellElement(isInstalled[0], 'UninstallString');
+		
+		console.log("found DisplayName: '" + display_name + "', DisplayVersion: '" + display_version + "', UninstallString: '" + uninstall_string + "'");
+
+        // we should not find multiple entries here, but just in case, check the highest
+        if ((display_name.length != 0) && (display_name.length == display_version.length && display_name.length == uninstall_string.length)) {
+			for (var i = 0; i < display_version.length; i++) {
+
+				var result = compare(display_version[i], component.value("Version"));    // example "14.16.27033"
+				
+				if(result == 1) {
+					up_to_date = true;
+					console.log("program is newer version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
+				} else if(result == 0) {
+					up_to_date = true;
+					console.log("program is the same version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
+				} else {
+					console.log("program is older, will replace with new version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
+					console.log("executing VCRedist uninstall command: '" + uninstall_string[i] + "'");
+					var e = installer.execute(uninstall_string[i], ["/NORESTART", "/SUPPRESSMSGBOXES"]);
+					console.log(e);
+				}
+			}
+        }
+
+        return up_to_date;
+    } else {
+        console.log("program not found, will install new version");
         return false;
     }
 }
