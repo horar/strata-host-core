@@ -111,13 +111,21 @@ function getVersion(a) {
 function getPowershellElement(str, element_name) {
 	var res = [];
     var x = str.split('\r\n');
+    var m = 0;
     for(var i = 0; i < x.length; i++){
         var n = x[i].indexOf(element_name);
         if(n == 0) {
-            var m = x[i].indexOf(": ", n + element_name.length);
-			res.push(x[i].slice(m + ": ".length));
+            m = x[i].indexOf(": ", n + element_name.length);
+            m += ": ".length;
+			res.push(x[i].slice(m));
+        } else if (m > 0) {
+            if(x[i].charAt(0) == " ")
+                res[res.length-1] = res[res.length-1].concat(" " + x[i].slice(m));
+          	else
+            	m = 0;
         }
     }
+
     return res;
 }
 
@@ -157,7 +165,7 @@ Component.prototype.isFTDIInstalled = function()
 				} else {
 					console.log("program is older, will replace with new version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
 					console.log("executing FTDI uninstall command: '" + uninstall_string[i] + "'");
-					var e = installer.execute(uninstall_string[i], ["/NORESTART", "/SUPPRESSMSGBOXES"]);
+					var e = installer.execute(uninstall_string[i], ["/SW"]);
 					console.log(e);
 				}
 			}
