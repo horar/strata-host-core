@@ -32,6 +32,7 @@ Item {
     property alias padding: buttonItem.padding
     property alias checkable: buttonItem.checkable
     property alias checked: buttonItem.checked
+    property alias pressed: buttonItem.pressed
 
 
     //cannot use TextMetrics as it provides wrong boundingRect.width for some font sizes (as of Qt 5.12.7)

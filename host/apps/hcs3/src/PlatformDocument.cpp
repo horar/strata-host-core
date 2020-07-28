@@ -27,18 +27,21 @@ PlatformDocument::PlatformDocument(const QString &classId)
 bool PlatformDocument::parseDocument(const QString &document)
 {
     QJsonParseError parseError;
-    QJsonDocument jsonRoot = QJsonDocument::fromJson(document.toUtf8(), &parseError);
+    const QJsonDocument jsonRoot = QJsonDocument::fromJson(document.toUtf8(), &parseError);
 
     if (parseError.error != QJsonParseError::NoError ) {
         return false;
     }
 
-    if (jsonRoot.object().contains("documents") == false) {
+    const QJsonObject rootObject = jsonRoot.object();
+
+    //documents
+    if (rootObject.contains("documents") == false) {
         qCCritical(logCategoryHcsPlatformDocument) << "documents key is missing";
         return false;
     }
 
-    QJsonValue documentsValue = jsonRoot.object().value("documents");
+    QJsonValue documentsValue = rootObject.value("documents");
     if (documentsValue.isObject() == false) {
         qCCritical(logCategoryHcsPlatformDocument) << "value of documents key is not an object";
         return false;
@@ -75,7 +78,7 @@ bool PlatformDocument::parseDocument(const QString &document)
     }
 
     //platform selector
-    QJsonObject jsonPlatformSelector = jsonRoot.object().value("platform_selector").toObject();
+    QJsonObject jsonPlatformSelector = rootObject.value("platform_selector").toObject();
     if (jsonPlatformSelector.isEmpty()) {
         qCCritical(logCategoryHcsPlatformDocument) << "platform_selector key is missing";
         return false;
@@ -88,7 +91,39 @@ bool PlatformDocument::parseDocument(const QString &document)
     }
 
     //name
-    name_ = jsonRoot.object().value("name").toString();
+    name_ = rootObject.value("name").toString();
+
+    //firmware
+    if (rootObject.contains("firmware") == false) {
+        qCCritical(logCategoryHcsPlatformDocument) << "firmware key is missing";
+        // TODO: Nowadays, server does not support firmware object. Return false when it will be supported.
+        //return false;
+    }
+    else {  // TODO: Remove this else line when server will support firmware object.
+        QJsonValue firmwareValue = rootObject.value("firmware");
+        if (firmwareValue.isArray()) {
+            populateVersionedList(firmwareValue.toArray(), firmwareList_);
+        } else {
+            qCCritical(logCategoryHcsPlatformDocument) << "value of firmware key is not an array";
+            return false;
+        }
+    }  // TODO: remove this else line
+
+    //control view
+    if (rootObject.contains("control_view") == false) {
+        qCCritical(logCategoryHcsPlatformDocument) << "control_view key is missing";
+        // TODO: Nowadays, server does not support control_view object. Return false when it will be supported.
+        //return false;
+    }
+    else {  // TODO: Remove this else line when server will support control_view object.
+        QJsonValue controlViewValue = rootObject.value("control_view");
+        if (controlViewValue.isArray()) {
+            populateVersionedList(controlViewValue.toArray(), controlViewList_);
+        } else {
+            qCCritical(logCategoryHcsPlatformDocument) << "value of control_view key is not an array";
+            return false;
+        }
+    }  // TODO: remove this else line
 
     return true;
 }
@@ -103,9 +138,19 @@ const QList<PlatformFileItem>& PlatformDocument::getViewList()
     return viewList_;
 }
 
-const QList<PlatformFileItem> &PlatformDocument::getDownloadList()
+const QList<PlatformFileItem>& PlatformDocument::getDownloadList()
 {
     return downloadList_;
+}
+
+const QList<VersionedFileItem>& PlatformDocument::getFirmwareList()
+{
+    return firmwareList_;
+}
+
+const QList<VersionedFileItem>& PlatformDocument::getControlViewList()
+{
+    return controlViewList_;
 }
 
 const PlatformFileItem &PlatformDocument::platformSelector()
@@ -135,15 +180,48 @@ bool PlatformDocument::populateFileObject(const QJsonObject &jsonObject, Platfor
     return true;
 }
 
+bool PlatformDocument::populateVersionedObject(const QJsonObject &jsonObject, VersionedFileItem &versionedFile)
+{
+    if (jsonObject.contains("file") == false
+            || jsonObject.contains("md5") == false
+            || jsonObject.contains("name") == false
+            || jsonObject.contains("timestamp") == false
+            || jsonObject.contains("version") == false)
+    {
+        return false;
+    }
+
+    versionedFile.partialUri = jsonObject.value("file").toString();
+    versionedFile.md5 = jsonObject.value("md5").toString();
+    versionedFile.name = jsonObject.value("name").toString();
+    versionedFile.timestamp = jsonObject.value("timestamp").toString();
+    versionedFile.version = jsonObject.value("version").toString();
+
+    return true;
+}
+
 void PlatformDocument::populateFileList(const QJsonArray &jsonList, QList<PlatformFileItem> &fileList)
 {
     foreach (const QJsonValue &value, jsonList) {
         PlatformFileItem fileItem;
         if (populateFileObject(value.toObject() , fileItem) == false) {
-            qCCritical(logCategoryHcsPlatformDocument) << "object not valid";
+            qCCritical(logCategoryHcsPlatformDocument) << "file object not valid";
             continue;
         }
 
         fileList.append(fileItem);
+    }
+}
+
+void PlatformDocument::populateVersionedList(const QJsonArray &jsonList, QList<VersionedFileItem> &versionedList)
+{
+    foreach (const QJsonValue &value, jsonList) {
+        VersionedFileItem firmwareItem;
+        if (populateVersionedObject(value.toObject() , firmwareItem) == false) {
+            qCCritical(logCategoryHcsPlatformDocument) << "versioned file object not valid";
+            continue;
+        }
+
+        versionedList.append(firmwareItem);
     }
 }

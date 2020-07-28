@@ -40,10 +40,6 @@ Item {
             dropDownPopup.close()
 
             if (selection.view === "close"){
-                if (model.device_id !== "") {
-                    sdsModel.coreInterface.disconnectPlatform(model.device_id)
-                }
-
                 let data = {
                     "class_id": platformTabRoot.class_id,
                     "device_id": platformTabRoot.device_id

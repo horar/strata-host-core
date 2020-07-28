@@ -11,6 +11,7 @@
 #include <QString>
 #include <QByteArray>
 #include <QJsonArray>
+#include <QNetworkAccessManager>
 
 #include "Dispatcher.h"
 #include "ClientsController.h"
@@ -18,6 +19,9 @@
 #include "LoggingAdapter.h"
 #include "BoardController.h"
 #include "FirmwareUpdateController.h"
+#include "StorageManager.h"
+
+#include <DownloadManager.h>
 
 
 struct PlatformMessage;
@@ -59,6 +63,7 @@ signals:
     void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
     void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5);
+    void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5);
 
 public slots:
     void onAboutToQuit();
@@ -97,7 +102,15 @@ public slots:
             const QByteArray &clientId,
             const QString &classId,
             const QJsonArray &documentList,
+            const QJsonArray &firmwareList,
+            const QJsonArray &controlViewList,
             const QString &error);
+
+    void sendDownloadControlViewFinishedMessage(
+            const QByteArray &clientId,
+            const QString &partialUri,
+            const QString &filePath,
+            const QString &errorString);
 
 private:
     void handleMessage(const PlatformMessage& msg);
@@ -116,11 +129,11 @@ private:
     void onCmdPlatformSelect(const rapidjson::Value* );
 
     //handlers for hcs::cmd
-    void onCmdHostDisconnectPlatform(const rapidjson::Value* );
     void onCmdHostUnregister(const rapidjson::Value* );
     void onCmdHostDownloadFiles(const rapidjson::Value* );      //from UI
     void onCmdDynamicPlatformList(const rapidjson::Value* );
     void onCmdUpdateFirmware(const rapidjson::Value* );
+    void onCmdDownloadControlView(const rapidjson::Value* );
 
     void platformConnected(const int deviceId, const QString &classId);
     void platformDisconnected(const int deviceId);
@@ -136,10 +149,9 @@ private:
     Database db_;
     LoggingAdapter dbLogAdapter_;
     LoggingAdapter clientsLogAdapter_;
-
-    std::shared_ptr<strata::DownloadManager> downloadManager_;
-    std::unique_ptr<StorageManager> storageManager_;
-
+    QNetworkAccessManager networkManager_;
+    strata::DownloadManager downloadManager_;
+    StorageManager storageManager_;
     FirmwareUpdateController updateController_;
 
     HCS_Dispatcher dispatcher_;
