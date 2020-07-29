@@ -102,7 +102,7 @@ REM     ..\
 echo "======================================================================="
 echo " Compiling.."
 echo "======================================================================="
-cmake --build .
+cmake --build . -- -j %NUMBER_OF_PROCESSORS%
 REM cmake --build . --config Debug
 
 if not exist "packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.exe" (
@@ -124,9 +124,6 @@ xcopy ..\..\deployment\Strata\dependencies\strata packages\com.onsemi.strata.dev
 
 REM copy HCS config file
 copy ..\..\deployment\Strata\config\hcs\hcs.config packages\com.onsemi.strata.hcs\data
-
-REM copy mqtt dll
-REM move packages\com.onsemi.strata.qt\data\vc_redist.x64.exe packages_win\com.onsemi.strata.utils.common.vcredist\data\StrataUtils\VC_REDIST\
 
 REM echo "Copying Qt Core\Components resources to packages\com.onsemi.strata.components\data"
 REM xcopy bin\component-*.rcc packages\com.onsemi.strata.components\data /Y
