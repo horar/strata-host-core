@@ -165,7 +165,7 @@ binarycreator \
     -p ./packages \
     strata-setup-online
 
-rd /s /q pub
+rm -rf ./pub
 
 repogen \
     --update-new-components \
