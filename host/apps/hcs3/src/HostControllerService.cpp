@@ -84,6 +84,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(this, &HostControllerService::firmwareUpdateRequested, &updateController_, &FirmwareUpdateController::updateFirmware, Qt::QueuedConnection);
 
     connect(this, &HostControllerService::versionInfoRequested, &coreUpdate_, &CoreUpdate::requestVersionInfo, Qt::QueuedConnection);
+    connect(&coreUpdate_, &CoreUpdate::versionInfoResponseRequested, this, &HostControllerService::sendVersionInfoMessage);
 
     connect(&boardsController_, &BoardController::boardConnected, this, &HostControllerService::platformConnected);
     connect(&boardsController_, &BoardController::boardDisconnected, this, &HostControllerService::platformDisconnected);
@@ -107,6 +108,8 @@ bool HostControllerService::initialize(const QString& config)
 
     storageManager_.setBaseUrl(baseUrl);
     storageManager_.setDatabase(&db_);
+
+    coreUpdate_.setDatabase(&db_);
 
     db_.initReplicator(db_cfg["gateway_sync"].GetString(), replicator_username, replicator_password);
 
@@ -700,8 +703,20 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
     }
 }
 
-void HostControllerService::onCmdGetLatestReleaseVersion(const rapidjson::Value * )
-{
-    qCWarning(logCategoryHcs) << "{VICTOR} Inside HostControllerService::onCmdGetLatestReleaseVersion, emit versionInfoRequested";
+void HostControllerService::onCmdGetLatestReleaseVersion(const rapidjson::Value * ) {
     emit versionInfoRequested(getSenderClient()->getClientId());
+}
+
+void HostControllerService::sendVersionInfoMessage(const QByteArray &clientId, const QString &latest_version) {
+    QJsonDocument doc;
+    QJsonObject message;
+    QJsonObject payload;
+
+    payload.insert("type", "latest_release_version");
+    payload.insert("latest_version", latest_version);
+
+    message.insert("hcs::notification", payload);
+    doc.setObject(message);
+
+    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }

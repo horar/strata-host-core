@@ -3,12 +3,6 @@
 #include <memory>
 
 #include <QObject>
-#include <QStringList>
-#include <QMap>
-#include <QJsonArray>
-#include <QDebug>
-#include <QUrl>
-#include <QPointer>
 
 class Database;
 
@@ -29,7 +23,12 @@ public:
 public slots:
     void requestVersionInfo(const QByteArray &clientId);
 
+signals:
+    void versionInfoResponseRequested(QByteArray clientId, QString latest_version);
+
 private:
+    void handleCoreUpdateResponse(const QByteArray &clientId, const QString &latest_version);
+
     Database* db_{nullptr};
 
 };

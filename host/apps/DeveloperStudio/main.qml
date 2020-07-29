@@ -34,6 +34,9 @@ SGWidgets.SGMainWindow {
         if (!PlatformSelection.isInitialized) {
             PlatformSelection.initialize(sdsModel.coreInterface)
         }
+        if (!CoreUpdate.isInitialized) {
+            CoreUpdate.initialize(sdsModel.coreInterface)
+        }
         initialized()
     }
 
@@ -109,9 +112,6 @@ SGWidgets.SGMainWindow {
 //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE) {
                 PlatformSelection.generatePlatformSelectorModel(list)
-
-                // Trigger check for core update
-                CoreUpdate.getUpdateInformation(sdsModel.coreInterface)
             }
         }
 
@@ -120,6 +120,12 @@ SGWidgets.SGMainWindow {
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformSelectorModel.platformListStatus === "loaded") {
                 Help.closeTour()
                 PlatformSelection.parseConnectedPlatforms(list)
+            }
+        }
+
+        onVersionInfoReceived: {
+            if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE) {
+                CoreUpdate.parseVersionInfo(payload)
             }
         }
     }

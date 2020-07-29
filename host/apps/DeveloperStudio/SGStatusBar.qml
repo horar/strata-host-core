@@ -12,6 +12,7 @@ import "qrc:/partial-views/status-bar"
 import "qrc:/partial-views/help-tour"
 import "qrc:/partial-views/about-popup"
 import "qrc:/js/help_layout_manager.js" as Help
+import "qrc:/js/core_update.js" as CoreUpdate
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
@@ -40,6 +41,9 @@ Rectangle {
     // Navigation_control calls this after login when statusbar AND platformSelector are all complete
     function loginSuccessful() {
         PlatformSelection.getPlatformList()
+
+        // Trigger check for core update
+        CoreUpdate.getUpdateInformation()
     }
 
     Component.onDestruction: {

@@ -20,8 +20,8 @@
 #include "BoardController.h"
 #include "FirmwareUpdateController.h"
 #include "StorageManager.h"
-#include <DownloadManager.h>
-#include <CoreUpdate.h>
+#include "DownloadManager.h"
+#include "CoreUpdate.h"
 
 struct PlatformMessage;
 
@@ -111,6 +111,11 @@ public slots:
             const QString &partialUri,
             const QString &filePath,
             const QString &errorString);
+
+    void sendVersionInfoMessage(
+            const QByteArray &clientId,
+            const QString &latest_version
+    );
 
 private:
     void handleMessage(const PlatformMessage& msg);
