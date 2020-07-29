@@ -76,5 +76,6 @@
         <file>partial-views/status-bar/SGPlatformTab.qml</file>
         <file>partial-views/platform-view/DisconnectedOverlay.qml</file>
         <file>js/core_update.js</file>
+        <file>partial-views/core-update/SGCoreUpdate.qml</file>
     </qresource>
 </RCC>

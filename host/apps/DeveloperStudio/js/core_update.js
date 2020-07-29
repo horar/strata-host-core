@@ -1,18 +1,21 @@
 .pragma library
 
+.import "navigation_control.js" as NavigationControl
 .import tech.strata.logger 1.0 as LoggerModule
 
 var isInitialized = false
 // var updateChecked = false
 var coreInterface
+var updateContainer
 var listError = {
     "retry_count": 0,
     "retry_timer": Qt.createQmlObject("import QtQuick 2.12; Timer {interval: 3000; repeat: false; running: false;}",Qt.application,"TimeOut")
 }
 
-function initialize (newCoreInterface) {
+function initialize (newCoreInterface, newUpdateContainer) {
     coreInterface = newCoreInterface
-    isInitialized = true
+    updateContainer = newUpdateContainer
+    // isInitialized = true
 //     listError.retry_timer.triggered.connect(function () { getUpdateInformation() });
 }
 
@@ -24,32 +27,22 @@ function getUpdateInformation () {
 }
 
 function parseVersionInfo (payload) {
-    console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "[VICTOR] Inside parseVersionInfo");
+    if (payload.hasOwnProperty("latest_version") && payload.latest_version.length > 0) {
+        console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Received Core Update notification, latest version:", payload.latest_version)
+        open()
+    } else {
+        console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Core Update Notification Error. Notification is malformed:", JSON.stringify(payload));
+        return
+    }
+}
 
-    let version_info
-
-    const obj = JSON.parse(payload)
-
-
-    console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "[VICTOR] obj: ", obj)
-
-    // // Parse JSON
-    // try {
-    //     version_info = JSON.parse(payload)
-    // } catch(err) {
-    //     console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Error parsing version info:", err.toString())
-    //     // platformSelectorModel.platformListStatus = "error"
-    // }
-
-    // if (version_info.length < 1) {
-    //     console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Version info JSON length < 1")
-    //     // empty list received from HCS, retry getPlatformList() query
-    //     // emptyListRetry()
-    //     return
-    // }
-
-    // console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Version info from UI: ", version_info.latest_version)
-
+function open() {
+    var coreUpdatePopup = NavigationControl.createView("qrc:/partial-views/core-update/SGCoreUpdate.qml", updateContainer)
+    coreUpdatePopup.width = updateContainer.width-100
+    coreUpdatePopup.height = updateContainer.height - 100
+    coreUpdatePopup.x = updateContainer.width/2 - coreUpdatePopup.width/2
+    coreUpdatePopup.y =  updateContainer.height/2 - coreUpdatePopup.height/2
+    coreUpdatePopup.open()
 }
 
 // On empty/invalid receive: retry until give-up

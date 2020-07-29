@@ -35,7 +35,7 @@ SGWidgets.SGMainWindow {
             PlatformSelection.initialize(sdsModel.coreInterface)
         }
         if (!CoreUpdate.isInitialized) {
-            CoreUpdate.initialize(sdsModel.coreInterface)
+            CoreUpdate.initialize(sdsModel.coreInterface, updateContainer)
         }
         initialized()
     }
@@ -64,6 +64,15 @@ SGWidgets.SGMainWindow {
                 NavigationControl.updateState(NavigationControl.events.CONNECTION_LOST_EVENT)
             }
         }
+    }
+
+    Item {
+        id: updateContainer
+        anchors {
+            centerIn: parent
+        }
+        width: 400
+        height: 400
     }
 
     ColumnLayout {
