@@ -71,7 +71,7 @@ echo git submodule update --init --recursive
 echo "-----------------------------------------------------------------------------"
 echo " Create a build folder.."
 echo "-----------------------------------------------------------------------------"
-REM rd /s /q build-ota
+REM if exist build-ota rd /s /q build-ota
 if not exist build-ota md build-ota
 
 echo "======================================================================="
@@ -79,7 +79,7 @@ echo " Generating project.."
 echo "======================================================================="
 cd build-ota
 
-rd /s /q packages
+if exist packages rd /s /q packages
 if not exist packages md packages
 
 cmake -G "NMake Makefiles JOM" ^
@@ -118,6 +118,10 @@ if not exist "packages\com.onsemi.strata.hcs\data\hcs.exe" (
     echo "======================================================================="
     Exit /B 2
 )
+
+echo "======================================================================="
+echo " Copying necessary files.."
+echo "======================================================================="
 
 REM copy various license files
 xcopy ..\..\deployment\Strata\dependencies\strata packages\com.onsemi.strata.devstudio\data /E /Y
@@ -166,6 +170,11 @@ REM -------------------------------------------------------------------------
 REM [LC] WIP
 REM -------------------------------------------------------------------------
 REM    --no-compiler-runtime ^ // we need vc_redist exe
+
+echo "-----------------------------------------------------------------------------"
+echo " Preparing Strata Developer Studio.exe dependencies.."
+echo "-----------------------------------------------------------------------------"
+
 windeployqt "packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.exe" ^
     --release ^
     --force ^
@@ -179,6 +188,10 @@ windeployqt "packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.e
     --libdir packages\com.onsemi.strata.qt\data ^
     --plugindir packages\com.onsemi.strata.qt\data\plugins ^
     --verbose 1
+
+echo "-----------------------------------------------------------------------------"
+echo " Preparing hcs.exe dependencies.."
+echo "-----------------------------------------------------------------------------"
 
 windeployqt "packages\com.onsemi.strata.hcs\data\hcs.exe" ^
     --release ^
@@ -201,6 +214,10 @@ if not exist packages\com.onsemi.strata.qt\data\vc_redist.x64.exe (
 
 move packages\com.onsemi.strata.qt\data\vc_redist.x64.exe packages_win\com.onsemi.strata.utils.common.vcredist\data\StrataUtils\VC_REDIST\
 
+echo "======================================================================="
+echo " Preparing offline installer.."
+echo "======================================================================="
+
 binarycreator ^
     --verbose ^
     --offline-only ^
@@ -208,6 +225,10 @@ binarycreator ^
     -p .\packages ^
     -p .\packages_win ^
     strata-setup-offline
+	
+echo "======================================================================="
+echo " Preparing online installer.."
+echo "======================================================================="
 
 binarycreator ^
     --verbose ^
@@ -217,12 +238,21 @@ binarycreator ^
     -p .\packages_win ^
     strata-setup-online
 
-rd /s /q pub
+echo "======================================================================="
+echo " Preparing online repository.."
+echo "======================================================================="
+
+if exist pub rd /s /q pub
 
 repogen ^
     --update-new-components ^
+    --verbose ^
     -p .\packages ^
     -p .\packages_win ^
     pub\repository\demo
+	
+echo "======================================================================="
+echo " OTA build finished"
+echo "======================================================================="
 
 endlocal

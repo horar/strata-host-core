@@ -49,12 +49,17 @@ echo git submodule update --init --recursive
 echo "-----------------------------------------------------------------------------"
 echo " Create a build folder.."
 echo "-----------------------------------------------------------------------------"
+#if [ -d build-ota ] ; then rm -rf build-ota; fi
 if [ ! -d build-ota ] ; then mkdir -pv build-ota; fi
-cd build-ota
 
 echo "======================================================================="
 echo " Generating project.."
 echo "======================================================================="
+cd build-ota
+
+if [ -d packages ] ; then rm -rf packages; fi
+if [ ! -d packages ] ; then mkdir -pv packages; fi
+
 cmake \
     -DCMAKE_BUILD_TYPE=OTA \
     ..
@@ -93,6 +98,10 @@ if [ ! -f ./packages/com.onsemi.strata.hcs/data/hcs.app ] ; then
     exit 2
 fi
 
+echo "======================================================================="
+echo " Copying necessary files.."
+echo "======================================================================="
+
 # copy various license files
 cp -fv ../../deployment/Strata/dependencies/strata/* ./packages/com.onsemi.strata.devstudio/data
 
@@ -124,6 +133,9 @@ cp -fv ./bin/Qt5Mqtt.so ./packages/com.onsemi.strata.devstudio/data
 # - generate qt.conf with updated paths for ota apps
 # - copy non-in resources for ifw-packages ... (icons, banners, scripts, license etc.)
 
+echo "-----------------------------------------------------------------------------"
+echo " Preparing Strata Developer Studio.app dependencies.."
+echo "-----------------------------------------------------------------------------"
 
 macdeployqt ./packages/com.onsemi.strata.devstudio/data/Strata\ Developer\ Studio.app \
     --release \
@@ -139,7 +151,11 @@ macdeployqt ./packages/com.onsemi.strata.devstudio/data/Strata\ Developer\ Studi
     --plugindir ./packages/com.onsemi.strata.qt/data/plugins \
     --verbose 1
 
-macdeployqt ./packages/com.onsemi.strata.hcs/data/hcs.exe \
+echo "-----------------------------------------------------------------------------"
+echo " Preparing hcs.app dependencies.."
+echo "-----------------------------------------------------------------------------"
+
+macdeployqt ./packages/com.onsemi.strata.hcs/data/hcs.app \
     --release \
     --force \
     --no-translations \
@@ -151,12 +167,20 @@ macdeployqt ./packages/com.onsemi.strata.hcs/data/hcs.exe \
     --plugindir ./packages/com.onsemi.strata.qt/data/plugins \
     --verbose 1
 
+echo "======================================================================="
+echo " Preparing offline installer.."
+echo "======================================================================="
+
 binarycreator \
     --verbose \
     --offline-only \
     -c ../resources/qtifw/config/config.xml \
     -p ./packages \
     strata-setup-offline
+	
+echo "======================================================================="
+echo " Preparing online installer.."
+echo "======================================================================="
 
 binarycreator \
     --verbose \
@@ -165,13 +189,21 @@ binarycreator \
     -p ./packages \
     strata-setup-online
 
-rm -rf ./pub
+echo "======================================================================="
+echo " Preparing online repository.."
+echo "======================================================================="
+
+if [ -d pub ] ; then rm -rf pub; fi
 
 repogen \
     --update-new-components \
+    --verbose \
     -p ./packages \
     pub/repository/demo
 
+echo "======================================================================="
+echo " OTA build finished"
+echo "======================================================================="
 
 # how to start/install it..
 #   ./strata-setup-offline.app/Contents/MacOS/strata-setup-offline
