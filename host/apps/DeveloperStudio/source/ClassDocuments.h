@@ -9,6 +9,7 @@
 #include <PlatformInterface/core/CoreInterface.h>
 #include "DownloadDocumentListModel.h"
 #include <DocumentListModel.h>
+#include <FirmwareListModel.h>
 
 class ClassDocuments : public QObject
 {
@@ -18,6 +19,7 @@ class ClassDocuments : public QObject
 
     Q_PROPERTY(DownloadDocumentListModel* downloadDocumentListModel READ downloadDocumentListModel CONSTANT)
     Q_PROPERTY(DocumentListModel* datasheetListModel READ datasheetListModel CONSTANT)
+    Q_PROPERTY(FirmwareListModel* firmwareListModel READ firmwareListModel CONSTANT)
     Q_PROPERTY(DocumentListModel* pdfListModel READ pdfListModel CONSTANT)
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
     Q_PROPERTY(int loadingProgressPercentage READ loadingProgressPercentage NOTIFY loadingProgressPercentageChanged)
@@ -30,6 +32,7 @@ public:
     DownloadDocumentListModel* downloadDocumentListModel();
     DocumentListModel* datasheetListModel();
     DocumentListModel* pdfListModel();
+    FirmwareListModel* firmwareListModel();
 
     QString errorString() const;
     bool loading() const;
@@ -56,6 +59,7 @@ private:
     DownloadDocumentListModel downloadDocumentModel_;
     DocumentListModel datasheetModel_;
     DocumentListModel pdfModel_;
+    FirmwareListModel firmwareModel_;
 
     QString errorString_;
     bool loading_ = false;

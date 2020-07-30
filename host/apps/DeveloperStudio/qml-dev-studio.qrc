@@ -78,5 +78,6 @@
         <file>partial-views/platform-view/PlatformSettings.qml</file>
         <file>partial-views/platform-view/PlatformSettings/SoftwareManagement.qml</file>
         <file>partial-views/platform-view/PlatformSettings/FirmwareManagement.qml</file>
+        <file>partial-views/platform-view/PlatformSettings/FirmwareVersionList.qml</file>
     </qresource>
 </RCC>

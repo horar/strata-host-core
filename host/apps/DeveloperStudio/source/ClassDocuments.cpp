@@ -34,6 +34,11 @@ DocumentListModel *ClassDocuments::pdfListModel()
     return &pdfModel_;
 }
 
+FirmwareListModel *ClassDocuments::firmwareListModel()
+{
+    return &firmwareModel_;
+}
+
 QString ClassDocuments::errorString() const
 {
     return errorString_;
@@ -75,6 +80,7 @@ void ClassDocuments::populateModels(QJsonObject data)
     QList<DocumentItem* > pdfList;
     QList<DocumentItem* > datasheetList;
     QList<DownloadDocumentItem* > downloadList;
+    QList<FirmwareItem* > firmwareList;
 
     if (data.contains("error")) {
         qCWarning(logCategoryDocumentManager) << "Document download error:" << data["error"].toString();
@@ -124,8 +130,6 @@ void ClassDocuments::populateModels(QJsonObject data)
         }
     }
 
-    // TODO: CS-830 - Iterate over firmware list here.
-    /*
     QJsonArray firmwareArray = data["firmwares"].toArray();
     for (const QJsonValueRef firmwareValue : firmwareArray) {
         QJsonObject documentObject = firmwareValue.toObject();
@@ -140,9 +144,18 @@ void ClassDocuments::populateModels(QJsonObject data)
             continue;
         }
 
-        // TODO: write rest of code
+        QJsonDocument doc(documentObject);
+        QString strJson(doc.toJson(QJsonDocument::Compact));
+
+        QString uri = documentObject["uri"].toString();
+        QString name = documentObject["name"].toString();
+        QString md5 = documentObject["md5"].toString();
+        QString version = documentObject["version"].toString();
+        QString timestamp = documentObject["timestamp"].toString();
+
+        FirmwareItem *fi = new FirmwareItem(uri, md5, name, timestamp, version);
+        firmwareList.append(fi);
     }
-    */
 
     // TODO: CS-831 - Iterate over control views list here.
     // QJsonArray controlViewArray = data["control_views"].toArray();
@@ -150,6 +163,7 @@ void ClassDocuments::populateModels(QJsonObject data)
     pdfModel_.populateModel(pdfList);
     datasheetModel_.populateModel(datasheetList);
     downloadDocumentModel_.populateModel(downloadList);
+    firmwareModel_.populateModel(firmwareList);
 
     setLoading(false);
 }

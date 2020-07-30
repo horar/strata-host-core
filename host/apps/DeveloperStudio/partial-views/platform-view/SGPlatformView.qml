@@ -26,6 +26,7 @@ StackLayout {
     property alias collateralContainer: collateralContainer
 
     property int device_id: model.device_id
+    property string class_id: model.class_id
     property string firmware_version: model.firmware_version
     property bool connected: model.connected
     property bool controlLoaded: false
