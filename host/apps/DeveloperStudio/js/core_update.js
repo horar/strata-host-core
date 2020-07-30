@@ -4,13 +4,15 @@
 .import tech.strata.logger 1.0 as LoggerModule
 
 var isInitialized = false
-// var updateChecked = false
 var coreInterface
 var updateContainer
 var listError = {
     "retry_count": 0,
     "retry_timer": Qt.createQmlObject("import QtQuick 2.12; Timer {interval: 3000; repeat: false; running: false;}",Qt.application,"TimeOut")
 }
+
+var latest_version
+var current_version
 
 function initialize (newCoreInterface, newUpdateContainer) {
     coreInterface = newCoreInterface
@@ -29,6 +31,7 @@ function getUpdateInformation () {
 function parseVersionInfo (payload) {
     if (payload.hasOwnProperty("latest_version") && payload.latest_version.length > 0) {
         console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Received Core Update notification, latest version:", payload.latest_version)
+        latest_version = payload.latest_version
         open()
     } else {
         console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Core Update Notification Error. Notification is malformed:", JSON.stringify(payload));
@@ -42,6 +45,7 @@ function open() {
     coreUpdatePopup.height = updateContainer.height - 100
     coreUpdatePopup.x = updateContainer.width/2 - coreUpdatePopup.width/2
     coreUpdatePopup.y =  updateContainer.height/2 - coreUpdatePopup.height/2
+    coreUpdatePopup.latest_version = latest_version
     coreUpdatePopup.open()
 }
 

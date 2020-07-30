@@ -11,11 +11,12 @@ Popup {
     modal: true
     focus: true
     padding: 0
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-
-    // onOpened: webview.url = "https://www.onsemi.com/PowerSolutions/locateSalesSupport.do"
+    closePolicy: Popup.CloseOnEscape
 
     onClosed: coreUpdatePopup.destroy()
+
+    property string latest_version: ""
+    property string current_version: ""
 
     DropShadow {
         width: coreUpdatePopup.width
@@ -69,16 +70,37 @@ Popup {
                 }
             }
         }
+    }
 
-        // WebEngineView {
-        //     id: webview
-        //     anchors {
-        //         top: title.bottom
-        //         left: popupContainer.left
-        //         right: popupContainer.right
-        //         bottom: popupContainer.bottom
-        //     }
-        //     url: ""
-        // }
+    Text {
+        font.family: "Helvetica"
+        font.pointSize: 24
+        text: "\n\nNew update available\nCurrent:" + current_version + "\nLatest:" + latest_version
+    }
+
+    Column {
+        topPadding: 120
+
+        anchors {
+            centerIn: parent
+        }
+
+        Button {
+            text: "Yes"
+            width: popupContainer.width / 2
+            // onClicked: model.submit()
+        }
+
+        Button {
+            text: "Ask again Later"
+            width: popupContainer.width / 2
+            // onClicked: model.submit()
+        }
+
+        Button {
+            text: "Don't ask again."
+            width: popupContainer.width / 2
+            // onClicked: model.submit()
+        }
     }
 }
