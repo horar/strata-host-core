@@ -26,6 +26,7 @@ var uuid_map = {
     "TEST.2018.002.0.0": "motor-vortex",
     "entice_rgb" : "entice_rgb",
     "template": "template",
+    "100V-ncp1034": "100V-ncp1034",
 
 
     /*****
