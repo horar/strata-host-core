@@ -205,38 +205,7 @@ Item {
                                 }
                             }
                         }
-                        //                        Item {
-                        //                            id: uvloThresholdContainer
-                        //                            Layout.fillWidth: true
-                        //                            Layout.fillHeight: true
-                        //                            //color: "green"
-                        //                            SGAlignedLabel {
-                        //                                id: uvloThresholdLabel
-                        //                                target: uvloThresholdSlider
-                        //                                text:"UVLO Threshold"
-                        //                                alignment: SGAlignedLabel.SideTopLeft
-                        //                                anchors.centerIn: parent
-                        //                                fontSizeMultiplier: ratioCalc
-                        //                                font.bold : true
 
-                        //                                SGSlider {
-                        //                                    id: uvloThresholdSlider
-                        //                                    width: uvloThresholdContainer.width/1.1
-                        //                                    inputBoxWidth: uvloThresholdContainer.width/6
-                        //                                    textColor: "black"
-                        //                                    stepSize: 10
-                        //                                    from: 0
-                        //                                    to: 100
-                        //                                    live: false
-                        //                                    fromText.text: "0V"
-                        //                                    toText.text: "100V"
-                        //                                    fromText.fontSizeMultiplier: 0.9
-                        //                                    toText.fontSizeMultiplier: 0.9
-
-
-                        //                                }
-                        //                            }
-                        //                        }
                         Item {
                             id: outputVolContainer
                             Layout.fillWidth: true
