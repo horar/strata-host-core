@@ -8,10 +8,9 @@
 #include <QFile>
 #include <QDir>
 #include <QThread>
-#include <QIcon>
 #include <QMessageBox>
-#include <QInputDialog>
 #include <QVersionNumber>
+#include <QApplication>
 #include <QCoreApplication>
 
 #ifdef Q_OS_WIN
@@ -225,7 +224,7 @@ void SDSModel::latestReleaseVersionAcquireFinishedHandler(const QJsonObject &pay
 
     if(currentVersionParsed < latestVersionParsed) {
         // Ask user confirmation
-        QMessageBox msgBox;
+        QMessageBox msgBox(QApplication::activeWindow());
         msgBox.setText("A new version of Strata is available.");
         msgBox.setInformativeText("Do you wish to update now?");
         QPushButton* yesButton = msgBox.addButton(tr("Yes"), QMessageBox::YesRole);
@@ -260,7 +259,7 @@ void SDSModel::updateApplicationExecutionFinishedHandler(const QJsonObject &payl
         qCCritical(logCategoryStrataDevStudio) << "execution of application update process finished with error: " << errorString;
 
         // Display to user some error message since he accepted update
-        QMessageBox msgBox;
+        QMessageBox msgBox(QApplication::activeWindow());
         msgBox.setText("The update failed.");
         msgBox.setInformativeText(errorString);
         msgBox.exec();
@@ -282,6 +281,12 @@ void SDSModel::setHcsConnected(bool hcsConnected)
 
     hcsConnected_ = hcsConnected;
     emit hcsConnectedChanged();
+
+    if(hcsConnected_ && !checkedForUpdate_) {
+        qCDebug(logCategoryStrataDevStudio) << "Will check for update now.";
+        coreInterface_->getLatestReleaseVersion();
+        checkedForUpdate_ = false;  // check only once at start
+    }
 }
 
 void SDSModel::forwardHcsOutput()
