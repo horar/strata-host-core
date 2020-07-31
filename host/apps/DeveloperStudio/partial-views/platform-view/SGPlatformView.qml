@@ -15,6 +15,8 @@ StackLayout {
         switch (model.view) {
         case "collateral":
             return 1
+        case "settings":
+            return 2
         default: // case "control":
             return 0
         }
@@ -109,5 +111,14 @@ StackLayout {
     SGUserSettings {
         id: sgUserSettings
         classId: model.class_id
+    }
+
+    Item {
+        id: settingsContainer
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+
+        PlatformSettings {
+        }
     }
 }
