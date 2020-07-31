@@ -19,8 +19,14 @@ void CoreUpdate::handleCoreUpdateResponse(const QByteArray &clientId, const QStr
 
 void CoreUpdate::requestVersionInfo(const QByteArray &clientId) {
     const QString currentVersion = getCurrentVersion(clientId);
-    const QString latestVersion = getLatestVersion(clientId);
-    handleCoreUpdateResponse(clientId, currentVersion, latestVersion);
+
+    if (!currentVersion.isEmpty()) {
+        const QString latestVersion = getLatestVersion(clientId);
+
+        if (!latestVersion.isEmpty()) {
+            handleCoreUpdateResponse(clientId, currentVersion, latestVersion);
+        }
+    }
 }
 
 QString CoreUpdate::getLatestVersion(const QByteArray &clientId) {

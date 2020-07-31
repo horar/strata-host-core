@@ -27,20 +27,33 @@ function getUpdateInformation () {
 function parseVersionInfo (payload) {
     if (payload.hasOwnProperty("current_version") && payload.current_version.length > 0
         && payload.hasOwnProperty("latest_version") && payload.latest_version.length > 0) {
-        console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Received core update notification")
+        console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Rcvd core update notification: current", payload.current_version, "latest", payload.latest_version)
 
         current_version = payload.current_version
         latest_version = payload.latest_version
         error_string = payload.error_string
 
-        open()
+        var temp_current_version = current_version.replace('-','').split(".");
+        var temp_latest_version = latest_version.replace('-','').split(".");
+
+        // Check if latest_version is newer than current_version
+        if (payload.current_version != payload.latest_version) {
+            for (let i = 0; i < temp_latest_version.length; i++) {
+                if (parseInt(temp_latest_version[i]) > parseInt(temp_current_version[i])) {
+                    console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Newer version available detected - offering update to ver", payload.latest_version)
+                    createUpdatePopup()
+                    break
+                }
+            }
+        }
+
     } else {
         console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Core update notification error. Notification is malformed:", JSON.stringify(payload));
         return
     }
 }
 
-function open() {
+function createUpdatePopup() {
     var coreUpdatePopup = NavigationControl.createView("qrc:/partial-views/core-update/SGCoreUpdate.qml", updateContainer)
     coreUpdatePopup.width = updateContainer.width-100
     coreUpdatePopup.height = updateContainer.height - 100

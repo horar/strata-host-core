@@ -76,7 +76,7 @@ Popup {
     Text {
         font.family: "Helvetica"
         font.pointSize: 24
-        text: "\n\nNew update available\nCurrent:" + current_version + "\nLatest:" + latest_version + "\nError:" + error_string
+        text: "\n\nNew update available\nCurrent:" + current_version + "\nLatest:" + latest_version + (error_string !== "" ? ("\nError:" + error_string) : "")
     }
 
     Column {
