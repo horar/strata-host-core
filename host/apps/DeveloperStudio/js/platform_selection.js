@@ -4,6 +4,7 @@
 .import "qrc:/js/platform_filters.js" as PlatformFilters
 
 .import tech.strata.logger 1.0 as LoggerModule
+.import tech.strata.commoncpp 1.0 as CommonCpp
 
 var isInitialized = false
 var coreInterface
@@ -14,6 +15,8 @@ var listError = {
 var platformSelectorModel
 var classMap = {} // contains metadata for platformSelectorModel for faster lookups
 var previouslyConnected = []
+var localPlatformListSettings = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"LocalPlatformList\";}", Qt.application)
+var localPlatformList = []
 
 function initialize (newCoreInterface) {
     platformSelectorModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string platformListStatus: 'loading'}",Qt.application,"PlatformSelectorModel")
@@ -57,6 +60,25 @@ function generatePlatformSelectorModel(platform_list_json) {
     PlatformFilters.initialize()
 
     console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Processing platform list");
+
+    // Check to see if the user has a local platform list that they want to add
+    if (localPlatformListSettings.value("path", "") !== "") {
+        const localPlatforms = getLocalPlatformList(localPlatformListSettings.value("path"));
+        console.info(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Found cached local platform list.")
+
+        if (localPlatforms.length > 0) {
+            const mode = localPlatformListSettings.value("mode", "append");
+            localPlatformList = localPlatforms;
+
+            if (mode === "replace") {
+                console.info(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Replacing dynamic platform list with cached local platform list.")
+                platform_list = localPlatformList;
+            } else if (mode === "append") {
+                console.info(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Appending cached local platform list to dynamic platform list")
+                platform_list = platform_list.concat(localPlatformList);
+            }
+        }
+    }
 
     for (let platform of platform_list){
         if (platform.class_id === undefined || platform.hasOwnProperty("available") === false) {
@@ -434,6 +456,47 @@ function insertErrorListing (platform) {
     }
 
     return index
+}
+
+/*
+  Sets the localPlatformList array and adds it to the platformSelectorModel
+*/
+function setLocalPlatformList(list) {
+    // Remove the previous local platforms if they exist
+    if (localPlatformList.length > 0) {
+        let idx = platformSelectorModel.count - localPlatformList.length
+
+        if (idx >= 0) {
+            platformSelectorModel.remove(idx, localPlatformList.length)
+        }
+    }
+
+    localPlatformList = list;
+
+    for (let platform of localPlatformList) {
+        generatePlatform(platform)
+    }
+}
+
+/*
+  Reads the localPlatformList JSON file and returns its contents.
+  If the JSON file has an error, it returns an empty array
+*/
+
+function getLocalPlatformList(path) {
+    let contents = CommonCpp.SGUtilsCpp.readTextFileContent(path)
+
+    if (contents !== "") {
+        try {
+            let localPlatforms = JSON.parse(contents);
+            localPlatformListSettings.setValue("path", path);
+
+            return localPlatforms;
+        } catch (err) {
+            console.error("Development platform list file has invalid JSON: ", path);
+            return [];
+        }
+    }
 }
 
 function logout() {

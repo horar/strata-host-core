@@ -275,26 +275,6 @@ Rectangle {
         y: container.parent.windowHeight/2 - feedbackPopup.height/2
     }
 
-    Window {
-        id: debugWindow
-        visible: container.parent.showDebug
-        height: 200
-        width: 300
-        x: 1620
-        y: 500
-        title: "SGStatusBar.qml Debug Controls"
-
-        Column {
-            id: debug1
-            Button {
-                text: "Toggle Content/Control"
-                onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                }
-            }
-        }
-    }
-
     function showAboutWindow() {
         SGDialogJS.createDialog(container, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
     }
