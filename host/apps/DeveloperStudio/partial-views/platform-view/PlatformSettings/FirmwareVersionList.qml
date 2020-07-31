@@ -271,11 +271,25 @@ ColumnLayout {
                                     }
                                     break;
                                 case "failure":
+                                    statusText.text = "Flashing failed: " + flash.prepare_error
                                     break;
                                 }
                                 break;
                             case "restore":
-                                // todo: need to determine this process behavior no working case for this
+                                switch (payload.status) {
+                                case "running":
+                                    statusText.text = "Restoring firmware... "
+                                    if (payload.total > -1) {
+                                        statusText.text += "" + (100 * (payload.complete / payload.total)).toFixed(0) + "% complete"
+                                        fillBar.width = (barBackground.width * .75) + (barBackground.width * .25) * (payload.complete / payload.total)
+                                    } else {
+                                        fillBar.width = barBackground.width * .75
+                                    }
+                                    break;
+                                case "failure":
+                                    statusText.text = "Restoration failed: " + payload.restore_error
+                                    break;
+                                }
                                 break;
                             case "finished":
                                 switch (payload.status) {

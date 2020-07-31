@@ -91,6 +91,7 @@ Item {
                                             "class_id": uuid,
                                             "name": model.fileName,
                                             "device_id": 2147483648, // +1 outside range of valid 32 bit signed device_ids
+                                            "firmware_version": "",
                                             "view": "control",
                                             "connected": true,
                                             "available": {
