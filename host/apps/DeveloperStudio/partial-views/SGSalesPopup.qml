@@ -48,7 +48,7 @@ Popup {
 
             SGIcon {
                 id: close
-                source: "qrc:/images/icons/times.svg"
+                source: "qrc:/sgimages/times.svg"
                 iconColor: close_hover.containsMouse ? "#eee" : "white"
                 height: 20
                 width: height
