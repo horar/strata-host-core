@@ -35,7 +35,8 @@ HostControllerService::HostControllerService(QObject* parent)
     hostCmdHandler_.insert( { std::string("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
     hostCmdHandler_.insert( { std::string("update_firmware"), std::bind(&HostControllerService::onCmdUpdateFirmware, this, std::placeholders::_1) } );
     hostCmdHandler_.insert( { std::string("download_view"), std::bind(&HostControllerService::onCmdDownloadControlView, this, std::placeholders::_1) });
-    hostCmdHandler_.insert( { std::string("get_latest_release_version"), std::bind(&HostControllerService::onCmdGetLatestReleaseVersion, this, std::placeholders::_1) });
+    hostCmdHandler_.insert( { std::string("get_version_info"), std::bind(&HostControllerService::onCmdGetVersionInfo, this, std::placeholders::_1) });
+    hostCmdHandler_.insert( { std::string("update_application"), std::bind(&HostControllerService::onCmdUpdateApplication, this, std::placeholders::_1) });
 }
 
 HostControllerService::~HostControllerService()
@@ -85,6 +86,8 @@ bool HostControllerService::initialize(const QString& config)
 
     connect(this, &HostControllerService::versionInfoRequested, &coreUpdate_, &CoreUpdate::requestVersionInfo, Qt::QueuedConnection);
     connect(&coreUpdate_, &CoreUpdate::versionInfoResponseRequested, this, &HostControllerService::sendVersionInfoMessage);
+    connect(this, &HostControllerService::updateApplicationRequested, &coreUpdate_, &CoreUpdate::requestUpdateApplication, Qt::QueuedConnection);
+    connect(&coreUpdate_, &CoreUpdate::updateApplicationResponseRequested, this, &HostControllerService::sendUpdateApplicationMessage);
 
     connect(&boardsController_, &BoardController::boardConnected, this, &HostControllerService::platformConnected);
     connect(&boardsController_, &BoardController::boardDisconnected, this, &HostControllerService::platformDisconnected);
@@ -703,7 +706,7 @@ void HostControllerService::handleUpdateProgress(int deviceId, QByteArray client
     }
 }
 
-void HostControllerService::onCmdGetLatestReleaseVersion(const rapidjson::Value * ) {
+void HostControllerService::onCmdGetVersionInfo(const rapidjson::Value * ) {
     emit versionInfoRequested(getSenderClient()->getClientId());
 }
 
@@ -712,9 +715,27 @@ void HostControllerService::sendVersionInfoMessage(const QByteArray &clientId, c
     QJsonObject message;
     QJsonObject payload;
 
-    payload.insert("type", "latest_release_version");
+    payload.insert("type", "version_info");
     payload.insert("current_version", currentVersion);
     payload.insert("latest_version", latestVersion);
+    payload.insert("error_string", errorString);
+
+    message.insert("hcs::notification", payload);
+    doc.setObject(message);
+
+    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+}
+
+void HostControllerService::onCmdUpdateApplication(const rapidjson::Value * ) {
+    emit updateApplicationRequested(getSenderClient()->getClientId());
+}
+
+void HostControllerService::sendUpdateApplicationMessage(const QByteArray &clientId, const QString &errorString) {
+    QJsonDocument doc;
+    QJsonObject message;
+    QJsonObject payload;
+
+    payload.insert("type", "update_application");
     payload.insert("error_string", errorString);
 
     message.insert("hcs::notification", payload);

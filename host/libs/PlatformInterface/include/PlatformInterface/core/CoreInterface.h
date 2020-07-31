@@ -83,6 +83,7 @@ signals:
     void downloadPlatformFilesFinished(QJsonObject payload);
 
     void versionInfoReceived(QJsonObject payload);
+    void updateApplicationReceived(QJsonObject payload);
 
     // Platform Framework Signals
     void notification(QString payload);

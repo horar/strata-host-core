@@ -208,8 +208,10 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
         emit downloadPlatformSingleFileFinished(payload);
     } else if (type == "download_platform_files_finished") {
         emit downloadPlatformFilesFinished(payload);
-    } else if (type == "latest_release_version") {
+    } else if (type == "version_info") {
         emit versionInfoReceived(payload);
+    } else if (type == "update_application") {
+        emit updateApplicationReceived(payload);
     } else {
         qCCritical(logCategoryCoreInterface) << "unknown message type" << type;
     }

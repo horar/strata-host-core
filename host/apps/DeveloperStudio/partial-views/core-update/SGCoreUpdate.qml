@@ -6,6 +6,8 @@ import QtGraphicalEffects 1.0
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
 
+import "qrc:/js/core_update.js" as CoreUpdate
+
 Popup {
     id: coreUpdatePopup
     modal: true
@@ -87,21 +89,30 @@ Popup {
         }
 
         Button {
-            text: "Yes"
+            text: "Update"
             width: popupContainer.width / 2
-            // onClicked: model.submit()
+            onClicked: {
+                CoreUpdate.acceptUpdate()
+                coreUpdatePopup.close()
+            }
         }
 
         Button {
-            text: "Ask again Later"
+            text: "Ask again later"
             width: popupContainer.width / 2
-            // onClicked: model.submit()
+            onClicked: {
+                CoreUpdate.setUserNotificationMode("AskAgainLater")
+                coreUpdatePopup.close()
+            }
         }
 
         Button {
-            text: "Don't ask again."
+            text: "Don't ask again"
             width: popupContainer.width / 2
-            // onClicked: model.submit()
+            onClicked: {
+                CoreUpdate.setUserNotificationMode("DontAskAgain")
+                coreUpdatePopup.close()
+            }
         }
     }
 }

@@ -9,25 +9,41 @@ var updateContainer
 
 var current_version
 var latest_version
+var last_known_version
 var error_string
+
+var settings_object
+var notification_mode
 
 function initialize (newCoreInterface, newUpdateContainer) {
     coreInterface = newCoreInterface
     updateContainer = newUpdateContainer
+
+    settings_object = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"CoreUpdate\";}", Qt.application)
+    getUserNotificationModeFromINIFile()
+    getLastKnownVersionFromINIFile()
+
     isInitialized = true
 }
 
 function getUpdateInformation () {
-    const get_latest_release_version = {
-        "hcs::cmd": "get_latest_release_version"
+    const get_version_info = {
+        "hcs::cmd": "get_version_info"
     }
-    coreInterface.sendCommand(JSON.stringify(get_latest_release_version));
+    coreInterface.sendCommand(JSON.stringify(get_version_info));
+}
+
+function updateApplication () {
+    const update_application = {
+        "hcs::cmd": "update_application"
+    }
+    coreInterface.sendCommand(JSON.stringify(update_application));
 }
 
 function parseVersionInfo (payload) {
     if (payload.hasOwnProperty("current_version") && payload.current_version.length > 0
         && payload.hasOwnProperty("latest_version") && payload.latest_version.length > 0) {
-        console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Rcvd core update notification: current", payload.current_version, "latest", payload.latest_version)
+        console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Rcvd core version notification: current", payload.current_version, "latest", payload.latest_version)
 
         current_version = payload.current_version
         latest_version = payload.latest_version
@@ -36,12 +52,21 @@ function parseVersionInfo (payload) {
         var temp_current_version = current_version.replace('-','').split(".");
         var temp_latest_version = latest_version.replace('-','').split(".");
 
+        // Check if latest_version is newer than last known version in the INI (offer update even if currently on "Don't Ask Again" mode)
+        if (last_known_version != payload.latest_version) {
+            setLastKnownVersion(payload.latest_version)
+            createUpdatePopup()
+            return
+        }
+
         // Check if latest_version is newer than current_version
         if (payload.current_version != payload.latest_version) {
             for (let i = 0; i < temp_latest_version.length; i++) {
                 if (parseInt(temp_latest_version[i]) > parseInt(temp_current_version[i])) {
-                    console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Newer version available detected - offering update to ver", payload.latest_version)
-                    createUpdatePopup()
+                    console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Newer version available detected:", payload.latest_version)
+                    if (notification_mode != "DontAskAgain") {
+                        createUpdatePopup()
+                    }
                     break
                 }
             }
@@ -53,9 +78,9 @@ function parseVersionInfo (payload) {
     }
 }
 
-function createUpdatePopup() {
+function createUpdatePopup () {
     var coreUpdatePopup = NavigationControl.createView("qrc:/partial-views/core-update/SGCoreUpdate.qml", updateContainer)
-    coreUpdatePopup.width = updateContainer.width-100
+    coreUpdatePopup.width = updateContainer.width - 100
     coreUpdatePopup.height = updateContainer.height - 100
     coreUpdatePopup.x = updateContainer.width/2 - coreUpdatePopup.width/2
     coreUpdatePopup.y =  updateContainer.height/2 - coreUpdatePopup.height/2
@@ -67,4 +92,39 @@ function createUpdatePopup() {
     coreUpdatePopup.open()
 }
 
-// On empty/invalid receive: retry until give-up
+function acceptUpdate () {
+    updateApplication()
+}
+
+function parseUpdateInfo (payload) {
+    // May not be needed in the end
+    console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Rcvd update info:", JSON.stringify(payload));
+}
+
+function getUserNotificationModeFromINIFile () {
+    if (settings_object.value("userNotificationMode")) {
+        notification_mode = settings_object.value("userNotificationMode")
+    } else {
+        setUserNotificationMode()
+    }
+}
+
+function setUserNotificationMode (mode) {
+    if (mode && mode === "DontAskAgain") {
+        settings_object.setValue("userNotificationMode", "DontAskAgain")
+    } else {
+        settings_object.setValue("userNotificationMode", "AskAgainLater")
+    }
+}
+
+function getLastKnownVersionFromINIFile () {
+    if (settings_object.value("lastKnownVersion")) {
+        last_known_version = settings_object.value("lastKnownVersion")
+    } else {
+        last_known_version = ""
+    }
+}
+
+function setLastKnownVersion (version) {
+    settings_object.setValue("lastKnownVersion", version)
+}

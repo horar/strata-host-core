@@ -13,8 +13,12 @@ void CoreUpdate::setDatabase(Database* db) {
     db_ = db;
 }
 
-void CoreUpdate::handleCoreUpdateResponse(const QByteArray &clientId, const QString &currentVersion, const QString &latestVersion, const QString &errorString) {
+void CoreUpdate::handleVersionInfoResponse(const QByteArray &clientId, const QString &currentVersion, const QString &latestVersion, const QString &errorString) {
     emit versionInfoResponseRequested(clientId, currentVersion, latestVersion, errorString);
+}
+
+void CoreUpdate::handleUpdateApplicationResponse(const QByteArray &clientId, const QString &errorString) {
+    emit updateApplicationResponseRequested(clientId, errorString);
 }
 
 void CoreUpdate::requestVersionInfo(const QByteArray &clientId) {
@@ -24,7 +28,7 @@ void CoreUpdate::requestVersionInfo(const QByteArray &clientId) {
         const QString latestVersion = getLatestVersion(clientId);
 
         if (!latestVersion.isEmpty()) {
-            handleCoreUpdateResponse(clientId, currentVersion, latestVersion);
+            handleVersionInfoResponse(clientId, currentVersion, latestVersion);
         }
     }
 }
@@ -34,7 +38,7 @@ QString CoreUpdate::getLatestVersion(const QByteArray &clientId) {
     std::string latest_version_body;
     if (db_->getDocument("latest_version", latest_version_body) == false) {
         qCCritical(logCategoryHcs) << "latest_version document not found in Database";
-        handleCoreUpdateResponse(clientId, QString(), QString(), "latest_version document not found in Database");
+        handleVersionInfoResponse(clientId, QString(), QString(), "latest_version document not found in Database");
         return "";
     }
 
@@ -42,7 +46,7 @@ QString CoreUpdate::getLatestVersion(const QByteArray &clientId) {
     QJsonDocument jsonDoc = QJsonDocument::fromJson(latest_version_body.c_str(), &parseError);
     if (parseError.error != QJsonParseError::NoError ) {
         qCCritical(logCategoryHcs) << "Parse error: " << parseError.errorString();
-        handleCoreUpdateResponse(clientId, QString(), QString(), "Parse error: " + parseError.errorString());
+        handleVersionInfoResponse(clientId, QString(), QString(), "Parse error: " + parseError.errorString());
         return "";
     }
 
@@ -55,7 +59,7 @@ QString CoreUpdate::getCurrentVersion(const QByteArray &clientId) {
     const QString AbsPathComponentsXmlFile = QDir(QDir::currentPath()).filePath("components.xml");
     if (!QFileInfo::exists(AbsPathComponentsXmlFile) || !QFileInfo(AbsPathComponentsXmlFile).isFile()) {
         qCCritical(logCategoryHcs) << "File components.xml not found at " << AbsPathComponentsXmlFile;
-        handleCoreUpdateResponse(clientId, QString(), QString(), "File components.xml not found at " + AbsPathComponentsXmlFile);
+        handleVersionInfoResponse(clientId, QString(), QString(), "File components.xml not found at " + AbsPathComponentsXmlFile);
         return "";
     }
     // Load 'components.xml' file
@@ -72,7 +76,7 @@ QString CoreUpdate::getCurrentVersion(const QByteArray &clientId) {
 
     QString currentVersion = findVersionFromComponentsXml(doc, "com.onsemi.strata.hcs");
     if (currentVersion == "") {
-        handleCoreUpdateResponse(clientId, QString(), QString(), "Could not find current Strata Core version from components.xml file.");
+        handleVersionInfoResponse(clientId, QString(), QString(), "Could not find current Strata Core version from components.xml file.");
     }
     return currentVersion;
 }
@@ -103,4 +107,18 @@ QString CoreUpdate::findVersionFromComponentsXml(const QDomDocument &xmlDocument
     }
     qCCritical(logCategoryHcs) << "Could not find " << packageName << " version from components.xml file.";
     return currentVersion;
+}
+
+void CoreUpdate::requestUpdateApplication(const QByteArray &clientId) {
+    /*
+
+        Perform application update here:
+
+        performApplicationUpdate()
+
+    */
+
+    qCCritical(logCategoryHcs) << "### Performing application update! ###";
+
+    handleUpdateApplicationResponse(clientId, "Update finished!");
 }
