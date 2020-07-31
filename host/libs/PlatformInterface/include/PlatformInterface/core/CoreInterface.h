@@ -67,8 +67,6 @@ public:
 
     void setNotificationThreadRunning(bool running);
 
-    Q_INVOKABLE void spoofCommand(QString cmd); // todo: remove this debug method
-
 signals:
     // ---
     // Core Framework Signals

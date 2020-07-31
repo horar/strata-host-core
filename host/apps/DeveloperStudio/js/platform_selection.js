@@ -166,8 +166,10 @@ function parseConnectedPlatforms (connected_platform_list_json) {
     previouslyConnected = currentlyConnected
 }
 
+/*
+    Upon successful firmware flash, connected platform list resent, check for version changes
+*/
 function refreshFirmwareVersion(platform) {
-    // Upon successful firmware flash, connected platform list resent, check for version changes
     let class_id_string = String(platform.class_id);
     let device_id_string = String(platform.device_id);
 
