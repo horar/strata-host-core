@@ -54,9 +54,9 @@ ColumnLayout {
     }
 
     function clearDescriptions () {
-        for (let i = 0; i < firmwareVersions.children.length; i++) {
-            if (firmwareVersions.children[i].objectName === "firmwareRow") {
-                firmwareVersions.children[i].description = ""
+        for (let i = 0; i < firmwareList.firmwareVersions.children.length; i++) {
+            if (firmwareList.firmwareVersions.children[i].objectName === "firmwareRow") {
+                firmwareList.firmwareVersions.children[i].description = ""
             }
         }
     }

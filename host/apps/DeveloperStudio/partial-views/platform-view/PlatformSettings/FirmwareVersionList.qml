@@ -11,6 +11,7 @@ ColumnLayout {
     Layout.topMargin: 10
 
     property alias firmwareRepeater: firmwareRepeater
+    property alias firmwareVersions: firmwareVersions
 
     ColumnLayout{
         id: firmwareVersions
@@ -130,27 +131,22 @@ ColumnLayout {
                                     enabled: model.installed === false && !firmwareColumn.flashingInProgress && platformStack.connected
 
                                     onClicked: {
-                                        // todo if (version < installed version)
-                                        // warningPop.delegateDownload = download
-                                        // warningPop.open()
-                                        if (firmwareColumn.flashingInProgress === false) {
-                                            flashingInProgress = true
-                                            flashStatus.resetState()
-                                            firmwareColumn.clearDescriptions()
-                                            description.text = "Do not unplug your board during this process"
+                                        let chosenVersion = model.version.split(".")
+                                        let installedVersion = platformStack.firmware_version.split(".")
 
-                                            let updateFirmwareCommand = {
-                                                "hcs::cmd": "update_firmware",
-                                                "payload": {
-                                                    "device_id": platformStack.device_id,
-                                                    "path": model.uri,
-                                                    "md5": model.md5
-                                                }
+                                        for (let i = 0; i < chosenVersion.length; i++) {
+                                            if (parseInt(chosenVersion[i]) > parseInt(installedVersion[i])) {
+                                                flashStatus.startFlash()
+                                                return
                                             }
-                                            coreInterface.sendCommand(JSON.stringify(updateFirmwareCommand));
-                                            flashStatus.visible = true
-                                            activeFirmware = flashStatus
                                         }
+
+                                        warningPop.callback = this
+                                        warningPop.open()
+                                    }
+
+                                    function callback() {
+                                        flashStatus.startFlash()
                                     }
                                 }
                             }
@@ -186,6 +182,27 @@ ColumnLayout {
                             fillBar.color = "lime"
                             flashStatus.visible = false
                             description.text = ""
+                        }
+
+                        function startFlash() {
+                            if (firmwareColumn.flashingInProgress === false) {
+                                flashingInProgress = true
+                                flashStatus.resetState()
+                                firmwareColumn.clearDescriptions()
+                                description.text = "Do not unplug your board during this process"
+
+                                let updateFirmwareCommand = {
+                                    "hcs::cmd": "update_firmware",
+                                    "payload": {
+                                        "device_id": platformStack.device_id,
+                                        "path": model.uri,
+                                        "md5": model.md5
+                                    }
+                                }
+                                coreInterface.sendCommand(JSON.stringify(updateFirmwareCommand));
+                                flashStatus.visible = true
+                                activeFirmware = flashStatus
+                            }
                         }
 
                         function parseProgress (payload) {

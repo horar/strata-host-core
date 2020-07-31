@@ -7,6 +7,10 @@ import tech.strata.sgwidgets 1.0
 ColumnLayout {
     id: software
 
+    // Todo: to be implemented in CS-831, CS-832
+
+    property bool upToDate
+
     Text {
         text: "Software Settings:"
         font.bold: true
@@ -28,7 +32,7 @@ ColumnLayout {
     }
 
     Text {
-        text: "Logic Gates v"+ root.viewVersion + ", released " + root.viewDate
+        text: "Logic Gates v1.10, released 6/7/2020"
         font.bold: true
         font.pixelSize: 18
     }
@@ -39,7 +43,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.topMargin: 15
         color: "#eee"
-        visible: root.upToDate
+        visible: software.upToDate
 
         RowLayout {
             anchors {
@@ -65,7 +69,7 @@ ColumnLayout {
                 fill: viewUpToDate
             }
             onClicked: {
-                root.upToDate = false
+                software.upToDate = false
             }
         }
     }
@@ -76,7 +80,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.topMargin: 15
         color: "#eee"
-        visible: !root.upToDate
+        visible: !software.upToDate
 
         ColumnLayout {
             id: notUpToDateColumn
@@ -127,7 +131,7 @@ ColumnLayout {
                         Layout.margins: 10
 
                         Text {
-                            text: "Update to Logic Gates v1.2.1, released " + root.viewDate
+                            text: "Update to Logic Gates v1.2.1, released 6/7/2020/"
                             font.bold: true
                             font.pixelSize: 18
                             color: "#666"
@@ -157,8 +161,8 @@ ColumnLayout {
                                 } else if (percent < 1) {
                                     return "Loading: " + ((percent-.8) * 500).toFixed(0) + "%"
                                 } else if (percent >= 1){
-                                    root.viewVersion = "1.2.1"
-                                    root.upToDate = true
+                                    //root.viewVersion = "1.2.1"
+                                    software.upToDate = true
                                     return "Complete"
                                 }
                             }
@@ -224,6 +228,7 @@ ColumnLayout {
             version: "1.1.0"
             installed: true
         }
+
         ListElement {
             file: "<PATH to control view>/250mA_LDO.rcc"
             md5: "a2d69a4c8a224afa77319cd3d833b292"
