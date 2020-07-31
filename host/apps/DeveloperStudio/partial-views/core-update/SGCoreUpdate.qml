@@ -17,6 +17,7 @@ Popup {
 
     property string latest_version: ""
     property string current_version: ""
+    property string error_string: ""
 
     DropShadow {
         width: coreUpdatePopup.width
@@ -75,7 +76,7 @@ Popup {
     Text {
         font.family: "Helvetica"
         font.pointSize: 24
-        text: "\n\nNew update available\nCurrent:" + current_version + "\nLatest:" + latest_version
+        text: "\n\nNew update available\nCurrent:" + current_version + "\nLatest:" + latest_version + "\nError:" + error_string
     }
 
     Column {

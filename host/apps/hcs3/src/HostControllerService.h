@@ -114,8 +114,9 @@ public slots:
 
     void sendVersionInfoMessage(
             const QByteArray &clientId,
-            const QString &latest_version
-    );
+            const QString &currentVersion,
+            const QString &latestVersion,
+            const QString &errorString);
 
 private:
     void handleMessage(const PlatformMessage& msg);

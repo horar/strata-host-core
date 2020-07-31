@@ -6,19 +6,15 @@
 var isInitialized = false
 var coreInterface
 var updateContainer
-var listError = {
-    "retry_count": 0,
-    "retry_timer": Qt.createQmlObject("import QtQuick 2.12; Timer {interval: 3000; repeat: false; running: false;}",Qt.application,"TimeOut")
-}
 
-var latest_version
 var current_version
+var latest_version
+var error_string
 
 function initialize (newCoreInterface, newUpdateContainer) {
     coreInterface = newCoreInterface
     updateContainer = newUpdateContainer
-    // isInitialized = true
-//     listError.retry_timer.triggered.connect(function () { getUpdateInformation() });
+    isInitialized = true
 }
 
 function getUpdateInformation () {
@@ -29,12 +25,17 @@ function getUpdateInformation () {
 }
 
 function parseVersionInfo (payload) {
-    if (payload.hasOwnProperty("latest_version") && payload.latest_version.length > 0) {
-        console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Received Core Update notification, latest version:", payload.latest_version)
+    if (payload.hasOwnProperty("current_version") && payload.current_version.length > 0
+        && payload.hasOwnProperty("latest_version") && payload.latest_version.length > 0) {
+        console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Received core update notification")
+
+        current_version = payload.current_version
         latest_version = payload.latest_version
+        error_string = payload.error_string
+
         open()
     } else {
-        console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Core Update Notification Error. Notification is malformed:", JSON.stringify(payload));
+        console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Core update notification error. Notification is malformed:", JSON.stringify(payload));
         return
     }
 }
@@ -45,7 +46,11 @@ function open() {
     coreUpdatePopup.height = updateContainer.height - 100
     coreUpdatePopup.x = updateContainer.width/2 - coreUpdatePopup.width/2
     coreUpdatePopup.y =  updateContainer.height/2 - coreUpdatePopup.height/2
+
+    coreUpdatePopup.current_version = current_version
     coreUpdatePopup.latest_version = latest_version
+    coreUpdatePopup.error_string = error_string
+
     coreUpdatePopup.open()
 }
 

@@ -707,13 +707,15 @@ void HostControllerService::onCmdGetLatestReleaseVersion(const rapidjson::Value 
     emit versionInfoRequested(getSenderClient()->getClientId());
 }
 
-void HostControllerService::sendVersionInfoMessage(const QByteArray &clientId, const QString &latest_version) {
+void HostControllerService::sendVersionInfoMessage(const QByteArray &clientId, const QString &currentVersion, const QString &latestVersion, const QString &errorString) {
     QJsonDocument doc;
     QJsonObject message;
     QJsonObject payload;
 
     payload.insert("type", "latest_release_version");
-    payload.insert("latest_version", latest_version);
+    payload.insert("current_version", currentVersion);
+    payload.insert("latest_version", latestVersion);
+    payload.insert("error_string", errorString);
 
     message.insert("hcs::notification", payload);
     doc.setObject(message);
