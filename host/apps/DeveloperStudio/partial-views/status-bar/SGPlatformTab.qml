@@ -74,7 +74,7 @@ Item {
             buttonData = {
                 "text": "Documents",
                 "view": "collateral",
-                "icon": "qrc:/images/icons/file.svg",
+                "icon": "qrc:/sgimages/file-blank.svg",
                 "selected": false
             }
             buttonModel.append(buttonData)
@@ -83,7 +83,7 @@ Item {
         buttonData = {
             "text": "Close Platform",
             "view": "close",
-            "icon": "qrc:/images/icons/times.svg",
+            "icon": "qrc:/sgimages/times.svg",
             "selected": false
         }
         buttonModel.append(buttonData)
@@ -92,7 +92,7 @@ Item {
     function setControlIcon () {
         for (let i = 0; i < buttonModel.count; i++) {
             if (buttonModel.get(i).view === "control") {
-                buttonModel.get(i).icon = (connected ? "qrc:/images/icons/sliders-h.svg" : "qrc:/images/icons/disconnected.svg")
+                buttonModel.get(i).icon = (connected ? "qrc:/sgimages/sliders-h.svg" : "qrc:/sgimages/disconnected.svg")
                 if (buttonModel.get(i).selected) {
                     selectedButtonIcon = buttonModel.get(i).icon
                 }
@@ -174,7 +174,7 @@ Item {
 
                 source: {
                     if (mouseMenu.containsMouse || dropDownPopup.visible) {
-                        return "qrc:/images/icons/angle-down.svg"
+                        return "qrc:/sgimages/chevron-down.svg"
                     } else {
                         return selectedButtonIcon
                     }

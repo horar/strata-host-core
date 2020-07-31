@@ -206,7 +206,7 @@ Item {
                 }
 
                 SGIcon {
-                    source: "qrc:/images/icons/times-circle-solid.svg"
+                    source: "qrc:/sgimages/times-circle-solid.svg"
                     height: parent.height * .75
                     width: height
                     anchors {
@@ -282,7 +282,7 @@ Item {
 
                 SGIcon {
                     id: angleIcon
-                    source: "qrc:/images/icons/angle-down.svg"
+                    source: "qrc:/sgimages/chevron-down.svg"
                     iconColor: segmentFilterMouse.enabled? "#666" : "#ddd"
                     anchors {
                         verticalCenter: segmentFilterContainer.verticalCenter
