@@ -49,16 +49,18 @@ Item {
     property var vout_below_threshold:  {
         "vout_below_status":"false"
     }
-    property var initial_status_0: {
+    property var initial_status: {
         "enable_status":"off",            // "on" slide switch
         "soft_start_status":"1.2ms",      // "2.4ms" dropdown
         "pgood_status":"bad",             // "good" LED good=>green, bad=>red
         "operating_mode_status":"dcm",    // "fccm" drop down
         "vcc_select_status":"external",   // "pvcc" drop down
-        "vout_setting_status":1.00,       // slider from 1V to 30V in steps of 0.5V
-        "switching_frequency_status":668, // in KHz slider from 100KHz to 1000KHz
+        "vout_setting_status":5.00,       // slider from 1V to 30V in steps of 0.5V
+        "switching_frequency_status":300, // in KHz slider from 100KHz to 1000KHz
         "sync_mode_status":"master",      // "slave" dropdown
         "ocp_status":5,                   // in A from 3.5A to 23A
+        "ocp_min":3.5,                    // in A from 3.5A to 5A
+        "ocp_max":23,                    // in A from 15A to 23A
         "variant":"FAN65004B"             // used to change the title and OCP limits
     }
 

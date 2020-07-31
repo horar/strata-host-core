@@ -22,67 +22,63 @@ ColumnLayout {
     property string popup_message: ""
 
 
-    property var initial_status_0: platformInterface.initial_status_0
-    onInitial_status_0Changed: {
-        if(initial_status_0.enable_status === "on")
+    property var initial_status: platformInterface.initial_status
+    onInitial_statusChanged: {
+        if(initial_status.enable_status === "on"){
             enableSwitch.checked = true
+            platformInterface.set_enable.update("on")
+            frequencyContainer.enabled = false
+            frequencyContainer.opacity = 0.5
+            vccContainer.enabled = false
+            vccContainer.opacity = 0.5
+            outputContainer.enabled = false
+            outputContainer.opacity = 0.5
+            ocpContainer.enabled = false
+            ocpContainer.opacity = 0.5
+            syncContainer.enabled = false
+            syncContainer.opacity = 0.5
+            softStartContainer.enabled = false
+            softStartContainer.opacity = 0.5
+            modeContainer.enabled = false
+            modeContainer.opacity = 0.5}
         else  enableSwitch.checked = false
 
-        if(initial_status_0.soft_start_status === "3ms")
+        if(initial_status.soft_start_status === "3ms")
             softStartCombo.currentIndex = 0
         else  softStartCombo.currentIndex = 1
 
-        if(initial_status_0.pgood_status === "bad")
+        if(initial_status.pgood_status === "bad")
             pgoodLight.status = SGStatusLight.Red
         else  pgoodLight.status = SGStatusLight.Green
 
-        if(initial_status_0.operating_mode_status === "dcm" || initial_status_0.operating_mode_status === "DCM" )
+        if(initial_status.operating_mode_status === "dcm" || initial_status.operating_mode_status === "DCM" ){
             modeCombo.currentIndex = 0
+            vbstConatiner.enabled = false
+            vbstConatiner.opacity = 0.5}
         else  modeCombo.currentIndex = 1
 
-        if(initial_status_0.vcc_select_status === "external")
+        if(initial_status.vcc_select_status === "external")
             vccCombo.currentIndex = 1
         else  vccCombo.currentIndex = 0
 
 
 
-        if(initial_status_0.sync_mode_status === "master" || initial_status_0.sync_mode_status === "Master")
+        if(initial_status.sync_mode_status === "master" || initial_status.sync_mode_status === "Master")
             syncCombo.currentIndex = 0
         else syncCombo.currentIndex = 1
 
-        frequencySlider.value = initial_status_0.switching_frequency_status
-        selectOutputSlider.value = initial_status_0.vout_setting_status
-        ocpSlider.value = initial_status_0.ocp_status
-        boardTitle.text = initial_status_0.variant
+        frequencySlider.value = initial_status.switching_frequency_status
+        selectOutputSlider.value = initial_status.vout_setting_status
+        ocpSlider.value = initial_status.ocp_status
+        boardTitle.text = initial_status.variant
 
-        if(initial_status_0.variant === "FAN65004B"){
-            ocpSlider.to = 15
-            ocpSlider.from = 3.5
-            ocpSlider.toText.text = "15 A"
-            ocpSlider.fromText.text = "3.5 A"
 
-        }
-        else if(initial_status_0.variant === "FAN65004C"){
-            ocpSlider.to = 16.5
-            ocpSlider.from = 4.5
-            ocpSlider.toText.text = "16.5 A"
-            ocpSlider.fromText.text = "4.5 A"
-
-        }
-        else if(initial_status_0.variant === "FAN65005A"){
-            ocpSlider.to = 15
-            ocpSlider.from = 3.5
-            ocpSlider.toText.text = "15 A"
-            ocpSlider.fromText.text = "3.5 A"
-
-        }
-        else if(initial_status_0.variant === "FAN65008B"){
-            ocpSlider.to = 23
-            ocpSlider.from = 5
-            ocpSlider.toText.text = "23 A"
-            ocpSlider.fromText.text = "5 A"
-
-        }
+        //var ocp_max = initial_status.ocp_max
+        //var ocp_min = initial_status.ocp_min
+        ocpSlider.to = initial_status.ocp_max
+        ocpSlider.from = initial_status.ocp_min
+        ocpSlider.toText.text = initial_status.ocp_max + " A"
+        ocpSlider.fromText.text = initial_status.ocp_min + " A"
 
 
     }
@@ -111,6 +107,8 @@ ColumnLayout {
         Help.registerTarget(modeLabel, "DCM (Discontinuous conduction mode) is a power saving mode that is built into the regulator. It will save power at lower current levels. FCCM (Forced continuous conduction mode) will maintain the set switching frequency, regardless of power.", 20,"basicFan65Help")
         Help.registerTarget(softStartLabel, "This control allows the soft start time to be adjusted.", 21,"basicFan65Help")
         Help.registerTarget(vccLabel, "This control allows the user to switch between the internally supplied 5V source (PVCC) or an external 5V source (5V).", 22,"basicFan65Help")
+
+        platformInterface.read_initial_status.update()
     }
 
     //For demo
@@ -820,7 +818,9 @@ ColumnLayout {
                                             onUserSet: {
                                                 platformInterface.switchFrequency = value
                                                 platformInterface.set_switching_frequency.update(value)
-                                                platformInterface.set_sync_slave_frequency.update(value)
+
+                                                //re-enable for REV1
+                                                //platformInterface.set_sync_slave_frequency.update(value)
 
                                                 //if (SGComboBox.model === "Slave"){
                                                 //platformInterface.set_sync_slave_frequency.update(value)
@@ -892,6 +892,8 @@ ColumnLayout {
                                             inputBoxWidth: ocpContainer.width/8
                                             fontSizeMultiplier: ratioCalc * 0.8
                                             fromText.text: "0 A"
+
+
                                             toText.text: "13 A"
                                             from: 0
                                             to: 13
@@ -1393,9 +1395,13 @@ ColumnLayout {
                                                     onActivated: {
                                                         if(currentIndex == 0){
                                                             platformInterface.select_mode.update("dcm")
+                                                            vbstConatiner.enabled = false
+                                                            vbstConatiner.opacity = 0.5
                                                         }
                                                         else  {
                                                             platformInterface.select_mode.update("fccm")
+                                                            vbstConatiner.enabled = true
+                                                            vbstConatiner.opacity = 1.0
                                                         }
                                                     }
                                                 }

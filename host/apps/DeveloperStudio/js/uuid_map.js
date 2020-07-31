@@ -71,10 +71,6 @@ var uuid_map = {
     "238": "ecoSWITCH",
     "239": "1A-LED",
     "240": "ldo-cp",
-    "f22a480f-ac31-4fa4-b57a-f37807d2f3ac": "fan6500xx", //4B
-    "b58b7688-054a-43bd-bc7c-68ee9a305082": "fan6500xx", //4C
-    "cafe00d9-fc59-4655-86b9-c7749123a7a6": "fan6500xx", //5A
-    "5d363e7b-6013-4b42-ae65-2338b203d95e": "fan6500xx", //8B
     "241": "fan6500xx",
     "242": "fan6500xx",
     "243": "Automotive-ADAS-Preregulator",
@@ -89,5 +85,9 @@ var uuid_map = {
     "72ddcc10-2d18-4316-8170-5223162e54cf": "sensor",
     "87054646-955d-42ed-aa82-8927b6a70286": "motorController",
     "b8a53467-4155-4104-905e-8d23bb5664a3": "Adj-LDO",
-    "8da4158e-caa7-469d-8e4c-949d7a7e9858": "Adj-LDO"
+    "8da4158e-caa7-469d-8e4c-949d7a7e9858": "Adj-LDO",
+    "043683ef-537b-49e6-a090-30e314a73265": "fan6500xx", //4B
+    "101d15b0-3aa9-40b5-a1ae-b0e0b87f4f5b": "fan6500xx", //4C
+    "f81d23a7-3c93-40c6-ac5f-e836e936728b": "fan6500xx", //5A
+    "a3359627-3938-4a84-9a9c-fb57ff22deed": "fan6500xx", //8B
 }
