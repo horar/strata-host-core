@@ -41,6 +41,9 @@ private slots:
     void finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus);
     void handleHcsProcessError(QProcess::ProcessError error);
 
+    void latestReleaseVersionAcquireFinishedHandler(const QJsonObject &payload);
+    void updateApplicationExecutionFinishedHandler(const QJsonObject &payload);
+
 private:
     bool hcsConnected_ = false;
     CoreInterface *coreInterface_;

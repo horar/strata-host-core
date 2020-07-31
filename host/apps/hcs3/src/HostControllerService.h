@@ -19,6 +19,7 @@
 #include "LoggingAdapter.h"
 #include "BoardController.h"
 #include "FirmwareUpdateController.h"
+#include "ApplicationUpdateController.h"
 #include "StorageManager.h"
 
 #include <DownloadManager.h>
@@ -64,6 +65,8 @@ signals:
     void cancelPlatformDocumentRequested(QByteArray clientId);
     void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5);
     void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5);
+    void latestReleaseVersionRequested(QByteArray clientId);
+    void applicationUpdateRequested(QByteArray clientId);
 
 public slots:
     void onAboutToQuit();
@@ -112,6 +115,16 @@ public slots:
             const QString &filePath,
             const QString &errorString);
 
+    void sendLatestReleaseVersionAcquiredMessage(
+            const QByteArray &clientId,
+            const QString &currentVersion,
+            const QString &latestVersion,
+            const QString &errorString);
+
+    void sendUpdateApplicationExecutedMessage(
+            const QByteArray &clientId,
+            const QString &errorString);
+
 private:
     void handleMessage(const PlatformMessage& msg);
 
@@ -135,6 +148,8 @@ private:
     void onCmdDynamicPlatformList(const rapidjson::Value* );
     void onCmdUpdateFirmware(const rapidjson::Value* );
     void onCmdDownloadControlView(const rapidjson::Value* );
+    void onCmdGetLatestReleaseVersion(const rapidjson::Value* );    //from UI
+    void onCmdUpdateApplication(const rapidjson::Value* );          //from UI
 
     void platformConnected(const int deviceId, const QString &classId);
     void platformDisconnected(const int deviceId);
@@ -153,7 +168,8 @@ private:
     QNetworkAccessManager networkManager_;
     strata::DownloadManager downloadManager_;
     StorageManager storageManager_;
-    FirmwareUpdateController updateController_;
+    FirmwareUpdateController firmwareUpdateController_;
+    ApplicationUpdateController applicationUpdateController_;
 
     HCS_Dispatcher dispatcher_;
     std::thread dispatcherThread_;

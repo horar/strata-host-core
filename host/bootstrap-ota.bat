@@ -126,7 +126,7 @@ echo "======================================================================="
 REM copy various license files
 xcopy ..\..\deployment\Strata\dependencies\strata packages\com.onsemi.strata.devstudio\data /E /Y
 
-REM copy HCS config file
+REM copy HCS config file (should not we use host\apps\hcs3\files\conf\hcs.config ? and why there are two of them and both in git?)
 copy ..\..\deployment\Strata\config\hcs\hcs.config packages\com.onsemi.strata.hcs\data
 
 REM echo "Copying Qt Core\Components resources to packages\com.onsemi.strata.components\data"
