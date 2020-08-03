@@ -265,6 +265,7 @@ void HostControllerService::sendPlatformDocumentsProgressMessage(
 void HostControllerService::sendPlatformDocumentsMessage(
         const QByteArray &clientId,
         const QString &classId,
+        const QJsonArray &datasheetList,
         const QJsonArray &documentList,
         const QJsonArray &firmwareList,
         const QJsonArray &controlViewList,
@@ -278,6 +279,7 @@ void HostControllerService::sendPlatformDocumentsMessage(
     payload.insert("class_id", classId);
 
     if (error.isEmpty()) {
+        payload.insert("datasheets", datasheetList);
         payload.insert("documents", documentList);
         payload.insert("firmwares", firmwareList);
         payload.insert("control_views", controlViewList);
