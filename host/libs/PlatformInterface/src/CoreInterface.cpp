@@ -208,10 +208,6 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
         emit downloadPlatformSingleFileFinished(payload);
     } else if (type == "download_platform_files_finished") {
         emit downloadPlatformFilesFinished(payload);
-    } else if (type == "latest_release_version") {
-        emit latestReleaseVersionAcquireFinished(payload);
-    } else if (type == "update_application") {
-        emit updateApplicationExecutionFinished(payload);
     } else {
         qCCritical(logCategoryCoreInterface) << "unknown message type" << type;
     }
@@ -273,34 +269,6 @@ void CoreInterface::unregisterClient()
     QJsonObject cmdMessageObject;
     cmdMessageObject.insert("hcs::cmd", "unregister");
     cmdMessageObject.insert("payload", QJsonObject());
-
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-    //qDebug()<<"parse to send"<<strJson;
-    hcc->sendCmd(strJson.toStdString());
-}
-
-// @f getLatestReleaseVersion
-// @b Get Latest Release Version from HCS (so we can decide if we need update)
-//
-void CoreInterface::getLatestReleaseVersion()
-{
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("hcs::cmd", "get_latest_release_version");
-
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-    //qDebug()<<"parse to send"<<strJson;
-    hcc->sendCmd(strJson.toStdString());
-}
-
-// @f updateApplication
-// @b Inform HCS to execute update (we will terminate SDS upon succesfull execution)
-//
-void CoreInterface::updateApplication()
-{
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("hcs::cmd", "update_application");
 
     QJsonDocument doc(cmdMessageObject);
     QString strJson(doc.toJson(QJsonDocument::Compact));

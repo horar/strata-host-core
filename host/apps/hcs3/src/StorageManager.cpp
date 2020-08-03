@@ -10,7 +10,6 @@
 
 #include <QStandardPaths>
 #include <QFile>
-#include <QtXml>
 #include <QDir>
 #include <QCryptographicHash>
 #include <QJsonDocument>
@@ -492,101 +491,6 @@ void StorageManager::requestCancelAllDownloads(const QByteArray &clientId)
             delete request;
         }
     }
-}
-
-#define STRATA_CONFIGURATION_XML QString("components.xml")
-
-void StorageManager::requestLatestReleaseVersion(const QByteArray &clientId)
-{
-    QString currentVersion = "N/A";
-    QString latestVersion  = "N/A";
-
-    qCInfo(logCategoryHcsStorage) << "clientId" << clientId.toHex();
-
-    QDir applicationDir(QCoreApplication::applicationDirPath());
-    if(!applicationDir.exists(STRATA_CONFIGURATION_XML)) {
-        QString errStr(STRATA_CONFIGURATION_XML + " not found in " + applicationDir.absolutePath());
-        qCCritical(logCategoryHcsStorage) << errStr;
-        emit latestReleaseVersionAcquired(clientId, currentVersion, latestVersion, errStr);
-        return;
-    }
-
-    QString configurationFileLocation = applicationDir.absoluteFilePath(STRATA_CONFIGURATION_XML);
-    QFile configurationFile(configurationFileLocation);
-    if (!configurationFile.open(QIODevice::ReadOnly )) {
-        QString errStr("Unable to open: " + configurationFileLocation + " for ReadOnly");
-        qCCritical(logCategoryHcsStorage) << errStr;
-        emit latestReleaseVersionAcquired(clientId, currentVersion, latestVersion, errStr);
-        return;
-    }
-
-    QDomDocument xmlData;   // The QDomDocument class represents an XML document.
-    QString errorStr;
-    int errorLine;
-    int errorColumn;
-
-    // Set data into the QDomDocument before processing
-    if(!xmlData.setContent(&configurationFile, false, &errorStr, &errorLine, &errorColumn)) {
-        QString errStr("Error when reading: " + configurationFileLocation +
-                       ", error: " + errorStr + " at line " + errorLine + " column " + errorColumn);
-
-        qCCritical(logCategoryHcsStorage) << errStr;
-        emit latestReleaseVersionAcquired(clientId, currentVersion, latestVersion, errStr);
-        configurationFile.close();
-        return;
-    }
-    configurationFile.close();
-
-    bool foundCurrentVersion = false;
-    // Extract the root markup
-    QDomElement rootElement=xmlData.documentElement();
-    if(!rootElement.isNull() && (rootElement.tagName() == "Packages")) {
-        qCDebug(logCategoryHcsStorage) << ("Found root element " + rootElement.tagName() + " in " + STRATA_CONFIGURATION_XML);
-
-        // Get the first child of the root (Markup ApplicationName is expected)
-        QDomElement childElement=rootElement.firstChild().toElement();
-
-        // Loop while there is a child
-        while(!childElement.isNull())
-        {
-            // Check if the child tag name is COMPONENT
-            if (childElement.tagName()=="ApplicationVersion")
-            {
-                qCDebug(logCategoryHcsStorage) << ("Found " + childElement.tagName() + " element in " + STRATA_CONFIGURATION_XML);
-
-                QDomNode childNode = childElement.firstChild();
-                if(!childNode.isNull()) {
-                    currentVersion = childNode.toText().data();
-                    if(currentVersion != "")
-                        foundCurrentVersion = true;
-
-                    qCDebug(logCategoryHcsStorage) << "Extracted currentVersion from " + STRATA_CONFIGURATION_XML + ": " + currentVersion;
-                }
-            }
-
-            // Next component
-            childElement = childElement.nextSibling().toElement();
-        }
-    } else {
-        QString errStr("Unable to acquire proper root element in: " + configurationFileLocation);
-
-        qCCritical(logCategoryHcsStorage) << errStr;
-        emit latestReleaseVersionAcquired(clientId, currentVersion, latestVersion, errStr);
-        return;
-    }
-
-    if(!foundCurrentVersion) {
-        QString errStr("Did not acquired proper currentVersion in: " + configurationFileLocation);
-
-        qCCritical(logCategoryHcsStorage) << errStr;
-        emit latestReleaseVersionAcquired(clientId, currentVersion, latestVersion, errStr);
-        return;
-    }
-
-    // TODO: add connection to database
-    latestVersion = "1.0.0";
-
-    emit latestReleaseVersionAcquired(clientId, currentVersion, latestVersion, "");
 }
 
 void StorageManager::updatePlatformDoc(const QString& classId)

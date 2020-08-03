@@ -8,11 +8,6 @@
 #include <QFile>
 #include <QDir>
 #include <QThread>
-#include <QIcon>
-#include <QMessageBox>
-#include <QInputDialog>
-#include <QVersionNumber>
-#include <QCoreApplication>
 
 #ifdef Q_OS_WIN
 #include <Shlwapi.h>
@@ -25,9 +20,6 @@ SDSModel::SDSModel(QObject *parent)
 {
     coreInterface_ = new CoreInterface(this);
     documentManager_ = new DocumentManager(coreInterface_, this);
-
-    connect(coreInterface_, &CoreInterface::latestReleaseVersionAcquireFinished, this, &SDSModel::latestReleaseVersionAcquireFinishedHandler);
-    connect(coreInterface_, &CoreInterface::updateApplicationExecutionFinished, this, &SDSModel::updateApplicationExecutionFinishedHandler);
 }
 
 SDSModel::~SDSModel()
@@ -191,87 +183,6 @@ void SDSModel::finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus)
 void SDSModel::handleHcsProcessError(QProcess::ProcessError error)
 {
     qCDebug(logCategoryStrataDevStudio) << error << hcsProcess_->errorString();
-}
-
-void SDSModel::latestReleaseVersionAcquireFinishedHandler(const QJsonObject &payload)
-{
-    QString errorString = payload["error_string"].toString();
-
-    if (errorString.isEmpty() == false) {
-        qCCritical(logCategoryStrataDevStudio) << "acquisition of latest release version finished with error: " << errorString;
-        // TODO: display to user some error message if he initiated the update
-        return;
-    }
-
-    QString currentVersion = payload["current_version"].toString();
-    QString latestVersion = payload["latest_version"].toString();
-
-    if(currentVersion.isEmpty() || currentVersion == "N/A" || latestVersion.isEmpty() || latestVersion == "N/A") {
-        qCCritical(logCategoryStrataDevStudio) << "acquisition of latest release version failed, currentVersion: " << currentVersion << ", latestVersion: " << latestVersion;
-        // TODO: display to user some error message if he initiated the update
-        return;
-    }
-
-    int suffixIndexCurrent;
-    int suffixIndexLatest;
-    QVersionNumber currentVersionParsed = QVersionNumber::fromString(currentVersion, &suffixIndexCurrent);
-    QVersionNumber latestVersionParsed = QVersionNumber::fromString(latestVersion, &suffixIndexLatest);
-
-    if(currentVersionParsed.isNull() || latestVersionParsed.isNull()) {
-        qCCritical(logCategoryStrataDevStudio) << "parsing of latest release version failed, currentVersion: " << currentVersion << ", latestVersion: " << latestVersion;
-        // TODO: display to user some error message if he initiated the update
-        return;
-    }
-
-    if(currentVersionParsed < latestVersionParsed) {
-        // Ask user confirmation
-        QMessageBox msgBox;
-        msgBox.setText("A new version of Strata is available.");
-        msgBox.setInformativeText("Do you wish to update now?");
-        QPushButton* yesButton = msgBox.addButton(tr("Yes"), QMessageBox::YesRole);
-        QPushButton* laterButton = msgBox.addButton(tr("Later"), QMessageBox::NoRole);
-        //QPushButton* neverButton = msgBox.addButton(tr("Never"), QMessageBox::RejectRole);
-        msgBox.setDefaultButton(yesButton);
-
-        msgBox.exec();
-
-        if (msgBox.clickedButton() == (QAbstractButton*)laterButton) {
-            qCDebug(logCategoryStrataDevStudio) << "UPDATE posponed, currentVersion: " << currentVersion << ", latestVersion: " << latestVersion;
-            return;
-        }
-
-        //if (msgBox.clickedButton() == (QAbstractButton*)neverButton) {
-        //    return; // TBD: disable updates (in .ini file), unless manually invoked
-        //}
-
-        // Execute update
-        qCDebug(logCategoryStrataDevStudio) << "UPDATE required, currentVersion: " << currentVersion << ", latestVersion: " << latestVersion;
-        coreInterface_->updateApplication();
-    } else {
-        qCDebug(logCategoryStrataDevStudio) << "UPDATE not required, currentVersion: " << currentVersion << ", latestVersion: " << latestVersion;
-    }
-}
-
-void SDSModel::updateApplicationExecutionFinishedHandler(const QJsonObject &payload)
-{
-    QString errorString = payload["error_string"].toString();
-
-    if (errorString.isEmpty() == false) {
-        qCCritical(logCategoryStrataDevStudio) << "execution of application update process finished with error: " << errorString;
-
-        // Display to user some error message since he accepted update
-        QMessageBox msgBox;
-        msgBox.setText("The update failed.");
-        msgBox.setInformativeText(errorString);
-        msgBox.exec();
-
-        return;
-    }
-
-    qCDebug(logCategoryStrataDevStudio) << "UPDATE initiated, terminating application";
-
-
-    QCoreApplication::exit();
 }
 
 void SDSModel::setHcsConnected(bool hcsConnected)

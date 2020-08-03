@@ -64,9 +64,6 @@ public slots:
 
     void requestCancelAllDownloads(const QByteArray &clientId);
 
-
-    void requestLatestReleaseVersion(const QByteArray &clientId);
-
     /**
      * Notification about the update of the document (from Database)
      * @param classId document ID to update
@@ -81,7 +78,6 @@ signals:
     void downloadPlatformDocumentsProgress(QByteArray clientId, QString classId, int filesCompleted, int filesTotal);
     void downloadPlatformFilesFinished(QByteArray clientId, QString errorString);
     void downloadControlViewFinished(QByteArray clientId, QString partialUri, QString filePath, QString errorString);
-    void latestReleaseVersionAcquired(QByteArray clientId, QString currentVersion, QString latestVersion, QString errorString);
 
     void platformListResponseRequested(QByteArray clientId, QJsonArray documentList);
     void platformDocumentsResponseRequested(QByteArray clientId, QString classId, QJsonArray documentList,

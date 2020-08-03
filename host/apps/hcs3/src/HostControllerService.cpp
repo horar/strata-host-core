@@ -35,8 +35,6 @@ HostControllerService::HostControllerService(QObject* parent)
     hostCmdHandler_.insert( { std::string("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
     hostCmdHandler_.insert( { std::string("update_firmware"), std::bind(&HostControllerService::onCmdUpdateFirmware, this, std::placeholders::_1) } );
     hostCmdHandler_.insert( { std::string("download_view"), std::bind(&HostControllerService::onCmdDownloadControlView, this, std::placeholders::_1) });
-    hostCmdHandler_.insert( { std::string("get_latest_release_version"), std::bind(&HostControllerService::onCmdGetLatestReleaseVersion, this, std::placeholders::_1) } );
-    hostCmdHandler_.insert( { std::string("update_application"), std::bind(&HostControllerService::onCmdUpdateApplication, this, std::placeholders::_1) });
 }
 
 HostControllerService::~HostControllerService()
@@ -73,7 +71,6 @@ bool HostControllerService::initialize(const QString& config)
     connect(&storageManager_, &StorageManager::downloadPlatformDocumentsProgress, this, &HostControllerService::sendPlatformDocumentsProgressMessage);
     connect(&storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
     connect(&storageManager_, &StorageManager::downloadControlViewFinished, this, &HostControllerService::sendDownloadControlViewFinishedMessage);
-    connect(&storageManager_, &StorageManager::latestReleaseVersionAcquired, this, &HostControllerService::sendLatestReleaseVersionAcquiredMessage);
 
     /* We dont want to call these StorageManager methods directly
      * as they should be executed in the main thread. Not in dispatcher's thread. */
@@ -82,17 +79,14 @@ bool HostControllerService::initialize(const QString& config)
     connect(this, &HostControllerService::downloadPlatformFilesRequested, &storageManager_, &StorageManager::requestDownloadPlatformFiles, Qt::QueuedConnection);
     connect(this, &HostControllerService::cancelPlatformDocumentRequested, &storageManager_, &StorageManager::requestCancelAllDownloads, Qt::QueuedConnection);
     connect(this, &HostControllerService::downloadControlViewRequested, &storageManager_, &StorageManager::requestDownloadControlView, Qt::QueuedConnection);
-    connect(this, &HostControllerService::latestReleaseVersionRequested, &storageManager_, &StorageManager::requestLatestReleaseVersion, Qt::QueuedConnection);
 
-    connect(this, &HostControllerService::firmwareUpdateRequested, &firmwareUpdateController_, &FirmwareUpdateController::updateFirmware, Qt::QueuedConnection);
-    connect(this, &HostControllerService::applicationUpdateRequested, &applicationUpdateController_, &ApplicationUpdateController::updateApplication, Qt::QueuedConnection);
+    connect(this, &HostControllerService::firmwareUpdateRequested, &updateController_, &FirmwareUpdateController::updateFirmware, Qt::QueuedConnection);
 
     connect(&boardsController_, &BoardController::boardConnected, this, &HostControllerService::platformConnected);
     connect(&boardsController_, &BoardController::boardDisconnected, this, &HostControllerService::platformDisconnected);
     connect(&boardsController_, &BoardController::boardMessage, this, &HostControllerService::sendMessageToClients);
 
-    connect(&firmwareUpdateController_, &FirmwareUpdateController::progressOfUpdate, this, &HostControllerService::handleUpdateProgress);
-    connect(&applicationUpdateController_, &ApplicationUpdateController::executionOfUpdate, this, &HostControllerService::sendUpdateApplicationExecutedMessage);
+    connect(&updateController_, &FirmwareUpdateController::progressOfUpdate, this, &HostControllerService::handleUpdateProgress);
 
     QUrl baseUrl = QString::fromStdString(db_cfg["file_server"].GetString());
 
@@ -115,7 +109,7 @@ bool HostControllerService::initialize(const QString& config)
 
     boardsController_.initialize();
 
-    firmwareUpdateController_.initialize(&boardsController_, &downloadManager_);
+    updateController_.initialize(&boardsController_, &downloadManager_);
 
     rapidjson::Value& hcs_cfg = config_["host_controller_service"];
 
@@ -308,46 +302,6 @@ void HostControllerService::sendDownloadControlViewFinishedMessage(
         {"type", "download_view_finished"},
         {"url", partialUri},
         {"filepath", filePath},
-        {"error_string", errorString}
-    };
-
-    QJsonObject message {
-        {"hcs::notification", payload}
-    };
-
-    QJsonDocument doc(message);
-
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
-}
-
-void HostControllerService::sendLatestReleaseVersionAcquiredMessage(
-        const QByteArray &clientId,
-        const QString &currentVersion,
-        const QString &latestVersion,
-        const QString &errorString)
-{
-    QJsonObject payload {
-        {"type", "latest_release_version"},
-        {"current_version", currentVersion},
-        {"latest_version", latestVersion},
-        {"error_string", errorString}
-    };
-
-    QJsonObject message {
-        {"hcs::notification", payload}
-    };
-
-    QJsonDocument doc(message);
-
-    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
-}
-
-void HostControllerService::sendUpdateApplicationExecutedMessage(
-        const QByteArray &clientId,
-        const QString &errorString)
-{
-    QJsonObject payload {
-        {"type", "update_application"},
         {"error_string", errorString}
     };
 
@@ -585,20 +539,6 @@ void HostControllerService::onCmdDownloadControlView(const rapidjson::Value* pay
     }
 
     emit downloadControlViewRequested(clientId, partialUri, md5);
-}
-
-void HostControllerService::onCmdGetLatestReleaseVersion(const rapidjson::Value* )
-{
-    QByteArray clientId = getSenderClient()->getClientId();
-
-    emit latestReleaseVersionRequested(clientId);
-}
-
-void HostControllerService::onCmdUpdateApplication(const rapidjson::Value* )
-{
-    QByteArray clientId = getSenderClient()->getClientId();
-
-    emit applicationUpdateRequested(clientId);
 }
 
 HCS_Client* HostControllerService::getClientById(const QByteArray& client_id)
