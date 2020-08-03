@@ -328,11 +328,11 @@ Rectangle {
     }
     
     Component.onCompleted: {
-        //Not using
+        //Debug
         //platformInterface.get_inital_state.update()
         clock_data = 1000
         clock = clock_data
-        platformInterface.set_clk_data.update(1000)
+        platformInterface.set_clk_data.update(clock_data)
         platformInterface.set_adc_supply.update("1.8", "3.3")
         plotSetting2.checked = true
         plotSetting1.checked = false
@@ -444,8 +444,6 @@ Rectangle {
                 }
             }
 
-
-
             Button {
                 id:resetChartButton
                 anchors {
@@ -461,7 +459,6 @@ Rectangle {
                     graph.resetChart()
                 }
             }
-
         }
         
         
@@ -860,7 +857,6 @@ Rectangle {
                                                 else {
                                                     platformInterface.set_adc_supply.update("3.3","1.8")
                                                 }
-
                                             }
                                             else  {
                                                 if(avddButtonContainer.radioButtons.avdd1.checked) {
@@ -903,7 +899,6 @@ Rectangle {
                                             if(checked){
                                                 if(dvsButtonContainer.radioButtons.dvdd1.checked) {
                                                     platformInterface.set_adc_supply.update("3.3","3.3")
-
                                                 }
                                                 else {
                                                     platformInterface.set_adc_supply.update("1.8","3.3")
@@ -913,7 +908,8 @@ Rectangle {
                                                 if(dvsButtonContainer.radioButtons.dvdd1.checked) {
                                                     platformInterface.set_adc_supply.update("3.3","1.8")
                                                 }
-                                                else { platformInterface.set_adc_supply.update("1.8","1.8")
+                                                else {
+                                                    platformInterface.set_adc_supply.update("1.8","1.8")
 
                                                 }
                                             }
