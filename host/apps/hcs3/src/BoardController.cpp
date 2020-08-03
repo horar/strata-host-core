@@ -123,26 +123,6 @@ QString BoardController::createPlatformsList() {
     return doc.toJson(QJsonDocument::Compact);
 }
 
-bool BoardController::clearClientId(const int deviceId) {
-    auto it = boards_.find(deviceId);
-    if (it != boards_.end()) {
-        it.value().clientId.clear();
-        return true;
-    }
-    return false;
-}
-
-bool BoardController::clearClientIdFromAllDevices(const QByteArray& clientId) {
-    bool found = false;
-    for (auto it = boards_.begin(); it != boards_.end(); ++it) {
-        if (clientId == it.value().clientId) {
-            it.value().clientId.clear();
-            found = true;
-        }
-    }
-    return found;
-}
-
 QString BoardController::logDeviceId(const int deviceId) const {
     return "Device Id: 0x" + QString::number(static_cast<uint>(deviceId), 16);
 }

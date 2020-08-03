@@ -129,7 +129,6 @@ private:
     void onCmdPlatformSelect(const rapidjson::Value* );
 
     //handlers for hcs::cmd
-    void onCmdHostDisconnectPlatform(const rapidjson::Value* );
     void onCmdHostUnregister(const rapidjson::Value* );
     void onCmdHostDownloadFiles(const rapidjson::Value* );      //from UI
     void onCmdDynamicPlatformList(const rapidjson::Value* );
