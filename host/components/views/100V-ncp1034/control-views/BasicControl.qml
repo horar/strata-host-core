@@ -189,7 +189,7 @@ Item {
                             SGAlignedLabel {
                                 id: softSTtartLabel
                                 target: softStart
-                                text: "Soft Start"
+                                text: "Soft Start "
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors {
                                     centerIn: parent
@@ -200,7 +200,7 @@ Item {
                                 SGComboBox {
                                     id: softStart
                                     fontSizeMultiplier: ratioCalc
-                                    model: ["1", "2", "5", "10", "15"]
+                                    model: ["1 ms", "2 ms", "5 ms", "10 ms", "15 ms"]
 
                                 }
                             }
