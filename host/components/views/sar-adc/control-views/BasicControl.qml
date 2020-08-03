@@ -37,8 +37,6 @@ Rectangle {
     property var data_value: platformInterface.get_data.data
 
     property var clock_data: 0
-    property var dvdd_data: 3.3
-    property var avdd_data: 3.3
     onData_valueChanged: {
         if(number_of_notification == 1) {
             warningPopup.open()
@@ -858,26 +856,18 @@ Rectangle {
                                             if(checked){
                                                 if(avddButtonContainer.radioButtons.avdd1.checked) {
                                                     platformInterface.set_adc_supply.update("3.3","3.3")
-                                                    dvdd_data = "3.3"
-                                                    avdd_data = "3.3"
                                                 }
                                                 else {
                                                     platformInterface.set_adc_supply.update("3.3","1.8")
-                                                    dvdd_data = "3.3"
-                                                    avdd_data = "1.8"
                                                 }
 
                                             }
                                             else  {
                                                 if(avddButtonContainer.radioButtons.avdd1.checked) {
                                                     platformInterface.set_adc_supply.update("1.8","3.3")
-                                                    dvdd_data = "1.8"
-                                                    avdd_data = "3.3"
                                                 }
                                                 else {
                                                     platformInterface.set_adc_supply.update("1.8","1.8")
-                                                    dvdd_data = "1.8"
-                                                    avdd_data = "1.8"
                                                 }
                                             }
                                         }
@@ -913,26 +903,18 @@ Rectangle {
                                             if(checked){
                                                 if(dvsButtonContainer.radioButtons.dvdd1.checked) {
                                                     platformInterface.set_adc_supply.update("3.3","3.3")
-                                                    dvdd_data = "3.3"
-                                                    avdd_data = "3.3"
 
                                                 }
                                                 else {
                                                     platformInterface.set_adc_supply.update("1.8","3.3")
-                                                    dvdd_data = "1.8"
-                                                    avdd_data = "3.3"
-
                                                 }
                                             }
                                             else  {
                                                 if(dvsButtonContainer.radioButtons.dvdd1.checked) {
                                                     platformInterface.set_adc_supply.update("3.3","1.8")
-                                                    dvdd_data = "3.3"
-                                                    avdd_data = "1.8"
                                                 }
                                                 else { platformInterface.set_adc_supply.update("1.8","1.8")
-                                                    dvdd_data = "1.8"
-                                                    avdd_data = "1.8"
+
                                                 }
                                             }
                                         }
