@@ -541,7 +541,7 @@ void StorageManager::requestLatestReleaseVersion(const QByteArray &clientId)
     // Extract the root markup
     QDomElement rootElement=xmlData.documentElement();
     if(!rootElement.isNull() && (rootElement.tagName() == "Packages")) {
-        qCDebug(logCategoryHcsStorage) << ("Found root '" + rootElement.tagName() + "' element in " + STRATA_CONFIGURATION_XML);
+        qCDebug(logCategoryHcsStorage) << ("Found root element " + rootElement.tagName() + " in " + STRATA_CONFIGURATION_XML);
 
         // Get the first child of the root (Markup ApplicationName is expected)
         QDomElement childElement=rootElement.firstChild().toElement();
@@ -552,7 +552,7 @@ void StorageManager::requestLatestReleaseVersion(const QByteArray &clientId)
             // Check if the child tag name is COMPONENT
             if (childElement.tagName()=="ApplicationVersion")
             {
-                qCDebug(logCategoryHcsStorage) << ("Found '" + childElement.tagName() + "' element in " + STRATA_CONFIGURATION_XML);
+                qCDebug(logCategoryHcsStorage) << ("Found " + childElement.tagName() + " element in " + STRATA_CONFIGURATION_XML);
 
                 QDomNode childNode = childElement.firstChild();
                 if(!childNode.isNull()) {

@@ -46,7 +46,6 @@ private slots:
 
 private:
     bool hcsConnected_ = false;
-    bool checkedForUpdate_ = false;
     CoreInterface *coreInterface_;
     DocumentManager *documentManager_;
     HcsNode *remoteHcsNode_;
