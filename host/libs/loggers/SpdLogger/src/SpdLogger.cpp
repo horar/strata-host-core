@@ -3,19 +3,8 @@
 #include <spdlog/spdlog.h>
 
 SpdLogger::SpdLogger()
-    :
-#if defined(_WIN32)
-      console_sink_
-{
-    std::make_shared<spdlog::sinks::msvc_sink_mt>()
-}
-#else
-      console_sink_
-{
-    std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>(spdlog::color_mode::always)
-}
-#endif
-
+    : console_sink_{
+          std::make_shared<spdlog::sinks::stdout_color_sink_mt>(spdlog::color_mode::always)}
 {
 }
 
