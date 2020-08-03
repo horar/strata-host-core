@@ -10,9 +10,18 @@
 using strata::DownloadManager;
 using strata::FlasherConnector;
 
-FirmwareUpdater::FirmwareUpdater(const strata::device::DevicePtr& devPtr, const std::shared_ptr<DownloadManager>& downloadManager, const QUrl& url, const QString& md5) :
-    running_(false), device_(devPtr), deviceId_(devPtr->deviceId()), downloadManager_(downloadManager), firmwareUrl_(url), firmwareMD5_(md5),
-    firmwareFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("hcs_new_firmware")))
+FirmwareUpdater::FirmwareUpdater(
+        const strata::device::DevicePtr& devPtr,
+        strata::DownloadManager *downloadManager,
+        const QUrl& url,
+        const QString& md5)
+    : running_(false),
+      device_(devPtr),
+      deviceId_(devPtr->deviceId()),
+      downloadManager_(downloadManager),
+      firmwareUrl_(url),
+      firmwareMD5_(md5),
+      firmwareFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("hcs_new_firmware")))
 {
     connect(this, &FirmwareUpdater::flashFirmware, this, &FirmwareUpdater::handleFlashFirmware, Qt::QueuedConnection);
 }
@@ -63,8 +72,8 @@ void FirmwareUpdater::downloadFirmware()
     settings.keepOriginalName = true;
     settings.oneFailsAllFail = true;
 
-    connect(downloadManager_.get(), &DownloadManager::groupDownloadFinished, this, &FirmwareUpdater::handleDownloadFinished);
-    connect(downloadManager_.get(), &DownloadManager::singleDownloadProgress, this, &FirmwareUpdater::handleSingleDownloadProgress);
+    connect(downloadManager_, &DownloadManager::groupDownloadFinished, this, &FirmwareUpdater::handleDownloadFinished);
+    connect(downloadManager_, &DownloadManager::singleDownloadProgress, this, &FirmwareUpdater::handleSingleDownloadProgress);
 
     downloadId_ = downloadManager_->download(downloadRequestList, settings);
 
@@ -78,7 +87,7 @@ void FirmwareUpdater::handleDownloadFinished(QString downloadId, QString errorSt
         return;
     }
 
-    disconnect(downloadManager_.get(), nullptr, this, nullptr);
+    disconnect(downloadManager_, nullptr, this, nullptr);
 
     if (errorString.isEmpty() == false) {
         emit updateProgress(deviceId_, FirmwareUpdateController::UpdateOperation::Download, FirmwareUpdateController::UpdateStatus::Failure, -1, -1, errorString);
@@ -111,11 +120,11 @@ void FirmwareUpdater::handleFlashFirmware()
 
     flasherConnector_ = new FlasherConnector(device_, firmwareFile_.fileName() , this);
 
-    connect(flasherConnector_.data(), &FlasherConnector::finished, this, &FirmwareUpdater::handleFlasherFinished);
-    connect(flasherConnector_.data(), &FlasherConnector::flashProgress, this, &FirmwareUpdater::handleFlashProgress);
-    connect(flasherConnector_.data(), &FlasherConnector::backupProgress, this, &FirmwareUpdater::handleBackupProgress);
-    connect(flasherConnector_.data(), &FlasherConnector::restoreProgress, this, &FirmwareUpdater::handleRestoreProgress);
-    connect(flasherConnector_.data(), &FlasherConnector::operationStateChanged, this, &FirmwareUpdater::handleOperationStateChanged);
+    connect(flasherConnector_, &FlasherConnector::finished, this, &FirmwareUpdater::handleFlasherFinished);
+    connect(flasherConnector_, &FlasherConnector::flashProgress, this, &FirmwareUpdater::handleFlashProgress);
+    connect(flasherConnector_, &FlasherConnector::backupProgress, this, &FirmwareUpdater::handleBackupProgress);
+    connect(flasherConnector_, &FlasherConnector::restoreProgress, this, &FirmwareUpdater::handleRestoreProgress);
+    connect(flasherConnector_, &FlasherConnector::operationStateChanged, this, &FirmwareUpdater::handleOperationStateChanged);
 
     flasherConnector_->flash(true);
 }

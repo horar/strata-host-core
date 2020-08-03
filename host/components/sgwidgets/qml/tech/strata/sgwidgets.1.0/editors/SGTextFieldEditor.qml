@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 
 SGWidgets.SGBaseEditor {
@@ -10,6 +11,8 @@ SGWidgets.SGBaseEditor {
     property string text
     property QtObject validator: null
     property string placeholderText
+    property bool showCursorPosition: false
+    property bool passwordMode: false
 
     editor: SGWidgets.SGTextField {
         id: editorItem
@@ -21,6 +24,8 @@ SGWidgets.SGBaseEditor {
         suggestionModelTextRole: root.suggestionModelTextRole
         validator: root.validator
         placeholderText: root.placeholderText
+        showCursorPosition: root.showCursorPosition
+        passwordMode: root.passwordMode
 
         onTextChanged: root.text = text
         Binding {

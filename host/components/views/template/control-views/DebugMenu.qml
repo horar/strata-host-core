@@ -26,7 +26,14 @@ Rectangle {
             this.reset()
         },
         "send": function () {
-            CorePlatformInterface.data_source_handler(JSON.stringify(this))
+            let notification = {
+                "notification": this
+            }
+            let wrapper = {
+                "device_id": CorePlatformInterface.device_id,
+                "message": JSON.stringify(notification)
+            }
+            CorePlatformInterface.data_source_handler(JSON.stringify(wrapper))
         },
         "reset": function () {
             this.value = ""

@@ -33,7 +33,7 @@ Item {
             SGIcon {
                 height: 70
                 width: height
-                source: "qrc:/images/icons/disconnected.svg"
+                source: "qrc:/sgimages/disconnected.svg"
                 iconColor : "#aaa"
                 anchors {
                     horizontalCenter: parent.horizontalCenter

@@ -6,10 +6,12 @@
 #include <QNetworkReply>
 #include <QList>
 #include <QMap>
+#include <QPointer>
 
 #include <QBasicTimer>
 #include <QTimerEvent>
 #include <QCryptographicHash>
+
 
 namespace strata {
 class DownloadManager : public QObject
@@ -18,7 +20,7 @@ class DownloadManager : public QObject
     Q_DISABLE_COPY(DownloadManager)
 
 public:
-    DownloadManager(QObject* parent = nullptr);
+    DownloadManager(QNetworkAccessManager *manager, QObject* parent = nullptr);
     ~DownloadManager() override;
 
     struct DownloadRequestItem {
@@ -113,7 +115,7 @@ private:
         QString errorString;
     };
 
-    QNetworkAccessManager *accessManager_;
+    QPointer<QNetworkAccessManager> networkManager_;
     QList<QNetworkReply*> currentDownloads_;
 
     int maxDownloadCount_ = 4;

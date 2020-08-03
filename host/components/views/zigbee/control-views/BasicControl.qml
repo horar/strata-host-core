@@ -52,6 +52,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 50
         anchors.top:parent.top
+        anchors.topMargin:20
         fillMode: Image.PreserveAspectFit
         mipmap:true
         opacity:1
@@ -79,7 +80,7 @@ Rectangle {
             }
             else{
                 if (platformInterface.toggle_door_notification.value === "open"){
-                    officeImage.source = "../images/room_doorOpenLightsOff.png" //lights off, door open
+                    officeImage.source = "../images/room_doorOpenLightsOff.jpg" //lights off, door open
                     }
                   else{
                     officeImage.source = "../images/room_lightsOff.jpg"          //lights off, door closed
@@ -94,7 +95,7 @@ Rectangle {
                     officeImage.source = "../images/room_doorOpen.jpg"              //lights on, door open
                     }
                   else{
-                    officeImage.source = "../images/room_doorOpenLightsOff.png"     //lights off, door open
+                    officeImage.source = "../images/room_doorOpenLightsOff.jpg"     //lights off, door open
                 }
             }
             else{
