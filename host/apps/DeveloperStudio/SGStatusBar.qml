@@ -17,6 +17,7 @@ import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
 
+
 Rectangle {
     id: container
     anchors { fill: parent }
@@ -153,6 +154,13 @@ Rectangle {
         width: height
 
         Rectangle {
+            Accessible.role: Accessible.Button
+            Accessible.name: "User Icon"
+            Accessible.description: "User menu button."
+            Accessible.onPressAction: {
+                profileMenu.open()
+            }
+
             id: profileIcon
             anchors {
                 centerIn: profileIconContainer
@@ -177,6 +185,7 @@ Rectangle {
         }
 
         MouseArea {
+
             id: profileIconHover
             hoverEnabled: true
             anchors {

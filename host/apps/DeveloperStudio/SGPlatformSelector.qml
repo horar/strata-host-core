@@ -63,6 +63,13 @@ Rectangle{
     }
 
     SGIcon {
+        Accessible.role: Accessible.Button
+        Accessible.name: "Help Icon"
+        Accessible.description: "Help tour button."
+        Accessible.onPressAction: {
+            Help.startHelpTour("selectorHelp", "strataMain")
+        }
+
         id: helpIcon
         anchors {
             right: container.right

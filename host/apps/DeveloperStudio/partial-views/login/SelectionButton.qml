@@ -2,6 +2,11 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 
 Button {
+    Accessible.onPressAction: function() {
+        clicked()
+        checked = true
+    }
+
     id: root
     checkable: true
     opacity: checked ? 1.0 : 0.3

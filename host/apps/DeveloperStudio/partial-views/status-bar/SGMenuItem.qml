@@ -4,6 +4,10 @@ import QtQuick.Controls 2.3
 import tech.strata.fonts 1.0
 
 Button {
+    Accessible.onPressAction: function() {
+        clicked()
+    }
+
     id: root
     text: qsTr("Button Text")
     hoverEnabled: true

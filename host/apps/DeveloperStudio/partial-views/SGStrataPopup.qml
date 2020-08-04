@@ -59,6 +59,12 @@ Dialog {
             }
 
             Rectangle {
+                Accessible.role: Accessible.Button
+                Accessible.name: "ClosePopup"
+                Accessible.onPressAction: function() {
+                    dialog.close()
+                }
+
                 id: closerBackground
                 color: mouseClose.containsMouse ? Qt.darker(headerContainer.color, 1.1) : "transparent"
                 radius: width/2

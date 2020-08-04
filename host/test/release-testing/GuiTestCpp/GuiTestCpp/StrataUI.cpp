@@ -2,6 +2,28 @@
 #include "pch.h"
 #include <UIAutomation.h>
 #include <comdef.h>
+
+#define COMBINE1(X, Y) X##Y  // helper macro
+#define COMBINE(X, Y) COMBINE1(X, Y)
+#define CHECK_OK(statement)           \
+    HRESULT COMBINE(hr, __LINE__) = statement; \
+    if (FAILED(COMBINE(hr, __LINE__))) {           \
+        return COMBINE(hr, __LINE__);               \
+    }
+#define CHECK_OK_OUTPUT(statement, setNull)           \
+    HRESULT COMBINE(hr, __LINE__) = statement; \
+    if (FAILED(COMBINE(hr, __LINE__))) {       \
+        *setNull = nullptr;                    \
+        return COMBINE(hr, __LINE__);          \
+    }
+
+#define CHECK_OK_BOOL(statement) \
+    HRESULT COMBINE(hr, __LINE__) = statement;\
+    if (FAILED(COMBINE(hr, __LINE__))) {\
+        return false;\
+    }
+const LPCWSTR WINDOW_NAME = L"ON Semiconductor: Strata Developer Studio";
+
 typedef bool (*ElementCheck)(IUIAutomationElement*);
 //TODO: add a signal thing to make the awaitelement thing work
 //class AwaitElementStructureChangedHandler : IUIAutomationStructureChangedEventHandler {
@@ -25,7 +47,7 @@ typedef bool (*ElementCheck)(IUIAutomationElement*);
 /// This is because the UIA api tends to be verbose and requires heavy knowledge of UIA-specific constants and structures, and it is hard to find a "simple" set of examples of how to use all of them.
 /// This also makes it easier to port this class to other languages (e.g. python) later.
 /// 
-/// Try to expose string inputs as char* and convert internalliy.
+/// Expose string inputs as LPCWSTR 
 /// </summary>
 class StrataUI {
 public:
@@ -40,6 +62,12 @@ public:
             FindStrataWindow();
         }
     }
+    StrataUI(HWND windowHandle)
+    {
+        this->initializeUIAutomation(&automation);
+        automation->ElementFromHandle(windowHandle, &window);
+
+    }
 
     /// <summary>
     /// Find the Strata window. NOTE: Window should be found before doing other UI tasks.
@@ -47,11 +75,16 @@ public:
     /// <returns></returns>
     HRESULT FindStrataWindow() {
         IUIAutomationElement* root;
-        automation->GetRootElement(&root);
+        CHECK_OK(automation->GetRootElement(&root));
 
-        IUIAutomationCondition* condition = createPropertyCondition(UIA_NamePropertyId, WINDOW_NAME);
+        IUIAutomationCondition* condition = createPropertyCondition(UIA_NamePropertyId, _variant_t(WINDOW_NAME));
 
         return root->FindFirst(TreeScope_Children, condition, &window);
+    }
+    HRESULT FindStrataWindow(HANDLE handle)
+    {
+        return automation->ElementFromHandle(handle, &window);
+
     }
 
     /// <summary>
@@ -59,14 +92,20 @@ public:
     /// </summary>
     /// <returns>true if on the login screen, false otherwise</returns>
     bool OnLoginScreen() {
-        return buttonEditHeuristic("Login", 2, 2);
+        IUIAutomationElement* pane;
+        getPane(&pane);
+
+        return buttonEditHeuristic(pane, L"Login", 2, 2);
     }
     /// <summary>
     /// 
     /// </summary>
     /// <returns>true if on the login screen, false otherwise</returns>
     bool OnRegisterScreen() {
-        return buttonEditHeuristic("Register", 2, 7);
+        IUIAutomationElement* pane;
+        getPane(&pane);
+
+        return buttonEditHeuristic(pane, L"Register", 2, 7);
     }
     /// <summary>
     /// 
@@ -78,7 +117,7 @@ public:
         return GetUserIcon(&userIcon) == S_OK && userIcon != nullptr;
     }
 
-    HRESULT SetToTab(char* name) {
+    HRESULT SetToTab(LPCWSTR name) {
         IUIAutomationElement* tab;
 
         HRESULT result = FindTab(name, &tab);
@@ -88,24 +127,22 @@ public:
         return result;
     }
 
-    HRESULT FindTab(char* name, IUIAutomationElement** tab) {
+    HRESULT FindTab(LPCWSTR name, IUIAutomationElement** tab) {
         IUIAutomationElement* pane;
         getPane(&pane);
 
 
         IUIAutomationCondition* checkboxOrButton;
-        automation->CreateOrCondition(
+        CHECK_OK_OUTPUT(automation->CreateOrCondition(
             createPropertyCondition(UIA_ControlTypePropertyId, _variant_t(UIA_ButtonControlTypeId)),
-            createPropertyCondition(UIA_ControlTypePropertyId, _variant_t(UIA_CheckBoxControlTypeId)),
-            &checkboxOrButton
-        );
+            createPropertyCondition(UIA_ControlTypePropertyId,
+                                    _variant_t(UIA_CheckBoxControlTypeId)),
+            &checkboxOrButton), tab);
 
         IUIAutomationCondition* controlTypeAndName;
-        automation->CreateAndCondition(
-            createPropertyCondition(UIA_NamePropertyId, _variant_t(name)),
-            checkboxOrButton,
-            &controlTypeAndName
-        );
+        CHECK_OK_OUTPUT(automation->CreateAndCondition(
+            createPropertyCondition(UIA_NamePropertyId, _variant_t(name)), checkboxOrButton,
+            &controlTypeAndName), tab);
         
         return pane->FindFirst(TreeScope_Descendants, controlTypeAndName, tab);
         
@@ -118,28 +155,34 @@ public:
     /// <param name="editFullDescription">The FullDescription (default text) of the element</param>
     /// <param name="text">Text to input</param>
     /// <returns></returns>
-    HRESULT SetEditText(const char* editFullDescription, const char* text) {
-        IUIAutomationElement* pane;
-        getPane(&pane);
+    HRESULT SetEditText(const LPCWSTR editIdentifier, const LPCWSTR text, bool useWindowContext = false, bool findByName = false) {
+        
+        IUIAutomationElement* context;
+        if (useWindowContext) {
+            context = window;        
+        } else {
+            getPane(&context);
+        }
 
         IUIAutomationElement* edit;
-        HRESULT result = findEdit(editFullDescription, pane, &edit);
-
-        if (result == S_OK) {
-            IUIAutomationValuePattern* valuePattern;
-            edit->GetCurrentPatternAs(UIA_ValuePatternId, __uuidof(IUIAutomationValuePattern), ((void**)&valuePattern));
-            return valuePattern->SetValue(_bstr_t(text));
+        if (findByName) {
+            CHECK_OK(findEditByName(context, editIdentifier, &edit));
+        } else {
+            CHECK_OK(findEdit(context, editIdentifier, &edit));
         }
-        return result;
+
+        IUIAutomationValuePattern* valuePattern;
+        CHECK_OK(edit->GetCurrentPatternAs(UIA_ValuePatternId, __uuidof(IUIAutomationValuePattern), ((void**)&valuePattern)));
+        return valuePattern->SetValue(_bstr_t(text));
     }
     HRESULT PressConfirmCheckbox() {
         IUIAutomationElement* pane;
-        getPane(&pane);
+        CHECK_OK(getPane(&pane));
 
         IUIAutomationElement* checkbox;
-        findByNameAndType("", UIA_CheckBoxControlTypeId, pane, &checkbox);
+        CHECK_OK(findByNameAndType(pane, L"", UIA_CheckBoxControlTypeId, &checkbox));
 
-        PressButton(checkbox);
+        return PressButton(checkbox);
     }
     /// <summary>
     /// Find login button and press it.
@@ -147,19 +190,8 @@ public:
     /// <returns></returns>
     HRESULT PressLoginButton() {
         IUIAutomationElement* loginButton;
-        HRESULT result = GetLoginButton(&loginButton);
-        if (result == S_OK) {
-            return PressButton(loginButton);
-        }
-        return result;
-    }
-    HRESULT PressRegisterButton() {
-        IUIAutomationElement* loginButton;
-        HRESULT result = GetLoginButton(&loginButton);
-        if (result == S_OK) {
-            return PressButton(loginButton);
-        }
-        return result;
+        CHECK_OK(GetLoginButton(&loginButton));
+        return PressButton(loginButton);
     }
     /// <summary>
     /// Get the login button element
@@ -177,7 +209,7 @@ public:
 
 
         IUIAutomationCondition* notClassName;
-        automation->CreateNotCondition(classNameCondition, &notClassName);
+        CHECK_OK(automation->CreateNotCondition(classNameCondition, &notClassName));
 
         IUIAutomationCondition* conditions[] = {
             createPropertyCondition(UIA_NamePropertyId, _variant_t("Login")),
@@ -186,23 +218,41 @@ public:
 
         };
         IUIAutomationCondition* loginButtonCondition;
-        automation->CreateAndConditionFromNativeArray(conditions, 3, &loginButtonCondition);
+        CHECK_OK(automation->CreateAndConditionFromNativeArray(conditions, 3, &loginButtonCondition));
 
         return pane->FindFirst(TreeScope_Descendants, loginButtonCondition, login);
 
     }
 
+    bool LoginButtonEnabled()
+    {
+        IUIAutomationElement* loginButton;
+        GetLoginButton(&loginButton);
+
+        return ButtonEnabled(loginButton);
+
+    }
+
     HRESULT GetRegisterButton(IUIAutomationElement** registerSubmitButton) {
-        buttonLowestHeuristic("Register", registerSubmitButton);
+        IUIAutomationElement* pane;
+        CHECK_OK(getPane(&pane));
+        return buttonLowestHeuristic(pane, L"Register", registerSubmitButton);
     }
     
     HRESULT PressRegisterButton() {
         IUIAutomationElement* registerButton;
-        GetRegisterButton(&registerButton);
+        CHECK_OK(GetRegisterButton(&registerButton));
 
-        PressButton(registerButton);
+        return PressButton(registerButton);
     }
 
+    bool RegsterButtonEnabled()
+    {
+        IUIAutomationElement* registerButton;
+        GetRegisterButton(&registerButton);
+        
+        return ButtonEnabled(registerButton);
+    }
     /// <summary>
     /// Invoke the given button
     /// </summary>
@@ -210,7 +260,7 @@ public:
     /// <returns></returns>
     HRESULT PressButton(IUIAutomationElement* button) {
         IUIAutomationInvokePattern* invokePattern;
-        button->GetCurrentPatternAs(UIA_InvokePatternId, __uuidof(IUIAutomationInvokePattern), (void**)&invokePattern);
+        CHECK_OK(button->GetCurrentPatternAs(UIA_InvokePatternId, __uuidof(IUIAutomationInvokePattern), (void**)&invokePattern));
         return invokePattern->Invoke();
 
     }
@@ -219,19 +269,47 @@ public:
     /// </summary>
     /// <param name="buttonName"></param>
     /// <returns></returns>
-    HRESULT PressButton(const char* buttonName) {
-        IUIAutomationElement* pane;
-        getPane(&pane);
+    HRESULT PressButton(const LPCWSTR buttonName, bool useWindowContext = false)
+    {
+
+        IUIAutomationElement* context;
+        if (useWindowContext) {
+            context = window;
+        } else {
+            CHECK_OK(getPane(&context));
+
+        }
 
         IUIAutomationElement* button;
-        HRESULT result = findByNameAndType(buttonName, UIA_ButtonControlTypeId, pane, &button);
+        CHECK_OK(findByNameAndType(context, buttonName, UIA_ButtonControlTypeId, &button));
 
-        if (result == S_OK) {
-            IUIAutomationInvokePattern* invokePattern;
-            button->GetCurrentPatternAs(UIA_InvokePatternId, __uuidof(IUIAutomationInvokePattern), (void**)&invokePattern);
-            return invokePattern->Invoke();
+        return PressButton(button);
+
+    }
+    bool ButtonEnabled(IUIAutomationElement* button)
+    {
+        _variant_t enabled;
+        button->GetCurrentPropertyValue(UIA_IsEnabledPropertyId, &enabled);
+
+        return enabled.boolVal;
+
+    }
+    bool ButtonEnabled(const LPCWSTR buttonName, bool useWindowContext = false)
+    {
+        IUIAutomationElement* context;
+
+        if (useWindowContext) {
+            context = window;
+        
+        } else {
+            getPane(&context);
+
         }
-        return result;
+
+        IUIAutomationElement* button;
+        findByNameAndType(context, buttonName, UIA_ButtonControlTypeId, &button);
+
+        return ButtonEnabled(button);
     }
 
     /// <summary>
@@ -240,45 +318,93 @@ public:
     /// <param name="userIcon"></param>
     /// <returns></returns>
     HRESULT GetUserIcon(IUIAutomationElement** userIcon) {
-        IUIAutomationElement* pane;
-        getPane(&pane);
 
 
-        return findByNameAndType("User Icon", UIA_ButtonControlTypeId, pane, userIcon);
+        return findByNameAndType(window, L"User Icon", UIA_ButtonControlTypeId, userIcon);
     }
 
    
-    bool ErrorPopupExists(const char* name) {
+    bool AlertExists(const LPCWSTR name) {
         IUIAutomationElement* pane;
         getPane(&pane);
 
         IUIAutomationElement* element;
 
-        return findByNameAndType(name, UIA_CustomControlTypeId, pane, &element) == S_OK && element != nullptr;
+        return findByNameAndType(pane, name, UIA_CustomControlTypeId, &element) == S_OK && element != nullptr;
+    }
+    bool AlertExists(const LPCWSTR name, const LPCWSTR alertText, bool useWindowContext = false)
+    {
+        IUIAutomationElement* context;
+        if (useWindowContext) {
+            context = window;
+        } else {
+            getPane(&context);
+        }
+
+        IUIAutomationCondition* conditions[] = {
+            createPropertyCondition(UIA_NamePropertyId, _variant_t(name)),
+            createPropertyCondition(UIA_ControlTypePropertyId, _variant_t(UIA_CustomControlTypeId)),
+            createPropertyCondition(UIA_FullDescriptionPropertyId, _variant_t(alertText))
+        };
+        
+        IUIAutomationCondition* existsCondition;
+        automation->CreateAndConditionFromNativeArray(conditions, 3, &existsCondition);
+
+        IUIAutomationElement* alert;
+
+        context->FindFirst(TreeScope_Descendants, existsCondition, &alert);
+
+        return alert != nullptr;
 
     }
+
+    bool OnForgotPassword()
+    {
+        IUIAutomationElement* forgotPassword;
+        CHECK_OK_BOOL(findInnerWindow(&forgotPassword));
+
+        return forgotPassword != nullptr;   
+    }
+
+    bool OnFeedback()
+    {
+        IUIAutomationElement* feedbackWindow;
+        CHECK_OK_BOOL(findInnerWindow(&feedbackWindow));
+        return feedbackWindow != nullptr;
+    }
+
+    bool OnFeedbackSuccess()
+    {
+        IUIAutomationElement* feedbackSuccessText;
+        CHECK_OK_BOOL(findByNameAndType(window, L"Submit Feedback Success", UIA_TextControlTypeId, &feedbackSuccessText));
+
+        return feedbackSuccessText != nullptr;
+    }
+    
+
+
 private:
     IUIAutomation* automation;
     IUIAutomationElement* window;
-
-    const _variant_t WINDOW_NAME = "ON Semiconductor: Strata Developer Studio";
-    HRESULT buttonLowestHeuristic(const char* buttonName, IUIAutomationElement** lowestButton) {
-        IUIAutomationElement* pane;
-        getPane(&pane);
+    HRESULT findInnerWindow(IUIAutomationElement** innerWindow)
+    {
+        return findByNameAndType(window, L"", UIA_WindowControlTypeId, innerWindow);
+    }
+    HRESULT buttonLowestHeuristic(IUIAutomationElement* pane,const LPCWSTR buttonName, IUIAutomationElement** lowestButton) {
 
         IUIAutomationCondition* nameAndType;
-        automation->CreateAndCondition(
+        CHECK_OK_OUTPUT(automation->CreateAndCondition(
             createPropertyCondition(UIA_NamePropertyId, _variant_t(buttonName)),
             createPropertyCondition(UIA_ControlTypePropertyId, _variant_t(UIA_ButtonControlTypeId)),
             &nameAndType
-        );
+        ), lowestButton);
 
         IUIAutomationElementArray* buttons;
-        pane->FindAll(TreeScope_Descendants, nameAndType, &buttons);
+        CHECK_OK_OUTPUT(pane->FindAll(TreeScope_Descendants, nameAndType, &buttons), lowestButton);
           
         
         int len;
-        buttons->get_Length(&len);
+        CHECK_OK_OUTPUT(buttons->get_Length(&len), lowestButton);
         if (len == 0) {
             *lowestButton = nullptr;
             return S_OK;
@@ -292,10 +418,10 @@ private:
 
             buttons->GetElement(0, &currentLowest);
             for (int i = 1; i < len; i++) {
-                buttons->GetElement(i, &button);
+                CHECK_OK_OUTPUT(buttons->GetElement(i, &button), lowestButton);
 
                 _variant_t rect;
-                button->GetCurrentPropertyValue(UIA_BoundingRectanglePropertyId, &rect);
+                CHECK_OK_OUTPUT(button->GetCurrentPropertyValue(UIA_BoundingRectanglePropertyId, &rect), lowestButton);
                 PINT rectValues = (PINT)rect.parray->pvData;
 
                 if (rectValues[0] < lowestValue) {
@@ -308,9 +434,7 @@ private:
         }
 
     }
-    bool buttonEditHeuristic(const char* buttonName, int numButtons, int numEdits) {
-        IUIAutomationElement* pane;
-        getPane(&pane);
+    bool buttonEditHeuristic(IUIAutomationElement* pane,const LPCWSTR buttonName, int numButtons, int numEdits) {
 
         IUIAutomationElementArray* buttons;
         pane->FindAll(TreeScope_Descendants, createPropertyCondition(UIA_NamePropertyId, _variant_t(buttonName)), &buttons);
@@ -322,18 +446,33 @@ private:
         buttons->get_Length(&buttonsLen);
 
         int editsLen;
-        buttons->get_Length(&editsLen);
+        edits->get_Length(&editsLen);
 
         return buttonsLen == numButtons && editsLen == numEdits;
 
     }
-    HRESULT findEdit(const char* fullDescription, IUIAutomationElement* pane, IUIAutomationElement** element) {
+    HRESULT findEditByName(IUIAutomationElement* pane, const LPCWSTR name,
+                           IUIAutomationElement** element)
+    {
         IUIAutomationAndCondition* andCondition;
-        automation->CreateAndCondition(createPropertyCondition(UIA_FullDescriptionPropertyId, _variant_t(fullDescription)), createPropertyCondition(UIA_ControlTypePropertyId, _variant_t(UIA_EditControlTypeId)), (IUIAutomationCondition**)&andCondition);
+
+        automation->CreateAndCondition(
+            createPropertyCondition(UIA_NamePropertyId, _variant_t(name)),
+            createPropertyCondition(UIA_ControlTypePropertyId, _variant_t(UIA_EditControlTypeId)),
+            (IUIAutomationCondition**)&andCondition);
         return pane->FindFirst(TreeScope_Descendants, andCondition, element);
 
     }
-    HRESULT findByNameAndType(const char* name, CONTROLTYPEID typeId, IUIAutomationElement* pane, IUIAutomationElement** element) {
+    HRESULT findEdit(IUIAutomationElement* pane, const LPCWSTR fullDescription, IUIAutomationElement** element) {
+        IUIAutomationAndCondition* andCondition;
+
+        automation->CreateAndCondition(
+            createPropertyCondition(UIA_FullDescriptionPropertyId, _variant_t(fullDescription)), 
+            createPropertyCondition(UIA_ControlTypePropertyId, _variant_t(UIA_EditControlTypeId)), (IUIAutomationCondition**)&andCondition);
+        return pane->FindFirst(TreeScope_Descendants, andCondition, element);
+
+    }
+    HRESULT findByNameAndType(IUIAutomationElement* pane, const LPCWSTR name, CONTROLTYPEID typeId, IUIAutomationElement** element) {
 
         IUIAutomationAndCondition* andCondition;
         automation->CreateAndCondition(createPropertyCondition(UIA_NamePropertyId, _variant_t(name)), createPropertyCondition(UIA_ControlTypePropertyId, _variant_t(typeId)), (IUIAutomationCondition**)&andCondition);

@@ -129,6 +129,9 @@ Item {
         }
 
         Rectangle {
+            Accessible.role: Accessible.AlertMessage
+            Accessible.name: "LoginError"
+            Accessible.description: loginErrorText.text
             id: loginErrorRect
             Layout.preferredWidth: usernameField.width
             Layout.preferredHeight: 0
@@ -169,6 +172,12 @@ Item {
         }
 
         Text {
+            Accessible.role: Accessible.Button
+            Accessible.name: forgotLink.text
+            Accessible.onPressAction: function() {
+                forgotPopup.visible = true
+            }
+
             id: forgotLink
             Layout.alignment: Qt.AlignRight
             text: "Forgot Password"
@@ -193,6 +202,10 @@ Item {
             Layout.preferredWidth: loginButton.width
 
             Button {
+                Accessible.onPressAction: function () {
+                    loginButton.submit()
+                }
+
                 id: loginButton
                 width: usernameField.width
                 height: usernameField.height

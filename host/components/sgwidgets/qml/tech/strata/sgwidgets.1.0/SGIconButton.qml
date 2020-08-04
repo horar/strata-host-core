@@ -3,6 +3,8 @@ import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
 
 Item {
+
+
     id: control
 
     width: wrapper.width
