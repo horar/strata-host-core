@@ -43,9 +43,7 @@ typedef bool (*ElementCheck)(IUIAutomationElement*);
 //};
 /// <summary>
 /// Wrapper class around UIA for accessing Strata UI elements. 
-/// This class was designed such that a user does not have to directly use UIA to manipulate the UI (not that there can't be public functions that do so). 
-/// This is because the UIA api tends to be verbose and requires heavy knowledge of UIA-specific constants and structures, and it is hard to find a "simple" set of examples of how to use all of them.
-/// This also makes it easier to port this class to other languages (e.g. python) later.
+/// This class was designed such that a user does not have to directly use UIA to manipulate the UI (not that there can't be public functions that do so).
 /// 
 /// Expose string inputs as LPCWSTR 
 /// </summary>
@@ -81,6 +79,11 @@ public:
 
         return root->FindFirst(TreeScope_Children, condition, &window);
     }
+    /// <summary>
+    /// Find Strata window from process handle
+    /// </summary>
+    /// <param name="handle"></param>
+    /// <returns></returns>
     HRESULT FindStrataWindow(HANDLE handle)
     {
         return automation->ElementFromHandle(handle, &window);
@@ -117,6 +120,11 @@ public:
         return GetUserIcon(&userIcon) == S_OK && userIcon != nullptr;
     }
 
+    /// <summary>
+    /// Set ui to a given tab on the login/register page.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
     HRESULT SetToTab(LPCWSTR name) {
         IUIAutomationElement* tab;
 
@@ -127,6 +135,12 @@ public:
         return result;
     }
 
+    /// <summary>
+    /// Determine if a tab with the given name exists
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="tab"></param>
+    /// <returns></returns>
     HRESULT FindTab(LPCWSTR name, IUIAutomationElement** tab) {
         IUIAutomationElement* pane;
         getPane(&pane);
@@ -152,8 +166,10 @@ public:
     /// <summary>
     /// Set the text of an edit element
     /// </summary>
-    /// <param name="editFullDescription">The FullDescription (default text) of the element</param>
-    /// <param name="text">Text to input</param>
+    /// <param name="editIdentifier">Name or default text of the element</param>
+    /// <param name="text">Text to put in edit</param>
+    /// <param name="useWindowContext">Look for the edit from the window level instead of the pane level</param>
+    /// <param name="findByName">Treat editIdentifier as the name of the edit instead of the default text.</param>
     /// <returns></returns>
     HRESULT SetEditText(const LPCWSTR editIdentifier, const LPCWSTR text, bool useWindowContext = false, bool findByName = false) {
         
@@ -175,6 +191,11 @@ public:
         CHECK_OK(edit->GetCurrentPatternAs(UIA_ValuePatternId, __uuidof(IUIAutomationValuePattern), ((void**)&valuePattern)));
         return valuePattern->SetValue(_bstr_t(text));
     }
+
+    /// <summary>
+    /// Click the confirm checkbox on the Register page.
+    /// </summary>
+    /// <returns></returns>
     HRESULT PressConfirmCheckbox() {
         IUIAutomationElement* pane;
         CHECK_OK(getPane(&pane));
@@ -184,6 +205,7 @@ public:
 
         return PressButton(checkbox);
     }
+
     /// <summary>
     /// Find login button and press it.
     /// </summary>
@@ -224,6 +246,10 @@ public:
 
     }
 
+    /// <summary>
+    /// Determine if the login button is enabled.
+    /// </summary>
+    /// <returns></returns>
     bool LoginButtonEnabled()
     {
         IUIAutomationElement* loginButton;
@@ -233,12 +259,21 @@ public:
 
     }
 
+    /// <summary>
+    /// Locate the register button on the register page.
+    /// </summary>
+    /// <param name="registerSubmitButton"></param>
+    /// <returns></returns>
     HRESULT GetRegisterButton(IUIAutomationElement** registerSubmitButton) {
         IUIAutomationElement* pane;
         CHECK_OK(getPane(&pane));
         return buttonLowestHeuristic(pane, L"Register", registerSubmitButton);
     }
     
+    /// <summary>
+    /// Click the register button on the register page.
+    /// </summary>
+    /// <returns></returns>
     HRESULT PressRegisterButton() {
         IUIAutomationElement* registerButton;
         CHECK_OK(GetRegisterButton(&registerButton));
@@ -246,6 +281,10 @@ public:
         return PressButton(registerButton);
     }
 
+    /// <summary>
+    /// Determine if the register button is clicked.
+    /// </summary>
+    /// <returns></returns>
     bool RegsterButtonEnabled()
     {
         IUIAutomationElement* registerButton;
@@ -286,14 +325,26 @@ public:
         return PressButton(button);
 
     }
+
+    /// <summary>
+    /// Determine if the given button is clickable.
+    /// </summary>
+    /// <param name="button"></param>
+    /// <returns></returns>
     bool ButtonEnabled(IUIAutomationElement* button)
     {
         _variant_t enabled;
         button->GetCurrentPropertyValue(UIA_IsEnabledPropertyId, &enabled);
 
         return enabled.boolVal;
-
     }
+
+    /// <summary>
+    /// Find the button with the given name and determine if it is clickable.
+    /// </summary>
+    /// <param name="buttonName"></param>
+    /// <param name="useWindowContext"></param>
+    /// <returns></returns>
     bool ButtonEnabled(const LPCWSTR buttonName, bool useWindowContext = false)
     {
         IUIAutomationElement* context;
@@ -323,7 +374,11 @@ public:
         return findByNameAndType(window, L"User Icon", UIA_ButtonControlTypeId, userIcon);
     }
 
-   
+    /// <summary>
+    /// Determine if the alert with the given name is visible.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
     bool AlertExists(const LPCWSTR name) {
         IUIAutomationElement* pane;
         getPane(&pane);
@@ -332,6 +387,14 @@ public:
 
         return findByNameAndType(pane, name, UIA_CustomControlTypeId, &element) == S_OK && element != nullptr;
     }
+
+    /// <summary>
+    /// Determine if the alert with the given name and text is visible.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="alertText"></param>
+    /// <param name="useWindowContext">Look from the strata window instead of the inner plane</param>
+    /// <returns></returns>
     bool AlertExists(const LPCWSTR name, const LPCWSTR alertText, bool useWindowContext = false)
     {
         IUIAutomationElement* context;
@@ -358,6 +421,10 @@ public:
 
     }
 
+    /// <summary>
+    /// Determine if the forgot password dialog is open on the login screen.
+    /// </summary>
+    /// <returns></returns>
     bool OnForgotPassword()
     {
         IUIAutomationElement* forgotPassword;
@@ -366,6 +433,10 @@ public:
         return forgotPassword != nullptr;   
     }
 
+    /// <summary>
+    /// Determine if the feedback dialog is open on the platform view.
+    /// </summary>
+    /// <returns></returns>
     bool OnFeedback()
     {
         IUIAutomationElement* feedbackWindow;
@@ -373,6 +444,10 @@ public:
         return feedbackWindow != nullptr;
     }
 
+    /// <summary>
+    /// Determine if the feedback success dialog is open on the platform view.
+    /// </summary>
+    /// <returns></returns>
     bool OnFeedbackSuccess()
     {
         IUIAutomationElement* feedbackSuccessText;

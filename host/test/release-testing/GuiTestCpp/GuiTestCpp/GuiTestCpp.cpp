@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CppUnitTest.h"
 #include "StrataUI.cpp"
-#include <curl/curl.h>
+//#include <curl\curl.h>
 #include <iomanip>
 
 #define ASSERT_S_OK(operation) Assert::IsTrue(operation == S_OK)
@@ -24,11 +24,36 @@ const LPCWSTR CONFIRM_PASSWORD_EDIT = L"Confirm Password";
 namespace GuiTestCpp
 {
 
+    /*TEST_CLASS(GuiTestCppNoNetwork)
+    {
+          static void GetSetting(LPCWSTR tag, LPWSTR buffer, int bufferSz)
+        {
+            WCHAR filenameBuf[MAX_PATH];
 
+            GetFullPathName(L"..\\settings.ini", MAX_PATH, filenameBuf, nullptr);
+            GetPrivateProfileString(L"settings", tag, L"", buffer, bufferSz,
+                                    filenameBuf);
+        }
+    public: 
+        TEST_CLASS_INITIALIZE(InitFirewall) 
+        {
+           
+            BSTR bstrRuleName = SysAllocString(L"TEMP_Block_Strata");
+            BSTR bstrRuleApplication = SysAllocString(L"%programfiles%\\MyApplication.exe");
+            BSTR bstrRuleLPorts = SysAllocString(L"4000");
+
+        }
+    };*/
 
 	TEST_CLASS(GuiTestCpp)
 	{
 	public: 
+        /// <summary>
+        /// Access setting in settings.ini
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <param name="buffer"></param>
+        /// <param name="bufferSz"></param>
         static void GetSetting(LPCWSTR tag, LPWSTR buffer, int bufferSz)
         {
             WCHAR filenameBuf[MAX_PATH];
@@ -37,63 +62,66 @@ namespace GuiTestCpp
             GetPrivateProfileString(L"settings", tag, L"", buffer, bufferSz,
                                     filenameBuf);
         }
-        static void CloseUser() 
-        {
-            WCHAR strataIniPath[MAX_PATH];
+        //static void CloseUser() 
+        //{
+        //    WCHAR strataIniPath[MAX_PATH];
 
-            GetSetting(L"strataIniPath", strataIniPath, MAX_PATH);
+        //    GetSetting(L"strataIniPath", strataIniPath, MAX_PATH);
 
-            WCHAR token[256];
-            GetPrivateProfileString(L"Login", L"token", L"", token, 256, nullptr);
+        //    WCHAR token[256];
+        //    GetPrivateProfileString(L"Login", L"token", L"", token, 256, nullptr);
 
-            WCHAR user[256];
-            GetPrivateProfileString(L"Login", L"user", L"", user, 256, nullptr);
+        //    WCHAR user[256];
+        //    GetPrivateProfileString(L"Login", L"user", L"", user, 256, nullptr);
 
-            WCHAR authServer[256];
-            GetPrivateProfileString(L"Login", L"authServer", L"", authServer, 256, nullptr);
+        //    WCHAR authServer[256];
+        //    GetPrivateProfileString(L"Login", L"authServer", L"", authServer, 256, nullptr);
 
-            if (wcslen(token) != 0 && wcslen(user) != 0 && wcslen(authServer) != 0) {
-                char errbuf[CURL_ERROR_SIZE] = {
-                    0,
-                };
+        //    if (wcslen(token) != 0 && wcslen(user) != 0 && wcslen(authServer) != 0) {
+        //        char errbuf[CURL_ERROR_SIZE] = {
+        //            0,
+        //        };
 
-                CURL* curl;
-                curl = curl_easy_init();
+        //        CURL* curl;
+        //        curl = curl_easy_init();
 
-                struct curl_slist* headers;
+        //        struct curl_slist* headers = NULL;
 
-                if (curl) {
-                    curl_easy_setopt(curl, CURLOPT_URL, (char*)_bstr_t(authServer));
+        //        if (curl) {
+        //            curl_easy_setopt(curl, CURLOPT_URL, (char*)_bstr_t(authServer));
 
-                    curl_slist_append(headers, "Content-Type:application/json");
-                    curl_slist_append(headers, _bstr_t(lstrcatW(L"x-access-token:", token)));
-                                 
+        //            curl_slist_append(headers, "Content-Type:application/json");
+        //            curl_slist_append(headers, _bstr_t(lstrcatW(L"x-access-token:", token)));
+        //                         
 
-                    curl_easy_setopt(curl, CURLOPT_HEADER, headers);
+        //            curl_easy_setopt(curl, CURLOPT_HEADER, headers);
 
-                    char* json = 
-                    _bstr_t(lstrcatW(
-                        lstrcatW(L"{\"username\":", user), 
-                         L"}" 
-                    ));
+        //            char* json = 
+        //            _bstr_t(lstrcatW(
+        //                lstrcatW(L"{\"username\":", user), 
+        //                 L"}" 
+        //            ));
 
-                    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json);
-                    curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errbuf);
-                    
-                    CURLcode res = curl_easy_perform(curl);
-                    curl_slist_free_all(headers);
+        //            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json);
+        //            curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errbuf);
+        //            
+        //            CURLcode res = curl_easy_perform(curl);
+        //            curl_slist_free_all(headers);
 
-                    if (res != CURLE_OK) {
-                        Logger::WriteMessage("Error closing user:");
-                        Logger::WriteMessage(errbuf);
-                    }
-                }
-            } 
-        }
+        //            if (res != CURLE_OK) {
+        //                Logger::WriteMessage("Error closing user:");
+        //                Logger::WriteMessage(errbuf);
+        //            }
+        //        }
+        //    } 
+        //    else {
+        //        Logger::WriteMessage("Could not find sufficient information to close user account.");
+        //    }
+        //}
 		StrataUI ui = new StrataUI(false);
 		TEST_CLASS_INITIALIZE(InitStrata){
             /* In windows, this will init the winsock stuff */
-            curl_global_init(CURL_GLOBAL_ALL);
+           // curl_global_init(CURL_GLOBAL_ALL);
  
 
             STARTUPINFO si;
@@ -130,36 +158,41 @@ namespace GuiTestCpp
 
         }
 
-        TEST_METHOD(ValidRegisterTest)
-        {
-            ui.FindStrataWindow();
-            ASSERT_S_OK(ui.SetToTab(L"Register"));
-            Assert::IsTrue(ui.OnRegisterScreen());
+   //     TEST_METHOD(ValidRegisterTest)
+   //     {
+   //         ui.FindStrataWindow();
+   //         ASSERT_S_OK(ui.SetToTab(L"Register"));
+   //         Assert::IsTrue(ui.OnRegisterScreen());
 
-            GUID guid;
-            ASSERT_S_OK(CoCreateGuid(&guid));
+   //         GUID guid;
+   //         ASSERT_S_OK(CoCreateGuid(&guid));
 
-            std::wstringstream stream;
-            stream << std::hex << guid.Data1 << L"@" << std::hex << guid.Data2 << ".com";
-            const LPWSTR username = const_cast<LPWSTR>(stream.str().c_str()); 
-            
-			ASSERT_S_OK(ui.SetEditText(FIRST_NAME_EDIT, L"New"));
-            ASSERT_S_OK(ui.SetEditText(LAST_NAME_EDIT, L"User"));
-            ASSERT_S_OK(ui.SetEditText(COMPANY_EDIT, L"ON Semiconductor"));
-            ASSERT_S_OK(ui.SetEditText(TITLE_EDIT, L"Senior QA"));
-            ASSERT_S_OK(ui.SetEditText(EMAIL_EDIT, username));
-            ASSERT_S_OK(ui.SetEditText(REGISTER_PASSWORD_EDIT, L"Strata12345"));
-            ASSERT_S_OK(ui.SetEditText(CONFIRM_PASSWORD_EDIT, L"Strata12345"));
-            ASSERT_S_OK(ui.PressConfirmCheckbox());
+   //         std::wstringstream stream;
+   //         stream << std::hex << guid.Data1 << L"@" << std::hex << guid.Data2 << ".com";
+   //         const LPWSTR username = const_cast<LPWSTR>(stream.str().c_str()); 
+   //         
+			//ASSERT_S_OK(ui.SetEditText(FIRST_NAME_EDIT, L"New"));
+   //         ASSERT_S_OK(ui.SetEditText(LAST_NAME_EDIT, L"User"));
+   //         ASSERT_S_OK(ui.SetEditText(COMPANY_EDIT, L"ON Semiconductor"));
+   //         ASSERT_S_OK(ui.SetEditText(TITLE_EDIT, L"Senior QA"));
+   //         ASSERT_S_OK(ui.SetEditText(EMAIL_EDIT, username));
+   //         ASSERT_S_OK(ui.SetEditText(REGISTER_PASSWORD_EDIT, L"Strata12345"));
+   //         ASSERT_S_OK(ui.SetEditText(CONFIRM_PASSWORD_EDIT, L"Strata12345"));
+   //         ASSERT_S_OK(ui.PressConfirmCheckbox());
 
-            Assert::IsTrue(ui.RegsterButtonEnabled());
+   //         Assert::IsTrue(ui.RegsterButtonEnabled());
 
-            ASSERT_S_OK(ui.PressRegisterButton());
+   //         //ASSERT_S_OK(ui.PressRegisterButton());
 
-        }
+   //     }
+        
+		/// <summary>
+		/// Test logging in with invalid credentials
+		/// </summary>
 		TEST_METHOD(InvalidLoginTest)
 		{
             ui.FindStrataWindow();
+
 			ASSERT_S_OK(ui.SetToTab(L"Login"));
 			Assert::IsTrue(ui.OnLoginScreen());
 			ASSERT_S_OK(ui.SetEditText(USERNAME_EDIT, L"badusername"));
@@ -174,6 +207,10 @@ namespace GuiTestCpp
 			Assert::IsTrue(ui.AlertExists(L"LoginError"));
 
 		}
+
+		/// <summary>
+		/// Test registering with an existing user.
+		/// </summary>
 		TEST_METHOD(InvalidRegisterTest)
 		{
             ui.FindStrataWindow();
@@ -199,15 +236,18 @@ namespace GuiTestCpp
 			Assert::IsTrue(ui.AlertExists(L"RegisterError"));			
 		}
 
+		/// <summary>
+		/// Test resetting a password with an existant and nonexistant username.
+		/// </summary>
 		TEST_METHOD(ResetPasswordTest)
         {
             ui.FindStrataWindow();
 
+            //Test nonexistant username
             ASSERT_S_OK(ui.SetToTab(L"Login"));
             Assert::IsTrue(ui.OnLoginScreen());
 
             ASSERT_S_OK(ui.PressButton(L"Forgot Password"));
-
 			Assert::IsTrue(ui.OnForgotPassword());
 			
 			ASSERT_S_OK(ui.SetEditText(L"example@onsemi.com", L"bad@bad.com", true));
@@ -219,6 +259,7 @@ namespace GuiTestCpp
 			
 			Assert::IsTrue(ui.AlertExists(L"ResetPasswordAlert", L"No user found with email bad@bad.com", true));
 
+            //Test existing username
 			ASSERT_S_OK(ui.SetEditText(L"example@onsemi.com", L"test@test.com", true));
             Assert::IsTrue(ui.ButtonEnabled(L"Submit", true));
             ASSERT_S_OK(ui.PressButton(L"Submit", true));
@@ -230,6 +271,10 @@ namespace GuiTestCpp
 			ASSERT_S_OK(ui.PressButton(L"ClosePopup", true));
 
 		}		
+
+		/// <summary>
+		/// Test sending feedback.
+		/// </summary>
 		TEST_METHOD(FeedbackTest)
         {
             ui.FindStrataWindow();
