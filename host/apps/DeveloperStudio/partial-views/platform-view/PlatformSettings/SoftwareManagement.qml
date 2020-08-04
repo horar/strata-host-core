@@ -7,9 +7,82 @@ import tech.strata.sgwidgets 1.0
 ColumnLayout {
     id: software
 
-    // Todo: to be implemented in CS-831, CS-832
-
     property bool upToDate
+    property var activeVersion: null
+    property var classDocuments: null
+    property int controlViewCount: classDocuments.controlViewListModel.count
+
+    Component.onCompleted: {
+        classDocuments = sdsModel.documentManager.getClassDocuments(platformStack.class_id)
+        controlViewList.controlViewRepeater.model = classDocuments.controlViewListModel
+    }
+
+    onControlViewCountChanged: {
+        matchVersion()
+    }
+
+    Connections {
+        target: coreInterface
+        onDownloadSingleFileProgress: {
+            if (payload.device_id === platformStack.device_id) {
+                console.info("PROGRESS", JSON.stringify(payload))
+            }
+        }
+    }
+
+    Connections {
+        target: platformStack
+        onConnectedChanged: {
+            matchVersion()
+        }
+    }
+
+    function matchVersion() {
+        for (let i = 0; i < classDocuments.controlViewListModel.count; i++) {
+            if (classDocuments.controlViewListModel[i].filepath !== "") {
+                activeVersion = classDocuments.controlViewListModel[i]
+                classDocuments.controlViewListModel.setInstalled(i, true)
+                upToDate = isUpToDate()
+            } else {
+                classDocuments.controlViewListModel.setInstalled(i, false)
+            }
+        }
+    }
+
+    function isUpToDate() {
+        for (let i = 0; i < classDocuments.controlViewListModel.count; i++) {
+            if (version !== activeVersion.version && isVersionGreater(classDocuments.controlViewListModel[i].version)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function isVersionGreater(cmpVersion) {
+        let activeVersionArr = activeVersion.version.split('.').map(num => parseInt(num, 10));
+        let cmpVersionArr = cmpVersion.split('.').map(num => parseInt(num, 10));
+
+        // fill in 0s for each missing version (e.g) 1.5 -> 1.5.0
+        while (activeVersionArr.length < 3) {
+            activeVersionArr.push(0)
+        }
+
+        while (cmpVersionArr.length < 3) {
+            cmpVersionArr.push(0)
+        }
+
+        for (let i = 0; i < 3; i++) {
+            if (activeVersionArr[i] > cmpVersionArr[i]) {
+                return false;
+            } else if (activeVersionArr[i] < cmpVersionArr[i]) {
+                return true;
+            }
+        }
+
+        // else they are the same version
+        return false;
+    }
+
 
     Text {
         text: "Software Settings:"
@@ -32,7 +105,7 @@ ColumnLayout {
     }
 
     Text {
-        text: "Logic Gates v1.10, released 6/7/2020"
+        text: activeVersion !== null ? activeVersion.version : "Not installed"
         font.bold: true
         font.pixelSize: 18
     }
