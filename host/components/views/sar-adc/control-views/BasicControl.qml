@@ -35,6 +35,8 @@ Rectangle {
     
     //Notification to acquire from the evaluation board by using the "get_data" command.
     property var data_value: platformInterface.get_data.data
+
+    property var clock_data: 0
     onData_valueChanged: {
         if(number_of_notification == 1) {
             warningPopup.open()
@@ -299,16 +301,16 @@ Rectangle {
                 
             }
         }
-        var dvdd_data = initial_data.dvdd
-        if(dvdd_data !== 0) {
-            if(dvdd_data === 3.3) {
+        var dvdd_data_initial = initial_data.dvdd
+        if(dvdd_data_initial !== 0) {
+            if(dvdd_data_initial === 3.3) {
                 dvsButtonContainer.radioButtons.dvdd1.checked = true
             }
             else dvsButtonContainer.radioButtons.dvdd2.checked = true
         }
-        var avdd_data = initial_data.avdd
-        if(avdd_data !== 0) {
-            if(avdd_data === 3.3) {
+        var avdd_data_initial = initial_data.avdd
+        if(avdd_data_initial !== 0) {
+            if(avdd_data_initial === 3.3) {
                 avddButtonContainer.radioButtons.avdd1.checked = true
             }
             else avddButtonContainer.radioButtons.avdd2.checked = true
@@ -326,7 +328,12 @@ Rectangle {
     }
     
     Component.onCompleted: {
-        platformInterface.get_inital_state.update()
+        //Debug
+        //platformInterface.get_inital_state.update()
+        clock_data = 1000
+        clock = clock_data
+        platformInterface.set_clk_data.update(clock_data)
+        platformInterface.set_adc_supply.update("1.8", "3.3")
         plotSetting2.checked = true
         plotSetting1.checked = false
     }
@@ -372,7 +379,6 @@ Rectangle {
             yMax: 4096
             xMin: 0                    // Default: 0
             xMax: 10                   // Default: 10
-
 
             Component.onCompleted: {
                 startXMin = graph.xMin
@@ -438,8 +444,6 @@ Rectangle {
                 }
             }
 
-
-
             Button {
                 id:resetChartButton
                 anchors {
@@ -455,7 +459,6 @@ Rectangle {
                     graph.resetChart()
                 }
             }
-
         }
         
         
@@ -845,23 +848,30 @@ Rectangle {
                                     SGRadioButton {
                                         id: dvdd1
                                         text: "3.3V"
-                                        checked: true
+
                                         onCheckedChanged: {
                                             if(checked){
-                                                if(avddButtonContainer.radioButtons.avdd1.checked)
+                                                if(avddButtonContainer.radioButtons.avdd1.checked) {
                                                     platformInterface.set_adc_supply.update("3.3","3.3")
-                                                else platformInterface.set_adc_supply.update("3.3","1.8")
+                                                }
+                                                else {
+                                                    platformInterface.set_adc_supply.update("3.3","1.8")
+                                                }
                                             }
                                             else  {
-                                                if(avddButtonContainer.radioButtons.avdd1.checked)
+                                                if(avddButtonContainer.radioButtons.avdd1.checked) {
                                                     platformInterface.set_adc_supply.update("1.8","3.3")
-                                                else platformInterface.set_adc_supply.update("1.8","1.8")
+                                                }
+                                                else {
+                                                    platformInterface.set_adc_supply.update("1.8","1.8")
+                                                }
                                             }
                                         }
                                     }
                                     
                                     SGRadioButton {
                                         id: dvdd2
+                                        checked: true
                                         text: "1.8V"
                                     }
                                 }
@@ -887,14 +897,21 @@ Rectangle {
                                         checked: true
                                         onCheckedChanged: {
                                             if(checked){
-                                                if(dvsButtonContainer.radioButtons.dvdd1.checked)
+                                                if(dvsButtonContainer.radioButtons.dvdd1.checked) {
                                                     platformInterface.set_adc_supply.update("3.3","3.3")
-                                                else platformInterface.set_adc_supply.update("1.8","3.3")
+                                                }
+                                                else {
+                                                    platformInterface.set_adc_supply.update("1.8","3.3")
+                                                }
                                             }
                                             else  {
-                                                if(dvsButtonContainer.radioButtons.dvdd1.checked)
+                                                if(dvsButtonContainer.radioButtons.dvdd1.checked) {
                                                     platformInterface.set_adc_supply.update("3.3","1.8")
-                                                else platformInterface.set_adc_supply.update("1.8","1.8")
+                                                }
+                                                else {
+                                                    platformInterface.set_adc_supply.update("1.8","1.8")
+
+                                                }
                                             }
                                         }
                                     }
@@ -955,7 +972,7 @@ Rectangle {
                             fontSize: 15
                             model : ["250kHz","500kHz","1000kHz","2000kHz","4000kHz","8000kHz","16000kHz","32000kHz"]
                             onActivated: {
-                                var clock_data =  parseInt(currentText.substring(0,(currentText.length)-3))
+                                clock_data =  parseInt(currentText.substring(0,(currentText.length)-3))
                                 clock = clock_data
                                 platformInterface.set_clk_data.update(clock_data)
                             }
