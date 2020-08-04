@@ -20,6 +20,7 @@ class ClassDocuments : public QObject
     Q_PROPERTY(DownloadDocumentListModel* downloadDocumentListModel READ downloadDocumentListModel CONSTANT)
     Q_PROPERTY(DocumentListModel* datasheetListModel READ datasheetListModel CONSTANT)
     Q_PROPERTY(VersionedListModel* firmwareListModel READ firmwareListModel CONSTANT)
+    Q_PROPERTY(VersionedListModel* controlViewListModel READ controlViewListModel CONSTANT)
     Q_PROPERTY(DocumentListModel* pdfListModel READ pdfListModel CONSTANT)
     Q_PROPERTY(bool loading READ loading NOTIFY loadingChanged)
     Q_PROPERTY(int loadingProgressPercentage READ loadingProgressPercentage NOTIFY loadingProgressPercentageChanged)
@@ -33,6 +34,7 @@ public:
     DocumentListModel* datasheetListModel();
     DocumentListModel* pdfListModel();
     VersionedListModel* firmwareListModel();
+    VersionedListModel* controlViewListModel();
 
     QString errorString() const;
     bool loading() const;
@@ -60,6 +62,7 @@ private:
     DocumentListModel datasheetModel_;
     DocumentListModel pdfModel_;
     VersionedListModel firmwareModel_;
+    VersionedListModel controlViewModel_;
 
     QString errorString_;
     bool loading_ = false;
