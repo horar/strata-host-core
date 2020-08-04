@@ -11,6 +11,7 @@ Widget09.SGResponsiveScrollView {
 
     minimumHeight: 900
     minimumWidth: 1300
+    scrollBarColor: hightlightColor
 
     property string borderColor: "#002C74"
     property string backgroundColor: "#91ABE1"

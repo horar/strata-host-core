@@ -236,6 +236,15 @@ FocusScope {
         }
     }
 
+    UserMenuButton {
+        anchors {
+            top: parent.top
+            topMargin: 8
+            right: parent.right
+            rightMargin: 8
+        }
+    }
+
     StackView {
         id: stackView
         anchors {
@@ -255,7 +264,7 @@ FocusScope {
     Component {
         id: initPageComponent
 
-        Item {
+        FocusScope {
             id: settingsPage
 
             Column {

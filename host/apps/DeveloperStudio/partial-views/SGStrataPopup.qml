@@ -71,7 +71,7 @@ Dialog {
                     anchors.centerIn: closerBackground
                     anchors.horizontalCenterOffset: .5
                     anchors.verticalCenterOffset: .5
-                    source: "qrc:/images/icons/times.svg"
+                    source: "qrc:/sgimages/times.svg"
                     height: title.paintedHeight
                     width: height
                     iconColor: "white"

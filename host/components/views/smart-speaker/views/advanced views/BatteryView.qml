@@ -16,10 +16,8 @@ Rectangle {
     property int theRunTime: platformInterface.battery_status.total_run_time
     property int theAmbientTemperature: platformInterface.battery_status.ambient_temp
     property int theBatteryTemperature: platformInterface.battery_status.battery_temp
-    property int theFloatVoltage: 12
     property string theChargeMode: platformInterface.charger_status.charge_mode
-    property string thePowerMode: "battery"
-    property bool isInOverCurrentProtection: false
+    property string thePowerMode: platformInterface.charger_status.audio_power_mode
     property int theTimeToEmpty:platformInterface.battery_status.time_to_empty
     property int theTimeToFull:platformInterface.battery_status.time_to_full
     property int theBatteryPercentage:platformInterface.battery_status.rsoc
@@ -78,7 +76,7 @@ Rectangle {
         anchors.right:parent.right
         Row{
             id:timeToFullRow
-            spacing:10
+            spacing:5
             width:parent.width
 
             Text{
@@ -256,7 +254,7 @@ Rectangle {
         anchors.right:parent.right
         Row{
             id:stateOfHealthRow
-            spacing:10
+            spacing:5
             width:parent.width
 
             Text{
@@ -283,7 +281,7 @@ Rectangle {
         }
         Row{
             id:runTimeRow
-            spacing:10
+            spacing:5
 
             Text{
                 id:runTimeLabel
@@ -309,7 +307,7 @@ Rectangle {
         }
         Row{
             id:ambientTemperatureRow
-            spacing:10
+            spacing:5
 
             Text{
                 id:ambientTemperatureLabel
@@ -335,7 +333,7 @@ Rectangle {
         }
         Row{
             id:batteryTemperatureRow
-            spacing:10
+            spacing:5
 
             Text{
                 id:batteryTemperatureLabel
@@ -359,35 +357,10 @@ Rectangle {
                 color: "grey"
             }
         }
-        Row{
-            id:floatVoltageRow
-            spacing:10
 
-            Text{
-                id:floatVoltageLabel
-                font.pixelSize: 18
-                width:telemetryTextWidth
-                text:"Float voltage:"
-                horizontalAlignment: Text.Text.AlignRight
-                color: "black"
-            }
-            Text{
-                id:floatVoltageValue
-                font.pixelSize: 18
-                text:theFloatVoltage
-                horizontalAlignment: Text.AlighLeft
-                color: "black"
-            }
-            Text{
-                id:floatVoltageUnit
-                font.pixelSize: 15
-                text:"V"
-                color: "grey"
-            }
-        }
         Row{
             id:chargeModeRow
-            spacing:10
+            spacing:5
 
             Text{
                 id:chargeModeLabel
@@ -408,7 +381,7 @@ Rectangle {
         }
         Row{
             id:powerModeRow
-            spacing:10
+            spacing:5
 
             Text{
                 id:powerModeLabel

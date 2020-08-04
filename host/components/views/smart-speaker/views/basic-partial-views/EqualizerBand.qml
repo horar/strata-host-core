@@ -62,7 +62,7 @@ Rectangle {
         height:25
         width:35
 
-        text: bandSlider.value
+        text: bandSlider.value.toFixed(0)
 
         onActiveFocusChanged: {
                 // When we first gain focus, save the old text and select everything for clearing.

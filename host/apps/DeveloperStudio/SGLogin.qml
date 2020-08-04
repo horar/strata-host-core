@@ -243,7 +243,7 @@ Item {
         }
 
         SGIcon {
-            source: "qrc:/images/icons/exclamation-circle-solid.svg"
+            source: "qrc:/sgimages/exclamation-circle-solid.svg"
             height: 30
             width: height
             iconColor: "white"

@@ -14,6 +14,8 @@
         <file>edit.svg</file>
         <file>exclamation.svg</file>
         <file>exclamation-triangle.svg</file>
+        <file>eye-slash.svg</file>
+        <file>eye.svg</file>
         <file>file-add.svg</file>
         <file>file-blank.svg</file>
         <file>file-export.svg</file>
@@ -25,13 +27,30 @@
         <file>plus.svg</file>
         <file>question-circle.svg</file>
         <file>save.svg</file>
+        <file>sign-in.svg</file>
+        <file>sign-out.svg</file>
         <file>status-light-off.svg</file>
         <file>status-light-transparent.svg</file>
         <file>strata-logo.svg</file>
         <file>times.svg</file>
         <file>times-circle.svg</file>
         <file>tools.svg</file>
+        <file>user.svg</file>
         <file>on-logo-green.svg</file>
         <file>zoom.svg</file>
+        <file>asterisk-solid.svg</file>
+        <file>bars-solid.svg</file>
+        <file>check-circle-solid.svg</file>
+        <file>chevron-up.svg</file>
+        <file>connected.svg</file>
+        <file>disconnected.svg</file>
+        <file>download-solid.svg</file>
+        <file>exclamation-circle-solid.svg</file>
+        <file>folder-open-solid.svg</file>
+        <file>qml.qrc</file>
+        <file>sliders-h.svg</file>
+        <file>sliders-v.svg</file>
+        <file>th-list.svg</file>
+        <file>times-circle-solid.svg</file>
     </qresource>
 </RCC>

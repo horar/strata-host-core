@@ -63,7 +63,7 @@ void ClassDocuments::updateLoadingProgress(QJsonObject data)
     int filesCompleted = data["files_completed"].toInt();
     int filesTotal = data["files_total"].toInt();
 
-    int progress = filesCompleted / (float)filesTotal * 100;
+    int progress = 100 * filesCompleted / filesTotal;
 
     setLoadingProgressPercentage(progress);
 }
@@ -84,8 +84,35 @@ void ClassDocuments::populateModels(QJsonObject data)
         return;
     }
 
+    // Populate datasheetList if the supplied jsonObject contains any datasheet information in the datasheets property
+    bool parseDatasheetCSV = true;
+    QJsonArray datasheetArray = data["datasheets"].toArray();
+    for (const QJsonValueRef value : datasheetArray) {
+        QJsonObject datasheetObject = value.toObject();
+
+        if (datasheetObject.contains("category") == false
+                || datasheetObject.contains("datasheet") == false
+                || datasheetObject.contains("name") == false
+                || datasheetObject.contains("opn") == false
+                || datasheetObject.contains("subcategory") == false)
+        {
+            qCWarning(logCategoryDocumentManager) << "datasheet object is not complete";
+            continue;
+        }
+
+        QString category = datasheetObject.value("category").toString();
+        QString uri = datasheetObject.value("datasheet").toString();
+        QString name = datasheetObject.value("name").toString();
+
+        DocumentItem *di = new DocumentItem(uri, name, category);
+        datasheetList.append(di);
+
+        // We have encountered at least one datasheet in the "datasheets" list, so we don't need to parse the datasheet csv file
+        parseDatasheetCSV = false;
+    }
+
     QJsonArray documentArray = data["documents"].toArray();
-    for (const QJsonValue &documentValue : documentArray) {
+    for (const QJsonValueRef documentValue : documentArray) {
         QJsonObject documentObject = documentValue.toObject();
 
         if (documentObject.contains("category") == false
@@ -104,8 +131,11 @@ void ClassDocuments::populateModels(QJsonObject data)
 
         if (category == "view") {
             if (name == "datasheet") {
-                //for datasheets, parse csv file
-                populateDatasheetList(uri, datasheetList);
+                if (parseDatasheetCSV) {
+                    //for datasheets, parse csv file
+                    qCDebug(logCategoryDocumentManager) << "parsing datasheet csv file";
+                    populateDatasheetList(uri, datasheetList);
+                }
             } else {
                 DocumentItem *di = new DocumentItem(uri, prettyName, name);
                 pdfList.append(di);
@@ -123,6 +153,29 @@ void ClassDocuments::populateModels(QJsonObject data)
             qCWarning(logCategoryDocumentManager) << "unknown category" << category;
         }
     }
+
+    // TODO: CS-830 - Iterate over firmware list here.
+    /*
+    QJsonArray firmwareArray = data["firmwares"].toArray();
+    for (const QJsonValueRef firmwareValue : firmwareArray) {
+        QJsonObject documentObject = firmwareValue.toObject();
+
+        if (documentObject.contains("uri") == false
+                || documentObject.contains("md5")  == false
+                || documentObject.contains("name") == false
+                || documentObject.contains("timestamp")  == false
+                || documentObject.contains("version")  == false) {
+
+            qCWarning(logCategoryDocumentManager) << "firmware object is not complete";
+            continue;
+        }
+
+        // TODO: write rest of code
+    }
+    */
+
+    // TODO: CS-831 - Iterate over control views list here.
+    // QJsonArray controlViewArray = data["control_views"].toArray();
 
     pdfModel_.populateModel(pdfList);
     datasheetModel_.populateModel(datasheetList);
