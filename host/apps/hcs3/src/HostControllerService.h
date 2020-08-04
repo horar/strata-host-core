@@ -101,6 +101,7 @@ public slots:
     void sendPlatformDocumentsMessage(
             const QByteArray &clientId,
             const QString &classId,
+            const QJsonArray &datasheetList,
             const QJsonArray &documentList,
             const QJsonArray &firmwareList,
             const QJsonArray &controlViewList,
@@ -144,11 +145,12 @@ private:
 
     bool parseConfig(const QString& config);
 
+    LoggingAdapter dbLogAdapter_;       // should be first, so it will be destroyed last (so we can use logs in destructor)
+    LoggingAdapter clientsLogAdapter_;  // should be first, so it will be destroyed last (so we can use logs in destructor)
+
     BoardController boardsController_;
     ClientsController clients_;     //UI or other clients
     Database db_;
-    LoggingAdapter dbLogAdapter_;
-    LoggingAdapter clientsLogAdapter_;
     QNetworkAccessManager networkManager_;
     strata::DownloadManager downloadManager_;
     StorageManager storageManager_;

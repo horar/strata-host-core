@@ -1,6 +1,7 @@
 .pragma library
 .import QtQuick 2.0 as QtQuickModule
 .import "uuid_map.js" as UuidMap
+.import "constants.js" as Constants
 
 .import tech.strata.logger 1.0 as LoggerModule
 
@@ -326,6 +327,7 @@ function updateState(event, data)
 
             case events.PLATFORM_CONNECTED_EVENT:
                 console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Platform connected, class_id:", data.class_id, "device_id:", data.device_id)
+
                 let view_index = -1
                 let connected_view
 
@@ -337,7 +339,7 @@ function updateState(event, data)
                         if (connected_view.device_id === data.device_id) {
                             view_index = j
                             break
-                        } else if (connected_view.device_id === ""){
+                        } else if (connected_view.device_id === Constants.NULL_DEVICE_ID){
                             view_index = j
                         }
                     }

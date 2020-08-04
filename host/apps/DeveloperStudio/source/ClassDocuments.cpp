@@ -90,6 +90,33 @@ void ClassDocuments::populateModels(QJsonObject data)
         return;
     }
 
+    // Populate datasheetList if the supplied jsonObject contains any datasheet information in the datasheets property
+    bool parseDatasheetCSV = true;
+    QJsonArray datasheetArray = data["datasheets"].toArray();
+    for (const QJsonValueRef value : datasheetArray) {
+        QJsonObject datasheetObject = value.toObject();
+
+        if (datasheetObject.contains("category") == false
+                || datasheetObject.contains("datasheet") == false
+                || datasheetObject.contains("name") == false
+                || datasheetObject.contains("opn") == false
+                || datasheetObject.contains("subcategory") == false)
+        {
+            qCWarning(logCategoryDocumentManager) << "datasheet object is not complete";
+            continue;
+        }
+
+        QString category = datasheetObject.value("category").toString();
+        QString uri = datasheetObject.value("datasheet").toString();
+        QString name = datasheetObject.value("name").toString();
+
+        DocumentItem *di = new DocumentItem(uri, name, category);
+        datasheetList.append(di);
+
+        // We have encountered at least one datasheet in the "datasheets" list, so we don't need to parse the datasheet csv file
+        parseDatasheetCSV = false;
+    }
+
     QJsonArray documentArray = data["documents"].toArray();
     for (const QJsonValueRef documentValue : documentArray) {
         QJsonObject documentObject = documentValue.toObject();
@@ -110,8 +137,11 @@ void ClassDocuments::populateModels(QJsonObject data)
 
         if (category == "view") {
             if (name == "datasheet") {
-                //for datasheets, parse csv file
-                populateDatasheetList(uri, datasheetList);
+                if (parseDatasheetCSV) {
+                    //for datasheets, parse csv file
+                    qCDebug(logCategoryDocumentManager) << "parsing datasheet csv file";
+                    populateDatasheetList(uri, datasheetList);
+                }
             } else {
                 DocumentItem *di = new DocumentItem(uri, prettyName, name);
                 pdfList.append(di);

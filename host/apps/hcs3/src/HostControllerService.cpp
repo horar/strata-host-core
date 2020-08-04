@@ -19,9 +19,9 @@
 
 HostControllerService::HostControllerService(QObject* parent)
     : QObject(parent),
-      db_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString()),
       dbLogAdapter_("strata.hcs.database"),
       clientsLogAdapter_("strata.hcs.clients"),
+      db_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString()),
       downloadManager_(&networkManager_),
       storageManager_(&downloadManager_)
 {
@@ -265,6 +265,7 @@ void HostControllerService::sendPlatformDocumentsProgressMessage(
 void HostControllerService::sendPlatformDocumentsMessage(
         const QByteArray &clientId,
         const QString &classId,
+        const QJsonArray &datasheetList,
         const QJsonArray &documentList,
         const QJsonArray &firmwareList,
         const QJsonArray &controlViewList,
@@ -278,6 +279,7 @@ void HostControllerService::sendPlatformDocumentsMessage(
     payload.insert("class_id", classId);
 
     if (error.isEmpty()) {
+        payload.insert("datasheets", datasheetList);
         payload.insert("documents", documentList);
         payload.insert("firmwares", firmwareList);
         payload.insert("control_views", controlViewList);

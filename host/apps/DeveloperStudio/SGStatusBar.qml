@@ -7,6 +7,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
 import "qrc:/js/login_utilities.js" as Authenticator
+import "qrc:/js/constants.js" as Constants
 import "qrc:/partial-views"
 import "qrc:/partial-views/status-bar"
 import "qrc:/partial-views/help-tour"
@@ -110,7 +111,7 @@ Rectangle {
             // demonstration tab set for help tour
             id: helpTab
             class_id: "0"
-            device_id: ""
+            device_id: Constants.NULL_DEVICE_ID
             view: "control"
             index: 0
             connected: true

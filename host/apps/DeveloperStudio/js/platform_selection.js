@@ -2,6 +2,7 @@
 .import "navigation_control.js" as NavigationControl
 .import "uuid_map.js" as UuidMap
 .import "qrc:/js/platform_filters.js" as PlatformFilters
+.import "constants.js" as Constants
 
 .import tech.strata.logger 1.0 as LoggerModule
 .import tech.strata.commoncpp 1.0 as CommonCpp
@@ -136,7 +137,7 @@ function generatePlatform (platform) {
 
     platform.error = false
     platform.connected = false  // != device_id, as device may be bound but not connected (i.e. view_open)
-    platform.device_id = ""
+    platform.device_id = Constants.NULL_DEVICE_ID
     platform.visible = true
     platform.view_open = false
     platform.ui_exists = (ui_location !== "")
@@ -219,9 +220,8 @@ function refreshFirmwareVersion(platform) {
     Determine if device was already connected (present in most recent connected_platform_list_json)
 */
 function devicePreviouslyConnected(device_id) {
-    let device_id_string = String(device_id);
     for (let i = 0; i < previouslyConnected.length; i++) {
-        if (String(previouslyConnected[i].device_id) === device_id_string) {
+        if (previouslyConnected[i].device_id === device_id) {
             // device previously connected: keep status, remove from previouslyConnected list
             previouslyConnected.splice(i, 1);
             return true
@@ -235,10 +235,9 @@ function devicePreviouslyConnected(device_id) {
 */
 function addConnectedPlatform(platform) {
     let class_id_string = String(platform.class_id);
-    let device_id_string = String(platform.device_id);
 
     if (classMap.hasOwnProperty(class_id_string)) {
-        connectListing(class_id_string, device_id_string, platform.firmware_version)
+        connectListing(class_id_string, platform.device_id, platform.firmware_version)
     } else if (class_id_string !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id_string)) {
         // unlisted platform connected: no entry in DP platform list, but UI found in UuidMap
         console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unlisted platform connected:", class_id_string);
@@ -250,7 +249,7 @@ function addConnectedPlatform(platform) {
     }
 
     let data = {
-        "device_id": device_id_string,
+        "device_id": platform.device_id,
         "class_id": class_id_string,
         "firmware_version": platform.firmware_version
     }
@@ -261,7 +260,7 @@ function addConnectedPlatform(platform) {
     Update existing listing's 'connected' state
     OR add duplicate listing when 2 boards with same class_id connected
 */
-function connectListing(class_id_string, device_id_string, firmware_version) {
+function connectListing(class_id_string, device_id, firmware_version) {
     let found_visible = false
     let selector_listing
     let selector_index = -1
@@ -273,10 +272,10 @@ function connectListing(class_id_string, device_id_string, firmware_version) {
     //    4) generate new listing
     for (let index of classMap[class_id_string].selector_listings) {
         selector_listing = platformSelectorModel.get(index)
-        if (selector_listing.device_id === device_id_string) {
+        if (selector_listing.device_id === device_id) {
             selector_index = index
             break
-        } else if (selector_listing.device_id === "" && found_visible === false) {
+        } else if (selector_listing.device_id === Constants.NULL_DEVICE_ID && found_visible === false) {
             selector_index = index
             if (selector_listing.visible) {
                 found_visible = true
@@ -293,8 +292,8 @@ function connectListing(class_id_string, device_id_string, firmware_version) {
 
     selector_listing = platformSelectorModel.get(selector_index)
     selector_listing.connected = true
-    selector_listing.device_id = device_id_string
     selector_listing.firmware_version = firmware_version
+    selector_listing.device_id = device_id
     selector_listing.visible = true
     let available = copyObject(copyObject(selector_listing.available))
     available.unlisted = false // override unlisted to show hidden listing when physical board present
@@ -315,7 +314,7 @@ function openPlatformView(platform) {
         "firmware_version": platform.firmware_version
     }
 
-    if (selector_listing.connected === false || selector_listing.ui_exists === false || platform.device_id === "" || platform.available.control === false) {
+    if (selector_listing.connected === false || selector_listing.ui_exists === false || platform.device_id === Constants.NULL_DEVICE_ID || platform.available.control === false) {
         data.view = "collateral"
         data.connected = false
     }
@@ -327,9 +326,8 @@ function openPlatformView(platform) {
     Disconnect listing, reset completely if no related PlatformView is open
 */
 function disconnectPlatform(platform) {
-    let device_id_string = String(platform.device_id)
     let class_id_string = String(platform.class_id)
-    let selector_listing = getDeviceListing(class_id_string, device_id_string)
+    let selector_listing = getDeviceListing(class_id_string, platform.device_id)
 
     selector_listing.connected = false
 
@@ -338,7 +336,7 @@ function disconnectPlatform(platform) {
     }
 
     let data = {
-        "device_id": device_id_string,
+        "device_id": platform.device_id,
         "class_id": class_id_string
     }
     NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, data)
@@ -349,7 +347,7 @@ function disconnectPlatform(platform) {
     Remove duplicate listings, leaving last listing visible
 */
 function resetListing(selector_listing) {
-    selector_listing.device_id = ""
+    selector_listing.device_id = Constants.NULL_DEVICE_ID
     selector_listing.available = copyObject(classMap[selector_listing.class_id].original_listing.available)
 
     if (selector_listing.error) {
@@ -371,10 +369,12 @@ function resetListing(selector_listing) {
 /*
     Find platform listing in model for a given device_id
 */
-function getDeviceListing(class_id_string, device_id_string) {
-    for (let index of classMap[class_id_string].selector_listings) {
-        if (platformSelectorModel.get(index).device_id === device_id_string) {
-            return platformSelectorModel.get(index)
+function getDeviceListing(class_id_string, device_id) {
+    if (classMap[class_id_string]) {
+        for (let index of classMap[class_id_string].selector_listings) {
+            if (platformSelectorModel.get(index).device_id === device_id) {
+                return platformSelectorModel.get(index)
+            }
         }
     }
     return null
@@ -384,12 +384,14 @@ function getDeviceListing(class_id_string, device_id_string) {
     Set view_open state to false, unbind device_id and reset listing if no longer connected
 */
 function closePlatformView (platform) {
-    let selector_listing = getDeviceListing(String(platform.class_id), String(platform.device_id))
+    let selector_listing = getDeviceListing(String(platform.class_id), platform.device_id)
 
-    selector_listing.view_open = false
+    if (selector_listing !== null) {
+        selector_listing.view_open = false
 
-    if (selector_listing.connected === false) {
-        resetListing(selector_listing)
+        if (selector_listing.connected === false) {
+            resetListing(selector_listing)
+        }
     }
 }
 
@@ -419,7 +421,7 @@ function generateErrorListing (platform) {
         "verbose_name" : "Unknown Platform",
         "connected" : true,
         "class_id" :  String(platform.class_id),
-        "device_id":  String(platform.device_id),
+        "device_id":  platform.device_id,
         "opn": "Class id: " +  String(platform.class_id),
         "description": "Strata does not recognize this class_id. Updating Strata may fix this problem.",
         "image": "", // Assigns 'not found' image

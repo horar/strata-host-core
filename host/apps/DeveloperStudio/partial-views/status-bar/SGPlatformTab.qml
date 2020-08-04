@@ -17,7 +17,7 @@ Item {
     property string view: model.view
     property string name: model.name
     property string class_id: model.class_id
-    property string device_id: model.device_id
+    property var device_id: model.device_id
     property bool connected: model.connected
     property var available: model.available
     property int index: model.index
