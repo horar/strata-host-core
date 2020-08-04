@@ -24,7 +24,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/ResourceLoader.cpp
     source/DocumentListModel.cpp
     source/DownloadDocumentListModel.cpp
-    source/FirmwareListModel.cpp
+    source/VersionedListModel.cpp
     source/ClassDocuments.cpp
     $<IF:$<CONFIG:Release>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
 

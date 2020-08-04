@@ -34,7 +34,7 @@ DocumentListModel *ClassDocuments::pdfListModel()
     return &pdfModel_;
 }
 
-FirmwareListModel *ClassDocuments::firmwareListModel()
+VersionedListModel *ClassDocuments::firmwareListModel()
 {
     return &firmwareModel_;
 }
@@ -80,7 +80,7 @@ void ClassDocuments::populateModels(QJsonObject data)
     QList<DocumentItem* > pdfList;
     QList<DocumentItem* > datasheetList;
     QList<DownloadDocumentItem* > downloadList;
-    QList<FirmwareItem* > firmwareList;
+    QList<VersionedItem* > firmwareList;
 
     if (data.contains("error")) {
         qCWarning(logCategoryDocumentManager) << "Document download error:" << data["error"].toString();
@@ -183,7 +183,7 @@ void ClassDocuments::populateModels(QJsonObject data)
         QString version = documentObject["version"].toString();
         QString timestamp = documentObject["timestamp"].toString();
 
-        FirmwareItem *fi = new FirmwareItem(uri, md5, name, timestamp, version);
+        VersionedItem *fi = new VersionedItem(uri, md5, name, timestamp, version);
         firmwareList.append(fi);
     }
 
