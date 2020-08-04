@@ -10,7 +10,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/js/uuid_map.js" as UuidMap
-import "qrc:/js/platform_selection.js" as PlatformSelection
+import "qrc:/js/constants.js" as Constants
 
 Item {
     id: root
@@ -93,7 +93,7 @@ Item {
                                         let data = {
                                             "class_id": uuid,
                                             "name": model.fileName,
-                                            "device_id": 2147483648, // +1 outside range of valid 32 bit signed device_ids
+                                            "device_id": Constants.DEBUG_DEVICE_ID,
                                             "view": "control",
                                             "connected": true,
                                             "available": {
