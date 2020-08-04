@@ -44,7 +44,7 @@ Set-Variable "HCSTCPEndpoint" "tcp://127.0.0.1:5563"
 
 # Define paths
 Set-Variable "SDSRootDir"    "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
-Set-Variable "HCSAppDataDir" "$Env:AppData\ON Semiconductor\hcs"
+Set-Variable "HCSAppDataDir" "$Env:AppData\ON Semiconductor\Host Controller Service"
 Set-Variable "HCSConfigFile" "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
 Set-Variable "HCSExecFile"   "$SDSRootDir\hcs.exe"
 Set-Variable "SDSExecFile"   "$SDSRootDir\Strata Developer Studio.exe"
