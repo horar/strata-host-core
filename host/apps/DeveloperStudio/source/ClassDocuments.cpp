@@ -193,7 +193,7 @@ void ClassDocuments::populateModels(QJsonObject data)
         firmwareList.append(fi);
     }
 
-    QJsonArray controlViewArray = data["firmwares"].toArray();
+    QJsonArray controlViewArray = data["control_views"].toArray();
     for (const QJsonValueRef controlViewValue : controlViewArray) {
         QJsonObject documentObject = controlViewValue.toObject();
 

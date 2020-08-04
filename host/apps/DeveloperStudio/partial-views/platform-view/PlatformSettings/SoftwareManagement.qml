@@ -9,12 +9,13 @@ ColumnLayout {
 
     property bool upToDate
     property var activeVersion: null
+    property var latestVersion: null
     property var classDocuments: null
     property int controlViewCount: classDocuments.controlViewListModel.count
 
     Component.onCompleted: {
         classDocuments = sdsModel.documentManager.getClassDocuments(platformStack.class_id)
-        controlViewList.controlViewRepeater.model = classDocuments.controlViewListModel
+        console.info("CLASS DOCUMENTS = ", JSON.stringify(classDocuments))
     }
 
     onControlViewCountChanged: {
@@ -23,7 +24,7 @@ ColumnLayout {
 
     Connections {
         target: coreInterface
-        onDownloadSingleFileProgress: {
+        onDownloadPlatformSingleFileProgress: {
             if (payload.device_id === platformStack.device_id) {
                 console.info("PROGRESS", JSON.stringify(payload))
             }
@@ -39,12 +40,10 @@ ColumnLayout {
 
     function matchVersion() {
         for (let i = 0; i < classDocuments.controlViewListModel.count; i++) {
-            if (classDocuments.controlViewListModel[i].filepath !== "") {
+            if (classDocuments.controlViewListModel[i].installed) {
                 activeVersion = classDocuments.controlViewListModel[i]
-                classDocuments.controlViewListModel.setInstalled(i, true)
                 upToDate = isUpToDate()
-            } else {
-                classDocuments.controlViewListModel.setInstalled(i, false)
+                break;
             }
         }
     }
@@ -52,9 +51,12 @@ ColumnLayout {
     function isUpToDate() {
         for (let i = 0; i < classDocuments.controlViewListModel.count; i++) {
             if (version !== activeVersion.version && isVersionGreater(classDocuments.controlViewListModel[i].version)) {
+                // if the version is greater, then set the latestVersion here
+                latestVersion = classDocuments.controlViewListModel[i];
                 return false;
             }
         }
+        latestVersion = activeVersion;
         return true;
     }
 
@@ -153,7 +155,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.topMargin: 15
         color: "#eee"
-        visible: !software.upToDate
+        visible: !software.upToDate && latestVersion !== null
 
         ColumnLayout {
             id: notUpToDateColumn
@@ -204,7 +206,7 @@ ColumnLayout {
                         Layout.margins: 10
 
                         Text {
-                            text: "Update to Logic Gates v1.2.1, released 6/7/2020/"
+                            text: "Update to " + platformStack.class_id + " v" + software.latestVersion.version + " released " + software.latestVersion.timestamp
                             font.bold: true
                             font.pixelSize: 18
                             color: "#666"

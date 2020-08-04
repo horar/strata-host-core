@@ -22,7 +22,7 @@ Rectangle {
         spacing: 30
 
         // Todo: to be implemented in CS-831, CS-832
-//        SoftwareManagement { }
+        SoftwareManagement { }
 
         FirmwareManagement { }
 
