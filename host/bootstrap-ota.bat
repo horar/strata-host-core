@@ -42,21 +42,33 @@ cmake --version
 echo "-----------------------------------------------------------------------------"
 qmake --version
 echo "-----------------------------------------------------------------------------"
+
 echo " Checking QtIFW binarycreator..."
-binarycreator --help >nul 2>&1 && (
+where binarycreator >nul 2>nul
+IF %ERRORLEVEL% EQU 0 (
     echo "QtIFW's binarycreator found"
-) || (
+) ELSE (
     echo "QtIFW's binarycreator is missing from path! Aborting."
     Exit /B 1
 )
 
-REM echo " Checking QtIFW repogen..."
-REM repogen >nul 2>&1 && (
-REM     echo "QtIFW's repogen found"
-REM ) || (
-REM     echo "QtIFW's repogen is missing from path! Aborting."
-REM     Exit /B 1
-REM )
+echo " Checking QtIFW repogen..."
+where repogen >nul 2>nul
+IF %ERRORLEVEL% EQU 0 (
+    echo "QtIFW's repogen found"
+) ELSE (
+    echo "QtIFW's repogen is missing from path! Aborting."
+    Exit /B 1
+)
+
+echo " Checking signtool..."
+where signtool >nul 2>nul
+IF %ERRORLEVEL% EQU 0 (
+    echo "signtool found"
+) ELSE (
+    echo "signtool is missing from path! Aborting."
+    Exit /B 1
+)
 
 echo "-----------------------------------------------------------------------------"
 echo " Actual/local branch list.."
@@ -215,6 +227,37 @@ if not exist packages\com.onsemi.strata.qt\data\vc_redist.x64.exe (
 move packages\com.onsemi.strata.qt\data\vc_redist.x64.exe packages_win\com.onsemi.strata.utils.common.vcredist\data\StrataUtils\VC_REDIST\
 
 echo "======================================================================="
+echo " Signing Binaries.."
+echo "======================================================================="
+
+set SIGNING_CERT=..\..\deployment\Strata\sign\code_signing.p12
+set SIGNING_PASS="P@ssw0rd!"
+
+echo "Cert: %SIGNING_CERT%"
+
+echo "Signing packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.exe"
+signtool sign -f "%SIGNING_CERT%" -p %SIGNING_PASS% "packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.exe"
+IF %ERRORLEVEL% EQU 0 (
+    echo "Successfully signed packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.exe"
+) ELSE (
+    echo "======================================================================="
+    echo " Failed to sign packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.exe!"
+    echo "======================================================================="
+    Exit /B 3
+)
+
+echo "Signing packages\com.onsemi.strata.hcs\data\hcs.exe"
+signtool sign -f "%SIGNING_CERT%" -p %SIGNING_PASS% "packages\com.onsemi.strata.hcs\data\hcs.exe"
+IF %ERRORLEVEL% EQU 0 (
+    echo "Successfully signed packages\com.onsemi.strata.hcs\data\hcs.exe"
+) ELSE (
+    echo "======================================================================="
+    echo " Failed to sign packages\com.onsemi.strata.hcs\data\hcs.exe!"
+    echo "======================================================================="
+    Exit /B 3
+)
+
+echo "======================================================================="
 echo " Preparing offline installer.."
 echo "======================================================================="
 
@@ -225,6 +268,21 @@ binarycreator ^
     -p .\packages ^
     -p .\packages_win ^
     strata-setup-offline
+
+REM sign the offline Installer
+signtool sign ^
+    -f "%SIGNING_CERT%" ^
+    -p %SIGNING_PASS% ^
+    "strata-setup-offline.exe"
+	
+IF %ERRORLEVEL% EQU 0 (
+    echo "Successfully signed the offline installer"
+) ELSE (
+    echo "======================================================================="
+    echo " Failed to sign the offline installer!"
+    echo "======================================================================="
+    Exit /B 3
+)
 	
 echo "======================================================================="
 echo " Preparing online installer.."
@@ -237,6 +295,21 @@ binarycreator ^
     -p .\packages ^
     -p .\packages_win ^
     strata-setup-online
+
+REM sign the online Installer
+signtool sign ^
+    -f "%SIGNING_CERT%" ^
+    -p %SIGNING_PASS% ^
+    "strata-setup-online.exe"
+	
+IF %ERRORLEVEL% EQU 0 (
+    echo "Successfully signed the online installer"
+) ELSE (
+    echo "======================================================================="
+    echo " Failed to sign the online installer!"
+    echo "======================================================================="
+    Exit /B 3
+)
 
 echo "======================================================================="
 echo " Preparing online repository.."

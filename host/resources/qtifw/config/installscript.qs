@@ -23,6 +23,11 @@ function Controller()
     if(installer.containsValue("forceUninstall") && ((installer.value("forceUninstall").toLowerCase() == "true") || (installer.value("forceUninstall") == "1"))) {
         forceUninstall = true;
     }
+	
+	console.log("Is PackageManager: " + forcePackageManager);
+	console.log("Is Update: " + forceUpdate);
+	console.log("Is Uninstall: " + forceUninstall);
+	console.log("Is Silent: " + isSilent);
 
     if (isSilent) {
         // do not use this or it will be impossible to cancel the installer
@@ -35,9 +40,10 @@ function Controller()
         })
         
         if(!installer.isInstaller()) {
-            if(!forceUninstall && !forceUpdate && !forceUninstall) {
+            if(!forcePackageManager && !forceUpdate && !forceUninstall) {
                 isSilent = false;
                 installer.setValue("isSilent_internal","false");
+				console.log("disabling isSilent");
             }
         }
     }
