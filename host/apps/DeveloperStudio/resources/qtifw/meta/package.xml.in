@@ -5,7 +5,7 @@
     <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <!--Does it makes sense to end-user to not install this?-->
-    <ForcedInstallation>true</ForcedInstallation>
+    <Default>true</Default>
     <SortingPriority>90</SortingPriority>
-    <Dependencies>com.onsemi.strata.components, com.onsemi.strata.hcs, com.onsemi.strata.qt, com.onsemi.strata.utils.common.vcredist, com.onsemi.strata.utils.ftdi</Dependencies>
+    <Dependencies>com.onsemi.strata.components, com.onsemi.strata.hcs</Dependencies>
 </Package>

@@ -182,8 +182,8 @@ Controller.prototype.ReadyForInstallationPageCallback = function () {
 }
 
 Controller.prototype.PerformInstallationPageCallback = function () {
-    if (isSilent)
-        gui.clickButton(buttons.CommitButton);
+    //if (isSilent)
+    //    gui.clickButton(buttons.CommitButton);
 }
 
 Controller.prototype.FinishedPageCallback = function () {

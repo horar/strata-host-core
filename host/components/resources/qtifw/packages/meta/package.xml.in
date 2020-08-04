@@ -4,6 +4,6 @@
     <Description>@PROJECT_DESCRIPTION@</Description>
     <Version>@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@-@BUILD_ID@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
-    <ForcedInstallation>true</ForcedInstallation>
+    <Default>true</Default>
     <SortingPriority>60</SortingPriority>
 </Package>
