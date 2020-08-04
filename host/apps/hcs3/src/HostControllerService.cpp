@@ -19,9 +19,9 @@
 
 HostControllerService::HostControllerService(QObject* parent)
     : QObject(parent),
-      db_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString()),
       dbLogAdapter_("strata.hcs.database"),
       clientsLogAdapter_("strata.hcs.clients"),
+      db_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString()),
       downloadManager_(&networkManager_),
       storageManager_(&downloadManager_)
 {
