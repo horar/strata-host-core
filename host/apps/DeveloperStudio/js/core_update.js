@@ -71,10 +71,10 @@ function parseVersionInfo (payload) {
                 }
             }
         }
-
+    } else if (payload.hasOwnProperty("error_string") && payload.error_string.length > 0) {
+        console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, payload.error_string);
     } else {
         console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Core update notification error. Notification is malformed:", JSON.stringify(payload));
-        return
     }
 }
 
