@@ -16,28 +16,36 @@ var settings_object
 var notification_mode
 
 function initialize (newCoreInterface, newUpdateContainer) {
-    coreInterface = newCoreInterface
-    updateContainer = newUpdateContainer
-
-    settings_object = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"CoreUpdate\";}", Qt.application)
-    getUserNotificationModeFromINIFile()
-    getLastKnownVersionFromINIFile()
+    // No-op if not on Windows
+    if (Qt.platform.os === "windows") {
+        coreInterface = newCoreInterface
+        updateContainer = newUpdateContainer
+        settings_object = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"CoreUpdate\";}", Qt.application)
+        getUserNotificationModeFromINIFile()
+        getLastKnownVersionFromINIFile()
+    }
 
     isInitialized = true
 }
 
 function getUpdateInformation () {
-    const get_version_info = {
-        "hcs::cmd": "get_version_info"
+    // No-op if not on Windows
+    if (Qt.platform.os === "windows") {
+        const get_version_info = {
+            "hcs::cmd": "get_version_info"
+        }
+        coreInterface.sendCommand(JSON.stringify(get_version_info));
     }
-    coreInterface.sendCommand(JSON.stringify(get_version_info));
 }
 
 function updateApplication () {
-    const update_application = {
-        "hcs::cmd": "update_application"
+    // No-op if not on Windows
+    if (Qt.platform.os === "windows") {
+        const update_application = {
+            "hcs::cmd": "update_application"
+        }
+        coreInterface.sendCommand(JSON.stringify(update_application));
     }
-    coreInterface.sendCommand(JSON.stringify(update_application));
 }
 
 function parseVersionInfo (payload) {

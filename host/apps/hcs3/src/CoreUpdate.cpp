@@ -21,18 +21,6 @@ void CoreUpdate::handleUpdateApplicationResponse(const QByteArray &clientId, con
     emit updateApplicationResponseRequested(clientId, errorString);
 }
 
-void CoreUpdate::requestVersionInfo(const QByteArray &clientId) {
-    const QString currentVersion = getCurrentVersion(clientId);
-
-    if (!currentVersion.isEmpty()) {
-        const QString latestVersion = getLatestVersion(clientId);
-
-        if (!latestVersion.isEmpty()) {
-            handleVersionInfoResponse(clientId, currentVersion, latestVersion);
-        }
-    }
-}
-
 QString CoreUpdate::getLatestVersion(const QByteArray &clientId) {
     // Retrieve latest version info from DB
     std::string latest_version_body;
@@ -109,6 +97,35 @@ QString CoreUpdate::findVersionFromComponentsXml(const QDomDocument &xmlDocument
     return currentVersion;
 }
 
+/*
+    No-op if not on Windows
+*/
+#if !defined(Q_OS_WIN)
+void CoreUpdate::requestVersionInfo(const QByteArray &clientId) {
+    qCCritical(logCategoryHcs) << "CoreUpdate functionality is available only on Windows OS";
+    handleVersionInfoResponse(clientId, QString(), QString(), "CoreUpdate functionality is available only on Windows OS");
+}
+#else
+void CoreUpdate::requestVersionInfo(const QByteArray &clientId) {
+    const QString currentVersion = getCurrentVersion(clientId);
+    if (!currentVersion.isEmpty()) {
+        const QString latestVersion = getLatestVersion(clientId);
+        if (!latestVersion.isEmpty()) {
+            handleVersionInfoResponse(clientId, currentVersion, latestVersion);
+        }
+    }
+}
+#endif
+
+/*
+    No-op if not on Windows
+*/
+#if !defined(Q_OS_WIN)
+void CoreUpdate::requestUpdateApplication(const QByteArray &clientId) {
+    qCCritical(logCategoryHcs) << "CoreUpdate functionality is available only on Windows OS";
+    handleVersionInfoResponse(clientId, QString(), QString(), "CoreUpdate functionality is available only on Windows OS");
+}
+#else
 void CoreUpdate::requestUpdateApplication(const QByteArray &clientId) {
     /*
 
@@ -122,3 +139,4 @@ void CoreUpdate::requestUpdateApplication(const QByteArray &clientId) {
 
     handleUpdateApplicationResponse(clientId, "Update finished!");
 }
+#endif
