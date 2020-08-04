@@ -68,7 +68,7 @@ function parseVersionInfo (payload) {
         }
 
         // Check if latest_version is newer than current_version
-        if (payload.current_version != payload.latest_version) {
+        if (payload.current_version !== payload.latest_version) {
             for (let i = 0; i < temp_latest_version.length; i++) {
                 if (parseInt(temp_latest_version[i]) > parseInt(temp_current_version[i])) {
                     console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Newer version available detected:", payload.latest_version)
