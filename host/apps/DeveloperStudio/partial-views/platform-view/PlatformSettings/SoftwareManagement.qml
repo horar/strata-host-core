@@ -23,10 +23,15 @@ ColumnLayout {
 
     Connections {
         target: coreInterface
+
+        onDownloadViewFinished: {
+            fillBar1.width = barBackground1.width;
+            console.info("Done downloading, ", JSON.stringify(payload))
+        }
+
         onDownloadPlatformSingleFileProgress: {
-            if (payload.device_id === platformStack.device_id) {
-                console.info("PROGRESS", JSON.stringify(payload))
-            }
+            console.info("PROGRESS", JSON.stringify(payload))
+
         }
     }
 
@@ -97,6 +102,7 @@ ColumnLayout {
         let obj = {};
 
         obj["uri"] = classDocuments.controlViewListModel.uri(index);
+        obj["md5"] = classDocuments.controlViewListModel.md5(index);
         obj["name"] = classDocuments.controlViewListModel.name(index);
         obj["version"] = classDocuments.controlViewListModel.version(index);
         obj["timestamp"] = classDocuments.controlViewListModel.timestamp(index);
@@ -233,9 +239,8 @@ ColumnLayout {
 
                             function getLatestVersionText() {
                                 if (software.latestVersion) {
-                                    let str = "Update to " + platformStack.class_id;
-
-                                    str += " v" + software.latestVersion.version;
+                                    let str = "Update to v";
+                                    str += software.latestVersion.version;
                                     str += ", released " + software.latestVersion.timestamp
                                     return str;
                                 }
@@ -286,25 +291,18 @@ ColumnLayout {
                                 color: "lime"
                                 height: barBackground1.height
                                 width: 0
-                                onVisibleChanged: {
-                                    if (visible)
-                                        timer1.start()
-                                }
+                            }
+                        }
 
-                                Timer {
-                                    id: timer1
-                                    interval: 16
-                                    running: false
-                                    repeat: true
-                                    onTriggered: {
-                                        if (fillBar1.width < barBackground1.width) {
-                                            fillBar1.width +=3
-                                        } else {
-                                            repeat = false
-                                        }
-                                    }
+                        function startDownload() {
+                            let updateCommand = {
+                                "hcs::cmd": "download_view",
+                                "payload": {
+                                    "url": software.latestVersion.uri,
+                                    "md5": software.latestVersion.md5
                                 }
                             }
+                            coreInterface.sendCommand(JSON.stringify(updateCommand));
                         }
                     }
                 }
@@ -317,6 +315,7 @@ ColumnLayout {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         downloadColumn1.visible = true
+                        downloadColumn1.startDownload();
                     }
                 }
             }

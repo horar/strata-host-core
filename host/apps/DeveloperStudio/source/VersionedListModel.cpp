@@ -103,6 +103,11 @@ QString VersionedListModel::uri(int index)
     return data(VersionedListModel::index(index, 0), UriRole).toString();
 }
 
+QString VersionedListModel::md5(int index)
+{
+    return data(VersionedListModel::index(index, 0), Md5Role).toString();
+}
+
 QString VersionedListModel::name(int index)
 {
     return data(VersionedListModel::index(index, 0), NameRole).toString();
