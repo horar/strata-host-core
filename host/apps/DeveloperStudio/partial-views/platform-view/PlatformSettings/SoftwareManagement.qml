@@ -25,6 +25,12 @@ ColumnLayout {
         target: coreInterface
 
         onDownloadViewFinished: {
+            // TODO: Unregister old version
+//            if (activeVersion) {
+//                sgResourceLoader.deleteResource(activeVersion.filepath)
+//            }
+//            sgResourceLoader.loadResource(payload.filepath)
+
             progressUpdateText.percent = 1.0
             activeVersion = latestVersion
             setUpToDateTimer.start()
