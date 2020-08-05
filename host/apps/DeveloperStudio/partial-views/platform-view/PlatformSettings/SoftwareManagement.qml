@@ -26,12 +26,8 @@ ColumnLayout {
 
         onDownloadViewFinished: {
             fillBar1.width = barBackground1.width;
-            console.info("Done downloading, ", JSON.stringify(payload))
-        }
-
-        onDownloadPlatformSingleFileProgress: {
-            console.info("PROGRESS", JSON.stringify(payload))
-
+            activeVersion = latestVersion
+            console.info("Done downloading control view ", JSON.stringify(payload))
         }
     }
 
@@ -52,18 +48,26 @@ ColumnLayout {
 
     function matchVersion() {
         for (let i = 0; i < controlViewCount; i++) {
+            // find the installed version (if any) and set it as activeVersion
             if (classDocuments.controlViewListModel.installed(i)) {
                 activeVersion = copyControlViewObject(i)
                 upToDate = isUpToDate();
-                break;
+                return;
             }
+        }
+
+        upToDate = false
+        latestVersion = getLatestVersion();
+
+        if (!latestVersion) {
+            console.error("Could not find any control views on server for class id:", platformStack.class_id)
         }
     }
 
     function isUpToDate() {
         for (let i = 0; i < controlViewCount; i++) {
             let version = classDocuments.controlViewListModel.version(i)
-            if (version !== activeVersion.version && isVersionGreater(version)) {
+            if (version !== activeVersion.version && isVersionGreater(activeVersion.version, version)) {
                 // if the version is greater, then set the latestVersion here
                 latestVersion = copyControlViewObject(i);
                 return false;
@@ -73,23 +77,43 @@ ColumnLayout {
         return true;
     }
 
-    function isVersionGreater(cmpVersion) {
-        let activeVersionArr = activeVersion.version.split('.').map(num => parseInt(num, 10));
-        let cmpVersionArr = cmpVersion.split('.').map(num => parseInt(num, 10));
+    function getLatestVersion() {
+        let latestVersionTemp;
 
-        // fill in 0s for each missing version (e.g) 1.5 -> 1.5.0
-        while (activeVersionArr.length < 3) {
-            activeVersionArr.push(0)
+        if (controlViewCount > 0) {
+            latestVersionTemp = copyControlViewObject(0);
+        } else {
+            return null;
         }
 
-        while (cmpVersionArr.length < 3) {
-            cmpVersionArr.push(0)
+        for (let i = 1; i < controlViewCount; i++) {
+            let version = classDocuments.controlViewListModel.version(i);
+            if (isVersionGreater(latestVersionTemp.version, version)) {
+                latestVersionTemp = copyControlViewObject(i);
+            }
+        }
+
+        return latestVersionTemp;
+    }
+
+    // checks if version 2 is greater than version 1
+    function isVersionGreater(version1, version2) {
+        let version1Arr = version1.split('.').map(num => parseInt(num, 10));
+        let version2Arr = version2.split('.').map(num => parseInt(num, 10));
+
+        // fill in 0s for each missing version (e.g) 1.5 -> 1.5.0
+        while (version1Arr.length < 3) {
+            version1Arr.push(0)
+        }
+
+        while (version2Arr.length < 3) {
+            version2Arr.push(0)
         }
 
         for (let i = 0; i < 3; i++) {
-            if (activeVersionArr[i] > cmpVersionArr[i]) {
+            if (version1Arr[i] > version2Arr[i]) {
                 return false;
-            } else if (activeVersionArr[i] < cmpVersionArr[i]) {
+            } else if (version1Arr[i] < version2Arr[i]) {
                 return true;
             }
         }
@@ -110,7 +134,6 @@ ColumnLayout {
 
         return obj;
     }
-
 
     Text {
         text: "Software Settings:"
@@ -162,15 +185,6 @@ ColumnLayout {
 
             Text {
                 text: "Up to date! No newer version available"
-            }
-        }
-
-        MouseArea {
-            anchors {
-                fill: viewUpToDate
-            }
-            onClicked: {
-                software.upToDate = false
             }
         }
     }

@@ -48,7 +48,7 @@ public:
     Q_INVOKABLE QString md5(int index);
     Q_INVOKABLE QString name(int index);
     Q_INVOKABLE QString timestamp(int index);
-    Q_INVOKABLE QString installed(int index);
+    Q_INVOKABLE bool installed(int index);
 
     enum {
         UriRole = Qt::UserRole,

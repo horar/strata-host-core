@@ -216,7 +216,6 @@ void ClassDocuments::populateModels(QJsonObject data)
         QString filepath = documentObject["filepath"].toString();
 
         VersionedItem *fi = new VersionedItem(uri, md5, name, timestamp, version, filepath);
-        qCDebug(logCategoryDocumentManager) << "APPENDING ITEM: " << version;
         controlViewList.append(fi);
     }
 

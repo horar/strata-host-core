@@ -250,6 +250,7 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
             if (downloadManager_->verifyFileChecksum(filePath, item.md5) == false) {
                 filePath.clear();
             }
+
             QJsonObject object {
                 {"uri", item.partialUri},
                 {"md5", item.md5},

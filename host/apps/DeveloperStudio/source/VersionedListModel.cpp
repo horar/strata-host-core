@@ -118,9 +118,9 @@ QString VersionedListModel::timestamp(int index)
     return data(VersionedListModel::index(index, 0), TimestampRole).toString();
 }
 
-QString VersionedListModel::installed(int index)
+bool VersionedListModel::installed(int index)
 {
-    return data(VersionedListModel::index(index, 0), InstalledRole).toString();
+    return data(VersionedListModel::index(index, 0), InstalledRole).toBool();
 }
 
 void VersionedListModel::setInstalled(int index, bool installed)
