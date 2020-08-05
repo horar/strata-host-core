@@ -40,7 +40,7 @@ Window {
 
             SGIcon {
                 id: alertIcon
-                source: Qt.colorEqual(alertRect.color, "red") ? "qrc:/sgimages/exclamation-circle-solid.svg" : "qrc:/sgimages/check-circle-solid.svg"
+                source: Qt.colorEqual(alertRect.color, "red") ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/check-circle.svg"
                 anchors {
                     left: alertRect.left
                     verticalCenter: alertRect.verticalCenter
