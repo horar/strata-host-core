@@ -113,6 +113,13 @@ public slots:
             const QString &filePath,
             const QString &errorString);
 
+    void sendControlViewDownloadProgressMessage(
+            const QByteArray &clientId,
+            const QString &filePath,
+            qint64 bytesReceived,
+            qint64 bytesTotal);
+
+
 private:
     void handleMessage(const PlatformMessage& msg);
 

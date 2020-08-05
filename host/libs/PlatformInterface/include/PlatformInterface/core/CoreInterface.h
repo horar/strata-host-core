@@ -83,6 +83,7 @@ signals:
 
     void firmwareProgress(QJsonObject payload);
     void downloadViewFinished(QJsonObject payload);
+    void downloadControlViewProgress(QJsonObject payload);
 
     // Platform Framework Signals
     void notification(QString payload);
