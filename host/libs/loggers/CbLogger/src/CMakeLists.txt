@@ -5,6 +5,7 @@ find_package(Qt5 ${VERSION_QT5}
 
 add_library(${PROJECT_NAME} STATIC
     CbLoggerSetup.cpp
+    LoggingQtCategories.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
