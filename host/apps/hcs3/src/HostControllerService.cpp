@@ -19,8 +19,6 @@
 
 HostControllerService::HostControllerService(QObject* parent)
     : QObject(parent),
-      dbLogAdapter_("strata.hcs.database"),
-      clientsLogAdapter_("strata.hcs.clients"),
       db_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString()),
       downloadManager_(&networkManager_),
       storageManager_(&downloadManager_)
@@ -47,14 +45,11 @@ bool HostControllerService::initialize(const QString& config)
         return false;
     }
 
-    db_.setLogAdapter(&dbLogAdapter_);
-    clients_.setLogAdapter(&clientsLogAdapter_);
-
     dispatcher_.setMsgHandler(std::bind(&HostControllerService::handleMessage, this, std::placeholders::_1) );
 
     rapidjson::Value& db_cfg = config_["database"];
 
-    if (!db_.open("strata_db")) {
+    if (db_.open("strata_db") == false) {
         qCCritical(logCategoryHcs) << "Failed to open database.";
         return false;
     }

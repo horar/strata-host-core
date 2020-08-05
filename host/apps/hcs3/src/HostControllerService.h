@@ -16,7 +16,6 @@
 #include "Dispatcher.h"
 #include "ClientsController.h"
 #include "Database.h"
-#include "LoggingAdapter.h"
 #include "BoardController.h"
 #include "FirmwareUpdateController.h"
 #include "StorageManager.h"
@@ -144,9 +143,6 @@ private:
     Client* getClientById(const QByteArray& client_id);
 
     bool parseConfig(const QString& config);
-
-    LoggingAdapter dbLogAdapter_;       // should be first, so it will be destroyed last (so we can use logs in destructor)
-    LoggingAdapter clientsLogAdapter_;  // should be first, so it will be destroyed last (so we can use logs in destructor)
 
     BoardController boardsController_;
     ClientsController clients_;     //UI or other clients
