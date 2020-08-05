@@ -9,6 +9,8 @@
 
 using std::string;
 
+namespace strata::loggers
+{
 QtMessageHandler g_qtLogCallback = nullptr;
 
 void c4LogCallback(C4LogDomain domain, C4LogLevel level, const char *fmt, va_list args)
@@ -41,3 +43,5 @@ void cbLoggerSetup(QtMessageHandler qtLogCallback)
     g_qtLogCallback = qtLogCallback;
     c4log_writeToCallback(kC4LogDebug, &c4LogCallback, false);
 }
+
+}  // namespace strat::loggers

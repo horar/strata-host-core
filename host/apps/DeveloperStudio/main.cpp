@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/resources/icons/app/on-logo.png"));
 
-    const QtLoggerSetup loggerInitialization(app);
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 13, 0))
     QtWebEngine::initialize();
