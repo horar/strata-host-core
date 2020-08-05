@@ -194,17 +194,16 @@ function parseConnectedPlatforms (connected_platform_list_json) {
 */
 function refreshFirmwareVersion(platform) {
     let class_id_string = String(platform.class_id);
-    let device_id_string = String(platform.device_id);
 
     if (classMap.hasOwnProperty(class_id_string)) {
         for (let index of classMap[class_id_string].selector_listings) {
             let selector_listing = platformSelectorModel.get(index)
-            if (selector_listing.device_id === device_id_string) {
+            if (selector_listing.device_id === platform.device_id) {
                 if (selector_listing.firmware_version !== platform.firmware_version) {
                     selector_listing.firmware_version = platform.firmware_version
                     for (let i = 0; i < NavigationControl.platform_view_model_.count; i++) {
                         let open_view = NavigationControl.platform_view_model_.get(i)
-                        if (open_view.class_id === class_id_string && open_view.device_id === device_id_string) {
+                        if (open_view.class_id === class_id_string && open_view.device_id === platform.device_id) {
                             open_view.firmware_version = platform.firmware_version
                             break
                         }
