@@ -33,12 +33,15 @@ pipeline {
         }
         stage('Deploy'){
             steps{
-                // TODO: To submit host binaries and control views to S3 & OTA API
-                // https://ons-sec.atlassian.net/browse/CS-808
-                sh "python ${env.workspace}/deployment/OTA/deploy.py --hcs '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin/hcs.exe' --dir '${BUILD_NAME}'"
-                sh "python ${env.workspace}/deployment/OTA/deploy.py --devstudio '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin/Strata Developer Studio.exe' --dir '${BUILD_NAME}'"
-                sh "python ${env.workspace}/deployment/OTA/deploy.py --views '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin' --dir '${BUILD_NAME}'"
-                sh "python ${env.workspace}/deployment/OTA/deploy.py --qmlcomponents '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin' --dir '${BUILD_NAME}'"
+                sh "python -m pip install -r ${env.workspace}/deployment/OTA/requirements.txt"
+                sh """python '${env.workspace}/deployment/OTA/deploy.py' \
+                    --dir '${BUILD_NAME}' \
+                    --hcs '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin/hcs.exe' \
+                    --devstudio '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin/Strata Developer Studio.exe' \
+                    --views '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin' \
+                    --qmlcomponents '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin' \
+                    --libs '${ROOT_BUILD_DIR}/${BUILD_NAME}/b/bin'
+                    """
                 archiveArtifacts artifacts: "${ROOT_BUILD_DIR}/${BUILD_NAME}/Strata*.exe", onlyIfSuccessful: true
             }
         }
