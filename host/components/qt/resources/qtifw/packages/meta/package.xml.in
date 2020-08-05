@@ -5,5 +5,5 @@
     <Version>@QT5_VERSION@-@BUILD_ID@</Version>
     <ReleaseDate>@BUILD_TIMESTAMP@</ReleaseDate>
     <ForcedInstallation>true</ForcedInstallation>
-    <SortingPriority>70</SortingPriority>
+    <SortingPriority>60</SortingPriority>
 </Package>

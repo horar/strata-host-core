@@ -1,16 +1,21 @@
 var isSilent = false;
+var startSDS = false;
 var forcePackageManager = false;
 var forceUpdate = false;
 var forceUninstall = false;
 var delayStart = 0;
 
 function Controller()
-{
+{    
     if(installer.containsValue("isSilent") && ((installer.value("isSilent").toLowerCase() == "true") || (installer.value("isSilent") == "1"))) {
         isSilent = true;
         installer.setValue("isSilent_internal","true");
     } else
         installer.setValue("isSilent_internal","false");    // must be always overwritten, so it is ignored in persistency
+    
+    if(installer.containsValue("startSDS") && ((installer.value("startSDS").toLowerCase() == "true") || (installer.value("startSDS") == "1"))) {
+        startSDS = true;
+    }
     
     if(installer.containsValue("forcePackageManager") && ((installer.value("forcePackageManager").toLowerCase() == "true") || (installer.value("forcePackageManager") == "1"))) {
         forcePackageManager = true;
@@ -23,29 +28,40 @@ function Controller()
     if(installer.containsValue("forceUninstall") && ((installer.value("forceUninstall").toLowerCase() == "true") || (installer.value("forceUninstall") == "1"))) {
         forceUninstall = true;
     }
-	
-	console.log("Is PackageManager: " + forcePackageManager);
-	console.log("Is Update: " + forceUpdate);
-	console.log("Is Uninstall: " + forceUninstall);
-	console.log("Is Silent: " + isSilent);
+    
+    console.log("Is forcePackageManager set: " + forcePackageManager);
+    console.log("Is forceUpdate set: " + forceUpdate);
+    console.log("Is forceUninstall set: " + forceUninstall);
+    console.log("Is isSilent set: " + isSilent);
 
     if (isSilent) {
-        // do not use this or it will be impossible to cancel the installer
-        //installer.autoRejectMessageBoxes();
-        //installer.setMessageBoxAutomaticAnswer("OverwriteTargetDirectory", QMessageBox.Yes);
-        //installer.setMessageBoxAutomaticAnswer("stopProcessesForUpdates", QMessageBox.Ignore);
-        
-        installer.installationFinished.connect(function () {
-            gui.clickButton(buttons.NextButton);
-        })
-        
         if(!installer.isInstaller()) {
             if(!forcePackageManager && !forceUpdate && !forceUninstall) {
                 isSilent = false;
                 installer.setValue("isSilent_internal","false");
-				console.log("disabling isSilent");
+                console.log("disabling isSilent");
             }
         }
+    }
+
+    if (isSilent) {
+        installer.installationFinished.connect(function () {
+            gui.clickButton(buttons.NextButton);
+        })
+                
+        installer.updateFinished.connect(function () {
+            gui.clickButton(buttons.NextButton);
+        })
+        
+        installer.uninstallationFinished.connect(function () {
+            gui.clickButton(buttons.NextButton);
+        })
+
+        // do not use this or it will be impossible to cancel the installer
+        //installer.autoRejectMessageBoxes();
+        //installer.setMessageBoxAutomaticAnswer("OverwriteTargetDirectory", QMessageBox.Yes);
+        //installer.setMessageBoxAutomaticAnswer("stopProcessesForUpdates", QMessageBox.Ignore);
+
     }
     
     var widget = gui.pageById(QInstaller.Introduction); // get the introduction wizard page
@@ -106,31 +122,28 @@ Controller.prototype.IntroductionPageCallback = function()
             var uninstallerRadioButton = widget.findChild("UninstallerRadioButton");
 
             if(forcePackageManager && (packageManagerRadioButton != null)) {
-				packageManagerRadioButton.setChecked(true);
-				if (isSilent) {
-					if(updaterRadioButton != null)
-						updaterRadioButton.visible = false;
-					if(uninstallerRadioButton != null)
-						uninstallerRadioButton.visible = false;
-				}
+                packageManagerRadioButton.show();
+                packageManagerRadioButton.setChecked(true);
+                if(updaterRadioButton != null)
+                    updaterRadioButton.hide();
+                if(uninstallerRadioButton != null)
+                    uninstallerRadioButton.hide();
             }
             if(forceUpdate && (updaterRadioButton != null)) {
-				updaterRadioButton.setChecked(true);
-				if (isSilent) {
-					if(packageManagerRadioButton != null)
-						packageManagerRadioButton.visible = false;
-					if(uninstallerRadioButton != null)
-						uninstallerRadioButton.visible = false;
-				}
+                updaterRadioButton.show();
+                updaterRadioButton.setChecked(true);
+                if(packageManagerRadioButton != null)
+                    packageManagerRadioButton.hide();
+                if(uninstallerRadioButton != null)
+                    uninstallerRadioButton.hide();
             }
             if(forceUninstall && (uninstallerRadioButton != null)) {
-				uninstallerRadioButton.setChecked(true);
-				if (isSilent) {
-					if(packageManagerRadioButton != null)
-						packageManagerRadioButton.visible = false;
-					if(updaterRadioButton != null)
-						updaterRadioButton.visible = false;
-				}
+                uninstallerRadioButton.show();
+                uninstallerRadioButton.setChecked(true);
+                if(packageManagerRadioButton != null)
+                    packageManagerRadioButton.hide();
+                if(updaterRadioButton != null)
+                    updaterRadioButton.hide();
             }
         }
     }
@@ -154,13 +167,14 @@ Controller.prototype.TargetDirectoryPageCallback = function () {
 }
 
 Controller.prototype.ComponentSelectionPageCallback = function () {
-    if (isSilent) {
-        var widget = gui.currentPageWidget();
-
-        // select the ui components
-        widget.selectAll();
-        //widget.selectComponent("com.onsemi.strata.devstudio");
-        gui.clickButton(buttons.NextButton);
+    var widget = gui.currentPageWidget();
+    if (widget != null) {
+        if (isSilent) {
+            // select the ui components
+            widget.selectAll();
+            //widget.selectComponent("com.onsemi.strata.devstudio");
+            gui.clickButton(buttons.NextButton);
+        }
     }
 }
 
@@ -182,8 +196,8 @@ Controller.prototype.ReadyForInstallationPageCallback = function () {
 }
 
 Controller.prototype.PerformInstallationPageCallback = function () {
-    //if (isSilent)
-    //    gui.clickButton(buttons.CommitButton);
+    if (isSilent)
+        gui.clickButton(buttons.CommitButton);
 }
 
 Controller.prototype.FinishedPageCallback = function () {
@@ -193,8 +207,9 @@ Controller.prototype.FinishedPageCallback = function () {
                                     + "Thank you for using ON Semiconductor. If you have any questions or in need of support, please contact your local sales representative.\n\n"
                                     + "Copyright 2020\n\n"
                                     );
-        if(installer.isInstaller() || installer.isUpdater()) {
-            widget.RunItCheckBox.setChecked(false);
+        if(installer.isInstaller() || installer.isUpdater() || installer.isPackageManager()) {
+            if(installer.containsValue("RunProgram") && (installer.value("RunProgram") != ""))
+                widget.RunItCheckBox.setChecked(startSDS);
         }
     }
 
@@ -204,14 +219,36 @@ Controller.prototype.FinishedPageCallback = function () {
 
 Controller.prototype.DynamicShortcutCheckBoxWidgetCallback = function()
 {
-    console.log("DynamicShortcutCheckBoxWidgetCallback isSilent : " + isSilent);
+    console.log("DynamicShortcutCheckBoxWidgetCallback called");
     
+    var install_SDS = true;
+    var component = installer.componentByName("com.onsemi.strata.devstudio");
+    if(component != null) {
+        console.log("component com.onsemi.strata.devstudio found, installation requested: " + component.installationRequested());
+        if (!component.installationRequested())
+            install_SDS = false;
+    } else {
+        console.log("component com.onsemi.strata.devstudio NOT found");
+    }
+
+	var widget = gui.currentPageWidget();
+	if (widget != null) {
+		var desktopCheckBox = widget.findChild("desktopCheckBox");
+		if(desktopCheckBox != null) {
+			if(install_SDS == true) {
+				desktopCheckBox.show();
+				desktopCheckBox.setChecked(installer.value("add_desktop_shortcut") == "true");
+			} else {
+				desktopCheckBox.hide();
+				desktopCheckBox.setChecked(installer.value("add_desktop_shortcut") == "false");
+			}
+		}
+		var startMenuCheckBox = widget.findChild("startMenuCheckBox");
+		if(startMenuCheckBox != null)
+			startMenuCheckBox.setChecked(installer.value("add_start_menu_shortcut") == "true");
+	}
+
     if (isSilent) {
-        var widget = gui.pageWidgetByObjectName("DynamicShortcutCheckBoxWidget");
-        if (widget != null) {
-            widget.desktopCheckBox.setChecked(installer.value("add_desktop_shortcut") == "true");
-            widget.startMenuCheckBox.setChecked(installer.value("add_start_menu_shortcut") == "true");
-        }
         gui.clickButton(buttons.NextButton);
     }
 }

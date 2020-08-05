@@ -44,19 +44,11 @@ Component.prototype.createOperations = function()
     component.addOperation("Mkdir", installer.value("StartMenuDir"));
                     
     var strata_mt_shortcut_dst = installer.value("StartMenuDir") + "\\Strata Maintenance Tool.lnk";
-    var strata_ds_shortcut_dst1 = installer.value("StartMenuDir") + "\\Strata Developer Studio.lnk";
-    var strata_ds_shortcut_dst2 = installer.value("DesktopDir") + "\\Strata Developer Studio.lnk";
 
     component.addOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Maintenance Tool.exe", strata_mt_shortcut_dst,
                             "workingDirectory=" + installer.value("TargetDir"), "iconPath=%SystemRoot%/system32/SHELL32.dll",
                             "iconId=2", "description=Open Maintenance Tool");
-                            
-    component.addOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Developer Studio.exe", strata_ds_shortcut_dst1,
-                            "workingDirectory=" + installer.value("TargetDir"), "description=Open Strata Developer Studio");
 
-    component.addOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Developer Studio.exe", strata_ds_shortcut_dst2,
-                            "workingDirectory=" + installer.value("TargetDir"), "description=Open Strata Developer Studio");
-                            
     if(installer.isInstaller())
         uninstallPreviousStrataInstallation();
 }
@@ -85,8 +77,6 @@ function isRestartRequired()
 
 Component.prototype.installationFinished = function()
 {
-    installer.setValue("RunProgram", installer.value("TargetDir") + "/Strata Developer Studio.exe"); // overwrite the RunProgram in case TargetDir changed (bug in QTIFW)
-
     if (installer.isInstaller() && (installer.status == QInstaller.Success)) {
         if (systemInfo.productType === "windows") {
             if(installer.value("add_start_menu_shortcut") !== "true") {
@@ -94,13 +84,14 @@ Component.prototype.installationFinished = function()
                 var strata_ds_shortcut_dst1 = installer.value("StartMenuDir") + "\\Strata Developer Studio.lnk";
 
                 installer.performOperation("Delete", strata_mt_shortcut_dst);
-                installer.performOperation("Delete", strata_ds_shortcut_dst1);
+                if(installer.containsValue("RunProgram") && (installer.value("RunProgram") != ""))
+                    installer.performOperation("Delete", strata_ds_shortcut_dst1);
                 installer.performOperation("Rmdir", installer.value("StartMenuDir"));
             }
             if(installer.value("add_desktop_shortcut") !== "true") {
                 var strata_ds_shortcut_dst2 = installer.value("DesktopDir") + "\\Strata Developer Studio.lnk";
-
-                installer.performOperation("Delete", strata_ds_shortcut_dst2);
+				if(installer.containsValue("RunProgram") && (installer.value("RunProgram") != ""))
+					installer.performOperation("Delete", strata_ds_shortcut_dst2);
             }
         }
 
@@ -257,9 +248,9 @@ function uninstallPreviousStrataInstallation()
             }
             if(perform_uninstall) {
                 for (var i = 0; i < display_version.length; i++) {
-					console.log("executing Strata uninstall command: '" + uninstall_string[i] + "'");
-					var e = installer.execute(uninstall_string[i], ["forceUninstall=true", "isSilent=true"]);
-					console.log(e);
+                    console.log("executing Strata uninstall command: '" + uninstall_string[i] + "'");
+                    var e = installer.execute(uninstall_string[i], ["forceUninstall=true", "isSilent=true"]);
+                    console.log(e);
                 }
             }
         }

@@ -35,6 +35,37 @@ set PATH="C:\Program Files\CMake\bin";%PATH%
 echo Setting up 'x64 Native Tools Command Prompt for VS 2017'
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64
 
+set BUILD_DIR=build-ota
+set PACKAGES_DIR=packages
+set PACKAGES_WIN_DIR=packages_win
+
+set PKG_STRATA=%PACKAGES_DIR%\com.onsemi.strata\data
+set PKG_STRATA_COMPONENTS=%PACKAGES_DIR%\com.onsemi.strata.components\data
+set PKG_STRATA_COMPONENTS_VIEWS=%PKG_STRATA_COMPONENTS%\views
+set PKG_STRATA_DS=%PACKAGES_DIR%\com.onsemi.strata.devstudio\data
+set PKG_STRATA_HCS=%PACKAGES_DIR%\com.onsemi.strata.hcs\data
+set PKG_STRATA_QT=%PACKAGES_DIR%\com.onsemi.strata.qt\data
+set PKG_STRATA_VC_REDIST=%PACKAGES_WIN_DIR%\com.onsemi.strata.utils.common.vcredist\data
+set PKG_STRATA_FTDI=%PACKAGES_WIN_DIR%\com.onsemi.strata.utils.ftdi\data
+
+set SDS_BINARY=Strata Developer Studio.exe
+set HCS_BINARY=hcs.exe
+set SDS_BINARY_DIR=%PKG_STRATA_DS%\%SDS_BINARY%
+set HCS_BINARY_DIR=%PKG_STRATA_HCS%\%HCS_BINARY%
+set STRATA_DEPLOYMENT_DIR=..\..\deployment\Strata
+set STRATA_RESOURCES_DIR=..\resources\qtifw
+set STRATA_CONFIG_XML=%STRATA_RESOURCES_DIR%\config\config.xml
+set MQTT_DLL=Qt5Mqtt.dll
+set MQTT_DLL_DIR=bin\%MQTT_DLL%
+set VCREDIST_BINARY=vc_redist.x64.exe
+set STRATA_OFFLINE=strata-setup-offline
+set STRATA_ONLINE=strata-setup-online
+set STRATA_OFFLINE_BINARY=%STRATA_OFFLINE%.exe
+set STRATA_ONLINE_BINARY=%STRATA_ONLINE%.exe
+set STRATA_ONLINE_REPO_ROOT=pub
+set STRATA_ONLINE_REPOSITORY=%STRATA_ONLINE_REPO_ROOT%\repository\demo
+
+
 echo "-----------------------------------------------------------------------------"
 echo " Build env. setup:"
 echo "-----------------------------------------------------------------------------"
@@ -83,16 +114,16 @@ echo git submodule update --init --recursive
 echo "-----------------------------------------------------------------------------"
 echo " Create a build folder.."
 echo "-----------------------------------------------------------------------------"
-REM if exist build-ota rd /s /q build-ota
-if not exist build-ota md build-ota
+REM if exist %BUILD_DIR% rd /s /q %BUILD_DIR%
+if not exist %BUILD_DIR% md %BUILD_DIR%
 
 echo "======================================================================="
 echo " Generating project.."
 echo "======================================================================="
-cd build-ota
+cd %BUILD_DIR%
 
-if exist packages rd /s /q packages
-if not exist packages md packages
+if exist %PACKAGES_DIR% rd /s /q %PACKAGES_DIR%
+if not exist %PACKAGES_DIR% md %PACKAGES_DIR%
 
 cmake -G "NMake Makefiles JOM" ^
     -DCMAKE_BUILD_TYPE=OTA ^
@@ -117,16 +148,16 @@ echo "======================================================================="
 cmake --build . -- -j %NUMBER_OF_PROCESSORS%
 REM cmake --build . --config Debug
 
-if not exist "packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.exe" (
+if not exist "%SDS_BINARY_DIR%" (
     echo "======================================================================="
-    echo " Missing Strata Developer Studio.exe, build probably failed"
+    echo " Missing %SDS_BINARY%, build probably failed"
     echo "======================================================================="
     Exit /B 2
 )
 
-if not exist "packages\com.onsemi.strata.hcs\data\hcs.exe" (
+if not exist "%HCS_BINARY_DIR%" (
     echo "======================================================================="
-    echo " Missing hcs.exe, build probably failed"
+    echo " Missing %HCS_BINARY%, build probably failed"
     echo "======================================================================="
     Exit /B 2
 )
@@ -136,47 +167,47 @@ echo " Copying necessary files.."
 echo "======================================================================="
 
 REM copy various license files
-xcopy ..\..\deployment\Strata\dependencies\strata packages\com.onsemi.strata.devstudio\data /E /Y
+xcopy %STRATA_DEPLOYMENT_DIR%\dependencies\strata %PKG_STRATA_DS% /E /Y
 
 REM copy HCS config file (should not we use host\apps\hcs3\files\conf\hcs.config ? and why there are two of them and both in git?)
-copy ..\..\deployment\Strata\config\hcs\hcs.config packages\com.onsemi.strata.hcs\data
+copy %STRATA_DEPLOYMENT_DIR%\config\hcs\hcs.config %PKG_STRATA_HCS%
 
-REM echo "Copying Qt Core\Components resources to packages\com.onsemi.strata.components\data"
-REM xcopy bin\component-*.rcc packages\com.onsemi.strata.components\data /Y
+REM echo "Copying Qt Core\Components resources to %PKG_STRATA_COMPONENTS%"
+REM xcopy bin\component-*.rcc %PKG_STRATA_COMPONENTS% /Y
 
-echo "Copying Qml Views Resources to packages\com.onsemi.strata.components\data\views"
-if not exist packages\com.onsemi.strata.components\data\views md packages\com.onsemi.strata.components\data\views
-xcopy bin\views-*.rcc packages\com.onsemi.strata.components\data\views /Y
+echo "Copying Qml Views Resources to %PKG_STRATA_COMPONENTS_VIEWS%"
+if not exist %PKG_STRATA_COMPONENTS_VIEWS% md %PKG_STRATA_COMPONENTS_VIEWS%
+xcopy bin\views-*.rcc %PKG_STRATA_COMPONENTS_VIEWS% /Y
 
-if not exist "bin\Qt5Mqtt.dll" (
+if not exist %MQTT_DLL_DIR% (
     echo "======================================================================="
-    echo " Missing Qt5Mqtt.dll, build probably failed"
+    echo " Missing %MQTT_DLL%, build probably failed"
     echo "======================================================================="
     Exit /B 2
 )
 
-echo "Copying QtMqtt dll to main dir"
-copy bin\Qt5Mqtt.dll packages\com.onsemi.strata.devstudio\data
+echo "Copying %MQTT_DLL% to main dir"
+copy %MQTT_DLL_DIR% %PKG_STRATA_DS%
 
-if not exist ..\resources\qtifw\packages_win (
+if not exist %STRATA_RESOURCES_DIR%\packages_win (
     echo "======================================================================="
     echo " Missing packages_win folder"
     echo "======================================================================="
     Exit /B 2
 )
 
-rd /s /q packages_win
-md packages_win
-xcopy ..\resources\qtifw\packages_win packages_win /E
+rd /s /q %PACKAGES_WIN_DIR%
+md %PACKAGES_WIN_DIR%
+xcopy %STRATA_RESOURCES_DIR%\packages_win %PACKAGES_WIN_DIR% /E
 
-if not exist ..\..\deployment\Strata\ftdi_driver_files (
+if not exist %STRATA_DEPLOYMENT_DIR%\ftdi_driver_files (
     echo "======================================================================="
     echo " Missing ftdi_driver_files folder"
     echo "======================================================================="
     Exit /B 2
 )
 
-xcopy ..\..\deployment\Strata\ftdi_driver_files packages_win\com.onsemi.strata.utils.ftdi\data\StrataUtils\FTDI /E
+xcopy %STRATA_DEPLOYMENT_DIR%\ftdi_driver_files %PKG_STRATA_FTDI%\StrataUtils\FTDI /E
 
 REM -------------------------------------------------------------------------
 REM [LC] WIP
@@ -184,10 +215,10 @@ REM -------------------------------------------------------------------------
 REM    --no-compiler-runtime ^ // we need vc_redist exe
 
 echo "-----------------------------------------------------------------------------"
-echo " Preparing Strata Developer Studio.exe dependencies.."
+echo " Preparing %SDS_BINARY% dependencies.."
 echo "-----------------------------------------------------------------------------"
 
-windeployqt "packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.exe" ^
+windeployqt "%SDS_BINARY_DIR%" ^
     --release ^
     --force ^
     --no-translations ^
@@ -197,15 +228,22 @@ windeployqt "packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.e
     --no-system-d3d-compiler ^
     --qmldir ..\apps\DeveloperStudio ^
     --qmldir ..\components ^
-    --libdir packages\com.onsemi.strata.qt\data ^
-    --plugindir packages\com.onsemi.strata.qt\data\plugins ^
+    --libdir %PKG_STRATA_QT% ^
+    --plugindir %PKG_STRATA_QT%\plugins ^
     --verbose 1
 
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " Failed to windeployqt %SDS_BINARY%!"
+    echo "======================================================================="
+    Exit /B 3
+)
+
 echo "-----------------------------------------------------------------------------"
-echo " Preparing hcs.exe dependencies.."
+echo " Preparing %HCS_BINARY% dependencies.."
 echo "-----------------------------------------------------------------------------"
 
-windeployqt "packages\com.onsemi.strata.hcs\data\hcs.exe" ^
+windeployqt "%HCS_BINARY_DIR%" ^
     --release ^
     --force ^
     --no-translations ^
@@ -213,116 +251,146 @@ windeployqt "packages\com.onsemi.strata.hcs\data\hcs.exe" ^
     --no-opengl-sw ^
     --no-angle ^
     --no-system-d3d-compiler ^
-    --libdir packages\com.onsemi.strata.qt\data ^
-    --plugindir packages\com.onsemi.strata.qt\data\plugins ^
+    --libdir %PKG_STRATA_QT% ^
+    --plugindir %PKG_STRATA_QT%\plugins ^
     --verbose 1
 
-if not exist packages\com.onsemi.strata.qt\data\vc_redist.x64.exe (
+IF %ERRORLEVEL% NEQ 0 (
     echo "======================================================================="
-    echo " Missing vc_redist.x64.exe"
+    echo " Failed to windeployqt %HCS_BINARY%!"
+    echo "======================================================================="
+    Exit /B 3
+)
+
+if not exist %PKG_STRATA_QT%\%VCREDIST_BINARY% (
+    echo "======================================================================="
+    echo " Missing %VCREDIST_BINARY%"
     echo "======================================================================="
     Exit /B 2
 )
 
-move packages\com.onsemi.strata.qt\data\vc_redist.x64.exe packages_win\com.onsemi.strata.utils.common.vcredist\data\StrataUtils\VC_REDIST\
+move %PKG_STRATA_QT%\%VCREDIST_BINARY% %PKG_STRATA_VC_REDIST%\StrataUtils\VC_REDIST\
 
 echo "======================================================================="
 echo " Signing Binaries.."
 echo "======================================================================="
 
-set SIGNING_CERT=..\..\deployment\Strata\sign\code_signing.p12
+set SIGNING_CERT=%STRATA_DEPLOYMENT_DIR%\sign\code_signing.p12
 set SIGNING_PASS="P@ssw0rd!"
 
 echo "Cert: %SIGNING_CERT%"
 
-echo "Signing packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.exe"
-signtool sign -f "%SIGNING_CERT%" -p %SIGNING_PASS% "packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.exe"
-IF %ERRORLEVEL% EQU 0 (
-    echo "Successfully signed packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.exe"
-) ELSE (
+echo "-----------------------------------------------------------------------------"
+echo "Signing %SDS_BINARY%"
+echo "-----------------------------------------------------------------------------"
+
+signtool sign -f "%SIGNING_CERT%" -p %SIGNING_PASS% "%SDS_BINARY_DIR%"
+IF %ERRORLEVEL% NEQ 0 (
     echo "======================================================================="
-    echo " Failed to sign packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.exe!"
+    echo " Failed to sign %SDS_BINARY%!"
     echo "======================================================================="
     Exit /B 3
 )
 
-echo "Signing packages\com.onsemi.strata.hcs\data\hcs.exe"
-signtool sign -f "%SIGNING_CERT%" -p %SIGNING_PASS% "packages\com.onsemi.strata.hcs\data\hcs.exe"
-IF %ERRORLEVEL% EQU 0 (
-    echo "Successfully signed packages\com.onsemi.strata.hcs\data\hcs.exe"
-) ELSE (
+echo "-----------------------------------------------------------------------------"
+echo "Signing %HCS_BINARY%"
+echo "-----------------------------------------------------------------------------"
+
+signtool sign -f "%SIGNING_CERT%" -p %SIGNING_PASS% "%HCS_BINARY_DIR%"
+IF %ERRORLEVEL% NEQ 0 (
     echo "======================================================================="
-    echo " Failed to sign packages\com.onsemi.strata.hcs\data\hcs.exe!"
+    echo " Failed to sign %HCS_BINARY%!"
     echo "======================================================================="
     Exit /B 3
 )
 
 echo "======================================================================="
-echo " Preparing offline installer.."
+echo " Preparing offline installer %STRATA_OFFLINE_BINARY%.."
 echo "======================================================================="
 
 binarycreator ^
     --verbose ^
     --offline-only ^
-    -c ..\resources\qtifw\config\config.xml ^
-    -p .\packages ^
-    -p .\packages_win ^
-    strata-setup-offline
+    -c %STRATA_CONFIG_XML% ^
+    -p %PACKAGES_DIR% ^
+    -p %PACKAGES_WIN_DIR% ^
+    %STRATA_OFFLINE%
 
-REM sign the offline Installer
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " Failed to create offline installer %STRATA_OFFLINE_BINARY%!"
+    echo "======================================================================="
+    Exit /B 3
+)
+
+echo "-----------------------------------------------------------------------------"
+echo "Signing the offline installer %STRATA_OFFLINE_BINARY%"
+echo "-----------------------------------------------------------------------------"
 signtool sign ^
     -f "%SIGNING_CERT%" ^
     -p %SIGNING_PASS% ^
-    "strata-setup-offline.exe"
+    %STRATA_OFFLINE_BINARY%
 	
-IF %ERRORLEVEL% EQU 0 (
-    echo "Successfully signed the offline installer"
-) ELSE (
+IF %ERRORLEVEL% NEQ 0 (
     echo "======================================================================="
-    echo " Failed to sign the offline installer!"
+    echo " Failed to sign the offline installer %STRATA_OFFLINE_BINARY%!"
     echo "======================================================================="
     Exit /B 3
 )
 	
 echo "======================================================================="
-echo " Preparing online installer.."
+echo " Preparing online installer %STRATA_ONLINE_BINARY%.."
 echo "======================================================================="
 
 binarycreator ^
     --verbose ^
     --online-only ^
-    -c ..\resources\qtifw\config\config.xml ^
-    -p .\packages ^
-    -p .\packages_win ^
-    strata-setup-online
+    -c %STRATA_CONFIG_XML% ^
+    -p %PACKAGES_DIR% ^
+    -p %PACKAGES_WIN_DIR% ^
+    %STRATA_ONLINE%
 
-REM sign the online Installer
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " Failed to create online installer %STRATA_ONLINE_BINARY%!"
+    echo "======================================================================="
+    Exit /B 3
+)
+
+echo "-----------------------------------------------------------------------------"
+echo "Signing the online installer %STRATA_ONLINE_BINARY%"
+echo "-----------------------------------------------------------------------------"
 signtool sign ^
     -f "%SIGNING_CERT%" ^
     -p %SIGNING_PASS% ^
-    "strata-setup-online.exe"
+    %STRATA_ONLINE_BINARY%
 	
-IF %ERRORLEVEL% EQU 0 (
-    echo "Successfully signed the online installer"
-) ELSE (
+IF %ERRORLEVEL% NEQ 0 (
     echo "======================================================================="
-    echo " Failed to sign the online installer!"
+    echo " Failed to sign the online installer %STRATA_ONLINE_BINARY%!"
     echo "======================================================================="
     Exit /B 3
 )
 
 echo "======================================================================="
-echo " Preparing online repository.."
+echo " Preparing online repository %STRATA_ONLINE_REPOSITORY%.."
 echo "======================================================================="
 
-if exist pub rd /s /q pub
+if exist %STRATA_ONLINE_REPO_ROOT% rd /s /q %STRATA_ONLINE_REPO_ROOT%
 
 repogen ^
     --update-new-components ^
     --verbose ^
-    -p .\packages ^
-    -p .\packages_win ^
-    pub\repository\demo
+    -p %PACKAGES_DIR% ^
+    -p %PACKAGES_WIN_DIR% ^
+    %STRATA_ONLINE_REPOSITORY%
+
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " Failed to create online repository %STRATA_ONLINE_REPOSITORY%!"
+    echo "======================================================================="
+    Exit /B 3
+)
 	
 echo "======================================================================="
 echo " OTA build finished"
