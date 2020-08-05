@@ -98,6 +98,26 @@ QString VersionedListModel::version(int index)
     return data(VersionedListModel::index(index, 0), VersionRole).toString();
 }
 
+QString VersionedListModel::uri(int index)
+{
+    return data(VersionedListModel::index(index, 0), UriRole).toString();
+}
+
+QString VersionedListModel::name(int index)
+{
+    return data(VersionedListModel::index(index, 0), NameRole).toString();
+}
+
+QString VersionedListModel::timestamp(int index)
+{
+    return data(VersionedListModel::index(index, 0), TimestampRole).toString();
+}
+
+QString VersionedListModel::installed(int index)
+{
+    return data(VersionedListModel::index(index, 0), InstalledRole).toString();
+}
+
 void VersionedListModel::setInstalled(int index, bool installed)
 {
     if (index < 0 || index >= data_.count()) {

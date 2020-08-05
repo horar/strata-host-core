@@ -11,11 +11,10 @@ ColumnLayout {
     property var activeVersion: null
     property var latestVersion: null
     property var classDocuments: null
-    property int controlViewCount: classDocuments.controlViewListModel.count
+    property int controlViewCount: 0
 
     Component.onCompleted: {
         classDocuments = sdsModel.documentManager.getClassDocuments(platformStack.class_id)
-        console.info("CLASS DOCUMENTS = ", JSON.stringify(classDocuments))
     }
 
     onControlViewCountChanged: {
@@ -32,6 +31,14 @@ ColumnLayout {
     }
 
     Connections {
+        target: sdsModel.documentManager.getClassDocuments(platformStack.class_id).controlViewListModel
+        onCountChanged: {
+            controlViewCount = count
+            classDocuments = sdsModel.documentManager.getClassDocuments(platformStack.class_id)
+        }
+    }
+
+    Connections {
         target: platformStack
         onConnectedChanged: {
             matchVersion()
@@ -39,20 +46,21 @@ ColumnLayout {
     }
 
     function matchVersion() {
-        for (let i = 0; i < classDocuments.controlViewListModel.count; i++) {
-            if (classDocuments.controlViewListModel[i].installed) {
-                activeVersion = classDocuments.controlViewListModel[i]
-                upToDate = isUpToDate()
+        for (let i = 0; i < controlViewCount; i++) {
+            if (classDocuments.controlViewListModel.installed(i)) {
+                activeVersion = copyControlViewObject(i)
+                upToDate = isUpToDate();
                 break;
             }
         }
     }
 
     function isUpToDate() {
-        for (let i = 0; i < classDocuments.controlViewListModel.count; i++) {
-            if (version !== activeVersion.version && isVersionGreater(classDocuments.controlViewListModel[i].version)) {
+        for (let i = 0; i < controlViewCount; i++) {
+            let version = classDocuments.controlViewListModel.version(i)
+            if (version !== activeVersion.version && isVersionGreater(version)) {
                 // if the version is greater, then set the latestVersion here
-                latestVersion = classDocuments.controlViewListModel[i];
+                latestVersion = copyControlViewObject(i);
                 return false;
             }
         }
@@ -83,6 +91,18 @@ ColumnLayout {
 
         // else they are the same version
         return false;
+    }
+
+    function copyControlViewObject(index) {
+        let obj = {};
+
+        obj["uri"] = classDocuments.controlViewListModel.uri(index);
+        obj["name"] = classDocuments.controlViewListModel.name(index);
+        obj["version"] = classDocuments.controlViewListModel.version(index);
+        obj["timestamp"] = classDocuments.controlViewListModel.timestamp(index);
+        obj["installed"] = classDocuments.controlViewListModel.installed(index);
+
+        return obj;
     }
 
 
@@ -206,10 +226,21 @@ ColumnLayout {
                         Layout.margins: 10
 
                         Text {
-                            text: "Update to " + platformStack.class_id + " v" + software.latestVersion.version + " released " + software.latestVersion.timestamp
+                            text: getLatestVersionText()
                             font.bold: true
                             font.pixelSize: 18
                             color: "#666"
+
+                            function getLatestVersionText() {
+                                if (software.latestVersion) {
+                                    let str = "Update to " + platformStack.class_id;
+
+                                    str += " v" + software.latestVersion.version;
+                                    str += ", released " + software.latestVersion.timestamp
+                                    return str;
+                                }
+                                return "";
+                            }
                         }
 
                         SGIcon {
@@ -294,23 +325,5 @@ ColumnLayout {
 
     ListModel {
         id: viewVersions
-
-        ListElement {
-            file: "<PATH to control view>/250mA_LDO.rcc"
-            md5: "a2d69a4c8a224afa77319cd3d833b292"
-            name: "control view"
-            timestamp: "2019-11-04 17:16:48"
-            version: "1.1.0"
-            installed: true
-        }
-
-        ListElement {
-            file: "<PATH to control view>/250mA_LDO.rcc"
-            md5: "a2d69a4c8a224afa77319cd3d833b292"
-            name: "control view"
-            timestamp: "2019-11-04 17:16:48"
-            version: "1.2.0"
-            installed: false
-        }
     }
 }

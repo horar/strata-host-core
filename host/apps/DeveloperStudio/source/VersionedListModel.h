@@ -8,7 +8,6 @@
 #include <QList>
 
 struct VersionedItem {
-
     VersionedItem(
             const QString &uri,
             const QString &md5,
@@ -37,7 +36,6 @@ class VersionedListModel: public QAbstractListModel
 {
     Q_OBJECT
     Q_DISABLE_COPY(VersionedListModel)
-
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 
 public:
@@ -46,6 +44,10 @@ public:
 
     Q_INVOKABLE QString version(int index);
     Q_INVOKABLE void setInstalled(int index, bool installed);
+    Q_INVOKABLE QString uri(int index);
+    Q_INVOKABLE QString name(int index);
+    Q_INVOKABLE QString timestamp(int index);
+    Q_INVOKABLE QString installed(int index);
 
     enum {
         UriRole = Qt::UserRole,

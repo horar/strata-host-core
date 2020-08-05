@@ -180,9 +180,6 @@ void ClassDocuments::populateModels(QJsonObject data)
             continue;
         }
 
-        QJsonDocument doc(documentObject);
-        QString strJson(doc.toJson(QJsonDocument::Compact));
-
         QString uri = documentObject["uri"].toString();
         QString name = documentObject["name"].toString();
         QString md5 = documentObject["md5"].toString();
@@ -219,6 +216,7 @@ void ClassDocuments::populateModels(QJsonObject data)
         QString filepath = documentObject["filepath"].toString();
 
         VersionedItem *fi = new VersionedItem(uri, md5, name, timestamp, version, filepath);
+        qCDebug(logCategoryDocumentManager) << "APPENDING ITEM: " << version;
         controlViewList.append(fi);
     }
 
