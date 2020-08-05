@@ -87,7 +87,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 visible:topRow.isConnected
-                value: platformInterface.request_usb_power_notification.output_voltage.toFixed(1)
+                value: platformInterface.request_usb_power_notification.vbus_voltage.toFixed(1)
             }
 
             PortStatBox{
@@ -142,7 +142,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"A"
-                value:platformInterface.battery_status.battery_current.toFixed(1)
+                value:platformInterface.battery_status_fre.battery_current.toFixed(1)
             }
             PortStatBox{
                 id:batteryVoltageBox
@@ -156,7 +156,7 @@ Rectangle {
                 unitColor: "grey"
                 textColor: "black"
                 bottomMargin:10
-                value: platformInterface.battery_status.battery_voltage.toFixed(1)
+                value: platformInterface.battery_status_fre.battery_voltage.toFixed(1)
             }
             PortStatBox{
                 id:batteryPowerBox
@@ -171,7 +171,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"W"
-                value:platformInterface.battery_status.battery_power.toFixed(1)
+                value:platformInterface.battery_status_fre.battery_power.toFixed(1)
             }
         }
         Row{

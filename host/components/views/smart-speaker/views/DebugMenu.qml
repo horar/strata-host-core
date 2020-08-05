@@ -164,19 +164,12 @@ Rectangle {
                     CorePlatformInterface.data_source_handler('{
                         "value":"request_usb_power_notification",
                         "payload":{
-                            "port":1,
-                            "device":"none",
                             "advertised_maximum_current": "'+ (Math.random() *10) +'",
                             "negotiated_current": "'+ (Math.random() *10) +'",
                             "negotiated_voltage":"'+ (Math.random() *10) +'",
-                            "input_voltage":"'+ (Math.random() *10) +'",
-                            "output_voltage":"'+ (Math.random() *10) +'",
-                            "input_current":"'+ (Math.random() *10) +'",
-                            "output_current":"'+ (Math.random() *10) +'",
-                            "temperature":"'+ (Math.random() *10) +'",
-                            "maximum_power":"'+ (Math.random() *10) +'"
-                                   }
-                                 }')
+                            "vbus_voltage":"'+ (Math.random() *10) +'"
+                            }
+                        }')
 
                     CorePlatformInterface.data_source_handler('{
                         "value":"request_usb_power_notification",
@@ -256,7 +249,6 @@ Rectangle {
                     CorePlatformInterface.data_source_handler('{
                         "value":"usb_pd_advertised_voltages_notification",
                         "payload":{
-                                    "port":1,
                                     "maximum_power":60,
                                     "number_of_settings": 7,
                                     "settings":[{"voltage":5,
@@ -322,7 +314,17 @@ Rectangle {
 
 
                     CorePlatformInterface.data_source_handler('{
-                        "value":"battery_status",
+                        "value":"battery_status_fre",
+                        "payload":{
+                            "no_battery_indicator":'+hasBattery+',
+                            "battery_voltage":'+ theBatteryVoltage +',
+                            "battery_current":'+ theBatteryCurrent +',
+                            "battery_power": '+theBatteryPower  +'
+                            }
+                        }')
+
+                    CorePlatformInterface.data_source_handler('{
+                        "value":"battery_status_inf",
                         "payload":{
                             "ambient_temp":'+ theAmbientTemp +',
                             "battery_temp":'+ theBatteryTemp +',
@@ -330,11 +332,7 @@ Rectangle {
                             "time_to_empty":'+ theTimeToEmpty +',
                             "time_to_full":'+ theTimeToFull +',
                             "rsoc":'+ theBatteryPercent +',
-                            "total_run_time":'+ theRunTime +',
-                            "no_battery_indicator":'+hasBattery+',
-                            "battery_voltage":'+ theBatteryVoltage +',
-                            "battery_current":'+ theBatteryCurrent +',
-                            "battery_power": '+theBatteryPower  +'
+                            "total_run_time":'+ theRunTime +'
                             }
                         }')
 

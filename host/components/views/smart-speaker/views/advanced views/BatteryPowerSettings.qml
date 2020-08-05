@@ -13,7 +13,7 @@ Rectangle {
     property color accentColor:"#86724C"
     property int   labelWidth: 150      //to keep labels aligned right
 
-    property bool batteryIsMissing: platformInterface.battery_status.no_battery_indicator
+    property bool batteryIsMissing: platformInterface.battery_status_fre.no_battery_indicator
 
     Rectangle{
         id:notConnectedScrim
@@ -67,7 +67,7 @@ Rectangle {
 
         onUserSet: {
             //the first parameter is usb volts, which will be ignored
-            platformInterface.set_audio_amp_voltage.update(0,value,"battery")
+            platformInterface.set_audio_amp_voltage.update(value,"battery")
         }
     }
     Text{
