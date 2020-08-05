@@ -210,6 +210,8 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
         emit downloadPlatformFilesFinished(payload);
     } else if (type == "firmware_update") {
         emit firmwareProgress(payload);
+    } else if (type == "download_view_finished") {
+        emit downloadViewFinished(payload);
     } else {
         qCCritical(logCategoryCoreInterface) << "unknown message type" << type;
     }
