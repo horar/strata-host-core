@@ -26,7 +26,7 @@
 
 struct PlatformMessage;
 
-class HCS_Client;
+class Client;
 class StorageManager;
 
 namespace strata {
@@ -139,9 +139,9 @@ private:
     void platformConnected(const int deviceId, const QString &classId);
     void platformDisconnected(const int deviceId);
 
-    HCS_Client* getSenderClient() const { return current_client_; }     //TODO: only one client
+    Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 
-    HCS_Client* getClientById(const QByteArray& client_id);
+    Client* getClientById(const QByteArray& client_id);
 
     bool parseConfig(const QString& config);
 
@@ -164,8 +164,8 @@ private:
     std::map<std::string, NotificationHandler> clientCmdHandler_;
     std::map<std::string, NotificationHandler> hostCmdHandler_;
 
-    std::list<HCS_Client*> clientList_;
-    HCS_Client* current_client_;
+    std::list<Client*> clientList_;
+    Client* current_client_;
 
     rapidjson::Document config_;
 };
