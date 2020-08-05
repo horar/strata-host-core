@@ -98,15 +98,15 @@ QString FirmwareListModel::version(int index)
     return data(FirmwareListModel::index(index, 0), VersionRole).toString();
 }
 
-bool FirmwareListModel::setInstalled(int index, bool installed)
+void FirmwareListModel::setInstalled(int index, bool installed)
 {
     if (index < 0 || index >= data_.count()) {
-        return false;
+        return;
     }
 
     FirmwareItem *item = data_.at(index);
     if (item->installed == installed) {
-        return false;
+        return;
     }
 
     item->installed = installed;
@@ -114,8 +114,6 @@ bool FirmwareListModel::setInstalled(int index, bool installed)
                 createIndex(index, 0),
                 createIndex(index, 0),
                 QVector<int>() << InstalledRole);
-
-    return true;
 }
 
 QHash<int, QByteArray> FirmwareListModel::roleNames() const

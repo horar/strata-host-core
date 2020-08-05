@@ -17,9 +17,9 @@ ColumnLayout {
         id: firmwareVersions
         visible: firmwareRepeater.model.count > 0
 
-        Text {
+        SGText {
             text: "Firmware versions available:"
-            font.pixelSize: 18
+            fontSizeMultiplier: 1.38
             color: "#666"
         }
 
@@ -36,14 +36,14 @@ ColumnLayout {
                 }
                 spacing: 30
 
-                Text {
+                SGText {
                     Layout.preferredWidth:60
                     Layout.leftMargin: 5
                     text: "Version"
                     font.italic: true
                 }
 
-                Text {
+                SGText {
                     Layout.fillWidth: true
                     text: "Date Released"
                     font.italic: true
@@ -77,22 +77,22 @@ ColumnLayout {
                         Layout.preferredHeight: 30
                         spacing: 30
 
-                        Text {
+                        SGText {
                             id: versionText
                             Layout.preferredWidth: 60
                             text: model.version
-                            font.pixelSize: 18
+                            fontSizeMultiplier: 1.38
                             color: "#666"
                         }
 
-                        Text {
+                        SGText {
                             text: model.timestamp
                             Layout.fillWidth: true
-                            font.pixelSize: 18
+                            fontSizeMultiplier: 1.38
                             color: "#666"
                         }
 
-                        Text {
+                        SGText {
                             id: description
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignRight
@@ -271,7 +271,7 @@ ColumnLayout {
                                     }
                                     break;
                                 case "failure":
-                                    statusText.text = "Flashing failed: " + flash.prepare_error
+                                    statusText.text = "Flashing failed: " + payload.flash_error
                                     break;
                                 }
                                 break;
@@ -323,7 +323,7 @@ ColumnLayout {
                             id: statusColumn
                             width: parent.width
 
-                            Text {
+                            SGText {
                                 id: statusText
                                 Layout.leftMargin: 10
                                 property real percent: fillBar.width/barBackground.width
@@ -390,8 +390,8 @@ ColumnLayout {
             iconColor: "#aaa"
         }
 
-        Text {
-            font.pixelSize: 18
+        SGText {
+            fontSizeMultiplier: 1.38
             color: "#666"
             text: "No firmware files are available for flashing to this platform"
         }

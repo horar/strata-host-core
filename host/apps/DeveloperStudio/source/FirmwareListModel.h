@@ -44,7 +44,7 @@ public:
     virtual ~FirmwareListModel() override;
 
     Q_INVOKABLE QString version(int index);
-    Q_INVOKABLE bool setInstalled(int index, bool installed);
+    Q_INVOKABLE void setInstalled(int index, bool installed);
 
     enum {
         UriRole = Qt::UserRole,
@@ -72,4 +72,4 @@ private:
 };
 
 
-#endif //DOWNLOAD_DOCUMENT_LIST_MODEL_H
+#endif //FIRMWARE_LIST_MODEL_H

@@ -61,10 +61,10 @@ ColumnLayout {
         }
     }
 
-    Text {
+    SGText {
         text: "Firmware Settings:"
         font.bold: true
-        font.pixelSize: 18
+        fontSizeMultiplier: 1.38
     }
 
     Rectangle {
@@ -87,9 +87,9 @@ ColumnLayout {
             iconColor: "#aaa"
         }
 
-        Text {
+        SGText {
             text: "Connect this platform to manage its firmware"
-            font.pixelSize: 18
+            fontSizeMultiplier: 1.38
             color: deviceVersion.color
         }
     }
@@ -99,17 +99,17 @@ ColumnLayout {
         visible: platformStack.connected
         Layout.topMargin: 10
 
-        Text {
+        SGText {
             id: deviceVersion
             text: "Device firmware version:"
-            font.pixelSize: 18
+            fontSizeMultiplier: 1.38
             color: "#666"
         }
 
-        Text {
+        SGText {
             text: platformStack.firmware_version
             font.bold: true
-            font.pixelSize: 18
+            fontSizeMultiplier: 1.38
         }
     }
 
