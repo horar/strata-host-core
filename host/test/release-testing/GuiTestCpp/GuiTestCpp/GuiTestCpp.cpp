@@ -1,6 +1,6 @@
+#include "pch.h"
 #include "CppUnitTest.h"
 #include "StrataUI.cpp"
-#include "pch.h"
 //#include <curl\curl.h>
 #include <iomanip>
 

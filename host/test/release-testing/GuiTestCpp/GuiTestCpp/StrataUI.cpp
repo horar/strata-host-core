@@ -1,7 +1,7 @@
 #pragma once
+#include "pch.h"
 #include <UIAutomation.h>
 #include <comdef.h>
-#include "pch.h"
 
 #define COMBINE1(X, Y) X##Y  // helper macro
 #define COMBINE(X, Y) COMBINE1(X, Y)
