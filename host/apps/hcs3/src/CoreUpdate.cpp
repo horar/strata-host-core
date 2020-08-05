@@ -8,6 +8,8 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QDomDocument>
+#include <QCoreApplication>
+#include <QProcess>
 
 void CoreUpdate::setDatabase(Database* db) {
     db_ = db;
@@ -44,15 +46,17 @@ QString CoreUpdate::getLatestVersion(const QByteArray &clientId) {
 
 QString CoreUpdate::getCurrentVersion(const QByteArray &clientId) {
     // Retrieve current version info from 'components.xml' file
-    const QString AbsPathComponentsXmlFile = QDir(QDir::currentPath()).filePath("components.xml");
-    if (!QFileInfo::exists(AbsPathComponentsXmlFile) || !QFileInfo(AbsPathComponentsXmlFile).isFile()) {
-        qCCritical(logCategoryHcs) << "File components.xml not found at " << AbsPathComponentsXmlFile;
-        handleVersionInfoResponse(clientId, QString(), QString(), "File components.xml not found at " + AbsPathComponentsXmlFile);
+    const QDir applicationDir(QCoreApplication::applicationDirPath());
+    const QString absPathComponentsXmlFile = applicationDir.filePath("components.xml");
+
+    if (!QFileInfo::exists(absPathComponentsXmlFile) || !QFileInfo(absPathComponentsXmlFile).isFile()) {
+        qCCritical(logCategoryHcs) << "File components.xml not found at " << absPathComponentsXmlFile;
+        handleVersionInfoResponse(clientId, QString(), QString(), "File components.xml not found at " + absPathComponentsXmlFile);
         return "";
     }
     // Load 'components.xml' file
     QDomDocument doc("tempDoc");
-    QFile file(AbsPathComponentsXmlFile);
+    QFile file(absPathComponentsXmlFile);
     if (!file.open(QIODevice::ReadOnly)) {
         return "";
     }
@@ -63,7 +67,7 @@ QString CoreUpdate::getCurrentVersion(const QByteArray &clientId) {
     file.close();
 
     QString currentVersion = findVersionFromComponentsXml(doc, "com.onsemi.strata.hcs");
-    if (currentVersion == "") {
+    if (currentVersion.isEmpty()) {
         handleVersionInfoResponse(clientId, QString(), QString(), "Could not find current Strata Core version from components.xml file.");
     }
     return currentVersion;
@@ -123,20 +127,42 @@ void CoreUpdate::requestVersionInfo(const QByteArray &clientId) {
 #if !defined(Q_OS_WIN)
 void CoreUpdate::requestUpdateApplication(const QByteArray &clientId) {
     qCCritical(logCategoryHcs) << "CoreUpdate functionality is available only on Windows OS";
-    handleVersionInfoResponse(clientId, QString(), QString(), "CoreUpdate functionality is available only on Windows OS");
+    handleUpdateApplicationResponse(clientId, "CoreUpdate functionality is available only on Windows OS");
 }
 #else
 void CoreUpdate::requestUpdateApplication(const QByteArray &clientId) {
-    /*
-
-        Perform application update here:
-
-        performApplicationUpdate()
-
-    */
-
-    qCCritical(logCategoryHcs) << "### Performing application update! ###";
-
-    handleUpdateApplicationResponse(clientId, "Update finished!");
+    // Search for Strata Maintenance Tool in application directory, if found perform update
+    const QDir applicationDir(QCoreApplication::applicationDirPath());
+    const QString absPathMaintenanceTool = locateMaintenanceTool(clientId, applicationDir);
+    if (!absPathMaintenanceTool.isEmpty()) {
+        performCoreUpdate(absPathMaintenanceTool, applicationDir);
+    }
 }
 #endif
+
+QString CoreUpdate::locateMaintenanceTool(const QByteArray &clientId, const QDir &applicationDir) {
+    const QString maintenanceToolFilename = "Strata Maintenance Tool.exe";
+    const QString absPathMaintenanceTool = applicationDir.filePath(maintenanceToolFilename);
+
+    if (!applicationDir.exists(maintenanceToolFilename)) {
+        qCCritical(logCategoryHcs) << maintenanceToolFilename << "not found in" << applicationDir.absolutePath();
+        handleUpdateApplicationResponse(clientId, maintenanceToolFilename + " not found in " + applicationDir.absolutePath());
+        return QString();
+    }
+
+    return absPathMaintenanceTool;
+}
+
+void CoreUpdate::performCoreUpdate(const QString &absPathMaintenanceTool, const QDir &applicationDir) {
+    // Launch Strata Maintenance Tool wizard
+    QStringList arguments;
+    arguments << "isSilent=true" << "forceUpdate=true" << "delayStart=3000";
+
+    QProcess maintenanceToolProcess;
+    maintenanceToolProcess.setProgram(absPathMaintenanceTool);
+    maintenanceToolProcess.setArguments(arguments);
+    maintenanceToolProcess.setWorkingDirectory(applicationDir.absolutePath());
+    maintenanceToolProcess.startDetached();
+
+
+}
