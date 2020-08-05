@@ -25,9 +25,14 @@ ColumnLayout {
         target: coreInterface
 
         onDownloadViewFinished: {
-            fillBar1.width = barBackground1.width;
+            progressUpdateText.percent = 1.0
             activeVersion = latestVersion
+            setUpToDateTimer.start()
             console.info("Done downloading control view ", JSON.stringify(payload))
+        }
+
+        onDownloadControlViewProgress: {
+            progressUpdateText.percent = payload.bytes_received / payload.bytes_total
         }
     }
 
@@ -133,6 +138,16 @@ ColumnLayout {
         obj["installed"] = classDocuments.controlViewListModel.installed(index);
 
         return obj;
+    }
+
+    Timer {
+        id: setUpToDateTimer
+        interval: 1500
+        repeat: false
+
+        onTriggered: {
+            upToDate = true
+        }
     }
 
     Text {
@@ -276,19 +291,19 @@ ColumnLayout {
                         visible: false
 
                         Text {
+                            id: progressUpdateText
                             Layout.leftMargin: 10
-                            property real percent: fillBar1.width/barBackground1.width
+                            property real percent: 0.0
+
+                            onPercentChanged: {
+                                fillBar1.width = barBackground1.width * percent
+                            }
+
                             text: {
-                                if (percent < .6) {
-                                    return "Downloading: " + (percent * 166.66).toFixed(0) + "%"
-                                } else if (percent < .8) {
-                                    return "Installing: " + ((percent-.6) * 500).toFixed(0) + "%"
-                                } else if (percent < 1) {
-                                    return "Loading: " + ((percent-.8) * 500).toFixed(0) + "%"
-                                } else if (percent >= 1){
-                                    //root.viewVersion = "1.2.1"
-                                    software.upToDate = true
-                                    return "Complete"
+                                if (percent < 1.0) {
+                                    return "Downloading: " + (percent * 100).toFixed(0) + "%"
+                                } else {
+                                    return "Successfully installed"
                                 }
                             }
                         }
