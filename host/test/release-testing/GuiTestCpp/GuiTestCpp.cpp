@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "CppUnitTest.h"
 #include "StrataUI.cpp"
 //#include <curl\curl.h>
@@ -56,8 +55,8 @@ public:
     {
         WCHAR filenameBuf[MAX_PATH];
 
-        GetFullPathName(L"..\\settings.ini", MAX_PATH, filenameBuf, nullptr);
-        GetPrivateProfileString(L"settings", tag, L"", buffer, bufferSz, filenameBuf);
+        GetFullPathNameW(L"..\\settings.ini", MAX_PATH, filenameBuf, nullptr);
+        GetPrivateProfileStringW(L"settings", tag, L"", buffer, bufferSz, filenameBuf);
     }
     // static void CloseUser()
     //{
@@ -121,7 +120,7 @@ public:
         /* In windows, this will init the winsock stuff */
         // curl_global_init(CURL_GLOBAL_ALL);
 
-        STARTUPINFO si;
+        STARTUPINFOW si;
         PROCESS_INFORMATION pi;
 
         // set the size of the structures
@@ -137,7 +136,7 @@ public:
             GetSetting(L"strataPath", path, MAX_PATH);
 
             // start the program up
-            CreateProcess(
+            CreateProcessW(
                 path,   // the path
                 NULL,   // Command line
                 NULL,   // Process handle not inheritable
@@ -259,7 +258,7 @@ public:
         Assert::IsTrue(ui.ButtonEnabled(L"Submit", true));
         ASSERT_S_OK(ui.PressButton(L"Submit", true));
 
-        Sleep(500);
+        Sleep(700);
 
         Assert::IsTrue(ui.AlertExists(
             L"ResetPasswordAlert",

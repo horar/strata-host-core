@@ -1,5 +1,4 @@
 #pragma once
-#include "pch.h"
 #include <UIAutomation.h>
 #include <comdef.h>
 
@@ -315,7 +314,8 @@ public:
     {
         IUIAutomationInvokePattern* invokePattern;
         CHECK_OK(button->GetCurrentPatternAs(
-            UIA_InvokePatternId, __uuidof(IUIAutomationInvokePattern), (void**)&invokePattern));
+            UIA_InvokePatternId, __uuidof(IUIAutomationInvokePattern), 
+            (void**)&invokePattern));
         return invokePattern->Invoke();
     }
     /// <summary>
