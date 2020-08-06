@@ -14,6 +14,9 @@ public:
     Q_INVOKABLE bool registerResource(const QString &fileName, const QString &root = "");
     Q_INVOKABLE bool unregisterResource(const QString &filename, const QString &root = "");
 
+    Q_INVOKABLE bool registerControlViewResources(const QString &class_id);
+
+
 private:
     void loadCoreResources();
     void loadViewResources();

@@ -16,6 +16,11 @@ ResourceLoader::~ResourceLoader()
 {
 }
 
+bool ResourceLoader::registerControlViewResources(const QString &class_id) {
+    QString path = ResourcePath::hcsDocumentsCachePath();
+    qCDebug(logCategoryResourceLoader) << "HCS Cache location: " << path;
+}
+
 bool ResourceLoader::registerResource(const QString &fileName, const QString &root) {
     QString path = ResourcePath::viewsResourcePath() + "/" + fileName;
     qDebug(logCategoryResourceLoader) << "Registering resource: " << path;

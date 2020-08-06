@@ -4,9 +4,11 @@
 
 #include <QCoreApplication>
 #include <QDir>
+#include <QStandardPaths>
 
 QString ResourcePath::coreResourcePath_ = QString();
 QString ResourcePath::viewsResourcePath_ = QString();
+QString ResourcePath::hcsDocumentsCachePath_ = QString();
 
 ResourcePath::ResourcePath()
 {
@@ -41,4 +43,12 @@ QString &ResourcePath::viewsResourcePath()
     }
 
     return viewsResourcePath_;
+}
+
+QString &ResourcePath::hcsDocumentsCachePath()
+{
+    if (hcsDocumentsCachePath_.isEmpty()) {
+        hcsDocumentsCachePath_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    }
+    return hcsDocumentsCachePath_;
 }

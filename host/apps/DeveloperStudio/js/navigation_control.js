@@ -67,6 +67,8 @@ var platform_view_repeater_ = null
 var platform_view_model_ = null
 var stack_container_ = null
 var platform_list = {}
+var resourceLoader = Qt.createQmlObject("import tech.strata.ResourceLoader 1.0; ResourceLoader {}", Qt.application, "ResourceLoader")
+
 
 /*
   Navigation initialized with parent containers
@@ -310,6 +312,14 @@ function updateState(event, data)
             {
             case events.OPEN_PLATFORM_VIEW_EVENT:
                 console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Opening Platform View for class_id:", data.class_id, "device_id:", data.device_id)
+                // load the resource
+                let fileName = "views-" + UuidMap.uuid_map[data.class_id] + ".rcc";
+
+                if (resourceLoader.registerControlViewResources(fileName)) {
+                    console.info(LoggerModule.Logger.devStudioNavigationControlCategory, "Successfully loaded resource for", fileName);
+                } else {
+                    console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Failed to load resource for", fileName);
+                }
 
                 // If matching view exists, bring it back into focus
                 for (let i = 0; i < platform_view_model_.count; i++) {
