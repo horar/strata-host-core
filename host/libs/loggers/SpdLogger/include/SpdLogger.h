@@ -1,8 +1,10 @@
 #pragma once
 
-#include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
+namespace strata::loggers
+{
 /**
  * @brief The spdlog logging setup
  */
@@ -33,3 +35,5 @@ private:
     std::shared_ptr<spdlog::logger> logger_;
     std::string logCategory_{"strata.logger.spdlog"};
 };
+
+}  // namespace strata::loggers
