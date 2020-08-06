@@ -348,6 +348,7 @@ function updateState(event, data)
                 if (view_index !== -1) {
                     connected_view = platform_view_model_.get(view_index)
                     connected_view.device_id = data.device_id
+                    connected_view.firmware_version = data.firmware_version
                     connected_view.connected = true
                 }
                 break;
@@ -359,6 +360,7 @@ function updateState(event, data)
                     let disconnected_view = platform_view_model_.get(k)
                     if (disconnected_view.class_id === data.class_id && disconnected_view.device_id === data.device_id) {
                         disconnected_view.connected = false
+                        disconnected_view.firmware_version = ""
                         break
                     }
                 }

@@ -94,6 +94,7 @@ Item {
                                             "class_id": uuid,
                                             "name": model.fileName,
                                             "device_id": Constants.DEBUG_DEVICE_ID,
+                                            "firmware_version": "",
                                             "view": "control",
                                             "connected": true,
                                             "available": {

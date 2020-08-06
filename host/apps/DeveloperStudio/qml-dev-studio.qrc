@@ -75,6 +75,10 @@
         <file>partial-views/platform-view/SGPlatformView.qml</file>
         <file>partial-views/status-bar/SGPlatformTab.qml</file>
         <file>partial-views/platform-view/DisconnectedOverlay.qml</file>
+        <file>partial-views/platform-view/PlatformSettings.qml</file>
+        <file>partial-views/platform-view/PlatformSettings/SoftwareManagement.qml</file>
+        <file>partial-views/platform-view/PlatformSettings/FirmwareManagement.qml</file>
+        <file>partial-views/platform-view/PlatformSettings/FirmwareVersionList.qml</file>
         <file>js/constants.js</file>
         <file>partial-views/status-bar/SGFeedbackTypeModel.qml</file>
         <file>partial-views/status-bar/SGFeedbackTypeDelegate.qml</file>
