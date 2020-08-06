@@ -137,13 +137,6 @@ SGWidgets.SGMainWindow {
                 CoreUpdate.parseVersionInfo(payload)
             }
         }
-
-        onUpdateApplicationReceived: {
-            // May not be needed in the end
-            if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE) {
-                CoreUpdate.parseUpdateInfo(payload)
-            }
-        }
     }
 
     SGDebugBar {

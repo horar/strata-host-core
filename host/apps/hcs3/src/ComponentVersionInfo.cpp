@@ -1,6 +1,6 @@
 #include "logging/LoggingQtCategories.h"
 
-#include "CoreUpdate.h"
+#include "ComponentVersionInfo.h"
 #include "Database.h"
 
 #include <QJsonDocument>
@@ -9,21 +9,16 @@
 #include <QFileInfo>
 #include <QDomDocument>
 #include <QCoreApplication>
-#include <QProcess>
 
-void CoreUpdate::setDatabase(Database* db) {
+void ComponentVersionInfo::setDatabase(Database* db) {
     db_ = db;
 }
 
-void CoreUpdate::handleVersionInfoResponse(const QByteArray &clientId, const QString &currentVersion, const QString &latestVersion, const QString &errorString) {
+void ComponentVersionInfo::handleVersionInfoResponse(const QByteArray &clientId, const QString &currentVersion, const QString &latestVersion, const QString &errorString) {
     emit versionInfoResponseRequested(clientId, currentVersion, latestVersion, errorString);
 }
 
-void CoreUpdate::handleUpdateApplicationResponse(const QByteArray &clientId, const QString &errorString) {
-    emit updateApplicationResponseRequested(clientId, errorString);
-}
-
-QString CoreUpdate::getLatestVersion(const QByteArray &clientId) {
+QString ComponentVersionInfo::getLatestVersionOfComponent(const QByteArray &clientId) {
     // Retrieve latest version info from DB
     std::string latest_version_body;
     if (db_->getDocument("latest_version", latest_version_body) == false) {
@@ -44,7 +39,7 @@ QString CoreUpdate::getLatestVersion(const QByteArray &clientId) {
     return jsonObj.value("latest_version").toString();
 }
 
-QString CoreUpdate::getCurrentVersion(const QByteArray &clientId) {
+QString ComponentVersionInfo::getCurrentVersionOfComponent(const QByteArray &clientId) {
     // Retrieve current version info from 'components.xml' file
     const QDir applicationDir(QCoreApplication::applicationDirPath());
     const QString absPathComponentsXmlFile = applicationDir.filePath("components.xml");
@@ -74,7 +69,7 @@ QString CoreUpdate::getCurrentVersion(const QByteArray &clientId) {
 }
 
 // Returns empty QString if desired package is not found in XML element
-QString CoreUpdate::findVersionFromComponentsXml(const QDomDocument &xmlDocument, const QString &packageName) {
+QString ComponentVersionInfo::findVersionFromComponentsXml(const QDomDocument &xmlDocument, const QString &packageName) {
     QString currentVersion = "";
     auto root = xmlDocument.documentElement();
     for (auto package = root.firstChild().toElement(); !package.isNull(); package = package.nextSibling().toElement()) {
@@ -101,68 +96,12 @@ QString CoreUpdate::findVersionFromComponentsXml(const QDomDocument &xmlDocument
     return currentVersion;
 }
 
-/*
-    No-op if not on Windows
-*/
-#if !defined(Q_OS_WIN)
-void CoreUpdate::requestVersionInfo(const QByteArray &clientId) {
-    qCCritical(logCategoryHcs) << "CoreUpdate functionality is available only on Windows OS";
-    handleVersionInfoResponse(clientId, QString(), QString(), "CoreUpdate functionality is available only on Windows OS");
-}
-#else
-void CoreUpdate::requestVersionInfo(const QByteArray &clientId) {
-    const QString currentVersion = getCurrentVersion(clientId);
+void ComponentVersionInfo::requestVersionInfo(const QByteArray &clientId) {
+    const QString currentVersion = getCurrentVersionOfComponent(clientId);
     if (!currentVersion.isEmpty()) {
-        const QString latestVersion = getLatestVersion(clientId);
+        const QString latestVersion = getLatestVersionOfComponent(clientId);
         if (!latestVersion.isEmpty()) {
             handleVersionInfoResponse(clientId, currentVersion, latestVersion);
         }
     }
-}
-#endif
-
-/*
-    No-op if not on Windows
-*/
-#if !defined(Q_OS_WIN)
-void CoreUpdate::requestUpdateApplication(const QByteArray &clientId) {
-    qCCritical(logCategoryHcs) << "CoreUpdate functionality is available only on Windows OS";
-    handleUpdateApplicationResponse(clientId, "CoreUpdate functionality is available only on Windows OS");
-}
-#else
-void CoreUpdate::requestUpdateApplication(const QByteArray &clientId) {
-    // Search for Strata Maintenance Tool in application directory, if found perform update
-    const QDir applicationDir(QCoreApplication::applicationDirPath());
-    const QString absPathMaintenanceTool = locateMaintenanceTool(clientId, applicationDir);
-    if (!absPathMaintenanceTool.isEmpty()) {
-        performCoreUpdate(absPathMaintenanceTool, applicationDir);
-    }
-}
-#endif
-
-QString CoreUpdate::locateMaintenanceTool(const QByteArray &clientId, const QDir &applicationDir) {
-    const QString maintenanceToolFilename = "Strata Maintenance Tool.exe";
-    const QString absPathMaintenanceTool = applicationDir.filePath(maintenanceToolFilename);
-
-    if (!applicationDir.exists(maintenanceToolFilename)) {
-        qCCritical(logCategoryHcs) << maintenanceToolFilename << "not found in" << applicationDir.absolutePath();
-        handleUpdateApplicationResponse(clientId, maintenanceToolFilename + " not found in " + applicationDir.absolutePath());
-        return QString();
-    }
-
-    return absPathMaintenanceTool;
-}
-
-void CoreUpdate::performCoreUpdate(const QString &absPathMaintenanceTool, const QDir &applicationDir) {
-    // Launch Strata Maintenance Tool wizard
-    QStringList arguments;
-    arguments << "isSilent=true" << "forceUpdate=true" << "delayStart=3000";
-
-    QProcess maintenanceToolProcess;
-    maintenanceToolProcess.setProgram(absPathMaintenanceTool);
-    maintenanceToolProcess.setArguments(arguments);
-    maintenanceToolProcess.setWorkingDirectory(applicationDir.absolutePath());
-    maintenanceToolProcess.startDetached();
-
-
 }

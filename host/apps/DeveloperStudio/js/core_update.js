@@ -32,19 +32,9 @@ function getUpdateInformation () {
     // No-op if not on Windows
     if (Qt.platform.os === "windows") {
         const get_version_info = {
-            "hcs::cmd": "get_version_info"
+            "hcs::cmd": "get_component_version_info"
         }
         coreInterface.sendCommand(JSON.stringify(get_version_info));
-    }
-}
-
-function updateApplication () {
-    // No-op if not on Windows
-    if (Qt.platform.os === "windows") {
-        const update_application = {
-            "hcs::cmd": "update_application"
-        }
-        coreInterface.sendCommand(JSON.stringify(update_application));
     }
 }
 
@@ -98,15 +88,6 @@ function createUpdatePopup () {
     coreUpdatePopup.error_string = error_string
 
     coreUpdatePopup.open()
-}
-
-function acceptUpdate () {
-    updateApplication()
-}
-
-function parseUpdateInfo (payload) {
-    // May not be needed in the end
-    console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Rcvd update info:", JSON.stringify(payload));
 }
 
 function getUserNotificationModeFromINIFile () {

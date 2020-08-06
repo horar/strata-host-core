@@ -6,7 +6,7 @@
 
 class Database;
 
-class CoreUpdate : public QObject
+class ComponentVersionInfo : public QObject
 {
     Q_OBJECT
 
@@ -16,8 +16,6 @@ public:
 public slots:
     void requestVersionInfo(const QByteArray &clientId);
 
-    void requestUpdateApplication(const QByteArray &clientId);
-
 signals:
     void versionInfoResponseRequested(QByteArray clientId, QString currentVersion, QString latestVersion, QString errorString);
 
@@ -26,17 +24,13 @@ signals:
 private:
     void handleVersionInfoResponse(const QByteArray &clientId, const QString &currentVersion, const QString &latestVersion, const QString &errorString = QString());
 
-    void handleUpdateApplicationResponse(const QByteArray &clientId, const QString &errorString = QString());
+    QString getLatestVersionOfComponent(const QByteArray &clientId);
 
-    QString getLatestVersion(const QByteArray &clientId);
-
-    QString getCurrentVersion(const QByteArray &clientId);
+    QString getCurrentVersionOfComponent(const QByteArray &clientId);
 
     QString findVersionFromComponentsXml(const QDomDocument &xmlDocument, const QString &packageName);
 
     QString locateMaintenanceTool(const QByteArray &clientId, const QDir &applicationDir);
-
-    void performCoreUpdate(const QString &absPathMaintenanceTool, const QDir &applicationDir);
 
     Database* db_{nullptr};
 };

@@ -24,9 +24,9 @@
 #include "SDSModel.h"
 #include "DocumentManager.h"
 #include "ResourceLoader.h"
+#include "CoreUpdate.h"
 
 #include "HcsNode.h"
-
 
 void addImportPaths(QQmlApplicationEngine *engine)
 {
@@ -101,6 +101,8 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<ClassDocuments>("tech.strata.ClassDocuments", 1, 0, "ClassDocuments", "You can't instantiate ClassDocuments in QML");
 
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
+
+    qmlRegisterType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate");
 
     SDSModel *sdsModel = new SDSModel();
     sdsModel->init(app.applicationDirPath(), QStringLiteral(HCS_CONFIG));

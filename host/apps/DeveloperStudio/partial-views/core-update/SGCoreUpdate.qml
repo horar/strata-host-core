@@ -8,6 +8,8 @@ import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/core_update.js" as CoreUpdate
 
+import tech.strata.CoreUpdate 1.0
+
 Popup {
     id: coreUpdatePopup
     modal: true
@@ -20,6 +22,10 @@ Popup {
     property string latest_version: ""
     property string current_version: ""
     property string error_string: ""
+
+    CoreUpdate {
+        id: updateObj
+    }
 
     DropShadow {
         width: coreUpdatePopup.width
@@ -91,8 +97,9 @@ Popup {
         Button {
             text: "Update"
             width: popupContainer.width / 2
+
             onClicked: {
-                CoreUpdate.acceptUpdate()
+                updateObj.requestUpdateApplication()
                 coreUpdatePopup.close()
             }
         }
