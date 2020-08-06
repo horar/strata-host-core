@@ -72,6 +72,8 @@ void DocumentManager::populateModels(QJsonObject data)
     if (classes_.contains(classId)) {
         classes_[classId]->populateModels(data);
     }
+
+    emit populateModelsFinished();
 }
 
 void DocumentManager::init()

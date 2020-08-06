@@ -9,6 +9,7 @@
 
 var isInitialized = false
 var coreInterface
+var documentManager
 var listError = {
     "retry_count": 0,
     "retry_timer": Qt.createQmlObject("import QtQuick 2.12; Timer {interval: 3000; repeat: false; running: false;}",Qt.application,"TimeOut")
@@ -19,9 +20,10 @@ var previouslyConnected = []
 var localPlatformListSettings = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"LocalPlatformList\";}", Qt.application)
 var localPlatformList = []
 
-function initialize (newCoreInterface) {
+function initialize (newCoreInterface, newDocumentManager) {
     platformSelectorModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string platformListStatus: 'loading'}",Qt.application,"PlatformSelectorModel")
     coreInterface = newCoreInterface
+    documentManager = newDocumentManager
     listError.retry_timer.triggered.connect(function () { getPlatformList() });
     isInitialized = true
 }
@@ -213,6 +215,39 @@ function refreshFirmwareVersion(platform) {
             }
         }
     }
+}
+
+/*
+  Function for downloading control views of connected platforms
+*/
+function downloadControlViews() {
+    for (let i = 0; i < previouslyConnected.length; i++) {
+        downloadControlView(previouslyConnected[i].class_id)
+    }
+}
+
+/*
+    Helper function for downloading a control view
+*/
+function downloadControlView(class_id) {
+    console.info("Downloading control view")
+    let controlViewList = documentManager.getClassDocuments(class_id).controlViewListModel;
+    let index = controlViewList.getLatestVersion();
+
+    if (index < 0) {
+        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Could not get latest version")
+        return;
+    }
+
+    let command = {
+        "hcs::cmd": "download_view",
+        "payload": {
+            "url": controlViewList.uri(index),
+            "md5": controlViewList.md5(index)
+        }
+    }
+
+    coreInterface.sendCommand(JSON.stringify(command))
 }
 
 /*

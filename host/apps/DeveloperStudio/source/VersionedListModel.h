@@ -49,6 +49,7 @@ public:
     Q_INVOKABLE QString name(int index);
     Q_INVOKABLE QString timestamp(int index);
     Q_INVOKABLE bool installed(int index);
+    Q_INVOKABLE int getLatestVersion();
 
     enum {
         UriRole = Qt::UserRole,

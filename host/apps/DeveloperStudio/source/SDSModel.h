@@ -7,6 +7,7 @@
 class DocumentManager;
 class CoreInterface;
 class HcsNode;
+class ResourceLoader;
 
 class SDSModel: public QObject
 {
@@ -16,6 +17,7 @@ class SDSModel: public QObject
     Q_PROPERTY(bool hcsConnected READ hcsConnected NOTIFY hcsConnectedChanged)
     Q_PROPERTY(CoreInterface* coreInterface READ coreInterface CONSTANT)
     Q_PROPERTY(DocumentManager* documentManager READ documentManager CONSTANT)
+    Q_PROPERTY(ResourceLoader* resourceLoader READ resourceLoader CONSTANT)
 
 public:
     explicit SDSModel(QObject *parent = nullptr);
@@ -28,6 +30,7 @@ public:
     bool hcsConnected() const;
     DocumentManager* documentManager() const;
     CoreInterface* coreInterface() const;
+    ResourceLoader* resourceLoader() const;
 
     /*Temporary solution until strata monitor is done*/
     bool killHcsSilently = false;
@@ -45,6 +48,7 @@ private:
     bool hcsConnected_ = false;
     CoreInterface *coreInterface_;
     DocumentManager *documentManager_;
+    ResourceLoader *resourceLoader_;
     HcsNode *remoteHcsNode_;
     QPointer<QProcess> hcsProcess_;
     QString appDirPath_;
