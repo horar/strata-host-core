@@ -9,11 +9,23 @@
 ResourceLoader::ResourceLoader()
 {
     loadCoreResources();
-    loadViewResources();
+//    loadViewResources();
 }
 
 ResourceLoader::~ResourceLoader()
 {
+}
+
+bool ResourceLoader::registerResource(const QString &fileName, const QString &root) {
+    QString path = ResourcePath::viewsResourcePath() + "/" + fileName;
+    qDebug(logCategoryResourceLoader) << "Registering resource: " << path;
+    return QResource::registerResource(path, root);
+}
+
+bool ResourceLoader::unregisterResource(const QString &fileName, const QString &root) {
+    QString path = ResourcePath::viewsResourcePath() + "/" + fileName;
+    qDebug(logCategoryResourceLoader) << "Unregistering resource: " << path;
+    return QResource::unregisterResource(path, root);
 }
 
 void ResourceLoader::loadCoreResources()
