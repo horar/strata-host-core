@@ -36,13 +36,12 @@ add_library(${PROJECT_NAME}Lib STATIC
     src/HostControllerService.cpp
     src/BoardController.cpp
     src/Dispatcher.cpp
-    src/HCS_Client.cpp
+    src/Client.cpp
     src/ClientsController.cpp
     src/Database.cpp
     src/StorageManager.cpp
     src/StorageInfo.cpp
     src/PlatformDocument.cpp
-    src/LoggingAdapter.cpp
     src/FirmwareUpdateController.cpp
     src/FirmwareUpdater.cpp
 

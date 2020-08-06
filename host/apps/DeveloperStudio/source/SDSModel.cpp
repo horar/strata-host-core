@@ -115,33 +115,30 @@ bool SDSModel::killHcs()
         return false;
     }
 
-#ifdef Q_OS_WIN // windows check to kill hcs3
-    // [PV] : In windows, QProcess terminate will not send any close message to QT non GUI application
-    // Waiting for 10s before kill, if user runs an instance of SDS immediately after closing, hcs3
-    // will not be terminated and new hcs insatnce will start, leaving two instances of hcs.
     if (hcsProcess_->state() == QProcess::Running) {
-        qCDebug(logCategoryStrataDevStudio) << "killing HCS";
-        hcsProcess_->kill();
-        if (hcsProcess_->waitForFinished() == false) {
-            qCWarning(logCategoryStrataDevStudio) << "Failed to kill HCS server";
-            return false;
+        qCDebug(logCategoryStrataDevStudio) << "waiting for HCS gracefull finish...";
+        if (hcsProcess_->waitForFinished(5000) == true) {
+            return true;
         }
-    }
-#else
-    if (hcsProcess_->state() == QProcess::Running) {
-        qCDebug(logCategoryStrataDevStudio) << "terminating HCS";
+
+#ifdef Q_OS_UNIX
+        qCDebug(logCategoryStrataDevStudio) << "terminating HCS...";
         hcsProcess_->terminate();
         QThread::msleep(100);   //This needs to be here, otherwise 'waitForFinished' waits until timeout
-        if (hcsProcess_->waitForFinished(10000) == false) {
-            qCDebug(logCategoryStrataDevStudio) << "termination failed, killing HCS";
-            hcsProcess_->kill();
-            if (hcsProcess_->waitForFinished() == false) {
-                qCWarning(logCategoryStrataDevStudio) << "Failed to kill HCS server";
-                return false;
-            }
+        if (hcsProcess_->waitForFinished(5000) == true) {
+            return true;
         }
-    }
+        qCWarning(logCategoryStrataDevStudio) << "Failed to terminate the server";
 #endif
+
+        qCDebug(logCategoryStrataDevStudio) << "killing HCS...";
+        hcsProcess_->kill();
+        if (hcsProcess_->waitForFinished(5000) == true) {
+            return true;
+        }
+        qCCritical(logCategoryStrataDevStudio) << "Failed to kill HCS server";
+        return false;
+    }
 
     return true;
 }
