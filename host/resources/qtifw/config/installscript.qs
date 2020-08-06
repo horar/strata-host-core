@@ -1,48 +1,33 @@
 var isSilent = false;
 var startSDS = false;
-var forcePackageManager = false;
-var forceUpdate = false;
-var forceUninstall = false;
 var delayStart = 0;
+
+function isValueSet(val)
+{
+    return (installer.containsValue(val) && ((installer.value(val).toLowerCase() == "true") || (installer.value(val) == "1")));
+}
+
+// if we run installer, it will be in installer mode
+// if we run maintenance tool, it will be by default in uninstall mode
+// we can also use the following settings to preselect other mode
+//  --updater                                Start application in updater mode.
+//  --manage-packages                        Start application in package manager
 
 function Controller()
 {    
-    if(installer.containsValue("isSilent") && ((installer.value("isSilent").toLowerCase() == "true") || (installer.value("isSilent") == "1"))) {
+    if(isValueSet("isSilent")) {
         isSilent = true;
         installer.setValue("isSilent_internal","true");
-    } else
-        installer.setValue("isSilent_internal","false");    // must be always overwritten, so it is ignored in persistency
+        ;
+    } else {
+        installer.setValue("isSilent_internal","false");
+    }
     
-    if(installer.containsValue("startSDS") && ((installer.value("startSDS").toLowerCase() == "true") || (installer.value("startSDS") == "1"))) {
+    if(isValueSet("startSDS"))
         startSDS = true;
-    }
-    
-    if(installer.containsValue("forcePackageManager") && ((installer.value("forcePackageManager").toLowerCase() == "true") || (installer.value("forcePackageManager") == "1"))) {
-        forcePackageManager = true;
-    }
-    
-    if(installer.containsValue("forceUpdate") && ((installer.value("forceUpdate").toLowerCase() == "true") || (installer.value("forceUpdate") == "1"))) {
-        forceUpdate = true;
-    }
-    
-    if(installer.containsValue("forceUninstall") && ((installer.value("forceUninstall").toLowerCase() == "true") || (installer.value("forceUninstall") == "1"))) {
-        forceUninstall = true;
-    }
-    
-    console.log("Is forcePackageManager set: " + forcePackageManager);
-    console.log("Is forceUpdate set: " + forceUpdate);
-    console.log("Is forceUninstall set: " + forceUninstall);
-    console.log("Is isSilent set: " + isSilent);
 
-    if (isSilent) {
-        if(!installer.isInstaller()) {
-            if(!forcePackageManager && !forceUpdate && !forceUninstall) {
-                isSilent = false;
-                installer.setValue("isSilent_internal","false");
-                console.log("disabling isSilent");
-            }
-        }
-    }
+    console.log("Is isSilent set: " + isSilent);
+    console.log("Is startSDS set: " + startSDS);
 
     if (isSilent) {
         installer.installationFinished.connect(function () {
@@ -74,6 +59,8 @@ function Controller()
         if(delayStart < 0)
             delayStart = 0;
     }
+    
+    console.log("Is delayStart set: " + delayStart);
 
     // restore all custom variables to defaults, because they are persistent through Strata Maintenance Tool.ini
     if(installer.isInstaller()) {
@@ -85,10 +72,7 @@ function Controller()
     
     // we already saved their values, so we can return them back to default now
     installer.setValue("isSilent", "false");
-    installer.setValue("forcePackageManager", "false");
-    installer.setValue("forceUpdate", "false");
-    installer.setValue("forceUninstall", "false");
-    
+    installer.setValue("startSDS", "false");
     installer.setValue("delayStart", "0");
 }
 
@@ -101,6 +85,7 @@ onPackageManagerCoreTypeChanged = function()
 
 Controller.prototype.IntroductionPageCallback = function()
 {
+    console.log("IntroductionPageCallback entered");
     var widget = gui.currentPageWidget();
     if (widget != null) {
         if(installer.isInstaller()) {
@@ -117,34 +102,6 @@ Controller.prototype.IntroductionPageCallback = function()
                                     + "Please choose one of the available options, then click Next to continue.\n\n"
                                     + "It is recommended that you close all other applications before continuing.\n\n"
                                     );
-            var packageManagerRadioButton = widget.findChild("PackageManagerRadioButton");
-            var updaterRadioButton = widget.findChild("UpdaterRadioButton");
-            var uninstallerRadioButton = widget.findChild("UninstallerRadioButton");
-
-            if(forcePackageManager && (packageManagerRadioButton != null)) {
-                packageManagerRadioButton.show();
-                packageManagerRadioButton.setChecked(true);
-                if(updaterRadioButton != null)
-                    updaterRadioButton.hide();
-                if(uninstallerRadioButton != null)
-                    uninstallerRadioButton.hide();
-            }
-            if(forceUpdate && (updaterRadioButton != null)) {
-                updaterRadioButton.show();
-                updaterRadioButton.setChecked(true);
-                if(packageManagerRadioButton != null)
-                    packageManagerRadioButton.hide();
-                if(uninstallerRadioButton != null)
-                    uninstallerRadioButton.hide();
-            }
-            if(forceUninstall && (uninstallerRadioButton != null)) {
-                uninstallerRadioButton.show();
-                uninstallerRadioButton.setChecked(true);
-                if(packageManagerRadioButton != null)
-                    packageManagerRadioButton.hide();
-                if(updaterRadioButton != null)
-                    updaterRadioButton.hide();
-            }
         }
     }
 
@@ -156,17 +113,23 @@ Controller.prototype.IntroductionPageCallback = function()
     }
 }
 
-Controller.prototype.WelcomePageCallback = function () {
+Controller.prototype.WelcomePageCallback = function ()
+{
+    console.log("WelcomePageCallback entered");
     if (isSilent)
         gui.clickButton(buttons.NextButton, 3000);
 }
 
-Controller.prototype.TargetDirectoryPageCallback = function () {
+Controller.prototype.TargetDirectoryPageCallback = function ()
+{
+    console.log("TargetDirectoryPageCallback entered");
     if (isSilent)
         gui.clickButton(buttons.NextButton);
 }
 
-Controller.prototype.ComponentSelectionPageCallback = function () {
+Controller.prototype.ComponentSelectionPageCallback = function ()
+{
+    console.log("ComponentSelectionPageCallback entered");
     var widget = gui.currentPageWidget();
     if (widget != null) {
         if (isSilent) {
@@ -178,38 +141,63 @@ Controller.prototype.ComponentSelectionPageCallback = function () {
     }
 }
 
-Controller.prototype.LicenseAgreementPageCallback = function () {
+Controller.prototype.LicenseAgreementPageCallback = function ()
+{
+    console.log("LicenseAgreementPageCallback entered");
+
     if (isSilent) {
         gui.currentPageWidget().AcceptLicenseRadioButton.setChecked(true);
         gui.clickButton(buttons.NextButton);
     }
 }
 
-Controller.prototype.StartMenuDirectoryPageCallback = function () {
+Controller.prototype.StartMenuDirectoryPageCallback = function ()
+{
+    console.log("StartMenuDirectoryPageCallback entered");
     if (isSilent)
         gui.clickButton(buttons.NextButton);
 }
 
-Controller.prototype.ReadyForInstallationPageCallback = function () {
+Controller.prototype.ReadyForInstallationPageCallback = function ()
+{
+    console.log("ReadyForInstallationPageCallback entered");
     if (isSilent)
         gui.clickButton(buttons.NextButton);
 }
 
-Controller.prototype.PerformInstallationPageCallback = function () {
+Controller.prototype.PerformInstallationPageCallback = function ()
+{
+    console.log("PerformInstallationPageCallback entered");
     if (isSilent)
         gui.clickButton(buttons.CommitButton);
 }
 
-Controller.prototype.FinishedPageCallback = function () {
+function isComponentInstalled(component_name)
+{
+    var component = installer.componentByName(component_name);
+    if(component != null) {
+		var installed = component.isInstalled();
+        console.log("component '" + component_name + "' found and is installed: " + installed);
+        return installed;
+    }
+    
+    console.log("component '" + component_name + "' NOT found");
+    return false;
+}
+
+Controller.prototype.FinishedPageCallback = function ()
+{
+    console.log("FinishedPageCallback entered");
     var widget = gui.currentPageWidget();
     if (widget != null) {
         widget.MessageLabel.setText("ON Semiconductor\n\n"
                                     + "Thank you for using ON Semiconductor. If you have any questions or in need of support, please contact your local sales representative.\n\n"
-                                    + "Copyright 2020\n\n"
+                                    + "Copyright " + (new Date().getFullYear()) + "\n\n"
                                     );
         if(installer.isInstaller() || installer.isUpdater() || installer.isPackageManager()) {
-            if(installer.containsValue("RunProgram") && (installer.value("RunProgram") != ""))
-                widget.RunItCheckBox.setChecked(startSDS);
+			var runItCheckBox = widget.findChild("RunItCheckBox");
+			if((runItCheckBox != null) && isComponentInstalled("com.onsemi.strata.devstudio"))
+				runItCheckBox.setChecked(startSDS);
         }
     }
 
@@ -217,36 +205,45 @@ Controller.prototype.FinishedPageCallback = function () {
         gui.clickButton(buttons.FinishButton);
 }
 
+function isComponentAvailable(component_name)
+{
+	// functions to check component state:
+	// boolean installationRequested()
+    // boolean uninstallationRequested()
+    // boolean updateRequested()
+    // boolean isInstalled()
+    // boolean isUninstalled()
+
+    var component = installer.componentByName(component_name);
+    if(component != null) {
+		var available = component.installationRequested() || component.updateRequested() || (component.isInstalled() && !component.uninstallationRequested());
+        console.log("component '" + component_name + "' found and is available: " + available);
+        return available;
+    }
+    
+    console.log("component '" + component_name + "' NOT found");
+    return false;
+}
+
 Controller.prototype.DynamicShortcutCheckBoxWidgetCallback = function()
 {
-    console.log("DynamicShortcutCheckBoxWidgetCallback called");
-    
-    var install_SDS = true;
-    var component = installer.componentByName("com.onsemi.strata.devstudio");
-    if(component != null) {
-        console.log("component com.onsemi.strata.devstudio found, installation requested: " + component.installationRequested());
-        if (!component.installationRequested())
-            install_SDS = false;
-    } else {
-        console.log("component com.onsemi.strata.devstudio NOT found");
+    console.log("DynamicShortcutCheckBoxWidgetCallback entered");
+    var widget = gui.currentPageWidget();
+    if (widget != null) {
+        var desktopCheckBox = widget.findChild("desktopCheckBox");
+        if(desktopCheckBox != null) {
+            if(isComponentAvailable("com.onsemi.strata.devstudio") == true) {
+                desktopCheckBox.setEnabled(true);
+                desktopCheckBox.setChecked(installer.value("add_desktop_shortcut") == "true");
+            } else {
+                desktopCheckBox.setEnabled(false);
+                desktopCheckBox.setChecked(installer.value("add_desktop_shortcut") == "false");
+            }
+        }
+        var startMenuCheckBox = widget.findChild("startMenuCheckBox");
+        if(startMenuCheckBox != null)
+            startMenuCheckBox.setChecked(installer.value("add_start_menu_shortcut") == "true");
     }
-
-	var widget = gui.currentPageWidget();
-	if (widget != null) {
-		var desktopCheckBox = widget.findChild("desktopCheckBox");
-		if(desktopCheckBox != null) {
-			if(install_SDS == true) {
-				desktopCheckBox.show();
-				desktopCheckBox.setChecked(installer.value("add_desktop_shortcut") == "true");
-			} else {
-				desktopCheckBox.hide();
-				desktopCheckBox.setChecked(installer.value("add_desktop_shortcut") == "false");
-			}
-		}
-		var startMenuCheckBox = widget.findChild("startMenuCheckBox");
-		if(startMenuCheckBox != null)
-			startMenuCheckBox.setChecked(installer.value("add_start_menu_shortcut") == "true");
-	}
 
     if (isSilent) {
         gui.clickButton(buttons.NextButton);

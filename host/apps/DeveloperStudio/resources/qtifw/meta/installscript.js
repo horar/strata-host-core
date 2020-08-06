@@ -35,18 +35,17 @@ Component.prototype.createOperations = function()
 {
     // call default implementation to actually install the content
     component.createOperations();
-	
-	var strata_ds_shortcut_dst1 = installer.value("StartMenuDir") + "\\Strata Developer Studio.lnk";
-    var strata_ds_shortcut_dst2 = installer.value("DesktopDir") + "\\Strata Developer Studio.lnk";
 
-    component.addOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Developer Studio.exe", strata_ds_shortcut_dst1,
-                            "workingDirectory=" + installer.value("TargetDir"), "description=Open Strata Developer Studio");
-
-    component.addOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Developer Studio.exe", strata_ds_shortcut_dst2,
-                            "workingDirectory=" + installer.value("TargetDir"), "description=Open Strata Developer Studio");
-
-	// do it like this in case the SDS is not chosen to be installed
-    installer.setValue("RunProgram", installer.value("TargetDir") + "/Strata Developer Studio.exe");
-    installer.setValue("RunProgramArguments", "");
-    installer.setValue("RunProgramDescription", "Launch Strata Developer Studio");
+    if (systemInfo.productType === "windows") {
+        if(installer.value("add_start_menu_shortcut") == "true") {
+            var strata_ds_shortcut_dst1 = installer.value("StartMenuDir") + "\\Strata Developer Studio.lnk";
+            component.addOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Developer Studio.exe", strata_ds_shortcut_dst1,
+                                    "workingDirectory=" + installer.value("TargetDir"), "description=Open Strata Developer Studio");
+        }
+        if(installer.value("add_desktop_shortcut") == "true") {
+            var strata_ds_shortcut_dst2 = installer.value("DesktopDir") + "\\Strata Developer Studio.lnk";
+            component.addOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Developer Studio.exe", strata_ds_shortcut_dst2,
+                                    "workingDirectory=" + installer.value("TargetDir"), "description=Open Strata Developer Studio");
+        }
+     }
 }

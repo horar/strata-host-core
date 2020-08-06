@@ -29,25 +29,24 @@
 
 function Component()
 {
-    installer.installationFinished.connect(this, Component.prototype.installationFinished);
+    installer.installationFinished.connect(this, Component.prototype.installationOrUpdateFinished);    // called after installation, update and adding/removing components
     installer.finishButtonClicked.connect(this, Component.prototype.finishButtonClicked);
 
-    if (installer.isInstaller())
-        component.loaded.connect(this, Component.prototype.installerLoaded);
+    if (installer.isInstaller() && (systemInfo.productType === "windows"))
+        component.loaded.connect(this, Component.prototype.addShortcutWidget);
 }
 
 Component.prototype.createOperations = function()
 {
     // call default implementation to actually install the content
     component.createOperations();
-    
-    component.addOperation("Mkdir", installer.value("StartMenuDir"));
-                    
-    var strata_mt_shortcut_dst = installer.value("StartMenuDir") + "\\Strata Maintenance Tool.lnk";
 
-    component.addOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Maintenance Tool.exe", strata_mt_shortcut_dst,
-                            "workingDirectory=" + installer.value("TargetDir"), "iconPath=%SystemRoot%/system32/SHELL32.dll",
-                            "iconId=2", "description=Open Maintenance Tool");
+	if ((systemInfo.productType === "windows") && installer.value("add_start_menu_shortcut") == "true") {
+		var strata_mt_shortcut_dst = installer.value("StartMenuDir") + "\\Strata Maintenance Tool.lnk";
+		component.addOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Maintenance Tool.exe", strata_mt_shortcut_dst,
+								"workingDirectory=" + installer.value("TargetDir"), "iconPath=%SystemRoot%/system32/SHELL32.dll",
+								"iconId=2", "description=Open Maintenance Tool");
+	}
 
     if(installer.isInstaller())
         uninstallPreviousStrataInstallation();
@@ -75,26 +74,34 @@ function isRestartRequired()
     }
 }
 
-Component.prototype.installationFinished = function()
+function isComponentInstalled(component_name)
 {
-    if (installer.isInstaller() && (installer.status == QInstaller.Success)) {
-        if (systemInfo.productType === "windows") {
-            if(installer.value("add_start_menu_shortcut") !== "true") {
-                var strata_mt_shortcut_dst = installer.value("StartMenuDir") + "\\Strata Maintenance Tool.lnk";
-                var strata_ds_shortcut_dst1 = installer.value("StartMenuDir") + "\\Strata Developer Studio.lnk";
+    var component = installer.componentByName(component_name);
+    if(component != null) {
+        var installed = component.isInstalled();
+        console.log("component '" + component_name + "' found and is installed: " + installed);
+        return installed;
+    }
+    
+    console.log("component '" + component_name + "' NOT found");
+    return false;
+}
 
-                installer.performOperation("Delete", strata_mt_shortcut_dst);
-                if(installer.containsValue("RunProgram") && (installer.value("RunProgram") != ""))
-                    installer.performOperation("Delete", strata_ds_shortcut_dst1);
-                installer.performOperation("Rmdir", installer.value("StartMenuDir"));
-            }
-            if(installer.value("add_desktop_shortcut") !== "true") {
-                var strata_ds_shortcut_dst2 = installer.value("DesktopDir") + "\\Strata Developer Studio.lnk";
-				if(installer.containsValue("RunProgram") && (installer.value("RunProgram") != ""))
-					installer.performOperation("Delete", strata_ds_shortcut_dst2);
-            }
-        }
+Component.prototype.installationOrUpdateFinished = function()
+{
+    console.log("installationOrUpdateFinished entered");
+    
+    if (isComponentInstalled("com.onsemi.strata.devstudio") && (installer.isInstaller() || installer.isUpdater() || installer.isPackageManager())) {
+        installer.setValue("RunProgram", installer.value("TargetDir") + "/Strata Developer Studio.exe");
+        installer.setValue("RunProgramArguments", "");
+        installer.setValue("RunProgramDescription", "Launch Strata Developer Studio");
+    } else {
+        installer.setValue("RunProgram", "");
+        installer.setValue("RunProgramArguments", "");
+        installer.setValue("RunProgramDescription", "");        
+    }
 
+    if ((installer.isInstaller() || installer.isUpdater() || installer.isPackageManager()) && (installer.status == QInstaller.Success)) {
         isRestartRequired();
     }
 }
@@ -109,8 +116,11 @@ Component.prototype.finishButtonClicked = function()
         // User has selected 'yes' to restart
         if(restart_reply == QMessageBox.Yes) {
             var widget = gui.currentPageWidget();
-            if (widget != null)
-                widget.RunItCheckBox.setChecked(false);
+            if (widget != null) {
+                var runItCheckBox = widget.findChild("RunItCheckBox");
+                if(runItCheckBox != null)
+                    runItCheckBox.setChecked(false);
+            }
 
             console.log("User reply to restart computer: Yes, restarting computer (with 5 second delay)");
             installer.executeDetached("powershell", "shutdown /r /t 5", "");
@@ -121,14 +131,18 @@ Component.prototype.finishButtonClicked = function()
         console.log("restart not required, terminating");
 }
 
-Component.prototype.installerLoaded = function () {
+Component.prototype.addShortcutWidget = function () {
     try {
         if (installer.addWizardPage( component, "ShortcutCheckBoxWidget", QInstaller.StartMenuSelection )) {
             console.log("ShortcutCheckBoxWidget page added");
             var widget = gui.pageWidgetByObjectName("DynamicShortcutCheckBoxWidget");
             if (widget != null) {
-                widget.desktopCheckBox.toggled.connect(this, Component.prototype.desktopShortcutChanged);
-                widget.startMenuCheckBox.toggled.connect(this, Component.prototype.startMenuShortcutChanged);
+                var desktopCheckBox = widget.findChild("desktopCheckBox");
+                if(desktopCheckBox != null)
+                    desktopCheckBox.toggled.connect(this, Component.prototype.desktopShortcutChanged);
+                var startMenuCheckBox = widget.findChild("startMenuCheckBox");
+                if(startMenuCheckBox != null)
+                    startMenuCheckBox.toggled.connect(this, Component.prototype.startMenuShortcutChanged);
             }
         } else
             console.log("ShortcutCheckBoxWidget page not added");
@@ -152,11 +166,13 @@ Component.prototype.startMenuShortcutChanged = function (checked)
     if (checked) {
         installer.setValue("add_start_menu_shortcut", "true");
         installer.setValue("StartMenuDir", "ON Semiconductor");
-        installer.setDefaultPageVisible(QInstaller.StartMenuSelection, true);
+        if (systemInfo.productType === "windows")
+            installer.setDefaultPageVisible(QInstaller.StartMenuSelection, true);
     } else {
         installer.setValue("add_start_menu_shortcut", "false");
         installer.setValue("StartMenuDir", "");
-        installer.setDefaultPageVisible(QInstaller.StartMenuSelection, false);
+        if (systemInfo.productType === "windows")
+            installer.setDefaultPageVisible(QInstaller.StartMenuSelection, false);
     }
 }
 
