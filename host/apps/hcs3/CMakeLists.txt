@@ -72,14 +72,14 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     Qt5::Concurrent
     Qt5::RemoteObjects
 
-    BoardManager
-    FlasherConnector
-    connector
-    EventsMgr
-    DownloadManager
+    strata::BoardManager
+    strata::FlasherConnector
+    strata::connector
+    strata::EventsMgr
+    strata::DownloadManager
     strata::CouchbaseLiteCPP
-    QtLogger
-    CbLogger
+    strata::QtLogger
+    strata::CbLogger
 )
 
 target_include_directories(${PROJECT_NAME}Lib
