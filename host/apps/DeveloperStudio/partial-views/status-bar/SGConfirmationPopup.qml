@@ -68,7 +68,7 @@ Popup {
 
                 SGIcon {
                     id: confirmTitleText
-                    source: "qrc:/images/icons/times.svg"
+                    source: "qrc:/sgimages/times.svg"
                     iconColor: closeconfirmMouse.containsMouse ? "#eee" : "white"
                     height: 20
                     width: height

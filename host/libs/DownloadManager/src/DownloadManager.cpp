@@ -404,7 +404,7 @@ QString DownloadManager::writeToFile(const QString &filePath, const QByteArray &
          return "Unable to open file: " + file.errorString();
      }
 
-     uint64_t file_size = file.size();
+     qint64 file_size = file.size();
      file.seek(file_size);
 
      qint64 written = file.write(buffer);

@@ -75,5 +75,8 @@
         <file>partial-views/platform-view/SGPlatformView.qml</file>
         <file>partial-views/status-bar/SGPlatformTab.qml</file>
         <file>partial-views/platform-view/DisconnectedOverlay.qml</file>
+        <file>js/constants.js</file>
+        <file>partial-views/status-bar/SGFeedbackTypeModel.qml</file>
+        <file>partial-views/status-bar/SGFeedbackTypeDelegate.qml</file>
     </qresource>
 </RCC>

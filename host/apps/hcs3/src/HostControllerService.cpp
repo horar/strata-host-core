@@ -19,9 +19,9 @@
 
 HostControllerService::HostControllerService(QObject* parent)
     : QObject(parent),
-      db_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString()),
       dbLogAdapter_("strata.hcs.database"),
       clientsLogAdapter_("strata.hcs.clients"),
+      db_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString()),
       downloadManager_(&networkManager_),
       storageManager_(&downloadManager_)
 {
@@ -30,10 +30,10 @@ HostControllerService::HostControllerService(QObject* parent)
     clientCmdHandler_.insert( { std::string("unregister"), std::bind(&HostControllerService::onCmdUnregisterClient, this, std::placeholders::_1) } );
     clientCmdHandler_.insert( { std::string("platform_select"), std::bind(&HostControllerService::onCmdPlatformSelect, this, std::placeholders::_1) } );
 
-    hostCmdHandler_.insert( { std::string("disconnect_platform"), std::bind(&HostControllerService::onCmdHostDisconnectPlatform, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("download_files"), std::bind(&HostControllerService::onCmdHostDownloadFiles, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
     hostCmdHandler_.insert( { std::string("update_firmware"), std::bind(&HostControllerService::onCmdUpdateFirmware, this, std::placeholders::_1) } );
+    hostCmdHandler_.insert( { std::string("download_view"), std::bind(&HostControllerService::onCmdDownloadControlView, this, std::placeholders::_1) });
 }
 
 HostControllerService::~HostControllerService()
@@ -69,6 +69,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(&storageManager_, &StorageManager::platformListResponseRequested, this, &HostControllerService::sendPlatformListMessage);
     connect(&storageManager_, &StorageManager::downloadPlatformDocumentsProgress, this, &HostControllerService::sendPlatformDocumentsProgressMessage);
     connect(&storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
+    connect(&storageManager_, &StorageManager::downloadControlViewFinished, this, &HostControllerService::sendDownloadControlViewFinishedMessage);
 
     /* We dont want to call these StorageManager methods directly
      * as they should be executed in the main thread. Not in dispatcher's thread. */
@@ -76,6 +77,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(this, &HostControllerService::platformDocumentsRequested, &storageManager_, &StorageManager::requestPlatformDocuments, Qt::QueuedConnection);
     connect(this, &HostControllerService::downloadPlatformFilesRequested, &storageManager_, &StorageManager::requestDownloadPlatformFiles, Qt::QueuedConnection);
     connect(this, &HostControllerService::cancelPlatformDocumentRequested, &storageManager_, &StorageManager::requestCancelAllDownloads, Qt::QueuedConnection);
+    connect(this, &HostControllerService::downloadControlViewRequested, &storageManager_, &StorageManager::requestDownloadControlView, Qt::QueuedConnection);
 
     connect(this, &HostControllerService::firmwareUpdateRequested, &updateController_, &FirmwareUpdateController::updateFirmware, Qt::QueuedConnection);
 
@@ -263,6 +265,7 @@ void HostControllerService::sendPlatformDocumentsProgressMessage(
 void HostControllerService::sendPlatformDocumentsMessage(
         const QByteArray &clientId,
         const QString &classId,
+        const QJsonArray &datasheetList,
         const QJsonArray &documentList,
         const QJsonArray &firmwareList,
         const QJsonArray &controlViewList,
@@ -276,6 +279,7 @@ void HostControllerService::sendPlatformDocumentsMessage(
     payload.insert("class_id", classId);
 
     if (error.isEmpty()) {
+        payload.insert("datasheets", datasheetList);
         payload.insert("documents", documentList);
         payload.insert("firmwares", firmwareList);
         payload.insert("control_views", controlViewList);
@@ -285,6 +289,28 @@ void HostControllerService::sendPlatformDocumentsMessage(
 
     message.insert("cloud::notification", payload);
     doc.setObject(message);
+
+    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+}
+
+void HostControllerService::sendDownloadControlViewFinishedMessage(
+        const QByteArray &clientId,
+        const QString &partialUri,
+        const QString &filePath,
+        const QString &errorString)
+{
+    QJsonObject payload {
+        {"type", "download_view_finished"},
+        {"url", partialUri},
+        {"filepath", filePath},
+        {"error_string", errorString}
+    };
+
+    QJsonObject message {
+        {"hcs::notification", payload}
+    };
+
+    QJsonDocument doc(message);
 
     clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
 }
@@ -420,16 +446,6 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
     emit platformDocumentsRequested(clientId, classId);
 }
 
-void HostControllerService::onCmdHostDisconnectPlatform(const rapidjson::Value* payload)
-{
-    if (!payload->HasMember("device_id")) {
-        qCCritical(logCategoryHcs) << "device_id key is missing";
-        return;
-    }
-    int device_id = (*payload)["device_id"].GetInt();
-    boardsController_.clearClientId(device_id);
-}
-
 void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
 {
     HCS_Client* client = getSenderClient();
@@ -437,7 +453,6 @@ void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
 
     QByteArray clientId = client->getClientId();
 
-    boardsController_.clearClientIdFromAllDevices(clientId);
     emit cancelPlatformDocumentRequested(clientId);
 
     // Remove the client from the mapping
@@ -495,6 +510,25 @@ void HostControllerService::onCmdUpdateFirmware(const rapidjson::Value *payload)
     }
 
     emit firmwareUpdateRequested(clientId, deviceId, firmwareUrl, firmwareMD5);
+}
+
+void HostControllerService::onCmdDownloadControlView(const rapidjson::Value* payload)
+{
+    QByteArray clientId = getSenderClient()->getClientId();
+
+    QString partialUri = QString::fromStdString((*payload)["url"].GetString());
+    if (partialUri.isEmpty()) {
+        qCWarning(logCategoryHcs) << "url attribute is empty";
+        return;
+    }
+
+    QString md5 = QString::fromStdString((*payload)["md5"].GetString());
+    if (md5.isEmpty()) {
+        qCWarning(logCategoryHcs) << "md5 attribute is empty";
+        return;
+    }
+
+    emit downloadControlViewRequested(clientId, partialUri, md5);
 }
 
 HCS_Client* HostControllerService::getClientById(const QByteArray& client_id)

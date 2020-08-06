@@ -30,6 +30,7 @@ StorageManager::~StorageManager()
 {
     qDeleteAll(documents_);
     documents_.clear();
+    qDeleteAll(downloadRequests_);
 }
 
 void StorageManager::setDatabase(Database* db)
@@ -138,11 +139,22 @@ void StorageManager::groupDownloadFinishedHandler(const QString &groupId, const 
         handlePlatformDocumentsResponse(request, errorString);
     } else if (request->type == RequestType::FileDownload) {
         emit downloadPlatformFilesFinished(request->clientId, errorString);
+    } else if (request->type == RequestType::ControlViewDownload) {
+        QList<DownloadManager::DownloadResponseItem> responseList = downloadManager_->getResponseList(groupId);
+        if (responseList.isEmpty() == false) {
+            const DownloadManager::DownloadResponseItem &responseItem = responseList.first();
+            emit downloadControlViewFinished(request->clientId,
+                                             downloadControlViewUris_[groupId],
+                                             responseItem.effectiveFilePath,
+                                             responseItem.errorString);
+        }
+        downloadControlViewUris_.remove(groupId);
     } else {
         qCCritical(logCategoryHcsStorage) << "unknown request type";
     }
 
     downloadRequests_.remove(groupId);
+    delete request;
 }
 
 void StorageManager::handlePlatformListResponse(const QByteArray &clientId, const QJsonArray &platformList)
@@ -152,7 +164,7 @@ void StorageManager::handlePlatformListResponse(const QByteArray &clientId, cons
 
 void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadRequest *requestItem, const QString &errorString)
 {
-    QJsonArray documentList, firmwareList, controlViewList;
+    QJsonArray documentList, datasheetList, firmwareList, controlViewList;
     QString  finalErrorString = errorString;
 
     PlatformDocument *platDoc = fetchPlatformDoc(requestItem->classId);
@@ -182,9 +194,30 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
             documentList.append(object);
         }
 
+        //add datasheet documents
+        QList<PlatformDatasheetItem> datasheetDownloadList = platDoc->getDatasheetList();
+        for (const auto &item : datasheetDownloadList) {
+            QJsonObject object;
+            object.insert("category", item.category);
+            object.insert("datasheet", item.datasheet);
+            object.insert("name", item.name);
+            object.insert("opn", item.opn);
+            object.insert("subcategory", item.subcategory);
+
+            datasheetList.append(object);
+        }
+
+        // If the datasheetDownloadList is empty, then we download datasheet.csv
+        // This is to handle older platforms that don't have the datasheets property
+        bool downloadDatasheetCSV = datasheetDownloadList.isEmpty();
+
         //add downloadable documents
         QList<PlatformFileItem> downloadList = platDoc->getDownloadList();
         for (const auto &item : downloadList) {
+            if (downloadDatasheetCSV == false && item.name == "datasheet") {
+                continue;
+            }
+
             QJsonObject object;
             object.insert("category", "download");
             object.insert("name", item.name);
@@ -233,6 +266,7 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
 
     emit platformDocumentsResponseRequested(requestItem->clientId,
                                             requestItem->classId,
+                                            datasheetList,
                                             documentList,
                                             firmwareList,
                                             controlViewList,
@@ -342,7 +376,7 @@ void StorageManager::requestPlatformDocuments(
     PlatformDocument* platDoc = fetchPlatformDoc(classId);
 
     if (platDoc == nullptr){
-        platformDocumentsResponseRequested(clientId, classId, QJsonArray(), QJsonArray(), QJsonArray(), "Failed to fetch platform data");
+        platformDocumentsResponseRequested(clientId, classId, QJsonArray(), QJsonArray(), QJsonArray(), QJsonArray(), "Failed to fetch platform data");
         qCCritical(logCategoryHcsStorage) << "Failed to fetch platform data with id:" << classId;
         return;
     }
@@ -412,6 +446,7 @@ void StorageManager::requestDownloadPlatformFiles(
 
     QList<DownloadManager::DownloadRequestItem> downloadList;
     QDir dir(destinationDir);
+
     QList<PlatformFileItem> downloadableFileList = platDoc->getDownloadList();
     for (const auto &fileItem : downloadableFileList) {
         if (partialUriList.indexOf(fileItem.partialUri) < 0) {
@@ -441,6 +476,29 @@ void StorageManager::requestDownloadPlatformFiles(
     downloadRequests_.insert(request->groupId, request);
 }
 
+void StorageManager::requestDownloadControlView(const QByteArray &clientId, const QString &partialUri, const QString &md5)
+{
+    DownloadManager::DownloadRequestItem item;
+    item.url = baseUrl_.resolved(partialUri);
+    item.filePath = createFilePathFromItem(partialUri, "documents/control_views");
+    item.md5 = md5;
+
+    QList<DownloadManager::DownloadRequestItem> downloadList({item});
+
+    DownloadRequest *request = new DownloadRequest();
+    request->clientId = clientId;
+    request->type = RequestType::ControlViewDownload;
+
+    DownloadManager::Settings settings;
+    settings.keepOriginalName = true;
+
+    request->groupId = downloadManager_->download(downloadList, settings);
+
+    downloadRequests_.insert(request->groupId, request);
+
+    downloadControlViewUris_[request->groupId] = partialUri;
+}
+
 void StorageManager::requestCancelAllDownloads(const QByteArray &clientId)
 {
     qCInfo(logCategoryHcsStorage) << "clientId" << clientId.toHex();
@@ -453,6 +511,7 @@ void StorageManager::requestCancelAllDownloads(const QByteArray &clientId)
             qCInfo(logCategoryHcsStorage) << "aborting all downloads for groupId" << groupId;
             downloadRequests_.remove(groupId);
             downloadManager_->abortAll(groupId);
+            delete request;
         }
     }
 }

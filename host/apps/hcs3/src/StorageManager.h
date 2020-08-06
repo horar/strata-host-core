@@ -57,6 +57,11 @@ public slots:
             const QStringList &partialUriList,
             const QString &destinationDir);
 
+    void requestDownloadControlView(
+            const QByteArray &clientId,
+            const QString &partialUri,
+            const QString &md5);
+
     void requestCancelAllDownloads(const QByteArray &clientId);
 
     /**
@@ -72,9 +77,10 @@ signals:
     void downloadPlatformSingleFileFinished(QByteArray clientId, QString filePath, QString errorString);
     void downloadPlatformDocumentsProgress(QByteArray clientId, QString classId, int filesCompleted, int filesTotal);
     void downloadPlatformFilesFinished(QByteArray clientId, QString errorString);
+    void downloadControlViewFinished(QByteArray clientId, QString partialUri, QString filePath, QString errorString);
 
     void platformListResponseRequested(QByteArray clientId, QJsonArray documentList);
-    void platformDocumentsResponseRequested(QByteArray clientId, QString classId, QJsonArray documentList,
+    void platformDocumentsResponseRequested(QByteArray clientId, QString classId, QJsonArray datasheetList, QJsonArray documentList,
                                             QJsonArray firmwareList, QJsonArray controlViewList, QString error);
 
 private slots:
@@ -107,7 +113,8 @@ private:
     enum class RequestType {
         PlatformList,
         PlatformDocuments,
-        FileDownload
+        FileDownload,
+        ControlViewDownload
     };
 
     struct DownloadRequest {
@@ -141,6 +148,7 @@ private:
     QPointer<strata::DownloadManager> downloadManager_;
     Database* db_{nullptr};
     QHash<QString /*groupId*/, DownloadRequest* > downloadRequests_;
+    QHash<QString /*groupId*/, QString /*partialUri*/ > downloadControlViewUris_;
     QMap<QString /*classId*/, PlatformDocument*> documents_;
 };
 

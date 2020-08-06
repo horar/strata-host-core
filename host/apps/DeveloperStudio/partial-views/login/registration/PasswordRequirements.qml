@@ -31,7 +31,7 @@ Rectangle {
         // based on https://www.w3resource.com/javascript/form/password-validation.php
 
         SGIcon {
-            source: requirementsGrid.passwordsMatch ? "qrc:/images/icons/check-circle-solid.svg" : "qrc:/images/icons/times-circle-solid.svg"
+            source: requirementsGrid.passwordsMatch ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
             iconColor: requirementsGrid.passwordsMatch ? "#30c235" : "#cccccc"
             height: 20
             width: height
@@ -43,7 +43,7 @@ Rectangle {
         }
 
         SGIcon {
-            source: requirementsGrid.hasCapital ? "qrc:/images/icons/check-circle-solid.svg" : "qrc:/images/icons/times-circle-solid.svg"
+            source: requirementsGrid.hasCapital ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
             iconColor: requirementsGrid.hasCapital ? "#30c235" : "#cccccc"
             height: 20
             width: height
@@ -55,7 +55,7 @@ Rectangle {
         }
 
         SGIcon {
-            source: requirementsGrid.hasLower ? "qrc:/images/icons/check-circle-solid.svg" : "qrc:/images/icons/times-circle-solid.svg"
+            source: requirementsGrid.hasLower ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
             iconColor: requirementsGrid.hasLower ? "#30c235" : "#cccccc"
             height: 20
             width: height
@@ -67,7 +67,7 @@ Rectangle {
         }
 
         SGIcon {
-            source: requirementsGrid.hasNumber ? "qrc:/images/icons/check-circle-solid.svg" : "qrc:/images/icons/times-circle-solid.svg"
+            source: requirementsGrid.hasNumber ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
             iconColor: requirementsGrid.hasNumber ? "#30c235" : "#cccccc"
             height: 20
             width: height
@@ -79,7 +79,7 @@ Rectangle {
         }
 
         SGIcon {
-            source: requirementsGrid.lengthValid ? "qrc:/images/icons/check-circle-solid.svg" : "qrc:/images/icons/times-circle-solid.svg"
+            source: requirementsGrid.lengthValid ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
             iconColor: requirementsGrid.lengthValid ? "#30c235" : "#cccccc"
             height: 20
             width: height

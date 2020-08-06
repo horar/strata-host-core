@@ -1,12 +1,19 @@
 #include "PrtModel.h"
 #include "logging/LoggingQtCategories.h"
+#include "DownloadManager.h"
 
 #include <QDir>
 
 PrtModel::PrtModel(QObject *parent)
     : QObject(parent),
-      downloadManager_(&networkManager_)
+      downloadManager_(&networkManager_),
+      authenticator_(&restClient_)
 {
+    QUrl baseUrl("http://18.191.108.5"); //test server
+    //QUrl baseUrl("https://18.222.75.160"); //production server
+
+    restClient_.init(baseUrl, &networkManager_, &authenticator_);
+
     boardManager_.init();
 
     connect(&boardManager_, &strata::BoardManager::boardReady, this, &PrtModel::boardReadyHandler);
@@ -22,6 +29,16 @@ PrtModel::~PrtModel()
 int PrtModel::deviceCount() const
 {
     return platformList_.length();
+}
+
+Authenticator* PrtModel::authenticator()
+{
+    return &authenticator_;
+}
+
+RestClient *PrtModel::restClient()
+{
+    return &restClient_;
 }
 
 QString PrtModel::deviceFirmwareVersion() const

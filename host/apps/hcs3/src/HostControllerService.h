@@ -63,6 +63,7 @@ signals:
     void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
     void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5);
+    void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5);
 
 public slots:
     void onAboutToQuit();
@@ -100,10 +101,17 @@ public slots:
     void sendPlatformDocumentsMessage(
             const QByteArray &clientId,
             const QString &classId,
+            const QJsonArray &datasheetList,
             const QJsonArray &documentList,
             const QJsonArray &firmwareList,
             const QJsonArray &controlViewList,
             const QString &error);
+
+    void sendDownloadControlViewFinishedMessage(
+            const QByteArray &clientId,
+            const QString &partialUri,
+            const QString &filePath,
+            const QString &errorString);
 
 private:
     void handleMessage(const PlatformMessage& msg);
@@ -122,11 +130,11 @@ private:
     void onCmdPlatformSelect(const rapidjson::Value* );
 
     //handlers for hcs::cmd
-    void onCmdHostDisconnectPlatform(const rapidjson::Value* );
     void onCmdHostUnregister(const rapidjson::Value* );
     void onCmdHostDownloadFiles(const rapidjson::Value* );      //from UI
     void onCmdDynamicPlatformList(const rapidjson::Value* );
     void onCmdUpdateFirmware(const rapidjson::Value* );
+    void onCmdDownloadControlView(const rapidjson::Value* );
 
     void platformConnected(const int deviceId, const QString &classId);
     void platformDisconnected(const int deviceId);
@@ -137,11 +145,12 @@ private:
 
     bool parseConfig(const QString& config);
 
+    LoggingAdapter dbLogAdapter_;       // should be first, so it will be destroyed last (so we can use logs in destructor)
+    LoggingAdapter clientsLogAdapter_;  // should be first, so it will be destroyed last (so we can use logs in destructor)
+
     BoardController boardsController_;
     ClientsController clients_;     //UI or other clients
     Database db_;
-    LoggingAdapter dbLogAdapter_;
-    LoggingAdapter clientsLogAdapter_;
     QNetworkAccessManager networkManager_;
     strata::DownloadManager downloadManager_;
     StorageManager storageManager_;
