@@ -14,6 +14,9 @@ Rectangle {
     property int   labelWidth: 150      //to keep labels aligned right
 
     property bool batteryIsMissing: platformInterface.battery_status_fre.no_battery_indicator
+    onBatteryIsMissingChanged: {
+        console.log("battery missing status is now", batteryIsMissing);
+    }
 
     Rectangle{
         id:notConnectedScrim
