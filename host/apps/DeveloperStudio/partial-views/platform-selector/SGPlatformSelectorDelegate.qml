@@ -426,7 +426,8 @@ Item {
                     "device_id": model.device_id,
                     "class_id": model.class_id,
                     "index": filteredPlatformSelectorModel.mapIndexToSource(model.index),
-                    "available": model.available
+                    "available": model.available,
+                    "firmware_version": model.firmware_version
                 }
                 PlatformSelection.openPlatformView(data)
             }

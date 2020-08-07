@@ -34,6 +34,11 @@ DocumentListModel *ClassDocuments::pdfListModel()
     return &pdfModel_;
 }
 
+FirmwareListModel *ClassDocuments::firmwareListModel()
+{
+    return &firmwareModel_;
+}
+
 QString ClassDocuments::errorString() const
 {
     return errorString_;
@@ -75,6 +80,7 @@ void ClassDocuments::populateModels(QJsonObject data)
     QList<DocumentItem* > pdfList;
     QList<DocumentItem* > datasheetList;
     QList<DownloadDocumentItem* > downloadList;
+    QList<FirmwareItem* > firmwareList;
 
     if (data.contains("error")) {
         qCWarning(logCategoryDocumentManager) << "Document download error:" << data["error"].toString();
@@ -82,6 +88,33 @@ void ClassDocuments::populateModels(QJsonObject data)
         setErrorString(data["error"].toString());
         setLoading(false);
         return;
+    }
+
+    // Populate datasheetList if the supplied jsonObject contains any datasheet information in the datasheets property
+    bool parseDatasheetCSV = true;
+    QJsonArray datasheetArray = data["datasheets"].toArray();
+    for (const QJsonValueRef value : datasheetArray) {
+        QJsonObject datasheetObject = value.toObject();
+
+        if (datasheetObject.contains("category") == false
+                || datasheetObject.contains("datasheet") == false
+                || datasheetObject.contains("name") == false
+                || datasheetObject.contains("opn") == false
+                || datasheetObject.contains("subcategory") == false)
+        {
+            qCWarning(logCategoryDocumentManager) << "datasheet object is not complete";
+            continue;
+        }
+
+        QString category = datasheetObject.value("category").toString();
+        QString uri = datasheetObject.value("datasheet").toString();
+        QString name = datasheetObject.value("name").toString();
+
+        DocumentItem *di = new DocumentItem(uri, name, category);
+        datasheetList.append(di);
+
+        // We have encountered at least one datasheet in the "datasheets" list, so we don't need to parse the datasheet csv file
+        parseDatasheetCSV = false;
     }
 
     QJsonArray documentArray = data["documents"].toArray();
@@ -104,8 +137,11 @@ void ClassDocuments::populateModels(QJsonObject data)
 
         if (category == "view") {
             if (name == "datasheet") {
-                //for datasheets, parse csv file
-                populateDatasheetList(uri, datasheetList);
+                if (parseDatasheetCSV) {
+                    //for datasheets, parse csv file
+                    qCDebug(logCategoryDocumentManager) << "parsing datasheet csv file";
+                    populateDatasheetList(uri, datasheetList);
+                }
             } else {
                 DocumentItem *di = new DocumentItem(uri, prettyName, name);
                 pdfList.append(di);
@@ -124,8 +160,6 @@ void ClassDocuments::populateModels(QJsonObject data)
         }
     }
 
-    // TODO: CS-830 - Iterate over firmware list here.
-    /*
     QJsonArray firmwareArray = data["firmwares"].toArray();
     for (const QJsonValueRef firmwareValue : firmwareArray) {
         QJsonObject documentObject = firmwareValue.toObject();
@@ -140,9 +174,18 @@ void ClassDocuments::populateModels(QJsonObject data)
             continue;
         }
 
-        // TODO: write rest of code
+        QJsonDocument doc(documentObject);
+        QString strJson(doc.toJson(QJsonDocument::Compact));
+
+        QString uri = documentObject["uri"].toString();
+        QString name = documentObject["name"].toString();
+        QString md5 = documentObject["md5"].toString();
+        QString version = documentObject["version"].toString();
+        QString timestamp = documentObject["timestamp"].toString();
+
+        FirmwareItem *fi = new FirmwareItem(uri, md5, name, timestamp, version);
+        firmwareList.append(fi);
     }
-    */
 
     // TODO: CS-831 - Iterate over control views list here.
     // QJsonArray controlViewArray = data["control_views"].toArray();
@@ -150,6 +193,7 @@ void ClassDocuments::populateModels(QJsonObject data)
     pdfModel_.populateModel(pdfList);
     datasheetModel_.populateModel(datasheetList);
     downloadDocumentModel_.populateModel(downloadList);
+    firmwareModel_.populateModel(firmwareList);
 
     setLoading(false);
 }

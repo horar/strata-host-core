@@ -80,7 +80,7 @@ signals:
     void downloadControlViewFinished(QByteArray clientId, QString partialUri, QString filePath, QString errorString);
 
     void platformListResponseRequested(QByteArray clientId, QJsonArray documentList);
-    void platformDocumentsResponseRequested(QByteArray clientId, QString classId, QJsonArray documentList,
+    void platformDocumentsResponseRequested(QByteArray clientId, QString classId, QJsonArray datasheetList, QJsonArray documentList,
                                             QJsonArray firmwareList, QJsonArray controlViewList, QString error);
 
 private slots:

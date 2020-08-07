@@ -138,7 +138,7 @@ Item {
 
             SGIcon {
                 id: alertIcon
-                source: "qrc:/images/icons/exclamation-circle-solid.svg"
+                source: "qrc:/sgimages/exclamation-circle.svg"
                 anchors {
                     left: loginErrorRect.left
                     verticalCenter: loginErrorRect.verticalCenter

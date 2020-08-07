@@ -7,6 +7,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
 import "qrc:/js/login_utilities.js" as Authenticator
+import "qrc:/js/constants.js" as Constants
 import "qrc:/partial-views"
 import "qrc:/partial-views/status-bar"
 import "qrc:/partial-views/help-tour"
@@ -114,7 +115,7 @@ Rectangle {
             // demonstration tab set for help tour
             id: helpTab
             class_id: "0"
-            device_id: ""
+            device_id: Constants.NULL_DEVICE_ID
             view: "control"
             index: 0
             connected: true
@@ -277,26 +278,6 @@ Rectangle {
         width: Math.max(container.width * 0.8, 600)
         x: container.width/2 - feedbackPopup.width/2
         y: container.parent.windowHeight/2 - feedbackPopup.height/2
-    }
-
-    Window {
-        id: debugWindow
-        visible: container.parent.showDebug
-        height: 200
-        width: 300
-        x: 1620
-        y: 500
-        title: "SGStatusBar.qml Debug Controls"
-
-        Column {
-            id: debug1
-            Button {
-                text: "Toggle Content/Control"
-                onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                }
-            }
-        }
     }
 
     function showAboutWindow() {

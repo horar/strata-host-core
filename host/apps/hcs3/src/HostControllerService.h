@@ -16,7 +16,6 @@
 #include "Dispatcher.h"
 #include "ClientsController.h"
 #include "Database.h"
-#include "LoggingAdapter.h"
 #include "BoardController.h"
 #include "FirmwareUpdateController.h"
 #include "StorageManager.h"
@@ -25,7 +24,7 @@
 
 struct PlatformMessage;
 
-class HCS_Client;
+class Client;
 class StorageManager;
 
 namespace strata {
@@ -101,6 +100,7 @@ public slots:
     void sendPlatformDocumentsMessage(
             const QByteArray &clientId,
             const QString &classId,
+            const QJsonArray &datasheetList,
             const QJsonArray &documentList,
             const QJsonArray &firmwareList,
             const QJsonArray &controlViewList,
@@ -135,7 +135,6 @@ private:
     void onCmdPlatformSelect(const rapidjson::Value* );
 
     //handlers for hcs::cmd
-    void onCmdHostDisconnectPlatform(const rapidjson::Value* );
     void onCmdHostUnregister(const rapidjson::Value* );
     void onCmdHostDownloadFiles(const rapidjson::Value* );      //from UI
     void onCmdDynamicPlatformList(const rapidjson::Value* );
@@ -146,17 +145,15 @@ private:
     void platformConnected(const int deviceId, const QString &classId);
     void platformDisconnected(const int deviceId);
 
-    HCS_Client* getSenderClient() const { return current_client_; }     //TODO: only one client
+    Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 
-    HCS_Client* getClientById(const QByteArray& client_id);
+    Client* getClientById(const QByteArray& client_id);
 
     bool parseConfig(const QString& config);
 
     BoardController boardsController_;
     ClientsController clients_;     //UI or other clients
     Database db_;
-    LoggingAdapter dbLogAdapter_;
-    LoggingAdapter clientsLogAdapter_;
     QNetworkAccessManager networkManager_;
     strata::DownloadManager downloadManager_;
     StorageManager storageManager_;
@@ -171,8 +168,8 @@ private:
     std::map<std::string, NotificationHandler> clientCmdHandler_;
     std::map<std::string, NotificationHandler> hostCmdHandler_;
 
-    std::list<HCS_Client*> clientList_;
-    HCS_Client* current_client_;
+    std::list<Client*> clientList_;
+    Client* current_client_;
 
     rapidjson::Document config_;
 };

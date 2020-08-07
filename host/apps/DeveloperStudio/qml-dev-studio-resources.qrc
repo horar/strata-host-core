@@ -8,23 +8,7 @@
         <file>resources/icons/app/on-logo.ico</file>
         <file>resources/icons/app/on-logo.png</file>
         <file>images/loading.gif</file>
-        <file>images/icons/angle-down.svg</file>
-        <file>images/icons/angle-up.svg</file>
-        <file>images/icons/ban.svg</file>
-        <file>images/icons/file.svg</file>
-        <file>images/icons/search.svg</file>
-        <file>images/icons/sliders-h.svg</file>
-        <file>images/icons/th-list.svg</file>
-        <file>images/icons/times.svg</file>
-        <file>images/icons/eye-slash-solid.svg</file>
-        <file>images/icons/eye-solid.svg</file>
-        <file>images/icons/exclamation-circle-solid.svg</file>
-        <file>images/icons/check-circle-solid.svg</file>
-        <file>images/icons/times-circle-solid.svg</file>
-        <file>images/icons/check-solid.svg</file>
         <file>images/grey-white-fade-background.svg</file>
-        <file>images/icons/asterisk-solid.svg</file>
-        <file>images/icons/disconnected.svg</file>
         <file>images/no-hcs-connection.svg</file>
     </qresource>
 </RCC>

@@ -49,6 +49,20 @@ bool PlatformDocument::parseDocument(const QString &document)
 
     QJsonObject jsonDocument = documentsValue.toObject();
 
+    //datasheets
+    if (jsonDocument.contains("datasheets") == false) {
+        qCWarning(logCategoryHcsPlatformDocument) << "datasheets key is missing";
+        // skip - some older platforms rely on datasheets.csv file instead
+    } else {
+        QJsonValue datasheetsValue = jsonDocument.value("datasheets");
+        if (datasheetsValue.isArray()) {
+            populateDatasheetList(datasheetsValue.toArray(), datasheetsList_);
+        } else {
+            qCCritical(logCategoryHcsPlatformDocument) << "value of datasheets key is not an array";
+            return false;
+        }
+    }
+
     //downloads
     if (jsonDocument.contains("downloads") == false) {
         qCCritical(logCategoryHcsPlatformDocument) << "downloads key is missing";
@@ -138,6 +152,11 @@ const QList<PlatformFileItem>& PlatformDocument::getViewList()
     return viewList_;
 }
 
+const QList<PlatformDatasheetItem>& PlatformDocument::getDatasheetList()
+{
+    return datasheetsList_;
+}
+
 const QList<PlatformFileItem>& PlatformDocument::getDownloadList()
 {
     return downloadList_;
@@ -223,5 +242,36 @@ void PlatformDocument::populateVersionedList(const QJsonArray &jsonList, QList<V
         }
 
         versionedList.append(firmwareItem);
+    }
+}
+
+bool PlatformDocument::populateDatasheetObject(const QJsonObject &jsonObject, PlatformDatasheetItem &datasheet) {
+    if (jsonObject.contains("category") == false
+            || jsonObject.contains("datasheet") == false
+            || jsonObject.contains("name") == false
+            || jsonObject.contains("opn") == false
+            || jsonObject.contains("subcategory") == false)
+    {
+        return false;
+    }
+
+    datasheet.category = jsonObject.value("category").toString();
+    datasheet.datasheet = jsonObject.value("datasheet").toString();
+    datasheet.name = jsonObject.value("name").toString();
+    datasheet.opn = jsonObject.value("opn").toString();
+    datasheet.subcategory = jsonObject.value("subcategory").toString();
+
+    return true;
+}
+
+void PlatformDocument::populateDatasheetList(const QJsonArray &jsonList, QList<PlatformDatasheetItem> &datasheetList) {
+    foreach (const QJsonValue &value, jsonList) {
+        PlatformDatasheetItem datasheet;
+        if (populateDatasheetObject(value.toObject(), datasheet) == false) {
+            qCCritical(logCategoryHcsPlatformDocument) << "datasheet object not valid";
+            continue;
+        }
+
+        datasheetList.append(datasheet);
     }
 }

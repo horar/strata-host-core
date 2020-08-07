@@ -85,7 +85,6 @@ SGWidgets.SGMainWindow {
             Layout.fillWidth: true
 
             property real windowHeight: mainWindow.height  // for centering popups spawned from the statusbar
-            property bool showDebug: false;  // for linking debug in status bar to the debug bar
         }
 
         StackLayout {
