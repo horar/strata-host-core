@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
 
     SDSModel *sdsModel = new SDSModel();
-    sdsModel->init(app.applicationDirPath(), QStringLiteral(HCS_CONFIG));
+    sdsModel->init(app.applicationDirPath());
 
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
     QObject::connect(&app, &QGuiApplication::lastWindowClosed,
