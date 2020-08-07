@@ -53,6 +53,7 @@ var events = {
     CONNECTION_LOST_EVENT:          9,
     CONNECTION_ESTABLISHED_EVENT:   10,
     PROMPT_SPLASH_SCREEN_EVENT:     11,
+    REQ_OPEN_PLATFORM_VIEW_EVENT:   12
 }
 
 /*
@@ -67,18 +68,21 @@ var platform_view_repeater_ = null
 var platform_view_model_ = null
 var stack_container_ = null
 var platform_list = {}
+var resource_loader_
+var pending_views_ = [];
 
 /*
   Navigation initialized with parent containers
   that will hold views
 */
-function init(status_bar_container, stack_container)
+function init(status_bar_container, stack_container, resourceLoader)
 {
     status_bar_container_ = status_bar_container
     main_container_ = stack_container.mainContainer
     platform_view_repeater_ = stack_container.platformViewRepeater
     platform_view_model_ = stack_container.platformViewModel
     stack_container_ = stack_container
+    resource_loader_ = resourceLoader
     updateState(events.PROMPT_SPLASH_SCREEN_EVENT)
 }
 
@@ -308,6 +312,14 @@ function updateState(event, data)
         case states.CONTROL_STATE:
             switch(event)
             {
+            case events.REQ_OPEN_PLATFORM_VIEW_EVENT:
+                if (resource_loader_.registerControlViewResources(data.class_id)) {
+                    updateState(events.OPEN_PLATFORM_VIEW_EVENT, data);
+                } else {
+                    pending_views_.push(data);
+                }
+                break;
+
             case events.OPEN_PLATFORM_VIEW_EVENT:
                 console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Opening Platform View for class_id:", data.class_id, "device_id:", data.device_id)
 
@@ -407,4 +419,24 @@ function updateState(event, data)
             globalEventHandler(event,data)
             break;
     }
+}
+
+function setControlViewReady(class_id) {
+    let viewIndex = -1;
+    let viewData = {};
+
+    for (let i = 0; i < pending_views_.length; i++) {
+        if (pending_views_[i].class_id === class_id) {
+            viewIndex = i;
+            viewData = pending_views_[i];
+            break;
+        }
+    }
+
+    if (viewIndex < 0) {
+        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Could not find pending control view for platform:", class_id)
+    } else {
+        updateState(events.OPEN_PLATFORM_VIEW_EVENT, pending_views_.splice(viewIndex, 1))
+    }
+
 }

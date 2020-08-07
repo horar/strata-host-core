@@ -35,7 +35,7 @@ public:
 signals:
     void updateProgressRequested(QJsonObject data);
     void populateModelsRequested(QJsonObject data);
-    void populateModelsFinished();
+    void populateModelsFinished(QString classId);
 
 private slots:
     void documentProgressHandler(QJsonObject data);

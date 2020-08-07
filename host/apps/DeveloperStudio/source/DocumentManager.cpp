@@ -73,7 +73,7 @@ void DocumentManager::populateModels(QJsonObject data)
         classes_[classId]->populateModels(data);
     }
 
-    emit populateModelsFinished();
+    emit populateModelsFinished(classId);
 }
 
 void DocumentManager::init()

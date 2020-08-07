@@ -19,6 +19,8 @@ var classMap = {} // contains metadata for platformSelectorModel for faster look
 var previouslyConnected = []
 var localPlatformListSettings = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"LocalPlatformList\";}", Qt.application)
 var localPlatformList = []
+var pendingViews = []
+var downloadedViews = {}
 
 function initialize (newCoreInterface, newDocumentManager) {
     platformSelectorModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string platformListStatus: 'loading'}",Qt.application,"PlatformSelectorModel")
@@ -218,39 +220,6 @@ function refreshFirmwareVersion(platform) {
 }
 
 /*
-  Function for downloading control views of connected platforms
-*/
-function downloadControlViews() {
-    for (let i = 0; i < previouslyConnected.length; i++) {
-        downloadControlView(previouslyConnected[i].class_id)
-    }
-}
-
-/*
-    Helper function for downloading a control view
-*/
-function downloadControlView(class_id) {
-    console.info("Downloading control view")
-    let controlViewList = documentManager.getClassDocuments(class_id).controlViewListModel;
-    let index = controlViewList.getLatestVersion();
-
-    if (index < 0) {
-        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Could not get latest version")
-        return;
-    }
-
-    let command = {
-        "hcs::cmd": "download_view",
-        "payload": {
-            "url": controlViewList.uri(index),
-            "md5": controlViewList.md5(index)
-        }
-    }
-
-    coreInterface.sendCommand(JSON.stringify(command))
-}
-
-/*
     Determine if device was already connected (present in most recent connected_platform_list_json)
 */
 function devicePreviouslyConnected(device_id) {
@@ -334,6 +303,64 @@ function connectListing(class_id_string, device_id, firmware_version) {
     selector_listing.available = available
 }
 
+/* The OOO here is loadPlatformDocuments()
+    -> catch signal documentManager.populateModelsFinished in main which calls:
+    -> onControlViewListPopulated() which calls:
+    -> loadPlatformDocuments() but this time, controlViewList isn't empty, so it calls downloadControlView() which calls
+    -> openPlatformView(). At this point, the documents are in the process of downloading, so we need to wait for signal in NavigationControl
+*/
+function loadPlatformDocuments(platform) {
+    let controlViewList = documentManager.getClassDocuments(platform.class_id).controlViewListModel;
+
+    if (controlViewList.count === 0) {
+        pendingViews.push(platform);
+        return false
+    } else {
+        downloadControlView(platform)
+    }
+}
+
+function onControlViewListPopulated(class_id) {
+    let platform;
+    let index;
+
+    for (let i = 0; i < pendingViews.length; i++) {
+        if (pendingViews[i].class_id === class_id) {
+            platform = pendingViews[i];
+            break;
+        }
+    }
+    pendingViews.splice(index, 1);
+    loadPlatformDocuments(platform);
+}
+
+/*
+    Helper function for downloading a control view
+    Returns false if unable to run download_view cmd, otherwise true
+*/
+function downloadControlView(platform) {
+    // this line below will start the process for downloading metadata about the control views
+    // so the first time it runs, it will return 0 for count, and asynchronously populate
+    let controlViewList = documentManager.getClassDocuments(platform.class_id).controlViewListModel;
+    let index = controlViewList.getLatestVersion();
+
+    if (index < 0) {
+        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unable to load control view list for", platform.class_id)
+        return
+    }
+
+    let command = {
+        "hcs::cmd": "download_view",
+        "payload": {
+            "url": controlViewList.uri(index),
+            "md5": controlViewList.md5(index)
+        }
+    }
+
+    coreInterface.sendCommand(JSON.stringify(command))
+    openPlatformView(platform)
+}
+
 function openPlatformView(platform) {
     let selector_listing = platformSelectorModel.get(platform.index)
     selector_listing.view_open = true
@@ -352,9 +379,9 @@ function openPlatformView(platform) {
         data.view = "collateral"
         data.connected = false
     }
-
-    NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT,data)
+    NavigationControl.updateState(NavigationControl.events.REQ_OPEN_PLATFORM_VIEW_EVENT,data)
 }
+
 
 /*
     Disconnect listing, reset completely if no related PlatformView is open
