@@ -16,6 +16,7 @@ using command::CmdRequestPlatformId;
 using command::CmdUpdateFirmware;
 using command::CmdFlashFirmware;
 using command::CmdBackupFirmware;
+using command::CmdFlashBootloader;
 using command::CmdStartApplication;
 using command::CommandResult;
 
@@ -89,6 +90,22 @@ void DeviceOperations::backupFirmwareChunk() {
         }
         if (currentCommand_ != commandList_.end()) {
             emit sendCommand(QPrivateSignal());
+        }
+    }
+}
+
+void DeviceOperations::flashBootloaderChunk(const QVector<quint8>& chunk, int chunkNumber) {
+    if (startOperation(DeviceOperation::FlashBootloaderChunk)) {
+        if (commandList_.empty()) {
+            commandList_.emplace_back(std::make_unique<CmdFlashBootloader>(device_));
+            currentCommand_ = commandList_.begin();
+        }
+        if (currentCommand_ != commandList_.end()) {
+            CmdFlashBootloader *cmdFlash = dynamic_cast<CmdFlashBootloader*>(currentCommand_->get());
+            if (cmdFlash != nullptr) {
+                cmdFlash->setChunk(chunk, chunkNumber);
+                emit sendCommand(QPrivateSignal());
+            }
         }
     }
 }
@@ -175,7 +192,14 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
             qCDebug(logCategoryDeviceOperations) << device_ << "Received '" << ackStr << "' ACK.";
             BaseDeviceCommand *command = currentCommand_->get();
             if (ackStr == command->name()) {
-                command->setAckReceived();
+                const rapidjson::Value& payload = doc[JSON_PAYLOAD];
+                const bool ackOk = payload[JSON_RETURN_VALUE].GetBool();
+                if (ackOk) {
+                    command->setAckReceived();
+                } else {
+                    const QString ackError = payload[JSON_RETURN_STRING].GetString();
+                    qCWarning(logCategoryDeviceOperations) << device_ << "ACK for '" << command->name() << "' command is not OK: '" << ackError << "'.";
+                }
             } else {
                 qCWarning(logCategoryDeviceOperations) << device_ << "Received wrong ACK. Expected '" << command->name() << "', got '" << ackStr << "'.";
             }
@@ -234,8 +258,13 @@ bool DeviceOperations::startOperation(DeviceOperation operation) {
     if (operation_ == DeviceOperation::None) {
         commandList_.clear();
     } else {  // another operation is runing
-        // flash or backup firmware chunk is a special case
-        if (operation_ != operation || (operation != DeviceOperation::FlashFirmwareChunk && operation != DeviceOperation::BackupFirmwareChunk)) {
+        // flash or backup firmware (or bootloader) chunk is a special case
+        if (operation_ != operation ||
+                (operation != DeviceOperation::FlashFirmwareChunk &&
+                 operation != DeviceOperation::BackupFirmwareChunk &&
+                 operation != DeviceOperation::FlashBootloaderChunk)
+           )
+        {
             QString errMsg(QStringLiteral("Cannot start operation, because another operation is running."));
             qCWarning(logCategoryDeviceOperations) << device_ << errMsg;
             emit error(errMsg);

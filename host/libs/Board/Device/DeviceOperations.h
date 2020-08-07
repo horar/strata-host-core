@@ -29,6 +29,7 @@ enum class DeviceOperation: int {
     Identify,
     SwitchToBootloader,
     FlashFirmwareChunk,
+    FlashBootloaderChunk,
     BackupFirmwareChunk,
     StartApplication,
     // special values for finished signal (operation was not finished successfully):
@@ -76,6 +77,13 @@ public:
      * Backup Firmware Chunk operation.
      */
     void backupFirmwareChunk();
+
+    /*!
+     * Flash Bootloader Chunk operation.
+     * \param chunk bootloader chunk
+     * \param chunkNumber bootloader chunk number
+     */
+    void flashBootloaderChunk(const QVector<quint8>& chunk, int chunkNumber);
 
     /*!
      * Start Application operation.

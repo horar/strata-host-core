@@ -50,6 +50,7 @@ add_library(${DEVICE_OPERATIONS}
     Device/DeviceOperations/src/DeviceCommands/CmdUpdateFirmware.cpp
     Device/DeviceOperations/src/DeviceCommands/CmdFlashFirmware.cpp
     Device/DeviceOperations/src/DeviceCommands/CmdBackupFirmware.cpp
+    Device/DeviceOperations/src/DeviceCommands/CmdFlashBootloader.cpp
     Device/DeviceOperations/src/DeviceCommands/CmdStartApplication.cpp
 
     #AUTOMOC wont find header if it is in different directory
