@@ -1,7 +1,12 @@
+#pragma once
 #include "CppUnitTest.h"
-#include "StrataUI.cpp"
+#include "StrataUI.h"
 //#include <curl\curl.h>
 #include <iomanip>
+#include <comdef.h>
+#include <UIAutomation.h>
+
+
 
 #define ASSERT_S_OK(operation) Assert::IsTrue(operation == S_OK)
 
@@ -195,8 +200,9 @@ public:
         Assert::IsTrue(ui.LoginButtonEnabled());
 
         ASSERT_S_OK(ui.PressLoginButton());
+        ui.AwaitElement();
 
-        Sleep(1000);
+        //Sleep(1000);
 
         Assert::IsTrue(ui.AlertExists(L"LoginError"));
     }
