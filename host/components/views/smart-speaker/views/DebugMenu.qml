@@ -312,29 +312,47 @@ Rectangle {
                     var theBatteryCurrent = (Math.random() *20)-10;
                     var theBatteryPower = (Math.random() *5);
 
-
-                    CorePlatformInterface.data_source_handler('{
-                        "value":"battery_status_fre",
-                        "payload":{
-                            "no_battery_indicator":'+hasBattery+',
-                            "battery_voltage":'+ theBatteryVoltage +',
-                            "battery_current":'+ theBatteryCurrent +',
-                            "battery_power": '+theBatteryPower  +'
+                    let notification = {
+                        "notification": {
+                            "value":"battery_status_fre",
+                            "payload":{
+                                "no_battery_indicator":'+hasBattery+',
+                                "battery_voltage":'+ theBatteryVoltage +',
+                                "battery_current":'+ theBatteryCurrent +',
+                                "battery_power": '+theBatteryPower  +'
                             }
-                        }')
+                        }
+                    }
 
-                    CorePlatformInterface.data_source_handler('{
-                        "value":"battery_status_inf",
-                        "payload":{
-                            "ambient_temp":'+ theAmbientTemp +',
-                            "battery_temp":'+ theBatteryTemp +',
-                            "state_of_health":'+ theStateOfHealth +',
-                            "time_to_empty":'+ theTimeToEmpty +',
-                            "time_to_full":'+ theTimeToFull +',
-                            "rsoc":'+ theBatteryPercent +',
-                            "total_run_time":'+ theRunTime +'
+                    let wrapper = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification)
+                    }
+
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper))
+
+                    let notification2 = {
+                        "notification": {
+                            "value":"battery_status_inf",
+                            "payload":{
+                                "ambient_temp":'+ theAmbientTemp +',
+                                "battery_temp":'+ theBatteryTemp +',
+                                "state_of_health":'+ theStateOfHealth +',
+                                "time_to_empty":'+ theTimeToEmpty +',
+                                "time_to_full":'+ theTimeToFull +',
+                                "rsoc":'+ theBatteryPercent +',
+                                "total_run_time":'+ theRunTime +'
                             }
-                        }')
+                        }
+                    }
+
+                    let wrapper2 = {
+                        "device_id": CorePlatformInterface.device_id,
+                        "message":JSON.stringify(notification2)
+                    }
+
+                    CorePlatformInterface.data_source_handler(JSON.stringify(wrapper2))
+                    console.log("sending battery status notification",JSON.stringify(wrapper2))
 
                     hasBattery = !hasBattery;
                 }
