@@ -93,9 +93,6 @@ if(WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${CMAKE_SOURCE_DIR}/ext_libs/libzmq/bin/windows/x64/libzmq.dll
             $<TARGET_FILE_DIR:${PROJECT_NAME}>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${CMAKE_SOURCE_DIR}/ext_libs/libcurl/bin/windows/x64/libcurl.dll
-            $<TARGET_FILE_DIR:${PROJECT_NAME}>
         COMMENT "Deploying dependant 3rd party libraries..."
         VERBATIM
     )
