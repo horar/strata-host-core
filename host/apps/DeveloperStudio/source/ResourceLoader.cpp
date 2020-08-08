@@ -20,7 +20,7 @@ bool ResourceLoader::registerControlViewResources(const QString &class_id) {
     QDir controlViewsDir(ResourcePath::hcsDocumentsCachePath() + "/control_views/" + class_id + "/control_views");
 
     if (controlViewsDir.exists()) {
-        QStringList listOfVersions = controlViewsDir.entryList(QDir::Filter::Dirs);
+        QStringList listOfVersions = controlViewsDir.entryList(QDir::Filter::Dirs | QDir::Filter::NoDotAndDotDot);
 
         // If we have more than one version, remove the older version(s)
         if (listOfVersions.length() > 1) {
@@ -44,9 +44,7 @@ bool ResourceLoader::registerControlViewResources(const QString &class_id) {
         // Now we have deleted all old versions
         controlViewsDir.cd(listOfVersions[0]);
 
-        QStringList nameFiters = {"*.rcc"};
-
-        controlViewsDir.setNameFilters(nameFiters);
+        qCDebug(logCategoryResourceLoader) << "Looking in resource path " << controlViewsDir.path();
 
         for (QString resource : controlViewsDir.entryList(QDir::Filter::Files)) {
             QDir dir(controlViewsDir.path() + "/" + resource);

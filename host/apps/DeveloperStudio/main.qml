@@ -120,13 +120,12 @@ SGWidgets.SGMainWindow {
         }
 
         onDownloadViewFinished: {
-            console.info("successfully registered resource: ", sdsModel.resourceLoader.registerResource(payload.filepath))
             console.info("PAYLOAD INFO: ", JSON.stringify(payload))
 
             // hacky way to get the class_id from the request.
             // e.g. "url":"226/control_views/1.1.3/views-hello-strata.rcc"
             let class_id = payload.url.split("/")[0];
-            NavigationControl.setControlViewReady(class_id)
+            PlatformSelection.onControlViewDownloadFinished(class_id)
         }
     }
 
@@ -140,7 +139,7 @@ SGWidgets.SGMainWindow {
         target: sdsModel.documentManager
 
         onPopulateModelsFinished: {
-            PlatformSelection.onControlViewListPopulated(class_id)
+            PlatformSelection.onControlViewListPopulated(classId)
         }
     }
 

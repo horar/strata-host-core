@@ -429,7 +429,7 @@ Item {
                     "available": model.available,
                     "firmware_version": model.firmware_version
                 }
-                PlatformSelection.openPlatformView(data)
+                PlatformSelection.loadPlatformDocuments(data)
             }
 
             MouseArea {

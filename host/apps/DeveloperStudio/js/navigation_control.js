@@ -313,26 +313,15 @@ function updateState(event, data)
             switch(event)
             {
             case events.REQ_OPEN_PLATFORM_VIEW_EVENT:
+                console.info("walk-- in req_open_platform_view_event for", data.class_id)
                 if (resource_loader_.registerControlViewResources(data.class_id)) {
+                    console.info("walk-- successfully loaded resource for", data.class_id)
                     updateState(events.OPEN_PLATFORM_VIEW_EVENT, data);
-                } else {
-                    pending_views_.push(data);
                 }
                 break;
 
             case events.OPEN_PLATFORM_VIEW_EVENT:
                 console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Opening Platform View for class_id:", data.class_id, "device_id:", data.device_id)
-
-//                resourceLoader.requestControlViewDownload(data.class_id);
-
-                // load the resource
-                let fileName = "views-" + UuidMap.uuid_map[data.class_id] + ".rcc";
-
-//                if (resourceLoader.registerControlViewResources(data.class_id)) {
-//                    console.info(LoggerModule.Logger.devStudioNavigationControlCategory, "Successfully loaded resource for", fileName);
-//                } else {
-//                    console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Failed to load resource for", fileName);
-//                }
 
                 // If matching view exists, bring it back into focus
                 for (let i = 0; i < platform_view_model_.count; i++) {

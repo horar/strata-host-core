@@ -312,26 +312,25 @@ function connectListing(class_id_string, device_id, firmware_version) {
 function loadPlatformDocuments(platform) {
     let controlViewList = documentManager.getClassDocuments(platform.class_id).controlViewListModel;
 
+    pendingViews.push(platform);
     if (controlViewList.count === 0) {
-        pendingViews.push(platform);
-        return false
+        console.info("walk-- load platform documents empty for", platform.class_id)
     } else {
+        console.info("walk-- cv list model populated, calling download function for", platform.class_id)
         downloadControlView(platform)
     }
 }
 
 function onControlViewListPopulated(class_id) {
-    let platform;
-    let index;
-
+    console.info("walk-- cv list populated", class_id)
     for (let i = 0; i < pendingViews.length; i++) {
         if (pendingViews[i].class_id === class_id) {
-            platform = pendingViews[i];
-            break;
+            loadPlatformDocuments(pendingViews[i]);
+            return;
         }
     }
-    pendingViews.splice(index, 1);
-    loadPlatformDocuments(platform);
+
+    console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Could not find class id", class_id, " in pending views")
 }
 
 /*
@@ -349,16 +348,57 @@ function downloadControlView(platform) {
         return
     }
 
-    let command = {
-        "hcs::cmd": "download_view",
-        "payload": {
-            "url": controlViewList.uri(index),
-            "md5": controlViewList.md5(index)
+    if (controlViewList.installed(index) === false) {
+        console.info("walk-- requesting download cv download for", platform.class_id)
+        console.info(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Downloading control view for ", platform.class_id)
+        let command = {
+            "hcs::cmd": "download_view",
+            "payload": {
+                "url": controlViewList.uri(index),
+                "md5": controlViewList.md5(index)
+            }
+        }
+
+        coreInterface.sendCommand(JSON.stringify(command))
+    } else {
+        // remove pending view because the view is already installed
+        console.info("walk-- found installed cv for", platform.class_id)
+        let idx = -1;
+        for (let i = 0; i < pendingViews.length; i++) {
+            if (pendingViews[i].class_id === platform.class_id) {
+                idx = i;
+                break;
+            }
+        }
+
+        if (idx < 0) {
+            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Could not remove class id", class_id, " in pending views")
+        } else {
+            pendingViews.splice(idx, 1)
+        }
+
+        openPlatformView(platform)
+    }
+}
+
+function onControlViewDownloadFinished(class_id) {
+    console.info("walk-- finished cv download for", class_id)
+    // remove pending view because the view is already installed
+    let idx = -1;
+    for (let i = 0; i < pendingViews.length; i++) {
+        if (pendingViews[i].class_id === class_id) {
+            idx = i;
+            break;
         }
     }
 
-    coreInterface.sendCommand(JSON.stringify(command))
-    openPlatformView(platform)
+    if (idx < 0) {
+        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Could not remove class id", class_id, " in pending views")
+        return
+    }
+    let platform = pendingViews[idx]
+    pendingViews.splice(idx, 1);
+    openPlatformView(platform);
 }
 
 function openPlatformView(platform) {
@@ -379,6 +419,10 @@ function openPlatformView(platform) {
         data.view = "collateral"
         data.connected = false
     }
+
+    console.info("walk-- opening platform view for ", platform.class_id)
+
+
     NavigationControl.updateState(NavigationControl.events.REQ_OPEN_PLATFORM_VIEW_EVENT,data)
 }
 
