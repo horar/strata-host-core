@@ -316,10 +316,10 @@ Rectangle {
                         "notification": {
                             "value":"battery_status_fre",
                             "payload":{
-                                "no_battery_indicator":'+hasBattery+',
-                                "battery_voltage":'+ theBatteryVoltage +',
-                                "battery_current":'+ theBatteryCurrent +',
-                                "battery_power": '+theBatteryPower  +'
+                                "no_battery_indicator":hasBattery,
+                                "battery_voltage": theBatteryVoltage ,
+                                "battery_current": theBatteryCurrent,
+                                "battery_power": theBatteryPower
                             }
                         }
                     }
@@ -335,13 +335,13 @@ Rectangle {
                         "notification": {
                             "value":"battery_status_inf",
                             "payload":{
-                                "ambient_temp":'+ theAmbientTemp +',
-                                "battery_temp":'+ theBatteryTemp +',
-                                "state_of_health":'+ theStateOfHealth +',
-                                "time_to_empty":'+ theTimeToEmpty +',
-                                "time_to_full":'+ theTimeToFull +',
-                                "rsoc":'+ theBatteryPercent +',
-                                "total_run_time":'+ theRunTime +'
+                                "ambient_temp":theAmbientTemp,
+                                "battery_temp":theBatteryTemp,
+                                "state_of_health":theStateOfHealth,
+                                "time_to_empty":theTimeToEmpty,
+                                "time_to_full":theTimeToFull,
+                                "rsoc":theBatteryPercent,
+                                "total_run_time":theRunTime
                             }
                         }
                     }
