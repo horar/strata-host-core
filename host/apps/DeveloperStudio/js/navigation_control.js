@@ -313,9 +313,7 @@ function updateState(event, data)
             switch(event)
             {
             case events.REQ_OPEN_PLATFORM_VIEW_EVENT:
-                console.info("walk-- in req_open_platform_view_event for", data.class_id)
                 if (resource_loader_.registerControlViewResources(data.class_id)) {
-                    console.info("walk-- successfully loaded resource for", data.class_id)
                     updateState(events.OPEN_PLATFORM_VIEW_EVENT, data);
                 }
                 break;
@@ -408,26 +406,6 @@ function updateState(event, data)
             globalEventHandler(event,data)
             break;
     }
-}
-
-function setControlViewReady(class_id) {
-    let viewIndex = -1;
-    let viewData = {};
-
-    for (let i = 0; i < pending_views_.length; i++) {
-        if (pending_views_[i].class_id === class_id) {
-            viewIndex = i;
-            viewData = pending_views_[i];
-            break;
-        }
-    }
-
-    if (viewIndex < 0) {
-        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Could not find pending control view for platform:", class_id)
-    } else {
-        updateState(events.OPEN_PLATFORM_VIEW_EVENT, pending_views_.splice(viewIndex, 1))
-    }
-
 }
 
 function isViewRegistered(class_id) {

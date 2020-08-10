@@ -25,16 +25,10 @@ ColumnLayout {
         target: coreInterface
 
         onDownloadViewFinished: {
-            // TODO: Unregister old version
-//            if (activeVersion) {
-//                sgResourceLoader.deleteResource(activeVersion.filepath)
-//            }
-//            sgResourceLoader.loadResource(payload.filepath)
-
+            sdsModel.resourceLoader.registerControlViewResources(platformStack.class_id);
             progressUpdateText.percent = 1.0
             activeVersion = latestVersion
             setUpToDateTimer.start()
-            console.info("Done downloading control view ", JSON.stringify(payload))
         }
 
         onDownloadControlViewProgress: {
@@ -342,6 +336,7 @@ ColumnLayout {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         downloadColumn1.visible = true
+                        sdsModel.resourceLoader.deleteViewResource(platformStack.class_id, activeVersion ? activeVersion.version : "");
                         downloadColumn1.startDownload();
                     }
                 }

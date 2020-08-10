@@ -44,7 +44,7 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
             controlViewsDir.cd(version);
             for (QString resource : controlViewsDir.entryList(QDir::Filter::Files)) {
                 QFileInfo viewFileInfo(controlViewsDir.path() + "/" + resource);
-                if (unregisterResource(viewFileInfo.path()) == false) {
+                if (unregisterResource(viewFileInfo.filePath()) == false) {
                     qCCritical(logCategoryResourceLoader) << "Failed to unregister resource " << resource << " for class id: " << class_id;
                 }
             }
@@ -62,6 +62,10 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
 }
 
 bool ResourceLoader::registerControlViewResources(const QString &class_id) {
+    if (isViewRegistered(class_id)) {
+        return true;
+    }
+
     QDir controlViewsDir(ResourcePath::hcsDocumentsCachePath() + "/control_views/" + class_id + "/control_views");
 
     if (controlViewsDir.exists()) {
@@ -94,9 +98,9 @@ bool ResourceLoader::registerControlViewResources(const QString &class_id) {
         for (QString resource : controlViewsDir.entryList(QDir::Filter::Files)) {
             QFileInfo viewFileInfo(controlViewsDir.path() + "/" + resource);
             qCDebug(logCategoryResourceLoader) << "Loading resource " << resource << " for class id: " << class_id;
-            if (registerResource(viewFileInfo.path()) == false) {
+            if (registerResource(viewFileInfo.filePath()) == false) {
                 qCCritical(logCategoryResourceLoader) << "Failed to load resource " << resource << " for class id: " << class_id;
-                // not sure if we want to return false indicating a failure here or not
+                return false;
             } else {
                 viewsRegistered.insert(class_id, true);
             }
