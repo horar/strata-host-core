@@ -19,8 +19,7 @@ var classMap = {} // contains metadata for platformSelectorModel for faster look
 var previouslyConnected = []
 var localPlatformListSettings = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"LocalPlatformList\";}", Qt.application)
 var localPlatformList = []
-var pendingViews = []
-var downloadedViews = {}
+var pendingViews = {}
 
 function initialize (newCoreInterface, newDocumentManager) {
     platformSelectorModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string platformListStatus: 'loading'}",Qt.application,"PlatformSelectorModel")
@@ -303,31 +302,41 @@ function connectListing(class_id_string, device_id, firmware_version) {
     selector_listing.available = available
 }
 
-/* The OOO here is loadPlatformDocuments()
-    -> catch signal documentManager.populateModelsFinished in main which calls:
-    -> onControlViewListPopulated() which calls:
-    -> loadPlatformDocuments() but this time, controlViewList isn't empty, so it calls downloadControlView() which calls
-    -> openPlatformView(). At this point, the documents are in the process of downloading, so we need to wait for signal in NavigationControl
+/* The Order of Operations here is as follows:
+    1. Call loadPlatformDocuments()
+    2. If controlViewListModel is not populated yet, then follow substeps, otherwise go to step 3.
+        2.1. Start the population of controlViewListModel
+        2.2. When finished populating, main.qml will catch documentManager.onPopulateModelsFinished and will call PlatformSelection.onControlViewListPopulated
+        2.3. onControlViewListPopulated will then call loadPlatformDocuments() again, but the model will be populated this time. So go back to step 1.
+    3. Call downloadControlView(). If already downloaded, then go to step 4 otherwise follow substeps
+        3.1. Send the download command to hcs
+        3.2. Main.qml will catch the onControlViewDownloadFinished signal and will call PlatformSelection.onControlViewDownloadFinished()
+    4. Call openPlatformView()
 */
 function loadPlatformDocuments(platform) {
+    if (NavigationControl.isViewRegistered(platform.class_id)) {
+        openPlatformView(platform);
+        return;
+    }
+
     let controlViewList = documentManager.getClassDocuments(platform.class_id).controlViewListModel;
 
-    pendingViews.push(platform);
-    if (controlViewList.count === 0) {
-        console.info("walk-- load platform documents empty for", platform.class_id)
-    } else {
-        console.info("walk-- cv list model populated, calling download function for", platform.class_id)
+    if (!pendingViews.hasOwnProperty(platform.class_id)) {
+        pendingViews[platform.class_id] = platform;
+    }
+
+    if (controlViewList.count > 0) {
         downloadControlView(platform)
     }
 }
 
+/*
+  This function is called by main.qml when the platform documents are populated
+*/
 function onControlViewListPopulated(class_id) {
-    console.info("walk-- cv list populated", class_id)
-    for (let i = 0; i < pendingViews.length; i++) {
-        if (pendingViews[i].class_id === class_id) {
-            loadPlatformDocuments(pendingViews[i]);
-            return;
-        }
+    if (pendingViews.hasOwnProperty(class_id)) {
+        loadPlatformDocuments(pendingViews[class_id]);
+        return;
     }
 
     console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Could not find class id", class_id, " in pending views")
@@ -349,7 +358,6 @@ function downloadControlView(platform) {
     }
 
     if (controlViewList.installed(index) === false) {
-        console.info("walk-- requesting download cv download for", platform.class_id)
         console.info(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Downloading control view for ", platform.class_id)
         let command = {
             "hcs::cmd": "download_view",
@@ -362,42 +370,27 @@ function downloadControlView(platform) {
         coreInterface.sendCommand(JSON.stringify(command))
     } else {
         // remove pending view because the view is already installed
-        console.info("walk-- found installed cv for", platform.class_id)
-        let idx = -1;
-        for (let i = 0; i < pendingViews.length; i++) {
-            if (pendingViews[i].class_id === platform.class_id) {
-                idx = i;
-                break;
-            }
-        }
-
-        if (idx < 0) {
-            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Could not remove class id", class_id, " in pending views")
+        if (!pendingViews.hasOwnProperty(platform.class_id)) {
+            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Could not remove class id", platform.class_id, " in pending views")
         } else {
-            pendingViews.splice(idx, 1)
+            delete pendingViews[platform.class_id];
         }
 
         openPlatformView(platform)
     }
 }
 
+/*
+  This function is called by main.qml when the control view is finished downloading
+*/
 function onControlViewDownloadFinished(class_id) {
-    console.info("walk-- finished cv download for", class_id)
     // remove pending view because the view is already installed
-    let idx = -1;
-    for (let i = 0; i < pendingViews.length; i++) {
-        if (pendingViews[i].class_id === class_id) {
-            idx = i;
-            break;
-        }
-    }
-
-    if (idx < 0) {
+    if (!pendingViews.hasOwnProperty(class_id)) {
         console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Could not remove class id", class_id, " in pending views")
         return
     }
-    let platform = pendingViews[idx]
-    pendingViews.splice(idx, 1);
+    let platform = pendingViews[class_id]
+    delete pendingViews[class_id];
     openPlatformView(platform);
 }
 
@@ -419,9 +412,6 @@ function openPlatformView(platform) {
         data.view = "collateral"
         data.connected = false
     }
-
-    console.info("walk-- opening platform view for ", platform.class_id)
-
 
     NavigationControl.updateState(NavigationControl.events.REQ_OPEN_PLATFORM_VIEW_EVENT,data)
 }

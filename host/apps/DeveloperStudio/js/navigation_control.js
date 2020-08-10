@@ -429,3 +429,7 @@ function setControlViewReady(class_id) {
     }
 
 }
+
+function isViewRegistered(class_id) {
+    return resource_loader_.isViewRegistered(class_id);
+}

@@ -5,6 +5,7 @@
 
 #include <QDirIterator>
 #include <QResource>
+#include <QFileInfo>
 
 ResourceLoader::ResourceLoader(QObject *parent) : QObject(parent)
 {
@@ -14,6 +15,50 @@ ResourceLoader::ResourceLoader(QObject *parent) : QObject(parent)
 
 ResourceLoader::~ResourceLoader()
 {
+}
+
+bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &version) {
+    QDir controlViewsDir(ResourcePath::hcsDocumentsCachePath() + "/control_views/" + class_id + "/control_views");
+
+    if (controlViewsDir.exists()) {
+        if (version.isEmpty()) {
+            // In this case, we want to delete all versions in the control_views directory
+            QStringList listOfVersions = controlViewsDir.entryList(QDir::Filter::Dirs | QDir::Filter::NoDotAndDotDot);
+
+            for (QString currentVersion : listOfVersions) {
+                controlViewsDir.cd(currentVersion);
+                // unregister resources
+                for (QString resource : controlViewsDir.entryList(QDir::Filter::Files)) {
+                    QFileInfo viewFileInfo(controlViewsDir.path() + "/" + resource);
+                    if (unregisterResource(viewFileInfo.path()) == false) {
+                        qCCritical(logCategoryResourceLoader) << "Failed to unregister resource " << resource << " for class id: " << class_id;
+                    }
+                }
+                if (controlViewsDir.removeRecursively() == false) {
+                    qCCritical(logCategoryResourceLoader) << "Could not delete the resource " << controlViewsDir.path();
+                    return false;
+                }
+                controlViewsDir.cdUp();
+            }
+        } else {
+            controlViewsDir.cd(version);
+            for (QString resource : controlViewsDir.entryList(QDir::Filter::Files)) {
+                QFileInfo viewFileInfo(controlViewsDir.path() + "/" + resource);
+                if (unregisterResource(viewFileInfo.path()) == false) {
+                    qCCritical(logCategoryResourceLoader) << "Failed to unregister resource " << resource << " for class id: " << class_id;
+                }
+            }
+            if (controlViewsDir.removeRecursively() == false) {
+                qCCritical(logCategoryResourceLoader) << "Could not delete the resource " << controlViewsDir.path();
+                return false;
+            }
+        }
+        viewsRegistered.insert(class_id, false);
+        return true;
+    } else {
+        qCCritical(logCategoryResourceLoader) << "Could not find control_views directory. Looked in " << controlViewsDir.path();
+        return false;
+    }
 }
 
 bool ResourceLoader::registerControlViewResources(const QString &class_id) {
@@ -47,11 +92,13 @@ bool ResourceLoader::registerControlViewResources(const QString &class_id) {
         qCDebug(logCategoryResourceLoader) << "Looking in resource path " << controlViewsDir.path();
 
         for (QString resource : controlViewsDir.entryList(QDir::Filter::Files)) {
-            QDir dir(controlViewsDir.path() + "/" + resource);
+            QFileInfo viewFileInfo(controlViewsDir.path() + "/" + resource);
             qCDebug(logCategoryResourceLoader) << "Loading resource " << resource << " for class id: " << class_id;
-            if (registerResource(dir.path()) == false) {
+            if (registerResource(viewFileInfo.path()) == false) {
                 qCCritical(logCategoryResourceLoader) << "Failed to load resource " << resource << " for class id: " << class_id;
                 // not sure if we want to return false indicating a failure here or not
+            } else {
+                viewsRegistered.insert(class_id, true);
             }
         }
 
@@ -131,4 +178,9 @@ QString ResourceLoader::getLatestVersion(const QStringList &versions) {
     }
 
     return latestVersion;
+}
+
+bool ResourceLoader::isViewRegistered(const QString &class_id) {
+    QHash<QString, bool>::const_iterator itr = viewsRegistered.find(class_id);
+    return itr != viewsRegistered.end() && itr.value() == true;
 }
