@@ -50,5 +50,6 @@
         <file>sliders-h.svg</file>
         <file>sliders-v.svg</file>
         <file>list.svg</file>
+        <file>update-arrow.svg</file>
     </qresource>
 </RCC>

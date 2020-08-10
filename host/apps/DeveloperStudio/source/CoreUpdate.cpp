@@ -9,30 +9,36 @@
     No-op if not on Windows
 */
 #if !defined(Q_OS_WIN)
-void CoreUpdate::requestUpdateApplication() {
+QString CoreUpdate::requestUpdateApplication() {
     qCCritical(logCategoryCoreUpdate) << "CoreUpdate functionality is available only on Windows OS";
+    return QString("CoreUpdate functionality is available only on Windows OS");
 }
 #else
-void CoreUpdate::requestUpdateApplication() {
+QString CoreUpdate::requestUpdateApplication() {
     // Search for Strata Maintenance Tool in application directory, if found perform update
     const QDir applicationDir(QCoreApplication::applicationDirPath());
-    const QString absPathMaintenanceTool = locateMaintenanceTool(applicationDir);
-    if (!absPathMaintenanceTool.isEmpty()) {
+    QString absPathMaintenanceTool;
+    QString error = locateMaintenanceTool(applicationDir, absPathMaintenanceTool);
+
+    if (error.isEmpty()) {
         performCoreUpdate(absPathMaintenanceTool, applicationDir);
-    }
-}
-#endif
-
-QString CoreUpdate::locateMaintenanceTool(const QDir &applicationDir) {
-    const QString maintenanceToolFilename = "Strata Maintenance Tool.exe";
-    const QString absPathMaintenanceTool = applicationDir.filePath(maintenanceToolFilename);
-
-    if (!applicationDir.exists(maintenanceToolFilename)) {
-        qCCritical(logCategoryCoreUpdate) << maintenanceToolFilename << "not found in" << applicationDir.absolutePath();
         return QString();
     }
 
-    return absPathMaintenanceTool;
+    return error;
+}
+#endif
+
+QString CoreUpdate::locateMaintenanceTool(const QDir &applicationDir, QString &absPathMaintenanceTool) {
+    const QString maintenanceToolFilename = "Strata Maintenance Tool.exe";
+    absPathMaintenanceTool = applicationDir.filePath(maintenanceToolFilename);
+
+    if (!applicationDir.exists(maintenanceToolFilename)) {
+        qCCritical(logCategoryCoreUpdate) << maintenanceToolFilename << "not found in" << applicationDir.absolutePath();
+        return QString(maintenanceToolFilename + " not found.");
+    }
+
+    return QString();
 }
 
 void CoreUpdate::performCoreUpdate(const QString &absPathMaintenanceTool, const QDir &applicationDir) {

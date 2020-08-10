@@ -1,124 +1,221 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtWebEngine 1.6
-import QtGraphicalEffects 1.0
+import QtQuick 2.9
+import QtQuick.Controls 2.3
+import QtQuick.Layouts 1.3
+import "qrc:/partial-views"
+import "../status-bar"
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.logger 1.0
 
 import "qrc:/js/core_update.js" as CoreUpdate
-
 import tech.strata.CoreUpdate 1.0
 
-Popup {
-    id: coreUpdatePopup
+SGStrataPopup {
+    id: root
+    headerText: "Update Detected"
     modal: true
-    focus: true
-    padding: 0
+    glowColor: "#666"
     closePolicy: Popup.CloseOnEscape
-
-    onClosed: coreUpdatePopup.destroy()
 
     property string latest_version: ""
     property string current_version: ""
     property string error_string: ""
 
+    onVisibleChanged: {
+        if (visible) {
+            nameField.forceActiveFocus()
+        }
+    }
+
     CoreUpdate {
         id: updateObj
     }
 
-    DropShadow {
-        width: coreUpdatePopup.width
-        height: coreUpdatePopup.height
-        horizontalOffset: 1
-        verticalOffset: 3
-        radius: 15.0
-        samples: 30
-        color: "#cc000000"
-        source: coreUpdatePopup.background
-        z: -1
-        cached: true
-    }
-
-    Rectangle {
-        id: popupContainer
-        width: coreUpdatePopup.width
-        height: coreUpdatePopup.height
-        clip: true
-        color: "white"
+    contentItem: ColumnLayout {
+        id: mainColumn
+        spacing: 20
 
         Rectangle {
-            id: title
-            height: 30
-            width: popupContainer.width
-            anchors {
-                top: popupContainer.top
-            }
-            color: "lightgrey"
+            id: feedbackTextContainer
+            color: "transparent"
+            Layout.preferredWidth: mainColumn.width
+            Layout.preferredHeight: feedbackTextColumn.height + feedbackTextColumn.anchors.topMargin * 2
+            clip: true
 
-            SGIcon {
-                id: close
-                source: "qrc:/images/icons/times.svg"
-                iconColor: close_hover.containsMouse ? "#eee" : "white"
-                height: 20
-                width: height
+            Row {
+                id: feedbackTextColumn
+                spacing: 20
+                width: feedbackTextContainer.width
                 anchors {
-                    right: title.right
-                    verticalCenter: title.verticalCenter
-                    rightMargin: 10
+                    top: feedbackTextContainer.top
+                    topMargin: 15
                 }
 
-                MouseArea {
-                    id: close_hover
-                    anchors {
-                        fill: close
+                SGIcon {
+                    height: 70
+                    width: height
+                    source: "qrc:/sgimages/update-arrow.svg"
+                    iconColor : "limegreen"
+                    // anchors {
+                    //     horizontalCenter: parent.horizontalCenter
+                    // }
+                }
+
+                Column {
+                    spacing: 20
+
+                    Text {
+                        id: newVersionText
+                        text: "New version of Developer Studio available!"
+                        font {
+                            pixelSize: 18
+                            family: Fonts.franklinGothicBook
+                            bold: true
+                        }
+                        // lineHeight: 1.5
+                        // width: feedbackTextContainer.width-30
+                        // anchors {
+                        //     horizontalCenter: feedbackTextColumn.horizontalCenter
+                        // }
+                        // horizontalAlignment: Text.AlignHCenter
+                        // wrapMode: Text.Wrap
+                        color: "black"
                     }
-                    onClicked: coreUpdatePopup.close()
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
+
+                    Text {
+                        id: currentVersionText
+                        text: "Current Version: " + current_version
+                        font {
+                            pixelSize: 14
+                            family: Fonts.franklinGothicBook
+                        }
+                        // lineHeight: 1.5
+                        // width: feedbackTextContainer.width-30
+                        // anchors {
+                        //     horizontalCenter: feedbackTextColumn.horizontalCenter
+                        // }
+                        // horizontalAlignment: Text.AlignHCenter
+                        // wrapMode: Text.Wrap
+                        color: "black"
+                    }
+                    Text {
+                        id: latestVersionText
+                        text: "Latest Version: " + latest_version
+                        font {
+                            pixelSize: 14
+                            family: Fonts.franklinGothicBook
+                        }
+                        // lineHeight: 1.5
+                        // width: feedbackTextContainer.width-30
+                        // anchors {
+                        //     horizontalCenter: feedbackTextColumn.horizontalCenter
+                        // }
+                        // horizontalAlignment: Text.AlignHCenter
+                        // wrapMode: Text.Wrap
+                        color: "black"
+                    }
+                }
+            }
+        }
+
+        SGCheckBox {
+            id: backupCheckbox
+            Layout.alignment: Qt.AlignHCenter
+            text: "Don't ask me again for this version"
+        }
+
+        Row {
+            spacing: 20
+
+            Button {
+                id: updateButton
+                text: "Update (will close Strata)"
+                Layout.bottomMargin: 20
+                Layout.alignment: Qt.AlignHCenter
+                activeFocusOnTab: true
+
+                background: Rectangle {
+                    color: !updateButton.enabled ? "#dbdbdb" : updateButton.down ? "#666" : "#888"
+                    border.color: updateButton.activeFocus ? "#219647" : "transparent"
+                }
+
+                contentItem: Text {
+                    text: updateButton.text
+                    color: !updateButton.enabled ? "#f2f2f2" : "white"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                    font {
+                        pixelSize: 15
+                        family: Fonts.franklinGothicBold
+                    }
+                }
+
+                onClicked: {
+                  function checkReply(reply) {
+                        console.error(Logger.devStudioCategory, "inside error() function")
+                        if (reply !== "") {
+                            errorPopup.popupText = reply
+                            errorPopup.open()
+                        }
+                    }
+
+                    var askagain = backupCheckbox.checked ? "DontAskAgain" : "AskAgainLater"
+                    CoreUpdate.setUserNotificationMode(askagain)
+                    var reply = updateObj.requestUpdateApplication()
+
+                    checkReply(reply)
+                    console.error(Logger.devStudioCategory, "from qml UI received reply", reply)
+                    root.close()
+                }
+            }
+
+            Button {
+                id: cancelButton
+                text: "Cancel"
+                Layout.bottomMargin: 20
+                Layout.alignment: Qt.AlignHCenter
+                activeFocusOnTab: true
+                enabled: textEdit.text !== "" && feedbackTypeListView.currentIndex !== -1
+
+                background: Rectangle {
+                    color: !cancelButton.enabled ? "#dbdbdb" : cancelButton.down ? "#666" : "#888"
+                    border.color: cancelButton.activeFocus ? "#219647" : "transparent"
+                }
+
+                contentItem: Text {
+                    text: cancelButton.text
+                    color: !cancelButton.enabled ? "#f2f2f2" : "white"
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                    font {
+                        pixelSize: 15
+                        family: Fonts.franklinGothicBold
+                    }
+                }
+
+                onClicked: {
+                    var askagain = backupCheckbox.checked ? "DontAskAgain" : "AskAgainLater"
+                    CoreUpdate.setUserNotificationMode(askagain)
+                    root.close()
                 }
             }
         }
     }
 
-    Text {
-        font.family: "Helvetica"
-        font.pointSize: 18
-        text: "\n\nNew update available\nCurrent:" + current_version + "\nLatest:" + latest_version + (error_string !== "" ? ("\nError:" + error_string) : "")
-    }
+    SGConfirmationPopup {
+        id: errorPopup
+        cancelButtonText: ""
+        acceptButtonText: "OK"
+        titleText: "Error"
+        popupText: ""
 
-    Column {
-        topPadding: 120
-
-        anchors {
-            centerIn: parent
-        }
-
-        Button {
-            text: "Update"
-            width: popupContainer.width / 2
-
+        Connections {
+            target: errorPopup.acceptButton
             onClicked: {
-                updateObj.requestUpdateApplication()
-                coreUpdatePopup.close()
-            }
-        }
-
-        Button {
-            text: "Ask again later"
-            width: popupContainer.width / 2
-            onClicked: {
-                CoreUpdate.setUserNotificationMode("AskAgainLater")
-                coreUpdatePopup.close()
-            }
-        }
-
-        Button {
-            text: "Don't ask again"
-            width: popupContainer.width / 2
-            onClicked: {
-                CoreUpdate.setUserNotificationMode("DontAskAgain")
-                coreUpdatePopup.close()
+                errorPopup.close()
             }
         }
     }

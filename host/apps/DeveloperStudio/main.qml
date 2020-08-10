@@ -71,8 +71,8 @@ SGWidgets.SGMainWindow {
         anchors {
             centerIn: parent
         }
-        width: 400
-        height: 400
+        width: 500
+        height: 300
     }
 
     ColumnLayout {

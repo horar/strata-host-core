@@ -78,8 +78,8 @@ function parseVersionInfo (payload) {
 
 function createUpdatePopup () {
     var coreUpdatePopup = NavigationControl.createView("qrc:/partial-views/core-update/SGCoreUpdate.qml", updateContainer)
-    coreUpdatePopup.width = updateContainer.width - 100
-    coreUpdatePopup.height = updateContainer.height - 100
+    coreUpdatePopup.width = updateContainer.width
+    coreUpdatePopup.height = updateContainer.height
     coreUpdatePopup.x = updateContainer.width/2 - coreUpdatePopup.width/2
     coreUpdatePopup.y =  updateContainer.height/2 - coreUpdatePopup.height/2
 
