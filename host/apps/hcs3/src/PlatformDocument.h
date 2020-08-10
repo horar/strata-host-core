@@ -14,7 +14,7 @@ struct PlatformFileItem {
     qint64 filesize;
 };
 
-struct FirmwareItem {
+struct VersionedFileItem {
     QString partialUri;
     QString md5;
     QString name;
@@ -33,7 +33,8 @@ public:
     QString classId();
     const QList<PlatformFileItem>& getViewList();
     const QList<PlatformFileItem>& getDownloadList();
-    const QList<FirmwareItem>& getFirmwareList();
+    const QList<VersionedFileItem>& getFirmwareList();
+    const QList<VersionedFileItem>& getControlViewList();
     const PlatformFileItem& platformSelector();
 
 private:
@@ -41,14 +42,15 @@ private:
     QString name_;
     QList<PlatformFileItem> downloadList_;
     QList<PlatformFileItem> viewList_;
-    QList<FirmwareItem> firmwareList_;
+    QList<VersionedFileItem> firmwareList_;
+    QList<VersionedFileItem> controlViewList_;
     PlatformFileItem platformSelector_;
 
     bool populateFileObject(const QJsonObject& jsonObject, PlatformFileItem &file);
     void populateFileList(const QJsonArray &jsonList, QList<PlatformFileItem> &fileList);
 
-    bool populateFirmwareObject(const QJsonObject& jsonObject, FirmwareItem &firmware);
-    void populateFirmwareList(const QJsonArray &jsonList, QList<FirmwareItem> &firmwareList);
+    bool populateVersionedObject(const QJsonObject& jsonObject, VersionedFileItem &versionedFile);
+    void populateVersionedList(const QJsonArray &jsonList, QList<VersionedFileItem> &versionedList);
 };
 
 #endif //PLATFORM_DOCUMENT_H

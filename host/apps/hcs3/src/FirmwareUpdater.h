@@ -29,7 +29,7 @@ public:
      * @param url URL where firmware is located
      * @param md5 MD5 of firmware
      */
-    FirmwareUpdater(const strata::device::DevicePtr& devPtr, const std::shared_ptr<strata::DownloadManager>& downloadManager, const QUrl& url, const QString& md5);
+    FirmwareUpdater(const strata::device::DevicePtr& devPtr, strata::DownloadManager *downloadManager, const QUrl& url, const QString& md5);
 
     /**
      * FirmwareUpdater destructor
@@ -70,7 +70,7 @@ private:
     const strata::device::DevicePtr device_;
     const int deviceId_;
 
-    std::shared_ptr<strata::DownloadManager> downloadManager_;
+    QPointer<strata::DownloadManager> downloadManager_;
     QString downloadId_;
 
     const QUrl firmwareUrl_;
