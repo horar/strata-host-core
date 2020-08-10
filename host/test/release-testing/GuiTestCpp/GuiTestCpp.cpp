@@ -50,6 +50,7 @@ public:
 TEST_CLASS(GuiTestCpp)
 {
 public:
+
     /// <summary>
     /// Access setting in settings.ini
     /// </summary>
@@ -184,7 +185,10 @@ public:
     //         //ASSERT_S_OK(ui.PressRegisterButton());
 
     //     }
-
+    TEST_METHOD(LoginPlatformConnectedTest)
+    {
+    
+    }
     /// <summary>
     /// Test logging in with invalid credentials
     /// </summary>
@@ -200,9 +204,8 @@ public:
         Assert::IsTrue(ui.LoginButtonEnabled());
 
         ASSERT_S_OK(ui.PressLoginButton());
-        ui.AwaitElement();
 
-        //Sleep(1000);
+        Sleep(1000);
 
         Assert::IsTrue(ui.AlertExists(L"LoginError"));
     }
@@ -283,7 +286,6 @@ public:
         ASSERT_S_OK(ui.SetToTab(L"Login"));
         Assert::IsTrue(ui.OnLoginScreen());
 
-        WCHAR filenameBuf[MAX_PATH];
         WCHAR usernameBuf[100];
         WCHAR passwordBuf[100];
         GetSetting(L"username", usernameBuf, 100);
