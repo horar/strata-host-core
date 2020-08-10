@@ -395,20 +395,23 @@ function onControlViewDownloadFinished(class_id) {
 }
 
 function openPlatformView(platform) {
-    let selector_listing = platformSelectorModel.get(platform.index)
-    selector_listing.view_open = true
+    let selector_listing = null;
+    if (platform.index) {
+        selector_listing = platformSelectorModel.get(platform.index)
+        selector_listing.view_open = true
+    }
 
     let data = {
         "class_id": platform.class_id,
         "device_id": platform.device_id,
-        "name": selector_listing.verbose_name,
+        "name": selector_listing ? selector_listing.verbose_name : platform.name,
         "view": "control",
         "connected": true,
         "available": platform.available,
         "firmware_version": platform.firmware_version
     }
 
-    if (selector_listing.connected === false || selector_listing.ui_exists === false || platform.device_id === Constants.NULL_DEVICE_ID || platform.available.control === false) {
+    if (selector_listing && (selector_listing.connected === false || selector_listing.ui_exists === false) || platform.device_id === Constants.NULL_DEVICE_ID || platform.available.control === false) {
         data.view = "collateral"
         data.connected = false
     }
