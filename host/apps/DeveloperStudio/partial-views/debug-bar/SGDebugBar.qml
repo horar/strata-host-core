@@ -65,25 +65,6 @@ Item {
                         id: viewsModel
                     }
 
-//                    FolderListModel {
-//                        id: viewFolderModel
-//                        showDirs: true
-//                        showFiles: false
-//                        folder: "qrc:///views/"
-
-//                        onCountChanged: {
-//                            viewCombobox.currentIndex = viewFolderModel.count - 1
-//                        }
-
-//                        onStatusChanged: {
-//                            if (viewFolderModel.status === FolderListModel.Ready) {
-//                                // [LC] - this FolderListModel is from Lab; a side effects in 5.12
-//                                //      - if 'folder' url doesn't exists the it loads app folder content
-//                                comboboxRow.visible = (viewFolderModel.folder.toString() === "qrc:///views/")
-//                            }
-//                        }
-//                    }
-
                     Component {
                         id: viewButtonDelegate
 
@@ -103,21 +84,6 @@ Item {
                                 const uuids = Object.keys(UuidMap.uuid_map)
                                 for (const uuid of uuids) {
                                     if (UuidMap.uuid_map[uuid] === model.name) {
-//                                        let data = {
-//                                            "class_id": uuid,
-//                                            "name": model.fileName,
-//                                            "device_id": Constants.DEBUG_DEVICE_ID,
-//                                            "firmware_version": "",
-//                                            "view": "control",
-//                                            "connected": true,
-//                                            "available": {
-//                                                "control": true,
-//                                                "documents": true,
-//                                                "unlisted": false,
-//                                                "order": false
-//                                            }
-//                                        }
-
                                         let data = {
                                             "device_id": Constants.DEBUG_DEVICE_ID,
                                             "class_id": uuid,
