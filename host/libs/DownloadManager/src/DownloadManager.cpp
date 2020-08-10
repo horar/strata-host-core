@@ -78,7 +78,7 @@ QString DownloadManager::download(
     return group->id;
 }
 
-bool DownloadManager::verifyFileChecksum(
+bool DownloadManager::verifyFileHash(
         const QString &filePath,
         const QString &checksum,
         const QCryptographicHash::Algorithm &method)
@@ -266,8 +266,8 @@ void DownloadManager::networkReplyFinishedHandler()
             }
 
             if (internalRequest->md5.isEmpty() == false) {
-                if (verifyFileChecksum(internalRequest->savedFile.fileName(), internalRequest->md5) == false) {
-                    errorString = "checksum verification failed";
+                if (verifyFileHash(internalRequest->savedFile.fileName(), internalRequest->md5) == false) {
+                    errorString = "hash verification failed";
                 }
             }
         }
@@ -319,7 +319,7 @@ bool DownloadManager::postNextDownloadRequest(InternalDownloadRequest *internalR
     if (QFileInfo::exists(internalRequest->savedFile.fileName())) {
         if (group->settings.keepOriginalName) {
             if (internalRequest->md5.length() > 0
-                    && verifyFileChecksum(internalRequest->savedFile.fileName(), internalRequest->md5))
+                    && verifyFileHash(internalRequest->savedFile.fileName(), internalRequest->md5))
             {
                 //md5 matches => no need to download it again => skip it
                 prepareResponse(internalRequest);
