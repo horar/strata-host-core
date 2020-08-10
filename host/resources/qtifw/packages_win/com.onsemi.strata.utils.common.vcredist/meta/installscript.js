@@ -52,6 +52,7 @@ Component.prototype.createOperations = function()
     } else {
         console.log("Microsoft Visual C++ 2017 X64 Additional Runtime already installed");
     }
+    //component.addElevatedOperation("Execute", "cmd", ["/c", "rd", "/s", "/q", "\"" + installer.value("TargetDir") + "/StrataUtils/VC_REDIST\""]);
 }
 
 // Return 1 if a > b
@@ -94,7 +95,7 @@ function compare(a, b) {
 }
 
 function getPowershellElement(str, element_name) {
-	var res = [];
+    var res = [];
     var x = str.split('\r\n');
     var m = 0;
     for(var i = 0; i < x.length; i++){
@@ -102,12 +103,12 @@ function getPowershellElement(str, element_name) {
         if(n == 0) {
             m = x[i].indexOf(": ", n + element_name.length);
             m += ": ".length;
-			res.push(x[i].slice(m));
+            res.push(x[i].slice(m));
         } else if (m > 0) {
             if(x[i].charAt(0) == " ")
                 res[res.length-1] = res[res.length-1].concat(" " + x[i].slice(m));
-          	else
-            	m = 0;
+              else
+                m = 0;
         }
     }
 
@@ -129,34 +130,34 @@ Component.prototype.isVCRedistInstalled = function()
     if((isInstalled[0] != null) && (isInstalled[0] != undefined) && (isInstalled[0] != "")) {
         var up_to_date = false;
         
-		var display_name = getPowershellElement(isInstalled[0], 'DisplayName');
-		var display_version = getPowershellElement(isInstalled[0], 'DisplayVersion');
-		var uninstall_string = getPowershellElement(isInstalled[0], 'UninstallString');
-		
-		console.log("found DisplayName: '" + display_name + "', DisplayVersion: '" + display_version + "', UninstallString: '" + uninstall_string + "'");
+        var display_name = getPowershellElement(isInstalled[0], 'DisplayName');
+        var display_version = getPowershellElement(isInstalled[0], 'DisplayVersion');
+        var uninstall_string = getPowershellElement(isInstalled[0], 'UninstallString');
+        
+        console.log("found DisplayName: '" + display_name + "', DisplayVersion: '" + display_version + "', UninstallString: '" + uninstall_string + "'");
 
         // we should not find multiple entries here, but just in case, check the highest
         if ((display_name.length != 0) && (display_name.length == display_version.length && display_name.length == uninstall_string.length)) {
-			for (var i = 0; i < display_version.length; i++) {
+            for (var i = 0; i < display_version.length; i++) {
 
-				var result = compare(display_version[i], component.value("Version"));    // example "14.16.27033"
-				
-				if(result == 1) {
-					up_to_date = true;
-					console.log("program is newer version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
-				} else if(result == 0) {
-					up_to_date = true;
-					console.log("program is the same version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
-				} else {
-					console.log("program is older, will replace with new version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
-					if(uninstall_string[i].indexOf("MsiExec.exe /I") == 0)
-						uninstall_string[i] = uninstall_string[i].substring(0, 13) + 'X' + uninstall_string[i].substring(13 + 1);
-					
-					console.log("executing VCRedist uninstall command: '" + uninstall_string[i] + "'");
-					var e = installer.execute(uninstall_string[i], ["/norestart", "/quiet"]);
-					console.log(e);
-				}
-			}
+                var result = compare(display_version[i], component.value("Version"));    // example "14.16.27033"
+                
+                if(result == 1) {
+                    up_to_date = true;
+                    console.log("program is newer version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
+                } else if(result == 0) {
+                    up_to_date = true;
+                    console.log("program is the same version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
+                } else {
+                    console.log("program is older, will replace with new version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
+                    if(uninstall_string[i].indexOf("MsiExec.exe /I") == 0)
+                        uninstall_string[i] = uninstall_string[i].substring(0, 13) + 'X' + uninstall_string[i].substring(13 + 1);
+                    
+                    console.log("executing VCRedist uninstall command: '" + uninstall_string[i] + "'");
+                    var e = installer.execute(uninstall_string[i], ["/norestart", "/quiet"]);
+                    console.log(e);
+                }
+            }
         }
 
         return up_to_date;

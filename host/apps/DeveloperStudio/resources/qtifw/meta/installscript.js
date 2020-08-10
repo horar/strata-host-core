@@ -31,6 +31,17 @@ function Component()
 {
 }
 
+Component.prototype.beginInstallation = function()
+{
+    if (systemInfo.productType === "windows") {
+        component.addStopProcessForUpdateRequest(installer.value("TargetDir") + "/Strata Developer Studio.exe");
+        component.addStopProcessForUpdateRequest(installer.value("TargetDir") + "/hcs.exe");
+    }
+
+    // call default implementation
+    component.beginInstallation();
+}
+
 Component.prototype.createOperations = function()
 {
     // call default implementation to actually install the content

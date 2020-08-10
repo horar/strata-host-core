@@ -30,17 +30,6 @@ function Component()
 {
 }
 
-Component.prototype.createOperations = function()
-{
-    // call default implementation
-    component.createOperations();
-	
-    if( systemInfo.productType == "windows" ) {
-		component.addOperation("Mkdir", "C:/ProgramData/ON Semiconductor/Strata Developer Studio/HCS")
-		component.addOperation("Move", installer.value("TargetDir") + "/hcs.config", "C:/ProgramData/ON Semiconductor/Strata Developer Studio/HCS/hcs.config");
-    }
-}
-
 Component.prototype.beginInstallation = function()
 {
     if (systemInfo.productType === "windows") {

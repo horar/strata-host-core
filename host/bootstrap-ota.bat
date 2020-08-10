@@ -18,6 +18,8 @@ REM echo "======================================================================
 REM echo " Parsing arguments.."
 REM echo "======================================================================="
 
+set BUILD_ID=1
+set BUILD_CLEANUP=0
 set BOOTSTRAP_USAGE=0
 set "BOOTSTRAP_ARGS_LIST=%*"
 call :parse_loop
@@ -48,8 +50,6 @@ echo Setting up 'x64 Native Tools Command Prompt for VS 2017'
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64
 REM call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\Tools\VsDevCmd.bat" -arch=amd64
 
-set BUILD_ID=1
-set BUILD_CLEANUP=0
 set BUILD_DIR=build-ota
 set PACKAGES_DIR=packages
 set PACKAGES_WIN_DIR=packages_win
@@ -244,6 +244,26 @@ echo "--------------------------------------------------------------------------
 echo " Preparing %SDS_BINARY% dependencies.."
 echo "-----------------------------------------------------------------------------"
 
+if not exist %STRATA_RESOURCES_DIR%\packages_win (
+    echo "======================================================================="
+    echo " Missing packages_win folder"
+    echo "======================================================================="
+    Exit /B 2
+)
+
+rd /s /q %PACKAGES_WIN_DIR%
+md %PACKAGES_WIN_DIR%
+xcopy %STRATA_RESOURCES_DIR%\packages_win %PACKAGES_WIN_DIR% /E
+
+if not exist %STRATA_DEPLOYMENT_DIR%\ftdi_driver_files (
+    echo "======================================================================="
+    echo " Missing ftdi_driver_files folder"
+    echo "======================================================================="
+    Exit /B 2
+)
+
+xcopy %STRATA_DEPLOYMENT_DIR%\ftdi_driver_files %PKG_STRATA_FTDI%\StrataUtils\FTDI /E
+
 REM call windeployqt first to create necessary folder structure
 windeployqt "%SDS_BINARY_DIR%" ^
     --release ^
@@ -296,7 +316,8 @@ if not exist %PKG_STRATA_QT%\%VCREDIST_BINARY% (
     Exit /B 2
 )
 
-move %PKG_STRATA_QT%\%VCREDIST_BINARY% %PKG_STRATA_VC_REDIST%\StrataUtils\VC_REDIST\
+echo "Moving %VCREDIST_BINARY% to %PKG_STRATA_VC_REDIST%\StrataUtils\VC_REDIST"
+move "%PKG_STRATA_QT%\%VCREDIST_BINARY%" "%PKG_STRATA_VC_REDIST%\StrataUtils\VC_REDIST\%VCREDIST_BINARY%"
 
 REM Copy OpenSSL dlls to QT5 dir
 if not exist %CRYPTO_DLL_DIR% (
@@ -307,7 +328,7 @@ if not exist %CRYPTO_DLL_DIR% (
 )
 
 echo "Copying %CRYPTO_DLL% to %PKG_STRATA_QT%"
-copy "%CRYPTO_DLL_DIR%" %PKG_STRATA_QT%
+copy "%CRYPTO_DLL_DIR%" "%PKG_STRATA_QT%\%CRYPTO_DLL%"
 
 if not exist "%SSL_DLL_DIR%" (
     echo "======================================================================="
@@ -317,7 +338,7 @@ if not exist "%SSL_DLL_DIR%" (
 )
 
 echo "Copying %SSL_DLL% to %PKG_STRATA_QT%"
-copy "%SSL_DLL_DIR%" %PKG_STRATA_QT%
+copy "%SSL_DLL_DIR%" "%PKG_STRATA_QT%\%SSL_DLL%"
 
 if not exist %MQTT_DLL_DIR% (
     echo "======================================================================="
@@ -328,27 +349,7 @@ if not exist %MQTT_DLL_DIR% (
 
 REM Copy Mqtt dll to QT5 dir
 echo "Copying %MQTT_DLL% to %PKG_STRATA_QT%"
-copy %MQTT_DLL_DIR% %PKG_STRATA_QT%
-
-if not exist %STRATA_RESOURCES_DIR%\packages_win (
-    echo "======================================================================="
-    echo " Missing packages_win folder"
-    echo "======================================================================="
-    Exit /B 2
-)
-
-rd /s /q %PACKAGES_WIN_DIR%
-md %PACKAGES_WIN_DIR%
-xcopy %STRATA_RESOURCES_DIR%\packages_win %PACKAGES_WIN_DIR% /E
-
-if not exist %STRATA_DEPLOYMENT_DIR%\ftdi_driver_files (
-    echo "======================================================================="
-    echo " Missing ftdi_driver_files folder"
-    echo "======================================================================="
-    Exit /B 2
-)
-
-xcopy %STRATA_DEPLOYMENT_DIR%\ftdi_driver_files %PKG_STRATA_FTDI%\StrataUtils\FTDI /E
+copy "%MQTT_DLL_DIR%" "%PKG_STRATA_QT%\%MQTT_DLL%"
 
 echo "======================================================================="
 echo " Signing Binaries.."
@@ -417,39 +418,39 @@ IF %ERRORLEVEL% NEQ 0 (
     Exit /B 3
 )
     
-echo "======================================================================="
-echo " Preparing online installer %STRATA_ONLINE_BINARY%.."
-echo "======================================================================="
-
-binarycreator ^
-    --verbose ^
-    --online-only ^
-    -c %STRATA_CONFIG_XML% ^
-    -p %PACKAGES_DIR% ^
-    -p %PACKAGES_WIN_DIR% ^
-    %STRATA_ONLINE%
-
-IF %ERRORLEVEL% NEQ 0 (
-    echo "======================================================================="
-    echo " Failed to create online installer %STRATA_ONLINE_BINARY%!"
-    echo "======================================================================="
-    Exit /B 3
-)
-
-echo "-----------------------------------------------------------------------------"
-echo "Signing the online installer %STRATA_ONLINE_BINARY%"
-echo "-----------------------------------------------------------------------------"
-signtool sign ^
-    -f "%SIGNING_CERT%" ^
-    -p %SIGNING_PASS% ^
-    %STRATA_ONLINE_BINARY%
-    
-IF %ERRORLEVEL% NEQ 0 (
-    echo "======================================================================="
-    echo " Failed to sign the online installer %STRATA_ONLINE_BINARY%!"
-    echo "======================================================================="
-    Exit /B 3
-)
+REM echo "======================================================================="
+REM echo " Preparing online installer %STRATA_ONLINE_BINARY%.."
+REM echo "======================================================================="
+REM 
+REM binarycreator ^
+REM     --verbose ^
+REM     --online-only ^
+REM     -c %STRATA_CONFIG_XML% ^
+REM     -p %PACKAGES_DIR% ^
+REM     -p %PACKAGES_WIN_DIR% ^
+REM     %STRATA_ONLINE%
+REM 
+REM IF %ERRORLEVEL% NEQ 0 (
+REM     echo "======================================================================="
+REM     echo " Failed to create online installer %STRATA_ONLINE_BINARY%!"
+REM     echo "======================================================================="
+REM     Exit /B 3
+REM )
+REM 
+REM echo "-----------------------------------------------------------------------------"
+REM echo "Signing the online installer %STRATA_ONLINE_BINARY%"
+REM echo "-----------------------------------------------------------------------------"
+REM signtool sign ^
+REM     -f "%SIGNING_CERT%" ^
+REM     -p %SIGNING_PASS% ^
+REM     %STRATA_ONLINE_BINARY%
+REM     
+REM IF %ERRORLEVEL% NEQ 0 (
+REM     echo "======================================================================="
+REM     echo " Failed to sign the online installer %STRATA_ONLINE_BINARY%!"
+REM     echo "======================================================================="
+REM     Exit /B 3
+REM )
 
 echo "======================================================================="
 echo " Preparing online repository %STRATA_ONLINE_REPOSITORY%.."
@@ -471,7 +472,7 @@ IF %ERRORLEVEL% NEQ 0 (
     Exit /B 3
 )
 
-if "%BUILD_CLEANUP%" EQU "1" (
+if %BUILD_CLEANUP% EQU 1 (
     echo "-----------------------------------------------------------------------------"
     echo " Cleaning build directory"
     echo "-----------------------------------------------------------------------------"
