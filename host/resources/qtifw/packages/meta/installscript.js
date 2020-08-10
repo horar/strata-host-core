@@ -41,12 +41,13 @@ Component.prototype.createOperations = function()
     // call default implementation to actually install the content
     component.createOperations();
 
-	if ((systemInfo.productType === "windows") && installer.value("add_start_menu_shortcut") == "true") {
-		var strata_mt_shortcut_dst = installer.value("StartMenuDir") + "\\Strata Maintenance Tool.lnk";
-		component.addOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Maintenance Tool.exe", strata_mt_shortcut_dst,
-								"workingDirectory=" + installer.value("TargetDir"), "iconPath=%SystemRoot%/system32/SHELL32.dll",
-								"iconId=2", "description=Open Maintenance Tool");
-	}
+    if ((systemInfo.productType === "windows") && installer.value("add_start_menu_shortcut") == "true") {
+        var strata_mt_shortcut_dst = installer.value("StartMenuDir") + "\\Strata Maintenance Tool.lnk";
+        component.addOperation("CreateShortcut", installer.value("TargetDir") + "/Strata Maintenance Tool.exe", strata_mt_shortcut_dst,
+                                "workingDirectory=" + installer.value("TargetDir"), "iconPath=%SystemRoot%/system32/SHELL32.dll",
+                                "iconId=2", "description=Open Maintenance Tool");
+        console.log("will add Start Menu shortcut to: " + strata_mt_shortcut_dst);
+    }
 
     if(installer.isInstaller())
         uninstallPreviousStrataInstallation();

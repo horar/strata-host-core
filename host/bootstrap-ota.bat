@@ -14,9 +14,21 @@ REM
 
 setlocal
 
+REM echo "======================================================================="
+REM echo " Parsing arguments.."
+REM echo "======================================================================="
+
+set BOOTSTRAP_USAGE=0
+set "BOOTSTRAP_ARGS_LIST=%*"
+call :parse_loop
+set BOOTSTRAP_ARGS_LIST=
+
+IF %BOOTSTRAP_USAGE% NEQ 0 ( goto :usage )
+
 echo "======================================================================="
 echo " Preparing environment.."
 echo "======================================================================="
+
 echo Setting up environment for Qt usage..
 set PATH=C:\dev\Qt\5.12.6\msvc2017_64\bin;%PATH%
 
@@ -34,7 +46,10 @@ set PATH="C:\Program Files\CMake\bin";%PATH%
 
 echo Setting up 'x64 Native Tools Command Prompt for VS 2017'
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64
+REM call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\Tools\VsDevCmd.bat" -arch=amd64
 
+set BUILD_ID=1
+set BUILD_CLEANUP=0
 set BUILD_DIR=build-ota
 set PACKAGES_DIR=packages
 set PACKAGES_WIN_DIR=packages_win
@@ -57,6 +72,10 @@ set STRATA_RESOURCES_DIR=..\resources\qtifw
 set STRATA_CONFIG_XML=%STRATA_RESOURCES_DIR%\config\config.xml
 set MQTT_DLL=Qt5Mqtt.dll
 set MQTT_DLL_DIR=bin\%MQTT_DLL%
+set CRYPTO_DLL=libcrypto-1_1-x64.dll
+set CRYPTO_DLL_DIR=%OPENSSL_PATH%\%CRYPTO_DLL%
+set SSL_DLL=libssl-1_1-x64.dll
+set SSL_DLL_DIR=%OPENSSL_PATH%\%SSL_DLL%
 set VCREDIST_BINARY=vc_redist.x64.exe
 set STRATA_OFFLINE=strata-setup-offline
 set STRATA_ONLINE=strata-setup-online
@@ -64,7 +83,6 @@ set STRATA_OFFLINE_BINARY=%STRATA_OFFLINE%.exe
 set STRATA_ONLINE_BINARY=%STRATA_ONLINE%.exe
 set STRATA_ONLINE_REPO_ROOT=pub
 set STRATA_ONLINE_REPOSITORY=%STRATA_ONLINE_REPO_ROOT%\repository\demo
-
 
 echo "-----------------------------------------------------------------------------"
 echo " Build env. setup:"
@@ -74,30 +92,56 @@ echo "--------------------------------------------------------------------------
 qmake --version
 echo "-----------------------------------------------------------------------------"
 
+echo " Checking cmake..."
+where cmake >nul 2>nul
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " cmake is missing from path! Aborting."
+    echo "======================================================================="
+    Exit /B 1
+)
+
+echo " Checking jom..."
+where jom >nul 2>nul
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " jom is missing from path! Aborting."
+    echo "======================================================================="
+    Exit /B 1
+)
+
 echo " Checking QtIFW binarycreator..."
 where binarycreator >nul 2>nul
-IF %ERRORLEVEL% EQU 0 (
-    echo "QtIFW's binarycreator found"
-) ELSE (
-    echo "QtIFW's binarycreator is missing from path! Aborting."
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " QtIFW's binarycreator is missing from path! Aborting."
+    echo "======================================================================="
     Exit /B 1
 )
 
 echo " Checking QtIFW repogen..."
 where repogen >nul 2>nul
-IF %ERRORLEVEL% EQU 0 (
-    echo "QtIFW's repogen found"
-) ELSE (
-    echo "QtIFW's repogen is missing from path! Aborting."
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " QtIFW's repogen is missing from path! Aborting."
+    echo "======================================================================="
     Exit /B 1
 )
 
 echo " Checking signtool..."
 where signtool >nul 2>nul
-IF %ERRORLEVEL% EQU 0 (
-    echo "signtool found"
-) ELSE (
-    echo "signtool is missing from path! Aborting."
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " signtool is missing from path! Aborting."
+    echo "======================================================================="
+    Exit /B 1
+)
+
+echo " Checking OpenSSL..."
+if not exist %OPENSSL_PATH% (
+    echo "======================================================================="
+    echo " Missing OpenSSL path: '%OPENSSL_PATH%', OpenSSL probably not installed"
+    echo "======================================================================="
     Exit /B 1
 )
 
@@ -128,8 +172,11 @@ if not exist %PACKAGES_DIR% md %PACKAGES_DIR%
 cmake -G "NMake Makefiles JOM" ^
     -DCMAKE_BUILD_TYPE=OTA ^
     -DWINDOWS_INSTALLER_BUILD:BOOL=1 ^
+    -DAPPS_TOOLBOX=off ^
+    -DAPPS_UTILS=off ^
+    -DBUILD_TESTING=off ^
     ..
-    
+
 REM    -DAPPS_CORESW=on ^
 REM    -DAPPS_CORECOMPONENTS=on ^
 REM    -DAPPS_TOOLBOX=off ^
@@ -142,11 +189,25 @@ REM cmake -G "Visual Studio 15 2017 Win64" ^
 REM     -T v141 ^
 REM     ..\
 
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " Failed to configure cmake build!"
+    echo "======================================================================="
+    Exit /B 4
+)
+
 echo "======================================================================="
 echo " Compiling.."
 echo "======================================================================="
 cmake --build . -- -j %NUMBER_OF_PROCESSORS%
 REM cmake --build . --config Debug
+
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " Failed to perform cmake build!"
+    echo "======================================================================="
+    Exit /B 5
+)
 
 if not exist "%SDS_BINARY_DIR%" (
     echo "======================================================================="
@@ -163,7 +224,7 @@ if not exist "%HCS_BINARY_DIR%" (
 )
 
 echo "======================================================================="
-echo " Copying necessary files.."
+echo " Preparing necessary files.."
 echo "======================================================================="
 
 REM copy various license files
@@ -179,45 +240,11 @@ echo "Copying Qml Views Resources to %PKG_STRATA_COMPONENTS_VIEWS%"
 if not exist %PKG_STRATA_COMPONENTS_VIEWS% md %PKG_STRATA_COMPONENTS_VIEWS%
 xcopy bin\views-*.rcc %PKG_STRATA_COMPONENTS_VIEWS% /Y
 
-if not exist %MQTT_DLL_DIR% (
-    echo "======================================================================="
-    echo " Missing %MQTT_DLL%, build probably failed"
-    echo "======================================================================="
-    Exit /B 2
-)
-
-echo "Copying %MQTT_DLL% to main dir"
-copy %MQTT_DLL_DIR% %PKG_STRATA_DS%
-
-if not exist %STRATA_RESOURCES_DIR%\packages_win (
-    echo "======================================================================="
-    echo " Missing packages_win folder"
-    echo "======================================================================="
-    Exit /B 2
-)
-
-rd /s /q %PACKAGES_WIN_DIR%
-md %PACKAGES_WIN_DIR%
-xcopy %STRATA_RESOURCES_DIR%\packages_win %PACKAGES_WIN_DIR% /E
-
-if not exist %STRATA_DEPLOYMENT_DIR%\ftdi_driver_files (
-    echo "======================================================================="
-    echo " Missing ftdi_driver_files folder"
-    echo "======================================================================="
-    Exit /B 2
-)
-
-xcopy %STRATA_DEPLOYMENT_DIR%\ftdi_driver_files %PKG_STRATA_FTDI%\StrataUtils\FTDI /E
-
-REM -------------------------------------------------------------------------
-REM [LC] WIP
-REM -------------------------------------------------------------------------
-REM    --no-compiler-runtime ^ // we need vc_redist exe
-
 echo "-----------------------------------------------------------------------------"
 echo " Preparing %SDS_BINARY% dependencies.."
 echo "-----------------------------------------------------------------------------"
 
+REM call windeployqt first to create necessary folder structure
 windeployqt "%SDS_BINARY_DIR%" ^
     --release ^
     --force ^
@@ -270,6 +297,58 @@ if not exist %PKG_STRATA_QT%\%VCREDIST_BINARY% (
 )
 
 move %PKG_STRATA_QT%\%VCREDIST_BINARY% %PKG_STRATA_VC_REDIST%\StrataUtils\VC_REDIST\
+
+REM Copy OpenSSL dlls to QT5 dir
+if not exist %CRYPTO_DLL_DIR% (
+    echo "======================================================================="
+    echo " Missing %CRYPTO_DLL_DIR%, OpenSSL probably not installed"
+    echo "======================================================================="
+    Exit /B 2
+)
+
+echo "Copying %CRYPTO_DLL% to %PKG_STRATA_QT%"
+copy "%CRYPTO_DLL_DIR%" %PKG_STRATA_QT%
+
+if not exist "%SSL_DLL_DIR%" (
+    echo "======================================================================="
+    echo " Missing %SSL_DLL_DIR%, OpenSSL probably not installed"
+    echo "======================================================================="
+    Exit /B 2
+)
+
+echo "Copying %SSL_DLL% to %PKG_STRATA_QT%"
+copy "%SSL_DLL_DIR%" %PKG_STRATA_QT%
+
+if not exist %MQTT_DLL_DIR% (
+    echo "======================================================================="
+    echo " Missing %MQTT_DLL%, build probably failed"
+    echo "======================================================================="
+    Exit /B 2
+)
+
+REM Copy Mqtt dll to QT5 dir
+echo "Copying %MQTT_DLL% to %PKG_STRATA_QT%"
+copy %MQTT_DLL_DIR% %PKG_STRATA_QT%
+
+if not exist %STRATA_RESOURCES_DIR%\packages_win (
+    echo "======================================================================="
+    echo " Missing packages_win folder"
+    echo "======================================================================="
+    Exit /B 2
+)
+
+rd /s /q %PACKAGES_WIN_DIR%
+md %PACKAGES_WIN_DIR%
+xcopy %STRATA_RESOURCES_DIR%\packages_win %PACKAGES_WIN_DIR% /E
+
+if not exist %STRATA_DEPLOYMENT_DIR%\ftdi_driver_files (
+    echo "======================================================================="
+    echo " Missing ftdi_driver_files folder"
+    echo "======================================================================="
+    Exit /B 2
+)
+
+xcopy %STRATA_DEPLOYMENT_DIR%\ftdi_driver_files %PKG_STRATA_FTDI%\StrataUtils\FTDI /E
 
 echo "======================================================================="
 echo " Signing Binaries.."
@@ -330,14 +409,14 @@ signtool sign ^
     -f "%SIGNING_CERT%" ^
     -p %SIGNING_PASS% ^
     %STRATA_OFFLINE_BINARY%
-	
+    
 IF %ERRORLEVEL% NEQ 0 (
     echo "======================================================================="
     echo " Failed to sign the offline installer %STRATA_OFFLINE_BINARY%!"
     echo "======================================================================="
     Exit /B 3
 )
-	
+    
 echo "======================================================================="
 echo " Preparing online installer %STRATA_ONLINE_BINARY%.."
 echo "======================================================================="
@@ -364,7 +443,7 @@ signtool sign ^
     -f "%SIGNING_CERT%" ^
     -p %SIGNING_PASS% ^
     %STRATA_ONLINE_BINARY%
-	
+    
 IF %ERRORLEVEL% NEQ 0 (
     echo "======================================================================="
     echo " Failed to sign the online installer %STRATA_ONLINE_BINARY%!"
@@ -391,9 +470,85 @@ IF %ERRORLEVEL% NEQ 0 (
     echo "======================================================================="
     Exit /B 3
 )
-	
+
+if "%BUILD_CLEANUP%" EQU "1" (
+    echo "-----------------------------------------------------------------------------"
+    echo " Cleaning build directory"
+    echo "-----------------------------------------------------------------------------"
+    for /F "delims=" %%i in ('dir /b') do (
+        if NOT "%%i"=="%STRATA_OFFLINE_BINARY%" if NOT "%%i"=="%STRATA_ONLINE_BINARY%" if NOT "%%i"=="%STRATA_ONLINE_REPO_ROOT%" (
+            rmdir "%%i" /s/q || del "%%i" /s/q
+        )
+    )
+)
+
+    
 echo "======================================================================="
 echo " OTA build finished"
 echo "======================================================================="
+
+exit /B 0
+
+:parse_loop
+for /F "tokens=1,* delims= " %%a in ("%BOOTSTRAP_ARGS_LIST%") do (
+REM    echo "    Inner argument: {%%a}"
+    call :parse_argument %%a
+    set "BOOTSTRAP_ARGS_LIST=%%b"
+    goto :parse_loop
+)
+exit /B 0
+
+:parse_argument
+REM called by :parse_loop and expects the arguments to either be:
+REM 1. a single argument in %1
+REM 2. an argument pair from the command line specified as '%1=%2'
+
+set __local_ARG_FOUND=
+if /I "%1"=="-c" (
+    set BUILD_CLEANUP=1
+    set __local_ARG_FOUND=1
+)
+if /I "%1"=="--cleanup" (
+    set BUILD_CLEANUP=1
+    set __local_ARG_FOUND=1
+)
+if /I "%1"=="-h" (
+    set BOOTSTRAP_USAGE=1
+    set __local_ARG_FOUND=1
+)
+if /I "%1"=="--help" (
+    set BOOTSTRAP_USAGE=1
+    set __local_ARG_FOUND=1
+)
+if /I "%1"=="-i" (
+    set BUILD_ID=%2
+    set __local_ARG_FOUND=1
+)
+if /I "%1"=="--buildid" (
+    set BUILD_ID=%2
+    set __local_ARG_FOUND=1
+)
+
+if "%__local_ARG_FOUND%" NEQ "1" (
+    if "%2"=="" (
+        echo " Invalid argument found : %1"
+    ) else (
+        echo " Invalid argument found : %1=%2"
+    )
+    set BOOTSTRAP_USAGE=1
+)
+set __local_ARG_FOUND=
+exit /B 0
+
+:usage
+echo "Syntax:"
+echo "     [-i=BUILD_ID] [-c] [-h]"
+echo "Where:"
+echo "     [-i | --buildid]: For build id"
+echo "     [-c | --cleanup]: To leave only installer"
+echo "     [-h | --help]: For this help"
+echo For example:
+echo "     bootstrap-ota.bat -i=999 --cleanup"
+exit /B 0
 
 endlocal

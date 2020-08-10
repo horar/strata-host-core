@@ -92,8 +92,9 @@ Controller.prototype.IntroductionPageCallback = function()
             widget.MessageLabel.setText("Welcome to the " + installer.value("Name") + " Setup Wizard.\n\n"
                                     + "This will install the following on your computer: \n"
                                     + "  1) Strata Developer Studio\n"
-                                    + "  2) Microsoft VS 2017 Tools, Add-ONs and Extensions\n"
-                                    + "  3) FTDI Driver\n\n"
+                                    + "  2) Host Controller Service\n"
+                                    + "  3) Microsoft VS 2017 Tools, Add-ONs and Extensions\n"
+                                    + "  4) FTDI Driver\n\n"
                                     + "It is recommended that you close all other applications before continuing.\n\n"
                                     + "Click Next to continue, or Quit to exit Setup."
                                     );
@@ -176,7 +177,7 @@ function isComponentInstalled(component_name)
 {
     var component = installer.componentByName(component_name);
     if(component != null) {
-		var installed = component.isInstalled();
+        var installed = component.isInstalled();
         console.log("component '" + component_name + "' found and is installed: " + installed);
         return installed;
     }
@@ -195,9 +196,9 @@ Controller.prototype.FinishedPageCallback = function ()
                                     + "Copyright " + (new Date().getFullYear()) + "\n\n"
                                     );
         if(installer.isInstaller() || installer.isUpdater() || installer.isPackageManager()) {
-			var runItCheckBox = widget.findChild("RunItCheckBox");
-			if((runItCheckBox != null) && isComponentInstalled("com.onsemi.strata.devstudio"))
-				runItCheckBox.setChecked(startSDS);
+            var runItCheckBox = widget.findChild("RunItCheckBox");
+            if((runItCheckBox != null) && isComponentInstalled("com.onsemi.strata.devstudio"))
+                runItCheckBox.setChecked(startSDS);
         }
     }
 
@@ -207,8 +208,8 @@ Controller.prototype.FinishedPageCallback = function ()
 
 function isComponentAvailable(component_name)
 {
-	// functions to check component state:
-	// boolean installationRequested()
+    // functions to check component state:
+    // boolean installationRequested()
     // boolean uninstallationRequested()
     // boolean updateRequested()
     // boolean isInstalled()
@@ -216,7 +217,7 @@ function isComponentAvailable(component_name)
 
     var component = installer.componentByName(component_name);
     if(component != null) {
-		var available = component.installationRequested() || component.updateRequested() || (component.isInstalled() && !component.uninstallationRequested());
+        var available = component.installationRequested() || component.updateRequested() || (component.isInstalled() && !component.uninstallationRequested());
         console.log("component '" + component_name + "' found and is available: " + available);
         return available;
     }

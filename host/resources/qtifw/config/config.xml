@@ -14,13 +14,7 @@
     <WizardDefaultHeight>480</WizardDefaultHeight>
     <StartMenuDir>ON Semiconductor</StartMenuDir>
     <TargetDir>@ApplicationsDirX64@/ON Semiconductor/Strata</TargetDir>
-    <RemoteRepositories>
-        <Repository>
-            <DisplayName>Strata Repository</DisplayName>
-            <Url>http://localhost/Strata</Url>
-        </Repository>
-    </RemoteRepositories>
-    <RepositorySettingsPageVisible>true</RepositorySettingsPageVisible>
+    <RepositorySettingsPageVisible>false</RepositorySettingsPageVisible>
     <MaintenanceToolName>Strata Maintenance Tool</MaintenanceToolName>
     <RemoveTargetDir>false</RemoveTargetDir>
     <AllowNonAsciiCharacters>true</AllowNonAsciiCharacters>
