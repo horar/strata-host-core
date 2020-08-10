@@ -1,5 +1,5 @@
 #include "HostControllerService.h"
-#include "HCS_Client.h"
+#include "Client.h"
 #include "ReplicatorCredentials.h"
 #include "logging/LoggingQtCategories.h"
 
@@ -20,8 +20,6 @@
 HostControllerService::HostControllerService(QObject* parent)
     : QObject(parent),
       db_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString()),
-      dbLogAdapter_("strata.hcs.database"),
-      clientsLogAdapter_("strata.hcs.clients"),
       downloadManager_(&networkManager_),
       storageManager_(&downloadManager_)
 {
@@ -47,14 +45,11 @@ bool HostControllerService::initialize(const QString& config)
         return false;
     }
 
-    db_.setLogAdapter(&dbLogAdapter_);
-    clients_.setLogAdapter(&clientsLogAdapter_);
-
     dispatcher_.setMsgHandler(std::bind(&HostControllerService::handleMessage, this, std::placeholders::_1) );
 
     rapidjson::Value& db_cfg = config_["database"];
 
-    if (!db_.open("strata_db")) {
+    if (db_.open("strata_db") == false) {
         qCCritical(logCategoryHcs) << "Failed to open database.";
         return false;
     }
@@ -265,6 +260,7 @@ void HostControllerService::sendPlatformDocumentsProgressMessage(
 void HostControllerService::sendPlatformDocumentsMessage(
         const QByteArray &clientId,
         const QString &classId,
+        const QJsonArray &datasheetList,
         const QJsonArray &documentList,
         const QJsonArray &firmwareList,
         const QJsonArray &controlViewList,
@@ -278,6 +274,7 @@ void HostControllerService::sendPlatformDocumentsMessage(
     payload.insert("class_id", classId);
 
     if (error.isEmpty()) {
+        payload.insert("datasheets", datasheetList);
         payload.insert("documents", documentList);
         payload.insert("firmwares", firmwareList);
         payload.insert("control_views", controlViewList);
@@ -384,7 +381,7 @@ void HostControllerService::platformDisconnected(const int deviceId)
 void HostControllerService::sendMessageToClients(const QString &platformId, const QString &message)
 {
     Q_UNUSED(platformId)
-    HCS_Client* client = getSenderClient();
+    Client* client = getSenderClient();
     if (client != nullptr) {
         clients_.sendMessage(client->getClientId(), message);
     }
@@ -393,7 +390,7 @@ void HostControllerService::sendMessageToClients(const QString &platformId, cons
 // clients handler...
 void HostControllerService::onCmdHCSStatus(const rapidjson::Value* )
 {
-    HCS_Client* client = getSenderClient();
+    Client* client = getSenderClient();
     Q_ASSERT(client);
 
     rapidjson::Document doc;
@@ -414,7 +411,7 @@ void HostControllerService::onCmdDynamicPlatformList(const rapidjson::Value * )
 
 void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
 {
-    HCS_Client* client = getSenderClient();
+    Client* client = getSenderClient();
     Q_ASSERT(client);
 
     qCWarning(logCategoryHcs) << "Deprecated command: \"cmd\":\"unregister\", use \"hcs::cmd\":\"unregister\" instead.";
@@ -423,7 +420,7 @@ void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
 
 void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
 {
-    HCS_Client* client = getSenderClient();
+    Client* client = getSenderClient();
     if (client == nullptr) {
         qCCritical(logCategoryHcs) << "sender client is missing";
         return;
@@ -446,7 +443,7 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
 
 void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
 {
-    HCS_Client* client = getSenderClient();
+    Client* client = getSenderClient();
     Q_ASSERT(client);
 
     QByteArray clientId = client->getClientId();
@@ -529,10 +526,10 @@ void HostControllerService::onCmdDownloadControlView(const rapidjson::Value* pay
     emit downloadControlViewRequested(clientId, partialUri, md5);
 }
 
-HCS_Client* HostControllerService::getClientById(const QByteArray& client_id)
+Client* HostControllerService::getClientById(const QByteArray& client_id)
 {
     auto findIt = std::find_if(clientList_.begin(), clientList_.end(),
-                               [&](HCS_Client* val) { return client_id == val->getClientId(); }  );
+                               [&](Client* val) { return client_id == val->getClientId(); }  );
 
     return (findIt != clientList_.end()) ? *findIt : nullptr;
 }
@@ -542,11 +539,11 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
     QByteArray clientId = msg.from_client;
 
     //check the client's ID (dealer_id) is in list
-    HCS_Client* client = getClientById(clientId);
+    Client* client = getClientById(clientId);
     if (client == nullptr) {
         qCInfo(logCategoryHcs) << "new Client:" << clientId.toHex();
 
-        client = new HCS_Client(clientId);
+        client = new Client(clientId);
         clientList_.push_back(client);
     }
 

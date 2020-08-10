@@ -1,13 +1,16 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.3
+import QtQuick.Dialogs 1.2
 import Qt.labs.folderlistmodel 2.12
 import Qt.labs.settings 1.1 as QtLabsSettings
+import tech.strata.commoncpp 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/js/uuid_map.js" as UuidMap
+import "qrc:/js/constants.js" as Constants
 
 Item {
     id: root
@@ -90,7 +93,8 @@ Item {
                                         let data = {
                                             "class_id": uuid,
                                             "name": model.fileName,
-                                            "device_id": 2147483648, // +1 outside range of valid 32 bit signed device_ids
+                                            "device_id": Constants.DEBUG_DEVICE_ID,
+                                            "firmware_version": "",
                                             "view": "control",
                                             "connected": true,
                                             "available": {
@@ -112,12 +116,16 @@ Item {
                 }
             }
 
-            // UI events
             Button {
-                text: "Statusbar Debug"
+                text: "Platform List Controls"
+
                 onClicked: {
-                    statusBarContainer.showDebug = !statusBarContainer.showDebug
+                    localPlatformListDialog.setVisible(true)
                 }
+            }
+
+            SGLocalPlatformListPopup {
+                id: localPlatformListDialog
             }
 
             Button {
