@@ -1,4 +1,4 @@
-#include <FirmwareListModel.h>
+#include <VersionedListModel.h>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFileInfo>
@@ -7,25 +7,25 @@
 #include <QDebug>
 #include "logging/LoggingQtCategories.h"
 
-FirmwareListModel::FirmwareListModel(QObject *parent)
+VersionedListModel::VersionedListModel(QObject *parent)
     : QAbstractListModel(parent)
 {
 
 }
 
-FirmwareListModel::~FirmwareListModel()
+VersionedListModel::~VersionedListModel()
 {
     clear();
 }
 
-QVariant FirmwareListModel::data(const QModelIndex &index, int role) const
+QVariant VersionedListModel::data(const QModelIndex &index, int role) const
 {
     int row = index.row();
     if (row < 0 || row >= data_.count()) {
         return QVariant();
     }
 
-    FirmwareItem *item = data_.at(row);
+    VersionedItem *item = data_.at(row);
 
     if (item == nullptr) {
         return QVariant();
@@ -49,25 +49,25 @@ QVariant FirmwareListModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-int FirmwareListModel::count() const
+int VersionedListModel::count() const
 {
     return data_.length();
 }
 
-int FirmwareListModel::rowCount(const QModelIndex &parent) const
+int VersionedListModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
 
     return data_.length();
 }
 
-void FirmwareListModel::populateModel(const QList<FirmwareItem *> &list)
+void VersionedListModel::populateModel(const QList<VersionedItem *> &list)
 {
     beginResetModel();
     clear(false);
 
     for (int i = 0; i < list.length(); ++i) {
-        FirmwareItem *item = list.at(i);
+        VersionedItem *item = list.at(i);
         data_.append(item);
     }
 
@@ -76,7 +76,7 @@ void FirmwareListModel::populateModel(const QList<FirmwareItem *> &list)
     emit countChanged();
 }
 
-void FirmwareListModel::clear(bool emitSignals)
+void VersionedListModel::clear(bool emitSignals)
 {
     if (emitSignals) {
         beginResetModel();
@@ -93,18 +93,18 @@ void FirmwareListModel::clear(bool emitSignals)
     }
 }
 
-QString FirmwareListModel::version(int index)
+QString VersionedListModel::version(int index)
 {
-    return data(FirmwareListModel::index(index, 0), VersionRole).toString();
+    return data(VersionedListModel::index(index, 0), VersionRole).toString();
 }
 
-void FirmwareListModel::setInstalled(int index, bool installed)
+void VersionedListModel::setInstalled(int index, bool installed)
 {
     if (index < 0 || index >= data_.count()) {
         return;
     }
 
-    FirmwareItem *item = data_.at(index);
+    VersionedItem *item = data_.at(index);
     if (item->installed == installed) {
         return;
     }
@@ -116,7 +116,7 @@ void FirmwareListModel::setInstalled(int index, bool installed)
                 QVector<int>() << InstalledRole);
 }
 
-QHash<int, QByteArray> FirmwareListModel::roleNames() const
+QHash<int, QByteArray> VersionedListModel::roleNames() const
 {
     QHash<int, QByteArray> names;
     names[UriRole] = "uri";

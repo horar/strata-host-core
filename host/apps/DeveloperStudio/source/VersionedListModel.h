@@ -1,5 +1,5 @@
-#ifndef FIRMWARE_LIST_MODEL_H
-#define FIRMWARE_LIST_MODEL_H
+#ifndef VERSIONED_LIST_MODEL_H
+#define VERSIONED_LIST_MODEL_H
 
 #include <QAbstractListModel>
 #include <QJsonArray>
@@ -7,21 +7,22 @@
 #include <QUrl>
 #include <QList>
 
-struct FirmwareItem {
+struct VersionedItem {
 
-    FirmwareItem(
+    VersionedItem(
             const QString &uri,
             const QString &md5,
             const QString &name,
             const QString &timestamp,
-            const QString &version)
+            const QString &version,
+            const QString &filepath = "")
     {
         this->uri = uri;
         this->md5 = md5;
         this->name = name;
         this->timestamp = timestamp;
         this->version = version;
-        installed = false;
+        this->installed = !filepath.isEmpty();
     }
 
     QString uri;
@@ -32,16 +33,16 @@ struct FirmwareItem {
     bool installed;
 };
 
-class FirmwareListModel: public QAbstractListModel
+class VersionedListModel: public QAbstractListModel
 {
     Q_OBJECT
-    Q_DISABLE_COPY(FirmwareListModel)
+    Q_DISABLE_COPY(VersionedListModel)
 
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 
 public:
-    FirmwareListModel(QObject *parent = nullptr);
-    virtual ~FirmwareListModel() override;
+    VersionedListModel(QObject *parent = nullptr);
+    virtual ~VersionedListModel() override;
 
     Q_INVOKABLE QString version(int index);
     Q_INVOKABLE void setInstalled(int index, bool installed);
@@ -58,7 +59,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    void populateModel(const QList<FirmwareItem*> &list);
+    void populateModel(const QList<VersionedItem*> &list);
     void clear(bool emitSignals=true);
 
 signals:
@@ -68,8 +69,8 @@ protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 
 private:
-    QList<FirmwareItem*>data_;
+    QList<VersionedItem*>data_;
 };
 
 
-#endif //FIRMWARE_LIST_MODEL_H
+#endif //VERSIONED_LIST_MODEL_H
