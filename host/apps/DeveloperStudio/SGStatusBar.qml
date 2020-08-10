@@ -245,6 +245,21 @@ Rectangle {
                     width: profileMenu.width
                 }
 
+                SGMenuItem {
+                    text: qsTr("Update")
+                    width: profileMenu.width
+                    enabled: false
+
+                    onClicked: {
+                        profileMenu.close()
+                        CoreUpdate.createUpdatePopup();
+                    }
+
+                    Component.onCompleted: {
+                        CoreUpdate.registerMenuItem(this)
+                    }
+                }
+
                 Rectangle {
                     id: menuDivider
                     color: "white"

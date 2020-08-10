@@ -154,8 +154,8 @@ SGStrataPopup {
 
                 onClicked: {
                   function checkReply(reply) {
-                        console.error(Logger.devStudioCategory, "inside error() function")
                         if (reply !== "") {
+                            console.error(Logger.devStudioCategory, "Received error message:", reply)
                             errorPopup.popupText = reply
                             errorPopup.open()
                         }
@@ -166,7 +166,6 @@ SGStrataPopup {
                     var reply = updateObj.requestUpdateApplication()
 
                     checkReply(reply)
-                    console.error(Logger.devStudioCategory, "from qml UI received reply", reply)
                     root.close()
                 }
             }

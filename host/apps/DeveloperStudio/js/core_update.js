@@ -15,6 +15,8 @@ var error_string
 var settings_object
 var notification_mode
 
+var update_menuitem
+
 function initialize (newCoreInterface, newUpdateContainer) {
     // No-op if not on Windows
     if (Qt.platform.os === "windows") {
@@ -53,6 +55,7 @@ function parseVersionInfo (payload) {
         // Check if latest_version is newer than last known version in the INI (offer update even if currently on "Don't Ask Again" mode)
         if (last_known_version != payload.latest_version) {
             setLastKnownVersion(payload.latest_version)
+            enableMenuItem()
             createUpdatePopup()
             return
         }
@@ -62,6 +65,7 @@ function parseVersionInfo (payload) {
             for (let i = 0; i < temp_latest_version.length; i++) {
                 if (parseInt(temp_latest_version[i]) > parseInt(temp_current_version[i])) {
                     console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Newer version available detected:", payload.latest_version)
+                    enableMenuItem()
                     if (notification_mode != "DontAskAgain") {
                         createUpdatePopup()
                     }
@@ -116,4 +120,12 @@ function getLastKnownVersionFromINIFile () {
 
 function setLastKnownVersion (version) {
     settings_object.setValue("lastKnownVersion", version)
+}
+
+function registerMenuItem (item) {
+    update_menuitem = item
+}
+
+function enableMenuItem () {
+    update_menuitem.enabled = true
 }
