@@ -46,6 +46,11 @@ QVariant OpnListModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+QVariant OpnListModel::data(int row, int role)
+{
+    return data(index(row,0), role);
+}
+
 QVariant OpnListModel::data(int row, QByteArray role)
 {
     int intRole = roleNames().key(role, -1);

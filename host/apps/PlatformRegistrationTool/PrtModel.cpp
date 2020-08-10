@@ -5,6 +5,9 @@
 #include <QDir>
 #include <QSettings>
 #include <QCoreApplication>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QUuid>
 
 PrtModel::PrtModel(QObject *parent)
     : QObject(parent),
@@ -153,11 +156,62 @@ void PrtModel::downloadBinaries(int platformIndex)
     });
 }
 
-void PrtModel::registerPlatform()
+void PrtModel::notifyServiceAboutRegistration(
+        const QString &classId,
+        const QString &platformId)
 {
-    //fake for now
-    QTimer::singleShot(4000, [this](){
-        emit registerPlatformFinished("fake registration failed");
+    qCDebug(logCategoryPrtAuth) << "classId" << classId;
+    qCDebug(logCategoryPrtAuth) << "platformId" << platformId;
+
+    QJsonDocument doc;
+    QJsonObject data;
+
+
+    data.insert("platform_id", platformId);
+    data.insert("class_id", classId );
+    data.insert("name", "x"); //TODO remove this once endpoint is updated
+
+    doc.setObject(data);
+
+    Deferred *deferred = restClient_.post(
+                QUrl("platform_register"),
+                QVariantMap(),
+                doc.toJson(QJsonDocument::Compact));
+
+
+    connect(deferred, &Deferred::finishedSuccessfully, [this] (int status, QByteArray data) {
+        Q_UNUSED(status)
+
+        qCDebug(logCategoryPrtAuth) << "reply data" << data;
+
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
+
+        if (parseError.error != QJsonParseError::NoError) {
+            qCCritical(logCategoryPrtAuth) << "failed, cannot parse reply" << parseError.errorString();
+            qCCritical(logCategoryPrtAuth) << "data:"<< data;
+
+            emit notifyServiceFinished(-1, "invalid reply");
+            return;
+        }
+
+        int boardCount = doc.object().value("count").toInt(-1);
+        if (boardCount <= 0) {
+            qCCritical(logCategoryPrtAuth) << "process failed";
+            emit notifyServiceFinished(-1, "invalid reply");
+            return;
+        }
+
+        emit notifyServiceFinished(boardCount, "");
+    });
+
+    connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
+        qCCritical(logCategoryPrtAuth)
+                << "failed, "
+                << "status=" << status
+                << "errorString=" << errorString;
+
+        emit notifyServiceFinished(-1, errorString);
     });
 }
 
@@ -171,6 +225,47 @@ void PrtModel::clearBinaries()
     if (firmwareFile_.isNull() == false) {
         firmwareFile_->deleteLater();
     }
+}
+
+QString PrtModel::generateUuid()
+{
+    return QUuid::createUuid().toString(QUuid::WithoutBraces);
+}
+
+void PrtModel::writeRegistrationData(
+        const QString &classId,
+        const QString &platfromId,
+        int boardCount)
+{
+    QString errorString;
+    if (platformList_.isEmpty()) {
+        errorString = "No platform connected";
+    }
+
+    if (errorString.isEmpty() == false) {
+        qCCritical(logCategoryPrt) << errorString;
+
+        emit writeRegistrationDataFinished(errorString);
+        return;
+    }
+
+    QJsonDocument doc;
+    QJsonObject data;
+    QJsonObject payload;
+    payload.insert("class_id", classId);
+    payload.insert("platform_id", platfromId);
+    payload.insert("board_count", boardCount);
+
+    data.insert("cmd", QSTR_SET_PLATFORM_ID);
+    data.insert("payload", payload);
+
+    doc.setObject(data);
+
+    connect(platformList_.first().get(), &strata::device::Device::msgFromDevice, this, &PrtModel::messageFromDeviceHandler);
+
+    QByteArray message = doc.toJson(QJsonDocument::Compact);
+    qCDebug(logCategoryPrtAuth) << message;
+    platformList_.first()->sendMessage(message);
 }
 
 void PrtModel::boardReadyHandler(int deviceId, bool recognized)
@@ -217,6 +312,56 @@ void PrtModel::downloadFinishedHandler(QString groupId, QString errorString)
     downloadFirmwareFinished(errorString);
 
     downloadJobId_.clear();
+}
+
+void PrtModel::messageFromDeviceHandler(QByteArray message)
+{
+    QJsonParseError parseError;
+    QJsonDocument doc = QJsonDocument::fromJson(message, &parseError);
+
+    if (parseError.error != QJsonParseError::NoError) {
+        qCCritical(logCategoryPrtAuth) << "cannot parse message" << parseError.errorString();
+        qCCritical(logCategoryPrtAuth) << "message:"<< message;
+        return;
+    }
+
+    if (doc.object().contains("ack")
+            && doc.object().value("ack").toString() == QSTR_SET_PLATFORM_ID)
+    {
+        QJsonObject payload = doc.object().value("payload").toObject();
+        if(payload.isEmpty()) {
+            finishRegistrationCommand("invalid response");
+            return;
+        }
+
+        if (payload.value("return_value").toBool(false) == false) {
+            finishRegistrationCommand("request not accepted by device");
+            return;
+        }
+    } else if (doc.object().contains("notification")) {
+        QJsonObject notification = doc.object().value("notification").toObject();
+
+        if (notification.contains("value")
+                && notification.value("value").toString() == QSTR_SET_PLATFORM_ID)
+        {
+            QJsonObject payload = notification.value("payload").toObject();
+            if (payload.isEmpty()) {
+                finishRegistrationCommand("invalid response");
+                return;
+            }
+
+            QString status = payload.value("status").toString();
+            if (status == "OK") {
+                finishRegistrationCommand("");
+            } else if (status == "failed!") {
+                finishRegistrationCommand("failed to write data");
+            } else if (status == "already_initialized") {
+                finishRegistrationCommand("board has already been registered");
+            } else {
+                finishRegistrationCommand("invalid response");
+            }
+        }
+    }
 }
 
 bool PrtModel::fakeDownloadBinaries(const QString &bootloaderUrl, const QString &firmwareUrl)
@@ -314,4 +459,15 @@ QString PrtModel::resolveConfigFilePath()
 #endif
 
     return applicationDir.filePath("prt-config.ini");
+}
+
+void PrtModel::finishRegistrationCommand(QString errorString)
+{
+    if (errorString.isEmpty() == false) {
+        qCCritical(logCategoryPrt) << "set_platform_id failed:" << errorString;
+    }
+
+    disconnect(platformList_.first().get(), &strata::device::Device::msgFromDevice, this, nullptr);
+
+    emit writeRegistrationDataFinished(errorString);
 }

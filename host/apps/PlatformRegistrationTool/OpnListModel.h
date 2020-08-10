@@ -33,6 +33,7 @@ public:
     };
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QVariant data(int row, int role);
     Q_INVOKABLE QVariant data(int row, QByteArray role);
 
     int count() const;

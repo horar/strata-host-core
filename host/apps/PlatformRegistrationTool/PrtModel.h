@@ -13,6 +13,8 @@
 #include <QNetworkAccessManager>
 
 
+const QString QSTR_SET_PLATFORM_ID("set_platform_id");
+
 class PrtModel : public QObject
 {
     Q_OBJECT
@@ -38,8 +40,17 @@ public:
     Q_INVOKABLE QString deviceFirmwareVerboseName() const;
     Q_INVOKABLE void downloadBinaries(int platformIndex);
     Q_INVOKABLE void programDevice();
-    Q_INVOKABLE void registerPlatform();
+    Q_INVOKABLE void notifyServiceAboutRegistration(
+            const QString &classId,
+            const QString &platformId);
+
+    Q_INVOKABLE void writeRegistrationData(
+            const QString &classId,
+            const QString &platfromId,
+            int boardCount);
+
     Q_INVOKABLE void clearBinaries();
+    Q_INVOKABLE QString generateUuid();
 
 signals:
     void boardReady(int deviceId);
@@ -54,13 +65,15 @@ signals:
 
     void flasherProgress(int chunk, int total);
     void flasherFinished(strata::FlasherConnector::Result result);
-    void registerPlatformFinished(QString errorString);
+    void notifyServiceFinished(int boardCount, QString errorString);
+    void writeRegistrationDataFinished(QString errorString);
 
 private slots:
     void boardReadyHandler(int deviceId, bool recognized);
     void boardDisconnectedHandler(int deviceId);
     void flasherFinishedHandler(strata::FlasherConnector::Result result);
     void downloadFinishedHandler(QString groupId, QString errorString);
+    void messageFromDeviceHandler(QByteArray message);
 
 private:
     strata::BoardManager boardManager_;
@@ -87,5 +100,5 @@ private:
             const QString &firmwareChecksum);
 
     QString resolveConfigFilePath();
-
+    void finishRegistrationCommand(QString errorString);
 };

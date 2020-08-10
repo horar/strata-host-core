@@ -104,6 +104,12 @@ FocusScope {
                 signal: breakBtn.clicked
             }
 
+            DSM.SignalTransition {
+                targetState: stateWaitForDevice
+                signal: prtModel.deviceCountChanged
+                guard: prtModel.deviceCount !== 1
+            }
+
             DSM.State {
                 id: stateCheckDeviceCount
                 onEntered: {
@@ -155,6 +161,12 @@ FocusScope {
                     }
                 }
 
+                onExited: {
+                    if (warningDialog !== null) {
+                        warningDialog.reject()
+                    }
+                }
+
                 DSM.SignalTransition {
                     targetState: stateWaitForJLink
                     signal: stateMechine.deviceFirmwareValid
@@ -163,15 +175,6 @@ FocusScope {
                 DSM.SignalTransition {
                     targetState: stateWaitForDevice
                     signal: stateMechine.deviceFirmwareInvalid
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateWaitForDevice
-                    signal: prtModel.deviceCountChanged
-                    guard: warningDialog !== null && prtModel.deviceCount === 0
-                    onTriggered: {
-                        warningDialog.reject()
-                    }
                 }
             }
 
@@ -316,23 +319,71 @@ FocusScope {
         DSM.State {
             id: stateRegistration
 
+            property string currentClassId
+            property string currentPlatformId
+            property int currentBoardCount
+
+            initialState: stateNotifyCloudService
+
             onEntered: {
-                prtModel.registerPlatform()
-                wizard.subtextNote = ""
+                stateRegistration.currentClassId = prtModel.opnListModel.data(wizard.platformIndex, "classId")
+                stateRegistration.currentPlatformId = prtModel.generateUuid()
+                stateRegistration.currentBoardCount = -1
             }
 
-            DSM.SignalTransition {
-                targetState: stateLoopSucceed
-                signal: prtModel.registerPlatformFinished
-                guard: errorString.length === 0
+            DSM.State {
+                id: stateNotifyCloudService
+
+                onEntered: {
+                    wizard.subtextNote = "contacting cloud service"
+                    prtModel.notifyServiceAboutRegistration(
+                                stateRegistration.currentClassId,
+                                stateRegistration.currentPlatformId)
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateWriteRegistrationData
+                    signal: prtModel.notifyServiceFinished
+                    guard: boardCount > 0 && errorString.length === 0
+                    onTriggered: {
+                        stateRegistration.currentBoardCount = boardCount
+                    }
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateLoopFailed
+                    signal: prtModel.notifyServiceFinished
+                    guard: errorString.length > 0
+                    onTriggered: {
+                        wizard.subtextNote = errorString
+                    }
+                }
             }
 
-            DSM.SignalTransition {
-                targetState: stateLoopFailed
-                signal: prtModel.registerPlatformFinished
-                guard: errorString.length > 0
-                onTriggered: {
-                    wizard.subtextNote = errorString
+            DSM.State {
+                id: stateWriteRegistrationData
+
+                onEntered: {
+                    wizard.subtextNote = "writing to device"
+                    prtModel.writeRegistrationData(
+                                stateRegistration.currentClassId,
+                                stateRegistration.currentPlatformId,
+                                stateRegistration.currentBoardCount)
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateLoopSucceed
+                    signal: prtModel.writeRegistrationDataFinished
+                    guard: errorString.length === 0
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateLoopFailed
+                    signal: prtModel.writeRegistrationDataFinished
+                    guard: errorString.length > 0
+                    onTriggered: {
+                        wizard.subtextNote = errorString
+                    }
                 }
             }
         }
