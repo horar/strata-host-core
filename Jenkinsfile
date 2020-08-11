@@ -33,6 +33,8 @@ pipeline {
         }
         stage('Deploy'){
             steps{
+                sh "python -m venv ${env.workspace}/deployment/OTA/ota-deploy-env"
+                sh "source ${env.workspace}/deployment/OTA/ota-deploy-env/Scripts/activate"
                 sh "python -m pip install -r ${env.workspace}/deployment/OTA/requirements.txt"
                 sh """python '${env.workspace}/deployment/OTA/deploy.py' \
                     --dir '${BUILD_NAME}' \
