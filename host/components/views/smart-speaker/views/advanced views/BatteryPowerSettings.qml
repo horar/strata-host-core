@@ -11,7 +11,7 @@ Rectangle {
 
     property color backgroundColor: "#D1DFFB"
     property color accentColor:"#86724C"
-    property int   labelWidth: 150      //to keep labels aligned right
+    property int   labelWidth: 130      //to keep labels aligned right
 
     property bool batteryIsMissing: platformInterface.battery_status_fre.no_battery_indicator
     onBatteryIsMissingChanged: {
@@ -82,6 +82,7 @@ Rectangle {
         font.pixelSize: 15
         text:"V"
         color: "grey"
+        visible:!batteryIsMissing
     }
 
     Text{
@@ -130,7 +131,7 @@ Rectangle {
         id: sinkCapSegmentedButton
         labelLeft: false
         anchors.left: sinkCapLabel.right
-        anchors.leftMargin: 10
+        anchors.leftMargin: 5
         anchors.verticalCenter: sinkCapLabel.verticalCenter
         textColor: "black"
         activeTextColor: "black"
