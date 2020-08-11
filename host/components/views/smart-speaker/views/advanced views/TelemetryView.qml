@@ -11,7 +11,7 @@ Rectangle {
     property color backgroundColor: "#D1DFFB"
     property color boxBackground: "#91ABE1"
     property color accentColor:"#86724C"
-    property int    boxHeight:75
+    property int    boxHeight:95
     property int    statBoxUnitSize:18
     property int    statBoxValueSize:36
 
@@ -59,7 +59,7 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 18
                 text:"USB"
-                width:70
+                width:65
                 horizontalAlignment: Text.AlignRight
             }
 
@@ -87,7 +87,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 visible:topRow.isConnected
-                value: platformInterface.request_usb_power_notification.output_voltage.toFixed(1)
+                value: platformInterface.request_usb_power_notification.vbus_voltage.toFixed(1)
             }
 
             PortStatBox{
@@ -126,7 +126,7 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 18
                 text:"Battery"
-                width:70
+                width:65
                 horizontalAlignment: Text.AlignRight
             }
             PortStatBox{
@@ -142,7 +142,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"A"
-                value:platformInterface.battery_status.battery_current.toFixed(1)
+                value:platformInterface.battery_status_fre.battery_current.toFixed(1)
             }
             PortStatBox{
                 id:batteryVoltageBox
@@ -156,7 +156,7 @@ Rectangle {
                 unitColor: "grey"
                 textColor: "black"
                 bottomMargin:10
-                value: platformInterface.battery_status.battery_voltage.toFixed(1)
+                value: platformInterface.battery_status_fre.battery_voltage.toFixed(1)
             }
             PortStatBox{
                 id:batteryPowerBox
@@ -171,7 +171,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"W"
-                value:platformInterface.battery_status.battery_power.toFixed(1)
+                value:platformInterface.battery_status_fre.battery_power.toFixed(1)
             }
         }
         Row{
@@ -182,7 +182,7 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 18
                 text:"Audio"
-                width:70
+                width:65
                 horizontalAlignment: Text.AlignRight
             }
             PortStatBox{
