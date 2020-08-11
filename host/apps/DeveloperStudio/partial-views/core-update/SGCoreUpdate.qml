@@ -21,6 +21,7 @@ SGStrataPopup {
     property string latest_version: ""
     property string current_version: ""
     property string error_string: ""
+    property bool dontaskagain_checked: false
 
     CoreUpdate {
         id: updateObj
@@ -35,14 +36,14 @@ SGStrataPopup {
             color: "transparent"
             Layout.preferredWidth: mainColumn.width
             Layout.preferredHeight: updateTextColumn.height + updateTextColumn.anchors.topMargin * 2
-            Layout.topMargin: 25
-            Layout.leftMargin: 25
+            Layout.topMargin: 5
+            Layout.leftMargin: 5
 
             clip: true
 
             Row {
                 id: updateTextColumn
-                spacing: 20
+                spacing: 5
                 width: updateContainer.width
 
                 anchors {
@@ -64,7 +65,7 @@ SGStrataPopup {
                         id: newVersionText
                         text: "New version of Developer Studio available!"
                         font {
-                            pixelSize: 18
+                            pixelSize: 20
                             family: Fonts.franklinGothicBook
                             bold: true
                         }
@@ -74,7 +75,7 @@ SGStrataPopup {
                         id: currentVersionText
                         text: "    Current Version: " + current_version
                         font {
-                            pixelSize: 14
+                            pixelSize: 18
                             family: Fonts.franklinGothicBook
                         }
                     }
@@ -82,7 +83,7 @@ SGStrataPopup {
                         id: latestVersionText
                         text: "    Latest Version: " + latest_version
                         font {
-                            pixelSize: 14
+                            pixelSize: 18
                             family: Fonts.franklinGothicBook
                         }
                     }
@@ -94,6 +95,7 @@ SGStrataPopup {
             id: backupCheckbox
             Layout.alignment: Qt.AlignHCenter
             text: "Don't ask me again for this version"
+            checked: dontaskagain_checked
         }
 
         Row {

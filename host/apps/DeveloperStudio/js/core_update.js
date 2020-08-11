@@ -16,6 +16,7 @@ var settings_object
 var notification_mode
 
 var update_menuitem
+var dontaskagain_checked
 
 function initialize (newCoreInterface, newUpdateContainer) {
     // No-op if not on Windows
@@ -73,6 +74,13 @@ function parseVersionInfo (payload) {
                 }
             }
         }
+
+        if (notification_mode == "DontAskAgain") {
+            dontaskagain_checked = true
+        } else {
+            dontaskagain_checked = false
+        }
+
     } else if (payload.hasOwnProperty("error_string") && payload.error_string.length > 0) {
         console.error(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, payload.error_string);
     } else {
@@ -90,6 +98,7 @@ function createUpdatePopup () {
     coreUpdatePopup.current_version = current_version
     coreUpdatePopup.latest_version = latest_version
     coreUpdatePopup.error_string = error_string
+    coreUpdatePopup.dontaskagain_checked = dontaskagain_checked
 
     coreUpdatePopup.open()
 }
@@ -100,13 +109,21 @@ function getUserNotificationModeFromINIFile () {
     } else {
         setUserNotificationMode()
     }
+
+    if (notification_mode == "DontAskAgain") {
+        dontaskagain_checked = true
+    } else {
+        dontaskagain_checked = false
+    }
 }
 
 function setUserNotificationMode (mode) {
     if (mode && mode === "DontAskAgain") {
         settings_object.setValue("userNotificationMode", "DontAskAgain")
+        dontaskagain_checked = true
     } else {
         settings_object.setValue("userNotificationMode", "AskAgainLater")
+        dontaskagain_checked = false
     }
 }
 
