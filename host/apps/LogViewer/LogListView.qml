@@ -321,7 +321,7 @@ Item {
                         target: cell
                         property: "color"
                         from: highlightColor
-                        to: index % 2 ? "#f2f0f0" : "white"
+                        to: "darkgray"
                         duration: animationDuration
                     }
                 }
@@ -340,23 +340,6 @@ Item {
                             property: "color"
                             from: level.color
                             to: "white"
-                            duration: animationDuration
-                        }
-                    }
-                    ParallelAnimation {
-                        ColorAnimation {
-                            targets: [ts,pid,tid,msg]
-                            properties: "color"
-                            from: "white"
-                            to: "black"
-                            duration: animationDuration
-                        }
-
-                        ColorAnimation {
-                            target: level
-                            property: "color"
-                            from: "white"
-                            to: level.color
                             duration: animationDuration
                         }
                     }
