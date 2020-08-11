@@ -134,8 +134,14 @@ void PrtModel::programDevice()
     flasherConnector_->flash(false);
 }
 
-void PrtModel::downloadBinaries(int platformIndex)
+void PrtModel::downloadBinaries(
+        QString bootloaderUrl,
+        QString bootloaderMd5,
+        int platformIndex)
 {
+    //TODO faked until there is bootloader endpoint support
+    Q_UNUSED(bootloaderUrl)
+    Q_UNUSED(bootloaderMd5)
     Q_UNUSED(platformIndex)
 
     QTimer::singleShot(2500, this, [this](){
@@ -230,6 +236,15 @@ void PrtModel::clearBinaries()
 QString PrtModel::generateUuid()
 {
     return QUuid::createUuid().toString(QUuid::WithoutBraces);
+}
+
+void PrtModel::requestBootloaderUrl()
+{
+    //TODO finish this method once bootloader endpoint is ready
+
+    QTimer::singleShot(1000, [this](){
+        emit bootloaderUrlRequestFinished("fake-bootloader-url","", "");
+    });
 }
 
 void PrtModel::writeRegistrationData(

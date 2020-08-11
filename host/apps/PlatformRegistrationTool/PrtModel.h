@@ -38,7 +38,11 @@ public:
 
     Q_INVOKABLE QString deviceFirmwareVersion() const;
     Q_INVOKABLE QString deviceFirmwareVerboseName() const;
-    Q_INVOKABLE void downloadBinaries(int platformIndex);
+    Q_INVOKABLE void downloadBinaries(
+            QString bootloaderUrl,
+            QString bootloaderMd5,
+            int platformIndex);
+
     Q_INVOKABLE void programDevice();
     Q_INVOKABLE void notifyServiceAboutRegistration(
             const QString &classId,
@@ -51,6 +55,7 @@ public:
 
     Q_INVOKABLE void clearBinaries();
     Q_INVOKABLE QString generateUuid();
+    Q_INVOKABLE void requestBootloaderUrl();
 
 signals:
     void boardReady(int deviceId);
@@ -67,6 +72,7 @@ signals:
     void flasherFinished(strata::FlasherConnector::Result result);
     void notifyServiceFinished(int boardCount, QString errorString);
     void writeRegistrationDataFinished(QString errorString);
+    void bootloaderUrlRequestFinished(QString url, QString md5, QString errorString);
 
 private slots:
     void boardReadyHandler(int deviceId, bool recognized);

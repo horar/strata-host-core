@@ -69,19 +69,14 @@ FocusScope {
         DSM.State {
             id: stateDownload
 
-            DSM.SignalTransition {
-                targetState: stateCheckDevice
-                signal: prtModel.downloadFirmwareFinished
-                guard: errorString.length === 0
-            }
+            property string bootloaderUrl
+            property string bootloaderMd5
 
-            DSM.SignalTransition {
-                targetState: stateError
-                signal: prtModel.downloadFirmwareFinished
-                guard: errorString.length > 0
-                onTriggered: {
-                    wizard.subtextNote = errorString
-                }
+            initialState: stateGetBootloaderUrl
+
+            onEntered: {
+                stateDownload.bootloaderUrl = ""
+                stateDownload.bootloaderMd5 = ""
             }
 
             DSM.SignalTransition {
@@ -89,8 +84,57 @@ FocusScope {
                 signal: breakBtn.clicked
             }
 
-            onEntered: {
-                prtModel.downloadBinaries(wizard.platformIndex)
+            DSM.State {
+                id: stateGetBootloaderUrl
+
+                onEntered: {
+                    prtModel.requestBootloaderUrl()
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateGetBinaries
+                    signal: prtModel.bootloaderUrlRequestFinished
+                    guard: errorString.length === 0
+                    onTriggered: {
+                        stateDownload.bootloaderUrl = url
+                        stateDownload.bootloaderMd5 = md5
+                    }
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateError
+                    signal: prtModel.bootloaderUrlRequestFinished
+                    guard: errorString.length > 0
+                    onTriggered: {
+                        wizard.subtextNote = errorString
+                    }
+                }
+            }
+
+            DSM.State {
+                id: stateGetBinaries
+
+                onEntered: {
+                    prtModel.downloadBinaries(
+                                stateDownload.bootloaderUrl,
+                                stateDownload.bootloaderMd5,
+                                wizard.platformIndex)
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateCheckDevice
+                    signal: prtModel.downloadFirmwareFinished
+                    guard: errorString.length === 0
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateError
+                    signal: prtModel.downloadFirmwareFinished
+                    guard: errorString.length > 0
+                    onTriggered: {
+                        wizard.subtextNote = errorString
+                    }
+                }
             }
         }
 
