@@ -350,6 +350,8 @@ function downloadControlView(platform) {
     // this line below will start the process for downloading metadata about the control views
     // so the first time it runs, it will return 0 for count, and asynchronously populate
     let controlViewList = documentManager.getClassDocuments(platform.class_id).controlViewListModel;
+
+    // get installed index instead of latest version
     let index = controlViewList.getLatestVersion();
 
     if (index < 0) {
@@ -386,7 +388,7 @@ function downloadControlView(platform) {
 function onControlViewDownloadFinished(class_id) {
     // remove pending view because the view is already installed
     if (!pendingViews.hasOwnProperty(class_id)) {
-        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Could not remove class id", class_id, " in pending views")
+        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Could not find class id", class_id, " in pending views")
         return
     }
     let platform = pendingViews[class_id]

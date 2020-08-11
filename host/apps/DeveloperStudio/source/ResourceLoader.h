@@ -20,6 +20,9 @@ public:
     Q_INVOKABLE bool registerControlViewResources(const QString &class_id);
     Q_INVOKABLE bool isViewRegistered(const QString &class_id);
 
+signals:
+    void resourceRegistered(const QString &class_id);
+    void resourceRegisterFailed(const QString &class_id);
 private:
     void loadCoreResources();
     void loadViewResources();

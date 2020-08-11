@@ -316,6 +316,7 @@ function updateState(event, data)
                 if (resource_loader_.registerControlViewResources(data.class_id)) {
                     updateState(events.OPEN_PLATFORM_VIEW_EVENT, data);
                 }
+                // else switch to an error screen
                 break;
 
             case events.OPEN_PLATFORM_VIEW_EVENT:

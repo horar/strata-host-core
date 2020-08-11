@@ -10,7 +10,6 @@
 ResourceLoader::ResourceLoader(QObject *parent) : QObject(parent)
 {
     loadCoreResources();
-//    loadViewResources();
 }
 
 ResourceLoader::~ResourceLoader()
@@ -63,6 +62,7 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
 
 bool ResourceLoader::registerControlViewResources(const QString &class_id) {
     if (isViewRegistered(class_id)) {
+        emit resourceRegistered(class_id);
         return true;
     }
 
@@ -106,8 +106,10 @@ bool ResourceLoader::registerControlViewResources(const QString &class_id) {
             }
         }
 
+        emit resourceRegistered(class_id);
         return true;
     } else {
+        emit resourceRegisterFailed(class_id);
         qCCritical(logCategoryResourceLoader) << "Could not find control_views directory. Looked in " << controlViewsDir.path();
         return false;
     }

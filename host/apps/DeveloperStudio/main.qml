@@ -81,11 +81,41 @@ SGWidgets.SGMainWindow {
             property alias mainContainer: mainContainer
             property alias platformViewModel: platformViewModel
             property alias platformViewRepeater: platformViewRepeater
+            property alias loadingDialog: loadingDialog
 
             Item {
                 id: mainContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+
+                Popup {
+                    id: loadingDialog
+                    width: parent.width
+                    height: parent.height
+                    modal: true
+
+                    background: Rectangle {
+                        width: mainWindow.width
+                        height: mainWindow.height
+                        color: Qt.rgba(216, 216, 216, 0.75)
+                    }
+
+                    AnimatedImage {
+                        id: indicator
+                        x: parent.width / 2 - width / 2
+                        y: parent.height / 2 - height / 2
+                        source: "qrc:/images/loading.gif"
+                        visible: parent.opened
+
+                        onVisibleChanged: {
+                            if (visible) {
+                                indicator.playing = true
+                            } else {
+                                indicator.playing = false
+                            }
+                        }
+                    }
+                }
             }
 
             ListModel {
@@ -120,8 +150,6 @@ SGWidgets.SGMainWindow {
         }
 
         onDownloadViewFinished: {
-            console.info("PAYLOAD INFO: ", JSON.stringify(payload))
-
             // hacky way to get the class_id from the request.
             // e.g. "url":"226/control_views/1.1.3/views-hello-strata.rcc"
             let class_id = payload.url.split("/")[0];
