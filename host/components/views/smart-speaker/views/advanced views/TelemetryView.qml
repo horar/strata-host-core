@@ -11,7 +11,7 @@ Rectangle {
     property color backgroundColor: "#D1DFFB"
     property color boxBackground: "#91ABE1"
     property color accentColor:"#86724C"
-    property int    boxHeight:75
+    property int    boxHeight:95
     property int    statBoxUnitSize:18
     property int    statBoxValueSize:36
 
@@ -59,7 +59,7 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 18
                 text:"USB"
-                width:70
+                width:65
                 horizontalAlignment: Text.AlignRight
             }
 
@@ -126,7 +126,7 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 18
                 text:"Battery"
-                width:70
+                width:65
                 horizontalAlignment: Text.AlignRight
             }
             PortStatBox{
@@ -182,7 +182,7 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 18
                 text:"Audio"
-                width:70
+                width:65
                 horizontalAlignment: Text.AlignRight
             }
             PortStatBox{
