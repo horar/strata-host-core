@@ -14,14 +14,13 @@ using command::BaseDeviceCommand;
 using command::CmdGetFirmwareInfo;
 using command::CmdRequestPlatformId;
 using command::CmdUpdateFirmware;
-using command::CmdFlashFirmware;
+using command::CmdFlash;
 using command::CmdBackupFirmware;
-using command::CmdFlashBootloader;
 using command::CmdStartApplication;
 using command::CommandResult;
 
 DeviceOperations::DeviceOperations(const DevicePtr& device) :
-    device_(device), responseTimer_(this), operation_(DeviceOperation::None)
+    operation_(DeviceOperation::None), device_(device), responseTimer_(this)
 {
     deviceId_ = static_cast<uint>(device_->deviceId());
 
@@ -66,20 +65,31 @@ void DeviceOperations::switchToBootloader() {
     }
 }
 
-void DeviceOperations::flashFirmwareChunk(const QVector<quint8>& chunk, int chunkNumber) {
-    if (startOperation(DeviceOperation::FlashFirmwareChunk)) {
+void DeviceOperations::flashChunk(const QVector<quint8>& chunk, int chunkNumber, bool flashFirmware) {
+    DeviceOperation operation = (flashFirmware) ?
+                                DeviceOperation::FlashFirmwareChunk :
+                                DeviceOperation::FlashBootloaderChunk;
+    if (startOperation(operation)) {
         if (commandList_.empty()) {
-            commandList_.emplace_back(std::make_unique<CmdFlashFirmware>(device_));
+            commandList_.emplace_back(std::make_unique<CmdFlash>(device_, flashFirmware));
             currentCommand_ = commandList_.begin();
         }
         if (currentCommand_ != commandList_.end()) {
-            CmdFlashFirmware *cmdFlash = dynamic_cast<CmdFlashFirmware*>(currentCommand_->get());
+            CmdFlash *cmdFlash = dynamic_cast<CmdFlash*>(currentCommand_->get());
             if (cmdFlash != nullptr) {
                 cmdFlash->setChunk(chunk, chunkNumber);
                 emit sendCommand(QPrivateSignal());
             }
         }
     }
+}
+
+void DeviceOperations::flashFirmwareChunk(const QVector<quint8>& chunk, int chunkNumber) {
+    flashChunk(chunk, chunkNumber, true);
+}
+
+void DeviceOperations::flashBootloaderChunk(const QVector<quint8>& chunk, int chunkNumber) {
+    flashChunk(chunk, chunkNumber, false);
 }
 
 void DeviceOperations::backupFirmwareChunk() {
@@ -90,22 +100,6 @@ void DeviceOperations::backupFirmwareChunk() {
         }
         if (currentCommand_ != commandList_.end()) {
             emit sendCommand(QPrivateSignal());
-        }
-    }
-}
-
-void DeviceOperations::flashBootloaderChunk(const QVector<quint8>& chunk, int chunkNumber) {
-    if (startOperation(DeviceOperation::FlashBootloaderChunk)) {
-        if (commandList_.empty()) {
-            commandList_.emplace_back(std::make_unique<CmdFlashBootloader>(device_));
-            currentCommand_ = commandList_.begin();
-        }
-        if (currentCommand_ != commandList_.end()) {
-            CmdFlashBootloader *cmdFlash = dynamic_cast<CmdFlashBootloader*>(currentCommand_->get());
-            if (cmdFlash != nullptr) {
-                cmdFlash->setChunk(chunk, chunkNumber);
-                emit sendCommand(QPrivateSignal());
-            }
         }
     }
 }

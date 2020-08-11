@@ -138,17 +138,20 @@ private slots:
     void handleDeviceError(device::Device::ErrorCode errCode, QString msg);
 
 protected:
+    DeviceOperation operation_;
+
+private:
     bool startOperation(DeviceOperation operation);
     void nextCommand();
     void finishOperation(DeviceOperation operation, int data = OPERATION_DEFAULT_DATA);
     void reset();
 
+    void flashChunk(const QVector<quint8>& chunk, int chunkNumber, bool flashFirmware);
+
     device::DevicePtr device_;
     uint deviceId_;
 
     QTimer responseTimer_;
-
-    DeviceOperation operation_;
 
     std::vector<std::unique_ptr<command::BaseDeviceCommand>> commandList_;
     std::vector<std::unique_ptr<command::BaseDeviceCommand>>::iterator currentCommand_;

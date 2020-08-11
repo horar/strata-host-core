@@ -5,9 +5,8 @@
 #include "CmdGetFirmwareInfo.h"
 #include "CmdRequestPlatformId.h"
 #include "CmdUpdateFirmware.h"
-#include "CmdFlashFirmware.h"
+#include "CmdFlash.h"
 #include "CmdBackupFirmware.h"
-#include "CmdFlashBootloader.h"
 #include "CmdStartApplication.h"
 
 #endif

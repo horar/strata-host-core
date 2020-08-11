@@ -12,20 +12,20 @@ using device::DeviceOperations;
 using device::DeviceOperation;
 using device::DeviceProperties;
 
-Flasher::Flasher(const DevicePtr& device, const QString& firmwareFilename) :
-    device_(device), fwFile_(firmwareFilename)
+Flasher::Flasher(const DevicePtr& device, const QString& fileName) :
+    device_(device), binaryFile_(fileName)
 {
     operation_ = std::make_unique<DeviceOperations>(device_);
 
     connect(operation_.get(), &DeviceOperations::finished, this, &Flasher::handleOperationFinished);
     connect(operation_.get(), &DeviceOperations::error, this, &Flasher::handleOperationError);
 
-    qCDebug(logCategoryFlasher) << device_ << "Flasher created (unique ID: 0x" << reinterpret_cast<quintptr>(this) << ").";
+    qCDebug(logCategoryFlasher) << device_ << "Flasher created (unique ID: 0x" << hex << reinterpret_cast<quintptr>(this) << ").";
 }
 
 Flasher::~Flasher() {
     // Destructor must be defined due to unique pointer to incomplete type.
-    qCDebug(logCategoryFlasher) << device_ << "Flasher deleted (unique ID: 0x" << reinterpret_cast<quintptr>(this) << ").";
+    qCDebug(logCategoryFlasher) << device_ << "Flasher deleted (unique ID: 0x" << hex << reinterpret_cast<quintptr>(this) << ").";
 }
 
 void Flasher::flashFirmware(bool startApplication) {
@@ -34,15 +34,15 @@ void Flasher::flashFirmware(bool startApplication) {
 
 void Flasher::backupFirmware(bool startApplication) {
     startApp_ = startApplication;
-    if (fwFile_.open(QIODevice::WriteOnly)) {
+    if (binaryFile_.open(QIODevice::WriteOnly)) {
         action_ = Action::BackupFirmware;
         chunkProgress_ = BACKUP_PROGRESS_STEP;
         qCInfo(logCategoryFlasher) << device_ << "Preparing for firmware backup.";
         emit switchToBootloader(false);
         operation_->switchToBootloader();
     } else {
-        qCCritical(logCategoryFlasher) << device_ << "Cannot open file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
-        emit error(fwFile_.errorString());
+        qCCritical(logCategoryFlasher) << device_ << "Cannot open file '" << binaryFile_.fileName() << "'. " << binaryFile_.errorString();
+        emit error(binaryFile_.errorString());
         finish(Result::Error);
     }
 }
@@ -53,25 +53,25 @@ void Flasher::flashBootloader(bool startApplication) {
 
 void Flasher::flash(bool flashFirmware, bool startApplication) {
     startApp_ = startApplication;
-    if (fwFile_.open(QIODevice::ReadOnly)) {
-        if (fwFile_.size() > 0) {
+    if (binaryFile_.open(QIODevice::ReadOnly)) {
+        if (binaryFile_.size() > 0) {
             action_ = (flashFirmware) ? Action::FlashFirmware : Action::FlashBootloader;
             chunkNumber_ = 0;
-            chunkCount_ = static_cast<int>((fwFile_.size() - 1 + CHUNK_SIZE) / CHUNK_SIZE);
+            chunkCount_ = static_cast<int>((binaryFile_.size() - 1 + CHUNK_SIZE) / CHUNK_SIZE);
             chunkProgress_ = FLASH_PROGRESS_STEP;
             const char* binaryType = (flashFirmware) ? "firmware" : "bootloader";
             qCInfo(logCategoryFlasher) << device_ << "Preparing for flashing " << chunkCount_ << " chunks of " << binaryType << '.';
             emit switchToBootloader(false);
             operation_->switchToBootloader();
         } else {
-            QString errStr = QStringLiteral("File '") + fwFile_.fileName() + QStringLiteral("' is empty.");
+            QString errStr = QStringLiteral("File '") + binaryFile_.fileName() + QStringLiteral("' is empty.");
             qCCritical(logCategoryFlasher) << device_ << errStr;
             emit error(errStr);
             finish(Result::Error);
         }
     } else {
-        qCCritical(logCategoryFlasher) << device_ << "Cannot open file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
-        emit error(fwFile_.errorString());
+        qCCritical(logCategoryFlasher) << device_ << "Cannot open file '" << binaryFile_.fileName() << "'. " << binaryFile_.errorString();
+        emit error(binaryFile_.errorString());
         finish(Result::Error);
     }
 }
@@ -149,7 +149,7 @@ void Flasher::handleOperationFinished(DeviceOperation operation, int data) {
 void Flasher::handleFlash(int lastFlashedChunk) {
     bool flashFirmware = (action_ == Action::FlashFirmware);
     if (lastFlashedChunk == 0) {  // the last chunk
-        fwFile_.close();
+        binaryFile_.close();
         const char* binaryType = (flashFirmware) ? "firmware" : "bootloader";
         qCInfo(logCategoryFlasher) << device_ << "Flashed chunk " << chunkCount_ << " of " << chunkCount_ << " - " << binaryType << " is flashed.";
         emit flashFirmwareProgress(chunkCount_, chunkCount_);
@@ -173,21 +173,21 @@ void Flasher::handleFlash(int lastFlashedChunk) {
     }
     ++chunkNumber_;
     int chunkSize = CHUNK_SIZE;
-    qint64 remainingFileSize = fwFile_.size() - fwFile_.pos();
+    qint64 remainingFileSize = binaryFile_.size() - binaryFile_.pos();
     if (remainingFileSize <= CHUNK_SIZE) {
         chunkNumber_ = 0;  // the last chunk
         chunkSize = static_cast<int>(remainingFileSize);
     }
     QVector<quint8> chunk(chunkSize);
 
-    qint64 bytesRead = fwFile_.read(reinterpret_cast<char*>(chunk.data()), chunkSize);
+    qint64 bytesRead = binaryFile_.read(reinterpret_cast<char*>(chunk.data()), chunkSize);
     if (bytesRead == chunkSize) {
         (flashFirmware) ?
             operation_->flashFirmwareChunk(chunk, chunkNumber_) :
             operation_->flashBootloaderChunk(chunk, chunkNumber_);
     } else {
-        qCCritical(logCategoryFlasher) << device_ << "Cannot read from file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
-        emit error(QStringLiteral("File read error. ") + fwFile_.errorString());
+        qCCritical(logCategoryFlasher) << device_ << "Cannot read from file '" << binaryFile_.fileName() << "'. " << binaryFile_.errorString();
+        emit error(QStringLiteral("File read error. ") + binaryFile_.errorString());
         finish(Result::Error);
     }
 }
@@ -196,10 +196,10 @@ void Flasher::handleBackup(int chunkNumber) {
     if (chunkNumber >= 0) {  // if no chunk was backed up yet, 'chunkNumber' is negative number (-1)
         QVector<quint8> chunk = operation_->recentBackupChunk();
         int totalChunks = operation_->backupChunksCount();
-        qint64 bytesWritten = fwFile_.write(reinterpret_cast<char*>(chunk.data()), chunk.size());
+        qint64 bytesWritten = binaryFile_.write(reinterpret_cast<char*>(chunk.data()), chunk.size());
         if (bytesWritten != chunk.size()) {
-            qCCritical(logCategoryFlasher) << device_ << "Cannot write to file '" << fwFile_.fileName() << "'. " << fwFile_.errorString();
-            emit error(QStringLiteral("File write error. ") + fwFile_.errorString());
+            qCCritical(logCategoryFlasher) << device_ << "Cannot write to file '" << binaryFile_.fileName() << "'. " << binaryFile_.errorString();
+            emit error(QStringLiteral("File write error. ") + binaryFile_.errorString());
             finish(Result::Error);
             return;
         }
@@ -212,7 +212,7 @@ void Flasher::handleBackup(int chunkNumber) {
                 qCDebug(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber << " of " << totalChunks;
             }
         } else {  // chunkNumber is 0 => the last chunk
-            fwFile_.close();
+            binaryFile_.close();
             qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << totalChunks << " of " << totalChunks << " - firmware backup is done.";
             emit backupFirmwareProgress(totalChunks, totalChunks);
             if (startApp_) {
@@ -233,8 +233,8 @@ void Flasher::handleOperationError(QString errStr) {
 }
 
 void Flasher::finish(Result result) {
-    if (fwFile_.isOpen()) {
-        fwFile_.close();
+    if (binaryFile_.isOpen()) {
+        binaryFile_.close();
     }
     emit finished(result);
 }

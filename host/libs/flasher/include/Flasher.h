@@ -38,9 +38,9 @@ class Flasher : public QObject
         /*!
          * Flasher constructor.
          * \param device device which will be used by Flasher
-         * \param firmwareFilename path to firmware file
+         * \param fileName path to firmware (or bootloader) file
          */
-        Flasher(const device::DevicePtr& device, const QString& firmwareFilename);
+        Flasher(const device::DevicePtr& device, const QString& fileName);
 
         /*!
          * Flasher destructor.
@@ -128,7 +128,7 @@ class Flasher : public QObject
 
         device::DevicePtr device_;
 
-        QFile fwFile_;
+        QFile binaryFile_;
 
         std::unique_ptr<device::DeviceOperations> operation_;
 
