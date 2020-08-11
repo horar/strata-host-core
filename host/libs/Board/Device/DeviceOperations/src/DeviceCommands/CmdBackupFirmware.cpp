@@ -27,7 +27,7 @@ QByteArray CmdBackupFirmware::message() {
 }
 
 bool CmdBackupFirmware::processNotification(rapidjson::Document& doc) {
-    if (CommandValidator::validate(CommandValidator::JsonType::backupFwRes, doc)) {
+    if (CommandValidator::validate(CommandValidator::JsonType::backupFirmwareRes, doc)) {
         const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
         if (payload.HasMember(JSON_STATUS)) {
             const rapidjson::Value& status = payload[JSON_STATUS];
