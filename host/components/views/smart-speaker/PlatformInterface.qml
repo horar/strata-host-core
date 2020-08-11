@@ -156,6 +156,11 @@ Item {
         "state":true,
     }
 
+    property var wake_word:{
+        "type":"alexa",              // or “voicespot”
+        "command":"play",            // or “pause", other commands TBD, does nothing for alexa
+    }
+
     // --------------------------------------------------------------------------------------------
     //          Commands
     //--------------------------------------------------------------------------------------------
