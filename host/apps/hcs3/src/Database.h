@@ -17,7 +17,6 @@ namespace Strata {
 };
 
 class HCS_Dispatcher;
-class LoggingAdapter;
 
 class Database final: public QObject
 {
@@ -27,8 +26,6 @@ class Database final: public QObject
 public:
     Database(const std::string dbPath, QObject *parent = nullptr);
     ~Database();
-
-    void setLogAdapter(LoggingAdapter* adapter);
 
     /**
      * Opens the database
@@ -90,8 +87,6 @@ private:
     const unsigned int REPLICATOR_RECONNECTION_INTERVAL = 15;
 
     Strata::SGBasicAuthenticator *basic_authenticator_{nullptr};
-
-    LoggingAdapter* logAdapter_{nullptr};
 
     std::set<std::string> channels_;
 };

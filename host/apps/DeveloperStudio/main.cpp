@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/resources/icons/app/on-logo.png"));
 
-    const QtLoggerSetup loggerInitialization(app);
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 13, 0))
     QtWebEngine::initialize();
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
 
     SDSModel *sdsModel = new SDSModel();
-    sdsModel->init(app.applicationDirPath(), QStringLiteral(HCS_CONFIG));
+    sdsModel->init(app.applicationDirPath());
 
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
     QObject::connect(&app, &QGuiApplication::lastWindowClosed,

@@ -46,15 +46,15 @@ void BoardManagerDerivate::mockAddNewDevice(const int deviceId, const QString de
                         removed);  // uses serialPortsList_ (needs old value from previous run)
 
         // Do not emit boardDisconnected and boardConnected signals in this locked block of code.
-        for (auto deviceId : removed) {
-            if (closeDevice(deviceId)) {  // modifies openedDevices_
-                deleted.emplace_back(deviceId);
+        for (auto removedDeviceId : removed) {
+            if (closeDevice(removedDeviceId)) {  // modifies openedDevices_
+                deleted.emplace_back(removedDeviceId);
             }
         }
 
-        for (auto deviceId : added) {
-            if (addDevice(deviceId, false)) {  // modifies openedDevices_, uses serialIdToName_
-                opened.emplace_back(deviceId);
+        for (auto addedDeviceId : added) {
+            if (addDevice(addedDeviceId, false)) {  // modifies openedDevices_, uses serialIdToName_
+                opened.emplace_back(addedDeviceId);
             }
         }
 
@@ -62,11 +62,11 @@ void BoardManagerDerivate::mockAddNewDevice(const int deviceId, const QString de
     }
 
     if (deleted.empty() == false || opened.empty() == false) {
-        for (auto deviceId : deleted) {
-            emit boardDisconnected(deviceId);
+        for (auto deletedDeviceId : deleted) {
+            emit boardDisconnected(deletedDeviceId);
         }
-        for (auto deviceId : opened) {
-            emit boardConnected(deviceId);
+        for (auto openedDeviceId : opened) {
+            emit boardConnected(openedDeviceId);
         }
         emit readyDeviceIdsChanged();
     }

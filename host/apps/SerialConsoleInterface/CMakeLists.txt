@@ -48,10 +48,10 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
     Qt5::WebEngine
-    BoardManager
-    FlasherConnector
+    strata::BoardManager
+    strata::FlasherConnector
     strata::CouchbaseLiteCPP
-    QtLogger
+    strata::QtLogger
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

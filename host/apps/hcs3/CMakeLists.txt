@@ -36,13 +36,12 @@ add_library(${PROJECT_NAME}Lib STATIC
     src/HostControllerService.cpp
     src/BoardController.cpp
     src/Dispatcher.cpp
-    src/HCS_Client.cpp
+    src/Client.cpp
     src/ClientsController.cpp
     src/Database.cpp
     src/StorageManager.cpp
     src/StorageInfo.cpp
     src/PlatformDocument.cpp
-    src/LoggingAdapter.cpp
     src/FirmwareUpdateController.cpp
     src/FirmwareUpdater.cpp
 
@@ -73,17 +72,41 @@ target_link_libraries(${PROJECT_NAME}Lib PUBLIC
     Qt5::Concurrent
     Qt5::RemoteObjects
 
-    BoardManager
-    FlasherConnector
-    connector
-    EventsMgr
-    DownloadManager
+    strata::BoardManager
+    strata::FlasherConnector
+    strata::connector
+    strata::EventsMgr
+    strata::DownloadManager
     strata::CouchbaseLiteCPP
-    QtLogger
-    CbLogger
+    strata::QtLogger
+    strata::CbLogger
 )
 
 target_include_directories(${PROJECT_NAME}Lib
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src
     PRIVATE $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, ${CMAKE_CURRENT_SOURCE_DIR}/src/release, ${CMAKE_CURRENT_SOURCE_DIR}/src/debug>
+)
+
+# deploy desired config file into side-by-side to compiled binary
+set(HCS_CONFIG_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/files/conf)
+
+if(NOT APPS_CORESW_HCS_CONFIG)
+    set(APPS_CORESW_HCS_CONFIG hcs_qa.config CACHE STRING "Desired HCS configuration file." FORCE)
+    message(STATUS "Defaulting 'APPS_CORESW_HCS_CONFIG' to ${APPS_CORESW_HCS_CONFIG}.")
+endif()
+file(GLOB APPS_CORESW_HCS_CONFIG_CHOICES
+    RELATIVE ${HCS_CONFIG_LOCATION}
+    ${HCS_CONFIG_LOCATION}/*.config
+)
+set_property(CACHE APPS_CORESW_HCS_CONFIG PROPERTY STRINGS ${APPS_CORESW_HCS_CONFIG_CHOICES})
+if(NOT APPS_CORESW_HCS_CONFIG IN_LIST APPS_CORESW_HCS_CONFIG_CHOICES)
+    message(FATAL_ERROR "Specify 'APPS_CORESW_HCS_CONFIG'. Must be one of ${APPS_CORESW_HCS_CONFIG_CHOICES}")
+endif()
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${HCS_CONFIG_LOCATION}/${APPS_CORESW_HCS_CONFIG}
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/hcs.config
+    COMMENT "Deploying 'hcs.config'..."
+    VERBATIM
 )

@@ -22,6 +22,8 @@ target_sources(${PROJECT_NAME} PRIVATE
     PrtModel.cpp
     RestClient.cpp
     Authenticator.cpp
+    OpnListModel.cpp
+
     images/images.qrc
     qml.qrc
 
@@ -60,10 +62,10 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Qml
     Qt5::Quick
 
-    BoardManager
-    FlasherConnector
-    DownloadManager
-    QtLogger
+    strata::BoardManager
+    strata::FlasherConnector
+    strata::DownloadManager
+    strata::QtLogger
 )
 
 target_include_directories(${PROJECT_NAME}
