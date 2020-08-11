@@ -69,7 +69,7 @@ Rectangle {
                         "notification": {
                                        "value":"volume",
                                        "payload": {
-                                            "master":"'+ (Math.random()*84 - 42) +'"
+                                            "master":(Math.random()*84 - 42)
                                             }
                                         }
                     }
@@ -190,7 +190,7 @@ Rectangle {
                                        "value":"equalizer_level",
                                        "payload": {
                                                 "band":7,
-                                                "level":"'+ (Math.random()*36-18) +'"
+                                                "level":(Math.random()*36-18)
                                             }
                                         }
                     }
@@ -275,18 +275,10 @@ Rectangle {
                     CorePlatformInterface.data_source_handler(JSON.stringify(wrapper))
 
 
-
                     let notification2 = {
                         "notification": {
-                        "value":"request_usb_power_notification",
+                        "value":"battery_status_fre",
                         "payload":{
-                            "ambient_temp":(Math.random() *100),
-                            "battery_temp":(Math.random() *100),
-                            "state_of_health":(Math.random() *100),
-                            "time_to_empty":(Math.random() *150),
-                            "time_to_full":(Math.random() *150),
-                            "rsoc":(Math.random() *100),
-                            "total_run_time":(Math.random() *500),
                             "no_battery_indicator":true,
                             "battery_voltage":(Math.random() *5),
                             "battery_current":(Math.random() *20)-10,
