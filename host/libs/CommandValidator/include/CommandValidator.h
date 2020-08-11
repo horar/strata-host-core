@@ -17,10 +17,11 @@ public:
         setPlatIdRes,
         ack,
         notification,
-        getFwInfoRes,
-        flashFwRes,
-        backupFwRes,
-        updateFwRes,
+        getFirmwareInfoRes,
+        flashFirmwareRes,
+        backupFirmwareRes,
+        flashBootloaderRes,
+        updateFirmwareRes,
         startAppRes,
         strataCmd,
         cmd
@@ -32,10 +33,11 @@ private:
     static const rapidjson::SchemaDocument setPlatformIdResSchema;
     static const rapidjson::SchemaDocument ackSchema;
     static const rapidjson::SchemaDocument notificationSchema;
-    static const rapidjson::SchemaDocument getFWInfoResSchema;
-    static const rapidjson::SchemaDocument flashFWResSchema;
-    static const rapidjson::SchemaDocument backupFWResSchema;
-    static const rapidjson::SchemaDocument updateFWResSchema;
+    static const rapidjson::SchemaDocument getFirmwareInfoResSchema;
+    static const rapidjson::SchemaDocument flashFirmwareResSchema;
+    static const rapidjson::SchemaDocument backupFirmwareResSchema;
+    static const rapidjson::SchemaDocument flashBootloaderResSchema;
+    static const rapidjson::SchemaDocument updateFirmwareResSchema;
     static const rapidjson::SchemaDocument startAppResSchema;
     static const rapidjson::SchemaDocument strataCommandSchema;
     static const rapidjson::SchemaDocument cmdSchema;

@@ -16,7 +16,7 @@ QByteArray CmdUpdateFirmware::message() {
 }
 
 bool CmdUpdateFirmware::processNotification(rapidjson::Document& doc) {
-    if (CommandValidator::validate(CommandValidator::JsonType::updateFwRes, doc)) {
+    if (CommandValidator::validate(CommandValidator::JsonType::updateFirmwareRes, doc)) {
         const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
         result_ = (status == JSON_OK) ? CommandResult::Done : CommandResult::Failure;
         return true;

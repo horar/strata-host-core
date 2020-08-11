@@ -35,7 +35,7 @@ TEST_F(CommandValidatorTest, updateFWResTest)
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::updateFwRes, doc));
+    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::updateFirmwareRes, doc));
 
     testCommand = R"(
         {
@@ -46,7 +46,7 @@ TEST_F(CommandValidatorTest, updateFWResTest)
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::updateFwRes, doc));
+    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::updateFirmwareRes, doc));
 
     testCommand = R"(
         {
@@ -58,7 +58,7 @@ TEST_F(CommandValidatorTest, updateFWResTest)
             }
         })";
     EXPECT_TRUE(CommandValidator::parseJson(testCommand, doc));
-    EXPECT_TRUE(CommandValidator::validate(CommandValidator::JsonType::updateFwRes, doc));
+    EXPECT_TRUE(CommandValidator::validate(CommandValidator::JsonType::updateFirmwareRes, doc));
 
 
     // Invalid test commands
@@ -71,7 +71,7 @@ TEST_F(CommandValidatorTest, updateFWResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::updateFwRes, doc));
+    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::updateFirmwareRes, doc));
 
     testCommand = R"(
         {
@@ -82,7 +82,7 @@ TEST_F(CommandValidatorTest, updateFWResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::updateFwRes, doc));
+    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::updateFirmwareRes, doc));
 
     testCommand = R"(
         {
@@ -92,7 +92,7 @@ TEST_F(CommandValidatorTest, updateFWResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::updateFwRes, doc));
+    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::updateFirmwareRes, doc));
 }
 
 TEST_F(CommandValidatorTest, flashFWResTest)
@@ -110,7 +110,7 @@ TEST_F(CommandValidatorTest, flashFWResTest)
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::flashFwRes, doc));
+    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::flashFirmwareRes, doc));
 
     testCommand = R"(
         {
@@ -121,7 +121,7 @@ TEST_F(CommandValidatorTest, flashFWResTest)
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::flashFwRes, doc));
+    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::flashFirmwareRes, doc));
 
     // Invalid test commands
     testCommand = R"(
@@ -133,7 +133,7 @@ TEST_F(CommandValidatorTest, flashFWResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::flashFwRes, doc));
+    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::flashFirmwareRes, doc));
 
     testCommand = R"(
         {
@@ -143,7 +143,7 @@ TEST_F(CommandValidatorTest, flashFWResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::flashFwRes, doc));
+    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::flashFirmwareRes, doc));
 
         testCommand = R"(
         {
@@ -154,7 +154,7 @@ TEST_F(CommandValidatorTest, flashFWResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::flashFwRes, doc));
+    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::flashFirmwareRes, doc));
 }
 
 TEST_F(CommandValidatorTest, getFWInfoResTest)
@@ -181,7 +181,7 @@ TEST_F(CommandValidatorTest, getFWInfoResTest)
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::getFwInfoRes, doc));
+    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::getFirmwareInfoRes, doc));
 
     testCommand = R"(
         {
@@ -197,7 +197,7 @@ TEST_F(CommandValidatorTest, getFWInfoResTest)
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::getFwInfoRes, doc));
+    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::getFirmwareInfoRes, doc));
 
     testCommand = R"(
         {
@@ -213,7 +213,7 @@ TEST_F(CommandValidatorTest, getFWInfoResTest)
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::getFwInfoRes, doc));
+    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::getFirmwareInfoRes, doc));
 
     // Invalid test commands
     testCommand = R"(
@@ -234,7 +234,7 @@ TEST_F(CommandValidatorTest, getFWInfoResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::getFwInfoRes, doc));
+    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::getFirmwareInfoRes, doc));
 
     testCommand = R"(
         {
@@ -254,7 +254,7 @@ TEST_F(CommandValidatorTest, getFWInfoResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::getFwInfoRes, doc));
+    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::getFirmwareInfoRes, doc));
 
 // This JSON is not valid, but schema does not covers this situation (empty application and bootloader).
 /*

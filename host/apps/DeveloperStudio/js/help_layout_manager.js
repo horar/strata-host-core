@@ -1,5 +1,6 @@
 .pragma library
 .import "navigation_control.js" as NavigationControl
+.import "constants.js" as Constants
 .import QtQuick 2.0 as QtQuickModule
 .import tech.strata.logger 1.0 as LoggerModule
 
@@ -205,7 +206,7 @@ function destroyHelp() {
     for (let i=views.length-1; i>=0; i--) {
         killView(i)
     }
-    current_device_id = ""
+    current_device_id = Constants.NULL_DEVICE_ID
 }
 
 function killView(index) {

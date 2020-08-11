@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.12
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as Filters
 import "qrc:/js/help_layout_manager.js" as Help
+import "qrc:/js/constants.js" as Constants
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
@@ -56,7 +57,7 @@ Item {
             // sort list according to connected state or secondarily if device_id is attached
             var listing1 = sourceModel.get(index1)
             var listing2 = sourceModel.get(index2)
-            return listing1.connected || (listing1.device_id !== "" && !listing2.connected)
+            return listing1.connected || (listing1.device_id !== Constants.NULL_DEVICE_ID && !listing2.connected)
         }
 
         function in_category(item) {
@@ -206,7 +207,7 @@ Item {
                 }
 
                 SGIcon {
-                    source: "qrc:/images/icons/times-circle-solid.svg"
+                    source: "qrc:/sgimages/times-circle.svg"
                     height: parent.height * .75
                     width: height
                     anchors {
@@ -282,7 +283,7 @@ Item {
 
                 SGIcon {
                     id: angleIcon
-                    source: "qrc:/images/icons/angle-down.svg"
+                    source: "qrc:/sgimages/chevron-down.svg"
                     iconColor: segmentFilterMouse.enabled? "#666" : "#ddd"
                     anchors {
                         verticalCenter: segmentFilterContainer.verticalCenter

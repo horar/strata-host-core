@@ -28,10 +28,9 @@ SDSModel::~SDSModel()
     delete coreInterface_;
 }
 
-void SDSModel::init(const QString &appDirPath, const QString &configFilename)
+void SDSModel::init(const QString &appDirPath)
 {
     appDirPath_ = appDirPath;
-    configFilename_ = configFilename;
 
     remoteHcsNode_ = new HcsNode(this);
 
@@ -46,34 +45,35 @@ bool SDSModel::startHcs()
         return false;
     }
 
-    if (appDirPath_.isEmpty() || configFilename_.isEmpty()) {
+    if (appDirPath_.isEmpty()) {
         return false;
     }
 
 #ifdef Q_OS_WIN
-#if WINDOWS_INSTALLER_BUILD
     const QString hcsPath{ QDir::cleanPath(QString("%1/hcs.exe").arg(appDirPath_)) };
+#if WINDOWS_INSTALLER_BUILD
     QString hcsConfigPath;
     TCHAR programDataPath[MAX_PATH];
     if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_COMMON_APPDATA, NULL, 0, programDataPath))) {
         hcsConfigPath = QDir::cleanPath(QString("%1/ON Semiconductor/Strata Developer Studio/HCS/hcs.config").arg(programDataPath));
-        qCInfo(logCategoryStrataDevStudio) << QStringLiteral("hcsConfigPath:") << hcsConfigPath ;
+        qCInfo(logCategoryStrataDevStudio) << QStringLiteral("hcsConfigPath:") << hcsConfigPath;
     }else{
         qCCritical(logCategoryStrataDevStudio) << "Failed to get ProgramData path using windows API call...";
         return false;
     }
 #else
-    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs.exe").arg(appDirPath_)) };
-    const QString hcsConfigPath{ QDir::cleanPath(QString("%1/../../apps/hcs3/files/conf/%2").arg(appDirPath_, configFilename_))};
+    const QString hcsConfigPath{ QDir::cleanPath(QString("%1/hcs.config").arg(appDirPath_)) };
 #endif
 #endif
+
 #ifdef Q_OS_MACOS
     const QString hcsPath{ QDir::cleanPath(QString("%1/../../../hcs").arg(appDirPath_)) };
-    const QString hcsConfigPath{ QDir::cleanPath( QString("%1/../../../../../apps/hcs3/files/conf/%2").arg(appDirPath_, configFilename_))};
+    const QString hcsConfigPath{ QDir::cleanPath( QString("%1/../../../hcs.config").arg(appDirPath_)) };
 #endif
+
 #ifdef Q_OS_LINUX
-    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs").arg(app.applicationDirPath())) };
-    const QString hcsConfigPath{ QDir::cleanPath(QString("%1/../../apps/hcs3/files/conf/host_controller_service.config").arg(app.applicationDirPath()))};
+    const QString hcsPath{ QDir::cleanPath(QString("%1/hcs").arg(appDirPath_)) };
+    const QString hcsConfigPath{ QDir::cleanPath(QString("%1/hcs.config").arg(appDirPath_))};
 #endif
 
     // Start HCS before handling events for Qt
@@ -115,33 +115,30 @@ bool SDSModel::killHcs()
         return false;
     }
 
-#ifdef Q_OS_WIN // windows check to kill hcs3
-    // [PV] : In windows, QProcess terminate will not send any close message to QT non GUI application
-    // Waiting for 10s before kill, if user runs an instance of SDS immediately after closing, hcs3
-    // will not be terminated and new hcs insatnce will start, leaving two instances of hcs.
     if (hcsProcess_->state() == QProcess::Running) {
-        qCDebug(logCategoryStrataDevStudio) << "killing HCS";
-        hcsProcess_->kill();
-        if (hcsProcess_->waitForFinished() == false) {
-            qCWarning(logCategoryStrataDevStudio) << "Failed to kill HCS server";
-            return false;
+        qCDebug(logCategoryStrataDevStudio) << "waiting for HCS gracefull finish...";
+        if (hcsProcess_->waitForFinished(5000) == true) {
+            return true;
         }
-    }
-#else
-    if (hcsProcess_->state() == QProcess::Running) {
-        qCDebug(logCategoryStrataDevStudio) << "terminating HCS";
+
+#ifdef Q_OS_UNIX
+        qCDebug(logCategoryStrataDevStudio) << "terminating HCS...";
         hcsProcess_->terminate();
         QThread::msleep(100);   //This needs to be here, otherwise 'waitForFinished' waits until timeout
-        if (hcsProcess_->waitForFinished(10000) == false) {
-            qCDebug(logCategoryStrataDevStudio) << "termination failed, killing HCS";
-            hcsProcess_->kill();
-            if (hcsProcess_->waitForFinished() == false) {
-                qCWarning(logCategoryStrataDevStudio) << "Failed to kill HCS server";
-                return false;
-            }
+        if (hcsProcess_->waitForFinished(5000) == true) {
+            return true;
         }
-    }
+        qCWarning(logCategoryStrataDevStudio) << "Failed to terminate the server";
 #endif
+
+        qCDebug(logCategoryStrataDevStudio) << "killing HCS...";
+        hcsProcess_->kill();
+        if (hcsProcess_->waitForFinished(5000) == true) {
+            return true;
+        }
+        qCCritical(logCategoryStrataDevStudio) << "Failed to kill HCS server";
+        return false;
+    }
 
     return true;
 }

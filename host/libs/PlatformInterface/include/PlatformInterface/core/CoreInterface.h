@@ -64,7 +64,6 @@ public:
     Q_INVOKABLE void connectToPlatform(QString class_id);
     Q_INVOKABLE void unregisterClient();
     Q_INVOKABLE void sendCommand(QString cmd);
-    Q_INVOKABLE void disconnectPlatform(int device_id);
 
     void setNotificationThreadRunning(bool running);
 
@@ -81,6 +80,8 @@ signals:
     void downloadPlatformSingleFileProgress(QJsonObject payload);
     void downloadPlatformSingleFileFinished(QJsonObject payload);
     void downloadPlatformFilesFinished(QJsonObject payload);
+
+    void firmwareProgress(QJsonObject payload);
 
     // Platform Framework Signals
     void notification(QString payload);

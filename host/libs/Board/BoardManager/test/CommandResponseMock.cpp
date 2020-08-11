@@ -37,7 +37,6 @@ std::vector<QByteArray> CommandResponseMock::replacePlaceholders(
 
     // find and resolve placeholders
     for (auto response : responses) {
-        std::smatch match;
         QString responseString(response);
 
         QRegularExpressionMatchIterator rxIterator =

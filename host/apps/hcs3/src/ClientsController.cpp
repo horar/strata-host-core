@@ -1,23 +1,18 @@
 #include "ClientsController.h"
 
 #include "Dispatcher.h"
+#include "logging/LoggingQtCategories.h"
 
 #include <Connector.h>
 #include <rapidjson/document.h>
 
 ClientsController::ClientsController()
 {
-
 }
 
 ClientsController::~ClientsController()
 {
     events_manager_.stop();
-}
-
-void ClientsController::setLogAdapter(LoggingAdapter* adapter)
-{
-    logAdapter_ = adapter;
 }
 
 bool ClientsController::initialize(HCS_Dispatcher* dispatcher, rapidjson::Value& config)
