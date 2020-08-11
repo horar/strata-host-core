@@ -149,12 +149,12 @@ SGWidgets.SGMainWindow {
             }
         }
 
-        onDownloadViewFinished: {
-            // hacky way to get the class_id from the request.
-            // e.g. "url":"226/control_views/1.1.3/views-hello-strata.rcc"
-            let class_id = payload.url.split("/")[0];
-            PlatformSelection.onControlViewDownloadFinished(class_id)
-        }
+//        onDownloadViewFinished: {
+//            // hacky way to get the class_id from the request.
+//            // e.g. "url":"226/control_views/1.1.3/views-hello-strata.rcc"
+//            let class_id = payload.url.split("/")[0];
+//            PlatformSelection.onControlViewDownloadFinished(class_id)
+//        }
     }
 
     SGDebugBar {
@@ -163,13 +163,13 @@ SGWidgets.SGMainWindow {
         }
     }
 
-    Connections {
-        target: sdsModel.documentManager
+//    Connections {
+//        target: sdsModel.documentManager
 
-        onPopulateModelsFinished: {
-            PlatformSelection.onControlViewListPopulated(classId)
-        }
-    }
+//        onPopulateModelsFinished: {
+//            PlatformSelection.onControlViewListPopulated(classId)
+//        }
+//    }
 
     function getLatestVersion(controlViewModel) {
         let latestVersionTemp;

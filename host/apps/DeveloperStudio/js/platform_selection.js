@@ -314,6 +314,8 @@ function connectListing(class_id_string, device_id, firmware_version) {
     4. Call openPlatformView()
 */
 function loadPlatformDocuments(platform) {
+    openPlatformView(platform)
+    return;
     if (NavigationControl.isViewRegistered(platform.class_id)) {
         openPlatformView(platform);
         return;
@@ -418,7 +420,7 @@ function openPlatformView(platform) {
         data.connected = false
     }
 
-    NavigationControl.updateState(NavigationControl.events.REQ_OPEN_PLATFORM_VIEW_EVENT,data)
+    NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT,data)
 }
 
 
