@@ -54,8 +54,9 @@ function parseVersionInfo (payload) {
         var temp_latest_version = latest_version.replace('-','').split(".");
 
         // Check if latest_version is newer than last known version in the INI (offer update even if currently on "Don't Ask Again" mode)
-        if (last_known_version != payload.latest_version) {
+        if (last_known_version !== payload.latest_version) {
             setLastKnownVersion(payload.latest_version)
+            setUserNotificationMode("AskAgainLater")
             enableMenuItem()
             createUpdatePopup()
             return
