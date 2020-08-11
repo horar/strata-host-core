@@ -75,5 +75,6 @@
         <file>partial-views/platform-view/SGPlatformView.qml</file>
         <file>partial-views/status-bar/SGPlatformTab.qml</file>
         <file>partial-views/platform-view/DisconnectedOverlay.qml</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/usb_type_c.svg</file>
     </qresource>
 </RCC>
