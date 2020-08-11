@@ -22,12 +22,6 @@ SGStrataPopup {
     property string current_version: ""
     property string error_string: ""
 
-    onVisibleChanged: {
-        if (visible) {
-            nameField.forceActiveFocus()
-        }
-    }
-
     CoreUpdate {
         id: updateObj
     }
@@ -37,19 +31,23 @@ SGStrataPopup {
         spacing: 20
 
         Rectangle {
-            id: feedbackTextContainer
+            id: updateContainer
             color: "transparent"
             Layout.preferredWidth: mainColumn.width
-            Layout.preferredHeight: feedbackTextColumn.height + feedbackTextColumn.anchors.topMargin * 2
+            Layout.preferredHeight: updateTextColumn.height + updateTextColumn.anchors.topMargin * 2
+            Layout.topMargin: 25
+            Layout.leftMargin: 25
+
             clip: true
 
             Row {
-                id: feedbackTextColumn
+                id: updateTextColumn
                 spacing: 20
-                width: feedbackTextContainer.width
+                width: updateContainer.width
+
                 anchors {
-                    top: feedbackTextContainer.top
-                    topMargin: 15
+                    top: updateContainer.top
+                    topMargin: 5
                 }
 
                 SGIcon {
@@ -57,9 +55,6 @@ SGStrataPopup {
                     width: height
                     source: "qrc:/sgimages/update-arrow.svg"
                     iconColor : "limegreen"
-                    // anchors {
-                    //     horizontalCenter: parent.horizontalCenter
-                    // }
                 }
 
                 Column {
@@ -73,47 +68,23 @@ SGStrataPopup {
                             family: Fonts.franklinGothicBook
                             bold: true
                         }
-                        // lineHeight: 1.5
-                        // width: feedbackTextContainer.width-30
-                        // anchors {
-                        //     horizontalCenter: feedbackTextColumn.horizontalCenter
-                        // }
-                        // horizontalAlignment: Text.AlignHCenter
-                        // wrapMode: Text.Wrap
-                        color: "black"
                     }
 
                     Text {
                         id: currentVersionText
-                        text: "Current Version: " + current_version
+                        text: "    Current Version: " + current_version
                         font {
                             pixelSize: 14
                             family: Fonts.franklinGothicBook
                         }
-                        // lineHeight: 1.5
-                        // width: feedbackTextContainer.width-30
-                        // anchors {
-                        //     horizontalCenter: feedbackTextColumn.horizontalCenter
-                        // }
-                        // horizontalAlignment: Text.AlignHCenter
-                        // wrapMode: Text.Wrap
-                        color: "black"
                     }
                     Text {
                         id: latestVersionText
-                        text: "Latest Version: " + latest_version
+                        text: "    Latest Version: " + latest_version
                         font {
                             pixelSize: 14
                             family: Fonts.franklinGothicBook
                         }
-                        // lineHeight: 1.5
-                        // width: feedbackTextContainer.width-30
-                        // anchors {
-                        //     horizontalCenter: feedbackTextColumn.horizontalCenter
-                        // }
-                        // horizontalAlignment: Text.AlignHCenter
-                        // wrapMode: Text.Wrap
-                        color: "black"
                     }
                 }
             }
@@ -127,13 +98,12 @@ SGStrataPopup {
 
         Row {
             spacing: 20
+            Layout.alignment: Qt.AlignHCenter
+            Layout.bottomMargin: 50
 
             Button {
                 id: updateButton
                 text: "Update (will close Strata)"
-                Layout.bottomMargin: 20
-                Layout.alignment: Qt.AlignHCenter
-                activeFocusOnTab: true
 
                 background: Rectangle {
                     color: !updateButton.enabled ? "#dbdbdb" : updateButton.down ? "#666" : "#888"
@@ -173,10 +143,6 @@ SGStrataPopup {
             Button {
                 id: cancelButton
                 text: "Cancel"
-                Layout.bottomMargin: 20
-                Layout.alignment: Qt.AlignHCenter
-                activeFocusOnTab: true
-                enabled: textEdit.text !== "" && feedbackTypeListView.currentIndex !== -1
 
                 background: Rectangle {
                     color: !cancelButton.enabled ? "#dbdbdb" : cancelButton.down ? "#666" : "#888"
