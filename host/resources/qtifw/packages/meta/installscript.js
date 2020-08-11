@@ -69,7 +69,6 @@ function isRestartRequired()
         installer.setValue("restart_is_required", "false");
         return false;
     } else {
-        console.log(vc_redist_temp_file + " not found");
         installer.setValue("restart_is_required", "false");
         return false;
     }
@@ -102,8 +101,25 @@ Component.prototype.installationOrUpdateFinished = function()
         installer.setValue("RunProgramDescription", "");        
     }
 
-    if ((installer.isInstaller() || installer.isUpdater() || installer.isPackageManager()) && (installer.status == QInstaller.Success)) {
+    if ((installer.isInstaller() || installer.isUpdater() || installer.isPackageManager()) && (installer.status == QInstaller.Success))
         isRestartRequired();
+
+    // erase StrataUtils folder
+	var strataUtilsFolder = installer.value("TargetDir") + "\\StrataUtils";
+    if((systemInfo.productType == "windows") && (installer.fileExists(strataUtilsFolder))) {
+        try {
+            console.log("erasing StrataUtils folder: " + strataUtilsFolder);
+            if(installer.gainAdminRights()) {    // needed when it is in Program Files directory on Win10
+                console.log("gained admin rights, executing cmd in admin mode");
+                installer.execute("cmd", ["/c", "rd", "/s", "/q", strataUtilsFolder]);
+                installer.dropAdminRights();
+            } else {
+                console.log("failed to gain admin rights, executing cmd in user mode");
+                installer.execute("cmd", ["/c", "rd", "/s", "/q", strataUtilsFolder]);
+            }
+        } catch(e) {
+            console.log(e);
+        }
     }
 }
 

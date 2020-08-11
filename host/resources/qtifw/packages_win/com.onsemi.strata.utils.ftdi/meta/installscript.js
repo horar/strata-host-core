@@ -48,7 +48,6 @@ Component.prototype.createOperations = function()
     } else {
         console.log("FTDI CDM Drivers already installed");
     }
-    //component.addElevatedOperation("Execute", "cmd", ["/c", "rd", "/s", "/q", "\"" + installer.value("TargetDir") + "/StrataUtils/FTDI\""]);
 }
 
 

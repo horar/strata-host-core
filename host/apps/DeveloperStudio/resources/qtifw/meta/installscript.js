@@ -64,7 +64,7 @@ Component.prototype.createOperations = function()
                 try {
                     var desktopFolder = installer.execute("cmd", ["/c", "echo", "%UserProfile%\\Desktop"]);
                     // the output of command is the first item, and the return code is the second
-                    if(desktopFolder[0] != "") {
+                    if((desktopFolder != undefined) && (desktopFolder != null) && (desktopFolder[0] != undefined) && (desktopFolder[0] != null) && (desktopFolder[0] != "")) {
                         strata_ds_shortcut_dst2 = desktopFolder[0].trim() + "\\Strata Developer Studio.lnk";
                         console.log("new desktop shortcut: " + strata_ds_shortcut_dst2);
                     } else {

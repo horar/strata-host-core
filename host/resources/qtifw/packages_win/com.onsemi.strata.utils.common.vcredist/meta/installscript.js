@@ -52,7 +52,6 @@ Component.prototype.createOperations = function()
     } else {
         console.log("Microsoft Visual C++ 2017 X64 Additional Runtime already installed");
     }
-    //component.addElevatedOperation("Execute", "cmd", ["/c", "rd", "/s", "/q", "\"" + installer.value("TargetDir") + "/StrataUtils/VC_REDIST\""]);
 }
 
 // Return 1 if a > b
