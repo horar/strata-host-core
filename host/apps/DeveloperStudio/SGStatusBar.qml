@@ -179,30 +179,28 @@ Rectangle {
             }
         }
 
-        RowLayout {
-            spacing: 0
+        Rectangle {
+            id: alertIconContainer
+            visible: false
 
-            Rectangle {
-                id: alertIconContainer
-                visible: false
+            anchors {
+                top: parent.top
+                horizontalCenter: parent.left
+                topMargin: 5
+            }
 
-                Layout.leftMargin: -5
-                Layout.rightMargin: 10
-                Layout.topMargin: 5
+            height: 12
+            width: height
+            radius: height / 2
+            color: "#00b842"
 
-                height: 12
+            SGIcon {
+                id: alertIcon
+                visible: alertIconContainer.visible
+                height: 15
                 width: height
-                radius: height / 2
-                color: "#00b842"
-
-                SGIcon {
-                    id: alertIcon
-                    visible: alertIconContainer.visible
-                    height: 15
-                    width: height
-                    source: "qrc:/sgimages/exclamation-circle.svg"
-                    iconColor : "white"
-                }
+                source: "qrc:/sgimages/exclamation-circle.svg"
+                iconColor : "white"
             }
         }
 
