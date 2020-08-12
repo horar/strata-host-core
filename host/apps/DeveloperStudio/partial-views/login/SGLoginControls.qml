@@ -69,7 +69,6 @@ Item {
             Component.onCompleted: {
                 UsernameStorage.populateSavedUsernames(model, usernameFieldSettings.userNameStore)
                 currentIndex = usernameFieldSettings.userNameIndex
-
                 if (usernameField.text === "") {
                     forceActiveFocus()
                 } else {
@@ -168,21 +167,39 @@ Item {
             }
         }
 
-        Text {
-            id: forgotLink
-            Layout.alignment: Qt.AlignRight
-            text: "Forgot Password"
-            color: forgotLink.pressed ? "#ddd" : "#545960"
-            font.underline: forgotMouse.containsMouse
+        RowLayout {
+            id: rowLoginControls
+            Layout.fillHeight: false
 
-            MouseArea {
-                id: forgotMouse
-                anchors.fill: forgotLink
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
+            CheckBox {
+                id: rememberCheckBox
+                text: qsTr("Remember Me")
+                checked: Authenticator.settings.rememberMe
+                onCheckedChanged: {
+                    Authenticator.settings.rememberMe = checked
+                }
+                padding: 0
+            }
 
-                onClicked: {
-                    forgotPopup.visible = true
+            Item {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+            }
+
+            Text {
+                id: forgotLink
+                text: "Forgot Password"
+                color: forgotLink.pressed ? "#ddd" : "#545960"
+                font.underline: forgotMouse.containsMouse
+
+                MouseArea {
+                    id: forgotMouse
+                    anchors.fill: forgotLink
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: {
+                        forgotPopup.visible = true
+                    }
                 }
             }
         }

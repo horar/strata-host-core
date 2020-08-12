@@ -82,5 +82,6 @@
         <file>js/constants.js</file>
         <file>partial-views/status-bar/SGFeedbackTypeModel.qml</file>
         <file>partial-views/status-bar/SGFeedbackTypeDelegate.qml</file>
+        <file>partial-views/login/LoginSettings.qml</file>
     </qresource>
 </RCC>
