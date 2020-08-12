@@ -7,6 +7,7 @@ import QtQuick.Controls.Styles 1.4
 import "qrc:/js/help_layout_manager.js" as Help
 import "SAR-ADC-Analysis.js" as SarAdcFunction
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import QtQuick.Dialogs 1.3
 
 Rectangle {
     id: root
@@ -35,6 +36,8 @@ Rectangle {
     
     //Notification to acquire from the evaluation board by using the "get_data" command.
     property var data_value: platformInterface.get_data.data
+
+    property var dataToSave: []
 
     property var clock_data: 0
     onData_valueChanged: {
@@ -71,6 +74,40 @@ Rectangle {
             dataArray = []
         }
     }
+
+    function saveFile(fileUrl, text) {
+        console.log(fileUrl)
+        console.log(text)
+        var request = new XMLHttpRequest();
+        request.open("PUT", fileUrl, false);
+        request.send(text);
+        return request.status;
+    }
+
+    function toCSV(json) {
+        json = Object.values(json);
+        var csv = "";
+        var keys = (json[0] && Object.keys(json[0])) || [];
+        csv += keys.join(',') + '\n';
+        for (var line of json) {
+            csv += keys.map(key => line[key]).join(',') + '\n';
+        }
+        return csv;
+    }
+
+
+    FileDialog {
+        id: saveFileDialog
+        selectExisting: false
+        nameFilters: ["CSV files (*.csv)", "All files (*)"]
+        onAccepted:  {
+            saveFile(saveFileDialog.fileUrl,  toCSV(dataToSave))
+            console.log("length",  dataToSave.length)
+
+        }
+    }
+
+
     
     function adc_data_to_plot() {
         var processed_data = SarAdcFunction.adcPostProcess(dataArray,clock,4096)
@@ -100,7 +137,10 @@ Rectangle {
             var  timeData = tdata[y]
             dataArray3.push({"x":timeData[0], "y":timeData[1]})
             maxXvaule = Math.round(timeData[0])
+            dataToSave.push({"Time x": timeData[0], "Time y": timeData[1]})
         }
+
+
         graph.xMax = maxXvaule
         time_maxValue = maxXvaule
         curve1.appendList(dataArray3)
@@ -989,68 +1029,126 @@ Rectangle {
                     id: acquireButtonContainer
                     color: "transparent"
                     width: parent.width
-                    height: parent.height/4.5
-                    Button {
-                        id: acquireDataButton
-                        width: parent.width/3
-                        height: parent.height/1.5
-                        text: qsTr("Acquire \n Data")
-                        onClicked: {
-                            progressBar.visible = true
-                            warningBox.visible = true
-                            barContainer.visible = true
-                            graphTitle.visible = false
-                            //Clear the graph if the graph is plotted before (!=0)
-                            if(graphPlottedCount != 0) {
-                                graph.removeCurve(0)
-                                graph2.removeCurve(0)
-                                graph3.removeCurve(0)
+                    height: parent.height/5.5
+
+                    RowLayout {
+                        anchors.fill: parent
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            Button {
+                                id: acquireDataButton
+                                width: parent.width/1.5
+                                height: parent.height/1.5
+                                text: qsTr("Acquire \n Data")
+                                onClicked: {
+                                    progressBar.visible = true
+                                    warningBox.visible = true
+                                    barContainer.visible = true
+                                    graphTitle.visible = false
+                                    //Clear the graph if the graph is plotted before (!=0)
+                                    if(graphPlottedCount != 0) {
+                                        graph.removeCurve(0)
+                                        graph2.removeCurve(0)
+                                        graph3.removeCurve(0)
+                                    }
+                                    //set back all the graph initial x & y axises
+                                    graph2.xMax = (clock/32)
+                                    graph2.yMax = 1
+                                    graph2.xMin = 0
+                                    graph2.yMin = -160
+                                    graph2.resetChart()
+                                    graph3.xMax = 4096
+                                    graph3.yMax = 40
+                                    graph3.xMin = 0
+                                    graph3.yMin = 0
+                                    graph3.resetChart()
+                                    time_maxValue = 10
+                                    graph.xMax = 10
+                                    graph.yMax = 4096
+                                    graph.xMin = 0
+                                    graph.yMin = 0
+                                    graph.resetChart()
+                                    acquireButtonContainer.enabled = false
+                                    platformInterface.get_data_value.update(packet_number)
+                                    saveDataButton.opacity = 1.0
+                                    saveDataButton.enabled = true
+                                    dataToSave =  []
+                                }
+
+                                anchors.centerIn: parent
+                                background: Rectangle {
+                                    implicitWidth: 100
+                                    implicitHeight: 60
+                                    opacity: enabled ? 1 : 0.3
+                                    border.color: acquireDataButton.down ? "#17a81a" : "black"//"#21be2b"
+                                    border.width: 1
+                                    color: "#33b13b"
+                                    radius: 10
+                                }
+
+                                contentItem: Text {
+                                    text: acquireDataButton.text
+                                    font.pixelSize: (parent.height)/3.5
+                                    opacity: enabled ? 1.0 : 0.3
+                                    color: acquireDataButton.down ? "#17a81a" : "white"//"#21be2b"
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                    elide: Text.ElideRight
+                                    wrapMode: Text.Wrap
+                                    width: parent.width
+                                }
                             }
-                            //set back all the graph initial x & y axises
-                            graph2.xMax = (clock/32)
-                            graph2.yMax = 1
-                            graph2.xMin = 0
-                            graph2.yMin = -160
-                            graph2.resetChart()
-                            graph3.xMax = 4096
-                            graph3.yMax = 40
-                            graph3.xMin = 0
-                            graph3.yMin = 0
-                            graph3.resetChart()
-                            time_maxValue = 10
-                            graph.xMax = 10
-                            graph.yMax = 4096
-                            graph.xMin = 0
-                            graph.yMin = 0
-                            graph.resetChart()
-                            acquireButtonContainer.enabled = false
-                            platformInterface.get_data_value.update(packet_number)
                         }
-                        
-                        anchors.centerIn: parent
-                        background: Rectangle {
-                            implicitWidth: 100
-                            implicitHeight: 60
-                            opacity: enabled ? 1 : 0.3
-                            border.color: acquireDataButton.down ? "#17a81a" : "black"//"#21be2b"
-                            border.width: 1
-                            color: "#33b13b"
-                            radius: 10
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            Button {
+                                id: saveDataButton
+                                width: parent.width/1.5
+                                height: parent.height/1.5
+                                text: qsTr("Save \n Data")
+                                opacity: 0.5
+                                enabled: true
+                                anchors.centerIn: parent
+                                onClicked: {
+                                    console.log(JSON.stringify(dataToSave))
+                                    saveFileDialog.open()
+                                }
+
+                                background: Rectangle {
+                                    implicitWidth: 100
+                                    implicitHeight: 60
+                                    opacity: enabled ? 1 : 0.3
+                                    border.color: saveDataButton.down ? "#17a81a" : "black"//"#21be2b"
+                                    border.width: 1
+                                    color: "#33b13b"
+                                    radius: 10
+                                }
+                                contentItem: Text {
+                                    text: saveDataButton.text
+                                    font.pixelSize: (parent.height)/3.5
+                                    opacity: enabled ? 1.0 : 0.3
+                                    color: saveDataButton.down ? "#17a81a" : "white"//"#21be2b"
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                    elide: Text.ElideRight
+                                    wrapMode: Text.Wrap
+                                    width: parent.width
+                                }
+
+
+
+                            }
                         }
-                        
-                        contentItem: Text {
-                            text: acquireDataButton.text
-                            font.pixelSize: (parent.height)/3.5
-                            opacity: enabled ? 1.0 : 0.3
-                            color: acquireDataButton.down ? "#17a81a" : "white"//"#21be2b"
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            elide: Text.ElideRight
-                            wrapMode: Text.Wrap
-                            width: parent.width
-                        }
+
                     }
                 }
+
+
                 Rectangle {
                     id: gaugeContainer
                     anchors{
