@@ -22,6 +22,7 @@ add_library(${PROJECT_NAME}
     logging/LoggingQtCategories.h
     logging/LoggingQtCategories.cpp
 )
+add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC include
@@ -33,7 +34,7 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core
     PUBLIC Qt5::Network
     PUBLIC strata::Couchbase-Lite-C
-    PUBLIC QtLogger
+    PUBLIC strata::QtLogger
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

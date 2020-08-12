@@ -29,8 +29,9 @@ public:
 private:
     const QStringList args_;
     const QCommandLineOption listOption_;
-    const QCommandLineOption flashOption_;
-    const QCommandLineOption backupOption_;
+    const QCommandLineOption flashFirmwareOption_;
+    const QCommandLineOption flashBootloaderOption_;
+    const QCommandLineOption backupFirmwareOption_;
     const QCommandLineOption deviceOption_;
     QCommandLineParser parser_;
 };

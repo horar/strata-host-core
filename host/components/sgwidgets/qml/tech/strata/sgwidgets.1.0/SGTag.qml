@@ -9,6 +9,7 @@ Item {
 
     property alias text: tagText.text
     property alias textColor: tagText.color
+    property alias implicitTextColor: tagText.implicitColor
     property alias radius: tagBackground.radius
     property alias color: tagBackground.color
     property alias font: tagText.font

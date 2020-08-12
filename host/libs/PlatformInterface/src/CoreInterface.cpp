@@ -208,6 +208,8 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
         emit downloadPlatformSingleFileFinished(payload);
     } else if (type == "download_platform_files_finished") {
         emit downloadPlatformFilesFinished(payload);
+    } else if (type == "firmware_update") {
+        emit firmwareProgress(payload);
     } else {
         qCCritical(logCategoryCoreInterface) << "unknown message type" << type;
     }
@@ -237,23 +239,6 @@ void CoreInterface::connectToPlatform(QString class_id)
 void CoreInterface::sendCommand(QString cmd)
 {
     hcc->sendCmd(cmd.toStdString());
-}
-
-// @f disconnectPlatform
-// @b send disconnect command to HCS
-//
-void CoreInterface::disconnectPlatform(int device_id)
-{
-    QJsonObject payloadObject;
-    payloadObject.insert("device_id", device_id);
-
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("hcs::cmd", "disconnect_platform");
-    cmdMessageObject.insert("payload", payloadObject);
-
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-    hcc->sendCmd(strJson.toStdString());
 }
 
 void CoreInterface::setNotificationThreadRunning(bool running)

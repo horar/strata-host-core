@@ -9,9 +9,6 @@ import "qrc:/js/help_layout_manager.js" as Help
 Rectangle {
     id: container
 
-    anchors {
-        fill: parent
-    }
     color: "#DDA"
 
     Column {

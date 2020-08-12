@@ -6,6 +6,7 @@
 #include <QString>
 #include <QUrl>
 #include <QHash>
+#include <QPointer>
 
 namespace strata {
     class DownloadManager;
@@ -22,7 +23,7 @@ public:
     /**
      * FirmwareUpdateController constructor.
      */
-    FirmwareUpdateController();
+    FirmwareUpdateController(QObject *parent = nullptr);
 
     /**
      * FirmwareUpdateController destructor.
@@ -34,7 +35,7 @@ public:
      * @param boardController pointer to BoardController
      * @param downloadManager shared pointer to DownloadManager
      */
-    void initialize(const BoardController* boardController, const std::shared_ptr<strata::DownloadManager>& downloadManager);
+    void initialize(BoardController *boardController, strata::DownloadManager *downloadManager);
 
     /**
      * The UpdateOperation enum for UpdateProgressInfo struct.
@@ -94,8 +95,8 @@ private slots:
                               FirmwareUpdateController::UpdateStatus status, int complete, int total, QString errorString);
 
 private:
-    const BoardController* boardController_;
-    std::shared_ptr<strata::DownloadManager> downloadManager_;
+    QPointer<BoardController> boardController_;
+    QPointer<strata::DownloadManager> downloadManager_;
 
     struct UpdateData {
         UpdateData(const QByteArray& client, FirmwareUpdater* updater);

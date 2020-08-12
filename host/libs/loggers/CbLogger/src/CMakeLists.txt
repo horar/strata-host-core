@@ -5,7 +5,9 @@ find_package(Qt5 ${VERSION_QT5}
 
 add_library(${PROJECT_NAME} STATIC
     CbLoggerSetup.cpp
+    LoggingQtCategories.cpp
 )
+add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC Qt5::Core

@@ -59,20 +59,6 @@ public:
      */
     QString createPlatformsList();
 
-    /**
-     * Clears client ID for board specified by device ID
-     * @param connectionId
-     * @return true if operation was successful, otherwise false (invalid deviceId)
-     */
-    bool clearClientId(const int deviceId);
-
-    /**
-     * Clears specified client ID from all boards
-     * @param clientId
-     * @return true if operation was successful, otherwise false (clientId not attached to any boards)
-     */
-    bool clearClientIdFromAllDevices(const QByteArray& clientId);
-
 signals:
     void boardConnected(int deviceId, QString classId);
     void boardDisconnected(int deviceId);
@@ -91,7 +77,6 @@ private:
     struct Board {
         Board(const strata::device::DevicePtr& devPtr);
         strata::device::DevicePtr device;
-        QByteArray clientId;
     };
 
     strata::BoardManager boardManager_;
