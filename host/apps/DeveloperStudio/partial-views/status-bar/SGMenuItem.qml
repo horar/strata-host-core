@@ -6,32 +6,33 @@ import tech.strata.sgwidgets 1.0
 import QtQuick.Layouts 1.12
 
 Button {
-    id: button
+    id: root
     text: qsTr("Button Text")
     hoverEnabled: true
 
     property alias buttonColor: backRect.color
     property alias textColor: buttonText.color
-    property alias icn: icon
+    property alias iconSource: icon.source
 
     contentItem: RowLayout {
         Text {
             id: buttonText
-            text: button.text
+            text: root.text
             opacity: enabled ? 1.0 : 0.3
             color: "white"
             font {
                 family: Fonts.franklinGothicBook
             }
-            Layout.rightMargin: 20
+            Layout.fillWidth: true
+            elide: Text.ElideRight
         }
 
         SGIcon {
             id: icon
-            height: 20
-            width: height
+            Layout.preferredHeight: 20
+            Layout.preferredWidth: Layout.preferredHeight
             iconColor : "white"
-            visible: false
+            visible: source !== ""
         }
     }
 
@@ -41,7 +42,7 @@ Button {
         implicitHeight: 40
         opacity: enabled ? 1 : 0.3
         radius: 2
-        color: !button.hovered ? "#00b842" : button.pressed ? Qt.darker("#007a1f", 1.25) : "#007a1f"
+        color: !root.hovered ? "#00b842" : root.pressed ? Qt.darker("#007a1f", 1.25) : "#007a1f"
     }
 
     MouseArea {
