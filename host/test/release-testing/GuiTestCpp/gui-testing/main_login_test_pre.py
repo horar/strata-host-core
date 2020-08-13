@@ -17,7 +17,8 @@ if __name__ == "__main__":
     macro.Login(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD)
 
     #Wait untill user is logged in
-    time.sleep(10)
+    while(not ui.OnPlatformViewScreen()):
+        pass
 
 
 

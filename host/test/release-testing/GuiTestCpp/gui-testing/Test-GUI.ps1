@@ -47,42 +47,42 @@ function Test-Gui() {
 
     Stop-Process -Name "Strata Developer Studio" -Force
     Stop-Process -Name "hcs" -Force
-#
-#    Write-Host "Disabling network for Strata..."
-#
-#    #Run tests without network
-#    #BLock Strata from making outbound requests
-#   (New-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network" -Direction Outbound -Program $SDSExecFile -Action Block) | Out-Null
-#
-#    Start-SDSAndWait
-#
-#    Write-Host "Testing Strata with no network connection..."
-#    Start-Process $PythonExec -ArgumentList $PythonGUIMainNoNetwork, $Username, $Password, $HCSTCPEndpoint -Wait
-#
-#    Stop-Process -Name "Strata Developer Studio" -Force
-#    Stop-Process -Name "hcs" -Force
-#
-#    Write-Host "Enabling network for Strata..."
-#    Remove-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network"
-#
-#    #Test logging in, closing strata, and reopening it
-#    #Login to strata
-#    Write-Host "Testing logging in, closing Strata, reopening Strata..."
-#
-#    Start-SDSAndWait
-#    Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPre, $Username, $Password, $HCSTCPEndpoint -Wait
-#
-#    Stop-Process -Name "Strata Developer Studio" -Force
-#    Stop-Process -Name "hcs" -Force
-#
-#    #Test for Strata automatically going to the platform view
-#    Start-SDSAndWait
-#
-#    Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPost, $Username, $Password, $HCSTCPEndpoint -Wait
-#
-#    Stop-Process -Name "Strata Developer Studio" -Force
-#    Stop-Process -Name "hcs" -Force
-#
+
+    Write-Host "Disabling network for Strata..."
+
+    #Run tests without network
+    #BLock Strata from making outbound requests
+   (New-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network" -Direction Outbound -Program $SDSExecFile -Action Block) | Out-Null
+
+    Start-SDSAndWait
+
+    Write-Host "Testing Strata with no network connection..."
+    Start-Process $PythonExec -ArgumentList $PythonGUIMainNoNetwork, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
+
+    Stop-Process -Name "Strata Developer Studio" -Force
+    Stop-Process -Name "hcs" -Force
+
+    Write-Host "Enabling network for Strata..."
+    Remove-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network"
+
+    #Test logging in, closing strata, and reopening it
+    #Login to strata
+    Write-Host "Testing logging in, closing Strata, reopening Strata..."
+
+    Start-SDSAndWait
+    Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPre, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
+
+    Stop-Process -Name "Strata Developer Studio" -Force
+    Stop-Process -Name "hcs" -Force
+
+    #Test for Strata automatically going to the platform view
+    Start-SDSAndWait
+
+    Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPost, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
+
+    Stop-Process -Name "Strata Developer Studio" -Force
+    Stop-Process -Name "hcs" -Force
+
     $result = (Get-Content "$TestRoot\GuiTestCpp\gui-testing\results.txt") -split ','
     return $result
 
