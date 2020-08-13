@@ -88,7 +88,7 @@ target_include_directories(${PROJECT_NAME}Lib
 )
 
 # deploy desired config file into side-by-side to compiled binary
-set(HCS_CONFIG_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/files/conf)
+set(HCS_CONFIG_LOCATION ${CMAKE_SOURCE_DIR}/assets/config/hcs)
 
 if(NOT APPS_CORESW_HCS_CONFIG)
     set(APPS_CORESW_HCS_CONFIG hcs_qa.config CACHE STRING "Desired HCS configuration file." FORCE)
