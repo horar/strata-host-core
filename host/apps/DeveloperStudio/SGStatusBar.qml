@@ -3,7 +3,6 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Window 2.3 // for debug window, can be cut out for release
 import QtGraphicalEffects 1.0
-import QtQuick.Layouts 1.12
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -196,9 +195,12 @@ Rectangle {
 
             SGIcon {
                 id: alertIcon
-                visible: alertIconContainer.visible
                 height: 15
                 width: height
+                anchors {
+                    centerIn: parent
+                }
+
                 source: "qrc:/sgimages/exclamation-circle.svg"
                 iconColor : "white"
             }
