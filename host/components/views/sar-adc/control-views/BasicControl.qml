@@ -120,6 +120,8 @@ Rectangle {
         var hdata_length = hdata.length // length of histogram data
         var maxXvaule // variable to hold the max x value data for time domain graph
         //frequency plot
+        //DEBUG
+        console.log("start Plotting........................................")
         var curve2 = graph2.createCurve("graph2")
         curve2.color = "White"
         var dataArray1 = []
@@ -159,7 +161,7 @@ Rectangle {
         graphPlottedCount++;
         
         //DEBUG
-        // console.log("Done Plotting........................................")
+        console.log("Done Plotting........................................")
         var sndr =  processed_data[3]
         var sfdr =  processed_data[4]
         var snr =   processed_data[5]
@@ -1112,7 +1114,7 @@ Rectangle {
                                 height: parent.height/1.5
                                 text: qsTr("Save \n Data")
                                 opacity: 0.5
-                                enabled: true
+                                enabled: false
                                 anchors.centerIn: parent
                                 onClicked: {
                                     console.log(JSON.stringify(dataToSave))
