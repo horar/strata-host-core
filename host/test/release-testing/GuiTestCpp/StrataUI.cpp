@@ -8,11 +8,13 @@
 #define CHECK_OK(statement)                    \
     HRESULT COMBINE(hr, __LINE__) = statement; \
     if (FAILED(COMBINE(hr, __LINE__))) {       \
+        printf("%s: failed with %x\n", __FUNCTION__, COMBINE(hr, __LINE__));                                \
         return COMBINE(hr, __LINE__);          \
     }
 #define CHECK_OK_OUTPUT(statement, setNull)    \
     HRESULT COMBINE(hr, __LINE__) = statement; \
     if (FAILED(COMBINE(hr, __LINE__))) {       \
+        printf("%s: failed with %x\n", __FUNCTION__, COMBINE(hr, __LINE__));                                \
         *setNull = nullptr;                    \
         return COMBINE(hr, __LINE__);          \
     }
@@ -20,9 +22,26 @@
 #define CHECK_OK_BOOL(statement)               \
     HRESULT COMBINE(hr, __LINE__) = statement; \
     if (FAILED(COMBINE(hr, __LINE__))) {       \
+        printf("%s: failed with %x\n", __FUNCTION__, COMBINE(hr, __LINE__));                                \
         return false;                          \
     }
-const LPCWSTR WINDOW_NAME = L"ON Semiconductor: Strata Developer Studio";
+#define CHECK_OK_NORETURN(statement)           \
+    HRESULT COMBINE(hr, __LINE__) = statement; \
+    if (FAILED(COMBINE(hr, __LINE__))) {       \
+        printf("%s: failed with %x\n", __FUNCTION__, COMBINE(hr, __LINE__));                                \
+    }
+#define CHECK_NULL(statement) \
+    if (statement == nullptr) { \
+        printf("%s: is null\n", #statement); \
+        throw E_POINTER; \
+    }
+
+#define CHECK_NULL_BOOL(statement)                \
+    if (statement == nullptr) {              \
+        printf("%s: is null\n", #statement); \
+        throw false;                    \
+    }
+
 std::condition_variable cv;
 std::mutex m;
 bool elementAdded = false;
@@ -88,49 +107,52 @@ public:
 /// This class was designed such that a user does not have to directly use UIA to manipulate the UI
 /// (not that there can't be public functions that do so).
 ///
-/// Expose string inputs as LPCWSTR
+/// Expose string inputs as wstring. wstring allows for easy interfacing with Python.
 /// </summary>
 /// <summary>
 /// Init StrataUI.
 /// </summary>
 /// <param name="initWindow">If true, try to find the Strata window. The window should be found
 /// before attempting to do any other UI action.</param> <returns></returns>
-StrataUI::StrataUI(bool initWindow)
+StrataUI::StrataUI(IUIAutomationElement* window, IUIAutomation* automation)
 {
-    this->initializeUIAutomation(&automation);
-    if (initWindow) {
-        FindStrataWindow();
-    }
+    this->window = window;
+    this->automation = automation;
 }
-StrataUI::StrataUI(HWND windowHandle)
-{
-    this->initializeUIAutomation(&automation);
-    automation->ElementFromHandle(windowHandle, &window);
-}
+//StrataUI::StrataUI(HWND windowHandle)
+//{
+//    CHECK_OK_NORETURN(this->initializeUIAutomation(&automation));
+//    automation->ElementFromHandle(windowHandle, &window);
+//}
 
 /// <summary>
 /// Find the Strata window. NOTE: Window should be found before doing other UI tasks.
 /// </summary>
 /// <returns></returns>
-HRESULT StrataUI::FindStrataWindow()
-{
-    IUIAutomationElement* root;
-    CHECK_OK(automation->GetRootElement(&root));
-
-    IUIAutomationCondition* condition =
-        createPropertyCondition(UIA_NamePropertyId, _variant_t(WINDOW_NAME));
-
-    return root->FindFirst(TreeScope_Children, condition, &window);
-}
+//HRESULT StrataUI::FindStrataWindow()
+//{
+//    CHECK_NULL(automation)
+//
+//    IUIAutomationElement* root;
+//    CHECK_OK(automation->GetRootElement(&root));
+//
+//    CHECK_NULL(root);
+//
+//    IUIAutomationCondition* condition =
+//        createPropertyCondition(UIA_NamePropertyId, _variant_t(WINDOW_NAME.c_str()));
+//
+//    return root->FindFirst(TreeScope_Children, condition, &window);
+//}
 /// <summary>
 /// Find Strata window from process handle
 /// </summary>
 /// <param name="handle"></param>
 /// <returns></returns>
-HRESULT StrataUI::FindStrataWindow(HANDLE handle)
-{
-    return automation->ElementFromHandle(handle, &window);
-}
+//HRESULT StrataUI::FindStrataWindow(HANDLE handle)
+//{
+//    CHECK_NULL(automation);
+//    return automation->ElementFromHandle(handle, &window);
+//}
 
 /// <summary>
 ///
@@ -138,10 +160,8 @@ HRESULT StrataUI::FindStrataWindow(HANDLE handle)
 /// <returns>true if on the login screen, false otherwise</returns>
 bool StrataUI::OnLoginScreen()
 {
-    IUIAutomationElement* pane;
-    getPane(&pane);
 
-    return buttonEditHeuristic(pane, L"Login", 2, 2);
+    return buttonEditHeuristic(window, L"Login", 2, 2);
 }
 /// <summary>
 ///
@@ -149,10 +169,8 @@ bool StrataUI::OnLoginScreen()
 /// <returns>true if on the login screen, false otherwise</returns>
 bool StrataUI::OnRegisterScreen()
 {
-    IUIAutomationElement* pane;
-    getPane(&pane);
 
-    return buttonEditHeuristic(pane, L"Register", 2, 7);
+    return buttonEditHeuristic(window, L"Register", 2, 7);
 }
 /// <summary>
 ///
@@ -169,11 +187,12 @@ bool StrataUI::OnPlatformViewScreen()
 /// </summary>
 /// <param name="name"></param>
 /// <returns></returns>
-HRESULT StrataUI::SetToTab(LPCWSTR name)
+HRESULT StrataUI::SetToTab(std::wstring name)
 {
     IUIAutomationElement* tab;
 
     HRESULT result = FindTab(name, &tab);
+    CHECK_NULL(tab);
     if (result == S_OK) {
         PressButton(tab);
     }
@@ -186,11 +205,8 @@ HRESULT StrataUI::SetToTab(LPCWSTR name)
 /// <param name="name"></param>
 /// <param name="tab"></param>
 /// <returns></returns>
-HRESULT StrataUI::FindTab(LPCWSTR name, IUIAutomationElement** tab)
+HRESULT StrataUI::FindTab(std::wstring name, IUIAutomationElement** tab)
 {
-    IUIAutomationElement* pane;
-    getPane(&pane);
-
     IUIAutomationCondition* checkboxOrButton;
     CHECK_OK_OUTPUT(
         automation->CreateOrCondition(
@@ -202,11 +218,11 @@ HRESULT StrataUI::FindTab(LPCWSTR name, IUIAutomationElement** tab)
 
     IUIAutomationCondition* controlTypeAndName;
     CHECK_OK_OUTPUT(automation->CreateAndCondition(
-                        createPropertyCondition(UIA_NamePropertyId, _variant_t(name)),
+                        createPropertyCondition(UIA_NamePropertyId, _variant_t(name.c_str())),
                         checkboxOrButton, &controlTypeAndName),
                     tab);
 
-    return pane->FindFirst(TreeScope_Descendants, controlTypeAndName, tab);
+    return window->FindFirst(TreeScope_Descendants, controlTypeAndName, tab);
 }
 
 /// <summary>
@@ -217,27 +233,21 @@ HRESULT StrataUI::FindTab(LPCWSTR name, IUIAutomationElement** tab)
 /// <param name="useWindowContext">Look for the edit from the window level instead of the pane
 /// level</param> <param name="findByName">Treat editIdentifier as the name of the edit instead
 /// of the default text.</param> <returns></returns>
-HRESULT StrataUI::SetEditText(const LPCWSTR editIdentifier, const LPCWSTR text,
-                              bool useWindowContext, bool findByName)
-{
-    IUIAutomationElement* context;
-    if (useWindowContext) {
-        context = window;
-    } else {
-        getPane(&context);
-    }
+HRESULT StrataUI::SetEditText(std::wstring editIdentifier, std::wstring text,
+                              bool findByName)
+{   
 
     IUIAutomationElement* edit;
     if (findByName) {
-        CHECK_OK(findEditByName(context, editIdentifier, &edit));
+        CHECK_OK(findEditByName(window, editIdentifier, &edit));
     } else {
-        CHECK_OK(findEdit(context, editIdentifier, &edit));
+        CHECK_OK(findEdit(window, editIdentifier, &edit));
     }
 
     IUIAutomationValuePattern* valuePattern;
     CHECK_OK(edit->GetCurrentPatternAs(UIA_ValuePatternId, __uuidof(IUIAutomationValuePattern),
                                        ((void**)&valuePattern)));
-    return valuePattern->SetValue(_bstr_t(text));
+    return valuePattern->SetValue(_bstr_t(text.c_str()));
 }
 
 /// <summary>
@@ -246,11 +256,9 @@ HRESULT StrataUI::SetEditText(const LPCWSTR editIdentifier, const LPCWSTR text,
 /// <returns></returns>
 HRESULT StrataUI::PressConfirmCheckbox()
 {
-    IUIAutomationElement* pane;
-    CHECK_OK(getPane(&pane));
 
     IUIAutomationElement* checkbox;
-    CHECK_OK(findByNameAndType(pane, L"", UIA_CheckBoxControlTypeId, &checkbox));
+    CHECK_OK(findByNameAndType(window, L"", UIA_CheckBoxControlTypeId, &checkbox));
 
     return PressButton(checkbox);
 }
@@ -272,8 +280,6 @@ HRESULT StrataUI::PressLoginButton()
 /// <returns></returns>
 HRESULT StrataUI::GetLoginButton(IUIAutomationElement** login)
 {
-    IUIAutomationElement* pane;
-    getPane(&pane);
 
     // Login tab button and submit button are differentiable by a difference in their class name
     // (login tab has "QQuickButton" while login submit has "QQuickButton_<numbers>" Not sure how
@@ -294,7 +300,7 @@ HRESULT StrataUI::GetLoginButton(IUIAutomationElement** login)
     IUIAutomationCondition* loginButtonCondition;
     CHECK_OK(automation->CreateAndConditionFromNativeArray(conditions, 3, &loginButtonCondition));
 
-    return pane->FindFirst(TreeScope_Descendants, loginButtonCondition, login);
+    return window->FindFirst(TreeScope_Descendants, loginButtonCondition, login);
 }
 
 /// <summary>
@@ -316,9 +322,8 @@ bool StrataUI::LoginButtonEnabled()
 /// <returns></returns>
 HRESULT StrataUI::GetRegisterButton(IUIAutomationElement** registerSubmitButton)
 {
-    IUIAutomationElement* pane;
-    CHECK_OK(getPane(&pane));
-    return buttonLowestHeuristic(pane, L"Register", registerSubmitButton);
+
+    return buttonLowestHeuristic(window, L"Register", registerSubmitButton);
 }
 
 /// <summary>
@@ -329,6 +334,8 @@ HRESULT StrataUI::PressRegisterButton()
 {
     IUIAutomationElement* registerButton;
     CHECK_OK(GetRegisterButton(&registerButton));
+
+    CHECK_NULL(registerButton);
 
     return PressButton(registerButton);
 }
@@ -351,6 +358,7 @@ bool StrataUI::RegsterButtonEnabled()
 /// <returns></returns>
 HRESULT StrataUI::PressButton(IUIAutomationElement* button)
 {
+    CHECK_NULL(button);
     IUIAutomationInvokePattern* invokePattern;
     CHECK_OK(button->GetCurrentPatternAs(UIA_InvokePatternId, __uuidof(IUIAutomationInvokePattern),
                                          (void**)&invokePattern));
@@ -361,19 +369,24 @@ HRESULT StrataUI::PressButton(IUIAutomationElement* button)
 /// </summary>
 /// <param name="buttonName"></param>
 /// <returns></returns>
-HRESULT StrataUI::PressButton(const LPCWSTR buttonName, bool useWindowContext)
-{
-    IUIAutomationElement* context;
-    if (useWindowContext) {
-        context = window;
-    } else {
-        CHECK_OK(getPane(&context));
-    }
-
+HRESULT StrataUI::PressButton(std::wstring buttonName)
+{    
     IUIAutomationElement* button;
-    CHECK_OK(findByNameAndType(context, buttonName, UIA_ButtonControlTypeId, &button));
+    CHECK_OK(findByNameAndType(window, buttonName, UIA_ButtonControlTypeId, &button));
 
     return PressButton(button);
+}
+
+int StrataUI::ConnectedPlatforms()
+{
+    CHECK_NULL(window);
+    IUIAutomationElementArray* elements;
+    findAllByNameAndType(window, L"Open Platform Controls", UIA_ButtonControlTypeId, &elements);
+
+    int len;
+    elements->get_Length(&len);
+
+    return len;
 }
 
 /// <summary>
@@ -383,6 +396,8 @@ HRESULT StrataUI::PressButton(const LPCWSTR buttonName, bool useWindowContext)
 /// <returns></returns>
 bool StrataUI::ButtonEnabled(IUIAutomationElement* button)
 {
+    CHECK_NULL_BOOL(button);
+
     _variant_t enabled;
     button->GetCurrentPropertyValue(UIA_IsEnabledPropertyId, &enabled);
 
@@ -395,19 +410,11 @@ bool StrataUI::ButtonEnabled(IUIAutomationElement* button)
 /// <param name="buttonName"></param>
 /// <param name="useWindowContext"></param>
 /// <returns></returns>
-bool StrataUI::ButtonEnabled(const LPCWSTR buttonName, bool useWindowContext)
+bool StrataUI::ButtonEnabled(std::wstring buttonName)
 {
-    IUIAutomationElement* context;
-
-    if (useWindowContext) {
-        context = window;
-
-    } else {
-        getPane(&context);
-    }
 
     IUIAutomationElement* button;
-    findByNameAndType(context, buttonName, UIA_ButtonControlTypeId, &button);
+    findByNameAndType(window, buttonName, UIA_ButtonControlTypeId, &button);
 
     return ButtonEnabled(button);
 }
@@ -427,14 +434,11 @@ HRESULT StrataUI::GetUserIcon(IUIAutomationElement** userIcon)
 /// </summary>
 /// <param name="name"></param>
 /// <returns></returns>
-bool StrataUI::AlertExists(const LPCWSTR name)
+bool StrataUI::AlertExists(std::wstring name)
 {
-    IUIAutomationElement* pane;
-    getPane(&pane);
-
     IUIAutomationElement* element;
 
-    return findByNameAndType(pane, name, UIA_CustomControlTypeId, &element) == S_OK &&
+    return findByNameAndType(window, name, UIA_CustomControlTypeId, &element) == S_OK &&
            element != nullptr;
 }
 
@@ -445,20 +449,15 @@ bool StrataUI::AlertExists(const LPCWSTR name)
 /// <param name="alertText"></param>
 /// <param name="useWindowContext">Look from the strata window instead of the inner
 /// plane</param> <returns></returns>
-bool StrataUI::AlertExists(const LPCWSTR name, const LPCWSTR alertText,
-                           bool useWindowContext)
+bool StrataUI::AlertExists(std::wstring name, std::wstring alertText)
 {
     IUIAutomationElement* context;
-    if (useWindowContext) {
-        context = window;
-    } else {
-        getPane(&context);
-    }
-
+    context = window;
+   
     IUIAutomationCondition* conditions[] = {
-        createPropertyCondition(UIA_NamePropertyId, _variant_t(name)),
+        createPropertyCondition(UIA_NamePropertyId, _variant_t(name.c_str())),
         createPropertyCondition(UIA_ControlTypePropertyId, _variant_t(UIA_CustomControlTypeId)),
-        createPropertyCondition(UIA_FullDescriptionPropertyId, _variant_t(alertText))};
+        createPropertyCondition(UIA_FullDescriptionPropertyId, _variant_t(alertText.c_str()))};
 
     IUIAutomationCondition* existsCondition;
     automation->CreateAndConditionFromNativeArray(conditions, 3, &existsCondition);
@@ -527,6 +526,7 @@ void StrataUI::AwaitElement()
 /// <returns></returns>
 HRESULT StrataUI::findInnerWindow(IUIAutomationElement** innerWindow)
 {
+    CHECK_NULL(window);
     return findByNameAndType(window, L"", UIA_WindowControlTypeId, innerWindow);
 }
 
@@ -538,13 +538,15 @@ HRESULT StrataUI::findInnerWindow(IUIAutomationElement** innerWindow)
 /// <param name="buttonName"></param>
 /// <param name="lowestButton"></param>
 /// <returns></returns>
-HRESULT StrataUI::buttonLowestHeuristic(IUIAutomationElement* pane, const LPCWSTR buttonName,
+HRESULT StrataUI::buttonLowestHeuristic(IUIAutomationElement* pane, std::wstring buttonName,
                                         IUIAutomationElement** lowestButton)
 {
+    CHECK_NULL(automation);
+    
     IUIAutomationCondition* nameAndType;
     CHECK_OK_OUTPUT(
         automation->CreateAndCondition(
-            createPropertyCondition(UIA_NamePropertyId, _variant_t(buttonName)),
+            createPropertyCondition(UIA_NamePropertyId, _variant_t(buttonName.c_str())),
             createPropertyCondition(UIA_ControlTypePropertyId, _variant_t(UIA_ButtonControlTypeId)),
             &nameAndType),
         lowestButton);
@@ -594,12 +596,12 @@ HRESULT StrataUI::buttonLowestHeuristic(IUIAutomationElement* pane, const LPCWST
 /// <param name="numButtons"></param>
 /// <param name="numEdits"></param>
 /// <returns></returns>
-bool StrataUI::buttonEditHeuristic(IUIAutomationElement* pane, const LPCWSTR buttonName,
+bool StrataUI::buttonEditHeuristic(IUIAutomationElement* pane, std::wstring buttonName,
                                    int numButtons, int numEdits)
 {
     IUIAutomationElementArray* buttons;
     pane->FindAll(TreeScope_Descendants,
-                  createPropertyCondition(UIA_NamePropertyId, _variant_t(buttonName)), &buttons);
+                  createPropertyCondition(UIA_NamePropertyId, _variant_t(buttonName.c_str())), &buttons);
 
     IUIAutomationElementArray* edits;
     pane->FindAll(
@@ -623,9 +625,10 @@ bool StrataUI::buttonEditHeuristic(IUIAutomationElement* pane, const LPCWSTR but
 /// <param name="name"></param>
 /// <param name="element"></param>
 /// <returns></returns>
-HRESULT StrataUI::findEditByName(IUIAutomationElement* pane, const LPCWSTR name,
+HRESULT StrataUI::findEditByName(IUIAutomationElement* pane, std::wstring name,
                                  IUIAutomationElement** element)
 {
+    CHECK_NULL(automation);
     return findByNameAndType(pane, name, UIA_EditControlTypeId, element);
 }
 
@@ -636,13 +639,14 @@ HRESULT StrataUI::findEditByName(IUIAutomationElement* pane, const LPCWSTR name,
 /// <param name="fullDescription"></param>
 /// <param name="element"></param>
 /// <returns></returns>
-HRESULT StrataUI::findEdit(IUIAutomationElement* pane, const LPCWSTR fullDescription,
+HRESULT StrataUI::findEdit(IUIAutomationElement* pane, std::wstring fullDescription,
                            IUIAutomationElement** element)
 {
     IUIAutomationAndCondition* andCondition;
+    CHECK_NULL(automation);
 
     automation->CreateAndCondition(
-        createPropertyCondition(UIA_FullDescriptionPropertyId, _variant_t(fullDescription)),
+        createPropertyCondition(UIA_FullDescriptionPropertyId, _variant_t(fullDescription.c_str())),
         createPropertyCondition(UIA_ControlTypePropertyId, _variant_t(UIA_EditControlTypeId)),
         (IUIAutomationCondition**)&andCondition);
 
@@ -657,16 +661,32 @@ HRESULT StrataUI::findEdit(IUIAutomationElement* pane, const LPCWSTR fullDescrip
 /// <param name="typeId"></param>
 /// <param name="element"></param>
 /// <returns></returns>
-HRESULT StrataUI::findByNameAndType(IUIAutomationElement* pane, const LPCWSTR name,
+HRESULT StrataUI::findByNameAndType(IUIAutomationElement* pane, std::wstring name,
                                     CONTROLTYPEID typeId, IUIAutomationElement** element)
 {
+    CHECK_NULL(automation);
+
     IUIAutomationAndCondition* andCondition;
     automation->CreateAndCondition(
-        createPropertyCondition(UIA_NamePropertyId, _variant_t(name)),
+        createPropertyCondition(UIA_NamePropertyId, _variant_t(name.c_str())),
         createPropertyCondition(UIA_ControlTypePropertyId, _variant_t(typeId)),
         (IUIAutomationCondition**)&andCondition);
     return pane->FindFirst(TreeScope_Descendants, andCondition, element);
 }
+
+HRESULT StrataUI::findAllByNameAndType(IUIAutomationElement* pane, std::wstring name,
+                                    CONTROLTYPEID typeId, IUIAutomationElementArray** elements)
+{
+    CHECK_NULL(automation);
+
+    IUIAutomationAndCondition* andCondition;
+    automation->CreateAndCondition(
+        createPropertyCondition(UIA_NamePropertyId, _variant_t(name.c_str())),
+        createPropertyCondition(UIA_ControlTypePropertyId, _variant_t(typeId)),
+        (IUIAutomationCondition**)&andCondition);
+    return pane->FindAll(TreeScope_Descendants, andCondition, elements);
+}
+
 
 /// <summary>
 /// Shorter initialization of a property condition.
@@ -682,21 +702,10 @@ IUIAutomationCondition* StrataUI::createPropertyCondition(PROPERTYID property, V
     return (IUIAutomationCondition*)condition;
 }
 
-/// <summary>
-/// Get the pane element of the Strata window.
-/// </summary>
-/// <param name="element"></param>
-/// <returns></returns>
-HRESULT StrataUI::getPane(IUIAutomationElement** element)
-{
-    return window->FindFirst(
-        TreeScope_Children,
-        createPropertyCondition(UIA_ControlTypePropertyId, _variant_t(UIA_PaneControlTypeId)),
-        element);
-}
 
-HRESULT StrataUI::initializeUIAutomation(IUIAutomation** ppAutomation)
-{
-    return CoCreateInstance(CLSID_CUIAutomation, NULL, CLSCTX_INPROC_SERVER, IID_IUIAutomation,
-                            reinterpret_cast<void**>(ppAutomation));
-}
+
+//HRESULT StrataUI::initializeUIAutomation(IUIAutomation** ppAutomation)
+//{
+//    return CoCreateInstance(CLSID_CUIAutomation, NULL, CLSCTX_INPROC_SERVER, IID_IUIAutomation,
+//                            reinterpret_cast<void**>(ppAutomation));
+//}

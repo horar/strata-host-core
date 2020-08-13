@@ -7,6 +7,7 @@
 
 
 
+
 class StrataUI
 {
 public:
@@ -15,21 +16,7 @@ public:
     /// </summary>
     /// <param name="initWindow">If true, try to find the Strata window. The window should be found
     /// before attempting to do any other UI action.</param> <returns></returns>
-    StrataUI(bool initWindow);
-    StrataUI(HWND windowHandle);
-
-    /// <summary>
-    /// Find the Strata window. NOTE: Window should be found before doing other UI tasks.
-    /// </summary>
-    /// <returns></returns>
-    HRESULT FindStrataWindow();
-    
-    /// <summary>
-    /// Find Strata window from process handle
-    /// </summary>
-    /// <param name="handle"></param>
-    /// <returns></returns>
-    HRESULT FindStrataWindow(HANDLE handle);
+    StrataUI(IUIAutomationElement* window, IUIAutomation* automation);
 
     /// <summary>
     ///
@@ -53,7 +40,7 @@ public:
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    HRESULT SetToTab(LPCWSTR name);
+    HRESULT SetToTab(std::wstring name);
 
     /// <summary>
     /// Determine if a tab with the given name exists
@@ -61,7 +48,7 @@ public:
     /// <param name="name"></param>
     /// <param name="tab"></param>
     /// <returns></returns>
-    HRESULT FindTab(LPCWSTR name, IUIAutomationElement** tab);
+    HRESULT FindTab(std::wstring name, IUIAutomationElement** tab);
 
     /// <summary>
     /// Set the text of an edit element
@@ -71,8 +58,8 @@ public:
     /// <param name="useWindowContext">Look for the edit from the window level instead of the pane
     /// level</param> <param name="findByName">Treat editIdentifier as the name of the edit instead
     /// of the default text.</param> <returns></returns>
-    HRESULT SetEditText(const LPCWSTR editIdentifier, const LPCWSTR text,
-                        bool useWindowContext = false, bool findByName = false);
+    HRESULT SetEditText(std::wstring editIdentifier, std::wstring text,
+                        bool findByName = false);
 
     /// <summary>
     /// Click the confirm checkbox on the Register page.
@@ -129,7 +116,13 @@ public:
     /// </summary>
     /// <param name="buttonName"></param>
     /// <returns></returns>
-    HRESULT PressButton(const LPCWSTR buttonName, bool useWindowContext = false);
+    HRESULT PressButton(std::wstring buttonName);
+
+    /// <summary>
+    /// Determine how many platforms are connected in the platform view.
+    /// </summary>
+    /// <returns></returns>
+    int ConnectedPlatforms();
 
     /// <summary>
     /// Determine if the given button is clickable.
@@ -144,7 +137,7 @@ public:
     /// <param name="buttonName"></param>
     /// <param name="useWindowContext"></param>
     /// <returns></returns>
-    bool ButtonEnabled(const LPCWSTR buttonName, bool useWindowContext = false);
+    bool ButtonEnabled(std::wstring buttonName);
 
     /// <summary>
     /// Find the user icon button in the platform view.
@@ -158,7 +151,7 @@ public:
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    bool AlertExists(const LPCWSTR name);
+    bool AlertExists(std::wstring name);
 
     /// <summary>
     /// Determine if the alert with the given name and text is visible.
@@ -167,7 +160,7 @@ public:
     /// <param name="alertText"></param>
     /// <param name="useWindowContext">Look from the strata window instead of the inner
     /// plane</param> <returns></returns>
-    bool AlertExists(const LPCWSTR name, const LPCWSTR alertText, bool useWindowContext = false);
+    bool AlertExists(std::wstring name, std::wstring alertText);
 
     /// <summary>
     /// Determine if the forgot password dialog is open on the login screen.
@@ -208,7 +201,7 @@ private:
     /// <param name="buttonName"></param>
     /// <param name="lowestButton"></param>
     /// <returns></returns>
-    HRESULT buttonLowestHeuristic(IUIAutomationElement* pane, const LPCWSTR buttonName,
+    HRESULT buttonLowestHeuristic(IUIAutomationElement* pane, std::wstring buttonName,
                                   IUIAutomationElement** lowestButton);
     /// <summary>
     /// Determine if the given pane has a specific number of buttons of the given buttonName and
@@ -219,7 +212,7 @@ private:
     /// <param name="numButtons"></param>
     /// <param name="numEdits"></param>
     /// <returns></returns>
-    bool buttonEditHeuristic(IUIAutomationElement* pane, const LPCWSTR buttonName, int numButtons,
+    bool buttonEditHeuristic(IUIAutomationElement* pane, std::wstring buttonName, int numButtons,
                              int numEdits);
 
     /// <summary>
@@ -229,7 +222,7 @@ private:
     /// <param name="name"></param>
     /// <param name="element"></param>
     /// <returns></returns>
-    HRESULT findEditByName(IUIAutomationElement* pane, const LPCWSTR name,
+    HRESULT findEditByName(IUIAutomationElement* pane, std::wstring name,
                            IUIAutomationElement** element);
 
     /// <summary>
@@ -239,7 +232,7 @@ private:
     /// <param name="fullDescription"></param>
     /// <param name="element"></param>
     /// <returns></returns>
-    HRESULT findEdit(IUIAutomationElement* pane, const LPCWSTR fullDescription,
+    HRESULT findEdit(IUIAutomationElement* pane, std::wstring fullDescription,
                      IUIAutomationElement** element);
 
     /// <summary>
@@ -250,8 +243,11 @@ private:
     /// <param name="typeId"></param>
     /// <param name="element"></param>
     /// <returns></returns>
-    HRESULT findByNameAndType(IUIAutomationElement* pane, const LPCWSTR name, CONTROLTYPEID typeId,
+    HRESULT findByNameAndType(IUIAutomationElement* pane, std::wstring name, CONTROLTYPEID typeId,
                               IUIAutomationElement** element);
+
+    HRESULT findAllByNameAndType(IUIAutomationElement* pane, std::wstring name, CONTROLTYPEID typeId,
+                              IUIAutomationElementArray** elements);
 
     /// <summary>
     /// Shorter initialization of a property condition.
@@ -260,12 +256,4 @@ private:
     /// <param name="value"></param>
     /// <returns></returns>
     IUIAutomationCondition* createPropertyCondition(PROPERTYID property, VARIANT value);
-    /// <summary>
-    /// Get the pane element of the Strata window.
-    /// </summary>
-    /// <param name="element"></param>
-    /// <returns></returns>
-    HRESULT getPane(IUIAutomationElement** element);
-
-    HRESULT initializeUIAutomation(IUIAutomation** ppAutomation);
 };

@@ -185,10 +185,6 @@ public:
     //         //ASSERT_S_OK(ui.PressRegisterButton());
 
     //     }
-    TEST_METHOD(LoginPlatformConnectedTest)
-    {
-    
-    }
     /// <summary>
     /// Test logging in with invalid credentials
     /// </summary>
@@ -252,28 +248,28 @@ public:
         ASSERT_S_OK(ui.PressButton(L"Forgot Password"));
         Assert::IsTrue(ui.OnForgotPassword());
 
-        ASSERT_S_OK(ui.SetEditText(L"example@onsemi.com", L"bad@bad.com", true));
+        ASSERT_S_OK(ui.SetEditText(L"example@onsemi.com", L"bad@bad.com"));
 
-        Assert::IsTrue(ui.ButtonEnabled(L"Submit", true));
-        ASSERT_S_OK(ui.PressButton(L"Submit", true));
+        Assert::IsTrue(ui.ButtonEnabled(L"Submit"));
+        ASSERT_S_OK(ui.PressButton(L"Submit"));
 
         Sleep(500);
 
         Assert::IsTrue(
-            ui.AlertExists(L"ResetPasswordAlert", L"No user found with email bad@bad.com", true));
+            ui.AlertExists(L"ResetPasswordAlert", L"No user found with email bad@bad.com"));
 
         // Test existing username
-        ASSERT_S_OK(ui.SetEditText(L"example@onsemi.com", L"test@test.com", true));
-        Assert::IsTrue(ui.ButtonEnabled(L"Submit", true));
-        ASSERT_S_OK(ui.PressButton(L"Submit", true));
+        ASSERT_S_OK(ui.SetEditText(L"example@onsemi.com", L"test@test.com"));
+        Assert::IsTrue(ui.ButtonEnabled(L"Submit"));
+        ASSERT_S_OK(ui.PressButton(L"Submit"));
 
         Sleep(700);
 
         Assert::IsTrue(ui.AlertExists(
             L"ResetPasswordAlert",
-            L"Email with password reset instructions is being sent to test@test.com", true));
+            L"Email with password reset instructions is being sent to test@test.com"));
 
-        ASSERT_S_OK(ui.PressButton(L"ClosePopup", true));
+        ASSERT_S_OK(ui.PressButton(L"ClosePopup"));
     }
 
     /// <summary>
@@ -299,23 +295,23 @@ public:
         Sleep(700);
         Assert::IsTrue(ui.OnPlatformViewScreen());
 
-        ASSERT_S_OK(ui.PressButton(L"User Icon", true));
-        ASSERT_S_OK(ui.PressButton(L"Feedback", true));
+        ASSERT_S_OK(ui.PressButton(L"User Icon"));
+        ASSERT_S_OK(ui.PressButton(L"Feedback"));
         Assert::IsTrue(ui.OnFeedback());
 
-        ASSERT_S_OK(ui.SetEditText(L"FeedbackEdit", L"this is a cool product", true, true));
+        ASSERT_S_OK(ui.SetEditText(L"FeedbackEdit", L"this is a cool product", true));
 
-        Assert::IsTrue(ui.ButtonEnabled(L"Submit", true));
-        ASSERT_S_OK(ui.PressButton(L"Submit", true));
+        Assert::IsTrue(ui.ButtonEnabled(L"Submit"));
+        ASSERT_S_OK(ui.PressButton(L"Submit"));
 
         Sleep(500);
 
         Assert::IsTrue(ui.OnFeedbackSuccess());
-        ASSERT_S_OK(ui.PressButton(L"OK", true));
+        ASSERT_S_OK(ui.PressButton(L"OK"));
 
         // Logout
-        ASSERT_S_OK(ui.PressButton(L"User Icon", true));
-        ASSERT_S_OK(ui.PressButton(L"Log Out", true));
+        ASSERT_S_OK(ui.PressButton(L"User Icon"));
+        ASSERT_S_OK(ui.PressButton(L"Log Out"));
 
         Assert::IsTrue(ui.OnLoginScreen());
     }

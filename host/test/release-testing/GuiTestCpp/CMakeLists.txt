@@ -1,5 +1,34 @@
-project(GuiTestCpp
+cmake_minimum_required(VERSION 3.15)
+project(TestSuite
 	LANGUAGES CXX
 )
-add_library(${PROJECT_NAME} SHARED StrataUI.h StrataUI.cpp HCS.cpp GuiTestCpp.cpp)
-add_library(UIAutomationx64 SHARED StrataUI.h StrataUI.cpp)
+
+
+
+FIND_PACKAGE(SWIG REQUIRED)
+INCLUDE(${SWIG_USE_FILE})
+
+FIND_PACKAGE(PythonInterp REQUIRED)
+FIND_PACKAGE(PythonLibs REQUIRED)
+INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
+SET(CMAKE_SWIG_FLAGS "")
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/gui-testing/GUIInterface)
+
+SET_SOURCE_FILES_PROPERTIES(StrataUI.i PROPERTIES CPLUSPLUS ON)
+
+SET_SOURCE_FILES_PROPERTIES(StrataUI.i PROPERTIES SWIG_FLAGS "-threads")
+
+
+
+SWIG_ADD_LIBRARY(StrataUIPython TYPE SHARED LANGUAGE python OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gui-testing/GUIInterface OUTFILE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gui-testing/GUIInterface SOURCES StrataUI.i StrataUI.cpp StrataUI.h StrataFinder.cpp StrataFinder.h)
+
+SWIG_LINK_LIBRARIES(StrataUIPython ${PYTHON_LIBRARIES})
+
+#add_library(${PROJECT_NAME} SHARED StrataUI.h StrataUI.cpp HCS.cpp GuiTestCpp.cpp)
+#add_library(UIAutomationx64 SHARED StrataUI.h StrataUI.cpp)
+#target_link_libraries(GuiTestCpp ${Boost_LIBRARIES})
+#target_link_libraries(UIAutomationx64 ${Boost_LIBRARIES})
+
