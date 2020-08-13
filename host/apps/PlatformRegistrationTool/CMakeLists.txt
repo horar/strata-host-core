@@ -109,7 +109,7 @@ add_custom_command(
     COMMAND
         ${CMAKE_COMMAND} -E copy_if_different
         ${PRT_CONFIG_LOCATION}/${APPS_TOOLBOX_PRT_CONFIG}
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/prt-config.ini
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/prt-config.ini
     COMMENT "Deploying config file ${APPS_TOOLBOX_PRT_CONFIG} as 'prt-config.ini'"
     VERBATIM
 )
