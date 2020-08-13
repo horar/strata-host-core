@@ -192,3 +192,12 @@ int VersionedListModel::getLatestVersion() {
     return latestVersionIndex;
 }
 
+int VersionedListModel::getInstalledVersion() {
+    for (int i = 0; i < data_.count(); i++) {
+        if (data_[i]->installed) {
+            return i;
+        }
+    }
+    return -1;
+}
+
