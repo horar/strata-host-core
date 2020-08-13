@@ -14,6 +14,8 @@
         <file>Workflow.qml</file>
         <file>WorkflowNode.qml</file>
         <file>WorkflowNodeText.qml</file>
+        <file>configs/prt-config.ini</file>
+        <file>configs/prt-config-qa.ini</file>
         <file>images/jlink-connect-schema.svg</file>
     </qresource>
 </RCC>
