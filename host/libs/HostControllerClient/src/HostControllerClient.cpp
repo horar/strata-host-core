@@ -2,9 +2,9 @@
 
 namespace strata::hcc {
 
-HostControllerClient::HostControllerClient(const char* net_in_address)
 using Connector = strata::connector::Connector;
 
+HostControllerClient::HostControllerClient(const std::string& net_in_address)
     : connector_(Connector::getConnector(Connector::CONNECTOR_TYPE::DEALER))
 {
     connector_->open(net_in_address);
