@@ -45,8 +45,8 @@ qmake --version
 echo "======================================================================="
 echo " Preparing sandbox.."
 echo "======================================================================="
-REM rd /s /q build-ota
-if not exist build-ota md build-ota
+REM rd /s /q build-host-ota
+if not exist build-host-ota md build-host-ota
 
 echo "-----------------------------------------------------------------------------"
 echo "Actual/local branch list.."
@@ -61,7 +61,7 @@ echo git submodule update --init --recursive
 echo "======================================================================="
 echo " Generating project.."
 echo "======================================================================="
-cd build-ota
+cd build-host-ota
 cmake -G "NMake Makefiles JOM" ^
     -DCMAKE_BUILD_TYPE=OTA ^
     -DAPPS_CORESW=on ^
@@ -72,10 +72,10 @@ cmake -G "NMake Makefiles JOM" ^
     -DBUILD_DONT_CLEAN_EXTERNAL=on ^
     -DBUILD_EXAMPLES=off ^
     -DBUILD_TESTING=off ^
-	..
+	..\host
 REM cmake -G "Visual Studio 15 2017 Win64" ^
 REM 	-T v141 ^
-REM 	..\
+REM 	..\host
 
 echo "======================================================================="
 echo " Compiling.."
@@ -97,8 +97,8 @@ windeployqt "packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.e
 	--no-angle ^
 	--no-system-d3d-compiler ^
 	--no-compiler-runtime ^
-    --qmldir ..\apps\DeveloperStudio ^
-    --qmldir ..\components ^
+    --qmldir ..\host\apps\DeveloperStudio ^
+    --qmldir ..\host\components ^
 	--libdir packages\com.onsemi.strata.qt\data ^
 	--plugindir packages\com.onsemi.strata.qt\data\plugins ^
     --verbose 1
@@ -106,7 +106,7 @@ windeployqt "packages\com.onsemi.strata.devstudio\data\Strata Developer Studio.e
 binarycreator ^
     --verbose ^
     --offline-only ^
-    -c ..\resources\qtifw\config\config.xml ^
+    -c ..\host\resources\qtifw\config\config.xml ^
     -p .\packages ^
     strata-setup-offline
 
@@ -114,7 +114,7 @@ binarycreator ^
 binarycreator ^
     --verbose ^
     --online-only ^
-    -c ..\resources\qtifw\config\config.xml ^
+    -c ..\host\resources\qtifw\config\config.xml ^
     -p .\packages ^
     strata-setup-online
 
