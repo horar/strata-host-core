@@ -517,7 +517,9 @@ Rectangle {
             height: parent.height - 130
             title: "Frequency Domain"
             xTitle: "Frequency (KHz)"
-            yTitle: "Power (dB)"
+            yTitle: "Power Relative to Fundamental (dB)"
+
+
             backgroundColor: "black"
             foregroundColor: "white"
             zoomXEnabled: true
