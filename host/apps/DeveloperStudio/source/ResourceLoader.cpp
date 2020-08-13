@@ -52,7 +52,7 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
                 return false;
             }
         }
-        viewsRegistered.insert(class_id, false);
+        viewsRegistered_.insert(class_id, false);
         return true;
     } else {
         qCCritical(logCategoryResourceLoader) << "Could not find control_views directory. Looked in " << controlViewsDir.path();
@@ -60,10 +60,11 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
     }
 }
 
-bool ResourceLoader::registerControlViewResources(const QString &class_id) {
+void ResourceLoader::registerControlViewResources(const QString &class_id, const QString &version) {
     if (isViewRegistered(class_id)) {
+        qCDebug(logCategoryResourceLoader) << "View is already registered for " << class_id;
         emit resourceRegistered(class_id);
-        return true;
+        return;
     }
 
     QDir controlViewsDir(ResourcePath::hcsDocumentsCachePath() + "/control_views/" + class_id + "/control_views");
@@ -73,25 +74,34 @@ bool ResourceLoader::registerControlViewResources(const QString &class_id) {
 
         // If we have more than one version, remove the older version(s)
         if (listOfVersions.length() > 1) {
-            QString latestVersion = getLatestVersion(listOfVersions);
-            QStringList newListOfVersions;
+            bool foundMatchingVersion = false;
+            QStringList dirsToRemove;
 
-            for (QString version : listOfVersions) {
-                if (version != latestVersion) {
-                    QDir dir(controlViewsDir.path()+ "/" + version);
-                    if (dir.removeRecursively() == false) {
-                        qCCritical(logCategoryResourceLoader) << "Unable to delete old version of control view " << class_id;
-                    }
+            for (QString currentVersion : listOfVersions) {
+                if (currentVersion != version) {
+                    dirsToRemove.append(controlViewsDir.path() + "/" + version);
                 } else {
-                    newListOfVersions.push_back(version);
+                    foundMatchingVersion = true;
                 }
             }
 
-            listOfVersions = newListOfVersions;
+            // If we found the matching version to install, then remove the rest of the directories
+            if (foundMatchingVersion) {
+                for (QString dirPath : dirsToRemove) {
+                    QDir dir(dirPath);
+                    if (dir.removeRecursively() == false) {
+                        qCCritical(logCategoryResourceLoader) << "Unable to delete version of control view " << class_id;
+                    }
+                }
+            } else {
+                qCCritical(logCategoryResourceLoader) << "Could not find version " << version << " for control view " << class_id;
+                emit resourceRegisterFailed(class_id);
+                return;
+            }
         }
 
         // Now we have deleted all old versions
-        controlViewsDir.cd(listOfVersions[0]);
+        controlViewsDir.cd(version);
 
         qCDebug(logCategoryResourceLoader) << "Looking in resource path " << controlViewsDir.path();
 
@@ -100,19 +110,50 @@ bool ResourceLoader::registerControlViewResources(const QString &class_id) {
             qCDebug(logCategoryResourceLoader) << "Loading resource " << resource << " for class id: " << class_id;
             if (registerResource(viewFileInfo.filePath()) == false) {
                 qCCritical(logCategoryResourceLoader) << "Failed to load resource " << resource << " for class id: " << class_id;
-                return false;
+                emit resourceRegisterFailed(class_id);
+                return;
             } else {
-                viewsRegistered.insert(class_id, true);
+                viewsRegistered_.insert(class_id, true);
             }
         }
 
         emit resourceRegistered(class_id);
-        return true;
     } else {
         emit resourceRegisterFailed(class_id);
         qCCritical(logCategoryResourceLoader) << "Could not find control_views directory. Looked in " << controlViewsDir.path();
+    }
+}
+
+bool ResourceLoader::registerStaticControlViewResources(const QString &class_id, const QString &displayName) {
+    if (displayName.isEmpty()) {
         return false;
     }
+
+    QDirIterator it(ResourcePath::viewsResourcePath(), {QStringLiteral("views-*.rcc")},
+                    QDir::Files);
+    QString resourcePath;
+
+    while (it.hasNext()) {
+        QFileInfo resourceInfo(it.next());
+        const QString resourceFile(resourceInfo.fileName());
+        const int extIndex = resourceFile.indexOf(".rcc");
+
+        if (resourceFile.mid(6, extIndex - 6) == displayName) {
+            resourcePath = resourceInfo.filePath();
+            break;
+        }
+    }
+
+    if (resourcePath.isEmpty() == false) {
+        deleteViewResource(class_id);
+        viewsRegistered_.insert(class_id, true);
+
+        bool registerResult = registerResource(resourcePath);
+        viewsRegistered_.insert(class_id, registerResult);
+        return registerResult;
+    }
+    return false;
+
 }
 
 bool ResourceLoader::registerResource(const QString &path, const QString &root) {
@@ -187,6 +228,6 @@ QString ResourceLoader::getLatestVersion(const QStringList &versions) {
 }
 
 bool ResourceLoader::isViewRegistered(const QString &class_id) {
-    QHash<QString, bool>::const_iterator itr = viewsRegistered.find(class_id);
-    return itr != viewsRegistered.end() && itr.value() == true;
+    QHash<QString, bool>::const_iterator itr = viewsRegistered_.find(class_id);
+    return itr != viewsRegistered_.end() && itr.value() == true;
 }
