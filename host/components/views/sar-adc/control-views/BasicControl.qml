@@ -76,8 +76,6 @@ Rectangle {
     }
 
     function saveFile(fileUrl, text) {
-        console.log(fileUrl)
-        console.log(text)
         var request = new XMLHttpRequest();
         request.open("PUT", fileUrl, false);
         request.send(text);
@@ -102,12 +100,8 @@ Rectangle {
         nameFilters: ["CSV files (*.csv)", "All files (*)"]
         onAccepted:  {
             saveFile(saveFileDialog.fileUrl,  toCSV(dataToSave))
-            console.log("length",  dataToSave.length)
-
         }
     }
-
-
     
     function adc_data_to_plot() {
         var processed_data = SarAdcFunction.adcPostProcess(dataArray,clock,4096)
@@ -1117,7 +1111,6 @@ Rectangle {
                                 enabled: false
                                 anchors.centerIn: parent
                                 onClicked: {
-                                    console.log(JSON.stringify(dataToSave))
                                     saveFileDialog.open()
                                 }
 
