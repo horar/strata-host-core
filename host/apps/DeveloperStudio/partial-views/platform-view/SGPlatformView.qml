@@ -7,6 +7,7 @@ import tech.strata.commoncpp 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
+import "qrc:/js/uuid_map.js" as UuidMap
 
 StackLayout {
     id: platformStack
@@ -28,22 +29,32 @@ StackLayout {
     property int device_id: model.device_id
     property string class_id: model.class_id
     property string firmware_version: model.firmware_version
+    property var controlViewList: sdsModel.documentManager.getClassDocuments(model.class_id).controlViewListModel
+    property int controlViewListCount: controlViewList.count
     property bool connected: model.connected
     property bool controlLoaded: false
+    property bool platformDocumentsInitialized: false
 
-    onConnectedChanged: {
-        if (connected && model.available.control) {
+    onControlViewListCountChanged: {
+        platformDocumentsInitialized = true;
+        if (loadingBar.percentReady === 0.0) {
             loadPlatformDocuments()
-//            loadControl()
-        } else {
-            removeControl()
         }
     }
 
-    Component.onCompleted: {
-        if (model.connected && model.available.control) {
-            loadPlatformDocuments()
-//            loadControl()  // load control
+    onConnectedChanged: {
+        if (connected && model.available.control) {
+            // When we reconnect the board, the view has already been registered, so we can immediately load the control
+            if (platformDocumentsInitialized) {
+                loadControl()
+            } else {
+                // Connect signals to slots first. This is to remedy the issue where the Connections component was not yet completed
+                // when the signal was emitted
+                sdsModel.resourceLoader.resourceRegistered.connect(resourceRegistered);
+                sdsModel.resourceLoader.resourceRegisterFailed.connect(resourceRegisterFailed);
+            }
+        } else {
+            removeControl();
         }
     }
 
@@ -62,10 +73,6 @@ StackLayout {
         if (controlLoaded === false){
             Help.setClassId(model.device_id)
             sgUserSettings.classId = model.class_id
-
-            if (sdsModel.resourceLoader.registerControlViewResources(model.class_id) === false) {
-                console.error("Failed to load resource")
-            }
 
             let qml_control = NavigationControl.getQMLFile(model.class_id, "Control")
             NavigationControl.context.class_id = model.class_id
@@ -93,58 +100,78 @@ StackLayout {
 
     /* The Order of Operations here is as follows:
         1. Call loadPlatformDocuments()
-        2. If controlViewListModel is not populated yet, then follow substeps, otherwise go to step 3.
-            2.1. Start the population of controlViewListModel
-            2.2. When finished populating, main.qml will catch documentManager.onPopulateModelsFinished and will call PlatformSelection.onControlViewListPopulated
-            2.3. onControlViewListPopulated will then call loadPlatformDocuments() again, but the model will be populated this time. So go back to step 1.
-        3. Call downloadControlView(). If already downloaded, then go to step 4 otherwise follow substeps
-            3.1. Send the download command to hcs
-            3.2. Main.qml will catch the onControlViewDownloadFinished signal and will call PlatformSelection.onControlViewDownloadFinished()
-        4. Call openPlatformView()
+        2. Check if static (local) control view exists, if so, register it
+        3. else, call loadResource()
+        4. If OTA versions are installed, register the installed version, else download latest version
     */
     function loadPlatformDocuments() {
-        if (NavigationControl.isViewRegistered(model.class_id)) {
-            controlContainer.percentReady = 1.0
-            return;
-        }
+        if (controlLoaded === false) {
+            if (NavigationControl.isViewRegistered(model.class_id)) {
+                loadingBar.percentReady = 1.0
+                return;
+            }
 
-        let controlViewList = sdsModel.documentManager.getClassDocuments(model.class_id).controlViewListModel;
+            let uuid_map = UuidMap.uuid_map;
+            let displayName = "";
+            for (let key in uuid_map) {
+                if (uuid_map.hasOwnProperty(key) && uuid_map[key] === model.class_id) {
+                    displayName = uuid_map[key];
+                    break;
+                }
+            }
 
-        if (controlViewList.count > 0) {
-            downloadControlView()
+            if (sdsModel.resourceLoader.registerStaticControlViewResources(model.class_id, displayName)) {
+                loadingBar.percentReady = 1.0;
+                return;
+            } else {
+                loadResource();
+            }
         }
     }
 
     /*
-        Helper function for downloading a control view
-        Returns false if unable to run download_view cmd, otherwise true
+        Helper function for downloading/registering a control view
     */
-    function downloadControlView() {
-        // this line below will start the process for downloading metadata about the control views
-        // so the first time it runs, it will return 0 for count, and asynchronously populate
-        let controlViewList = sdsModel.documentManager.getClassDocuments(model.class_id).controlViewListModel;
-
+    function loadResource() {
         // get installed index instead of latest version
-        let index = controlViewList.getLatestVersion();
+        let index = controlViewList.getInstalledVersion();
 
         if (index < 0) {
-            console.error("Unable to load control view list for", model.class_id)
-            return
-        }
+            console.info("No control view installed for", model.class_id)
+            index = controlViewList.getLatestVersion();
 
-        if (controlViewList.installed(index) === false) {
-            console.info("Downloading control view for ", model.class_id)
-            let command = {
+            let updateCommand = {
                 "hcs::cmd": "download_view",
                 "payload": {
                     "url": controlViewList.uri(index),
                     "md5": controlViewList.md5(index)
                 }
-            }
+            };
 
-            coreInterface.sendCommand(JSON.stringify(command))
+            coreInterface.sendCommand(JSON.stringify(updateCommand));
+            return
         } else {
-            sdsModel.resourceLoader.registerControlViewResources(model.class_id);
+            sdsModel.resourceLoader.registerControlViewResources(model.class_id, controlViewList.version(index));
+        }
+    }
+
+    /*
+      Slot for the sdsModel.resourceLoader.resourceRegistered signal
+    */
+    function resourceRegistered (class_id) {
+        if (class_id === model.class_id) {
+            loadingBar.color = "#57d445"
+            loadingBar.percentReady = 1.0;
+        }
+    }
+
+    /*
+      Slot for the sdsModel.resourceLoader.resourceRegisteredFailed signal
+    */
+    function resourceRegisterFailed (class_id) {
+        if (class_id === model.class_id) {
+            loadingBar.color = "red";
+            loadingBar.percentReady = 1.0;
         }
     }
 
@@ -153,43 +180,54 @@ StackLayout {
         Layout.fillHeight: true
         Layout.fillWidth: true
 
+        Timer {
+            id: waitToLoadTimer
+            interval: 100
+            repeat: false
+
+            onTriggered: {
+                loadControl()
+            }
+        }
+
+        Rectangle {
+            id: loadingBarContainer
+            x: platformStack.width / 2 - width / 2
+            y: platformStack.height / 2 - height / 2
+
+            width: platformStack.width * .5
+            height: 15
+
+            color: "grey"
+            visible: true
+
+            Rectangle {
+                id: loadingBar
+
+                property double percentReady: 0.0
+
+                z: 100
+
+                height: parent.height
+                width: 0
+                color: "#57d445"
+
+                onPercentReadyChanged: {
+                    width = loadingBarContainer.width * percentReady;
+                    if (percentReady === 1.0) {
+                        waitToLoadTimer.start()
+                    }
+                }
+            }
+        }
+
         Item {
             id: controlContainer
-
-            property double percentReady: 0.0
 
             anchors {
                 fill: parent
             }
 
-            onPercentReadyChanged: {
-                console.info("test -- percent ready", percentReady)
-                if (percentReady === 1.0) {
-                    loadingTimer.start()
-                }
-            }
-
-            Timer {
-                id: loadingTimer
-                repeat: false
-                interval: 2000
-
-                onTriggered: {
-                    loadingText.visible = false
-                    loadControl();
-                }
-            }
-
-            Text {
-                id: loadingText
-                x: parent.width / 2 - width / 2
-                y: parent.height / 2 - height / 2
-
-                text: "Loading: " + parent.percentReady + "%"
-                font: {
-                    minimumPixelSize: 56
-                }
-            }
         }
 
         DisconnectedOverlay {
@@ -222,50 +260,24 @@ StackLayout {
     }
 
     Connections {
-        target: sdsModel.documentManager
-
-        onPopulateModelsFinished: {
-            if (classId === model.class_id) {
-                console.info("test -- populateModelsFinished")
-                if (controlContainer.percentReady < 0.25) {
-                    controlContainer.percentReady = 0.25;
-                }
-                loadPlatformDocuments();
-            }
-        }
-    }
-
-    Connections {
         target: sdsModel.coreInterface
 
         onDownloadViewFinished: {
             // hacky way to get the class_id from the request.
             // e.g. "url":"226/control_views/1.1.3/views-hello-strata.rcc"
-            let class_id = payload.url.split("/")[0];
-            if (class_id === model.class_id) {
-                console.info("test -- viewDownloaded")
-                if (controlContainer.percentReady < 0.5) {
-                    controlContainer.percentReady = 0.50;
-                }
-                sdsModel.resourceLoader.registerControlViewResources(model.class_id)
-            }
-        }
-    }
+            let urlSplit = payload.url.split("/");
+            let class_id = urlSplit[0];
+            let version = urlSplit[2];
 
-    Connections {
-        target: sdsModel.resourceLoader
-
-        onResourceRegistered: {
             if (class_id === model.class_id) {
-                console.info("test -- resourceRegistered")
-                controlContainer.percentReady = 1.0;
+                sdsModel.resourceLoader.registerControlViewResources(model.class_id, version)
             }
         }
 
-        onResourceRegisterFailed: {
-            if (class_id === model.class_id) {
-                console.info("test -- resourceFailed")
-                controlContainer.percentReady = 1.0;
+        onDownloadControlViewProgress: {
+            let percent = payload.bytes_received / payload.bytes_total;
+            if (percent !== 1.0) {
+                loadingBar.percentReady = percent
             }
         }
 
