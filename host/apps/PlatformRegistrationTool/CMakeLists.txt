@@ -87,3 +87,29 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH ":/")
+
+# deploy desired config file into side-by-side to compiled binary
+set(PRT_CONFIG_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/configs)
+
+if(NOT APPS_TOOLBOX_PRT_CONFIG)
+    set(APPS_TOOLBOX_PRT_CONFIG prt-config-qa.ini CACHE STRING "Desired PRT configuration file." FORCE)
+    message(STATUS "Defaulting 'APPS_TOOLBOX_PRT_CONFIG' to ${APPS_TOOLBOX_PRT_CONFIG}.")
+endif()
+file(GLOB APPS_TOOLBOX_PRT_CONFIG_CHOICES
+    RELATIVE ${PRT_CONFIG_LOCATION}
+    ${PRT_CONFIG_LOCATION}/*.ini
+)
+set_property(CACHE APPS_TOOLBOX_PRT_CONFIG PROPERTY STRINGS ${APPS_TOOLBOX_PRT_CONFIG_CHOICES})
+if(NOT APPS_TOOLBOX_PRT_CONFIG IN_LIST APPS_TOOLBOX_PRT_CONFIG_CHOICES)
+    message(FATAL_ERROR "Specify 'APPS_TOOLBOX_PRT_CONFIG_CHOICES'. Must be one of ${APPS_TOOLBOX_PRT_CONFIG_CHOICES}")
+endif()
+add_custom_command(
+    TARGET ${PROJECT_NAME}
+    POST_BUILD
+    COMMAND
+        ${CMAKE_COMMAND} -E copy_if_different
+        ${PRT_CONFIG_LOCATION}/${APPS_TOOLBOX_PRT_CONFIG}
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/prt-config.ini
+    COMMENT "Deploying config file ${APPS_TOOLBOX_PRT_CONFIG} as 'prt-config.ini'"
+    VERBATIM
+)
