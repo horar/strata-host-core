@@ -138,6 +138,10 @@ StackLayout {
     */
     function loadPlatformDocuments() {
         if (controlLoaded === false) {
+            /* First check if the view is already registered.
+              If it is not, then try to first register a static (local) control view for this class_id.
+              If that doesn't work then try to load an OTA control view
+            */
             if (sdsModel.resourceLoader.isViewRegistered(model.class_id)) {
                 loadingBar.percentReady = 1.0
                 return;
