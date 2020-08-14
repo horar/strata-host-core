@@ -12,19 +12,12 @@
 
 class HCS_Dispatcher;
 class Connector;
-class LoggingAdapter;
 
 class ClientsController final
 {
 public:
     ClientsController();
     ~ClientsController();
-
-    /**
-     * Setup logging adapter
-     * @param adapter
-     */
-    void setLogAdapter(LoggingAdapter* adapter);
 
     /**
      * Initializes clients controller
@@ -47,7 +40,6 @@ private:
 
 private:
     HCS_Dispatcher* dispatcher_{nullptr};
-    LoggingAdapter* logAdapter_{nullptr};
 
     std::unique_ptr<Connector> client_connector_ ;  //router
 

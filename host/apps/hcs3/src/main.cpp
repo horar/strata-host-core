@@ -73,8 +73,8 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
     }
 
-    const QtLoggerSetup loggerInitialization(app);
-    cbLoggerSetup(loggerInitialization.getQtLogCallback());
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
+    strata::loggers::cbLoggerSetup(loggerInitialization.getQtLogCallback());
 
     qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
     qCInfo(logCategoryHcs) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
