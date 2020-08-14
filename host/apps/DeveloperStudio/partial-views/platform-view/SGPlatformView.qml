@@ -34,6 +34,7 @@ StackLayout {
     property bool connected: model.connected
     property bool controlLoaded: false
     property bool platformDocumentsInitialized: false
+    property bool usingLocalView: false
 
     onControlViewListCountChanged: {
         platformDocumentsInitialized = true;
@@ -117,6 +118,7 @@ StackLayout {
             success = sdsModel.resourceLoader.deleteViewResource(model.class_id, oldVersion);
             console.info("Successfully deleted control view version", oldVersion, "for platform", model.class_id);
         }
+        usingLocalView = false;
         sdsModel.resourceLoader.registerControlViewResources(model.class_id, version);
     }
 
@@ -148,9 +150,11 @@ StackLayout {
             }
 
             if (sdsModel.resourceLoader.registerStaticControlViewResources(model.class_id, model.name)) {
+                platformStack.usingLocalView = true;
                 loadingBar.percentReady = 1.0;
                 return;
             } else {
+                platformStack.usingLocalView = false;
                 loadResource();
             }
         }

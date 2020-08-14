@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0
 
+import "qrc:/js/navigation_control.js" as NavigationControl
+
 ColumnLayout {
     id: software
 
@@ -163,7 +165,18 @@ ColumnLayout {
     }
 
     Text {
-        text: activeVersion !== null ? activeVersion.version : "Not installed"
+        text: {
+            if (platformStack.usingLocalView) {
+                return "Original version installed";
+            }
+
+            if (activeVersion !== null) {
+                return activeVersion.version;
+            } else {
+                return "Not installed";
+            }
+        }
+
         font.bold: true
         font.pixelSize: 18
     }
