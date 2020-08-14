@@ -191,7 +191,7 @@ const rapidjson::SchemaDocument CommandValidator::setPlatformIdResSchema(
     )
 );
 
-const rapidjson::SchemaDocument CommandValidator::updateFWResSchema(
+const rapidjson::SchemaDocument CommandValidator::updateFirmwareResSchema(
     CommandValidator::parseSchema(
         R"(
         {
@@ -230,7 +230,7 @@ const rapidjson::SchemaDocument CommandValidator::updateFWResSchema(
     )
 );
 
-const rapidjson::SchemaDocument CommandValidator::flashFWResSchema(
+const rapidjson::SchemaDocument CommandValidator::flashFirmwareResSchema(
     CommandValidator::parseSchema(
         R"(
         {
@@ -269,7 +269,7 @@ const rapidjson::SchemaDocument CommandValidator::flashFWResSchema(
     )
 );
 
-const rapidjson::SchemaDocument CommandValidator::backupFWResSchema(
+const rapidjson::SchemaDocument CommandValidator::backupFirmwareResSchema(
     CommandValidator::parseSchema(
         R"(
         {
@@ -320,6 +320,45 @@ const rapidjson::SchemaDocument CommandValidator::backupFWResSchema(
     )
 );
 
+const rapidjson::SchemaDocument CommandValidator::flashBootloaderResSchema(
+    CommandValidator::parseSchema(
+        R"(
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+            "notification": {
+                "type": "object",
+                "properties": {
+                "value": {
+                    "type": "string",
+                    "pattern": "^flash_bootloader$"
+                },
+                "payload": {
+                    "type": "object",
+                    "properties": {
+                    "status": {
+                        "type": "string"
+                    }
+                    },
+                    "required": [
+                    "status"
+                    ]
+                }
+                },
+                "required": [
+                "value",
+                "payload"
+                ]
+            }
+            },
+            "required": [
+            "notification"
+            ]
+        })"
+    )
+);
+
 const rapidjson::SchemaDocument CommandValidator::startAppResSchema(
     CommandValidator::parseSchema(
         R"(
@@ -359,7 +398,7 @@ const rapidjson::SchemaDocument CommandValidator::startAppResSchema(
     )
 );
 
-const rapidjson::SchemaDocument CommandValidator::getFWInfoResSchema(
+const rapidjson::SchemaDocument CommandValidator::getFirmwareInfoResSchema(
     CommandValidator::parseSchema(
         R"(
         {
@@ -520,10 +559,11 @@ const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument
     {JsonType::setPlatIdRes, setPlatformIdResSchema},
     {JsonType::ack, ackSchema},
     {JsonType::notification, notificationSchema},
-    {JsonType::getFwInfoRes, getFWInfoResSchema},
-    {JsonType::flashFwRes, flashFWResSchema},
-    {JsonType::backupFwRes, backupFWResSchema},
-    {JsonType::updateFwRes, updateFWResSchema},
+    {JsonType::getFirmwareInfoRes, getFirmwareInfoResSchema},
+    {JsonType::flashFirmwareRes, flashFirmwareResSchema},
+    {JsonType::backupFirmwareRes, backupFirmwareResSchema},
+    {JsonType::flashBootloaderRes, flashBootloaderResSchema},
+    {JsonType::updateFirmwareRes, updateFirmwareResSchema},
     {JsonType::startAppRes, startAppResSchema},
     {JsonType::strataCmd, strataCommandSchema},
     {JsonType::cmd, cmdSchema}

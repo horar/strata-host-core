@@ -8,6 +8,11 @@
 var initialized = false
 
 /*
+  Settings: Store/retrieve login information
+*/
+var settings = createObject("qrc:/partial-views/login/LoginSettings.qml", null)
+
+/*
   Signals: Signal component to notify Login status
 */
 var signals = createObject("qrc:/partial-views/login/LoginSignals.qml", null)
@@ -71,6 +76,9 @@ function logout() {
     Rest.xhr("get", "logout?session=" + Rest.session, "", logout_result, logout_error)//, signals)
     Rest.jwt = ""
     Rest.session = ""
+    if (settings.rememberMe) {
+        settings.rememberMe = false
+    }
 }
 
 function logout_result(response){

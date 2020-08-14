@@ -34,9 +34,14 @@ DocumentListModel *ClassDocuments::pdfListModel()
     return &pdfModel_;
 }
 
-FirmwareListModel *ClassDocuments::firmwareListModel()
+VersionedListModel *ClassDocuments::firmwareListModel()
 {
     return &firmwareModel_;
+}
+
+VersionedListModel *ClassDocuments::controlViewListModel()
+{
+    return &controlViewModel_;
 }
 
 QString ClassDocuments::errorString() const
@@ -80,7 +85,8 @@ void ClassDocuments::populateModels(QJsonObject data)
     QList<DocumentItem* > pdfList;
     QList<DocumentItem* > datasheetList;
     QList<DownloadDocumentItem* > downloadList;
-    QList<FirmwareItem* > firmwareList;
+    QList<VersionedItem* > firmwareList;
+    QList<VersionedItem* > controlViewList;
 
     if (data.contains("error")) {
         qCWarning(logCategoryDocumentManager) << "Document download error:" << data["error"].toString();
@@ -183,17 +189,44 @@ void ClassDocuments::populateModels(QJsonObject data)
         QString version = documentObject["version"].toString();
         QString timestamp = documentObject["timestamp"].toString();
 
-        FirmwareItem *fi = new FirmwareItem(uri, md5, name, timestamp, version);
-        firmwareList.append(fi);
+        VersionedItem *firmwareItem = new VersionedItem(uri, md5, name, timestamp, version);
+        firmwareList.append(firmwareItem);
     }
 
-    // TODO: CS-831 - Iterate over control views list here.
-    // QJsonArray controlViewArray = data["control_views"].toArray();
+    QJsonArray controlViewArray = data["control_views"].toArray();
+    for (const QJsonValueRef controlViewValue : controlViewArray) {
+        QJsonObject documentObject = controlViewValue.toObject();
+
+        if (documentObject.contains("uri") == false
+                || documentObject.contains("md5")  == false
+                || documentObject.contains("name") == false
+                || documentObject.contains("timestamp")  == false
+                || documentObject.contains("version")  == false
+                || documentObject.contains("filepath") == false) {
+
+            qCWarning(logCategoryDocumentManager) << "control view object is not complete";
+            continue;
+        }
+
+        QJsonDocument doc(documentObject);
+        QString strJson(doc.toJson(QJsonDocument::Compact));
+
+        QString uri = documentObject["uri"].toString();
+        QString name = documentObject["name"].toString();
+        QString md5 = documentObject["md5"].toString();
+        QString version = documentObject["version"].toString();
+        QString timestamp = documentObject["timestamp"].toString();
+        QString filepath = documentObject["filepath"].toString();
+
+        VersionedItem *controlViewItem = new VersionedItem(uri, md5, name, timestamp, version, filepath);
+        controlViewList.append(controlViewItem);
+    }
 
     pdfModel_.populateModel(pdfList);
     datasheetModel_.populateModel(datasheetList);
     downloadDocumentModel_.populateModel(downloadList);
     firmwareModel_.populateModel(firmwareList);
+    controlViewModel_.populateModel(controlViewList);
 
     setLoading(false);
 }

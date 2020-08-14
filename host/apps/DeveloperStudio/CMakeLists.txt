@@ -15,7 +15,7 @@ find_package(Qt5 ${VERSION_QT5}
     REQUIRED
 )
 
-qt5_generate_repc(NODE_RO_SRCS ../hcs3/src/HostControllerService.rep REPLICA)
+qt5_generate_repc(NODE_RO_SRCS ${CMAKE_SOURCE_DIR}/apps/hcs3/src/HostControllerService.rep REPLICA)
 
 add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     main.cpp
@@ -24,7 +24,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/ResourceLoader.cpp
     source/DocumentListModel.cpp
     source/DownloadDocumentListModel.cpp
-    source/FirmwareListModel.cpp
+    source/VersionedListModel.cpp
     source/ClassDocuments.cpp
     source/CoreUpdate.cpp
     $<IF:$<CONFIG:Release>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
@@ -65,11 +65,11 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::RemoteObjects
     Qt5::Svg
 
-    connector
-    HostControllerClient
-    PlatformInterface
+    strata::connector
+    strata::HostControllerClient
+    strata::PlatformInterface
 
-    QtLogger
+    strata::QtLogger
 )
 
 if(WIN32)
@@ -94,9 +94,6 @@ if(WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${CMAKE_SOURCE_DIR}/ext_libs/libzmq/bin/windows/x64/libzmq.dll
             $<TARGET_FILE_DIR:${PROJECT_NAME}>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${CMAKE_SOURCE_DIR}/ext_libs/libcurl/bin/windows/x64/libcurl.dll
-            $<TARGET_FILE_DIR:${PROJECT_NAME}>
         COMMENT "Deploying dependant 3rd party libraries..."
         VERBATIM
     )
@@ -109,7 +106,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 
 # LC: start 'hcs' process from strata (will be handled by strata monitor in near future)
 set_source_files_properties(main.cpp source/SDSModel.cpp PROPERTIES
-    COMPILE_DEFINITIONS "START_SERVICES;WINDOWS_INSTALLER_BUILD=$<BOOL:${WINDOWS_INSTALLER_BUILD}>;HCS_CONFIG=$<IF:$<CONFIG:Release>,\"hcs.config\",\"hcs_qa.config\">"
+    COMPILE_DEFINITIONS "START_SERVICES;WINDOWS_INSTALLER_BUILD=$<BOOL:${WINDOWS_INSTALLER_BUILD}>"
 )
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
