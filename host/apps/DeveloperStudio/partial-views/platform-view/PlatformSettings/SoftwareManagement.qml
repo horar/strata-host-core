@@ -25,9 +25,7 @@ ColumnLayout {
         target: coreInterface
 
         onDownloadViewFinished: {
-            sdsModel.resourceLoader.registerControlViewResources(platformStack.class_id);
             progressUpdateText.percent = 1.0
-            activeVersion = latestVersion
             setUpToDateTimer.start()
         }
 
@@ -134,11 +132,13 @@ ColumnLayout {
 
     Timer {
         id: setUpToDateTimer
-        interval: 1500
+        interval: 1000
         repeat: false
 
         onTriggered: {
             upToDate = true
+            platformStack.updateControl(latestVersion.version, activeVersion ? activeVersion.version : "")
+            activeVersion = latestVersion;
         }
     }
 
