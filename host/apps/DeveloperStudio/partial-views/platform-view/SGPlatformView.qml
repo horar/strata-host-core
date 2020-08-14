@@ -45,13 +45,15 @@ StackLayout {
     onConnectedChanged: {
         if (connected && model.available.control) {
             // When we reconnect the board, the view has already been registered, so we can immediately load the control
-            if (platformDocumentsInitialized) {
+            if (platformDocumentsInitialized) {                
                 loadControl()
             } else {
                 // Connect signals to slots first. This is to remedy the issue where the Connections component was not yet completed
                 // when the signal was emitted
                 sdsModel.resourceLoader.resourceRegistered.connect(resourceRegistered);
                 sdsModel.resourceLoader.resourceRegisterFailed.connect(resourceRegisterFailed);
+                loadingBarContainer.visible = true;
+                loadingBar.percentReady = 0.0;
             }
         } else {
             removeControl();
@@ -60,6 +62,15 @@ StackLayout {
 
     Component.onDestruction: {
         removeControl()
+    }
+
+    onCurrentIndexChanged: {
+        if (index === 0) {
+            if (controlLoaded === false) {
+                loadingBarContainer.visible = true;
+                loadingBar.percentReady = 1.0;
+            }
+        }
     }
 
     function setArray(index, value) {
@@ -73,6 +84,8 @@ StackLayout {
         if (controlLoaded === false){
             Help.setClassId(model.device_id)
             sgUserSettings.classId = model.class_id
+            loadingBarContainer.visible = false;
+            loadingBar.percentReady = 0.0;
 
             let qml_control = NavigationControl.getQMLFile(model.class_id, "Control")
             NavigationControl.context.class_id = model.class_id
@@ -91,6 +104,16 @@ StackLayout {
         }
     }
 
+    function updateControl(version, oldVersion) {
+        removeControl();
+
+        if (oldVersion !== "") {
+            let success = sdsModel.resourceLoader.deleteViewResource(model.class_id, oldVersion);
+            console.info("Successfully deleted control view version", oldVersion, "for platform", model.class_id);
+        }
+        sdsModel.resourceLoader.registerControlViewResources(model.class_id, version);
+    }
+
     function removeControl () {
         if (controlLoaded) {
             NavigationControl.removeView(controlContainer)
@@ -106,21 +129,12 @@ StackLayout {
     */
     function loadPlatformDocuments() {
         if (controlLoaded === false) {
-            if (NavigationControl.isViewRegistered(model.class_id)) {
+            if (sdsModel.resourceLoader.isViewRegistered(model.class_id)) {
                 loadingBar.percentReady = 1.0
                 return;
             }
 
-            let uuid_map = UuidMap.uuid_map;
-            let displayName = "";
-            for (let key in uuid_map) {
-                if (uuid_map.hasOwnProperty(key) && uuid_map[key] === model.class_id) {
-                    displayName = uuid_map[key];
-                    break;
-                }
-            }
-
-            if (sdsModel.resourceLoader.registerStaticControlViewResources(model.class_id, displayName)) {
+            if (sdsModel.resourceLoader.registerStaticControlViewResources(model.class_id, model.name)) {
                 loadingBar.percentReady = 1.0;
                 return;
             } else {
@@ -149,7 +163,6 @@ StackLayout {
             };
 
             coreInterface.sendCommand(JSON.stringify(updateCommand));
-            return
         } else {
             sdsModel.resourceLoader.registerControlViewResources(model.class_id, controlViewList.version(index));
         }
@@ -269,7 +282,7 @@ StackLayout {
             let class_id = urlSplit[0];
             let version = urlSplit[2];
 
-            if (class_id === model.class_id) {
+            if (class_id === model.class_id && controlLoaded === false) {
                 sdsModel.resourceLoader.registerControlViewResources(model.class_id, version)
             }
         }
