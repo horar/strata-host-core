@@ -1,7 +1,7 @@
 #include "HostControllerClient.hpp"
 
-namespace Spyglass
-{
+namespace strata::hcc {
+
 HostControllerClient::HostControllerClient(const char* net_in_address)
     : connector_(ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::DEALER))
 {
@@ -10,6 +10,16 @@ HostControllerClient::HostControllerClient(const char* net_in_address)
 
 HostControllerClient::~HostControllerClient()
 {
+}
+
+bool HostControllerClient::close()
+{
+    return connector_->close();
+}
+
+bool HostControllerClient::closeContext()
+{
+    return connector_->closeContext();
 }
 
 bool HostControllerClient::sendCmd(const std::string& cmd)
@@ -26,7 +36,7 @@ std::string HostControllerClient::receiveCommandAck()
 std::string HostControllerClient::receiveNotification()
 {
     std::string message;
-    return (connector_->read(message,ReadMode::BLOCKING) ? message : std::string());
+    return (connector_->read(message, ReadMode::BLOCKING) ? message : std::string());
 }
 
-}  // namespace Spyglass
+}  // namespace

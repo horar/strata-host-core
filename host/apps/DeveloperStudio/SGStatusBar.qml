@@ -67,6 +67,38 @@ Rectangle {
         anchors {
             left: logoContainer.right
         }
+        spacing: 1
+
+        Rectangle {
+            id: platformSelector
+            height: 40
+            width: 120
+
+            color: platformSelectorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === 0 ? "#33b13b" : "#444"
+
+            property color menuColor: "#33b13b"
+
+            SGText {
+                color: "white"
+                text: "Platform Selector"
+                anchors {
+                    centerIn: parent
+                    verticalCenterOffset: 2
+                }
+                font.family: Fonts.franklinGothicBook
+            }
+
+            MouseArea {
+                id: platformSelectorMouse
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: {
+                    let data = {"index": 0}
+                    NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
+                }
+                cursorShape: Qt.PointingHandCursor
+            }
+        }
 
         Repeater {
             id: platformTabRepeater
@@ -77,12 +109,22 @@ Rectangle {
         SGPlatformTab {
             // demonstration tab set for help tour
             id: helpTab
-            visible: false
             class_id: "0"
+            device_id: ""
             view: "control"
             index: 0
             connected: true
             name: "Help Example"
+            visible: false
+            onXChanged: {
+                if (visible) {
+                    Help.refreshView(Help.internal_tour_index)
+                }
+            }
+            available: {
+                "documents": true,
+                "control": true
+            }
 
             Connections {
                 target: Help.utility
@@ -218,7 +260,7 @@ Rectangle {
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                         Authenticator.logout()
                         PlatformSelection.logout()
-                        coreInterface.disconnectPlatform()
+                        sdsModel.coreInterface.unregisterClient()
                     }
                     width: profileMenu.width
                 }
@@ -231,26 +273,6 @@ Rectangle {
         width: Math.max(container.width * 0.8, 600)
         x: container.width/2 - feedbackPopup.width/2
         y: container.parent.windowHeight/2 - feedbackPopup.height/2
-    }
-
-    Window {
-        id: debugWindow
-        visible: container.parent.showDebug
-        height: 200
-        width: 300
-        x: 1620
-        y: 500
-        title: "SGStatusBar.qml Debug Controls"
-
-        Column {
-            id: debug1
-            Button {
-                text: "Toggle Content/Control"
-                onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                }
-            }
-        }
     }
 
     function showAboutWindow() {

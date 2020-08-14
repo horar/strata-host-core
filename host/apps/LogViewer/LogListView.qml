@@ -1,6 +1,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.logviewer.models 1.0 as LogViewModels
 
 Item {
@@ -49,7 +50,7 @@ Item {
     TextMetrics {
         id: textMetricsTs
         font: timestampHeaderText.font
-        text: Qt.platform.os === "windows" ? "9999-99-99 99:99.99.999 Central Europe Standard Time" : "9999-99-99 99:99.99.999 CEST"
+        text: "9999-99-99 99:99.99.999 +UTC99:99"
     }
 
     TextMetrics {
@@ -266,13 +267,11 @@ Item {
             policy: ScrollBar.AsNeeded
         }
 
-        onMovingVerticallyChanged: {
-            if (movingVertically) {
-                logViewerMain.automaticScroll = false
-            }
-
-            if (movingVertically === false && logListView.atYEnd) {
+        onContentYChanged: {
+            if (logListView.atYEnd) {
                 logViewerMain.automaticScroll = true
+            } else {
+                logViewerMain.automaticScroll = false
             }
         }
 
@@ -410,9 +409,9 @@ Item {
                     text: {
                         if (visible) {
                             if (timestampSimpleFormat == false) {
-                                return Qt.formatDateTime(model.timestamp, "yyyy-MM-dd hh:mm:ss.zzz t")
+                                return CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(model.timestamp, timestampFormat)
                             } else {
-                                return Qt.formatDateTime(model.timestamp, "hh:mm:ss.zzz")
+                                return Qt.formatDateTime(model.timestamp, simpleTimestampFormat)
                             }
                         } else {
                             return ""

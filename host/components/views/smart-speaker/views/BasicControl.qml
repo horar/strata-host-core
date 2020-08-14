@@ -11,13 +11,16 @@ Widget09.SGResponsiveScrollView {
 
     minimumHeight: 900
     minimumWidth: 1300
+    scrollBarColor: hightlightColor
 
-    property string backgroundColor: "#FF2A2E31"
+    property string borderColor: "#002C74"
+    property string backgroundColor: "#91ABE1"
+    property string hightlightColor: "#F8BB2C"
 
     Rectangle {
         id: container
         parent: root.contentItem
-        color:"dimgrey"
+        color:borderColor
         anchors {
             fill: parent
         }
@@ -47,14 +50,28 @@ Widget09.SGResponsiveScrollView {
             id:boardName
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top:parent.top
-            text:"Bluetooth Speaker"
-            color:"white"
+            anchors.topMargin: 10
+            text:"Voice User Interface"
+            color:"black"
             font.pixelSize: 75
+        }
+        Row{
+            id: vuiRow
+            anchors.top:boardName.bottom
+            anchors.topMargin: 30
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 20
+
+            VoiceUIView{
+                id:voiceUIView
+                height:75
+                width:825
+            }
         }
 
         Row{
             id:mixerRow
-            anchors.top:boardName.bottom
+            anchors.top:vuiRow.bottom
             anchors.topMargin: 30
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 20
@@ -62,7 +79,7 @@ Widget09.SGResponsiveScrollView {
             MixerView{
                 id:mixerView
                 height:500
-                width:250
+                width:150
             }
 
 
@@ -71,45 +88,34 @@ Widget09.SGResponsiveScrollView {
                 height:500
                 width:660
             }
-
-            //            SpeakerView{
-            //                id:speakerView
-            //                height:500
-            //                width:200
-            //                visible:false
-            //                anchors.left:eqView.right
-            //                anchors.leftMargin:20
-            //                anchors.verticalCenter: eqView.verticalCenter
-
-            //                coilTemperature: Math.round(platformInterface.request_usb_power_notification.input_voltage*100)/100;
-            //                speakerResistance: "20"
-            //                resonantFrequency: "20"
-            //                qesValue: "20"
-            //                qmsValue: "20"
-            //                qtsValue: "20"
-            //                rmsValue: "20"
-            //                cmsValue: "20"
-            //                }
         }
 
         //bottom row
         Row{
             anchors.top:mixerRow.bottom
             anchors.topMargin: 30
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.left: mixerRow.left
             spacing: 20
 
             BluetoothView{
                 id:bluetoothView
-                height:200
-                width:250
+                height:100
+                width:270
             }
 
             PlaybackControlView{
                 id:playbackControlView
                 height:100
-                width:290
+                width:250
             }
+
+            AmplifierView{
+                id:amplifierView
+                height:100
+                width:270
+            }
+
+
             //            InputVoltageView{
             //                id:inputVoltageView
             //                height:200

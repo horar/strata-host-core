@@ -5,7 +5,15 @@ FocusScope {
     id: delegate
 
     width: Math.max(text.width, loader.width)
-    height: loader.y + loader.height + helperTextItem.paintedHeight + 4
+    height: {
+        var h = loader.y + loader.height
+
+        if (hasHelperText) {
+            h += helperTextItem.paintedHeight + 4
+        }
+
+        return h
+    }
 
     focus: true
 
@@ -19,6 +27,7 @@ FocusScope {
     property int spacing: 2
     property string helperText: ""
     property string errorText
+    property bool hasHelperText: true
 
     /* Set this to True if you want input validation to be handled by editor. */
     property bool inputValidation: false
@@ -136,7 +145,7 @@ FocusScope {
             topMargin: 1
         }
 
-        //fontSizeMultiplier: 0.9
+        visible: hasHelperText
         font.italic: true
         text: validStatus === SGBaseEditor.Invalid ? errorText : helperText
         color: validStatus === SGBaseEditor.Invalid ? SGColorsJS.ERROR_COLOR : Qt.darker("grey",1.5)

@@ -38,8 +38,9 @@ macro(generate_app_version)
 
     message(STATUS "Creating app version target for ${PROJECT_NAME} (prefix: '${local_GITTAG_PREFIX}')...")
 
-    if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.h)
-        file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.h
+    if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/Version.h)
+        message(STATUS "Writting ${PROJECT_NAME}'s Version.h...")
+        file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/Version.h
             "// WARNING! All changes made in this file will be lost!!\n\n"
             "#pragma once\n\n"
             "#include <string_view>\n\n"
@@ -64,10 +65,15 @@ macro(generate_app_version)
             -DGIT_ROOT_DIR=${GIT_ROOT_DIR}
             -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
 
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+
+            -DVERSION_FILE=Version.cpp
+
             -DINPUT_DIR=${CMAKE_SOURCE_DIR}/CMake/Templates
-            -DINPUT_FILE=Version.cpp
-            -DOUTPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}
-            -DOUTPUT_FILE=${PROJECT_NAME}Version.cpp
+            -DWORKING_DIR=${CMAKE_CURRENT_BINARY_DIR}
+
+            -DDEPLOYMENT_DIR=${CMAKE_BINARY_DIR}
+            -DPROJECT_DIR=${CMAKE_CURRENT_SOURCE_DIR}
 
             -DUSE_GITTAG_VERSION=${BUILD_GITTAG_VERSION}
 
@@ -93,24 +99,24 @@ macro(generate_app_version)
     if(APPLE AND local_MACBUNDLE)
         add_custom_command(TARGET ${PROJECT_NAME}_version POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.plist
-                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_DESCRIPTION}.app/Contents/Info.plist
+                ${CMAKE_CURRENT_BINARY_DIR}/Info.plist
+                ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>/${PROJECT_DESCRIPTION}.app/Contents/MacOS/Info.plist
                 COMMENT "Copying OS X Info.plist" VERBATIM
         )
     endif()
     if (WIN32)
         target_sources(${PROJECT_NAME} PRIVATE
-            ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.rc
+            ${CMAKE_CURRENT_BINARY_DIR}/App.rc
         )
-        set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.rc
+    set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/App.rc
             PROPERTIES GENERATED ON
         )
     endif()
 
     target_sources(${PROJECT_NAME} PRIVATE
-        ${PROJECT_NAME}Version.cpp
+        Version.cpp
     )
-    set_source_files_properties(${PROJECT_NAME}Version.cpp
+    set_source_files_properties(Version.cpp
         PROPERTIES GENERATED ON
         SKIP_AUTOMOC ON
     )
@@ -146,10 +152,15 @@ macro(generate_component_version)
             -DGIT_ROOT_DIR=${GIT_ROOT_DIR}
             -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
 
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+
+            -DVERSION_FILE=version.json
+
             -DINPUT_DIR=${CMAKE_SOURCE_DIR}/CMake/Templates
-            -DINPUT_FILE=${${PROJECT_NAME}_input_file}
-            -DOUTPUT_DIR=${CMAKE_CURRENT_BINARY_DIR}
-            -DOUTPUT_FILE=version.json
+            -DWORKING_DIR=${CMAKE_CURRENT_BINARY_DIR}
+
+            -DDEPLOYMENT_DIR=${CMAKE_BINARY_DIR}
+            -DPROJECT_DIR=${CMAKE_CURRENT_SOURCE_DIR}
 
             -DUSE_GITTAG_VERSION=${BUILD_GITTAG_VERSION}
 
@@ -167,4 +178,54 @@ macro(generate_component_version)
     set_source_files_properties(version.json
         PROPERTIES GENERATED ON
     )
+endmacro()
+
+macro(generate_ifw_version)
+    set(options GITTAG_PREFIX)
+    cmake_parse_arguments(local "" "${options}" "" ${ARGN})
+
+    if (NOT TARGET ${PROJECT_NAME}_version)
+        message(STATUS "Creating version target for ${PROJECT_NAME} (prefix: '${local_GITTAG_PREFIX}')...")
+
+        add_custom_target(${PROJECT_NAME}_version ALL)
+        add_custom_command(
+            TARGET ${PROJECT_NAME}_version
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+
+            COMMAND ${CMAKE_COMMAND}
+                -DGIT_ROOT_DIR=${GIT_ROOT_DIR}
+                -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
+
+                -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+
+                -DVERSION_FILE=version.json
+                -DINPUT_DIR=${CMAKE_SOURCE_DIR}/CMake/Templates
+                -DWORKING_DIR=${CMAKE_CURRENT_BINARY_DIR}
+                -DDEPLOYMENT_DIR=${CMAKE_BINARY_DIR}
+                -DPROJECT_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+
+                -DUSE_GITTAG_VERSION=${BUILD_GITTAG_VERSION}
+
+
+                -DPROJECT_NAME=${PROJECT_NAME}
+                -DPROJECT_COMPANY=${PROJECT_COMPANY}
+                -DPROJECT_COPYRIGHT=${PROJECT_COPYRIGHT}
+                -DPROJECT_DESCRIPTION=${PROJECT_DESCRIPTION}
+                -DPROJECT_BUNDLE_ID=${PROJECT_BUNDLE_ID}
+                -DPROJECT_VERSION_TWEAK=${BUILD_ID}
+                -DQT5_VERSION=${Qt5Core_VERSION_STRING}
+
+
+                -DGITTAG_PREFIX=${local_GITTAG_PREFIX}
+
+                -P ${CMAKE_SOURCE_DIR}/CMake/Modules/GitVersion-builder.cmake
+                COMMENT "Analyzing git-tag version changes for ${PROJECT_NAME}..." VERBATIM
+        )
+
+        add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_version)
+
+        set_source_files_properties(version.json
+            PROPERTIES GENERATED ON
+        )
+    endif()
 endmacro()

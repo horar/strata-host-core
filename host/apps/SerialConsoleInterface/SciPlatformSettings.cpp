@@ -33,6 +33,35 @@ SciPlatformSettingsItem *SciPlatformSettings::getBoardData(const QString &id) co
 
 void SciPlatformSettings::setCommandHistory(const QString &id, const QStringList &list)
 {
+    int index = findBoardIndex(id);
+    settingsList_.at(index)->commandHistoryList = list;
+    rearrangeAndSave(index);
+}
+
+void SciPlatformSettings::setExportPath(const QString &id, const QString &exportPath)
+{
+    int index = findBoardIndex(id);
+    if (settingsList_.at(index)->exportPath == exportPath) {
+        return;
+    }
+
+    settingsList_.at(index)->exportPath = exportPath;
+    rearrangeAndSave(index);
+}
+
+void SciPlatformSettings::setAutoExportPath(const QString &id, const QString &autoExportPath)
+{
+    int index = findBoardIndex(id);
+    if (settingsList_.at(index)->autoExportPath == autoExportPath) {
+        return;
+    }
+
+    settingsList_.at(index)->autoExportPath = autoExportPath;
+    rearrangeAndSave(index);
+}
+
+int SciPlatformSettings::findBoardIndex(const QString &id)
+{
     int index = -1;
     for (int i = 0; i < settingsList_.length(); ++i) {
         if (settingsList_.at(i)->id == id) {
@@ -50,19 +79,22 @@ void SciPlatformSettings::setCommandHistory(const QString &id, const QStringList
         index = 0;
     }
 
-    settingsList_.at(index)->commandHistoryList = list;
+    return index;
+}
 
+void SciPlatformSettings::rearrangeAndSave(int index)
+{
     //sorted by last usage
     settingsList_.move(index, 0);
-
-    bool saved = saveData();
-    if (saved == false) {
-        qCCritical(logCategorySci) << "platform data were not saved";
-    }
+    saveData();
 }
 
 void SciPlatformSettings::loadData()
 {
+    if (QFile::exists(boardStoragePath_) == false) {
+        return;
+    }
+
     QFile file(boardStoragePath_);
     if (file.open(QFile::ReadOnly | QFile::Text) == false) {
         qCCritical(logCategorySci) << "cannot load data" << boardStoragePath_ << file.errorString();
@@ -90,7 +122,6 @@ void SciPlatformSettings::loadData()
         }
 
         QString id = board.toObject().value(SCI_SETTINGS_ID).toString();
-        QStringList commandHistoryList = board.toObject().value(SCI_SETTINGS_CMD_HISTORY).toVariant().toStringList();
 
         if (id.isEmpty()) {
             qCCritical(logCategorySci) << "empty board identification";
@@ -99,14 +130,16 @@ void SciPlatformSettings::loadData()
 
         SciPlatformSettingsItem *item = new SciPlatformSettingsItem();
         item->id = id;
-        item->commandHistoryList = commandHistoryList;
+        item->commandHistoryList = board.toObject().value(SCI_SETTINGS_CMD_HISTORY).toVariant().toStringList();
+        item->exportPath = board.toObject().value(SCI_EXPORT_PATH).toString();
+        item->autoExportPath = board.toObject().value(SCI_AUTOEXPORT_PATH).toString();
 
         settingsList_.append(item);
         settingsHash_.insert(id, item);
     }
 }
 
-bool SciPlatformSettings::saveData()
+void SciPlatformSettings::saveData()
 {
     QJsonDocument doc;
     QJsonArray boardList;
@@ -115,6 +148,8 @@ bool SciPlatformSettings::saveData()
         QJsonObject obj;
         obj.insert(SCI_SETTINGS_ID, item->id);
         obj.insert(SCI_SETTINGS_CMD_HISTORY, QJsonArray::fromStringList(item->commandHistoryList));
+        obj.insert(SCI_EXPORT_PATH, item->exportPath);
+        obj.insert(SCI_AUTOEXPORT_PATH, item->autoExportPath);
 
         boardList.append(obj);
 
@@ -129,12 +164,15 @@ bool SciPlatformSettings::saveData()
     bool ret = file.open(QIODevice::WriteOnly | QIODevice::Text);
     if (ret == false) {
         qCCritical(logCategorySci) << "cannot open file" << boardStoragePath_ << file.errorString();
-        return false;
+        return;
     }
 
     QTextStream out(&file);
 
     out << doc.toJson(QJsonDocument::Compact);
 
-    return file.commit();
+    bool comitted = file.commit();
+    if (comitted == false) {
+         qCCritical(logCategorySci) << "platform data were not saved";
+    }
 }

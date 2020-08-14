@@ -1,4 +1,3 @@
-
 #include <HostControllerClient.hpp>
 
 #include <string>
@@ -6,7 +5,7 @@
 
 const char* HOST_CONTROLLER_SERVICE_IN_ADDRESS = "tcp://127.0.0.1:5563";
 
-Spyglass::HostControllerClient* hcc = nullptr;
+strata::hcc::HostControllerClient* hcc = nullptr;
 
 int send_register_client()
 {
@@ -20,7 +19,7 @@ int send_register_client()
 
 int send_unregister_client()
 {
-    const std::string msg("{ \"cmd\":\"unregister\" }");
+    const std::string msg("{ \"hcs::cmd\":\"unregister\" }");
 
     hcc->sendCmd(msg);
 //    std::string response = hcc->receiveNotification();
@@ -43,7 +42,7 @@ int send_platform_select()
 int main(int, char*[])
 {
     int ret;
-    Spyglass::HostControllerClient client(HOST_CONTROLLER_SERVICE_IN_ADDRESS);
+    strata::hcc::HostControllerClient client(HOST_CONTROLLER_SERVICE_IN_ADDRESS);
 
     //connect ??
 

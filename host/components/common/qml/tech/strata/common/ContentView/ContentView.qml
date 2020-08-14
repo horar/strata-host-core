@@ -11,22 +11,28 @@ Rectangle {
         fill: parent
     }
 
-    property int totalDocuments: documentManager.pdfListModel.count + documentManager.datasheetListModel.count + documentManager.downloadDocumentListModel.count
+    property string class_id: ""
+    property var classDocuments: null
+
+    property int totalDocuments: classDocuments.pdfListModel.count + classDocuments.datasheetListModel.count + classDocuments.downloadDocumentListModel.count
     onTotalDocumentsChanged: {
-        if (documentManager.pdfListModel.count > 0) {
-             pdfViewer.url = "file://localhost/" + documentManager.pdfListModel.getFirstUri();
-        } else if (documentManager.datasheetListModel.count > 0) {
-            pdfViewer.url = documentManager.datasheetListModel.getFirstUri();
+        if (classDocuments.pdfListModel.count > 0) {
+             pdfViewer.url = "file://localhost/" + classDocuments.pdfListModel.getFirstUri();
+        } else if (classDocuments.datasheetListModel.count > 0) {
+            pdfViewer.url = classDocuments.datasheetListModel.getFirstUri();
         } else {
             pdfViewer.url = ""
         }
     }
 
-    Connections {
-        target: documentManager
+    Component.onCompleted: {
+         classDocuments = sdsModel.documentManager.getClassDocuments(view.class_id)
+    }
 
+    Connections {
+        target: classDocuments
         onErrorStringChanged: {
-            if (documentManager.errorString.length > 0) {
+            if (classDocuments.errorString.length > 0) {
                 pdfViewer.url = ""
                 loadingImage.currentFrame = 0
             }
@@ -100,29 +106,29 @@ Rectangle {
                         id: pdfAccordion
                         title: "Platform Documents"
                         contents: Documents {
-                            model: documentManager.pdfListModel
+                            model: classDocuments.pdfListModel
                         }
                         open: true
-                        visible: documentManager.pdfListModel.count > 0
+                        visible: classDocuments.pdfListModel.count > 0
                     }
 
                     SGAccordionItem {
                         id: datasheetAccordion
                         title: "Part Datasheets"
                         contents: Datasheets {
-                            model: documentManager.datasheetListModel
+                            model: classDocuments.datasheetListModel
                         }
-                        visible: documentManager.datasheetListModel.count > 0
+                        visible: classDocuments.datasheetListModel.count > 0
                     }
 
                     SGAccordionItem {
                         id: downloadAccordion
                         title: "Downloads"
                         contents: Downloads {
-                            model: documentManager.downloadDocumentListModel
+                            model: classDocuments.downloadDocumentListModel
 
                         }
-                        visible: documentManager.downloadDocumentListModel.count > 0
+                        visible: classDocuments.downloadDocumentListModel.count > 0
                     }
                 }
             }
@@ -223,7 +229,7 @@ Rectangle {
                 centerIn: loading
                 verticalCenterOffset: -height/4
             }
-            playing: documentManager.loading
+            playing: classDocuments.loading
             height: 200
             width: 200
         }
@@ -240,12 +246,12 @@ Rectangle {
                 family:  Fonts.franklinGothicBold
             }
             text: {
-                if (documentManager.errorString.length > 0) {
-                    return "Error: " + documentManager.errorString
+                if (classDocuments.errorString.length > 0) {
+                    return "Error: " + classDocuments.errorString
                 }
 
-                if (documentManager.loading) {
-                    return "Downloading\n" + documentManager.loadingProgressPercentage + "% completed"
+                if (classDocuments.loading) {
+                    return "Downloading\n" + classDocuments.loadingProgressPercentage + "% completed"
                 }
 
                 return ""

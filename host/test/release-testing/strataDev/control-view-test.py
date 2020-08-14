@@ -150,7 +150,7 @@ while True:
         time.sleep(1)
         print("Done.")
         quit(0)              # Exit as soon as you finish the control views
-    elif (message == b'{"cmd":"unregister","payload":{}}'):
+    elif (message == b'{"hcs::cmd":"unregister","payload":{}}'):
         printLineSeparator()
         print("Strata UI was closed. Exitting...")
         printLineSeparator()

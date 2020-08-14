@@ -55,7 +55,7 @@ public:
     bool registerNotificationHandler(std::string notification, NotificationHandler handler);
     bool registerDataSourceHandler(std::string source, DataSourceHandler handler);
 
-    Spyglass::HostControllerClient *hcc;
+    strata::hcc::HostControllerClient *hcc;
     std::thread notification_thread_;
     void notificationsThread();
 
@@ -64,7 +64,8 @@ public:
     Q_INVOKABLE void connectToPlatform(QString class_id);
     Q_INVOKABLE void unregisterClient();
     Q_INVOKABLE void sendCommand(QString cmd);
-    Q_INVOKABLE void disconnectPlatform();
+
+    void setNotificationThreadRunning(bool running);
 
 signals:
     // ---
@@ -90,7 +91,7 @@ private:
     QString platform_list_{"{ \"list\":[]}"};
     QString connected_platform_list_{"{ \"list\":[]}"};
     QString hcs_token_;
-    bool notification_thread_running_;
+    std::atomic_bool notification_thread_running_;
 
     // ---
     // notification handling

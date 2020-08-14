@@ -9,11 +9,11 @@ import tech.strata.logger 1.0
 FocusScope {
     id: programDeviceView
 
-    property string firmwareBinaryPath
+    property string firmwareBinaryPath: Sci.Settings.lastSelectedFirmware
     property int processingStatus: ProgramDeviceView.Setup
     property bool doBackup: true
 
-    property int backupChunks: 0
+    property real backupProgress: 0.0
     property real programProgress: 0.0
     property real programBackupProgress: 0.0
     property int baseSpacing: 16
@@ -21,8 +21,6 @@ FocusScope {
     property bool editable: processingStatus === ProgramDeviceView.Setup
                             || processingStatus === ProgramDeviceView.ProgramSucceed
                             || processingStatus === ProgramDeviceView.ProgramFailed
-
-    signal closeProgramDeviceViewRequested()
 
     enum ProcessingStatus {
         Setup,
@@ -38,17 +36,15 @@ FocusScope {
         target: model.platform
 
         onFlasherProgramProgress: {
-            if (processingStatus === ProgramDeviceView.ProgramInProgress) {
-                programProgress = chunk / total
-            } else if (processingStatus === ProgramDeviceView.ProgramBackupInProgress) {
-                programBackupProgress = chunk / total
-            } else {
-                console.warn(Logger.sciCategory, "program progress received outside or correct state")
-            }
+            programProgress = chunk / total
         }
 
         onFlasherBackupProgress: {
-            backupChunks = chunk;
+            backupProgress = chunk / total;
+        }
+
+        onFlasherRestoreProgress: {
+            programBackupProgress = chunk / total
         }
 
         onFlasherOperationStateChanged: {
@@ -123,63 +119,51 @@ FocusScope {
             font.bold: true
         }
 
-        Row {
-            id: firmwareRow
+        SGWidgets.SGFileSelector {
+            id: firmwarePathEdit
+            width: content.width
             anchors {
                 top: title.bottom
                 topMargin: baseSpacing
             }
 
-            spacing: baseSpacing
-            SGWidgets.SGTextFieldEditor {
-                id: firmwarePathEdit
+            label: qsTr("Firmware data file")
+            inputValidation: true
+            focus: true
+            enabled: programDeviceView.editable
 
-                label: qsTr("Firmware data file")
-                itemWidth: content.width - selectButton.width - baseSpacing
-                inputValidation: true
-                enabled: programDeviceView.editable
-                placeholderText: "Select path..."
-                focus: true
-                text: firmwareBinaryPath
-                onTextChanged: {
-                    firmwareBinaryPath = text
-                }
-
-                Binding {
-                    target: firmwarePathEdit
-                    property: "text"
-                    value: firmwareBinaryPath
-                }
-
-                function inputValidationErrorMsg() {
-                    if (text.length === 0) {
-                        return qsTr("Firmware data file is required")
-                    } else if (!CommonCpp.SGUtilsCpp.isFile(text)) {
-                        return qsTr("Firmware data file path does not refer to a file")
-                    }
-
-                    return ""
-                }
+            onFilePathChanged: {
+                firmwareBinaryPath = filePath
             }
 
-            SGWidgets.SGButton {
-                id: selectButton
-                y: firmwarePathEdit.itemY + (firmwarePathEdit.item.height - height) / 2
+            Binding {
+                target: firmwarePathEdit
+                property: "filePath"
+                value: firmwareBinaryPath
+            }
 
-                enabled: programDeviceView.editable
-                text: "Select"
-                onClicked: {
-                    selectFirmwareBinary()
+            dialogLabel: "Select Firmware Binary"
+            dialogSelectExisting: true
+            dialogNameFilters: ["Binary files (*.bin)","All files (*)"]
+
+            function inputValidationErrorMsg() {
+                if (filePath.length === 0) {
+                    return qsTr("Firmware data file is required")
+                } else if (!CommonCpp.SGUtilsCpp.isFile(filePath)) {
+                    return qsTr("Firmware data file path does not refer to a file")
                 }
+
+                return ""
             }
         }
 
         SGWidgets.SGCheckBox {
             id: backupCheckbox
             anchors {
-                top: firmwareRow.bottom
+                top: firmwarePathEdit.bottom
             }
 
+            enabled: programDeviceView.editable
             leftPadding: 0
             text: "Backup firmware before programming"
             onCheckStateChanged: {
@@ -220,7 +204,7 @@ FocusScope {
                 text: {
                     var t = "Backup"
                     if (processingStatus !== ProgramDeviceView.Setup) {
-                        t += " (" + backupChunks + " chunk" + (backupChunks == 1 ? "" : "s")  + " completed)"
+                        t += " (" + Math.floor(backupProgress * 100) + "% completed)"
                     }
                     return t
                 }
@@ -272,7 +256,7 @@ FocusScope {
                 icon.source: "qrc:/sgimages/chevron-left.svg"
                 enabled: programDeviceView.editable
                 onClicked: {
-                    closeProgramDeviceViewRequested()
+                    closeView()
                 }
             }
 
@@ -292,6 +276,7 @@ FocusScope {
                                     "Firmware file not set",
                                     error)
                     } else {
+                        Sci.Settings.lastSelectedFirmware = firmwareBinaryPath
                         startProgramProcess()
                     }
                 }
@@ -318,7 +303,7 @@ FocusScope {
 
         programBackupNode.visible = false
 
-        backupChunks = 0
+        backupProgress = 0.0
         programProgress = 0.0
         programBackupProgress = 0.0
 
@@ -348,27 +333,7 @@ FocusScope {
         }
     }
 
-    function selectFirmwareBinary() {
-        var folder = firmwareBinaryPath.length > 0 ? firmwareBinaryPath : Sci.Settings.lastSelectedFirmware
-        var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(
-                    programDeviceView,
-                    fileDialogComponent,
-                    {
-                        "title": "Select Firmware Binary",
-                        "nameFilters": ["Binary files (*.bin)","All files (*)"],
-                        "folderRequested": CommonCpp.SGUtilsCpp.pathToUrl(CommonCpp.SGUtilsCpp.fileAbsolutePath(folder)),
-                    })
-
-        dialog.accepted.connect(function() {
-            firmwareBinaryPath = CommonCpp.SGUtilsCpp.urlToLocalFile(dialog.fileUrl)
-            Sci.Settings.lastSelectedFirmware = firmwareBinaryPath
-            dialog.destroy()
-        })
-
-        dialog.rejected.connect(function() {
-            dialog.destroy()
-        })
-
-        dialog.open();
+    function closeView() {
+        StackView.view.pop();
     }
 }

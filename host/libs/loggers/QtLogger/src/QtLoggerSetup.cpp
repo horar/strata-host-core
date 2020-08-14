@@ -71,7 +71,12 @@ QtLoggerSetup::QtLoggerSetup(const QCoreApplication& app)
 
 QtLoggerSetup::~QtLoggerSetup()
 {
-    qCInfo(logCategoryQtLogger) << "...Qt logging finished";
+    qCDebug(logCategoryQtLogger) << "...Qt logging finished";
+}
+
+QtMessageHandler QtLoggerSetup::getQtLogCallback() const
+{
+    return &qtLogCallback;
 }
 
 void QtLoggerSetup::generateDefaultSettings() const
@@ -158,10 +163,10 @@ void QtLoggerSetup::setupQtLog()
 
     qInstallMessageHandler(qtLogCallback);
 
-    qCInfo(logCategoryQtLogger) << "Qt logging initiated...";
+    qCDebug(logCategoryQtLogger) << "Qt logging initiated...";
 
-    qCInfo(logCategoryQtLogger) << "Application setup:";
-    qCInfo(logCategoryQtLogger) << "\tini:" << settings.fileName();
+    qCDebug(logCategoryQtLogger) << "Application setup:";
+    qCDebug(logCategoryQtLogger) << "\tini:" << settings.fileName();
     qCDebug(logCategoryQtLogger) << "\tformat:" << settings.format();
     qCDebug(logCategoryQtLogger) << "\taccess" << settings.status();
     qCDebug(logCategoryQtLogger) << "\tlogging category filte rules:" << filterRules;

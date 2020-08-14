@@ -14,6 +14,7 @@ TextField {
     property alias leftIconSource: leftIconItem.source
     property bool darkMode: false
     property bool showCursorPosition: false
+    property bool passwordMode: false
 
     /* properties for suggestion list */
     property variant suggestionListModel
@@ -31,6 +32,12 @@ TextField {
     signal suggestionDelegateSelected(int index)
     signal suggestionDelegateRemoveRequested(int index)
 
+    /*private*/
+    property bool hasRightIcons: cursorInfoLoader.status === Loader.Ready
+                                 || revelPasswordLoader.status ===  Loader.Ready
+
+    property bool revealPassword: false
+
     placeholderText: "Input..."
     selectByMouse: true
     focus: true
@@ -38,9 +45,17 @@ TextField {
     Keys.priority: Keys.BeforeItem
     font.pixelSize: SGWidgets.SGSettings.fontPixelSize
     leftPadding: leftIconSource.toString() ? leftIconItem.height + 16 : 10
-    rightPadding: cursorInfoLoader.status === Loader.Ready ? cursorInfoLoader.width + 16 : 10
+    rightPadding: hasRightIcons ? rightIcons.width + 16 : 10
     color: darkMode ? "white" : control.palette.text
     opacity: control.darkMode && control.enabled === false ? 0.5 : 1
+
+    echoMode: {
+        if (passwordMode && revealPassword === false) {
+            return TextField.Password
+        }
+
+        return TextField.Normal
+    }
 
     Keys.onPressed: {
         if (suggestionOpenWithAnyKey && suggestionPopupLoader.status === Loader.Ready) {
@@ -95,15 +110,27 @@ TextField {
             iconColor: "darkgray"
         }
 
-        Loader {
-            id: cursorInfoLoader
+        Row {
+            id: rightIcons
             anchors {
                 right: parent.right
                 rightMargin: 10
                 verticalCenter: parent.verticalCenter
             }
 
-            sourceComponent: showCursorPosition ? cursorInfoComponent : undefined
+            spacing: 4
+
+            Loader {
+                id: cursorInfoLoader
+                anchors.verticalCenter: parent.verticalCenter
+                sourceComponent: showCursorPosition ? cursorInfoComponent : undefined
+            }
+
+            Loader {
+                id: revelPasswordLoader
+                anchors.verticalCenter: parent.verticalCenter
+                sourceComponent: passwordMode ? revealPasswordComponent : undefined
+            }
         }
     }
 
@@ -148,6 +175,22 @@ TextField {
             horizontalPadding: 2
             verticalPadding: 2
             font: control.font
+        }
+    }
+
+    Component {
+        id: revealPasswordComponent
+
+        SGWidgets.SGIconButton {
+            iconColor: control.palette.text
+            backgroundOnlyOnHovered: false
+            highlightImplicitColor: "transparent"
+            iconSize: control.background.height - 16
+            icon.source: pressed ? "qrc:/sgimages/eye.svg" : "qrc:/sgimages/eye-slash.svg"
+            onClicked: control.forceActiveFocus()
+            onPressedChanged: {
+                revealPassword = pressed
+            }
         }
     }
 }

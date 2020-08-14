@@ -18,6 +18,9 @@ target_sources(${PROJECT_NAME}
     SGSortFilterProxyModel.cpp
     logging/LoggingQtCategories.cpp
     SGQWTPlot.cpp
+    SGUserSettings.cpp
+    mqtt/SGMqttClient.cpp
+    mqtt/SGSslConfiguration.cpp
 
     imports/tech/strata/commoncpp/qmldir
     imports/tech/strata/commoncpp/plugins.qmltypes
@@ -30,13 +33,14 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Qml
     Qt5::Widgets
     qwt::qwt
+    mqtt::mqtt
     QtLogger
     )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
     AUTORCC ON
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/imports/tech/strata/commoncpp
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>/imports/tech/strata/commoncpp
 )
 
 # Copy 'qmldir' and 'qmltypes' file next to plugin lib

@@ -158,6 +158,7 @@ public:
     virtual ~Connector() = default;
 
     virtual bool open(const std::string&) = 0;
+    virtual bool closeContext() = 0;
     virtual bool close() = 0;
 
     // non-blocking calls

@@ -6,7 +6,7 @@
 
 namespace strata {
 
-FlasherConnector::FlasherConnector(const SerialDevicePtr& device, const QString& firmwarePath, QObject* parent) :
+FlasherConnector::FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, QObject* parent) :
     QObject(parent), device_(device), filePath_(firmwarePath),
     tmpBackupFile_(QDir(QDir::tempPath()).filePath(QStringLiteral("firmware_backup"))), action_(Action::None) { }
 
@@ -77,7 +77,11 @@ void FlasherConnector::flashFirmware(bool flashOld) {
 
     connect(flasher_.get(), &Flasher::finished, this, &FlasherConnector::handleFlasherFinished);
     connect(flasher_.get(), &Flasher::error, this, &FlasherConnector::handleFlasherError);
-    connect(flasher_.get(), &Flasher::flashProgress, this, &FlasherConnector::flashProgress);
+    if (flashOld) {
+        connect(flasher_.get(), &Flasher::flashProgress, this, &FlasherConnector::restoreProgress);
+    } else {
+        connect(flasher_.get(), &Flasher::flashProgress, this, &FlasherConnector::flashProgress);
+    }
     connect(flasher_.get(), &Flasher::switchToBootloader, this, &FlasherConnector::handleSwitchToBootloader);
     connect(flasher_.get(), &Flasher::devicePropertiesChanged, this, &FlasherConnector::devicePropertiesChanged);
 

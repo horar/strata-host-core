@@ -75,6 +75,14 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<PrtModel>("tech.strata.prt", 1, 0, "PrtModel");
     qmlRegisterUncreatableType<strata::BoardManager>("tech.strata.sci", 1, 0, "BoardManager", "can not instantiate BoardManager in qml");
+    qmlRegisterUncreatableType<Authenticator>("tech.strata.prt.authenticator", 1, 0, "Authenticator", "can not instantiate Authenticator in qml");
+    qmlRegisterUncreatableType<RestClient>("tech.strata.prt.restclient", 1, 0, "RestClient", "can not instantiate RestClient in qml");
+    qmlRegisterUncreatableType<Deferred>("tech.strata.prt.restclient", 1, 0, "Deferred", "can not instantiate Deferred in qml");
+
+    qmlRegisterUncreatableType<strata::FlasherConnector>("tech.strata.flasherConnector", 1, 0, "FlasherConnector", "can not instantiate FlasherConnector in qml");
+    qRegisterMetaType<strata::FlasherConnector::Operation>();
+    qRegisterMetaType<strata::FlasherConnector::State>();
+    qRegisterMetaType<strata::FlasherConnector::Result>();
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {

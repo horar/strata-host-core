@@ -19,11 +19,7 @@ Database::Database(const std::string dbPath, QObject *parent)
 
 Database::~Database()
 {
-    if (sg_replicator_) {
-        sg_replicator_->stop();
-    }
-
-    delete sg_replicator_;
+    delete sg_replicator_;      // will call stop
     delete url_endpoint_;
     delete sg_replicator_configuration_;
     delete basic_authenticator_;

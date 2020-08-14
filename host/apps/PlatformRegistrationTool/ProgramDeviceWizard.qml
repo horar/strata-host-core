@@ -3,16 +3,17 @@ import QtQuick.Controls 2.12
 import Qt.labs.settings 1.1 as QtLabsSettings
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.commoncpp 1.0 as CommonCpp
-import QtQuick.Dialogs 1.3
 import Qt.labs.platform 1.1 as QtLabsPlatform
 import tech.strata.logger 1.0
+import tech.strata.flasherConnector 1.0
 
-Item {
+FocusScope {
     id: wizard
 
-    property string binaryPathForJlink
+    property string firmwareBinaryPath
+    property string bootloaderBinaryPath
     property string jlinkExePath
-    property bool useJLink: false
+
     property int spacing: 10
     property bool closeButtonVisible: false
     property bool requestCancelOnClose: false
@@ -23,6 +24,7 @@ Item {
         WaitingForDevice,
         WaitingForJLink,
         ProgrammingWithJlink,
+        ProgrammingWithFlasher,
         ProgrammingSucceed,
         ProgrammingFailed
     }
@@ -41,9 +43,9 @@ Item {
         id: settings
         category: "app"
 
-        property alias binaryPathForJlink: wizard.binaryPathForJlink
+        property alias bootloaderBinaryPath: wizard.bootloaderBinaryPath
+        property alias firmwareBinaryPath: wizard.firmwareBinaryPath
         property alias jlinkExePath: wizard.jlinkExePath
-        property alias useJLink: wizard.useJLink
     }
 
     Rectangle {
@@ -137,6 +139,7 @@ Item {
             color: baseColor
             iconColor: baseColor
             highlight: processingStatus === ProgramDeviceWizard.ProgrammingWithJlink
+                       || processingStatus === ProgramDeviceWizard.ProgrammingWithFlasher
         }
 
         Arrow {
@@ -233,6 +236,15 @@ Item {
         }
     }
 
+    UserMenuButton {
+        anchors {
+            top: parent.top
+            topMargin: 8
+            right: parent.right
+            rightMargin: 8
+        }
+    }
+
     StackView {
         id: stackView
         anchors {
@@ -241,6 +253,8 @@ Item {
             left: parent.left
             right: parent.right
         }
+
+        focus: true
     }
 
     CommonCpp.SGJLinkConnector {
@@ -253,227 +267,116 @@ Item {
         FocusScope {
             id: settingsPage
 
-            Flickable {
-                id: flick
-
+            Column {
+                id: content
+                width: parent.width - 24
                 anchors {
                     top: parent.top
-                    right: parent.right
-                    left: parent.left
-                    bottom: footer.top
-                    margins: 12
+                    topMargin: 12
+                    horizontalCenter: parent.horizontalCenter
+                }
+                spacing: wizard.spacing
+
+                SGWidgets.SGText {
+                    id: bootloaderHeader
+
+                    text: "Bootloader"
+                    fontSizeMultiplier: 2.0
                 }
 
-                clip: true
-                boundsBehavior: Flickable.StopAtBounds
-                contentWidth: content.width
-                contentHeight: content.height
+                SGWidgets.SGFileSelector {
+                    id: jlinkExePathEdit
+                    width: content.width
 
-                Component.onCompleted: {
-                    manualButton.checked = true
-                }
+                    focus: true
+                    label: "SEGGER J-Link Commander executable (JLink.exe)"
+                    placeholderText: "Enter path..."
+                    inputValidation: true
 
-                ScrollBar.vertical: ScrollBar {
-                    parent: flick.parent
-                    anchors {
-                        top: flick.top
-                        bottom: flick.bottom
-                        left: flick.right
-                        leftMargin: 1
+                    Binding {
+                        target: jlinkExePathEdit
+                        property: "filePath"
+                        value: wizard.jlinkExePath
                     }
 
-                    policy: ScrollBar.AlwaysOn
-                    interactive: false
-                    width: 8
-                    visible: flick.height < flick.contentHeight
-                }
-
-                ButtonGroup {
-                    buttons: [manualButton, automaticButton]
-                }
-
-                Column {
-                    id: content
-                    width: flick.width
-
-                    SGWidgets.SGText {
-                        id: firmwareHeader
-
-                        text: "Firmware"
-                        fontSizeMultiplier: 2.0
+                    onFilePathChanged: {
+                        wizard.jlinkExePath = filePath
                     }
 
-                    Column {
-                        id: optionWrapper
-                        width: parent.width
+                    dialogLabel: "Select JLink Commander executable"
+                    dialogSelectExisting: true
 
-                        Row {
-                            id: manualOptionWrapper
-
-                            spacing: wizard.spacing
-
-                            RadioButton {
-                                id: manualButton
-
-                                //vertical center to pathEdit
-                                y: firmwarePathEdit.itemY + (firmwarePathEdit.item.height - height) / 2
-
-                                onCheckedChanged: {
-                                    if (checked) {
-                                        firmwarePathEdit.forceActiveFocus()
-                                    }
-                                }
-                            }
-
-                            SGWidgets.SGTextFieldEditor {
-                                id: firmwarePathEdit
-
-                                label: qsTr("Firmware data file")
-                                itemWidth: optionWrapper.width - manualButton.width - selectButton.width - 2*wizard.spacing
-                                enabled: manualButton.checked
-                                inputValidation: true
-                                placeholderText: "Enter path..."
-                                text: wizard.binaryPathForJlink
-                                onTextChanged: {
-                                    wizard.binaryPathForJlink = text
-                                }
-
-                                Binding {
-                                    target: firmwarePathEdit
-                                    property: "text"
-                                    value: wizard.binaryPathForJlink
-                                }
-
-                                function inputValidationErrorMsg() {
-                                    if (text.length === 0) {
-                                        return qsTr("Firmware data file is required")
-                                    } else if (!CommonCpp.SGUtilsCpp.isFile(text)) {
-                                        return qsTr("Firmware data file path does not refer to a file")
-                                    }
-
-                                    return ""
-                                }
-                            }
-
-                            SGWidgets.SGButton {
-                                id: selectButton
-                                anchors {
-                                    verticalCenter: manualButton.verticalCenter
-                                }
-
-                                text: "Select"
-                                enabled: manualButton.checked
-                                focusPolicy: Qt.NoFocus
-                                onClicked: {
-                                    getFilePath("Select Firmware Binary",
-                                                ["Binary files (*.bin)","All files (*)"],
-                                                resolveAbsoluteFileUrl(wizard.binaryPathForJlink),
-                                                function(path) {
-                                                    wizard.binaryPathForJlink = path
-                                                })
-                                }
-                            }
+                    function inputValidationErrorMsg() {
+                        if (filePath.length === 0) {
+                            return qsTr("JLink Commander is required")
+                        } else if (!CommonCpp.SGUtilsCpp.isFile(filePath)) {
+                            return qsTr("JLink Commander is not a valid file")
+                        } else if(!CommonCpp.SGUtilsCpp.isExecutable(filePath)) {
+                            return qsTr("JLink Commander is not executable")
                         }
 
-                        Row {
-                            id: automaticOptionWrapper
+                        return ""
+                    }
+                }
 
-                            //TODO disabled until we have connection to couchbase
-                            enabled: false
+                SGWidgets.SGFileSelector {
+                    id: bootloaderPathEdit
+                    width: content.width
 
-                            spacing: wizard.spacing
-
-                            RadioButton {
-                                id: automaticButton
-                                //vertical center to opnEditText
-                                y: opnEdit.itemY + (opnEdit.item.height - height) / 2
-
-                                onCheckedChanged: {
-                                    if (checked) {
-                                        opnEdit.forceActiveFocus()
-                                    }
-                                }
-                            }
-
-                            SGWidgets.SGTextFieldEditor {
-                                id: opnEdit
-                                itemWidth: firmwarePathEdit.itemWidth
-                                label: "Ordering Part Number"
-                                enabled: automaticButton.checked
-                            }
-                        }
+                    label: "Bootloader data file"
+                    placeholderText: "Enter path..."
+                    inputValidation: true
+                    filePath: wizard.bootloaderBinaryPath
+                    onFilePathChanged: {
+                        wizard.bootloaderBinaryPath = filePath
                     }
 
-                    SGWidgets.SGText {
-                        id: bootloaderHeader
+                    dialogLabel: "Select Bootloader Binary"
+                    dialogSelectExisting: true
+                    dialogNameFilters: ["Binary files (*.bin)","All files (*)"]
 
-                        text: "J-Link"
-                        fontSizeMultiplier: 2.0
+                    function inputValidationErrorMsg() {
+                        if (filePath.length === 0) {
+                            return qsTr("Bootloader data file is required")
+                        } else if (!CommonCpp.SGUtilsCpp.isFile(filePath)) {
+                            return qsTr("Bootloader data file path does not refer to a file")
+                        }
+
+                        return ""
+                    }
+                }
+
+
+                SGWidgets.SGText {
+                    id: firmwareHeader
+
+                    text: "Firmware"
+                    fontSizeMultiplier: 2.0
+                }
+
+                SGWidgets.SGFileSelector {
+                    id: firmwarePathEdit
+                    width: content.width
+                    label: "Firmware data file"
+                    placeholderText: "Enter path..."
+                    inputValidation: true
+                    filePath: wizard.firmwareBinaryPath
+                    onFilePathChanged: {
+                        wizard.firmwareBinaryPath = filePath
                     }
 
-                    Item {
-                        id: jlinkWrapper
+                    dialogLabel: "Select Firmware Binary"
+                    dialogSelectExisting: true
+                    dialogNameFilters: ["Binary files (*.bin)","All files (*)"]
 
-                        width: parent.width
-                        height: jlinkInputColumn.y + jlinkInputColumn.height
-
-                        Column {
-                            id: jlinkInputColumn
-                            anchors {
-                                right: parent.right
-                            }
-
-                            Row {
-                                spacing: wizard.spacing
-
-                                SGWidgets.SGTextFieldEditor {
-                                    id: jlinkExePathEdit
-
-                                    itemWidth: firmwarePathEdit.itemWidth
-                                    label: "SEGGER J-Link Commander executable (JLink.exe)"
-                                    placeholderText: "Enter path..."
-                                    inputValidation: true
-                                    text: wizard.jlinkExePath
-                                    onTextChanged: {
-                                        wizard.jlinkExePath = text
-                                    }
-
-                                    Binding {
-                                        target: jlinkExePathEdit
-                                        property: "text"
-                                        value: wizard.jlinkExePath
-                                    }
-
-                                    function inputValidationErrorMsg() {
-                                        if (text.length === 0) {
-                                            return qsTr("JLink Commander is required")
-                                        } else if (!CommonCpp.SGUtilsCpp.isFile(text)) {
-                                            return qsTr("JLink Commander is not a valid file")
-                                        } else if(!CommonCpp.SGUtilsCpp.isExecutable(text)) {
-                                            return qsTr("JLink Commander is not executable")
-                                        }
-
-                                        return ""
-                                    }
-                                }
-
-                                SGWidgets.SGButton {
-                                    id: selectJFlashLiteButton
-                                    y: jlinkExePathEdit.itemY + (jlinkExePathEdit.item.height - height) / 2
-
-                                    text: "Select"
-                                    focusPolicy: Qt.NoFocus
-                                    onClicked: {
-                                        getFilePath("Select JLink Commander executable",
-                                                    undefined,
-                                                    resolveAbsoluteFileUrl(wizard.jlinkExePath),
-                                                    function(path) {
-                                                        wizard.jlinkExePath = path
-                                                    })
-                                    }
-                                }
-                            }
+                    function inputValidationErrorMsg() {
+                        if (filePath.length === 0) {
+                            return qsTr("Firmware data file is required")
+                        } else if (!CommonCpp.SGUtilsCpp.isFile(filePath)) {
+                            return qsTr("Firmware data file path does not refer to a file")
                         }
+
+                        return ""
                     }
                 }
             }
@@ -507,25 +410,19 @@ Item {
                     onClicked: {
                         var errorList = []
 
-                        if (firmwarePathEdit.enabled) {
-                            var error = firmwarePathEdit.inputValidationErrorMsg()
-                            if (error.length) {
-                                errorList.push(error)
-                            }
+                        var error = bootloaderPathEdit.inputValidationErrorMsg()
+                        if (error.length) {
+                            errorList.push(error)
                         }
 
-                        if (opnEdit.enabled) {
-                            error = opnEdit.inputValidationErrorMsg()
-                            if (error.length) {
-                                errorList.push(error)
-                            }
+                        error = jlinkExePathEdit.inputValidationErrorMsg()
+                        if (error.length) {
+                            errorList.push(error)
                         }
 
-                        if (jlinkExePathEdit.enabled) {
-                            error = jlinkExePathEdit.inputValidationErrorMsg()
-                            if (error.length) {
-                                errorList.push(error)
-                            }
+                        error = firmwarePathEdit.inputValidationErrorMsg()
+                        if (error.length) {
+                            errorList.push(error)
                         }
 
                         if (errorList.length) {
@@ -567,6 +464,36 @@ Item {
                 onBoardDisconnected: {
                     callTryProgramDevice()
                 }
+
+                onFlasherProgress: {
+                    if (operation === FlasherConnector.Preparation ) {
+                        if (state === FlasherConnector.Started) {
+                            subtextNote = "Preparations"
+                        } else if (state === FlasherConnector.Failed) {
+                            subtextNote = errorString
+                        }
+                    } else if (operation === FlasherConnector.Flash) {
+                        if (state === FlasherConnector.Started) {
+                            subtextNote = "Programming"
+                        } else if (state === FlasherConnector.Failed) {
+                            subtextNote = errorString
+                        }
+                    } else if ( FlasherConnector.BackupBeforeFlash
+                               || operation === FlasherConnector.RestoreFromBackup) {
+                        console.warn(Logger.sciCategory, "unsupported state")
+                    } else {
+                        console.warn(Logger.sciCategory, "unknown state")
+                    }
+                }
+
+                onFlasherFinished: {
+                    if (result === FlasherConnector.Success) {
+                        processingStatus = ProgramDeviceWizard.ProgrammingSucceed
+                    } else if (result === FlasherConnector.Unsuccess
+                               || result === FlasherConnector.Failure) {
+                        processingStatus = ProgramDeviceWizard.ProgrammingFailed
+                    }
+                }
             }
 
             Timer {
@@ -584,10 +511,16 @@ Item {
                 onFlashBoardProcessFinished: {
                     console.log(Logger.prtCategory, "JLink flash finished with exitedNormally=", exitedNormally)
                     if (exitedNormally) {
-                        processingStatus = ProgramDeviceWizard.ProgrammingSucceed
+                        var errorString = prtModel.programDevice(firmwareBinaryPath);
+                        if (errorString.length === 0) {
+                            processingStatus = ProgramDeviceWizard.ProgrammingWithFlasher
+                        } else {
+                            processingStatus = ProgramDeviceWizard.ProgrammingFailed
+                            subtextNote = errorString
+                        }
                     } else {
                         processingStatus = ProgramDeviceWizard.ProgrammingFailed
-                        subtextNote = "Firmware programming error"
+                        subtextNote = "Bootloader programming error"
                     }
                 }
 
@@ -674,7 +607,7 @@ Item {
             }
 
             function doProgramDeviceJlink() {
-                var run = jLinkConnector.flashBoardRequested(wizard.binaryPathForJlink, true)
+                var run = jLinkConnector.flashBoardRequested(wizard.bootloaderBinaryPath, true)
                 if (run) {
                     processingStatus = ProgramDeviceWizard.ProgrammingWithJlink
                     processPage.subtextNote = "Programming"
@@ -702,6 +635,8 @@ Item {
                     } else if (processingStatus === ProgramDeviceWizard.WaitingForJLink) {
                         return "Waiting for JLink connection"
                     } else if (processingStatus === ProgramDeviceWizard.ProgrammingWithJlink) {
+                        return "Programming bootloader..."
+                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingWithFlasher) {
                         return "Programming firmware..."
                     } else if (processingStatus === ProgramDeviceWizard.ProgrammingSucceed) {
                         return "Programming successful"
@@ -733,6 +668,7 @@ Item {
                     height: parent.height
 
                     running: processingStatus === ProgramDeviceWizard.ProgrammingWithJlink
+                             || processingStatus === ProgramDeviceWizard.ProgrammingWithFlasher
                 }
 
                 SGWidgets.SGIcon {
@@ -785,7 +721,8 @@ Item {
                             msg += "Multiple devices detected !"
                         }
                         return msg
-                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingWithJlink) {
+                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingWithJlink
+                               || processingStatus === ProgramDeviceWizard.ProgrammingWithFlasher) {
                         msg = processPage.subtextNote
                         msg += "\n\n"
                         msg += "Do not unplug the device until process is complete"
@@ -796,7 +733,7 @@ Item {
                         msg += "process will start automatically\n\n"
                         msg += "or press End."
                         return msg
-                    } else if(processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
+                    } else if (processingStatus === ProgramDeviceWizard.ProgrammingFailed) {
                         msg = processPage.subtextNote
                         msg += "\n\n"
                         msg += "Unplug the device and press Continue"
@@ -815,7 +752,7 @@ Item {
                     margins: 10
                 }
 
-                source: "qrc://jlink-connect-schema.svg"
+                source: "qrc:/images/jlink-connect-schema.svg"
                 fillMode: Image.PreserveAspectFit
                 sourceSize: Qt.size(width, height)
                 smooth: true
@@ -876,41 +813,6 @@ Item {
         }
     }
 
-    Component {
-        id: fileDialogComponent
-        FileDialog {
-            //"file:" scheme has length of 5
-            folder: folderRequested.length > 5 ? folderRequested : shortcuts.documents
-
-            property string folderRequested
-        }
-    }
-
-    function getFilePath(title, nameFilterList, folder, callback) {
-
-        var dialog = SGWidgets.SGDialogJS.createDialogFromComponent(
-                    wizard,
-                    fileDialogComponent,
-                    {
-                        "title": title,
-                        "nameFilters": nameFilterList,
-                        "folderRequested": folder
-                    })
-
-        dialog.accepted.connect(function() {
-            if (callback) {
-                callback(CommonCpp.SGUtilsCpp.urlToLocalFile(dialog.fileUrl))
-            }
-
-            dialog.destroy()
-        })
-
-        dialog.rejected.connect(function() {
-            dialog.destroy()
-        })
-
-        dialog.open();
-    }
 
     function resolveAbsoluteFileUrl(path) {
         return CommonCpp.SGUtilsCpp.pathToUrl(

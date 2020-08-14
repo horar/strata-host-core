@@ -14,6 +14,8 @@ Item {
         fill: parent
     }
 
+    property var sgUserSettings
+
     PlatformInterface {
         id: platformInterface
     }
@@ -45,6 +47,14 @@ Item {
                 controlContainer.currentIndex = 1
             }
         }
+
+        TabButton {
+            id: userSettingsButton
+            text: qsTr("User Settings")
+            onClicked: {
+                controlContainer.currentIndex = 2
+            }
+        }
     }
 
     StackLayout {
@@ -62,6 +72,10 @@ Item {
 
         AdvancedControl {
             id: advanced
+        }
+
+        UserSettingsControl {
+            id: userSettings
         }
     }
 

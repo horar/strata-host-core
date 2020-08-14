@@ -21,5 +21,8 @@
         <file>images/room_lightsOff.jpg</file>
         <file>images/room_doorOpen.jpg</file>
         <file>images/room_lightsOn.jpg</file>
+        <file>images/zigbee-logo.png</file>
+        <file>images/ON-logo.svg</file>
+        <file>images/room_doorOpenLightsOff.jpg</file>
     </qresource>
 </RCC>

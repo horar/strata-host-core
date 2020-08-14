@@ -2,16 +2,15 @@ macro(add_view)
     set(projectName NAME)
     cmake_parse_arguments(local "" "${projectName}" "" ${ARGN})
 
-    cmake_dependent_option(VIEWS_${local_NAME} "Strata '${local_NAME}' view" ON
-                           "BUILD_VIEWS" OFF)
-    add_feature_info(views-${local_NAME} VIEWS_${local_NAME} "Strata '${local_NAME}' view")
+    cmake_dependent_option(APPS_VIEWS_${local_NAME} "Strata '${local_NAME}' view" ON
+                           "APPS_VIEWS" OFF)
+                       add_feature_info(APPS_VIEWS-${local_NAME} APPS_VIEWS_${local_NAME} "Strata '${local_NAME}' view")
 
-    if(NOT BUILD_VIEWS)
-        return()
-    endif()
-
-    if(NOT ${VIEWS_${local_NAME}})
-        file(REMOVE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/views-${local_NAME}.rcc)
+    if(NOT APPS_VIEWS OR NOT ${APPS_VIEWS_${local_NAME}})
+        if(EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/views-${local_NAME}.rcc)
+            message(STATUS "...removing 'views-${local_NAME}.rcc'")
+            file(REMOVE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/views-${local_NAME}.rcc)
+        endif()
         return()
     endif()
 
