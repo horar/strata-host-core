@@ -751,3 +751,15 @@ TEST_F(CommandValidatorTest, isValidStrataCommandTest)
     testCommand = R"({"ack":"request_platform_id","payload":{"return_value":"true","return_string":"command valid"}})";
     EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::strataCmd, doc));
 }
+
+TEST_F(CommandValidatorTest, containsObject)
+{
+    std::string testCommand;
+    rapidjson::Document doc;
+
+    testCommand = R"({"cmd":"test"})";
+    EXPECT_TRUE(CommandValidator::parseJsonCommand(testCommand, doc));
+
+    testCommand = R"("test")";
+    EXPECT_FALSE(CommandValidator::parseJsonCommand(testCommand, doc));
+}
