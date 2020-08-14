@@ -38,6 +38,7 @@ signals:
     void hcsConnectedChanged();
 
 private slots:
+    void startedProcess();
     void finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus);
     void handleHcsProcessError(QProcess::ProcessError error);
 

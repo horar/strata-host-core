@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 
     if (appGuard.tryToRun() == false) {
         qCCritical(logCategoryHcs) << QStringLiteral("Another instance of Host Controller Service is already running.");
-        return EXIT_FAILURE;
+        return EXIT_FAILURE + 1; // LC: todo..
     }
 
 #if defined(Q_OS_WIN)
