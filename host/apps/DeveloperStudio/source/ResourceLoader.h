@@ -39,6 +39,14 @@ public:
     Q_INVOKABLE bool deleteViewResource(const QString &class_id, const QString &version = "");
 
     /**
+     * @brief deleteStaticViewResource Deletes a static view from the bin directory and unregisters it.
+     * @param class_id The class id of the platform.
+     * @param displayName The name of the platform.
+     * @return True if successful, false if unable to delete resource.
+     */
+    Q_INVOKABLE bool deleteStaticViewResource(const QString &class_id, const QString &displayName);
+
+    /**
      * @brief registerControlViewResources Registers a control view's resource file.
      * @param class_id The class id of the platform.
      * @param version Optional* The version to register. If left blank, it will register the latest version.

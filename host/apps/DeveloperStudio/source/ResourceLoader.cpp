@@ -59,6 +59,25 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
     }
 }
 
+bool ResourceLoader::deleteStaticViewResource(const QString &class_id, const QString &displayName) {
+    QFile rccFile(ResourcePath::viewsResourcePath() + "/views-" + displayName + ".rcc");
+
+    qCDebug(logCategoryResourceLoader) << "Attempting to remove static resource file" << rccFile.fileName();
+    if (rccFile.exists()) {
+        if (!unregisterResource(rccFile.fileName())) {
+            qCWarning(logCategoryResourceLoader) << "Resource " << rccFile.fileName() << " either does not exist or is still in use.";
+        }
+        if (!rccFile.remove()) {
+            qCCritical(logCategoryResourceLoader) << "Could not delete static resource " << rccFile.fileName();
+            return false;
+        }
+
+        viewsRegistered_.insert(class_id, false);
+    }
+
+    return true;
+}
+
 void ResourceLoader::registerControlViewResources(const QString &class_id, const QString &version) {
     if (isViewRegistered(class_id)) {
         qCDebug(logCategoryResourceLoader) << "View is already registered for " << class_id;

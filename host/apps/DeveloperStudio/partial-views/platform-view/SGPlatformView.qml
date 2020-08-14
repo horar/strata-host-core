@@ -104,16 +104,25 @@ StackLayout {
         }
     }
 
+    /*
+      Updates a control view to a new version
+    */
     function updateControl(version, oldVersion) {
         removeControl();
 
+        console.info("Attempting to update control view from", oldVersion === "" ? "local" : oldVersion, "to", version);
+        let success = sdsModel.resourceLoader.deleteStaticViewResource(model.class_id, model.name);
+
         if (oldVersion !== "") {
-            let success = sdsModel.resourceLoader.deleteViewResource(model.class_id, oldVersion);
+            success = sdsModel.resourceLoader.deleteViewResource(model.class_id, oldVersion);
             console.info("Successfully deleted control view version", oldVersion, "for platform", model.class_id);
         }
         sdsModel.resourceLoader.registerControlViewResources(model.class_id, version);
     }
 
+    /*
+      Removes the control view from controlContainer
+    */
     function removeControl () {
         if (controlLoaded) {
             NavigationControl.removeView(controlContainer)
