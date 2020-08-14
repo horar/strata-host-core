@@ -16,6 +16,8 @@ var settings_object
 var notification_mode
 
 var update_menuitem
+var update_alerticon
+
 var dontaskagain_checked
 
 function initialize (newCoreInterface, newUpdateContainer) {
@@ -57,7 +59,7 @@ function parseVersionInfo (payload) {
         if (last_known_version !== payload.latest_version) {
             setLastKnownVersion(payload.latest_version)
             setUserNotificationMode("AskAgainLater")
-            enableMenuItem()
+            enableMenuItemAndAlertIcon()
             createUpdatePopup()
             return
         }
@@ -67,7 +69,7 @@ function parseVersionInfo (payload) {
             for (let i = 0; i < temp_latest_version.length; i++) {
                 if (parseInt(temp_latest_version[i]) > parseInt(temp_current_version[i])) {
                     console.info(LoggerModule.Logger.devStudioCorePlatformInterfaceCategory, "Newer version available detected:", payload.latest_version)
-                    enableMenuItem()
+                    enableMenuItemAndAlertIcon()
                     if (notification_mode != "DontAskAgain") {
                         createUpdatePopup()
                     }
@@ -93,6 +95,7 @@ function createUpdatePopup () {
     var coreUpdatePopup = NavigationControl.createView("qrc:/partial-views/core-update/SGCoreUpdate.qml", updateContainer)
     coreUpdatePopup.width = updateContainer.width
     coreUpdatePopup.height = updateContainer.height
+
     coreUpdatePopup.x = updateContainer.width/2 - coreUpdatePopup.width/2
     coreUpdatePopup.y =  updateContainer.height/2 - coreUpdatePopup.height/2
 
@@ -144,6 +147,11 @@ function registerMenuItem (item) {
     update_menuitem = item
 }
 
-function enableMenuItem () {
+function registerAlertIcon (icon) {
+    update_alerticon = icon
+}
+
+function enableMenuItemAndAlertIcon () {
     update_menuitem.enabled = true
+    update_alerticon.visible = true
 }

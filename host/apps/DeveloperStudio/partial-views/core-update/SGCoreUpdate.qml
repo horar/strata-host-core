@@ -17,6 +17,7 @@ SGStrataPopup {
     modal: true
     glowColor: "#666"
     closePolicy: Popup.CloseOnEscape
+    implicitWidth: width
 
     property string latest_version: ""
     property string current_version: ""
@@ -44,7 +45,6 @@ SGStrataPopup {
             Row {
                 id: updateTextColumn
                 spacing: 5
-                width: updateContainer.width
 
                 anchors {
                     top: updateContainer.top

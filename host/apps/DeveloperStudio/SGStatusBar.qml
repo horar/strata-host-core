@@ -181,6 +181,38 @@ Rectangle {
             }
         }
 
+        Rectangle {
+            id: alertIconContainer
+            visible: false
+
+            anchors {
+                top: parent.top
+                horizontalCenter: parent.left
+                topMargin: 5
+            }
+
+            height: 12
+            width: height
+            radius: height / 2
+            color: "#00b842"
+
+            SGIcon {
+                id: alertIcon
+                height: 15
+                width: height
+                anchors {
+                    centerIn: parent
+                }
+
+                source: "qrc:/sgimages/exclamation-circle.svg"
+                iconColor : "white"
+            }
+
+            Component.onCompleted: {
+                CoreUpdate.registerAlertIcon(this)
+            }
+        }
+
         MouseArea {
             id: profileIconHover
             hoverEnabled: true
@@ -249,6 +281,7 @@ Rectangle {
                     text: qsTr("Update")
                     width: profileMenu.width
                     enabled: false
+                    iconSource: enabled ? "qrc:/sgimages/exclamation-circle.svg" : ""
 
                     onClicked: {
                         profileMenu.close()
