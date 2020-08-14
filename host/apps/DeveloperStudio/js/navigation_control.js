@@ -69,7 +69,6 @@ var platform_view_model_ = null
 var stack_container_ = null
 var platform_list = {}
 var resource_loader_
-var pending_views_ = [];
 
 /*
   Navigation initialized with parent containers
