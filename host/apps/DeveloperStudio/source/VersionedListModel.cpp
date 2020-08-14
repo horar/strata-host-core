@@ -161,29 +161,9 @@ int VersionedListModel::getLatestVersion() {
     for (int j = 0; j < data_.count(); j++) {
         VersionedItem *versionItem = data_[j];
         QString version = versionItem->version;
-        QStringList latestVersionSeparated = latestVersion.split(".");
-        QStringList versionSeparated = version.split(".");
-        bool versionIsGreater = false;
 
-        while (latestVersionSeparated.length() < 3) {
-            latestVersionSeparated.push_back("0");
-        }
-
-        while (versionSeparated.length() < 3) {
-            versionSeparated.push_back("0");
-        }
-
-        for (int i = 0; i < 3; i++) {
-            if (versionSeparated[i].toInt() > latestVersionSeparated[i].toInt()) {
-                versionIsGreater = true;
-                break;
-            } else if (versionSeparated[i].toInt() < latestVersionSeparated[i].toInt()) {
-                versionIsGreater = false;
-                break;
-            }
-        }
-
-        if (versionIsGreater) {
+        // Check if version is greater than latestVersion
+        if (isVersionGreater(latestVersion, version)) {
             latestVersion = version;
             latestVersionIndex = j;
         }
@@ -193,11 +173,36 @@ int VersionedListModel::getLatestVersion() {
 }
 
 int VersionedListModel::getInstalledVersion() {
+    int oldestInstalledIndex = -1;
+
     for (int i = 0; i < data_.count(); i++) {
-        if (data_[i]->installed) {
-            return i;
+        if (data_[i]->installed && (oldestInstalledIndex == -1 || isVersionGreater(data_[i]->version, data_[oldestInstalledIndex]->version))) {
+            oldestInstalledIndex = i;
         }
     }
-    return -1;
+    return oldestInstalledIndex;
+}
+
+bool VersionedListModel::isVersionGreater(const QString &mainVersion, const QString &compareVersion) {
+    QStringList mainVersionSeparated = mainVersion.split(".");
+    QStringList compareVersionSeparated = compareVersion.split(".");
+
+    while (mainVersionSeparated.length() < 3) {
+        mainVersionSeparated.push_back("0");
+    }
+
+    while (compareVersionSeparated.length() < 3) {
+        compareVersionSeparated.push_back("0");
+    }
+
+    for (int i = 0; i < 3; i++) {
+        if (compareVersionSeparated[i].toInt() > mainVersionSeparated[i].toInt()) {
+            return true;
+        } else if (compareVersionSeparated[i].toInt() < mainVersionSeparated[i].toInt()) {
+            return false;
+        }
+    }
+
+    return false;
 }
 
