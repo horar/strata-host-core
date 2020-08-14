@@ -50,5 +50,4 @@ private:
     QString appDirPath_;
 
     void setHcsConnected(bool hcsConnected);
-    void forwardHcsOutput();
 };

@@ -81,13 +81,14 @@ bool SDSModel::startHcs()
     if (QFile::exists(hcsPath)) {
         hcsProcess_ = new QProcess(this);
 
+        hcsProcess_->setStandardOutputFile(QProcess::nullDevice());
+        hcsProcess_->setStandardErrorFile(QProcess::nullDevice());
+
         connect(hcsProcess_, qOverload<int, QProcess::ExitStatus>(&QProcess::finished),
                 this, &SDSModel::finishHcsProcess);
 
         connect(hcsProcess_, &QProcess::errorOccurred,
                 this, &SDSModel::handleHcsProcessError);
-
-        forwardHcsOutput();
 
         QStringList arguments;
         arguments << "-f" << hcsConfigPath;
@@ -190,23 +191,4 @@ void SDSModel::setHcsConnected(bool hcsConnected)
 
     hcsConnected_ = hcsConnected;
     emit hcsConnectedChanged();
-}
-
-void SDSModel::forwardHcsOutput()
-{
-    // XXX: [LC] temporary solutions until Strata Monitor takeover 'hcs' service management
-    QObject::connect(hcsProcess_, &QProcess::readyReadStandardOutput, [&]() {
-        QByteArray stdOut = hcsProcess_->readAllStandardOutput();
-        const QString hscMsg{QString::fromLatin1(stdOut)};
-        for (const auto& line : hscMsg.split(QRegExp("\n|\r\n|\r"))) {
-            qCDebug(logCategoryHcs) << line;
-        }
-    } );
-    QObject::connect(hcsProcess_, &QProcess::readyReadStandardError, [&]() {
-        const QString hscMsg{QString::fromLatin1(hcsProcess_->readAllStandardError())};
-        for (const auto& line : hscMsg.split(QRegExp("\n|\r\n|\r"))) {
-            qCCritical(logCategoryHcs) << line;
-        }
-    });
-    // XXX: [LC] end
 }
