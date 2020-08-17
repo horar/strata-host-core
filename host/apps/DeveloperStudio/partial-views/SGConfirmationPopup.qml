@@ -21,6 +21,10 @@ Popup {
     property alias popupText: confirmText.text
     property alias acceptButton: acceptButton
     property alias cancelButton: cancelButton
+    property string acceptButtonColor: "#999"
+    property string acceptButtonHoverColor: "#666"
+    property string cancelButtonColor: "#999"
+    property string cancelButtonHoverColor: "#666"
 
     DropShadow {
         width: root.width
@@ -113,18 +117,90 @@ Popup {
                 Button {
                     id: acceptButton
                     text: "Accept"
+
+                    contentItem: Text {
+                        text: acceptButton.text
+                        font.pixelSize: 12
+                        font.family: Fonts.franklinGothicBook
+                        color: "white"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                    }
+
+                    background: Rectangle {
+                        id: acceptBtnBg
+                        implicitWidth: 100
+                        implicitHeight: 40
+                        color: acceptButtonColor
+                    }
+
                     onClicked: {
                         root.close()
                     }
+
+                    MouseArea {
+                        id: acceptBtnCursor
+
+                        hoverEnabled: true
+                        anchors.fill: parent
+                        onPressed:  mouse.accepted = false
+                        cursorShape: Qt.PointingHandCursor
+
+                        onEntered: {
+                            acceptBtnBg.color = acceptButtonHoverColor
+                        }
+
+                        onExited: {
+                            acceptBtnBg.color = acceptButtonColor
+                        }
+                    }
+
                 }
 
                 Button {
                     id: cancelButton
                     text: "Cancel"
                     visible: text !== ""
+
+                    contentItem: Text {
+                        text: cancelButton.text
+                        font.pixelSize: 12
+                        font.family: Fonts.franklinGothicBook
+                        color: "white"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                    }
+
+                    background: Rectangle {
+                        id: cancelBtnBg
+                        implicitWidth: 100
+                        implicitHeight: 40
+                        color: cancelButtonColor
+                    }
+
                     onClicked: {
                         root.close()
                     }
+
+                    MouseArea {
+                        id: cancelBtnCursor
+
+                        hoverEnabled: true
+                        anchors.fill: parent
+                        onPressed:  mouse.accepted = false
+                        cursorShape: Qt.PointingHandCursor
+
+                        onEntered: {
+                            cancelBtnBg.color = cancelButtonHoverColor
+                        }
+
+                        onExited: {
+                            cancelBtnBg.color = cancelButtonColor
+                        }
+                    }
+
                 }
             }
         }

@@ -86,4 +86,6 @@ private:
             const QString &firmwareUrl,
             const QString &firmwareChecksum);
 
+    QString resolveConfigFilePath();
+
 };
