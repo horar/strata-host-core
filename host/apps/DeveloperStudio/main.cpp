@@ -102,19 +102,19 @@ int main(int argc, char *argv[])
 
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
 
-    SDSModel *sdsModel = new SDSModel();
+    QScopedPointer<SDSModel> sdsModel{new SDSModel()};
     sdsModel->init(app.applicationDirPath());
 
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
     QObject::connect(&app, &QGuiApplication::lastWindowClosed,
-                     sdsModel, &SDSModel::shutdownService/*, Qt::QueuedConnection*/);
+                     sdsModel.get(), &SDSModel::shutdownService/*, Qt::QueuedConnection*/);
 
     QQmlApplicationEngine engine;
     QQmlFileSelector selector(&engine);
 
     addImportPaths(&engine);
 
-    engine.rootContext()->setContextProperty ("sdsModel", sdsModel);
+    engine.rootContext()->setContextProperty ("sdsModel", sdsModel.get());
 
     /* deprecated context property, use sdsModel.coreInterface instead */
     engine.rootContext()->setContextProperty ("coreInterface", sdsModel->coreInterface());
@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
         engine.load(QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
         if (engine.rootObjects().isEmpty()) {
             qCCritical(logCategoryStrataDevStudio) << "hell froze - engine fails to load error dialog; aborting...";
-            return -1;
+            return EXIT_FAILURE;
         }
 
         return app.exec();
@@ -152,8 +152,6 @@ int main(int argc, char *argv[])
     bool killed = sdsModel->killHcs();
     qCDebug(logCategoryStrataDevStudio) << "hcs killed=" << killed;
 #endif
-
-    delete sdsModel;
 
     return appResult;
 }
