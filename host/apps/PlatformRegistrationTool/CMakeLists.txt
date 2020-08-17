@@ -29,6 +29,9 @@ target_sources(${PROJECT_NAME} PRIVATE
 
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
+
+    configs/prt-config-prod.ini
+    configs/prt-config-qa.ini
 )
 
 generate_app_version(GITTAG_PREFIX "prt_" MACBUNDLE ON)
