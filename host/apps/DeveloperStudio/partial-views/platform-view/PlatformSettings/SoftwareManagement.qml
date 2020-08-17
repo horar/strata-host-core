@@ -202,7 +202,7 @@ ColumnLayout {
 
             SGIcon {
                 iconColor: "#999"
-                source: "qrc:/sgimages/check-circle-solid.svg"
+                source: "qrc:/sgimages/check-circle.svg"
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: 30
                 Layout.leftMargin: 10
@@ -233,7 +233,7 @@ ColumnLayout {
 
                 SGIcon {
                     iconColor: "lime"
-                    source: "qrc:/sgimages/exclamation-circle-solid.svg"
+                    source: "qrc:/sgimages/exclamation-circle.svg"
                     Layout.preferredHeight: 30
                     Layout.preferredWidth: 30
 
@@ -289,7 +289,7 @@ ColumnLayout {
 
                         SGIcon {
                             iconColor: "#666"
-                            source: "qrc:/sgimages/download-solid.svg"
+                            source: "qrc:/sgimages/download.svg"
                             Layout.preferredHeight: 30
                             Layout.preferredWidth: 30
                         }

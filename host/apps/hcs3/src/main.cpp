@@ -73,8 +73,8 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
     }
 
-    const QtLoggerSetup loggerInitialization(app);
-    cbLoggerSetup(loggerInitialization.getQtLogCallback());
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
+    strata::loggers::cbLoggerSetup(loggerInitialization.getQtLogCallback());
 
     qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
     qCInfo(logCategoryHcs) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 
     if (appGuard.tryToRun() == false) {
         qCCritical(logCategoryHcs) << QStringLiteral("Another instance of Host Controller Service is already running.");
-        return EXIT_FAILURE;
+        return EXIT_FAILURE + 1; // LC: todo..
     }
 
 #if defined(Q_OS_WIN)

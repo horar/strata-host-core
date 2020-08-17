@@ -207,7 +207,7 @@ Item {
                 }
 
                 SGIcon {
-                    source: "qrc:/sgimages/times-circle-solid.svg"
+                    source: "qrc:/sgimages/times-circle.svg"
                     height: parent.height * .75
                     width: height
                     anchors {

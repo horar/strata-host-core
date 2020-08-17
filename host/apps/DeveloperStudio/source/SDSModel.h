@@ -23,7 +23,7 @@ public:
     explicit SDSModel(QObject *parent = nullptr);
     virtual ~SDSModel();
 
-    void init(const QString &appDirPath, const QString &configFilename);
+    void init(const QString &appDirPath);
     bool startHcs();
     bool killHcs();
 
@@ -41,6 +41,7 @@ signals:
     void hcsConnectedChanged();
 
 private slots:
+    void startedProcess();
     void finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus);
     void handleHcsProcessError(QProcess::ProcessError error);
 
@@ -52,8 +53,6 @@ private:
     HcsNode *remoteHcsNode_;
     QPointer<QProcess> hcsProcess_;
     QString appDirPath_;
-    QString configFilename_;
 
     void setHcsConnected(bool hcsConnected);
-    void forwardHcsOutput();
 };

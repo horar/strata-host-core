@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0
 import "PlatformSettings"
-import "../status-bar"
+import "../"
 
 Rectangle {
     id: platformSettings
@@ -21,7 +21,6 @@ Rectangle {
         }
         spacing: 30
 
-        // Todo: to be implemented in CS-831, CS-832
         SoftwareManagement { }
 
         FirmwareManagement { }

@@ -89,6 +89,8 @@ Item {
                                             "class_id": uuid,
                                             "name": model.name,
                                             "index": null,
+                                            "view": "control",
+                                            "connected": true,
                                             "available": {
                                                 "control": true,
                                                 "documents": true,

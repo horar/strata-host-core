@@ -112,7 +112,7 @@ ColumnLayout {
                                 anchors {
                                     fill: parent
                                 }
-                                source: model.installed ? "qrc:/sgimages/check-circle-solid.svg" : "qrc:/sgimages/download-solid.svg"
+                                source: model.installed ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/download.svg"
                                 iconColor: {
                                     if (platformStack.connected === false || firmwareColumn.flashingInProgress) {
                                         return "#ddd" // disabled - light greyed out
@@ -131,18 +131,22 @@ ColumnLayout {
                                     enabled: model.installed === false && !firmwareColumn.flashingInProgress && platformStack.connected
 
                                     onClicked: {
-                                        let chosenVersion = model.version.split(".")
-                                        let installedVersion = platformStack.firmware_version.split(".")
+                                        if (platformStack.firmware_version !== "") {
+                                            let chosenVersion = model.version.split(".")
+                                            let installedVersion = platformStack.firmware_version.split(".")
 
-                                        for (let i = 0; i < chosenVersion.length; i++) {
-                                            if (parseInt(chosenVersion[i]) > parseInt(installedVersion[i])) {
-                                                flashStatus.startFlash()
-                                                return
+                                            for (let i = 0; i < chosenVersion.length; i++) {
+                                                if (parseInt(chosenVersion[i]) > parseInt(installedVersion[i])) {
+                                                    flashStatus.startFlash()
+                                                    return
+                                                }
                                             }
-                                        }
 
-                                        warningPop.callback = this
-                                        warningPop.open()
+                                            warningPop.callback = this
+                                            warningPop.open()
+                                        } else {
+                                            flashStatus.startFlash()
+                                        }
                                     }
 
                                     function callback() {
@@ -384,7 +388,7 @@ ColumnLayout {
         Layout.maximumHeight: visible ? implicitHeight : 0
 
         SGIcon {
-            source: "qrc:/sgimages/exclamation-circle-solid.svg"
+            source: "qrc:/sgimages/exclamation-circle.svg"
             Layout.preferredHeight: 30
             Layout.preferredWidth: 30
             iconColor: "#aaa"

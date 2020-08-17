@@ -12,12 +12,12 @@ ColumnLayout {
     property bool flashingInProgress: false
 
     Component.onCompleted: {
-        classDocuments = sdsModel.documentManager.getClassDocuments(platformStack.class_id)
-        firmwareList.firmwareRepeater.model = classDocuments.firmwareListModel
+        firmwareListModel = sdsModel.documentManager.getClassDocuments(platformStack.class_id).firmwareListModel
+        firmwareList.firmwareRepeater.model = firmwareListModel
     }
 
-    property var classDocuments: null
-    property int firmwareCount: classDocuments.firmwareListModel.count
+    property var firmwareListModel: null
+    property int firmwareCount: firmwareListModel.count
 
     onFirmwareCountChanged: {
         matchVersion()
@@ -43,12 +43,12 @@ ColumnLayout {
     }
 
     function matchVersion() {
-        for (let i = 0; i < classDocuments.firmwareListModel.count; i++) {
-            let version = classDocuments.firmwareListModel.version(i)
+        for (let i = 0; i < firmwareListModel.count; i++) {
+            let version = firmwareListModel.version(i)
             if (version === platformStack.firmware_version) {
-                classDocuments.firmwareListModel.setInstalled(i, true)
+                firmwareListModel.setInstalled(i, true)
             } else {
-                classDocuments.firmwareListModel.setInstalled(i, false)
+                firmwareListModel.setInstalled(i, false)
             }
         }
     }
@@ -94,9 +94,30 @@ ColumnLayout {
         }
     }
 
+    RowLayout {
+        id: errorResponse
+        spacing: 10
+        Layout.topMargin: 10
+        visible: platformStack.connected && platformStack.firmware_version === ""
+
+        SGIcon {
+            id: errorIcon
+            source: "qrc:/sgimages/exclamation-triangle.svg"
+            Layout.preferredHeight: 30
+            Layout.preferredWidth: 30
+            iconColor: "#f53847"
+        }
+
+        SGText {
+            text: "Error: Unable to determine platform firmware version"
+            fontSizeMultiplier: 1.38
+            color: deviceVersion.color
+        }
+    }
+
     ColumnLayout {
         id: connectedFirmwareColumn
-        visible: platformStack.connected
+        visible: platformStack.connected && platformStack.firmware_version !== ""
         Layout.topMargin: 10
 
         SGText {

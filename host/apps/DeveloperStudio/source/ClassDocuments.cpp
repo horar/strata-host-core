@@ -186,8 +186,8 @@ void ClassDocuments::populateModels(QJsonObject data)
         QString version = documentObject["version"].toString();
         QString timestamp = documentObject["timestamp"].toString();
 
-        VersionedItem *fi = new VersionedItem(uri, md5, name, timestamp, version);
-        firmwareList.append(fi);
+        VersionedItem *firmwareItem = new VersionedItem(uri, md5, name, timestamp, version);
+        firmwareList.append(firmwareItem);
     }
 
     QJsonArray controlViewArray = data["control_views"].toArray();
@@ -205,9 +205,6 @@ void ClassDocuments::populateModels(QJsonObject data)
             continue;
         }
 
-        QJsonDocument doc(documentObject);
-        QString strJson(doc.toJson(QJsonDocument::Compact));
-
         QString uri = documentObject["uri"].toString();
         QString name = documentObject["name"].toString();
         QString md5 = documentObject["md5"].toString();
@@ -215,8 +212,8 @@ void ClassDocuments::populateModels(QJsonObject data)
         QString timestamp = documentObject["timestamp"].toString();
         QString filepath = documentObject["filepath"].toString();
 
-        VersionedItem *fi = new VersionedItem(uri, md5, name, timestamp, version, filepath);
-        controlViewList.append(fi);
+        VersionedItem *controlViewItem = new VersionedItem(uri, md5, name, timestamp, version, filepath);
+        controlViewList.append(controlViewItem);
     }
 
     pdfModel_.populateModel(pdfList);

@@ -86,4 +86,4 @@ private:
 };
 
 
-#endif //VERSIONED_DOCUMENT_LIST_MODEL_H
+#endif //VERSIONED_LIST_MODEL_H
