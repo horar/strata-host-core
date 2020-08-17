@@ -92,22 +92,22 @@ class Flasher : public QObject
 
         /*!
          * This signal is emitted during firmware flashing.
-         * \param chunk chunk number which was flashed
-         * \param total total count of firmware chunks
+         * \param chunk chunk number which was flashed (1 - N)
+         * \param total total count of firmware chunks (N)
          */
         void flashFirmwareProgress(int chunk, int total);
 
         /*!
          * This signal is emitted during firmware backup.
-         * \param chunk chunk number which was backed up
-         * \param total total count of firmware chunks
+         * \param chunk chunk number which was backed up (1 - N)
+         * \param total total count of firmware chunks (N)
          */
         void backupFirmwareProgress(int chunk, int total);
 
         /*!
          * This signal is emitted during bootloader flashing.
-         * \param chunk chunk number which was flashed
-         * \param total total count of bootloader chunks
+         * \param chunk chunk number which was flashed (1 - N)
+         * \param total total count of bootloader chunks (N)
          */
         void flashBootloaderProgress(int chunk, int total);
 

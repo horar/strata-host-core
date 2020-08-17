@@ -65,7 +65,7 @@ void DeviceOperations::switchToBootloader() {
     }
 }
 
-void DeviceOperations::flashChunk(const QVector<quint8>& chunk, int chunkNumber, bool flashFirmware) {
+void DeviceOperations::flashChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount, bool flashFirmware) {
     DeviceOperation operation = (flashFirmware) ?
                                 DeviceOperation::FlashFirmwareChunk :
                                 DeviceOperation::FlashBootloaderChunk;
@@ -77,19 +77,19 @@ void DeviceOperations::flashChunk(const QVector<quint8>& chunk, int chunkNumber,
         if (currentCommand_ != commandList_.end()) {
             CmdFlash *cmdFlash = dynamic_cast<CmdFlash*>(currentCommand_->get());
             if (cmdFlash != nullptr) {
-                cmdFlash->setChunk(chunk, chunkNumber);
+                cmdFlash->setChunk(chunk, chunkNumber, chunkCount);
                 emit sendCommand(QPrivateSignal());
             }
         }
     }
 }
 
-void DeviceOperations::flashFirmwareChunk(const QVector<quint8>& chunk, int chunkNumber) {
-    flashChunk(chunk, chunkNumber, true);
+void DeviceOperations::flashFirmwareChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount) {
+    flashChunk(chunk, chunkNumber, chunkCount, true);
 }
 
-void DeviceOperations::flashBootloaderChunk(const QVector<quint8>& chunk, int chunkNumber) {
-    flashChunk(chunk, chunkNumber, false);
+void DeviceOperations::flashBootloaderChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount) {
+    flashChunk(chunk, chunkNumber, chunkCount, false);
 }
 
 void DeviceOperations::backupFirmwareChunk() {

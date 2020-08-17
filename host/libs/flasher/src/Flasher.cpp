@@ -148,11 +148,17 @@ void Flasher::handleOperationFinished(DeviceOperation operation, int data) {
 
 void Flasher::handleFlash(int lastFlashedChunk) {
     bool flashFirmware = (action_ == Action::FlashFirmware);
-    if (lastFlashedChunk == 0) {  // the last chunk
+
+    // Bootloader uses range 0 to N-1 for chunk numbers, our signals use range 1 to N.
+    int flashedChunk = lastFlashedChunk + 1;
+
+    if (flashedChunk == chunkCount_) {  // the last chunk
         binaryFile_.close();
         const char* binaryType = (flashFirmware) ? "firmware" : "bootloader";
-        qCInfo(logCategoryFlasher) << device_ << "Flashed chunk " << chunkCount_ << " of " << chunkCount_ << " - " << binaryType << " is flashed.";
-        emit flashFirmwareProgress(chunkCount_, chunkCount_);
+        qCInfo(logCategoryFlasher) << device_ << "Flashed chunk " << flashedChunk << " of " << chunkCount_ << " - " << binaryType << " is flashed.";
+        (flashFirmware)
+            ? emit flashFirmwareProgress(flashedChunk, chunkCount_)
+            : emit flashBootloaderProgress(flashedChunk, chunkCount_);
         if (startApp_) {
             operation_->startApplication();
         } else {
@@ -160,31 +166,32 @@ void Flasher::handleFlash(int lastFlashedChunk) {
         }
         return;
     }
-    if (lastFlashedChunk > 0) {  // if no chunk was flashed yet, 'lastFlashedChunk' is negative number (-1)
-        if (lastFlashedChunk == chunkProgress_) { // this is faster than modulo
+
+    if (lastFlashedChunk >= 0) {  // if no chunk was flashed yet, 'lastFlashedChunk' is negative number (-1)
+        if (flashedChunk == chunkProgress_) { // this is faster than modulo
             chunkProgress_ += FLASH_PROGRESS_STEP;
-            qCInfo(logCategoryFlasher) << device_ << "Flashed chunk " << lastFlashedChunk << " of " << chunkCount_;
-            (flashFirmware) ?
-                emit flashFirmwareProgress(lastFlashedChunk, chunkCount_) :
-                emit flashBootloaderProgress(lastFlashedChunk, chunkCount_);
+            qCInfo(logCategoryFlasher) << device_ << "Flashed chunk " << flashedChunk << " of " << chunkCount_;
+            (flashFirmware)
+                ? emit flashFirmwareProgress(flashedChunk, chunkCount_)
+                : emit flashBootloaderProgress(flashedChunk, chunkCount_);
         } else {
-            qCDebug(logCategoryFlasher) << device_ << "Flashed chunk " << lastFlashedChunk << " of " << chunkCount_;
+            qCDebug(logCategoryFlasher) << device_ << "Flashed chunk " << flashedChunk << " of " << chunkCount_;
         }
     }
-    ++chunkNumber_;
+
     int chunkSize = CHUNK_SIZE;
     qint64 remainingFileSize = binaryFile_.size() - binaryFile_.pos();
-    if (remainingFileSize <= CHUNK_SIZE) {
-        chunkNumber_ = 0;  // the last chunk
+    if (remainingFileSize <= CHUNK_SIZE) {  // the last chunk
         chunkSize = static_cast<int>(remainingFileSize);
     }
     QVector<quint8> chunk(chunkSize);
 
     qint64 bytesRead = binaryFile_.read(reinterpret_cast<char*>(chunk.data()), chunkSize);
     if (bytesRead == chunkSize) {
-        (flashFirmware) ?
-            operation_->flashFirmwareChunk(chunk, chunkNumber_) :
-            operation_->flashBootloaderChunk(chunk, chunkNumber_);
+        (flashFirmware)
+            ? operation_->flashFirmwareChunk(chunk, chunkNumber_, chunkCount_)
+            : operation_->flashBootloaderChunk(chunk, chunkNumber_, chunkCount_);
+        ++chunkNumber_;
     } else {
         qCCritical(logCategoryFlasher) << device_ << "Cannot read from file '" << binaryFile_.fileName() << "'. " << binaryFile_.errorString();
         emit error(QStringLiteral("File read error. ") + binaryFile_.errorString());

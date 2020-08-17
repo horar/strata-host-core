@@ -69,9 +69,10 @@ public:
     /*!
      * Flash Firmware Chunk operation.
      * \param chunk firmware chunk
-     * \param chunkNumber firmware chunk number
+     * \param chunkNumber firmware chunk number (from 0 to N-1)
+     * \param chunkCount total count of firmware chunks (N)
      */
-    void flashFirmwareChunk(const QVector<quint8>& chunk, int chunkNumber);
+    void flashFirmwareChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount);
 
     /*!
      * Backup Firmware Chunk operation.
@@ -81,9 +82,10 @@ public:
     /*!
      * Flash Bootloader Chunk operation.
      * \param chunk bootloader chunk
-     * \param chunkNumber bootloader chunk number
+     * \param chunkNumber bootloader chunk number (from 0 to N-1)
+     * \param chunkCount total count of bootloader chunks (N)
      */
-    void flashBootloaderChunk(const QVector<quint8>& chunk, int chunkNumber);
+    void flashBootloaderChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount);
 
     /*!
      * Start Application operation.
@@ -146,7 +148,7 @@ private:
     void finishOperation(DeviceOperation operation, int data = OPERATION_DEFAULT_DATA);
     void reset();
 
-    void flashChunk(const QVector<quint8>& chunk, int chunkNumber, bool flashFirmware);
+    void flashChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount, bool flashFirmware);
 
     device::DevicePtr device_;
     uint deviceId_;
