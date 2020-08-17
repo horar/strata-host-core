@@ -41,7 +41,15 @@ void c4LogCallback(C4LogDomain domain, C4LogLevel level, const char *fmt, va_lis
 void cbLoggerSetup(QtMessageHandler qtLogCallback)
 {
     g_qtLogCallback = qtLogCallback;
+
+    // TODO: [LC] this could be probably related to our Qt log levels in config file
+    c4log_setLevel(kC4DefaultLog, kC4LogDebug);
+    c4log_setLevel(kC4DatabaseLog, kC4LogDebug);
+    c4log_setLevel(kC4QueryLog, kC4LogDebug);
+    c4log_setLevel(kC4SyncLog, kC4LogDebug);
+    c4log_setLevel(kC4WebSocketLog, kC4LogDebug);
+
     c4log_writeToCallback(kC4LogDebug, &c4LogCallback, false);
 }
 
-}  // namespace strat::loggers
+}  // namespace strata::loggers
