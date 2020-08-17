@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
+import "qrc:/js/platform_selection.js" as PlatformSelection
 
 ColumnLayout {
     id: software
@@ -27,12 +28,16 @@ ColumnLayout {
         target: coreInterface
 
         onDownloadViewFinished: {
-            progressUpdateText.percent = 1.0
-            setUpToDateTimer.start()
+            if (platformStack.currentIndex !== 0) {
+                progressUpdateText.percent = 1.0
+                setUpToDateTimer.start()
+            }
         }
 
         onDownloadControlViewProgress: {
-            progressUpdateText.percent = payload.bytes_received / payload.bytes_total
+            if (platformStack.currentIndex !== 0) {
+                progressUpdateText.percent = payload.bytes_received / payload.bytes_total
+            }
         }
     }
 
@@ -140,7 +145,7 @@ ColumnLayout {
         onTriggered: {
             upToDate = true
             platformStack.updateControl(latestVersion.version, activeVersion ? activeVersion.version : "")
-            activeVersion = latestVersion;
+            activeVersion = latestVersion
         }
     }
 
@@ -349,7 +354,6 @@ ColumnLayout {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
                         downloadColumn1.visible = true
-                        sdsModel.resourceLoader.deleteViewResource(platformStack.class_id, activeVersion ? activeVersion.version : "");
                         downloadColumn1.startDownload();
                     }
                 }

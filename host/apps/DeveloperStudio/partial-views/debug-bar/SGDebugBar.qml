@@ -97,7 +97,7 @@ Item {
                                             },
                                             "firmware_version": ""
                                         }
-                                        PlatformSelection.loadPlatformDocuments(data)
+                                        PlatformSelection.openPlatformView(data)
                                         viewCombobox.currentIndex = index
                                         break
                                     }
