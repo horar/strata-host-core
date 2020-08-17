@@ -29,8 +29,6 @@ StackLayout {
     property int device_id: model.device_id
     property string class_id: model.class_id
     property string name: model.name
-    property int view_index: model.view_index
-    property var available: model.available
     property string firmware_version: model.firmware_version
     property var controlViewList: sdsModel.documentManager.getClassDocuments(model.class_id).controlViewListModel
     property int controlViewListCount: controlViewList.count
@@ -67,7 +65,6 @@ StackLayout {
     }
 
     Component.onDestruction: {
-        console.info("test -- on destructor")
         removeControl()
     }
 
@@ -94,11 +91,14 @@ StackLayout {
             loadingBarContainer.visible = false;
             loadingBar.percentReady = 0.0;
 
-            let idx = controlViewList.getInstalledVersion();
             let version = "";
 
-            if (idx >= 0) {
-                version = controlViewList.version(idx);
+            if (!usingLocalView) {
+                let idx = controlViewList.getInstalledVersion();
+
+                if (idx >= 0) {
+                    version = controlViewList.version(idx);
+                }
             }
 
             let qml_control = NavigationControl.getQMLFile(model.class_id, "Control", version)
@@ -106,15 +106,10 @@ StackLayout {
             NavigationControl.context.device_id = model.device_id
             NavigationControl.context.sgUserSettings = sgUserSettings
 
-            controlContainer.setSource(qml_control)
+            controlContainer.setSource(qml_control);
             delete NavigationControl.context.class_id
             delete NavigationControl.context.device_id
             delete NavigationControl.context.sgUserSettings
-            if (control === null) {
-                controlContainer.setSource(NavigationControl.screens.LOAD_ERROR)
-            }
-
-            controlLoaded = true
         }
     }
 
@@ -144,7 +139,6 @@ StackLayout {
         if (controlLoaded) {
             controlContainer.setSource("")
             controlContainer.sourceComponent = undefined
-            controlLoaded = false
         }
     }
 
@@ -291,6 +285,17 @@ StackLayout {
 
             anchors {
                 fill: parent
+            }
+
+            onStatusChanged: {
+                if (status === Loader.Ready) {
+                    platformStack.controlLoaded = true
+                } else if (status === Loader.Error) {
+                    controlContainer.setSource(NavigationControl.screens.LOAD_ERROR)
+                    platformStack.controlLoaded = true
+                } else if (status === Loader.Null) {
+                    platformStack.controlLoaded = false
+                }
             }
 
         }
