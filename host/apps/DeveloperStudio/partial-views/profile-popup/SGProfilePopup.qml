@@ -201,7 +201,7 @@ SGStrataPopup {
                         leftMargin: alertRect.height/2 - height/2
                     }
 
-                    source: Qt.colorEqual(alertRect.color, "red") ? "qrc:/images/icons/exclamation-circle.svg" : "qrc:/images/icons/check-circle.svg"
+                    source: Qt.colorEqual(alertRect.color, "red") ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/check-circle.svg"
                     iconColor: "white"
                 }
 
@@ -456,7 +456,7 @@ SGStrataPopup {
 
                     SGIcon {
                         id: showPasswordIcon
-                        source: passwordField.echoMode === TextInput.Password ? "qrc:/images/icons/eye.svg" : "qrc:/images/icons/eye-slash.svg"
+                        source: passwordField.echoMode === TextInput.Password ? "qrc:/sgimages/eye.svg" : "qrc:/sgimages/eye-slash.svg"
                         iconColor: showPassword.containsMouse ? "lightgrey" : "#ddd"
                         anchors {
                             verticalCenter: passwordField.verticalCenter
