@@ -166,15 +166,8 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
 
     rapidjson::Document doc;
 
-    if (CommandValidator::parseJson(data.toStdString(), doc) == false) {
+    if (CommandValidator::parseJsonCommand(data.toStdString(), doc) == false) {
         qCWarning(logCategoryDeviceOperations) << device_ << "Cannot parse JSON: '" << data << "'.";
-        return;
-    }
-
-    if (doc.IsObject() == false) {
-        // JSON can contain only a value (e.g. "abc").
-        // We require object as a JSON content (JSON starts with '{' and ends with '}')
-        qCWarning(logCategoryDeviceOperations) << device_ << "Content of JSON response is not an object: '" << data << "'.";
         return;
     }
 

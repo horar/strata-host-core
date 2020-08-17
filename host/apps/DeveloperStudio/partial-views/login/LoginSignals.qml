@@ -34,6 +34,25 @@ Item {
     signal validationResult(string result)
 
     /*
+      CLose Acount Signals
+    */
+    signal closeAccountResult(string result)
+
+    /*
+      Update Profile Signals
+    */
+    signal profileUpdateResult(string result)
+
+    /*
+      Change Password Signals
+    */
+    signal changePasswordResult(string result)
+
+    /*
+      Get Profile Signals
+    */
+    signal getProfileResult(string result, var user)
+    /*
       Signal for changing auth server to test auth server via debug bar
     */
     signal serverChanged()
