@@ -113,9 +113,11 @@ Rectangle {
         var tdata_length = total_time_length
         var hdata_length = hdata.length // length of histogram data
         var maxXvaule // variable to hold the max x value data for time domain graph
-        //frequency plot
+
         //DEBUG
-        console.log("start Plotting........................................")
+        //console.log("start Plotting........................................")
+
+         //frequency plot
         var curve2 = graph2.createCurve("graph2")
         curve2.color = "White"
         var dataArray1 = []
@@ -140,7 +142,6 @@ Rectangle {
         graph.xMax = maxXvaule
         time_maxValue = maxXvaule
         curve1.appendList(dataArray3)
-
         //Histogram Plot
         var curve3 = graph3.createCurve("graph3")
         curve3.color = "Green"
@@ -151,11 +152,11 @@ Rectangle {
         curve3.appendList(dataArray2)
         warningPopup.close()
         acquireButtonContainer.enabled = true
-
         graphPlottedCount++;
         
         //DEBUG
         console.log("Done Plotting........................................")
+
         var sndr =  processed_data[3]
         var sfdr =  processed_data[4]
         var snr =   processed_data[5]
@@ -518,8 +519,6 @@ Rectangle {
             title: "Frequency Domain"
             xTitle: "Frequency (KHz)"
             yTitle: "Power Relative to Fundamental (dB)"
-
-
             backgroundColor: "black"
             foregroundColor: "white"
             zoomXEnabled: true
