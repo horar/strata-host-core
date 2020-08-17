@@ -88,8 +88,9 @@ function init(status_bar_container, stack_container, resourceLoader)
 /*
     Retrieve the qml file in the templated file structure
 */
-var PREFIX = "qrc:/views/"
-function getQMLFile(class_id, filename) {
+var PREFIX = "qrc:/"
+var VIEWS_PREFIX = "views/"
+function getQMLFile(class_id, filename, version = "") {
 
     // eventually dirname should === class_id and this UUIDmap will be unnecessary
     var dir_name = UuidMap.uuid_map[class_id]
@@ -101,7 +102,7 @@ function getQMLFile(class_id, filename) {
         filename = filename + ".qml"
     }
 
-    var qml_file_name = PREFIX + dir_name + "/" + filename
+    var qml_file_name = PREFIX + (version === "" ? version : version + "/") + VIEWS_PREFIX + dir_name + "/" + filename
     console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Locating at ", qml_file_name)
 
     loadViewVersion(PREFIX + dir_name)

@@ -28,6 +28,9 @@ StackLayout {
 
     property int device_id: model.device_id
     property string class_id: model.class_id
+    property string name: model.name
+    property int view_index: model.view_index
+    property var available: model.available
     property string firmware_version: model.firmware_version
     property var controlViewList: sdsModel.documentManager.getClassDocuments(model.class_id).controlViewListModel
     property int controlViewListCount: controlViewList.count
@@ -35,6 +38,8 @@ StackLayout {
     property bool controlLoaded: false
     property bool platformDocumentsInitialized: false
     property bool usingLocalView: false
+    property string version: ""
+    property string oldVersion: ""
 
     onControlViewListCountChanged: {
         platformDocumentsInitialized = true;
@@ -62,6 +67,7 @@ StackLayout {
     }
 
     Component.onDestruction: {
+        console.info("test -- on destructor")
         removeControl()
     }
 
@@ -88,17 +94,24 @@ StackLayout {
             loadingBarContainer.visible = false;
             loadingBar.percentReady = 0.0;
 
-            let qml_control = NavigationControl.getQMLFile(model.class_id, "Control")
+            let idx = controlViewList.getInstalledVersion();
+            let version = "";
+
+            if (idx >= 0) {
+                version = controlViewList.version(idx);
+            }
+
+            let qml_control = NavigationControl.getQMLFile(model.class_id, "Control", version)
             NavigationControl.context.class_id = model.class_id
             NavigationControl.context.device_id = model.device_id
             NavigationControl.context.sgUserSettings = sgUserSettings
 
-            let control = NavigationControl.createView(qml_control, controlContainer)
+            controlContainer.setSource(qml_control)
             delete NavigationControl.context.class_id
             delete NavigationControl.context.device_id
             delete NavigationControl.context.sgUserSettings
             if (control === null) {
-                NavigationControl.createView(NavigationControl.screens.LOAD_ERROR, controlContainer)
+                controlContainer.setSource(NavigationControl.screens.LOAD_ERROR)
             }
 
             controlLoaded = true
@@ -109,17 +122,19 @@ StackLayout {
       Updates a control view to a new version
     */
     function updateControl(version, oldVersion) {
-        removeControl();
+        platformStack.version = version;
+        platformStack.oldVersion = oldVersion;
 
-        console.info("Attempting to update control view from", oldVersion === "" ? "local" : oldVersion, "to", version);
-        let success = sdsModel.resourceLoader.deleteStaticViewResource(model.class_id, model.name);
-
-        if (oldVersion !== "") {
-            success = sdsModel.resourceLoader.deleteViewResource(model.class_id, oldVersion);
-            console.info("Successfully deleted control view version", oldVersion, "for platform", model.class_id);
+        for (let i = 0; i < controlViewListCount; i++) {
+            if (controlViewList.version(i) === version) {
+                controlViewList.setInstalled(i, true);
+            } else if (controlViewList.version(i) === oldVersion) {
+                controlViewList.setInstalled(i, false);
+            }
         }
-        usingLocalView = false;
-        sdsModel.resourceLoader.registerControlViewResources(model.class_id, version);
+
+        removeControl();
+        waitToDeleteTimer.start();
     }
 
     /*
@@ -127,7 +142,8 @@ StackLayout {
     */
     function removeControl () {
         if (controlLoaded) {
-            NavigationControl.removeView(controlContainer)
+            controlContainer.setSource("")
+            controlContainer.sourceComponent = undefined
             controlLoaded = false
         }
     }
@@ -189,7 +205,7 @@ StackLayout {
       Slot for the sdsModel.resourceLoader.resourceRegistered signal
     */
     function resourceRegistered (class_id) {
-        if (class_id === model.class_id) {
+        if (class_id === platformStack.class_id) {
             loadingBar.color = "#57d445"
             loadingBar.percentReady = 1.0;
         }
@@ -199,9 +215,28 @@ StackLayout {
       Slot for the sdsModel.resourceLoader.resourceRegisteredFailed signal
     */
     function resourceRegisterFailed (class_id) {
-        if (class_id === model.class_id) {
+        if (class_id === platformStack.class_id) {
             loadingBar.color = "red";
             loadingBar.percentReady = 1.0;
+        }
+    }
+
+    Timer {
+        id: waitToDeleteTimer
+        interval: 200
+        repeat: false
+        onTriggered: {
+            console.info("Attempting to update control view from", oldVersion === "" ? "local" : oldVersion, "to", version);
+            let success = sdsModel.resourceLoader.deleteStaticViewResource(model.class_id, model.name);
+
+            if (oldVersion !== "") {
+                success = sdsModel.resourceLoader.deleteViewResource(model.class_id, oldVersion);
+                console.info("Successfully deleted control view version", oldVersion, "for platform", model.class_id);
+            }
+            usingLocalView = false;
+            sdsModel.resourceLoader.registerControlViewResources(model.class_id, version);
+            version = ""
+            oldVersion = ""
         }
     }
 
@@ -251,7 +286,7 @@ StackLayout {
             }
         }
 
-        Item {
+        Loader {
             id: controlContainer
 
             anchors {
@@ -290,6 +325,7 @@ StackLayout {
     }
 
     Connections {
+        id: coreInterfaceConnections
         target: sdsModel.coreInterface
 
         onDownloadViewFinished: {
@@ -299,15 +335,17 @@ StackLayout {
             let class_id = urlSplit[0];
             let version = urlSplit[2];
 
-            if (class_id === model.class_id && controlLoaded === false) {
+            if (class_id === model.class_id && currentIndex === 0) {
                 sdsModel.resourceLoader.registerControlViewResources(model.class_id, version)
             }
         }
 
         onDownloadControlViewProgress: {
-            let percent = payload.bytes_received / payload.bytes_total;
-            if (percent !== 1.0) {
-                loadingBar.percentReady = percent
+            if (currentIndex === 0) {
+                let percent = payload.bytes_received / payload.bytes_total;
+                if (percent !== 1.0) {
+                    loadingBar.percentReady = percent
+                }
             }
         }
 
