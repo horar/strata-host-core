@@ -117,7 +117,7 @@ Rectangle {
         //DEBUG
         //console.log("start Plotting........................................")
 
-         //frequency plot
+        //frequency plot
         var curve2 = graph2.createCurve("graph2")
         curve2.color = "White"
         var dataArray1 = []
@@ -1135,12 +1135,8 @@ Rectangle {
                                     wrapMode: Text.Wrap
                                     width: parent.width
                                 }
-
-
-
                             }
                         }
-
                     }
                 }
 
