@@ -10,7 +10,7 @@ add_feature_info(APPS_CORESW_HCS APPS_CORESW_HCS "Host controller service")
 
 if(NOT MINGW)
     cmake_dependent_option(APPS_CORESW_DEVSTUDIO "Build 'Strata Developer Studio' app" ON
-                            "APPS_CORESW;APPS_CORESW_HCS" OFF)
+                            "APPS_CORESW" OFF)
     add_feature_info(APPS_CORESW_DEVSTUDIO APPS_CORESW_DEVSTUDIO "Strata Developer Studio")
 else()
     message(WARNING "Strata Developer Studio is not supported in MinGW development environment!")
