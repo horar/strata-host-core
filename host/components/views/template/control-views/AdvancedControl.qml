@@ -38,7 +38,7 @@ Widget09.SGResponsiveScrollView {
             text: "Motor On/Off"
             anchors {
                 top: name.bottom
-                 horizontalCenter: name.horizontalCenter
+                horizontalCenter: name.horizontalCenter
             }
             alignment: SGAlignedLabel.SideTopCenter
 
