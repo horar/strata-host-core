@@ -88,7 +88,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH ":/")
 
-# deploy desired config file into side-by-side to compiled binary
+# deploy desired config file into side-by-side to compiled binary/bundle
 set(PRT_CONFIG_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/configs)
 
 if(NOT APPS_TOOLBOX_PRT_CONFIG)
@@ -97,7 +97,7 @@ if(NOT APPS_TOOLBOX_PRT_CONFIG)
 endif()
 file(GLOB APPS_TOOLBOX_PRT_CONFIG_CHOICES
     RELATIVE ${PRT_CONFIG_LOCATION}
-    ${PRT_CONFIG_LOCATION}/*.ini
+    ${PRT_CONFIG_LOCATION}/prt-*.ini
 )
 set_property(CACHE APPS_TOOLBOX_PRT_CONFIG PROPERTY STRINGS ${APPS_TOOLBOX_PRT_CONFIG_CHOICES})
 if(NOT APPS_TOOLBOX_PRT_CONFIG IN_LIST APPS_TOOLBOX_PRT_CONFIG_CHOICES)
