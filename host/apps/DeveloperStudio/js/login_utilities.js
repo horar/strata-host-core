@@ -188,6 +188,86 @@ function password_reset_error(error)
 }
 
 /*
+   Close Account: Send close account request to server
+*/
+function close_account(request_info) {
+    var data = {"username":request_info.username};
+    Rest.xhr("post", "closeAccount", data, close_account_result, close_account_result, signals);
+}
+
+/*
+  Close Account: Callback function for response from server
+*/
+function close_account_result(response) {
+    if (response.message !== "Account closed") {
+        console.error(LoggerModule.Logger.devStudioLoginCategory, "Close Account Request Failed: ", JSON.stringify(response))
+        if (response.message === "No connection") {
+            signals.closeAccountResult("No Connection");
+        } else {
+            signals.closeAccountResult(response.message);
+        }
+    } else {
+        signals.closeAccountResult("Success");
+    }
+}
+
+/*
+  Get Profile: Get user's profile
+*/
+function get_profile(username) {
+    var data = {"username": username};
+    Rest.xhr("post", "profile", data, get_profile_result, get_profile_result, signals)
+}
+
+/*
+  Get Profile: Callback function for response from server
+*/
+function get_profile_result(response) {
+    if (response.hasOwnProperty("message") && (response.message === "Cannot retrieve profile" || response.message === "unauthorized request")) {
+        console.error(LoggerModule.Logger.devStudioLoginCategory, "Get Profile request failed: ", JSON.stringify(response))
+        signals.getProfileResult("Failed to get profile", null)
+    } else {
+        signals.getProfileResult("Success", response)
+    }
+}
+
+/*
+    Update Profile: Send update profile request to server
+*/
+function update_profile(username, updated_properties) {
+    var data = updated_properties;
+    data._id = username;
+
+    if (updated_properties.hasOwnProperty("password")) {
+        Rest.xhr("post", "profileUpdate", data, change_password_result, change_password_result, signals)
+    } else {
+        Rest.xhr("post", "profileUpdate", data, update_profile_result, update_profile_result, signals)
+    }
+}
+
+/*
+  Update Profile Result: Callback function for response from update profile request
+*/
+function update_profile_result(response) {
+    if (response.message === "Profile update successful") {
+        signals.profileUpdateResult("Success")
+    } else {
+        signals.profileUpdateResult(response.message)
+    }
+}
+
+/*
+  Change Password Result: Callback function for response from change password request
+*/
+function change_password_result(response) {
+    if (response.message === "Profile update successful") {
+        signals.changePasswordResult("Success")
+    } else {
+        signals.changePasswordResult(response.message)
+    }
+}
+
+/*
   Validate token: if a JWT exists from previous session, send it for server to validate and start new session
 */
 function validate_token()
