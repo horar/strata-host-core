@@ -14,13 +14,13 @@
 using std::string;
 using strata::hcc::HostControllerClient;
 
-const char* HOST_CONTROLLER_SERVICE_IN_ADDRESS = "tcp://127.0.0.1:5563";
-
-CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
+CoreInterface::CoreInterface(QObject* parent, const std::string& hcsInAddress)
+    : QObject(parent), hcc{std::make_unique<HostControllerClient>(hcsInAddress)}
 {
-    //qCDebug(logCategoryCoreInterface) << "CoreInterface::CoreInterfaceQObject *parent) : QObject(parent) CTOR\n";
+    // qCDebug(logCategoryCoreInterface) << "CoreInterface::CoreInterfaceQObject *parent) :
+    // QObject(parent) CTOR\n";
 
-    hcc = new HostControllerClient(HOST_CONTROLLER_SERVICE_IN_ADDRESS);
+    qCDebug(logCategoryCoreInterface) << QStringLiteral("HCS incomming address set to: %1").arg(QString::fromStdString(hcsInAddress));
 
     // --------------------
     // Core Framework
@@ -57,8 +57,6 @@ CoreInterface::~CoreInterface()
     } else {
         notification_thread_.detach();
     }
-
-    delete hcc;
 }
 
 // @f notificationsThreadHandle

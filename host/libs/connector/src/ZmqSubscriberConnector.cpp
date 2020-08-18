@@ -1,6 +1,9 @@
 #include "ZmqSubscriberConnector.h"
 #include <zhelpers.hpp>
 
+namespace strata::connector
+{
+
 ZmqSubscriberConnector::ZmqSubscriberConnector() : ZmqConnector(ZMQ_SUB)
 {
     CONNECTOR_DEBUG_LOG("Creating ZMQ %s connector object\n", "ZMQ_SUB");
@@ -76,3 +79,4 @@ bool ZmqSubscriberConnector::blockingRead(std::string& message)
     return false;
 }
 
+}  // namespace strata::connector

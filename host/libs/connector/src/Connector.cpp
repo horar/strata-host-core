@@ -1,6 +1,6 @@
+#include <assert.h>
 
 //#include "SerialConnector.h"
-#include <assert.h>
 #include "ZmqDealerConnector.h"
 #include "ZmqPublisherConnector.h"
 #include "ZmqRequestConnector.h"
@@ -8,6 +8,8 @@
 #include "ZmqRouterConnector.h"
 #include "ZmqSubscriberConnector.h"
 
+namespace strata::connector
+{
 void Connector::addSubscriber(const std::string&)
 {
     assert(false);
@@ -33,9 +35,9 @@ std::string Connector::getPlatformUUID() const
     return platform_uuid_;
 }
 
-bool Connector::isSpyglassPlatform() const
+bool Connector::isStrataPlatform() const
 {
-    return spyglass_platform_connected_;
+    return strata_platform_connected_;
 }
 
 void Connector::setConnectionState(bool connection_state)
@@ -50,7 +52,7 @@ bool Connector::isConnected() const
 
 void Connector::setPlatformConnected(bool state)
 {
-    spyglass_platform_connected_ = state;
+    strata_platform_connected_ = state;
 }
 
 std::ostream& operator<<(std::ostream& stream, const Connector& c)
@@ -60,33 +62,24 @@ std::ostream& operator<<(std::ostream& stream, const Connector& c)
     return stream;
 }
 
-namespace ConnectorFactory
-{
-Connector* getConnector(const CONNECTOR_TYPE type)
+std::unique_ptr<Connector> Connector::getConnector(const CONNECTOR_TYPE type)
 {
     CONNECTOR_DEBUG_LOG("ConnectorFactory::getConnector type: %d\n", type);
     switch (type) {
-//        case CONNECTOR_TYPE::SERIAL:
-//            return static_cast<Connector*>(new SerialConnector);
-//            break;
+            //        case CONNECTOR_TYPE::SERIAL:
+            //            return std::make_unique<SerialConnector>();
         case CONNECTOR_TYPE::ROUTER:
-            return static_cast<Connector*>(new ZmqRouterConnector());
-            break;
+            return std::make_unique<ZmqRouterConnector>();
         case CONNECTOR_TYPE::DEALER:
-            return static_cast<Connector*>(new ZmqDealerConnector());
-            break;
+            return std::make_unique<ZmqDealerConnector>();
         case CONNECTOR_TYPE::PUBLISHER:  // not used yet
-            return static_cast<Connector*>(new ZmqPublisherConnector());
-            break;
+            return std::make_unique<ZmqPublisherConnector>();
         case CONNECTOR_TYPE::SUBSCRIBER:
-            return static_cast<Connector*>(new ZmqSubscriberConnector());
-            break;
+            return std::make_unique<ZmqSubscriberConnector>();
         case CONNECTOR_TYPE::REQUEST:
-            return static_cast<Connector*>(new ZmqRequestConnector());
-            break;
+            return std::make_unique<ZmqRequestConnector>();
         case CONNECTOR_TYPE::RESPONSE:  // not used yet
-            return static_cast<Connector*>(new ZmqResponseConnector());
-            break;
+            return std::make_unique<ZmqResponseConnector>();
         default:
             CONNECTOR_DEBUG_LOG("ERROR: ConnectorFactory::getConnector - %d (unknown interface).",
                                 type);
@@ -95,4 +88,4 @@ Connector* getConnector(const CONNECTOR_TYPE type)
     return nullptr;
 }
 
-}  // namespace ConnectorFactory
+}  // namespace strata::connector

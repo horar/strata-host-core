@@ -1,8 +1,9 @@
-#ifndef ZmqRouterConnector_H
-#define ZmqRouterConnector_H
+#pragma once
 
 #include "ZmqConnector.h"
 
+namespace strata::connector
+{
 class ZmqRouterConnector : public ZmqConnector
 {
 public:
@@ -10,12 +11,9 @@ public:
     virtual ~ZmqRouterConnector();
 
     bool open(const std::string& ip_address) override;
-
     bool send(const std::string& message) override;
-
     bool read(std::string& notification) override;
-
     bool blockingRead(std::string& notification) override;
 };
 
-#endif  // ZmqRouterConnector_H
+}  // namespace strata::connector
