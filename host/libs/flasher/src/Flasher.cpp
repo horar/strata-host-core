@@ -210,7 +210,11 @@ void Flasher::handleBackup(int chunkNumber) {
             finish(Result::Error);
             return;
         }
-        if (chunkNumber != 0) {
+
+        // Bootloader uses range 0 to N-1 for chunk numbers, our signals use range 1 to N.
+        ++chunkNumber;  // move chunk number to range from 1 to N
+
+        if (chunkNumber < totalChunks) {
             if (chunkNumber == chunkProgress_) { // this is faster than modulo
                 chunkProgress_ += BACKUP_PROGRESS_STEP;
                 qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber << " of " << totalChunks;
@@ -218,7 +222,7 @@ void Flasher::handleBackup(int chunkNumber) {
             } else {
                 qCDebug(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber << " of " << totalChunks;
             }
-        } else {  // chunkNumber is 0 => the last chunk
+        } else {  // the last chunk
             binaryFile_.close();
             qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << totalChunks << " of " << totalChunks << " - firmware backup is done.";
             emit backupFirmwareProgress(totalChunks, totalChunks);
