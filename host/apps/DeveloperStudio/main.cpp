@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
 
-    QScopedPointer<SDSModel> sdsModel{new SDSModel()};
+    std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>()};
     sdsModel->init(app.applicationDirPath());
 
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
