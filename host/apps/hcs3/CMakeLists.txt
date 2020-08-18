@@ -87,6 +87,36 @@ target_include_directories(${PROJECT_NAME}Lib
     PRIVATE $<IF:$<CONFIG:Release>, ${CMAKE_CURRENT_SOURCE_DIR}/src/release, ${CMAKE_CURRENT_SOURCE_DIR}/src/debug>
 )
 
+if(WIN32)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_SOURCE_DIR}/ext_libs/libzmq/bin/windows/x64/libzmq.dll
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMENT "Deploying dependant 3rd party ZMQ library..."
+        VERBATIM
+    )
+
+    get_target_property(QT_LIBRARY_DIR Qt5::Core LOCATION)
+    get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
+    get_filename_component(QT_SSL_LIBRARY_DIR "${QT_LIBRARY_DIR}/../../../Tools/OpenSSL/Win_x64//bin" ABSOLUTE)
+    if(EXISTS ${QT_SSL_LIBRARY_DIR})
+        message(STATUS "OpenSSL DLL's will be copyed from ${QT_SSL_LIBRARY_DIR}")
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${QT_SSL_LIBRARY_DIR}/libcrypto-1_1-x64.dll
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${QT_SSL_LIBRARY_DIR}/libssl-1_1-x64.dll
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>
+            COMMENT "Deploying dependant 3rd party Qt OpenSSL libraries..."
+            VERBATIM
+        )
+    else()
+        message(WARNING "Please install OpenSSL coming with your Qt installer (can't find OpenSSL DLL's in '${QT_SSL_LIBRARY_DIR}'")
+    endif()
+endif()
+
+
 # deploy desired config file into side-by-side to compiled binary
 set(HCS_CONFIG_LOCATION ${CMAKE_SOURCE_DIR}/assets/config/hcs)
 
