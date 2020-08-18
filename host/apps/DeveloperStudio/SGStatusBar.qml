@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Window 2.3 // for debug window, can be cut out for release
 import QtGraphicalEffects 1.0
+
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
@@ -175,6 +176,34 @@ Rectangle {
                     family: Fonts.franklinGothicBold
                     pixelSize: profileIconHover.containsMouse ? 24 : 20
                 }
+            }
+        }
+
+        Rectangle {
+            id: alertIconContainer
+            visible: false
+
+            anchors {
+                top: parent.top
+                horizontalCenter: parent.left
+                topMargin: 5
+            }
+
+            height: 12
+            width: height
+            radius: height / 2
+            color: "#00b842"
+
+            SGIcon {
+                id: alertIcon
+                height: 15
+                width: height
+                anchors {
+                    centerIn: parent
+                }
+
+                source: "qrc:/sgimages/exclamation-circle.svg"
+                iconColor : "white"
             }
         }
 
