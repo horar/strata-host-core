@@ -17,13 +17,13 @@ CmdBackupFirmware::CmdBackupFirmware(const device::DevicePtr& device, QVector<qu
     totalChunks_(totalChunks), firstBackupChunk_(true), maxRetries_(MAX_CHUNK_RETRIES), retriesCount_(0) { }
 
 QByteArray CmdBackupFirmware::message() {
-    QByteArray msg;
+    QByteArray status;
     if (retriesCount_ == 0) {
-        msg = (firstBackupChunk_) ? "{\"cmd\":\"backup_firmware\"}" : "{\"cmd\":\"backup_firmware\",\"payload\":{\"status\":\"ok\"}}";
+        status = (firstBackupChunk_) ? "init" : "ok";
     } else {
-        msg = "{\"cmd\":\"backup_firmware\",\"payload\":{\"status\":\"resend_chunk\"}}";
+        status = "resend_chunk";
     }
-    return msg;
+    return QByteArray("{\"cmd\":\"backup_firmware\",\"payload\":{\"status\":\"" + status + "\"}}");
 }
 
 bool CmdBackupFirmware::processNotification(rapidjson::Document& doc) {
