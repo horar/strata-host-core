@@ -163,32 +163,19 @@ bool ResourceLoader::registerStaticControlViewResources(const QString &class_id,
         return false;
     }
 
-    QDirIterator it(ResourcePath::viewsResourcePath(), {QStringLiteral("views-*.rcc")},
-                    QDir::Files);
-    QString resourcePath = "";
+    QFileInfo resourceInfo(ResourcePath::viewsResourcePath() + "/" + "views-" + displayName + ".rcc");
 
-    while (it.hasNext()) {
-        QFileInfo resourceInfo(it.next());
-        const QString resourceFile(resourceInfo.fileName());
-        const int extIndex = resourceFile.indexOf(".rcc");
-
-        // This gets the name of the view ex) views-hello-strata.rcc
-        if (resourceFile.mid(6, extIndex - 6) == displayName) {
-            resourcePath = resourceInfo.filePath();
-            break;
-        }
-    }
-
-    if (resourcePath.isEmpty() == false) {
-        qCDebug(logCategoryResourceLoader) << "Found static resource file, attempting to load resource " << resourcePath << " for class id: " << class_id;
+    if (resourceInfo.exists()) {
+        qCDebug(logCategoryResourceLoader) << "Found static resource file, attempting to load resource " << resourceInfo.filePath() << " for class id: " << class_id;
         viewsRegistered_.insert(class_id, true);
 
-        bool registerResult = registerResource(resourcePath);
+        bool registerResult = registerResource(resourceInfo.filePath());
         viewsRegistered_.insert(class_id, registerResult);
         return registerResult;
+    } else {
+        qCDebug(logCategoryResourceLoader) << "Did not find static resource file " << resourceInfo.filePath();
+        return false;
     }
-    return false;
-
 }
 
 bool ResourceLoader::registerResource(const QString &path, const QString &root) {

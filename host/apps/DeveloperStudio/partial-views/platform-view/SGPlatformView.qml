@@ -28,7 +28,6 @@ StackLayout {
 
     property int device_id: model.device_id
     property string class_id: model.class_id
-    property string name: model.name
     property string firmware_version: model.firmware_version
     property var controlViewList: sdsModel.documentManager.getClassDocuments(model.class_id).controlViewListModel
     property int controlViewListCount: controlViewList.count
@@ -159,7 +158,15 @@ StackLayout {
                 return;
             }
 
-            if (sdsModel.resourceLoader.registerStaticControlViewResources(model.class_id, model.name)) {
+            let name;
+
+            if (UuidMap.uuid_map.hasOwnProperty(model.class_id)) {
+                name = UuidMap.uuid_map[model.class_id];
+            } else {
+                name = model.name;
+            }
+
+            if (sdsModel.resourceLoader.registerStaticControlViewResources(model.class_id, name)) {
                 platformStack.usingLocalView = true;
                 loadingBar.percentReady = 1.0;
                 return;
@@ -221,7 +228,16 @@ StackLayout {
         repeat: false
         onTriggered: {
             console.info("Attempting to update control view from", oldVersion === "" ? "local" : oldVersion, "to", version);
-            let success = sdsModel.resourceLoader.deleteStaticViewResource(model.class_id, model.name);
+
+            let name;
+
+            if (UuidMap.uuid_map.hasOwnProperty(model.class_id)) {
+                name = UuidMap.uuid_map[model.class_id];
+            } else {
+                name = model.name;
+            }
+
+            let success = sdsModel.resourceLoader.deleteStaticViewResource(model.class_id, name);
 
             if (oldVersion !== "") {
                 success = sdsModel.resourceLoader.deleteViewResource(model.class_id, oldVersion);
