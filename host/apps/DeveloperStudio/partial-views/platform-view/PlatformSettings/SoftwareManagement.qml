@@ -13,16 +13,6 @@ ColumnLayout {
     property bool upToDate
     property var activeVersion: null
     property var latestVersion: null
-    property var controlViewList: null
-    property int controlViewCount: controlViewList.count
-
-    Component.onCompleted: {
-        controlViewList = sdsModel.documentManager.getClassDocuments(platformStack.class_id).controlViewListModel
-    }
-
-    onControlViewCountChanged: {
-        matchVersion()
-    }
 
     Connections {
         target: coreInterface
@@ -43,19 +33,31 @@ ColumnLayout {
 
     Connections {
         target: platformStack
+
         onConnectedChanged: {
+            matchVersion()
+        }
+
+        onControlViewListCountChanged: {
+            matchVersion()
+        }
+    }
+
+    Connections {
+        target: platformStack.controlViewList
+
+        onDataChanged: {
             matchVersion()
         }
     }
 
     function matchVersion() {
-        for (let i = 0; i < controlViewCount; i++) {
-            // find the installed version (if any) and set it as activeVersion
-            if (controlViewList.installed(i)) {
-                activeVersion = copyControlViewObject(i)
-                upToDate = isUpToDate();
-                return;
-            }
+        let activeIdx = platformStack.controlViewList.getInstalledVersion()
+
+        if (activeIdx >= 0) {
+            activeVersion = copyControlViewObject(activeIdx)
+            upToDate = isUpToDate()
+            return
         }
 
         upToDate = false
@@ -67,8 +69,8 @@ ColumnLayout {
     }
 
     function isUpToDate() {
-        for (let i = 0; i < controlViewCount; i++) {
-            let version = controlViewList.version(i)
+        for (let i = 0; i < platformStack.controlViewListCount; i++) {
+            let version = platformStack.controlViewList.version(i)
             if (version !== activeVersion.version && isVersionGreater(activeVersion.version, version)) {
                 // if the version is greater, then set the latestVersion here
                 latestVersion = copyControlViewObject(i);
@@ -82,14 +84,14 @@ ColumnLayout {
     function getLatestVersion() {
         let latestVersionTemp;
 
-        if (controlViewCount > 0) {
+        if (platformStack.controlViewListCount > 0) {
             latestVersionTemp = copyControlViewObject(0);
         } else {
             return null;
         }
 
-        for (let i = 1; i < controlViewCount; i++) {
-            let version = controlViewList.version(i);
+        for (let i = 1; i < platformStack.controlViewListCount; i++) {
+            let version = platformStack.controlViewList.version(i);
             if (isVersionGreater(latestVersionTemp.version, version)) {
                 latestVersionTemp = copyControlViewObject(i);
             }
@@ -127,12 +129,12 @@ ColumnLayout {
     function copyControlViewObject(index) {
         let obj = {};
 
-        obj["uri"] = controlViewList.uri(index);
-        obj["md5"] = controlViewList.md5(index);
-        obj["name"] = controlViewList.name(index);
-        obj["version"] = controlViewList.version(index);
-        obj["timestamp"] = controlViewList.timestamp(index);
-        obj["installed"] = controlViewList.installed(index);
+        obj["uri"] = platformStack.controlViewList.uri(index);
+        obj["md5"] = platformStack.controlViewList.md5(index);
+        obj["name"] = platformStack.controlViewList.name(index);
+        obj["version"] = platformStack.controlViewList.version(index);
+        obj["timestamp"] = platformStack.controlViewList.timestamp(index);
+        obj["installed"] = platformStack.controlViewList.installed(index);
 
         return obj;
     }

@@ -106,6 +106,7 @@ StackLayout {
             NavigationControl.context.sgUserSettings = sgUserSettings
 
             controlContainer.setSource(qml_control);
+            controlContainer.active = true;
             delete NavigationControl.context.class_id
             delete NavigationControl.context.device_id
             delete NavigationControl.context.sgUserSettings
@@ -137,7 +138,7 @@ StackLayout {
     function removeControl () {
         if (controlLoaded) {
             controlContainer.setSource("")
-            controlContainer.sourceComponent = undefined
+            controlContainer.active = false
         }
     }
 
@@ -188,7 +189,7 @@ StackLayout {
             console.info("No control view installed for", model.class_id)
             index = controlViewList.getLatestVersion();
 
-            let updateCommand = {
+            let downloadCommand = {
                 "hcs::cmd": "download_view",
                 "payload": {
                     "url": controlViewList.uri(index),
@@ -196,7 +197,7 @@ StackLayout {
                 }
             };
 
-            coreInterface.sendCommand(JSON.stringify(updateCommand));
+            coreInterface.sendCommand(JSON.stringify(downloadCommand));
         } else {
             sdsModel.resourceLoader.registerControlViewResources(model.class_id, controlViewList.version(index));
         }
@@ -357,7 +358,15 @@ StackLayout {
             let version = urlSplit[2];
 
             if (class_id === model.class_id && currentIndex === 0) {
-                sdsModel.resourceLoader.registerControlViewResources(model.class_id, version)
+                // Mark the new version as installed
+                for (let i = 0; i < controlViewListCount; i++) {
+                    if (controlViewList.installed(i) === true) {
+                        controlViewList.setInstalled(i, false);
+                    } else if (controlViewList.version(i) === version) {
+                        controlViewList.setInstalled(i, true);
+                    }
+                }
+                sdsModel.resourceLoader.registerControlViewResources(model.class_id, version);
             }
         }
 
