@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
     SignalHandlers sh(&app);
 #endif
 
-    QScopedPointer<HostControllerService> hcs(new HostControllerService);
+    std::unique_ptr<HostControllerService> hcs{std::make_unique<HostControllerService>()};
 
     const QString config{parser.value(QStringLiteral("f"))};
     if (hcs->initialize(config) == false) {
