@@ -609,7 +609,7 @@ bool CommandValidator::validateDocWithSchema(const rapidjson::SchemaDocument &sc
 }
 
 bool CommandValidator::validate(const std::string &command, const JsonType type, rapidjson::Document &doc) {
-    if (parseJson(command, doc) == false) {
+    if (parseJsonCommand(command, doc) == false) {
         return false;
     }
 
@@ -617,7 +617,7 @@ bool CommandValidator::validate(const std::string &command, const JsonType type,
 }
 
 bool CommandValidator::validate(const std::string &command, const std::string& schema, rapidjson::Document &doc) {
-    if (parseJson(command, doc) == false) {
+    if (parseJsonCommand(command, doc) == false) {
         return false;
     }
 
@@ -645,12 +645,19 @@ bool CommandValidator::isValidJson(const std::string &command) {
     return (rapidjson::Document().Parse(command.c_str()).HasParseError() == false);
 }
 
-bool CommandValidator::parseJson(const std::string &command, rapidjson::Document &doc) {
+bool CommandValidator::parseJsonCommand(const std::string &command, rapidjson::Document &doc) {
     rapidjson::ParseResult result = doc.Parse(command.c_str());
     if (result.IsError()) {
         // TODO: use logger from CS-440
         std::cerr << "JSON parse error at offset " << result.Offset() << ": " << rapidjson::GetParseError_En(result.Code())
                   << " Invalid JSON: '" << command << "'" << std::endl;
+        return false;
+    }
+    if (doc.IsObject() == false) {
+        // JSON can contain only a value (e.g. "abc").
+        // We require object as a JSON content (Strata JSON commands starts with '{' and ends with '}')
+        std::cerr << "Content of JSON is not an object: '" << command << "'." << std::endl;
+        // TODO: use logger from CS-440
         return false;
     }
     return true;

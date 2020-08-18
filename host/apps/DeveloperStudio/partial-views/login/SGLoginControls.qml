@@ -78,8 +78,8 @@ Item {
 
             // DTOR
             Component.onDestruction: {
-                usernameFieldSettings.userNameStore = UsernameStorage.saveSessionUsernames(model, usernameFieldSettings.userNameStore) // save logins from session into userNameStore
-                usernameFieldSettings.userNameIndex = currentIndex;     // point to last login
+                usernameFieldSettings.setValue("userNameStore", UsernameStorage.saveSessionUsernames(model, usernameFieldSettings.userNameStore)) // save logins from session into userNameStore
+                usernameFieldSettings.setValue("userNameIndex", currentIndex);     // point to last login
             } // end DTOR
 
             function updateModel() {

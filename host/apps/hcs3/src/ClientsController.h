@@ -11,7 +11,10 @@
 #include <rapidjson/document.h>
 
 class HCS_Dispatcher;
+namespace strata::connector
+{
 class Connector;
+}
 
 class ClientsController final
 {
@@ -41,7 +44,7 @@ private:
 private:
     HCS_Dispatcher* dispatcher_{nullptr};
 
-    std::unique_ptr<Connector> client_connector_ ;  //router
+    std::unique_ptr<strata::connector::Connector> client_connector_ ;  //router
 
     strata::events_mgr::EvEventsMgr events_manager_;
     strata::events_mgr::EvEvent client_event_;

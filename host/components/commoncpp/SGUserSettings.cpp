@@ -158,8 +158,4 @@ void SGUserSettings::setBaseOutputPath()
     if (!classId_.isNull() && !classId_.isEmpty()) {
         base_output_path_ = utils.joinFilePath(base_output_path_, classId_);
     }
-
-    // This line will make the entire path including the settings directory.
-    // If directories in the path already exists, it ignores them.
-    makePath(base_output_path_);
 }
