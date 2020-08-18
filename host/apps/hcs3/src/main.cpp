@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 
     if (appGuard.tryToRun() == false) {
         qCCritical(logCategoryHcs) << QStringLiteral("Another instance of Host Controller Service is already running.");
-        return EXIT_FAILURE;
+        return EXIT_FAILURE + 1; // LC: todo..
     }
 
 #if defined(Q_OS_WIN)
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
     SignalHandlers sh(&app);
 #endif
 
-    QScopedPointer<HostControllerService> hcs(new HostControllerService);
+    std::unique_ptr<HostControllerService> hcs{std::make_unique<HostControllerService>()};
 
     const QString config{parser.value(QStringLiteral("f"))};
     if (hcs->initialize(config) == false) {

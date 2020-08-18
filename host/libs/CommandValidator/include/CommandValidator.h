@@ -89,7 +89,7 @@ public:
      * @param doc[out] The rapidjson::Document where command will be parsed.
      * @return true if the the command is valid JSON, false otherwise.
      */
-    static bool parseJson(const std::string &command, rapidjson::Document &doc);
+    static bool parseJsonCommand(const std::string &command, rapidjson::Document &doc);
 
 
 private:

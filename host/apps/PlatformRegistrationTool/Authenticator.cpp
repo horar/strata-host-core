@@ -43,6 +43,9 @@ void Authenticator::renewSession()
     connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
         qCInfo(logCategoryPrtAuth) << "session renew failed" << username_ << status << errorString;
 
+        setSessionId(QByteArray());
+        setXAccessToken(QByteArray());
+
         emit renewSessionFinished(false);
     });
 }
@@ -79,6 +82,9 @@ void Authenticator::login(const QString &username, const QString &password)
 
     connect(deferred, &Deferred::finishedWithError, [this] (int status, QString errorString) {
         qCInfo(logCategoryPrtAuth) << "login failed" << status << errorString;
+
+        setSessionId(QByteArray());
+        setXAccessToken(QByteArray());
 
         QString newErrorString = errorString;
         if (status >= 400 && status < 500) {

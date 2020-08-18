@@ -46,6 +46,10 @@ SGWidgets.SGMainWindow {
         NavigationControl.removeView(statusBarContainer)
         NavigationControl.removeView(mainContainer)
         platformViewModel.clear()
+
+        if (SessionUtils.settings.rememberMe === false) {
+            SessionUtils.settings.clear()
+        }
     }
 
     Connections {

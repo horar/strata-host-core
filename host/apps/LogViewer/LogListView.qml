@@ -94,6 +94,13 @@ Item {
         height: headerContent.height + 8
         x: -logViewWrapper.contentX
 
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                logViewWrapper.forceActiveFocus();
+            }
+        }
+
         Rectangle {
             id: headerBg
             anchors.fill: parent

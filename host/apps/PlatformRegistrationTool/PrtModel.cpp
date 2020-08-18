@@ -3,6 +3,8 @@
 #include "DownloadManager.h"
 
 #include <QDir>
+#include <QSettings>
+#include <QCoreApplication>
 
 PrtModel::PrtModel(QObject *parent)
     : QObject(parent),
@@ -10,8 +12,21 @@ PrtModel::PrtModel(QObject *parent)
       authenticator_(&restClient_),
       opnListModel_(&restClient_)
 {
-    QUrl baseUrl("http://18.191.108.5"); //test server
-    //QUrl baseUrl("https://18.222.75.160"); //production server
+    QString configFilePath = resolveConfigFilePath();
+
+    qCDebug(logCategoryPrt) << "config file:" << configFilePath;
+
+    QSettings settings(configFilePath, QSettings::IniFormat);
+
+    QUrl baseUrl = settings.value("cloud-service/url").toUrl();
+
+    if (baseUrl.isValid() == false) {
+        qCCritical(logCategoryPrt) << "cloud service url is not valid:" << baseUrl.toString();
+    }
+
+    if (baseUrl.scheme().isEmpty()) {
+        qCCritical(logCategoryPrt) << "cloud service url does not have scheme:" << baseUrl.toString();
+    }
 
     restClient_.init(baseUrl, &networkManager_, &authenticator_);
 
@@ -283,4 +298,17 @@ void PrtModel::downloadBinaries(
     downloadJobId_ = downloadManager_.download(downloadRequestList, settings);
 
     qCDebug(logCategoryPrt) << "downloadJobId" << downloadJobId_;
+}
+
+QString PrtModel::resolveConfigFilePath()
+{
+    QDir applicationDir(QCoreApplication::applicationDirPath());
+
+#ifdef Q_OS_MACOS
+    applicationDir.cdUp();
+    applicationDir.cdUp();
+    applicationDir.cdUp();
+#endif
+
+    return applicationDir.filePath("prt-config.ini");
 }

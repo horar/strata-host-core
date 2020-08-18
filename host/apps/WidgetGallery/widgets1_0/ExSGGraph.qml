@@ -336,6 +336,62 @@ Item {
                 yTitle: "Y Axis"
             }
         }
+
+        SGWidgets.SGGraph {
+            id: valueHoverGraph
+            width: 400
+            height: 150
+            title: "Graph with hover value tool tip"
+            xMin: 1
+            xMax: 100
+            yMin: 1
+            yMax: 100
+            xTitle: "X Axis"
+            yTitle: "Y Axis"
+
+            Item {
+                id: crosshair
+                x: valueHoverGraph.mouseArea.mouseX
+                y: valueHoverGraph.mouseArea.mouseY - 3
+
+                ToolTip {
+                    id: toolTip
+                    visible: valueHoverGraph.mouseArea.containsMouse
+                    closePolicy: Popup.NoAutoClose
+                    text: "(" + mouseValue.x.toFixed(decimalsX) + "," + mouseValue.y.toFixed(decimalsY) + ")"
+
+                    property point mouseValue: valueHoverGraph.mapToValue(Qt.point(crosshair.x, crosshair.y))
+                    property int decimalsX: 0
+                    property int decimalsY: 0
+
+                    Component.onCompleted: generateDecimals()
+
+                    // show an appropriate number of digits based on the range of the graph
+                    function generateDecimals() {
+                        generateXDecimals()
+                        generateYDecimals()
+                    }
+
+                    function generateXDecimals() {
+                        let range = (valueHoverGraph.xMax - valueHoverGraph.xMin)
+                        if (range < 1 && range > -1){
+                            decimalsX = (valueHoverGraph.xMax - valueHoverGraph.xMin).toString().split(".")[1].length
+                        } else {
+                            decimalsX =  0
+                        }
+                    }
+
+                    function generateYDecimals() {
+                        let range = (valueHoverGraph.yMax - valueHoverGraph.yMin)
+                        if (range < 1 && range > -1){
+                            decimalsY = (valueHoverGraph.yMax - valueHoverGraph.yMin).toString().split(".")[1].length
+                        } else {
+                            decimalsY = 0
+                        }
+                    }
+                }
+            }
+        }
     }
 
     function yourDataValueHere() {

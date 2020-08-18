@@ -57,7 +57,7 @@ TEST_F(CommandValidatorTest, updateFWResTest)
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::parseJson(testCommand, doc));
+    EXPECT_TRUE(CommandValidator::parseJsonCommand(testCommand, doc));
     EXPECT_TRUE(CommandValidator::validate(CommandValidator::JsonType::updateFirmwareRes, doc));
 
 
@@ -557,7 +557,7 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
         }
     )";
     EXPECT_TRUE(CommandValidator::isValidJson(testCommand));
-    EXPECT_TRUE(CommandValidator::parseJson(testCommand, doc));
+    EXPECT_TRUE(CommandValidator::parseJsonCommand(testCommand, doc));
 
     testCommand = R"(
         {
@@ -568,7 +568,7 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
         }
     )";
     EXPECT_TRUE(CommandValidator::isValidJson(testCommand));
-    EXPECT_TRUE(CommandValidator::parseJson(testCommand, doc));
+    EXPECT_TRUE(CommandValidator::parseJsonCommand(testCommand, doc));
 
     // Invalid test command
     testCommand = R"(
@@ -585,7 +585,7 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
         }
     )";
     EXPECT_FALSE(CommandValidator::isValidJson(testCommand));
-    EXPECT_FALSE(CommandValidator::parseJson(testCommand, doc));
+    EXPECT_FALSE(CommandValidator::parseJsonCommand(testCommand, doc));
 
     testCommand = R"(
         {
@@ -602,7 +602,7 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
         }
     )";
     EXPECT_FALSE(CommandValidator::isValidJson(testCommand));
-    EXPECT_FALSE(CommandValidator::parseJson(testCommand, doc));
+    EXPECT_FALSE(CommandValidator::parseJsonCommand(testCommand, doc));
 
     testCommand = R"(
         {
@@ -619,7 +619,7 @@ TEST_F(CommandValidatorTest, isValidJsonTest)
         }
     )";
     EXPECT_FALSE(CommandValidator::isValidJson(testCommand));
-    EXPECT_FALSE(CommandValidator::parseJson(testCommand, doc));
+    EXPECT_FALSE(CommandValidator::parseJsonCommand(testCommand, doc));
 }
 
 TEST_F(CommandValidatorTest, isValidCmdTest)
@@ -750,4 +750,16 @@ TEST_F(CommandValidatorTest, isValidStrataCommandTest)
 
     testCommand = R"({"ack":"request_platform_id","payload":{"return_value":"true","return_string":"command valid"}})";
     EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::strataCmd, doc));
+}
+
+TEST_F(CommandValidatorTest, containsObject)
+{
+    std::string testCommand;
+    rapidjson::Document doc;
+
+    testCommand = R"({"cmd":"test"})";
+    EXPECT_TRUE(CommandValidator::parseJsonCommand(testCommand, doc));
+
+    testCommand = R"("test")";
+    EXPECT_FALSE(CommandValidator::parseJsonCommand(testCommand, doc));
 }
