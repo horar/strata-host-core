@@ -55,7 +55,7 @@ SGStrataPopup {
                     height: 70
                     width: height
                     source: "qrc:/sgimages/update-arrow.svg"
-                    iconColor : "limegreen"
+                    iconColor: "#3aba44"
                 }
 
                 Column {
@@ -73,7 +73,7 @@ SGStrataPopup {
 
                     Text {
                         id: currentVersionText
-                        text: "    Current Version: " + current_version
+                        text: "Installed Version: " + "<b>" + current_version + "</b>"
                         font {
                             pixelSize: 18
                             family: Fonts.franklinGothicBook
@@ -81,7 +81,7 @@ SGStrataPopup {
                     }
                     Text {
                         id: latestVersionText
-                        text: "    Latest Version: " + latest_version
+                        text: "Latest Version: " + "<b>" + latest_version + "</b>"
                         font {
                             pixelSize: 18
                             family: Fonts.franklinGothicBook
