@@ -31,6 +31,18 @@ SGAlignedLabel {
         }
     }
 
+    Item{
+        anchors.fill: parent
+        width: root.contentWidth
+        height: root.contentHeight
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                buttonContainer.currentIndex = index
+            }
+        }
+    }
+
     RadioButton {
         id: radioButton
 
