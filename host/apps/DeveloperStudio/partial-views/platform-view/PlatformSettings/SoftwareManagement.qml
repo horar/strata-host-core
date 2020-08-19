@@ -14,15 +14,25 @@ ColumnLayout {
     property var activeVersion: null
     property var latestVersion: null
     property string downloadFilepath: ""
+    property bool downloadError: false
 
     Connections {
         target: coreInterface
 
         onDownloadViewFinished: {
             if (platformStack.currentIndex !== 0) {
-                progressUpdateText.percent = 1.0
-                downloadFilepath = payload.filepath
-                setUpToDateTimer.start()
+                if (payload.error_string.length > 0) {
+                    downloadError = true
+                    progressBar.color = "red"
+                    progressUpdateText.percent = 1.0
+                    setUpToDateTimer.start()
+                } else {
+                    downloadError = false;
+                    downloadFilepath = payload.filepath;
+                    progressBar.color = "#57d445"
+                    progressUpdateText.percent = 1.0
+                    setUpToDateTimer.start()
+                }
             }
         }
 
@@ -147,10 +157,16 @@ ColumnLayout {
         repeat: false
 
         onTriggered: {
-            upToDate = true
-            platformStack.updateControl(latestVersion.version, activeVersion ? activeVersion.version : "", downloadFilepath)
-            activeVersion = latestVersion
-            downloadFilepath = ""
+            if (downloadError) {
+                upToDate = false
+                activeVersion = latestVersion
+                downloadFilepath = ""
+            } else {
+                upToDate = true
+                platformStack.updateControl(latestVersion.version, activeVersion ? activeVersion.version : "", downloadFilepath)
+                activeVersion = latestVersion
+                downloadFilepath = ""
+            }
         }
     }
 
@@ -311,10 +327,14 @@ ColumnLayout {
                             property real percent: 0.0
 
                             onPercentChanged: {
-                                fillBar1.width = barBackground1.width * percent
+                                progressBar.width = barBackground1.width * percent
                             }
 
                             text: {
+                                if (downloadError) {
+                                    return "Error downloading view";
+                                }
+
                                 if (percent < 1.0) {
                                     return "Downloading: " + (percent * 100).toFixed(0) + "%"
                                 } else {
@@ -331,8 +351,8 @@ ColumnLayout {
                             clip: true
 
                             Rectangle {
-                                id: fillBar1
-                                color: "lime"
+                                id: progressBar
+                                color: "#57d445"
                                 height: barBackground1.height
                                 width: 0
                             }
@@ -358,6 +378,7 @@ ColumnLayout {
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
+                        progressUpdateText.percent = 0.0
                         downloadColumn1.visible = true
                         downloadColumn1.startDownload();
                     }

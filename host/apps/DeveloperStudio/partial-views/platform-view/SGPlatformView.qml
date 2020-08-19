@@ -305,6 +305,7 @@ StackLayout {
                     platformStack.controlLoaded = true
                 } else if (status === Loader.Error) {
                     controlContainer.setSource(NavigationControl.screens.LOAD_ERROR)
+                    controlContainer.item.error_message = "Unable to load this view."
                     platformStack.controlLoaded = true
                 } else if (status === Loader.Null) {
                     platformStack.controlLoaded = false
@@ -348,6 +349,15 @@ StackLayout {
 
         onDownloadViewFinished: {
             // If the control view is the active view
+            if (payload.error_string.length > 0) {
+                loadingBar.color = "red"
+                loadingBar.percentReady = 1.0
+                controlContainer.setSource(NavigationControl.screens.LOAD_ERROR)
+                controlContainer.active = true
+                controlContainer.item.error_message = payload.error_string
+                return
+            }
+
             if (currentIndex === 0) {
                 for (let i = 0; i < controlViewListCount; i++) {
                     if (controlViewList.uri(i) === payload.url) {
