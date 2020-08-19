@@ -13,6 +13,7 @@ ColumnLayout {
     property bool upToDate
     property var activeVersion: null
     property var latestVersion: null
+    property string downloadFilepath: ""
 
     Connections {
         target: coreInterface
@@ -20,6 +21,7 @@ ColumnLayout {
         onDownloadViewFinished: {
             if (platformStack.currentIndex !== 0) {
                 progressUpdateText.percent = 1.0
+                downloadFilepath = payload.filepath
                 setUpToDateTimer.start()
             }
         }
@@ -146,8 +148,9 @@ ColumnLayout {
 
         onTriggered: {
             upToDate = true
-            platformStack.updateControl(latestVersion.version, activeVersion ? activeVersion.version : "")
+            platformStack.updateControl(latestVersion.version, activeVersion ? activeVersion.version : "", downloadFilepath)
             activeVersion = latestVersion
+            downloadFilepath = ""
         }
     }
 

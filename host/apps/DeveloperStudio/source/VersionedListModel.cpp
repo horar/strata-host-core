@@ -44,6 +44,8 @@ QVariant VersionedListModel::data(const QModelIndex &index, int role) const
         return item->version;
     case InstalledRole:
         return item->installed;
+    case FilepathRole:
+        return item->filepath;
     }
 
     return QVariant();
@@ -123,6 +125,11 @@ bool VersionedListModel::installed(int index)
     return data(VersionedListModel::index(index, 0), InstalledRole).toBool();
 }
 
+QString VersionedListModel::filepath(int index)
+{
+    return data(VersionedListModel::index(index, 0), FilepathRole).toString();
+}
+
 void VersionedListModel::setInstalled(int index, bool installed)
 {
     if (index < 0 || index >= data_.count()) {
@@ -141,6 +148,24 @@ void VersionedListModel::setInstalled(int index, bool installed)
                 QVector<int>() << InstalledRole);
 }
 
+void VersionedListModel::setFilepath(int index, QString path)
+{
+    if (index < 0 || index >= data_.count()) {
+        return;
+    }
+
+    VersionedItem *item = data_.at(index);
+    if (item->filepath == path) {
+        return;
+    }
+
+    item->filepath = path;
+    emit dataChanged(
+                createIndex(index, 0),
+                createIndex(index, 0),
+                QVector<int>() << FilepathRole);
+}
+
 QHash<int, QByteArray> VersionedListModel::roleNames() const
 {
     QHash<int, QByteArray> names;
@@ -150,12 +175,13 @@ QHash<int, QByteArray> VersionedListModel::roleNames() const
     names[TimestampRole] = "timestamp";
     names[Md5Role] = "md5";
     names[InstalledRole] = "installed";
+    names[FilepathRole] = "filepath";
 
     return names;
 }
 
 int VersionedListModel::getLatestVersion() {
-    QString latestVersion = "0.0.0";
+    QString latestVersion = "-1.0.0";
     int latestVersionIndex = -1;
 
     for (int j = 0; j < data_.count(); j++) {

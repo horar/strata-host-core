@@ -35,8 +35,6 @@ StackLayout {
     property bool controlLoaded: false
     property bool platformDocumentsInitialized: false
     property bool usingLocalView: false
-    property string version: ""
-    property string oldVersion: ""
 
     onControlViewListCountChanged: {
         platformDocumentsInitialized = true;
@@ -116,20 +114,46 @@ StackLayout {
     /*
       Updates a control view to a new version
     */
-    function updateControl(version, oldVersion) {
-        platformStack.version = version;
-        platformStack.oldVersion = oldVersion;
+    function updateControl(newVersion, oldVersion, newVersionPath) {
+        let versionsToRemove = [];
 
         for (let i = 0; i < controlViewListCount; i++) {
-            if (controlViewList.version(i) === version) {
+            if (controlViewList.version(i) === newVersion) {
                 controlViewList.setInstalled(i, true);
-            } else if (controlViewList.version(i) === oldVersion) {
+                controlViewList.setFilepath(i, newVersionPath);
+            } else if (controlViewList.version(i) !== newVersion && controlViewList.installed(i) === true) {
                 controlViewList.setInstalled(i, false);
+                versionsToRemove.push({
+                                            "filepath": controlViewList.filepath(i),
+                                            "version": controlViewList.version(i)
+                                        });
             }
         }
 
         removeControl();
-        waitToDeleteTimer.start();
+
+        let name;
+
+        if (UuidMap.uuid_map.hasOwnProperty(model.class_id)) {
+            name = UuidMap.uuid_map[model.class_id];
+        } else {
+            name = model.name;
+        }
+
+        let success = sdsModel.resourceLoader.deleteStaticViewResource(model.class_id, name);
+
+        if (versionsToRemove.length > 0) {
+            for (let i = 0; i < versionsToRemove.length; i++) {
+                let success = sdsModel.resourceLoader.deleteViewResource(model.class_id, versionsToRemove[i].filepath, versionsToRemove[i].version);
+                if (success) {
+                    console.info("Successfully deleted control view version", versionsToRemove[i].version, "for platform", model.class_id);
+                } else {
+                    console.error("Could not delete control view version", versionsToRemove[i].version, "for platform", model.class_id);
+                }
+            }
+        }
+        usingLocalView = false;
+        sdsModel.resourceLoader.registerControlViewResources(model.class_id, newVersionPath, newVersion);
     }
 
     /*
@@ -199,7 +223,7 @@ StackLayout {
 
             coreInterface.sendCommand(JSON.stringify(downloadCommand));
         } else {
-            sdsModel.resourceLoader.registerControlViewResources(model.class_id, controlViewList.version(index));
+            sdsModel.resourceLoader.registerControlViewResources(model.class_id, controlViewList.filepath(index), controlViewList.version(index));
         }
     }
 
@@ -220,34 +244,6 @@ StackLayout {
         if (class_id === platformStack.class_id) {
             loadingBar.color = "red";
             loadingBar.percentReady = 1.0;
-        }
-    }
-
-    Timer {
-        id: waitToDeleteTimer
-        interval: 200
-        repeat: false
-        onTriggered: {
-            console.info("Attempting to update control view from", oldVersion === "" ? "local" : oldVersion, "to", version);
-
-            let name;
-
-            if (UuidMap.uuid_map.hasOwnProperty(model.class_id)) {
-                name = UuidMap.uuid_map[model.class_id];
-            } else {
-                name = model.name;
-            }
-
-            let success = sdsModel.resourceLoader.deleteStaticViewResource(model.class_id, name);
-
-            if (oldVersion !== "") {
-                success = sdsModel.resourceLoader.deleteViewResource(model.class_id, oldVersion);
-                console.info("Successfully deleted control view version", oldVersion, "for platform", model.class_id);
-            }
-            usingLocalView = false;
-            sdsModel.resourceLoader.registerControlViewResources(model.class_id, version);
-            version = ""
-            oldVersion = ""
         }
     }
 
@@ -351,22 +347,21 @@ StackLayout {
         target: sdsModel.coreInterface
 
         onDownloadViewFinished: {
-            // hacky way to get the class_id from the request.
-            // e.g. "url":"226/control_views/1.1.3/views-hello-strata.rcc"
-            let urlSplit = payload.url.split("/");
-            let class_id = urlSplit[0];
-            let version = urlSplit[2];
-
-            if (class_id === model.class_id && currentIndex === 0) {
-                // Mark the new version as installed
+            // If the control view is the active view
+            if (currentIndex === 0) {
                 for (let i = 0; i < controlViewListCount; i++) {
-                    if (controlViewList.installed(i) === true) {
-                        controlViewList.setInstalled(i, false);
-                    } else if (controlViewList.version(i) === version) {
+                    if (controlViewList.uri(i) === payload.url) {
                         controlViewList.setInstalled(i, true);
+                        controlViewList.setFilepath(i, payload.filepath);
+                        for (let j = 0; j < controlViewListCount; j++) {
+                            if (j !== i && controlViewList.installed(j) === true) {
+                                controlViewList.setInstalled(j, false);
+                            }
+                        }
+                        sdsModel.resourceLoader.registerControlViewResources(model.class_id, payload.filepath, controlViewList.version(i));
+                        break;
                     }
                 }
-                sdsModel.resourceLoader.registerControlViewResources(model.class_id, version);
             }
         }
 

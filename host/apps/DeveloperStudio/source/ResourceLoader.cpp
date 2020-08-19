@@ -14,53 +14,40 @@ ResourceLoader::ResourceLoader(QObject *parent) : QObject(parent)
 
 ResourceLoader::~ResourceLoader()
 {
+    QHashIterator<QString, ResourceItem*> itr(viewsRegistered_);
+    while (itr.hasNext()) {
+        itr.next();
+        delete itr.value();
+    }
 }
 
-bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &version) {
-    QDir controlViewsDir(ResourcePath::hcsDocumentsCachePath() + "/control_views/" + class_id + "/control_views");
-
-    if (controlViewsDir.exists()) {
-        if (version.isEmpty()) {
-            // In this case, we want to delete all versions in the control_views directory
-            QStringList listOfVersions = controlViewsDir.entryList(QDir::Filter::Dirs | QDir::Filter::NoDotAndDotDot);
-
-            for (QString currentVersion : listOfVersions) {
-                controlViewsDir.cd(currentVersion);
-                // unregister resources
-                for (QString resource : controlViewsDir.entryList(QDir::Filter::Files)) {
-                    QFileInfo viewFileInfo(controlViewsDir.path() + "/" + resource);
-                    if (unregisterResource(viewFileInfo.filePath(), "/" + currentVersion) == false) {
-                        qCWarning(logCategoryResourceLoader) << "Resource " << resource << " still in use for class id: " << class_id;
-                    }
-                }
-                if (controlViewsDir.removeRecursively() == false) {
-                    qCCritical(logCategoryResourceLoader) << "Could not delete the resource " << controlViewsDir.path();
-                    return false;
-                }
-                controlViewsDir.cdUp();
-            }
-        } else {
-            controlViewsDir.cd(version);
-            qCDebug(logCategoryResourceLoader) << "Attempting to unregister and delete " << class_id << " resource version " << version;
-            for (QString resource : controlViewsDir.entryList(QDir::Filter::Files)) {
-                QFileInfo viewFileInfo(controlViewsDir.path() + "/" + resource);
-                if (unregisterResource(viewFileInfo.filePath(), "/" + version) == false) {
-                    qCWarning(logCategoryResourceLoader) << "Resource " << resource << " still in use for class id: " << class_id;
-                }
-            }
-            qCDebug(logCategoryResourceLoader) << "Deleting " << controlViewsDir.path() << " from filesystem.";
-            if (controlViewsDir.removeRecursively() == false) {
-                qCCritical(logCategoryResourceLoader) << "Could not delete the resource " << controlViewsDir.path();
-                return false;
-            }
-
-        }
-        viewsRegistered_.insert(class_id, false);
-        return true;
-    } else {
-        qCCritical(logCategoryResourceLoader) << "Could not find control_views directory while deleting resource. Looked in " << controlViewsDir.path();
+bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &path, const QString &version) {
+    if (path.isEmpty() || version.isEmpty()) {
         return false;
     }
+
+    QFile resourceInfo(path);
+
+    if (resourceInfo.exists()) {
+        if (unregisterResource(resourceInfo.fileName(), "/" + version) == false) {
+            qCWarning(logCategoryResourceLoader) << "Unable to unregister resource. Resource " << resourceInfo.fileName() << " still in use for class id: " << class_id;
+        }
+        if (resourceInfo.remove() == false) {
+            qCCritical(logCategoryResourceLoader) << "Could not delete the resource " << resourceInfo.fileName();
+            return false;
+        }
+    } else {
+        qCCritical(logCategoryResourceLoader) << "Attempted to delete control view that doesn't exist - " << resourceInfo.fileName();
+        return false;
+    }
+
+    QHash<QString, ResourceItem*>::iterator itr = viewsRegistered_.find(class_id);
+    if (itr != viewsRegistered_.end() && itr.value()->filepath == resourceInfo.fileName()) {
+        ResourceItem *info = itr.value();
+        info->filepath = "";
+        info->version = "";
+    }
+    return true;
 }
 
 bool ResourceLoader::deleteStaticViewResource(const QString &class_id, const QString &displayName) {
@@ -76,84 +63,48 @@ bool ResourceLoader::deleteStaticViewResource(const QString &class_id, const QSt
             return false;
         }
 
-        viewsRegistered_.insert(class_id, false);
+        QHash<QString, ResourceItem*>::iterator itr = viewsRegistered_.find(class_id);
+        if (itr != viewsRegistered_.end() && itr.value()->filepath == rccFile.fileName()) {
+            ResourceItem *info = itr.value();
+            info->filepath = "";
+            info->version = "";
+        }
     }
 
     return true;
 }
 
-void ResourceLoader::registerControlViewResources(const QString &class_id, const QString &version) {
+void ResourceLoader::registerControlViewResources(const QString &class_id, const QString &path, const QString &version) {
     if (isViewRegistered(class_id)) {
         qCDebug(logCategoryResourceLoader) << "View is already registered for " << class_id;
         emit resourceRegistered(class_id);
         return;
     }
 
-    QDir controlViewsDir(ResourcePath::hcsDocumentsCachePath() + "/control_views/" + class_id + "/control_views");
+    QFileInfo viewFileInfo(path);
 
-    if (controlViewsDir.exists()) {
-        QStringList listOfVersions = controlViewsDir.entryList(QDir::Filter::Dirs | QDir::Filter::NoDotAndDotDot);
+    if (viewFileInfo.exists()) {
+        qCDebug(logCategoryResourceLoader) << "Loading resource " << viewFileInfo.fileName() << " for class id: " << class_id;
 
-        // If we have more than one version, remove the older version(s)
-        if (listOfVersions.count() > 1) {
-            qCDebug(logCategoryResourceLoader) << "More than one control view version found. Deleting versions other than " << version;
-            bool foundMatchingVersion = false;
-            QStringList dirsToRemove;
-
-            for (QString currentVersion : listOfVersions) {
-                if (currentVersion != version) {
-                    dirsToRemove.append(controlViewsDir.path() + "/" + currentVersion);
-                } else {
-                    foundMatchingVersion = true;
-                }
-            }
-
-            // If we found the matching version to install, then remove the rest of the directories
-            if (foundMatchingVersion) {
-                for (QString dirPath : dirsToRemove) {
-                    QDir dir(dirPath);
-                    if (dir.removeRecursively() == false) {
-                        qCCritical(logCategoryResourceLoader) << "Unable to delete version of control view " << class_id;
-                    } else {
-                        qCDebug(logCategoryResourceLoader) << "Successfully removed " << dirPath << " for class id" << class_id;
-                    }
-                }
-            } else {
-                qCCritical(logCategoryResourceLoader) << "Could not find version " << version << " for control view " << class_id;
-                emit resourceRegisterFailed(class_id);
-                return;
-            }
+        /*********
+         * [HACK]
+         * As of right now, (08/17/2020) there is a bug in Qt that prevents the unregistering of resources from memory.
+         * This makes it impossible to overwrite versions of .rcc files that have the same name and use them without restarting the app.
+         * In the meantime, we will use the version of the control view as the mapRoot.
+         * Ex) version = 1.15.0 -> qrc:/1.15.0/views/.../views-<control_view_name>.qml
+         *********/
+        if (registerResource(viewFileInfo.filePath(), "/" + version) == false) {
+            qCCritical(logCategoryResourceLoader) << "Failed to register resource " << viewFileInfo.fileName() << " for class id: " << class_id;
+            emit resourceRegisterFailed(class_id);
+            return;
+        } else {
+            qCDebug(logCategoryResourceLoader) << "Successfully registered resource for class id: " << class_id;
+            ResourceItem *info = new ResourceItem(viewFileInfo.filePath(), version);
+            viewsRegistered_.insert(class_id, info);
+            emit resourceRegistered(class_id);
         }
-
-        // Now we have deleted all old versions
-        controlViewsDir.cd(version);
-
-        qCDebug(logCategoryResourceLoader) << "Looking in resource path " << controlViewsDir.path();
-
-        for (QString resource : controlViewsDir.entryList(QDir::Filter::Files)) {
-            QFileInfo viewFileInfo(controlViewsDir.path() + "/" + resource);
-            qCDebug(logCategoryResourceLoader) << "Loading resource " << resource << " for class id: " << class_id;
-
-            /*********
-             * [HACK]
-             * As of right now, (08/17/2020) there is a bug in Qt that prevents the unregistering of resources from memory.
-             * This makes it impossible to overwrite versions of .rcc files that have the same name and use them without restarting the app.
-             * In the meantime, we will use the version of the control view as the mapRoot.
-             * Ex) version = 1.15.0 -> qrc:/1.15.0/views/.../views-<control_view_name>.qml
-             *********/
-            if (registerResource(viewFileInfo.filePath(), "/" + version) == false) {
-                qCCritical(logCategoryResourceLoader) << "Failed to load resource " << resource << " for class id: " << class_id;
-                emit resourceRegisterFailed(class_id);
-                return;
-            } else {
-                qCDebug(logCategoryResourceLoader) << "Successfully registered resource for class id: " << class_id;
-                viewsRegistered_.insert(class_id, true);
-            }
-        }
-
-        emit resourceRegistered(class_id);
     } else {
-        qCCritical(logCategoryResourceLoader) << "Could not find control_views directory. Looked in " << controlViewsDir.path();
+        qCCritical(logCategoryResourceLoader) << "Could not find resource file. Looked in " << viewFileInfo.filePath();
         emit resourceRegisterFailed(class_id);
     }
 }
@@ -167,10 +118,9 @@ bool ResourceLoader::registerStaticControlViewResources(const QString &class_id,
 
     if (resourceInfo.exists()) {
         qCDebug(logCategoryResourceLoader) << "Found static resource file, attempting to load resource " << resourceInfo.filePath() << " for class id: " << class_id;
-        viewsRegistered_.insert(class_id, true);
-
         bool registerResult = registerResource(resourceInfo.filePath());
-        viewsRegistered_.insert(class_id, registerResult);
+        ResourceItem *info = new ResourceItem(resourceInfo.filePath(), "");
+        viewsRegistered_.insert(class_id, info);
         return registerResult;
     } else {
         qCDebug(logCategoryResourceLoader) << "Did not find static resource file " << resourceInfo.filePath();
@@ -250,6 +200,6 @@ QString ResourceLoader::getLatestVersion(const QStringList &versions) {
 }
 
 bool ResourceLoader::isViewRegistered(const QString &class_id) {
-    QHash<QString, bool>::const_iterator itr = viewsRegistered_.find(class_id);
-    return itr != viewsRegistered_.end() && itr.value() == true;
+    QHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.find(class_id);
+    return itr != viewsRegistered_.end() && !itr.value()->filepath.isEmpty();
 }

@@ -21,6 +21,7 @@ struct VersionedItem {
         this->name = name;
         this->timestamp = timestamp;
         this->version = version;
+        this->filepath = filepath;
         this->installed = !filepath.isEmpty();
     }
 
@@ -29,6 +30,7 @@ struct VersionedItem {
     QString name;
     QString timestamp;
     QString version;
+    QString filepath;
     bool installed;
 };
 
@@ -43,11 +45,13 @@ public:
     virtual ~VersionedListModel() override;
 
     Q_INVOKABLE void setInstalled(int index, bool installed);
+    Q_INVOKABLE void setFilepath(int index, QString path);
     Q_INVOKABLE QString version(int index);
     Q_INVOKABLE QString uri(int index);
     Q_INVOKABLE QString md5(int index);
     Q_INVOKABLE QString name(int index);
     Q_INVOKABLE QString timestamp(int index);
+    Q_INVOKABLE QString filepath(int index);
     Q_INVOKABLE bool installed(int index);
     Q_INVOKABLE int getLatestVersion();
     Q_INVOKABLE int getInstalledVersion();
@@ -58,7 +62,8 @@ public:
         NameRole,
         TimestampRole,
         Md5Role,
-        InstalledRole
+        InstalledRole,
+        FilepathRole
     };
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;

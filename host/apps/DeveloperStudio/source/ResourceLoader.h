@@ -4,6 +4,20 @@
 #include <QObject>
 #include <QString>
 #include <QHash>
+#include <QDir>
+
+struct ResourceItem {
+    ResourceItem(
+            const QString &filepath,
+            const QString &version)
+    {
+        this->filepath = filepath;
+        this->version = version;
+    }
+
+    QString filepath;
+    QString version;
+};
 
 class ResourceLoader : public QObject
 {
@@ -33,10 +47,11 @@ public:
     /**
      * @brief deleteViewResource Deletes a resource from disk and unregisters it from qrc.
      * @param class_id The class id of the platform.
-     * @param version Optional* The version to delete. If left blank, it will delete all versions.
+     * @param path The path the .rcc file was downloaded to
+     * @param version The version of the rcc file
      * @return True if successful, false if unable to delete resource.
      */
-    Q_INVOKABLE bool deleteViewResource(const QString &class_id, const QString &version = "");
+    Q_INVOKABLE bool deleteViewResource(const QString &class_id, const QString &path, const QString &version);
 
     /**
      * @brief deleteStaticViewResource Deletes a static view from the bin directory and unregisters it.
@@ -49,9 +64,10 @@ public:
     /**
      * @brief registerControlViewResources Registers a control view's resource file.
      * @param class_id The class id of the platform.
-     * @param version Optional* The version to register. If left blank, it will register the latest version.
+     * @param path The path the .rcc file was downloaded to
+     * @param version The version of the rcc file
      */
-    Q_INVOKABLE void registerControlViewResources(const QString &class_id, const QString &version = "");
+    Q_INVOKABLE void registerControlViewResources(const QString &class_id, const QString &path, const QString &version);
 
     /**
      * @brief registerStaticControlViewResources Registers a local control view's resource file. This is for non OTA.
@@ -85,7 +101,8 @@ private:
     void loadCoreResources();
     void loadViewResources();
     QString getLatestVersion(const QStringList &versions);
-    QHash<QString, bool> viewsRegistered_;
+
+    QHash<QString, ResourceItem*> viewsRegistered_;
     static inline QStringList coreResources_{
         QStringLiteral("component-fonts.rcc"), QStringLiteral("component-theme.rcc"),
         QStringLiteral("component-pdfjs.rcc"), QStringLiteral("component-common.rcc"),
