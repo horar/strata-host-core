@@ -19,7 +19,6 @@
 
 HostControllerService::HostControllerService(QObject* parent)
     : QObject(parent),
-      db_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString()),
       downloadManager_(&networkManager_),
       storageManager_(&downloadManager_)
 {
@@ -47,9 +46,26 @@ bool HostControllerService::initialize(const QString& config)
 
     dispatcher_.setMsgHandler(std::bind(&HostControllerService::handleMessage, this, std::placeholders::_1) );
 
+    QString baseFolder{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
+    if (config_.HasMember("stage")) {
+        rapidjson::Value &devStage = config_["stage"];
+        if (devStage.IsString()) {
+            std::string stage{devStage.GetString()};
+            std::transform(stage.begin(), stage.end(), stage.begin(), ::toupper);
+            qCInfo(logCategoryHcs, "Running in %s setup", qUtf8Printable(stage.data()));
+            baseFolder += QString("/%1").arg(qUtf8Printable(stage.data()));
+            QDir baseFolderDir{baseFolder};
+            if (baseFolderDir.exists() == false) {
+                qCDebug(logCategoryHcs) << "Creating base folder" << baseFolder << "-" << baseFolderDir.mkpath(baseFolder);
+            }
+        }
+    }
+
+    storageManager_.setBaseFolder(baseFolder);
+
     rapidjson::Value& db_cfg = config_["database"];
 
-    if (db_.open("strata_db") == false) {
+    if (db_.open(baseFolder.toStdString(), "strata_db") == false) {
         qCCritical(logCategoryHcs) << "Failed to open database.";
         return false;
     }
