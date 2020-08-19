@@ -52,8 +52,7 @@ var events = {
     SWITCH_VIEW_EVENT:              8,
     CONNECTION_LOST_EVENT:          9,
     CONNECTION_ESTABLISHED_EVENT:   10,
-    PROMPT_SPLASH_SCREEN_EVENT:     11,
-    REQ_OPEN_PLATFORM_VIEW_EVENT:   12
+    PROMPT_SPLASH_SCREEN_EVENT:     11
 }
 
 /*
@@ -312,13 +311,6 @@ function updateState(event, data)
         case states.CONTROL_STATE:
             switch(event)
             {
-            case events.REQ_OPEN_PLATFORM_VIEW_EVENT:
-                if (resource_loader_.registerControlViewResources(data.class_id)) {
-                    updateState(events.OPEN_PLATFORM_VIEW_EVENT, data);
-                }
-                // else switch to an error screen
-                break;
-
             case events.OPEN_PLATFORM_VIEW_EVENT:
                 console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Opening Platform View for class_id:", data.class_id, "device_id:", data.device_id)
 
