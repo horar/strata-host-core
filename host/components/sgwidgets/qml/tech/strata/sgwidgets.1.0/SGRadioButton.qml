@@ -11,6 +11,7 @@ SGAlignedLabel {
     alignment: buttonContainer ? buttonContainer.alignment : SGAlignedLabel.SideRightCenter
     fontSizeMultiplier: buttonContainer ? buttonContainer.fontSizeMultiplier : 1
     opacity: enabled ? 1.0 : 0.3
+    clickableLabel : true
 
     property Item buttonContainer: null
     property real radioSize: buttonContainer ? buttonContainer.radioSize : 20 * fontSizeMultiplier
@@ -21,9 +22,9 @@ SGAlignedLabel {
     property alias button: radioButton
     property alias pressed: radioButton.pressed
 
-    signal clicked()
     signal toggled()
     signal released()
+
 
     onCheckedChanged: {
         if (checked && buttonContainer) {
@@ -31,16 +32,8 @@ SGAlignedLabel {
         }
     }
 
-    Item{
-        anchors.fill: parent
-        width: root.contentWidth
-        height: root.contentHeight
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                buttonContainer.currentIndex = index
-            }
-        }
+    onClicked: {
+        radioButton.checked = true
     }
 
     RadioButton {

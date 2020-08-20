@@ -34,6 +34,9 @@ Item {
     property alias horizontalAlignment: label.horizontalAlignment
     property alias contentHeight: label.contentHeight
     property alias contentWidth: label.contentWidth
+    property alias clickableLabel: labelMouseArea.enabled
+
+    signal clicked()
 
     enum Alignment {
         CornerTopLeft,
@@ -69,6 +72,7 @@ Item {
         setAnchors()
     }
 
+
     Component.onCompleted: setAnchors()
 
     SGText {
@@ -100,6 +104,13 @@ Item {
             case SGAlignedLabel.SideTopRight:
                 return Text.AlignLeft
             }
+        }
+
+        MouseArea{
+            id: labelMouseArea
+            anchors.fill: parent
+            enabled:  false
+            onClicked: root.clicked()
         }
     }
 
