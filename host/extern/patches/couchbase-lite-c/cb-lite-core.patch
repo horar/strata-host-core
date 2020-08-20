@@ -43,16 +43,3 @@ index 87899c4f..8f54e3c4 100644
      #else
          // From <http://stackoverflow.com/a/16902907/98077>.
          // On iOS, gethostname() returns the mDNS/Bonjour hostname (without the ".local")
-diff --git a/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh b/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh
-index 31c1f5ab..5fb88da2 100644
---- a/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh
-+++ b/vendor/couchbase-lite-core/Replicator/c4RemoteReplicator.hh
-@@ -26,7 +26,7 @@ namespace c4Internal {
-     public:
- 
-         // Maximum number of retries before a one-shot replication gives up
--        static constexpr unsigned kMaxOneShotRetryCount = 2;
-+        static constexpr unsigned kMaxOneShotRetryCount = 0;
- 
-         // Longest possible retry delay, in seconds (only a continuous replication will reach this.)
-         // But a call to c4repl_retry() will also trigger a retry.

@@ -505,8 +505,11 @@ if(NOT WIN32)
         DEPENDS strata::CouchbaseLiteCPP
         EXCLUDE_FROM_ALL ON
         # Apply patches
-        PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/.. && git submodule --quiet update --force --recursive extern/couchbase-lite-C
-        COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-c.patch ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-core.patch
+        # PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/.. && git submodule --quiet update --force --recursive extern/couchbase-lite-C
+        # COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-c.patch ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-core.patch
+
+        # PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/.. && git submodule --quiet update --force --recursive extern/couchbase-lite-C
+        # PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-c-NEW.patch ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-core-NEW.patch
 
         CMAKE_ARGS ${CMAKE_ARGS}
             -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
@@ -522,7 +525,7 @@ if(NOT WIN32)
 
         # LiteCore
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreStatic-O${CMAKE_STATIC_LIBRARY_SUFFIX}
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/${CMAKE_STATIC_LIBRARY_PREFIX}Support${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Support-O${CMAKE_STATIC_LIBRARY_SUFFIX}
+        # COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/${CMAKE_STATIC_LIBRARY_PREFIX}Support${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Support-O${CMAKE_STATIC_LIBRARY_SUFFIX}
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreWebSocket${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreWebSocket-O${CMAKE_STATIC_LIBRARY_SUFFIX}
 
         # BLIP
@@ -538,6 +541,12 @@ if(NOT WIN32)
 
         # SQLite
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/vendor/sqlite3-unicodesn/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN-O${CMAKE_STATIC_LIBRARY_SUFFIX}
+
+        # SQLiteCpp
+        # COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/vendor/SQLiteCpp/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN-O${CMAKE_STATIC_LIBRARY_SUFFIX}
+
+        # CouchbaseSqlite3
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/${CMAKE_STATIC_LIBRARY_PREFIX}CouchbaseSqlite3${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}CouchbaseSqlite3-O${CMAKE_STATIC_LIBRARY_SUFFIX}
 
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${SOURCE_DIR_EXTERN}/couchbase-lite-C/include/cbl++ <INSTALL_DIR>/include-CBL-official-API/couchbase-lite-C
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${SOURCE_DIR_EXTERN}/couchbase-lite-C/include/cbl <INSTALL_DIR>/include-CBL-official-API/couchbase-lite-C
@@ -613,6 +622,15 @@ set_target_properties(cb-lite-c::LiteCore PROPERTIES
 )
 add_dependencies(cb-lite-c::LiteCore DEPENDS strata::Couchbase-Lite-C)
 
+# ##################
+add_library(cb-lite-c::CouchbaseSqlite3 STATIC IMPORTED GLOBAL)
+set_target_properties(cb-lite-c::CouchbaseSqlite3 PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include-CBL-official-API"
+    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}CouchbaseSqlite3-O${CMAKE_STATIC_LIBRARY_SUFFIX}"
+)
+add_dependencies(cb-lite-c::CouchbaseSqlite3 DEPENDS strata::Couchbase-Lite-C)
+# ##################
+
 add_library(cb-lite-c::Fleece STATIC IMPORTED GLOBAL)
 set_target_properties(cb-lite-c::Fleece PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include-CBL-official-API"
@@ -632,11 +650,11 @@ set_target_properties(cb-lite-c::SQLite3_unicode PROPERTIES
     IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN-O${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
 
-add_library(cb-lite-c::support STATIC IMPORTED GLOBAL)
-set_target_properties(cb-lite-c::support PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include-CBL-official-API"
-    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Support-O${CMAKE_STATIC_LIBRARY_SUFFIX}"
-)
+# add_library(cb-lite-c::support STATIC IMPORTED GLOBAL)
+# set_target_properties(cb-lite-c::support PROPERTIES
+#     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include-CBL-official-API"
+#     IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Support-O${CMAKE_STATIC_LIBRARY_SUFFIX}"
+# )
 
 add_library(cb-lite-c::mbedcrypto STATIC IMPORTED GLOBAL)
 set_target_properties(cb-lite-c::mbedcrypto PROPERTIES
@@ -687,11 +705,13 @@ target_link_libraries(strata::Couchbase-Lite-C
         cb-lite-c::Fleece
         cb-lite-c::BLIP
         cb-lite-c::SQLite3_unicode
-        cb-lite-c::support
+        # cb-lite-c::support
         cb-lite-c::mbedcrypto
         cb-lite-c::mbedtls
         cb-lite-c::mbedx509
         cb-lite-c::LiteCoreWebSocket
+
+        cb-lite-c::CouchbaseSqlite3
 )
 
 if(APPLE)
