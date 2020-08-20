@@ -115,6 +115,14 @@ public:
      */
     int backupChunksCount() const;
 
+    /*!
+     * Set size and MD5 checksum of flashed firmware (or bootloader). This method must
+     * be called before first call of flashFirmwareChunk or flashBootloaderChunk
+     * \param fileSize size of firmware (or bootloader) in bytes
+     * \param fileMD5 MD5 checksum of firmware (or bootloader)
+     */
+    void setFlashInfo(qint64 fileSize, const QString& fileMD5);
+
 signals:
     /*!
      * This signal is emitted when DeviceOperations finishes.
@@ -160,6 +168,8 @@ private:
 
     QVector<quint8> backupChunk_;
     int backupChunksCount_;
+    qint64 fileSize_;
+    QString fileMD5_;
 };
 
 }  // namespace

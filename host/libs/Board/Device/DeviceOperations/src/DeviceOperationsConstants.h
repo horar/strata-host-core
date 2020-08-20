@@ -37,6 +37,7 @@ constexpr const char* const JSON_DATA = "data";
 constexpr const char* const JSON_STATUS = "status";
 constexpr const char* const JSON_OK = "ok";
 constexpr const char* const JSON_RESEND_CHUNK = "resend_chunk";
+constexpr const char* const JSON_MD5 = "md5";
 
 const QString QSTR_BOOTLOADER("Bootloader");
 

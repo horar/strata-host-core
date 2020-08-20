@@ -71,7 +71,7 @@ void DeviceOperations::flashChunk(const QVector<quint8>& chunk, int chunkNumber,
                                 DeviceOperation::FlashBootloaderChunk;
     if (startOperation(operation)) {
         if (commandList_.empty()) {
-            commandList_.emplace_back(std::make_unique<CmdFlash>(device_, flashFirmware));
+            commandList_.emplace_back(std::make_unique<CmdFlash>(device_, fileSize_, fileMD5_, flashFirmware));
             currentCommand_ = commandList_.begin();
         }
         if (currentCommand_ != commandList_.end()) {
@@ -131,6 +131,11 @@ int DeviceOperations::backupChunksCount() const {
     return backupChunksCount_;
 }
 
+void DeviceOperations::setFlashInfo(qint64 fileSize, const QString& fileMD5) {
+    fileSize_ = fileSize;
+    fileMD5_ = fileMD5;
+}
+
 void DeviceOperations::handleSendCommand() {
     if (currentCommand_ == commandList_.end()) {
         return;
@@ -177,10 +182,11 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
         if (CommandValidator::validate(CommandValidator::JsonType::ack, doc)) {
             const QString ackStr = doc[JSON_ACK].GetString();
             qCDebug(logCategoryDeviceOperations) << device_ << "Received '" << ackStr << "' ACK.";
+            const rapidjson::Value& payload = doc[JSON_PAYLOAD];
+            const bool ackOk = payload[JSON_RETURN_VALUE].GetBool();
+
             BaseDeviceCommand *command = currentCommand_->get();
             if (ackStr == command->name()) {
-                const rapidjson::Value& payload = doc[JSON_PAYLOAD];
-                const bool ackOk = payload[JSON_RETURN_VALUE].GetBool();
                 if (ackOk) {
                     command->setAckReceived();
                 } else {
@@ -189,6 +195,9 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
                 }
             } else {
                 qCWarning(logCategoryDeviceOperations) << device_ << "Received wrong ACK. Expected '" << command->name() << "', got '" << ackStr << "'.";
+                if (ackOk == false) {
+                    qCWarning(logCategoryDeviceOperations) << device_ << "ACK is not OK: '" << payload[JSON_RETURN_STRING].GetString() << "'.";
+                }
             }
             ok = true;
         }

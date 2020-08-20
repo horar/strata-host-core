@@ -1,6 +1,8 @@
 #include "Flasher.h"
 #include "FlasherConstants.h"
 
+#include <QCryptographicHash>
+
 #include <Device/DeviceOperations.h>
 
 #include "logging/LoggingQtCategories.h"
@@ -13,7 +15,10 @@ using device::DeviceOperation;
 using device::DeviceProperties;
 
 Flasher::Flasher(const DevicePtr& device, const QString& fileName) :
-    device_(device), binaryFile_(fileName)
+    Flasher(device, fileName, QString()) { }
+
+Flasher::Flasher(const DevicePtr& device, const QString& fileName, const QString& fileMD5) :
+    device_(device), binaryFile_(fileName), fileMD5_(fileMD5)
 {
     operation_ = std::make_unique<DeviceOperations>(device_);
 
@@ -55,13 +60,32 @@ void Flasher::flash(bool flashFirmware, bool startApplication) {
     startApp_ = startApplication;
     if (binaryFile_.open(QIODevice::ReadOnly)) {
         if (binaryFile_.size() > 0) {
+            {
+                QCryptographicHash hash(QCryptographicHash::Algorithm::Md5);
+                hash.addData(&binaryFile_);
+                QString md5 = hash.result().toHex();
+                binaryFile_.seek(0);
+                if (fileMD5_.isEmpty()) {
+                    fileMD5_ = md5;
+                } else {
+                    if (fileMD5_ != md5) {
+                        QString errStr(QStringLiteral("Wrong MD5 checksum of file to be flashed."));
+                        qCCritical(logCategoryFlasher) << device_ << errStr;
+                        emit error(errStr);
+                        finish(Result::Error);
+                        return;
+                    }
+                }
+            }
             action_ = (flashFirmware) ? Action::FlashFirmware : Action::FlashBootloader;
             chunkNumber_ = 0;
             chunkCount_ = static_cast<int>((binaryFile_.size() - 1 + CHUNK_SIZE) / CHUNK_SIZE);
             chunkProgress_ = FLASH_PROGRESS_STEP;
             const char* binaryType = (flashFirmware) ? "firmware" : "bootloader";
             qCInfo(logCategoryFlasher) << device_ << "Preparing for flashing " << chunkCount_ << " chunks of " << binaryType << '.';
+
             emit switchToBootloader(false);
+
             operation_->switchToBootloader();
         } else {
             QString errStr = QStringLiteral("File '") + binaryFile_.fileName() + QStringLiteral("' is empty.");
@@ -137,7 +161,7 @@ void Flasher::handleOperationFinished(DeviceOperation operation, int data) {
         break;
     default :
         {
-            QString errStr = QStringLiteral("Unsupported operation.");
+            QString errStr(QStringLiteral("Unsupported operation."));
             qCCritical(logCategoryFlasher) << device_ << errStr;
             emit error(errStr);
             finish(Result::Error);
@@ -167,7 +191,9 @@ void Flasher::handleFlash(int lastFlashedChunk) {
         return;
     }
 
-    if (lastFlashedChunk >= 0) {  // if no chunk was flashed yet, 'lastFlashedChunk' is negative number (-1)
+    if (lastFlashedChunk < 0) {  // if no chunk was flashed yet, 'lastFlashedChunk' is negative number (-1)
+        operation_->setFlashInfo(binaryFile_.size(), fileMD5_);
+    } else {
         if (flashedChunk == chunkProgress_) { // this is faster than modulo
             chunkProgress_ += FLASH_PROGRESS_STEP;
             qCInfo(logCategoryFlasher) << device_ << "Flashed chunk " << flashedChunk << " of " << chunkCount_;
@@ -177,6 +203,14 @@ void Flasher::handleFlash(int lastFlashedChunk) {
         } else {
             qCDebug(logCategoryFlasher) << device_ << "Flashed chunk " << flashedChunk << " of " << chunkCount_;
         }
+    }
+
+    if (binaryFile_.atEnd()) {
+        QString errStr(QStringLiteral("Unexpected end of file."));
+        qCCritical(logCategoryFlasher) << device_ << errStr << ' ' <<  binaryFile_.fileName();
+        emit error(errStr);
+        finish(Result::Error);
+        return;
     }
 
     int chunkSize = CHUNK_SIZE;

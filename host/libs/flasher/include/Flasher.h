@@ -41,6 +41,13 @@ class Flasher : public QObject
          * \param fileName path to firmware (or bootloader) file
          */
         Flasher(const device::DevicePtr& device, const QString& fileName);
+        /*!
+         * Flasher constructor.
+         * \param device device which will be used by Flasher
+         * \param fileName path to firmware (or bootloader) file
+         * \param fileMD5 MD5 checksum of file which will be flashed
+         */
+        Flasher(const device::DevicePtr& device, const QString& fileName, const QString& fileMD5);
 
         /*!
          * Flasher destructor.
@@ -129,6 +136,7 @@ class Flasher : public QObject
         device::DevicePtr device_;
 
         QFile binaryFile_;
+        QString fileMD5_;
 
         std::unique_ptr<device::DeviceOperations> operation_;
 

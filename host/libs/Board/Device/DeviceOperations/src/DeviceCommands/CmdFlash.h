@@ -9,7 +9,7 @@ namespace strata::device::command {
 
 class CmdFlash : public BaseDeviceCommand {
 public:
-    CmdFlash(const device::DevicePtr& device, bool flashFirmware);
+    CmdFlash(const device::DevicePtr& device, qint64 fileSize, const QString& fileMD5, bool flashFirmware);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
     bool logSendMessage() const override;
@@ -21,6 +21,8 @@ private:
     QVector<quint8> chunk_;
     int chunkNumber_;
     int chunkCount_;
+    const quint64 fileSize_;
+    const QString fileMD5_;
     const uint maxRetries_;
     uint retriesCount_;
 };

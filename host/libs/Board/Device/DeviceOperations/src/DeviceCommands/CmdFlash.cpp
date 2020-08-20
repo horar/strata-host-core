@@ -13,9 +13,10 @@
 
 namespace strata::device::command {
 
-CmdFlash::CmdFlash(const device::DevicePtr& device, bool flashFirmware) :
+CmdFlash::CmdFlash(const device::DevicePtr& device, qint64 fileSize, const QString& fileMD5, bool flashFirmware) :
     BaseDeviceCommand(device, (flashFirmware) ? QStringLiteral("flash_firmware") : QStringLiteral("flash_bootloader")),
-    flashFirmware_(flashFirmware), chunkNumber_(0), maxRetries_(MAX_CHUNK_RETRIES), retriesCount_(0) { }
+    flashFirmware_(flashFirmware), chunkNumber_(0), fileSize_(fileSize), fileMD5_(fileMD5),
+    maxRetries_(MAX_CHUNK_RETRIES), retriesCount_(0) { }
 
 QByteArray CmdFlash::message() {
     rapidjson::StringBuffer sb;
@@ -53,6 +54,14 @@ QByteArray CmdFlash::message() {
     writer.String(chunkBase64.data(), static_cast<rapidjson::SizeType>(chunkBase64Size));
 
     writer.EndObject();
+
+    if (chunkNumber_ == 0) {  // the first chunk
+        writer.Key(JSON_SIZE);
+        writer.Int(fileSize_);
+
+        writer.Key(JSON_MD5);
+        writer.String(fileMD5_.toStdString().c_str());
+    }
 
     writer.EndObject();
 
