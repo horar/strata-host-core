@@ -116,7 +116,7 @@ function getPowershellElement(str, element_name) {
 
 Component.prototype.isVCRedistInstalled = function()
 {
-    var programName = "Microsoft Visual C\\+\\+ 2017 Redistributable \\(x64\\)";    // this is the correct program to be uninstalled
+    var programName = "Microsoft Visual C\\+\\+ 201[75](\\-\\d{4})? Redistributable \\(x64\\)";    // this is the correct program to be uninstalled
     var powerShellCommand = "(Get-ChildItem -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall | Get-ItemProperty | Where-Object {$_.DisplayName -match '" + programName + "' })";
 
     console.log("executing powershell command '" + powerShellCommand + "'");

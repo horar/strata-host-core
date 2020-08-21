@@ -74,9 +74,9 @@ set STRATA_CONFIG_XML=%STRATA_RESOURCES_DIR%\config\config.xml
 set MQTT_DLL=Qt5Mqtt.dll
 set MQTT_DLL_DIR=bin\%MQTT_DLL%
 set CRYPTO_DLL=libcrypto-1_1-x64.dll
-set CRYPTO_DLL_DIR=%OPENSSL_PATH%\%CRYPTO_DLL%
+set CRYPTO_DLL_DIR=%PKG_STRATA_DS%\%CRYPTO_DLL%
 set SSL_DLL=libssl-1_1-x64.dll
-set SSL_DLL_DIR=%OPENSSL_PATH%\%SSL_DLL%
+set SSL_DLL_DIR=%PKG_STRATA_DS%\%SSL_DLL%
 set VCREDIST_BINARY=vc_redist.x64.exe
 set STRATA_OFFLINE=strata-setup-offline
 set STRATA_ONLINE=strata-setup-online
@@ -323,23 +323,23 @@ move "%PKG_STRATA_QT%\%VCREDIST_BINARY%" "%PKG_STRATA_VC_REDIST%\StrataUtils\VC_
 REM Copy OpenSSL dlls to QT5 dir
 if not exist %CRYPTO_DLL_DIR% (
     echo "======================================================================="
-    echo " Missing %CRYPTO_DLL_DIR%, OpenSSL probably not installed"
+    echo " Missing %CRYPTO_DLL_DIR%, build probably failed"
     echo "======================================================================="
     Exit /B 2
 )
 
-echo "Copying %CRYPTO_DLL% to %PKG_STRATA_QT%"
-copy "%CRYPTO_DLL_DIR%" "%PKG_STRATA_QT%\%CRYPTO_DLL%"
+echo "Moving %CRYPTO_DLL% to %PKG_STRATA_QT%"
+move "%CRYPTO_DLL_DIR%" "%PKG_STRATA_QT%\%CRYPTO_DLL%"
 
 if not exist "%SSL_DLL_DIR%" (
     echo "======================================================================="
-    echo " Missing %SSL_DLL_DIR%, OpenSSL probably not installed"
+    echo " Missing %SSL_DLL_DIR%, build probably failed"
     echo "======================================================================="
     Exit /B 2
 )
 
-echo "Copying %SSL_DLL% to %PKG_STRATA_QT%"
-copy "%SSL_DLL_DIR%" "%PKG_STRATA_QT%\%SSL_DLL%"
+echo "Moving %SSL_DLL% to %PKG_STRATA_QT%"
+move "%SSL_DLL_DIR%" "%PKG_STRATA_QT%\%SSL_DLL%"
 
 if not exist %MQTT_DLL_DIR% (
     echo "======================================================================="
