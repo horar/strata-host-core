@@ -24,16 +24,17 @@ class Database final: public QObject
     Q_DISABLE_COPY(Database)
 
 public:
-    Database(const std::string dbPath, QObject *parent = nullptr);
+    Database(QObject *parent = nullptr);
     ~Database();
 
     /**
      * Opens the database
+     * @param db_path
      * @param db_name
      * @return returns true when succeeded, otherwise false
      * NOTE: add a path to the DB.
      */
-    bool open(const std::string& db_name);
+    bool open(std::string_view db_path, const std::string &db_name);
 
     /**
      * Initializes and starts the DB replicator

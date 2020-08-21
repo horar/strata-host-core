@@ -29,13 +29,15 @@ git submodule update --init --recursive
 echo "-----------------------------------------------------------------------------"
 echo "Create a build folder.."
 echo "-----------------------------------------------------------------------------"
-mkdir -pv build
-cd build
+mkdir -pv build-host
+cd build-host
 
 echo "-----------------------------------------------------------------------------"
 echo "Generate project files.."
 echo "-----------------------------------------------------------------------------"
-cmake -DCMAKE_BUILD_TYPE=Debug ..
+cmake \
+    -DCMAKE_BUILD_TYPE=Debug \
+    ../host
 if [ $? != 0 ] ; then exit -1; fi
 
 echo "-----------------------------------------------------------------------------"
