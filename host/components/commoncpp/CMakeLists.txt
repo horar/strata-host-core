@@ -15,6 +15,7 @@ target_sources(${PROJECT_NAME}
     CommonCppPlugin.cpp
     SGUtilsCpp.cpp
     SGJLinkConnector.cpp
+    SGVersionUtils.cpp
     SGSortFilterProxyModel.cpp
     logging/LoggingQtCategories.cpp
     SGQWTPlot.cpp
