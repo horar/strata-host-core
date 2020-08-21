@@ -28,5 +28,5 @@ void CommonCppPlugin::registerTypes(const char *uri)
     qmlRegisterType<QmlMqttClient>(uri, 1, 0, "SGMqttClient");
     qmlRegisterUncreatableType<QmlMqttSubscription>(uri, 1, 0, "SGMqttSubscription", QLatin1String("Subscriptions are read-only"));
     qmlRegisterType<QmlSslConfiguration>(uri, 1, 0, "SGSslConfiguration");
-    qmlRegisterType<SGVersionUtils>(uri, 1, 0, "SGVersionUtils");
+    qmlRegisterSingletonType<SGVersionUtils>(uri, 1, 0, "SGVersionUtils", SGVersionUtils::SingletonTypeProvider);
 }

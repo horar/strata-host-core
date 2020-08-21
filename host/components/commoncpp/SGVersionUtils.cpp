@@ -140,3 +140,12 @@ QList<uint> SGVersionUtils::convertStringToIntList(const QString &version, bool 
     return versionSeparated;
 }
 
+QObject* SGVersionUtils::SingletonTypeProvider(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+
+    SGVersionUtils *utils = new SGVersionUtils();
+    return utils;
+}
+

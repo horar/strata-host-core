@@ -5,6 +5,8 @@
 #include <QStringList>
 #include <QList>
 #include <QRegularExpression>
+#include <QQmlEngine>
+#include <QJSEngine>
 
 class SGVersionUtils : public QObject
 {
@@ -62,7 +64,7 @@ public:
 
     Q_INVOKABLE static QString cleanVersion(const QString &version);
 
-
+    static QObject* SingletonTypeProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
 private:
     static inline const QRegularExpression validVersionRegexp = QRegularExpression("^[vV]?(\\d+$)|^[vV]?((\\d+\\.)+\\d+)\\D*[^\\.]*$");
 
