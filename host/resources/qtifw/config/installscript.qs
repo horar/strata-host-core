@@ -30,23 +30,13 @@ function Controller()
     console.log("Is startSDS set: " + startSDS);
 
     if (isSilent) {
-        installer.installationFinished.connect(function () {
-            gui.clickButton(buttons.NextButton);
-        })
-                
-        installer.updateFinished.connect(function () {
-            gui.clickButton(buttons.NextButton);
-        })
-        
-        installer.uninstallationFinished.connect(function () {
-            gui.clickButton(buttons.NextButton);
-        })
+        installer.installationFinished.connect(Controller.prototype.InstallationPerformed);
+        installer.uninstallationFinished.connect(Controller.prototype.InstallationPerformed);
 
         // do not use this or it will be impossible to cancel the installer
         //installer.autoRejectMessageBoxes();
         //installer.setMessageBoxAutomaticAnswer("OverwriteTargetDirectory", QMessageBox.Yes);
         //installer.setMessageBoxAutomaticAnswer("stopProcessesForUpdates", QMessageBox.Ignore);
-
     }
     
     var widget = gui.pageById(QInstaller.Introduction); // get the introduction wizard page
@@ -147,7 +137,12 @@ Controller.prototype.LicenseAgreementPageCallback = function ()
     console.log("LicenseAgreementPageCallback entered");
 
     if (isSilent) {
-        gui.currentPageWidget().AcceptLicenseRadioButton.setChecked(true);
+        var widget = gui.currentPageWidget();
+        if (widget != null) {
+            var licenseRadioButton = widget.findChild("AcceptLicenseRadioButton");
+            if(licenseRadioButton != null)
+                licenseRadioButton.setChecked(true);
+        }
         gui.clickButton(buttons.NextButton);
     }
 }
@@ -169,8 +164,21 @@ Controller.prototype.ReadyForInstallationPageCallback = function ()
 Controller.prototype.PerformInstallationPageCallback = function ()
 {
     console.log("PerformInstallationPageCallback entered");
-    if (isSilent)
-        gui.clickButton(buttons.CommitButton);
+    //if (isSilent)
+    //    gui.clickButton(buttons.CommitButton);
+}
+
+Controller.prototype.InstallationPerformed = function ()
+{
+    console.log("InstallationPerformed entered");
+    if (isSilent) {
+        var widget = gui.pageById(QInstaller.PerformInstallation);
+        var widget_cmp = gui.currentPageWidget();
+        if(widget === widget_cmp) {
+            console.log("InstallationPerformed clicking next button");
+            gui.clickButton(buttons.NextButton, 2000);    // timer to avoid double clicking
+        }
+    }
 }
 
 function isComponentInstalled(component_name)
@@ -246,8 +254,6 @@ Controller.prototype.DynamicShortcutCheckBoxWidgetCallback = function()
             startMenuCheckBox.setChecked(installer.value("add_start_menu_shortcut") == "true");
     }
 
-    if (isSilent) {
+    if (isSilent)
         gui.clickButton(buttons.NextButton);
-    }
 }
-

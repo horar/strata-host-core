@@ -3,7 +3,7 @@
     <DisplayName>Visual C++ Redistributable for Visual Studio 2017</DisplayName>
     <Description>The Visual C++ Redistributable Packages install run-time components that are required to run C++ applications built using Visual Studio 2017</Description>
     <!--This version is used also in installscript.js when doing uninstall-->
-    <Version>14.16.27033</Version>
+    <Version>14.16.27033.0</Version>
     <ForcedInstallation>true</ForcedInstallation>
     <SortingPriority>50</SortingPriority>
     <Script>installscript.js</Script>

@@ -364,25 +364,25 @@ echo "--------------------------------------------------------------------------
 echo "Signing %SDS_BINARY%"
 echo "-----------------------------------------------------------------------------"
 
-signtool sign -f "%SIGNING_CERT%" -p %SIGNING_PASS% "%SDS_BINARY_DIR%"
-IF %ERRORLEVEL% NEQ 0 (
-    echo "======================================================================="
-    echo " Failed to sign %SDS_BINARY%!"
-    echo "======================================================================="
-    Exit /B 3
-)
+REM signtool sign -f "%SIGNING_CERT%" -p %SIGNING_PASS% "%SDS_BINARY_DIR%"
+REM IF %ERRORLEVEL% NEQ 0 (
+REM     echo "======================================================================="
+REM     echo " Failed to sign %SDS_BINARY%!"
+REM     echo "======================================================================="
+REM     Exit /B 3
+REM )
 
 echo "-----------------------------------------------------------------------------"
 echo "Signing %HCS_BINARY%"
 echo "-----------------------------------------------------------------------------"
 
-signtool sign -f "%SIGNING_CERT%" -p %SIGNING_PASS% "%HCS_BINARY_DIR%"
-IF %ERRORLEVEL% NEQ 0 (
-    echo "======================================================================="
-    echo " Failed to sign %HCS_BINARY%!"
-    echo "======================================================================="
-    Exit /B 3
-)
+REM signtool sign -f "%SIGNING_CERT%" -p %SIGNING_PASS% "%HCS_BINARY_DIR%"
+REM IF %ERRORLEVEL% NEQ 0 (
+REM     echo "======================================================================="
+REM     echo " Failed to sign %HCS_BINARY%!"
+REM     echo "======================================================================="
+REM     Exit /B 3
+REM )
 
 echo "======================================================================="
 echo " Preparing offline installer %STRATA_OFFLINE_BINARY%.."
@@ -406,17 +406,17 @@ IF %ERRORLEVEL% NEQ 0 (
 echo "-----------------------------------------------------------------------------"
 echo "Signing the offline installer %STRATA_OFFLINE_BINARY%"
 echo "-----------------------------------------------------------------------------"
-signtool sign ^
-    -f "%SIGNING_CERT%" ^
-    -p %SIGNING_PASS% ^
-    %STRATA_OFFLINE_BINARY%
-    
-IF %ERRORLEVEL% NEQ 0 (
-    echo "======================================================================="
-    echo " Failed to sign the offline installer %STRATA_OFFLINE_BINARY%!"
-    echo "======================================================================="
-    Exit /B 3
-)
+REM signtool sign ^
+REM     -f "%SIGNING_CERT%" ^
+REM     -p %SIGNING_PASS% ^
+REM     %STRATA_OFFLINE_BINARY%
+REM     
+REM IF %ERRORLEVEL% NEQ 0 (
+REM     echo "======================================================================="
+REM     echo " Failed to sign the offline installer %STRATA_OFFLINE_BINARY%!"
+REM     echo "======================================================================="
+REM     Exit /B 3
+REM )
     
 REM echo "======================================================================="
 REM echo " Preparing online installer %STRATA_ONLINE_BINARY%.."

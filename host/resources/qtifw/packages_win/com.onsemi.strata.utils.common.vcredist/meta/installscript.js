@@ -116,7 +116,7 @@ function getPowershellElement(str, element_name) {
 
 Component.prototype.isVCRedistInstalled = function()
 {
-    var programName = "Microsoft Visual C\\+\\+ 2017 X64 Additional Runtime";
+    var programName = "Microsoft Visual C\\+\\+ 2017 Redistributable \\(x64\\)";    // this is the correct program to be uninstalled
     var powerShellCommand = "(Get-ChildItem -Path HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall, HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall | Get-ItemProperty | Where-Object {$_.DisplayName -match '" + programName + "' })";
 
     console.log("executing powershell command '" + powerShellCommand + "'");
@@ -149,12 +149,11 @@ Component.prototype.isVCRedistInstalled = function()
                     console.log("program is the same version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
                 } else {
                     console.log("program is older, will replace with new version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
-                    if(uninstall_string[i].indexOf("MsiExec.exe /I") == 0)
-                        uninstall_string[i] = uninstall_string[i].substring(0, 13) + 'X' + uninstall_string[i].substring(13 + 1);
                     
-                    console.log("executing VCRedist uninstall command: '" + uninstall_string[i] + "'");
-                    var e = installer.execute(uninstall_string[i], ["/norestart", "/quiet"]);
-                    console.log(e);
+                    // do not uninstall vcredist, it might cause issue, just let the updater do its job and hope it works correctly
+                    //console.log("executing VCRedist uninstall command: '" + uninstall_string[i] + "'");
+                    //var e = installer.execute(uninstall_string[i], ["/norestart", "/quiet"]);
+                    //console.log(e);
                 }
             }
         }
