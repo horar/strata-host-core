@@ -1,5 +1,5 @@
-#ifndef CMD_FLASH_FIRMWARE_H
-#define CMD_FLASH_FIRMWARE_H
+#ifndef CMD_FLASH_H
+#define CMD_FLASH_H
 
 #include "BaseDeviceCommand.h"
 
@@ -7,9 +7,9 @@
 
 namespace strata::device::command {
 
-class CmdFlashFirmware : public BaseDeviceCommand {
+class CmdFlash : public BaseDeviceCommand {
 public:
-    CmdFlashFirmware(const device::DevicePtr& device);
+    CmdFlash(const device::DevicePtr& device, bool flashFirmware);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
     bool logSendMessage() const override;
@@ -17,6 +17,7 @@ public:
     int dataForFinish() const override;
     void setChunk(const QVector<quint8>& chunk, int chunkNumber);
 private:
+    const bool flashFirmware_;  // true = flash firmware, false = flash bootloader
     QVector<quint8> chunk_;
     int chunkNumber_;
     const uint maxRetries_;

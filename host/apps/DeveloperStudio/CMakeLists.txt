@@ -96,6 +96,25 @@ if(WIN32)
         COMMENT "Deploying dependant 3rd party libraries..."
         VERBATIM
     )
+
+    get_target_property(QT_LIBRARY_DIR Qt5::Core LOCATION)
+    get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
+    get_filename_component(QT_SSL_LIBRARY_DIR "${QT_LIBRARY_DIR}/../../../Tools/OpenSSL/Win_x64//bin" ABSOLUTE)
+    if(EXISTS ${QT_SSL_LIBRARY_DIR})
+        message(STATUS "OpenSSL DLL's will be copyed from ${QT_SSL_LIBRARY_DIR}")
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${QT_SSL_LIBRARY_DIR}/libcrypto-1_1-x64.dll
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${QT_SSL_LIBRARY_DIR}/libssl-1_1-x64.dll
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>
+            COMMENT "Deploying dependant 3rd party Qt OpenSSL libraries..."
+            VERBATIM
+        )
+    else()
+        message(WARNING "Please install OpenSSL coming with your Qt installer (can't find OpenSSL DLL's in '${QT_SSL_LIBRARY_DIR}'")
+    endif()
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE

@@ -1,5 +1,4 @@
-#ifndef ZmqConnector_H
-#define ZmqConnector_H
+#pragma once
 
 #include <memory>
 #include "Connector.h"
@@ -9,6 +8,8 @@ namespace zmq
 class context_t;
 class socket_t;
 }  // namespace zmq
+
+namespace strata::connector {
 
 class ZmqConnector : public Connector
 {
@@ -46,4 +47,4 @@ protected:
     std::unique_ptr<zmq::socket_t> socket_;
 };
 
-#endif  // ZmqConnector_H
+}  // namespace strata::connector
