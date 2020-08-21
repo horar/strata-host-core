@@ -12,10 +12,8 @@
 
 using namespace Strata;
 
-Database::Database(const std::string dbPath, QObject *parent)
-    : QObject(parent),
-      sgDatabasePath_{std::move(dbPath)}
-{
+Database::Database(QObject *parent)
+    : QObject(parent){
 }
 
 Database::~Database()
@@ -28,11 +26,14 @@ Database::~Database()
     delete sg_database_;
 }
 
-bool Database::open(const std::string& db_name)
+bool Database::open(std::string_view db_path, const std::string& db_name)
 {
     if (sg_database_ != nullptr) {
         return false;
     }
+
+    sgDatabasePath_ = db_path;
+    qCDebug(logCategoryHcsDb) << "DB location set to:" << QString::fromStdString(sgDatabasePath_);
 
     if (sgDatabasePath_.empty()) {
         qCCritical(logCategoryHcsDb) << "Missing writable DB location path";

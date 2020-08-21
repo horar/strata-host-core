@@ -40,8 +40,8 @@ git submodule update --init --recursive
 echo "-----------------------------------------------------------------------------"
 echo "Create a build folder.."
 echo "-----------------------------------------------------------------------------"
-mkdir -pv build-ota
-cd build-ota
+mkdir -pv build-host-ota
+cd build-host-ota
 
 echo "-----------------------------------------------------------------------------"
 echo "Generate project files.."
@@ -56,7 +56,7 @@ cmake \
     -DBUILD_DONT_CLEAN_EXTERNAL=on \
     -DBUILD_EXAMPLES=off \
     -DBUILD_TESTING=off \
-    ..
+    ../host
 if [ $? != 0 ] ; then exit -1; fi
 
 echo "-----------------------------------------------------------------------------"
@@ -78,14 +78,14 @@ cmake --build . -- -j $(sysctl -n hw.ncpu)
 
 
 macdeployqt ./packages/com.onsemi.strata.devstudio/data/Strata\ Developer\ Studio.app \
-    -qmldir=../apps/DeveloperStudio \
-    -qmldir=../components \
+    -qmldir=../host/apps/DeveloperStudio \
+    -qmldir=../host/components \
     -verbose=1
 
 binarycreator \
     --verbose \
     --offline-only \
-    -c ../resources/qtifw/config/config.xml \
+    -c ../host/resources/qtifw/config/config.xml \
     -p ./packages/ \
     strata-setup-offline
 
