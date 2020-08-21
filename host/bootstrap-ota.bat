@@ -69,6 +69,7 @@ set SDS_BINARY_DIR=%PKG_STRATA_DS%\%SDS_BINARY%
 set HCS_BINARY_DIR=%PKG_STRATA_HCS%\%HCS_BINARY%
 set STRATA_DEPLOYMENT_DIR=..\..\deployment\Strata
 set STRATA_RESOURCES_DIR=..\resources\qtifw
+set STRATA_HCS_CONFIG_DIR=..\assets\config\hcs
 set STRATA_CONFIG_XML=%STRATA_RESOURCES_DIR%\config\config.xml
 set MQTT_DLL=Qt5Mqtt.dll
 set MQTT_DLL_DIR=bin\%MQTT_DLL%
@@ -230,8 +231,8 @@ echo "======================================================================="
 REM copy various license files
 xcopy %STRATA_DEPLOYMENT_DIR%\dependencies\strata %PKG_STRATA_DS% /E /Y
 
-REM copy HCS config file (should not we use host\apps\hcs3\files\conf\hcs.config ? and why there are two of them and both in git?)
-copy %STRATA_DEPLOYMENT_DIR%\config\hcs\hcs.config %PKG_STRATA_HCS%
+REM copy HCS config file
+copy %STRATA_HCS_CONFIG_DIR%\hcs_prod.config %PKG_STRATA_HCS%\hcs.config
 
 REM echo "Copying Qt Core\Components resources to %PKG_STRATA_COMPONENTS%"
 REM xcopy bin\component-*.rcc %PKG_STRATA_COMPONENTS% /Y
@@ -251,8 +252,8 @@ if not exist %STRATA_RESOURCES_DIR%\packages_win (
     Exit /B 2
 )
 
-rd /s /q %PACKAGES_WIN_DIR%
-md %PACKAGES_WIN_DIR%
+if exist %PACKAGES_WIN_DIR% rd /s /q %PACKAGES_WIN_DIR%
+if not exist %PACKAGES_WIN_DIR% md %PACKAGES_WIN_DIR%
 xcopy %STRATA_RESOURCES_DIR%\packages_win %PACKAGES_WIN_DIR% /E
 
 if not exist %STRATA_DEPLOYMENT_DIR%\ftdi_driver_files (
