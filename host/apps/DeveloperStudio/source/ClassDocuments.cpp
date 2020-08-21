@@ -64,7 +64,7 @@ void ClassDocuments::loadPlatformDocuments()
     setLoadingProgressPercentage(0);
     setLoading(true);
     setErrorString("");
-    coreInterface_->connectToPlatform(classId_);
+    coreInterface_->loadDocuments(classId_);
 }
 
 void ClassDocuments::updateLoadingProgress(QJsonObject data)

@@ -10,7 +10,7 @@
 #include <QDir>
 #include <QDebug>
 
-SGUserSettings::SGUserSettings(QObject *parent, const QString &classId) : QObject(parent), classId_(classId)
+SGUserSettings::SGUserSettings(QObject *parent, const QString &user, const QString &classId) : QObject(parent), classId_(classId), user_(user)
 {
     setBaseOutputPath();
 }
@@ -40,13 +40,17 @@ QJsonObject SGUserSettings::readFile(const QString &fileName, const QString &sub
 {
     SGUtilsCpp utils;
     QString filePath = utils.joinFilePath(base_output_path_, subdirectory);
+    QJsonObject returnedObj;
 
     filePath = utils.joinFilePath(filePath, fileName);
 
-    QJsonObject returnedObj;
+    QFileInfo fi(filePath);
+    if (fi.exists() == false || fi.isFile() == false) {
+        qCWarning(logCategoryUserSettings) << "Settings file at path " << filePath << " doesn't exist or is not a file.";
+        return returnedObj;
+    }
 
     QString fileText = utils.readTextFileContent(filePath);
-
 
     if (!fileText.isEmpty()) {
         QJsonDocument doc = QJsonDocument::fromJson(fileText.toUtf8());
@@ -123,12 +127,6 @@ bool SGUserSettings::renameFile(const QString &origFileName, const QString &newF
     return true;
 }
 
-QString SGUserSettings::getBaseOutputPath()
-{
-    return base_output_path_;
-}
-
-
 bool SGUserSettings::makePath(const QString &path)
 {
     return QDir().mkpath(path);
@@ -148,14 +146,37 @@ void SGUserSettings::setClassId(const QString &id)
     }
 }
 
+QString SGUserSettings::user()
+{
+    return user_;
+}
+
+void SGUserSettings::setUser(const QString &user)
+{
+    if (user_ != user) {
+        user_ = user;
+        setBaseOutputPath();
+        emit userChanged();
+    }
+}
+
 void SGUserSettings::setBaseOutputPath()
 {
     SGUtilsCpp utils;
-    const QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    const QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);    
+    QString hashedString;
+    if (user_ != "") {
+        const uint hashedUser = qHash(user_);
+        hashedString = QString::number(hashedUser);
+    }
 
     base_output_path_ = utils.joinFilePath(appDataPath, "settings");
+
+    base_output_path_ = utils.joinFilePath(base_output_path_, hashedString);
 
     if (!classId_.isNull() && !classId_.isEmpty()) {
         base_output_path_ = utils.joinFilePath(base_output_path_, classId_);
     }
+
+    qCDebug(logCategoryUserSettings) << "Setting base output path for user settings to " << base_output_path_;
 }

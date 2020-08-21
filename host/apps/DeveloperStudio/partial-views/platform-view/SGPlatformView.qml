@@ -35,6 +35,8 @@ StackLayout {
     property bool controlLoaded: false
     property bool platformDocumentsInitialized: false
     property bool usingLocalView: false
+    property bool fullyInitialized: platformStack.initialized && sgUserSettings.initialized
+    property bool initialized: false
 
     onControlViewListCountChanged: {
         platformDocumentsInitialized = true;
@@ -44,21 +46,12 @@ StackLayout {
     }
 
     onConnectedChanged: {
-        if (connected && model.available.control) {
-            // When we reconnect the board, the view has already been registered, so we can immediately load the control
-            if (platformDocumentsInitialized) {                
-                loadControl()
-            } else {
-                // Connect signals to slots first. This is to remedy the issue where the Connections component was not yet completed
-                // when the signal was emitted
-                sdsModel.resourceLoader.resourceRegistered.connect(resourceRegistered);
-                sdsModel.resourceLoader.resourceRegisterFailed.connect(resourceRegisterFailed);
-                loadingBarContainer.visible = true;
-                loadingBar.percentReady = 0.0;
-            }
-        } else {
-            removeControl();
-        }
+        initialize()
+    }
+
+    Component.onCompleted: {
+        initialized = true
+        initialize()
     }
 
     Component.onDestruction: {
@@ -78,6 +71,26 @@ StackLayout {
         if (myArray[index]!== value) {
             myArray[index] = value
             myArrayChanged() //emit signal
+        }
+    }
+    
+    function initialize () {
+        if (fullyInitialized) { // guarantee control view loads after platformStack & sgUserSettings
+            if (connected && model.available.control) {
+                // When we reconnect the board, the view has already been registered, so we can immediately load the control
+                if (platformDocumentsInitialized) {                
+                    loadControl()
+                } else {
+                    // Connect signals to slots first. This is to remedy the issue where the Connections component was not yet completed
+                    // when the signal was emitted
+                    sdsModel.resourceLoader.resourceRegistered.connect(resourceRegistered);
+                    sdsModel.resourceLoader.resourceRegisterFailed.connect(resourceRegisterFailed);
+                    loadingBarContainer.visible = true;
+                    loadingBar.percentReady = 0.0;
+                }
+            } else {
+                removeControl()
+            }
         }
     }
 
@@ -247,6 +260,19 @@ StackLayout {
         }
     }
 
+    SGUserSettings {
+        id: sgUserSettings
+        classId: model.class_id
+        user: NavigationControl.context.user_id
+
+        property bool initialized: false
+
+        Component.onCompleted: {
+            initialized = true
+            platformStack.initialize()
+        }
+    }
+
     Item {
         id: controlStackContainer
         Layout.fillHeight: true
@@ -327,11 +353,6 @@ StackLayout {
         ContentView {
             class_id: model.class_id
         }
-    }
-
-    SGUserSettings {
-        id: sgUserSettings
-        classId: model.class_id
     }
 
     Item {

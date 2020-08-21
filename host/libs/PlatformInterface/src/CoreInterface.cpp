@@ -217,16 +217,16 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
     }
 }
 
-// @f connectToPlatform
+// @f loadDocuments
 // @b send the user selected platform to HCS to create the mapping
 //
-void CoreInterface::connectToPlatform(QString class_id)
+void CoreInterface::loadDocuments(QString class_id)
 {
     QJsonObject cmdPayloadObject;
     cmdPayloadObject.insert("class_id",class_id);
 
     QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("cmd", "platform_select");
+    cmdMessageObject.insert("cmd", "load_documents");
     cmdMessageObject.insert("payload", cmdPayloadObject);
 
     QJsonDocument doc(cmdMessageObject);

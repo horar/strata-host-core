@@ -40,6 +40,14 @@ void StorageManager::setDatabase(Database* db)
     connect(db_, &Database::documentUpdated, this, &StorageManager::updatePlatformDoc);
 }
 
+void StorageManager::setBaseFolder(const QString& baseFolder)
+{
+    baseFolder_ = baseFolder;
+
+    StorageInfo info(nullptr, baseFolder_);
+    info.calculateSize();
+}
+
 void StorageManager::setBaseUrl(const QUrl &url)
 {
     if (baseUrl_.isEmpty() == false) {
@@ -52,12 +60,6 @@ void StorageManager::setBaseUrl(const QUrl &url)
     }
 
     baseUrl_ = url;
-
-    baseFolder_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    Q_ASSERT(baseFolder_.isEmpty() == false);
-
-    StorageInfo info(nullptr, baseFolder_);
-    info.calculateSize();
 
     connect(downloadManager_, &DownloadManager::filePathChanged, this, &StorageManager::filePathChangedHandler);
     connect(downloadManager_, &DownloadManager::singleDownloadProgress, this, &StorageManager::singleDownloadProgressHandler);
@@ -329,8 +331,7 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
     QJsonArray jsonPlatformListResponse;
     QList<DownloadManager::DownloadRequestItem> downloadList;
 
-    QString pathPrefix = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    pathPrefix.append("/documents/platform_selector/");
+    const QString pathPrefix{QString("%1/documents/platform_selector/").arg(baseFolder_)};
 
     for (const QJsonValueRef value : jsonPlatformList) {
         QString classId = value.toObject().value("class_id").toString();
