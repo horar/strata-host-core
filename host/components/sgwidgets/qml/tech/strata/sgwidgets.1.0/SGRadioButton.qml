@@ -21,6 +21,7 @@ SGAlignedLabel {
     property alias checked: radioButton.checked
     property alias button: radioButton
     property alias pressed: radioButton.pressed
+    property alias radioButtonExclusive: radioButton.autoExclusive
 
     signal toggled()
     signal released()
@@ -33,7 +34,9 @@ SGAlignedLabel {
     }
 
     onClicked: {
-        radioButton.checked = true
+        if(!radioButtonExclusive)
+            checked ? checked = false : checked = true
+        else checked = true
     }
 
     RadioButton {
@@ -42,8 +45,9 @@ SGAlignedLabel {
         implicitWidth: indicator.width
         implicitHeight: indicator.height
         ButtonGroup.group: root.ButtonGroup.group
+        autoExclusive: true
 
-        onClicked: root.clicked()
+        //onClicked: root.clicked()
         onToggled: root.toggled()
         onReleased: root.released()
 
