@@ -29,36 +29,36 @@ TEST_F(CommandValidatorTest, updateFWResTest)
     testCommand = R"(
         {
             "notification":{
-                "value":"update_firmware",
+                "value":"start_bootloader",
                 "payload":{
                     "status":"ok"
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::updateFirmwareRes, doc));
+    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::startBootloaderRes, doc));
 
     testCommand = R"(
         {
             "notification":{
-                "value":"update_firmware",
+                "value":"start_bootloader",
                 "payload":{
                     "status":"failed"
                 }
             }
         })";
-    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::updateFirmwareRes, doc));
+    EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::startBootloaderRes, doc));
 
     testCommand = R"(
         {
             "notification":{
-                "value":"update_firmware",
+                "value":"start_bootloader",
                 "payload":{
                     "status":"invalid FIB state"
                 }
             }
         })";
     EXPECT_TRUE(CommandValidator::parseJsonCommand(testCommand, doc));
-    EXPECT_TRUE(CommandValidator::validate(CommandValidator::JsonType::updateFirmwareRes, doc));
+    EXPECT_TRUE(CommandValidator::validate(CommandValidator::JsonType::startBootloaderRes, doc));
 
 
     // Invalid test commands
@@ -71,28 +71,28 @@ TEST_F(CommandValidatorTest, updateFWResTest)
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::updateFirmwareRes, doc));
+    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::startBootloaderRes, doc));
 
     testCommand = R"(
         {
             "notification":{
-                "value":"update_firmware",
+                "value":"start_bootloader",
                 "payload":{
                     "status": 56465
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::updateFirmwareRes, doc));
+    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::startBootloaderRes, doc));
 
     testCommand = R"(
         {
             "notification":{
-                "value":"update_firmware",
+                "value":"start_bootloader",
                 "payload":{
                 }
             }
         })";
-    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::updateFirmwareRes, doc));
+    EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::startBootloaderRes, doc));
 }
 
 TEST_F(CommandValidatorTest, flashFWResTest)
@@ -519,7 +519,7 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
     )";
     EXPECT_FALSE(CommandValidator::validate(testCommand, CommandValidator::JsonType::reqPlatIdRes, doc));
 
-    // Deprecated response 
+    // Deprecated response
     testCommand = R"(
         {
             "notification":{
@@ -681,13 +681,13 @@ TEST_F(CommandValidatorTest, isValidStrataCommandTest)
     testCommand = R"({"ack":"request_platform_id","payload":{"return_value":true,"return_string":"command valid"}})";
     EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::strataCmd, doc));
 
-    testCommand = R"({"notification":{"value":"update_firmware","payload":{"status":"ok"}}})";
+    testCommand = R"({"notification":{"value":"start_bootloader","payload":{"status":"ok"}}})";
     EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::strataCmd, doc));
 
-    testCommand = R"({"notification":{"value":"update_firmware","payload":{"status":"failed"}}})";
+    testCommand = R"({"notification":{"value":"start_bootloader","payload":{"status":"failed"}}})";
     EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::strataCmd, doc));
 
-    testCommand = R"({"notification":{"value":"update_firmware","payload":{"status":"invalid FIB state"}}})";
+    testCommand = R"({"notification":{"value":"start_bootloader","payload":{"status":"invalid FIB state"}}})";
     EXPECT_TRUE(CommandValidator::validate(testCommand, CommandValidator::JsonType::strataCmd, doc));
 
     testCommand = R"({  "notification":{  "value":"platform_id","payload":{  "name":"WaterHeater","platform_id":"101","class_id":"201","count":1,"platform_id_version":"2.0"}}})";
