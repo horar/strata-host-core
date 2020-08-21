@@ -66,7 +66,8 @@ public slots:
     void requestDownloadControlView(
             const QByteArray &clientId,
             const QString &partialUri,
-            const QString &md5);
+            const QString &md5,
+            const QString &class_id);
 
     void requestCancelAllDownloads(const QByteArray &clientId);
 

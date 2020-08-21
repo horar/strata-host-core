@@ -363,7 +363,8 @@ ColumnLayout {
                                 "hcs::cmd": "download_view",
                                 "payload": {
                                     "url": software.latestVersion.uri,
-                                    "md5": software.latestVersion.md5
+                                    "md5": software.latestVersion.md5,
+                                    "class_id": platformStack.class_id
                                 }
                             }
                             coreInterface.sendCommand(JSON.stringify(updateCommand));

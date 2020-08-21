@@ -101,7 +101,7 @@ function getQMLFile(class_id, filename, version = "") {
         filename = filename + ".qml"
     }
 
-    var qml_file_name = PREFIX + (version === "" ? version : version + "/") + VIEWS_PREFIX + dir_name + "/" + filename
+    var qml_file_name = PREFIX + (class_id === "" ? class_id : class_id + "/") + (version === "" ? version : version + "/") + VIEWS_PREFIX + dir_name + "/" + filename
     console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Locating at ", qml_file_name)
 
     loadViewVersion(PREFIX + dir_name)

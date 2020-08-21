@@ -101,6 +101,7 @@ private:
     void loadCoreResources();
     void loadViewResources();
     QString getLatestVersion(const QStringList &versions);
+    QString getQResourcePrefix(const QString &class_id, const QString &version);
 
     QHash<QString, ResourceItem*> viewsRegistered_;
     static inline QStringList coreResources_{

@@ -562,7 +562,12 @@ void HostControllerService::onCmdDownloadControlView(const rapidjson::Value* pay
         return;
     }
 
-    emit downloadControlViewRequested(clientId, partialUri, md5);
+    QString class_id = QString::fromStdString((*payload)["class_id"].GetString());
+    if (class_id.isEmpty()) {
+        qCWarning(logCategoryHcs) << "class_id attribute is empty";
+    }
+
+    emit downloadControlViewRequested(clientId, partialUri, md5, class_id);
 }
 
 Client* HostControllerService::getClientById(const QByteArray& client_id)

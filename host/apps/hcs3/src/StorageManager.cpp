@@ -250,7 +250,7 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
         //control views
         QList<VersionedFileItem> controlViewItems = platDoc->getControlViewList();
         for (const auto &item : controlViewItems) {
-            QString filePath = createFilePathFromItem(item.partialUri, "documents/control_views");
+            QString filePath = createFilePathFromItem(item.partialUri, "documents/control_views" + (requestItem->classId.isEmpty() ? "" : "/" + requestItem->classId));
             if (downloadManager_->verifyFileChecksum(filePath, item.md5) == false) {
                 filePath.clear();
             }
@@ -480,11 +480,12 @@ void StorageManager::requestDownloadPlatformFiles(
     downloadRequests_.insert(request->groupId, request);
 }
 
-void StorageManager::requestDownloadControlView(const QByteArray &clientId, const QString &partialUri, const QString &md5)
+void StorageManager::requestDownloadControlView(const QByteArray &clientId, const QString &partialUri, const QString &md5, const QString &class_id)
 {
     DownloadManager::DownloadRequestItem item;
     item.url = baseUrl_.resolved(partialUri);
-    item.filePath = createFilePathFromItem(partialUri, "documents/control_views");
+    QString prefix = "documents/control_views" + (class_id.isEmpty() ? "" : "/" + class_id);
+    item.filePath = createFilePathFromItem(partialUri, prefix);
     item.md5 = md5;
 
     QList<DownloadManager::DownloadRequestItem> downloadList({item});

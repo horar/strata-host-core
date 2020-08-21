@@ -230,7 +230,8 @@ StackLayout {
                 "hcs::cmd": "download_view",
                 "payload": {
                     "url": controlViewList.uri(index),
-                    "md5": controlViewList.md5(index)
+                    "md5": controlViewList.md5(index),
+                    "class_id": platformStack.class_id
                 }
             };
 

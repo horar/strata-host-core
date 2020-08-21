@@ -29,7 +29,7 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
     QFile resourceInfo(path);
 
     if (resourceInfo.exists()) {
-        if (unregisterResource(resourceInfo.fileName(), "/" + version) == false) {
+        if (unregisterResource(resourceInfo.fileName(), getQResourcePrefix(class_id, version)) == false) {
             qCWarning(logCategoryResourceLoader) << "Unable to unregister resource. Resource " << resourceInfo.fileName() << " still in use for class id: " << class_id;
         }
         if (resourceInfo.remove() == false) {
@@ -93,7 +93,7 @@ void ResourceLoader::registerControlViewResources(const QString &class_id, const
          * In the meantime, we will use the version of the control view as the mapRoot.
          * Ex) version = 1.15.0 -> qrc:/1.15.0/views/.../views-<control_view_name>.qml
          *********/
-        if (registerResource(viewFileInfo.filePath(), "/" + version) == false) {
+        if (registerResource(viewFileInfo.filePath(), getQResourcePrefix(class_id, version)) == false) {
             qCCritical(logCategoryResourceLoader) << "Failed to register resource " << viewFileInfo.fileName() << " for class id: " << class_id;
             emit resourceRegisterFailed(class_id);
             return;
@@ -202,4 +202,12 @@ QString ResourceLoader::getLatestVersion(const QStringList &versions) {
 bool ResourceLoader::isViewRegistered(const QString &class_id) {
     QHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.find(class_id);
     return itr != viewsRegistered_.end() && !itr.value()->filepath.isEmpty();
+}
+
+QString ResourceLoader::getQResourcePrefix(const QString &class_id, const QString &version) {
+    if (class_id.isEmpty()) {
+        return "/";
+    } else {
+        return "/" + class_id + (version.isEmpty() ? "" : "/" + version);
+    }
 }
