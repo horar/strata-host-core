@@ -64,7 +64,7 @@ public:
 
 
 private:
-    static inline const QRegularExpression validVersionRegexp = QRegularExpression("(^\\d+$)|^((\\d+\\.)+\\d+)\\D*[^\\.]*$");
+    static inline const QRegularExpression validVersionRegexp = QRegularExpression("^[vV]?(\\d+$)|^[vV]?((\\d+\\.)+\\d+)\\D*[^\\.]*$");
 
     template <typename T>
     static int getLongestVersion(const QList<T> &v1, const QList<T> &v2);
