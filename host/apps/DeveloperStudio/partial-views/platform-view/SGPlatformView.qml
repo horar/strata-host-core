@@ -34,7 +34,7 @@ StackLayout {
     property bool connected: model.connected
     property bool controlLoaded: false
     property bool platformDocumentsInitialized: false
-    property bool usingLocalView: false
+    property bool usingLocalView: true
     property bool fullyInitialized: platformStack.initialized && sgUserSettings.initialized
     property bool initialized: false
 
@@ -73,12 +73,12 @@ StackLayout {
             myArrayChanged() //emit signal
         }
     }
-    
+
     function initialize () {
         if (fullyInitialized) { // guarantee control view loads after platformStack & sgUserSettings
             if (connected && model.available.control) {
                 // When we reconnect the board, the view has already been registered, so we can immediately load the control
-                if (platformDocumentsInitialized) {                
+                if (platformDocumentsInitialized) {
                     loadControl()
                 } else {
                     // Connect signals to slots first. This is to remedy the issue where the Connections component was not yet completed
