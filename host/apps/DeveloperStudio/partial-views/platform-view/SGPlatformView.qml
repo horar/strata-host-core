@@ -348,17 +348,16 @@ StackLayout {
         target: sdsModel.coreInterface
 
         onDownloadViewFinished: {
-            // If the control view is the active view
-            if (payload.error_string.length > 0) {
-                loadingBar.color = "red"
-                loadingBar.percentReady = 1.0
-                controlContainer.setSource(NavigationControl.screens.LOAD_ERROR)
-                controlContainer.active = true
-                controlContainer.item.error_message = payload.error_string
-                return
-            }
-
             if (currentIndex === 0) {
+                if (payload.error_string.length > 0) {
+                    loadingBar.color = "red"
+                    loadingBar.percentReady = 1.0
+                    controlContainer.setSource(NavigationControl.screens.LOAD_ERROR)
+                    controlContainer.active = true
+                    controlContainer.item.error_message = payload.error_string
+                    return
+                }
+
                 for (let i = 0; i < controlViewListCount; i++) {
                     if (controlViewList.uri(i) === payload.url) {
                         controlViewList.setInstalled(i, true);

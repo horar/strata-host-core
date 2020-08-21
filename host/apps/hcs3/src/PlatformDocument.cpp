@@ -214,10 +214,10 @@ bool PlatformDocument::populateVersionedObject(const QJsonObject &jsonObject, Ve
     versionedFile.md5 = jsonObject.value("md5").toString();
     versionedFile.name = jsonObject.value("name").toString();
     versionedFile.timestamp = jsonObject.value("timestamp").toString();
-    if (jsonObject.value("version").isArray() && jsonObject.value("version").toArray().count() > 0) {
+    if (jsonObject.value("version").isArray()) {
         versionedFile.version = jsonObject.value("version").toArray()[0].toString();
     } else {
-        versionedFile.version = "";
+        versionedFile.version = jsonObject.value("version").toString();
     }
 
     return true;
