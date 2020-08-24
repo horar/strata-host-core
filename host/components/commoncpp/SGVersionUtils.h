@@ -3,8 +3,6 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
-#include <QList>
-#include <QRegularExpression>
 #include <QQmlEngine>
 #include <QJSEngine>
 
@@ -62,13 +60,12 @@ public:
      */
     Q_INVOKABLE static bool valid(const QString &version);
 
-    Q_INVOKABLE static QString cleanVersion(const QString &version);
+    /**
+     * @brief cleanVersion Returns a cleaned version of the version given
+     * @param version The version to clean
+     * @return Returns the cleaned version
+     */
+    Q_INVOKABLE static QString cleanVersion(QString version);
 
     static QObject* SingletonTypeProvider(QQmlEngine *engine, QJSEngine *scriptEngine);
-private:
-    static inline const QRegularExpression validVersionRegexp = QRegularExpression("^[vV]?(\\d+(\\.\\d+){0,2})(\\.\\d+)*[^\\.]*$");
-
-    template <typename T>
-    static int getLongestVersion(const QList<T> &v1, const QList<T> &v2);
-    static QList<uint> convertStringToIntList(const QString &version, bool *error);
 };
