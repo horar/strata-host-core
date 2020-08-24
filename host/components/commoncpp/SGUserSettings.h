@@ -9,14 +9,14 @@ class SGUserSettings : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString classId READ classId WRITE setClassId NOTIFY classIdChanged)
+    Q_PROPERTY(QString user READ user WRITE setUser NOTIFY userChanged)
 
 private:
     QString classId_;
+    QString user_;
 
-    /** SGUserSettings setBaseOutputPath
-     * @brief SGUserSettings Sets the base output path of files.
-     */
-    void setBaseOutputPath();
+    // The base output path for settings files.
+    QString base_output_path_;
 
     /** SGUserSettings makePath
      * @brief SGUserSettings Creates all directories included in a path if they do not exist.
@@ -25,16 +25,23 @@ private:
      */
     bool makePath(const QString &path);
 
+    /** SGUserSettings setBaseOutputPath
+     * @brief SGUserSettings Sets the base output path of files.
+     */
+    void setBaseOutputPath();
+
 public:
-    // The base output path for settings files.
-    QString base_output_path_;
+    explicit SGUserSettings(QObject *parent = nullptr, const QString &user = "", const QString &classId = "");
+    virtual ~SGUserSettings();
 
     // Getter function for retrieving the class id of the current control view
     QString classId();
-	
-    explicit SGUserSettings(QObject *parent = nullptr, const QString &classId = "");
-    virtual ~SGUserSettings();
-	
+    void setClassId(const QString &id);
+
+    // Getter function for retrieving the user
+    QString user();
+    void setUser(const QString &user);
+
     /** SGUserSettings writeFile
      * @brief Writes a settings file in JSON format to the platform's directory
      * @param fileName The name of the settings file for that platform.
@@ -75,16 +82,9 @@ public:
      */
     Q_INVOKABLE bool renameFile(const QString &origFileName, const QString &newFileName, const QString &subdirectory = "");
 
-    /** SGUserSettings getBaseOutputPath
-     * @brief SGUserSettings Gets the absolute path for a platform's settings directory.
-     * @return Returns the absolute path for the platform's settings directory.
-     */
-    Q_INVOKABLE QString getBaseOutputPath();
-
-    void setClassId(const QString &id);
-	
 signals: 
     void classIdChanged();
+    void userChanged();
 };
 
 #endif // SGUSERSETTINGS_H

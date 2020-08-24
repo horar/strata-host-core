@@ -172,7 +172,7 @@ void DeviceOperationsTest::switchToBootloaderAndBackTest()
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 7);
     verifyMessage(recordedMessages[0], test_commands::request_platform_id_request);
-    verifyMessage(recordedMessages[1], test_commands::update_firmware_request);
+    verifyMessage(recordedMessages[1], test_commands::start_bootloader_request);
     verifyMessage(recordedMessages[2], test_commands::request_platform_id_request);
     verifyMessage(recordedMessages[3], test_commands::get_firmware_info_request);
     verifyMessage(recordedMessages[4], test_commands::start_application_request);

@@ -61,7 +61,7 @@ public:
 
     // Invokables
     //To send the selected platform and its connection status
-    Q_INVOKABLE void connectToPlatform(QString class_id);
+    Q_INVOKABLE void loadDocuments(QString class_id);
     Q_INVOKABLE void unregisterClient();
     Q_INVOKABLE void sendCommand(QString cmd);
 
