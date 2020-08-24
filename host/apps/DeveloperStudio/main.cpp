@@ -102,10 +102,12 @@ int main(int argc, char *argv[])
 
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
 
-    qmlRegisterType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate");
+    qmlRegisterUncreatableType<CoreUpdate>("tech.strata.CoreUpdate", 1, 0, "CoreUpdate", "You can't instantiate CoreUpdate in QML");
 
     std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>()};
     sdsModel->init(app.applicationDirPath());
+
+    std::unique_ptr<CoreUpdate> coreUpdate{std::make_unique<CoreUpdate>()};
 
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
     QObject::connect(&app, &QGuiApplication::lastWindowClosed,
@@ -121,6 +123,7 @@ int main(int argc, char *argv[])
     /* deprecated context property, use sdsModel.coreInterface instead */
     engine.rootContext()->setContextProperty ("coreInterface", sdsModel->coreInterface());
 
+    engine.rootContext()->setContextProperty ("coreUpdate", coreUpdate.get());
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty()) {

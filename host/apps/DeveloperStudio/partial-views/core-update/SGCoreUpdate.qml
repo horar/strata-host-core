@@ -9,7 +9,6 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.logger 1.0
 
 import "qrc:/js/core_update.js" as CoreUpdate
-import tech.strata.CoreUpdate 1.0
 
 SGStrataPopup {
     id: root
@@ -23,10 +22,6 @@ SGStrataPopup {
     property string current_version: ""
     property string error_string: ""
     property bool dontaskagain_checked: false
-
-    CoreUpdate {
-        id: updateObj
-    }
 
     contentItem: ColumnLayout {
         id: mainColumn
@@ -135,7 +130,7 @@ SGStrataPopup {
 
                     var askagain = backupCheckbox.checked ? "DontAskAgain" : "AskAgainLater"
                     CoreUpdate.setUserNotificationMode(askagain)
-                    var reply = updateObj.requestUpdateApplication()
+                    var reply = coreUpdate.requestUpdateApplication()
 
                     checkReply(reply)
                     root.close()
