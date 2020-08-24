@@ -80,7 +80,7 @@ int SGVersionUtils::getGreatestVersion(const QStringList &versions, bool *error)
 bool SGVersionUtils::valid(const QString &version) {
     QRegularExpressionMatch match = validVersionRegexp.match(version);
 
-    if (match.hasMatch()) {
+    if (match.hasMatch() && !match.captured(1).isEmpty()) {
         return true;
     }
 
@@ -93,16 +93,15 @@ QString SGVersionUtils::cleanVersion(const QString &version) {
     /***
      * The captured groups here are populated as follows if there is a match:
      * Group 0: The entire string matched
-     * Group 1: If the string was just a number (no "."), then it will return just the number. Ex) "1" returns "1"
-     * Group 2: The part of the string containing no non-numeric characters. Ex) "1.2.3.5-124-fefe" returns "1.2.3.5"
-     * Group 3: Irrelevant
+     * Group 1: The <major>.<minor>.<patch> part of the string. Ex) 1.2.3.4 returns "1.2.3"
+     * Group 2: The last version part matched in <major>.<minor>.<patch>. Ex) "1.2" returns ".2"
+     * Group 3: The last .<digit> that we are not considering past <major>.<minor>.<patch> Ex) "1.2.3.4.5.6" returns ".6"
+     *
      ***/
-        if (match.hasMatch()) {
+    if (match.hasMatch()) {
         // Here we check if the version was just an integer. Ex) "1"
         if (!match.captured(1).isEmpty()) {
             return match.captured(1);
-        } else {
-            return match.captured(2);
         }
     }
 
