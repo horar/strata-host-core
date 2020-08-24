@@ -30,36 +30,35 @@ StackLayout {
     property string firmware_version: model.firmware_version
     property bool connected: model.connected
     property bool controlLoaded: false
+    property bool fullyInitialized: platformStack.initialized && sgUserSettings.initialized
+    property bool initialized: false
 
     onConnectedChanged: {
-        if (connected && model.available.control) {
-            loadControl()
-        } else {
-            removeControl()
-        }
+        initialize()
     }
 
     Component.onCompleted: {
-        if (model.connected && model.available.control) {
-            loadControl()  // load control
-        }
+        initialized = true
+        initialize()
     }
 
     Component.onDestruction: {
         removeControl()
     }
 
-    function setArray(index, value) {
-        if (myArray[index]!== value) {
-            myArray[index] = value
-            myArrayChanged() //emit signal
+    function initialize () {
+        if (fullyInitialized) { // guarantee control view loads after platformStack & sgUserSettings
+            if (connected && model.available.control) {
+                loadControl()
+            } else {
+                removeControl()
+            }
         }
     }
 
     function loadControl () {
         if (controlLoaded === false){
             Help.setClassId(model.device_id)
-            sgUserSettings.classId = model.class_id
             let qml_control = NavigationControl.getQMLFile(model.class_id, "Control")
             NavigationControl.context.class_id = model.class_id
             NavigationControl.context.device_id = model.device_id
@@ -81,6 +80,19 @@ StackLayout {
         if (controlLoaded) {
             NavigationControl.removeView(controlContainer)
             controlLoaded = false
+        }
+    }
+
+    SGUserSettings {
+        id: sgUserSettings
+        classId: model.class_id
+        user: NavigationControl.context.user_id
+
+        property bool initialized: false
+
+        Component.onCompleted: {
+            initialized = true
+            platformStack.initialize()
         }
     }
 
@@ -109,11 +121,6 @@ StackLayout {
         ContentView {
             class_id: model.class_id
         }
-    }
-
-    SGUserSettings {
-        id: sgUserSettings
-        classId: model.class_id
     }
 
     Item {

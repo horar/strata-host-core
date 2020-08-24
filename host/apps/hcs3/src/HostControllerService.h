@@ -132,7 +132,7 @@ private:
     //handlers for client (UI)
     void onCmdHCSStatus(const rapidjson::Value* );
     void onCmdUnregisterClient(const rapidjson::Value* );
-    void onCmdPlatformSelect(const rapidjson::Value* );
+    void onCmdLoadDocuments(const rapidjson::Value* );
 
     //handlers for hcs::cmd
     void onCmdHostUnregister(const rapidjson::Value* );

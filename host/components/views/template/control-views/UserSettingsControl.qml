@@ -3,31 +3,26 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 
 import tech.strata.sgwidgets 1.0
-import tech.strata.sgwidgets 0.9 as Widget09
 import "qrc:/js/help_layout_manager.js" as Help
 
 Rectangle {
     id: container
-
-    color: "#DDA"
+    color: "#cfc"
 
     Column {
         id: basicSettingsControl
-
         width: parent.width / 2 - verticalDivider.width
-
         anchors {
             left: parent.left
             leftMargin: 10
         }
-
         spacing: 3
 
-        // This example will place te settings in basicSliders.json. This is in the AppData path for this Application
+        // This example will place the settings in basicSliders.json. This is in the AppData path for this Application
         property string configFileName: "basicSliders.json"
 
         Component.onCompleted: {
-           loadSettings()
+            loadSettings()
         }
 
         Component.onDestruction: {
@@ -78,7 +73,6 @@ Rectangle {
 
                 SGSlider {
                     id: slider1
-
                     height: 300
                     from: -10
                     to: 10
@@ -90,6 +84,7 @@ Rectangle {
                     }
                 }
             }
+
             SGAlignedLabel{
                 id: sliderLabel2
                 target: slider2
@@ -98,7 +93,6 @@ Rectangle {
 
                 SGSlider {
                     id: slider2
-
                     height: 300
                     from: -10
                     to: 10
@@ -110,6 +104,7 @@ Rectangle {
                     }
                 }
             }
+
             SGAlignedLabel{
                 id: sliderLabel3
                 target: slider3
@@ -118,7 +113,6 @@ Rectangle {
 
                 SGSlider {
                     id: slider3
-
                     height: 300
                     from: -10
                     to: 10
@@ -131,17 +125,14 @@ Rectangle {
                 }
             }
         }
-
     }
 
     Rectangle {
         id: verticalDivider
-
         anchors {
             centerIn: parent
             bottom: parent.bottom
         }
-
         color: "#cecece"
         width: 1
         height: parent.height
@@ -149,14 +140,11 @@ Rectangle {
 
     Column {
         id: advancedSettingsControl
-
         width: parent.width / 2 - verticalDivider.width
-
         anchors {
             left: parent.horizontalCenter
             leftMargin: 10
         }
-
         spacing: 5
 
         property string subdirName: "advancedSettings"
@@ -205,9 +193,6 @@ Rectangle {
                 width: 400
                 from: -10
                 to: 10
-
-                onValueChanged: console.info("Slider value is now:", value)  // Signals on any value change (both user and programmatic changes)
-                onUserSet: console.info("Slider set by user to:", value)     // Signals when user sets value (affected by live)
             }
         }
 
@@ -241,8 +226,8 @@ Rectangle {
                 }
             }
         }
-
     }
+
     Row {
         anchors {
             bottom: container.bottom
@@ -250,26 +235,18 @@ Rectangle {
             left: container.horizontalCenter
             leftMargin: 10
         }
-
         spacing: 3
 
         SGComboBox {
             id: comboBoxDemo
-
             width: saveSettingsTF.width
             height: saveSettingsTF.height
-
             placeholderText: "Select Configuration"
             dividers: true
             model: filesInDir.length > 0 ? filesInDir.map((file) => getFileNameFromFile(file)) : [];
 
             // This variable stores a list of paths for each file found in the base output directory for the current platform
             property var filesInDir: sgUserSettings.listFilesInDirectory(advancedSettingsControl.subdirName);
-            property var configSelected
-
-            onModelChanged: {
-                console.info("model changed: ", model);
-            }
 
             function getFileNameFromFile(file) {
                 return file.slice(0, file.lastIndexOf('.'));
@@ -303,7 +280,5 @@ Rectangle {
             }
         }
     }
-
-
 }
 

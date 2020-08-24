@@ -87,6 +87,14 @@ QString DocumentListModel::getFirstUri()
     return data_.at(0)->uri;
 }
 
+QString DocumentListModel::dirname(int index) {
+    if (index < 0 || index >= data_.count()) {
+        return QString();
+    }
+
+    return data_.at(index)->dirname;
+}
+
 QHash<int, QByteArray> DocumentListModel::roleNames() const
 {
     QHash<int, QByteArray> names;
