@@ -34,7 +34,7 @@ Item {
     property alias horizontalAlignment: label.horizontalAlignment
     property alias contentHeight: label.contentHeight
     property alias contentWidth: label.contentWidth
-    property alias clickableLabel: labelMouseArea.enabled
+    property alias clickableLabel: labelMouseArea.enabled //Default False (modifty to enable/disable to click on the label)
 
     signal clicked()
 
