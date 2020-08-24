@@ -47,7 +47,7 @@ add_library(${DEVICE_OPERATIONS}
     Device/DeviceOperations/src/DeviceCommands/BaseDeviceCommand.cpp
     Device/DeviceOperations/src/DeviceCommands/CmdGetFirmwareInfo.cpp
     Device/DeviceOperations/src/DeviceCommands/CmdRequestPlatformId.cpp
-    Device/DeviceOperations/src/DeviceCommands/CmdUpdateFirmware.cpp
+    Device/DeviceOperations/src/DeviceCommands/CmdStartBootloader.cpp
     Device/DeviceOperations/src/DeviceCommands/CmdFlash.cpp
     Device/DeviceOperations/src/DeviceCommands/CmdBackupFirmware.cpp
     Device/DeviceOperations/src/DeviceCommands/CmdStartApplication.cpp
