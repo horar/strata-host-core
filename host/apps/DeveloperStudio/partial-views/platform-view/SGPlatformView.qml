@@ -7,7 +7,6 @@ import tech.strata.commoncpp 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
-import "qrc:/js/uuid_map.js" as UuidMap
 
 StackLayout {
     id: platformStack
@@ -29,21 +28,14 @@ StackLayout {
     property int device_id: model.device_id
     property string class_id: model.class_id
     property string firmware_version: model.firmware_version
-    property var controlViewList: sdsModel.documentManager.getClassDocuments(model.class_id).controlViewListModel
-    property int controlViewListCount: controlViewList.count
+    property var controlViewList
+    property int controlViewListCount
     property bool connected: model.connected
     property bool controlLoaded: false
     property bool platformDocumentsInitialized: false
     property bool usingLocalView: true
     property bool fullyInitialized: platformStack.initialized && sgUserSettings.initialized
     property bool initialized: false
-
-    onControlViewListCountChanged: {
-        platformDocumentsInitialized = true;
-        if (loadingBar.percentReady === 0.0) {
-            loadPlatformDocuments()
-        }
-    }
 
     onConnectedChanged: {
         initialize()
@@ -85,6 +77,8 @@ StackLayout {
                     // when the signal was emitted
                     sdsModel.resourceLoader.resourceRegistered.connect(resourceRegistered);
                     sdsModel.resourceLoader.resourceRegisterFailed.connect(resourceRegisterFailed);
+                    controlViewList = sdsModel.documentManager.getClassDocuments(model.class_id).controlViewListModel
+                    controlViewListCount = controlViewList.count
                     loadingBarContainer.visible = true;
                     loadingBar.percentReady = 0.0;
                 }
@@ -111,16 +105,15 @@ StackLayout {
                 }
             }
 
-            let qml_control = NavigationControl.getQMLFile(model.class_id, "Control", version)
+            let qml_control = NavigationControl.getQMLFile(model.class_id, model.name, "Control", usingLocalView, version)
             NavigationControl.context.class_id = model.class_id
             NavigationControl.context.device_id = model.device_id
-            NavigationControl.context.sgUserSettings = sgUserSettings
 
             controlContainer.setSource(qml_control);
             controlContainer.active = true;
+
             delete NavigationControl.context.class_id
             delete NavigationControl.context.device_id
-            delete NavigationControl.context.sgUserSettings
         }
     }
 
@@ -145,15 +138,7 @@ StackLayout {
 
         removeControl();
 
-        let name;
-
-        if (UuidMap.uuid_map.hasOwnProperty(model.class_id)) {
-            name = UuidMap.uuid_map[model.class_id];
-        } else {
-            name = model.name;
-        }
-
-        let success = sdsModel.resourceLoader.deleteStaticViewResource(model.class_id, name);
+        let success = sdsModel.resourceLoader.deleteStaticViewResource(model.class_id, model.name);
 
         if (versionsToRemove.length > 0) {
             for (let i = 0; i < versionsToRemove.length; i++) {
@@ -196,15 +181,7 @@ StackLayout {
                 return;
             }
 
-            let name;
-
-            if (UuidMap.uuid_map.hasOwnProperty(model.class_id)) {
-                name = UuidMap.uuid_map[model.class_id];
-            } else {
-                name = model.name;
-            }
-
-            if (sdsModel.resourceLoader.registerStaticControlViewResources(model.class_id, name)) {
+            if (sdsModel.resourceLoader.registerStaticControlViewResources(model.class_id, model.name)) {
                 platformStack.usingLocalView = true;
                 loadingBar.percentReady = 1.0;
                 return;
@@ -261,19 +238,6 @@ StackLayout {
         }
     }
 
-    SGUserSettings {
-        id: sgUserSettings
-        classId: model.class_id
-        user: NavigationControl.context.user_id
-
-        property bool initialized: false
-
-        Component.onCompleted: {
-            initialized = true
-            platformStack.initialize()
-        }
-    }
-
     Item {
         id: controlStackContainer
         Layout.fillHeight: true
@@ -323,6 +287,8 @@ StackLayout {
         Loader {
             id: controlContainer
 
+            property alias sgUserSettings: sgUserSettings
+
             anchors {
                 fill: parent
             }
@@ -362,6 +328,19 @@ StackLayout {
         Layout.fillWidth: true
 
         PlatformSettings {
+        }
+    }
+
+    SGUserSettings {
+        id: sgUserSettings
+        classId: model.class_id
+        user: NavigationControl.context.user_id
+
+        property bool initialized: false
+
+        Component.onCompleted: {
+            initialized = true
+            platformStack.initialize()
         }
     }
 
@@ -405,5 +384,20 @@ StackLayout {
             }
         }
 
+    }
+
+    Connections {
+        target: sdsModel.documentManager
+
+        onPopulateModelsFinished: {
+            if (classId === model.class_id) {
+                platformDocumentsInitialized = true;
+                controlViewList = sdsModel.documentManager.getClassDocuments(model.class_id).controlViewListModel
+                controlViewListCount = controlViewList.count
+                if (loadingBar.percentReady === 0.0) {
+                    loadPlatformDocuments()
+                }
+            }
+        }
     }
 }

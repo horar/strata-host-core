@@ -1,6 +1,5 @@
 .pragma library
 .import QtQuick 2.0 as QtQuickModule
-.import "uuid_map.js" as UuidMap
 .import "constants.js" as Constants
 
 .import tech.strata.logger 1.0 as LoggerModule
@@ -89,10 +88,7 @@ function init(status_bar_container, stack_container, resourceLoader)
 */
 var PREFIX = "qrc:/"
 var VIEWS_PREFIX = "views/"
-function getQMLFile(class_id, filename, version = "") {
-
-    // eventually dirname should === class_id and this UUIDmap will be unnecessary
-    var dir_name = UuidMap.uuid_map[class_id]
+function getQMLFile(class_id, viewName, filename, localResource, version = "") {
     //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, class_id + "-" + filename + "qml file requested.")
 
     // Build the file name - ./view/<class_id>/filename.qml
@@ -100,11 +96,16 @@ function getQMLFile(class_id, filename, version = "") {
         //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "adding extension to filename: ", filename)
         filename = filename + ".qml"
     }
+    var qml_file_name = "";
+    if (localResource === true) {
+        qml_file_name = PREFIX + VIEWS_PREFIX + viewName + "/" + filename;
+    } else {
+        qml_file_name = PREFIX + (class_id === "" ? class_id : class_id + "/") + (version === "" ? version : version + "/") + VIEWS_PREFIX + viewName + "/" + filename
+    }
 
-    var qml_file_name = PREFIX + (class_id === "" ? class_id : class_id + "/") + (version === "" ? version : version + "/") + VIEWS_PREFIX + dir_name + "/" + filename
     console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Locating at ", qml_file_name)
 
-    loadViewVersion(PREFIX + dir_name)
+    loadViewVersion(PREFIX + viewName)
 
     return qml_file_name
 }

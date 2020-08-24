@@ -5,6 +5,7 @@
 #include <QString>
 #include <QHash>
 #include <QDir>
+#include <QUrl>
 
 struct ResourceItem {
     ResourceItem(
@@ -83,6 +84,8 @@ public:
      * @return True if registered, false if not registered into qrc.
      */
     Q_INVOKABLE bool isViewRegistered(const QString &class_id);
+
+    Q_INVOKABLE QUrl getStaticResourcesUrl();
 
 signals:
     /**

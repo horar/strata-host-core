@@ -9,7 +9,6 @@ import tech.strata.commoncpp 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/login_utilities.js" as Authenticator
-import "qrc:/js/uuid_map.js" as UuidMap
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/platform_selection.js" as PlatformSelection
 
@@ -50,28 +49,45 @@ Item {
                 ComboBox {
                     id: viewCombobox
                     delegate: viewButtonDelegate
-                    model: viewsModel
-                    textRole: "name"
+                    model: viewFolderModel
+                    textRole: "fileName"
 
-                    Component.onCompleted: {
-                        let viewsList = UuidMap.getUUIDModel();
-                        for (let i = 0; i < viewsList.length; i++) {
-                            viewsModel.append({"name": viewsList[i]});
+                    onCurrentIndexChanged: {
+                        if (currentText === "") {
+                            displayText = viewFolderModel.get(currentIndex, "fileName").replace("views-", "").slice(0, -4)
+                        } else {
+                            displayText = currentText.replace("views-", "").slice(0, -4)
                         }
-                        currentIndex = viewsList.length - 1;
                     }
 
-                    ListModel {
-                        id: viewsModel
+                    FolderListModel {
+                        id: viewFolderModel
+                        showDirs: false
+                        showFiles: true
+                        nameFilters: "views-*.rcc"
+                        folder: sdsModel.resourceLoader.getStaticResourcesUrl()
+
+                        onCountChanged: {
+                            viewCombobox.currentIndex = viewFolderModel.count - 1
+                        }
+
+                        onStatusChanged: {
+                            if (viewFolderModel.status === FolderListModel.Ready) {
+                                // [LC] - this FolderListModel is from Lab; a side effects in 5.12
+                                //      - if 'folder' url doesn't exists the it loads app folder content
+                                comboboxRow.visible = (viewFolderModel.folder.toString() === sdsModel.resourceLoader.getStaticResourcesUrl().toString())
+                            }
+                        }
                     }
 
                     Component {
                         id: viewButtonDelegate
 
                         Button {
+                            id: selectButton
                             width: viewCombobox.width
                             height: 20
-                            text: model.name
+                            text: model.fileName.substring(6, model.fileName.indexOf(".rcc"))
                             hoverEnabled: true
                             background: Rectangle {
                                 color: hovered ? "white" : "lightgrey"
@@ -81,29 +97,29 @@ Item {
                                 if (NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
                                     NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
                                 }
-                                const uuids = Object.keys(UuidMap.uuid_map)
-                                for (const uuid of uuids) {
-                                    if (UuidMap.uuid_map[uuid] === model.name) {
-                                        let data = {
-                                            "device_id": Constants.DEBUG_DEVICE_ID,
-                                            "class_id": uuid,
-                                            "name": model.name,
-                                            "index": null,
-                                            "view": "control",
-                                            "connected": true,
-                                            "available": {
-                                                "control": true,
-                                                "documents": true,
-                                                "unlisted": false,
-                                                "order": false
-                                            },
-                                            "firmware_version": ""
-                                        }
-                                        PlatformSelection.openPlatformView(data)
-                                        viewCombobox.currentIndex = index
-                                        break
-                                    }
+
+                                let name = selectButton.text;
+
+                                sdsModel.resourceLoader.registerStaticControlViewResources(name, name);
+
+                                let data = {
+                                    "device_id": Constants.DEBUG_DEVICE_ID,
+                                    "class_id": name,
+                                    "name": name,
+                                    "index": null,
+                                    "view": "control",
+                                    "connected": true,
+                                    "available": {
+                                        "control": true,
+                                        "documents": true,
+                                        "unlisted": false,
+                                        "order": false
+                                    },
+                                    "firmware_version": ""
                                 }
+
+                                PlatformSelection.openPlatformView(data)
+                                viewCombobox.currentIndex = index
                             }
                         }
                     }

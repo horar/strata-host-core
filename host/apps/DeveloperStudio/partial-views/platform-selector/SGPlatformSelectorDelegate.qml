@@ -397,11 +397,11 @@ Item {
 
         Button {
             id: select
-            text: model.view_open ? "Return to Platform Tab" : (model.connected && model.ui_exists && model.available.control ) ? "Open Platform Controls" : "Browse Documentation"
+            text: model.view_open ? "Return to Platform Tab" : (model.connected && model.available.control ) ? "Open Platform Controls" : "Browse Documentation"
             anchors {
                 horizontalCenter: buttonColumn.horizontalCenter
             }
-            visible: model.connected && model.ui_exists && model.available.control ? model.available.control : model.available.documents
+            visible: model.connected && model.available.control ? model.available.control : model.available.documents
 
             contentItem: Text {
                 text: select.text

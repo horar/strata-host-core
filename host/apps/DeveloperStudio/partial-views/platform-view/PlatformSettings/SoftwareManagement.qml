@@ -56,10 +56,12 @@ ColumnLayout {
     }
 
     Connections {
-        target: platformStack.controlViewList
+        target: sdsModel.documentManager
 
-        onDataChanged: {
-            matchVersion()
+        onPopulateModelsFinished: {
+            if (classId === platformStack.class_id) {
+                platformStack.controlViewList.dataChanged.connect(matchVersion)
+            }
         }
     }
 

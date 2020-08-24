@@ -199,6 +199,13 @@ QString ResourceLoader::getLatestVersion(const QStringList &versions) {
     return latestVersion;
 }
 
+QUrl ResourceLoader::getStaticResourcesUrl() {
+    QUrl url;
+    url.setScheme("file");
+    url.setPath(ResourcePath::viewsResourcePath());
+    return url;
+}
+
 bool ResourceLoader::isViewRegistered(const QString &class_id) {
     QHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.find(class_id);
     return itr != viewsRegistered_.end() && !itr.value()->filepath.isEmpty();
