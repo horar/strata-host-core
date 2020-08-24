@@ -34,7 +34,7 @@ Item {
     property alias horizontalAlignment: label.horizontalAlignment
     property alias contentHeight: label.contentHeight
     property alias contentWidth: label.contentWidth
-    property alias clickableLabel: labelMouseArea.enabled //Default False (modifty to enable/disable to click on the label)
+    property alias clickable: labelMouseArea.enabled // Default: False (modify to enable/disable click on the text)
 
     signal clicked()
 
@@ -72,7 +72,6 @@ Item {
         setAnchors()
     }
 
-
     Component.onCompleted: setAnchors()
 
     SGText {
@@ -109,7 +108,8 @@ Item {
         MouseArea{
             id: labelMouseArea
             anchors.fill: parent
-            enabled:  false
+            enabled: false
+            visible: enabled
             onClicked: root.clicked()
         }
     }

@@ -9,11 +9,17 @@ RadioButton {
     implicitWidth: indicator.width
     implicitHeight: indicator.height
     objectName: "RadioButton"
+    opacity: enabled ? 1.0 : 0.3
+    layer.enabled: true
 
     property Item buttonContainer: null
-    property real radioSize: buttonContainer ? buttonContainer.radioSize : 20 * root.fontSizeMultiplier
+    property real radioSize: buttonContainer ? buttonContainer.radioSize : 20 * label.fontSizeMultiplier
     property color radioColor: buttonContainer ? buttonContainer.radioColor : "black"
     property int index
+
+    property alias fontSizeMultiplier: label.fontSizeMultiplier
+    property alias color: label.color
+    property alias alignment: label.alignment
 
     onCheckedChanged: {
         if (checked && buttonContainer) {
@@ -22,14 +28,12 @@ RadioButton {
     }
 
     indicator: SGAlignedLabel {
-        id: root
+        id: label
         target: outerRadio
         text: radioButton.text
         color: buttonContainer ? buttonContainer.textColor : "black"
         alignment: buttonContainer ? buttonContainer.alignment : SGAlignedLabel.SideRightCenter
         fontSizeMultiplier: buttonContainer ? buttonContainer.fontSizeMultiplier : 1
-        opacity: enabled ? 1.0 : 0.3
-        clickableLabel : false  // Default: false (True: disables the label to be clicked.)
 
         Rectangle {
             id: outerRadio
@@ -49,7 +53,6 @@ RadioButton {
                     verticalCenter: outerRadio.verticalCenter
                 }
                 radius: width / 2
-                opacity: enabled ? 1.0 : 0.3
                 color: radioButton.radioColor
                 visible: radioButton.checked
             }
