@@ -42,7 +42,7 @@ public:
      * @brief compare
      * @param version1 The LHS of the compare. Ex) version1 < version2
      * @param version2 The RHS of the compare. Ex) version1 < version2
-     * @return Returns -1, 0, or 1 depending on if version1 is less than, equal to, or greater than version2, respectively
+     * @return Returns -1, 0, or 1 depending on if version1 is less than, equal to, or greater than version2, respectively. Returns -2 either version is invalid
      */
     Q_INVOKABLE static int compare(const QString &version1, const QString &version2, bool *error = nullptr);
 
