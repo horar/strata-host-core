@@ -191,7 +191,7 @@ const rapidjson::SchemaDocument CommandValidator::setPlatformIdResSchema(
     )
 );
 
-const rapidjson::SchemaDocument CommandValidator::updateFirmwareResSchema(
+const rapidjson::SchemaDocument CommandValidator::startBootloaderResSchema(
     CommandValidator::parseSchema(
         R"(
         {
@@ -203,7 +203,7 @@ const rapidjson::SchemaDocument CommandValidator::updateFirmwareResSchema(
                 "properties": {
                 "value": {
                     "type": "string",
-                    "pattern": "^update_firmware$"
+                    "pattern": "^start_bootloader$"
                 },
                 "payload": {
                     "type": "object",
@@ -563,7 +563,7 @@ const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument
     {JsonType::flashFirmwareRes, flashFirmwareResSchema},
     {JsonType::backupFirmwareRes, backupFirmwareResSchema},
     {JsonType::flashBootloaderRes, flashBootloaderResSchema},
-    {JsonType::updateFirmwareRes, updateFirmwareResSchema},
+    {JsonType::startBootloaderRes, startBootloaderResSchema},
     {JsonType::startAppRes, startAppResSchema},
     {JsonType::strataCmd, strataCommandSchema},
     {JsonType::cmd, cmdSchema}
