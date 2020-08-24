@@ -66,20 +66,18 @@ var platform_view_repeater_ = null
 var platform_view_model_ = null
 var stack_container_ = null
 var platform_list = {}
-var resource_loader_
 
 /*
   Navigation initialized with parent containers
   that will hold views
 */
-function init(status_bar_container, stack_container, resourceLoader)
+function init(status_bar_container, stack_container)
 {
     status_bar_container_ = status_bar_container
     main_container_ = stack_container.mainContainer
     platform_view_repeater_ = stack_container.platformViewRepeater
     platform_view_model_ = stack_container.platformViewModel
     stack_container_ = stack_container
-    resource_loader_ = resourceLoader
     updateState(events.PROMPT_SPLASH_SCREEN_EVENT)
 }
 
@@ -400,8 +398,4 @@ function updateState(event, data)
             globalEventHandler(event,data)
             break;
     }
-}
-
-function isViewRegistered(class_id) {
-    return resource_loader_.isViewRegistered(class_id);
 }
