@@ -146,7 +146,7 @@ SGWidgets.SGMainWindow {
 
         onConnectedPlatformListChanged: {
             console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", list)
-            if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformSelectorModel.platformListStatus === "loaded")
+            if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformSelectorModel.platformListStatus === "loaded") {
                 Help.closeTour()
                 PlatformSelection.parseConnectedPlatforms(list)
             }

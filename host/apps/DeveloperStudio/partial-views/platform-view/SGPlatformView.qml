@@ -287,8 +287,6 @@ StackLayout {
         Loader {
             id: controlContainer
 
-            property alias sgUserSettings: sgUserSettings
-
             anchors {
                 fill: parent
             }

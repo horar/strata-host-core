@@ -99,9 +99,6 @@ Item {
                                 }
 
                                 let name = selectButton.text;
-
-                                sdsModel.resourceLoader.registerStaticControlViewResources(name, name);
-
                                 let data = {
                                     "device_id": Constants.DEBUG_DEVICE_ID,
                                     "class_id": name,
