@@ -31,14 +31,12 @@ Item {
                 id: ps
                 text: "Pseudo-Sinusoidal"
                 checked: true
-                radioButtonExclusive: radioButtons.exclusive
                 onCheckedChanged: { if (checked) console.info ( "PS Checked!") }
             }
 
             SGRadioButton {
                 id: trap
                 text: "Trapezoidal"
-                radioButtonExclusive: radioButtons.exclusive
                 onCheckedChanged: { if (checked) console.info ( "Trap Checked!") }
                 enabled: true
             }
@@ -46,7 +44,6 @@ Item {
             SGRadioButton {
                 id: square
                 text: "Square"
-                radioButtonExclusive: radioButtons.exclusive
                 onCheckedChanged: { if (checked) console.info ( "Square Checked!") }
             }
         }
