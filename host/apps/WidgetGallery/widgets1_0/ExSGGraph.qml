@@ -85,6 +85,11 @@ Item {
                 zoomYEnabled: false
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
+                xGrid: true
+                yGrid: false
+                gridColor: "green"
+
+
             }
 
             Column {
@@ -150,6 +155,8 @@ Item {
                 zoomXEnabled: false
                 zoomYEnabled: false
                 autoUpdate: false
+                xGrid: true
+                yGrid: true
 
                 Component.onCompleted: {
                     let movingCurve = createCurve("movingCurve")

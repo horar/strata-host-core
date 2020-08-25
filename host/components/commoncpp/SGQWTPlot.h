@@ -146,9 +146,6 @@ private slots:
 
 
 
-
-
-
 class SGQWTPlotCurve : public QObject
 {
     Q_OBJECT

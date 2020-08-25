@@ -15,8 +15,11 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     setForegroundColor("black");
 
     qwtGrid->attach(qwtPlot);
+
+    //Setting the default values for x,y axises and color of grid lines.
     setXGrid(false);
-    setXGrid(false);
+    setYGrid(false);
+    setGridColor("black");
 
 }
 
@@ -134,6 +137,58 @@ int SGQWTPlot::getCount()
     return curves_.count();
 }
 
+
+void SGQWTPlot :: setXGrid(bool showGrid)
+{
+    if(xGrid_ != showGrid){
+        xGrid_ = showGrid;
+        qwtGrid->enableX(xGrid_);
+    }
+
+    emit xGridChanged();
+
+    if (autoUpdate_) {
+        update();
+    }
+
+}
+
+bool SGQWTPlot :: xGrid()
+{
+    return xGrid_;
+}
+
+void SGQWTPlot :: setYGrid(bool showGrid)
+{
+    if(yGrid_ != showGrid) {
+        yGrid_ = showGrid;
+        qwtGrid->enableY(yGrid_);
+    }
+
+    emit yGridChanged();
+
+    if (autoUpdate_) {
+        update();
+    }
+}
+
+bool SGQWTPlot :: yGrid()
+{
+    return yGrid_;
+}
+
+void SGQWTPlot :: setGridColor(QColor newColor)
+{
+    if (gridColor_ != newColor){
+        gridColor_ = newColor;
+        qwtGrid->setPen(QPen(gridColor_,0,Qt::DotLine));
+    }
+    emit gridColorChanged();
+
+    if (autoUpdate_) {
+        update();
+    }
+}
 void SGQWTPlot::setXMin(double value)
 {
     qwtPlot->setAxisScale( qwtPlot->xBottom, value, xMax());
@@ -424,54 +479,7 @@ QPointF SGQWTPlot::mapToPosition(QPointF point)
 }
 
 
-void SGQWTPlot :: setXGrid(bool showGrid)
-{
-    if(xGrid_ != showGrid){
-        xGrid_ = showGrid;
-        qwtGrid->enableX(xGrid_);
-    }
 
-    emit xGridChanged();
-    if (autoUpdate_) {
-        update();
-    }
-
-}
-
-bool SGQWTPlot :: xGrid()
-{
-    return xGrid_;
-}
-
-void SGQWTPlot :: setYGrid(bool showGrid)
-{
-    if(yGrid_ != showGrid) {
-        yGrid_ = showGrid;
-        qwtGrid->enableY(yGrid_);
-    }
-
-    emit yGridChanged();
-    if (autoUpdate_) {
-        update();
-    }
-}
-
-bool SGQWTPlot :: yGrid()
-{
-    return yGrid_;
-}
-
-void SGQWTPlot :: setGridColor(QColor newColor)
-{
-    if (gridColor_ != newColor){
-        gridColor_ = newColor;
-        qwtGrid->setPen(QPen(gridColor_,0,Qt::DotLine));
-    }
-    emit gridColorChanged();
-    if (autoUpdate_) {
-        update();
-    }
-}
 
 
 SGQWTPlotCurve::SGQWTPlotCurve(QString name, QObject* parent) : QObject(parent)
