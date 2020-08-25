@@ -85,7 +85,7 @@ Item {
 
                             onClicked: {
                                 if (NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
-                                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                                 }
                                 const uuids = Object.keys(UuidMap.uuid_map)
                                 for (const uuid of uuids) {
@@ -140,7 +140,7 @@ Item {
                 text: "Login as Guest"
                 onClicked: {
                     if (NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
-                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                     }
                 }
             }
@@ -150,7 +150,7 @@ Item {
                 text: "Always Login as Guest"
                 onCheckedChanged: {
                     if (checked && NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE && sdsModel.hcsConnected) {
-                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                     }
                 }
 
@@ -165,7 +165,7 @@ Item {
                     onHcsConnectedChanged: {
                         if (sdsModel.hcsConnected && alwaysLogin.checked) {
                             NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
-                            NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                            NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                         }
                     }
                 }
