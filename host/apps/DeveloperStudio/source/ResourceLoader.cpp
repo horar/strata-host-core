@@ -165,40 +165,6 @@ void ResourceLoader::loadViewResources()
     }
 }
 
-QString ResourceLoader::getLatestVersion(const QStringList &versions) {
-    QString latestVersion = "0.0.0";
-
-    for (QString version : versions) {
-        QStringList latestVersionSeparated = latestVersion.split(".");
-        QStringList versionSeparated = version.split(".");
-        bool versionIsGreater = false;
-
-        while (latestVersionSeparated.length() < 3) {
-            latestVersionSeparated.push_back("0");
-        }
-
-        while (versionSeparated.length() < 3) {
-            versionSeparated.push_back("0");
-        }
-
-        for (int i = 0; i < 3; i++) {
-            if (versionSeparated[i].toInt() > latestVersionSeparated[i].toInt()) {
-                versionIsGreater = true;
-                break;
-            } else if (versionSeparated[i].toInt() < latestVersionSeparated[i].toInt()) {
-                versionIsGreater = false;
-                break;
-            }
-        }
-
-        if (versionIsGreater) {
-            latestVersion = version;
-        }
-    }
-
-    return latestVersion;
-}
-
 QUrl ResourceLoader::getStaticResourcesUrl() {
     QUrl url;
     url.setScheme("file");

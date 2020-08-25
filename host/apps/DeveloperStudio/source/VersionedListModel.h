@@ -80,14 +80,6 @@ protected:
 
 private:
     QList<VersionedItem*>data_;
-
-    /**
-     * @brief isVersionGreater Checks to see if compareVersion is greater than mainVersion
-     * @param mainVersion The version to check against
-     * @param compareVersion The version to compare mainVersion to
-     * @return True if compareVersion > mainVersion else false
-     */
-    bool isVersionGreater(const QString &mainVersion, const QString &compareVersion);
 };
 
 

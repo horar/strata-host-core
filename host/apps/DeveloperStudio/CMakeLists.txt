@@ -67,6 +67,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::connector
     strata::HostControllerClient
     strata::PlatformInterface
+    strata::SGVersionUtils
 
     strata::QtLogger
 )

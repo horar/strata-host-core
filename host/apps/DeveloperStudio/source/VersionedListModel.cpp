@@ -1,11 +1,13 @@
-#include <VersionedListModel.h>
+#include "VersionedListModel.h"
+#include "logging/LoggingQtCategories.h"
+#include "SGVersionUtils.h"
+
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFileInfo>
 #include <QDir>
 #include <QVector>
 #include <QDebug>
-#include "logging/LoggingQtCategories.h"
 
 VersionedListModel::VersionedListModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -181,19 +183,12 @@ QHash<int, QByteArray> VersionedListModel::roleNames() const
 }
 
 int VersionedListModel::getLatestVersion() {
-    QString latestVersion = "-1.0.0";
-    int latestVersionIndex = -1;
-
-    for (int j = 0; j < data_.count(); j++) {
-        VersionedItem *versionItem = data_[j];
-        QString version = versionItem->version;
-
-        // Check if version is greater than latestVersion
-        if (isVersionGreater(latestVersion, version)) {
-            latestVersion = version;
-            latestVersionIndex = j;
-        }
+    QStringList versions;
+    for (VersionedItem *versionItem : data_) {
+        versions.append(versionItem->version);
     }
+
+    int latestVersionIndex = SGVersionUtils::getGreatestVersion(versions);
 
     return latestVersionIndex;
 }
@@ -202,33 +197,10 @@ int VersionedListModel::getInstalledVersion() {
     int oldestInstalledIndex = -1;
 
     for (int i = 0; i < data_.count(); i++) {
-        if (data_[i]->installed && (oldestInstalledIndex == -1 || isVersionGreater(data_[i]->version, data_[oldestInstalledIndex]->version))) {
+        if (data_[i]->installed && (oldestInstalledIndex == -1 || SGVersionUtils::greaterThan(data_[oldestInstalledIndex]->version, data_[i]->version))) {
             oldestInstalledIndex = i;
         }
     }
     return oldestInstalledIndex;
-}
-
-bool VersionedListModel::isVersionGreater(const QString &mainVersion, const QString &compareVersion) {
-    QStringList mainVersionSeparated = mainVersion.split(".");
-    QStringList compareVersionSeparated = compareVersion.split(".");
-
-    while (mainVersionSeparated.length() < 3) {
-        mainVersionSeparated.push_back("0");
-    }
-
-    while (compareVersionSeparated.length() < 3) {
-        compareVersionSeparated.push_back("0");
-    }
-
-    for (int i = 0; i < 3; i++) {
-        if (compareVersionSeparated[i].toInt() > mainVersionSeparated[i].toInt()) {
-            return true;
-        } else if (compareVersionSeparated[i].toInt() < mainVersionSeparated[i].toInt()) {
-            return false;
-        }
-    }
-
-    return false;
 }
 

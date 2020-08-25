@@ -85,7 +85,7 @@ ColumnLayout {
     function isUpToDate() {
         for (let i = 0; i < platformStack.controlViewListCount; i++) {
             let version = platformStack.controlViewList.version(i)
-            if (version !== activeVersion.version && isVersionGreater(activeVersion.version, version)) {
+            if (version !== activeVersion.version && SGVersionUtils.greaterThan(version, activeVersion.version)) {
                 // if the version is greater, then set the latestVersion here
                 latestVersion = copyControlViewObject(i);
                 return false;
@@ -106,38 +106,17 @@ ColumnLayout {
 
         for (let i = 1; i < platformStack.controlViewListCount; i++) {
             let version = platformStack.controlViewList.version(i);
-            if (isVersionGreater(latestVersionTemp.version, version)) {
+            if (SGVersionUtils.valid(version) === false) {
+                console.error("Invalid Version found");
+                return null
+            }
+
+            if (SGVersionUtils.greaterThan(version, latestVersionTemp.version)) {
                 latestVersionTemp = copyControlViewObject(i);
             }
         }
 
         return latestVersionTemp;
-    }
-
-    // checks if version 2 is greater than version 1
-    function isVersionGreater(version1, version2) {
-        let version1Arr = version1.split('.').map(num => parseInt(num, 10));
-        let version2Arr = version2.split('.').map(num => parseInt(num, 10));
-
-        // fill in 0s for each missing version (e.g) 1.5 -> 1.5.0
-        while (version1Arr.length < 3) {
-            version1Arr.push(0)
-        }
-
-        while (version2Arr.length < 3) {
-            version2Arr.push(0)
-        }
-
-        for (let i = 0; i < 3; i++) {
-            if (version1Arr[i] > version2Arr[i]) {
-                return false;
-            } else if (version1Arr[i] < version2Arr[i]) {
-                return true;
-            }
-        }
-
-        // else they are the same version
-        return false;
     }
 
     function copyControlViewObject(index) {
