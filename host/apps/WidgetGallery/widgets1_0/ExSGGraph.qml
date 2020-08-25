@@ -25,10 +25,9 @@ Item {
                 yMax: 1
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
-                enableGrid: true
-
-
-
+                xGrid: false
+                yGrid: true
+                gridColor: "red"
 
             }
 

@@ -131,7 +131,9 @@ Module {
         Property { name: "foregroundColor"; type: "QColor" }
         Property { name: "autoUpdate"; type: "bool" }
         Property { name: "count"; type: "int"; isReadonly: true }
-        Property { name: "enableGrid"; type: "bool"}
+        Property { name: "xGrid"; type: "bool"}
+        Property { name: "yGrid"; type: "bool"}
+        Property { name: "gridColor"; type: "QColor"}
         Method { name: "initialize" }
         Method { name: "update" }
         Method {

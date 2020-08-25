@@ -44,7 +44,9 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(QColor foregroundColor MEMBER foregroundColor_ WRITE setForegroundColor NOTIFY foregroundColorChanged)
     Q_PROPERTY(bool autoUpdate MEMBER autoUpdate_ NOTIFY autoUpdateChanged)
     Q_PROPERTY(int count READ getCount NOTIFY countChanged)
-    Q_PROPERTY(bool enableGrid READ enableGrid WRITE setEnableGrid NOTIFY enableGridChanged)
+    Q_PROPERTY(bool xGrid READ xGrid WRITE setXGrid NOTIFY xGridChanged)
+    Q_PROPERTY(bool yGrid READ yGrid WRITE setYGrid NOTIFY yGridChanged)
+    Q_PROPERTY(QColor gridColor MEMBER gridColor_ WRITE setGridColor NOTIFY gridColorChanged)
 
 
 public:
@@ -90,17 +92,17 @@ public:
     void setBackgroundColor(QColor newColor);
     void setForegroundColor(QColor newColor);
     int getCount();
-    void setEnableGrid(bool showGrid);
-    bool enableGrid()  {
-        return enableGrid_;
-    }
+    void setXGrid(bool showGrid);
+    bool xGrid();
+    void setYGrid(bool showGrid);
+    bool yGrid();
     void setGridColor(QColor newColor);
+
 
 
 protected:
     QwtPlot* qwtPlot = nullptr;
-
-
+    QwtPlotGrid * qwtGrid  = nullptr;
     void updateCurveList();
 
 signals:
@@ -120,7 +122,9 @@ signals:
     void foregroundColorChanged();
     void autoUpdateChanged();
     void countChanged();
-    void enableGridChanged();
+    void xGridChanged();
+    void yGridChanged();
+    void gridColorChanged();
 
 private:
     friend class SGQWTPlotCurve;
@@ -131,8 +135,8 @@ private:
     QColor backgroundColor_;
     QColor foregroundColor_;
     bool autoUpdate_ = true;
-    QwtPlotGrid * grid;
-    bool enableGrid_;
+    bool xGrid_ = true;
+    bool yGrid_ = true;
     QColor gridColor_;
 
 

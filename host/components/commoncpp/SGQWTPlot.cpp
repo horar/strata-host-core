@@ -9,20 +9,25 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     connect(this, &QQuickPaintedItem::heightChanged, this, &SGQWTPlot::updatePlotSize);
 
     qwtPlot = new QwtPlot();
-    grid = new QwtPlotGrid();
-
-
+    qwtGrid = new QwtPlotGrid();
 
     setBackgroundColor("white");
     setForegroundColor("black");
 
+    qwtGrid->attach(qwtPlot);
+    setXGrid(false);
+    setXGrid(false);
 
 }
 
 SGQWTPlot::~SGQWTPlot()
 {
+    delete qwtGrid;
+    qwtGrid = nullptr;
+
     delete qwtPlot;
     qwtPlot = nullptr;
+
 }
 
 void SGQWTPlot::paint(QPainter* painter)
@@ -419,31 +424,49 @@ QPointF SGQWTPlot::mapToPosition(QPointF point)
 }
 
 
-void SGQWTPlot :: setEnableGrid(bool showGrid)
+void SGQWTPlot :: setXGrid(bool showGrid)
+{
+    if(xGrid_ != showGrid){
+        xGrid_ = showGrid;
+        qwtGrid->enableX(xGrid_);
+    }
+
+    emit xGridChanged();
+    if (autoUpdate_) {
+        update();
+    }
+
+}
+
+bool SGQWTPlot :: xGrid()
+{
+    return xGrid_;
+}
+
+void SGQWTPlot :: setYGrid(bool showGrid)
 {
 
-    if(showGrid != enableGrid_){
-        showGrid = enableGrid_;
-        qwtPlot->enableAxis(QwtPlot::xTop,true);
-       // grid->setPen(QPen(Qt::black,0,Qt::DotLine));
-        grid->setXAxis(QwtPlot::xTop);
-        grid->enableX(showGrid);
-        grid->attach(qwtPlot);
-        setGridColor("red");
-    }
-    else {
-        grid->enableX(showGrid);
+    if(yGrid_ != showGrid) {
+        yGrid_ = showGrid;
+        qwtGrid->enableY(yGrid_);
     }
 
-    emit enableGridChanged();
+    emit yGridChanged();
+    if (autoUpdate_) {
+        update();
+    }
+}
 
+bool SGQWTPlot :: yGrid()
+{
+    return yGrid_;
 }
 
 void SGQWTPlot :: setGridColor(QColor newColor)
 {
     if (gridColor_ != newColor){
         gridColor_ = newColor;
-        grid->setPen(QPen(gridColor_,0,Qt::DotLine));
+        qwtGrid->setPen(QPen(gridColor_,0,Qt::DotLine));
     }
 }
 
