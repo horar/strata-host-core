@@ -15,11 +15,11 @@ SGVersionUtils::~SGVersionUtils()
 }
 
 bool SGVersionUtils::greaterThan(const QString &version1, const QString &version2, bool *error) {
-    return compare(version1, version2, error) > 0;
+    return compare(version1, version2, error) == 1;
 }
 
 bool SGVersionUtils::lessThan(const QString &version1, const QString &version2, bool *error) {
-    return compare(version1, version2, error) < 0;
+    return compare(version1, version2, error) == -1;
 }
 
 bool SGVersionUtils::equalTo(const QString &version1, const QString &version2, bool *error) {
@@ -40,7 +40,15 @@ int SGVersionUtils::compare(const QString &version1, const QString &version2, bo
         return -2;
     }
 
-    return QVersionNumber::compare(v1, v2);
+    int result = QVersionNumber::compare(v1, v2);
+
+    if (result < 0) {
+        return -1;
+    } else if (result > 0) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 int SGVersionUtils::getGreatestVersion(const QStringList &versions, bool *error) {
@@ -62,12 +70,12 @@ int SGVersionUtils::getGreatestVersion(const QStringList &versions, bool *error)
 }
 
 bool SGVersionUtils::valid(const QString &version) {
-    QVersionNumber v = QVersionNumber::fromString(version);
-    if (v.isNull()) {
-        return true;
+    QString cleanedVersion = cleanVersion(version);
+    if (cleanedVersion.isEmpty()) {
+        return false;
     }
 
-    return false;
+    return true;
 }
 
 QString SGVersionUtils::cleanVersion(QString version) {
