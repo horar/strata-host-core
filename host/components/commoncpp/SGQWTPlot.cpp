@@ -9,9 +9,14 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     connect(this, &QQuickPaintedItem::heightChanged, this, &SGQWTPlot::updatePlotSize);
 
     qwtPlot = new QwtPlot();
+    grid = new QwtPlotGrid();
+
+
 
     setBackgroundColor("white");
     setForegroundColor("black");
+
+
 }
 
 SGQWTPlot::~SGQWTPlot()
@@ -70,12 +75,12 @@ void SGQWTPlot::shiftYAxis(double offset)
 
 void SGQWTPlot::autoScaleXAxis()
 {
-   qwtPlot->setAxisAutoScale(qwtPlot->xBottom);
-   emit xMinChanged();
-   emit xMaxChanged();
-   if (autoUpdate_) {
-       update();
-   }
+    qwtPlot->setAxisAutoScale(qwtPlot->xBottom);
+    emit xMinChanged();
+    emit xMaxChanged();
+    if (autoUpdate_) {
+        update();
+    }
 }
 
 void SGQWTPlot::autoScaleYAxis()
@@ -414,8 +419,33 @@ QPointF SGQWTPlot::mapToPosition(QPointF point)
 }
 
 
+void SGQWTPlot :: setEnableGrid(bool showGrid)
+{
 
+    if(showGrid != enableGrid_){
+        showGrid = enableGrid_;
+        qwtPlot->enableAxis(QwtPlot::xTop,true);
+       // grid->setPen(QPen(Qt::black,0,Qt::DotLine));
+        grid->setXAxis(QwtPlot::xTop);
+        grid->enableX(showGrid);
+        grid->attach(qwtPlot);
+        setGridColor("red");
+    }
+    else {
+        grid->enableX(showGrid);
+    }
 
+    emit enableGridChanged();
+
+}
+
+void SGQWTPlot :: setGridColor(QColor newColor)
+{
+    if (gridColor_ != newColor){
+        gridColor_ = newColor;
+        grid->setPen(QPen(gridColor_,0,Qt::DotLine));
+    }
+}
 
 
 SGQWTPlotCurve::SGQWTPlotCurve(QString name, QObject* parent) : QObject(parent)

@@ -25,6 +25,11 @@ Item {
                 yMax: 1
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
+                enableGrid: true
+
+
+
+
             }
 
             Column {

@@ -16,6 +16,7 @@
 #include <qwt/qwt_scale_widget.h>
 #include <qwt/qwt_plot_layout.h>
 #include <qwt/qwt_text_label.h>
+#include <qwt/qwt_plot_grid.h>
 
 #include <QDebug>
 
@@ -43,6 +44,8 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(QColor foregroundColor MEMBER foregroundColor_ WRITE setForegroundColor NOTIFY foregroundColorChanged)
     Q_PROPERTY(bool autoUpdate MEMBER autoUpdate_ NOTIFY autoUpdateChanged)
     Q_PROPERTY(int count READ getCount NOTIFY countChanged)
+    Q_PROPERTY(bool enableGrid READ enableGrid WRITE setEnableGrid NOTIFY enableGridChanged)
+
 
 public:
     SGQWTPlot(QQuickItem* parent = nullptr);
@@ -87,9 +90,16 @@ public:
     void setBackgroundColor(QColor newColor);
     void setForegroundColor(QColor newColor);
     int getCount();
+    void setEnableGrid(bool showGrid);
+    bool enableGrid()  {
+        return enableGrid_;
+    }
+    void setGridColor(QColor newColor);
+
 
 protected:
     QwtPlot* qwtPlot = nullptr;
+
 
     void updateCurveList();
 
@@ -110,6 +120,7 @@ signals:
     void foregroundColorChanged();
     void autoUpdateChanged();
     void countChanged();
+    void enableGridChanged();
 
 private:
     friend class SGQWTPlotCurve;
@@ -120,6 +131,10 @@ private:
     QColor backgroundColor_;
     QColor foregroundColor_;
     bool autoUpdate_ = true;
+    QwtPlotGrid * grid;
+    bool enableGrid_;
+    QColor gridColor_;
+
 
 private slots:
     void updatePlotSize();
@@ -195,7 +210,9 @@ public:
     QRectF boundingRect() const;
 
 private:
-      const QVector<QPointF>* container_;
+    const QVector<QPointF>* container_;
 };
+
+
 
 #endif // SGQWTPLOT_H
