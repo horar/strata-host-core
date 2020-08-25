@@ -31,5 +31,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 if(BUILD_TESTING)
-    add_subdirectory(test)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")
+        add_subdirectory(test)
+    endif()
 endif()

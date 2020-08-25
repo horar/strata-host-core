@@ -3,6 +3,8 @@ project(SGVersionUtils
     LANGUAGES CXX
 )
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 find_package(Qt5 ${VERSION_QT5}
     COMPONENTS Core Qml
     REQUIRED
@@ -21,7 +23,7 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    PRIVATE
+    PUBLIC
     Qt5::Core
     Qt5::Qml
     strata::QtLogger
@@ -32,5 +34,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 if(BUILD_TESTING)
-    add_subdirectory(test)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")
+        add_subdirectory(test)
+    endif()
 endif()
