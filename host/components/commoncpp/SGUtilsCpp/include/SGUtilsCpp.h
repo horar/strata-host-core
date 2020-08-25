@@ -2,6 +2,7 @@
 #define SGUTILSCPP_H
 
 #include <QObject>
+#include <QUrl>
 
 class SGUtilsCpp : public QObject
 {
