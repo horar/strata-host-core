@@ -445,7 +445,6 @@ bool SGQWTPlot :: xGrid()
 
 void SGQWTPlot :: setYGrid(bool showGrid)
 {
-
     if(yGrid_ != showGrid) {
         yGrid_ = showGrid;
         qwtGrid->enableY(yGrid_);
@@ -467,6 +466,10 @@ void SGQWTPlot :: setGridColor(QColor newColor)
     if (gridColor_ != newColor){
         gridColor_ = newColor;
         qwtGrid->setPen(QPen(gridColor_,0,Qt::DotLine));
+    }
+    emit gridColorChanged();
+    if (autoUpdate_) {
+        update();
     }
 }
 
