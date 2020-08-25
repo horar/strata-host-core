@@ -34,6 +34,12 @@ public:
     void setDatabase(Database* db);
 
     /**
+     * @brief setBaseFolder
+     * @param base folder for database and documents
+     */
+    void setBaseFolder(const QString &baseFolder);
+
+    /**
      * Sets the base URL for downloads
      * @param url base URL
      */

@@ -21,7 +21,7 @@ public:
         flashFirmwareRes,
         backupFirmwareRes,
         flashBootloaderRes,
-        updateFirmwareRes,
+        startBootloaderRes,
         startAppRes,
         strataCmd,
         cmd
@@ -37,7 +37,7 @@ private:
     static const rapidjson::SchemaDocument flashFirmwareResSchema;
     static const rapidjson::SchemaDocument backupFirmwareResSchema;
     static const rapidjson::SchemaDocument flashBootloaderResSchema;
-    static const rapidjson::SchemaDocument updateFirmwareResSchema;
+    static const rapidjson::SchemaDocument startBootloaderResSchema;
     static const rapidjson::SchemaDocument startAppResSchema;
     static const rapidjson::SchemaDocument strataCommandSchema;
     static const rapidjson::SchemaDocument cmdSchema;
