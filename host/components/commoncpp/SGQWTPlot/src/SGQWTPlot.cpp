@@ -1,4 +1,5 @@
 #include "SGQWTPlot.h"
+#include "logging/LoggingQtCategories.h"
 
 SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
 {
