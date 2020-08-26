@@ -196,10 +196,6 @@ private:
 };
 
 
-
-
-
-
 class SGQWTPlotCurveData : public QwtSeriesData<QPointF>
 {
 public:
@@ -213,7 +209,5 @@ public:
 private:
     const QVector<QPointF>* container_;
 };
-
-
 
 #endif // SGQWTPLOT_H
