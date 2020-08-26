@@ -9,12 +9,12 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     connect(this, &QQuickPaintedItem::heightChanged, this, &SGQWTPlot::updatePlotSize);
 
     qwtPlot = new QwtPlot();
-    qwtGrid = new QwtPlotGrid();
+    qwtGrid_ = new QwtPlotGrid();
 
     setBackgroundColor("white");
     setForegroundColor("black");
 
-    qwtGrid->attach(qwtPlot);
+    qwtGrid_->attach(qwtPlot);
 
     //Setting the default values for x,y axises and color of grid lines.
     setXGrid(false);
@@ -25,8 +25,8 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
 
 SGQWTPlot::~SGQWTPlot()
 {
-    delete qwtGrid;
-    qwtGrid = nullptr;
+    delete qwtGrid_;
+    qwtGrid_ = nullptr;
 
     delete qwtPlot;
     qwtPlot = nullptr;
@@ -142,12 +142,14 @@ void SGQWTPlot :: setXGrid(bool showGrid)
 {
     if(xGrid_ != showGrid) {
         xGrid_ = showGrid;
-        qwtGrid->enableX(xGrid_);
+        qwtGrid_->enableX(xGrid_);
+
+        emit xGridChanged();
+        if (autoUpdate_) {
+            update();
+        }
     }
-    emit xGridChanged();
-    if (autoUpdate_) {
-        update();
-    }
+
 
 }
 
@@ -160,12 +162,14 @@ void SGQWTPlot :: setYGrid(bool showGrid)
 {
     if(yGrid_ != showGrid) {
         yGrid_ = showGrid;
-        qwtGrid->enableY(yGrid_);
+        qwtGrid_->enableY(yGrid_);
+
+        emit yGridChanged();
+        if (autoUpdate_) {
+            update();
+        }
     }
-    emit yGridChanged();
-    if (autoUpdate_) {
-        update();
-    }
+
 }
 
 bool SGQWTPlot :: yGrid()
@@ -177,12 +181,14 @@ void SGQWTPlot :: setGridColor(QColor newColor)
 {
     if (gridColor_ != newColor) {
         gridColor_ = newColor;
-        qwtGrid->setPen(QPen(gridColor_,0,Qt::DotLine));
+        qwtGrid_->setPen(QPen(gridColor_,0,Qt::DotLine));
+
+        emit gridColorChanged();
+        if (autoUpdate_) {
+            update();
+        }
     }
-    emit gridColorChanged();
-    if (autoUpdate_) {
-        update();
-    }
+
 }
 void SGQWTPlot::setXMin(double value)
 {

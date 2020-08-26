@@ -102,7 +102,6 @@ public:
 
 protected:
     QwtPlot* qwtPlot = nullptr;
-    QwtPlotGrid * qwtGrid  = nullptr;
     void updateCurveList();
 
 signals:
@@ -130,6 +129,7 @@ private:
     friend class SGQWTPlotCurve;
 
     QList<SGQWTPlotCurve*> curves_;
+    QwtPlotGrid * qwtGrid_  = nullptr;
     bool xLogarithmic_ = false;
     bool yLogarithmic_ = false;
     QColor backgroundColor_;
