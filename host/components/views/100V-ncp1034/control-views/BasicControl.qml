@@ -15,6 +15,38 @@ Item {
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
 
+    Component.onCompleted: {
+        platformInterface.get_status_command.update()
+    }
+
+    property var control_states: platformInterface.control_states
+    onControl_statesChanged: {
+        enableSwitch.checked = control_states.buck_enabled
+        setExternalVCC.checked = control_states.ldo_enabled
+        outputVoltAdjustment.checked = control_states.dac_enabled
+
+        if(control_states.rt_mode === "0")
+            setSwitchFreq.checked = true
+        else   setSwitchFreq.checked = false
+
+        if(control_states.ss_set === 1){
+            softStart.currentIndex = 0
+        }
+        if(control_states.ss_set === 2){
+            softStart.currentIndex = 1
+        }
+        if(control_states.ss_set === 3){
+            softStart.currentIndex = 2
+        }
+        if(control_states.ss_set === 4){
+            softStart.currentIndex = 3
+        }
+
+        outputVolslider.value = control_states.vout_set.toFixed(2)
+
+    }
+
+
 
     ColumnLayout {
         anchors.fill :parent
@@ -65,182 +97,297 @@ Item {
                         Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            RowLayout {
+                            ColumnLayout{
                                 anchors.fill: parent
+
+
                                 Item {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
-                                    SGAlignedLabel {
-                                        id: eableSwitchLabel
-                                        target: enableSwitch
-                                        text: "Enable"
-                                        alignment: SGAlignedLabel.SideTopCenter
-                                        anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc
-                                        font.bold : true
+                                    RowLayout {
+                                        anchors.fill: parent
+                                        Item {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGAlignedLabel {
+                                                id: eableSwitchLabel
+                                                target: enableSwitch
+                                                text: "Enable Buck"
+                                                alignment: SGAlignedLabel.SideLeftCenter
+                                                anchors.centerIn: parent
+                                                fontSizeMultiplier: ratioCalc
+                                                font.bold : true
 
-                                        SGSwitch {
-                                            id: enableSwitch
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            labelsInside: true
-                                            checkedLabel: "On"
-                                            uncheckedLabel:   "Off"
-                                            textColor: "black"              // Default: "black"
-                                            handleColor: "white"            // Default: "white"
-                                            grooveColor: "#ccc"             // Default: "#ccc"
-                                            grooveFillColor: "#0cf"         // Default: "#0cf"
+                                                SGSwitch {
+                                                    id: enableSwitch
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                    labelsInside: true
+                                                    checkedLabel: "On"
+                                                    uncheckedLabel:   "Off"
+                                                    textColor: "black"              // Default: "black"
+                                                    handleColor: "white"            // Default: "white"
+                                                    grooveColor: "#ccc"             // Default: "#ccc"
+                                                    grooveFillColor: "#0cf"         // Default: "#0cf"
 
+                                                    onToggled: {
+                                                        platformInterface.enable_buck.update(checked)
+                                                    }
+
+                                                }
+                                            }
                                         }
-                                    }
-                                }
-                                Item {
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    SGAlignedLabel {
-                                        id: disableSwitchLabel
-                                        target: disableSwitch
-                                        text: "Disable DAC"
-                                        alignment: SGAlignedLabel.SideTopCenter
-                                        anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc
-                                        font.bold : true
 
-                                        SGSwitch {
-                                            id: disableSwitch
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            labelsInside: true
-                                            checkedLabel: "On"
-                                            uncheckedLabel:   "Off"
-                                            textColor: "black"              // Default: "black"
-                                            handleColor: "white"            // Default: "white"
-                                            grooveColor: "#ccc"             // Default: "#ccc"
-                                            grooveFillColor: "#0cf"         // Default: "#0cf"
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            //color: "green"
-                            RowLayout {
-                                anchors.fill: parent
-                                Item {
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
-                                    SGAlignedLabel {
-                                        id: syncSwitchLabel
-                                        target: syncSwitch
-                                        text: "Disable LDO"
-                                        alignment: SGAlignedLabel.SideTopCenter
-                                        anchors.centerIn: parent
-                                        fontSizeMultiplier: ratioCalc
-                                        font.bold : true
-
-                                        SGSwitch {
-                                            id: syncSwitch
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            labelsInside: true
-                                            checkedLabel: "On"
-                                            uncheckedLabel:   "Off"
-                                            textColor: "black"              // Default: "black"
-                                            handleColor: "white"            // Default: "white"
-                                            grooveColor: "#ccc"             // Default: "#ccc"
-                                            grooveFillColor: "#0cf"         // Default: "#0cf"
-
-                                        }
                                     }
                                 }
 
+
                                 Item {
                                     Layout.fillWidth: true
                                     Layout.fillHeight: true
                                     SGAlignedLabel {
-                                        id: setFreqLabel
-                                        target: setFreq
-                                        text: "Set Frequency"
-                                        alignment: SGAlignedLabel.SideTopCenter
+                                        id: setSwitchFreqLabel
+                                        target: setSwitchFreq
+                                        text: "Set Switching \n Frequency"
+                                        alignment: SGAlignedLabel.SideLeftCenter
                                         anchors.centerIn: parent
                                         fontSizeMultiplier: ratioCalc
                                         font.bold : true
 
                                         SGSwitch {
-                                            id: setFreq
+                                            id: setSwitchFreq
                                             anchors.verticalCenter: parent.verticalCenter
                                             labelsInside: true
-                                            checkedLabel: "100kHz"
+                                            checkedLabel: "100 kHz"
                                             uncheckedLabel:   "Manual"
                                             textColor: "black"              // Default: "black"
                                             handleColor: "white"            // Default: "white"
                                             grooveColor: "#ccc"             // Default: "#ccc"
                                             grooveFillColor: "#0cf"         // Default: "#0cf"
+                                            onToggled: {
+                                                if(checked){
+                                                    platformInterface.set_rt_mode.update(0)
+                                                }
+                                                else  platformInterface.set_rt_mode.update(1)
+                                            }
+
+
+                                        }
+                                    }
+                                }
+
+
+                                Item {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGAlignedLabel {
+                                        id: softSTtartLabel
+                                        target: softStart
+                                        text: "Soft Start (ms)"
+                                        alignment: SGAlignedLabel.SideLeftCenter
+                                        anchors {
+                                            centerIn: parent
+                                        }
+                                        fontSizeMultiplier: ratioCalc
+                                        font.bold : true
+
+                                        SGComboBox {
+                                            id: softStart
+                                            fontSizeMultiplier: ratioCalc
+                                            model: ["1", "5.5", "11", "15.5"]
+                                            onCurrentIndexChanged: {
+                                                platformInterface.set_ss.update(currentIndex+1)
+                                            }
+
+                                        }
+                                    }
+                                }
+
+                                Item {
+                                    id: outputVolContainer
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGAlignedLabel {
+                                        id: outputVolLabel
+                                        target: outputVolslider
+                                        text:"Set Output Voltage"
+                                        alignment: SGAlignedLabel.SideTopCenter
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc
+                                        font.bold : true
+
+                                        SGSlider {
+                                            id: outputVolslider
+                                            width: outputVolContainer.width/1.1
+                                            inputBoxWidth: outputVolContainer.width/6
+                                            textColor: "black"
+                                            stepSize: 0.50
+                                            from: 5.00
+                                            to: 24.00
+                                            live: false
+                                            inputBox.validator: DoubleValidator { }
+                                            inputBox.text: outputVolslider.value.toFixed(2)
+
+                                            fromText.text: "5V"
+                                            toText.text: "24V"
+                                            fromText.fontSizeMultiplier: 0.9
+                                            toText.fontSizeMultiplier: 0.9
+                                            onUserSet: {
+                                                platformInterface.set_vout.update(value.toFixed(2))
+                                                 inputBox.text = value.toFixed(2)
+
+                                            }
+                                            onValueChanged: {
+                                                inputBox.text = value
+                                            }
+
+
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            ColumnLayout{
+                                anchors.fill: parent
+                                Text {
+                                    id: manualText
+                                    font.bold: true
+                                    text: "Advance Settings"
+                                    font.pixelSize: ratioCalc * 20
+                                    Layout.topMargin: 10
+                                    color: "#696969"
+                                    Layout.leftMargin: 20
+                                }
+
+                                Rectangle {
+                                    id: line4
+                                    Layout.preferredHeight: 2
+                                    Layout.alignment: Qt.AlignCenter
+                                    Layout.preferredWidth: parent.width
+                                    border.color: "lightgray"
+                                    radius: 2
+                                }
+                                Item {
+                                    id: outputVoltAdjustmentContainer
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGAlignedLabel {
+                                        id: setoutputVoltAdjustmentLabel
+                                        target: outputVoltAdjustment
+                                        text: "Output Voltage \n Adjustment"
+                                        alignment: SGAlignedLabel.SideLeftCenter
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc
+                                        font.bold : true
+
+                                        SGSwitch {
+                                            id: outputVoltAdjustment
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            labelsInside: true
+                                            checkedLabel: "On"
+                                            uncheckedLabel:   "Off"
+                                            textColor: "black"              // Default: "black"
+                                            handleColor: "white"            // Default: "white"
+                                            grooveColor: "#ccc"             // Default: "#ccc"
+                                            grooveFillColor: "#0cf"         // Default: "#0cf"
+                                            onToggled: {
+                                                platformInterface.enable_dac.update(checked)
+                                            }
+
+
+                                        }
+                                    }
+
+                                }
+                                Item {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGAlignedLabel {
+                                        id: setDefaultVINLabel
+                                        target: defaultVINLimits
+                                        text: "Default VIN \n Limits"
+                                        alignment: SGAlignedLabel.SideLeftCenter
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc
+                                        font.bold : true
+
+                                        SGSwitch {
+                                            id: defaultVINLimits
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            labelsInside: true
+                                            checkedLabel: "On"
+                                            uncheckedLabel:   "Off"
+                                            textColor: "black"              // Default: "black"
+                                            handleColor: "white"            // Default: "white"
+                                            grooveColor: "#ccc"             // Default: "#ccc"
+                                            grooveFillColor: "#0cf"         // Default: "#0cf"
+
+
+                                        }
+                                    }
+                                }
+                                Item {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGAlignedLabel {
+                                        id: setDefaultVOUTLabel
+                                        target: defaultVOUT
+                                        text: "Default VOUT \n Limits"
+                                        alignment: SGAlignedLabel.SideLeftCenter
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc
+                                        font.bold : true
+
+                                        SGSwitch {
+                                            id: defaultVOUT
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            labelsInside: true
+                                            checkedLabel: "On"
+                                            uncheckedLabel:   "Off"
+                                            textColor: "black"              // Default: "black"
+                                            handleColor: "white"            // Default: "white"
+                                            grooveColor: "#ccc"             // Default: "#ccc"
+                                            grooveFillColor: "#0cf"         // Default: "#0cf"
+
+
+                                        }
+                                    }
+                                }
+
+                                Item {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    SGAlignedLabel {
+                                        id: setExternalVCCLabel
+                                        target: setExternalVCC
+                                        text: "External VCC \n Supply"
+                                        alignment: SGAlignedLabel.SideLeftCenter
+                                        anchors.centerIn: parent
+                                        fontSizeMultiplier: ratioCalc
+                                        font.bold : true
+
+                                        SGSwitch {
+                                            id: setExternalVCC
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            labelsInside: true
+                                            checkedLabel: "On"
+                                            uncheckedLabel:   "Off"
+                                            textColor: "black"              // Default: "black"
+                                            handleColor: "white"            // Default: "white"
+                                            grooveColor: "#ccc"             // Default: "#ccc"
+                                            grooveFillColor: "#0cf"         // Default: "#0cf"
+                                            onToggled: {
+                                                platformInterface.enable_ldo.update(checked)
+                                            }
+
 
                                         }
                                     }
                                 }
                             }
-                        }
-                        Item {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGAlignedLabel {
-                                id: softSTtartLabel
-                                target: softStart
-                                text: "Soft Start "
-                                alignment: SGAlignedLabel.SideTopLeft
-                                anchors {
-                                    centerIn: parent
-                                }
-                                fontSizeMultiplier: ratioCalc
-                                font.bold : true
-
-                                SGComboBox {
-                                    id: softStart
-                                    fontSizeMultiplier: ratioCalc
-                                    model: ["1 ms", "2 ms", "5 ms", "10 ms", "15 ms"]
-
-                                }
-                            }
-                        }
-
-                        Item {
-                            id: outputVolContainer
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            SGAlignedLabel {
-                                id: outputVolLabel
-                                target: outputVolslider
-                                text:"Output Voltage"
-                                alignment: SGAlignedLabel.SideTopLeft
-                                anchors.centerIn: parent
-                                fontSizeMultiplier: ratioCalc
-                                font.bold : true
-
-                                SGSlider {
-                                    id: outputVolslider
-                                    width: outputVolContainer.width/1.1
-                                    inputBoxWidth: outputVolContainer.width/6
-                                    textColor: "black"
-                                    stepSize: 0.5
-                                    from: 5
-                                    to: 24
-                                    live: false
-                                    fromText.text: "5V"
-                                    toText.text: "24V"
-                                    fromText.fontSizeMultiplier: 0.9
-                                    toText.fontSizeMultiplier: 0.9
-
-
-                                }
-                            }
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
 
                         }
                     }
@@ -317,6 +464,10 @@ Item {
                                                                     boxFont.family: Fonts.digitalseven
                                                                     unitFont.bold: true
                                                                     text: "14.5"
+                                                                    property var periodic_telemetry_vout: platformInterface.periodic_telemetry.vout
+                                                                    onPeriodic_telemetry_voutChanged: {
+                                                                        outputVoltage.text = periodic_telemetry_vout.toFixed(2)
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -346,6 +497,10 @@ Item {
                                                                     boxFont.family: Fonts.digitalseven
                                                                     unitFont.bold: true
                                                                     text: "12"
+                                                                    property var periodic_telemetry_vcc: platformInterface.periodic_telemetry.vcc
+                                                                    onPeriodic_telemetry_vccChanged: {
+                                                                        vccVoltage.text = periodic_telemetry_vcc.toFixed(2)
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -375,6 +530,12 @@ Item {
                                                                     boxFont.family: Fonts.digitalseven
                                                                     unitFont.bold: true
                                                                     text: "80"
+
+
+                                                                    property var periodic_telemetry_vin: platformInterface.periodic_telemetry.vin
+                                                                    onPeriodic_telemetry_vinChanged: {
+                                                                        inputVoltage.text = periodic_telemetry_vin.toFixed(2)
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -404,13 +565,18 @@ Item {
 
                                                                 SGInfoBox {
                                                                     id: outputCurrent
-                                                                    unit: "mA"
+                                                                    unit: "A"
                                                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                                     width: 100 * ratioCalc
                                                                     boxColor: "lightgrey"
                                                                     boxFont.family: Fonts.digitalseven
                                                                     unitFont.bold: true
                                                                     text: "900"
+                                                                    property var periodic_telemetry_iout: platformInterface.periodic_telemetry.iout
+                                                                    onPeriodic_telemetry_ioutChanged: {
+                                                                        outputCurrent.text = periodic_telemetry_iout.toFixed(3)
+                                                                    }
+
                                                                 }
                                                             }
                                                         }
@@ -432,13 +598,17 @@ Item {
 
                                                                 SGInfoBox {
                                                                     id: vccCurrent
-                                                                    unit: "mA"
+                                                                    unit: "A"
                                                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                                     width: 100 * ratioCalc
                                                                     boxColor: "lightgrey"
                                                                     boxFont.family: Fonts.digitalseven
                                                                     unitFont.bold: true
                                                                     text: "200"
+                                                                    property var periodic_telemetry_icc: platformInterface.periodic_telemetry.icc
+                                                                    onPeriodic_telemetry_iccChanged: {
+                                                                        vccCurrent.text = periodic_telemetry_icc.toFixed(2)
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -460,13 +630,17 @@ Item {
 
                                                                 SGInfoBox {
                                                                     id: inputCurrent
-                                                                    unit: "mA"
+                                                                    unit: "A"
                                                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                                     width: 100 * ratioCalc
                                                                     boxColor: "lightgrey"
                                                                     boxFont.family: Fonts.digitalseven
                                                                     unitFont.bold: true
                                                                     text: "500"
+                                                                    property var periodic_telemetry_iin: platformInterface.periodic_telemetry.iin
+                                                                    onPeriodic_telemetry_iinChanged: {
+                                                                        inputCurrent.text = periodic_telemetry_iin.toFixed(3)
+                                                                    }
 
                                                                 }
                                                             }
@@ -545,7 +719,7 @@ Item {
                                 }
 
                                 Rectangle {
-                                    id: line4
+                                    id: line5
                                     Layout.preferredHeight: 2
                                     Layout.alignment: Qt.AlignCenter
                                     Layout.preferredWidth: parent.width
@@ -560,14 +734,14 @@ Item {
                                         anchors.fill: parent
 
                                         Item {
-                                            id: powerGaugeContainer
+                                            id: inputpowerGaugeContainer
                                             //color: "green"
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             SGAlignedLabel {
-                                                id: powerLossGaugeLabel
-                                                target: powerLossGauge
-                                                text: "Power Loss "
+                                                id: inputpowerGaugeLabel
+                                                target: inputpowerGauge
+                                                text: "Input \n Power"
                                                 margin: -15
                                                 anchors.top: parent.top
                                                 alignment: SGAlignedLabel.SideBottomCenter
@@ -576,9 +750,9 @@ Item {
                                                 horizontalAlignment: Text.AlignHCenter
 
                                                 SGCircularGauge {
-                                                    id: powerLossGauge
-                                                    width: powerGaugeContainer.width
-                                                    height: powerGaugeContainer.height - powerLossGaugeLabel.contentHeight
+                                                    id: inputpowerGauge
+                                                    width: inputpowerGaugeContainer.width
+                                                    height: inputpowerGaugeContainer.height - inputpowerGaugeLabel.contentHeight
                                                     tickmarkStepSize: 10
                                                     minimumValue: 0
                                                     maximumValue: 100
@@ -587,7 +761,12 @@ Item {
                                                     gaugeFillColor2: "red"
                                                     unitText: "W"
                                                     unitTextFontSizeMultiplier: ratioCalc * 1.5
-                                                    valueDecimalPlaces: 0
+                                                    valueDecimalPlaces: 2
+                                                    property var periodic_telemetry_pin: platformInterface.periodic_telemetry.pin
+                                                    onPeriodic_telemetry_pinChanged: {
+                                                        inputpowerGauge.value = periodic_telemetry_pin.toFixed(2)
+                                                    }
+
 
 
                                                 }
@@ -595,14 +774,14 @@ Item {
 
                                         }
                                         Rectangle {
-                                            id: vccGaugeContainer
+                                            id: buckOutputPowerGaugeContainer
 
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             SGAlignedLabel {
-                                                id: vccPowerGaugeLabel
-                                                target: vccpowerGauge
-                                                text: "VCC Power "
+                                                id:  buckOutputPowerGaugeLabel
+                                                target:  buckOutputPowerGauge
+                                                text: "Buck \n Output Power"
                                                 margin: -15
                                                 anchors.top: parent.top
                                                 alignment: SGAlignedLabel.SideBottomCenter
@@ -611,98 +790,142 @@ Item {
                                                 horizontalAlignment: Text.AlignHCenter
 
                                                 SGCircularGauge {
-                                                    id: vccpowerGauge
-                                                    width: vccGaugeContainer.width
-                                                    height: vccGaugeContainer.height - vccPowerGaugeLabel.contentHeight
-                                                    tickmarkStepSize: 0.1
+                                                    id: buckOutputPowerGauge
+                                                    width: buckOutputPowerGaugeContainer.width
+                                                    height: buckOutputPowerGaugeContainer.height - buckOutputPowerGaugeLabel.contentHeight
+                                                    tickmarkStepSize: 10
                                                     minimumValue: 0
-                                                    maximumValue: 1
-                                                    value:  0.5
+                                                    maximumValue: 100
+                                                    value:  10
                                                     gaugeFillColor1: "blue"
                                                     gaugeFillColor2: "red"
                                                     unitText: "W"
+                                                    unitTextFontSizeMultiplier: ratioCalc * 1.5
+                                                    valueDecimalPlaces: 2
+                                                    property var periodic_telemetry_pout: platformInterface.periodic_telemetry.pout
+                                                    onPeriodic_telemetry_poutChanged: {
+                                                        buckOutputPowerGauge.value = periodic_telemetry_pout.toFixed(2)
+                                                    }
+
+
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            id: effGaugeContainer
+
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGAlignedLabel {
+                                                id: effGaugeLabel
+                                                target: effGauge
+                                                text: "Buck \n Efficiency"
+                                                margin: -15
+                                                anchors.top: parent.top
+                                                alignment: SGAlignedLabel.SideBottomCenter
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                font.bold : true
+                                                horizontalAlignment: Text.AlignHCenter
+
+                                                SGCircularGauge {
+                                                    id: effGauge
+                                                    minimumValue: 0
+                                                    maximumValue: 100
+                                                    value: 100
+
+                                                    width: effGaugeContainer.width
+                                                    height: effGaugeContainer.height - effGaugeLabel.contentHeight
+
+                                                    gaugeFillColor1: "blue"
+                                                    gaugeFillColor2: "red"
+                                                    tickmarkStepSize: 10
+                                                    unitText: "%"
+                                                    unitTextFontSizeMultiplier: ratioCalc * 1.5
+                                                    valueDecimalPlaces: 1
+                                                    property var periodic_telemetry_eff: platformInterface.periodic_telemetry.eff
+                                                    onPeriodic_telemetry_effChanged: {
+                                                        effGauge.value = periodic_telemetry_eff
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            id: ldoTempContainer
+
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGAlignedLabel {
+                                                id: ldoTempLabel
+                                                target: ldoTemp
+                                                text: "VCC \n LDO Temperature"
+                                                margin: -15
+                                                anchors.top: parent.top
+                                                alignment: SGAlignedLabel.SideBottomCenter
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                font.bold : true
+                                                horizontalAlignment: Text.AlignHCenter
+
+                                                SGCircularGauge {
+                                                    id: ldoTemp
+                                                    width: ldoTempContainer.width
+                                                    height: ldoTempContainer.height - ldoTempLabel.contentHeight
+                                                    tickmarkStepSize: 15
+                                                    minimumValue: 0
+                                                    maximumValue: 150
+                                                    value: 50
+                                                    gaugeFillColor1: "blue"
+                                                    gaugeFillColor2: "red"
+                                                    unitText: "˚C"
+                                                    unitTextFontSizeMultiplier: ratioCalc * 1.5
+                                                    valueDecimalPlaces: 1
+                                                    property var periodic_telemetry_ldo_temp: platformInterface.periodic_telemetry.ldo_temp
+                                                    onPeriodic_telemetry_ldo_tempChanged: {
+                                                        ldoTemp.value = periodic_telemetry_ldo_temp
+                                                    }
+
+
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            id: boardTempContainer
+
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGAlignedLabel {
+                                                id: boardTempLabel
+                                                target: boardTemp
+                                                text: "Board \n Temperature"
+                                                margin: -15
+                                                anchors.top: parent.top
+                                                alignment: SGAlignedLabel.SideBottomCenter
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                font.bold : true
+                                                horizontalAlignment: Text.AlignHCenter
+
+                                                SGCircularGauge {
+                                                    id: boardTemp
+                                                    width: boardTempContainer.width
+                                                    height: boardTempContainer.height - boardTempLabel.contentHeight
+                                                    tickmarkStepSize: 15
+                                                    minimumValue: 0
+                                                    maximumValue: 150
+                                                    value: 50
+                                                    gaugeFillColor1: "blue"
+                                                    gaugeFillColor2: "red"
+                                                    unitText: "˚C"
                                                     unitTextFontSizeMultiplier: ratioCalc * 1.5
                                                     valueDecimalPlaces: 1
 
-
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            id: powerEffContainer
-
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            SGAlignedLabel {
-                                                id: powerEffGaugeLabel
-                                                target: powerEffGauge
-                                                text: "Power Efficiency "
-                                                margin: -15
-                                                anchors.top: parent.top
-                                                alignment: SGAlignedLabel.SideBottomCenter
-                                                fontSizeMultiplier: ratioCalc * 1.2
-                                                font.bold : true
-                                                horizontalAlignment: Text.AlignHCenter
-
-                                                SGCircularGauge {
-                                                    id: powerEffGauge
-                                                    width: powerEffContainer.width
-                                                    height: powerEffContainer.height - powerEffGaugeLabel.contentHeight
-                                                    tickmarkStepSize: 10
-                                                    minimumValue: 0
-                                                    maximumValue: 100
-                                                    value: 50
-                                                    gaugeFillColor1: "blue"
-                                                    gaugeFillColor2: "red"
-                                                    unitText: "%"
-                                                    unitTextFontSizeMultiplier: ratioCalc * 1.5
-                                                    valueDecimalPlaces: 0
-
-
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            id: tempGaugeContainer
-
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            SGAlignedLabel {
-                                                id: tempGaugeLabel
-                                                target: tempGauge
-                                                text: "Board Temperature"
-                                                margin: -15
-                                                anchors.top: parent.top
-                                                alignment: SGAlignedLabel.SideBottomCenter
-                                                fontSizeMultiplier: ratioCalc * 1.2
-                                                font.bold : true
-                                                horizontalAlignment: Text.AlignHCenter
-
-                                                SGCircularGauge {
-                                                    id: tempGauge
-                                                    minimumValue: 0
-                                                    maximumValue: 150
-                                                    value: 100
-                                                    width: tempGaugeContainer.width
-                                                    height: tempGaugeContainer.height - tempGaugeLabel.contentHeight
-                                                    anchors.centerIn: parent
-                                                    gaugeFillColor1: "blue"
-                                                    gaugeFillColor2: "red"
-                                                    tickmarkStepSize: 15
-                                                    unitText: "˚C"
-                                                    unitTextFontSizeMultiplier: ratioCalc * 2.5
-                                                    valueDecimalPlaces: 0
-                                                    function lerpColor (color1, color2, x){
-                                                        if (Qt.colorEqual(color1, color2)){
-                                                            return color1;
-                                                        } else {
-                                                            return Qt.rgba(
-                                                                        color1.r * (1 - x) + color2.r * x,
-                                                                        color1.g * (1 - x) + color2.g * x,
-                                                                        color1.b * (1 - x) + color2.b * x, 1
-                                                                        );
-                                                        }
+                                                    property var periodic_telemetry_board_temp: platformInterface.periodic_telemetry.board_temp
+                                                    onPeriodic_telemetry_board_tempChanged: {
+                                                        boardTemp.value = periodic_telemetry_board_temp
                                                     }
+
+
                                                 }
                                             }
                                         }
@@ -713,6 +936,142 @@ Item {
 
                                 }
 
+                            }
+                        }
+                        Item {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: parent.height/6
+
+                            ColumnLayout{
+                                anchors.fill: parent
+                                Text {
+                                    id: statusIndicator
+                                    font.bold: true
+                                    text: "Status Indicator"
+                                    font.pixelSize: ratioCalc * 20
+                                    Layout.topMargin: 10
+                                    color: "#696969"
+                                    Layout.leftMargin: 20
+                                }
+
+                                Rectangle {
+                                    id: line6
+                                    Layout.preferredHeight: 2
+                                    Layout.alignment: Qt.AlignCenter
+                                    Layout.preferredWidth: parent.width
+                                    border.color: "lightgray"
+                                    radius: 2
+                                }
+                                Item {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+
+                                    RowLayout{
+                                        anchors.fill: parent
+                                        Item {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGAlignedLabel {
+                                                id: vinLedLabel
+                                                target: vinLed
+                                                alignment: SGAlignedLabel.SideLeftCenter
+                                                anchors.centerIn: parent
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                text: "VIN"
+                                                font.bold: true
+
+                                                SGStatusLight {
+                                                    id: vinLed
+                                                    width: 30
+                                                }
+
+                                                property var pg_vin: platformInterface.pg_vin.value
+                                                onPg_vinChanged:  {
+                                                    if(pg_vin === "false")
+                                                        vinLed.status = SGStatusLight.Red
+                                                    else vinLed.status = SGStatusLight.Green
+                                                }
+                                            }
+                                        }
+                                        Item {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGAlignedLabel {
+                                                id: voutLedLabel
+                                                target: voutLed
+                                                alignment: SGAlignedLabel.SideLeftCenter
+                                                anchors.centerIn: parent
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                text: "VOUT "
+                                                font.bold: true
+
+                                                SGStatusLight {
+                                                    id: voutLed
+                                                    width: 30
+                                                }
+
+                                                property var pg_vout: platformInterface.pg_vout.value
+                                                onPg_voutChanged:  {
+                                                    if(pg_vout === "false")
+                                                        voutLed.status = SGStatusLight.Red
+                                                    else voutLed.status = SGStatusLight.Green
+                                                }
+                                            }
+                                        }
+                                        Item {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGAlignedLabel {
+                                                id: vccLedLabel
+                                                target: vccLed
+                                                alignment: SGAlignedLabel.SideLeftCenter
+                                                anchors.centerIn: parent
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                text: "VCC "
+                                                font.bold: true
+
+                                                SGStatusLight {
+                                                    id: vccLed
+                                                    width: 30
+                                                }
+
+                                                property var pg_vcc: platformInterface.pg_vcc.value
+                                                onPg_vccChanged:  {
+                                                    if(pg_vcc === "false")
+                                                        vccLed.status = SGStatusLight.Red
+                                                    else vccLed.status = SGStatusLight.Green
+                                                }
+                                            }
+                                        }
+                                        Item {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            SGAlignedLabel {
+                                                id: tempAlertLabel
+                                                target: tempAlertLed
+                                                alignment: SGAlignedLabel.SideLeftCenter
+                                                anchors.centerIn: parent
+                                                fontSizeMultiplier: ratioCalc * 1.2
+                                                text: "Temperature \n Alert "
+                                                font.bold: true
+
+                                                SGStatusLight {
+                                                    id: tempAlertLed
+                                                    width: 30
+                                                }
+
+                                                property var pg_vcc: platformInterface.temp_alert.value
+                                                onPg_vccChanged:  {
+                                                    if(pg_vcc === "true")
+                                                        tempAlertLed.status = SGStatusLight.Red
+                                                    else tempAlertLed.status = SGStatusLight.Green
+                                                }
+                                            }
+                                        }
+
+                                    }
+
+                                }
                             }
                         }
                     }
