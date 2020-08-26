@@ -130,8 +130,13 @@ int main(int argc, char *argv[])
     // [prasanth] : Important note: Start HCS before launching the UI
     // So the service callback works properly
 #ifdef START_SERVICES
-    bool started = sdsModel->startHcs();
-    qCDebug(logCategoryStrataDevStudio) << "hcs started=" << started;
+    QObject::connect(
+        &ui, &AppUi::uiLoaded, &app,
+        [&sdsModel]() {
+            bool started = sdsModel->startHcs();
+            qCDebug(logCategoryHcs) << "hcs started =" << started;
+        },
+        Qt::QueuedConnection);
 #endif
     ui.loadUrl(QUrl(QStringLiteral("qrc:/main.qml")));
 
@@ -145,7 +150,7 @@ int main(int argc, char *argv[])
     sdsModel->killHcsSilently = true;
 
     bool killed = sdsModel->killHcs();
-    qCDebug(logCategoryStrataDevStudio) << "hcs killed=" << killed;
+    qCDebug(logCategoryHcs) << "hcs killed =" << killed;
 #endif
 
     return appResult;
