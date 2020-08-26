@@ -1,7 +1,7 @@
 // REPO_NAME & ROOT_BUILD_DIR must be as short as possible
 def REPO_NAME = "s"
 def ROOT_BUILD_DIR = "b"
-def BUILD_NAME = ""
+def BUILD_NAME = UUID.randomUUID().toString()
 def INSTALLER_PATH = ""
 pipeline {
     agent { 
@@ -14,10 +14,6 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                script{
-                    BUILD_NAME = sh(encoding: 'UTF-8', script: "date +%m%d_%H%M%S%SS", returnStdout: true)
-                    BUILD_NAME = BUILD_NAME.minus("\n")
-                }
                 sh "${env.workspace}/deployment/Strata/deploy_strata_windows.sh -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}'"
             }
         }           
