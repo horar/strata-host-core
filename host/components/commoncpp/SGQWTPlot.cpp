@@ -140,13 +140,11 @@ int SGQWTPlot::getCount()
 
 void SGQWTPlot :: setXGrid(bool showGrid)
 {
-    if(xGrid_ != showGrid){
+    if(xGrid_ != showGrid) {
         xGrid_ = showGrid;
         qwtGrid->enableX(xGrid_);
     }
-
     emit xGridChanged();
-
     if (autoUpdate_) {
         update();
     }
@@ -164,9 +162,7 @@ void SGQWTPlot :: setYGrid(bool showGrid)
         yGrid_ = showGrid;
         qwtGrid->enableY(yGrid_);
     }
-
     emit yGridChanged();
-
     if (autoUpdate_) {
         update();
     }
@@ -179,12 +175,11 @@ bool SGQWTPlot :: yGrid()
 
 void SGQWTPlot :: setGridColor(QColor newColor)
 {
-    if (gridColor_ != newColor){
+    if (gridColor_ != newColor) {
         gridColor_ = newColor;
         qwtGrid->setPen(QPen(gridColor_,0,Qt::DotLine));
     }
     emit gridColorChanged();
-
     if (autoUpdate_) {
         update();
     }
