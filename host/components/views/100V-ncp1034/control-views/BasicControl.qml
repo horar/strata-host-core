@@ -25,7 +25,7 @@ Item {
         setExternalVCC.checked = control_states.ldo_enabled
         outputVoltAdjustment.checked = control_states.dac_enabled
 
-        if(control_states.rt_mode === "0")
+        if(control_states.rt_mode === 0)
             setSwitchFreq.checked = true
         else   setSwitchFreq.checked = false
 
