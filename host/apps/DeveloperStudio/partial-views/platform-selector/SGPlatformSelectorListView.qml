@@ -77,12 +77,37 @@ Item {
 
         function contains_text(item) {
             if (filteringText){
-                var keywords = item.description + " " + item.opn + " " + item.verbose_name
-                if(keywords.toLowerCase().includes(filter.lowerCaseText)) {
-                    return true
-                } else {
-                    return false
+                let found = false
+                let replaceIdx = item.description.toLowerCase().indexOf(filter.lowerCaseText)
+                if (replaceIdx > -1) {
+                    found = true;
                 }
+
+                item.descMatchingIndex = replaceIdx
+
+                replaceIdx = item.opn.toLowerCase().indexOf(filter.lowerCaseText)
+                if (replaceIdx > -1) {
+                    found = true
+                }
+                item.opnMatchingIndex = replaceIdx
+
+                replaceIdx = item.verbose_name.toLowerCase().indexOf(filter.lowerCaseText)
+                if (replaceIdx > -1) {
+                    found = true
+                }
+                item.nameMatchingIndex = replaceIdx
+
+                for (let i = 0; i < item.parts_list.count; i++) {
+                    let idxMatched = item.parts_list.get(i).opn.toLowerCase().indexOf(filter.lowerCaseText);
+                    if (idxMatched !== -1) {
+                        found = true
+                    }
+                    item.parts_list.set(i, {
+                        opn: item.parts_list.get(i).opn,
+                        matchingIndex: idxMatched
+                    });
+                }
+                return found
             } else {
                 return true
             }
@@ -430,7 +455,7 @@ Item {
             model: filteredPlatformSelectorModel
             maximumFlickVelocity: 1200 // Limit scroll speed on Windows trackpads: https://bugreports.qt.io/browse/QTBUG-56075
 
-            property real delegateHeight: 160
+            property real delegateHeight: 190
             property real delegateWidth: 950
 
             Component.onCompleted: {

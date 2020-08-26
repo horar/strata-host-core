@@ -13,7 +13,7 @@ import tech.strata.commoncpp 1.0
 Item {
     id: root
     implicitWidth: 950
-    implicitHeight: 160
+    implicitHeight: 190
 
     property bool isCurrentItem: false
 
@@ -178,23 +178,30 @@ Item {
         }
     }
 
-
-
-    Item {
+    Column {
         id: infoColumn
         anchors {
             left: imageContainer.right
             leftMargin: 20
-            top: root.top
             topMargin: 20
-            bottom: root.bottom
             bottomMargin: 20
+            verticalCenter: root.verticalCenter
         }
+        spacing: 12
         width: 350
 
         Text {
             id: name
-            text: model.verbose_name
+            text: {
+                if (model.nameMatchingIndex === -1) {
+                    return model.verbose_name
+                } else {
+                    let txt = model.verbose_name
+                    let idx = model.nameMatchingIndex
+                    return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                }
+            }
+
             font {
                 pixelSize: 16
                 family: Fonts.franklinGothicBold
@@ -202,39 +209,53 @@ Item {
             width: infoColumn.width
             anchors {
                 horizontalCenter: infoColumn.horizontalCenter
-                top: infoColumn.top
             }
             wrapMode: Text.Wrap
             horizontalAlignment: Text.AlignHCenter
+            textFormat: Text.RichText
         }
 
         Text {
             id: productId
-            text: model.opn
+            text: {
+                if (model.opnMatchingIndex === -1) {
+                    return model.opn
+                } else {
+                    let txt = model.opn
+                    let idx = model.opnMatchingIndex
+                    return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                }
+            }
+
             anchors {
                 horizontalCenter: infoColumn.horizontalCenter
-                top: name.bottom
-                topMargin: 12
             }
             width: infoColumn.width
             font {
                 pixelSize: 13
-                family: Fonts.franklinGothicBold
+                family: Fonts.franklinGothicBook
             }
             color: "#333"
             font.italic: true
             wrapMode: Text.Wrap
             horizontalAlignment: Text.AlignHCenter
+            textFormat: Text.RichText
         }
 
         Text {
             id: info
-            text: model.description
+            text: {
+                if (model.descMatchingIndex === -1) {
+                    return model.description
+                } else {
+                    let txt = model.description
+                    let idx = model.descMatchingIndex
+                    return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                }
+            }
+
             anchors {
                 horizontalCenter: infoColumn.horizontalCenter
-                top: productId.bottom
-                topMargin: 12
-                bottom: infoColumn.bottom
             }
             width: infoColumn.width
             font {
@@ -245,6 +266,45 @@ Item {
             wrapMode: Text.Wrap
             elide: Text.ElideRight
             horizontalAlignment: Text.AlignHCenter
+            textFormat: Text.RichText
+        }
+
+        Text {
+            id: parts
+            text: {
+                let str = "Matching Part OPNs: ";
+                for (let i = 0; i < model.parts_list.count; i++) {
+                    if (model.parts_list.get(i).matchingIndex > -1) {
+                        let idx = model.parts_list.get(i).matchingIndex
+                        let part = model.parts_list.get(i).opn
+                        if (str !== "Matching Part OPNs: ") {
+                            str += ", "
+                        }
+                        str += part.substring(0, idx) + "<font color=\"green\">" + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + "</font>" + part.substring(idx + PlatformFilters.keywordFilter.length)
+                    } else {
+                        continue
+                    }
+
+                    if (str.length > 50) {
+                        str += "..."
+                        break
+                    }
+                }
+                return str
+            }
+            visible: PlatformFilters.keywordFilter !== "" && text !== "Matching Part OPNs: "
+            anchors {
+                horizontalCenter: infoColumn.horizontalCenter
+            }
+            width: infoColumn.width
+            font {
+                pixelSize: 12
+                family: Fonts.franklinGothicBook
+            }
+            color: "#666"
+            wrapMode: Text.WordWrap
+            horizontalAlignment: Text.AlignHCenter
+            textFormat: Text.RichText
         }
     }
 
