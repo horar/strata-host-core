@@ -117,24 +117,34 @@ void Flasher::handleOperationFinished(DeviceOperation operation, int data) {
         }
         switch (action_) {
         case Action::FlashFirmware :
+            operation_->startFlashFirmware(static_cast<uint>(binaryFile_.size()), chunkCount_, fileMD5_);
+            break;
         case Action::FlashBootloader :
-            handleFlash(-1);  // negative value (-1) means that no chunk was flashed / backed up yet
+            operation_->startFlashBootloader(static_cast<uint>(binaryFile_.size()), chunkCount_, fileMD5_);
             break;
         case Action::BackupFirmware :
-            handleBackup(-1);  // negative value (-1) means that no chunk was flashed / backed up yet
+            operation_->startBackupFirmware();
             break;
         }
+        break;
+    case DeviceOperation::StartFlashFirmware :
+    case DeviceOperation::StartFlashBootloader :
+        manageFlash(-1);  // negative value (-1) means that no chunk was flashed yet
         break;
     case DeviceOperation::FlashFirmwareChunk :
     case DeviceOperation::FlashBootloaderChunk :
-        handleFlash(data);
+        manageFlash(data);
         break;
-    case DeviceOperation::BackupFirmwareChunk :
+    case DeviceOperation::StartBackupFirmware:
         if (data == device::OPERATION_BACKUP_NO_FIRMWARE) {
             finish(Result::NoFirmware);
         } else {
-            handleBackup(data);
+            chunkCount_ = data;
+            manageBackup(-1);  // negative value (-1) means that no chunk was backed up yet
         }
+        break;
+    case DeviceOperation::BackupFirmwareChunk :
+        manageBackup(data);
         break;
     case DeviceOperation::StartApplication :
         qCInfo(logCategoryFlasher) << device_ << "Launching firmware. Name: '"
@@ -169,8 +179,7 @@ void Flasher::handleOperationFinished(DeviceOperation operation, int data) {
     }
 }
 
-
-void Flasher::handleFlash(int lastFlashedChunk) {
+void Flasher::manageFlash(int lastFlashedChunk) {
     bool flashFirmware = (action_ == Action::FlashFirmware);
 
     // Bootloader uses range 0 to N-1 for chunk numbers, our signals use range 1 to N.
@@ -191,9 +200,7 @@ void Flasher::handleFlash(int lastFlashedChunk) {
         return;
     }
 
-    if (lastFlashedChunk < 0) {  // if no chunk was flashed yet, 'lastFlashedChunk' is negative number (-1)
-        operation_->setFlashInfo(binaryFile_.size(), fileMD5_);
-    } else {
+    if (lastFlashedChunk >= 0) {  // if no chunk was flashed yet, 'lastFlashedChunk' is negative number (-1)
         if (flashedChunk == chunkProgress_) { // this is faster than modulo
             chunkProgress_ += FLASH_PROGRESS_STEP;
             qCInfo(logCategoryFlasher) << device_ << "Flashed chunk " << flashedChunk << " of " << chunkCount_;
@@ -233,10 +240,9 @@ void Flasher::handleFlash(int lastFlashedChunk) {
     }
 }
 
-void Flasher::handleBackup(int chunkNumber) {
+void Flasher::manageBackup(int chunkNumber) {
     if (chunkNumber >= 0) {  // if no chunk was backed up yet, 'chunkNumber' is negative number (-1)
         QVector<quint8> chunk = operation_->recentBackupChunk();
-        int totalChunks = operation_->backupChunksCount();
         qint64 bytesWritten = binaryFile_.write(reinterpret_cast<char*>(chunk.data()), chunk.size());
         if (bytesWritten != chunk.size()) {
             qCCritical(logCategoryFlasher) << device_ << "Cannot write to file '" << binaryFile_.fileName() << "'. " << binaryFile_.errorString();
@@ -248,18 +254,18 @@ void Flasher::handleBackup(int chunkNumber) {
         // Bootloader uses range 0 to N-1 for chunk numbers, our signals use range 1 to N.
         ++chunkNumber;  // move chunk number to range from 1 to N
 
-        if (chunkNumber < totalChunks) {
+        if (chunkNumber < chunkCount_) {
             if (chunkNumber == chunkProgress_) { // this is faster than modulo
                 chunkProgress_ += BACKUP_PROGRESS_STEP;
-                qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber << " of " << totalChunks;
-                emit backupFirmwareProgress(chunkNumber, totalChunks);
+                qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber << " of " << chunkCount_;
+                emit backupFirmwareProgress(chunkNumber, chunkCount_);
             } else {
-                qCDebug(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber << " of " << totalChunks;
+                qCDebug(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber << " of " << chunkCount_;
             }
         } else {  // the last chunk
             binaryFile_.close();
-            qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << totalChunks << " of " << totalChunks << " - firmware backup is done.";
-            emit backupFirmwareProgress(totalChunks, totalChunks);
+            qCInfo(logCategoryFlasher) << device_ << "Backed up chunk " << chunkNumber << " of " << chunkCount_ << " - firmware backup is done.";
+            emit backupFirmwareProgress(chunkNumber, chunkCount_);
             if (startApp_) {
                 operation_->startApplication();
             } else {
@@ -268,7 +274,7 @@ void Flasher::handleBackup(int chunkNumber) {
             return;
         }
     }
-    operation_->backupFirmwareChunk();
+    operation_->backupFirmwareChunk(chunkCount_);
 }
 
 void Flasher::handleOperationError(QString errStr) {

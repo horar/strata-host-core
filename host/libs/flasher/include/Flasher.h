@@ -129,8 +129,10 @@ class Flasher : public QObject
 
     private:
         void flash(bool flashFirmware, bool startApplication);
-        void handleFlash(int lastFlashedChunk);
-        void handleBackup(int chunkNumber);
+        void startFlash();
+        void manageFlash(int lastFlashedChunk);
+        void startBackup();
+        void manageBackup(int chunkNumber);
         void finish(Result result);
 
         device::DevicePtr device_;

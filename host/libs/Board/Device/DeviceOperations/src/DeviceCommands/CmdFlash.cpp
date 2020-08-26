@@ -13,10 +13,9 @@
 
 namespace strata::device::command {
 
-CmdFlash::CmdFlash(const device::DevicePtr& device, qint64 fileSize, const QString& fileMD5, bool flashFirmware) :
+CmdFlash::CmdFlash(const device::DevicePtr& device, bool flashFirmware) :
     BaseDeviceCommand(device, (flashFirmware) ? QStringLiteral("flash_firmware") : QStringLiteral("flash_bootloader")),
-    flashFirmware_(flashFirmware), chunkNumber_(0), fileSize_(fileSize), fileMD5_(fileMD5),
-    maxRetries_(MAX_CHUNK_RETRIES), retriesCount_(0) { }
+    flashFirmware_(flashFirmware), chunkNumber_(0), maxRetries_(MAX_CHUNK_RETRIES), retriesCount_(0) { }
 
 QByteArray CmdFlash::message() {
     rapidjson::StringBuffer sb;
@@ -36,9 +35,6 @@ QByteArray CmdFlash::message() {
     writer.Key(JSON_NUMBER);
     writer.Int(chunkNumber_);
 
-    writer.Key(JSON_TOTAL);
-    writer.Int(chunkCount_);
-
     writer.Key(JSON_SIZE);
     writer.Int(chunk_.size());
 
@@ -55,14 +51,6 @@ QByteArray CmdFlash::message() {
 
     writer.EndObject();
 
-    if (chunkNumber_ == 0) {  // the first chunk
-        writer.Key(JSON_SIZE);
-        writer.Int(fileSize_);
-
-        writer.Key(JSON_MD5);
-        writer.String(fileMD5_.toStdString().c_str());
-    }
-
     writer.EndObject();
 
     writer.EndObject();
@@ -71,9 +59,9 @@ QByteArray CmdFlash::message() {
 }
 
 bool CmdFlash::processNotification(rapidjson::Document& doc) {
-    CommandValidator::JsonType jsonType = (flashFirmware_) ?
-                                          CommandValidator::JsonType::flashFirmwareRes :
-                                          CommandValidator::JsonType::flashBootloaderRes;
+    CommandValidator::JsonType jsonType = (flashFirmware_)
+                                          ? CommandValidator::JsonType::flashFirmwareRes
+                                          : CommandValidator::JsonType::flashBootloaderRes;
     if (CommandValidator::validate(jsonType, doc)) {
         const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
         if (status == JSON_OK) {
