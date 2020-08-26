@@ -88,6 +88,27 @@ ApplicationWindow {
         }
     }
 
+    header: ToolBar {
+        id: appToolbar
+
+        Rectangle {
+            id: strataHeaderBackground
+
+            anchors.fill: parent
+            color: "black"
+
+            Image {
+                id: strataLogoImage
+
+                height: 0.8 * parent.height
+                anchors.verticalCenter: parent.verticalCenter
+                source: "qrc:/images/strata-logo-reverse.svg"
+                fillMode: Image.PreserveAspectFit
+                mipmap: true
+            }
+        }
+    }
+
     footer: DialogButtonBox {
         standardButtons: DialogButtonBox.Abort
         onRejected: Qt.quit(-1);
