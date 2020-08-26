@@ -120,12 +120,13 @@
  *
  */
 
-#ifndef CONNECTOR_H__
-#define CONNECTOR_H__
+#pragma once
 
 #include <iostream>
 #include <mutex>
 #include <string>
+
+namespace strata::connector {
 
 // console prints
 // DEBUG is used for showing the debug print messages on console.
@@ -162,7 +163,6 @@ public:
     virtual bool close() = 0;
 
     // non-blocking calls
-
     virtual bool send(const std::string& message) = 0;
     virtual bool read(std::string& notification) = 0;
 
@@ -180,12 +180,15 @@ public:
     void setDealerID(const std::string& id);
     std::string getDealerID() const;
     std::string getPlatformUUID() const;
-    bool isSpyglassPlatform() const;
+    bool isStrataPlatform() const;
     void setConnectionState(bool connection_state);
     bool isConnected() const;
     void setPlatformUUID(const std::string& id);
 
     friend std::ostream& operator<<(std::ostream& stream, const Connector& c);
+
+    enum class CONNECTOR_TYPE { SERIAL, ROUTER, DEALER, PUBLISHER, SUBSCRIBER, REQUEST, RESPONSE };
+    static std::unique_ptr<Connector> getConnector(const CONNECTOR_TYPE type);
 
 protected:
     void setPlatformConnected(bool state);
@@ -199,15 +202,7 @@ private:
     std::string server_;
 
     bool connection_state_ = false;
-    bool spyglass_platform_connected_ =
-        false;  // flag used in hcs for checking if platform is available
+    bool strata_platform_connected_ = false;  // used in HCS for checking if platform is available
 };
 
-namespace ConnectorFactory
-{
-enum class CONNECTOR_TYPE { SERIAL, ROUTER, DEALER, PUBLISHER, SUBSCRIBER, REQUEST, RESPONSE };
-
-Connector* getConnector(const CONNECTOR_TYPE type);
-};  // namespace ConnectorFactory
-
-#endif
+}  // namespace strata::connector

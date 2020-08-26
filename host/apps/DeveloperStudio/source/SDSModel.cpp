@@ -81,13 +81,17 @@ bool SDSModel::startHcs()
     if (QFile::exists(hcsPath)) {
         hcsProcess_ = new QProcess(this);
 
+        hcsProcess_->setStandardOutputFile(QProcess::nullDevice());
+        hcsProcess_->setStandardErrorFile(QProcess::nullDevice());
+
+        connect(hcsProcess_, &QProcess::started,
+            this, &SDSModel::startedProcess);
+
         connect(hcsProcess_, qOverload<int, QProcess::ExitStatus>(&QProcess::finished),
                 this, &SDSModel::finishHcsProcess);
 
         connect(hcsProcess_, &QProcess::errorOccurred,
                 this, &SDSModel::handleHcsProcessError);
-
-        forwardHcsOutput();
 
         QStringList arguments;
         arguments << "-f" << hcsConfigPath;
@@ -99,13 +103,11 @@ bool SDSModel::startHcs()
             qCWarning(logCategoryStrataDevStudio) << "Process does not started yet (state:" << hcsProcess_->state() << ")";
             return false;
         }
-        qCInfo(logCategoryStrataDevStudio) << "HCS started";
     } else {
         qCCritical(logCategoryStrataDevStudio) << "Failed to start HCS: does not exist";
         return false;
     }
 
-    setHcsConnected(true);
     return true;
 }
 
@@ -163,14 +165,28 @@ void SDSModel::shutdownService()
     remoteHcsNode_->shutdownService();
 }
 
+void SDSModel::startedProcess()
+{
+    qCInfo(logCategoryStrataDevStudio) << "HCS started";
+
+    setHcsConnected(true);
+}
+
 void SDSModel::finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus)
 {
     qCDebug(logCategoryStrataDevStudio)
-            << "exitCode=" << exitCode
-            << "exitStatus=" << exitStatus;
+        << "exitStatus=" << exitStatus
+        << "exitCode=" << exitCode;
 
     hcsProcess_->deleteLater();
     hcsProcess_.clear();
+
+    if (exitStatus == QProcess::NormalExit && exitCode == (EXIT_FAILURE + 1))
+    {
+        // LC: todo; there was another HCS instance; new one is going down
+        qCDebug(logCategoryStrataDevStudio) << "Quitting - another HCS instance was running";
+        return;
+    }
 
     if (killHcsSilently == false) {
         setHcsConnected(false);
@@ -190,23 +206,4 @@ void SDSModel::setHcsConnected(bool hcsConnected)
 
     hcsConnected_ = hcsConnected;
     emit hcsConnectedChanged();
-}
-
-void SDSModel::forwardHcsOutput()
-{
-    // XXX: [LC] temporary solutions until Strata Monitor takeover 'hcs' service management
-    QObject::connect(hcsProcess_, &QProcess::readyReadStandardOutput, [&]() {
-        QByteArray stdOut = hcsProcess_->readAllStandardOutput();
-        const QString hscMsg{QString::fromLatin1(stdOut)};
-        for (const auto& line : hscMsg.split(QRegExp("\n|\r\n|\r"))) {
-            qCDebug(logCategoryHcs) << line;
-        }
-    } );
-    QObject::connect(hcsProcess_, &QProcess::readyReadStandardError, [&]() {
-        const QString hscMsg{QString::fromLatin1(hcsProcess_->readAllStandardError())};
-        for (const auto& line : hscMsg.split(QRegExp("\n|\r\n|\r"))) {
-            qCCritical(logCategoryHcs) << line;
-        }
-    });
-    // XXX: [LC] end
 }
