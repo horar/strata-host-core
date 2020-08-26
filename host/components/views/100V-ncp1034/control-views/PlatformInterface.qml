@@ -207,7 +207,7 @@ Item {
                            })
 
     property var set_vout : ({
-                                 "cmd" : "set_ss",
+                                 "cmd" : "set_vout",
                                  "payload": {
                                      "value": 12.0	// default value
                                  },
