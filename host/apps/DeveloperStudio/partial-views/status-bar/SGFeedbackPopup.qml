@@ -245,6 +245,10 @@ SGStrataPopup {
                         }
 
                         TextEdit {
+                            Accessible.role: Accessible.EditableText
+                            Accessible.name: "FeedbackEdit"
+
+
                             id: textEdit
                             width: scrollingText.width
                             wrapMode: TextEdit.Wrap
@@ -272,6 +276,10 @@ SGStrataPopup {
                 }
 
                 Button {
+                    Accessible.onPressAction: function() {
+                        clicked();
+                    }
+
                     id: submitButton
                     text: "Submit"
                     Layout.bottomMargin: 20

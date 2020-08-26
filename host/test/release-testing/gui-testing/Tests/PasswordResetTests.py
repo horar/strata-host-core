@@ -2,7 +2,7 @@
 Tests involving resetting user passwords.
 '''
 import unittest
-from GUIInterface.StrataUISingleton import finder
+from GUIInterface.StrataUI import *
 import time
 import Common
 
@@ -13,21 +13,21 @@ class PasswordResetTest(unittest.TestCase):
     Test resetting the password of a nonexistant user
     '''
     def setUp(self) -> None:
-        ui = finder.GetWindow()
-        ui.SetToTab(Common.LOGIN_TAB)
-        ui.PressButton(Common.RESET_PASSWORD_OPEN_BUTTON)
+        ui = StrataUI()
+        ui.SetToLoginTab()
+        ui.PressButtonByName(Common.RESET_PASSWORD_OPEN_BUTTON)
 
     def tearDown(self) -> None:
-        ui = finder.GetWindow()
-        ui.PressButton(Common.RESET_PASSWORD_CLOSE_BUTTON)
+        ui = StrataUI()
+        ui.PressButtonByName(Common.RESET_PASSWORD_CLOSE_BUTTON)
 
     def doTest(self, username):
-        ui = finder.GetWindow()
+        ui = StrataUI()
         self.assertTrue(ui.OnForgotPassword())
 
         ui.SetEditText(Common.RESET_PASSWORD_EDIT, username)
 
-        ui.PressButton(Common.RESET_PASSWORD_SUBMIT_BUTTON)
+        ui.PressButtonByName(Common.RESET_PASSWORD_SUBMIT_BUTTON)
 
         time.sleep(1)
 

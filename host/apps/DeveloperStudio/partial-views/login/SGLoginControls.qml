@@ -128,6 +128,9 @@ Item {
         }
 
         Rectangle {
+            Accessible.role: Accessible.AlertMessage
+            Accessible.name: "LoginError"
+            Accessible.description: loginErrorText.text
             id: loginErrorRect
             Layout.preferredWidth: usernameField.width
             Layout.preferredHeight: 0
@@ -167,9 +170,21 @@ Item {
             }
         }
 
-        RowLayout {
+   RowLayout {
             id: rowLoginControls
             Layout.fillHeight: false
+        Text {
+            Accessible.role: Accessible.Button
+            Accessible.name: forgotLink.text
+            Accessible.onPressAction: function() {
+                forgotPopup.visible = true
+            }
+
+            id: forgotLink
+            Layout.alignment: Qt.AlignRight
+            text: "Forgot Password"
+            color: forgotLink.pressed ? "#ddd" : "#545960"
+            font.underline: forgotMouse.containsMouse
 
             CheckBox {
                 id: rememberCheckBox
@@ -210,6 +225,10 @@ Item {
             Layout.preferredWidth: loginButton.width
 
             Button {
+                Accessible.onPressAction: function () {
+                    loginButton.submit()
+                }
+
                 id: loginButton
                 width: usernameField.width
                 height: usernameField.height
@@ -357,4 +376,5 @@ Item {
             }
         }
     }
+}
 }

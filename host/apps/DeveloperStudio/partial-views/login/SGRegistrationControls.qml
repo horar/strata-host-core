@@ -28,6 +28,10 @@ Item {
         width: parent.width
 
         Rectangle {
+            Accessible.role: Accessible.AlertMessage
+            Accessible.name: "RegisterError"
+            Accessible.description: alertText.text
+
             id: alertRect
             Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: fieldGrid.width * 0.75
@@ -218,6 +222,10 @@ Item {
             Layout.alignment: Qt.AlignHCenter
 
             Button {
+                Accessible.onPressAction: function() {
+                    clicked()
+                }
+
                 id: registerButton
                 height: 32
                 width: parent.width

@@ -1,6 +1,5 @@
 import unittest
-from GUIInterface.StrataUISingleton import finder
-import GUIInterface.StrataUIHelper as macro
+from GUIInterface.StrataUI import *
 import time
 import Common
 
@@ -14,37 +13,35 @@ class LoginInvalidTest(unittest.TestCase):
     Test logging in with invalid username/password
     '''
     def setUp(self):
-        ui = finder.GetWindow()
-        ui.SetToTab(Common.LOGIN_TAB)
+        ui = StrataUI()
+        ui.SetToLoginTab()
 
     def tearDown(self) -> None:
         pass
 
     def test_login_submit(self):
-        ui = finder.GetWindow()
+        ui = StrataUI()
         self.assertTrue(ui.OnLoginScreen())
 
-        macro.Login(ui, "badusername", "badpassword")
-        time.sleep(1)
+        Login(ui, "badusername", "badpassword", self)
         self.assertTrue(ui.AlertExists(Common.LOGIN_ALERT))
+
 
 class RegisterExisting(unittest.TestCase):
     '''
     Test registering with an existing user.
     '''
     def setUp(self) -> None:
-        ui = finder.GetWindow()
-        ui.SetToTab(Common.REGISTER_TAB)
-
+        ui = StrataUI()
+        ui.SetToRegisterTab()
 
     def tearDown(self) -> None:
         pass
 
     def test_registerexisting(self):
-        ui = finder.GetWindow()
+        ui = StrataUI()
         self.assertTrue(ui.OnRegisterScreen())
-
-        macro.Register(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, "Testy", "McTest", "Lead QA", "ON Semiconductor")
         time.sleep(1)
-        self.assertTrue(ui.AlertExists(Common.REGISTER_ALERT))
+        Register(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, "Testy", "McTest", "ON Semiconductor", "Lead QA", self)
+        self.assertTrue(ui.AlertExists(REGISTER_ALERT))
 

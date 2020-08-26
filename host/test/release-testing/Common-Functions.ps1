@@ -24,6 +24,18 @@ function Assert-PythonAndPyzmq {
                 Write-Host -ForegroundColor Red "Error: ZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions.`nAborting."
                 Exit-TestScript -1
             }
+            If (!(Start-Process $PythonExec '-c "import pyautogui"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
+                Write-Host -ForegroundColor Red "Error: PyAutoGui library for Python is required, visit https://pyautogui.readthedocs.io/en/latest/index.html for instructions.`nAborting."
+                Exit-TestScript -1
+            }
+            If (!(Start-Process $PythonExec '-c "import cv2"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
+                Write-Host -ForegroundColor Red "Error: opencv-python library for Python is required, visit https://pypi.org/project/opencv-python/ for instructions.`nAborting."
+                Exit-TestScript -1
+            }
+            If (!(Start-Process $PythonExec '-c "import requests"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
+                Write-Host -ForegroundColor Red "Error: requests library for Python is required, visit https://requests.readthedocs.io/en/master/user/install/ for instructions.`nAborting."
+                Exit-TestScript -1
+            }
         } Else {
             Exit-TestScript -1 "Error: Python not found.`nAborting."
         }
@@ -66,6 +78,19 @@ function Assert-PythonScripts {
     If (!(Test-Path $PythonPlatformIdentificationTest)) {
         Exit-TestScript -1 "Error: cannot find Python script at $PythonPlatformIdentificationTest.`nAborting."
     }
+    If (!(Test-Path $PythonGUIMain)) {
+        Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMain.`nAborting."
+    }
+    If (!(Test-Path $PythonGUIMainLoginTestPre)) {
+        Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMainLoginTestPre.`nAborting."
+    }
+    If (!(Test-Path $PythonGUIMainLoginTestPost)) {
+        Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMainLoginTestPost.`nAborting."
+    }
+    If (!(Test-Path $PythonGUIMainNoNetwork)) {
+        Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMainNoNetwork.`nAborting."
+    }
+
 }
 
 # Check if PS module 'PSSQLite' is installed
@@ -212,6 +237,8 @@ function Show-TestSummary {
     Show-TestResult -TestName "Test-TokenAndViewsDownload" -TestResults $TokenAndViewsDownloadResults
 
     Show-TestResult -TestName "Test-CollateralDownload" -TestResults $CollateralDownloadResults
+
+    Show-TestResult -TestName "Test-GUI" -TestResults $GUIResults
 
     If ($EnablePlatformIdentificationTest -eq $true) { 
         Show-TestResult -TestName "Test-PlatformIdentification" -TestResults $PlatformIdentificationResults

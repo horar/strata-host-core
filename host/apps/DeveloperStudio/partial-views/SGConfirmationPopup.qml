@@ -115,6 +115,10 @@ Popup {
                 }
 
                 Button {
+                    Accessible.onPressAction: function() {
+                        clicked()
+                    }
+
                     id: acceptButton
                     text: "Accept"
 
@@ -159,6 +163,10 @@ Popup {
                 }
 
                 Button {
+                    Accessible.onPressAction: function() {
+                        clicked()
+                    }
+
                     id: cancelButton
                     text: "Cancel"
                     visible: text !== ""

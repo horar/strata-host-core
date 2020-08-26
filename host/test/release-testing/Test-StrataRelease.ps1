@@ -51,6 +51,7 @@ Set-Variable "SDSExecFile"   "$SDSRootDir\Strata Developer Studio.exe"
 Set-Variable "HCSDbFile"     "$HCSAppDataDir\db\strata_db\db.sqlite3"
 Set-Variable "TestRoot"      $PSScriptRoot
 Set-Variable "JLinkExePath"  "${Env:ProgramFiles(x86)}\SEGGER\JLink\JLink.exe"
+Set-Variable "RequirementsFile" "$TestRoot\requirements.txt"
 
 # Define variables for server authentication credentials needed to acquire login token
 Set-Variable "SDSServer"      "http://18.191.108.5/"      # "https://strata.onsemi.com"
@@ -61,6 +62,10 @@ Set-Variable "SDSLoginInfo"   '{"username":"test@test.com","password":"Strata123
 Set-Variable "PythonCollateralDownloadTest"     "$PSScriptRoot/hcs/hcs-collateral-download-test.py"
 Set-Variable "PythonControlViewTest"            "$PSScriptRoot/strataDev/control-view-test.py"
 Set-Variable "PythonPlatformIdentificationTest" "$PSScriptRoot/PlatformIdentification/platform-identification-test.py"
+Set-Variable "PythonGUIMain"                    "$PSScriptRoot/gui-testing/main.py"
+Set-Variable "PythonGUIMainLoginTestPre"        "$PSScriptRoot/gui-testing/main_login_test_pre.py"
+Set-Variable "PythonGUIMainLoginTestPost"       "$PSScriptRoot/gui-testing/main_login_test_post.py"
+Set-Variable "PythonGUIMainNoNetwork"           "$PSScriptRoot/gui-testing/main_no_network.py"
 
 # Import common functions
 . "$PSScriptRoot\Common-Functions.ps1"
@@ -82,6 +87,9 @@ Set-Variable "PythonPlatformIdentificationTest" "$PSScriptRoot/PlatformIdentific
 
 # Import functions for test "Test-PlatformIdentification"
 . "$PSScriptRoot\PlatformIdentification\Test-PlatformIdentification.ps1"
+
+#Import functions for test "Test-GUI"
+. "$PSScriptRoot\gui-testing\Test-GUI.ps1"
 
 #------------------------------------------------------[Pre-requisite checks]------------------------------------------------------
 
@@ -112,16 +120,21 @@ $SDSInstallerResults = Test-SDSInstaller -SDSInstallerPath $SDSInstallerPath
 # Search for SDS and HCS
 Assert-StrataAndHCS
 
+
 # Run Test-Database (HCS database testing)
 $DatabaseResults = Test-Database
 
 # Run Test-TokenAndViewsDownload
 $TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
 
-# Run Test-CollateralDownload (HCS collateral download testing)
+#Run Test-GUI
+$GUIResults = Test-GUI
+
+
+#Run Test-CollateralDownload (HCS collateral download testing)
 $CollateralDownloadResults = Test-CollateralDownload
 
-# Run Test-PlatformIdentification
+#Run Test-PlatformIdentification
 # The test is disabled by default, The reason is that it requires having a platform and a JLink connected to the test machine.
 # To enable the test, pass this flag -EnablePlatformIdentificationTest when running Test-StrataRelease.ps script
 If ($EnablePlatformIdentificationTest -eq $true) {
@@ -131,7 +144,7 @@ If ($EnablePlatformIdentificationTest -eq $true) {
 # Run Test-SDSControlViews (SDS control view testing)
 # Because the recent changes in the Navigation of Strata Developer Studio, this test is not working as expected.
 # These issues will be resolved in CS-626
-# $SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
+#$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
 
 Show-TestSummary
 

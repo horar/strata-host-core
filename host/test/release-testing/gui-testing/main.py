@@ -10,7 +10,7 @@ import sys
 
 if __name__ == "__main__":
     Common.populateConstants(sys.argv)
-    strata.bindToStrata(Common.DEFAULT_URL)
+    #strata.bindToStrata(Common.DEFAULT_URL)
 
     Common.awaitStrata()
 

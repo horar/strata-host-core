@@ -6,6 +6,10 @@ import tech.strata.sgwidgets 1.0
 import QtQuick.Layouts 1.12
 
 Button {
+    Accessible.onPressAction: function() {
+        clicked()
+    }
+
     id: root
     text: qsTr("Button Text")
     hoverEnabled: true

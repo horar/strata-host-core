@@ -1,9 +1,10 @@
 '''
-Singleton modlue for connecting and sending commands to strata.
+Singleton module for connecting and sending commands to strata.
 '''
 import zmq
 import json
 import threading
+import Common
 __client:zmq.Socket
 __strataId:bytes
 
@@ -34,7 +35,7 @@ def __init():
 
 def initPlatformList():
     '''
-    Wait untill Strata requests a platform list and send an empty one.
+    Wait until Strata requests a platform list and send an empty one.
     :return:
     '''
     global __client
@@ -46,8 +47,7 @@ def initPlatformList():
 
 def bindToStrata(url):
     '''
-    Bind to HCS port and start reciving data
-    :param strataPath:
+    Bind to HCS port and start receiving data
     :param url:
     :return:
     '''
