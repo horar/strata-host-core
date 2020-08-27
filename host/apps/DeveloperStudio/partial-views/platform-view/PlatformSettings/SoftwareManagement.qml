@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
 
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
@@ -144,7 +145,7 @@ ColumnLayout {
                 downloadFilepath = ""
             } else {
                 upToDate = true
-                platformStack.updateControl(latestVersion.version, activeVersion ? activeVersion.version : "", downloadFilepath)
+                platformStack.startControlUpdate(latestVersion.version, downloadFilepath)
                 activeVersion = latestVersion
                 downloadFilepath = ""
             }

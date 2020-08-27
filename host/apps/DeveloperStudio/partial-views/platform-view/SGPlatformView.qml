@@ -36,6 +36,8 @@ StackLayout {
     property bool usingLocalView: true
     property bool fullyInitialized: platformStack.initialized && sgUserSettings.initialized
     property bool initialized: false
+    property string updateVersion: ""
+    property string updateVersionPath: ""
 
     onConnectedChanged: {
         initialize()
@@ -109,8 +111,13 @@ StackLayout {
             NavigationControl.context.class_id = model.class_id
             NavigationControl.context.device_id = model.device_id
 
-            controlContainer.setSource(qml_control);
-            controlContainer.active = true;
+            let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlContainer);
+            if (obj === null) {
+                obj = sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlContainer);
+                obj.error_message = "Could not load view."
+            } else {
+                controlLoaded = true
+            }
 
             delete NavigationControl.context.class_id
             delete NavigationControl.context.device_id
@@ -120,38 +127,11 @@ StackLayout {
     /*
       Updates a control view to a new version
     */
-    function updateControl(newVersion, oldVersion, newVersionPath) {
-        let versionsToRemove = [];
-
-        for (let i = 0; i < controlViewListCount; i++) {
-            if (controlViewList.version(i) === newVersion) {
-                controlViewList.setInstalled(i, true);
-                controlViewList.setFilepath(i, newVersionPath);
-            } else if (controlViewList.version(i) !== newVersion && controlViewList.installed(i) === true) {
-                controlViewList.setInstalled(i, false);
-                versionsToRemove.push({
-                                            "filepath": controlViewList.filepath(i),
-                                            "version": controlViewList.version(i)
-                                        });
-            }
-        }
-
+    function startControlUpdate(newVersion, newVersionPath) {
+        platformStack.updateVersion = newVersion;
+        platformStack.updateVersionPath = newVersionPath;
         removeControl();
-
-        let success = sdsModel.resourceLoader.deleteStaticViewResource(model.class_id, model.name);
-
-        if (versionsToRemove.length > 0) {
-            for (let i = 0; i < versionsToRemove.length; i++) {
-                let success = sdsModel.resourceLoader.deleteViewResource(model.class_id, versionsToRemove[i].filepath, versionsToRemove[i].version);
-                if (success) {
-                    console.info("Successfully deleted control view version", versionsToRemove[i].version, "for platform", model.class_id);
-                } else {
-                    console.error("Could not delete control view version", versionsToRemove[i].version, "for platform", model.class_id);
-                }
-            }
-        }
-        usingLocalView = false;
-        sdsModel.resourceLoader.registerControlViewResources(model.class_id, newVersionPath, newVersion);
+        updateControlTimer.start()
     }
 
     /*
@@ -159,8 +139,48 @@ StackLayout {
     */
     function removeControl () {
         if (controlLoaded) {
-            controlContainer.setSource("")
-            controlContainer.active = false
+            for (let i = 0; i < controlContainer.children.length; i++) {
+                controlContainer.children[i].destroy();
+            }
+            controlLoaded = false
+        }
+    }
+
+    /*
+      This function should only be called after the previous view is completely destroyed
+    */
+    function updateControl() {
+        if (platformStack.updateVersion !== "") {
+            let versionsToRemove = [];
+
+            for (let i = 0; i < controlViewListCount; i++) {
+                if (controlViewList.version(i) === platformStack.updateVersion) {
+                    controlViewList.setInstalled(i, true);
+                    controlViewList.setFilepath(i, platformStack.updateVersionPath);
+                } else if (controlViewList.version(i) !== platformStack.updateVersion && controlViewList.installed(i) === true) {
+                    controlViewList.setInstalled(i, false);
+                    versionsToRemove.push({
+                                                "filepath": controlViewList.filepath(i),
+                                                "version": controlViewList.version(i)
+                                            });
+                }
+            }
+            let success = sdsModel.resourceLoader.deleteStaticViewResource(model.class_id, model.name, controlContainer);
+
+            if (versionsToRemove.length > 0) {
+                for (let i = 0; i < versionsToRemove.length; i++) {
+                    let success = sdsModel.resourceLoader.deleteViewResource(model.class_id, versionsToRemove[i].filepath, versionsToRemove[i].version, controlContainer);
+                    if (success) {
+                        console.info("Successfully deleted control view version", versionsToRemove[i].version, "for platform", model.class_id);
+                    } else {
+                        console.error("Could not delete control view version", versionsToRemove[i].version, "for platform", model.class_id);
+                    }
+                }
+            }
+            usingLocalView = false;
+            sdsModel.resourceLoader.registerControlViewResources(model.class_id, platformStack.updateVersionPath, platformStack.updateVersion);
+            platformStack.updateVersion = ""
+            platformStack.updateVersionPath = ""
         }
     }
 
@@ -253,6 +273,16 @@ StackLayout {
             }
         }
 
+        Timer {
+            id: updateControlTimer
+            interval: 50
+            repeat: false
+
+            onTriggered: {
+                updateControl()
+            }
+        }
+
         Rectangle {
             id: loadingBarContainer
             x: platformStack.width / 2 - width / 2
@@ -284,25 +314,12 @@ StackLayout {
             }
         }
 
-        Loader {
+        Item {
             id: controlContainer
 
             anchors {
                 fill: parent
             }
-
-            onStatusChanged: {
-                if (status === Loader.Ready) {
-                    platformStack.controlLoaded = true
-                } else if (status === Loader.Error) {
-                    controlContainer.setSource(NavigationControl.screens.LOAD_ERROR)
-                    controlContainer.item.error_message = "Unable to load this view."
-                    platformStack.controlLoaded = true
-                } else if (status === Loader.Null) {
-                    platformStack.controlLoaded = false
-                }
-            }
-
         }
 
         DisconnectedOverlay {
@@ -351,9 +368,10 @@ StackLayout {
                 if (payload.error_string.length > 0) {
                     loadingBar.color = "red"
                     loadingBar.percentReady = 1.0
-                    controlContainer.setSource(NavigationControl.screens.LOAD_ERROR)
-                    controlContainer.active = true
-                    controlContainer.item.error_message = payload.error_string
+                    removeControl();
+                    let obj = sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlContainer);
+                    obj.error_message = payload.error_string
+                    controlLoaded = true
                     return
                 }
 

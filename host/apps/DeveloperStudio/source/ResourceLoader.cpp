@@ -21,10 +21,14 @@ ResourceLoader::~ResourceLoader()
     }
 }
 
-bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &path, const QString &version) {
+bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &path, const QString &version, QObject *loader) {
     if (path.isEmpty() || version.isEmpty()) {
         return false;
     }
+
+    QQmlEngine *eng = qmlEngine(loader);
+    eng->trimComponentCache();
+    eng->collectGarbage();
 
     QFile resourceInfo(path);
 
@@ -50,7 +54,11 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
     return true;
 }
 
-bool ResourceLoader::deleteStaticViewResource(const QString &class_id, const QString &displayName) {
+bool ResourceLoader::deleteStaticViewResource(const QString &class_id, const QString &displayName, QObject *loader) {
+    QQmlEngine *eng = qmlEngine(loader);
+    eng->trimComponentCache();
+    eng->collectGarbage();
+
     QFile rccFile(ResourcePath::viewsResourcePath() + "/views-" + displayName + ".rcc");
 
     qCDebug(logCategoryResourceLoader) << "Attempting to remove static resource file" << rccFile.fileName();
@@ -175,6 +183,38 @@ QUrl ResourceLoader::getStaticResourcesUrl() {
 bool ResourceLoader::isViewRegistered(const QString &class_id) {
     QHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.find(class_id);
     return itr != viewsRegistered_.end() && !itr.value()->filepath.isEmpty();
+}
+
+QQmlComponent* ResourceLoader::createComponent(const QString &path, QQuickItem *parent) {
+    QQmlEngine *e = qmlEngine(parent);
+    if (e) {
+        QQmlComponent *component = new QQmlComponent(e, path);
+        if (component->errors().count() > 0) {
+            qCCritical(logCategoryResourceLoader) << component->errorString();
+        }
+        return component;
+    } else {
+        return NULL;
+    }
+}
+
+QQuickItem* ResourceLoader::createViewObject(const QString &path, QQuickItem *parent) {
+    QQmlEngine *e = qmlEngine(parent);
+    if (e) {
+        QQmlComponent component = QQmlComponent(e, path);
+        if (component.errors().count() > 0) {
+            qCCritical(logCategoryResourceLoader) << component.errorString();
+        }
+        //todo 'if component/object null' error handling etc
+        QObject* object = component.create();
+        QQuickItem* item = qobject_cast<QQuickItem*>( object );
+        QQmlEngine::setObjectOwnership(item, QQmlEngine::JavaScriptOwnership);
+
+        item->setParentItem(parent);
+        return item;
+    } else {
+        return NULL;
+    }
 }
 
 QString ResourceLoader::getQResourcePrefix(const QString &class_id, const QString &version) {
