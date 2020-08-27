@@ -1,3 +1,4 @@
+# TODO [Carter] - to be implemented in CS-1001
 # add_executable(${PROJECT_NAME}-test
 #     main.cpp
 #     SGUserSettings-test.cpp
