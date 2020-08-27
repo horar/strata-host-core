@@ -7,22 +7,21 @@ import tech.strata.fonts 1.0
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/navigation_control.js" as NavigationControl
 
-Rectangle {
+Item {
     id: platformTabRoot
     height: 40
     width: 200
-
-    color: mouse.containsMouse ? "#34993b" : inView ? "#33b13b" : "black"
 
     property color menuColor: "#33b13b"
 
     property string view: model.view
     property string name: model.name
     property string class_id: model.class_id
+    property var device_id: model.device_id
     property bool connected: model.connected
     property var available: model.available
     property int index: model.index
-    property bool inView: true
+    property bool inView: NavigationControl.stack_container_.currentIndex === index + 1
     property string selectedButtonIcon: ""
 
     Component.onCompleted: {
@@ -41,15 +40,15 @@ Rectangle {
             dropDownPopup.close()
 
             if (selection.view === "close"){
-                coreInterface.disconnectPlatform() // cancels any active collateral downloads
-                documentManager.clearDocuments();
-
-                let data = {"class_id": platformTabRoot.class_id}
+                let data = {
+                    "class_id": platformTabRoot.class_id,
+                    "device_id": platformTabRoot.device_id
+                }
+                PlatformSelection.closePlatformView(data)
                 NavigationControl.updateState(NavigationControl.events.CLOSE_PLATFORM_VIEW_EVENT, data)  // must call last - model entry/delegate begins destruction
             } else {
                 model.view = selection.view
                 setSelectedButton()
-                platformTabRoot.bringIntoView()
             }
         }
     }
@@ -75,16 +74,24 @@ Rectangle {
             buttonData = {
                 "text": "Documents",
                 "view": "collateral",
-                "icon": "qrc:/images/icons/file.svg",
+                "icon": "qrc:/sgimages/file-blank.svg",
                 "selected": false
             }
             buttonModel.append(buttonData)
         }
 
         buttonData = {
+            "text": "Settings",
+            "view": "settings",
+            "icon": "qrc:/sgimages/cog.svg",
+            "selected": false
+        }
+        buttonModel.append(buttonData)
+
+        buttonData = {
             "text": "Close Platform",
             "view": "close",
-            "icon": "qrc:/images/icons/times.svg",
+            "icon": "qrc:/sgimages/times.svg",
             "selected": false
         }
         buttonModel.append(buttonData)
@@ -93,7 +100,7 @@ Rectangle {
     function setControlIcon () {
         for (let i = 0; i < buttonModel.count; i++) {
             if (buttonModel.get(i).view === "control") {
-                buttonModel.get(i).icon = (connected ? "qrc:/images/icons/sliders-h.svg" : "qrc:/images/icons/disconnected.svg")
+                buttonModel.get(i).icon = (connected ? "qrc:/sgimages/sliders-h.svg" : "qrc:/sgimages/disconnected.svg")
                 if (buttonModel.get(i).selected) {
                     selectedButtonIcon = buttonModel.get(i).icon
                 }
@@ -115,47 +122,73 @@ Rectangle {
 
     RowLayout {
         anchors {
-            verticalCenter: parent.verticalCenter
-            left: parent.left
-            leftMargin: 10
-            right: parent.right
-            rightMargin: 10
+            fill: parent
         }
-        spacing: 10
+        spacing: 0
 
-        SGText {
-            color: "white"
-            text: platformTabRoot.name
+        Rectangle {
+            color: mouse.containsMouse ? "#34993b" : inView ? platformTabRoot.menuColor : mouseMenu.containsMouse ? platformTabRoot.menuColor : "#444"
+            Layout.fillHeight: true
             Layout.fillWidth: true
-            elide: Text.ElideRight
-            Layout.preferredHeight: contentHeight + 2 // hack to force franklinGothicBook to vertical center
-            verticalAlignment: Text.AlignBottom
-            font.family: Fonts.franklinGothicBook
+
+            SGText {
+                color: "white"
+                text: platformTabRoot.name
+                elide: Text.ElideRight
+                font.family: Fonts.franklinGothicBook
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    verticalCenterOffset: 2 // hack to force franklinGothicBook to vertical center
+                    left: parent.left
+                    right: parent.right
+                    leftMargin: 10
+                }
+            }
+
+            MouseArea {
+                id: mouse
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: {
+                    platformTabRoot.bringIntoView()
+                }
+                cursorShape: Qt.PointingHandCursor
+            }
         }
 
-        SGIcon {
-            id: currentIcon
-            iconColor: "white"
-            height: 25
-            width: 25
-            source: {
-                if (mouse.containsMouse || dropDownPopup.visible) {
-                    return "qrc:/images/icons/angle-down.svg"
-                } else {
-                    return selectedButtonIcon
+        Rectangle {
+            Layout.fillHeight: true
+            Layout.preferredWidth: height
+            color: mouseMenu.containsMouse ? "#34993b" : inView ? platformTabRoot.menuColor : mouse.containsMouse ? platformTabRoot.menuColor :"#444"
+
+            MouseArea {
+                id: mouseMenu
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: {
+                    dropDownPopup.open()
+                }
+                cursorShape: Qt.PointingHandCursor
+            }
+
+            SGIcon {
+                id: currentIcon
+                iconColor: "white"
+                height: 25
+                width: 25
+                anchors {
+                    centerIn: parent
+                }
+
+                source: {
+                    if (mouseMenu.containsMouse || dropDownPopup.visible) {
+                        return "qrc:/sgimages/chevron-down.svg"
+                    } else {
+                        return selectedButtonIcon
+                    }
                 }
             }
         }
-    }
-
-    MouseArea {
-        id: mouse
-        anchors.fill: parent
-        hoverEnabled: true
-        onClicked: {
-            dropDownPopup.open()
-        }
-        cursorShape: Qt.PointingHandCursor
     }
 
     Popup {
@@ -175,6 +208,7 @@ Rectangle {
             signal clicked(int index)
 
             onClicked: {
+                platformTabRoot.bringIntoView()
                 platformTabRoot.menuClicked(index)
             }
 

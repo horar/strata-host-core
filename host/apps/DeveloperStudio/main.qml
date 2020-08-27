@@ -10,6 +10,7 @@ import "qrc:/js/login_utilities.js" as SessionUtils
 import "qrc:/partial-views"
 import "qrc:/partial-views/debug-bar"
 import "qrc:/partial-views/platform-view"
+import "qrc:/js/platform_filters.js" as PlatformFilters
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
 import tech.strata.logger 1.0
@@ -28,8 +29,10 @@ SGWidgets.SGMainWindow {
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")
         NavigationControl.init(statusBarContainer, stackContainer)
-        Help.registerWindow(mainWindow)
-        if (!PlatformSelection.isInitialized) { PlatformSelection.initialize(coreInterface, documentManager, stackContainer.platformViewModel) }
+        Help.registerWindow(mainWindow, stackContainer)
+        if (!PlatformSelection.isInitialized) {
+            PlatformSelection.initialize(sdsModel.coreInterface)
+        }
         initialized()
     }
 
@@ -37,12 +40,30 @@ SGWidgets.SGMainWindow {
         SessionUtils.close_session()
 
         // End session with HCS
-        coreInterface.unregisterClient();
+        sdsModel.coreInterface.unregisterClient();
 
         // Destruct components dynamically created by NavigationControl
         NavigationControl.removeView(statusBarContainer)
         NavigationControl.removeView(mainContainer)
         platformViewModel.clear()
+
+        if (SessionUtils.settings.rememberMe === false) {
+            SessionUtils.settings.clear()
+        }
+    }
+
+    Connections {
+        target: sdsModel
+        onHcsConnectedChanged: {
+            if (sdsModel.hcsConnected) {
+                NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
+            } else {
+                PlatformFilters.clearActiveFilters()
+                PlatformSelection.logout()
+                SessionUtils.initialized = false
+                NavigationControl.updateState(NavigationControl.events.CONNECTION_LOST_EVENT)
+            }
+        }
     }
 
     ColumnLayout {
@@ -55,7 +76,6 @@ SGWidgets.SGMainWindow {
             Layout.fillWidth: true
 
             property real windowHeight: mainWindow.height  // for centering popups spawned from the statusbar
-            property bool showDebug: false;  // for linking debug in status bar to the debug bar
         }
 
         StackLayout {
@@ -85,18 +105,18 @@ SGWidgets.SGMainWindow {
 
     Connections {
         id: coreInterfaceConnection
-        target: coreInterface
+        target: sdsModel.coreInterface
 
         onPlatformListChanged: {
 //            console.log(Logger.devStudioCategory, "Main: PlatformListChanged: ", list)
             if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE) {
-                PlatformSelection.populatePlatforms(list)
+                PlatformSelection.generatePlatformSelectorModel(list)
             }
         }
 
         onConnectedPlatformListChanged: {
 //            console.log(Logger.devStudioCategory, "Main: ConnectedPlatformListChanged: ", list)
-            if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformListModel.platformListStatus === "loaded") {
+            if (NavigationControl.navigation_state_ === NavigationControl.states.CONTROL_STATE && PlatformSelection.platformSelectorModel.platformListStatus === "loaded") {
                 Help.closeTour()
                 PlatformSelection.parseConnectedPlatforms(list)
             }

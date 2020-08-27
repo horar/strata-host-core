@@ -104,8 +104,9 @@ signals:
     /*!
      * This signal is emitted during firmware backup.
      * \param chunk chunk number which was backed up
+     * \param total total count of firmware chunks
      */
-    void backupProgress(int chunk);
+    void backupProgress(int chunk, int total);
 
     /*!
      * This signal is emitted during flashing backed up firmware.

@@ -1,6 +1,8 @@
-
 #include "ZmqResponseConnector.h"
 #include <zmq.hpp>
+
+namespace strata::connector
+{
 
 ZmqResponseConnector::ZmqResponseConnector() : ZmqConnector(ZMQ_REP)
 {
@@ -28,3 +30,5 @@ bool ZmqResponseConnector::open(const std::string& ip_address)
 
     return false;
 }
+
+}  // namespace strata::connector

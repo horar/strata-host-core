@@ -28,8 +28,6 @@ public:
         TidRole,
         LevelRole,
         MessageRole,
-        RowIndexRole,
-        FileHashRole,
     };
 
     enum LogLevel {
@@ -45,13 +43,15 @@ public:
 
     QString getRotatedFilePath(const QString &path) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    void clear(bool emitSignals);
+    void clear();
     QDateTime oldestTimestamp() const;
     QDateTime newestTimestamp() const;
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     FileModel *fileModel();
-    void removeRowsFromModel(const uint &pathHash);
+    void removeRowsFromModel(const uint pathHash);
+    void insertChunk(QList<LogItem*>::iterator chunkIter, QList<LogItem*> chunk);
+    QList<LogItem*>::iterator removeChunk(const QList<LogItem*>::iterator &chunkStart, const QList<LogItem*>::iterator &chunkEnd);
 
 public slots:
     void checkFile();
@@ -70,9 +70,9 @@ private:
     QDateTime oldestTimestamp_;
     QDateTime newestTimestamp_;
     QDateTime previousTimestamp_;
-    QList<LogItem> data_;
+    QList<LogItem*> data_;
     QVector<qint64> lastPositions_;
-    void parseLine(const QString &line, LogItem &item);
+    LogItem* parseLine(const QString &line);
     QString populateModel(const QString &path, const qint64 &lastPosition);
     void updateTimestamps();
     FileModel fileModel_;
@@ -91,12 +91,15 @@ struct LogItem {
         return (timestamp < second.timestamp);
     }
 
+    static bool comparator(const LogItem* first, const LogItem* second) {
+        return *first < *second;
+    }
+
     QDateTime timestamp;
     QString pid;
     QString tid;
     QString message;
     LogModel::LogLevel level;
-    int rowIndex;
     uint filehash;
 };
 

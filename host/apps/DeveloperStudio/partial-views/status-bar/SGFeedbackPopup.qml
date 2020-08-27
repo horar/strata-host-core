@@ -101,58 +101,128 @@ SGStrataPopup {
             }
         }
 
-        GridLayout {
-            columns: 2
 
-            Text {
-                text: "Name:"
-            }
-
-            Text {
-                id: nameField
-                text: NavigationControl.context.first_name + " " + NavigationControl.context.last_name
-            }
-
-            Text {
-                text: "Email:"
-            }
-
-            Text {
-                id: emailField
-                text: NavigationControl.context.user_id
-            }
-        }
 
         Rectangle {
             id: feedbackFormContainer
             color: "#efefef"
             Layout.preferredWidth: mainColumn.width
-            Layout.preferredHeight: feedbackColumn.height
+            Layout.preferredHeight: personalGrid.height + feedbackTypeContainer.height + feedbackColumn.height + submitButton.height + personalGrid.anchors.topMargin
+
+            GridLayout {
+                id: personalGrid
+                anchors {
+                    top: feedbackFormContainer.top
+                    left: feedbackFormContainer.left
+                    topMargin: 20
+                    leftMargin: 15
+                }
+
+                columns: 2
+
+                Text {
+                    text: "Name:"
+
+                    font {
+                        pixelSize: 15
+                        family: Fonts.franklinGothicBook
+                    }
+                }
+
+                Text {
+                    id: nameField
+                    text: NavigationControl.context.first_name + " " + NavigationControl.context.last_name
+                    font {
+                        pixelSize: 15
+                        family: Fonts.franklinGothicBook
+                    }
+                }
+
+                Text {
+                    text: "Email:"
+                    font {
+                        pixelSize: 15
+                        family: Fonts.franklinGothicBook
+                    }
+                }
+
+                Text {
+                    id: emailField
+                    text: NavigationControl.context.user_id
+                    font {
+                        pixelSize: 15
+                        family: Fonts.franklinGothicBook
+                    }
+                }
+            }
+
+            Rectangle {
+                id: feedbackTypeContainer
+
+                width: parent.width
+                height: feedbackTypeText.height + 40
+
+                anchors {
+                    top: personalGrid.bottom
+                    left: feedbackFormContainer.left
+                    topMargin: 20
+                    leftMargin: 15
+                }
+
+                color: "transparent"
+
+                Text {
+                    id: feedbackTypeText
+                    width: parent.width
+                    anchors.top: parent.top
+                    text: "Please select a feedback type:"
+
+                    font {
+                        pixelSize: 15
+                        family: Fonts.franklinGothicBook
+                    }
+                }
+
+                ListView {
+                    id: feedbackTypeListView
+
+                    width: parent.width
+
+                    anchors {
+                        top: feedbackTypeText.bottom
+                        topMargin: 10
+                    }
+
+                    orientation: Qt.Horizontal
+                    spacing: 5
+                    model: SGFeedbackTypeModel {}
+                    delegate: SGFeedbackTypeDelegate {}
+                    currentIndex: -1
+                }
+            }
 
             ColumnLayout {
                 id: feedbackColumn
                 width: feedbackFormContainer.width
-                spacing: 20
+                anchors {
+                    top: feedbackTypeContainer.bottom
+                    left: feedbackFormContainer.left
+                    right: feedbackFormContainer.right
+                    topMargin: 20
+                    leftMargin: 15
+                    rightMargin: 15
+                }
+                spacing: 10
 
-                Rectangle {
-                    id: feedbackFormTitle
-                    color: "#ddd"
+                Text {
+                    id: feedbackFormTitleText
+
                     Layout.fillWidth: true
-                    height: 35
 
-                    Text {
-                        id: feedbackFormTitleText
-                        text: "Any comments or questions:"
-                        font {
-                            pixelSize: 15
-                            family: Fonts.franklinGothicBook
-                        }
-                        anchors {
-                            verticalCenter: feedbackFormTitle.verticalCenter
-                            verticalCenterOffset: 2
-                            left: feedbackFormTitle.left
-                            leftMargin: 15
-                        }
+                    text: "Any comments or questions:"
+                    font {
+                        pixelSize: 15
+                        family: Fonts.franklinGothicBook
                     }
                 }
 
@@ -165,8 +235,6 @@ SGStrataPopup {
                     }
                     Layout.fillWidth: true
                     Layout.preferredHeight: 200
-                    Layout.leftMargin: 15
-                    Layout.rightMargin: 15
                     clip: true
 
                     ScrollView {
@@ -209,7 +277,7 @@ SGStrataPopup {
                     Layout.bottomMargin: 20
                     Layout.alignment: Qt.AlignHCenter
                     activeFocusOnTab: true
-                    enabled: textEdit.text !== ""
+                    enabled: textEdit.text !== "" && feedbackTypeListView.currentIndex !== -1
 
                     background: Rectangle {
                         color: !submitButton.enabled ? "#dbdbdb" : submitButton.down ? "#666" : "#888"
@@ -233,9 +301,10 @@ SGStrataPopup {
                     }
 
                     onClicked: {
-                        var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: textEdit.text }
+                        var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: textEdit.text, type: feedbackTypeListView.currentItem.typeValue }
                         function success() {
                             confirmPopup.open()
+                            feedbackTypeListView.currentIndex = -1
                         }
 
                         function error(response) {

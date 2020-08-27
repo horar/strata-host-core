@@ -11,7 +11,7 @@ Rectangle {
     property color backgroundColor: "#D1DFFB"
     property color boxBackground: "#91ABE1"
     property color accentColor:"#86724C"
-    property int    boxHeight:75
+    property int    boxHeight:95
     property int    statBoxUnitSize:18
     property int    statBoxValueSize:36
 
@@ -50,13 +50,16 @@ Rectangle {
             spacing: 10
 
             property bool isConnected: platformInterface.usb_pd_port_connect.connection_state === "connected"
+            onIsConnectedChanged: {
+                console.log("isConnected is now",isConnected)
+            }
 
             Text{
                 id:usbLabel
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 18
                 text:"USB"
-                width:70
+                width:65
                 horizontalAlignment: Text.AlignRight
             }
 
@@ -75,7 +78,7 @@ Rectangle {
                 id:usbVBUSBox
                 width:boxHeight
                 height:boxHeight
-                label: "VBUS"
+                label: "VOLTAGE"
                 labelColor: "white"
                 color:boxBackground
                 valueSize:statBoxValueSize
@@ -84,7 +87,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 visible:topRow.isConnected
-                value: platformInterface.request_usb_power_notification.output_voltage
+                value: platformInterface.request_usb_power_notification.vbus_voltage.toFixed(1)
             }
 
             PortStatBox{
@@ -123,7 +126,7 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 18
                 text:"Battery"
-                width:70
+                width:65
                 horizontalAlignment: Text.AlignRight
             }
             PortStatBox{
@@ -139,7 +142,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"A"
-                value:platformInterface.battery_status.battery_current
+                value:platformInterface.battery_status_fre.battery_current.toFixed(1)
             }
             PortStatBox{
                 id:batteryVoltageBox
@@ -153,7 +156,7 @@ Rectangle {
                 unitColor: "grey"
                 textColor: "black"
                 bottomMargin:10
-                value: platformInterface.battery_status.battery_voltage
+                value: platformInterface.battery_status_fre.battery_voltage.toFixed(1)
             }
             PortStatBox{
                 id:batteryPowerBox
@@ -168,7 +171,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"W"
-                value:platformInterface.battery_status.battery_power
+                value:platformInterface.battery_status_fre.battery_power.toFixed(1)
             }
         }
         Row{
@@ -178,8 +181,8 @@ Rectangle {
                 id:audioRailLabel
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 18
-                text:"Audio\nrail"
-                width:70
+                text:"Audio"
+                width:65
                 horizontalAlignment: Text.AlignRight
             }
             PortStatBox{
@@ -195,6 +198,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"A"
+                value:platformInterface.audio_power.audio_current.toFixed(1)
             }
             PortStatBox{
                 id:audioVoltageBox
@@ -208,6 +212,7 @@ Rectangle {
                 unitColor: "grey"
                 textColor: "black"
                 bottomMargin:10
+                value:platformInterface.audio_power.audio_voltage.toFixed(1)
             }
             PortStatBox{
                 id:audioPowerBox
@@ -222,7 +227,7 @@ Rectangle {
                 textColor: "black"
                 bottomMargin:10
                 unit:"W"
-                value:platformInterface.audio_power.audio_power
+                value:platformInterface.audio_power.audio_power.toFixed(1)
             }
         }
     }

@@ -1,5 +1,4 @@
-#ifndef COREINTERFACE_H
-#define COREINTERFACE_H
+#pragma once
 
 //----
 // Core Framework
@@ -28,8 +27,8 @@
 #include <string>
 #include <HostControllerClient.hpp>
 
-typedef std::function<void(QJsonObject)> NotificationHandler; // notification handler
-typedef std::function<void(QJsonObject)> DataSourceHandler; // data source handler accepting QJsonObject
+using NotificationHandler = std::function<void(QJsonObject)>; // notification handler
+using DataSourceHandler = std::function<void(QJsonObject)>; // data source handler accepting QJsonObject
 
 class CoreInterface : public QObject
 {
@@ -43,7 +42,8 @@ class CoreInterface : public QObject
     Q_PROPERTY(QString hcs_token_ READ hcsToken NOTIFY hcsTokenChanged)
 
 public:
-    explicit CoreInterface(QObject *parent = nullptr);
+    explicit CoreInterface(QObject* parent = nullptr,
+                           const std::string& hcsInAddress = "tcp://127.0.0.1:5563");
     virtual ~CoreInterface();
 
     // ---
@@ -55,7 +55,7 @@ public:
     bool registerNotificationHandler(std::string notification, NotificationHandler handler);
     bool registerDataSourceHandler(std::string source, DataSourceHandler handler);
 
-    strata::hcc::HostControllerClient *hcc;
+    std::unique_ptr<strata::hcc::HostControllerClient> hcc;
     std::thread notification_thread_;
     void notificationsThread();
 
@@ -64,7 +64,8 @@ public:
     Q_INVOKABLE void connectToPlatform(QString class_id);
     Q_INVOKABLE void unregisterClient();
     Q_INVOKABLE void sendCommand(QString cmd);
-    Q_INVOKABLE void disconnectPlatform();
+
+    void setNotificationThreadRunning(bool running);
 
 signals:
     // ---
@@ -80,6 +81,8 @@ signals:
     void downloadPlatformSingleFileFinished(QJsonObject payload);
     void downloadPlatformFilesFinished(QJsonObject payload);
 
+    void firmwareProgress(QJsonObject payload);
+
     // Platform Framework Signals
     void notification(QString payload);
 
@@ -90,7 +93,7 @@ private:
     QString platform_list_{"{ \"list\":[]}"};
     QString connected_platform_list_{"{ \"list\":[]}"};
     QString hcs_token_;
-    bool notification_thread_running_;
+    std::atomic_bool notification_thread_running_;
 
     // ---
     // notification handling
@@ -105,7 +108,4 @@ private:
 
     // attached Data Source subscribers
     std::map<std::string, DataSourceHandler > data_source_handlers_;
-
 };
-
-#endif // COREINTERFACE_H
