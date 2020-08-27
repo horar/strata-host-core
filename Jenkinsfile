@@ -14,7 +14,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh "${env.workspace}/deployment/Strata/deploy_strata_windows.sh -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}'"
+                sh "${env.workspace}/deployment/Strata/deploy_strata_windows.sh -r '${env.workspace}/${ROOT_BUILD_DIR}' -d '${BUILD_NAME}' --nosigning"
             }
         }           
         stage('Test') {
