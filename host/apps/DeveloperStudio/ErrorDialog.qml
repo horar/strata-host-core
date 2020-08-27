@@ -61,6 +61,14 @@ ApplicationWindow {
                     text: errorString
                     readOnly: true
                     selectByMouse: true
+
+                    MouseArea {
+                        id: textCursor
+
+                        anchors.fill: parent
+                        cursorShape: Qt.IBeamCursor
+                        enabled: false // cursor appears, MouseArea does not accept clicks/interfere
+                    }
                 }
             }
         }
