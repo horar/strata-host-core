@@ -37,7 +37,7 @@ Item {
         "value": true
     }
 
-    property var soc_otped: {
+    property var soc_otp_popup: {
         "value": false
     }
 
@@ -798,25 +798,64 @@ Item {
         "values":["Boost","Buck","Bypass"]
     }
 
-    property var power_boost_ocp: {
-        "caption":"Boost OCP",
+    property var power_fault_vled: {
+        "caption":"VLED Power\nFault",
         "scales":[],
         "states":[1],
         "value":false,
         "values":[]
     }
 
-    property var power_boost_ocp_caption: {
-        "caption":"Boost OCP"
+    property var power_fault_vled_caption: {
+        "caption":"VLED Power\nFault"
     }
 
-    property var power_boost_ocp_states: {
+    property var power_fault_vled_states: {
         "states": [1]
     }
 
-    property var power_boost_ocp_value: {
+    property var power_fault_vled_value: {
         "value": false
     }
+
+    property var power_fault_vs: {
+        "caption":"VS Power\nFault",
+        "scales":[],
+        "states":[1],
+        "value":false,
+        "values":[]
+    }
+    property var power_fault_vs_caption: {
+        "caption":"VS Power\nFault"
+    }
+
+    property var power_fault_vs_states: {
+        "states": [1]
+    }
+
+    property var power_fault_vs_value: {
+        "value": false
+    }
+
+    property var power_fault_vdd: {
+        "caption":"VDD Power\nFault",
+        "scales":[],
+        "states":[1],
+        "value":false,
+        "values":[]
+    }
+    property var power_fault_vdd_caption: {
+        "caption":"VDD Power\nFault"
+    }
+
+    property var power_fault_vdd_states: {
+        "states": [1]
+    }
+
+    property var power_fault_vdd_value: {
+        "value": false
+    }
+
 
     property var power_voltage_set: {
         "caption":"Boost Voltage Set",
@@ -1007,7 +1046,7 @@ Item {
 
     property var power_vcc_value: {
         "value": 0.00
-    }   
+    }
     property var power_led_driver_temp_top: {
         "caption":"LED Driver Temp Top (°C)",
         "scales":[150,0,1],
@@ -1207,28 +1246,23 @@ Item {
     }
 
     property var soc_vdd_disconnect: {
-        "caption":"VDD Voltage",
+        "caption":"VDD Voltage \n Disconnect",
         "scales":[],
         "states":[0],
-        "value":"Connect",
-        "values":["Connect","Disconnect"]
+        "value":"",
+        "values":[]
     }
 
     property var soc_vdd_disconnect_caption: {
-        "caption":"VDD\nVoltage"
+        "caption":"VDD Voltage \n Disconnect"
     }
 
     property var soc_vdd_disconnect_states: {
         "states":[0]
     }
 
-    property var soc_vdd_disconnect_value: {
-        "value":"Connect"
-    }
 
-    property var soc_vdd_disconnect_values: {
-        "values":["Connect","Disconnect"]
-    }
+
 
     property var soc_mode: {
         "caption":"Mode (I2CFLAG)",
@@ -1403,6 +1437,10 @@ Item {
         "states":[0]
     }
 
+    property var soc_vdd_popup: {
+        "value": false
+    }
+
     //Commands
     //May not be necessary
     property var set_soc_read: ({
@@ -1452,17 +1490,12 @@ Item {
 
     property var set_soc_vdd_disconnect: ({
                                               "cmd" : "soc_vdd_disconnect",
-                                              "payload": {
-                                                  "value":"Connect"
-                                              },
+                                              "payload": {},
 
                                               update: function (value) {
-                                                  this.set(value)
-                                                  this.send(this)
+                                                  CorePlatformInterface.send(this)
                                               },
-                                              set: function (value) {
-                                                  this.payload.value = value
-                                              },
+
                                               send: function () { CorePlatformInterface.send(this) },
                                               show: function () { CorePlatformInterface.show(this) }
                                           })

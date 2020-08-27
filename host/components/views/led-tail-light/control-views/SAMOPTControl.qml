@@ -233,12 +233,126 @@ Item {
         setStatesForControls(samOut12,soc_sam_conf_2_state[11])
     }
 
-    property var soc_otped: platformInterface.soc_otped
-    onSoc_otpedChanged: {
-        if(soc_otped.value === true)
+
+
+    property var soc_otp_popup: platformInterface.soc_otp_popup
+    onSoc_otp_popupChanged: {
+        if(soc_otp_popup.value === true)
             warningPopupOTP.open()
     }
 
+    property var soc_vdd_popup: platformInterface.soc_vdd_popup
+    onSoc_vdd_popupChanged: {
+        if(soc_vdd_popup.value === true)
+            warningPopupVDDVol.open()
+        else  warningPopupVDDVol.close()
+    }
+
+    Popup {
+        id: warningPopupVDDVol
+        width: parent.width/2
+        height: parent.height/4
+        anchors.centerIn: parent
+        modal: true
+        focus: true
+        closePolicy: Popup.NoAutoClose
+        background: Rectangle{
+            id: warningPopupContainerVDD
+            width: warningPopupVDDVol.width
+            height: warningPopupVDDVol.height
+            color: "#dcdcdc"
+            border.color: "grey"
+            border.width: 2
+            radius: 10
+        }
+        Rectangle {
+            id: warningPopupBoxVDDVol
+            color: "transparent"
+            anchors {
+                top: parent.top
+                // topMargin: 5
+                horizontalCenter: parent.horizontalCenter
+            }
+            width: warningPopupContainerVDD.width - 50
+            height: warningPopupContainerVDD.height - 50
+
+            Rectangle {
+                id: messageContainerForPopupVDDVol
+                anchors {
+                    top: parent.top
+                    topMargin: 10
+                    centerIn:  parent.Center
+                }
+                color: "transparent"
+                width: parent.width
+                height:  parent.height - (parent.height/2) - 10
+                Text {
+                    id: warningTextForPopupVDDVol
+                    anchors.fill:parent
+                    text: "VDD was temporarily disconnected from LED driver. Click"+ "\"" + "Reconnect VDD" + "\"" + "to reconnect VDD and resume previous LED driver Mode setting (SAM or I2C)."
+                    verticalAlignment:  Text.AlignVCenter
+                    wrapMode: Text.WordWrap
+                    fontSizeMode: Text.Fit
+                    width: parent.width
+                    font.family: "Helvetica Neue"
+                    font.pixelSize: ratioCalc * 15
+                    font.bold: true
+                }
+            }
+            Rectangle {
+                id: selectionContainerForPopupVDD
+                width: parent.width
+                height: parent.height/2
+                anchors{
+                    top: messageContainerForPopupVDDVol.bottom
+                    topMargin: 15
+                    bottom: warningPopupBoxVDDVol.bottom
+                    bottomMargin: 10
+                }
+                color: "transparent"
+
+                RowLayout {
+                    anchors.fill: parent
+                    Rectangle{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "transparent"
+                    }
+
+                    Rectangle{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "transparent"
+
+                    }
+                    Rectangle{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        color: "transparent"
+
+                        SGButton {
+                            id: reconnectButton
+                            width: parent.width/1.5
+                            height:parent.height
+
+                            anchors.centerIn: parent
+                            text: "Reconnect VDD"
+                            color: checked ? "white" : pressed ? "#cfcfcf": hovered ? "#eee" : "white"
+                            roundedLeft: true
+                            roundedRight: true
+                            onClicked: {
+
+                                if(i2cStandalone.checked)
+                                    platformInterface.set_soc_mode.update("I2C")
+                                else  platformInterface.set_soc_mode.update("SAM")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
 
 
     Popup {
@@ -660,7 +774,7 @@ Item {
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                     color: "transparent"
+                    color: "transparent"
                     SGAlignedLabel {
                         id: current7bitLabel
                         target: current7bit
@@ -718,7 +832,7 @@ Item {
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                     color: "transparent"
+                    color: "transparent"
                     SGAlignedLabel {
                         id: new7bitLabel
                         target: new7bit
@@ -815,7 +929,7 @@ Item {
                             anchors.fill: parent
                             cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                             onClicked: {
-                               // controlNavigation.i2cAddressText = new7bit.text
+                                // controlNavigation.i2cAddressText = new7bit.text
                                 var hexTodecimal = parseInt(new7bit.text, 16)
                                 console.log(new7bit.text.toUpperCase())
                                 console.log(hexTodecimal)
@@ -1091,90 +1205,40 @@ Item {
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id: vDDVoltageDisconnectLabel
-                                target: vDDVoltageDisconnect
-                                alignment: SGAlignedLabel.SideTopLeft
-                                anchors {
-                                    //top:parent.top
-                                    left: parent.left
-                                    verticalCenter: parent.verticalCenter
-                                    leftMargin: 20
-                                }
 
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                font.bold : true
-
-                                SGSwitch {
-                                    id: vDDVoltageDisconnect
-                                    labelsInside: true
-                                    // checkedLabel: "Connect"
-                                    // uncheckedLabel: "Disconnect"
-                                    textColor: "black"              // Default: "black"
-                                    handleColor: "white"            // Default: "white"
-                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                   fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    onToggled: {
-                                        if(checked)
-                                            platformInterface.set_soc_vdd_disconnect.update("Connect")
-                                        else  platformInterface.set_soc_vdd_disconnect.update("Disconnect")
-                                    }
-                                }
-
-                                property var soc_vdd_disconnect: platformInterface.soc_vdd_disconnect
-                                onSoc_vdd_disconnectChanged: {
-                                    vDDVoltageDisconnectLabel.text = soc_vdd_disconnect.caption
-                                    setStatesForControls(vDDVoltageDisconnect,soc_vdd_disconnect.states[0])
-                                    //                                    if(soc_vdd_disconnect.state === "enabled"){
-                                    //                                        vDDVoltageDisconnect.enabled = true
-                                    //                                        vDDVoltageDisconnect.opacity = 1.0
-                                    //                                    }
-                                    //                                    else if (soc_vdd_disconnect.state === "disabled") {
-                                    //                                        vDDVoltageDisconnect.enabled = false
-                                    //                                        vDDVoltageDisconnect.opacity = 1.0
-                                    //                                    }
-                                    //                                    else {
-                                    //                                        vDDVoltageDisconnect.enabled = false
-                                    //                                        vDDVoltageDisconnect.opacity = 0.5
-                                    //                                    }
-                                    vDDVoltageDisconnect.checkedLabel = soc_vdd_disconnect.values[0]
-                                    vDDVoltageDisconnect.uncheckedLabel = soc_vdd_disconnect.values[1]
-
-                                    if(soc_vdd_disconnect.value === "Connect")
-                                        vDDVoltageDisconnect.checked = true
-
-                                    else  vDDVoltageDisconnect.checked = false
+                            SGButton {
+                                id:  vDDVoltageDisconnect
+                                anchors.verticalCenter: parent.verticalCenter
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                                hoverEnabled: true
+                                height: parent.height/1.8
+                                width: parent.width/2.5
+                                MouseArea {
+                                    hoverEnabled: true
+                                    anchors.fill: parent
+                                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                    onClicked: platformInterface.set_soc_vdd_disconnect.update()
 
                                 }
-
-
-                                property var soc_vdd_disconnect_caption: platformInterface.soc_vdd_disconnect_caption.caption
-                                onSoc_vdd_disconnect_captionChanged: {
-                                    vDDVoltageDisconnectLabel.text = soc_vdd_disconnect_caption
-                                }
-
-                                property var soc_vdd_disconnect_state: platformInterface.soc_vdd_disconnect_states.states
-                                onSoc_vdd_disconnect_stateChanged: {
-                                    setStatesForControls(vDDVoltageDisconnect,soc_vdd_disconnect_state[0])
-                                }
-
-                                property var soc_vdd_disconnect_values: platformInterface.soc_vdd_disconnect_values.values
-                                onSoc_vdd_disconnect_valuesChanged: {
-                                    vDDVoltageDisconnect.checkedLabel = soc_vdd_disconnect_values[0]
-                                    vDDVoltageDisconnect.uncheckedLabel = soc_vdd_disconnect_values[1]
-                                }
-
-                                property var soc_vdd_disconnect_value: platformInterface.soc_vdd_disconnect_value.value
-                                onSoc_vdd_disconnect_valueChanged:{
-                                    if(soc_vdd_disconnect_value === "Connect")
-                                        vDDVoltageDisconnect.checked = true
-
-                                    else  vDDVoltageDisconnect.checked = false
-                                }
-
-
                             }
+
+                            property var soc_vdd_disconnect: platformInterface.soc_vdd_disconnect
+                            onSoc_vdd_disconnectChanged: {
+                                vDDVoltageDisconnect.text = soc_vdd_disconnect.caption
+                                setStatesForControls(vDDVoltageDisconnect,soc_vdd_disconnect.states[0])
+                            }
+
+                            property var soc_vdd_disconnect_caption: platformInterface.soc_vdd_disconnect_caption.caption
+                            onSoc_vdd_disconnect_captionChanged: {
+                                vDDVoltageDisconnect.text = soc_vdd_disconnect_caption
+                            }
+
+                            property var soc_vdd_disconnect_state: platformInterface.soc_vdd_disconnect_states.states
+                            onSoc_vdd_disconnect_stateChanged: {
+                                setStatesForControls(vDDVoltageDisconnect,soc_vdd_disconnect_state[0])
+                            }
+
                         }
 
 
@@ -1197,7 +1261,7 @@ Item {
                             SGText {
                                 id:samconfi1Text
                                 //text: "<b>" + qsTr("SAM_CONF_1") + "</b>"
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold: true
                                 anchors.verticalCenter: parent.verticalCenter
                                 property var soc_sam_conf_1_caption: platformInterface.soc_sam_conf_1_caption.caption
@@ -1218,7 +1282,7 @@ Item {
                                 target: out1
                                 text: "OUT 0"
                                 alignment: SGAlignedLabel.SideTopCenter
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGSwitch {
@@ -1278,7 +1342,7 @@ Item {
                                 target: out2
                                 text: "OUT 1"
                                 alignment: SGAlignedLabel.SideTopCenter
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGSwitch {
@@ -1345,7 +1409,7 @@ Item {
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
-                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
 
                                     onToggled: {
@@ -1396,7 +1460,7 @@ Item {
                                 target: out4
                                 text: "OUT 3"
                                 alignment: SGAlignedLabel.SideTopCenter
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGSwitch {
@@ -1404,7 +1468,7 @@ Item {
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
-                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
                                     anchors.verticalCenter: parent.verticalCenter
                                     onToggled: {
@@ -1455,7 +1519,7 @@ Item {
                                 target: out5
                                 text: "OUT 4"
                                 alignment: SGAlignedLabel.SideTopCenter
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGSwitch {
@@ -1463,7 +1527,7 @@ Item {
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
-                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
                                     anchors.verticalCenter: parent.verticalCenter
                                     onToggled: {
@@ -1522,7 +1586,7 @@ Item {
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
-                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
                                     anchors.verticalCenter: parent.verticalCenter
                                     onToggled: {
@@ -1573,7 +1637,7 @@ Item {
                                 target: out7
                                 text: "OUT 6"
                                 alignment: SGAlignedLabel.SideTopCenter
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGSwitch {
@@ -1581,7 +1645,7 @@ Item {
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
-                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
                                     anchors.verticalCenter: parent.verticalCenter
                                     onToggled: {
@@ -1631,7 +1695,7 @@ Item {
                                 target: out8
                                 text: "OUT 7"
                                 alignment: SGAlignedLabel.SideTopCenter
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGSwitch {
@@ -1639,7 +1703,7 @@ Item {
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
-                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
                                     anchors.verticalCenter: parent.verticalCenter
                                     onToggled: {
@@ -1690,7 +1754,7 @@ Item {
                                 target: out9
                                 text: "OUT 8"
                                 alignment: SGAlignedLabel.SideTopCenter
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGSwitch {
@@ -1698,7 +1762,7 @@ Item {
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
-                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
                                     anchors.verticalCenter: parent.verticalCenter
                                     onToggled: {
@@ -1749,7 +1813,7 @@ Item {
                                 target: out10
                                 text: "OUT 9"
                                 alignment: SGAlignedLabel.SideTopCenter
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGSwitch {
@@ -1808,7 +1872,7 @@ Item {
                                 target: out11
                                 text: "OUT 10"
                                 alignment: SGAlignedLabel.SideTopCenter
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGSwitch {
@@ -1816,7 +1880,7 @@ Item {
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
-                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
                                     anchors.verticalCenter: parent.verticalCenter
                                     onToggled: {
@@ -1866,7 +1930,7 @@ Item {
                                 target: out12
                                 text: "OUT 11"
                                 alignment: SGAlignedLabel.SideTopCenter
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
                                 anchors.verticalCenter: parent.verticalCenter
                                 SGSwitch {
@@ -1874,7 +1938,7 @@ Item {
                                     labelsInside: true
                                     checkedLabel: "On"
                                     uncheckedLabel: "Off"
-                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     checked: false
                                     anchors.verticalCenter: parent.verticalCenter
                                     onToggled: {
@@ -1954,7 +2018,7 @@ Item {
                                 labelsInside: true
                                 checkedLabel: "On"
                                 uncheckedLabel: "Off"
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                 checked: false
                                 anchors.verticalCenter: parent.verticalCenter
                                 onToggled: {
@@ -2002,7 +2066,7 @@ Item {
                                 labelsInside: true
                                 checkedLabel: "On"
                                 uncheckedLabel: "Off"
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                 checked: false
                                 anchors.verticalCenter: parent.verticalCenter
                                 onToggled: {
@@ -2051,7 +2115,7 @@ Item {
                                 labelsInside: true
                                 checkedLabel: "On"
                                 uncheckedLabel: "Off"
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                 checked: false
                                 anchors.verticalCenter: parent.verticalCenter
                                 onToggled: {
@@ -2100,7 +2164,7 @@ Item {
                                 labelsInside: true
                                 checkedLabel: "On"
                                 uncheckedLabel: "Off"
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                 checked: false
                                 anchors.verticalCenter: parent.verticalCenter
                                 onToggled: {
@@ -2198,7 +2262,7 @@ Item {
                                 labelsInside: true
                                 checkedLabel: "On"
                                 uncheckedLabel: "Off"
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                 checked: false
                                 anchors.verticalCenter: parent.verticalCenter
                                 onToggled: {
@@ -2247,7 +2311,7 @@ Item {
                                 labelsInside: true
                                 checkedLabel: "On"
                                 uncheckedLabel: "Off"
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                 checked: false
                                 anchors.verticalCenter: parent.verticalCenter
                                 onToggled: {
@@ -2296,7 +2360,7 @@ Item {
                                 labelsInside: true
                                 checkedLabel: "On"
                                 uncheckedLabel: "Off"
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                 checked: false
                                 anchors.verticalCenter: parent.verticalCenter
                                 onToggled: {
@@ -2345,7 +2409,7 @@ Item {
                                 labelsInside: true
                                 checkedLabel: "On"
                                 uncheckedLabel: "Off"
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                 checked: false
                                 anchors.verticalCenter: parent.verticalCenter
                                 onToggled: {
@@ -2394,7 +2458,7 @@ Item {
                                 labelsInside: true
                                 checkedLabel: "On"
                                 uncheckedLabel: "Off"
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                 checked: false
                                 anchors.verticalCenter: parent.verticalCenter
                                 onToggled: {
@@ -2443,7 +2507,7 @@ Item {
                                 labelsInside: true
                                 checkedLabel: "On"
                                 uncheckedLabel: "Off"
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                 checked: false
                                 anchors.verticalCenter: parent.verticalCenter
                                 onToggled: {
@@ -2491,7 +2555,7 @@ Item {
                                 labelsInside: true
                                 checkedLabel: "On"
                                 uncheckedLabel: "Off"
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                 checked: false
                                 anchors.verticalCenter: parent.verticalCenter
                                 onToggled: {
@@ -2590,7 +2654,7 @@ Item {
                             id:  zapButton
 
                             anchors.verticalCenter: parent.verticalCenter
-                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                            fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                             color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                             hoverEnabled: true
                             height: parent.height/2
@@ -2723,12 +2787,12 @@ Item {
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
 
-                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                 font.bold : true
 
                                 SGComboBox {
                                     id: samOpenLoadDiagnostic
-                                     fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                                     onActivated: {
                                         platformInterface.set_soc_write.update(
                                                     false,
