@@ -15,12 +15,10 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     setForegroundColor("black");
 
     qwtGrid_->attach(qwtPlot);
-
     //Setting the default values for x,y axises and color of grid lines.
-    setXGrid(false);
-    setYGrid(false);
-    setGridColor("black");
-
+    qwtGrid_->enableX(xGrid_);
+    qwtGrid_->enableY(yGrid_);
+    setGridColor("lightgrey");
 }
 
 SGQWTPlot::~SGQWTPlot()
@@ -149,8 +147,6 @@ void SGQWTPlot :: setXGrid(bool showGrid)
             update();
         }
     }
-
-
 }
 
 bool SGQWTPlot :: xGrid()
@@ -169,7 +165,6 @@ void SGQWTPlot :: setYGrid(bool showGrid)
             update();
         }
     }
-
 }
 
 bool SGQWTPlot :: yGrid()
@@ -188,8 +183,8 @@ void SGQWTPlot :: setGridColor(QColor newColor)
             update();
         }
     }
-
 }
+
 void SGQWTPlot::setXMin(double value)
 {
     qwtPlot->setAxisScale( qwtPlot->xBottom, value, xMax());

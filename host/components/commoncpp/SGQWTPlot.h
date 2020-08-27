@@ -135,8 +135,8 @@ private:
     QColor backgroundColor_;
     QColor foregroundColor_;
     bool autoUpdate_ = true;
-    bool xGrid_ = true;
-    bool yGrid_ = true;
+    bool xGrid_ = false;
+    bool yGrid_ = false;
     QColor gridColor_;
 
 

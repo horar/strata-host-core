@@ -28,7 +28,6 @@ Item {
                 xGrid: false
                 yGrid: true
                 gridColor: "red"
-
             }
 
             Column {
@@ -44,7 +43,7 @@ Item {
                         curve.color = sgGraphExample.randomColor()
                         let dataArray = []
                         for (let i = 0; i <= 1000; i++) {
-                           dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
+                            dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
                         }
                         curve.appendList(dataArray)
                     }
@@ -88,8 +87,6 @@ Item {
                 xGrid: true
                 yGrid: false
                 gridColor: "green"
-
-
             }
 
             Column {
@@ -111,7 +108,7 @@ Item {
                         curve.color = sgGraphExample.randomColor()
                         let dataArray = []
                         for (let i = 0; i <= 1000; i++) {
-                           dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
+                            dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
                         }
                         curve.appendList(dataArray)
                     }
