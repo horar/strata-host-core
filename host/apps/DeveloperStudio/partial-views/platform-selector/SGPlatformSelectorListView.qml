@@ -76,36 +76,41 @@ Item {
         }
 
         function contains_text(item) {
-            if (filteringText){
+            if (filteringText && (searchCategoryText.checked || searchCategoryPartsList.checked)){
                 let found = false
-                let replaceIdx = item.description.toLowerCase().indexOf(filter.lowerCaseText)
-                if (replaceIdx > -1) {
-                    found = true;
-                }
 
-                item.descMatchingIndex = replaceIdx
+                if (searchCategoryText.checked === true) {
+                    let replaceIdx = item.description.toLowerCase().indexOf(filter.lowerCaseText)
+                    if (replaceIdx > -1) {
+                        found = true;
+                    }
 
-                replaceIdx = item.opn.toLowerCase().indexOf(filter.lowerCaseText)
-                if (replaceIdx > -1) {
-                    found = true
-                }
-                item.opnMatchingIndex = replaceIdx
+                    item.descMatchingIndex = replaceIdx
 
-                replaceIdx = item.verbose_name.toLowerCase().indexOf(filter.lowerCaseText)
-                if (replaceIdx > -1) {
-                    found = true
-                }
-                item.nameMatchingIndex = replaceIdx
-
-                for (let i = 0; i < item.parts_list.count; i++) {
-                    let idxMatched = item.parts_list.get(i).opn.toLowerCase().indexOf(filter.lowerCaseText);
-                    if (idxMatched !== -1) {
+                    replaceIdx = item.opn.toLowerCase().indexOf(filter.lowerCaseText)
+                    if (replaceIdx > -1) {
                         found = true
                     }
-                    item.parts_list.set(i, {
-                        opn: item.parts_list.get(i).opn,
-                        matchingIndex: idxMatched
-                    });
+                    item.opnMatchingIndex = replaceIdx
+
+                    replaceIdx = item.verbose_name.toLowerCase().indexOf(filter.lowerCaseText)
+                    if (replaceIdx > -1) {
+                        found = true
+                    }
+                    item.nameMatchingIndex = replaceIdx
+                }
+
+                if (searchCategoryPartsList.checked === true) {
+                    for (let i = 0; i < item.parts_list.count; i++) {
+                        let idxMatched = item.parts_list.get(i).opn.toLowerCase().indexOf(filter.lowerCaseText);
+                        if (idxMatched !== -1) {
+                            found = true
+                        }
+                        item.parts_list.set(i, {
+                            opn: item.parts_list.get(i).opn,
+                            matchingIndex: idxMatched
+                        });
+                    }
                 }
                 return found
             } else {
@@ -204,6 +209,7 @@ Item {
 
                     onLowerCaseTextChanged: {
                         Filters.keywordFilter = lowerCaseText
+                        searchCategoriesDropdown.close()
                         if (lowerCaseText === "") {
                             filteredPlatformSelectorModel.filteringText = false
                         } else {
@@ -226,12 +232,40 @@ Item {
                     MouseArea {
                         id: mouseArea
                         anchors.fill: parent
-                        onPressed: mouse.accepted = false
+                        onClicked: {
+                            searchCategoriesDropdown.close()
+                            filter.focus = true
+                        }
                         cursorShape: Qt.IBeamCursor
                     }
                 }
 
                 SGIcon {
+                    id: cogIcon
+                    source: "qrc:/sgimages/cog.svg"
+                    height: parent.height * .75
+                    width: height
+                    anchors {
+                        verticalCenter: textFilterContainer.verticalCenter
+                        right: clearIcon.visible ? clearIcon.left : textFilterContainer.right
+                        rightMargin: (textFilterContainer.height - height) / 2
+                    }
+                    iconColor: cogMouse.containsMouse || searchCategoriesDropdown.opened ?  "#bbb" : "#999"
+
+                    MouseArea {
+                        id: cogMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked: {
+                            searchCategoriesDropdown.opened ? searchCategoriesDropdown.close() : searchCategoriesDropdown.open()
+                        }
+                    }
+                }
+
+                SGIcon {
+                    id: clearIcon
                     source: "qrc:/sgimages/times-circle.svg"
                     height: parent.height * .75
                     width: height
@@ -251,6 +285,42 @@ Item {
                         }
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
+                    }
+                }
+
+                Popup {
+                    id: searchCategoriesDropdown
+
+                    y: textFilterContainer.height-1
+                    width: textFilterContainer.width
+                    topPadding: 0
+                    bottomPadding: 0
+                    leftPadding: 5
+
+                    closePolicy: Popup.CloseOnReleaseOutsideParent
+
+                    background: Rectangle {
+                        border {
+                            width: 1
+                            color: "#DDD"
+                        }
+                    }
+
+                    contentItem: Column {
+                        id: checkboxCol
+                        anchors.fill: parent
+
+                        CheckBox {
+                            id: searchCategoryText
+                            text: qsTr("Search in Platform Titles and Descriptions")
+                            checked: true
+                        }
+
+                        CheckBox {
+                            id: searchCategoryPartsList
+                            text: qsTr("Search in Part Numbers in Bill of Materials")
+                            checked: true
+                        }
                     }
                 }
             }

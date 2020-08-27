@@ -193,7 +193,7 @@ Item {
         Text {
             id: name
             text: {
-                if (model.nameMatchingIndex === -1) {
+                if (searchCategoryText.checked === false || model.nameMatchingIndex === -1) {
                     return model.verbose_name
                 } else {
                     let txt = model.verbose_name
@@ -218,7 +218,7 @@ Item {
         Text {
             id: productId
             text: {
-                if (model.opnMatchingIndex === -1) {
+                if (searchCategoryText.checked === false || model.opnMatchingIndex === -1) {
                     return model.opn
                 } else {
                     let txt = model.opn
@@ -245,7 +245,7 @@ Item {
         Text {
             id: info
             text: {
-                if (model.descMatchingIndex === -1) {
+                if (searchCategoryText.checked === false || model.descMatchingIndex === -1) {
                     return model.description
                 } else {
                     let txt = model.description
@@ -272,27 +272,33 @@ Item {
         Text {
             id: parts
             text: {
-                let str = "Matching Part OPNs: ";
-                for (let i = 0; i < model.parts_list.count; i++) {
-                    if (model.parts_list.get(i).matchingIndex > -1) {
-                        let idx = model.parts_list.get(i).matchingIndex
-                        let part = model.parts_list.get(i).opn
-                        if (str !== "Matching Part OPNs: ") {
-                            str += ", "
-                        }
-                        str += part.substring(0, idx) + "<font color=\"green\">" + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + "</font>" + part.substring(idx + PlatformFilters.keywordFilter.length)
-                    } else {
-                        continue
-                    }
+                if (searchCategoryPartsList.checked === true) {
+                    let str = "Matching Part OPNs: ";
+                    if (model.parts_list !== undefined) {
+                        for (let i = 0; i < model.parts_list.count; i++) {
+                            if (model.parts_list.get(i).matchingIndex > -1) {
+                                let idx = model.parts_list.get(i).matchingIndex
+                                let part = model.parts_list.get(i).opn
+                                if (str !== "Matching Part OPNs: ") {
+                                    str += ", "
+                                }
+                                str += part.substring(0, idx) + "<font color=\"green\">" + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + "</font>" + part.substring(idx + PlatformFilters.keywordFilter.length)
+                            } else {
+                                continue
+                            }
 
-                    if (str.length > 50) {
-                        str += "..."
-                        break
+                            if (str.length > 50) {
+                                str += "..."
+                                break
+                            }
+                        }
                     }
+                    return str
+                } else {
+                    return ""
                 }
-                return str
             }
-            visible: PlatformFilters.keywordFilter !== "" && text !== "Matching Part OPNs: "
+            visible: searchCategoryPartsList.checked === true && PlatformFilters.keywordFilter !== "" && text !== "Matching Part OPNs: "
             anchors {
                 horizontalCenter: infoColumn.horizontalCenter
             }
