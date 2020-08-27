@@ -61,9 +61,10 @@ class StrataUI:
         resetPasswordWindow = self.app.WindowControl()
         return resetPasswordWindow.Exists()
 
-    def SetEditText(self, editFullDescription, text):
-        edit = self.app.EditControl(Compare = self.hasProperty(PropertyId.FullDescriptionProperty, editFullDescription))
+    def SetEditText(self, editIdentifier, text, property = PropertyId.FullDescriptionProperty):
+        edit = self.app.EditControl(Compare = self.hasProperty(property, editIdentifier))
         edit.GetValuePattern().SetValue(text)
+
     def GetEditText(self, editFullDescription):
         edit = self.app.EditControl(Compare = self.hasProperty(PropertyId.FullDescriptionProperty, editFullDescription))
         return edit.GetValuePattern().Value
@@ -76,9 +77,13 @@ class StrataUI:
         button: ButtonControl = self.findButtonByHeight(REGISTER_TAB, lambda c, l: c < l)
         button.GetInvokePattern().Invoke()
 
-    def PressRegisterConfirmCheckbox(self):
+    def PressRegisterConfirmCheckbox(self, setTicked = True):
         confirm: CheckBoxControl = self.app.CheckBoxControl()
-        confirm.GetInvokePattern().Invoke()
+        state = confirm.GetTogglePattern().ToggleState
+        if state == ToggleState.On and not setTicked:
+            confirm.GetTogglePattern().Toggle()
+        elif state == ToggleState.Off and setTicked:
+            confirm.GetTogglePattern().Toggle()
 
     def PressButtonByName(self, name):
         button = self.app.ButtonControl(Compare = self.hasProperty(PropertyId.NameProperty, name))
@@ -109,14 +114,14 @@ def SetAndVerifyEdit(ui, editFullDescription, text, test):
     test.assertEqual(ui.GetEditText(editFullDescription), text)
 
 def Login(ui: StrataUI, username, password, test: unittest.TestCase = None):
-    setText = lambda description, text: SetAndVerifyEdit(ui, description, text, test) if test != None else ui.SetEditText
+    setText = (lambda description, text: SetAndVerifyEdit(ui, description, text, test)) if test != None else ui.SetEditText
 
     setText(USERNAME_EDIT, username)
     setText(PASSWORD_EDIT, password)
     ui.PressLoginButton()
 
 def Register(ui: StrataUI, username, password, firstName, lastName, company, title, test: unittest.TestCase = None):
-    setText = lambda description, text: SetAndVerifyEdit(ui, description, text, test) if test != None else ui.SetEditText
+    setText = (lambda description, text: SetAndVerifyEdit(ui, description, text, test)) if test != None else ui.SetEditText
 
     setText(EMAIL_EDIT, username)
     setText(PASSWORD_EDIT, password)

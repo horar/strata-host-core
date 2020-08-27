@@ -10,15 +10,15 @@ import sys
 
 if __name__ == "__main__":
     Common.populateConstants(sys.argv)
-    #strata.bindToStrata(Common.DEFAULT_URL)
+    strata.bindToStrata(Common.DEFAULT_URL)
 
     Common.awaitStrata()
 
 
     suite = unittest.TestSuite([
                                 unittest.defaultTestLoader.loadTestsFromModule(BoardTests),
-                                # unittest.defaultTestLoader.loadTestsFromModule(FeedbackTests),
-                                # unittest.defaultTestLoader.loadTestsFromModule(NewRegisterTests),
+                                unittest.defaultTestLoader.loadTestsFromModule(FeedbackTests),
+                                unittest.defaultTestLoader.loadTestsFromModule(NewRegisterTests),
                                 unittest.defaultTestLoader.loadTestsFromModule(InvalidInputTests),
                                 unittest.defaultTestLoader.loadTestsFromModule(PasswordResetTests)
                                 ])

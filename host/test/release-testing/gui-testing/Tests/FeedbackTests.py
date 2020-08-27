@@ -31,7 +31,8 @@ class Feedback(unittest.TestCase):
         #Feedback should open and have submit disabled because nothing has been inputted.
         self.assertTrue(ui.OnFeedback())
 
-        ui.SetEditText(FEEDBACK_EDIT, "this is a cool product")
+        ui.PressButtonByName(FEEDBACK_BUG_BUTTON)
+        ui.SetEditText(FEEDBACK_EDIT, "this is a cool product", property=PropertyId.NameProperty)
 
         ui.PressButtonByName(FEEDBACK_SUBMIT_BUTTON)
 

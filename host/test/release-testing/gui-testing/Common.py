@@ -27,6 +27,7 @@ FEEDBACK_SUBMIT_BUTTON = "Submit"
 FEEDBACK_EDIT = "FeedbackEdit"
 FEEDBACK_SUCCESS_OK_BUTTON = "OK"
 FEEDBACK_SUCCESS_TEXT = "Submit Feedback Success"
+FEEDBACK_BUG_BUTTON = "Bug"
 
 FIRST_NAME_EDIT = "First Name"
 LAST_NAME_EDIT = "Last Name"
@@ -56,7 +57,7 @@ __dirname = os.path.dirname(__file__)
 RESULT_FILE = os.path.join(__dirname, 'results.txt')
 
 def randomUsername():
-    str(uuid.uuid4()) + "@onsemi.com"
+    return str(uuid.uuid4()) + "@onsemi.com"
 
 def writeResults(totalFails, totalTests):
     '''

@@ -22,10 +22,10 @@ class RegisterNew(unittest.TestCase):
     '''
     def setUp(self) -> None:
         ui = StrataUI()
-        ui.SetToTab(Common.REGISTER_TAB)
+        ui.SetToRegisterTab()
 
     def tearDown(self) -> None:
-
+        time.sleep(1)
         ui = StrataUI()
         cleanup.closeAccount()
         Logout(ui)
@@ -34,16 +34,16 @@ class RegisterNew(unittest.TestCase):
         ui = StrataUI()
         #Assert that on registration page
         self.assertTrue(ui.OnRegisterScreen())
-
         newUsername = Common.randomUsername()
-        Register(ui, newUsername, NEW_PASSWORD, NEW_FIRST_NAME, NEW_LAST_NAME, NEW_TITLE, NEW_COMPANY)
+        Register(ui, newUsername, NEW_PASSWORD, NEW_FIRST_NAME, NEW_LAST_NAME, NEW_TITLE, NEW_COMPANY, self)
 
         self.assertTrue(ui.AlertExists(Common.REGISTER_ALERT))
 
         ui.SetToLoginTab()
-        Login(ui, newUsername, NEW_PASSWORD)
+        Login(ui, newUsername, NEW_PASSWORD, self)
 
         self.assertTrue(ui.OnPlatformView())
+
 
 
 

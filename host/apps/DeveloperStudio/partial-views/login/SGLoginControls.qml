@@ -173,18 +173,6 @@ Item {
    RowLayout {
             id: rowLoginControls
             Layout.fillHeight: false
-        Text {
-            Accessible.role: Accessible.Button
-            Accessible.name: forgotLink.text
-            Accessible.onPressAction: function() {
-                forgotPopup.visible = true
-            }
-
-            id: forgotLink
-            Layout.alignment: Qt.AlignRight
-            text: "Forgot Password"
-            color: forgotLink.pressed ? "#ddd" : "#545960"
-            font.underline: forgotMouse.containsMouse
 
             CheckBox {
                 id: rememberCheckBox
@@ -202,6 +190,12 @@ Item {
             }
 
             Text {
+                Accessible.role: Accessible.Button
+                Accessible.name: forgotLink.text
+                Accessible.onPressAction: function() {
+                    forgotPopup.visible = true
+                }
+
                 id: forgotLink
                 text: "Forgot Password"
                 color: forgotLink.pressed ? "#ddd" : "#545960"
@@ -377,4 +371,4 @@ Item {
         }
     }
 }
-}
+

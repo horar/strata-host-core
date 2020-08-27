@@ -43,7 +43,7 @@ class NoNetworkRegister(unittest.TestCase):
         #assert on register page
         self.assertTrue(ui.OnRegisterScreen())
 
-        Register(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, "Testy", "McTest", "Lead QA", "ON Semiconductor")
+        Register(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, "Testy", "McTest", "Lead QA", "ON Semiconductor", self)
 
         ui.PressRegisterButton()
 
