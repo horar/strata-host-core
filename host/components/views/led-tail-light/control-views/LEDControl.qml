@@ -5070,7 +5070,6 @@ Item {
                                         onLed_diagrange_valueChanged: {
                                             if(led_diagrange_value === false)
                                                 diagRange.status = SGStatusLight.Off
-
                                             else  diagRange.status = SGStatusLight.Green
                                         }
                                     }

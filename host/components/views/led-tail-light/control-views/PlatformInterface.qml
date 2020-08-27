@@ -41,7 +41,7 @@ Item {
         "value": false
     }
 
-    property var popup_mode: {
+    property var mode_popup: {
         "value": false
     }
 
