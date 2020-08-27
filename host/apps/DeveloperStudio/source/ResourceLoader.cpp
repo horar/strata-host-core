@@ -185,19 +185,6 @@ bool ResourceLoader::isViewRegistered(const QString &class_id) {
     return itr != viewsRegistered_.end() && !itr.value()->filepath.isEmpty();
 }
 
-QQmlComponent* ResourceLoader::createComponent(const QString &path, QQuickItem *parent) {
-    QQmlEngine *e = qmlEngine(parent);
-    if (e) {
-        QQmlComponent *component = new QQmlComponent(e, path);
-        if (component->errors().count() > 0) {
-            qCCritical(logCategoryResourceLoader) << component->errorString();
-        }
-        return component;
-    } else {
-        return NULL;
-    }
-}
-
 QQuickItem* ResourceLoader::createViewObject(const QString &path, QQuickItem *parent) {
     QQmlEngine *e = qmlEngine(parent);
     if (e) {
