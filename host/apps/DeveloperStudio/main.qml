@@ -31,7 +31,7 @@ SGWidgets.SGMainWindow {
         NavigationControl.init(statusBarContainer, stackContainer, sdsModel.resourceLoader)
         Help.registerWindow(mainWindow, stackContainer)
         if (!PlatformSelection.isInitialized) {
-            PlatformSelection.initialize(sdsModel.coreInterface, sdsModel.documentManager)
+            PlatformSelection.initialize(sdsModel.coreInterface)
         }
         initialized()
     }

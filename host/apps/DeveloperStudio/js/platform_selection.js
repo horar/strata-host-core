@@ -18,7 +18,7 @@ var previouslyConnected = []
 var localPlatformListSettings = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"LocalPlatformList\";}", Qt.application)
 var localPlatformList = []
 
-function initialize (newCoreInterface, newDocumentManager) {
+function initialize (newCoreInterface) {
     platformSelectorModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string platformListStatus: 'loading'}",Qt.application,"PlatformSelectorModel")
     coreInterface = newCoreInterface
     listError.retry_timer.triggered.connect(function () { getPlatformList() });
