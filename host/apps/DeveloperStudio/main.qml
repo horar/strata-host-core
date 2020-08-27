@@ -28,7 +28,7 @@ SGWidgets.SGMainWindow {
 
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")
-        NavigationControl.init(statusBarContainer, stackContainer, sdsModel.resourceLoader)
+        NavigationControl.init(statusBarContainer, stackContainer)
         Help.registerWindow(mainWindow, stackContainer)
         if (!PlatformSelection.isInitialized) {
             PlatformSelection.initialize(sdsModel.coreInterface)
