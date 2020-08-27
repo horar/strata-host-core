@@ -8,7 +8,6 @@
 
 var isInitialized = false
 var coreInterface
-var documentManager
 var listError = {
     "retry_count": 0,
     "retry_timer": Qt.createQmlObject("import QtQuick 2.12; Timer {interval: 3000; repeat: false; running: false;}",Qt.application,"TimeOut")
@@ -18,12 +17,10 @@ var classMap = {} // contains metadata for platformSelectorModel for faster look
 var previouslyConnected = []
 var localPlatformListSettings = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"LocalPlatformList\";}", Qt.application)
 var localPlatformList = []
-var pendingViews = {}
 
 function initialize (newCoreInterface, newDocumentManager) {
     platformSelectorModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string platformListStatus: 'loading'}",Qt.application,"PlatformSelectorModel")
     coreInterface = newCoreInterface
-    documentManager = newDocumentManager
     listError.retry_timer.triggered.connect(function () { getPlatformList() });
     isInitialized = true
 }
