@@ -25,6 +25,9 @@ Item {
                 yMax: 1
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
+                xGrid: false
+                yGrid: true
+                gridColor: "red"
             }
 
             Column {
@@ -40,7 +43,7 @@ Item {
                         curve.color = sgGraphExample.randomColor()
                         let dataArray = []
                         for (let i = 0; i <= 1000; i++) {
-                           dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
+                            dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
                         }
                         curve.appendList(dataArray)
                     }
@@ -81,6 +84,9 @@ Item {
                 zoomYEnabled: false
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
+                xGrid: true
+                yGrid: false
+                gridColor: "green"
             }
 
             Column {
@@ -102,7 +108,7 @@ Item {
                         curve.color = sgGraphExample.randomColor()
                         let dataArray = []
                         for (let i = 0; i <= 1000; i++) {
-                           dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
+                            dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
                         }
                         curve.appendList(dataArray)
                     }
@@ -146,6 +152,8 @@ Item {
                 zoomXEnabled: false
                 zoomYEnabled: false
                 autoUpdate: false
+                xGrid: true
+                yGrid: true
 
                 Component.onCompleted: {
                     let movingCurve = createCurve("movingCurve")

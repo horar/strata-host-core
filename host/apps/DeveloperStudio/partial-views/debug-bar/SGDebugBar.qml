@@ -95,7 +95,7 @@ Item {
 
                             onClicked: {
                                 if (NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
-                                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                                 }
 
                                 let name = selectButton.text;
@@ -147,7 +147,7 @@ Item {
                 text: "Login as Guest"
                 onClicked: {
                     if (NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
-                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                     }
                 }
             }
@@ -157,7 +157,7 @@ Item {
                 text: "Always Login as Guest"
                 onCheckedChanged: {
                     if (checked && NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE && sdsModel.hcsConnected) {
-                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                     }
                 }
 
@@ -172,7 +172,7 @@ Item {
                     onHcsConnectedChanged: {
                         if (sdsModel.hcsConnected && alwaysLogin.checked) {
                             NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
-                            NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                            NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                         }
                     }
                 }
@@ -181,8 +181,8 @@ Item {
             Button {
                 id: serverChange
                 onClicked: {
-                    if (Rest.url !== Rest.productionAuthServer) {
-                        Rest.url = Rest.productionAuthServer
+                    if (Rest.url !== Constants.PRODUCTION_AUTH_SERVER) {
+                        Rest.url = Constants.PRODUCTION_AUTH_SERVER
                     } else {
                         Rest.url = root.testAuthServer
                     }
@@ -194,7 +194,7 @@ Item {
                 }
 
                 function setButtonText () {
-                    if (Rest.url !== Rest.productionAuthServer) {
+                    if (Rest.url !== Constants.PRODUCTION_AUTH_SERVER) {
                         text = "Switch to Prod Auth Server"
                     } else {
                         text = "Switch to Test Auth Server"

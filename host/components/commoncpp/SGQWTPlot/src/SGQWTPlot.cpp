@@ -10,15 +10,26 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     connect(this, &QQuickPaintedItem::heightChanged, this, &SGQWTPlot::updatePlotSize);
 
     qwtPlot = new QwtPlot();
+    qwtGrid_ = new QwtPlotGrid();
 
     setBackgroundColor("white");
     setForegroundColor("black");
+
+    qwtGrid_->attach(qwtPlot);
+    //Setting the default values for x,y axises and color of grid lines.
+    qwtGrid_->enableX(xGrid_);
+    qwtGrid_->enableY(yGrid_);
+    setGridColor("lightgrey");
 }
 
 SGQWTPlot::~SGQWTPlot()
 {
+    delete qwtGrid_;
+    qwtGrid_ = nullptr;
+
     delete qwtPlot;
     qwtPlot = nullptr;
+
 }
 
 void SGQWTPlot::paint(QPainter* painter)
@@ -71,12 +82,12 @@ void SGQWTPlot::shiftYAxis(double offset)
 
 void SGQWTPlot::autoScaleXAxis()
 {
-   qwtPlot->setAxisAutoScale(qwtPlot->xBottom);
-   emit xMinChanged();
-   emit xMaxChanged();
-   if (autoUpdate_) {
-       update();
-   }
+    qwtPlot->setAxisAutoScale(qwtPlot->xBottom);
+    emit xMinChanged();
+    emit xMaxChanged();
+    if (autoUpdate_) {
+        update();
+    }
 }
 
 void SGQWTPlot::autoScaleYAxis()
@@ -123,6 +134,56 @@ void SGQWTPlot::removeCurve(int index)
 int SGQWTPlot::getCount()
 {
     return curves_.count();
+}
+
+
+void SGQWTPlot :: setXGrid(bool showGrid)
+{
+    if(xGrid_ != showGrid) {
+        xGrid_ = showGrid;
+        qwtGrid_->enableX(xGrid_);
+
+        emit xGridChanged();
+        if (autoUpdate_) {
+            update();
+        }
+    }
+}
+
+bool SGQWTPlot :: xGrid()
+{
+    return xGrid_;
+}
+
+void SGQWTPlot :: setYGrid(bool showGrid)
+{
+    if(yGrid_ != showGrid) {
+        yGrid_ = showGrid;
+        qwtGrid_->enableY(yGrid_);
+
+        emit yGridChanged();
+        if (autoUpdate_) {
+            update();
+        }
+    }
+}
+
+bool SGQWTPlot :: yGrid()
+{
+    return yGrid_;
+}
+
+void SGQWTPlot :: setGridColor(QColor newColor)
+{
+    if (gridColor_ != newColor) {
+        gridColor_ = newColor;
+        qwtGrid_->setPen(QPen(gridColor_,0,Qt::DotLine));
+
+        emit gridColorChanged();
+        if (autoUpdate_) {
+            update();
+        }
+    }
 }
 
 void SGQWTPlot::setXMin(double value)
@@ -413,7 +474,6 @@ QPointF SGQWTPlot::mapToPosition(QPointF point)
     double yPos = yMap.transform(point.y()) + canvasRect.y();
     return QPointF(xPos, yPos);
 }
-
 
 
 

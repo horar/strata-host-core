@@ -12,6 +12,7 @@ import 'qrc:/js/login_utilities.js' as LoginUtil
 import 'qrc:/js/navigation_control.js' as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
+import "qrc:/js/constants.js" as Constants
 
 SGStrataPopup {
     id: root
@@ -121,8 +122,16 @@ SGStrataPopup {
             columnSpacing: 5
             rowSpacing: 10
 
+            property bool guestUser: false
+
             Component.onCompleted: {
-                LoginUtil.get_profile(NavigationControl.context.user_id)
+                if (NavigationControl.context.user_id === Constants.GUEST_USER_ID) {
+                    guestUser = true
+                }
+
+                if (guestUser === false) {
+                    LoginUtil.get_profile(NavigationControl.context.user_id)
+                }
             }
 
             Popup {
@@ -235,7 +244,7 @@ SGStrataPopup {
                 id: basicInfoControls
 
                 errorAlertText: "Please make sure that both your first and last name are filled out."
-                animationTargets: [firstNameColumn, lastNameColumn]
+                animationTargets: guestUser === true ? [] : [firstNameColumn, lastNameColumn]
                 expandHeight: firstNameColumn.textField.height
                 hideHeight: firstNameColumn.plainText.height
 
@@ -285,7 +294,7 @@ SGStrataPopup {
                 id: companyControls
 
                 errorAlertText: ""
-                animationTargets: [jobTitleColumn]
+                animationTargets: guestUser === true ? [] : [jobTitleColumn]
                 expandHeight: companyColumn.textField.height
                 hideHeight: companyColumn.plainText.height
 
@@ -302,10 +311,13 @@ SGStrataPopup {
                 }
 
                 function expandAnimationFinished() {
-                    companyColumn.editable = false
                     jobTitleColumn.textField.text = jobTitleColumn.plainText.text
-                    jobTitleColumn.editable = true
                     jobTitleColumn.textField.focus = true
+                    companyColumn.editable = false
+
+                    if (mainGrid.guestUser === false) {
+                        jobTitleColumn.editable = true
+                    }
                 }
             }
 
@@ -348,7 +360,7 @@ SGStrataPopup {
                 id: passwordControls
 
                 errorAlertText: "Please make sure that your password meets our requirements."
-                animationTargets: [currentPasswordRow,newPasswordRow]
+                animationTargets: guestUser === true ? [] : [currentPasswordRow,newPasswordRow]
                 expandHeight: passwordField.height
 
                 onSaved: {
@@ -371,8 +383,10 @@ SGStrataPopup {
                 }
 
                 function expandAnimationFinished () {
-                    newPasswordRow.editable = true
-                    currentPasswordRow.editable = true
+                    if (mainGrid.guestUser === false) {
+                        newPasswordRow.editable = true
+                        currentPasswordRow.editable = true
+                    }
                 }
 
                 function expandAnimationStarted () {
@@ -517,6 +531,7 @@ SGStrataPopup {
                 id: closeAccountButton
                 text: "Close Account"
 
+                enabled: mainGrid.guestUser === false
                 Layout.columnSpan: 3
 
                 contentItem: Text {

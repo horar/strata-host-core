@@ -14,6 +14,7 @@
 #include <qwt/qwt_scale_widget.h>
 #include <qwt/qwt_plot_layout.h>
 #include <qwt/qwt_text_label.h>
+#include <qwt/qwt_plot_grid.h>
 
 #include <QDebug>
 
@@ -41,6 +42,10 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(QColor foregroundColor MEMBER foregroundColor_ WRITE setForegroundColor NOTIFY foregroundColorChanged)
     Q_PROPERTY(bool autoUpdate MEMBER autoUpdate_ NOTIFY autoUpdateChanged)
     Q_PROPERTY(int count READ getCount NOTIFY countChanged)
+    Q_PROPERTY(bool xGrid READ xGrid WRITE setXGrid NOTIFY xGridChanged)
+    Q_PROPERTY(bool yGrid READ yGrid WRITE setYGrid NOTIFY yGridChanged)
+    Q_PROPERTY(QColor gridColor MEMBER gridColor_ WRITE setGridColor NOTIFY gridColorChanged)
+
 
 public:
     SGQWTPlot(QQuickItem* parent = nullptr);
@@ -85,10 +90,16 @@ public:
     void setBackgroundColor(QColor newColor);
     void setForegroundColor(QColor newColor);
     int getCount();
+    void setXGrid(bool showGrid);
+    bool xGrid();
+    void setYGrid(bool showGrid);
+    bool yGrid();
+    void setGridColor(QColor newColor);
+
+
 
 protected:
     QwtPlot* qwtPlot = nullptr;
-
     void updateCurveList();
 
 signals:
@@ -108,23 +119,28 @@ signals:
     void foregroundColorChanged();
     void autoUpdateChanged();
     void countChanged();
+    void xGridChanged();
+    void yGridChanged();
+    void gridColorChanged();
 
 private:
     friend class SGQWTPlotCurve;
 
     QList<SGQWTPlotCurve*> curves_;
+    QwtPlotGrid * qwtGrid_  = nullptr;
     bool xLogarithmic_ = false;
     bool yLogarithmic_ = false;
     QColor backgroundColor_;
     QColor foregroundColor_;
     bool autoUpdate_ = true;
+    bool xGrid_ = false;
+    bool yGrid_ = false;
+    QColor gridColor_;
+
 
 private slots:
     void updatePlotSize();
 };
-
-
-
 
 
 
@@ -178,10 +194,6 @@ private:
 };
 
 
-
-
-
-
 class SGQWTPlotCurveData : public QwtSeriesData<QPointF>
 {
 public:
@@ -193,7 +205,7 @@ public:
     QRectF boundingRect() const;
 
 private:
-      const QVector<QPointF>* container_;
+    const QVector<QPointF>* container_;
 };
 
 #endif // SGQWTPLOT_H
