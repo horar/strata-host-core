@@ -5,9 +5,16 @@ from functools import reduce
 import unittest
 
 class StrataUI:
+    '''
+    Class that wraps uiautomation into a more friendly procedural interface.
+    '''
     def __init__(self):
-        self.app = WindowControl(searchDepth = 1, Name="ON Semiconductor: Strata Developer Studio")
-    def hasProperty(self, id, value):
+        '''
+        Init StrataUI. Expects strata to be already open.
+        '''
+        self.app = WindowControl(searchDepth = 1, Name = STRATA_WINDOW)
+
+    def __hasProperty(self, id, value):
         def compare(control: Control, depth: int):
             return control.GetPropertyValue(id) == value
         return compare
@@ -23,9 +30,15 @@ class StrataUI:
         return matching
 
     def FindAll(self, f):
+        '''
+        Find all elements that are approved by the function f(control: Control)
+        '''
         return self.__findAll(self.app, f)
 
     def findButtonByHeight(self, name, comparison):
+        '''
+        Find the (lowest, highest, etc.) button by its name
+        '''
         buttons = self.FindAll(lambda control: control.GetPropertyValue(PropertyId.NameProperty) == name and control.GetPropertyValue(PropertyId.ControlTypeProperty) == ControlType.ButtonControl)
 
         def lowestButton(button: Control, lowest: Control):
@@ -37,47 +50,81 @@ class StrataUI:
         return button
 
     def OnLoginScreen(self):
-        passwordEdit = self.app.EditControl(Compare=self.hasProperty(PropertyId.FullDescriptionProperty, PASSWORD_EDIT))
+        '''
+        True if on login screen
+        '''
+        passwordEdit = self.app.EditControl(Compare=self.__hasProperty(PropertyId.FullDescriptionProperty, PASSWORD_EDIT))
         return passwordEdit.Exists()
 
     def OnRegisterScreen(self):
-        firstNameEdit = self.app.EditControl(Compare = self.hasProperty(PropertyId.FullDescriptionProperty, FIRST_NAME_EDIT))
+        '''
+        True if on register screen
+        '''
+        firstNameEdit = self.app.EditControl(Compare = self.__hasProperty(PropertyId.FullDescriptionProperty, FIRST_NAME_EDIT))
         return firstNameEdit.Exists()
 
     def OnPlatformView(self):
-        userIcon = self.app.ButtonControl(Compare = self.hasProperty(PropertyId.NameProperty, USER_ICON_BUTTON))
+        '''
+        True if on platform view
+        '''
+        userIcon = self.app.ButtonControl(Compare = self.__hasProperty(PropertyId.NameProperty, USER_ICON_BUTTON))
         return userIcon.Exists()
 
     def OnFeedback(self):
+        '''
+        True if feedback window open
+        '''
+
         #find inner window
         feedbackWindow = self.app.WindowControl()
         return feedbackWindow.Exists()
 
     def OnFeedbackSuccess(self):
-        successText = self.app.TextControl(Compare=self.hasProperty(PropertyId.NameProperty, FEEDBACK_SUCCESS_TEXT))
+        '''
+        True if feedback success dialog open
+        '''
+        successText = self.app.TextControl(Compare=self.__hasProperty(PropertyId.NameProperty, FEEDBACK_SUCCESS_TEXT))
         return successText.Exists()
 
     def OnForgotPassword(self):
+        '''
+        True if forgot password dialog open
+        '''
         resetPasswordWindow = self.app.WindowControl()
         return resetPasswordWindow.Exists()
 
     def SetEditText(self, editIdentifier, text, property = PropertyId.FullDescriptionProperty):
-        edit = self.app.EditControl(Compare = self.hasProperty(property, editIdentifier))
+        '''
+        Find an edit by a specific property and set its text
+        '''
+        edit = self.app.EditControl(Compare = self.__hasProperty(property, editIdentifier))
         edit.GetValuePattern().SetValue(text)
 
-    def GetEditText(self, editFullDescription):
-        edit = self.app.EditControl(Compare = self.hasProperty(PropertyId.FullDescriptionProperty, editFullDescription))
+    def GetEditText(self, editIdentifier, property = PropertyId.FullDescriptionProperty):
+        '''
+        Find an edit by a specific property and get its text
+        '''
+        edit = self.app.EditControl(Compare = self.__hasProperty(property, editIdentifier))
         return edit.GetValuePattern().Value
 
     def PressLoginButton(self):
+        '''
+        Press the login submit button on the login view
+        '''
         button: ButtonControl = self.findButtonByHeight(LOGIN_TAB, lambda c, l: c < l)
         button.GetInvokePattern().Invoke()
 
     def PressRegisterButton(self):
+        '''
+        Press the register submit button on the register view
+        '''
         button: ButtonControl = self.findButtonByHeight(REGISTER_TAB, lambda c, l: c < l)
         button.GetInvokePattern().Invoke()
 
     def PressRegisterConfirmCheckbox(self, setTicked = True):
+        '''
+        Set the confirm checkbox on the register view to ticked or unticked
+        '''
         confirm: CheckBoxControl = self.app.CheckBoxControl()
         state = confirm.GetTogglePattern().ToggleState
         if state == ToggleState.On and not setTicked:
@@ -85,23 +132,38 @@ class StrataUI:
         elif state == ToggleState.Off and setTicked:
             confirm.GetTogglePattern().Toggle()
 
-    def PressButtonByName(self, name):
-        button = self.app.ButtonControl(Compare = self.hasProperty(PropertyId.NameProperty, name))
+    def PressButton(self, identifier, property=PropertyId.NameProperty):
+        '''
+        Find a button by a specific property and press it.
+        '''
+        button = self.app.ButtonControl(Compare = self.__hasProperty(property, identifier))
         button.GetInvokePattern().Invoke()
 
     def SetToRegisterTab(self):
+        '''
+        Set to the register tab in the login/register view.
+        '''
         button = self.findButtonByHeight(REGISTER_TAB, lambda c, l: c > l)
         button.GetInvokePattern().Invoke()
 
     def SetToLoginTab(self):
+        '''
+        Set to the login tab in the login/register view.
+        '''
         button = self.findButtonByHeight(LOGIN_TAB, lambda c, l: c > l)
         button.GetInvokePattern().Invoke()
 
-    def AlertExists(self, name):
-        alert = self.app.CustomControl(Compare = self.hasProperty(PropertyId.NameProperty, name))
+    def AlertExists(self, identifier, property = PropertyId.NameProperty):
+        '''
+        Determine if an alert exists by a specific property
+        '''
+        alert = self.app.CustomControl(Compare = self.__hasProperty(PropertyId.NameProperty, identifier))
         return alert.Exists()
 
     def ConnectedPlatforms(self):
+        '''
+        Get the number of platforms connected in the platform view. (only works on platform view).
+        '''
         def isPlatform(control:Control):
             return control.GetPropertyValue(PropertyId.NameProperty) == PLATFORM_CONTROLS_BUTTON and control.GetPropertyValue(PropertyId.ControlTypeProperty) == ControlType.ButtonControl
         platforms = self.FindAll(isPlatform)
@@ -110,10 +172,16 @@ class StrataUI:
 
 
 def SetAndVerifyEdit(ui, editFullDescription, text, test):
+    '''
+    Set edit text and assert that the text has been set.
+    '''
     ui.SetEditText(editFullDescription, text)
     test.assertEqual(ui.GetEditText(editFullDescription), text)
 
 def Login(ui: StrataUI, username, password, test: unittest.TestCase = None):
+    '''
+    Login to strata from the login view using the given username and password, optionally asserting that the text has been set using the test case.
+    '''
     setText = (lambda description, text: SetAndVerifyEdit(ui, description, text, test)) if test != None else ui.SetEditText
 
     setText(USERNAME_EDIT, username)
@@ -121,6 +189,10 @@ def Login(ui: StrataUI, username, password, test: unittest.TestCase = None):
     ui.PressLoginButton()
 
 def Register(ui: StrataUI, username, password, firstName, lastName, company, title, test: unittest.TestCase = None):
+    '''
+    Register using the given information, optionally asserting that the text has been set using the test case.
+    '''
+
     setText = (lambda description, text: SetAndVerifyEdit(ui, description, text, test)) if test != None else ui.SetEditText
 
     setText(EMAIL_EDIT, username)
@@ -134,8 +206,11 @@ def Register(ui: StrataUI, username, password, firstName, lastName, company, tit
     ui.PressRegisterButton()
 
 def Logout(ui: StrataUI):
-    ui.PressButtonByName(USER_ICON_BUTTON)
-    ui.PressButtonByName(LOGOUT_BUTTON)
+    '''
+    Logout of strata from the platform view.
+    '''
+    ui.PressButton(USER_ICON_BUTTON)
+    ui.PressButton(LOGOUT_BUTTON)
 
 
 

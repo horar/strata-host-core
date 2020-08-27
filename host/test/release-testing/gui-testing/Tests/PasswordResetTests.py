@@ -15,11 +15,11 @@ class PasswordResetTest(unittest.TestCase):
     def setUp(self) -> None:
         ui = StrataUI()
         ui.SetToLoginTab()
-        ui.PressButtonByName(Common.RESET_PASSWORD_OPEN_BUTTON)
+        ui.PressButton(Common.RESET_PASSWORD_OPEN_BUTTON)
 
     def tearDown(self) -> None:
         ui = StrataUI()
-        ui.PressButtonByName(Common.RESET_PASSWORD_CLOSE_BUTTON)
+        ui.PressButton(Common.RESET_PASSWORD_CLOSE_BUTTON)
 
     def doTest(self, username):
         ui = StrataUI()
@@ -27,7 +27,7 @@ class PasswordResetTest(unittest.TestCase):
 
         ui.SetEditText(Common.RESET_PASSWORD_EDIT, username)
 
-        ui.PressButtonByName(Common.RESET_PASSWORD_SUBMIT_BUTTON)
+        ui.PressButton(Common.RESET_PASSWORD_SUBMIT_BUTTON)
 
         time.sleep(1)
 

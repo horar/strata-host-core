@@ -13,6 +13,8 @@ VALID_PASSWORD = None
 
 DEFAULT_URL = None
 
+STRATA_WINDOW = "ON Semiconductor: Strata Developer Studio"
+
 LOGIN_TAB = "Login"
 REGISTER_TAB = "Register"
 
