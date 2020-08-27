@@ -49,6 +49,7 @@ private:
     HcsNode *remoteHcsNode_;
     QPointer<QProcess> hcsProcess_;
     QString appDirPath_;
+    bool externalHcsConnected_{false};
 
     void setHcsConnected(bool hcsConnected);
 };

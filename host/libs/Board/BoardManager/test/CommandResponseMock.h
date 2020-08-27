@@ -99,12 +99,12 @@ R"({
     }
 })";
 
-const QByteArray update_firmware_request = R"({"cmd":"update_firmware"})";
+const QByteArray start_bootloader_request = R"({"cmd":"start_bootloader"})";
 
-const QByteArray update_firmware_response =
+const QByteArray start_bootloader_response =
 R"({
     "notification":{
-        "value":"update_firmware",
+        "value":"start_bootloader",
         "payload":{
             "status":"ok"
         }

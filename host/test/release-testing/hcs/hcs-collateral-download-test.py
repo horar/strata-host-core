@@ -124,7 +124,7 @@ for platform in platform_list:
         total_passed_platforms += 1
         continue
 
-    message_to_HCS = '{"cmd":"platform_select","payload":{"class_id":"' + str(platform["class_id"]) + '"}}'
+    message_to_HCS = '{"cmd":"load_documents","payload":{"class_id":"' + str(platform["class_id"]) + '"}}'
     message_from_HCS = messageHCS(message_to_HCS, "document")
 
     if message_from_HCS == "":

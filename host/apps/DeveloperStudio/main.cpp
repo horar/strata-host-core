@@ -13,10 +13,10 @@
 #include <QSysInfo>
 #include <QSslSocket>
 
+#include <PlatformInterface/core/CoreInterface.h>
+
 #include "Version.h"
 #include "StrataDeveloperStudioTimestamp.h"
-
-#include <PlatformInterface/core/CoreInterface.h>
 
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
@@ -26,6 +26,8 @@
 #include "ResourceLoader.h"
 
 #include "HcsNode.h"
+
+#include "AppUi.h"
 
 
 void addImportPaths(QQmlApplicationEngine *engine)
@@ -119,26 +121,24 @@ int main(int argc, char *argv[])
     /* deprecated context property, use sdsModel.coreInterface instead */
     engine.rootContext()->setContextProperty ("coreInterface", sdsModel->coreInterface());
 
-
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-    if (engine.rootObjects().isEmpty()) {
-        qCCritical(logCategoryStrataDevStudio) << "engine failed to load 'main' qml file; quitting...";
-        engine.load(QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
-        if (engine.rootObjects().isEmpty()) {
-            qCCritical(logCategoryStrataDevStudio) << "hell froze - engine fails to load error dialog; aborting...";
-            return EXIT_FAILURE;
-        }
-
-        return app.exec();
-    }
+    AppUi ui(engine, QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
+    QObject::connect(
+        &ui, &AppUi::uiFails, &app, []() { QCoreApplication::exit(EXIT_FAILURE); },
+        Qt::QueuedConnection);
 
     // Starting services this build?
     // [prasanth] : Important note: Start HCS before launching the UI
     // So the service callback works properly
 #ifdef START_SERVICES
-    bool started = sdsModel->startHcs();
-    qCDebug(logCategoryStrataDevStudio) << "hcs started=" << started;
+    QObject::connect(
+        &ui, &AppUi::uiLoaded, &app,
+        [&sdsModel]() {
+            bool started = sdsModel->startHcs();
+            qCDebug(logCategoryHcs) << "hcs started =" << started;
+        },
+        Qt::QueuedConnection);
 #endif
+    ui.loadUrl(QUrl(QStringLiteral("qrc:/main.qml")));
 
     int appResult = app.exec();
     // LC: process remaining events i.e. submit remaining events (created by external close request)
@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
     sdsModel->killHcsSilently = true;
 
     bool killed = sdsModel->killHcs();
-    qCDebug(logCategoryStrataDevStudio) << "hcs killed=" << killed;
+    qCDebug(logCategoryHcs) << "hcs killed =" << killed;
 #endif
 
     return appResult;

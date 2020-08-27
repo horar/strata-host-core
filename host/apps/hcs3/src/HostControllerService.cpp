@@ -25,7 +25,7 @@ HostControllerService::HostControllerService(QObject* parent)
     //handlers for 'cmd'
     clientCmdHandler_.insert( { std::string("request_hcs_status"), std::bind(&HostControllerService::onCmdHCSStatus, this, std::placeholders::_1) });
     clientCmdHandler_.insert( { std::string("unregister"), std::bind(&HostControllerService::onCmdUnregisterClient, this, std::placeholders::_1) } );
-    clientCmdHandler_.insert( { std::string("platform_select"), std::bind(&HostControllerService::onCmdPlatformSelect, this, std::placeholders::_1) } );
+    clientCmdHandler_.insert( { std::string("load_documents"), std::bind(&HostControllerService::onCmdLoadDocuments, this, std::placeholders::_1) } );
 
     hostCmdHandler_.insert( { std::string("download_files"), std::bind(&HostControllerService::onCmdHostDownloadFiles, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
@@ -434,7 +434,7 @@ void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
     onCmdHostUnregister(nullptr);
 }
 
-void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
+void HostControllerService::onCmdLoadDocuments(const rapidjson::Value* payload)
 {
     Client* client = getSenderClient();
     if (client == nullptr) {

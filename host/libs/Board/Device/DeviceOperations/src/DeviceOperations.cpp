@@ -13,7 +13,7 @@ namespace strata::device {
 using command::BaseDeviceCommand;
 using command::CmdGetFirmwareInfo;
 using command::CmdRequestPlatformId;
-using command::CmdUpdateFirmware;
+using command::CmdStartBootloader;
 using command::CmdFlash;
 using command::CmdBackupFirmware;
 using command::CmdStartApplication;
@@ -57,7 +57,7 @@ void DeviceOperations::switchToBootloader() {
         // If board is already in bootloader mode, CmdUpdateFirmware is skipped
         // and whole operation ends. Finished() signal will be sent with data set to 1 then.
         commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
-        commandList_.emplace_back(std::make_unique<CmdUpdateFirmware>(device_));
+        commandList_.emplace_back(std::make_unique<CmdStartBootloader>(device_));
         commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
         commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, false));
         currentCommand_ = commandList_.begin();
