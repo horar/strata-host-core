@@ -108,7 +108,13 @@ StackLayout {
                 }
             }
 
-            let qml_control = NavigationControl.getQMLFile(model.class_id, model.name, "Control", usingLocalView, version)
+            let name = model.name;
+
+            if (usingLocalView) {
+                name = UuidMap.uuid_map[model.class_id];
+            }
+
+            let qml_control = NavigationControl.getQMLFile(model.class_id, name, "Control", usingLocalView, version)
             NavigationControl.context.class_id = model.class_id
             NavigationControl.context.device_id = model.device_id
 

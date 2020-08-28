@@ -185,7 +185,7 @@ bool ResourceLoader::isViewRegistered(const QString &class_id) {
     return itr != viewsRegistered_.end() && !itr.value()->filepath.isEmpty();
 }
 
-QQuickItem* ResourceLoader::createViewObject(const QString &path, QObject *parent, QVariantMap initialProperties) {
+QQuickItem* ResourceLoader::createViewObject(const QString &path, QQuickItem *parent, QVariantMap initialProperties) {
     QQmlEngine *e = qmlEngine(parent);
     if (e) {
         QQmlComponent component = QQmlComponent(e, path, QQmlComponent::CompilationMode::PreferSynchronous, parent);
@@ -214,7 +214,7 @@ QQuickItem* ResourceLoader::createViewObject(const QString &path, QObject *paren
         QQuickItem* item = qobject_cast<QQuickItem*>( object );
         QQmlEngine::setObjectOwnership(item, QQmlEngine::JavaScriptOwnership);
 
-        item->setParentItem(qobject_cast<QQuickItem*>(parent));
+        item->setParentItem(parent);
         return item;
     } else {
         return NULL;
