@@ -73,7 +73,7 @@ StackLayout {
         if (fullyInitialized) { // guarantee control view loads after platformStack & sgUserSettings
             if (connected && model.available.control) {
                 // When we reconnect the board, the view has already been registered, so we can immediately load the control
-                if (platformDocumentsInitialized) {
+                if (sdsModel.resourceLoader.isViewRegistered(model.class_id)) {
                     loadControl()
                 } else {
                     // Connect signals to slots first. This is to remedy the issue where the Connections component was not yet completed
@@ -82,6 +82,7 @@ StackLayout {
                     sdsModel.resourceLoader.resourceRegisterFailed.connect(resourceRegisterFailed);
                     controlViewList = sdsModel.documentManager.getClassDocuments(model.class_id).controlViewListModel
                     controlViewListCount = controlViewList.count
+                    loadPlatformDocuments()
                     loadingBarContainer.visible = true;
                     loadingBar.percentReady = 0.0;
                 }
@@ -234,6 +235,11 @@ StackLayout {
         if (index < 0) {
             console.info("No control view installed for", model.class_id)
             index = controlViewList.getLatestVersion();
+
+            if (controlViewList.uri(index) === "" || controlViewList.md5(index) === "") {
+                let obj = sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlContainer, {"error_message": "Could not find view"});
+                controlLoaded = true
+            }
 
             let downloadCommand = {
                 "hcs::cmd": "download_view",
