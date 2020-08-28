@@ -195,6 +195,16 @@ QQuickItem* ResourceLoader::createViewObject(const QString &path, QObject *paren
         }
         QQmlContext *context = qmlContext(parent);
 
+        // From the Qt Docs:
+        /*
+         * When QQmlComponent constructs an instance, it occurs in three steps:
+         *  1. The object hierarchy is created, and constant values are assigned.
+         *  2. Property bindings are evaluated for the first time.
+         *  3. If applicable, QQmlParserStatus::componentComplete() is called on objects.
+         *
+         * QQmlComponent::beginCreate() differs from QQmlComponent::create() in that it only performs step 1.
+         * QQmlComponent::completeCreate() must be called to complete steps 2 and 3.
+         */
         QObject* object = component.beginCreate(context);
         for (QString key : initialProperties.keys()) {
             object->setProperty(key.toLocal8Bit().data(), initialProperties.value(key));
