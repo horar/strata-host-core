@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.12
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as Filters
 import "qrc:/js/help_layout_manager.js" as Help
+import "qrc:/js/constants.js" as Constants
 
 import tech.strata.fonts 1.0
 import tech.strata.sgwidgets 1.0
@@ -36,21 +37,27 @@ Item {
     }
 
     SGSortFilterProxyModel {
-        id: filteredPlatformListModel
-        sourceModel: PlatformSelection.platformListModel
+        id: filteredPlatformSelectorModel
+        sourceModel: PlatformSelection.platformSelectorModel
         sortEnabled: true
         invokeCustomFilter: true
-        sortRole: "connected"
-        sortAscending: false
+        invokeCustomLessThan: true
 
         property bool filteringCategory: false
         property bool filteringText: false
         property bool filteringSegment: false
 
         // Custom filtering functions
-        function filterAcceptsRow(row) {
-            var item = sourceModel.get(row)
-            return in_category(item) && contains_text(item) && in_segment(item) && is_visible(item)
+        function filterAcceptsRow(index) {
+            var listing = sourceModel.get(index)
+            return in_category(listing) && contains_text(listing) && in_segment(listing) && is_visible(listing)
+        }
+
+        function lessThan(index1, index2) {
+            // sort list according to connected state or secondarily if device_id is attached
+            var listing1 = sourceModel.get(index1)
+            var listing2 = sourceModel.get(index2)
+            return listing1.connected || (listing1.device_id !== Constants.NULL_DEVICE_ID && !listing2.connected)
         }
 
         function in_category(item) {
@@ -95,10 +102,14 @@ Item {
         }
 
         function is_visible(item) {
-            if (item.available.unlisted){
-                return false
+            if (item.visible) {
+                if (item.available.unlisted){
+                    return false
+                } else {
+                    return true
+                }
             } else {
-                return true
+                return false
             }
         }
     }
@@ -107,20 +118,20 @@ Item {
         target: Filters.utility
         onCategoryFiltersChanged: {
             if (Filters.categoryFilters.length === 0) {
-                filteredPlatformListModel.filteringCategory = false
+                filteredPlatformSelectorModel.filteringCategory = false
             } else {
-                filteredPlatformListModel.filteringCategory = true
+                filteredPlatformSelectorModel.filteringCategory = true
             }
-            filteredPlatformListModel.invalidate() //re-triggers filterAcceptsRow check
+            filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
         }
 
         onSegmentFilterChanged: {
             if (Filters.segmentFilter === "") {
-                filteredPlatformListModel.filteringSegment = false
+                filteredPlatformSelectorModel.filteringSegment = false
             } else {
-                filteredPlatformListModel.filteringSegment = true
+                filteredPlatformSelectorModel.filteringSegment = true
             }
-            filteredPlatformListModel.invalidate() //re-triggers filterAcceptsRow check
+            filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
         }
     }
 
@@ -162,18 +173,18 @@ Item {
                     color: "#33b13b"
                     font.bold: true
                     selectByMouse: true
-                    enabled: PlatformSelection.platformListModel.platformListStatus === "loaded"
+                    enabled: PlatformSelection.platformSelectorModel.platformListStatus === "loaded"
 
                     property string lowerCaseText: text.toLowerCase()
 
                     onLowerCaseTextChanged: {
                         Filters.keywordFilter = lowerCaseText
                         if (lowerCaseText === "") {
-                            filteredPlatformListModel.filteringText = false
+                            filteredPlatformSelectorModel.filteringText = false
                         } else {
-                            filteredPlatformListModel.filteringText = true
+                            filteredPlatformSelectorModel.filteringText = true
                         }
-                        filteredPlatformListModel.invalidate() //re-triggers filterAcceptsRow check
+                        filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
                     }
 
                     Text {
@@ -196,7 +207,7 @@ Item {
                 }
 
                 SGIcon {
-                    source: "qrc:/images/icons/times-circle-solid.svg"
+                    source: "qrc:/sgimages/times-circle.svg"
                     height: parent.height * .75
                     width: height
                     anchors {
@@ -272,7 +283,7 @@ Item {
 
                 SGIcon {
                     id: angleIcon
-                    source: "qrc:/images/icons/angle-down.svg"
+                    source: "qrc:/sgimages/chevron-down.svg"
                     iconColor: segmentFilterMouse.enabled? "#666" : "#ddd"
                     anchors {
                         verticalCenter: segmentFilterContainer.verticalCenter
@@ -416,14 +427,14 @@ Item {
                 right: listviewContainer.right
                 top: listviewContainer.top
             }
-            model: filteredPlatformListModel
+            model: filteredPlatformSelectorModel
             maximumFlickVelocity: 1200 // Limit scroll speed on Windows trackpads: https://bugreports.qt.io/browse/QTBUG-56075
 
             property real delegateHeight: 160
             property real delegateWidth: 950
 
             Component.onCompleted: {
-                currentIndex = Qt.binding( function() { return PlatformSelection.platformListModel.currentIndex })
+                currentIndex = Qt.binding( function() { return PlatformSelection.platformSelectorModel.currentIndex })
             }
 
             delegate: SGPlatformSelectorDelegate {
@@ -457,10 +468,10 @@ Item {
             }
 
             Connections {
-                target: filteredPlatformListModel
+                target: filteredPlatformSelectorModel
                 onCountChanged: {
-                    if (filteredPlatformListModel.count > 0) {
-                        PlatformSelection.platformListModel.currentIndex = 0
+                    if (filteredPlatformSelectorModel.count > 0) {
+                        PlatformSelection.platformSelectorModel.currentIndex = 0
                     }
                 }
             }
@@ -471,6 +482,6 @@ Item {
         anchors {
             fill: root
         }
-        status: PlatformSelection.platformListModel.platformListStatus
+        status: PlatformSelection.platformSelectorModel.platformListStatus
     }
 }

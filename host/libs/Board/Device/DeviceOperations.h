@@ -29,6 +29,7 @@ enum class DeviceOperation: int {
     Identify,
     SwitchToBootloader,
     FlashFirmwareChunk,
+    FlashBootloaderChunk,
     BackupFirmwareChunk,
     StartApplication,
     // special values for finished signal (operation was not finished successfully):
@@ -78,6 +79,13 @@ public:
     void backupFirmwareChunk();
 
     /*!
+     * Flash Bootloader Chunk operation.
+     * \param chunk bootloader chunk
+     * \param chunkNumber bootloader chunk number
+     */
+    void flashBootloaderChunk(const QVector<quint8>& chunk, int chunkNumber);
+
+    /*!
      * Start Application operation.
      */
     void startApplication();
@@ -98,6 +106,12 @@ public:
      * \return firmware chunk from last backupFirmwareChunk() operation
      */
     QVector<quint8> recentBackupChunk() const;
+
+    /*!
+     * Get total count of chunks of backed up firmware.
+     * \return count of backed up firmware chunks
+     */
+    int backupChunksCount() const;
 
 signals:
     /*!
@@ -124,22 +138,26 @@ private slots:
     void handleDeviceError(device::Device::ErrorCode errCode, QString msg);
 
 protected:
+    DeviceOperation operation_;
+
+private:
     bool startOperation(DeviceOperation operation);
     void nextCommand();
     void finishOperation(DeviceOperation operation, int data = OPERATION_DEFAULT_DATA);
     void reset();
+
+    void flashChunk(const QVector<quint8>& chunk, int chunkNumber, bool flashFirmware);
 
     device::DevicePtr device_;
     uint deviceId_;
 
     QTimer responseTimer_;
 
-    DeviceOperation operation_;
-
     std::vector<std::unique_ptr<command::BaseDeviceCommand>> commandList_;
     std::vector<std::unique_ptr<command::BaseDeviceCommand>>::iterator currentCommand_;
 
     QVector<quint8> backupChunk_;
+    int backupChunksCount_;
 };
 
 }  // namespace

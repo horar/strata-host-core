@@ -48,5 +48,6 @@
         <file>views/images/battery-icon.svg</file>
         <file>views/images/usb-c icon.svg</file>
         <file>views/advanced views/PortStatBox.qml</file>
+        <file>views/DebugMenu.qml</file>
     </qresource>
 </RCC>

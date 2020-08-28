@@ -258,9 +258,9 @@ void SciPlatform::flasherProgramProgressHandler(int chunk, int total)
     emit flasherProgramProgress(chunk, total);
 }
 
-void SciPlatform::flasherBackupProgressHandler(int chunk)
+void SciPlatform::flasherBackupProgressHandler(int chunk, int total)
 {
-    emit flasherBackupProgress(chunk);
+    emit flasherBackupProgress(chunk, total);
 }
 
 void SciPlatform::flasherRestoreProgressHandler(int chunk, int total)

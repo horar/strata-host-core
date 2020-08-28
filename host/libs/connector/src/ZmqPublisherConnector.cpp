@@ -1,6 +1,8 @@
-
 #include "ZmqPublisherConnector.h"
 #include <zhelpers.hpp>
+
+namespace strata::connector
+{
 
 ZmqPublisherConnector::ZmqPublisherConnector() : ZmqConnector(ZMQ_PUB), mSubscribers_()
 {
@@ -55,4 +57,6 @@ bool ZmqPublisherConnector::send(const std::string& message)
 void ZmqPublisherConnector::addSubscriber(const std::string& dealerID)
 {
     mSubscribers_.insert(dealerID);
+}
+
 }

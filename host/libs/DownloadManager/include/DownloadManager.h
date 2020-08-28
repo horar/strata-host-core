@@ -6,10 +6,12 @@
 #include <QNetworkReply>
 #include <QList>
 #include <QMap>
+#include <QPointer>
 
 #include <QBasicTimer>
 #include <QTimerEvent>
 #include <QCryptographicHash>
+
 
 namespace strata {
 class DownloadManager : public QObject
@@ -18,11 +20,11 @@ class DownloadManager : public QObject
     Q_DISABLE_COPY(DownloadManager)
 
 public:
-    DownloadManager(QObject* parent = nullptr);
+    DownloadManager(QNetworkAccessManager *manager, QObject* parent = nullptr);
     ~DownloadManager() override;
 
     struct DownloadRequestItem {
-        QUrl relativeUrl;
+        QUrl url;
         QString filePath;
         QString md5;
     };
@@ -41,7 +43,7 @@ public:
               keepOriginalName(false),
               oneFailsAllFail(true)
         {
-        };
+        }
 
         QString id;
 
@@ -61,7 +63,6 @@ public:
         bool oneFailsAllFail;
     };
 
-    void setBaseUrl(const QUrl &baseUrl);
     void setMaxDownloadCount(int maxDownloadCount);
 
     QString download(const QList<DownloadRequestItem> &items,
@@ -114,10 +115,9 @@ private:
         QString errorString;
     };
 
-    QNetworkAccessManager *accessManager_;
+    QPointer<QNetworkAccessManager> networkManager_;
     QList<QNetworkReply*> currentDownloads_;
 
-    QUrl baseUrl_;
     int maxDownloadCount_ = 4;
 
     QList<DownloadItem> itemList_;

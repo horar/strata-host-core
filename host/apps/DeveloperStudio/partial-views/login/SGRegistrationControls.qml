@@ -38,7 +38,7 @@ Item {
 
             SGIcon {
                 id: alertIcon
-                source: Qt.colorEqual(alertRect.color, "red") ? "qrc:/images/icons/exclamation-circle-solid.svg" : "qrc:/images/icons/check-circle-solid.svg"
+                source: Qt.colorEqual(alertRect.color, "red") ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/check-circle.svg"
                 anchors {
                     left: alertRect.left
                     verticalCenter: alertRect.verticalCenter
@@ -122,7 +122,7 @@ Item {
 
             SGIcon {
                 id: showPasswordIcon
-                source: passwordField.echoMode === TextInput.Password ? "qrc:/images/icons/eye-solid.svg" : "qrc:/images/icons/eye-slash-solid.svg"
+                source: passwordField.echoMode === TextInput.Password ? "qrc:/sgimages/eye.svg" : "qrc:/sgimages/eye-slash.svg"
                 iconColor: showPassword.containsMouse ? "lightgrey" : "#ddd"
                 anchors {
                     verticalCenter: passwordField.verticalCenter
@@ -180,7 +180,7 @@ Item {
                         anchors.centerIn: parent
                         iconColor: "#777"
                         visible: policyCheck.checked
-                        source: "qrc:/images/icons/check-solid.svg"
+                        source: "qrc:/sgimages/check.svg"
                     }
 
                     Rectangle {

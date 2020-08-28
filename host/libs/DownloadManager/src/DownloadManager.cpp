@@ -11,10 +11,10 @@
 
 namespace strata {
 
-DownloadManager::DownloadManager(QObject *parent)
-    : QObject(parent)
+DownloadManager::DownloadManager(QNetworkAccessManager *manager, QObject *parent)
+    : QObject(parent),
+      networkManager_(manager)
 {
-    accessManager_ = new QNetworkAccessManager(this);
 }
 
 DownloadManager::~DownloadManager()
@@ -26,11 +26,6 @@ DownloadManager::~DownloadManager()
 
     qDeleteAll(groupHash_);
     groupHash_.clear();
-}
-
-void DownloadManager::setBaseUrl(const QUrl &baseUrl)
-{
-    baseUrl_ = baseUrl;
 }
 
 void DownloadManager::setMaxDownloadCount(int maxDownloadCount)
@@ -46,40 +41,52 @@ QString DownloadManager::download(
         const QList<DownloadRequestItem> &itemList,
         const Settings &settings)
 {
-
     DownloadGroup *group = new DownloadGroup;
     group->id = QUuid::createUuid().toString(QUuid::WithoutBraces);
     group->settings = settings;
     groupHash_.insert(group->id, group);
+    bool oneValidRequest = false;
 
     qCDebug(logCategoryDownloadManager) << "new download request" << group->id;
 
-    if (baseUrl_.scheme().isEmpty()) {
-        qCCritical(logCategoryDownloadManager) << "Base url does not have scheme";
-        return QString();
-    }
-
     for (const auto& requestItem : itemList) {
         DownloadItem item;
-        item.url = baseUrl_.resolved(requestItem.relativeUrl);
+        item.url = requestItem.url;
         item.originalFilePath = requestItem.filePath;
         item.effectiveFilePath = requestItem.filePath;
         item.md5 = requestItem.md5;
         item.groupId = group->id;
-        item.state = DownloadState::Pending;
-
-        itemList_.append(item);
-        itemHash_.insert(item.url, &itemList_.last());
 
         qCDebug(logCategoryDownloadManager)
                 << "download item"
                 << item.url << item.originalFilePath;
+
+        if (requestItem.url.isValid() == false) {
+            item.state = DownloadState::FinishedWithError;
+            item.errorString = "url is not valid";
+            qCCritical(logCategoryDownloadManager) << item.errorString << requestItem.url.toString();
+
+        } else if (requestItem.url.scheme().length() == 0) {
+            item.state = DownloadState::FinishedWithError;
+            item.errorString = "url does not have scheme";
+            qCCritical(logCategoryDownloadManager) << item.errorString << requestItem.url.toString();
+        } else {
+            item.state = DownloadState::Pending;
+            oneValidRequest = true;
+        }
+
+        itemList_.append(item);
+        itemHash_.insert(item.url, &itemList_.last());
     }
 
     //to make sure reponse is always asynchronious
-    QTimer::singleShot(1, [this]() {
-        for (int i = 0; i < maxDownloadCount_; ++i) {
-            startNextDownload();
+    QTimer::singleShot(1, [this, oneValidRequest]() {
+        if (oneValidRequest) {
+            for (int i = 0; i < maxDownloadCount_; ++i) {
+                startNextDownload();
+            }
+        } else {
+            prepareResponse(&itemList_.last());
         }
     });
 
@@ -363,7 +370,7 @@ void DownloadManager::createFolderForFile(const QString &filePath)
 QNetworkReply *DownloadManager::postRequest(const QUrl &url)
 {
     QNetworkRequest request(url);
-    QNetworkReply *reply = accessManager_->get(request);
+    QNetworkReply *reply = networkManager_->get(request);
 
     if (reply == nullptr) {
         return reply;
@@ -397,7 +404,7 @@ QString DownloadManager::writeToFile(const QString &filePath, const QByteArray &
          return "Unable to open file: " + file.errorString();
      }
 
-     uint64_t file_size = file.size();
+     qint64 file_size = file.size();
      file.seek(file_size);
 
      qint64 written = file.write(buffer);

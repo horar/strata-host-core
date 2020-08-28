@@ -1,68 +1,83 @@
-include(CMakeDependentOption)
+#
+# Strta applications
+#
+option(APPS_CORESW "Build Strata applications" ON)
+add_feature_info(APPS_CORESW APPS_CORESW "Build Strata applications")
 
-option(APPS_HCS "Build 'hcs' service" ON)
-add_feature_info(APPS_HCS APPS_HCS "Host controller service")
-cmake_dependent_option(APPS_HCS_V3 "Build 'hcs' service version 3" ON
-                            "APPS_HCS" OFF)
-add_feature_info(APPS_HCS_V3 APPS_HCS_V3 "Host controller service - version 3")
-option(APPS_FLASHER "Build 'Flasher' app" ON)
-add_feature_info(APPS_FLASHER APPS_FLASHER "Platform flasher cli")
+cmake_dependent_option(APPS_CORESW_HCS "Build 'hcs' service" ON
+                            "APPS_CORESW" OFF)
+add_feature_info(APPS_CORESW_HCS APPS_CORESW_HCS "Host controller service")
+
 if(NOT MINGW)
-    cmake_dependent_option(APPS_DEVSTUDIO "Build 'Strata Developer Studio' app" ON
-                           "APPS_HCS" OFF)
-    add_feature_info(APPS_DEVSTUDIO APPS_DEVSTUDIO "Strata Developer Studio")
+    cmake_dependent_option(APPS_CORESW_DEVSTUDIO "Build 'Strata Developer Studio' app" ON
+                            "APPS_CORESW" OFF)
+    add_feature_info(APPS_CORESW_DEVSTUDIO APPS_CORESW_DEVSTUDIO "Strata Developer Studio")
 else()
     message(WARNING "Strata Developer Studio is not supported in MinGW development environment!")
 endif()
-option(APPS_SCI "Build 'Serial Console Interface'" ON)
-add_feature_info(APPS_SCI APPS_SCI "Serial Console Interface")
-option(APPS_PRT "Build 'Platform Registration Tool'" ON)
-add_feature_info(APPS_PRT APPS_PRT "Platform Registration Tool")
-option(APPS_CBB "Build 'CouchbaseBrowser'" ON)
-add_feature_info(APPS_CBB APPS_CBB "CouchbaseBrowser")
-option(APPS_CDC "Build 'Command Doc Creator'" ON)
-add_feature_info(APPS_CDC APPS_CDC "Command Doc Creator")
-option(APPS_LV "Build 'LogViewer'" ON)
-add_feature_info(APPS_LV APPS_LV "LogViewer")
-option(APPS_WG "Build 'Widget Gallery'" ON)
-add_feature_info(APPS_WG APPS_WG "Widget Gallery")
 
-if(APPS_HCS)
-    if(APPS_HCS_V3)
-        add_subdirectory(hcs3)
-    else()
-        add_subdirectory(hcs2)
-    endif()
+
+#
+# Strta toolbox/development utilities
+#
+option(APPS_TOOLBOX "Build Strata Toolbox/utilities" ON)
+add_feature_info(APPS_TOOLBOX APPS_TOOLBOX "Build Strata Toolbox/utilities")
+
+cmake_dependent_option(APPS_TOOLBOX_FLASHER "Build 'Flasher' app" ON
+                        "APPS_TOOLBOX" OFF)
+add_feature_info(APPS_TOOLBOX_FLASHER APPS_TOOLBOX_FLASHER "Platform flasher cli")
+cmake_dependent_option(APPS_TOOLBOX_SCI "Build 'Serial Console Interface'" ON
+                        "APPS_TOOLBOX" OFF)
+add_feature_info(APPS_TOOLBOX_SCI APPS_TOOLBOX_SCI "Serial Console Interface")
+cmake_dependent_option(APPS_TOOLBOX_PRT "Build 'Platform Registration Tool'" ON
+                        "APPS_TOOLBOX" OFF)
+add_feature_info(APPS_TOOLBOX_PRT APPS_TOOLBOX_PRT "Platform Registration Tool")
+cmake_dependent_option(APPS_TOOLBOX_CBB "Build 'CouchbaseBrowser'" ON
+                        "APPS_TOOLBOX" OFF)
+add_feature_info(APPS_TOOLBOX_CBB APPS_TOOLBOX_CBB "CouchbaseBrowser")
+cmake_dependent_option(APPS_TOOLBOX_CDC "Build 'Command Doc Creator'" ON
+                        "APPS_TOOLBOX" OFF)
+add_feature_info(APPS_TOOLBOX_CDC APPS_TOOLBOX_CDC "Command Doc Creator")
+cmake_dependent_option(APPS_TOOLBOX_LV "Build 'LogViewer'" ON
+                        "APPS_TOOLBOX" OFF)
+add_feature_info(APPS_TOOLBOX_LV APPS_TOOLBOX_LV "LogViewer")
+cmake_dependent_option(APPS_TOOLBOX_WG "Build 'Widget Gallery'" ON
+                        "APPS_TOOLBOX" OFF)
+add_feature_info(APPS_TOOLBOX_WG APPS_TOOLBOX_WG "Widget Gallery")
+
+if(APPS_CORESW_HCS)
+    add_subdirectory(hcs3)
 endif()
 
-if(APPS_FLASHER)
-    add_subdirectory(Flasher)
-endif()
-
-if(APPS_DEVSTUDIO AND NOT MINGW)
+if(APPS_CORESW_DEVSTUDIO AND NOT MINGW)
     add_subdirectory(DeveloperStudio)
 endif()
 
-if (APPS_SCI)
+
+if(APPS_TOOLBOX_FLASHER)
+    add_subdirectory(Flasher)
+endif()
+
+if (APPS_TOOLBOX_SCI)
     add_subdirectory(SerialConsoleInterface)
 endif()
 
-if (APPS_PRT)
+if (APPS_TOOLBOX_PRT)
     add_subdirectory(PlatformRegistrationTool)
 endif()
 
-if (APPS_CBB)
+if (APPS_TOOLBOX_CBB)
     add_subdirectory(CouchbaseBrowser)
 endif()
 
-if (APPS_CDC)
+if (APPS_TOOLBOX_CDC)
     add_subdirectory(CommandDocCreator)
 endif()
 
-if (APPS_LV)
+if (APPS_TOOLBOX_LV)
     add_subdirectory(LogViewer)
 endif()
 
-if (APPS_WG)
+if (APPS_TOOLBOX_WG)
     add_subdirectory(WidgetGallery)
 endif()

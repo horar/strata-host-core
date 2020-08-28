@@ -1,23 +1,18 @@
 #include "ClientsController.h"
 
 #include "Dispatcher.h"
+#include "logging/LoggingQtCategories.h"
 
 #include <Connector.h>
 #include <rapidjson/document.h>
 
 ClientsController::ClientsController()
 {
-
 }
 
 ClientsController::~ClientsController()
 {
-
-}
-
-void ClientsController::setLogAdapter(LoggingAdapter* adapter)
-{
-    logAdapter_ = adapter;
+    events_manager_.stop();
 }
 
 bool ClientsController::initialize(HCS_Dispatcher* dispatcher, rapidjson::Value& config)
@@ -28,7 +23,8 @@ bool ClientsController::initialize(HCS_Dispatcher* dispatcher, rapidjson::Value&
         return false;
     }
 
-    client_connector_.reset(ConnectorFactory::getConnector(ConnectorFactory::CONNECTOR_TYPE::ROUTER));
+    using Connector = strata::connector::Connector;
+    client_connector_ = Connector::getConnector(Connector::CONNECTOR_TYPE::ROUTER);
 
     // opening the client socket to connect with UI
     if (client_connector_->open(config["subscriber_address"].GetString()) == false) {
