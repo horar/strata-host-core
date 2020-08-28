@@ -7,6 +7,7 @@ import tech.strata.commoncpp 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/help_layout_manager.js" as Help
+import "qrc:/js/uuid_map.js" as UuidMap
 
 StackLayout {
     id: platformStack
@@ -200,7 +201,13 @@ StackLayout {
                 return;
             }
 
-            if (sdsModel.resourceLoader.registerStaticControlViewResources(model.class_id, model.name)) {
+            let name = UuidMap.uuid_map[model.class_id];
+
+            if (!name) {
+                name = model.name
+            }
+
+            if (sdsModel.resourceLoader.registerStaticControlViewResources(model.class_id, name)) {
                 platformStack.usingLocalView = true;
                 loadingBar.percentReady = 1.0;
                 return;
