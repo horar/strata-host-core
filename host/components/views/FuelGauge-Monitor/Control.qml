@@ -27,7 +27,7 @@ Item {
             top: parent.top
             margins: 5
         }
-        source: "control-views/question-circle-solid.svg"
+//        source: "control-views/question-circle-solid.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
         height: 25
         width: 25
