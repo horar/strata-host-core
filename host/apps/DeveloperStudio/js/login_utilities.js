@@ -216,19 +216,22 @@ function close_account_result(response) {
 */
 function get_profile(username) {
     var data = {"username": username};
-    Rest.xhr("post", "profile", data, get_profile_result, get_profile_result, signals)
+    Rest.xhr("post", "profile", data, get_profile_result, get_profile_result_failed, signals)
 }
 
 /*
   Get Profile: Callback function for response from server
 */
 function get_profile_result(response) {
-    if (response.hasOwnProperty("message") && (response.message === "Cannot retrieve profile" || response.message === "unauthorized request")) {
-        console.error(LoggerModule.Logger.devStudioLoginCategory, "Get Profile request failed: ", JSON.stringify(response))
-        signals.getProfileResult("Failed to get profile", null)
-    } else {
-        signals.getProfileResult("Success", response)
-    }
+    signals.getProfileResult("Success", response)
+}
+
+/*
+  Get Profile: Callback function for response from server on error
+*/
+function get_profile_result_failed(response) {
+    console.error(LoggerModule.Logger.devStudioLoginCategory, "Get Profile request failed: ", JSON.stringify(response))
+    signals.getProfileResult("Failed to get profile", null)
 }
 
 /*

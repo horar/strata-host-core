@@ -1,9 +1,9 @@
 .pragma library
 
 .import tech.strata.logger 1.0 as LoggerModule
+.import "constants.js" as Constants
 
-var productionAuthServer = "https://strata.onsemi.com/";
-var url = productionAuthServer;
+var url = Constants.PRODUCTION_AUTH_SERVER;
 
 var jwt = '';
 var session = '';
