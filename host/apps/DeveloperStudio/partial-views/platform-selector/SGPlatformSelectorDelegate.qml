@@ -425,6 +425,7 @@ Item {
                 let data = {
                     "device_id": model.device_id,
                     "class_id": model.class_id,
+                    "name": model.verbose_name,
                     "index": filteredPlatformSelectorModel.mapIndexToSource(model.index),
                     "available": model.available,
                     "firmware_version": model.firmware_version

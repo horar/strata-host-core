@@ -190,7 +190,8 @@ QQuickItem* ResourceLoader::createViewObject(const QString &path, QObject *paren
     if (e) {
         QQmlComponent component = QQmlComponent(e, path);
         if (component.errors().count() > 0) {
-            qCCritical(logCategoryResourceLoader) << component.errorString();
+            qCCritical(logCategoryResourceLoader) << component.errors();
+            return NULL;
         }
         QQmlContext *context = qmlContext(parent);
         //todo 'if component/object null' error handling etc
