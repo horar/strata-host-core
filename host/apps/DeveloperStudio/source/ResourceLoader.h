@@ -95,7 +95,7 @@ public:
      * @param parent The parent to append this object to
      * @return The created QQuickItem*
      */
-    Q_INVOKABLE QQuickItem* createViewObject(const QString &path, QObject *parent, QVariantMap initialProperties);
+    Q_INVOKABLE QQuickItem* createViewObject(const QString &path, QObject *parent, QVariantMap initialProperties = QVariantMap());
 
     Q_INVOKABLE QUrl getStaticResourcesUrl();
 
