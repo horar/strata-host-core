@@ -120,17 +120,23 @@ class StrataUI:
         '''
         button: ButtonControl = self.findButtonByHeight(REGISTER_TAB, lambda c, l: c < l)
         button.GetInvokePattern().Invoke()
+    def SetCheckbox(self, checkbox, setTicked):
+        state = checkbox.GetTogglePattern().ToggleState
+        if state == ToggleState.On and not setTicked:
+            checkbox.GetTogglePattern().Toggle()
+        elif state == ToggleState.Off and setTicked:
+            checkbox.GetTogglePattern().Toggle()
 
     def PressRegisterConfirmCheckbox(self, setTicked = True):
         '''
         Set the confirm checkbox on the register view to ticked or unticked
         '''
         confirm: CheckBoxControl = self.app.CheckBoxControl()
-        state = confirm.GetTogglePattern().ToggleState
-        if state == ToggleState.On and not setTicked:
-            confirm.GetTogglePattern().Toggle()
-        elif state == ToggleState.Off and setTicked:
-            confirm.GetTogglePattern().Toggle()
+        self.SetCheckbox(confirm, setTicked)
+
+    def PressRememberMeCheckbox(self, setTicked = True):
+        rememberMe: CheckBoxControl = self.app.CheckBoxControl(Compare=self.__hasProperty(PropertyId.NameProperty, REMEMBER_ME_CHECKBOX))
+        self.SetCheckbox(rememberMe, setTicked)
 
     def PressButton(self, identifier, property=PropertyId.NameProperty):
         '''

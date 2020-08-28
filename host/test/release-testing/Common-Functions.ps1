@@ -13,32 +13,21 @@ function Assert-PythonAndPyzmq {
     # on Win, Python 3 is not in the path by default, as a result we'll need to use 'python3' for OSX and 'python' for Win
     If ($Env:OS -Eq "Windows_NT") {
         $Global:PythonExec = 'python'
+        $Global:PipExec = 'pip'
     } Else {
         $Global:PythonExec = 'python3'
+        $Global:PipExec = 'pip3'
     }
+
 
     # Attempt to run Python and import PyZMQ, display error if operation fails
     Try {
-        If ((Start-Process $PythonExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
-            If (!(Start-Process $PythonExec '-c "import zmq"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
-                Write-Host -ForegroundColor Red "Error: ZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions.`nAborting."
-                Exit-TestScript -1
-            }
-            If (!(Start-Process $PythonExec '-c "import pyautogui"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
-                Write-Host -ForegroundColor Red "Error: PyAutoGui library for Python is required, visit https://pyautogui.readthedocs.io/en/latest/index.html for instructions.`nAborting."
-                Exit-TestScript -1
-            }
-            If (!(Start-Process $PythonExec '-c "import cv2"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
-                Write-Host -ForegroundColor Red "Error: opencv-python library for Python is required, visit https://pypi.org/project/opencv-python/ for instructions.`nAborting."
-                Exit-TestScript -1
-            }
-            If (!(Start-Process $PythonExec '-c "import requests"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
-                Write-Host -ForegroundColor Red "Error: requests library for Python is required, visit https://requests.readthedocs.io/en/master/user/install/ for instructions.`nAborting."
-                Exit-TestScript -1
-            }
+        If ((Start-Process $PipExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
+            Start-Process $PipExec -ArgumentList '-r requirements.txt'
         } Else {
-            Exit-TestScript -1 "Error: Python not found.`nAborting."
+            Exit-TestScript -1 "Error: Pip not found.`nAborting."
         }
+        
     } Catch [System.Management.Automation.CommandNotFoundException] {
         Exit-TestScript -1 "Error: Python not found.`nAborting."
     }

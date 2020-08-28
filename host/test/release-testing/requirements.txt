@@ -1,4 +1,3 @@
 pyzmq
-pyautogui
-opencv-python
 requests
+uiautomation

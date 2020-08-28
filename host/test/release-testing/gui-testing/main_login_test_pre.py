@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     #strata.bindToStrata(Common.DEFAULT_URL)
     ui = StrataUI()
-    print("Logging in with: " + str(Common.VALID_USERNAME) + " " + str(Common.VALID_PASSWORD))
+    ui.PressRememberMeCheckbox()
     Login(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD)
 
     #Wait until user is logged in

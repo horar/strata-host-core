@@ -20,6 +20,7 @@ REGISTER_TAB = "Register"
 
 USERNAME_EDIT = "Username/Email"
 PASSWORD_EDIT = "Password"
+REMEMBER_ME_CHECKBOX = "Remember Me"
 
 USER_ICON_BUTTON = "User Icon"
 LOGOUT_BUTTON = "Log Out"

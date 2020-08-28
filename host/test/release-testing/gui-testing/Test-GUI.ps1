@@ -60,27 +60,26 @@ function Test-Gui() {
     Remove-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network"
 
 
-    #This test fails currently. Logginging in and restarting strata fails even when manually attempted.
-    #Test logging in, closing strata, and reopening it
-    #Login to strata
-    #Write-Host "Testing logging in, closing Strata, reopening Strata..."
+#    This test fails currently. Logginging in and restarting strata fails even when manually attempted.
+#    Test logging in, closing strata, and reopening it
+#    Login to strata
+    Write-Host "Testing logging in, closing Strata, reopening Strata..."
 
-    #Start-SDSAndWait
-    #Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPre, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
+    Start-SDSAndWait
+    Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPre, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
 
-    #Stop-Process -Name "Strata Developer Studio" -Force
-    #Stop-Process -Name "hcs" -Force
+    Stop-Process -Name "Strata Developer Studio" -Force
+    Stop-Process -Name "hcs" -Force
 
     #Test for Strata automatically going to the platform view
-    #Start-SDSAndWait
+    Start-SDSAndWait
 
-    #Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPost, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPost, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
 
-#    Stop-Process -Name "Strata Developer Studio" -Force
- #   Stop-Process -Name "hcs" -Force
+    Stop-Process -Name "Strata Developer Studio" -Force
+    Stop-Process -Name "hcs" -Force
 
     $result = (Get-Content "$TestRoot\gui-testing\results.txt") -split ','
     return $result
 
 }
-Test-Gui
