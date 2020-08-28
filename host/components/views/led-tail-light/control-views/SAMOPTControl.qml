@@ -285,11 +285,11 @@ Item {
                 }
                 color: "transparent"
                 width: parent.width
-                height:  parent.height - (parent.height/2) - 10
+                height:  parent.height - (parent.height/2) - 7
                 Text {
                     id: warningTextForPopupVDDVol
                     anchors.fill:parent
-                    text: "VDD was temporarily disconnected from LED driver. Click"+ "\"" + "Reconnect VDD" + "\"" + "to reconnect VDD and resume previous LED driver Mode setting (SAM or I2C)."
+                    text: "VDD was temporarily disconnected from LED driver which. Loss of VDD will put the LED driver into SAM mode. Click "+ "\"" + "Reconnect VDD" + "\"" + " to reconnect VDD and resume previous LED driver Mode setting (SAM or I2C)."
                     verticalAlignment:  Text.AlignVCenter
                     wrapMode: Text.WordWrap
                     fontSizeMode: Text.Fit
@@ -917,7 +917,7 @@ Item {
                     Layout.fillWidth: true
                     SGButton {
                         id:  i2cAddressButton
-                        text: qsTr("Apply \n I2C Address")
+                        text: qsTr("Apply I2C Address")
                         anchors.verticalCenter: parent.verticalCenter
                         fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
                         color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
@@ -1213,7 +1213,7 @@ Item {
                                 color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
                                 hoverEnabled: true
                                 height: parent.height/1.8
-                                width: parent.width/2.5
+                                width: parent.width/2
                                 MouseArea {
                                     hoverEnabled: true
                                     anchors.fill: parent
