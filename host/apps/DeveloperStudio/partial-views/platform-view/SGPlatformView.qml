@@ -112,9 +112,9 @@ StackLayout {
             NavigationControl.context.class_id = model.class_id
             NavigationControl.context.device_id = model.device_id
 
-            let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlContainer, {"sgUserSettings": sgUserSettings});
+            let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlContainer, {});
             if (obj === null) {
-                obj = sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlContainer, {"error_message": "Could not load view"});
+                obj = sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlContainer, {"error_message": "Could not load view."});
             } else {
                 controlLoaded = true
             }

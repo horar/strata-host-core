@@ -188,17 +188,19 @@ bool ResourceLoader::isViewRegistered(const QString &class_id) {
 QQuickItem* ResourceLoader::createViewObject(const QString &path, QObject *parent, QVariantMap initialProperties) {
     QQmlEngine *e = qmlEngine(parent);
     if (e) {
-        QQmlComponent component = QQmlComponent(e, path);
+        QQmlComponent component = QQmlComponent(e, path, QQmlComponent::CompilationMode::PreferSynchronous, parent);
         if (component.errors().count() > 0) {
             qCCritical(logCategoryResourceLoader) << component.errors();
             return NULL;
         }
         QQmlContext *context = qmlContext(parent);
-        //todo 'if component/object null' error handling etc
+
+        QObject* object = component.beginCreate(context);
         for (QString key : initialProperties.keys()) {
-            component.setProperty(key.toLocal8Bit().data(), initialProperties.value(key));
+            object->setProperty(key.toLocal8Bit().data(), initialProperties.value(key));
         }
-        QObject* object = component.create(context);
+        component.completeCreate();
+
         QQuickItem* item = qobject_cast<QQuickItem*>( object );
         QQmlEngine::setObjectOwnership(item, QQmlEngine::JavaScriptOwnership);
 
