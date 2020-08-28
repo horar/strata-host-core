@@ -111,10 +111,9 @@ StackLayout {
             NavigationControl.context.class_id = model.class_id
             NavigationControl.context.device_id = model.device_id
 
-            let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlContainer);
+            let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlContainer, {"sgUserSettings": sgUserSettings});
             if (obj === null) {
-                obj = sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlContainer);
-                obj.error_message = "Could not load view."
+                obj = sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlContainer, {"error_message": "Could not load view"});
             } else {
                 controlLoaded = true
             }
@@ -369,8 +368,7 @@ StackLayout {
                     loadingBar.color = "red"
                     loadingBar.percentReady = 1.0
                     removeControl();
-                    let obj = sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlContainer);
-                    obj.error_message = payload.error_string
+                    let obj = sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlContainer, {"error_message": payload.error_string});
                     controlLoaded = true
                     return
                 }

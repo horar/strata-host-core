@@ -185,19 +185,23 @@ bool ResourceLoader::isViewRegistered(const QString &class_id) {
     return itr != viewsRegistered_.end() && !itr.value()->filepath.isEmpty();
 }
 
-QQuickItem* ResourceLoader::createViewObject(const QString &path, QQuickItem *parent) {
+QQuickItem* ResourceLoader::createViewObject(const QString &path, QObject *parent, QVariantMap initialProperties) {
     QQmlEngine *e = qmlEngine(parent);
     if (e) {
         QQmlComponent component = QQmlComponent(e, path);
         if (component.errors().count() > 0) {
             qCCritical(logCategoryResourceLoader) << component.errorString();
         }
+        QQmlContext *context = qmlContext(parent);
         //todo 'if component/object null' error handling etc
-        QObject* object = component.create();
+        for (QString key : initialProperties.keys()) {
+            component.setProperty(key.toLocal8Bit().data(), initialProperties.value(key));
+        }
+        QObject* object = component.create(context);
         QQuickItem* item = qobject_cast<QQuickItem*>( object );
         QQmlEngine::setObjectOwnership(item, QQmlEngine::JavaScriptOwnership);
 
-        item->setParentItem(parent);
+        item->setParentItem(qobject_cast<QQuickItem*>(parent));
         return item;
     } else {
         return NULL;
