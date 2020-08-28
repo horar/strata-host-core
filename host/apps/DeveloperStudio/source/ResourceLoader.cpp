@@ -182,7 +182,10 @@ QUrl ResourceLoader::getStaticResourcesUrl() {
 
 bool ResourceLoader::isViewRegistered(const QString &class_id) {
     QHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.find(class_id);
-    return itr != viewsRegistered_.end() && !itr.value()->filepath.isEmpty();
+    if (itr != viewsRegistered_.end() && !itr.value()->filepath.isEmpty()) {
+        return true;
+    }
+    return false;
 }
 
 QQuickItem* ResourceLoader::createViewObject(const QString &path, QQuickItem *parent, QVariantMap initialProperties) {
