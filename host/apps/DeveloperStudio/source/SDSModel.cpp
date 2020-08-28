@@ -162,6 +162,11 @@ CoreInterface *SDSModel::coreInterface() const
 
 void SDSModel::shutdownService()
 {
+    if (externalHcsConnected_) {
+        qCDebug(logCategoryStrataDevStudio) << "connected to externally started HCS; skipping shutdown request";
+        return;
+    }
+
     remoteHcsNode_->shutdownService();
 }
 
@@ -185,6 +190,7 @@ void SDSModel::finishHcsProcess(int exitCode, QProcess::ExitStatus exitStatus)
     {
         // LC: todo; there was another HCS instance; new one is going down
         qCDebug(logCategoryStrataDevStudio) << "Quitting - another HCS instance was running";
+        externalHcsConnected_ = true;
         return;
     }
 

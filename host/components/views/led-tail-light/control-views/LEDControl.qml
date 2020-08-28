@@ -1055,64 +1055,6 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             SGAlignedLabel {
-                                id: lockPWMDutyLabel
-                                target: lockPWMDuty
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                font.bold : true
-                                alignment: SGAlignedLabel.SideLeftCenter
-                                anchors {
-                                    left: parent.left
-                                    verticalCenter: parent.verticalCenter
-
-                                }
-                                SGSwitch {
-                                    id: lockPWMDuty
-                                    labelsInside: true
-                                    checkedLabel: "On"
-                                    uncheckedLabel: "Off"
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
-                                    checked: false
-                                    onToggled: {
-                                        platformInterface.set_led_pwm_duty_lock.update(checked)
-                                    }
-
-                                    property var led_pwm_duty_lock: platformInterface.led_pwm_duty_lock
-                                    onLed_pwm_duty_lockChanged: {
-                                        lockPWMDutyLabel.text = led_pwm_duty_lock.caption
-                                        setStatesForControls(lockPWMDuty,led_pwm_duty_lock.states[0])
-                                        if(led_pwm_duty_lock.value === true)
-                                            lockPWMDuty.checked = true
-                                        else  lockPWMDuty.checked = false
-                                    }
-
-                                    property var led_pwm_duty_lock_caption: platformInterface.led_pwm_duty_lock_caption.caption
-                                    onLed_pwm_duty_lock_captionChanged : {
-                                        lockPWMDutyLabel.text = led_pwm_duty_lock_caption
-                                    }
-
-                                    property var led_pwm_duty_lock_states: platformInterface.led_pwm_duty_lock_states.states
-                                    onLed_pwm_duty_lock_statesChanged : {
-                                        setStatesForControls(lockPWMDuty,led_pwm_duty_lock_states[0])
-                                    }
-
-                                    property var led_pwm_duty_lock_value: platformInterface.led_pwm_duty_lock_value.value
-                                    onLed_pwm_duty_lock_valueChanged : {
-                                        if(led_pwm_duty_lock_value === true)
-                                            lockPWMDuty.checked = true
-                                        else  lockPWMDuty.checked = false
-
-
-                                    }
-                                }
-                            }
-                        }
-
-
-
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
                                 id: lockPWMDutyENLabel
                                 target: lockPWMDutyEN
                                 // text: "Lock PWM EN Together"
@@ -1168,6 +1110,66 @@ Item {
                                 }
                             }
                         }
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id: lockPWMDutyLabel
+                                target: lockPWMDuty
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                font.bold : true
+                                alignment: SGAlignedLabel.SideLeftCenter
+                                anchors {
+                                    left: parent.left
+                                    verticalCenter: parent.verticalCenter
+
+                                }
+                                SGSwitch {
+                                    id: lockPWMDuty
+                                    labelsInside: true
+                                    checkedLabel: "On"
+                                    uncheckedLabel: "Off"
+                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                    checked: false
+                                    onToggled: {
+                                        platformInterface.set_led_pwm_duty_lock.update(checked)
+                                    }
+
+                                    property var led_pwm_duty_lock: platformInterface.led_pwm_duty_lock
+                                    onLed_pwm_duty_lockChanged: {
+                                        lockPWMDutyLabel.text = led_pwm_duty_lock.caption
+                                        setStatesForControls(lockPWMDuty,led_pwm_duty_lock.states[0])
+                                        if(led_pwm_duty_lock.value === true)
+                                            lockPWMDuty.checked = true
+                                        else  lockPWMDuty.checked = false
+                                    }
+
+                                    property var led_pwm_duty_lock_caption: platformInterface.led_pwm_duty_lock_caption.caption
+                                    onLed_pwm_duty_lock_captionChanged : {
+                                        lockPWMDutyLabel.text = led_pwm_duty_lock_caption
+                                    }
+
+                                    property var led_pwm_duty_lock_states: platformInterface.led_pwm_duty_lock_states.states
+                                    onLed_pwm_duty_lock_statesChanged : {
+                                        setStatesForControls(lockPWMDuty,led_pwm_duty_lock_states[0])
+                                    }
+
+                                    property var led_pwm_duty_lock_value: platformInterface.led_pwm_duty_lock_value.value
+                                    onLed_pwm_duty_lock_valueChanged : {
+                                        if(led_pwm_duty_lock_value === true)
+                                            lockPWMDuty.checked = true
+                                        else  lockPWMDuty.checked = false
+
+
+                                    }
+                                }
+                            }
+                        }
+
+
+
+
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
@@ -5048,23 +5050,10 @@ Item {
                                             diagRangeLabel.text =  led_diagrange.caption
                                             setStatesForControls(diagRangeLabel,led_diagrange.states[0])
 
-                                            //                                            if(led_diagrange.state === "enabled") {
-                                            //                                                diagRangeLabel.enabled = true
-                                            //                                                diagRangeLabel.opacity = 1.0
-                                            //                                            }
-                                            //                                            else if (led_diagrange.state === "disabled") {
-                                            //                                                diagRangeLabel.enabled = false
-                                            //                                                diagRangeLabel.opacity = 1.0
-                                            //                                            }
-                                            //                                            else  {
-                                            //                                                diagRangeLabel.enabled = false
-                                            //                                                diagRangeLabel.opacity = 0.5
-                                            //                                            }
-
                                             if(led_diagrange.value === false)
                                                 diagRange.status = SGStatusLight.Off
 
-                                            else  diagRange.status = SGStatusLight.Red
+                                            else  diagRange.status = SGStatusLight.Green
                                         }
 
                                         property var led_diagrange_caption: platformInterface.led_diagrange_caption.caption
@@ -5081,8 +5070,7 @@ Item {
                                         onLed_diagrange_valueChanged: {
                                             if(led_diagrange_value === false)
                                                 diagRange.status = SGStatusLight.Off
-
-                                            else  diagRange.status = SGStatusLight.Red
+                                            else  diagRange.status = SGStatusLight.Green
                                         }
                                     }
                                 }

@@ -60,9 +60,9 @@ Item {
 
     }
 
-    property var popup_mode: platformInterface.popup_mode.value
-    onPopup_modeChanged: {
-        if(popup_mode === true)
+    property var mode_popup: platformInterface.mode_popup.value
+    onMode_popupChanged: {
+        if(mode_popup === true)
             warningPopupMode.open()
         else warningPopupMode.close()
     }

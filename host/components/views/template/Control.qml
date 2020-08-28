@@ -21,7 +21,7 @@ Item {
     }
 
     Component.onCompleted: {
-        Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
+        Help.registerTarget(navTabs, "Using these three tabs, you can view basic controls, advanced controls or the SGUserSettings demo.", 0, "controlHelp")
     }
 
     TabBar {
@@ -98,6 +98,7 @@ Item {
             }
             onClicked: {
                 // Make sure view is set to Basic before starting tour
+                navTabs.currentIndex = 0
                 controlContainer.currentIndex = 0
                 basicButton.clicked()
                 Help.startHelpTour("controlHelp")

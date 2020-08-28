@@ -40,10 +40,10 @@ public:
     Q_ENUM(LogLevel)
     Q_INVOKABLE QString followFile(const QString &path);
     Q_INVOKABLE void removeFile(const QString &path);
+    Q_INVOKABLE void clear();
 
     QString getRotatedFilePath(const QString &path) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    void clear();
     QDateTime oldestTimestamp() const;
     QDateTime newestTimestamp() const;
     int count() const;

@@ -4,7 +4,7 @@
 #include "BaseDeviceCommand.h"
 #include "CmdGetFirmwareInfo.h"
 #include "CmdRequestPlatformId.h"
-#include "CmdUpdateFirmware.h"
+#include "CmdStartBootloader.h"
 #include "CmdFlash.h"
 #include "CmdBackupFirmware.h"
 #include "CmdStartApplication.h"

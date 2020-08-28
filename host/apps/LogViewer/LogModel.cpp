@@ -126,11 +126,16 @@ QString LogModel::getRotatedFilePath(const QString &path) const
 
 void LogModel::clear()
 {
-    previousTimestamp_ = QDateTime();
+    beginResetModel();
 
     for (int i = 0; i < data_.length(); i++) {
         delete data_.at(i);
     }
+    data_.clear();
+
+    endResetModel();
+    emit countChanged();
+    updateTimestamps();
 }
 
 QDateTime LogModel::oldestTimestamp() const

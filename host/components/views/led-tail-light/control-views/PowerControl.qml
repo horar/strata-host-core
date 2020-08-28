@@ -148,67 +148,88 @@ Item {
                                 }
                             }
                         }
-
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-
                             SGAlignedLabel {
-                                id:boostOCPLabel
-                                target: boostOCP
-                                alignment: SGAlignedLabel.SideTopCenter
+                                id: vsVoltageSelectLabel
+                                target: vsVoltageSelect
+                                //text: "VS Voltage Select"
+                                alignment: SGAlignedLabel.SideTopLeft
+
                                 anchors {
                                     top:parent.top
                                     left: parent.left
                                     verticalCenter: parent.verticalCenter
                                     leftMargin: 20
                                 }
+
                                 fontSizeMultiplier: ratioCalc * 1.2
-                                //text: "Boost\nOCP"
-                                font.bold: true
+                                font.bold : true
 
-                                SGStatusLight {
-                                    id: boostOCP
-                                    width : 40
+                                SGSwitch {
+                                    id: vsVoltageSelect
+                                    labelsInside: true
+                                    //checkedLabel: "VLED"
+                                    //uncheckedLabel: "5V"
+                                    textColor: "black"              // Default: "black"
+                                    handleColor: "white"            // Default: "white"
+                                    grooveColor: "#ccc"             // Default: "#ccc"
+                                    grooveFillColor: "#0cf"         // Default: "#0cf"
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    checked: false
 
-                                }
+                                    onToggled: {
+                                        if(checked)
+                                            platformInterface.set_power_vs_select.update("5V_USB")
+                                        else
+                                            platformInterface.set_power_vs_select.update("VLED")
 
-                                property var power_boost_ocp: platformInterface.power_boost_ocp
-                                onPower_boost_ocpChanged: {
-                                    console.log(power_boost_ocp.caption)
-                                    boostOCPLabel.text = power_boost_ocp.caption
-                                    console.log(boostOCPLabel.text)
-                                    setStatesForControls(boostOCP,power_boost_ocp.states[0])
-                                    if(power_boost_ocp.value === true)
-                                        boostOCP.status = SGStatusLight.Red
-                                    else boostOCP.status = SGStatusLight.Off
-                                }
-
-                                property var power_boost_ocp_caption: platformInterface.power_boost_ocp_caption.caption
-                                onPower_boost_ocp_captionChanged: {
-                                    boostOCPLabel.text = power_boost_ocp_caption
-                                }
-
-                                property var power_boost_ocp_state: platformInterface.power_boost_ocp_states.states
-                                onPower_boost_ocp_stateChanged: {
-                                    setStatesForControls(boostOCP,power_boost_ocp_state[0])
-                                }
-
-                                property var power_boost_ocp_value: platformInterface.power_boost_ocp_value.value
-                                onPower_boost_ocp_valueChanged:{
-                                    if(power_boost_ocp_value === true) {
-                                        if(!powerControl.visible) {
-                                            alertViewBadge.opacity = 1.0
-                                        }
-                                        boostOCP.status = SGStatusLight.Red
-                                    }
-                                    else {
-                                        boostOCP.status = SGStatusLight.Off
                                     }
                                 }
 
+                                property var power_vs_select: platformInterface.power_vs_select
+                                onPower_vs_selectChanged: {
+                                    vsVoltageSelectLabel.text = power_vs_select.caption
+                                    setStatesForControls(vsVoltageSelect,power_vs_select.states[0])
+
+
+                                    vsVoltageSelect.checkedLabel = power_vs_select.values[0]
+                                    vsVoltageSelect.uncheckedLabel = power_vs_select.values[1]
+
+                                    if(power_vs_select.value === power_vs_select.values[0])
+                                        vsVoltageSelect.checked = true
+                                    else  vsVoltageSelect.checked = false
+                                }
+
+                                property var power_vs_select_caption: platformInterface.power_vs_select_caption.caption
+                                onPower_vs_select_captionChanged: {
+                                    vsVoltageSelectLabel.text = power_vs_select_caption
+                                }
+
+                                property var power_vs_select_state: platformInterface.power_vs_select_states.states
+                                onPower_vs_select_stateChanged: {
+                                    setStatesForControls(vsVoltageSelect,power_vs_select_state[0])
+                                }
+
+                                property var power_vs_select_values: platformInterface.power_vs_select_values.values
+                                onPower_vs_select_valuesChanged: {
+                                    vsVoltageSelect.checkedLabel = power_vs_select_values[0]
+                                    vsVoltageSelect.uncheckedLabel = power_vs_select_values[1]
+                                }
+
+                                property var power_vs_select_value: platformInterface.power_vs_select_value.value
+                                onPower_vs_select_valueChanged: {
+                                    var valuesOfswitch =  platformInterface.power_vs_select_values.values
+                                    console.log(valuesOfswitch,power_vs_select_value)
+                                    if(power_vs_select_value === valuesOfswitch[0])
+                                        vsVoltageSelect.checked = true
+                                    else  vsVoltageSelect.checked = false
+                                }
                             }
                         }
+
+
                     }
                 }
                 Rectangle {
@@ -276,86 +297,188 @@ Item {
                     }
 
                 }
+
                 Rectangle {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    SGAlignedLabel {
-                        id: vsVoltageSelectLabel
-                        target: vsVoltageSelect
-                        //text: "VS Voltage Select"
-                        alignment: SGAlignedLabel.SideTopLeft
 
-                        anchors {
-                            top:parent.top
-                            left: parent.left
-                            verticalCenter: parent.verticalCenter
-                            leftMargin: 20
+                    RowLayout {
+                        anchors.fill: parent
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id:boostOCPLabel
+                                target: boostOCP
+                                alignment: SGAlignedLabel.SideTopCenter
+                                anchors {
+                                    top:parent.top
+                                    left: parent.left
+                                    verticalCenter: parent.verticalCenter
+                                    leftMargin: 20
+                                }
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                //text: "Boost\nOCP"
+                                font.bold: true
+
+                                SGStatusLight {
+                                    id: boostOCP
+                                    width : 40
+
+                                }
+
+                                property var power_fault_vled: platformInterface.power_fault_vled
+                                onPower_fault_vledChanged: {
+                                    console.log(power_fault_vled.caption)
+                                    boostOCPLabel.text = power_fault_vled.caption
+                                    console.log(boostOCPLabel.text)
+                                    setStatesForControls(boostOCP,power_fault_vled.states[0])
+                                    if(power_fault_vled.value === true)
+                                        boostOCP.status = SGStatusLight.Red
+                                    else boostOCP.status = SGStatusLight.Off
+                                }
+
+                                property var power_fault_vled_caption: platformInterface.power_fault_vled_caption.caption
+                                onPower_fault_vled_captionChanged: {
+                                    boostOCPLabel.text = power_fault_vled_caption
+                                }
+
+                                property var power_fault_vled_states: platformInterface.power_fault_vled_states.states
+                                onPower_fault_vled_statesChanged: {
+                                    setStatesForControls(boostOCP,power_fault_vled_states[0])
+                                }
+
+                                property var power_fault_vled_value: platformInterface.power_fault_vled_value.value
+                                onPower_fault_vled_valueChanged:{
+                                    if(power_fault_vled_value === true) {
+                                        if(!powerControl.visible) {
+                                            alertViewBadge.opacity = 1.0
+                                        }
+                                        boostOCP.status = SGStatusLight.Red
+                                    }
+                                    else {
+                                        boostOCP.status = SGStatusLight.Off
+                                    }
+                                }
+                            }
                         }
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id:vsPowerFaultLabel
+                                target: vsPowerFault
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold: true
+                                alignment: SGAlignedLabel.SideTopCenter
+                                anchors {
+                                    top:parent.top
+                                    left: parent.left
+                                    verticalCenter: parent.verticalCenter
+                                    leftMargin: 20
+                                }
 
-                        fontSizeMultiplier: ratioCalc * 1.2
-                        font.bold : true
+                                SGStatusLight {
+                                    id: vsPowerFault
+                                    width : 40
 
-                        SGSwitch {
-                            id: vsVoltageSelect
-                            labelsInside: true
-                            //checkedLabel: "VLED"
-                            //uncheckedLabel: "5V"
-                            textColor: "black"              // Default: "black"
-                            handleColor: "white"            // Default: "white"
-                            grooveColor: "#ccc"             // Default: "#ccc"
-                            grooveFillColor: "#0cf"         // Default: "#0cf"
-                            fontSizeMultiplier: ratioCalc * 1.2
-                            checked: false
+                                    property var power_fault_vs: platformInterface.power_fault_vs
+                                    onPower_fault_vsChanged: {
+                                        vsPowerFaultLabel.text = power_fault_vs.caption
+                                        setStatesForControls(vsPowerFault,power_fault_vs.states[0])
+                                        if(power_fault_vs.value === true)
+                                            vsPowerFault.status = SGStatusLight.Red
+                                        else vsPowerFault.status = SGStatusLight.Off
+                                    }
 
-                            onToggled: {
-                                if(checked)
-                                    platformInterface.set_power_vs_select.update("5V_USB")
-                                else
-                                    platformInterface.set_power_vs_select.update("VLED")
+                                    property var power_fault_vs_caption: platformInterface.power_fault_vs_caption.caption
+                                    onPower_fault_vs_captionChanged: {
+                                        vsPowerFaultLabel.text = power_fault_vs_caption
+                                    }
 
+                                    property var power_fault_vs_states: platformInterface.power_fault_vs_states.states
+                                    onPower_fault_vs_statesChanged: {
+                                        setStatesForControls(vsPowerFault,power_fault_vs_states[0])
+                                    }
+
+                                    property var power_fault_vs_value: platformInterface.power_fault_vs_value.value
+                                    onPower_fault_vs_valueChanged:{
+                                        if(power_fault_vs_value === true) {
+                                            if(!powerControl.visible) {
+                                                alertViewBadge.opacity = 1.0
+                                            }
+                                            vsPowerFault.status = SGStatusLight.Red
+                                        }
+                                        else {
+                                            vsPowerFault.status = SGStatusLight.Off
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            SGAlignedLabel {
+                                id:vddPowerFaultLabel
+                                target: vddPowerFault
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold: true
+                                alignment: SGAlignedLabel.SideTopCenter
+                                anchors {
+                                    top:parent.top
+                                    left: parent.left
+                                    verticalCenter: parent.verticalCenter
+                                    leftMargin: 20
+                                }
+
+                                SGStatusLight {
+                                    id: vddPowerFault
+                                    width : 40
+
+                                    property var power_fault_vdd: platformInterface.power_fault_vdd
+                                    onPower_fault_vddChanged: {
+                                        vddPowerFaultLabel.text = power_fault_vdd.caption
+                                        setStatesForControls(vddPowerFault,power_fault_vdd.states[0])
+                                        if(power_fault_vdd.value === true)
+                                            vddPowerFault.status = SGStatusLight.Red
+                                        else vddPowerFault.status = SGStatusLight.Off
+                                    }
+
+                                    property var power_fault_vdd_caption: platformInterface.power_fault_vdd_caption.caption
+                                    onPower_fault_vdd_captionChanged: {
+                                        vddPowerFaultLabel.text = power_fault_vdd_caption
+                                    }
+
+                                    property var power_fault_vdd_states: platformInterface.power_fault_vdd_states.states
+                                    onPower_fault_vdd_statesChanged: {
+                                        setStatesForControls(vddPowerFault,power_fault_vdd_states[0])
+                                    }
+
+                                    property var power_fault_vdd_value: platformInterface.power_fault_vdd_value.value
+                                    onPower_fault_vdd_valueChanged:{
+                                        if(power_fault_vdd_value === true) {
+                                            if(!powerControl.visible) {
+                                                alertViewBadge.opacity = 1.0
+                                            }
+                                            vddPowerFault.status = SGStatusLight.Red
+                                        }
+                                        else {
+                                            vddPowerFault.status = SGStatusLight.Off
+                                        }
+                                    }
+
+                                }
                             }
                         }
 
-                        property var power_vs_select: platformInterface.power_vs_select
-                        onPower_vs_selectChanged: {
-                            vsVoltageSelectLabel.text = power_vs_select.caption
-                            setStatesForControls(vsVoltageSelect,power_vs_select.states[0])
 
-
-                            vsVoltageSelect.checkedLabel = power_vs_select.values[0]
-                            vsVoltageSelect.uncheckedLabel = power_vs_select.values[1]
-
-                            if(power_vs_select.value === power_vs_select.values[0])
-                                vsVoltageSelect.checked = true
-                            else  vsVoltageSelect.checked = false
-                        }
-
-                        property var power_vs_select_caption: platformInterface.power_vs_select_caption.caption
-                        onPower_vs_select_captionChanged: {
-                            vsVoltageSelectLabel.text = power_vs_select_caption
-                        }
-
-                        property var power_vs_select_state: platformInterface.power_vs_select_states.states
-                        onPower_vs_select_stateChanged: {
-                            setStatesForControls(vsVoltageSelect,power_vs_select_state[0])
-                        }
-
-                        property var power_vs_select_values: platformInterface.power_vs_select_values.values
-                        onPower_vs_select_valuesChanged: {
-                            vsVoltageSelect.checkedLabel = power_vs_select_values[0]
-                            vsVoltageSelect.uncheckedLabel = power_vs_select_values[1]
-                        }
-
-                        property var power_vs_select_value: platformInterface.power_vs_select_value.value
-                        onPower_vs_select_valueChanged: {
-                            var valuesOfswitch =  platformInterface.power_vs_select_values.values
-                            console.log(valuesOfswitch,power_vs_select_value)
-                            if(power_vs_select_value === valuesOfswitch[0])
-                                vsVoltageSelect.checked = true
-                            else  vsVoltageSelect.checked = false
-                        }
                     }
+
+
                 }
+
             }
         }
 
@@ -524,7 +647,7 @@ Item {
                                             height:  35 * ratioCalc
                                             width: 140 * ratioCalc
                                             fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                            unit: "<b> mA</b>"
+                                            unit: "<b> V </b>"
 
                                             // text: "500"
                                             boxFont.family: Fonts.digitalseven
@@ -638,7 +761,7 @@ Item {
                                         onPower_iledChanged: {
                                             ledCurrentLabel.text = power_iled.caption
                                             setStatesForControls(ledCurrent,power_iled.states[0])
-                                            ledCurrent.text = (power_iled.value).toFixed(2)
+                                            ledCurrent.text = (power_iled.value).toFixed(1)
 
                                         }
 
@@ -654,7 +777,7 @@ Item {
 
                                         property var power_iled_value: platformInterface.power_iled_value.value
                                         onPower_iled_valueChanged:{
-                                            ledCurrent.text = power_iled_value.toFixed(2)
+                                            ledCurrent.text = power_iled_value.toFixed(1)
                                         }
                                     }
                                 }
@@ -683,7 +806,7 @@ Item {
                                         onPower_isChanged: {
                                             supplyCurrentLabel.text = power_is.caption
                                             setStatesForControls(supplyCurrent,power_is.states[0])
-                                            supplyCurrent.text = (power_is.value).toFixed(2)
+                                            supplyCurrent.text = (power_is.value).toFixed(1)
 
                                         }
 
@@ -699,7 +822,7 @@ Item {
 
                                         property var power_is_value: platformInterface.power_is_value.value
                                         onPower_is_valueChanged:{
-                                            supplyCurrent.text = power_is_value.toFixed(2)
+                                            supplyCurrent.text = power_is_value.toFixed(1)
                                         }
 
                                     }

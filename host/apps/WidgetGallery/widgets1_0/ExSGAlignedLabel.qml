@@ -38,13 +38,19 @@ Item {
         id: contentColumn
         spacing: 10
 
-
         SGAlignedLabel {
             id: demoTopLabel
             target: infoBoxSideTopCenter
             alignment: SGAlignedLabel.SideTopCenter
-            text: "Top Label"
+            text: "Top Label (Clickable)"
             fontSizeMultiplier: 1.3
+            clickable: true
+
+            onClicked: {
+                console.log("Label Clicked!")
+                color = "red"
+            }
+
             SGInfoBox {
                 id: infoBoxSideTopCenter
                 fontSizeMultiplier: 1.3
