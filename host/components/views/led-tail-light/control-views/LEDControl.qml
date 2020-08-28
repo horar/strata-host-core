@@ -13,6 +13,76 @@ Item {
     height: parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
+    Item {
+        id: filterHelpContainer1
+        property point topLeft
+        property point bottomRight
+        width:  (out0ENLED.width) * 13.2
+        height: (bottomRight.y - topLeft.y)
+        x: topLeft.x
+        y: topLeft.y
+        function update() {
+            topLeft = out0ENLED.mapToItem(root, 0,  0)
+            bottomRight = out11ENLED.mapToItem(root, out11ENLED.width, out11ENLED.height)
+        }
+    }
+
+    Item {
+        id: filterHelpContainer2
+        property point topLeft
+        property point bottomRight
+        width:  (out0interExterLED.width) * 13.2
+        height: (bottomRight.y - topLeft.y)
+        x: topLeft.x
+        y: topLeft.y
+        function update() {
+            topLeft = out0interExterLED.mapToItem(root, 0,  0)
+            bottomRight = out11interExterLED.mapToItem(root, out11interExterLED.width, out11interExterLED.height)
+        }
+    }
+
+//    Item {
+//        id: filterHelpContainer3
+//        property point topLeft
+//        property point bottomRight
+//        width:  (out0interExterLED.width) * 13.2
+//        height: (bottomRight.y - topLeft.y)
+//        x: topLeft.x
+//        y: topLeft.y
+//        function update() {
+//            topLeft = out0interExterLED.mapToItem(root, 0,  0)
+//            bottomRight = out11interExterLED.mapToItem(root, out11interExterLED.width, out11interExterLED.height)
+//        }
+//    }
+
+    onWidthChanged: {
+        filterHelpContainer1.update()
+        filterHelpContainer2.update()
+    }
+    onHeightChanged: {
+        filterHelpContainer1.update()
+        filterHelpContainer2.update()
+    }
+
+    Connections {
+        target: Help.utility
+        onTour_runningChanged:{
+            filterHelpContainer1.update()
+            filterHelpContainer2.update()
+        }
+    }
+
+
+
+    Component.onCompleted: {
+
+        Help.registerTarget(partNumber, "Indication of LED driver part assembled on PCB. The part number is reported to the user interface based on state of pin PD9, low = NCV7684, high = NCV7685.", 0, "ledDriverHelp")
+        Help.registerTarget(filterHelpContainer1, "Toggles each LED on or off. If PWM is enabled, these controls will be disabled.", 1, "ledDriverHelp")
+        Help.registerTarget(filterHelpContainer2, "Toggles each LED with to use onboard LEDs or externally connected LEDs through 24 pin header at the top of the PCB.", 2, "ledDriverHelp")
+        Help.registerTarget(enableOutput, "Toggles each LED on or off. If PWM is enabled, these controls will be disabled.", 3, "ledDriverHelp")
+        Help.registerTarget(enableOutput, "Toggles each LED on or off. If PWM is enabled, these controls will be disabled.", 4, "ledDriverHelp")
+    }
+
     function setStateForPWMDuty(pwmDutyid,index)
     {
         if(index !== "undefined") {
@@ -1714,6 +1784,7 @@ Item {
                                     //color: "blue"
 
                                     ColumnLayout {
+                                        id: outputENContainer
                                         anchors.fill: parent
                                         Rectangle {
                                             Layout.fillWidth: true
@@ -1980,6 +2051,7 @@ Item {
                                     Layout.fillHeight: true
                                     Layout.fillWidth: true
                                     ColumnLayout {
+                                        id: outputExternalLEDContainer
                                         anchors.fill: parent
                                         Rectangle {
                                             Layout.fillWidth: true

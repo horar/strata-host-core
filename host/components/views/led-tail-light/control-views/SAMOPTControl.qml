@@ -289,7 +289,7 @@ Item {
                 Text {
                     id: warningTextForPopupVDDVol
                     anchors.fill:parent
-                    text: "VDD was temporarily disconnected from LED driver which. Loss of VDD will put the LED driver into SAM mode. Click "+ "\"" + "Reconnect VDD" + "\"" + " to reconnect VDD and resume previous LED driver Mode setting (SAM or I2C)."
+                    text: "VDD was temporarily disconnected from LED driver. Loss of VDD will put the LED driver into SAM mode. Click "+ "\"" + "Reconnect VDD" + "\"" + " to reconnect VDD and resume previous LED driver Mode setting (SAM or I2C)."
                     verticalAlignment:  Text.AlignVCenter
                     wrapMode: Text.WordWrap
                     fontSizeMode: Text.Fit

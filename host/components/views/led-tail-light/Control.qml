@@ -29,9 +29,7 @@ Item {
         return  ("0"+(Number(d).toString(16))).slice(-2).toUpperCase()
     }
 
-    function toSetThelof()
-    {
-
+    function toSetThelof() {
         for(var j = 0; j < statusLog.model.count; j++){
             statusLog.model.get(j).color = "black"
         }
@@ -41,8 +39,8 @@ Item {
 
     Component.onCompleted: {
         platformInterface.set_startup.update(96,false)
-        // platformInterface.control_props.update()
         platformInterface.set_mode.update("Car Demo")
+
 
     }
 
@@ -515,5 +513,33 @@ Item {
             visible: false
         }
 
+    }
+    SGIcon {
+        id: helpIcon
+        anchors {
+            right: controlContainer.right
+            top: navTabs.bottom
+            topMargin: 10
+            margins: 10
+        }
+        width: 40
+        height: 40
+        source:  "qrc:/sgimages/question-circle.svg"
+        iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
+
+
+        MouseArea {
+            id: helpMouse
+            anchors {
+                fill: helpIcon
+            }
+            onClicked: {
+                if(carDemoMode.visible)
+                    Help.startHelpTour("carDemoHelp")
+                if(ledControl.visible)
+                    Help.startHelpTour("ledDriverHelp")
+            }
+            hoverEnabled: true
+        }
     }
 }

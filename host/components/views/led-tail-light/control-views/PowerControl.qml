@@ -76,7 +76,6 @@ Item {
                     RowLayout {
                         anchors.fill: parent
 
-
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
@@ -148,86 +147,91 @@ Item {
                                 }
                             }
                         }
+
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id: vsVoltageSelectLabel
-                                target: vsVoltageSelect
-                                //text: "VS Voltage Select"
-                                alignment: SGAlignedLabel.SideTopLeft
-
-                                anchors {
-                                    top:parent.top
-                                    left: parent.left
-                                    verticalCenter: parent.verticalCenter
-                                    leftMargin: 20
-                                }
-
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                font.bold : true
-
-                                SGSwitch {
-                                    id: vsVoltageSelect
-                                    labelsInside: true
-                                    //checkedLabel: "VLED"
-                                    //uncheckedLabel: "5V"
-                                    textColor: "black"              // Default: "black"
-                                    handleColor: "white"            // Default: "white"
-                                    grooveColor: "#ccc"             // Default: "#ccc"
-                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                                    fontSizeMultiplier: ratioCalc * 1.2
-                                    checked: false
-
-                                    onToggled: {
-                                        if(checked)
-                                            platformInterface.set_power_vs_select.update("5V_USB")
-                                        else
-                                            platformInterface.set_power_vs_select.update("VLED")
-
-                                    }
-                                }
-
-                                property var power_vs_select: platformInterface.power_vs_select
-                                onPower_vs_selectChanged: {
-                                    vsVoltageSelectLabel.text = power_vs_select.caption
-                                    setStatesForControls(vsVoltageSelect,power_vs_select.states[0])
-
-
-                                    vsVoltageSelect.checkedLabel = power_vs_select.values[0]
-                                    vsVoltageSelect.uncheckedLabel = power_vs_select.values[1]
-
-                                    if(power_vs_select.value === power_vs_select.values[0])
-                                        vsVoltageSelect.checked = true
-                                    else  vsVoltageSelect.checked = false
-                                }
-
-                                property var power_vs_select_caption: platformInterface.power_vs_select_caption.caption
-                                onPower_vs_select_captionChanged: {
-                                    vsVoltageSelectLabel.text = power_vs_select_caption
-                                }
-
-                                property var power_vs_select_state: platformInterface.power_vs_select_states.states
-                                onPower_vs_select_stateChanged: {
-                                    setStatesForControls(vsVoltageSelect,power_vs_select_state[0])
-                                }
-
-                                property var power_vs_select_values: platformInterface.power_vs_select_values.values
-                                onPower_vs_select_valuesChanged: {
-                                    vsVoltageSelect.checkedLabel = power_vs_select_values[0]
-                                    vsVoltageSelect.uncheckedLabel = power_vs_select_values[1]
-                                }
-
-                                property var power_vs_select_value: platformInterface.power_vs_select_value.value
-                                onPower_vs_select_valueChanged: {
-                                    var valuesOfswitch =  platformInterface.power_vs_select_values.values
-                                    console.log(valuesOfswitch,power_vs_select_value)
-                                    if(power_vs_select_value === valuesOfswitch[0])
-                                        vsVoltageSelect.checked = true
-                                    else  vsVoltageSelect.checked = false
-                                }
-                            }
                         }
+                        //                        Rectangle {
+                        //                            Layout.fillHeight: true
+                        //                            Layout.fillWidth: true
+                        //                            SGAlignedLabel {
+                        //                                id: vsVoltageSelectLabel
+                        //                                target: vsVoltageSelect
+                        //                                //text: "VS Voltage Select"
+                        //                                alignment: SGAlignedLabel.SideTopLeft
+
+                        //                                anchors {
+                        //                                    top:parent.top
+                        //                                    left: parent.left
+                        //                                    verticalCenter: parent.verticalCenter
+                        //                                    leftMargin: 20
+                        //                                }
+
+                        //                                fontSizeMultiplier: ratioCalc * 1.2
+                        //                                font.bold : true
+
+                        //                                SGSwitch {
+                        //                                    id: vsVoltageSelect
+                        //                                    labelsInside: true
+                        //                                    //checkedLabel: "VLED"
+                        //                                    //uncheckedLabel: "5V"
+                        //                                    textColor: "black"              // Default: "black"
+                        //                                    handleColor: "white"            // Default: "white"
+                        //                                    grooveColor: "#ccc"             // Default: "#ccc"
+                        //                                    grooveFillColor: "#0cf"         // Default: "#0cf"
+                        //                                    fontSizeMultiplier: ratioCalc * 1.2
+                        //                                    checked: false
+
+                        //                                    onToggled: {
+                        //                                        if(checked)
+                        //                                            platformInterface.set_power_vs_select.update("5V_USB")
+                        //                                        else
+                        //                                            platformInterface.set_power_vs_select.update("VLED")
+
+                        //                                    }
+                        //                                }
+
+                        //                                property var power_vs_select: platformInterface.power_vs_select
+                        //                                onPower_vs_selectChanged: {
+                        //                                    vsVoltageSelectLabel.text = power_vs_select.caption
+                        //                                    setStatesForControls(vsVoltageSelect,power_vs_select.states[0])
+
+
+                        //                                    vsVoltageSelect.checkedLabel = power_vs_select.values[0]
+                        //                                    vsVoltageSelect.uncheckedLabel = power_vs_select.values[1]
+
+                        //                                    if(power_vs_select.value === power_vs_select.values[0])
+                        //                                        vsVoltageSelect.checked = true
+                        //                                    else  vsVoltageSelect.checked = false
+                        //                                }
+
+                        //                                property var power_vs_select_caption: platformInterface.power_vs_select_caption.caption
+                        //                                onPower_vs_select_captionChanged: {
+                        //                                    vsVoltageSelectLabel.text = power_vs_select_caption
+                        //                                }
+
+                        //                                property var power_vs_select_state: platformInterface.power_vs_select_states.states
+                        //                                onPower_vs_select_stateChanged: {
+                        //                                    setStatesForControls(vsVoltageSelect,power_vs_select_state[0])
+                        //                                }
+
+                        //                                property var power_vs_select_values: platformInterface.power_vs_select_values.values
+                        //                                onPower_vs_select_valuesChanged: {
+                        //                                    vsVoltageSelect.checkedLabel = power_vs_select_values[0]
+                        //                                    vsVoltageSelect.uncheckedLabel = power_vs_select_values[1]
+                        //                                }
+
+                        //                                property var power_vs_select_value: platformInterface.power_vs_select_value.value
+                        //                                onPower_vs_select_valueChanged: {
+                        //                                    var valuesOfswitch =  platformInterface.power_vs_select_values.values
+                        //                                    console.log(valuesOfswitch,power_vs_select_value)
+                        //                                    if(power_vs_select_value === valuesOfswitch[0])
+                        //                                        vsVoltageSelect.checked = true
+                        //                                    else  vsVoltageSelect.checked = false
+                        //                                }
+                        //                            }
+                        //                        }
 
 
                     }
@@ -357,66 +361,69 @@ Item {
                                         boostOCP.status = SGStatusLight.Red
                                     }
                                     else {
+                                        if(!powerControl.visible) {
+                                            alertViewBadge.opacity = 0.0
+                                        }
                                         boostOCP.status = SGStatusLight.Off
                                     }
                                 }
                             }
                         }
-                        Rectangle {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id:vsPowerFaultLabel
-                                target: vsPowerFault
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                font.bold: true
-                                alignment: SGAlignedLabel.SideTopCenter
-                                anchors {
-                                    top:parent.top
-                                    left: parent.left
-                                    verticalCenter: parent.verticalCenter
-                                    leftMargin: 20
-                                }
+                        //                        Rectangle {
+                        //                            Layout.fillHeight: true
+                        //                            Layout.fillWidth: true
+                        //                            SGAlignedLabel {
+                        //                                id:vsPowerFaultLabel
+                        //                                target: vsPowerFault
+                        //                                fontSizeMultiplier: ratioCalc * 1.2
+                        //                                font.bold: true
+                        //                                alignment: SGAlignedLabel.SideTopCenter
+                        //                                anchors {
+                        //                                    top:parent.top
+                        //                                    left: parent.left
+                        //                                    verticalCenter: parent.verticalCenter
+                        //                                    leftMargin: 20
+                        //                                }
 
-                                SGStatusLight {
-                                    id: vsPowerFault
-                                    width : 40
+                        //                                SGStatusLight {
+                        //                                    id: vsPowerFault
+                        //                                    width : 40
 
-                                    property var power_fault_vs: platformInterface.power_fault_vs
-                                    onPower_fault_vsChanged: {
-                                        vsPowerFaultLabel.text = power_fault_vs.caption
-                                        setStatesForControls(vsPowerFault,power_fault_vs.states[0])
-                                        if(power_fault_vs.value === true)
-                                            vsPowerFault.status = SGStatusLight.Red
-                                        else vsPowerFault.status = SGStatusLight.Off
-                                    }
+                        //                                    property var power_fault_vs: platformInterface.power_fault_vs
+                        //                                    onPower_fault_vsChanged: {
+                        //                                        vsPowerFaultLabel.text = power_fault_vs.caption
+                        //                                        setStatesForControls(vsPowerFault,power_fault_vs.states[0])
+                        //                                        if(power_fault_vs.value === true)
+                        //                                            vsPowerFault.status = SGStatusLight.Red
+                        //                                        else vsPowerFault.status = SGStatusLight.Off
+                        //                                    }
 
-                                    property var power_fault_vs_caption: platformInterface.power_fault_vs_caption.caption
-                                    onPower_fault_vs_captionChanged: {
-                                        vsPowerFaultLabel.text = power_fault_vs_caption
-                                    }
+                        //                                    property var power_fault_vs_caption: platformInterface.power_fault_vs_caption.caption
+                        //                                    onPower_fault_vs_captionChanged: {
+                        //                                        vsPowerFaultLabel.text = power_fault_vs_caption
+                        //                                    }
 
-                                    property var power_fault_vs_states: platformInterface.power_fault_vs_states.states
-                                    onPower_fault_vs_statesChanged: {
-                                        setStatesForControls(vsPowerFault,power_fault_vs_states[0])
-                                    }
+                        //                                    property var power_fault_vs_states: platformInterface.power_fault_vs_states.states
+                        //                                    onPower_fault_vs_statesChanged: {
+                        //                                        setStatesForControls(vsPowerFault,power_fault_vs_states[0])
+                        //                                    }
 
-                                    property var power_fault_vs_value: platformInterface.power_fault_vs_value.value
-                                    onPower_fault_vs_valueChanged:{
-                                        if(power_fault_vs_value === true) {
-                                            if(!powerControl.visible) {
-                                                alertViewBadge.opacity = 1.0
-                                            }
-                                            vsPowerFault.status = SGStatusLight.Red
-                                        }
-                                        else {
-                                            vsPowerFault.status = SGStatusLight.Off
-                                        }
-                                    }
+                        //                                    property var power_fault_vs_value: platformInterface.power_fault_vs_value.value
+                        //                                    onPower_fault_vs_valueChanged:{
+                        //                                        if(power_fault_vs_value === true) {
+                        //                                            if(!powerControl.visible) {
+                        //                                                alertViewBadge.opacity = 1.0
+                        //                                            }
+                        //                                            vsPowerFault.status = SGStatusLight.Red
+                        //                                        }
+                        //                                        else {
+                        //                                            vsPowerFault.status = SGStatusLight.Off
+                        //                                        }
+                        //                                    }
 
-                                }
-                            }
-                        }
+                        //                                }
+                        //                            }
+                        //                        }
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
@@ -465,6 +472,9 @@ Item {
                                             vddPowerFault.status = SGStatusLight.Red
                                         }
                                         else {
+                                            if(!powerControl.visible) {
+                                                alertViewBadge.opacity = 0.0
+                                            }
                                             vddPowerFault.status = SGStatusLight.Off
                                         }
                                     }

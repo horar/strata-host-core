@@ -818,24 +818,24 @@ Item {
         "value": false
     }
 
-    property var power_fault_vs: {
-        "caption":"VS Power\nFault",
-        "scales":[],
-        "states":[1],
-        "value":false,
-        "values":[]
-    }
-    property var power_fault_vs_caption: {
-        "caption":"VS Power\nFault"
-    }
+//    property var power_fault_vs: {
+//        "caption":"VS Power\nFault",
+//        "scales":[],
+//        "states":[1],
+//        "value":false,
+//        "values":[]
+//    }
+//    property var power_fault_vs_caption: {
+//        "caption":"VS Power\nFault"
+//    }
 
-    property var power_fault_vs_states: {
-        "states": [1]
-    }
+//    property var power_fault_vs_states: {
+//        "states": [1]
+//    }
 
-    property var power_fault_vs_value: {
-        "value": false
-    }
+//    property var power_fault_vs_value: {
+//        "value": false
+//    }
 
     property var power_fault_vdd: {
         "caption":"VDD Power\nFault",
@@ -882,29 +882,29 @@ Item {
     }
 
 
-    property var power_vs_select: {
-        "caption":"VS Voltage Select",
-        "states":[0],
-        "state":"enabled",
-        "value":"5V_USB",
-        "values":["5V_USB","VLED"]
-    }
+//    property var power_vs_select: {
+//        "caption":"VS Voltage Select",
+//        "states":[0],
+//        "state":"enabled",
+//        "value":"5V_USB",
+//        "values":["5V_USB","VLED"]
+//    }
 
-    property var power_vs_select_caption: {
-        "caption":"VS Voltage Select"
-    }
+//    property var power_vs_select_caption: {
+//        "caption":"VS Voltage Select"
+//    }
 
-    property var power_vs_select_states: {
-        "states":[0]
-    }
+//    property var power_vs_select_states: {
+//        "states":[0]
+//    }
 
-    property var power_vs_select_value: {
-        "value": "5V_USB"
-    }
+//    property var power_vs_select_value: {
+//        "value": "5V_USB"
+//    }
 
-    property var power_vs_select_values: {
-        "values": ["5V_USB","VLED"]
-    }
+//    property var power_vs_select_values: {
+//        "values": ["5V_USB","VLED"]
+//    }
 
     property var power_vled: {
         "caption":"LED Voltage (VLED)",
