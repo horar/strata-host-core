@@ -9,7 +9,7 @@ import StrataInterface as strata
 import sys
 
 if __name__ == "__main__":
-    Common.populateConstants(sys.argv)
+    Common.initIntegratedTest(sys.argv)
     strata.bindToStrata(Common.DEFAULT_URL)
 
     Common.awaitStrata()

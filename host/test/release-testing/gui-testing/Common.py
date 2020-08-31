@@ -6,6 +6,7 @@ import sys
 import uuid
 import psutil
 import time
+import unittest
 
 VALID_USERNAME = None
 
@@ -14,7 +15,6 @@ VALID_PASSWORD = None
 DEFAULT_URL = None
 
 STRATA_WINDOW = "ON Semiconductor: Strata Developer Studio"
-
 LOGIN_TAB = "Login"
 REGISTER_TAB = "Register"
 
@@ -50,7 +50,10 @@ RESET_PASSWORD_EDIT = "example@onsemi.com"
 RESET_PASSWORD_SUBMIT_BUTTON = "Submit"
 
 
+
 PLATFORM_CONTROLS_BUTTON = "Open Platform Controls"
+
+STRATA_PROCESS = "Strata Developer Studio.exe"
 
 LOGIC_GATE_CLASS_ID = "201"
 
@@ -79,29 +82,46 @@ def writeResults(totalFails, totalTests):
     with open(RESULT_FILE, "r") as resultsFile:
         results = resultsFile.read()
         if results != "":
-            prevSuccesses, prevTotal = int(results.split(",")[0]), int(results.split(",")[1])
+            prevTotal, prevSuccesses = int(results.split(",")[0]), int(results.split(",")[1])
     newTotal = totalTests + prevTotal
     newSuccesses = (totalTests - totalFails) + prevSuccesses
     with open(RESULT_FILE, "w") as resultsFile:
-        resultsFile.write(str(newTotal) + ","+ str(newSuccesses))
-
-def populateConstants(argv):
+        resultsFile.write(str(newSuccesses) + ","+ str(newTotal))
+def initIntegratedTest(argv):
     '''
-    Check for the correct number of arguments in argv and populate TestCommon.VALID_PASSWORD and TestCommon.VALID_USERNAME.
-    Exits if invalid number of arguments supplied.
+    This function should be used if running from the Test-GUI powershell script. Populate constants and exit with a message if the amount of arguments is incorrect.
+    '''
+    global VALID_PASSWORD
+    global VALID_USERNAME
+    global DEFAULT_URL
+
+    if len(argv) < 4:
+        print("Usage: <valid username> <valid password> <hcs tcp url>")
+        sys.exit(0)
+    VALID_USERNAME = argv[1]
+    VALID_PASSWORD = argv[2]
+    DEFAULT_URL = argv[3]
+
+def runStandalone(argval):
+    '''
+    This function should be used if running a test standalone from the command line. Populate constants and exit with a message if the amount of arguments is incorrect.
     :return:
     '''
 
     global VALID_PASSWORD
     global VALID_USERNAME
     global DEFAULT_URL
-    if len(argv) < 4:
-        print("Usage: <valid username> <valid password> <hcs tcp url>")
+
+    if len(argval) < 5:
+        print("Usage: <test module/class/function> <valid username> <valid password> <hcs tcp url>")
         sys.exit(0)
-    else:
-        VALID_USERNAME = argv[1]
-        VALID_PASSWORD = argv[2]
-        DEFAULT_URL = argv[3]
+    VALID_USERNAME = argval[2]
+    VALID_PASSWORD = argval[3]
+    DEFAULT_URL = argval[4]
+    tests = unittest.defaultTestLoader.loadTestsFromName(argval[1])
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(tests)
+
 
 def processRunning(name):
     return name in (p.name() for p in psutil.process_iter())
@@ -109,4 +129,6 @@ def processRunning(name):
 def awaitStrata():
     while not processRunning("Strata Developer Studio.exe"):
         pass
+
+    #wait for strata to l fully
     time.sleep(5)

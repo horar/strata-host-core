@@ -9,6 +9,8 @@ import time
 import Common
 import StrataInterface as strata
 
+
+
 class LoginValidNoBoard(unittest.TestCase):
     '''
     Test logging in without a board attached.
@@ -21,7 +23,6 @@ class LoginValidNoBoard(unittest.TestCase):
         ui = StrataUI()
         Logout(ui)
 
-
     def test_login_submit(self):
         ui = StrataUI()
         #assert on login page
@@ -30,8 +31,6 @@ class LoginValidNoBoard(unittest.TestCase):
         Login(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, self)
 
         self.assertTrue(ui.OnPlatformView())
-
-
 
 class LoginValidWithBoard(unittest.TestCase):
     '''
@@ -64,4 +63,3 @@ class LoginValidWithBoard(unittest.TestCase):
         time.sleep(1)
 
         self.assertTrue(ui.ConnectedPlatforms() == 0)
-
