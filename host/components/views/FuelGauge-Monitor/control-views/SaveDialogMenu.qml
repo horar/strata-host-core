@@ -9,7 +9,7 @@ Rectangle {
     id: root2
     property  alias opensavedaialoguemenu:opensavedaialoguemenu
     property alias get_measurement_start:get_measurement_start
-    //property alias saving_variable: saving_variable
+    //property alias saving_variable: saving_variable:
     property alias save_file_dialogbox: save_file_dialogbox
     property var my_log_time:0
     property var time_data:[]
