@@ -18,7 +18,7 @@ function Assert-PythonAndRequirements {
         $Global:PythonExec = 'python3'
         $Global:PipExec = 'pip3'
     }
-
+    
     # Verify Python being run is Python 3
     $PythonVersion = Invoke-Expression "${PythonExec} -c 'import sys; print(sys.version_info[0])'"
     If ($PythonVersion -Ne 3) {
@@ -28,7 +28,7 @@ function Assert-PythonAndRequirements {
     # Attempt to run pip and install dependencies
     Try {
         If ((Start-Process $PipExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
-            Start-Process $PipExec -ArgumentList '-r requirements.txt'
+            Start-Process $PipExec -NoNewWindow -Wait -ArgumentList "install -r ${PSScriptRoot}\\requirements.txt"
         } Else {
             Exit-TestScript -1 "Error: Pip not found.`nAborting."
         }
