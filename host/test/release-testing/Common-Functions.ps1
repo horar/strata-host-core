@@ -13,20 +13,21 @@ function Assert-PythonAndPyzmq {
     # on Win, Python 3 is not in the path by default, as a result we'll need to use 'python3' for OSX and 'python' for Win
     If ($Env:OS -Eq "Windows_NT") {
         $Global:PythonExec = 'python'
+        $Global:PipExec = 'pip'
     } Else {
         $Global:PythonExec = 'python3'
+        $Global:PipExec = 'pip3'
     }
+
 
     # Attempt to run Python and import PyZMQ, display error if operation fails
     Try {
-        If ((Start-Process $PythonExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
-            If (!(Start-Process $PythonExec '-c "import zmq"' -WindowStyle Hidden -Wait -PassThru).ExitCode -Eq 0) {
-                Write-Host -ForegroundColor Red "Error: ZeroMQ library for Python is required, visit https://zeromq.org/languages/python/ for instructions.`nAborting."
-                Exit-TestScript -1
-            }
+        If ((Start-Process $PipExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
+            Start-Process $PipExec -ArgumentList '-r requirements.txt'
         } Else {
-            Exit-TestScript -1 "Error: Python not found.`nAborting."
+            Exit-TestScript -1 "Error: Pip not found.`nAborting."
         }
+        
     } Catch [System.Management.Automation.CommandNotFoundException] {
         Exit-TestScript -1 "Error: Python not found.`nAborting."
     }
@@ -66,6 +67,19 @@ function Assert-PythonScripts {
     If (!(Test-Path $PythonPlatformIdentificationTest)) {
         Exit-TestScript -1 "Error: cannot find Python script at $PythonPlatformIdentificationTest.`nAborting."
     }
+    If (!(Test-Path $PythonGUIMain)) {
+        Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMain.`nAborting."
+    }
+    If (!(Test-Path $PythonGUIMainLoginTestPre)) {
+        Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMainLoginTestPre.`nAborting."
+    }
+    If (!(Test-Path $PythonGUIMainLoginTestPost)) {
+        Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMainLoginTestPost.`nAborting."
+    }
+    If (!(Test-Path $PythonGUIMainNoNetwork)) {
+        Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMainNoNetwork.`nAborting."
+    }
+
 }
 
 # Check if PS module 'PSSQLite' is installed
@@ -212,6 +226,8 @@ function Show-TestSummary {
     Show-TestResult -TestName "Test-TokenAndViewsDownload" -TestResults $TokenAndViewsDownloadResults
 
     Show-TestResult -TestName "Test-CollateralDownload" -TestResults $CollateralDownloadResults
+
+    Show-TestResult -TestName "Test-GUI" -TestResults $GUIResults
 
     If ($EnablePlatformIdentificationTest -eq $true) { 
         Show-TestResult -TestName "Test-PlatformIdentification" -TestResults $PlatformIdentificationResults
