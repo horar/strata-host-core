@@ -7,9 +7,9 @@ Version:        1.0
 Creation Date:  03/17/2020
 #>
 
-# Check if python and pyzmq are installed
+# Check if python and pip are installed and install dependencies specified in requirements.txt
 function Assert-PythonAndRequirements {
-    # Determine the python command based on OS. OSX will execute Python 2 by default and here we need to use Python 3.
+    # Determine the python and pip command based on OS. OSX will execute Python 2 by default and here we need to use Python 3.
     # on Win, Python 3 is not in the path by default, as a result we'll need to use 'python3' for OSX and 'python' for Win
     If ($Env:OS -Eq "Windows_NT") {
         $Global:PythonExec = 'python'
@@ -19,7 +19,13 @@ function Assert-PythonAndRequirements {
         $Global:PipExec = 'pip3'
     }
 
-    # Attempt to run Python and import PyZMQ, display error if operation fails
+    # Verify Python being run is Python 3
+    $PythonVersion = Invoke-Expression "${PythonExec} -c 'import sys; print(sys.version_info[0])'"
+    If ($PythonVersion -Ne 3) {
+        Exit-TestScript -1 "Error: Python 3 is required, visit https://www.python.org/downloads/ to download.`nAborting."
+    }
+
+    # Attempt to run pip and install dependencies
     Try {
         If ((Start-Process $PipExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
             Start-Process $PipExec -ArgumentList '-r requirements.txt'
@@ -29,13 +35,7 @@ function Assert-PythonAndRequirements {
         
     } Catch [System.Management.Automation.CommandNotFoundException] {
         Exit-TestScript -1 "Error: Pip not found.`nAborting."
-    }
-
-    # Verify Python being run is Python 3
-    $PythonVersion = Invoke-Expression "${PythonExec} -c 'import sys; print(sys.version_info[0])'"
-    If ($PythonVersion -Ne 3) {
-        Exit-TestScript -1 "Error: Python 3 is required, visit https://www.python.org/downloads/ to download.`nAborting."
-    }
+    }   
 }
 
 # Check if both SDS and HCS are found where expected
