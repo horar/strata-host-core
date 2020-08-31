@@ -57,7 +57,7 @@ ColumnLayout {
         //		console.log("charge log time="+virtualtextarea.realtimelog)
     }
 
-    //inturrupts from MCU
+    //inturrupts recv from MCU:
     property var double_estd_time: platformInterface.int_os_alert.double_time
     onDouble_estd_timeChanged: {
         if(double_estd_time==="red"){sgStatusLight18.status="red"
