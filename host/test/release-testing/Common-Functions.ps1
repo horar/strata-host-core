@@ -8,7 +8,7 @@ Creation Date:  03/17/2020
 #>
 
 # Check if python and pyzmq are installed
-function Assert-PythonAndPyzmq {
+function Assert-PythonAndRequirements {
     # Determine the python command based on OS. OSX will execute Python 2 by default and here we need to use Python 3.
     # on Win, Python 3 is not in the path by default, as a result we'll need to use 'python3' for OSX and 'python' for Win
     If ($Env:OS -Eq "Windows_NT") {
@@ -19,7 +19,6 @@ function Assert-PythonAndPyzmq {
         $Global:PipExec = 'pip3'
     }
 
-
     # Attempt to run Python and import PyZMQ, display error if operation fails
     Try {
         If ((Start-Process $PipExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
@@ -29,7 +28,7 @@ function Assert-PythonAndPyzmq {
         }
         
     } Catch [System.Management.Automation.CommandNotFoundException] {
-        Exit-TestScript -1 "Error: Python not found.`nAborting."
+        Exit-TestScript -1 "Error: Pip not found.`nAborting."
     }
 
     # Verify Python being run is Python 3
@@ -66,18 +65,6 @@ function Assert-PythonScripts {
     }
     If (!(Test-Path $PythonPlatformIdentificationTest)) {
         Exit-TestScript -1 "Error: cannot find Python script at $PythonPlatformIdentificationTest.`nAborting."
-    }
-    If (!(Test-Path $PythonGUIMain)) {
-        Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMain.`nAborting."
-    }
-    If (!(Test-Path $PythonGUIMainLoginTestPre)) {
-        Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMainLoginTestPre.`nAborting."
-    }
-    If (!(Test-Path $PythonGUIMainLoginTestPost)) {
-        Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMainLoginTestPost.`nAborting."
-    }
-    If (!(Test-Path $PythonGUIMainNoNetwork)) {
-        Exit-TestScript -1 "Error: cannot find Python script at $PythonGUIMainNoNetwork.`nAborting."
     }
 
 }
