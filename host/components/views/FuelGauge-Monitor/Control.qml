@@ -20,7 +20,7 @@ Item {
         anchors.fill: parent
     }
 
-    SGIcon {
+    /* SGIcon {
         id: helpIcon
         anchors {
             right: basic.right
@@ -45,5 +45,5 @@ Item {
             }
             hoverEnabled: true
         }
-    }
+    } */
 }
