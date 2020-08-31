@@ -41,27 +41,61 @@ Item {
         }
     }
 
-//    Item {
-//        id: filterHelpContainer3
-//        property point topLeft
-//        property point bottomRight
-//        width:  (out0interExterLED.width) * 13.2
-//        height: (bottomRight.y - topLeft.y)
-//        x: topLeft.x
-//        y: topLeft.y
-//        function update() {
-//            topLeft = out0interExterLED.mapToItem(root, 0,  0)
-//            bottomRight = out11interExterLED.mapToItem(root, out11interExterLED.width, out11interExterLED.height)
-//        }
-//    }
+    Item {
+        id: filterHelpContainer3
+        property point topLeft
+        property point bottomRight
+        width:  (out0pwmEnableLED.width) * 13.2
+        height: (bottomRight.y - topLeft.y)
+        x: topLeft.x
+        y: topLeft.y
+        function update() {
+            topLeft = out0pwmEnableLED.mapToItem(root, 0,  0)
+            bottomRight = out11pwmEnableLED.mapToItem(root, out11pwmEnableLED.width, out11pwmEnableLED.height)
+        }
+    }
+
+    Item {
+        id: filterHelpContainer4
+        property point topLeft
+        property point bottomRight
+        width:  (out0faultStatusLEDContainer.width) * 13.2
+        height: (bottomRight.y - topLeft.y)
+        x: topLeft.x
+        y: topLeft.y
+        function update() {
+            topLeft = out0faultStatusLEDContainer.mapToItem(root, 0,  0)
+            bottomRight = out11faultStatusLEDContainer.mapToItem(root, out11faultStatusLEDContainer.width, out11faultStatusLEDContainer.height)
+        }
+    }
+
+    Item {
+        id: filterHelpContainer5
+        property point topLeft
+        property point bottomRight
+        width:  (out0dutyContainer.width) * 13.2
+        height: (bottomRight.y - topLeft.y)
+        x: topLeft.x
+        y: topLeft.y
+        function update() {
+            topLeft = out0dutyContainer.mapToItem(root, 0,  0)
+            bottomRight = out11dutyContainer.mapToItem(root, out11dutyContainer.width, out11dutyContainer.height)
+        }
+    }
 
     onWidthChanged: {
         filterHelpContainer1.update()
         filterHelpContainer2.update()
+        filterHelpContainer3.update()
+        filterHelpContainer4.update()
+        filterHelpContainer5.update()
     }
     onHeightChanged: {
         filterHelpContainer1.update()
         filterHelpContainer2.update()
+        filterHelpContainer3.update()
+        filterHelpContainer4.update()
+        filterHelpContainer5.update()
     }
 
     Connections {
@@ -69,6 +103,9 @@ Item {
         onTour_runningChanged:{
             filterHelpContainer1.update()
             filterHelpContainer2.update()
+            filterHelpContainer3.update()
+            filterHelpContainer4.update()
+            filterHelpContainer5.update()
         }
     }
 
@@ -79,8 +116,33 @@ Item {
         Help.registerTarget(partNumber, "Indication of LED driver part assembled on PCB. The part number is reported to the user interface based on state of pin PD9, low = NCV7684, high = NCV7685.", 0, "ledDriverHelp")
         Help.registerTarget(filterHelpContainer1, "Toggles each LED on or off. If PWM is enabled, these controls will be disabled.", 1, "ledDriverHelp")
         Help.registerTarget(filterHelpContainer2, "Toggles each LED with to use onboard LEDs or externally connected LEDs through 24 pin header at the top of the PCB.", 2, "ledDriverHelp")
-        Help.registerTarget(enableOutput, "Toggles each LED on or off. If PWM is enabled, these controls will be disabled.", 3, "ledDriverHelp")
-        Help.registerTarget(enableOutput, "Toggles each LED on or off. If PWM is enabled, these controls will be disabled.", 4, "ledDriverHelp")
+        Help.registerTarget(filterHelpContainer3, "Toggles PWM for each LED channel on or off. If PWM is disabled, these controls will also be disabled." , 3, "ledDriverHelp")
+        Help.registerTarget(filterHelpContainer4, "Indicates fault on each LED channel. I2C Open Load Diagnostic must be set to “Diagnostic Only” or “Auto Retry” and DIAGEN above 2V for fault status to update." , 4, "ledDriverHelp")
+        Help.registerTarget(filterHelpContainer5, "Sets the duty cycle of the PWM for each LED channel with 128 step resolution. Maximum and minimum duty cycles will switch LED fully on and off respectively. If PWM is disabled, these controls will also be disabled.", 5, "ledDriverHelp")
+        Help.registerTarget(gobalCurrentSetSlider,"Sets the maximum current for all LED channels.",15,"ledDriverHelp")
+        Help.registerTarget(diag,"Generic diagnostic error when any LED channel is in an error mode.",21,"ledDriverHelp")
+        Help.registerTarget(scIset,"Set when a short-circuit on the external resistor on ISET pin. Permanently latches after 10µs.",6,"ledDriverHelp")
+        Help.registerTarget(i2Cerr,"Set if an error has been detected during the I2C communication. Reset on register read.",7,"ledDriverHelp")
+        Help.registerTarget(uv,"Set if under voltage condition when VS is below VSUV (4.1V typical). All channels will be turned off.",8,"ledDriverHelp")
+        Help.registerTarget(diagRange,"Set when divided voltage is above the VDiagenTH threshold and reset when below. Default voltage threshold is fixed on this PCB to 9V. User can adjust this threshold with the onboard potentiometer by removing lower divider resistor and shorting jumper.",9,"ledDriverHelp")
+
+
+        Help.registerTarget(tw,"Thermal warning that is set when junction temperature is above the Tjwar_on threshold (140°C typical) and reset on register read and when temperature is below Tjwar_on minus Tjsd_hys threshold (127.5°C typical).",10,"ledDriverHelp")
+        Help.registerTarget(tsd,"Thermal shutdown set when junction temperature is above the TSD threshold (170°C typical) and reset on register read and when temperature is below TSD minus Tjsd_hys threshold (157.5°C typical).",11,"ledDriverHelp")
+
+         Help.registerTarget(diagerr,"Set when DIAG pin is forced low externally. Permanently latches after 10µs.",12,"ledDriverHelp")
+         Help.registerTarget(ol,"Set when at least one LED channel is in an open load. Permanently latches after 10µs. I2C Open Load Diagnostic must be set to “Diagnostic Only” or “Auto Retry” and DIAGEN above 2V for OL to update.",13,"ledDriverHelp")
+         Help.registerTarget(enableOutput,"Toggles the output enable pin of the NCV7685. The NCV7684 does not support output enable",14,"ledDriverHelp")
+         Help.registerTarget(pwmenableOutput,"Activates the PWM dimming feature of the LED driver. User interface controls related to PWM will be disabled when PWM is disabled.",16,"ledDriverHelp")
+         Help.registerTarget(lockPWMDutyEN,"Locks together the PWM enable or disable state for all LED channels. Use OUT0 PWM Enable switch to control all channels.",17,"ledDriverHelp")
+         Help.registerTarget(lockPWMDuty,"Locks together the PWM value for all LED channels together. Use OUT0 PWM Duty slide to control all channels.",18,"ledDriverHelp")
+        Help.registerTarget(pwmLinearLog,"Selects between logarithmic and linear translation of PWM Duty value.",19,"ledDriverHelp")
+
+        Help.registerTarget(pwmFrequency,"Sets the PWM frequency. This list varies depending on if the NCV7684 or NCV7685 is connected",20,"ledDriverHelp")
+
+        Help.registerTarget(openLoadDiagnostic,"   1. No Diagnostic = No open load detection is performed  \n  2. Auto Retry = During open load fault, a) DIAG pin is pulled low, b) low current is imposed on faulty channel only, c) other channels turned off. If fault is recovered DIAG is released and normal operation continues. \n 3.Diagnostic Only = During open load fault, the DIAG pin is pulled low with no change to current regulation. If fault is recovered DIAG is released.",22,"ledDriverHelp")
+
+
     }
 
     function setStateForPWMDuty(pwmDutyid,index)
@@ -1976,6 +2038,7 @@ Item {
                                         }
 
                                         Rectangle {
+                                            id: out0faultStatusLEDContainer
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             SGStatusLight {
@@ -1986,6 +2049,7 @@ Item {
                                         }
 
                                         Rectangle {
+                                            id: out0dutyContainer
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
                                             CustomizeRGBSlider {
@@ -4815,6 +4879,7 @@ Item {
                                         }
 
                                         Rectangle {
+                                            id: out11faultStatusLEDContainer
                                             Layout.fillWidth: true
                                             Layout.fillHeight: true
                                             SGStatusLight {
@@ -4825,6 +4890,7 @@ Item {
                                         }
 
                                         Rectangle {
+                                            id: out11dutyContainer
                                             Layout.fillWidth: true
                                             Layout.preferredHeight: parent.height/3
                                             CustomizeRGBSlider {
