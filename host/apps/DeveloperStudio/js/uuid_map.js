@@ -84,6 +84,8 @@ var uuid_map = {
     "b8a53467-4155-4104-905e-8d23bb5664a3": "Adj-LDO",
     "8da4158e-caa7-469d-8e4c-949d7a7e9858": "Adj-LDO",
     "d0cc3eb2-f822-4955-afa4-b975957aed38": "Adj-LDO",
-    "0570d932-6a3f-4a34-8442-cd9914518241": "current-sense"
+    "0570d932-6a3f-4a34-8442-cd9914518241": "current-sense",
+	"bcd30065-a324-4a2c-8b55-05752c4eb76a": "FuelGauge-Monitor"
+	
 
 }
