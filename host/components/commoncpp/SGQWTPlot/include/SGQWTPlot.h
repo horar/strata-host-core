@@ -5,8 +5,6 @@
 #include <QPointF>
 #include <QVector>
 
-#include "logging/LoggingQtCategories.h"
-
 #include <qwt/qwt_plot.h>
 #include <qwt/qwt_plot_curve.h>
 #include <qwt/qwt_plot_renderer.h>
