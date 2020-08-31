@@ -28,7 +28,7 @@ function Assert-PythonAndRequirements {
     # Attempt to run pip and install dependencies
     Try {
         If ((Start-Process $PipExec --version -Wait -WindowStyle Hidden -PassThru).ExitCode -Eq 0) {
-            Start-Process $PipExec -NoNewWindow -Wait -ArgumentList "install -r ${PSScriptRoot}\\requirements.txt"
+            Start-Process $PipExec -NoNewWindow -Wait -ArgumentList "install -r $PSScriptRoot\requirements.txt"
         } Else {
             Exit-TestScript -1 "Error: Pip not found.`nAborting."
         }
