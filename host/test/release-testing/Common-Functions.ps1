@@ -214,8 +214,6 @@ function Show-TestSummary {
 
     Show-TestResult -TestName "Test-CollateralDownload" -TestResults $CollateralDownloadResults
 
-    Show-TestResult -TestName "Test-GUI" -TestResults $GUIResults
-
     If ($EnablePlatformIdentificationTest -eq $true) { 
         Show-TestResult -TestName "Test-PlatformIdentification" -TestResults $PlatformIdentificationResults
     }
