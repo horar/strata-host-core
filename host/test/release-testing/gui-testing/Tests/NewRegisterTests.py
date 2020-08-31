@@ -7,7 +7,6 @@ import time
 import SystemInterface as cleanup
 import Common
 
-# NEW_USERNAME = "bep@bip.com"
 NEW_PASSWORD = "Bepzipbip15"
 NEW_FIRST_NAME = "First"
 NEW_LAST_NAME = "Last"

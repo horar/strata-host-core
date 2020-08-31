@@ -5,6 +5,7 @@ import zmq
 import json
 import threading
 import Common
+
 __client:zmq.Socket
 __strataId:bytes
 
@@ -142,10 +143,3 @@ if __name__ == "__main__":
                 "{\"hcs::notification\":{\"list\":[{\"class_id\":\"%s\",\"connection\":\"connected\",\"verbose_name\":\"\"}],\"type\":\"connected_platforms\"}}" % classID,
                 'utf-8')
             __client.send_multipart([__strataId, myEncodedStr])
-
-    # bind(DEFAULT_URL)
-    # print("bind")
-    # time.sleep(10)
-    # reciveStrataId()
-    # openPlatform("201")
-    #closePlatforms(client, strataId)

@@ -49,8 +49,6 @@ RESET_PASSWORD_CLOSE_BUTTON = "ClosePopup"
 RESET_PASSWORD_EDIT = "example@onsemi.com"
 RESET_PASSWORD_SUBMIT_BUTTON = "Submit"
 
-
-
 PLATFORM_CONTROLS_BUTTON = "Open Platform Controls"
 
 STRATA_PROCESS = "Strata Developer Studio.exe"
@@ -104,7 +102,7 @@ def initIntegratedTest(argv):
 
 def runStandalone(argval):
     '''
-    This function should be used if running a test standalone from the command line. Populate constants and exit with a message if the amount of arguments is incorrect.
+    This function should be used if running a test standalone from the command line. Populate constants and run specified tests, or exit with a message if the amount of arguments is incorrect.
     :return:
     '''
 
@@ -113,7 +111,7 @@ def runStandalone(argval):
     global DEFAULT_URL
 
     if len(argval) < 5:
-        print("Usage: <test module/class/function> <valid username> <valid password> <hcs tcp url>")
+        print("Usage: <test module[[.class].function]> <valid username> <valid password> <hcs tcp url>")
         sys.exit(0)
     VALID_USERNAME = argval[2]
     VALID_PASSWORD = argval[3]

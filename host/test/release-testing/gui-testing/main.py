@@ -2,7 +2,6 @@
 Main testing script. Assumes that Strata is open, visible, and maximized
 '''
 import unittest
-
 from Tests import InvalidInputTests, PasswordResetTests, NewRegisterTests, FeedbackTests, BoardTests
 import Common
 import StrataInterface as strata
@@ -13,7 +12,6 @@ if __name__ == "__main__":
     strata.bindToStrata(Common.DEFAULT_URL)
 
     Common.awaitStrata()
-
 
     suite = unittest.TestSuite([
                                 unittest.defaultTestLoader.loadTestsFromModule(BoardTests),
@@ -30,5 +28,3 @@ if __name__ == "__main__":
         pass
 
     Common.writeResults(len(result.errors) + len(result.failures), result.testsRun)
-
-    # strata.cleanup()

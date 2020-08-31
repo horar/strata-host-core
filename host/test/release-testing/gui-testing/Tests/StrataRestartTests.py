@@ -3,8 +3,6 @@ Tests to be ran after logging into Strata and closing it.
 '''
 import unittest
 from GUIInterface.StrataUI import *
-import time
-import SystemInterface as cleanup
 
 class StrataLoginPostRestartTest(unittest.TestCase):
     '''

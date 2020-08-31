@@ -1,4 +1,3 @@
-import win32gui
 from uiautomation import *
 from Common import *
 from functools import reduce
