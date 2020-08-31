@@ -8,6 +8,11 @@
 var initialized = false
 
 /*
+  Settings: Store/retrieve login information
+*/
+var settings = createObject("qrc:/partial-views/login/LoginSettings.qml", null)
+
+/*
   Signals: Signal component to notify Login status
 */
 var signals = createObject("qrc:/partial-views/login/LoginSignals.qml", null)
@@ -71,6 +76,9 @@ function logout() {
     Rest.xhr("get", "logout?session=" + Rest.session, "", logout_result, logout_error)//, signals)
     Rest.jwt = ""
     Rest.session = ""
+    if (settings.rememberMe) {
+        settings.rememberMe = false
+    }
 }
 
 function logout_result(response){
@@ -176,6 +184,89 @@ function password_reset_error(error)
         signals.resetResult("No Connection")
     } else {
         signals.resetResult("Bad Request")
+    }
+}
+
+/*
+   Close Account: Send close account request to server
+*/
+function close_account(request_info) {
+    var data = {"username":request_info.username};
+    Rest.xhr("post", "closeAccount", data, close_account_result, close_account_result, signals);
+}
+
+/*
+  Close Account: Callback function for response from server
+*/
+function close_account_result(response) {
+    if (response.message !== "Account closed") {
+        console.error(LoggerModule.Logger.devStudioLoginCategory, "Close Account Request Failed: ", JSON.stringify(response))
+        if (response.message === "No connection") {
+            signals.closeAccountResult("No Connection");
+        } else {
+            signals.closeAccountResult(response.message);
+        }
+    } else {
+        signals.closeAccountResult("Success");
+    }
+}
+
+/*
+  Get Profile: Get user's profile
+*/
+function get_profile(username) {
+    var data = {"username": username};
+    Rest.xhr("post", "profile", data, get_profile_result, get_profile_result_failed, signals)
+}
+
+/*
+  Get Profile: Callback function for response from server
+*/
+function get_profile_result(response) {
+    signals.getProfileResult("Success", response)
+}
+
+/*
+  Get Profile: Callback function for response from server on error
+*/
+function get_profile_result_failed(response) {
+    console.error(LoggerModule.Logger.devStudioLoginCategory, "Get Profile request failed: ", JSON.stringify(response))
+    signals.getProfileResult("Failed to get profile", null)
+}
+
+/*
+    Update Profile: Send update profile request to server
+*/
+function update_profile(username, updated_properties) {
+    var data = updated_properties;
+    data._id = username;
+
+    if (updated_properties.hasOwnProperty("password")) {
+        Rest.xhr("post", "profileUpdate", data, change_password_result, change_password_result, signals)
+    } else {
+        Rest.xhr("post", "profileUpdate", data, update_profile_result, update_profile_result, signals)
+    }
+}
+
+/*
+  Update Profile Result: Callback function for response from update profile request
+*/
+function update_profile_result(response) {
+    if (response.message === "Profile update successful") {
+        signals.profileUpdateResult("Success")
+    } else {
+        signals.profileUpdateResult(response.message)
+    }
+}
+
+/*
+  Change Password Result: Callback function for response from change password request
+*/
+function change_password_result(response) {
+    if (response.message === "Profile update successful") {
+        signals.changePasswordResult("Success")
+    } else {
+        signals.changePasswordResult(response.message)
     }
 }
 

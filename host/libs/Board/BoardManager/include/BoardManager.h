@@ -10,7 +10,6 @@
 #include <QHash>
 #include <QVariantMap>
 #include <QVector>
-#include <QSharedPointer>
 #include <QMutex>
 
 #include <Device/Device.h>
@@ -131,7 +130,7 @@ namespace strata {
         QHash<int, QString> serialIdToName_;
         QHash<int, device::DevicePtr> openedDevices_;
 
-        QHash<int, QSharedPointer<device::DeviceOperations>> deviceOperations_;
+        QHash<int, std::shared_ptr<device::DeviceOperations>> deviceOperations_;
 
         // flag if require response to get_firmware_info command
         bool reqFwInfoResp_;

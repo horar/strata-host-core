@@ -27,7 +27,7 @@ Item {
             anchors {
                 horizontalCenter: parent.horizontalCenter
             }
-            source: "qrc:/images/icons/exclamation-circle-solid.svg"
+            source: "qrc:/sgimages/exclamation-circle.svg"
             iconColor: "lightgrey"
             height: 40
             width: 40

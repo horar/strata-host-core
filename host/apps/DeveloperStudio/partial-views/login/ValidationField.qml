@@ -44,7 +44,7 @@ TextField {
 
     SGIcon {
         id: validIcon
-        source: field.valid ? "qrc:/images/icons/check-solid.svg" : "qrc:/images/icons/asterisk-solid.svg"
+        source: field.valid ? "qrc:/sgimages/check.svg" : "qrc:/sgimages/asterisk.svg"
         iconColor: field.valid ? "#30c235" : "#ddd"
         anchors {
             top: field.top
@@ -56,4 +56,3 @@ TextField {
         width: height
     }
 }
-

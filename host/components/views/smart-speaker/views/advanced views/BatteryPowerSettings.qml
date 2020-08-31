@@ -11,8 +11,12 @@ Rectangle {
 
     property color backgroundColor: "#D1DFFB"
     property color accentColor:"#86724C"
+    property int   labelWidth: 130      //to keep labels aligned right
 
-    property bool batteryIsMissing: platformInterface.battery_status.no_battery_indicator
+    property bool batteryIsMissing: platformInterface.battery_status_fre.no_battery_indicator
+    onBatteryIsMissingChanged: {
+        console.log("battery missing status is now", batteryIsMissing);
+    }
 
     Rectangle{
         id:notConnectedScrim
@@ -42,6 +46,8 @@ Rectangle {
         anchors.leftMargin:10
         anchors.top: parent.top
         anchors.topMargin: 10
+        width: labelWidth
+        horizontalAlignment: Text.AlignRight
         text:"Audio voltage:"
         color: "black"
         visible:!batteryIsMissing
@@ -53,11 +59,29 @@ Rectangle {
         anchors.verticalCenter: audioVoltageLabel.verticalCenter
         anchors.verticalCenterOffset: 5
         height:25
-        from:100
-        to:600
+        from:5.5
+        to:14
+        stepSize: .5
         inputBox: true
         grooveColor: "grey"
         grooveFillColor: hightlightColor
+        visible:!batteryIsMissing
+        value: platformInterface.audio_power.audio_voltage
+
+        onUserSet: {
+            //the first parameter is usb volts, which will be ignored
+            platformInterface.set_audio_amp_voltage.update(value,"battery")
+        }
+    }
+    Text{
+        id:audioVoltageSliderUnit
+        anchors.verticalCenter: audioVoltageSlider.verticalCenter
+        anchors.verticalCenterOffset: 0
+        anchors.left: audioVoltageSlider.right
+        anchors.leftMargin: 5
+        font.pixelSize: 15
+        text:"V"
+        color: "grey"
         visible:!batteryIsMissing
     }
 
@@ -68,6 +92,8 @@ Rectangle {
         anchors.leftMargin:10
         anchors.top: audioVoltageLabel.bottom
         anchors.topMargin: 20
+        width: labelWidth
+        horizontalAlignment: Text.AlignRight
         text:"Controller bypass:"
         color: "black"
         visible:!batteryIsMissing
@@ -80,6 +106,11 @@ Rectangle {
         height:25
         grooveFillColor: hightlightColor
         visible:!batteryIsMissing
+        checked: platformInterface.fet_bypass.state
+
+        onToggled: {
+            platformInterface.set_fet_bypass.update(checked);
+        }
     }
 
     Text{
@@ -89,6 +120,8 @@ Rectangle {
         anchors.leftMargin:10
         anchors.top: controllerBypassLabel.bottom
         anchors.topMargin: 20
+        width:labelWidth
+        horizontalAlignment: Text.AlignRight
         text:"Sink capabilities:"
         color: "black"
         visible:!batteryIsMissing
@@ -98,7 +131,7 @@ Rectangle {
         id: sinkCapSegmentedButton
         labelLeft: false
         anchors.left: sinkCapLabel.right
-        anchors.leftMargin: 10
+        anchors.leftMargin: 5
         anchors.verticalCenter: sinkCapLabel.verticalCenter
         textColor: "black"
         activeTextColor: "black"

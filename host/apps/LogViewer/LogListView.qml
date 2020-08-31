@@ -94,6 +94,13 @@ Item {
         height: headerContent.height + 8
         x: -logViewWrapper.contentX
 
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                logViewWrapper.forceActiveFocus();
+            }
+        }
+
         Rectangle {
             id: headerBg
             anchors.fill: parent
@@ -267,13 +274,11 @@ Item {
             policy: ScrollBar.AsNeeded
         }
 
-        onMovingVerticallyChanged: {
-            if (movingVertically) {
-                logViewerMain.automaticScroll = false
-            }
-
-            if (movingVertically === false && logListView.atYEnd) {
+        onContentYChanged: {
+            if (logListView.atYEnd) {
                 logViewerMain.automaticScroll = true
+            } else {
+                logViewerMain.automaticScroll = false
             }
         }
 
@@ -323,7 +328,7 @@ Item {
                         target: cell
                         property: "color"
                         from: highlightColor
-                        to: index % 2 ? "#f2f0f0" : "white"
+                        to: "darkgray"
                         duration: animationDuration
                     }
                 }
@@ -342,23 +347,6 @@ Item {
                             property: "color"
                             from: level.color
                             to: "white"
-                            duration: animationDuration
-                        }
-                    }
-                    ParallelAnimation {
-                        ColorAnimation {
-                            targets: [ts,pid,tid,msg]
-                            properties: "color"
-                            from: "white"
-                            to: "black"
-                            duration: animationDuration
-                        }
-
-                        ColorAnimation {
-                            target: level
-                            property: "color"
-                            from: "white"
-                            to: level.color
                             duration: animationDuration
                         }
                     }
