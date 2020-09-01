@@ -81,7 +81,7 @@ StackLayout {
                     sdsModel.resourceLoader.resourceRegisterFailed.connect(resourceRegisterFailed);
                     controlViewList = sdsModel.documentManager.getClassDocuments(model.class_id).controlViewListModel
                     controlViewListCount = controlViewList.count
-                    loadPlatformDocuments()
+                    checkForResources()
                     loadingBarContainer.visible = true;
                     loadingBar.percentReady = 0.0;
                 }
@@ -191,12 +191,12 @@ StackLayout {
     }
 
     /* The Order of Operations here is as follows:
-        1. Call loadPlatformDocuments()
+        1. Call checkForResources()
         2. Check if static (local) control view exists, if so, register it
         3. else, call loadResource()
         4. If OTA versions are installed, register the installed version, else download latest version
     */
-    function loadPlatformDocuments() {
+    function checkForResources() {
         if (controlLoaded === false) {
             /* First check if the view is already registered.
               If it is not, then try to first register a static (local) control view for this class_id.
@@ -426,7 +426,7 @@ StackLayout {
                 controlViewList = sdsModel.documentManager.getClassDocuments(model.class_id).controlViewListModel
                 controlViewListCount = controlViewList.count
                 if (loadingBar.percentReady === 0.0) {
-                    loadPlatformDocuments()
+                    checkForResources()
                 }
             }
         }
