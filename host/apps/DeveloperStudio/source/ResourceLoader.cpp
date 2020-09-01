@@ -33,7 +33,7 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
     QFile resourceInfo(path);
 
     if (resourceInfo.exists()) {
-        if (unregisterResource(resourceInfo.fileName(), getQResourcePrefix(class_id, version)) == false) {
+        if (QResource::unregisterResource(resourceInfo.fileName(), getQResourcePrefix(class_id, version)) == false) {
             qCWarning(logCategoryResourceLoader) << "Unable to unregister resource. Resource " << resourceInfo.fileName() << " still in use for class id: " << class_id;
         }
         if (resourceInfo.remove() == false) {
@@ -55,31 +55,9 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
 }
 
 bool ResourceLoader::deleteStaticViewResource(const QString &class_id, const QString &displayName, QObject *loader) {
-    QQmlEngine *eng = qmlEngine(loader);
-    eng->trimComponentCache();
-    eng->collectGarbage();
 
-    QFile rccFile(ResourcePath::viewsResourcePath() + "/views-" + displayName + ".rcc");
-
-    qCDebug(logCategoryResourceLoader) << "Attempting to remove static resource file" << rccFile.fileName();
-    if (rccFile.exists()) {
-        if (!unregisterResource(rccFile.fileName())) {
-            qCWarning(logCategoryResourceLoader) << "Resource " << rccFile.fileName() << " either does not exist or is still in use.";
-        }
-        if (!rccFile.remove()) {
-            qCCritical(logCategoryResourceLoader) << "Could not delete static resource " << rccFile.fileName();
-            return false;
-        }
-
-        QHash<QString, ResourceItem*>::iterator itr = viewsRegistered_.find(class_id);
-        if (itr != viewsRegistered_.end() && itr.value()->filepath == rccFile.fileName()) {
-            ResourceItem *info = itr.value();
-            info->filepath = "";
-            info->version = "";
-        }
-    }
-
-    return true;
+    QFileInfo rccFile(ResourcePath::viewsResourcePath() + "/views-" + displayName + ".rcc");
+    return deleteViewResource(class_id, rccFile.filePath(), "", loader);
 }
 
 void ResourceLoader::registerControlViewResources(const QString &class_id, const QString &path, const QString &version) {
@@ -95,13 +73,10 @@ void ResourceLoader::registerControlViewResources(const QString &class_id, const
         qCDebug(logCategoryResourceLoader) << "Loading resource " << viewFileInfo.fileName() << " for class id: " << class_id;
 
         /*********
-         * [HACK]
-         * As of right now, (08/17/2020) there is a bug in Qt that prevents the unregistering of resources from memory.
-         * This makes it impossible to overwrite versions of .rcc files that have the same name and use them without restarting the app.
-         * In the meantime, we will use the version of the control view as the mapRoot.
-         * Ex) version = 1.15.0 -> qrc:/1.15.0/views/.../views-<control_view_name>.qml
+         * We are currently using the class id and version to avoid conflicts when registering resources
+         * Ex) version = 1.15.0 -> qrc:/<class_id>/1.15.0/views/.../views-<control_view_name>.qml
          *********/
-        if (registerResource(viewFileInfo.filePath(), getQResourcePrefix(class_id, version)) == false) {
+        if (QResource::registerResource(viewFileInfo.filePath(), getQResourcePrefix(class_id, version)) == false) {
             qCCritical(logCategoryResourceLoader) << "Failed to register resource " << viewFileInfo.fileName() << " for class id: " << class_id;
             emit resourceRegisterFailed(class_id);
             return;
@@ -126,7 +101,7 @@ bool ResourceLoader::registerStaticControlViewResources(const QString &class_id,
 
     if (resourceInfo.exists()) {
         qCDebug(logCategoryResourceLoader) << "Found static resource file, attempting to load resource " << resourceInfo.filePath() << " for class id: " << class_id;
-        bool registerResult = registerResource(resourceInfo.filePath());
+        bool registerResult = QResource::registerResource(resourceInfo.filePath());
         ResourceItem *info = new ResourceItem(resourceInfo.filePath(), "");
         viewsRegistered_.insert(class_id, info);
         return registerResult;
@@ -134,16 +109,6 @@ bool ResourceLoader::registerStaticControlViewResources(const QString &class_id,
         qCDebug(logCategoryResourceLoader) << "Did not find static resource file " << resourceInfo.filePath();
         return false;
     }
-}
-
-bool ResourceLoader::registerResource(const QString &path, const QString &root) {
-    qDebug(logCategoryResourceLoader) << "Registering resource: " << path;
-    return QResource::registerResource(path, root);
-}
-
-bool ResourceLoader::unregisterResource(const QString &path, const QString &root) {
-    qDebug(logCategoryResourceLoader) << "Unregistering resource: " << path;
-    return QResource::unregisterResource(path, root);
 }
 
 void ResourceLoader::loadCoreResources()
@@ -219,6 +184,15 @@ QQuickItem* ResourceLoader::createViewObject(const QString &path, QQuickItem *pa
 
         item->setParentItem(parent);
         return item;
+    } else {
+        return NULL;
+    }
+}
+
+QString ResourceLoader::getVersionRegistered(const QString &class_id) {
+    QHash<QString, ResourceItem*>::const_iterator itr = viewsRegistered_.find(class_id);
+    if (itr != viewsRegistered_.end()) {
+        return itr.value()->version;
     } else {
         return NULL;
     }

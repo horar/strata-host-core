@@ -12,6 +12,7 @@ ColumnLayout {
     id: software
 
     property bool upToDate
+    property int index
     property var activeVersion: null
     property var latestVersion: null
     property string downloadFilepath: ""
@@ -21,7 +22,7 @@ ColumnLayout {
         target: coreInterface
 
         onDownloadViewFinished: {
-            if (platformStack.currentIndex !== 0) {
+            if (platformStack.currentIndex === index) {
                 if (payload.error_string.length > 0) {
                     downloadError = true
                     progressBar.color = "red"
@@ -38,7 +39,7 @@ ColumnLayout {
         }
 
         onDownloadControlViewProgress: {
-            if (platformStack.currentIndex !== 0) {
+            if (platformStack.currentIndex === index) {
                 progressUpdateText.percent = payload.bytes_received / payload.bytes_total
             }
         }
@@ -53,19 +54,10 @@ ColumnLayout {
             }
         }
 
-        onControlViewListCountChanged: {
-            if (platformStack.connected) {
+        onCurrentIndexChanged: {
+            // when the active view is this view, then match the version
+            if (platformStack.currentIndex === index) {
                 matchVersion()
-            }
-        }
-    }
-
-    Connections {
-        target: sdsModel.documentManager
-
-        onPopulateModelsFinished: {
-            if (classId === platformStack.class_id) {
-                platformStack.controlViewList.dataChanged.connect(matchVersion)
             }
         }
     }
@@ -149,7 +141,7 @@ ColumnLayout {
                 downloadFilepath = ""
             } else {
                 upToDate = true
-                platformStack.startControlUpdate(latestVersion.version, downloadFilepath)
+                platformStack.controlContainer.startControlUpdate(latestVersion.version, downloadFilepath)
                 activeVersion = latestVersion
                 downloadFilepath = ""
             }

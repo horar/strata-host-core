@@ -32,22 +32,6 @@ public:
     virtual ~ResourceLoader();
 
     /**
-     * @brief registerResource Registers a resource into qrc
-     * @param path The path to the .rcc file
-     * @param root Optional* The root path to add to the qrc
-     * @return True if successful, false if unable to register
-     */
-    Q_INVOKABLE bool registerResource(const QString &path, const QString &root = "");
-
-    /**
-     * @brief unregisterResource Unregisters a resource in qrc.
-     * @param path The path of the .rcc file to unregister.
-     * @param root Optional* The root path added to the qrc.
-     * @return True if successful, false if unable to unregister.
-     */
-    Q_INVOKABLE bool unregisterResource(const QString &path, const QString &root = "");
-
-    /**
      * @brief deleteViewResource Deletes a resource from disk and unregisters it from qrc.
      * @param class_id The class id of the platform.
      * @param path The path the .rcc file was downloaded to
@@ -96,6 +80,13 @@ public:
      * @return The created QQuickItem*
      */
     Q_INVOKABLE QQuickItem* createViewObject(const QString &path, QQuickItem *parent, QVariantMap initialProperties = QVariantMap());
+
+    /**
+     * @brief getVersionRegistered Gets the version of the class_id registered
+     * @param class_id The class id of the platform
+     * @return The version registered to that class_id
+     */
+    Q_INVOKABLE QString getVersionRegistered(const QString &class_id);
 
     Q_INVOKABLE QUrl getStaticResourcesUrl();
 

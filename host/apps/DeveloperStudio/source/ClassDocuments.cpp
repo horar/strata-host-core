@@ -54,6 +54,11 @@ bool ClassDocuments::loading() const
     return loading_;
 }
 
+bool ClassDocuments::initialized() const
+{
+    return initialized_;
+}
+
 int ClassDocuments::loadingProgressPercentage() const
 {
     return loadingProgressPercentage_;
@@ -223,6 +228,7 @@ void ClassDocuments::populateModels(QJsonObject data)
     controlViewModel_.populateModel(controlViewList);
 
     setLoading(false);
+    initialized_ = true;
 }
 
 void ClassDocuments::clearDocuments()
