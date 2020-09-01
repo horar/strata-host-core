@@ -173,7 +173,7 @@ StackLayout {
             width: platformStack.width * .5
             height: 15
 
-            property string color: bar.color
+            property alias color: bar.color
 
             background: Rectangle {
                 implicitWidth: parent.width
@@ -184,7 +184,7 @@ StackLayout {
             contentItem: Rectangle {
                 id: bar
                 color: "#57d445"
-                width: parent.width * control.visualPosition
+                width: parent.width * loadingBar.visualPosition
             }
         }
 
