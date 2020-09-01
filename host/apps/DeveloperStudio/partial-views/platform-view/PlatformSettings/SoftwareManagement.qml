@@ -48,11 +48,15 @@ ColumnLayout {
         target: platformStack
 
         onConnectedChanged: {
-            matchVersion()
+            if (platformStack.connected) {
+                matchVersion()
+            }
         }
 
         onControlViewListCountChanged: {
-            matchVersion()
+            if (platformStack.connected) {
+                matchVersion()
+            }
         }
     }
 
