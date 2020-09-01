@@ -13,11 +13,11 @@ Item {
     height: parent.width / parent.height < initialAspectRatio ? parent.width / initialAspectRatio : parent.height
     width: parent.width / parent.height > initialAspectRatio ? parent.height * initialAspectRatio : parent.width
 
+    property var string: "X<sub>2</sub>8"
     Component.onCompleted: {
         Help.registerTarget(diag, "Generic diagnostic error when any LED channel is in an error mode.", 8, "samoptHelp")
-        Help.registerTarget(enableCRC, " Toggles the cyclic redundancy check (CRC) to prevent data corruption on I2C communication lines. A CRC byte is calculated inserted into I2C read and write communications and verified between master and slave devices. The CRC configuration is as follows:
+        Help.registerTarget(enableCRC, "Toggles the cyclic redundancy check (CRC) to prevent data corruption on I2C communication lines. A CRC byte is calculated inserted into I2C read and write communications and verified between master and slave devices. The CRC configuration is as follows:
 1.The CRC polynomial is 0x2F (x8+x5+x3+x2+x+1)
-2.The initial XOR is 0xFF
 3.The final XOR is 0x00
 4.Reflect and data and remainder are disabled \nThis design will by default search for a device with I2C CRC disabled and 7-bit I2C slave address of 0x60 – if no LED driver is found the user must enter a valid I2C configuration to enable the user interface.
 ", 0, "samoptHelp")
@@ -27,7 +27,7 @@ Item {
         Help.registerTarget(samConfig, "Toggles between SAM configurations SAM_CONF_1 and SAM_CONF_2.", 4, "samoptHelp")
         Help.registerTarget(samOpenLoadDiagnostic, "Sets the diagnostic state of the LED driver in SAM mode.
 1.No Diagnostic = No open load detection is performed
-2.Auto Retry = During open load fault, 1) DIAG pin is pulled low, 2) low current is imposed on faulty channel only, 3) other channels turned off. If fault is recovered DIAG is released and normal operation continues.
+2.Auto Retry = During open load fault, a. DIAG pin is pulled low, b. low current is imposed on faulty channel only, c. other channels turned off. If fault is recovered DIAG is released and normal operation continues.
 3.Diagnostic Only = During open load fault, the DIAG pin is pulled low with no change to current regulation. If fault is recovered DIAG is released.
 ", 9, "samoptHelp")
         Help.registerTarget(filterHelpContainer1, "Sets the on or off state of each individual LED channel. Use the SAM Configuration control to toggle between the two SAM configurations. The hard-coded registers will be read during board boot and these controls will be updated accordingly.", 6, "samoptHelp")
