@@ -54,6 +54,7 @@ Item {
                     textRole: "fileName"
 
                     onCurrentIndexChanged: {
+                        // Here we remove the "views-" portion from the filename and also removes the .rcc from the filename
                         if (currentText === "") {
                             displayText = viewFolderModel.get(currentIndex, "fileName").replace("views-", "").slice(0, -4)
                         } else {
@@ -88,6 +89,7 @@ Item {
                             id: selectButton
                             width: viewCombobox.width
                             height: 20
+                            // The below line gets the substring that is between "views-" and ".rcc". Ex) "views-template.rcc" = "template"
                             text: model.fileName.substring(6, model.fileName.indexOf(".rcc"))
                             hoverEnabled: true
                             background: Rectangle {

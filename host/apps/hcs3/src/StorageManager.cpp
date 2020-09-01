@@ -484,7 +484,10 @@ void StorageManager::requestDownloadControlView(const QByteArray &clientId, cons
 {
     DownloadManager::DownloadRequestItem item;
     item.url = baseUrl_.resolved(partialUri);
-    QString prefix = "documents/control_views" + (class_id.isEmpty() ? "" : "/" + class_id);
+    QString prefix = "documents/control_views";
+    if (!class_id.isEmpty()) {
+        prefix += "/" + class_id;
+    }
     item.filePath = createFilePathFromItem(partialUri, prefix);
     item.md5 = md5;
 
