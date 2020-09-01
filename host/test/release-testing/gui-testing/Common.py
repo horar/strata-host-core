@@ -56,6 +56,8 @@ RESET_PASSWORD_SUBMIT_BUTTON = "Submit"
 PLATFORM_CONTROLS_BUTTON = "Open Platform Controls"
 
 STRATA_PROCESS = "Strata Developer Studio.exe"
+LOGIC_GATE_CLASS_ID = "201"
+
 
 __dirname = os.path.dirname(__file__)
 RESULT_FILE = os.path.join(__dirname, 'results.txt')
