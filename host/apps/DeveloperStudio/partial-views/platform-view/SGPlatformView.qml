@@ -89,7 +89,7 @@ StackLayout {
                     }
                 }
             } else {
-                removeControl()
+                controlContainer.removeControl()
             }
         }
     }
