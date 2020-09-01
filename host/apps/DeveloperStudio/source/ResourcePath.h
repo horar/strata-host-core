@@ -9,10 +9,8 @@ public:
 
     static QString& coreResourcePath();
     static QString& viewsResourcePath();
-    static QString& hcsDocumentsCachePath();
 
 private:
     static QString coreResourcePath_;
     static QString viewsResourcePath_;
-    static QString hcsDocumentsCachePath_;
 };

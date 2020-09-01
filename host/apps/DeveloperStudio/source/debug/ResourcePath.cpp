@@ -8,7 +8,6 @@
 
 QString ResourcePath::coreResourcePath_ = QString();
 QString ResourcePath::viewsResourcePath_ = QString();
-QString ResourcePath::hcsDocumentsCachePath_ = QString();
 
 ResourcePath::ResourcePath()
 {
@@ -43,23 +42,4 @@ QString &ResourcePath::viewsResourcePath()
     }
 
     return viewsResourcePath_;
-}
-
-QString &ResourcePath::hcsDocumentsCachePath()
-{
-    if (hcsDocumentsCachePath_.isEmpty()) {
-        QDir documentsDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
-
-        // Go up to ON Semiconductor Dir
-        documentsDir.cdUp();
-
-        // Go to HCS Dir
-        documentsDir.cd("Host Controller Service");
-
-        // Go to documents dir
-        documentsDir.cd("documents");
-
-        hcsDocumentsCachePath_ = documentsDir.path();
-    }
-    return hcsDocumentsCachePath_;
 }
