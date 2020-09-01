@@ -94,6 +94,5 @@
         <file>partial-views/login/LoginSettings.qml</file>
         <file>js/uuid_map.js</file>
         <file>partial-views/platform-view/ControlViewContainer.qml</file>
-        <file>partial-views/platform-view/LoadingBar.qml</file>
     </qresource>
 </RCC>

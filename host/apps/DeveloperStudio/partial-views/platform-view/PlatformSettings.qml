@@ -13,8 +13,6 @@ Rectangle {
         fill: parent
     }
 
-    property int index
-
     ColumnLayout {
         id: mainColumn
         anchors {
@@ -24,7 +22,6 @@ Rectangle {
         spacing: 30
 
         SoftwareManagement {
-            index: index
         }
 
         FirmwareManagement { }

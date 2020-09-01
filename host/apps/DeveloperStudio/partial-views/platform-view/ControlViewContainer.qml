@@ -93,7 +93,7 @@ Item {
               If that doesn't work then try to load an OTA control view
             */
             if (sdsModel.resourceLoader.isViewRegistered(model.class_id)) {
-                platformStack.loadingBar.percentReady = 1.0
+                platformStack.loadingBar.value = 1.0
                 return;
             }
 
@@ -105,7 +105,7 @@ Item {
 
             if (sdsModel.resourceLoader.registerStaticControlViewResources(model.class_id, name)) {
                 usingLocalView = true;
-                platformStack.loadingBar.percentReady = 1.0;
+                platformStack.loadingBar.value = 1.0;
                 return;
             } else {
                 usingLocalView = false;
@@ -163,11 +163,11 @@ Item {
                         platformStack.controlViewList.setInstalled(i, true);
                         platformStack.controlViewList.setFilepath(i, payload.filepath);
                         for (let j = 0; j < platformStack.controlViewListCount; j++) {
-                            if (j !== i && platformStack.controlViewListCount.installed(j) === true) {
+                            if (j !== i && platformStack.controlViewList.installed(j) === true) {
                                 platformStack.controlViewListCount.setInstalled(j, false);
                             }
                         }
-                        sdsModel.resourceLoader.registerControlViewResources(model.class_id, payload.filepath, platformStack.controlViewListCount.version(i));
+                        sdsModel.resourceLoader.registerControlViewResources(model.class_id, payload.filepath, platformStack.controlViewList.version(i));
                         break;
                     }
                 }
@@ -178,7 +178,7 @@ Item {
             if (currentIndex === index) {
                 let percent = payload.bytes_received / payload.bytes_total;
                 if (percent !== 1.0) {
-                    platformStack.loadingBar.percentReady = percent
+                    platformStack.loadingBar.value = percent
                 }
             }
         }

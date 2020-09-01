@@ -22,7 +22,7 @@ ColumnLayout {
         target: coreInterface
 
         onDownloadViewFinished: {
-            if (platformStack.currentIndex === index) {
+            if (platformStack.currentIndex === 2) {
                 if (payload.error_string.length > 0) {
                     downloadError = true
                     progressBar.color = "red"
@@ -39,7 +39,7 @@ ColumnLayout {
         }
 
         onDownloadControlViewProgress: {
-            if (platformStack.currentIndex === index) {
+            if (platformStack.currentIndex === 2) {
                 progressUpdateText.percent = payload.bytes_received / payload.bytes_total
             }
         }
@@ -56,7 +56,7 @@ ColumnLayout {
 
         onCurrentIndexChanged: {
             // when the active view is this view, then match the version
-            if (platformStack.currentIndex === index) {
+            if (platformStack.currentIndex === 2) {
                 matchVersion()
             }
         }

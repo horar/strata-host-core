@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.12
 
 import tech.strata.common 1.0
 import tech.strata.commoncpp 1.0
@@ -55,7 +56,7 @@ StackLayout {
         if (index === 0) {
             if (controlLoaded === false) {
                 loadingBar.visible = true;
-                loadingBar.percentReady = 1.0;
+                loadingBar.value = 1.0;
             }
         }
     }
@@ -81,11 +82,11 @@ StackLayout {
                     // when the signal was emitted
                     sdsModel.resourceLoader.resourceRegistered.connect(resourceRegistered);
                     sdsModel.resourceLoader.resourceRegisterFailed.connect(resourceRegisterFailed);
+                    loadingBar.visible = true;
+                    loadingBar.value = 0.0;
                     if (platformDocumentsInitialized === true) {
                         controlContainer.checkForResources()
                     }
-                    loadingBar.visible = true;
-                    loadingBar.percentReady = 0.0;
                 }
             } else {
                 removeControl()
@@ -97,8 +98,6 @@ StackLayout {
         if (controlLoaded === false){
             Help.setClassId(model.device_id)
             sgUserSettings.classId = model.class_id
-            loadingBar.visible = false;
-            loadingBar.percentReady = 0.0;
 
             let version = "";
             let name = model.name;
@@ -117,6 +116,8 @@ StackLayout {
             NavigationControl.context.class_id = model.class_id
             NavigationControl.context.device_id = model.device_id
 
+            loadingBar.visible = false;
+            loadingBar.value = 0.0;
             let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlContainer);
             if (obj === null) {
                 createErrorScreen("Could not load view.")
@@ -135,7 +136,7 @@ StackLayout {
     function resourceRegistered (class_id) {
         if (class_id === platformStack.class_id) {
             loadingBar.color = "#57d445"
-            loadingBar.percentReady = 1.0;
+            loadingBar.value = 1.0;
         }
     }
 
@@ -151,7 +152,7 @@ StackLayout {
 
     function createErrorScreen(errorString) {
         loadingBar.color = "red"
-        loadingBar.percentReady = 1.0
+        loadingBar.value = 1.0
         let obj = sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlContainer, {"error_message": errorString});
         controlLoaded = true
     }
@@ -161,8 +162,30 @@ StackLayout {
         Layout.fillHeight: true
         Layout.fillWidth: true
 
-        LoadingBar {
+        ProgressBar {
             id: loadingBar
+            from: 0.0
+            to: 1.0
+
+            x: platformStack.width / 2 - width / 2
+            y: platformStack.height / 2 - height / 2
+
+            width: platformStack.width * .5
+            height: 15
+
+            property string color: bar.color
+
+            background: Rectangle {
+                implicitWidth: parent.width
+                implicitHeight: parent.height
+                color: "grey"
+            }
+
+            contentItem: Rectangle {
+                id: bar
+                color: "#57d445"
+                width: parent.width * control.visualPosition
+            }
         }
 
         ControlViewContainer {
@@ -191,7 +214,6 @@ StackLayout {
         Layout.fillWidth: true
 
         PlatformSettings {
-            index: 2
         }
     }
 
@@ -213,7 +235,7 @@ StackLayout {
 
         onPopulateModelsFinished: {
             if (classId === model.class_id) {
-                if (loadingBar.status === LoadingBar.Status.Null) {
+                if (loadingBar.value === 0.0) {
                     controlContainer.checkForResources()
                 }
             }
@@ -223,8 +245,8 @@ StackLayout {
     Connections {
         target: loadingBar
 
-        onStatusChanged: {
-            if (loadingBar.status === LoadingBar.Status.FullyLoaded) {
+        onValueChanged: {
+            if (loadingBar.value === 1.0) {
                 loadControl()
             }
         }
