@@ -33,7 +33,6 @@ StackLayout {
     property int controlViewListCount
     property bool connected: model.connected
     property bool controlLoaded: false
-    property bool platformDocumentsInitialized: false
     property bool usingLocalView: true
     property bool fullyInitialized: platformStack.initialized && sgUserSettings.initialized
     property bool initialized: false
@@ -424,7 +423,6 @@ StackLayout {
 
         onPopulateModelsFinished: {
             if (classId === model.class_id) {
-                platformDocumentsInitialized = true;
                 controlViewList = sdsModel.documentManager.getClassDocuments(model.class_id).controlViewListModel
                 controlViewListCount = controlViewList.count
                 if (loadingBar.percentReady === 0.0) {
