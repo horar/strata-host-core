@@ -46,6 +46,5 @@ class NoNetworkRegister(unittest.TestCase):
         Register(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, "Testy", "McTest", "Lead QA", "ON Semiconductor", self)
 
         ui.PressRegisterButton()
-
         time.sleep(10)
         self.assertTrue(ui.AlertExists(Common.REGISTER_ALERT))

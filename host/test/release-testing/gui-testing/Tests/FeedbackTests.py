@@ -23,7 +23,7 @@ class Feedback(unittest.TestCase):
         self.assertTrue(ui.OnLoginScreen())
         Login(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, self)
 
-        time.sleep(1)
+        self.assertTrue(ui.OnPlatformView())
 
         ui.PressButton(Common.USER_ICON_BUTTON)
         ui.PressButton(Common.FEEDBACK_BUTTON)

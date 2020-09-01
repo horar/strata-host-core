@@ -18,21 +18,21 @@ class StrataUI:
             return control.GetPropertyValue(id) == value
         return compare
 
-    def __findAll(self, node: Control, f):
+    def __findAll(self, node: Control, condition):
         matching = []
         child = node.GetFirstChildControl()
         while child:
-            if f(child):
+            if condition(child):
                 matching.append(child)
-            matching = matching + self.__findAll(child, f)
+            matching = matching + self.__findAll(child, condition)
             child = child.GetNextSiblingControl()
         return matching
 
-    def FindAll(self, f):
+    def FindAll(self, condition):
         '''
-        Find all elements that are approved by the function f(control: Control)
+        Find all elements that are approved by the function condition(control: Control)
         '''
-        return self.__findAll(self.app, f)
+        return self.__findAll(self.app, condition)
 
     def findButtonByHeight(self, name, comparison):
         '''
@@ -163,6 +163,7 @@ class StrataUI:
         Determine if an alert exists by a specific property
         '''
         alert = self.app.CustomControl(Compare = self.__hasProperty(PropertyId.NameProperty, identifier))
+
         return alert.Exists()
 
     def ConnectedPlatforms(self):

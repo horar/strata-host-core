@@ -9,8 +9,6 @@ import time
 import Common
 import StrataInterface as strata
 
-
-
 class LoginValidNoBoard(unittest.TestCase):
     '''
     Test logging in without a board attached.
@@ -49,7 +47,7 @@ class LoginValidWithBoard(unittest.TestCase):
         self.assertTrue(ui.OnLoginScreen())
 
         Login(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, self)
-
+        time.sleep(0.5)
         self.assertTrue(ui.OnPlatformView())
 
         strata.initPlatformList()

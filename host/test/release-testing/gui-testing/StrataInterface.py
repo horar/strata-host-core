@@ -40,10 +40,9 @@ def initPlatformList():
     :return:
     '''
     global __client
-    while __client.recv() != b'{"hcs::cmd":"dynamic_platform_list","payload":{}}':
-        pass
-    emptyDynamicPlatformList = b'{"hcs::notification":{"list":[{"class_id":"201"}],"type":"all_platforms"}}'
-    __client.send_multipart([__strataId, emptyDynamicPlatformList])
+
+    dynamicPlatformList = b'{"hcs::notification":{"list":[{"class_id":"201"}],"type":"all_platforms"}}'
+    __client.send_multipart([__strataId, dynamicPlatformList])
 
 
 def bindToStrata(url):

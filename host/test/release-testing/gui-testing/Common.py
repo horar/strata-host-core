@@ -7,6 +7,9 @@ import uuid
 import psutil
 import time
 import unittest
+import subprocess
+import argparse
+import StrataInterface as strata
 
 VALID_USERNAME = None
 
@@ -109,14 +112,29 @@ def runStandalone(argval):
     global VALID_PASSWORD
     global VALID_USERNAME
     global DEFAULT_URL
+    parser = argparse.ArgumentParser(description="Run a test standalone.")
+    parser.add_argument("testName", action="store")
+    parser.add_argument("-u", action="store", type=str, help="Valid username", metavar="username")
+    parser.add_argument("-p", action="store", type=str, help="Valid password", metavar="password")
+    parser.add_argument("-a", action="store", type=str, help="HCS address (will override hcs with script hcs)", metavar="hcs address")
+    parser.add_argument("-s", action="store", type=str, help="Path to Strata executable (will open strata)", metavar="strata path")
+    args = parser.parse_args(argval[1:])
 
-    if len(argval) < 5:
-        print("Usage: <test module[[.class].function]> <valid username> <valid password> <hcs tcp url>")
+    if(args.testName == None):
+        parser.print_help()
         sys.exit(0)
-    VALID_USERNAME = argval[2]
-    VALID_PASSWORD = argval[3]
-    DEFAULT_URL = argval[4]
-    tests = unittest.defaultTestLoader.loadTestsFromName(argval[1])
+
+    VALID_USERNAME = args.u
+    VALID_PASSWORD = args.p
+    DEFAULT_URL = args.a
+
+    if args.s:
+        subprocess.Popen(args.s)
+        if args.a:
+            strata.bindToStrata(args.a)
+        awaitStrata()
+
+    tests = unittest.defaultTestLoader.loadTestsFromName(args.testName)
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(tests)
 
@@ -125,8 +143,10 @@ def processRunning(name):
     return name in (p.name() for p in psutil.process_iter())
 
 def awaitStrata():
+
     while not processRunning("Strata Developer Studio.exe"):
         pass
 
-    #wait for strata to l fully
+
+    #wait for strata to load fully
     time.sleep(5)
