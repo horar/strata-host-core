@@ -11,6 +11,7 @@ import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/platform_selection.js" as PlatformSelection
+import "qrc:/js/uuid_map.js" as UuidMap
 
 Item {
     id: root
@@ -99,9 +100,17 @@ Item {
                                 }
 
                                 let name = selectButton.text;
+                                let class_id;
+                                for (let key of Object.keys(UuidMap.uuid_map)) {
+                                    if (UuidMap.uuid_map[key] === name) {
+                                        class_id = key;
+                                        break;
+                                    }
+                                }
+
                                 let data = {
                                     "device_id": Constants.DEBUG_DEVICE_ID,
-                                    "class_id": name,
+                                    "class_id": class_id,
                                     "name": name,
                                     "index": null,
                                     "view": "control",
