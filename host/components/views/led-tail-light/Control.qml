@@ -540,6 +540,10 @@ Item {
                     Help.startHelpTour("ledDriverHelp")
                 if(powerControl.visible)
                     Help.startHelpTour("powerControlHelp")
+                if(sAMOPTControl.visible)
+                    Help.startHelpTour("samoptHelp")
+                if(miscControl.visible)
+                    Help.startHelpTour("miscHelp")
 
             }
             hoverEnabled: true

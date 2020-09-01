@@ -17,6 +17,41 @@ Item {
         return  ("0"+(Number(d).toString(16))).slice(-2).toUpperCase()
     }
 
+    Component.onCompleted: {
+        Help.registerTarget(idVers1, "ON Semiconductor device identifier for the LED driver. The value is 0x43 for both NCV7684 and NCV7685.", 0, "miscHelp")
+        Help.registerTarget(idVers2, "Version identifier for the LED driver. The values are 0x02 for the NCV7684 and 0x04 for the NCV7685.", 1, "miscHelp")
+        Help.registerTarget(filterHelpContainer1, "Version identifier for the LED driver. The values are 0x02 for the NCV7684 and 0x04 for the NCV7685.", 2, "miscHelp")
+
+    }
+
+    Item {
+        id: filterHelpContainer1
+        property point topLeft
+        property point bottomRight
+        width:  (oddContainer.width + evenContainer.width)
+        height: (bottomRight.y - topLeft.y)
+        x: topLeft.x
+        y: topLeft.y
+        function update() {
+            topLeft = oddContainer.mapToItem(root, 0,  0)
+            bottomRight = evenContainer.mapToItem(root, evenContainer.width, evenContainer.height)
+        }
+    }
+
+    onWidthChanged: {
+        filterHelpContainer1.update()
+    }
+    onHeightChanged: {
+        filterHelpContainer1.update()
+    }
+
+    Connections {
+        target: Help.utility
+        onTour_runningChanged:{
+            filterHelpContainer1.update()
+        }
+    }
+
     function setStatesForControls (theId, index){
         if(index !== null && index !== undefined)  {
             if(index === 0) {
@@ -108,6 +143,7 @@ Item {
                         }
                     }
                     Rectangle {
+                        id: oddContainer
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         SGAlignedLabel {
@@ -176,6 +212,7 @@ Item {
                 Layout.fillWidth: true
 
                 ColumnLayout {
+
                     anchors.fill: parent
 
                     Rectangle {
@@ -231,6 +268,7 @@ Item {
                         }
                     }
                     Rectangle {
+                        id: evenContainer
                         Layout.fillHeight: true
                         Layout.fillWidth: true
                         SGAlignedLabel {

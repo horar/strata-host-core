@@ -16,7 +16,7 @@ Item {
 
 
     Component.onCompleted: {
-        Help.registerTarget(vedInputVoltageType, "Sets the VLED input voltage source for the LED driver. The power supply can be restarted if there is a Power Fault by re-selecting the power supply type from this drop down. If there is no fault and the LEDs are not illuminated ensure 1) an external supply is provided for Buck and Bypass supplies, 2) the Boost supply is not overloaded, and 3) the LED driver is configured to illuminate the LEDs on the LED Driver tab. \n 1.Boost = Use onboard NCV5173 boost supply that is adjustable from 5.5 to 14V. The boost input voltage is supplied from the USB cable, therefore, a load switch prevents input currents higher than 400mA. The Power Fault indicator will show an over current event. Use Buck or Bypass power sources with external power supply for higher current applications. This is the default voltage source on boot. \n 2.Buck = Use onboard NCV885301 buck supply that is adjustable from 2-18V. External voltage source that is greater than the user’s Buck Voltage Set value is required. \n 3.Bypass = Bypass both buck and boost input supplies to directly use externally supplied voltage source.", 0, "powerControlHelp")
+        Help.registerTarget(vedInputVoltageType, "Sets the VLED input voltage source for the LED driver. The power supply can be restarted if there is a Power Fault by re-selecting the power supply type from this drop down. If there is no fault and the LEDs are not illuminated ensure 1) an external supply is provided for Buck and Bypass supplies, 2) the Boost supply is not overloaded, and 3) the LED driver is configured to illuminate the LEDs on the LED Driver tab. \n1.Boost = Use onboard NCV5173 boost supply that is adjustable from 5.5 to 14V. The boost input voltage is supplied from the USB cable, therefore, a load switch prevents input currents higher than 400mA. The Power Fault indicator will show an over current event. Use Buck or Bypass power sources with external power supply for higher current applications. This is the default voltage source on boot. \n2.Buck = Use onboard NCV885301 buck supply that is adjustable from 2-18V. External voltage source that is greater than the user’s Buck Voltage Set value is required. \n3.Bypass = Bypass both buck and boost input supplies to directly use externally supplied voltage source.", 0, "powerControlHelp")
         Help.registerTarget(boostOCP, "missing", 2, "powerControlHelp")
         Help.registerTarget(voltageSet, "Sets the output voltage of both Buck and Boost power supplies set in the VLED Input Voltage type control. Bypass option will disable this control. The set voltage remembered when switching back to a previously configured input source",1, "powerControlHelp")
         Help.registerTarget(vddPowerFault, "Indicates a power fault on VDD switch’s FLAGB pin. This is likely due to an over current event on VDD.",3, "powerControlHelp")
@@ -484,7 +484,6 @@ Item {
                                 SGStatusLight {
                                     id: vddPowerFault
                                     width : 40
-
                                     property var power_fault_vdd: platformInterface.power_fault_vdd
                                     onPower_fault_vddChanged: {
                                         vddPowerFaultLabel.text = power_fault_vdd.caption
