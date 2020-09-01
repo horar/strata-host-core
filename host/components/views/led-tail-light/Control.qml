@@ -538,6 +538,9 @@ Item {
                     Help.startHelpTour("carDemoHelp")
                 if(ledControl.visible)
                     Help.startHelpTour("ledDriverHelp")
+                if(powerControl.visible)
+                    Help.startHelpTour("powerControlHelp")
+
             }
             hoverEnabled: true
         }
