@@ -18,7 +18,7 @@ ColumnLayout {
     property alias logSwitch: logSwitch
     property var x_Axis_Timer_:0
     property var x_Axis_Timer_1:0
-    property  int clear:0 //
+    property  int clear:0 ///
     property var dataArray_temp_graph: []
     property var dataArray_voltage_graph: []
     property var one_time_clear_all_data: 0
