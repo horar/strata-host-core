@@ -164,27 +164,26 @@ StackLayout {
 
         ProgressBar {
             id: loadingBar
-            from: 0.0
-            to: 1.0
 
             x: platformStack.width / 2 - width / 2
             y: platformStack.height / 2 - height / 2
 
-            width: platformStack.width * .5
-            height: 15
-
             property alias color: bar.color
 
             background: Rectangle {
-                implicitWidth: parent.width
-                implicitHeight: parent.height
-                color: "grey"
+                id: barContainer
+                implicitWidth: platformStack.width / 2
+                implicitHeight: 15
+                color: "#e6e6e6"
+                radius: 5
             }
 
             contentItem: Rectangle {
                 id: bar
                 color: "#57d445"
-                width: parent.width * loadingBar.visualPosition
+                height: parent.height
+                width: loadingBar.visualPosition * parent.width
+                radius: 5
             }
         }
 
@@ -236,6 +235,7 @@ StackLayout {
         onPopulateModelsFinished: {
             if (classId === model.class_id) {
                 if (loadingBar.value === 0.0) {
+                    loadingBar.value = 0.01
                     controlContainer.checkForResources()
                 }
             }

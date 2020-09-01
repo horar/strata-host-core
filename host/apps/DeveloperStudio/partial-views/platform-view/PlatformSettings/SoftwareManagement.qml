@@ -72,7 +72,8 @@ ColumnLayout {
         }
 
         upToDate = false
-        latestVersion = getLatestVersion();
+        let latestVersionIdx = platformStack.controlViewList.getLatestVersion();
+        latestVersion = copyControlViewObject(latestVersionIdx)
 
         if (!latestVersion) {
             console.error("Could not find any control views on server for class id:", platformStack.class_id)
@@ -90,30 +91,6 @@ ColumnLayout {
         }
         latestVersion = activeVersion;
         return true;
-    }
-
-    function getLatestVersion() {
-        let latestVersionTemp;
-
-        if (platformStack.controlViewListCount > 0) {
-            latestVersionTemp = copyControlViewObject(0);
-        } else {
-            return null;
-        }
-
-        for (let i = 1; i < platformStack.controlViewListCount; i++) {
-            let version = platformStack.controlViewList.version(i);
-            if (SGVersionUtils.valid(version) === false) {
-                console.error("Invalid Version found");
-                return null
-            }
-
-            if (SGVersionUtils.greaterThan(version, latestVersionTemp.version)) {
-                latestVersionTemp = copyControlViewObject(i);
-            }
-        }
-
-        return latestVersionTemp;
     }
 
     function copyControlViewObject(index) {
