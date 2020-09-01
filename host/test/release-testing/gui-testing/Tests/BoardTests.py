@@ -1,18 +1,16 @@
 '''
 Tests involving logging in with boards attached or disconnected.
 '''
-import unittest
-
-from GUIInterface.StrataUI import *
-import time
 
 import Common
-import StrataInterface as strata
+from GUIInterface.StrataUI import *
+
 
 class LoginValidNoBoard(unittest.TestCase):
     '''
     Test logging in without a board attached.
     '''
+
     def setUp(self):
         ui = StrataUI()
         ui.SetToLoginTab()
@@ -23,27 +21,30 @@ class LoginValidNoBoard(unittest.TestCase):
 
     def test_login_submit(self):
         ui = StrataUI()
-        #assert on login page
+        # assert on login page
         self.assertIsNotNone(ui.OnLoginScreen())
 
         Login(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, self)
 
         self.assertTrue(ui.OnPlatformView())
 
+
 class LoginValidWithBoard(unittest.TestCase):
     '''
     Test logging in with a board attached and disconnecting it when logged in.
     '''
+
     def setUp(self):
         ui = StrataUI()
         ui.SetToLoginTab()
+
     def tearDown(self) -> None:
         ui = StrataUI()
         Logout(ui)
 
     def test_login_with_board_and_disconnect(self):
         ui = StrataUI()
-        #assert on login page
+        # assert on login page
         self.assertTrue(ui.OnLoginScreen())
 
         Login(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, self)

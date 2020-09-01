@@ -24,7 +24,8 @@ StrataPath: The path to the Strata executable.
 Version:        1.0
 Creation Date:  07/10/2020
 #>
-function Test-Gui() {
+function Test-Gui()
+{
     $SDSLoginInfoObj = $SDSLoginInfo | ConvertFrom-Json
 
     $Username = $SDSLoginInfoObj.username
@@ -46,7 +47,7 @@ function Test-Gui() {
 
     #Run tests without network
     #BLock Strata from making outbound requests
-   (New-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network" -Direction Outbound -Program $SDSExecFile -Action Block) | Out-Null
+    (New-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network" -Direction Outbound -Program $SDSExecFile -Action Block) | Out-Null
 
     Start-SDSAndWait
 
@@ -60,9 +61,9 @@ function Test-Gui() {
     Remove-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network"
 
 
-#    This test fails currently. Logginging in and restarting strata fails even when manually attempted.
-#    Test logging in, closing strata, and reopening it
-#    Login to strata
+    #    This test fails currently. Logginging in and restarting strata fails even when manually attempted.
+    #    Test logging in, closing strata, and reopening it
+    #    Login to strata
     Write-Host "Testing logging in, closing Strata, reopening Strata..."
 
     Start-SDSAndWait

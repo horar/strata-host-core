@@ -1,17 +1,18 @@
 '''
 Tests involving resetting user passwords.
 '''
-import unittest
-from GUIInterface.StrataUI import *
-import time
+
 import Common
+from GUIInterface.StrataUI import *
 
 INVALID_USER = "bad@bad.com"
+
 
 class PasswordResetTest(unittest.TestCase):
     '''
     Test resetting the password of a nonexistant user
     '''
+
     def setUp(self) -> None:
         ui = StrataUI()
         ui.SetToLoginTab()
@@ -38,7 +39,3 @@ class PasswordResetTest(unittest.TestCase):
 
     def test_passwordResetValid(self):
         self.doTest(Common.VALID_USERNAME)
-
-
-
-

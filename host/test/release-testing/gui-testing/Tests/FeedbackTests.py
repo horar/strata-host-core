@@ -1,11 +1,10 @@
 '''
 Tests involving the feedback system.
 '''
-import unittest
 
 import Common
 from GUIInterface.StrataUI import *
-import time
+
 
 class Feedback(unittest.TestCase):
 
@@ -19,7 +18,7 @@ class Feedback(unittest.TestCase):
 
     def test_feedback(self):
         ui = StrataUI()
-        #assert on login page
+        # assert on login page
         self.assertTrue(ui.OnLoginScreen())
         Login(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, self)
 
@@ -28,7 +27,7 @@ class Feedback(unittest.TestCase):
         ui.PressButton(Common.USER_ICON_BUTTON)
         ui.PressButton(Common.FEEDBACK_BUTTON)
 
-        #Feedback should open and have submit disabled because nothing has been inputted.
+        # Feedback should open and have submit disabled because nothing has been inputted.
         self.assertTrue(ui.OnFeedback())
 
         ui.PressButton(FEEDBACK_BUG_BUTTON)
@@ -41,6 +40,3 @@ class Feedback(unittest.TestCase):
         self.assertTrue(ui.OnFeedbackSuccess())
 
         ui.PressButton(FEEDBACK_SUCCESS_OK_BUTTON)
-
-
-

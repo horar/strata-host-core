@@ -1,13 +1,15 @@
 '''
 Singleton module for connecting and sending commands to strata.
 '''
-import zmq
 import json
 import threading
+
+import zmq
+
 import Common
 
-__client:zmq.Socket
-__strataId:bytes
+__client: zmq.Socket
+__strataId: bytes
 
 
 def __bind(url):
@@ -26,13 +28,13 @@ def __bind(url):
     __client.bind(url)
 
 
-
 def __init():
     global __strataId
     global __client
 
     __strataId = __client.recv()
     initPlatformList()
+
 
 def initPlatformList():
     '''
@@ -54,9 +56,10 @@ def bindToStrata(url):
 
     __bind(url)
 
-    #Must start attempting to recive data before strata is started
-    initThread = threading.Thread(target=__init, daemon= True)
+    # Must start attempting to recive data before strata is started
+    initThread = threading.Thread(target=__init, daemon=True)
     initThread.start()
+
 
 def openPlatform(classId):
     '''
@@ -69,7 +72,7 @@ def openPlatform(classId):
             "type": "connected_platforms",
             "list": [
                 {
-                    "class_id":classId,
+                    "class_id": classId,
                     "device_id": -1089402724,
                     "firmware_version": "1.0.0"
                 }
@@ -80,6 +83,7 @@ def openPlatform(classId):
     global __strataId
 
     __client.send_multipart([__strataId, bytes(json.dumps(command), 'utf-8')])
+
 
 def cleanup():
     '''
@@ -99,6 +103,7 @@ def closePlatforms():
     global __client
     global __strataId
     __client.send_multipart([__strataId, myEncodedStr])
+
 
 if __name__ == "__main__":
     context = zmq.Context.instance()

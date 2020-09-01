@@ -1,17 +1,15 @@
-import unittest
-from GUIInterface.StrataUI import *
-import time
 import Common
+from GUIInterface.StrataUI import *
 
 INVALID_USERNAME = "badusername"
 INVALID_PASSWORD = "badpassword"
 
 
 class LoginInvalidTest(unittest.TestCase):
-
     '''
     Test logging in with invalid username/password
     '''
+
     def setUp(self):
         ui = StrataUI()
         ui.SetToLoginTab()
@@ -31,6 +29,7 @@ class RegisterExisting(unittest.TestCase):
     '''
     Test registering with an existing user.
     '''
+
     def setUp(self) -> None:
         ui = StrataUI()
         ui.SetToRegisterTab()
@@ -42,6 +41,6 @@ class RegisterExisting(unittest.TestCase):
         ui = StrataUI()
         self.assertTrue(ui.OnRegisterScreen())
         time.sleep(1)
-        Register(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, "Testy", "McTest", "ON Semiconductor", "Lead QA", self)
+        Register(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, "Testy", "McTest", "ON Semiconductor", "Lead QA",
+                 self)
         self.assertTrue(ui.AlertExists(REGISTER_ALERT))
-
