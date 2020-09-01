@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-Opens and tests Strata's GUI. Do not touch the mouse or keyboard while this test runs and make sure no application will open in front of Strata while the test is running.
+Opens and tests Strata's GUI. Do not touch the mouse or keyboard while this test runs.
 .DESCRIPTION
 This is part of the automated test script for the master test plan
 https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist
@@ -46,7 +46,7 @@ function Test-Gui()
     Write-Host "Disabling network for Strata..."
 
     #Run tests without network
-    #BLock Strata from making outbound requests
+    #Block Strata from making outbound requests
     (New-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network" -Direction Outbound -Program $SDSExecFile -Action Block) | Out-Null
 
     Start-SDSAndWait
@@ -61,7 +61,6 @@ function Test-Gui()
     Remove-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network"
 
 
-    #    This test fails currently. Logginging in and restarting strata fails even when manually attempted.
     #    Test logging in, closing strata, and reopening it
     #    Login to strata
     Write-Host "Testing logging in, closing Strata, reopening Strata..."
