@@ -4,6 +4,7 @@ from uiautomation import *
 
 from Common import *
 
+import _ctypes
 
 class StrataUI:
     '''
@@ -32,6 +33,14 @@ class StrataUI:
             child = child.GetNextSiblingControl()
         return matching
 
+    def __existsCatchComError(self, control):
+        #Transitioning screens while checking for existance sometimes throws a COMError.
+        try:
+            return control.Exists()
+        except _ctypes.COMError:
+            return False
+
+
     def FindAll(self, condition):
         '''
         Find all elements that are approved by the function condition(control: Control)
@@ -54,13 +63,15 @@ class StrataUI:
         button = reduce(lowestButton, buttons)
         return button
 
+
     def OnLoginScreen(self):
         '''
         True if on login screen
         '''
         passwordEdit = self.app.EditControl(
             Compare=self.__hasProperty(PropertyId.FullDescriptionProperty, PASSWORD_EDIT))
-        return passwordEdit.Exists()
+
+        return self.__existsCatchComError(passwordEdit)
 
     def OnRegisterScreen(self):
         '''
@@ -68,14 +79,16 @@ class StrataUI:
         '''
         firstNameEdit = self.app.EditControl(
             Compare=self.__hasProperty(PropertyId.FullDescriptionProperty, FIRST_NAME_EDIT))
-        return firstNameEdit.Exists()
+
+        return self.__existsCatchComError(firstNameEdit)
 
     def OnPlatformView(self):
         '''
         True if on platform view
         '''
         userIcon = self.app.ButtonControl(Compare=self.__hasProperty(PropertyId.NameProperty, USER_ICON_BUTTON))
-        return userIcon.Exists()
+
+        return self.__existsCatchComError(userIcon)
 
     def OnFeedback(self):
         '''
@@ -84,21 +97,22 @@ class StrataUI:
 
         # find inner window
         feedbackWindow = self.app.WindowControl()
-        return feedbackWindow.Exists()
+
+        return self.__existsCatchComError(feedbackWindow)
 
     def OnFeedbackSuccess(self):
         '''
         True if feedback success dialog open
         '''
         successText = self.app.TextControl(Compare=self.__hasProperty(PropertyId.NameProperty, FEEDBACK_SUCCESS_TEXT))
-        return successText.Exists()
 
+        return self.__existsCatchComError(successText)
     def OnForgotPassword(self):
         '''
         True if forgot password dialog open
         '''
         resetPasswordWindow = self.app.WindowControl()
-        return resetPasswordWindow.Exists()
+        return self.__existsCatchComError(resetPasswordWindow)
 
     def SetEditText(self, editIdentifier, text, property=PropertyId.FullDescriptionProperty):
         '''
@@ -173,8 +187,7 @@ class StrataUI:
         Determine if an alert exists by a specific property
         '''
         alert = self.app.CustomControl(Compare=self.__hasProperty(PropertyId.NameProperty, identifier))
-
-        return alert.Exists()
+        return self.__existsCatchComError(alert)
 
     def ConnectedPlatforms(self):
         '''
