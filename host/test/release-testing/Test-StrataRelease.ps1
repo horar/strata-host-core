@@ -105,7 +105,7 @@ Assert-SDSInstallerPath
 Assert-PSSQLite
 
 # Search for Python tools
-Assert-PythonAndPyzmq
+Assert-PythonAndRequirements
 
 # Search for Python scripts
 Assert-PythonScripts

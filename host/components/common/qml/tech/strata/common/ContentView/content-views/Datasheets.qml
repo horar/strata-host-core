@@ -72,7 +72,17 @@ Item {
                             right: chevronImage.left
                         }
 
-                        text: model.prettyName
+                        text: {
+                            /*
+                                the first regexp is looking for HTML RichText
+                                the second regexp is looking for spaces after string
+                                the third regexp is looking for spaces before string
+                                the fourth regexp is looking for tabs throughout the string
+                            */
+                            const htmlTags = /(<([^>]+)>)|\s*$|^\s*|\t/ig;
+                            return model.prettyName.replace(htmlTags,"");
+                        }
+                        textFormat: Text.PlainText
                         alternativeColorEnabled: delegate.checked === false
                         wrapMode: Text.Wrap
                         font.bold: delegate.checked ? false : true
