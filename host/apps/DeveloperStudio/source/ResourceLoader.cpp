@@ -61,12 +61,6 @@ bool ResourceLoader::deleteStaticViewResource(const QString &class_id, const QSt
 }
 
 void ResourceLoader::registerControlViewResources(const QString &class_id, const QString &path, const QString &version) {
-    if (isViewRegistered(class_id)) {
-        qCDebug(logCategoryResourceLoader) << "View is already registered for " << class_id;
-        emit resourceRegistered(class_id);
-        return;
-    }
-
     QFileInfo viewFileInfo(path);
 
     if (viewFileInfo.exists()) {

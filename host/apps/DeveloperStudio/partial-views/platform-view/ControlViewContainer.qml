@@ -9,6 +9,8 @@ Item {
     property bool usingLocalView: true
     property string updateVersion: ""
     property string updateVersionPath: ""
+    property string activeVersion: ""
+    property var versionsToRemoveFromUpdate: []
 
     anchors {
         fill: parent
@@ -18,6 +20,23 @@ Item {
         // Only update the control view version if we are requesting an update.
         if (children.length === 0 && updateVersion !== "" && updateVersionPath !== "") {
             updateControl()
+        }
+    }
+
+    Component.onDestruction: {
+        if (removeOldVersionTimer.running) {
+            removeOldVersionTimer.stop()
+            deleteViewResources();
+        }
+    }
+
+    Timer {
+        id: removeOldVersionTimer
+        interval: 5000
+        repeat: false
+
+        onTriggered: {
+            deleteViewResources();
         }
     }
 
@@ -47,37 +66,42 @@ Item {
     */
     function updateControl() {
         if (updateVersion !== "") {
-            let versionsToRemove = [];
-
             for (let i = 0; i < platformStack.controlViewListCount; i++) {
                 if (platformStack.controlViewList.version(i) === updateVersion) {
                     platformStack.controlViewList.setInstalled(i, true);
                     platformStack.controlViewList.setFilepath(i, updateVersionPath);
                 } else if (platformStack.controlViewList.version(i) !== updateVersion && platformStack.controlViewList.installed(i) === true) {
                     platformStack.controlViewList.setInstalled(i, false);
-                    versionsToRemove.push({
-                                                "filepath": platformStack.controlViewList.filepath(i),
-                                                "version": platformStack.controlViewList.version(i)
-                                            });
+                    versionsToRemoveFromUpdate.push({
+                                                        "version": platformStack.controlViewList.version(i),
+                                                        "filepath": platformStack.controlViewList.filepath(i)
+                                                    });
                 }
             }
-            let success = sdsModel.resourceLoader.deleteStaticViewResource(model.class_id, model.name, root);
-
-            if (versionsToRemove.length > 0) {
-                for (let i = 0; i < versionsToRemove.length; i++) {
-                    let success = sdsModel.resourceLoader.deleteViewResource(model.class_id, versionsToRemove[i].filepath, versionsToRemove[i].version, root);
-                    if (success) {
-                        console.info("Successfully deleted control view version", versionsToRemove[i].version, "for platform", model.class_id);
-                    } else {
-                        console.error("Could not delete control view version", versionsToRemove[i].version, "for platform", model.class_id);
-                    }
-                }
-            }
-            usingLocalView = false;
             sdsModel.resourceLoader.registerControlViewResources(model.class_id, updateVersionPath, updateVersion);
-            updateVersion = ""
-            updateVersionPath = ""
+            usingLocalView = false;
+            removeOldVersionTimer.start();
         }
+    }
+
+    /*
+      This function deletes all registered controlViewResources
+    */
+    function deleteViewResources() {
+        for (let i = 0; i < versionsToRemoveFromUpdate.length; i++) {
+            let success = sdsModel.resourceLoader.deleteViewResource(model.class_id, versionsToRemoveFromUpdate[i].filepath, versionsToRemoveFromUpdate[i].version, root);
+            if (success) {
+                console.info("Successfully deleted control view version", platformStack.controlViewList.version(i), "for platform", model.class_id);
+            } else {
+                console.error("Could not delete control view version", platformStack.controlViewList.version(i), "for platform", model.class_id);
+            }
+        }
+
+        sdsModel.resourceLoader.deleteStaticViewResource(model.class_id, model.name, root);
+
+        updateVersion = ""
+        updateVersionPath = ""
+        versionsToRemoveFromUpdate = []
     }
 
     /* The Order of Operations here is as follows:
@@ -141,10 +165,15 @@ Item {
 
             coreInterface.sendCommand(JSON.stringify(downloadCommand));
         } else {
-            sdsModel.resourceLoader.registerControlViewResources(model.class_id, platformStack.controlViewList.filepath(index), platformStack.controlViewList.version(index));
+            if (sdsModel.resourceLoader.isViewRegistered(model.class_id)) {
+                platformStack.resourceRegistered(model.class_id);
+            } else {
+                sdsModel.resourceLoader.registerControlViewResources(model.class_id,
+                                                                     platformStack.controlViewList.filepath(index),
+                                                                     platformStack.controlViewList.version(index));
+            }
         }
     }
-
 
     Connections {
         id: coreInterfaceConnections
@@ -167,7 +196,11 @@ Item {
                                 platformStack.controlViewListCount.setInstalled(j, false);
                             }
                         }
-                        sdsModel.resourceLoader.registerControlViewResources(model.class_id, payload.filepath, platformStack.controlViewList.version(i));
+                        if (sdsModel.resourceLoader.isViewRegistered(model.class_id)) {
+                            platformStack.resourceRegistered(model.class_id);
+                        } else {
+                            sdsModel.resourceLoader.registerControlViewResources(model.class_id, payload.filepath, platformStack.controlViewList.version(i));
+                        }
                         break;
                     }
                 }
