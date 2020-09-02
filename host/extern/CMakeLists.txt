@@ -28,6 +28,16 @@ list(APPEND CMAKE_ARGS "-DCMAKE_VERBOSE_MAKEFILE:BOOL=${CMAKE_VERBOSE_MAKEFILE}"
 if(APPLE)
     list(APPEND CMAKE_ARGS "-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}")
 endif()
+list(APPEND CMAKE_ARGS "-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}")
+list(APPEND CMAKE_ARGS "-DCMAKE_CXX_STANDARD:STRING=17")
+list(APPEND CMAKE_ARGS "-DCMAKE_CXX_STANDARD_REQUIRED:BOOL=ON")
+list(APPEND CMAKE_ARGS "-DCMAKE_CXX_EXTENSIONS:BOOL=OFF")
+if(APPLE)
+    # LC: we don't use C compiler in Strata projects; empty path fails on Windows
+    list(APPEND CMAKE_ARGS "-DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}")
+endif()
+
+
 #
 # rapidjson
 #
@@ -35,7 +45,7 @@ ExternalProject_Add(rapidjson
     INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
     SOURCE_DIR ${SOURCE_DIR_EXTERN}/rapidjson
     EXCLUDE_FROM_ALL ON
-    CMAKE_ARGS ${CMAKE_ARGS}
+    CMAKE_ARGS "${CMAKE_ARGS}"
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
         -DRAPIDJSON_BUILD_DOC=off
         -DRAPIDJSON_BUILD_EXAMPLES=off
@@ -55,7 +65,7 @@ ExternalProject_Add(spdlog
     INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
     SOURCE_DIR ${SOURCE_DIR_EXTERN}/spdlog
     EXCLUDE_FROM_ALL ON
-    CMAKE_ARGS ${CMAKE_ARGS}
+    CMAKE_ARGS "${CMAKE_ARGS}"
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
         -DSPDLOG_BUILD_SHARED=off
         -DSPDLOG_BUILD_BENCH=off
@@ -139,7 +149,7 @@ if(BUILD_TESTING)
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/googletest
         EXCLUDE_FROM_ALL ON
-        CMAKE_ARGS ${CMAKE_ARGS}
+        CMAKE_ARGS "${CMAKE_ARGS}"
             -Dgtest_force_shared_crt=YES
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     )
@@ -212,7 +222,7 @@ if(NOT WIN32)
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
         EXCLUDE_FROM_ALL ON
-        CMAKE_ARGS ${CMAKE_ARGS}
+        CMAKE_ARGS "${CMAKE_ARGS}"
             -DBUILD_EXAMPLES=${BUILD_EXAMPLES}
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DSSL_LIB="${SSL_LIB_PATH_MACOS}/libssl.1.1.dylib"
@@ -235,7 +245,7 @@ else()
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
         EXCLUDE_FROM_ALL ON
-        CMAKE_ARGS ${CMAKE_ARGS}
+        CMAKE_ARGS "${CMAKE_ARGS}"
             -DBUILD_EXAMPLES=${BUILD_EXAMPLES}
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DSSL_LIB="libssl-1_1-x64.dll"
@@ -499,7 +509,7 @@ if(NOT WIN32)
         PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/.. && git submodule --quiet update --force --recursive extern/couchbase-lite-C
         COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-c.patch ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-core.patch
 
-        CMAKE_ARGS ${CMAKE_ARGS}
+        CMAKE_ARGS "${CMAKE_ARGS}"
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 
         INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
@@ -547,7 +557,7 @@ else()
         PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/.. && git submodule --quiet update --force --recursive extern/couchbase-lite-C
         COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-c.patch ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-core.patch
 
-        CMAKE_ARGS ${CMAKE_ARGS}
+        CMAKE_ARGS "${CMAKE_ARGS}"
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 
         INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
