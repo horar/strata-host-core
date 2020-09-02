@@ -93,7 +93,3 @@ def deleteLoggedInUser():
     '''
     closeAccount()
     removeLoginInfo()
-
-
-if __name__ == "__main__":
-    deleteLoggedInUser()

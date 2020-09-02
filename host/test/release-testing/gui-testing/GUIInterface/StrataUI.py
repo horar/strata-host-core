@@ -1,10 +1,13 @@
+import _ctypes
+import unittest
 from functools import reduce
 
-from uiautomation import *
+from uiautomation import WindowControl, Control, PropertyId, ControlType, ButtonControl, ToggleState, CheckBoxControl
 
-from Common import *
+from Common import STRATA_WINDOW, PASSWORD_EDIT, FIRST_NAME_EDIT, USER_ICON_BUTTON, FEEDBACK_SUCCESS_TEXT, LOGIN_TAB, \
+    REGISTER_TAB, REMEMBER_ME_CHECKBOX, PLATFORM_CONTROLS_BUTTON, USERNAME_EDIT, EMAIL_EDIT, CONFIRM_PASSWORD_EDIT, \
+    LAST_NAME_EDIT, COMPANY_EDIT, TITLE_EDIT, LOGOUT_BUTTON
 
-import _ctypes
 
 class StrataUI:
     '''
@@ -248,8 +251,3 @@ def Logout(ui: StrataUI):
     '''
     ui.PressButton(USER_ICON_BUTTON)
     ui.PressButton(LOGOUT_BUTTON)
-
-
-if __name__ == "__main__":
-    ui = StrataUI()
-    print(str(ui.OnRegisterScreen()))

@@ -43,8 +43,18 @@ def initPlatformList():
     '''
     global __client
 
-    dynamicPlatformList = b'{"hcs::notification":{"list":[{"class_id":"201"}],"type":"all_platforms"}}'
-    __client.send_multipart([__strataId, dynamicPlatformList])
+    dynamicPlatformList = {
+        "hcs::notification":{
+            "list":[
+                {
+                    "class_id":"201"
+                }
+            ],
+            "type": "all_platforms"
+        }
+    }
+
+    __client.send_multipart([__strataId, bytes(json.dumps(dynamicPlatformList), 'utf-8')])
 
 
 def bindToStrata(url):
@@ -98,52 +108,13 @@ def closePlatforms():
     Disconnect all connected platforms from strata.
     :return:
     '''
-    myEncodedStr = bytes(
-        "{\"hcs::notification\":{\"list\":[],\"type\":\"connected_platforms\"}}", 'utf-8')
+    notification = {
+        "hcs::notification": {
+            "list":[],
+            "type":"connected_platforms"
+        }
+    }
+
     global __client
     global __strataId
-    __client.send_multipart([__strataId, myEncodedStr])
-
-
-if __name__ == "__main__":
-    context = zmq.Context.instance()
-    __client = context.socket(zmq.ROUTER)
-    __client.RCVTIMEO = 10000  # 10s timeout.
-    __client.setsockopt(zmq.IDENTITY, b'zmqRouterTest')
-    __client.bind(Common.DEFAULT_URL)
-    try:
-        __strataId = __client.recv()
-    except zmq.Again:
-        print("No Response received from Strata. Exiting...")
-        quit(-1)
-    if not __strataId:
-        print("received an empty response. Exiting...")
-        quit(-1)
-
-    while True:
-        print("waiting for response..")
-
-        # 10s timeout.
-        try:
-            message = __client.recv()
-        except zmq.Again:
-            print("Response Timeout. Exiting...")
-            quit(-1)
-        if not message:
-            print("received an empty response. Exiting...")
-            quit(-1)
-
-        print("Received reply [ %s ]" % (message))
-        emptyDynamicPlatformList = b'{"hcs::notification":{"list":[{"class_id":"201"}],"type":"all_platforms"}}'
-
-        if (message == b'{"hcs::cmd":"dynamic_platform_list","payload":{}}'):
-            # If the dynamicPlatformList.json file exist use it, otherwise, send the empty list and use
-            # the hardcoded uuidList.
-            # Send the platform list and wait
-            __client.send_multipart([__strataId, emptyDynamicPlatformList])
-
-            classID = "201"
-            myEncodedStr = bytes(
-                "{\"hcs::notification\":{\"list\":[{\"class_id\":\"%s\",\"connection\":\"connected\",\"verbose_name\":\"\"}],\"type\":\"connected_platforms\"}}" % classID,
-                'utf-8')
-            __client.send_multipart([__strataId, myEncodedStr])
+    __client.send_multipart([__strataId, bytes(json.dumps(notification), 'utf-8')])
