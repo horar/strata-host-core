@@ -304,7 +304,7 @@ bool CommandValidator::validateJsonWithSchema(const rapidjson::SchemaDocument &s
         rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 
         json.Accept(writer);
-        QByteArray text(buffer.GetString(), buffer.GetSize());
+        QByteArray text(buffer.GetString(), static_cast<int>(buffer.GetSize()));
 
         buffer.Clear();
         writer.Reset(buffer);

@@ -11,6 +11,7 @@ public:
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
     int dataForFinish() const override;
+    int totalChunks() const;
 private:
     uint chunks_;
     /* these values ​​are not used yet

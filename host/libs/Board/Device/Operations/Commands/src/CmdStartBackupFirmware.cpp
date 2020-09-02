@@ -40,7 +40,7 @@ bool CmdStartBackupFirmware::processNotification(rapidjson::Document& doc) {
                 size_ = size.GetUint();
                 md5_ = md5.GetString();
                 */
-                result_ = CommandResult::Done;
+                result_ = CommandResult::Partial;
             } else {
                 qCWarning(logCategoryDeviceOperations) << device_ << "Wrong format of notification.";
                 result_ = CommandResult::Failure;
@@ -53,8 +53,12 @@ bool CmdStartBackupFirmware::processNotification(rapidjson::Document& doc) {
 }
 
 int CmdStartBackupFirmware::dataForFinish() const {
-    // OPERATION_BACKUP_NO_FIRMWARE or number of firmware chunks is used as data for finished() signal
-    return (result_ == CommandResult::FinaliseOperation) ? OPERATION_BACKUP_NO_FIRMWARE : static_cast<int>(chunks_);
+    // operation::BACKUP_NO_FIRMWARE or operation::BACKUP_STARTED is used as data for finished() signal
+    return (result_ == CommandResult::FinaliseOperation) ? operation::BACKUP_NO_FIRMWARE : operation::BACKUP_STARTED;
+}
+
+int CmdStartBackupFirmware::totalChunks() const {
+    return static_cast<int>(chunks_);
 }
 
 }  // namespace

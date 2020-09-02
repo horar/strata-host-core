@@ -10,9 +10,7 @@ public:
     explicit CmdStartBootloader(const device::DevicePtr& device);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
-    bool skip() override;
     std::chrono::milliseconds waitBeforeNextCommand() const override;
-    int dataForFinish() const override;
 };
 
 }  // namespace

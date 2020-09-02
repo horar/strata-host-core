@@ -13,7 +13,6 @@ public:
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
     bool logSendMessage() const override;
-    void prepareRepeat() override;
     int dataForFinish() const override;
 private:
     QVector<quint8>& chunk_;
