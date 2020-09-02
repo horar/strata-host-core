@@ -15,7 +15,7 @@ ClientsController::~ClientsController()
     events_manager_.stop();
 }
 
-bool ClientsController::initialize(HCS_Dispatcher* dispatcher, rapidjson::Value& config)
+bool ClientsController::initialize(std::shared_ptr<HCS_Dispatcher> dispatcher, rapidjson::Value& config)
 {
     using namespace strata::events_mgr;
 
