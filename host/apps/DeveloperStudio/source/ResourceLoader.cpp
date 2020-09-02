@@ -55,9 +55,12 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
 }
 
 bool ResourceLoader::deleteStaticViewResource(const QString &class_id, const QString &displayName, QObject *loader) {
-
     QFileInfo rccFile(ResourcePath::viewsResourcePath() + "/views-" + displayName + ".rcc");
-    return deleteViewResource(class_id, rccFile.filePath(), "", loader);
+    if (rccFile.exists()) {
+        return deleteViewResource(class_id, rccFile.filePath(), "", loader);
+    } else {
+        return false;
+    }
 }
 
 void ResourceLoader::registerControlViewResources(const QString &class_id, const QString &path, const QString &version) {
