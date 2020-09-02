@@ -27,15 +27,25 @@ void SGUtilsCppTest::TearDown()
 TEST_F(SGUtilsCppTest, testFileUtils)
 {
     EXPECT_TRUE(utils.isFile("test.txt"));
-    EXPECT_EQ(utils.fileName("test.txt"), "test");
+    EXPECT_EQ(utils.fileName("/path/to/test.txt").toStdString(), "test.txt");
     EXPECT_EQ(utils.dirName("/this/is/a/test"), "test");
     QUrl url("/path/to/something/on/disk/test.html");
-    EXPECT_EQ(utils.pathToUrl("/path/to/something/on/disk/test.html"), url);
+    url.setScheme("file");
+    EXPECT_EQ(utils.pathToUrl("/path/to/something/on/disk/test.html").toString().toStdString(), url.toString().toStdString());
     EXPECT_EQ(utils.urlToLocalFile(url), "/path/to/something/on/disk/test.html");
 
     EXPECT_EQ(utils.joinFilePath("/prepend/path", "append-me.txt"), "/prepend/path/append-me.txt");
 
+    QFile exeFile("test.exe");
+    if (!exeFile.open(QIODevice::WriteOnly)) {
+        throw "Unable to open executable";
+    }
+    exeFile.setPermissions(QFile::Permission::ExeUser);
+    QString testText = "test";
+    exeFile.write(testText.toUtf8());
+    exeFile.close();
     EXPECT_TRUE(utils.isExecutable("test.exe"));
+    exeFile.remove();
     EXPECT_FALSE(utils.isExecutable("test.txt"));
 }
 
