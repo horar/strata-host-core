@@ -228,7 +228,7 @@ void ClassDocuments::populateModels(QJsonObject data)
     controlViewModel_.populateModel(controlViewList);
 
     setLoading(false);
-    initialized_ = true;
+    setInitialized(true);
 }
 
 void ClassDocuments::clearDocuments()
@@ -251,6 +251,14 @@ void ClassDocuments::setLoading(bool loading)
     if (loading_ != loading) {
         loading_ = loading;
         emit loadingChanged();
+    }
+}
+
+void ClassDocuments::setInitialized(bool initialized)
+{
+    if (initialized_ != initialized) {
+        initialized_ = initialized;
+        emit initializedChanged();
     }
 }
 

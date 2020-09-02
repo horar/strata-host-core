@@ -74,6 +74,7 @@ private:
 
     void setErrorString(QString errorString);
     void setLoading(bool loading);
+    void setInitialized(bool initialized);
     void setLoadingProgressPercentage(int loadingProgressPercentage);
     void populateDatasheetList(const QString &path, QList<DocumentItem* > &list);
 };

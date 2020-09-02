@@ -54,9 +54,11 @@ StackLayout {
 
     onCurrentIndexChanged: {
         if (index === 0) {
-            if (controlLoaded === false) {
+            if (controlLoaded === false && connected) {
                 loadingBar.visible = true;
-                loadingBar.value = 1.0;
+                if (sdsModel.resourceLoader.isViewRegistered(model.class_id)) {
+                    loadingBar.value = 1.0
+                }
             }
         }
     }
@@ -85,6 +87,7 @@ StackLayout {
                     loadingBar.visible = true;
                     loadingBar.value = 0.0;
                     if (platformDocumentsInitialized === true) {
+                        loadingBar.value = 0.01;
                         controlContainer.checkForResources()
                     }
                 }
@@ -151,8 +154,6 @@ StackLayout {
     }
 
     function createErrorScreen(errorString) {
-        loadingBar.color = "red"
-        loadingBar.value = 1.0
         let obj = sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlContainer, {"error_message": errorString});
         controlLoaded = true
     }
@@ -233,7 +234,7 @@ StackLayout {
         target: sdsModel.documentManager
 
         onPopulateModelsFinished: {
-            if (classId === model.class_id) {
+            if (classId === model.class_id && model.connected) {
                 if (loadingBar.value === 0.0) {
                     loadingBar.value = 0.01
                     controlContainer.checkForResources()
