@@ -23,7 +23,7 @@ def __bind(url):
     global __client
     global __strataId
     __client = context.socket(zmq.ROUTER)
-    __client.RCVTIMEO = 10000  # no timeout
+    __client.RCVTIMEO = 10000
     __client.setsockopt(zmq.IDENTITY, b'zmqRouterTest')
     __client.bind(url)
 
