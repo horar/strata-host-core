@@ -140,7 +140,7 @@ Item {
 
         Help.registerTarget(pwmFrequency,"Sets the PWM frequency. This list varies depending on if the NCV7684 or NCV7685 is connected",20,"ledDriverHelp")
 
-        Help.registerTarget(openLoadDiagnostic,"   1. No Diagnostic = No open load detection is performed  \n  2. Auto Retry = During open load fault, a) DIAG pin is pulled low, b) low current is imposed on faulty channel only, c) other channels turned off. If fault is recovered DIAG is released and normal operation continues. \n 3.Diagnostic Only = During open load fault, the DIAG pin is pulled low with no change to current regulation. If fault is recovered DIAG is released.",22,"ledDriverHelp")
+        Help.registerTarget(openLoadDiagnostic," Sets the diagnostic state of the LED driver in I2C mode. \n  • No Diagnostic = No open load detection is performed.  \n  • Auto Retry = During open load fault, a) DIAG pin is pulled low, b) low current is imposed on faulty channel only, c) other channels turned off. If fault is recovered DIAG is released and normal operation continues. \n • Diagnostic Only = During open load fault, the DIAG pin is pulled low with no change to current regulation. If fault is recovered DIAG is released.",22,"ledDriverHelp")
 
 
     }
