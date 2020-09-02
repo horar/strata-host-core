@@ -93,5 +93,6 @@
         <file>partial-views/distribution-portal/images/arrow-circle-right.svg</file>
         <file>partial-views/distribution-portal/SGBaseDistributionItem.qml</file>
         <file>partial-views/login/LoginSettings.qml</file>
+        <file>partial-views/control-view-creator/ControlViewCreator.qml</file>
     </qresource>
 </RCC>

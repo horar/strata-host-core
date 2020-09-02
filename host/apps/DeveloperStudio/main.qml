@@ -10,6 +10,7 @@ import "qrc:/js/login_utilities.js" as SessionUtils
 import "qrc:/partial-views"
 import "qrc:/partial-views/debug-bar"
 import "qrc:/partial-views/platform-view"
+import "qrc:/partial-views/control-view-creator"
 import "qrc:/js/platform_filters.js" as PlatformFilters
 
 import tech.strata.sgwidgets 1.0 as SGWidgets
@@ -99,6 +100,12 @@ SGWidgets.SGMainWindow {
                 id: platformViewRepeater
                 model: platformViewModel
                 delegate: SGPlatformView {}
+            }
+
+            ControlViewCreator {
+                id: controlViewCreator
+                Layout.fillHeight: true
+                Layout.fillWidth: true
             }
         }
     }
