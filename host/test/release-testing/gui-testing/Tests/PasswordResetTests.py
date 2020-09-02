@@ -3,6 +3,7 @@ Tests involving resetting user passwords.
 '''
 
 import Common
+import time
 from GUIInterface.StrataUI import *
 
 INVALID_USER = "bad@bad.com"

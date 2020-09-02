@@ -3,8 +3,9 @@ Tests involving logging in with boards attached or disconnected.
 '''
 
 import Common
+import time
+import StrataInterface as strata
 from GUIInterface.StrataUI import *
-
 
 class LoginValidNoBoard(unittest.TestCase):
     '''

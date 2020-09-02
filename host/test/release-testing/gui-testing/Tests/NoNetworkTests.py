@@ -3,6 +3,7 @@ Tests involving interacting with elements while not connected to the network
 '''
 
 import Common
+import time
 from GUIInterface.StrataUI import *
 
 

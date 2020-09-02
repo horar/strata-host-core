@@ -115,9 +115,7 @@ Popup {
                 }
 
                 Button {
-                    Accessible.onPressAction: function() {
-                        clicked()
-                    }
+
 
                     id: acceptButton
                     text: "Accept"
@@ -159,13 +157,14 @@ Popup {
                             acceptBtnBg.color = acceptButtonColor
                         }
                     }
+                    Accessible.onPressAction: function() {
+                        clicked()
+                    }
 
                 }
 
                 Button {
-                    Accessible.onPressAction: function() {
-                        clicked()
-                    }
+
 
                     id: cancelButton
                     text: "Cancel"
@@ -208,7 +207,9 @@ Popup {
                             cancelBtnBg.color = cancelButtonColor
                         }
                     }
-
+                    Accessible.onPressAction: function() {
+                        clicked()
+                    }
                 }
             }
         }

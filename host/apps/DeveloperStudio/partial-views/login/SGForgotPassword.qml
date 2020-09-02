@@ -37,10 +37,6 @@ SGStrataPopup {
             width: parent.width
 
             Rectangle {
-                Accessible.role: Accessible.AlertMessage
-                Accessible.name: "ResetPasswordAlert"
-                Accessible.description: alertText.text
-
                 id: alertRect
                 Layout.columnSpan: 2
                 Layout.alignment: Qt.AlignHCenter
@@ -80,6 +76,10 @@ SGStrataPopup {
                     text: ""
                     color: "white"
                 }
+                Accessible.role: Accessible.AlertMessage
+                Accessible.name: "ResetPasswordAlert"
+                Accessible.description: alertText.text
+
             }
 
             Text {
@@ -119,10 +119,6 @@ SGStrataPopup {
                 Layout.alignment: Qt.AlignHCenter
 
                 Button {
-                    Accessible.onPressAction: function() {
-                        clicked()
-                    }
-
                     id: submitButton
                     height: 40
                     width: 120
@@ -174,6 +170,10 @@ SGStrataPopup {
                         }
                         visible: registerToolTipShow.containsMouse && !submitButton.enabled
                     }
+                    Accessible.onPressAction: function() {
+                        clicked()
+                    }
+
                 }
 
                 MouseArea {

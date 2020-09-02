@@ -6,8 +6,6 @@ import threading
 
 import zmq
 
-import Common
-
 __client: zmq.Socket
 __strataId: bytes
 

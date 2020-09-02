@@ -4,12 +4,6 @@ import tech.strata.fonts 1.0
 
 Component {
     Rectangle {
-        Accessible.role: Accessible.Button
-        Accessible.name: content.text
-        Accessible.onPressAction: function() {
-            feedbackTypeListView.currentIndex = index
-        }
-
         id: label
 
         property alias containsMouse: buttonMouseArea.containsMouse
@@ -41,6 +35,11 @@ Component {
             onClicked: {
                 feedbackTypeListView.currentIndex = index
             }
+        }
+        Accessible.role: Accessible.Button
+        Accessible.name: content.text
+        Accessible.onPressAction: function() {
+            feedbackTypeListView.currentIndex = index
         }
     }
 }

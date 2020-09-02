@@ -128,9 +128,6 @@ Item {
         }
 
         Rectangle {
-            Accessible.role: Accessible.AlertMessage
-            Accessible.name: "LoginError"
-            Accessible.description: loginErrorText.text
             id: loginErrorRect
             Layout.preferredWidth: usernameField.width
             Layout.preferredHeight: 0
@@ -168,6 +165,10 @@ Item {
                 text: ""
                 color: "white"
             }
+            Accessible.role: Accessible.AlertMessage
+            Accessible.name: "LoginError"
+            Accessible.description: loginErrorText.text
+
         }
 
    RowLayout {
@@ -219,9 +220,7 @@ Item {
             Layout.preferredWidth: loginButton.width
 
             Button {
-                Accessible.onPressAction: function () {
-                    loginButton.submit()
-                }
+
 
                 id: loginButton
                 width: usernameField.width
@@ -301,6 +300,9 @@ Item {
                         return result
                     }
                     visible: loginToolTipShow.containsMouse && !loginButton.enabled && !forgotPopup.visible
+                }
+                Accessible.onPressAction: function () {
+                    loginButton.submit()
                 }
             }
 

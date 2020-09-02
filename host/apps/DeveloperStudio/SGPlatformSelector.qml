@@ -68,12 +68,7 @@ Rectangle{
     }
 
     SGIcon {
-        Accessible.role: Accessible.Button
-        Accessible.name: "Help Icon"
-        Accessible.description: "Help tour button."
-        Accessible.onPressAction: {
-            Help.startHelpTour("selectorHelp", "strataMain")
-        }
+
 
         id: helpIcon
         anchors {
@@ -85,6 +80,10 @@ Rectangle{
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
         height: 40
         width: 40
+        function clickAction() {
+            Help.startHelpTour("selectorHelp", "strataMain")
+
+        }
 
         MouseArea {
             id: helpMouse
@@ -94,10 +93,12 @@ Rectangle{
             }
             cursorShape: Qt.PointingHandCursor
 
-            onClicked: {
-                Help.startHelpTour("selectorHelp", "strataMain")
-            }
+            onClicked: helpIcon.clickAction()
         }
+        Accessible.role: Accessible.Button
+        Accessible.name: "Help Icon"
+        Accessible.description: "Help tour button."
+        Accessible.onPressAction: clickAction()
     }
 
     Item {

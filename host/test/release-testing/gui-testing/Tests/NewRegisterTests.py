@@ -4,6 +4,7 @@ Tests involving creating a new user.
 
 import Common
 import SystemInterface as cleanup
+import time
 from GUIInterface.StrataUI import *
 
 NEW_PASSWORD = "Bepzipbip15"

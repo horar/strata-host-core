@@ -1,5 +1,7 @@
 import Common
+import time
 from GUIInterface.StrataUI import *
+
 
 INVALID_USERNAME = "badusername"
 INVALID_PASSWORD = "badpassword"
@@ -43,4 +45,4 @@ class RegisterExisting(unittest.TestCase):
         time.sleep(1)
         Register(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, "Testy", "McTest", "ON Semiconductor", "Lead QA",
                  self)
-        self.assertTrue(ui.AlertExists(REGISTER_ALERT))
+        self.assertTrue(ui.AlertExists(Common.REGISTER_ALERT))

@@ -6,10 +6,6 @@ import tech.strata.sgwidgets 1.0
 import QtQuick.Layouts 1.12
 
 Button {
-    Accessible.onPressAction: function() {
-        clicked()
-    }
-
     id: root
     text: qsTr("Button Text")
     hoverEnabled: true
@@ -54,5 +50,8 @@ Button {
         anchors.fill: parent
         onPressed: mouse.accepted = false
         cursorShape: Qt.PointingHandCursor
+    }
+    Accessible.onPressAction: function() {
+        clicked()
     }
 }

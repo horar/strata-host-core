@@ -59,12 +59,6 @@ Dialog {
             }
 
             Rectangle {
-                Accessible.role: Accessible.Button
-                Accessible.name: "ClosePopup"
-                Accessible.onPressAction: function() {
-                    dialog.close()
-                }
-
                 id: closerBackground
                 color: mouseClose.containsMouse ? Qt.darker(headerContainer.color, 1.1) : "transparent"
                 radius: width/2
@@ -82,14 +76,20 @@ Dialog {
                     width: height
                     iconColor: "white"
                 }
+                function pressAction() {
+                    dialog.close()
+                }
 
                 MouseArea {
                     id: mouseClose
                     anchors.fill: closerBackground
-                    onClicked: dialog.close()
+                    onClicked: closerBackground.pressAction()
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                 }
+                Accessible.role: Accessible.Button
+                Accessible.name: "ClosePopup"
+                Accessible.onPressAction: pressAction()
             }
         }
     }

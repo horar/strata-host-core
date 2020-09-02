@@ -245,8 +245,6 @@ SGStrataPopup {
                         }
 
                         TextEdit {
-                            Accessible.role: Accessible.EditableText
-                            Accessible.name: "FeedbackEdit"
 
 
                             id: textEdit
@@ -271,14 +269,14 @@ SGStrataPopup {
                             }
                             KeyNavigation.tab: submitButton
                             KeyNavigation.priority: KeyNavigation.BeforeItem
+                            Accessible.role: Accessible.EditableText
+                            Accessible.name: "FeedbackEdit"
+
                         }
                     }
                 }
 
                 Button {
-                    Accessible.onPressAction: function() {
-                        clicked();
-                    }
 
                     id: submitButton
                     text: "Submit"
@@ -325,6 +323,10 @@ SGStrataPopup {
                         }
                         Feedback.feedbackInfo(feedbackInfo, success, error)
                     }
+                    Accessible.onPressAction: function() {
+                        clicked();
+                    }
+
                 }
             }
         }
