@@ -1,7 +1,8 @@
 #pragma once
 
+#include "SGUtilsCpp.h"
+
 #include <gtest/gtest.h>
-#include <SGUtilsCpp.h>
 #include <QString>
 
 class SGUtilsCppTest : public testing::Test
