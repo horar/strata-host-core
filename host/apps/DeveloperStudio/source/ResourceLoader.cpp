@@ -22,7 +22,7 @@ ResourceLoader::~ResourceLoader()
 }
 
 bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &path, const QString &version, QObject *loader) {
-    if (path.isEmpty() || version.isEmpty()) {
+    if (path.isEmpty()) {
         return false;
     }
 
