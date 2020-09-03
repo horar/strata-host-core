@@ -183,7 +183,7 @@ Item {
         target: sdsModel.coreInterface
 
         onDownloadViewFinished: {
-            if (platformStack.currentIndex === index && payload.url === activeDownloadUri) {
+            if (payload.url === activeDownloadUri) {
                 activeDownloadUri = ""
                 if (payload.error_string.length > 0) {
                     removeControl()
@@ -212,7 +212,7 @@ Item {
         }
 
         onDownloadControlViewProgress: {
-            if (currentIndex === index && payload.url === activeDownloadUri) {
+            if (platformStack.currentIndex === index) {
                 let percent = payload.bytes_received / payload.bytes_total;
                 if (percent !== 1.0) {
                     platformStack.loadingBar.value = percent

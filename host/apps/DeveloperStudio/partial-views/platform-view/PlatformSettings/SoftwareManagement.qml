@@ -17,12 +17,14 @@ ColumnLayout {
     property var latestVersion: null
     property string downloadFilepath: ""
     property bool downloadError: false
+    property string activeDownloadUri: ""
 
     Connections {
         target: coreInterface
 
         onDownloadViewFinished: {
-            if (platformStack.currentIndex === 2) {
+            if (payload.url === activeDownloadUri) {
+                activeDownloadUri = ""
                 if (payload.error_string.length > 0) {
                     downloadError = true
                     progressBar.color = "red"
@@ -196,7 +198,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.topMargin: 15
         color: "#eee"
-        visible: !software.upToDate && latestVersion !== null
+        visible: !software.upToDate && latestVersion !== null && platformStack.controlContainer.activeDownloadUri === ""
 
         ColumnLayout {
             id: notUpToDateColumn
@@ -322,6 +324,7 @@ ColumnLayout {
                                     "class_id": platformStack.class_id
                                 }
                             }
+                            activeDownloadUri = software.latestVersion.uri
                             coreInterface.sendCommand(JSON.stringify(updateCommand));
                         }
                     }
