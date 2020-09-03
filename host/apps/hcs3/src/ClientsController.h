@@ -38,6 +38,11 @@ public:
      */
     bool sendMessage(const QByteArray& clientId, const QString& message);
 
+    /**
+     * Stops the clients controller
+     */
+    void stop();
+
 private:
     void onDescriptorHandle(strata::events_mgr::EvEventBase*, int);
 
