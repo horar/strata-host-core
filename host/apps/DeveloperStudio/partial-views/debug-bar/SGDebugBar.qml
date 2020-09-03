@@ -56,7 +56,10 @@ Item {
                     onCurrentIndexChanged: {
                         // Here we remove the "views-" portion from the filename and also removes the .rcc from the filename
                         if (currentText === "") {
-                            displayText = viewFolderModel.get(currentIndex, "fileName").replace("views-", "").slice(0, -4)
+                            let fileName = viewFolderModel.get(currentIndex, "fileName");
+                            if (fileName !== undefined) {
+                                displayText = viewFolderModel.get(currentIndex, "fileName").replace("views-", "").slice(0, -4)
+                            }
                         } else {
                             displayText = currentText.replace("views-", "").slice(0, -4)
                         }
