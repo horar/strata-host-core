@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.3
+import QtQuick.Layouts 1.12
 import QtQuick.Shapes 1.0
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
@@ -178,17 +179,19 @@ Item {
         }
     }
 
-    Column {
+    ColumnLayout {
         id: infoColumn
         anchors {
             left: imageContainer.right
             leftMargin: 20
             topMargin: 20
             bottomMargin: 20
-            verticalCenter: root.verticalCenter
+            top: root.top
+            bottom: root.bottom
         }
         spacing: 12
         width: 350
+        clip: true
 
         Text {
             id: name
@@ -206,13 +209,11 @@ Item {
                 pixelSize: 16
                 family: Fonts.franklinGothicBold
             }
-            width: infoColumn.width
-            anchors {
-                horizontalCenter: infoColumn.horizontalCenter
-            }
+            Layout.preferredWidth: infoColumn.width
+            Layout.alignment: Qt.AlignCenter
             wrapMode: Text.Wrap
             horizontalAlignment: Text.AlignHCenter
-            textFormat: Text.RichText
+            textFormat: Text.StyledText
         }
 
         Text {
@@ -227,10 +228,7 @@ Item {
                 }
             }
 
-            anchors {
-                horizontalCenter: infoColumn.horizontalCenter
-            }
-            width: infoColumn.width
+            Layout.preferredWidth: infoColumn.width
             font {
                 pixelSize: 13
                 family: Fonts.franklinGothicBook
@@ -238,8 +236,9 @@ Item {
             color: "#333"
             font.italic: true
             wrapMode: Text.Wrap
+            Layout.alignment: Qt.AlignCenter
             horizontalAlignment: Text.AlignHCenter
-            textFormat: Text.RichText
+            textFormat: Text.StyledText
         }
 
         Text {
@@ -253,11 +252,8 @@ Item {
                     return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
                 }
             }
-
-            anchors {
-                horizontalCenter: infoColumn.horizontalCenter
-            }
-            width: infoColumn.width
+            Layout.alignment: Qt.AlignCenter
+            Layout.preferredWidth: infoColumn.width
             font {
                 pixelSize: 12
                 family: Fonts.franklinGothicBook
@@ -266,7 +262,7 @@ Item {
             wrapMode: Text.Wrap
             elide: Text.ElideRight
             horizontalAlignment: Text.AlignHCenter
-            textFormat: Text.RichText
+            textFormat: Text.StyledText
         }
 
         Text {
@@ -286,11 +282,6 @@ Item {
                             } else {
                                 continue
                             }
-
-                            if (str.length > 50) {
-                                str += "..."
-                                break
-                            }
                         }
                     }
                     return str
@@ -299,18 +290,18 @@ Item {
                 }
             }
             visible: searchCategoryPartsList.checked === true && PlatformFilters.keywordFilter !== "" && text !== "Matching Part OPNs: "
-            anchors {
-                horizontalCenter: infoColumn.horizontalCenter
-            }
-            width: infoColumn.width
+            Layout.alignment: Qt.AlignCenter
+            Layout.preferredWidth: infoColumn.width
+            maximumLineCount: 2
+            wrapMode: Text.Wrap
             font {
                 pixelSize: 12
                 family: Fonts.franklinGothicBook
             }
             color: "#666"
-            wrapMode: Text.WordWrap
+            textFormat: Text.StyledText
             horizontalAlignment: Text.AlignHCenter
-            textFormat: Text.RichText
+            elide: Text.ElideRight
         }
     }
 
