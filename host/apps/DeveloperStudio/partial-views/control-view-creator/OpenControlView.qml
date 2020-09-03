@@ -1,7 +1,9 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
+import QtQml.Models 2.12
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.SGQrcListModel 1.0
 
 Rectangle {
     id: openProjectContainer
@@ -26,6 +28,14 @@ Rectangle {
             Layout.preferredHeight: 1
             Layout.fillWidth: true
         }
+
+//        Repeater {
+//            model: qrcModel
+
+//            delegate: Text {
+//                text: "PREFIX: " + prefix + " | FILENAME: " + filename
+//            }
+//        }
 
         SGAlignedLabel {
             Layout.topMargin: 20
@@ -88,5 +98,14 @@ Rectangle {
             // space filler
             Layout.fillHeight: true
         }
+
+
     }
+
+    SGQrcListModel {
+        id: qrcModel
+        url: "file:///Users/zbj9gc/Downloads/sample/qml.qrc"
+    }
+
+
 }
