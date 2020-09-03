@@ -43,65 +43,19 @@ index 4035afa..34e0845 100644
  
  
  /** @} */
-diff --git a/src/CBLLog.cc b/src/CBLLog.cc
-index f3437ee..9610900 100644
---- a/src/CBLLog.cc
-+++ b/src/CBLLog.cc
-@@ -66,25 +66,25 @@ bool CBLLog_WillLogToConsole(CBLLogDomain domain, CBLLogLevel level) CBLAPI {
- 
- 
- void CBLLog_SetCallback(CBLLogCallback callback) CBLAPI {
--    auto c4Callback = [](C4LogDomain domain, C4LogLevel level, const char *msg, va_list) noexcept {
--        // Map C4LogDomain to CBLLogDomain:
--        auto callback = sCallback;
--        if (!callback)
--            return;
--        CBLLogDomain cblDomain = kCBLLogDomainAll;
--        for (int d = 0; d < 5; ++d) {
--            if (kC4Domains[d] == domain) {
--                cblDomain = CBLLogDomain(d);
--                break;
--            }
--        }
--        callback(cblDomain, CBLLogLevel(level), msg);
--    };
--
--    sCallback = callback;
--    c4log_writeToCallback(c4log_callbackLevel(),
--                          callback ? c4Callback : nullptr,
--                          true);
-+    // auto c4Callback = [](C4LogDomain domain, C4LogLevel level, const char *msg, va_list) noexcept {
-+    //     // Map C4LogDomain to CBLLogDomain:
-+    //     auto callback = sCallback;
-+    //     if (!callback)
-+    //         return;
-+    //     CBLLogDomain cblDomain = kCBLLogDomainAll;
-+    //     for (int d = 0; d < 5; ++d) {
-+    //         if (kC4Domains[d] == domain) {
-+    //             cblDomain = CBLLogDomain(d);
-+    //             break;
-+    //         }
-+    //     }
-+    //     callback(cblDomain, CBLLogLevel(level), msg);
-+    // };
-+
-+    // sCallback = callback;
-+    // c4log_writeToCallback(c4log_callbackLevel(),
-+    //                       callback ? c4Callback : nullptr,
-+    //                       true);
- }
- 
- 
-diff --git a/src/CBL.def b/src/CBL.def
-index 0d46e7b..23073e7 100644
---- a/src/CBL.def
-+++ b/src/CBL.def
-@@ -6,7 +6,7 @@ CBL_InstanceCount
- CBL_DumpInstances
- 
- CBL_Log
--CBL_SetLogLevel
-+; CBL_SetLogLevel
- 
- CBL_Now
- 
+diff --git a/cmake/platform_win.cmake b/cmake/platform_win.cmake
+index e135e75..21e77cf 100644
+--- a/cmake/platform_win.cmake
++++ b/cmake/platform_win.cmake
+@@ -49,8 +49,8 @@ function(set_dylib_properties)
+         set_target_properties(CouchbaseLiteC PROPERTIES COMPILE_FLAGS /ZW)
+         set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /nodefaultlib:kernel32.lib /nodefaultlib:ole32.lib")
+     endif()
+-    set_target_properties(CouchbaseLiteC PROPERTIES LINK_FLAGS
+-        "/def:${PROJECT_SOURCE_DIR}/src/CBL.def")
++    # set_target_properties(CouchbaseLiteC PROPERTIES LINK_FLAGS
++    #     "/def:${PROJECT_SOURCE_DIR}/src/CBL.def")
+     target_link_libraries(CouchbaseLiteC PRIVATE zlibstatic Ws2_32)
+     target_compile_definitions(CouchbaseLiteCStatic PRIVATE LITECORE_EXPORTS)
+ endfunction()
+\ No newline at end of file
