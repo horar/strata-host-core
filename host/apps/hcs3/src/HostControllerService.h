@@ -114,6 +114,7 @@ public slots:
 
     void sendControlViewDownloadProgressMessage(
             const QByteArray &clientId,
+            const QString &partialUri,
             const QString &filePath,
             qint64 bytesReceived,
             qint64 bytesTotal);

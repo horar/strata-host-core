@@ -41,7 +41,7 @@ ColumnLayout {
         }
 
         onDownloadControlViewProgress: {
-            if (platformStack.currentIndex === 2) {
+            if (platformStack.currentIndex === 2 && payload.url === activeDownloadUri) {
                 progressUpdateText.percent = payload.bytes_received / payload.bytes_total
             }
         }

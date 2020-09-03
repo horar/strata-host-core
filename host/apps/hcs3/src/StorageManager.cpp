@@ -102,7 +102,7 @@ void StorageManager::singleDownloadProgressHandler(const QString &groupId, const
     if (request->type == RequestType::FileDownload) {
         emit downloadPlatformSingleFileProgress(request->clientId, filePath, bytesReceived, bytesTotal);
     } else if (request->type == RequestType::ControlViewDownload) {
-        emit downloadControlViewProgress(request->clientId, filePath, bytesReceived, bytesTotal);
+        emit downloadControlViewProgress(request->clientId, downloadControlViewUris_[groupId], filePath, bytesReceived, bytesTotal);
     }
 }
 

@@ -212,7 +212,7 @@ Item {
         }
 
         onDownloadControlViewProgress: {
-            if (platformStack.currentIndex === index) {
+            if (platformStack.currentIndex === index && payload.url === activeDownloadUri) {
                 let percent = payload.bytes_received / payload.bytes_total;
                 if (percent !== 1.0) {
                     platformStack.loadingBar.value = percent

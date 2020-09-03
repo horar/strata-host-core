@@ -276,6 +276,7 @@ void HostControllerService::sendPlatformDocumentsProgressMessage(
 
 void HostControllerService::sendControlViewDownloadProgressMessage(
         const QByteArray &clientId,
+        const QString &partialUri,
         const QString &filePath,
         qint64 bytesReceived,
         qint64 bytesTotal)
@@ -285,6 +286,7 @@ void HostControllerService::sendControlViewDownloadProgressMessage(
     QJsonObject payload;
 
     payload.insert("type", "control_view_download_progress");
+    payload.insert("url", partialUri);
     payload.insert("filepath", filePath);
     payload.insert("bytes_received", bytesReceived);
     payload.insert("bytes_total", bytesTotal);
