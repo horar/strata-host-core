@@ -1,5 +1,6 @@
 import Common
 import time
+import sys
 from GUIInterface.StrataUI import *
 
 
@@ -40,9 +41,10 @@ class RegisterExisting(unittest.TestCase):
         pass
 
     def test_registerexisting(self):
+        args = Common.getCommandLineArguments(sys.argv)
         ui = StrataUI()
         self.assertTrue(ui.OnRegisterScreen())
         time.sleep(1)
-        Register(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, "Testy", "McTest", "ON Semiconductor", "Lead QA",
+        Register(ui, args.username, args.password, "Testy", "McTest", "ON Semiconductor", "Lead QA",
                  self)
         self.assertTrue(ui.AlertExists(Common.REGISTER_ALERT))

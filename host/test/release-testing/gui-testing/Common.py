@@ -3,10 +3,8 @@ Singleton module for constants and methods common across tests and mains
 '''
 import argparse
 import os
-import subprocess
 import sys
 import time
-import unittest
 import uuid
 
 import psutil
@@ -14,9 +12,12 @@ import psutil
 import StrataInterface as strata
 
 #These are global parameters that can be set by initIntegratedTest or runStandalone. They are implemented this way because unittest does not easily allow for parameterized tests.
-VALID_USERNAME = None
-VALID_PASSWORD = None
-DEFAULT_URL = None
+# VALID_USERNAME = None
+# VALID_PASSWORD = None
+# DEFAULT_URL = None
+# INI_PATH = None
+
+
 
 STRATA_WINDOW = "ON Semiconductor: Strata Developer Studio"
 LOGIN_TAB = "Login"
@@ -59,15 +60,13 @@ STRATA_PROCESS = "Strata Developer Studio.exe"
 LOGIC_GATE_CLASS_ID = "201"
 
 
-__dirname = os.path.dirname(__file__)
-RESULT_FILE = os.path.join(__dirname, 'results.txt')
 
 
 def randomUsername():
     return str(uuid.uuid4()) + "@onsemi.com"
 
 
-def writeResults(totalFails, totalTests):
+def writeResults(totalFails, totalTests, path):
     '''
     Write <total successes>,<total tests> to the results file.
     :param totalFails:
@@ -77,78 +76,34 @@ def writeResults(totalFails, totalTests):
     prevSuccesses = 0
     prevTotal = 0
 
-    if not os.path.exists(RESULT_FILE):
-        f = open(RESULT_FILE, "w")
+    if not os.path.exists(path):
+        f = open(path, "w")
         f.close()
 
-    with open(RESULT_FILE, "r") as resultsFile:
+    with open(path, "r") as resultsFile:
         results = resultsFile.read()
         if results != "":
             prevTotal, prevSuccesses = int(results.split(",")[0]), int(results.split(",")[1])
 
     newTotal = totalTests + prevTotal
     newSuccesses = (totalTests - totalFails) + prevSuccesses
-    with open(RESULT_FILE, "w") as resultsFile:
+    with open(path, "w") as resultsFile:
         resultsFile.write(str(newSuccesses) + "," + str(newTotal))
 
 
-def initIntegratedTest(argv):
-    '''
-    This function should be used if running from the Test-GUI powershell script. Populate constants and exit with a message if the amount of arguments is incorrect.
-    '''
-    global VALID_PASSWORD
-    global VALID_USERNAME
-    global DEFAULT_URL
-
-    if len(argv) < 4:
-        print("Usage: <valid username> <valid password> <hcs tcp url>")
-        sys.exit(0)
-    VALID_USERNAME = argv[1]
-    VALID_PASSWORD = argv[2]
-    DEFAULT_URL = argv[3]
-
-
-def runStandalone(argval):
-    '''
-    This function should be used if running a test standalone from the command line. Populate constants and run specified tests, or exit with a message if the amount of arguments is incorrect.
-    :return:
-    '''
-
-    global VALID_PASSWORD
-    global VALID_USERNAME
-    global DEFAULT_URL
-
-    parser = argparse.ArgumentParser(description="Run a test standalone.")
-    parser.add_argument("testName", action="store")
-    parser.add_argument("-u", action="store", type=str, help="Valid username", metavar="username")
-    parser.add_argument("-p", action="store", type=str, help="Valid password", metavar="password")
-    parser.add_argument("-a", action="store", type=str, help="HCS address (will override hcs with script hcs)",
+def getCommandLineArguments(argv):
+    parser = argparse.ArgumentParser(description="Run a test or tests.")
+    parser.add_argument("testNames", nargs='*', type=str, help="Unittest modules or test classes")
+    parser.add_argument("--username", action="store", type=str, help="Valid username", metavar="username")
+    parser.add_argument("--password", action="store", type=str, help="Valid password", metavar="password")
+    parser.add_argument("--hcsAddress", action="store", type=str, help="HCS address (will override hcs with script hcs)",
                         metavar="hcs address")
-    parser.add_argument("-s", action="store", type=str, help="Path to Strata executable (will open strata)",
+    parser.add_argument("--strataPath", action="store", type=str, help="Path to Strata executable (will open strata)",
                         metavar="strata path")
-    args = parser.parse_args(argval[1:])
-
-    if (args.testName == None):
-        parser.print_help()
-        sys.exit(0)
-
-    VALID_USERNAME = args.u
-    VALID_PASSWORD = args.p
-    DEFAULT_URL = args.a
-
-    if args.s:
-        subprocess.Popen(args.s)
-
-        #HCS connection to strata must occur while strata is starting up.
-        if args.a:
-            strata.bindToStrata(args.a)
-
-        awaitStrata()
-
-    tests = unittest.defaultTestLoader.loadTestsFromName(args.testName)
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(tests)
-
+    parser.add_argument("--strataIni", action="store", type=str, help="Path to Strata ini", metavar="strata ini path")
+    parser.add_argument("--resultsPath", action="store", type=str, help="Specify that a results file should be written to with the given path", metavar="results file path")
+    parser.add_argument("--appendResults", action="store_true", help = "Append results to result file instead of making a new one.")
+    return parser.parse_args(argv[1:])
 
 def processRunning(name):
     return name in (p.name() for p in psutil.process_iter())

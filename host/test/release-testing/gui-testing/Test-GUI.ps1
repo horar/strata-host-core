@@ -26,10 +26,29 @@ Creation Date:  07/10/2020
 #>
 function Test-Gui()
 {
+    $ResultsFile = "$TestRoot\gui-testing\results.txt"
+    $BasicTests = "Tests.BoardTests Tests.FeedbackTests Tests.InvalidInputTests Tests.NewRegisterTests Tests.PasswordResetTests"
+    $NoNetworkTests = "Tests.NoNetworkTests"
+    $StrataRestartTests = "Tests.StrataRestartTests"
+
     $SDSLoginInfoObj = $SDSLoginInfo | ConvertFrom-Json
 
     $Username = $SDSLoginInfoObj.username
     $Password = $SDSLoginInfoObj.password
+
+    Backup-Strata_INI
+
+    $token_string = "[Login]`nauthentication_server=$SDSServer"
+
+    # Write to "Strata Developer Studio.ini"
+    Set-Content "$StrataDeveloperStudioIniDir\Strata Developer Studio.ini" $token_string
+
+
+    #In case instances still remain
+#    Stop-Process -Name "Strata Developer Studio" -Force -ErrorAction SilentlyContinue
+#    Stop-Process -Name "hcs" -Force -ErrorAction SilentlyContinue
+    Stop-SDS
+    Stop-HCS
 
     Write-Host "Starting GUI testing"
 
@@ -38,10 +57,13 @@ function Test-Gui()
     #run basic tests
     Start-SDSAndWait
 
-    Start-Process $PythonExec -ArgumentList $PythonGUIMain, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $BasicTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`"" -NoNewWindow -Wait
 
-    Stop-Process -Name "Strata Developer Studio" -Force
-    Stop-Process -Name "hcs" -Force
+#    Stop-Process -Name "Strata Developer Studio" -Force
+#    Stop-Process -Name "hcs" -Force
+
+    Stop-SDS
+    Stop-HCS
 
     Write-Host "Disabling network for Strata..."
 
@@ -52,10 +74,12 @@ function Test-Gui()
     Start-SDSAndWait
 
     Write-Host "Testing Strata with no network connection..."
-    Start-Process $PythonExec -ArgumentList $PythonGUIMainNoNetwork, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $NoNetworkTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --appendResults --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`"" -NoNewWindow -Wait
 
-    Stop-Process -Name "Strata Developer Studio" -Force
-    Stop-Process -Name "hcs" -Force
+#    Stop-Process -Name "Strata Developer Studio" -Force
+#    Stop-Process -Name "hcs" -Force
+    Stop-SDS
+    Stop-HCS
 
     Write-Host "Enabling network for Strata..."
     Remove-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network"
@@ -66,18 +90,23 @@ function Test-Gui()
     Write-Host "Testing logging in, closing Strata, reopening Strata..."
 
     Start-SDSAndWait
-    Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPre, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMainLoginTestPre --username $Username --password $Password" -NoNewWindow -Wait
 
-    Stop-Process -Name "Strata Developer Studio" -Force
-    Stop-Process -Name "hcs" -Force
-
+#    Stop-Process -Name "Strata Developer Studio" -Force
+#    Stop-Process -Name "hcs" -Force
+    Stop-SDS
+    Stop-HCS
     #Test for Strata automatically going to the platform view
     Start-SDSAndWait
 
-    Start-Process $PythonExec -ArgumentList $PythonGUIMainLoginTestPost, $Username, $Password, $HCSTCPEndpoint -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $StrataRestartTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --appendResults --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`"" -NoNewWindow -Wait
 
-    Stop-Process -Name "Strata Developer Studio" -Force
-    Stop-Process -Name "hcs" -Force
+#    Stop-Process -Name "Strata Developer Studio" -Force
+#    Stop-Process -Name "hcs" -Force
+    Stop-SDS
+    Stop-HCS
+
+    Restore-Strata_INI
 
     $result = (Get-Content "$TestRoot\gui-testing\results.txt") -split ','
     return $result

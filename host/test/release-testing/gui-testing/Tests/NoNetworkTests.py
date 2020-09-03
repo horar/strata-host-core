@@ -4,6 +4,7 @@ Tests involving interacting with elements while not connected to the network
 
 import Common
 import time
+import sys
 from GUIInterface.StrataUI import *
 
 
@@ -23,11 +24,12 @@ class NoNetworkLogin(unittest.TestCase):
             Logout(ui)
 
     def test_no_network_login(self):
+        args = Common.getCommandLineArguments(sys.argv)
         ui = StrataUI()
         # assert on login page
         self.assertTrue(ui.OnLoginScreen())
 
-        Login(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, self)
+        Login(ui, args.username, args.password, self)
 
         time.sleep(10)
         self.assertTrue(ui.AlertExists(Common.LOGIN_ALERT))
@@ -42,11 +44,12 @@ class NoNetworkRegister(unittest.TestCase):
         pass
 
     def test_no_network_register(self):
+        args = Common.getCommandLineArguments(sys.argv)
         ui = StrataUI()
         # assert on register page
         self.assertTrue(ui.OnRegisterScreen())
 
-        Register(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, "Testy", "McTest", "Lead QA", "ON Semiconductor",
+        Register(ui, args.username, args.password, "Testy", "McTest", "Lead QA", "ON Semiconductor",
                  self)
 
         ui.PressRegisterButton()

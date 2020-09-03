@@ -5,6 +5,7 @@ Tests involving creating a new user.
 import Common
 import SystemInterface as cleanup
 import time
+import sys
 from GUIInterface.StrataUI import *
 
 NEW_PASSWORD = "Bepzipbip15"
@@ -25,8 +26,12 @@ class RegisterNew(unittest.TestCase):
 
     def tearDown(self) -> None:
         time.sleep(1)
+
         ui = StrataUI()
-        cleanup.closeAccount()
+
+        args = Common.getCommandLineArguments(sys.argv)
+        cleanup.closeAccount(args.strataIni)
+
         Logout(ui)
 
     def test_registernew(self):

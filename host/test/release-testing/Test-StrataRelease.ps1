@@ -45,6 +45,7 @@ Set-Variable "HCSTCPEndpoint" "tcp://127.0.0.1:5563"
 # Define paths
 Set-Variable "SDSRootDir"    "$Env:ProgramFiles\ON Semiconductor\Strata Developer Studio"
 Set-Variable "HCSAppDataDir" "$Env:AppData\ON Semiconductor\Host Controller Service"
+Set-Variable "StrataDeveloperStudioIniDir" "$Env:AppData\ON Semiconductor\"
 Set-Variable "HCSConfigFile" "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
 Set-Variable "HCSExecFile"   "$SDSRootDir\hcs.exe"
 Set-Variable "SDSExecFile"   "$SDSRootDir\Strata Developer Studio.exe"
@@ -62,10 +63,8 @@ Set-Variable "SDSLoginInfo"   '{"username":"test@test.com","password":"Strata123
 Set-Variable "PythonCollateralDownloadTest"     "$PSScriptRoot/hcs/hcs-collateral-download-test.py"
 Set-Variable "PythonControlViewTest"            "$PSScriptRoot/strataDev/control-view-test.py"
 Set-Variable "PythonPlatformIdentificationTest" "$PSScriptRoot/PlatformIdentification/platform-identification-test.py"
-Set-Variable "PythonGUIMain"                    "$PSScriptRoot/gui-testing/main.py"
+Set-Variable "PythonGUIMain"                    "$PSScriptRoot/gui-testing/runtest.py"
 Set-Variable "PythonGUIMainLoginTestPre"        "$PSScriptRoot/gui-testing/main_login_test_pre.py"
-Set-Variable "PythonGUIMainLoginTestPost"       "$PSScriptRoot/gui-testing/main_login_test_post.py"
-Set-Variable "PythonGUIMainNoNetwork"           "$PSScriptRoot/gui-testing/main_no_network.py"
 
 # Import common functions
 . "$PSScriptRoot\Common-Functions.ps1"
@@ -129,7 +128,6 @@ $TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
 
 #Run Test-GUI
 $GUIResults = Test-GUI
-
 
 #Run Test-CollateralDownload (HCS collateral download testing)
 $CollateralDownloadResults = Test-CollateralDownload

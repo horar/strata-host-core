@@ -5,7 +5,9 @@ Tests involving logging in with boards attached or disconnected.
 import Common
 import time
 import StrataInterface as strata
+import sys
 from GUIInterface.StrataUI import *
+
 
 class LoginValidNoBoard(unittest.TestCase):
     '''
@@ -21,11 +23,12 @@ class LoginValidNoBoard(unittest.TestCase):
         Logout(ui)
 
     def test_login_submit(self):
+        args = Common.getCommandLineArguments(sys.argv)
         ui = StrataUI()
         # assert on login page
         self.assertIsNotNone(ui.OnLoginScreen())
 
-        Login(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, self)
+        Login(ui, args.username, args.password, self)
 
         self.assertTrue(ui.OnPlatformView())
 
@@ -44,11 +47,12 @@ class LoginValidWithBoard(unittest.TestCase):
         Logout(ui)
 
     def test_login_with_board_and_disconnect(self):
+        args = Common.getCommandLineArguments(sys.argv)
         ui = StrataUI()
         # assert on login page
         self.assertTrue(ui.OnLoginScreen())
 
-        Login(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, self)
+        Login(ui, args.username, args.password, self)
         time.sleep(0.5)
         self.assertTrue(ui.OnPlatformView())
 

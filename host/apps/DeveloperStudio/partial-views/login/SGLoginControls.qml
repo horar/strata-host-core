@@ -171,7 +171,7 @@ Item {
 
         }
 
-   RowLayout {
+        RowLayout {
             id: rowLoginControls
             Layout.fillHeight: false
 

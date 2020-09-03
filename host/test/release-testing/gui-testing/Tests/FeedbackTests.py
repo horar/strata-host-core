@@ -3,6 +3,7 @@ Tests involving the feedback system.
 '''
 
 import Common
+import sys
 from GUIInterface.StrataUI import *
 import time
 
@@ -17,10 +18,11 @@ class Feedback(unittest.TestCase):
         Logout(ui)
 
     def test_feedback(self):
+        args = Common.getCommandLineArguments(sys.argv)
         ui = StrataUI()
         # assert on login page
         self.assertTrue(ui.OnLoginScreen())
-        Login(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD, self)
+        Login(ui, args.username, args.password, self)
 
         self.assertTrue(ui.OnPlatformView())
 

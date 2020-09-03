@@ -4,6 +4,7 @@ Tests involving resetting user passwords.
 
 import Common
 import time
+import sys
 from GUIInterface.StrataUI import *
 
 INVALID_USER = "bad@bad.com"
@@ -39,4 +40,5 @@ class PasswordResetTest(unittest.TestCase):
         self.doTest(INVALID_USER)
 
     def test_passwordResetValid(self):
-        self.doTest(Common.VALID_USERNAME)
+        args = Common.getCommandLineArguments(sys.argv)
+        self.doTest(args.username)

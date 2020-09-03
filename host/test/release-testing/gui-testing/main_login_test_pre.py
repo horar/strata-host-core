@@ -7,12 +7,12 @@ import Common
 from GUIInterface.StrataUI import *
 
 if __name__ == "__main__":
-    Common.initIntegratedTest(sys.argv)
     Common.awaitStrata()
+    args = Common.getCommandLineArguments(sys.argv)
 
     ui = StrataUI()
     ui.PressRememberMeCheckbox()
-    Login(ui, Common.VALID_USERNAME, Common.VALID_PASSWORD)
+    Login(ui, args.username, args.password)
 
     # Wait until user is logged in
     while not ui.OnPlatformView():
