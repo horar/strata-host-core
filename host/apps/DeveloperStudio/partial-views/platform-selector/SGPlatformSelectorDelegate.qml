@@ -196,11 +196,11 @@ Item {
         Text {
             id: name
             text: {
-                if (searchCategoryText.checked === false || model.nameMatchingIndex === -1) {
+                if (searchCategoryText.checked === false || model.name_matching_index === -1) {
                     return model.verbose_name
                 } else {
                     let txt = model.verbose_name
-                    let idx = model.nameMatchingIndex
+                    let idx = model.name_matching_index
                     return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
                 }
             }
@@ -219,11 +219,11 @@ Item {
         Text {
             id: productId
             text: {
-                if (searchCategoryText.checked === false || model.opnMatchingIndex === -1) {
+                if (searchCategoryText.checked === false || model.opn_matching_index === -1) {
                     return model.opn
                 } else {
                     let txt = model.opn
-                    let idx = model.opnMatchingIndex
+                    let idx = model.opn_matching_index
                     return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
                 }
             }
@@ -244,11 +244,11 @@ Item {
         Text {
             id: info
             text: {
-                if (searchCategoryText.checked === false || model.descMatchingIndex === -1) {
+                if (searchCategoryText.checked === false || model.desc_matching_index === -1) {
                     return model.description
                 } else {
                     let txt = model.description
-                    let idx = model.descMatchingIndex
+                    let idx = model.desc_matching_index
                     return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
                 }
             }

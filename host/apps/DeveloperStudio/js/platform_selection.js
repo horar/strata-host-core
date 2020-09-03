@@ -141,9 +141,9 @@ function generatePlatform (platform) {
         platform.parts_list = []
     }
 
-    platform.descMatchingIndex = -1
-    platform.opnMatchingIndex = -1
-    platform.nameMatchingIndex = -1
+    platform.desc_matching_index = -1
+    platform.opn_matching_index = -1
+    platform.name_matching_index = -1
 
     platform.error = false
     platform.connected = false  // != device_id, as device may be bound but not connected (i.e. view_open)

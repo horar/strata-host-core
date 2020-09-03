@@ -85,19 +85,19 @@ Item {
                         found = true;
                     }
 
-                    item.descMatchingIndex = replaceIdx
+                    item.desc_matching_index = replaceIdx
 
                     replaceIdx = item.opn.toLowerCase().indexOf(filter.lowerCaseText)
                     if (replaceIdx > -1) {
                         found = true
                     }
-                    item.opnMatchingIndex = replaceIdx
+                    item.opn_matching_index = replaceIdx
 
                     replaceIdx = item.verbose_name.toLowerCase().indexOf(filter.lowerCaseText)
                     if (replaceIdx > -1) {
                         found = true
                     }
-                    item.nameMatchingIndex = replaceIdx
+                    item.name_matching_index = replaceIdx
                 }
 
                 if (searchCategoryPartsList.checked === true) {
@@ -328,12 +328,20 @@ Item {
                             id: searchCategoryText
                             text: qsTr("Platform Titles and Descriptions")
                             checked: true
+
+                            onCheckedChanged: {
+                                filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                            }
                         }
 
                         CheckBox {
                             id: searchCategoryPartsList
                             text: qsTr("Part Numbers in Bill of Materials")
                             checked: true
+
+                            onCheckedChanged: {
+                                filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                            }
                         }
                     }
                 }
