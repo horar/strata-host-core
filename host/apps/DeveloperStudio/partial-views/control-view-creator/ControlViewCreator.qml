@@ -15,10 +15,23 @@ Rectangle {
         // todo: append files in project from QRC to fileModel
 
         // example files
-        fileModel.append({"file":"filename1.txt", "open":true, "visible": true})
-        fileModel.append({"file":"filename2.txt", "open":false, "visible": false})
-        fileModel.append({"file":"filename3.txt", "open":false, "visible": false})
-        fileModel.append({"file":"filename4.txt", "open":false, "visible": false})
+        fileModel.append({
+                             "file":"Control.qml",
+                             "path":"file:///Users/zbd8dm/Desktop/sample/Control.qml",
+                             "open":true,
+                             "visible": true
+                         })
+        fileModel.append({
+                             "file":"PlatformInterface.qml",
+                             "path":"file:///Users/zbd8dm/Desktop/sample/PlatformInterface.qml",
+                             "open":false,
+                             "visible": false
+                         })
+        // example files
+//        fileModel.append({"file":"filename1.txt", "open":true, "visible": true})
+//        fileModel.append({"file":"filename2.txt", "open":false, "visible": false})
+//        fileModel.append({"file":"filename3.txt", "open":false, "visible": false})
+//        fileModel.append({"file":"filename4.txt", "open":false, "visible": false})
     }
 
     ColumnLayout {
