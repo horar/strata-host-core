@@ -55,8 +55,8 @@ class StrataUI:
         Find the (lowest, highest, etc.) button by its name
         '''
         buttons = self.FindAll(
-            lambda control: control.GetPropertyValue(PropertyId.NameProperty) == name and control.GetPropertyValue(
-                PropertyId.ControlTypeProperty) == ControlType.ButtonControl)
+            lambda control: control.GetPropertyValue(PropertyId.NameProperty) == name and
+                            (control.GetPropertyValue(PropertyId.ControlTypeProperty) == ControlType.ButtonControl or control.GetPropertyValue(PropertyId.ControlTypeProperty) == ControlType.CheckBoxControl))
 
         def lowestButton(button: Control, lowest: Control):
             currentRect = button.GetPropertyValue(PropertyId.BoundingRectangleProperty)
