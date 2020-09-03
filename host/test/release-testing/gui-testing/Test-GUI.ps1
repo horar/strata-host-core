@@ -45,8 +45,6 @@ function Test-Gui()
 
 
     #In case instances still remain
-#    Stop-Process -Name "Strata Developer Studio" -Force -ErrorAction SilentlyContinue
-#    Stop-Process -Name "hcs" -Force -ErrorAction SilentlyContinue
     Stop-SDS
     Stop-HCS
 
@@ -58,9 +56,6 @@ function Test-Gui()
     Start-SDSAndWait
 
     Start-Process $PythonExec -ArgumentList "$PythonGUIMain $BasicTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`"" -NoNewWindow -Wait
-
-#    Stop-Process -Name "Strata Developer Studio" -Force
-#    Stop-Process -Name "hcs" -Force
 
     Stop-SDS
     Stop-HCS
@@ -92,17 +87,14 @@ function Test-Gui()
     Start-SDSAndWait
     Start-Process $PythonExec -ArgumentList "$PythonGUIMainLoginTestPre --username $Username --password $Password" -NoNewWindow -Wait
 
-#    Stop-Process -Name "Strata Developer Studio" -Force
-#    Stop-Process -Name "hcs" -Force
     Stop-SDS
     Stop-HCS
+
     #Test for Strata automatically going to the platform view
     Start-SDSAndWait
 
     Start-Process $PythonExec -ArgumentList "$PythonGUIMain $StrataRestartTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --appendResults --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`"" -NoNewWindow -Wait
 
-#    Stop-Process -Name "Strata Developer Studio" -Force
-#    Stop-Process -Name "hcs" -Force
     Stop-SDS
     Stop-HCS
 
