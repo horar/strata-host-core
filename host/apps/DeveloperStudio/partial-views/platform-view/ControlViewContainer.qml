@@ -10,6 +10,7 @@ Item {
     property string updateVersion: ""
     property string updateVersionPath: ""
     property string activeVersion: ""
+    property string activeDownloadUri: ""
     property var versionsToRemoveFromUpdate: []
 
     anchors {
@@ -163,6 +164,8 @@ Item {
                 }
             };
 
+            activeDownloadUri = platformStack.controlViewList.uri(index)
+
             coreInterface.sendCommand(JSON.stringify(downloadCommand));
         } else {
             if (sdsModel.resourceLoader.isViewRegistered(model.class_id)) {
@@ -180,7 +183,8 @@ Item {
         target: sdsModel.coreInterface
 
         onDownloadViewFinished: {
-            if (platformStack.currentIndex === index) {
+            if (platformStack.currentIndex === index && payload.url === activeDownloadUri) {
+                activeDownloadUri = ""
                 if (payload.error_string.length > 0) {
                     removeControl()
                     platformStack.createErrorScreen(payload.error_string);
@@ -208,7 +212,7 @@ Item {
         }
 
         onDownloadControlViewProgress: {
-            if (currentIndex === index) {
+            if (currentIndex === index && payload.url === activeDownloadUri) {
                 let percent = payload.bytes_received / payload.bytes_total;
                 if (percent !== 1.0) {
                     platformStack.loadingBar.value = percent
