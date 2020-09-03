@@ -55,8 +55,10 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
 }
 
 bool ResourceLoader::deleteStaticViewResource(const QString &class_id, const QString &displayName, QObject *loader) {
-    QFileInfo rccFile(ResourcePath::viewsResourcePath() + "/views-" + displayName + ".rcc");
+    QDir staticViewsDir(ResourcePath::viewsResourcePath());
+    QFileInfo rccFile(staticViewsDir.filePath("views-" + displayName + ".rcc"));
     if (rccFile.exists()) {
+        qCDebug(logCategoryResourceLoader) << "Deleting static resource" << displayName;
         return deleteViewResource(class_id, rccFile.filePath(), "", loader);
     } else {
         return false;
@@ -94,7 +96,8 @@ bool ResourceLoader::registerStaticControlViewResources(const QString &class_id,
         return false;
     }
 
-    QFileInfo resourceInfo(ResourcePath::viewsResourcePath() + "/" + "views-" + displayName + ".rcc");
+    QDir staticViewsDir(ResourcePath::viewsResourcePath());
+    QFileInfo resourceInfo(staticViewsDir.filePath("views-" + displayName + ".rcc"));
 
     if (resourceInfo.exists()) {
         qCDebug(logCategoryResourceLoader) << "Found static resource file, attempting to load resource " << resourceInfo.filePath() << " for class id: " << class_id;
