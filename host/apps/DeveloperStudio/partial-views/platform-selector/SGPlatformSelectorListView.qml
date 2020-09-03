@@ -255,37 +255,13 @@ Item {
                 }
 
                 SGIcon {
-                    id: cogIcon
-                    source: "qrc:/sgimages/cog.svg"
-                    height: parent.height * .75
-                    width: height
-                    anchors {
-                        verticalCenter: textFilterContainer.verticalCenter
-                        right: clearIcon.visible ? clearIcon.left : textFilterContainer.right
-                        rightMargin: (textFilterContainer.height - height) / 2
-                    }
-                    iconColor: cogMouse.containsMouse || searchCategoriesDropdown.opened ?  "#bbb" : "#999"
-
-                    MouseArea {
-                        id: cogMouse
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-
-                        onClicked: {
-                            searchCategoriesDropdown.opened ? searchCategoriesDropdown.close() : searchCategoriesDropdown.open()
-                        }
-                    }
-                }
-
-                SGIcon {
                     id: clearIcon
                     source: "qrc:/sgimages/times-circle.svg"
                     height: parent.height * .75
                     width: height
                     anchors {
                         verticalCenter: textFilterContainer.verticalCenter
-                        right: textFilterContainer.right
+                        right: cogIcon.left
                         rightMargin: (textFilterContainer.height - height) / 2
                     }
                     iconColor: textFilterClearMouse.containsMouse ?  "#bbb" : "#999"
@@ -302,11 +278,35 @@ Item {
                     }
                 }
 
+                SGIcon {
+                    id: cogIcon
+                    source: "qrc:/sgimages/cog.svg"
+                    height: parent.height * .75
+                    width: height
+                    anchors {
+                        verticalCenter: textFilterContainer.verticalCenter
+                        right: textFilterContainer.right
+                        rightMargin: (textFilterContainer.height - height) / 2
+                    }
+                    iconColor: cogMouse.containsMouse || searchCategoriesDropdown.opened ?  "#bbb" : "#999"
+
+                    MouseArea {
+                        id: cogMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked: {
+                            searchCategoriesDropdown.opened ? searchCategoriesDropdown.close() : searchCategoriesDropdown.open()
+                        }
+                    }
+                }
+
                 Popup {
                     id: searchCategoriesDropdown
 
                     y: textFilterContainer.height-1
-                    width: textFilterContainer.width
+                    width: textFilterContainer.width+1
                     topPadding: 0
                     bottomPadding: 0
                     leftPadding: 5
@@ -323,13 +323,6 @@ Item {
                     contentItem: Column {
                         id: checkboxCol
                         anchors.fill: parent
-                        topPadding: 10
-
-                        Text {
-                            text: "Search in:"
-                            leftPadding: 5
-                            bottomPadding: 5
-                        }
 
                         CheckBox {
                             id: searchCategoryText
