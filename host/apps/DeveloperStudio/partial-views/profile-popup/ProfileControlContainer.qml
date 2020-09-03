@@ -87,11 +87,11 @@ Rectangle {
                    if (allFieldsValid()) {
                        root.saved()
                        root.editing = false
-                       hideAnimation.start()
+                       alertRect.hide()
                    } else {
-                       alertText.text = errorAlertText
+                       alertRect.text = errorAlertText
                        alertRect.color = "red"
-                       alertAnimation.start()
+                       alertRect.show()
                    }
                }
            }
