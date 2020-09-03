@@ -79,15 +79,25 @@ Controller.prototype.IntroductionPageCallback = function()
     var widget = gui.currentPageWidget();
     if (widget != null) {
         if(installer.isInstaller()) {
-            widget.MessageLabel.setText("Welcome to the " + installer.value("Name") + " Setup Wizard.\n\n"
-                                    + "This will install the following on your computer: \n"
-                                    + "  1) Strata Developer Studio\n"
-                                    + "  2) Host Controller Service\n"
-                                    + "  3) Microsoft VS 2017 Tools, Add-ONs and Extensions\n"
-                                    + "  4) FTDI Driver\n\n"
-                                    + "It is recommended that you close all other applications before continuing.\n\n"
-                                    + "Click Next to continue, or Quit to exit Setup."
-                                    );
+            if (systemInfo.productType === "windows") {
+                widget.MessageLabel.setText("Welcome to the " + installer.value("Name") + " Setup Wizard.\n\n"
+                                        + "This will install the following on your computer: \n"
+                                        + "  1) Strata Developer Studio\n"
+                                        + "  2) Host Controller Service\n"
+                                        + "  3) Microsoft VS 2017 Tools, Add-ONs and Extensions\n"
+                                        + "  4) FTDI Driver\n\n"
+                                        + "It is recommended that you close all other applications before continuing.\n\n"
+                                        + "Click Next to continue, or Quit to exit Setup."
+                                        );
+            } else {
+                widget.MessageLabel.setText("Welcome to the " + installer.value("Name") + " Setup Wizard.\n\n"
+                                        + "This will install the following on your computer: \n"
+                                        + "  1) Strata Developer Studio\n"
+                                        + "  2) Host Controller Service\n\n"
+                                        + "It is recommended that you close all other applications before continuing.\n\n"
+                                        + "Click Next to continue, or Quit to exit Setup."
+                                        );
+            }
         } else {
             widget.MessageLabel.setText("Welcome to the " + installer.value("Name") + " Setup Wizard.\n\n"
                                     + "Please choose one of the available options, then click Next to continue.\n\n"

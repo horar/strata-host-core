@@ -7,5 +7,4 @@
     <Script>installscript.js</Script>
     <ForcedInstallation>true</ForcedInstallation>
     <SortingPriority>70</SortingPriority>
-    <Dependencies>com.onsemi.strata.qt, com.onsemi.strata.utils.common.vcredist, com.onsemi.strata.utils.ftdi</Dependencies>
 </Package>

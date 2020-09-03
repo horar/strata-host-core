@@ -27,9 +27,9 @@ int send_unregister_client()
     return 0;
 }
 
-int send_platform_select()
+int send_load_documents()
 {
-    const std::string msg(  "{ \"cmd\":\"platform_select\", \"payload\":" \
+    const std::string msg(  "{ \"cmd\":\"load_documents\", \"payload\":" \
                             " { \"class_id\":\"P2.2017.1.1.0.0.cbde0519-0f42-4431-a379-caee4a1494af\" } " \
                             "}" );
 

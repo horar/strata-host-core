@@ -6,6 +6,7 @@ import QtGraphicalEffects 1.0
 
 import "qrc:/partial-views"
 import "qrc:/partial-views/platform-selector"
+import "qrc:/partial-views/distribution-portal"
 import "js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_filters.js" as Filters
 import "qrc:/js/help_layout_manager.js" as Help
@@ -62,11 +63,15 @@ Rectangle{
         }
     }
 
+    SGBaseDistributionButton {
+
+    }
+
     SGIcon {
         id: helpIcon
         anchors {
             right: container.right
-            top: container.top
+            bottom: container.bottom
             margins: 20
         }
         source: "qrc:/sgimages/question-circle.svg"
@@ -100,4 +105,5 @@ Rectangle{
             salesPopup.open()
         }
     }
+
 }
