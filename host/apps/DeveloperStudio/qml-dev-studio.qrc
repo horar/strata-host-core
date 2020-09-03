@@ -4,7 +4,6 @@
         <file>partial-views/login/LoginSignals.qml</file>
         <file>SGStatusBar.qml</file>
         <file>SGPlatformSelector.qml</file>
-        <file>include/Modules/CircleBadge.qml</file>
         <file>js/core_platform_interface.js</file>
         <file>js/feedback.js</file>
         <file>js/help_layout_manager.js</file>
