@@ -184,14 +184,15 @@ Item {
         anchors {
             left: imageContainer.right
             leftMargin: 20
-            topMargin: 20
-            bottomMargin: 20
-            top: root.top
-            bottom: root.bottom
+            verticalCenter: parent.verticalCenter
         }
-        spacing: 12
+        height: parent.height - 40 // 20 each top/bottom margin
         width: 350
-        clip: true
+
+        ColumnLayout {
+            spacing: 12
+            Layout.maximumHeight: parent.height
+            Layout.fillHeight: false
 
         Text {
             id: name
@@ -209,8 +210,7 @@ Item {
                 pixelSize: 16
                 family: Fonts.franklinGothicBold
             }
-            Layout.preferredWidth: infoColumn.width
-            Layout.alignment: Qt.AlignCenter
+            Layout.fillWidth: true
             wrapMode: Text.Wrap
             horizontalAlignment: Text.AlignHCenter
             textFormat: Text.StyledText
@@ -228,7 +228,7 @@ Item {
                 }
             }
 
-            Layout.preferredWidth: infoColumn.width
+            Layout.fillWidth: true
             font {
                 pixelSize: 13
                 family: Fonts.franklinGothicBook
@@ -236,7 +236,6 @@ Item {
             color: "#333"
             font.italic: true
             wrapMode: Text.Wrap
-            Layout.alignment: Qt.AlignCenter
             horizontalAlignment: Text.AlignHCenter
             textFormat: Text.StyledText
         }
@@ -252,9 +251,8 @@ Item {
                     return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
                 }
             }
-            Layout.alignment: Qt.AlignCenter
-            Layout.preferredWidth: infoColumn.width
-            maximumLineCount: 5
+            Layout.fillWidth: true
+            Layout.fillHeight: true
             font {
                 pixelSize: 12
                 family: Fonts.franklinGothicBook
@@ -291,10 +289,7 @@ Item {
                 }
             }
             visible: searchCategoryPartsList.checked === true && PlatformFilters.keywordFilter !== "" && text !== "Matching Part OPNs: "
-            Layout.alignment: Qt.AlignCenter
-            Layout.preferredWidth: infoColumn.width
-            maximumLineCount: 2
-            wrapMode: Text.Wrap
+            Layout.fillWidth: true
             font {
                 pixelSize: 12
                 family: Fonts.franklinGothicBook
@@ -303,6 +298,7 @@ Item {
             textFormat: Text.StyledText
             horizontalAlignment: Text.AlignHCenter
             elide: Text.ElideRight
+        }
         }
     }
 
