@@ -190,13 +190,26 @@ Item {
                 width: 577
                 clip: true
 
+                SGIcon {
+                    id: searchIcon
+                    source: "qrc:/sgimages/zoom.svg"
+                    height: filter.height * .75
+                    width: height
+                    iconColor: "#666"
+                    anchors {
+                        left: textFilterContainer.left
+                        leftMargin: 10
+                        verticalCenter: textFilterContainer.verticalCenter
+                    }
+                }
+
                 TextInput {
                     id: filter
                     text: ""
                     anchors {
                         verticalCenter: textFilterContainer.verticalCenter
-                        left: textFilterContainer.left
-                        leftMargin: 10
+                        left: searchIcon.right
+                        leftMargin: 5
                         right: textFilterContainer.right
                         rightMargin: 10
                     }
@@ -217,6 +230,7 @@ Item {
                         }
                         filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
                     }
+
 
                     Text {
                         id: placeholderText
