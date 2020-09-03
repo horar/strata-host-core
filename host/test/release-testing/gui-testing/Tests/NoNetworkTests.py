@@ -3,7 +3,6 @@ Tests involving interacting with elements while not connected to the network
 '''
 
 import Common
-import time
 import sys
 from GUIInterface.StrataUI import *
 
@@ -31,8 +30,7 @@ class NoNetworkLogin(unittest.TestCase):
 
         Login(ui, args.username, args.password, self)
 
-        time.sleep(10)
-        self.assertTrue(ui.AlertExists(Common.LOGIN_ALERT))
+        self.assertTrue(ui.AlertExists(Common.LOGIN_ALERT, maxSearchSeconds=20))
 
 
 class NoNetworkRegister(unittest.TestCase):
@@ -53,5 +51,4 @@ class NoNetworkRegister(unittest.TestCase):
                  self)
 
         ui.PressRegisterButton()
-        time.sleep(10)
-        self.assertTrue(ui.AlertExists(Common.REGISTER_ALERT))
+        self.assertTrue(ui.AlertExists(Common.REGISTER_ALERT, maxSearchSeconds=20))

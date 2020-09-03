@@ -36,10 +36,10 @@ class StrataUI:
             child = child.GetNextSiblingControl()
         return matching
 
-    def __existsCatchComError(self, control):
+    def __existsCatchComError(self, control, maxSearchSeconds = 7):
         #Transitioning screens while checking for existance sometimes throws a COMError.
         try:
-            return control.Exists()
+            return control.Exists(maxSearchSeconds=maxSearchSeconds)
         except _ctypes.COMError:
             return False
 
@@ -185,12 +185,12 @@ class StrataUI:
         button = self.findButtonByHeight(LOGIN_TAB, lambda c, l: c > l)
         button.GetInvokePattern().Invoke()
 
-    def AlertExists(self, identifier, property=PropertyId.NameProperty):
+    def AlertExists(self, identifier, property=PropertyId.NameProperty, maxSearchSeconds = 7):
         '''
         Determine if an alert exists by a specific property
         '''
         alert = self.app.CustomControl(Compare=self.__hasProperty(PropertyId.NameProperty, identifier))
-        return self.__existsCatchComError(alert)
+        return self.__existsCatchComError(alert, maxSearchSeconds)
 
     def ConnectedPlatforms(self):
         '''

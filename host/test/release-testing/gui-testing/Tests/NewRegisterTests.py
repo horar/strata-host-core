@@ -4,7 +4,6 @@ Tests involving creating a new user.
 
 import Common
 import SystemInterface as cleanup
-import time
 import sys
 from GUIInterface.StrataUI import *
 
@@ -25,23 +24,24 @@ class RegisterNew(unittest.TestCase):
         ui.SetToRegisterTab()
 
     def tearDown(self) -> None:
-        time.sleep(1)
-
         ui = StrataUI()
 
-        args = Common.getCommandLineArguments(sys.argv)
-        cleanup.closeAccount(args.strataIni)
+        if ui.OnPlatformView:
+            args = Common.getCommandLineArguments(sys.argv)
+            cleanup.closeAccount(args.strataIni)
 
-        Logout(ui)
+            Logout(ui)
 
     def test_registernew(self):
         ui = StrataUI()
+
         # Assert that on registration page
         self.assertTrue(ui.OnRegisterScreen())
+
         newUsername = Common.randomUsername()
         Register(ui, newUsername, NEW_PASSWORD, NEW_FIRST_NAME, NEW_LAST_NAME, NEW_TITLE, NEW_COMPANY, self)
 
-        self.assertTrue(ui.AlertExists(Common.REGISTER_ALERT))
+        self.assertTrue(ui.AlertExists(Common.REGISTER_ALERT, maxSearchSeconds=20))
 
         ui.SetToLoginTab()
         Login(ui, newUsername, NEW_PASSWORD, self)

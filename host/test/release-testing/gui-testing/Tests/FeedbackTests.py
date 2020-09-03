@@ -5,7 +5,6 @@ Tests involving the feedback system.
 import Common
 import sys
 from GUIInterface.StrataUI import *
-import time
 
 class Feedback(unittest.TestCase):
 
@@ -24,8 +23,6 @@ class Feedback(unittest.TestCase):
         self.assertTrue(ui.OnLoginScreen())
         Login(ui, args.username, args.password, self)
 
-        time.sleep(1)
-
         self.assertTrue(ui.OnPlatformView())
 
         ui.PressButton(Common.USER_ICON_BUTTON)
@@ -38,8 +35,6 @@ class Feedback(unittest.TestCase):
         ui.SetEditText(Common.FEEDBACK_EDIT, "this is a cool product", property=PropertyId.NameProperty)
 
         ui.PressButton(Common.FEEDBACK_SUBMIT_BUTTON)
-
-        time.sleep(1)
 
         self.assertTrue(ui.OnFeedbackSuccess())
 

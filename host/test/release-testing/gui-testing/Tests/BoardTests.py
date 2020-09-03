@@ -3,7 +3,6 @@ Tests involving logging in with boards attached or disconnected.
 '''
 
 import Common
-import time
 import StrataInterface as strata
 import sys
 from GUIInterface.StrataUI import *
@@ -53,7 +52,7 @@ class LoginValidWithBoard(unittest.TestCase):
         self.assertTrue(ui.OnLoginScreen())
 
         Login(ui, args.username, args.password, self)
-        time.sleep(0.5)
+
         self.assertTrue(ui.OnPlatformView())
 
         strata.initPlatformList()
@@ -63,7 +62,5 @@ class LoginValidWithBoard(unittest.TestCase):
         self.assertTrue(ui.ConnectedPlatforms() > 0)
 
         strata.closePlatforms()
-
-        time.sleep(1)
 
         self.assertTrue(ui.ConnectedPlatforms() == 0)

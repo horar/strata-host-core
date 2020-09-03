@@ -3,7 +3,6 @@ Tests involving resetting user passwords.
 '''
 
 import Common
-import time
 import sys
 from GUIInterface.StrataUI import *
 
@@ -31,8 +30,6 @@ class PasswordResetTest(unittest.TestCase):
         ui.SetEditText(Common.RESET_PASSWORD_EDIT, username)
 
         ui.PressButton(Common.RESET_PASSWORD_SUBMIT_BUTTON)
-
-        time.sleep(1)
 
         self.assertTrue(ui.AlertExists(Common.RESET_PASSWORD_ALERT))
 
