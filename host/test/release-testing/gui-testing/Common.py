@@ -3,21 +3,10 @@ Singleton module for constants and methods common across tests and mains
 '''
 import argparse
 import os
-import sys
 import time
 import uuid
 
 import psutil
-
-import StrataInterface as strata
-
-#These are global parameters that can be set by initIntegratedTest or runStandalone. They are implemented this way because unittest does not easily allow for parameterized tests.
-# VALID_USERNAME = None
-# VALID_PASSWORD = None
-# DEFAULT_URL = None
-# INI_PATH = None
-
-
 
 STRATA_WINDOW = "ON Semiconductor: Strata Developer Studio"
 LOGIN_TAB = "Login"
