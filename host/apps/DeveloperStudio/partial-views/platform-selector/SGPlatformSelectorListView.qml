@@ -220,7 +220,7 @@ Item {
 
                     Text {
                         id: placeholderText
-                        text: "Filter By Keyword..."
+                        text: "Search..."
                         color: filter.enabled? "#666" : "#ddd"
                         visible: filter.text === ""
                         anchors {
@@ -309,16 +309,23 @@ Item {
                     contentItem: Column {
                         id: checkboxCol
                         anchors.fill: parent
+                        topPadding: 10
+
+                        Text {
+                            text: "Search in:"
+                            leftPadding: 5
+                            bottomPadding: 5
+                        }
 
                         CheckBox {
                             id: searchCategoryText
-                            text: qsTr("Search in Platform Titles and Descriptions")
+                            text: qsTr("Platform Titles and Descriptions")
                             checked: true
                         }
 
                         CheckBox {
                             id: searchCategoryPartsList
-                            text: qsTr("Search in Part Numbers in Bill of Materials")
+                            text: qsTr("Part Numbers in Bill of Materials")
                             checked: true
                         }
                     }
