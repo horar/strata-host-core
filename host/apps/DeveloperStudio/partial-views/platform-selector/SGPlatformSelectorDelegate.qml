@@ -194,111 +194,111 @@ Item {
             Layout.maximumHeight: parent.height
             Layout.fillHeight: false
 
-        Text {
-            id: name
-            text: {
-                if (searchCategoryText.checked === false || model.name_matching_index === -1) {
-                    return model.verbose_name
-                } else {
-                    let txt = model.verbose_name
-                    let idx = model.name_matching_index
-                    return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+            Text {
+                id: name
+                text: {
+                    if (searchCategoryText.checked === false || model.name_matching_index === -1) {
+                        return model.verbose_name
+                    } else {
+                        let txt = model.verbose_name
+                        let idx = model.name_matching_index
+                        return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                    }
                 }
-            }
 
-            font {
-                pixelSize: 16
-                family: Fonts.franklinGothicBold
-            }
-            Layout.fillWidth: true
-            wrapMode: Text.Wrap
-            horizontalAlignment: Text.AlignHCenter
-            textFormat: Text.StyledText
-        }
-
-        Text {
-            id: productId
-            text: {
-                if (searchCategoryText.checked === false || model.opn_matching_index === -1) {
-                    return model.opn
-                } else {
-                    let txt = model.opn
-                    let idx = model.opn_matching_index
-                    return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                font {
+                    pixelSize: 16
+                    family: Fonts.franklinGothicBold
                 }
+                Layout.fillWidth: true
+                wrapMode: Text.Wrap
+                horizontalAlignment: Text.AlignHCenter
+                textFormat: Text.StyledText
             }
 
-            Layout.fillWidth: true
-            font {
-                pixelSize: 13
-                family: Fonts.franklinGothicBook
-            }
-            color: "#333"
-            font.italic: true
-            wrapMode: Text.Wrap
-            horizontalAlignment: Text.AlignHCenter
-            textFormat: Text.StyledText
-        }
-
-        Text {
-            id: info
-            text: {
-                if (searchCategoryText.checked === false || model.desc_matching_index === -1) {
-                    return model.description
-                } else {
-                    let txt = model.description
-                    let idx = model.desc_matching_index
-                    return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+            Text {
+                id: productId
+                text: {
+                    if (searchCategoryText.checked === false || model.opn_matching_index === -1) {
+                        return model.opn
+                    } else {
+                        let txt = model.opn
+                        let idx = model.opn_matching_index
+                        return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                    }
                 }
-            }
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            font {
-                pixelSize: 12
-                family: Fonts.franklinGothicBook
-            }
-            color: "#666"
-            wrapMode: Text.Wrap
-            elide: Text.ElideRight
-            horizontalAlignment: Text.AlignHCenter
-            textFormat: Text.StyledText
-        }
 
-        Text {
-            id: parts
-            text: {
-                if (searchCategoryPartsList.checked === true) {
-                    let str = "Matching Part OPNs: ";
-                    if (model.parts_list !== undefined) {
-                        for (let i = 0; i < model.parts_list.count; i++) {
-                            if (model.parts_list.get(i).matchingIndex > -1) {
-                                let idx = model.parts_list.get(i).matchingIndex
-                                let part = model.parts_list.get(i).opn
-                                if (str !== "Matching Part OPNs: ") {
-                                    str += ", "
+                Layout.fillWidth: true
+                font {
+                    pixelSize: 13
+                    family: Fonts.franklinGothicBook
+                }
+                color: "#333"
+                font.italic: true
+                wrapMode: Text.Wrap
+                horizontalAlignment: Text.AlignHCenter
+                textFormat: Text.StyledText
+            }
+
+            Text {
+                id: info
+                text: {
+                    if (searchCategoryText.checked === false || model.desc_matching_index === -1) {
+                        return model.description
+                    } else {
+                        let txt = model.description
+                        let idx = model.desc_matching_index
+                        return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                    }
+                }
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                font {
+                    pixelSize: 12
+                    family: Fonts.franklinGothicBook
+                }
+                color: "#666"
+                wrapMode: Text.Wrap
+                elide: Text.ElideRight
+                horizontalAlignment: Text.AlignHCenter
+                textFormat: Text.StyledText
+            }
+
+            Text {
+                id: parts
+                text: {
+                    if (searchCategoryPartsList.checked === true) {
+                        let str = "Matching Part OPNs: ";
+                        if (model.parts_list !== undefined) {
+                            for (let i = 0; i < model.parts_list.count; i++) {
+                                if (model.parts_list.get(i).matchingIndex > -1) {
+                                    let idx = model.parts_list.get(i).matchingIndex
+                                    let part = model.parts_list.get(i).opn
+                                    if (str !== "Matching Part OPNs: ") {
+                                        str += ", "
+                                    }
+                                    str += part.substring(0, idx) + "<font color=\"green\">" + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + "</font>" + part.substring(idx + PlatformFilters.keywordFilter.length)
+                                } else {
+                                    continue
                                 }
-                                str += part.substring(0, idx) + "<font color=\"green\">" + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + "</font>" + part.substring(idx + PlatformFilters.keywordFilter.length)
-                            } else {
-                                continue
                             }
                         }
+                        return str
+                    } else {
+                        return ""
                     }
-                    return str
-                } else {
-                    return ""
                 }
+                visible: searchCategoryPartsList.checked === true && PlatformFilters.keywordFilter !== "" && text !== "Matching Part OPNs: "
+                Layout.fillWidth: true
+                font {
+                    pixelSize: 12
+                    family: Fonts.franklinGothicBook
+                }
+                color: "#666"
+                textFormat: Text.StyledText
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideRight
             }
-            visible: searchCategoryPartsList.checked === true && PlatformFilters.keywordFilter !== "" && text !== "Matching Part OPNs: "
-            Layout.fillWidth: true
-            font {
-                pixelSize: 12
-                family: Fonts.franklinGothicBook
-            }
-            color: "#666"
-            textFormat: Text.StyledText
-            horizontalAlignment: Text.AlignHCenter
-            elide: Text.ElideRight
-        }
         }
     }
 
