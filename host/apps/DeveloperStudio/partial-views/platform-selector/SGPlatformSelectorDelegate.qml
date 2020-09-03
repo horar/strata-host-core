@@ -254,6 +254,7 @@ Item {
             }
             Layout.alignment: Qt.AlignCenter
             Layout.preferredWidth: infoColumn.width
+            maximumLineCount: 5
             font {
                 pixelSize: 12
                 family: Fonts.franklinGothicBook
