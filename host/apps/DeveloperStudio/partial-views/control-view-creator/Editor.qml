@@ -10,11 +10,12 @@ Item {
     id: editorRoot
 
     function setVisible (index) {
-        if (fileModel.get(index).open === false) {
-            fileModel.get(index).open = true
+        let file = fileModel.get(index);
+        if (file.open === false) {
+            fileModel.setOpen(index, true)
         }
         for (let i = 0; i < fileModel.count; i++) {
-            fileModel.get(i).visible = (index === i)
+            fileModel.setVisible(i, index === i)
         }
         fileStack.currentIndex = index
     }

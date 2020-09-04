@@ -9,20 +9,21 @@ QrcItem::QrcItem(QObject *parent) : QObject(parent)
 {
 }
 
-QrcItem::QrcItem(QString filename, QString prefix, QUrl path, QObject *parent) : QObject(parent)
+QrcItem::QrcItem(QString filename, QUrl path, QObject *parent) : QObject(parent)
 {
-    filename_ = filename;
-    prefix_ = prefix;
+    QFileInfo file(filename);
+    QDir fileDir(file.dir());
+    while (fileDir.dirName() != ".") {
+        relativePath_.append(fileDir.dirName());
+        fileDir.cdUp();
+    }
+    filename_ = file.fileName();
     visible_ = false;
     open_ = false;
 
     QFileInfo qrcFile(QDir::toNativeSeparators(path.toLocalFile()));
-    filepath_ = qrcFile.dir().filePath(filename);
-}
-
-QString QrcItem::prefix() const
-{
-    return prefix_;
+    filepath_.setScheme("file");
+    filepath_.setPath(qrcFile.dir().filePath(filename));
 }
 
 QString QrcItem::filename() const
@@ -30,9 +31,14 @@ QString QrcItem::filename() const
     return filename_;
 }
 
-QString QrcItem::filepath() const
+QUrl QrcItem::filepath() const
 {
     return filepath_;
+}
+
+QStringList QrcItem::relativePath() const
+{
+    return relativePath_;
 }
 
 bool QrcItem::visible() const
@@ -45,13 +51,6 @@ bool QrcItem::open() const
     return open_;
 }
 
-void QrcItem::setPrefix(QString prefix) {
-    if (prefix_ != prefix) {
-        prefix_ = prefix;
-        emit prefixChanged();
-    }
-}
-
 void QrcItem::setFilename(QString filename) {
     if (filename_ != filename) {
         filename_ = filename;
@@ -59,11 +58,16 @@ void QrcItem::setFilename(QString filename) {
     }
 }
 
-void QrcItem::setFilepath(QString filepath) {
+void QrcItem::setFilepath(QUrl filepath) {
     if (filepath_ != filepath) {
         filepath_ = filepath;
         emit filepathChanged();
     }
+}
+
+void QrcItem::setRelativePath(QStringList relativePath) {
+    relativePath_ = relativePath;
+    emit relativePathChanged();
 }
 
 void QrcItem::setVisible(bool visible) {
@@ -91,6 +95,22 @@ SGQrcListModel::~SGQrcListModel()
     clear();
 }
 
+void SGQrcListModel::setOpen(int index, bool open)
+{
+    if (index < 0 || index >= data_.count()) {
+        qCritical() << "Error: Attempting to set property of index that is not valid";
+    }
+    data_.at(index)->setOpen(open);
+}
+
+void SGQrcListModel::setVisible(int index, bool visible)
+{
+    if (index < 0 || index >= data_.count()) {
+        qCritical() << "Error: Attempting to set property of index that is not valid";
+    }
+    data_.at(index)->setVisible(visible);
+}
+
 void SGQrcListModel::readQrcFile()
 {
     beginResetModel();
@@ -108,17 +128,19 @@ void SGQrcListModel::readQrcFile()
     }
 
     QXmlStreamReader reader(&qrcIn);
-    QString prefix = "/";
     while (reader.readNextStartElement() && !reader.hasError()) {
         // Start of XML element
         if (reader.name() == "RCC" || reader.name() == "rcc") {
             if (reader.readNextStartElement()) {
                 if (reader.name() == "qresource" && reader.attributes().hasAttribute("prefix")) {
-                    prefix = reader.attributes().value("prefix").toString();
+                    if (reader.attributes().value("prefix").toString() != "/") {
+                        reader.raiseError("Unexpected prefix for qresource");
+                        break;
+                    }
                 }
                 while (reader.readNextStartElement()) {
                     if (reader.name() == "file") {
-                        data_.push_back(new QrcItem(reader.readElementText(), prefix, url_));
+                        data_.push_back(new QrcItem(reader.readElementText(), url_));
                     } else {
                         reader.skipCurrentElement();
                     }
@@ -139,13 +161,22 @@ void SGQrcListModel::readQrcFile()
     emit countChanged();
 }
 
-QrcItem* SGQrcListModel::get(int index) const
+QVariantMap SGQrcListModel::get(int index) const
 {
     if (index < 0 || index >= data_.count()) {
-        return NULL;
+        return QVariantMap();
     }
 
-    return data_.at(index);
+    QVariantMap map;
+    QrcItem* item = data_.at(index);
+
+    map.insert("filename", item->filename());
+    map.insert("filepath", item->filepath());
+    map.insert("open", item->open());
+    map.insert("visible", item->visible());
+    map.insert("relativePath", item->relativePath());
+
+    return map;
 }
 
 QVariant SGQrcListModel::data(const QModelIndex &index, int role) const
@@ -162,12 +193,12 @@ QVariant SGQrcListModel::data(const QModelIndex &index, int role) const
     }
 
     switch (role) {
-    case PrefixRole:
-        return item->prefix();
     case FilenameRole:
         return item->filename();
     case FilepathRole:
         return item->filepath();
+    case RelativePathRole:
+        return item->relativePath();
     case VisibleRole:
         return item->visible();
     case OpenRole:
@@ -236,9 +267,9 @@ void SGQrcListModel::clear(bool emitSignals)
 
 QHash<int, QByteArray> SGQrcListModel::roleNames() const {
     QHash<int, QByteArray> roles;
-    roles[PrefixRole] = "prefix";
     roles[FilenameRole] = "filename";
     roles[FilepathRole] = "filepath";
+    roles[RelativePathRole] = "relativePath";
     roles[VisibleRole] = "visible";
     roles[OpenRole] = "open";
     return roles;

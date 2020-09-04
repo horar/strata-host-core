@@ -7,45 +7,48 @@
 #include <QString>
 #include <QUrl>
 #include <QList>
+#include <QVariantMap>
 
-class QrcItem : QObject
+class QrcItem : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString prefix READ prefix WRITE setPrefix NOTIFY prefixChanged)
     Q_PROPERTY(QString filename READ filename WRITE setFilename NOTIFY filenameChanged)
-    Q_PROPERTY(QString filepath READ filepath WRITE setFilepath NOTIFY filepathChanged)
+    Q_PROPERTY(QUrl filepath READ filepath WRITE setFilepath NOTIFY filepathChanged)
+    Q_PROPERTY(QStringList relativePath READ relativePath NOTIFY relativePathChanged)
     Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
     Q_PROPERTY(bool open READ open WRITE setOpen NOTIFY openChanged)
 
 public:
     explicit QrcItem(QObject *parent = nullptr);
-    QrcItem(QString filename, QString prefix, QUrl path, QObject *parent = nullptr);
+    QrcItem(QString filename, QUrl path, QObject *parent = nullptr);
 
-    QString prefix() const;
     QString filename() const;
-    QString filepath() const;
+    QUrl filepath() const;
+    QStringList relativePath() const;
     bool visible() const;
     bool open() const;
 
-    void setPrefix(QString);
-    void setFilename(QString);
-    void setFilepath(QString);
-    void setVisible(bool);
-    void setOpen(bool);
+    void setFilename(QString filename);
+    void setFilepath(QUrl filepath);
+    void setRelativePath(QStringList relativePath);
+    void setVisible(bool visible);
+    void setOpen(bool open);
 
 signals:
-    void prefixChanged();
     void filenameChanged();
     void filepathChanged();
+    void relativePathChanged();
     void visibleChanged();
     void openChanged();
 private:
-    QString prefix_;
     QString filename_;
-    QString filepath_;
+    QUrl filepath_;
+    QStringList relativePath_;
     bool visible_;
     bool open_;
 };
+
+Q_DECLARE_METATYPE(QrcItem*)
 
 class SGQrcListModel : public QAbstractListModel
 {
@@ -55,9 +58,9 @@ class SGQrcListModel : public QAbstractListModel
 
 public:
     enum QrcRoles {
-        PrefixRole = Qt::UserRole + 1,
-        FilenameRole,
+        FilenameRole = Qt::UserRole + 1,
         FilepathRole,
+        RelativePathRole,
         VisibleRole,
         OpenRole
     };
@@ -74,7 +77,9 @@ public:
     QUrl url() const;
     void setUrl(QUrl url);
 
-    Q_INVOKABLE QrcItem* get(int index) const;
+    Q_INVOKABLE void setOpen(int index, bool open);
+    Q_INVOKABLE void setVisible(int index, bool visible);
+    Q_INVOKABLE QVariantMap get(int index) const;
 signals:
     void countChanged();
     void urlChanged();

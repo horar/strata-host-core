@@ -33,7 +33,7 @@ Rectangle {
                 Layout.fillWidth: true
                 checkable: true
                 checked: model.visible
-                text: model.file
+                text: model.filename
 
                 property int modelIndex: index
 
