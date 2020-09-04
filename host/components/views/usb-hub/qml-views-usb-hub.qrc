@@ -66,5 +66,13 @@
         <file>views/images/videoCable.png</file>
         <file>views/images/AudioAnimReverse.gif</file>
         <file>views/images/AudioAnim.gif</file>
+        <file>views/advanced-partial-views/Overview.qml</file>
+        <file>views/advanced-partial-views/Port.qml</file>
+        <file>views/advanced-partial-views/PortInfo.qml</file>
+        <file>views/advanced-partial-views/PortInfoMini.qml</file>
+        <file>views/advanced-partial-views/PortSettings.qml</file>
+        <file>views/advanced-partial-views/PortStatBox.qml</file>
+        <file>views/advanced-partial-views/PortStatBoxMini.qml</file>
+        <file>views/advanced-partial-views/SystemSettings.qml</file>
     </qresource>
 </RCC>
