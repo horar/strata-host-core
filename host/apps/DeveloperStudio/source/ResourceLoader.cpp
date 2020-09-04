@@ -59,7 +59,7 @@ bool ResourceLoader::deleteStaticViewResource(const QString &class_id, const QSt
     QFileInfo rccFile(staticViewsDir.filePath("views-" + displayName + ".rcc"));
     if (rccFile.exists()) {
         qCDebug(logCategoryResourceLoader) << "Deleting static resource" << displayName;
-        return deleteViewResource(class_id, rccFile.filePath(), "", loader);
+        return deleteViewResource(class_id, rccFile.filePath(), "static", loader);
     } else {
         return false;
     }
@@ -69,11 +69,11 @@ void ResourceLoader::registerControlViewResources(const QString &class_id, const
     QFileInfo viewFileInfo(path);
 
     if (viewFileInfo.exists()) {
-        qCDebug(logCategoryResourceLoader) << "Loading resource " << viewFileInfo.fileName() << " for class id: " << class_id;
+        qCDebug(logCategoryResourceLoader) << "Loading resource " << viewFileInfo.filePath() << " for class id: " << class_id;
 
         /*********
          * We are currently using the class id and version to avoid conflicts when registering resources
-         * Ex) version = 1.15.0 -> qrc:/<class_id>/1.15.0/views/.../views-<control_view_name>.qml
+         * Ex) version = 1.15.0 -> qrc:/<class_id>/1.15.0/Control.qml
          *********/
         if (QResource::registerResource(viewFileInfo.filePath(), getQResourcePrefix(class_id, version)) == false) {
             qCCritical(logCategoryResourceLoader) << "Failed to register resource " << viewFileInfo.fileName() << " for class id: " << class_id;
@@ -101,7 +101,7 @@ bool ResourceLoader::registerStaticControlViewResources(const QString &class_id,
 
     if (resourceInfo.exists()) {
         qCDebug(logCategoryResourceLoader) << "Found static resource file, attempting to load resource " << resourceInfo.filePath() << " for class id: " << class_id;
-        bool registerResult = QResource::registerResource(resourceInfo.filePath());
+        bool registerResult = QResource::registerResource(resourceInfo.filePath(), getQResourcePrefix(class_id, "static"));
         ResourceItem *info = new ResourceItem(resourceInfo.filePath(), "");
         viewsRegistered_.insert(class_id, info);
         return registerResult;

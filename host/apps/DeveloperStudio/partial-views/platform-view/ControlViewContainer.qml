@@ -81,7 +81,7 @@ Item {
                 }
             }
             usingLocalView = false;
-            sdsModel.resourceLoader.registerControlViewResources(model.class_id, updateVersionPath, updateVersion);
+            sdsModel.resourceLoader.registerControlViewResources(platformStack.class_id, updateVersionPath, updateVersion);
             removeOldVersionTimer.start();
         }
     }
@@ -91,22 +91,16 @@ Item {
     */
     function deleteViewResources() {
         for (let i = 0; i < versionsToRemoveFromUpdate.length; i++) {
-            let success = sdsModel.resourceLoader.deleteViewResource(model.class_id, versionsToRemoveFromUpdate[i].filepath, versionsToRemoveFromUpdate[i].version, root);
+            let success = sdsModel.resourceLoader.deleteViewResource(platformStack.class_id, versionsToRemoveFromUpdate[i].filepath, versionsToRemoveFromUpdate[i].version, root);
             if (success) {
-                console.info("Successfully deleted control view version", platformStack.controlViewList.version(i), "for platform", model.class_id);
+                console.info("Successfully deleted control view version", platformStack.controlViewList.version(i), "for platform", platformStack.class_id);
             } else {
-                console.error("Could not delete control view version", platformStack.controlViewList.version(i), "for platform", model.class_id);
+                console.error("Could not delete control view version", platformStack.controlViewList.version(i), "for platform", platformStack.class_id);
             }
         }
 
-
-        let name = UuidMap.uuid_map[model.class_id];
-
-        if (!name) {
-            name = model.name
-        }
-
-        sdsModel.resourceLoader.deleteStaticViewResource(model.class_id, name, root);
+        let name = UuidMap.uuid_map[platformStack.class_id];
+        sdsModel.resourceLoader.deleteStaticViewResource(platformStack.class_id, name, root);
 
         updateVersion = ""
         updateVersionPath = ""
@@ -125,18 +119,13 @@ Item {
               If it is not, then try to first register a static (local) control view for this class_id.
               If that doesn't work then try to load an OTA control view
             */
-            if (sdsModel.resourceLoader.isViewRegistered(model.class_id)) {
+            if (sdsModel.resourceLoader.isViewRegistered(platformStack.class_id)) {
                 platformStack.loadingBar.value = 1.0
                 return;
             }
 
-            let name = UuidMap.uuid_map[model.class_id];
-
-            if (!name) {
-                name = model.name
-            }
-
-            if (sdsModel.resourceLoader.registerStaticControlViewResources(model.class_id, name)) {
+            let name = UuidMap.uuid_map[platformStack.class_id];
+            if (sdsModel.resourceLoader.registerStaticControlViewResources(platformStack.class_id, name)) {
                 usingLocalView = true;
                 platformStack.loadingBar.value = 1.0;
                 return;
@@ -155,7 +144,7 @@ Item {
         let index = platformStack.controlViewList.getInstalledVersion();
 
         if (index < 0) {
-            console.info("No control view installed for", model.class_id)
+            console.info("No control view installed for", platformStack.class_id)
             index = platformStack.controlViewList.getLatestVersion();
 
             if (platformStack.controlViewList.uri(index) === "" || platformStack.controlViewList.md5(index) === "") {
@@ -176,10 +165,10 @@ Item {
 
             coreInterface.sendCommand(JSON.stringify(downloadCommand));
         } else {
-            if (sdsModel.resourceLoader.isViewRegistered(model.class_id)) {
-                platformStack.resourceRegistered(model.class_id);
+            if (sdsModel.resourceLoader.isViewRegistered(platformStack.class_id)) {
+                platformStack.resourceRegistered(platformStack.class_id);
             } else {
-                sdsModel.resourceLoader.registerControlViewResources(model.class_id,
+                sdsModel.resourceLoader.registerControlViewResources(platformStack.class_id,
                                                                      platformStack.controlViewList.filepath(index),
                                                                      platformStack.controlViewList.version(index));
             }
@@ -208,10 +197,10 @@ Item {
                                 platformStack.controlViewListCount.setInstalled(j, false);
                             }
                         }
-                        if (sdsModel.resourceLoader.isViewRegistered(model.class_id)) {
-                            platformStack.resourceRegistered(model.class_id);
+                        if (sdsModel.resourceLoader.isViewRegistered(platformStack.class_id)) {
+                            platformStack.resourceRegistered(platformStack.class_id);
                         } else {
-                            sdsModel.resourceLoader.registerControlViewResources(model.class_id, payload.filepath, platformStack.controlViewList.version(i));
+                            sdsModel.resourceLoader.registerControlViewResources(platformStack.class_id, payload.filepath, platformStack.controlViewList.version(i));
                         }
                         break;
                     }

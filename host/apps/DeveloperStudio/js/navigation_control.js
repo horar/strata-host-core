@@ -86,7 +86,6 @@ function init(status_bar_container, stack_container)
     Retrieve the qml file in the templated file structure
 */
 var PREFIX = "qrc:/"
-var VIEWS_PREFIX = "views/"
 function getQMLFile(class_id, viewName, filename, localResource, version = "") {
     //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, class_id + "-" + filename + "qml file requested.")
 
@@ -97,9 +96,9 @@ function getQMLFile(class_id, viewName, filename, localResource, version = "") {
     }
     var qml_file_name = "";
     if (localResource === true) {
-        qml_file_name = PREFIX + VIEWS_PREFIX + viewName + "/" + filename;
+        qml_file_name = PREFIX + (class_id === "" ? class_id : class_id + "/") + "static/" + filename;
     } else {
-        qml_file_name = PREFIX + (class_id === "" ? class_id : class_id + "/") + (version === "" ? version : version + "/") + VIEWS_PREFIX + viewName + "/" + filename
+        qml_file_name = PREFIX + (class_id === "" ? class_id : class_id + "/") + (version === "" ? version : version + "/") + filename
     }
 
     console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Locating at ", qml_file_name)
