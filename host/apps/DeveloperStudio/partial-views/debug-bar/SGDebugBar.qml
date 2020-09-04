@@ -252,4 +252,49 @@ Item {
             commandBar.visible = true
         }
     }
+
+    SGQmlErrorListButton {
+        id: qmlErrorListButton
+
+        visible: qmlErrorModel.count !== 0
+        text: qsTr("%1 QML warnings").arg(qmlErrorModel.count)
+
+        onCheckedChanged: {
+            if (checked) {
+                qmlErrorListPopUp.open()
+                stopAnimation()
+            } else {
+                qmlErrorListPopUp.close()
+                startAnimation()
+            }
+        }
+
+        ListModel {
+            id: qmlErrorModel
+        }
+
+        Connections {
+            target: sdsModel
+            onNotifyQmlError: {
+                qmlErrorModel.append({"data" : notifyQmlError})
+            }
+        }
+    }
+
+    SGQmlErrorListPopUp {
+        id: qmlErrorListPopUp
+
+        topMargin: 32
+        leftMargin: 32
+        topPadding: errorListDetailsChecked ? undefined : 1
+        bottomPadding: errorListDetailsChecked ? undefined : 1
+
+        anchors.centerIn: errorListDetailsChecked ? ApplicationWindow.overlay : undefined
+        opacity: errorListDetailsChecked ? 0.9 : 0.7
+
+        title: qmlErrorListButton.text
+
+
+        qmlErrorListModel: qmlErrorModel
+    }
 }
