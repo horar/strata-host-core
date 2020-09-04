@@ -124,6 +124,9 @@ ColumnLayout {
                 activeVersion = latestVersion
                 downloadFilepath = ""
             }
+            downloadButtonMouseArea.enabled = true
+            downloadIcon.opacity = 1
+            downloadButtonMouseArea.cursorShape = Qt.PointingHandCursor
         }
     }
 
@@ -266,6 +269,7 @@ ColumnLayout {
                         }
 
                         SGIcon {
+                            id: downloadIcon
                             iconColor: "#666"
                             source: "qrc:/sgimages/download.svg"
                             Layout.preferredHeight: 30
@@ -331,6 +335,7 @@ ColumnLayout {
                 }
 
                 MouseArea {
+                    id: downloadButtonMouseArea
                     anchors {
                         fill: parent
                     }
@@ -339,6 +344,9 @@ ColumnLayout {
                     onClicked: {
                         progressUpdateText.percent = 0.0
                         downloadColumn1.visible = true
+                        enabled = false
+                        downloadIcon.opacity = 0.5
+                        cursorShape = Qt.ArrowCursor
                         downloadColumn1.startDownload();
                     }
                 }
