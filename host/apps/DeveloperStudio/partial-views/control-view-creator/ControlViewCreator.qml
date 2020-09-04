@@ -10,7 +10,6 @@ Rectangle {
 
     SGQrcListModel {
         id: fileModel
-        url: "file:///Users/zbj9gc/Downloads/sample/qml.qrc"
     }
 
     ColumnLayout {
@@ -85,6 +84,10 @@ Rectangle {
                 id: openProjectContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
+
+                onFileUrlChanged: {
+                    fileModel.url = fileUrl
+                }
             }
 
             NewControlView {
