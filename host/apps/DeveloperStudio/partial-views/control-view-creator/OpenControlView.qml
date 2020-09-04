@@ -29,13 +29,16 @@ Rectangle {
             Layout.fillWidth: true
         }
 
-//        Repeater {
-//            model: qrcModel
+        Repeater {
+            model: SGQrcListModel {
+                id: qrcModel
+                url: "file:///Users/zbj9gc/Downloads/sample/qml.qrc"
+            }
 
-//            delegate: Text {
-//                text: "PREFIX: " + prefix + " | FILENAME: " + filename
-//            }
-//        }
+            delegate: Text {
+                text: "PREFIX: " + model.prefix + " | FILENAME: " + model.filename + " | FILEPATH " + model.filepath
+            }
+        }
 
         SGAlignedLabel {
             Layout.topMargin: 20
@@ -100,11 +103,6 @@ Rectangle {
         }
 
 
-    }
-
-    SGQrcListModel {
-        id: qrcModel
-        url: "file:///Users/zbj9gc/Downloads/sample/qml.qrc"
     }
 
 

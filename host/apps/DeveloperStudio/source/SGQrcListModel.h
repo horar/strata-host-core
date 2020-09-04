@@ -19,6 +19,7 @@ class QrcItem : QObject
 
 public:
     explicit QrcItem(QObject *parent = nullptr);
+    QrcItem(QString filename, QString prefix, QUrl path, QObject *parent = nullptr);
 
     QString prefix() const;
     QString filename() const;
@@ -54,7 +55,7 @@ class SGQrcListModel : public QAbstractListModel
 
 public:
     enum QrcRoles {
-        PrefixRole = Qt::UserRole,
+        PrefixRole = Qt::UserRole + 1,
         FilenameRole,
         FilepathRole,
         VisibleRole,

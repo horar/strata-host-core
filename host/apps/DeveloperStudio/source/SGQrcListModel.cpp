@@ -9,6 +9,17 @@ QrcItem::QrcItem(QObject *parent) : QObject(parent)
 {
 }
 
+QrcItem::QrcItem(QString filename, QString prefix, QUrl path, QObject *parent) : QObject(parent)
+{
+    filename_ = filename;
+    prefix_ = prefix;
+    visible_ = false;
+    open_ = false;
+
+    QFileInfo qrcFile(QDir::toNativeSeparators(path.toLocalFile()));
+    filepath_ = qrcFile.dir().filePath(filename);
+}
+
 QString QrcItem::prefix() const
 {
     return prefix_;
@@ -82,44 +93,50 @@ SGQrcListModel::~SGQrcListModel()
 
 void SGQrcListModel::readQrcFile()
 {
-    QFile *qrcIn = new QFile(QDir::toNativeSeparators(QUrl(url_).toLocalFile()));
+    beginResetModel();
+    clear(false);
+    QFile qrcIn(QDir::toNativeSeparators(url_.toLocalFile()));
 
-    if (!qrcIn->exists()) {
-        qCritical() << "QRC file does not exist." << qrcIn->fileName();
+    if (!qrcIn.exists()) {
+        qCritical() << "QRC file does not exist." << qrcIn.fileName();
         return;
     }
 
-    if (!qrcIn->open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!qrcIn.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qCritical() << "Failed to open qrc file";
         return;
     }
 
-    QXmlStreamReader reader(qrcIn);
-
-    while (!reader.atEnd() && !reader.hasError()) {
-        QXmlStreamReader::TokenType token = reader.readNext();
-
-        // Start of document
-        if (token == QXmlStreamReader::StartDocument) {
-            continue;
-        }
+    QXmlStreamReader reader(&qrcIn);
+    QString prefix = "/";
+    while (reader.readNextStartElement() && !reader.hasError()) {
         // Start of XML element
-        if (token == QXmlStreamReader::StartElement) {
-            if (reader.name() == "RCC" || reader.name() == "rcc") {
-                continue;
-            }
-            if (reader.name() == "qresource") {
-                qDebug() << reader.readElementText();
+        if (reader.name() == "RCC" || reader.name() == "rcc") {
+            if (reader.readNextStartElement()) {
+                if (reader.name() == "qresource" && reader.attributes().hasAttribute("prefix")) {
+                    prefix = reader.attributes().value("prefix").toString();
+                }
+                while (reader.readNextStartElement()) {
+                    if (reader.name() == "file") {
+                        data_.push_back(new QrcItem(reader.readElementText(), prefix, url_));
+                    } else {
+                        reader.skipCurrentElement();
+                    }
+                }
             }
         }
     }
 
     if (reader.hasError()) {
         qCritical() << "Error parsing qrc file:" << reader.errorString();
+    } else {
+        qDebug() << "Successfully parsed qrc file";
     }
     reader.clear();
-    qrcIn->close();
-    delete qrcIn;
+    qrcIn.close();
+
+    endResetModel();
+    emit countChanged();
 }
 
 QrcItem* SGQrcListModel::get(int index) const
@@ -224,4 +241,5 @@ QHash<int, QByteArray> SGQrcListModel::roleNames() const {
     roles[FilepathRole] = "filepath";
     roles[VisibleRole] = "visible";
     roles[OpenRole] = "open";
+    return roles;
 }
