@@ -5,12 +5,13 @@ import QtQuick.Window 2.0
 import QtQuick.Dialogs 1.3
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.fonts 1.0
 
-Rectangle {
+Item {
     id: fileContainerRoot
     Layout.fillHeight: true
     Layout.fillWidth: true
-    color: Qt.rgba(Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, 1) // randomish color
+
 
     property int modelIndex: index
     property string file: model.file
@@ -58,19 +59,15 @@ Rectangle {
     ScrollView  {
         id: flickable
         anchors.fill: parent
-
         TextArea {
             id: textArea
             selectByMouse: true
             background: null
-            //focus: true
-            //wrapMode: TextArea.Wrap
+            font: Fonts.inconsolata
             selectionColor: Qt.rgba(0.0, 0.0, 0.0, 0.15)
             selectedTextColor: color
 
         }
-
-
     }
 
 
