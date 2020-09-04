@@ -1,6 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
+import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
 import Qt.labs.folderlistmodel 2.12
 import Qt.labs.settings 1.1 as QtLabsSettings
@@ -130,10 +130,7 @@ Item {
 
             Button {
                 text: "Reset Window Size"
-                onClicked: {
-                    mainWindow.height = 900
-                    mainWindow.width = 1200
-                }
+                onClicked: mainWindow.resetWindowSize()
             }
 
             Button {
