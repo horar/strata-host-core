@@ -21,4 +21,4 @@
 [submodule "extern/couchbase-lite-C"]
 	path = extern/couchbase-lite-C
 	url = https://github.com/couchbaselabs/couchbase-lite-C.git
-	ignore = dirty
+	ignore = all

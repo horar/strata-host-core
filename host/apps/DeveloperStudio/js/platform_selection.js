@@ -125,6 +125,16 @@ function generatePlatform (platform) {
         platform.filters = []
     }
 
+    if (platform.hasOwnProperty("parts_list")) {
+        platform.parts_list = platform.parts_list.map(part => { return { opn: part, matchingIndex: -1 }})
+    } else {
+        platform.parts_list = []
+    }
+
+    platform.desc_matching_index = -1
+    platform.opn_matching_index = -1
+    platform.name_matching_index = -1
+
     platform.error = false
     platform.connected = false  // != device_id, as device may be bound but not connected (i.e. view_open)
     platform.device_id = Constants.NULL_DEVICE_ID

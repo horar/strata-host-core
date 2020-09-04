@@ -1,6 +1,7 @@
 .pragma library
 
 .import "restclient.js" as Rest
+.import "utilities.js" as Utility
 .import QtQuick 2.0 as QtQuickModule
 
 .import tech.strata.logger 1.0 as LoggerModule
@@ -10,12 +11,12 @@ var initialized = false
 /*
   Settings: Store/retrieve login information
 */
-var settings = createObject("qrc:/partial-views/login/LoginSettings.qml", null)
+var settings = Utility.createObject("qrc:/partial-views/login/LoginSettings.qml", null)
 
 /*
   Signals: Signal component to notify Login status
 */
-var signals = createObject("qrc:/partial-views/login/LoginSignals.qml", null)
+var signals = Utility.createObject("qrc:/partial-views/general/Signals.qml", null)
 
 /*
   Login: Send information to server
@@ -303,30 +304,4 @@ function set_token (token) {
     Rest.jwt = token
 }
 
-/*
-  Utilities: Dynamically load qml controls by qml filename
-*/
-function createObject(name, parent) {
-    console.log(LoggerModule.Logger.devStudioLoginCategory, "createObject: name =", name)
-
-    var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
-
-    if (component.status === QtQuickModule.Component.Error) {
-        console.error(LoggerModule.Logger.devStudioLoginCategory, "Cannot createComponent:", name, "; err=", component.errorString());
-    }
-
-    var object = component.createObject(parent)
-    if (object === null) {
-        console.error(LoggerModule.Logger.devStudioLoginCategory, "Cannot createObject:", name);
-    }
-
-    return object;
-}
-
-/*
-  Utilities: Destroy dynamically created objects
-*/
-function destroyObject (object) {
-    object.destroy()
-}
 
