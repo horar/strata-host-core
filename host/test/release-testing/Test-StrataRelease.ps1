@@ -113,36 +113,36 @@ Assert-PythonScripts
 
 Write-Host "Starting tests...`n"
 
-# # Run Test-SDSInstaller
-# $SDSInstallerResults = Test-SDSInstaller -SDSInstallerPath $SDSInstallerPath
+# Run Test-SDSInstaller
+$SDSInstallerResults = Test-SDSInstaller -SDSInstallerPath $SDSInstallerPath
 
 # Search for SDS and HCS
 Assert-StrataAndHCS
 
 
-# # Run Test-Database (HCS database testing)
-# $DatabaseResults = Test-Database
+# Run Test-Database (HCS database testing)
+$DatabaseResults = Test-Database
 
-# # Run Test-TokenAndViewsDownload
-# $TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
+# Run Test-TokenAndViewsDownload
+$TokenAndViewsDownloadResults = Test-TokenAndViewsDownload
 
 #Run Test-GUI
 $GUIResults = Test-GUI
 
-# #Run Test-CollateralDownload (HCS collateral download testing)
-# $CollateralDownloadResults = Test-CollateralDownload
+#Run Test-CollateralDownload (HCS collateral download testing)
+$CollateralDownloadResults = Test-CollateralDownload
 
 #Run Test-PlatformIdentification
 # The test is disabled by default, The reason is that it requires having a platform and a JLink connected to the test machine.
 # To enable the test, pass this flag -EnablePlatformIdentificationTest when running Test-StrataRelease.ps script
-# If ($EnablePlatformIdentificationTest -eq $true) {
-#     $PlatformIdentificationResults = Test-PlatformIdentification -PythonScriptPath $PythonPlatformIdentificationTest -ZmqEndpoint $HCSTCPEndpoint
-# }
+If ($EnablePlatformIdentificationTest -eq $true) {
+    $PlatformIdentificationResults = Test-PlatformIdentification -PythonScriptPath $PythonPlatformIdentificationTest -ZmqEndpoint $HCSTCPEndpoint
+}
 
 # Run Test-SDSControlViews (SDS control view testing)
 # Because the recent changes in the Navigation of Strata Developer Studio, this test is not working as expected.
 # These issues will be resolved in CS-626
-#$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
+$SDSControlViewsResults = Test-SDSControlViews -PythonScriptPath $PythonControlViewTest -StrataPath $SDSExecFile -ZmqEndpoint $HCSTCPEndpoint
 
 Show-TestSummary
 
