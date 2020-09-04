@@ -98,7 +98,14 @@ Item {
             }
         }
 
-        sdsModel.resourceLoader.deleteStaticViewResource(model.class_id, model.name, root);
+
+        let name = UuidMap.uuid_map[model.class_id];
+
+        if (!name) {
+            name = model.name
+        }
+
+        sdsModel.resourceLoader.deleteStaticViewResource(model.class_id, name, root);
 
         updateVersion = ""
         updateVersionPath = ""
