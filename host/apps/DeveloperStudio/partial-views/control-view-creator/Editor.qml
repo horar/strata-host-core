@@ -19,6 +19,8 @@ Item {
         fileStack.currentIndex = index
     }
 
+
+
     ColumnLayout {
         anchors {
             fill: parent
@@ -37,6 +39,7 @@ Item {
                 height: parent.height
 
                 SGButton {
+                    id: saveButton
                     text: "Save file"
                 }
 
@@ -133,6 +136,7 @@ Item {
                         delegate: FileContainer {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+
                         }
                     }
                 }

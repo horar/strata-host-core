@@ -1,6 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.1
+import QtQuick.Controls 2.3
 import QtQuick.Window 2.0
 import QtQuick.Dialogs 1.3
 
@@ -22,51 +22,55 @@ Rectangle {
         return request.responseText;
     }
 
+    function saveFile(fileUrl, text) {
+        console.log(fileUrl)
+        console.log(text)
+        var request = new XMLHttpRequest();
+        request.open("PUT", fileUrl, false);
+        request.send(text);
+        return request.status;
+    }
+
+
+    Connections{
+        target: saveButton
+        onClicked: {
+            console.log(model.path)
+            console.log(textArea.text)
+
+            saveFile(model.path,textArea.text)
+        }
+    }
+
     FileDialog {
         id: openFileDialog
         nameFilters: ["QML files (*.qml)", "All files (*)"]
         onAccepted: {
             console.info(openFileDialog.fileUrl)
-
-
         }
     }
 
 
     Component.onCompleted: {
-        var str =  openFile(model.path)
-        console.info(str)
-        textArea.text = str
-
+        textArea.text = openFile(model.path)
     }
 
-    Flickable {
+    ScrollView  {
         id: flickable
-        flickableDirection: Flickable.VerticalFlick
         anchors.fill: parent
 
-        TextArea.flickable: TextArea {
+        TextArea {
             id: textArea
-            //textFormat: Qt.RichText
-            wrapMode: TextArea.Wrap
-            focus: true
             selectByMouse: true
-            persistentSelection: true
-            // Different styles have different padding and background
-            // decorations, but since this editor is almost taking up the
-            // entire window, we don't need them.
-            leftPadding: 6
-            rightPadding: 6
-            topPadding: 0
-            bottomPadding: 0
             background: null
+            //focus: true
+            //wrapMode: TextArea.Wrap
+            selectionColor: Qt.rgba(0.0, 0.0, 0.0, 0.15)
+            selectedTextColor: color
 
-
-
-            onLinkActivated: Qt.openUrlExternally(link)
         }
 
-        ScrollBar.vertical: ScrollBar {}
+
     }
 
 
