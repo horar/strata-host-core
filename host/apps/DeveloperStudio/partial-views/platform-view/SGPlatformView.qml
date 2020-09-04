@@ -103,7 +103,11 @@ StackLayout {
             sgUserSettings.classId = model.class_id
 
             let version = "";
-            let name = model.name;
+            let name = UuidMap.uuid_map[model.class_id];
+
+            if (!name) {
+                name = model.name
+            }
 
             if (controlContainer.usingLocalView === false) {
                 let idx = controlViewList.getInstalledVersion();
@@ -111,8 +115,6 @@ StackLayout {
                 if (idx >= 0) {
                     version = controlViewList.version(idx);
                 }
-            } else {
-                name = UuidMap.uuid_map[model.class_id];
             }
 
             let qml_control = NavigationControl.getQMLFile(model.class_id, name, "Control", controlContainer.usingLocalView, version)

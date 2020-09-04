@@ -1,6 +1,7 @@
 import QtQuick 2.0
 
 import "qrc:/js/uuid_map.js" as UuidMap
+import "qrc:/js/navigation_control.js" as NavigationControl
 
 Item {
     id: root
@@ -79,8 +80,8 @@ Item {
                                                     });
                 }
             }
-            sdsModel.resourceLoader.registerControlViewResources(model.class_id, updateVersionPath, updateVersion);
             usingLocalView = false;
+            sdsModel.resourceLoader.registerControlViewResources(model.class_id, updateVersionPath, updateVersion);
             removeOldVersionTimer.start();
         }
     }
