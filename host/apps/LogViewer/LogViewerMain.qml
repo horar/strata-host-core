@@ -8,14 +8,14 @@ import tech.strata.commoncpp 1.0 as CommonCPP
 import tech.strata.logviewer.models 1.0 as LogViewModels
 import Qt.labs.settings 1.1 as QtLabsSettings
 
-Item {
+FocusScope {
     id: logViewerMain
-    focus: true
 
     property bool fileLoaded: false
     property bool messageWrapEnabled: true
-    property alias linesCount: logFilesModel.count
-    property alias fileModel: logFilesModel.fileModel
+    property alias linesCount: logModel.count
+    property alias fileModel: logModel.fileModel
+    property int openedFilesCount: fileModel.count
     property int cellHeightSpacer: 6
     property int defaultIconSize: 24
     property int fontMinSize: 8
@@ -33,14 +33,15 @@ Item {
     property bool searchTagShown: false
     property bool automaticScroll: true
     property bool timestampSimpleFormat: false
-    property int searchResultCount: logFilesModelProxy.count
+    property int searchResultCount: logModelProxy.count
     property int statusBarHeight: statusBar.height
     property string borderColor: "darkgray"
     property string timestampFormat: "yyyy-MM-dd hh:mm:ss.zzz t"
     property string simpleTimestampFormat: "hh:mm:ss.zzz"
+    property bool showDropAreaIndicator: false
 
     LogViewModels.LogModel {
-        id: logFilesModel
+        id: logModel
 
         onRowsInserted: {
             if (automaticScroll) {
@@ -50,6 +51,13 @@ Item {
 
         onModelReset: {
             scrollbackViewAtEndTimer.restart()
+        }
+    }
+
+    onOpenedFilesCountChanged: {
+        if (openedFilesCount < 1) {
+            fileLoaded = false
+            searchInput.text = ""
         }
     }
 
@@ -117,7 +125,7 @@ Item {
         var pathList = []
 
         for (var i = 0; i < path.length; ++i) {
-            var errorString = logFilesModel.followFile(CommonCPP.SGUtilsCpp.urlToLocalFile(path[i]))
+            var errorString = logModel.followFile(CommonCPP.SGUtilsCpp.urlToLocalFile(path[i]))
 
             if (errorString.length > 0) {
                 errorStringList.push(errorString)
@@ -152,14 +160,18 @@ Item {
         return text
     }
 
+    function clearScrollback() {
+        logModel.clear();
+    }
+
     CommonCPP.SGSortFilterProxyModel {
-        id: logFilesModelProxy
-        sourceModel: logFilesModel
+        id: logModelProxy
+        sourceModel: logModel
         filterPattern: searchInput.text
         filterPatternSyntax: regExpButton.checked ? CommonCPP.SGSortFilterProxyModel.RegExp : CommonCPP.SGSortFilterProxyModel.FixedString
         caseSensitive: caseSensButton.checked ? true : false
         filterRole: "message"
-        sortRole: "timestamp"
+        sortEnabled: false
     }
 
     Row {
@@ -289,6 +301,17 @@ Item {
                     value: automaticScroll
                 }
             }
+
+            SGWidgets.SGIconButton {
+                id: clearScrollbackButton
+                hintText: qsTr("Clear scrollback")
+                icon.source: "qrc:/sgimages/broom.svg"
+                iconSize: defaultIconSize
+                backgroundOnlyOnHovered: false
+                enabled: fileLoaded
+                padding: buttonPadding
+                onClicked: clearScrollback()
+            }
         }
     }
 
@@ -313,7 +336,7 @@ Item {
                 if (searchInput.text === ""){
                     searchingMode = false
                     primaryLogView.height = contentView.height
-                    secondaryLogView.currentIndex = -1
+                    secondaryLogView.currentIndex = 0
                 }
             }
         }
@@ -533,68 +556,143 @@ Item {
 
                     ListView {
                         id: listViewSide
-                        width: sidePanel.width - 5
+                        width: sidePanel.width
                         height: contentHeight
                         model: fileModel
                         interactive: false
                         clip: true
 
+                        property int maybeRemoveIndex: -1
+
                         delegate: Item {
                             id: delegateSide
-                            width: fileName.width
+                            width: parent.width
                             height: fileName.height + horizontalDivider.height
 
+                            property bool inRemoveMode: index === listViewSide.maybeRemoveIndex
+
                             MouseArea {
-                                id: fileNameMouseArea
+                                id: delegateSideMouseArea
                                 anchors.fill: delegateSide
                                 hoverEnabled: true
-                            }
 
-                            ToolTip {
-                                id: fileNameToolTip
-                                text: model.filepath
-                                visible: fileNameMouseArea.containsMouse
-                                delay: 500
-                                timeout: 4000
-                                font.pixelSize: SGWidgets.SGSettings.fontPixelSize
-                            }
+                                onClicked: {
+                                    listViewSide.maybeRemoveIndex = -1
+                                }
 
-                            Rectangle {
-                                id: cellSide
-                                height: fileName.height
-                                width: sidePanel.width
-                                color: "#eeeeee"
-                            }
+                                onEntered: {
+                                    cellSide.color = "darkgray"
+                                    rightCloseFileButton.iconColor = "white"
+                                }
 
-                            SGWidgets.SGIcon {
-                                id: fileIcon
-                                source: "qrc:/sgimages/file-blank.svg"
-                                height: cellSide.height - 5
-                                width: height - 5
-                                anchors.left: cellSide.left
-                                anchors.verticalCenter: cellSide.verticalCenter
-                                anchors.leftMargin: 5
-                            }
+                                onExited: {
+                                    cellSide.color = "#eeeeee"
+                                    rightCloseFileButton.iconColor = "#eeeeee"
+                                }
 
-                            Rectangle {
-                                id: horizontalDivider
-                                anchors.top: cellSide.bottom
-                                width: cellSide.width
-                                height: 1
-                                color: "lightgray"
-                            }
+                                ToolTip {
+                                    id: fileNameToolTip
+                                    text: model.filepath
+                                    visible: delegateSideMouseArea.containsMouse
+                                    delay: 500
+                                    timeout: 4000
+                                    font.pixelSize: SGWidgets.SGSettings.fontPixelSize
+                                }
 
-                            SGWidgets.SGText {
-                                id: fileName
-                                topPadding: 5
-                                bottomPadding: 5
-                                rightPadding: 5
-                                leftPadding: 3
-                                anchors.left: fileIcon.right
-                                anchors.verticalCenter: parent.verticalCenter
-                                text: model.filename
-                                width: sidePanel.width - fileIcon.width - 5
-                                elide: Text.ElideRight
+                                Rectangle {
+                                    id: cellSide
+                                    height: fileName.height
+                                    width: parent.width
+                                    color: "#eeeeee"
+                                }
+
+                                Item {
+                                    id: leftFileWrapper
+                                    width: delegateSide.inRemoveMode ? leftCloseFileButton.width : 0
+                                    height: cellSide.height
+                                    anchors.left: cellSide.left
+                                    anchors.leftMargin: delegateSide.inRemoveMode ? 5 : 0
+
+                                    clip: true
+
+                                    Behavior on width {
+                                        NumberAnimation { duration: 100 }
+                                    }
+
+                                    SGWidgets.SGIconButton {
+                                        id: leftCloseFileButton
+                                        anchors.left: parent.left
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        iconSize: fileName.contentHeight + 1
+                                        icon.source: "qrc:/sgimages/times-circle.svg"
+                                        iconColor: SGWidgets.SGColorsJS.ERROR_COLOR
+                                        alternativeColorEnabled: true
+
+                                        onClicked: {
+                                            listViewSide.maybeRemoveIndex = -1
+                                            logModel.removeFile(model.filepath)
+                                        }
+                                    }
+                                }
+
+                                SGWidgets.SGIcon {
+                                    id: fileIcon
+                                    source: "qrc:/sgimages/file-blank.svg"
+                                    height: cellSide.height - 5
+                                    width: height - 5
+                                    anchors.left: leftFileWrapper.right
+                                    anchors.verticalCenter: cellSide.verticalCenter
+                                    anchors.leftMargin: 3
+                                }
+
+                                SGWidgets.SGText {
+                                    id: fileName
+                                    topPadding: 5
+                                    bottomPadding: 5
+                                    anchors.left: fileIcon.right
+                                    anchors.leftMargin: 5
+                                    anchors.right: rightFileWrapper.left
+                                    anchors.verticalCenter: cellSide.verticalCenter
+                                    //font.family: "monospace"
+                                    text: model.filename
+                                    elide: Text.ElideRight
+                                }
+
+                                Item {
+                                    id: rightFileWrapper
+                                    width: delegateSide.inRemoveMode === false ? rightCloseFileButton.width : 0
+                                    height: cellSide.height
+                                    anchors.right: cellSide.right
+                                    anchors.rightMargin: 10
+
+                                    clip: true
+
+                                    Behavior on width {
+                                        NumberAnimation { duration: 100 }
+                                    }
+
+                                    SGWidgets.SGIconButton {
+                                        id: rightCloseFileButton
+                                        anchors.right: parent.right
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        iconSize: fileName.contentHeight - 2
+                                        icon.source: "qrc:/sgimages/times.svg"
+                                        iconColor: "#eeeeee"
+                                        alternativeColorEnabled: true
+
+                                        onClicked: {
+                                            listViewSide.maybeRemoveIndex = index
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    id: horizontalDivider
+                                    anchors.top: cellSide.bottom
+                                    width: cellSide.width
+                                    height: 1
+                                    color: "lightgray"
+                                }
                             }
                         }
                     }
@@ -618,8 +716,9 @@ Item {
                     anchors.right: parent.right
                     Layout.minimumHeight: parent.height/2
                     Layout.fillHeight: true
-                    model: logFilesModel
+                    model: logModel
                     visible: fileLoaded
+                    focus: true
 
                     timestampColumnVisible: checkBoxTs.checked
                     pidColumnVisible: checkBoxPid.checked
@@ -634,13 +733,16 @@ Item {
                     startAnimation: secondaryLogView.activeFocus
                     timestampSimpleFormat: logViewerMain.timestampSimpleFormat
                     automaticScroll: logViewerMain.automaticScroll
+
+                    KeyNavigation.tab: searchInput
+                    KeyNavigation.backtab: secondaryLogView
+                    KeyNavigation.priority: KeyNavigation.BeforeItem
                 }
 
                 Rectangle {
                     height: parent.height - primaryLogView.height
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.leftMargin: sidePanelShown ? 4 : 0
                     Layout.minimumHeight: parent.height/4
                     border.color: SGWidgets.SGColorsJS.TANGO_BUTTER1
                     border.width: 2
@@ -649,9 +751,8 @@ Item {
                     LogListView {
                         id: secondaryLogView
                         anchors.fill: parent
-                        anchors.leftMargin: sidePanelShown ? -2 : 2
                         anchors.margins: 2
-                        model: logFilesModelProxy
+                        model: logModelProxy
 
                         timestampColumnVisible: checkBoxTs.checked
                         pidColumnVisible: checkBoxPid.checked
@@ -667,10 +768,20 @@ Item {
                         automaticScroll: logViewerMain.automaticScroll
 
                         onCurrentItemChanged: {
-                            var sourceIndex = logFilesModelProxy.mapIndexToSource(index)
+                            var sourceIndex = logModelProxy.mapIndexToSource(index)
                             primaryLogView.positionViewAtIndex(sourceIndex, ListView.Center)
                             primaryLogView.currentIndex = sourceIndex
                         }
+
+                        onActiveFocusChanged: {
+                            if (secondaryLogView.activeFocus) {
+                                currentItemChanged(secondaryLogView.currentIndex)
+                            }
+                        }
+
+                        KeyNavigation.tab: primaryLogView
+                        KeyNavigation.backtab: searchInput
+                        KeyNavigation.priority: KeyNavigation.BeforeItem
                     }
                 }
             }
@@ -695,8 +806,8 @@ Item {
             width: statusBar.width - statusBarText.x
             font.family: "monospace"
             text: {
-                qsTr("Range: %1 - %2 | %3 %4").arg(CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(logFilesModel.oldestTimestamp, timestampFormat))
-                .arg(CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(logFilesModel.newestTimestamp, timestampFormat))
+                qsTr("Range: %1 - %2 | %3 %4").arg(CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(logModel.oldestTimestamp, timestampFormat))
+                .arg(CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(logModel.newestTimestamp, timestampFormat))
                 .arg(logViewerMain.linesCount)
                 .arg((logViewerMain.linesCount == 1) ? "log" : "logs")
             }
@@ -751,16 +862,14 @@ Item {
                 dropAreaColor.color = "darkgray"
                 borderColor = "black"
                 if (fileLoaded) {
-                    dashedBorder.visible = true
-                    dropAreaText.visible = true
+                    showDropAreaIndicator = true
                 }
             } else {
                 dashedBorder.dashesSize = 2
                 dropAreaColor.color = "#eeeeee"
                 borderColor = "darkgray"
                 if (fileLoaded) {
-                    dashedBorder.visible = false
-                    dropAreaText.visible = false
+                    showDropAreaIndicator = false
                 }
             }
         }
@@ -778,7 +887,7 @@ Item {
             anchors {
                 fill: parent
             }
-            visible: !fileLoaded
+            visible: !fileLoaded || showDropAreaIndicator
 
             property int dashesSize: 2
 
@@ -832,7 +941,7 @@ Item {
             anchors.centerIn: parent
             text: fileLoaded === false ? qsTr("Add a file or drop it here.") : qsTr("Drop a file here.")
             fontSizeMultiplier: 2
-            visible: dashedBorder.visible ? fileLoaded === false ? true : false : false
+            visible: dashedBorder.visible
         }
     }
 
@@ -840,23 +949,8 @@ Item {
         if ((event.key === Qt.Key_F) && (event.modifiers & Qt.ControlModifier)) {
             searchInput.forceActiveFocus()
         }
-    }
-
-    Keys.onTabPressed: {
-        if (searchInput.activeFocus === true) {
-            if (secondaryLogView.currentIndex === -1) {
-                secondaryLogView.currentIndex = 0
-            }
-        }
-
-        if (primaryLogView.activeFocus === true) {
-            if (secondaryLogView.currentIndex === -1) {
-                secondaryLogView.currentIndex = 0
-            }
-        }
-
-        if (searchResultCount !== 0 && searchingMode) {
-            secondaryLogView.forceActiveFocus()
+        if (event.key === Qt.Key_Escape) {
+            listViewSide.maybeRemoveIndex = -1
         }
     }
 }

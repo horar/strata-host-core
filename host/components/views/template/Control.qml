@@ -14,12 +14,14 @@ Item {
         fill: parent
     }
 
+    property var sgUserSettings
+
     PlatformInterface {
         id: platformInterface
     }
 
     Component.onCompleted: {
-        Help.registerTarget(navTabs, "Using these two tabs, you may select between basic and advanced controls.", 0, "controlHelp")
+        Help.registerTarget(navTabs, "Using these three tabs, you can view basic controls, advanced controls or the SGUserSettings demo.", 0, "controlHelp")
     }
 
     TabBar {
@@ -45,6 +47,14 @@ Item {
                 controlContainer.currentIndex = 1
             }
         }
+
+        TabButton {
+            id: userSettingsButton
+            text: qsTr("User Settings")
+            onClicked: {
+                controlContainer.currentIndex = 2
+            }
+        }
     }
 
     StackLayout {
@@ -63,6 +73,10 @@ Item {
         AdvancedControl {
             id: advanced
         }
+
+        UserSettingsControl {
+            id: userSettings
+        }
     }
 
     SGIcon {
@@ -72,7 +86,7 @@ Item {
             top: controlContainer.top
             margins: 20
         }
-        source: "control-views/question-circle-solid.svg"
+        source: "qrc:/sgimages/question-circle.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
         height: 40
         width: 40
@@ -84,6 +98,7 @@ Item {
             }
             onClicked: {
                 // Make sure view is set to Basic before starting tour
+                navTabs.currentIndex = 0
                 controlContainer.currentIndex = 0
                 basicButton.clicked()
                 Help.startHelpTour("controlHelp")

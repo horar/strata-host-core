@@ -1,12 +1,6 @@
 [submodule "cloud/couchbase-lite-core"]
 	path = cloud/couchbase-lite-core
 	url = https://github.com/couchbase/couchbase-lite-core.git
-[submodule "shared/cpp-base64"]
-	path = shared/cpp-base64
-	url = https://github.com/ReneNyffenegger/cpp-base64.git
-[submodule "host/ext_libs/threadpool"]
-	path = host/ext_libs/threadpool
-	url = https://github.com/progschj/ThreadPool
 [submodule "extern/spdlog"]
 	path = extern/spdlog
 	url = https://github.com/gabime/spdlog.git
@@ -20,6 +14,11 @@
 	path = extern/couchbase-lite-cpp
 	url = https://github.com/stratadeveloperstudio/couchbase-lite-cpp.git
 	ignore = dirty
+[submodule "extern/qtmqtt"]
+	path = extern/qtmqtt
+	url = https://github.com/qt/qtmqtt.git
+	ignore = all
 [submodule "extern/couchbase-lite-C"]
 	path = extern/couchbase-lite-C
 	url = https://github.com/couchbaselabs/couchbase-lite-C.git
+	ignore = all

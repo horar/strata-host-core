@@ -1,12 +1,16 @@
 #include "HostControllerService.h"
 
-#include "HostControllerServiceVersion.h"
+#include "Version.h"
 #include "HostControllerServiceTimestamp.h"
 #include "RunGuard.h"
+
+#include "HostControllerServiceNode.h"
 
 #include "logging/LoggingQtCategories.h"
 
 #include <QtLoggerSetup.h>
+
+#include <CbLoggerSetup.h>
 
 #include <QCoreApplication>
 #include <QCommandLineParser>
@@ -14,13 +18,18 @@
 #include <QStandardPaths>
 #include <QDir>
 
-#include <EvEventsMgr.h>    //for EvEventsMgrInstance (windows WSA)
+#if defined(Q_OS_WIN)
+#include <EventsMgr/win32/EvEventsMgrInstance.h> // Windows WSA
+#endif
 
+#if !defined(Q_OS_WIN)
+#include "unix/SignalHandlers.h"
+#endif
 
 int main(int argc, char *argv[])
 {
     QSettings::setDefaultFormat(QSettings::IniFormat);
-    QCoreApplication::setApplicationName(QStringLiteral("hcs"));
+    QCoreApplication::setApplicationName(QStringLiteral("Host Controller Service"));
     QCoreApplication::setApplicationVersion(AppInfo::version.data());
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
@@ -35,7 +44,8 @@ int main(int argc, char *argv[])
     });
     parser.addOption({
         {QStringLiteral("c")},
-        QObject::tr("Clear cache data of Host Controller Service.")
+        QObject::tr("Clear cache data of Host Controller Service for <stage>."),
+        QObject::tr("stage")
     });
     parser.addVersionOption();
     parser.addHelpOption();
@@ -49,14 +59,15 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
         }
 
-        const QString cacheDir{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
+        QString cacheDir{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
         if (cacheDir.isEmpty()) {
             qWarning() << "Folder with application cached data either not accessible or not found!!";
             return EXIT_FAILURE;
         }
+        cacheDir.append(QString("/%1").arg(parser.value(QStringLiteral("c"))).toUpper());
         qDebug() << "Cache location:" << cacheDir;
 
-        for (const auto folder : {QStringLiteral("db"), QStringLiteral("documents")}) {
+        for (const auto& folder : {QStringLiteral("db"), QStringLiteral("documents")}) {
             QDir dir(QString("%1/%2").arg(cacheDir).arg(folder));
             qInfo() << "Removing" << dir.path() << ":" << dir.removeRecursively();
         }
@@ -64,7 +75,9 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
     }
 
-    const QtLoggerSetup loggerInitialization(app);
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
+    strata::loggers::cbLoggerSetup(loggerInitialization.getQtLogCallback());
+
     qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
     qCInfo(logCategoryHcs) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
     qCInfo(logCategoryHcs) << QStringLiteral("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
@@ -76,12 +89,23 @@ int main(int argc, char *argv[])
 
     if (appGuard.tryToRun() == false) {
         qCCritical(logCategoryHcs) << QStringLiteral("Another instance of Host Controller Service is already running.");
-        return EXIT_FAILURE;
+        return EXIT_FAILURE + 1; // LC: todo..
     }
 
-    spyglass::EvEventsMgrInstance instance;
+#if defined(Q_OS_WIN)
+    strata::events_mgr::EvEventsMgrInstance instance;
+#endif
 
-    QScopedPointer<HostControllerService> hcs(new HostControllerService);
+    HostControllerServiceNode hcsNode;
+    hcsNode.start(QUrl(QStringLiteral("local:hcs3")));
+    QObject::connect(qApp, &QCoreApplication::aboutToQuit,
+                     &hcsNode, &HostControllerServiceNode::stop);
+
+#if !defined(Q_OS_WIN)
+    SignalHandlers sh(&app);
+#endif
+
+    std::unique_ptr<HostControllerService> hcs{std::make_unique<HostControllerService>()};
 
     const QString config{parser.value(QStringLiteral("f"))};
     if (hcs->initialize(config) == false) {

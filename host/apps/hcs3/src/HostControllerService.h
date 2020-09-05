@@ -1,27 +1,36 @@
+#pragma once
 
-#ifndef HOST_HOSTCONTROLLERSERVICE_H__
-#define HOST_HOSTCONTROLLERSERVICE_H__
-
-// rapid json library
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 
 #include <set>
+#include <memory>
 
 #include <QObject>
+#include <QString>
+#include <QByteArray>
+#include <QJsonArray>
+#include <QNetworkAccessManager>
+
 #include "Dispatcher.h"
 #include "ClientsController.h"
 #include "Database.h"
-#include "LoggingAdapter.h"
-#include "BoardManagerWrapper.h"
-#include <QJsonArray>
+#include "BoardController.h"
+#include "FirmwareUpdateController.h"
+#include "StorageManager.h"
+
+#include <DownloadManager.h>
 
 
 struct PlatformMessage;
 
-class HCS_Client;
+class Client;
 class StorageManager;
+
+namespace strata {
+class DownloadManager;
+}
 
 class HostControllerService : public QObject
 {
@@ -52,6 +61,8 @@ signals:
     void platformDocumentsRequested(QByteArray clientId, QString classId);
     void downloadPlatformFilesRequested(QByteArray clientId, QStringList partialUriList, QString savePath);
     void cancelPlatformDocumentRequested(QByteArray clientId);
+    void firmwareUpdateRequested(QByteArray clientId, int deviceId, QUrl firmwareUrl, QString firmwareMD5);
+    void downloadControlViewRequested(QByteArray clientId, QString partialUri, QString md5);
 
 public slots:
     void onAboutToQuit();
@@ -82,52 +93,64 @@ public slots:
 
     void sendPlatformDocumentsProgressMessage(
             const QByteArray &clientId,
+            const QString &classId,
             int filesCompleted,
             int filesTotal);
 
     void sendPlatformDocumentsMessage(
             const QByteArray &clientId,
+            const QString &classId,
+            const QJsonArray &datasheetList,
             const QJsonArray &documentList,
+            const QJsonArray &firmwareList,
+            const QJsonArray &controlViewList,
             const QString &error);
+
+    void sendDownloadControlViewFinishedMessage(
+            const QByteArray &clientId,
+            const QString &partialUri,
+            const QString &filePath,
+            const QString &errorString);
 
 private:
     void handleMessage(const PlatformMessage& msg);
 
     void handleClientMsg(const PlatformMessage& msg);
     void sendMessageToClients(const QString &platformId, const QString& message);
-    bool disptachMessageToPlatforms(const std::string& dealer_id, const std::string& read_message);
 
-    bool broadcastMessage(const std::string& message);
+    bool broadcastMessage(const QString& message);
+
+    void handleUpdateProgress(int deviceId, QByteArray clientId, FirmwareUpdateController::UpdateProgress progress);
 
     ///////
     //handlers for client (UI)
     void onCmdHCSStatus(const rapidjson::Value* );
     void onCmdUnregisterClient(const rapidjson::Value* );
-    void onCmdPlatformSelect(const rapidjson::Value* );
+    void onCmdLoadDocuments(const rapidjson::Value* );
 
     //handlers for hcs::cmd
-    void onCmdHostDisconnectPlatform(const rapidjson::Value* );
     void onCmdHostUnregister(const rapidjson::Value* );
     void onCmdHostDownloadFiles(const rapidjson::Value* );      //from UI
     void onCmdDynamicPlatformList(const rapidjson::Value* );
+    void onCmdUpdateFirmware(const rapidjson::Value* );
+    void onCmdDownloadControlView(const rapidjson::Value* );
 
-    void platformConnected(const QString &classId, const QString &platformId);
-    void platformDisconnected(const QString &classId, const QString &platformId);
+    void platformConnected(const int deviceId, const QString &classId);
+    void platformDisconnected(const int deviceId);
 
-    HCS_Client* getSenderClient() const { return current_client_; }     //TODO: only one client
+    Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 
-    HCS_Client* getClientById(const std::string& client_id);
-    HCS_Client* findClientByPlatformId(const std::string& platformId);
+    Client* getClientById(const QByteArray& client_id);
 
     bool parseConfig(const QString& config);
 
-    BoardManagerWrapper boards_;
+    BoardController boardsController_;
     ClientsController clients_;     //UI or other clients
     Database db_;
-    LoggingAdapter dbLogAdapter_;
-    LoggingAdapter clientsLogAdapter_;
-
-    StorageManager *storageManager_{nullptr};
+    QNetworkAccessManager networkManager_;
+    strata::DownloadManager downloadManager_;
+    StorageManager storageManager_;
+    FirmwareUpdateController updateController_;
 
     HCS_Dispatcher dispatcher_;
     std::thread dispatcherThread_;
@@ -137,10 +160,8 @@ private:
     std::map<std::string, NotificationHandler> clientCmdHandler_;
     std::map<std::string, NotificationHandler> hostCmdHandler_;
 
-    std::list<HCS_Client*> clientList_;
-    HCS_Client* current_client_;
+    std::list<Client*> clientList_;
+    Client* current_client_;
 
     rapidjson::Document config_;
 };
-
-#endif //HOST_HOSTCONTROLLERSERVICE_H__

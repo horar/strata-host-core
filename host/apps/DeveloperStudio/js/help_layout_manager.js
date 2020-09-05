@@ -1,15 +1,18 @@
 .pragma library
 .import "navigation_control.js" as NavigationControl
+.import "constants.js" as Constants
+.import "utilities.js" as Utility
 .import QtQuick 2.0 as QtQuickModule
 .import tech.strata.logger 1.0 as LoggerModule
 
 var window
-var current_class_id
+var current_device_id
 var current_tour_targets
 var tour_running = false
 var tour_count = 0
 var internal_tour_index
 var views = [ ]
+var stackContainer
 
 var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal_tour_indexChanged(int index); signal tour_runningChanged(bool tour_running)}', Qt.application, 'HelpUtility');
 
@@ -36,7 +39,7 @@ var utility = Qt.createQmlObject('import QtQuick 2.0; QtObject { signal internal
 
 function registerTarget(helpTarget, targetDescription, index, tourName) {
     // find view and tour to append target to
-    let tourLocation = locateTour(current_class_id, tourName)
+    let tourLocation = locateTour(current_device_id, tourName)
     if (tourLocation.tourIndex === null) {
         // create tour in view if view found, but no tour found
         tourLocation.tourIndex = createTour(tourLocation.viewIndex, tourName)
@@ -44,11 +47,8 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
 
     let tourTargetList = views[tourLocation.viewIndex].view_tours[tourLocation.tourIndex].tour_targets
 
-    let component = Qt.createComponent("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml");
-    if (component.status === QtQuickModule.Component.Error) {
-        console.error(LoggerModule.Logger.devStudioHelpCategory, "Cannot createComponent ", component.errorString());
-    }
-    let tourStop = component.createObject(window);
+    
+    let tourStop = Utility.createObject("qrc:/partial-views/help-tour/SGPeekThroughOverlay.qml",window)
     tourStop.index = index
     tourStop.description = targetDescription
     let tourTarget = {"index": index, "target": helpTarget, "description": targetDescription, "helpObject": tourStop}
@@ -65,20 +65,15 @@ function registerTarget(helpTarget, targetDescription, index, tourName) {
     tourTargetList.push(tourTarget)
 }
 
-function setClassId(class_id) {
-    // incoming target registration belongs to new class_id, needs new tour initialized
-    if (views.length >1) {
-        // new class_id is replacing a disconnected platform (strataMain is views[0]); older help needs to be removed
-        killView(1)
-    }
-
-    current_class_id = class_id
-    createView(class_id)
+function setClassId(device_id) {
+    // incoming target registration belongs to new device_id, needs new tour initialized
+    current_device_id = device_id
+    createView(device_id)
 }
 
-function createView(class_id ) {
+function createView(device_id ) {
     let view = {
-        "view_id": class_id,
+        "view_id": device_id,
         "view_tours" : []
     }
     views.push(view)
@@ -95,9 +90,9 @@ function createTour(viewIndex, tourName) {
     return views[viewIndex].view_tours.length-1
 }
 
-function locateTour(class_id, tourName) {
+function locateTour(device_id, tourName) {
     for (let i=0; i<views.length; i++) {
-        if (views[i].view_id === class_id) {
+        if (views[i].view_id === device_id) {
             for (let j=0; j<views[i].view_tours.length; j++) {
                 if (views[i].view_tours[j].tour_name === tourName) {
                     return {"viewIndex":i, "tourIndex": j}
@@ -109,12 +104,12 @@ function locateTour(class_id, tourName) {
     return {"viewIndex":null, "tourIndex": null}
 }
 
-function startHelpTour(tourName, class_id) {
-    if (class_id !== "strataMain") {
-        class_id = current_class_id
+function startHelpTour(tourName, device_id) {
+    if (device_id !== "strataMain") {
+        device_id = NavigationControl.platform_view_model_.get(stackContainer.currentIndex-1).device_id
     }
 
-    let tourLocation = locateTour(class_id, tourName)
+    let tourLocation = locateTour(device_id, tourName)
     if (tourLocation.viewIndex === null || tourLocation.tourIndex === null) {
         console.error(LoggerModule.Logger.devStudioHelpCategory, "No help tour found for tour name", tourName, JSON.stringify(tourLocation))
         return
@@ -185,8 +180,9 @@ function closeTour() {
     utility.tour_runningChanged(tour_running)
 }
 
-function registerWindow(windowTarget) {
+function registerWindow(windowTarget, stackContainerTarget) {
     window = windowTarget.contentItem
+    stackContainer = stackContainerTarget
     windowTarget.widthChanged.connect(liveResize)
     windowTarget.heightChanged.connect(liveResize)
 }
@@ -208,7 +204,7 @@ function destroyHelp() {
     for (let i=views.length-1; i>=0; i--) {
         killView(i)
     }
-    current_class_id = ""
+    current_device_id = Constants.NULL_DEVICE_ID
 }
 
 function killView(index) {
@@ -222,7 +218,7 @@ function killView(index) {
 }
 
 function setTourFontSizeMultiplier(tourName, fontSizeMultiplier) {
-    let tourLocation = locateTour(current_class_id, tourName)
+    let tourLocation = locateTour(current_device_id, tourName)
     if (tourLocation.viewIndex === null || tourLocation.tourIndex === null) {
         console.error(LoggerModule.Logger.devStudioHelpCategory, "Tour fontSizeMultiplier not set - '" + tourName + "' tour not found")
     } else {

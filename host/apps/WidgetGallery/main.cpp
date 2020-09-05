@@ -8,7 +8,7 @@
 #include <QIcon>
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
-#include "WidgetGalleryVersion.h"
+#include "Version.h"
 
 void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/images/wg-logo.svg"));
 
-    const QtLoggerSetup loggerInitialization(app);
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
     qCInfo(logCategoryWg) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     loadResources();

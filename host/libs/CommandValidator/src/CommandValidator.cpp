@@ -191,7 +191,7 @@ const rapidjson::SchemaDocument CommandValidator::setPlatformIdResSchema(
     )
 );
 
-const rapidjson::SchemaDocument CommandValidator::updateFWResSchema(
+const rapidjson::SchemaDocument CommandValidator::startBootloaderResSchema(
     CommandValidator::parseSchema(
         R"(
         {
@@ -203,7 +203,7 @@ const rapidjson::SchemaDocument CommandValidator::updateFWResSchema(
                 "properties": {
                 "value": {
                     "type": "string",
-                    "pattern": "^update_firmware$"
+                    "pattern": "^start_bootloader$"
                 },
                 "payload": {
                     "type": "object",
@@ -230,7 +230,7 @@ const rapidjson::SchemaDocument CommandValidator::updateFWResSchema(
     )
 );
 
-const rapidjson::SchemaDocument CommandValidator::flashFWResSchema(
+const rapidjson::SchemaDocument CommandValidator::flashFirmwareResSchema(
     CommandValidator::parseSchema(
         R"(
         {
@@ -269,7 +269,7 @@ const rapidjson::SchemaDocument CommandValidator::flashFWResSchema(
     )
 );
 
-const rapidjson::SchemaDocument CommandValidator::backupFWResSchema(
+const rapidjson::SchemaDocument CommandValidator::backupFirmwareResSchema(
     CommandValidator::parseSchema(
         R"(
         {
@@ -292,11 +292,12 @@ const rapidjson::SchemaDocument CommandValidator::backupFWResSchema(
                           "type": "object",
                           "properties": {
                             "number": {"type": "number"},
+                            "total": {"type": "number"},
                             "size": {"type": "number"},
                             "crc": {"type": "number"},
                             "data": {"type": "string"}
                           },
-                          "required": ["number", "size", "crc", "data"]
+                          "required": ["number", "total", "size", "crc", "data"]
                         }
                       },
                       "required": ["chunk"]
@@ -315,6 +316,45 @@ const rapidjson::SchemaDocument CommandValidator::backupFWResSchema(
             }
           },
           "required": ["notification"]
+        })"
+    )
+);
+
+const rapidjson::SchemaDocument CommandValidator::flashBootloaderResSchema(
+    CommandValidator::parseSchema(
+        R"(
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+            "notification": {
+                "type": "object",
+                "properties": {
+                "value": {
+                    "type": "string",
+                    "pattern": "^flash_bootloader$"
+                },
+                "payload": {
+                    "type": "object",
+                    "properties": {
+                    "status": {
+                        "type": "string"
+                    }
+                    },
+                    "required": [
+                    "status"
+                    ]
+                }
+                },
+                "required": [
+                "value",
+                "payload"
+                ]
+            }
+            },
+            "required": [
+            "notification"
+            ]
         })"
     )
 );
@@ -358,7 +398,7 @@ const rapidjson::SchemaDocument CommandValidator::startAppResSchema(
     )
 );
 
-const rapidjson::SchemaDocument CommandValidator::getFWInfoResSchema(
+const rapidjson::SchemaDocument CommandValidator::getFirmwareInfoResSchema(
     CommandValidator::parseSchema(
         R"(
         {
@@ -519,10 +559,11 @@ const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument
     {JsonType::setPlatIdRes, setPlatformIdResSchema},
     {JsonType::ack, ackSchema},
     {JsonType::notification, notificationSchema},
-    {JsonType::getFwInfoRes, getFWInfoResSchema},
-    {JsonType::flashFwRes, flashFWResSchema},
-    {JsonType::backupFwRes, backupFWResSchema},
-    {JsonType::updateFwRes, updateFWResSchema},
+    {JsonType::getFirmwareInfoRes, getFirmwareInfoResSchema},
+    {JsonType::flashFirmwareRes, flashFirmwareResSchema},
+    {JsonType::backupFirmwareRes, backupFirmwareResSchema},
+    {JsonType::flashBootloaderRes, flashBootloaderResSchema},
+    {JsonType::startBootloaderRes, startBootloaderResSchema},
     {JsonType::startAppRes, startAppResSchema},
     {JsonType::strataCmd, strataCommandSchema},
     {JsonType::cmd, cmdSchema}
@@ -568,7 +609,7 @@ bool CommandValidator::validateDocWithSchema(const rapidjson::SchemaDocument &sc
 }
 
 bool CommandValidator::validate(const std::string &command, const JsonType type, rapidjson::Document &doc) {
-    if (parseJson(command, doc) == false) {
+    if (parseJsonCommand(command, doc) == false) {
         return false;
     }
 
@@ -576,7 +617,7 @@ bool CommandValidator::validate(const std::string &command, const JsonType type,
 }
 
 bool CommandValidator::validate(const std::string &command, const std::string& schema, rapidjson::Document &doc) {
-    if (parseJson(command, doc) == false) {
+    if (parseJsonCommand(command, doc) == false) {
         return false;
     }
 
@@ -604,12 +645,19 @@ bool CommandValidator::isValidJson(const std::string &command) {
     return (rapidjson::Document().Parse(command.c_str()).HasParseError() == false);
 }
 
-bool CommandValidator::parseJson(const std::string &command, rapidjson::Document &doc) {
+bool CommandValidator::parseJsonCommand(const std::string &command, rapidjson::Document &doc) {
     rapidjson::ParseResult result = doc.Parse(command.c_str());
     if (result.IsError()) {
         // TODO: use logger from CS-440
         std::cerr << "JSON parse error at offset " << result.Offset() << ": " << rapidjson::GetParseError_En(result.Code())
                   << " Invalid JSON: '" << command << "'" << std::endl;
+        return false;
+    }
+    if (doc.IsObject() == false) {
+        // JSON can contain only a value (e.g. "abc").
+        // We require object as a JSON content (Strata JSON commands starts with '{' and ends with '}')
+        std::cerr << "Content of JSON is not an object: '" << command << "'." << std::endl;
+        // TODO: use logger from CS-440
         return false;
     }
     return true;

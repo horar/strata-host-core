@@ -25,9 +25,9 @@ generate_app_version(GITTAG_PREFIX "${PROJECT_NAME}_" MACBUNDLE OFF)
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::SerialPort
-    QtLogger
-    Flasher
-    SerialDevice
+    strata::QtLogger
+    strata::Flasher
+    strata::Device
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

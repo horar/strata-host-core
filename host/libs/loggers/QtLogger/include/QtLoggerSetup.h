@@ -5,6 +5,8 @@
 #include <QCoreApplication>
 #include <QFileSystemWatcher>
 
+namespace strata::loggers
+{
 /**
  * @brief The QtLoggerSetup class
  *
@@ -26,6 +28,8 @@ public:
      */
     explicit QtLoggerSetup(const QCoreApplication& app);
     ~QtLoggerSetup();
+
+    QtMessageHandler getQtLogCallback() const;
 
 private:
     void reload();
@@ -50,3 +54,5 @@ private:
     QFileSystemWatcher watchdog_;
     QString logLevel_;
 };
+
+}  // namespace strata::loggers

@@ -1,7 +1,7 @@
 #include <BoardManager.h>
 #include "SciModel.h"
 #include "SciDatabaseConnector.h"
-#include "SerialConsoleInterfaceVersion.h"
+#include "Version.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 
     QtWebEngine::initialize();
 
-    const QtLoggerSetup loggerInitialization(app);
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
     qCInfo(logCategorySci) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     qmlRegisterUncreatableType<SciModel>("tech.strata.sci", 1, 0, "SciModel", "cannot instantiate SciModel in qml");

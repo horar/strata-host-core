@@ -18,7 +18,7 @@ LogModel::LogModel(QObject *parent)
 
 LogModel::~LogModel()
 {
-    clear(true);
+    clear();
     delete timer_;
 }
 
@@ -33,26 +33,41 @@ QString LogModel::populateModel(const QString &path, const qint64 &lastPosition)
     if (fileModel_.containsFilePath(path) == false) {
         fileModel_.append(path);
     }
-    setNewestTimestamp(QDateTime());
-    setOldestTimestamp(QDateTime());
-    previousTimestamp_ = QDateTime();
 
     QTextStream stream(&file);
     stream.seek(lastPosition);
 
+    QList<LogItem*> chunk;
+    bool chunkReady = false;
+
+    QList<LogItem*>::iterator up = data_.begin();
+    QList<LogItem*>::iterator chunkIter = up;
+
     while (stream.atEnd() == false) {
-        LogItem item;
-        parseLine(stream.readLine(), item);
-        if (item.message.endsWith("\n")) {
-            item.message.chop(1);
+
+        LogItem *item = parseLine(stream.readLine());
+        item->filehash = qHash(path);
+
+        up = std::upper_bound(data_.begin(), data_.end(), item, LogItem::comparator);
+
+        if (up != chunkIter) {
+            chunkReady = true;
         }
-        item.rowIndex = data_.length() + 1;
 
-        QList<LogItem>::iterator up = std::upper_bound(data_.begin(), data_.end(), item);
-        beginInsertRows(QModelIndex(), up - data_.begin(), up - data_.begin());
+        if (chunkReady) {
+            if (chunk.isEmpty() == false) {
+                insertChunk(chunkIter, chunk);
+            }
+            chunk.clear();
+            chunkReady = false;
+            up = std::upper_bound(data_.begin(), data_.end(), item, LogItem::comparator);
+            chunkIter = up;
+        }
+        chunk.append(item);
+    }
 
-        data_.insert(up, item);
-        endInsertRows();
+    if (chunk.isEmpty() == false) {
+        insertChunk(chunkIter, chunk);
     }
 
     if (lastPositions_.length() < fileModel_.count()) {
@@ -68,6 +83,17 @@ QString LogModel::populateModel(const QString &path, const qint64 &lastPosition)
     return "";
 }
 
+void LogModel::insertChunk(QList<LogItem*>::iterator chunkIter, QList<LogItem*> chunk)
+{
+    int position = chunkIter - data_.begin();
+
+    beginInsertRows(QModelIndex(), position, position + chunk.length() - 1);
+    for (int i = 0; i < chunk.length(); ++i) {
+        data_.insert(position + i, chunk.at(i));
+    }
+    endInsertRows();
+}
+
 QString LogModel::followFile(const QString &path)
 {
     if (fileModel_.containsFilePath(path)) {
@@ -75,6 +101,17 @@ QString LogModel::followFile(const QString &path)
         return "file is already opened";
     } else {
         return populateModel(path, 0);
+    }
+}
+
+void LogModel::removeFile(const QString &path)
+{
+    int removedAt = fileModel_.remove(path);
+    if (removedAt >= 0) {
+        lastPositions_.removeAt(removedAt);
+        removeRowsFromModel(qHash(path));
+    } else {
+        qCCritical(logCategoryLogViewer) << "path not found";
     }
 }
 
@@ -87,18 +124,18 @@ QString LogModel::getRotatedFilePath(const QString &path) const
     return rotatedFilePath;
 }
 
-void LogModel::clear(bool emitSignals)
+void LogModel::clear()
 {
-    if (emitSignals) {
-        beginResetModel();
-    }
-    lastPositions_.clear();
-    data_.clear();
-    previousTimestamp_ = QDateTime();
+    beginResetModel();
 
-    if(emitSignals) {
-        endResetModel();
+    for (int i = 0; i < data_.length(); i++) {
+        delete data_.at(i);
     }
+    data_.clear();
+
+    endResetModel();
+    emit countChanged();
+    updateTimestamps();
 }
 
 QDateTime LogModel::oldestTimestamp() const
@@ -112,18 +149,27 @@ QDateTime LogModel::newestTimestamp() const
 }
 
 void LogModel::updateTimestamps() {
-    const auto validTimestamp = [](const LogItem item) {
-        return item.timestamp.isNull() == false;
+
+    setNewestTimestamp(QDateTime());
+    setOldestTimestamp(QDateTime());
+    previousTimestamp_ = QDateTime();
+
+    const auto validTimestamp = [](const LogItem* item) {
+        return item->timestamp.isNull() == false;
     };
 
     const auto firstLogItem = find_if(cbegin(data_), cend(data_), validTimestamp);
     if (firstLogItem != data_.cend()) {
-        setOldestTimestamp((*firstLogItem).timestamp);
+        setOldestTimestamp((*firstLogItem)->timestamp);
     }
 
     const auto lastLogItem = find_if(crbegin(data_), crend(data_), validTimestamp);
     if (lastLogItem != data_.crend()) {
-        setNewestTimestamp((*lastLogItem).timestamp);
+        setNewestTimestamp((*lastLogItem)->timestamp);
+    }
+
+    if (data_.isEmpty()) {
+        followingInitialized_ = false;
     }
 }
 
@@ -138,21 +184,19 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
     if (row < 0 || row >= data_.count()) {
         return QVariant();
     }
-    LogItem item = data_.at(row);
+    LogItem* item = data_.at(row);
 
     switch (role) {
     case TimestampRole:
-        return item.timestamp;
+        return item->timestamp;
     case PidRole:
-        return item.pid;
+        return item->pid;
     case TidRole:
-        return item.tid;
+        return item->tid;
     case LevelRole:
-        return item.level;
+        return item->level;
     case MessageRole:
-        return item.message;
-    case RowIndexRole:
-        return item.rowIndex;
+        return item->message;
     }
     return QVariant();
 }
@@ -165,7 +209,6 @@ QHash<int, QByteArray> LogModel::roleNames() const
     names[TidRole] = "tid";
     names[LevelRole] = "level";
     names[MessageRole] = "message";
-    names[RowIndexRole] = "rowIndex";
     return names;
 }
 
@@ -174,37 +217,92 @@ int LogModel::count() const
     return data_.length();
 }
 
-void LogModel::parseLine(const QString &line, LogItem &item)
+LogItem* LogModel::parseLine(const QString &line)
 {
+    LogItem* item = new LogItem;
     QStringList splitIt = line.split('\t');
 
     if (splitIt.length() >= 5) {
-        item.timestamp = QDateTime::fromString(splitIt.takeFirst(), Qt::DateFormat::ISODateWithMs);
-        previousTimestamp_ = item.timestamp;
-        item.pid = splitIt.takeFirst().replace("PID:","");
-        item.tid = splitIt.takeFirst().replace("TID:","");
+        item->timestamp = QDateTime::fromString(splitIt.takeFirst(), Qt::DateFormat::ISODateWithMs);
+        previousTimestamp_ = item->timestamp;
+        item->pid = splitIt.takeFirst().replace("PID:","");
+        item->tid = splitIt.takeFirst().replace("TID:","");
         QString level = splitIt.takeFirst();
 
         if (level == "[D]") {
-            item.level = LevelDebug;
+            item->level = LevelDebug;
         } else if (level == "[I]") {
-            item.level = LevelInfo;
+            item->level = LevelInfo;
         } else if (level == "[W]") {
-            item.level = LevelWarning;
+            item->level = LevelWarning;
         } else if (level == "[E]") {
-            item.level = LevelError;
+            item->level = LevelError;
         }
-        item.message = splitIt.join('\t');
+        item->message = splitIt.join('\t');
     } else {
-        item.message = line;
+        item->message = line;
     }
 
     if (line.isEmpty()) {
-        item.timestamp = previousTimestamp_;
+        item->timestamp = previousTimestamp_;
     }
-    if (item.timestamp.isNull()) {
-        item.timestamp = previousTimestamp_;
+    if (item->timestamp.isNull()) {
+        item->timestamp = previousTimestamp_;
     }
+    return item;
+}
+
+void LogModel::removeRowsFromModel(const uint pathHash)
+{
+    QList<LogItem*>::iterator chunkStart, chunkEnd;
+    QList<LogItem*>::iterator it = data_.begin();
+    bool chunkForRemoveBegan = false;
+    bool gotChunk = false;
+
+    while (it != data_.end()) {
+
+        LogItem* item = *it;
+
+        if (item->filehash == pathHash) {
+            if (chunkForRemoveBegan == false) {
+                chunkForRemoveBegan = true;
+                chunkStart = it;
+            }
+        } else {
+            if (chunkForRemoveBegan) {
+                chunkForRemoveBegan = false;
+                gotChunk = true;
+                chunkEnd = it;
+            }
+        }
+
+        if (gotChunk) {
+            it = removeChunk(chunkStart, chunkEnd);
+            gotChunk = false;
+        }
+        ++it;
+    }
+
+    if (chunkForRemoveBegan) {
+        removeChunk(chunkStart, data_.end());
+    }
+
+    emit countChanged();
+    updateTimestamps();
+}
+
+QList<LogItem*>::iterator LogModel::removeChunk(const QList<LogItem*>::iterator &chunkStart, const QList<LogItem*>::iterator &chunkEnd)
+{
+    int first = chunkStart - data_.begin();
+    int last = chunkEnd - data_.begin() - 1;
+
+    beginRemoveRows(QModelIndex(), first, last);
+    for (auto it = chunkStart; it != chunkEnd; ++it) {
+        delete *it;
+    }
+    QList<LogItem*>::iterator it = data_.erase(chunkStart, chunkEnd);
+    endRemoveRows();
+    return it;
 }
 
 void LogModel::checkFile()

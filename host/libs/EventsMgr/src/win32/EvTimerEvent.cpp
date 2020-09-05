@@ -1,11 +1,10 @@
-
 #if !defined(_WIN32)
 #error "This file is only for Widnows"
 #endif
 
-#include "win32/EvTimerEvent.h"
+#include "EventsMgr/win32/EvTimerEvent.h"
 
-namespace spyglass {
+namespace strata::events_mgr {
 
 EvTimerEvent::EvTimerEvent() : EvEventBase(EvType::eEvTypeWinTimer), hTimer_(NULL), timeInMs_(0), active_(false)
 {

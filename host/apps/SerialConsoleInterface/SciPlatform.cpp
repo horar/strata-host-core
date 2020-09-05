@@ -1,5 +1,4 @@
 #include "SciPlatform.h"
-#include <DeviceProperties.h>
 #include "logging/LoggingQtCategories.h"
 
 #include <QJsonDocument>
@@ -9,6 +8,7 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QSaveFile>
+
 
 SciPlatform::SciPlatform(
         SciPlatformSettings *settings,
@@ -34,7 +34,7 @@ int SciPlatform::deviceId()
     return deviceId_;
 }
 
-void SciPlatform::setDevice(strata::SerialDevicePtr device)
+void SciPlatform::setDevice(strata::device::DevicePtr device)
 {
     if (device == nullptr) {
         if (status_ == PlatformStatus::Disconnected) {
@@ -49,9 +49,9 @@ void SciPlatform::setDevice(strata::SerialDevicePtr device)
         device_ = device;
         deviceId_ = device_->deviceId();
 
-        connect(device_.get(), &strata::SerialDevice::msgFromDevice, this, &SciPlatform::messageFromDeviceHandler);
-        connect(device_.get(), &strata::SerialDevice::messageSent, this, &SciPlatform::messageToDeviceHandler);
-        connect(device_.get(), &strata::SerialDevice::serialDeviceError, this, &SciPlatform::deviceErrorHandler);
+        connect(device_.get(), &strata::device::Device::msgFromDevice, this, &SciPlatform::messageFromDeviceHandler);
+        connect(device_.get(), &strata::device::Device::messageSent, this, &SciPlatform::messageToDeviceHandler);
+        connect(device_.get(), &strata::device::Device::deviceError, this, &SciPlatform::deviceErrorHandler);
 
         setStatus(PlatformStatus::Connected);
     }
@@ -143,9 +143,9 @@ void SciPlatform::resetPropertiesFromDevice()
         return;
     }
 
-    QString verboseName = device_->property(strata::DeviceProperties::verboseName);
-    QString appVersion = device_->property(strata::DeviceProperties::applicationVer);
-    QString bootloaderVersion = device_->property(strata::DeviceProperties::bootloaderVer);
+    QString verboseName = device_->property(strata::device::DeviceProperties::verboseName);
+    QString appVersion = device_->property(strata::device::DeviceProperties::applicationVer);
+    QString bootloaderVersion = device_->property(strata::device::DeviceProperties::bootloaderVer);
 
     if (verboseName.isEmpty()) {
         if (appVersion.isEmpty() == false) {
@@ -194,30 +194,6 @@ bool SciPlatform::sendMessage(const QByteArray &message)
     return result;
 }
 
-bool SciPlatform::exportScrollback(QString filePath) const
-{
-    QSaveFile file(filePath);
-    bool ret = file.open(QIODevice::WriteOnly | QIODevice::Text);
-    if (ret == false) {
-        qCCritical(logCategorySci) << "cannot open file" << filePath << file.errorString();
-        return false;
-    }
-
-    QTextStream out(&file);
-
-    out << scrollbackModel_->getTextForExport();
-
-    return file.commit();
-}
-
-void SciPlatform::removeCommandFromHistoryAt(int index)
-{
-    bool isRemoved = commandHistoryModel_->removeAt(index);
-    if (isRemoved) {
-        settings_->setCommandHistory(verboseName_, commandHistoryModel()->getCommandList());
-    }
-}
-
 bool SciPlatform::programDevice(QString filePath, bool doBackup)
 {
     if (status_ != PlatformStatus::Ready
@@ -235,6 +211,7 @@ bool SciPlatform::programDevice(QString filePath, bool doBackup)
 
     connect(flasherConnector_, &strata::FlasherConnector::flashProgress, this, &SciPlatform::flasherProgramProgressHandler);
     connect(flasherConnector_, &strata::FlasherConnector::backupProgress, this, &SciPlatform::flasherBackupProgressHandler);
+    connect(flasherConnector_, &strata::FlasherConnector::restoreProgress, this, &SciPlatform::flasherRestoreProgressHandler);
     connect(flasherConnector_, &strata::FlasherConnector::operationStateChanged, this, &SciPlatform::flasherOperationStateChangedHandler);
     connect(flasherConnector_, &strata::FlasherConnector::finished, this, &SciPlatform::flasherFinishedHandler);
     connect(flasherConnector_, &strata::FlasherConnector::devicePropertiesChanged, this, &SciPlatform::resetPropertiesFromDevice);
@@ -243,6 +220,21 @@ bool SciPlatform::programDevice(QString filePath, bool doBackup)
     setProgramInProgress(true);
 
     return true;
+}
+
+void SciPlatform::storeCommandHistory(const QStringList &list)
+{
+    settings_->setCommandHistory(verboseName_, list);
+}
+
+void SciPlatform::storeExportPath(const QString &exportPath)
+{
+    settings_->setExportPath(verboseName_, exportPath);
+}
+
+void SciPlatform::storeAutoExportPath(const QString &autoExportPath)
+{
+    settings_->setAutoExportPath(verboseName_, autoExportPath);
 }
 
 void SciPlatform::messageFromDeviceHandler(QByteArray message)
@@ -255,9 +247,9 @@ void SciPlatform::messageToDeviceHandler(QByteArray message)
     scrollbackModel_->append(message, SciScrollbackModel::MessageType::Request);
 }
 
-void SciPlatform::deviceErrorHandler(strata::SerialDevice::ErrorCode errorCode, QString errorString)
+void SciPlatform::deviceErrorHandler(strata::device::Device::ErrorCode errorCode, QString errorString)
 {
-    Q_UNUSED(errorCode);
+    Q_UNUSED(errorCode)
     setErrorString(errorString);
 }
 
@@ -266,9 +258,14 @@ void SciPlatform::flasherProgramProgressHandler(int chunk, int total)
     emit flasherProgramProgress(chunk, total);
 }
 
-void SciPlatform::flasherBackupProgressHandler(int chunk)
+void SciPlatform::flasherBackupProgressHandler(int chunk, int total)
 {
-    emit flasherBackupProgress(chunk);
+    emit flasherBackupProgress(chunk, total);
+}
+
+void SciPlatform::flasherRestoreProgressHandler(int chunk, int total)
+{
+    emit flasherRestoreProgress(chunk, total);
 }
 
 void SciPlatform::flasherOperationStateChangedHandler(

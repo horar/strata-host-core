@@ -3,14 +3,17 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Window 2.3 // for debug window, can be cut out for release
 import QtGraphicalEffects 1.0
+
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
 import "qrc:/js/login_utilities.js" as Authenticator
+import "qrc:/js/constants.js" as Constants
 import "qrc:/partial-views"
 import "qrc:/partial-views/status-bar"
 import "qrc:/partial-views/help-tour"
 import "qrc:/partial-views/about-popup"
+import "qrc:/partial-views/profile-popup"
 import "qrc:/js/help_layout_manager.js" as Help
 
 import tech.strata.fonts 1.0
@@ -67,6 +70,38 @@ Rectangle {
         anchors {
             left: logoContainer.right
         }
+        spacing: 1
+
+        Rectangle {
+            id: platformSelector
+            height: 40
+            width: 120
+
+            color: platformSelectorMouse.containsMouse ? "#34993b" : NavigationControl.stack_container_.currentIndex === 0 ? "#33b13b" : "#444"
+
+            property color menuColor: "#33b13b"
+
+            SGText {
+                color: "white"
+                text: "Platform Selector"
+                anchors {
+                    centerIn: parent
+                    verticalCenterOffset: 2
+                }
+                font.family: Fonts.franklinGothicBook
+            }
+
+            MouseArea {
+                id: platformSelectorMouse
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: {
+                    let data = {"index": 0}
+                    NavigationControl.updateState(NavigationControl.events.SWITCH_VIEW_EVENT, data)
+                }
+                cursorShape: Qt.PointingHandCursor
+            }
+        }
 
         Repeater {
             id: platformTabRepeater
@@ -77,12 +112,22 @@ Rectangle {
         SGPlatformTab {
             // demonstration tab set for help tour
             id: helpTab
-            visible: false
             class_id: "0"
+            device_id: Constants.NULL_DEVICE_ID
             view: "control"
             index: 0
             connected: true
             name: "Help Example"
+            visible: false
+            onXChanged: {
+                if (visible) {
+                    Help.refreshView(Help.internal_tour_index)
+                }
+            }
+            available: {
+                "documents": true,
+                "control": true
+            }
 
             Connections {
                 target: Help.utility
@@ -131,6 +176,34 @@ Rectangle {
                     family: Fonts.franklinGothicBold
                     pixelSize: profileIconHover.containsMouse ? 24 : 20
                 }
+            }
+        }
+
+        Rectangle {
+            id: alertIconContainer
+            visible: false
+
+            anchors {
+                top: parent.top
+                horizontalCenter: parent.left
+                topMargin: 5
+            }
+
+            height: 12
+            width: height
+            radius: height / 2
+            color: "#00b842"
+
+            SGIcon {
+                id: alertIcon
+                height: 15
+                width: height
+                anchors {
+                    centerIn: parent
+                }
+
+                source: "qrc:/sgimages/exclamation-circle.svg"
+                iconColor : "white"
             }
         }
 
@@ -198,6 +271,15 @@ Rectangle {
                     width: profileMenu.width
                 }
 
+                SGMenuItem {
+                    text: qsTr("Profile")
+                    onClicked: {
+                        profileMenu.close()
+                        profilePopup.open()
+                    }
+                    width: profileMenu.width
+                }
+
                 Rectangle {
                     id: menuDivider
                     color: "white"
@@ -218,7 +300,7 @@ Rectangle {
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                         Authenticator.logout()
                         PlatformSelection.logout()
-                        coreInterface.disconnectPlatform()
+                        sdsModel.coreInterface.unregisterClient()
                     }
                     width: profileMenu.width
                 }
@@ -229,28 +311,15 @@ Rectangle {
     SGFeedbackPopup {
         id: feedbackPopup
         width: Math.max(container.width * 0.8, 600)
+        height: Math.max(container.height * 0.8, 600)
         x: container.width/2 - feedbackPopup.width/2
         y: container.parent.windowHeight/2 - feedbackPopup.height/2
     }
 
-    Window {
-        id: debugWindow
-        visible: container.parent.showDebug
-        height: 200
-        width: 300
-        x: 1620
-        y: 500
-        title: "SGStatusBar.qml Debug Controls"
-
-        Column {
-            id: debug1
-            Button {
-                text: "Toggle Content/Control"
-                onClicked: {
-                    NavigationControl.updateState(NavigationControl.events.TOGGLE_CONTROL_CONTENT)
-                }
-            }
-        }
+    SGProfilePopup {
+        id: profilePopup
+        x: container.width/2 - profilePopup.width/2
+        y: container.parent.windowHeight/2 - profilePopup.height/2
     }
 
     function showAboutWindow() {

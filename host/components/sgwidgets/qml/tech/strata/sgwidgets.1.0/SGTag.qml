@@ -9,15 +9,17 @@ Item {
 
     property alias text: tagText.text
     property alias textColor: tagText.color
+    property alias implicitTextColor: tagText.implicitColor
     property alias radius: tagBackground.radius
     property alias color: tagBackground.color
     property alias font: tagText.font
+    property alias fontSizeMultiplier: tagText.fontSizeMultiplier
 
     property bool sizeByMask: false
     property alias mask: metrics.text
 
     property int horizontalPadding: 4
-    property int verticalPadding: 4
+    property int verticalPadding: 2
 
     TextMetrics {
         id: metrics

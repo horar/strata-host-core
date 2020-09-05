@@ -1,7 +1,8 @@
 #include "Commands.h"
 #include "SerialPortList.h"
 #include "logging/LoggingQtCategories.h"
-#include <SerialDevice.h>
+#include <Device/Device.h>
+#include <Device/Serial/SerialDevice.h>
 #include <Flasher.h>
 
 #include <cstdlib>
@@ -62,15 +63,15 @@ void ListCommand::process() {
 }
 
 
-// FIRMWARE (FLASH/BACKUP) command
+// FLASHER (FLASH/BACKUP firmware/bootloader) command
 
-FirmwareCommand::FirmwareCommand(const QString &fileName, int deviceNumber, bool flash) :
-    fileName_(fileName), deviceNumber_(deviceNumber), flash_(flash) { }
+FlasherCommand::FlasherCommand(const QString &fileName, int deviceNumber, CmdType command) :
+    fileName_(fileName), deviceNumber_(deviceNumber), command_(command) { }
 
 // Destructor must be defined due to unique pointer to incomplete type.
-FirmwareCommand::~FirmwareCommand() { }
+FlasherCommand::~FlasherCommand() { }
 
-void FirmwareCommand::process() {
+void FlasherCommand::process() {
     SerialPortList serialPorts;
 
     if (serialPorts.count() == 0) {
@@ -86,7 +87,7 @@ void FirmwareCommand::process() {
         return;
     }
 
-    SerialDevicePtr device = std::make_shared<SerialDevice>(static_cast<int>(qHash(name)), name);
+    device::DevicePtr device = std::make_shared<device::serial::SerialDevice>(static_cast<int>(qHash(name)), name);
     if (device->open() == false) {
         qCCritical(logCategoryFlasherCli) << "Cannot open board (serial device)" << name;
         emit finished(EXIT_FAILURE);
@@ -99,10 +100,16 @@ void FirmwareCommand::process() {
         emit this->finished((result == Flasher::Result::Ok) ? EXIT_SUCCESS : EXIT_FAILURE);
     });
 
-    if (flash_) {
-        flasher_->flash();
-    } else {
-        flasher_->backup();
+    switch (command_) {
+    case CmdType::FlashFirmware :
+        flasher_->flashFirmware();
+        break;
+    case CmdType::FlashBootloader :
+        flasher_->flashBootloader();
+        break;
+    case CmdType::BackupFirmware :
+        flasher_->backupFirmware();
+        break;
     }
 }
 
