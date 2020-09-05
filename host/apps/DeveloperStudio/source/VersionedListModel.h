@@ -71,6 +71,7 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     void populateModel(const QList<VersionedItem*> &list);
     void clear(bool emitSignals=true);
+    Q_INVOKABLE QVariantMap get(int index);
 
 signals:
     void countChanged();

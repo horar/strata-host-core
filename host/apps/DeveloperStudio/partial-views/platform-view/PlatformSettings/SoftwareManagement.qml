@@ -14,7 +14,7 @@ ColumnLayout {
     property bool upToDate
     property int index
     property var activeVersion: null
-    property var latestVersion: null
+    property var latestVersion: ({})
     property string downloadFilepath: ""
     property bool downloadError: false
     property string activeDownloadUri: ""
@@ -68,18 +68,22 @@ ColumnLayout {
         let activeIdx = platformStack.controlViewList.getInstalledVersion()
 
         if (activeIdx >= 0) {
-            activeVersion = copyControlViewObject(activeIdx)
+            activeVersion = platformStack.controlViewList.get(activeIdx)
             upToDate = isUpToDate()
             return
         }
 
         upToDate = false
         let latestVersionIdx = platformStack.controlViewList.getLatestVersion();
-        latestVersion = copyControlViewObject(latestVersionIdx)
+        latestVersion = platformStack.controlViewList.get(latestVersionIdx);
 
-        if (!latestVersion) {
+        if (objectIsEmpty(latestVersion)) {
             console.error("Could not find any control views on server for class id:", platformStack.class_id)
         }
+    }
+
+    function objectIsEmpty(obj) {
+        return Object.keys(obj).length === 0 && obj.constructor === Object
     }
 
     function isUpToDate() {
@@ -87,25 +91,12 @@ ColumnLayout {
             let version = platformStack.controlViewList.version(i)
             if (version !== activeVersion.version && SGVersionUtils.greaterThan(version, activeVersion.version)) {
                 // if the version is greater, then set the latestVersion here
-                latestVersion = copyControlViewObject(i);
+                latestVersion = platformStack.controlViewList.get(i);
                 return false;
             }
         }
         latestVersion = activeVersion;
         return true;
-    }
-
-    function copyControlViewObject(index) {
-        let obj = {};
-
-        obj["uri"] = platformStack.controlViewList.uri(index);
-        obj["md5"] = platformStack.controlViewList.md5(index);
-        obj["name"] = platformStack.controlViewList.name(index);
-        obj["version"] = platformStack.controlViewList.version(index);
-        obj["timestamp"] = platformStack.controlViewList.timestamp(index);
-        obj["installed"] = platformStack.controlViewList.installed(index);
-
-        return obj;
     }
 
     Timer {
@@ -116,7 +107,6 @@ ColumnLayout {
         onTriggered: {
             if (downloadError) {
                 upToDate = false
-                activeVersion = latestVersion
                 downloadFilepath = ""
             } else {
                 upToDate = true
@@ -201,7 +191,9 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.topMargin: 15
         color: "#eee"
-        visible: !software.upToDate && latestVersion !== null && platformStack.controlContainer.activeDownloadUri === ""
+        visible: {
+            return !software.upToDate && !objectIsEmpty(latestVersion) && platformStack.controlContainer.activeDownloadUri === ""
+        }
 
         ColumnLayout {
             id: notUpToDateColumn
@@ -258,7 +250,7 @@ ColumnLayout {
                             color: "#666"
 
                             function getLatestVersionText() {
-                                if (software.latestVersion) {
+                                if (!objectIsEmpty(latestVersion)) {
                                     let str = "Update to v";
                                     str += software.latestVersion.version;
                                     str += ", released " + software.latestVersion.timestamp

@@ -168,6 +168,25 @@ void VersionedListModel::setFilepath(int index, QString path)
                 QVector<int>() << FilepathRole);
 }
 
+QVariantMap VersionedListModel::get(int index)
+{
+    if (index < 0 || index >= data_.count()) {
+        return QVariantMap();
+    }
+
+    VersionedItem *item = data_.at(index);
+    QVariantMap map;
+    map.insert("uri", item->uri);
+    map.insert("md5", item->md5);
+    map.insert("name", item->name);
+    map.insert("timestamp", item->timestamp);
+    map.insert("version", item->version);
+    map.insert("filepath", item->filepath);
+    map.insert("installed", item->installed);
+    return map;
+}
+
+
 QHash<int, QByteArray> VersionedListModel::roleNames() const
 {
     QHash<int, QByteArray> names;
