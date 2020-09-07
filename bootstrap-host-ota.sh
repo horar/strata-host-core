@@ -4,36 +4,137 @@
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)
 
+function usage {
+    echo "Syntax:"
+    echo "     [-i=BUILD_ID] [-c] [-h]"
+    echo "Where:"
+    echo "     [-i | --buildid]: For build id"
+    echo "     [-c | --cleanup]: To leave only installer"
+    echo "     [-h | --help]: For this help"
+    echo "For example:"
+    echo "     ./bootstrap-host-ota.sh -i=999 --cleanup"
+    exit 0
+}
+
+#echo "======================================================================="
+#echo " Parsing arguments.."
+#echo "======================================================================="
+
+BUILD_ID=1
+BUILD_CLEANUP=0
+BOOTSTRAP_USAGE=0
+
+for i in "$@"
+do
+case $i in
+    -i=*|--buildid=*)
+    BUILD_ID="${i#*=}"
+    shift # past argument=value
+    ;;
+    -c|--cleanup)
+    BUILD_CLEANUP=1
+    shift # past argument with no value
+    ;;
+    -h|--help)
+    BOOTSTRAP_USAGE=1
+    shift # past argument with no value
+    ;;
+    *)
+    BOOTSTRAP_USAGE=1
+    shift # past unknown option
+    ;;
+esac
+done
+
+if [ $BOOTSTRAP_USAGE != 0 ] ; then usage; fi
 
 echo "======================================================================="
 echo " Preparing environment.."
 echo "======================================================================="
 
-# exit on first error
-set -e
+BUILD_DIR=build-host-ota
+PACKAGES_DIR=packages
+
+PKG_STRATA=$PACKAGES_DIR/com.onsemi.strata/data
+PKG_STRATA_COMPONENTS=$PACKAGES_DIR/com.onsemi.strata.components/data
+PKG_STRATA_COMPONENTS_VIEWS=$PKG_STRATA_COMPONENTS/views
+PKG_STRATA_DS=$PACKAGES_DIR/com.onsemi.strata.devstudio/data
+PKG_STRATA_HCS=$PACKAGES_DIR/com.onsemi.strata.hcs/data
+
+SDS_BINARY=Strata\ Developer\ Studio.app
+HCS_BINARY=hcs
+SDS_BINARY_DIR=$PKG_STRATA_DS/$SDS_BINARY
+HCS_BINARY_DIR=$PKG_STRATA_HCS/$HCS_BINARY
+STRATA_DEPLOYMENT_DIR=../deployment/Strata
+STRATA_RESOURCES_DIR=../host/resources/qtifw
+STRATA_HCS_CONFIG_DIR=../host/assets/config/hcs
+STRATA_CONFIG_XML=$STRATA_RESOURCES_DIR/config/config.xml
+STRATA_OFFLINE=strata-setup-offline
+STRATA_ONLINE=strata-setup-online
+STRATA_OFFLINE_BINARY=$STRATA_OFFLINE.app
+STRATA_ONLINE_BINARY=$STRATA_ONLINE.app
+STRATA_ONLINE_REPO_ROOT=pub
+STRATA_ONLINE_REPOSITORY=$STRATA_ONLINE_REPO_ROOT/repository/demo
 
 echo "-----------------------------------------------------------------------------"
 echo " Build env. setup:"
 echo "-----------------------------------------------------------------------------"
+
+echo " Checking clang..."
+if [ ! -x "$(command -v clang)" ]; then
+    echo "======================================================================="
+    echo " clang is missing from path! Aborting."
+    echo "======================================================================="
+    exit 1
+fi
+
 clang --version
 echo "-----------------------------------------------------------------------------"
+
+echo " Checking cmake..."
+if [ ! -x "$(command -v cmake)" ]; then
+    echo "======================================================================="
+    echo " cmake is missing from path! Aborting."
+    echo "======================================================================="
+    exit 1
+fi
+
 cmake --version
 echo "-----------------------------------------------------------------------------"
+
+echo " Checking qmake..."
+if [ ! -x "$(command -v qmake)" ]; then
+    echo "======================================================================="
+    echo " qmake is missing from path! Aborting."
+    echo "======================================================================="
+    exit 1
+fi
+
 qmake --version
 echo "-----------------------------------------------------------------------------"
+
 echo " Checking QtIFW binarycreator..."
 if [ ! -x "$(command -v binarycreator)" ]; then
-    echo "QtIFW's binarycreator is missing from path! Aborting."
-    exit
-else
-    echo "QtIFW's binarycreator found"
+    echo "======================================================================="
+    echo " QtIFW's binarycreator is missing from path! Aborting."
+    echo "======================================================================="
+    exit 1
 fi
+
 echo " Checking QtIFW repogen..."
 if [ ! -x "$(command -v repogen)" ]; then
-    echo "QtIFW's repogen is missing from path! Aborting."
-    exit
-else
-    echo "QtIFW's repogen found"
+    echo "======================================================================="
+    echo " QtIFW's repogen is missing from path! Aborting."
+    echo "======================================================================="
+    exit 1
+fi
+
+echo " Checking Qt macdeployqt..."
+if [ ! -x "$(command -v macdeployqt)" ]; then
+    echo "======================================================================="
+    echo " Qt's macdeployqt is missing from path! Aborting."
+    echo "======================================================================="
+    exit 1
 fi
 
 echo "-----------------------------------------------------------------------------"
@@ -49,16 +150,16 @@ echo git submodule update --init --recursive
 echo "-----------------------------------------------------------------------------"
 echo " Create a build folder.."
 echo "-----------------------------------------------------------------------------"
-#if [ -d build-host-ota ] ; then rm -rf build-host-ota; fi
-if [ ! -d build-host-ota ] ; then mkdir -pv build-host-ota; fi
+#if [ -d $BUILD_DIR ] ; then rm -rf $BUILD_DIR; fi
+if [ ! -d $BUILD_DIR ] ; then mkdir -pv $BUILD_DIR; fi
 
 echo "======================================================================="
 echo " Generating project.."
 echo "======================================================================="
-cd build-host-ota
+cd $BUILD_DIR
 
-if [ -d packages ] ; then rm -rf packages; fi
-if [ ! -d packages ] ; then mkdir -pv packages; fi
+if [ -d $PACKAGES_DIR ] ; then rm -rf $PACKAGES_DIR; fi
+if [ ! -d $PACKAGES_DIR ] ; then mkdir -pv $PACKAGES_DIR; fi
 
 cmake \
     -DCMAKE_BUILD_TYPE=OTA \
@@ -68,7 +169,12 @@ cmake \
     -DBUILD_TESTING=off \
     ../host
 
-if [ $? != 0 ] ; then exit -1; fi
+if [ $? != 0 ] ; then 
+    echo "======================================================================="
+    echo " Failed to configure cmake build!"
+    echo "======================================================================="
+    exit 4
+fi
 
 echo "======================================================================="
 echo " Compiling.."
@@ -76,43 +182,43 @@ echo "======================================================================="
 cmake --build . -- -j $(sysctl -n hw.ncpu)
 # cmake --build . --config Debug
 
-if [ ! -d ./packages/com.onsemi.strata.devstudio/data/Strata\ Developer\ Studio.app ] ; then 
+if [ $? != 0 ] ; then 
     echo "======================================================================="
-    echo " Missing Strata Developer Studio.app, build probably failed"
+    echo " Failed to perform cmake build!"
+    echo "======================================================================="
+    exit 5
+fi
+
+if [ ! -d "$SDS_BINARY_DIR" ] ; then 
+    echo "======================================================================="
+    echo " Missing $SDS_BINARY, build probably failed"
     echo "======================================================================="
     exit 2
 fi
 
-if [ ! -f ./packages/com.onsemi.strata.hcs/data/hcs ] ; then 
+if [ ! -f "$HCS_BINARY_DIR" ] ; then 
     echo "======================================================================="
-    echo " Missing hcs, build probably failed"
+    echo " Missing $HCS_BINARY, build probably failed"
     echo "======================================================================="
     exit 2
 fi
 
 echo "======================================================================="
-echo " Copying necessary files.."
+echo " Preparing necessary files.."
 echo "======================================================================="
 
 # copy various license files
-cp -fv ../deployment/Strata/dependencies/strata/* ./packages/com.onsemi.strata.devstudio/data
+cp -fv $STRATA_DEPLOYMENT_DIR/dependencies/strata/* $PKG_STRATA_DS
 
-# echo "Copying Qt Core/Components resources to ./packages/com.onsemi.strata.components/data"
-# cp -fv ./bin/component-*.rcc ./packages/com.onsemi.strata.components/data
+# copy HCS config file
+cp -fv $STRATA_HCS_CONFIG_DIR/hcs_prod.config $PKG_STRATA_HCS/hcs.config
 
-echo "Copying Qml Views Resources to ./packages/com.onsemi.strata.components/data/views"
-if [ ! -d ./packages/com.onsemi.strata.components/data/views ] ; then mkdir -pv ./packages/com.onsemi.strata.components/data/views; fi
-cp -fv ./bin/views-*.rcc ./packages/com.onsemi.strata.components/data/views
+# echo "Copying Qt Core/Components resources to $PKG_STRATA_COMPONENTS"
+# cp -fv ./bin/component-*.rcc $PKG_STRATA_COMPONENTS
 
-#if [ ! -f ./bin/Qt5Mqtt.so ] ; then 
-#    echo "======================================================================="
-#    echo " Missing Qt5Mqtt.so, build probably failed"
-#    echo "======================================================================="
-#    exit 2
-#fi
-
-#echo "Copying QtMqtt.so to main dir"
-#cp -fv ./bin/Qt5Mqtt.so ./packages/com.onsemi.strata.devstudio/data
+echo "Copying Qml Views Resources to $PKG_STRATA_COMPONENTS_VIEWS"
+if [ ! -d $PKG_STRATA_COMPONENTS_VIEWS ] ; then mkdir -pv $PKG_STRATA_COMPONENTS_VIEWS; fi
+cp -fv ./bin/views-*.rcc $PKG_STRATA_COMPONENTS_VIEWS
 
 
 # TODO (LC):
@@ -123,49 +229,82 @@ cp -fv ./bin/views-*.rcc ./packages/com.onsemi.strata.components/data/views
 # - copy non-in resources for ifw-packages ... (icons, banners, scripts, license etc.)
 
 echo "-----------------------------------------------------------------------------"
-echo " Preparing Strata Developer Studio.app dependencies.."
+echo " Preparing $SDS_BINARY dependencies.."
 echo "-----------------------------------------------------------------------------"
 
-macdeployqt ./packages/com.onsemi.strata.devstudio/data/Strata\ Developer\ Studio.app \
+macdeployqt "$SDS_BINARY_DIR" \
     -qmldir=../host/apps/DeveloperStudio \
     -qmldir=../host/components \
-    -libpath=./packages/com.onsemi.strata.qt/data \
-    -libpath=./packages/com.onsemi.strata.qt/data/plugins \
     -verbose=1
 
+if [ $? != 0 ] ; then 
+    echo "======================================================================="
+    echo " Failed to macdeployqt $SDS_BINARY!"
+    echo "======================================================================="
+    exit 3
+fi
+
 echo "======================================================================="
-echo " Preparing offline installer.."
+echo " Preparing offline installer $STRATA_OFFLINE_BINARY.."
 echo "======================================================================="
 
 binarycreator \
     --verbose \
     --offline-only \
-    -c ../host/resources/qtifw/config/config.xml \
-    -p ./packages \
-    strata-setup-offline
-	
+    -c $STRATA_CONFIG_XML \
+    -p $PACKAGES_DIR \
+    $STRATA_OFFLINE
+
+if [ $? != 0 ] ; then 
+    echo "======================================================================="
+    echo " Failed to create offline installer $STRATA_OFFLINE_BINARY!"
+    echo "======================================================================="
+    exit 3
+fi
+
 #echo "======================================================================="
-#echo " Preparing online installer.."
+#echo " Preparing online installer $STRATA_ONLINE_BINARY.."
 #echo "======================================================================="
 
 #binarycreator \
 #    --verbose \
 #    --online-only \
-#    -c ../host/resources/qtifw/config/config.xml \
-#    -p ./packages \
-#    strata-setup-online
+#    -c $STRATA_CONFIG_XML \
+#    -p $PACKAGES_DIR \
+#    $STRATA_ONLINE
+
+#if [ $? != 0 ] ; then 
+#    echo "======================================================================="
+#    echo " Failed to create online installer $STRATA_ONLINE_BINARY!"
+#    echo "======================================================================="
+#    exit 3
+#fi
 
 echo "======================================================================="
-echo " Preparing online repository.."
+echo " Preparing online repository $STRATA_ONLINE_REPOSITORY.."
 echo "======================================================================="
 
-if [ -d pub ] ; then rm -rf pub; fi
+if [ -d $STRATA_ONLINE_REPO_ROOT ] ; then rm -rf $STRATA_ONLINE_REPO_ROOT; fi
 
 repogen \
     --update-new-components \
     --verbose \
-    -p ./packages \
-    pub/repository/demo
+    -p $PACKAGES_DIR \
+    $STRATA_ONLINE_REPOSITORY
+
+if [ $? != 0 ] ; then 
+    echo "======================================================================="
+    echo " Failed to create online repository $STRATA_ONLINE_REPOSITORY!"
+    echo "======================================================================="
+    exit 3
+fi
+
+if [ $BUILD_CLEANUP != 0 ] ; then
+    echo "-----------------------------------------------------------------------------"
+    echo " Cleaning build directory"
+    echo "-----------------------------------------------------------------------------"
+    # TODO
+fi
 
 echo "======================================================================="
 echo " OTA build finished"

@@ -140,6 +140,15 @@ IF %ERRORLEVEL% NEQ 0 (
     Exit /B 1
 )
 
+echo " Checking Qt windeployqt..."
+where windeployqt >nul 2>nul
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " Qt's windeployqt is missing from path! Aborting."
+    echo "======================================================================="
+    Exit /B 1
+)
+
 echo " Checking signtool..."
 where signtool >nul 2>nul
 IF %ERRORLEVEL% NEQ 0 (
@@ -540,7 +549,7 @@ echo "Where:"
 echo "     [-i | --buildid]: For build id"
 echo "     [-c | --cleanup]: To leave only installer"
 echo "     [-h | --help]: For this help"
-echo For example:
+echo "For example:"
 echo "     bootstrap-host-ota.bat -i=999 --cleanup"
 exit /B 0
 
