@@ -92,20 +92,27 @@ Component.prototype.installationOrUpdateFinished = function()
     console.log("installationOrUpdateFinished entered");
     
     if (isComponentInstalled("com.onsemi.strata.devstudio") && (installer.isInstaller() || installer.isUpdater() || installer.isPackageManager())) {
-        installer.setValue("RunProgram", installer.value("TargetDir") + "/Strata Developer Studio.exe");
+        if (systemInfo.productType === "windows")
+            installer.setValue("RunProgram", installer.value("TargetDir") + "/Strata Developer Studio.exe");
+        else if (systemInfo.productType === "osx")
+            installer.setValue("RunProgram", installer.value("TargetDir") + "/Strata Developer Studio.app/Contents/MacOS/Strata Developer Studio");
+        else
+            installer.setValue("RunProgram", "");
+
         installer.setValue("RunProgramArguments", "");
         installer.setValue("RunProgramDescription", "Launch Strata Developer Studio");
     } else {
         installer.setValue("RunProgram", "");
         installer.setValue("RunProgramArguments", "");
-        installer.setValue("RunProgramDescription", "");        
+        installer.setValue("RunProgramDescription", "");
     }
 
-    if ((installer.isInstaller() || installer.isUpdater() || installer.isPackageManager()) && (installer.status == QInstaller.Success))
+    console.log("RunProgram: " + installer.value("RunProgram"));
+    if ((systemInfo.productType === "windows") && (installer.isInstaller() || installer.isUpdater() || installer.isPackageManager()) && (installer.status == QInstaller.Success))
         isRestartRequired();
 
     // erase StrataUtils folder
-	var strataUtilsFolder = installer.value("TargetDir") + "\\StrataUtils";
+    var strataUtilsFolder = installer.value("TargetDir") + "\\StrataUtils";
     if((systemInfo.productType == "windows") && (installer.fileExists(strataUtilsFolder))) {
         try {
             console.log("erasing StrataUtils folder: " + strataUtilsFolder);
