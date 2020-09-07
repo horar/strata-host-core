@@ -88,10 +88,6 @@ set STRATA_ONLINE_REPOSITORY=%STRATA_ONLINE_REPO_ROOT%\repository\demo
 echo "-----------------------------------------------------------------------------"
 echo " Build env. setup:"
 echo "-----------------------------------------------------------------------------"
-cmake --version
-echo "-----------------------------------------------------------------------------"
-qmake --version
-echo "-----------------------------------------------------------------------------"
 
 echo " Checking cmake..."
 where cmake >nul 2>nul
@@ -101,6 +97,21 @@ IF %ERRORLEVEL% NEQ 0 (
     echo "======================================================================="
     Exit /B 1
 )
+
+cmake --version
+echo "-----------------------------------------------------------------------------"
+
+echo " Checking qmake..."
+where qmake >nul 2>nul
+IF %ERRORLEVEL% NEQ 0 (
+    echo "======================================================================="
+    echo " qmake is missing from path! Aborting."
+    echo "======================================================================="
+    Exit /B 1
+)
+
+qmake --version
+echo "-----------------------------------------------------------------------------"
 
 echo " Checking jom..."
 where jom >nul 2>nul
@@ -530,7 +541,7 @@ echo "     [-i | --buildid]: For build id"
 echo "     [-c | --cleanup]: To leave only installer"
 echo "     [-h | --help]: For this help"
 echo For example:
-echo "     bootstrap-ota.bat -i=999 --cleanup"
+echo "     bootstrap-host-ota.bat -i=999 --cleanup"
 exit /B 0
 
 endlocal
