@@ -57,7 +57,10 @@ bool ClientsController::sendMessage(const QByteArray& clientId, const QString& m
 
 void ClientsController::stop()
 {
-    events_manager_.stop();
+    if(events_manager_.isRunning()) {
+        events_manager_.stop();
+        qCInfo(logCategoryHcs) << "Clients controller stoped.";
+    }
 }
 
 void ClientsController::onDescriptorHandle(strata::events_mgr::EvEventBase*, int)
