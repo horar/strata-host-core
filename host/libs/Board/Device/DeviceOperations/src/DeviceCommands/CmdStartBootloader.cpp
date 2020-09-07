@@ -12,7 +12,7 @@ CmdStartBootloader::CmdStartBootloader(const device::DevicePtr& device) :
     BaseDeviceCommand(device, QStringLiteral("start_bootloader")) { }
 
 QByteArray CmdStartBootloader::message() {
-    return QByteArray("{\"cmd\":\"start_bootloader\"}");
+    return QByteArray("{\"cmd\":\"start_bootloader\",\"payload\":{}}");
 }
 
 bool CmdStartBootloader::processNotification(rapidjson::Document& doc) {
