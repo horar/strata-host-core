@@ -230,6 +230,45 @@ const rapidjson::SchemaDocument CommandValidator::startBootloaderResSchema(
     )
 );
 
+const rapidjson::SchemaDocument CommandValidator::startFlashFirmwareResSchema(
+    CommandValidator::parseSchema(
+        R"(
+        {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+            "notification": {
+                "type": "object",
+                "properties": {
+                "value": {
+                    "type": "string",
+                    "pattern": "^start_flash_firmware$"
+                },
+                "payload": {
+                    "type": "object",
+                    "properties": {
+                    "status": {
+                        "type": "string"
+                    }
+                    },
+                    "required": [
+                    "status"
+                    ]
+                }
+                },
+                "required": [
+                "value",
+                "payload"
+                ]
+            }
+            },
+            "required": [
+            "notification"
+            ]
+        })"
+    )
+);
+
 const rapidjson::SchemaDocument CommandValidator::flashFirmwareResSchema(
     CommandValidator::parseSchema(
         R"(
@@ -269,7 +308,7 @@ const rapidjson::SchemaDocument CommandValidator::flashFirmwareResSchema(
     )
 );
 
-const rapidjson::SchemaDocument CommandValidator::backupFirmwareResSchema(
+const rapidjson::SchemaDocument CommandValidator::startBackupFirmwareResSchema(
     CommandValidator::parseSchema(
         R"(
         {
@@ -281,26 +320,17 @@ const rapidjson::SchemaDocument CommandValidator::backupFirmwareResSchema(
               "properties": {
                 "value": {
                   "type": "string",
-                  "pattern": "^backup_firmware$"
+                  "pattern": "^start_backup_firmware$"
                 },
                 "payload": {
                   "oneOf": [
                     {
                       "type": "object",
                       "properties": {
-                        "chunk": {
-                          "type": "object",
-                          "properties": {
-                            "number": {"type": "number"},
-                            "total": {"type": "number"},
-                            "size": {"type": "number"},
-                            "crc": {"type": "number"},
-                            "data": {"type": "string"}
-                          },
-                          "required": ["number", "total", "size", "crc", "data"]
-                        }
+                        "size": {"type": "number"},
+                        "chunks": {"type": "number"}
                       },
-                      "required": ["chunk"]
+                      "required": ["size", "chunks"]
                     },
                     {
                       "type": "object",
@@ -310,6 +340,45 @@ const rapidjson::SchemaDocument CommandValidator::backupFirmwareResSchema(
                       "required": ["status"]
                     }
                   ]
+                }
+              },
+              "required": ["value", "payload"]
+            }
+          },
+          "required": ["notification"]
+        })"
+    )
+);
+
+const rapidjson::SchemaDocument CommandValidator::backupFirmwareResSchema(
+    CommandValidator::parseSchema(
+        R"(
+        {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "type": "object",
+          "properties": {
+            "notification": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "pattern": "^backup_firmware$"
+                },
+                "payload": {
+                  "type": "object",
+                  "properties": {
+                    "chunk": {
+                      "type": "object",
+                      "properties": {
+                        "number": {"type": "number"},
+                        "size": {"type": "number"},
+                        "crc": {"type": "number"},
+                        "data": {"type": "string"}
+                      },
+                      "required": ["number", "size", "crc", "data"]
+                    }
+                  },
+                  "required": ["chunk"]
                 }
               },
               "required": ["value", "payload"]
@@ -560,10 +629,12 @@ const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument
     {JsonType::ack, ackSchema},
     {JsonType::notification, notificationSchema},
     {JsonType::getFirmwareInfoRes, getFirmwareInfoResSchema},
+    {JsonType::startBootloaderRes, startBootloaderResSchema},
+    {JsonType::startFlashFirmwareRes, startFlashFirmwareResSchema},
     {JsonType::flashFirmwareRes, flashFirmwareResSchema},
+    {JsonType::startBackupFirmwareRes, startBackupFirmwareResSchema},
     {JsonType::backupFirmwareRes, backupFirmwareResSchema},
     {JsonType::flashBootloaderRes, flashBootloaderResSchema},
-    {JsonType::startBootloaderRes, startBootloaderResSchema},
     {JsonType::startAppRes, startAppResSchema},
     {JsonType::strataCmd, strataCommandSchema},
     {JsonType::cmd, cmdSchema}
@@ -634,7 +705,7 @@ bool CommandValidator::validate(const JsonType type, const rapidjson::Document &
   const auto it = schemas.find(type);
   if (it == schemas.end()) {
       // TODO: use logger from CS-440
-      std::cerr << "Unknown schema." << std::endl;
+      std::cerr << "Unknown schema (" << static_cast<int>(type) << ")." << std::endl;
       return false;
   }
 

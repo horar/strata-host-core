@@ -14,7 +14,9 @@ using command::BaseDeviceCommand;
 using command::CmdGetFirmwareInfo;
 using command::CmdRequestPlatformId;
 using command::CmdStartBootloader;
+using command::CmdStartFlash;
 using command::CmdFlash;
+using command::CmdStartBackupFirmware;
 using command::CmdBackupFirmware;
 using command::CmdStartApplication;
 using command::CommandResult;
@@ -65,7 +67,26 @@ void DeviceOperations::switchToBootloader() {
     }
 }
 
-void DeviceOperations::flashChunk(const QVector<quint8>& chunk, int chunkNumber, bool flashFirmware) {
+void DeviceOperations::startFlash(uint size, uint chunks, const QString &md5, bool flashFirmware) {
+    DeviceOperation operation = (flashFirmware) ?
+                                DeviceOperation::StartFlashFirmware :
+                                DeviceOperation::StartFlashBootloader;
+    if (startOperation(operation)) {
+        commandList_.emplace_back(std::make_unique<CmdStartFlash>(device_, size, chunks, md5, flashFirmware));
+        currentCommand_ = commandList_.begin();
+        emit sendCommand(QPrivateSignal());
+    }
+}
+
+void DeviceOperations::startFlashFirmware(uint size, uint chunks, const QString &md5) {
+    startFlash(size, chunks, md5, true);
+}
+
+void DeviceOperations::startFlashBootloader(uint size, uint chunks, const QString &md5) {
+    startFlash(size, chunks, md5, false);
+}
+
+void DeviceOperations::flashChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount, bool flashFirmware) {
     DeviceOperation operation = (flashFirmware) ?
                                 DeviceOperation::FlashFirmwareChunk :
                                 DeviceOperation::FlashBootloaderChunk;
@@ -77,25 +98,33 @@ void DeviceOperations::flashChunk(const QVector<quint8>& chunk, int chunkNumber,
         if (currentCommand_ != commandList_.end()) {
             CmdFlash *cmdFlash = dynamic_cast<CmdFlash*>(currentCommand_->get());
             if (cmdFlash != nullptr) {
-                cmdFlash->setChunk(chunk, chunkNumber);
+                cmdFlash->setChunk(chunk, chunkNumber, chunkCount);
                 emit sendCommand(QPrivateSignal());
             }
         }
     }
 }
 
-void DeviceOperations::flashFirmwareChunk(const QVector<quint8>& chunk, int chunkNumber) {
-    flashChunk(chunk, chunkNumber, true);
+void DeviceOperations::flashFirmwareChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount) {
+    flashChunk(chunk, chunkNumber, chunkCount, true);
 }
 
-void DeviceOperations::flashBootloaderChunk(const QVector<quint8>& chunk, int chunkNumber) {
-    flashChunk(chunk, chunkNumber, false);
+void DeviceOperations::flashBootloaderChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount) {
+    flashChunk(chunk, chunkNumber, chunkCount, false);
 }
 
-void DeviceOperations::backupFirmwareChunk() {
+void DeviceOperations::startBackupFirmware() {
+    if (startOperation(DeviceOperation::StartBackupFirmware)) {
+        commandList_.emplace_back(std::make_unique<CmdStartBackupFirmware>(device_));
+        currentCommand_ = commandList_.begin();
+        emit sendCommand(QPrivateSignal());
+    }
+}
+
+void DeviceOperations::backupFirmwareChunk(int chunkCount) {
     if (startOperation(DeviceOperation::BackupFirmwareChunk)) {
         if (commandList_.empty()) {
-            commandList_.emplace_back(std::make_unique<CmdBackupFirmware>(device_, backupChunk_, backupChunksCount_));
+            commandList_.emplace_back(std::make_unique<CmdBackupFirmware>(device_, backupChunk_, chunkCount));
             currentCommand_ = commandList_.begin();
         }
         if (currentCommand_ != commandList_.end()) {
@@ -129,6 +158,11 @@ QVector<quint8> DeviceOperations::recentBackupChunk() const {
 
 int DeviceOperations::backupChunksCount() const {
     return backupChunksCount_;
+}
+
+void DeviceOperations::setFlashInfo(qint64 fileSize, const QString& fileMD5) {
+    fileSize_ = fileSize;
+    fileMD5_ = fileMD5;
 }
 
 void DeviceOperations::handleSendCommand() {
@@ -177,10 +211,11 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
         if (CommandValidator::validate(CommandValidator::JsonType::ack, doc)) {
             const QString ackStr = doc[JSON_ACK].GetString();
             qCDebug(logCategoryDeviceOperations) << device_ << "Received '" << ackStr << "' ACK.";
+            const rapidjson::Value& payload = doc[JSON_PAYLOAD];
+            const bool ackOk = payload[JSON_RETURN_VALUE].GetBool();
+
             BaseDeviceCommand *command = currentCommand_->get();
             if (ackStr == command->name()) {
-                const rapidjson::Value& payload = doc[JSON_PAYLOAD];
-                const bool ackOk = payload[JSON_RETURN_VALUE].GetBool();
                 if (ackOk) {
                     command->setAckReceived();
                 } else {
@@ -189,6 +224,9 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
                 }
             } else {
                 qCWarning(logCategoryDeviceOperations) << device_ << "Received wrong ACK. Expected '" << command->name() << "', got '" << ackStr << "'.";
+                if (ackOk == false) {
+                    qCWarning(logCategoryDeviceOperations) << device_ << "ACK is not OK: '" << payload[JSON_RETURN_STRING].GetString() << "'.";
+                }
             }
             ok = true;
         }

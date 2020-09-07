@@ -59,13 +59,13 @@ QByteArray CmdFlash::message() {
 }
 
 bool CmdFlash::processNotification(rapidjson::Document& doc) {
-    CommandValidator::JsonType jsonType = (flashFirmware_) ?
-                                          CommandValidator::JsonType::flashFirmwareRes :
-                                          CommandValidator::JsonType::flashBootloaderRes;
+    CommandValidator::JsonType jsonType = (flashFirmware_)
+                                          ? CommandValidator::JsonType::flashFirmwareRes
+                                          : CommandValidator::JsonType::flashBootloaderRes;
     if (CommandValidator::validate(jsonType, doc)) {
         const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
         if (status == JSON_OK) {
-            result_ = (chunkNumber_ == 0) ? CommandResult::Done : CommandResult::Repeat;
+            result_ = (chunkNumber_ == (chunkCount_ - 1)) ? CommandResult::Done : CommandResult::Repeat;
         } else {
             result_ = CommandResult::Failure;
             if (status == JSON_RESEND_CHUNK) {
@@ -86,7 +86,8 @@ bool CmdFlash::processNotification(rapidjson::Document& doc) {
 }
 
 bool CmdFlash::logSendMessage() const {
-    return (chunkNumber_ == 1);
+    // log only first flashed chunk
+    return (chunkNumber_ == 0);
 }
 
 void CmdFlash::prepareRepeat() {
@@ -98,9 +99,10 @@ int CmdFlash::dataForFinish() const {
     return chunkNumber_;
 }
 
-void CmdFlash::setChunk(const QVector<quint8>& chunk, int chunkNumber) {
+void CmdFlash::setChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount) {
     chunk_ = chunk;
     chunkNumber_ = chunkNumber;
+    chunkCount_ = chunkCount;
 }
 
 }  // namespace
