@@ -9,7 +9,7 @@ CmdGetFirmwareInfo::CmdGetFirmwareInfo(const device::DevicePtr& device, bool req
     BaseDeviceCommand(device, QStringLiteral("get_firmware_info")), requireResponse_(requireResponse) { }
 
 QByteArray CmdGetFirmwareInfo::message() {
-    return QByteArray("{\"cmd\":\"get_firmware_info\"}");
+    return QByteArray("{\"cmd\":\"get_firmware_info\",\"payload\":{}}");
 }
 
 bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc) {

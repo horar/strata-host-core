@@ -26,6 +26,14 @@ public:
     FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, QObject* parent = nullptr);
 
     /*!
+     * FlasherConnector constructor.
+     * \param device device which will be used by FlasherConnector
+     * \param firmwarePath path to firmware file
+     * \param firmwareMD5 MD5 checksum of firmware
+     */
+    FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, const QString& firmwareMD5, QObject* parent = nullptr);
+
+    /*!
      * FlasherConnector destructor.
      */
     ~FlasherConnector();
@@ -142,6 +150,7 @@ private:
     device::DevicePtr device_;
     std::unique_ptr<Flasher> flasher_;
     QString filePath_;
+    const QString newFirmwareMD5_;
     QTemporaryFile tmpBackupFile_;
     QString errorString_;
 

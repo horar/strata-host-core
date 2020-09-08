@@ -9,7 +9,7 @@ namespace strata::device::command {
 
 class CmdBackupFirmware : public BaseDeviceCommand {
 public:
-    CmdBackupFirmware(const device::DevicePtr& device, QVector<quint8>& chunk, int& totalChunks);
+    CmdBackupFirmware(const device::DevicePtr& device, QVector<quint8>& chunk, int totalChunks);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
     bool logSendMessage() const override;
@@ -17,7 +17,7 @@ public:
     int dataForFinish() const override;
 private:
     QVector<quint8>& chunk_;
-    int& totalChunks_;
+    const int totalChunks_;
     int chunkNumber_;
     bool firstBackupChunk_;
     const uint maxRetries_;
