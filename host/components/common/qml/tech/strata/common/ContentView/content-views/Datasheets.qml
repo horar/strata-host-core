@@ -34,7 +34,7 @@ Item {
                 if (index - 1 < 0)
                     return undefined;
 
-                index = mapIndexFromSource(index - 1);
+                index = mapIndexToSource(index - 1);
                 return sourceModel.dirname(index)
             }
         }
@@ -104,6 +104,7 @@ Item {
                 }
 
                 headerSourceComponent: {
+                    console.info("DIRNAME", model.dirname, "PREVIOUSDIRNAME", sortModel.previousDirname(model.index))
                     if (model.dirname !== sortModel.previousDirname(model.index)) {
                         return sectionDelegateComponent
                     }
