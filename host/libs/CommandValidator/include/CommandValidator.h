@@ -18,10 +18,13 @@ public:
         ack,
         notification,
         getFirmwareInfoRes,
-        flashFirmwareRes,
-        backupFirmwareRes,
-        flashBootloaderRes,
         startBootloaderRes,
+        startFlashFirmwareRes,
+        flashFirmwareRes,
+        startBackupFirmwareRes,
+        backupFirmwareRes,
+        startFlashBootloaderRes,
+        flashBootloaderRes,
         startAppRes,
         strataCmd,
         cmd
@@ -34,7 +37,9 @@ private:
     static const rapidjson::SchemaDocument ackSchema;
     static const rapidjson::SchemaDocument notificationSchema;
     static const rapidjson::SchemaDocument getFirmwareInfoResSchema;
+    static const rapidjson::SchemaDocument startFlashFirmwareResSchema;
     static const rapidjson::SchemaDocument flashFirmwareResSchema;
+    static const rapidjson::SchemaDocument startBackupFirmwareResSchema;
     static const rapidjson::SchemaDocument backupFirmwareResSchema;
     static const rapidjson::SchemaDocument flashBootloaderResSchema;
     static const rapidjson::SchemaDocument startBootloaderResSchema;

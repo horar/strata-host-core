@@ -2,6 +2,7 @@
 .import QtQuick 2.0 as QtQuickModule
 .import "uuid_map.js" as UuidMap
 .import "constants.js" as Constants
+.import "utilities.js" as Utility
 
 .import tech.strata.logger 1.0 as LoggerModule
 
@@ -144,15 +145,7 @@ function createView(name, parent)
     catch(err){
         console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "ERROR: Could not destroy child")
     }
-
-    var component = Qt.createComponent(name, QtQuickModule.Component.PreferSynchronous, parent);
-    if (component.status === QtQuickModule.Component.Error) {
-        console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Cannot createComponent():", component.errorString(), "parameters:", JSON.stringify(context));
-        context.error_message = component.errorString()
-        return null
-    }
-
-    var object = component.createObject(parent,context)
+        var object = Utility.createObject(name,parent,context);
     if (object === null) {
         console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "Error creating object: name=", name, ", parameters=", JSON.stringify(context));
     } else {

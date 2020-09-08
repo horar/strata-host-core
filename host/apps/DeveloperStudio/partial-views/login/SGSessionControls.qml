@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import Qt.labs.settings 1.0
 import "qrc:/partial-views/login/"
+import "qrc:/partial-views/general/"
 import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/js/navigation_control.js" as NavigationControl
 

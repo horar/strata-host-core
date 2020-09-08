@@ -10,8 +10,8 @@ Component {
         property string typeValue: type
 
         color: containsMouse ? hoverColor : baseColor
-        width: content.width + 15
-        height: 30
+        implicitWidth: content.width + 15
+        implicitHeight: 30
         radius: 5
         border.width: feedbackTypeListView.currentIndex === index ? 2 : 0
         border.color: "black"

@@ -28,8 +28,11 @@ enum class DeviceOperation: int {
     None,
     Identify,
     SwitchToBootloader,
+    StartFlashFirmware,
+    StartFlashBootloader,
     FlashFirmwareChunk,
     FlashBootloaderChunk,
+    StartBackupFirmware,
     BackupFirmwareChunk,
     StartApplication,
     // special values for finished signal (operation was not finished successfully):
@@ -67,23 +70,47 @@ public:
     void switchToBootloader();
 
     /*!
+     * Start Flash Firmware operation
+     * \param size firmware size (in bytes)
+     * \param chunks number of firmware chunks (which will be flashed)
+     * \param md5 MD5 checksum of firmware
+     */
+    void startFlashFirmware(uint size, uint chunks, const QString& md5);
+
+    /*!
      * Flash Firmware Chunk operation.
      * \param chunk firmware chunk
-     * \param chunkNumber firmware chunk number
+     * \param chunkNumber firmware chunk number (from 0 to N-1)
+     * \param chunkCount total count of firmware chunks (N)
      */
-    void flashFirmwareChunk(const QVector<quint8>& chunk, int chunkNumber);
+    void flashFirmwareChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount);
+
+    /*!
+     * Start Backup Firmware operation
+     */
+    void startBackupFirmware();
 
     /*!
      * Backup Firmware Chunk operation.
+     * \param chunkCount total count of firmware chunks
      */
-    void backupFirmwareChunk();
+    void backupFirmwareChunk(int chunkCount);
+
+    /*!
+     * Start Flash Bootloader operation
+     * \param size bootloader size (in bytes)
+     * \param chunks number of bootloader chunks (which will be flashed)
+     * \param md5 MD5 checksum of bootloader
+     */
+    void startFlashBootloader(uint size, uint chunks, const QString& md5);
 
     /*!
      * Flash Bootloader Chunk operation.
      * \param chunk bootloader chunk
-     * \param chunkNumber bootloader chunk number
+     * \param chunkNumber bootloader chunk number (from 0 to N-1)
+     * \param chunkCount total count of bootloader chunks (N)
      */
-    void flashBootloaderChunk(const QVector<quint8>& chunk, int chunkNumber);
+    void flashBootloaderChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount);
 
     /*!
      * Start Application operation.
@@ -112,6 +139,14 @@ public:
      * \return count of backed up firmware chunks
      */
     int backupChunksCount() const;
+
+    /*!
+     * Set size and MD5 checksum of flashed firmware (or bootloader). This method must
+     * be called before first call of flashFirmwareChunk or flashBootloaderChunk
+     * \param fileSize size of firmware (or bootloader) in bytes
+     * \param fileMD5 MD5 checksum of firmware (or bootloader)
+     */
+    void setFlashInfo(qint64 fileSize, const QString& fileMD5);
 
 signals:
     /*!
@@ -146,7 +181,8 @@ private:
     void finishOperation(DeviceOperation operation, int data = OPERATION_DEFAULT_DATA);
     void reset();
 
-    void flashChunk(const QVector<quint8>& chunk, int chunkNumber, bool flashFirmware);
+    void startFlash(uint size, uint chunks, const QString& md5, bool flashFirmware);
+    void flashChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount, bool flashFirmware);
 
     device::DevicePtr device_;
     uint deviceId_;
@@ -158,6 +194,8 @@ private:
 
     QVector<quint8> backupChunk_;
     int backupChunksCount_;
+    qint64 fileSize_;
+    QString fileMD5_;
 };
 
 }  // namespace
