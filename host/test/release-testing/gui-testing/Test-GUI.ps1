@@ -26,6 +26,9 @@ Creation Date:  07/10/2020
 #>
 function Test-Gui()
 {
+    Write-Separator
+    Write-Host "GUI Tests"
+    Write-Separator
     $ResultsFile = "$TestRoot\gui-testing\results.txt"
     $BasicTests = "Tests.BoardTests Tests.FeedbackTests Tests.InvalidInputTests Tests.NewRegisterTests Tests.PasswordResetTests"
     $NoNetworkTests = "Tests.NoNetworkTests"
@@ -48,9 +51,8 @@ function Test-Gui()
     Stop-SDS
     Stop-HCS
 
-    Write-Host "Starting GUI testing"
 
-    Write-Host "Running basic tests..."
+    Write-Host "TEST GROUP 1: Normal Strata Tests"
 
     #run basic tests
     Start-SDSAndWait
@@ -60,6 +62,8 @@ function Test-Gui()
     Stop-SDS
     Stop-HCS
 
+    Write-Host "`n`nTEST GROUP 2: No Network Strata Tests"
+
     Write-Host "Disabling network for Strata..."
 
     #Run tests without network
@@ -68,7 +72,6 @@ function Test-Gui()
 
     Start-SDSAndWait
 
-    Write-Host "Testing Strata with no network connection..."
     Start-Process $PythonExec -ArgumentList "$PythonGUIMain $NoNetworkTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --appendResults --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`"" -NoNewWindow -Wait
 
 #    Stop-Process -Name "Strata Developer Studio" -Force
@@ -82,7 +85,7 @@ function Test-Gui()
 
     #    Test logging in, closing strata, and reopening it
     #    Login to strata
-    Write-Host "Testing logging in, closing Strata, reopening Strata..."
+    Write-Host "`n`nTEST GROUP 3: Strata After Logging In and Restarting"
 
     Start-SDSAndWait
     Start-Process $PythonExec -ArgumentList "$PythonGUIMainLoginTestPre --username $Username --password $Password" -NoNewWindow -Wait
