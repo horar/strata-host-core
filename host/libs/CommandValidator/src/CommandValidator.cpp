@@ -66,6 +66,21 @@ const rapidjson::SchemaDocument CommandValidator::notificationSchema_(
     )
 );
 
+// notification with status in payload
+const rapidjson::SchemaDocument CommandValidator::notifPayloadStatusSchema_(
+    CommandValidator::parseSchema(
+        R"(
+		{
+			"$schema": "http://json-schema.org/draft-04/schema#",
+			"type": "object",
+			"properties": {
+				"status": { "type": "string" }
+			},
+			"required": [ "status" ]
+		})"
+    )
+);
+
 // this support platform id v2 only.
 const rapidjson::SchemaDocument CommandValidator::reqPlatformId_nps_(
     CommandValidator::parseSchema(
@@ -88,20 +103,6 @@ const rapidjson::SchemaDocument CommandValidator::reqPlatformId_nps_(
 				"count",
 				"platform_id_version"
 			]
-		})"
-    )
-);
-
-const rapidjson::SchemaDocument CommandValidator::setPlatformId_nps_(
-    CommandValidator::parseSchema(
-        R"(
-		{
-			"$schema": "http://json-schema.org/draft-04/schema#",
-			"type": "object",
-			"properties": {
-				"status": { "type": "string" }
-			},
-			"required": [ "status" ]
 		})"
     )
 );
@@ -147,62 +148,6 @@ const rapidjson::SchemaDocument CommandValidator::getFirmwareInfo_nps_(
 				}
 			},
 			"required": [ "bootloader", "application" ]
-		})"
-    )
-);
-
-const rapidjson::SchemaDocument CommandValidator::startBootloader_nps_(
-    CommandValidator::parseSchema(
-        R"(
-		{
-			"$schema": "http://json-schema.org/draft-04/schema#",
-			"type": "object",
-			"properties": {
-				"status": { "type": "string" }
-			},
-			"required": [ "status" ]
-		})"
-    )
-);
-
-const rapidjson::SchemaDocument CommandValidator::startApplication_nps_(
-    CommandValidator::parseSchema(
-        R"(
-		{
-			"$schema": "http://json-schema.org/draft-04/schema#",
-			"type": "object",
-			"properties": {
-				"status": { "type": "string" }
-			},
-			"required": [ "status" ]
-		})"
-    )
-);
-
-const rapidjson::SchemaDocument CommandValidator::startFlashFirmware_nps_(
-    CommandValidator::parseSchema(
-        R"(
-		{
-			"$schema": "http://json-schema.org/draft-04/schema#",
-			"type": "object",
-			"properties": {
-				"status": { "type": "string" }
-			},
-			"required": [ "status" ]
-		})"
-    )
-);
-
-const rapidjson::SchemaDocument CommandValidator::flashFirmware_nps_(
-    CommandValidator::parseSchema(
-        R"(
-		{
-			"$schema": "http://json-schema.org/draft-04/schema#",
-			"type": "object",
-			"properties": {
-				"status": { "type": "string" }
-			},
-			"required": [ "status" ]
 		})"
     )
 );
@@ -256,35 +201,6 @@ const rapidjson::SchemaDocument CommandValidator::backupFirmware_nps_(
     )
 );
 
-const rapidjson::SchemaDocument CommandValidator::startFlashBootloader_nps_(
-    CommandValidator::parseSchema(
-        R"(
-		{
-			"$schema": "http://json-schema.org/draft-04/schema#",
-			"type": "object",
-			"properties": {
-				"status": { "type": "string" }
-			},
-			"required": [ "status" ]
-		})"
-    )
-);
-
-const rapidjson::SchemaDocument CommandValidator::flashBootloader_nps_(
-    CommandValidator::parseSchema(
-        R"(
-		{
-			"$schema": "http://json-schema.org/draft-04/schema#",
-			"type": "object",
-			"properties": {
-				"status": { "type": "string" }
-			},
-			"required": [ "status" ]
-		})"
-    )
-);
-
-
 const rapidjson::SchemaDocument CommandValidator::strataCommandSchema_(
     CommandValidator::parseSchema(
         R"(
@@ -336,16 +252,16 @@ const std::map<const CommandValidator::JsonType, const rapidjson::SchemaDocument
     {JsonType::ack, ackSchema_},
     {JsonType::notification, notificationSchema_},
     {JsonType::reqPlatformIdNotif, reqPlatformId_nps_},
-    {JsonType::setPlatformIdNotif, setPlatformId_nps_},
+    {JsonType::setPlatformIdNotif, notifPayloadStatusSchema_},
     {JsonType::getFirmwareInfoNotif, getFirmwareInfo_nps_},
-    {JsonType::startBootloaderNotif, startBootloader_nps_},
-    {JsonType::startApplicationNotif, startApplication_nps_},
-    {JsonType::startFlashFirmwareNotif, startFlashFirmware_nps_},
-    {JsonType::flashFirmwareNotif, flashFirmware_nps_},
+    {JsonType::startBootloaderNotif, notifPayloadStatusSchema_},
+    {JsonType::startApplicationNotif, notifPayloadStatusSchema_},
+    {JsonType::startFlashFirmwareNotif, notifPayloadStatusSchema_},
+    {JsonType::flashFirmwareNotif, notifPayloadStatusSchema_},
     {JsonType::startBackupFirmwareNotif, startBackupFirmware_nps_},
     {JsonType::backupFirmwareNotif, backupFirmware_nps_},
-    {JsonType::startFlashBootloaderNotif, startFlashBootloader_nps_},
-    {JsonType::flashBootloaderNotif, flashBootloader_nps_},
+    {JsonType::startFlashBootloaderNotif, notifPayloadStatusSchema_},
+    {JsonType::flashBootloaderNotif, notifPayloadStatusSchema_},
     {JsonType::strataCommand, strataCommandSchema_}
 };
 

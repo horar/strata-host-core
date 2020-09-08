@@ -32,21 +32,14 @@ public:
 
 private:
     // Basic commands
-    // nps = notification payload schema
     static const rapidjson::SchemaDocument cmdSchema_;
     static const rapidjson::SchemaDocument ackSchema_;
     static const rapidjson::SchemaDocument notificationSchema_;
-    static const rapidjson::SchemaDocument reqPlatformId_nps_;
-    static const rapidjson::SchemaDocument setPlatformId_nps_;
+    static const rapidjson::SchemaDocument notifPayloadStatusSchema_;
+    static const rapidjson::SchemaDocument reqPlatformId_nps_;  // nps = notification payload schema
     static const rapidjson::SchemaDocument getFirmwareInfo_nps_;
-    static const rapidjson::SchemaDocument startBootloader_nps_;
-    static const rapidjson::SchemaDocument startApplication_nps_;
-    static const rapidjson::SchemaDocument startFlashFirmware_nps_;
-    static const rapidjson::SchemaDocument flashFirmware_nps_;
     static const rapidjson::SchemaDocument startBackupFirmware_nps_;
     static const rapidjson::SchemaDocument backupFirmware_nps_;
-    static const rapidjson::SchemaDocument startFlashBootloader_nps_;
-    static const rapidjson::SchemaDocument flashBootloader_nps_;
     static const rapidjson::SchemaDocument strataCommandSchema_;
 
     static const std::map<const JsonType, const rapidjson::SchemaDocument&> schemas_;
