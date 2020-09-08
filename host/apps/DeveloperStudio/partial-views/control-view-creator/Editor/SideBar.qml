@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.2
 
 import tech.strata.sgwidgets 1.0
 
@@ -25,6 +26,8 @@ Rectangle {
             color: "white"
         }
 
+        ButtonGroup { id: buttonGroup }
+
         Repeater {
             id: fileSelectorRepeater
             model: fileModel
@@ -34,6 +37,7 @@ Rectangle {
                 checkable: true
                 checked: model.visible
                 text: model.file
+                ButtonGroup.group: buttonGroup
 
                 property int modelIndex: index
 
