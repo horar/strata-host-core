@@ -22,17 +22,17 @@ public:
     explicit QrcItem(QObject *parent = nullptr);
     QrcItem(QString filename, QUrl path, QObject *parent = nullptr);
 
-    QString filename() const;
-    QUrl filepath() const;
-    QStringList relativePath() const;
-    bool visible() const;
-    bool open() const;
+    Q_INVOKABLE QString filename() const;
+    Q_INVOKABLE QUrl filepath() const;
+    Q_INVOKABLE QStringList relativePath() const;
+    Q_INVOKABLE bool visible() const;
+    Q_INVOKABLE bool open() const;
 
-    void setFilename(QString filename);
-    void setFilepath(QUrl filepath);
-    void setRelativePath(QStringList relativePath);
-    void setVisible(bool visible);
-    void setOpen(bool open);
+    Q_INVOKABLE void setFilename(QString filename);
+    Q_INVOKABLE void setFilepath(QUrl filepath);
+    Q_INVOKABLE void setRelativePath(QStringList relativePath);
+    Q_INVOKABLE void setVisible(bool visible);
+    Q_INVOKABLE void setOpen(bool open);
 
 signals:
     void filenameChanged();
@@ -79,7 +79,7 @@ public:
 
     Q_INVOKABLE void setOpen(int index, bool open);
     Q_INVOKABLE void setVisible(int index, bool visible);
-    Q_INVOKABLE QVariantMap get(int index) const;
+    Q_INVOKABLE QrcItem* get(int index) const;
 signals:
     void countChanged();
     void urlChanged();

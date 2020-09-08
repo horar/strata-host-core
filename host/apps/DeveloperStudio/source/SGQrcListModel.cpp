@@ -161,22 +161,14 @@ void SGQrcListModel::readQrcFile()
     emit countChanged();
 }
 
-QVariantMap SGQrcListModel::get(int index) const
+QrcItem* SGQrcListModel::get(int index) const
 {
     if (index < 0 || index >= data_.count()) {
-        return QVariantMap();
+        return nullptr;
     }
 
-    QVariantMap map;
     QrcItem* item = data_.at(index);
-
-    map.insert("filename", item->filename());
-    map.insert("filepath", item->filepath());
-    map.insert("open", item->open());
-    map.insert("visible", item->visible());
-    map.insert("relativePath", item->relativePath());
-
-    return map;
+    return item;
 }
 
 QVariant SGQrcListModel::data(const QModelIndex &index, int role) const

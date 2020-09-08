@@ -11,8 +11,9 @@ Item {
 
     function setVisible (index) {
         let file = fileModel.get(index);
+
         if (file.open === false) {
-            fileModel.setOpen(index, true)
+            file.setOpen(true);
         }
         for (let i = 0; i < fileModel.count; i++) {
             fileModel.setVisible(i, index === i)
