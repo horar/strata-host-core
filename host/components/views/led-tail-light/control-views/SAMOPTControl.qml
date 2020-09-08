@@ -2879,7 +2879,7 @@ Item {
                                                      platformInterface.soc_sam_conf_2_out9,
                                                      platformInterface.soc_sam_conf_2_out10,
                                                      platformInterface.soc_sam_conf_2_out11,
-                                                     platformInterface.soc_sam_conf_1_out12
+                                                     platformInterface.soc_sam_conf_2_out12
                                                     ],
                                                     samOpenLoadDiagnostic.currentText,
                                                     platformInterface.soc_crcValue,
