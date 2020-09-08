@@ -16,7 +16,7 @@ Item {
             file.open = true
         }
         for (let i = 0; i < fileModel.count; i++) {
-            fileModel.setVisible(i, index === i)
+            fileModel.get(i).visible = (i === index)
         }
         fileStack.currentIndex = index
     }

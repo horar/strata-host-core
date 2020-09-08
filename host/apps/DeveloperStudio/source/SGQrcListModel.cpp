@@ -95,22 +95,6 @@ SGQrcListModel::~SGQrcListModel()
     clear();
 }
 
-void SGQrcListModel::setOpen(int index, bool open)
-{
-    if (index < 0 || index >= data_.count()) {
-        qCritical() << "Error: Attempting to set property of index that is not valid";
-    }
-    data_.at(index)->setOpen(open);
-}
-
-void SGQrcListModel::setVisible(int index, bool visible)
-{
-    if (index < 0 || index >= data_.count()) {
-        qCritical() << "Error: Attempting to set property of index that is not valid";
-    }
-    data_.at(index)->setVisible(visible);
-}
-
 void SGQrcListModel::readQrcFile()
 {
     beginResetModel();
