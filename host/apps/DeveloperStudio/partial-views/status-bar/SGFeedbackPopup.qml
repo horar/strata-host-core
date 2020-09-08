@@ -277,7 +277,6 @@ SGStrataPopup {
                 }
 
                 Button {
-
                     id: submitButton
                     text: "Submit"
                     Layout.bottomMargin: 20

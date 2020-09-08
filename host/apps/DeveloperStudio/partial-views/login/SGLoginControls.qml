@@ -220,8 +220,6 @@ Item {
             Layout.preferredWidth: loginButton.width
 
             Button {
-
-
                 id: loginButton
                 width: usernameField.width
                 height: usernameField.height
@@ -373,4 +371,3 @@ Item {
         }
     }
 }
-

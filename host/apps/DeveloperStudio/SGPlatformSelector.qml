@@ -68,8 +68,6 @@ Rectangle{
     }
 
     SGIcon {
-
-
         id: helpIcon
         anchors {
             right: container.right
@@ -82,7 +80,6 @@ Rectangle{
         width: 40
         function clickAction() {
             Help.startHelpTour("selectorHelp", "strataMain")
-
         }
 
         MouseArea {

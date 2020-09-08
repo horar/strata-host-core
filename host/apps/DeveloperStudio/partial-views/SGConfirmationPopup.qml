@@ -115,8 +115,6 @@ Popup {
                 }
 
                 Button {
-
-
                     id: acceptButton
                     text: "Accept"
 
@@ -164,8 +162,6 @@ Popup {
                 }
 
                 Button {
-
-
                     id: cancelButton
                     text: "Cancel"
                     visible: text !== ""
