@@ -13,43 +13,46 @@ class CommandValidator
 {
 public:
     enum class JsonType {
-        reqPlatIdRes,
-        setPlatIdRes,
+        cmd,
         ack,
         notification,
-        getFirmwareInfoRes,
-        startBootloaderRes,
-        startFlashFirmwareRes,
-        flashFirmwareRes,
-        startBackupFirmwareRes,
-        backupFirmwareRes,
-        startFlashBootloaderRes,
-        flashBootloaderRes,
-        startAppRes,
-        strataCmd,
-        cmd
+        reqPlatformIdNotif,
+        setPlatformIdNotif,
+        getFirmwareInfoNotif,
+        startBootloaderNotif,
+        startApplicationNotif,
+        startFlashFirmwareNotif,
+        flashFirmwareNotif,
+        startBackupFirmwareNotif,
+        backupFirmwareNotif,
+        startFlashBootloaderNotif,
+        flashBootloaderNotif,
+        strataCommand
     };
 
 private:
     // Basic commands
-    static const rapidjson::SchemaDocument requestPlatformIdResSchema;
-    static const rapidjson::SchemaDocument setPlatformIdResSchema;
-    static const rapidjson::SchemaDocument ackSchema;
-    static const rapidjson::SchemaDocument notificationSchema;
-    static const rapidjson::SchemaDocument getFirmwareInfoResSchema;
-    static const rapidjson::SchemaDocument startFlashFirmwareResSchema;
-    static const rapidjson::SchemaDocument flashFirmwareResSchema;
-    static const rapidjson::SchemaDocument startBackupFirmwareResSchema;
-    static const rapidjson::SchemaDocument backupFirmwareResSchema;
-    static const rapidjson::SchemaDocument flashBootloaderResSchema;
-    static const rapidjson::SchemaDocument startBootloaderResSchema;
-    static const rapidjson::SchemaDocument startAppResSchema;
-    static const rapidjson::SchemaDocument strataCommandSchema;
-    static const rapidjson::SchemaDocument cmdSchema;
+    // nps = notification payload schema
+    static const rapidjson::SchemaDocument cmdSchema_;
+    static const rapidjson::SchemaDocument ackSchema_;
+    static const rapidjson::SchemaDocument notificationSchema_;
+    static const rapidjson::SchemaDocument reqPlatformId_nps_;
+    static const rapidjson::SchemaDocument setPlatformId_nps_;
+    static const rapidjson::SchemaDocument getFirmwareInfo_nps_;
+    static const rapidjson::SchemaDocument startBootloader_nps_;
+    static const rapidjson::SchemaDocument startApplication_nps_;
+    static const rapidjson::SchemaDocument startFlashFirmware_nps_;
+    static const rapidjson::SchemaDocument flashFirmware_nps_;
+    static const rapidjson::SchemaDocument startBackupFirmware_nps_;
+    static const rapidjson::SchemaDocument backupFirmware_nps_;
+    static const rapidjson::SchemaDocument startFlashBootloader_nps_;
+    static const rapidjson::SchemaDocument flashBootloader_nps_;
+    static const rapidjson::SchemaDocument strataCommandSchema_;
 
-    static const std::map<const JsonType, const rapidjson::SchemaDocument&> schemas;
+    static const std::map<const JsonType, const rapidjson::SchemaDocument&> schemas_;
+    static const std::map<const JsonType, const char*> notifications_;
 
-    static rapidjson::SchemaDocument parseSchema(const std::string &schema, bool *isOK = nullptr);
+    static rapidjson::SchemaDocument parseSchema(const std::string &schema, bool *isOk = nullptr);
 
 public:
     /**
@@ -81,6 +84,14 @@ public:
     static bool validate(const JsonType type, const rapidjson::Document &doc);
 
     /**
+     * Validate the notification.
+     * @param type[in] Type of JSON notification (value from enum CommandValidator::JsonType).
+     * @param doc[in] The rapidjson::Document contatining JSON command.
+     * @return True if the the notification is valid, False otherwise.
+     */
+    static bool validateNotification(const JsonType type, const rapidjson::Document &doc);
+
+    /**
      * Check if the command is valid JSON.
      * @param command[in] The string containing JSON command.
      * @return true if the the command is valid, false otherwise.
@@ -103,7 +114,7 @@ private:
      *
      * @return true if the the command is valid, false otherwise.
      */
-    static bool validateDocWithSchema(const rapidjson::SchemaDocument &schema, const rapidjson::Document &doc);
+    static bool validateJsonWithSchema(const rapidjson::SchemaDocument &schema, const rapidjson::Value &json);
 
 
 };
