@@ -4,7 +4,7 @@ import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import "qrc:/partial-views/login/"
 import "qrc:/partial-views/"
-import "qrc:/js/login_utilities.js" as LoginUtilities
+import "qrc:/js/utilities.js" as Utility
 import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/js/constants.js" as Constants
@@ -205,7 +205,7 @@ Item {
         id: privacyPolicy
 
         function open() {
-            var privacyPolicyPopup = LoginUtilities.createObject("qrc:/partial-views/SGPrivacyPolicyPopUp.qml", privacyPolicy)
+            var privacyPolicyPopup = Utility.createObject("qrc:/partial-views/SGPrivacyPolicyPopUp.qml", privacyPolicy)
             privacyPolicyPopup.width = root.width * .8
             privacyPolicyPopup.webContainerHeight = root.height *.75
             privacyPolicyPopup.x = root.width/2 - privacyPolicyPopup.width/2

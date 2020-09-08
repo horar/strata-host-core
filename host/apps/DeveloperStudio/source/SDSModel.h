@@ -34,8 +34,10 @@ public:
 
 public slots:
     void shutdownService();
+
 signals:
     void hcsConnectedChanged();
+    void notifyQmlError(QString notifyQmlError);
 
 private slots:
     void startedProcess();

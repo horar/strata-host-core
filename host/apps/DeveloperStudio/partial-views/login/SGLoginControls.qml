@@ -7,6 +7,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/js/login_storage.js" as UsernameStorage
 import "qrc:/partial-views/login/"
+import "qrc:/partial-views/general/"
 import "qrc:/partial-views/"
 
 import tech.strata.fonts 1.0
@@ -18,7 +19,7 @@ Item {
     Layout.preferredHeight: loginControls.implicitHeight
     Layout.fillWidth: true
 
-    property bool animationsRunning: failedLoginAnimation.running || hideFailedLoginAnimation.running
+    property bool animationsRunning: loginErrorRect.running
     property bool connecting: connectionStatus.visible
 
     ColumnLayout {
@@ -56,7 +57,7 @@ Item {
             }
 
             Keys.onPressed: {
-                hideFailedLoginAnimation.startAnimation()
+                loginErrorRect.hide()
             }
 
             Keys.onReturnPressed:{
@@ -119,7 +120,7 @@ Item {
             showIcon: false
 
             Keys.onPressed: {
-                hideFailedLoginAnimation.startAnimation()
+                loginErrorRect.hide()
             }
 
             Keys.onReturnPressed:{
@@ -127,44 +128,9 @@ Item {
             }
         }
 
-        Rectangle {
+        SGNotificationToast {
             id: loginErrorRect
             Layout.preferredWidth: usernameField.width
-            Layout.preferredHeight: 0
-            color:"red"
-            visible: Layout.preferredHeight > 0
-            clip: true
-
-            SGIcon {
-                id: alertIcon
-                source: "qrc:/sgimages/exclamation-circle.svg"
-                anchors {
-                    left: loginErrorRect.left
-                    verticalCenter: loginErrorRect.verticalCenter
-                    leftMargin: 5
-                }
-                height: 30
-                width: 30
-                iconColor: "white"
-            }
-
-            Text {
-                id: loginErrorText
-                font {
-                    pixelSize: 10
-                    family: Fonts.franklinGothicBold
-                }
-                wrapMode: Label.WordWrap
-                anchors {
-                    left: alertIcon.right
-                    right: loginErrorRect.right
-                    rightMargin: 5
-                    verticalCenter: loginErrorRect.verticalCenter
-                }
-                horizontalAlignment:Text.AlignHCenter
-                text: ""
-                color: "white"
-            }
         }
 
         RowLayout {
@@ -321,39 +287,13 @@ Item {
             } else {
                 loginControls.visible = true
                 connectionStatus.text = ""
+                loginErrorRect.color = "red"
                 if (resultObject.response === "No Connection") {
-                    loginErrorText.text = "Connection to authentication server failed"
+                    loginErrorRect.text = "Connection to authentication server failed"
                 } else {
-                    loginErrorText.text = "Username and/or password is incorrect"
+                    loginErrorRect.text = "Username and/or password is incorrect"
                 }
-                failedLoginAnimation.start()
-            }
-        }
-    }
-
-    NumberAnimation{
-        id: failedLoginAnimation
-        target: loginErrorRect
-        property: "Layout.preferredHeight"
-        to: usernameField.height + 10
-        duration: 200
-    }
-
-    NumberAnimation{
-        id: hideFailedLoginAnimation
-        target: loginErrorRect
-        property: "Layout.preferredHeight"
-        to: 0
-        duration: 200
-        onStopped: {
-            if (!animationsRunning) {
-                loginErrorText.text = ""
-            }
-        }
-
-        function startAnimation () {
-            if (loginErrorRect.height !== 0 && !animationsRunning) {
-                start()
+                loginErrorRect.show()
             }
         }
     }

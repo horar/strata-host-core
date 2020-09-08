@@ -56,4 +56,9 @@ Item {
       Signal for changing auth server to test auth server via debug bar
     */
     signal serverChanged()
+    /*
+      Feedback result signals
+    */
+    signal feedbackResult(string result)
+
 }
