@@ -13,8 +13,6 @@ import tech.strata.commoncpp 1.0
 
 Item {
     id: root
-    implicitWidth: 950
-    implicitHeight: 190
 
     property bool isCurrentItem: false
 
