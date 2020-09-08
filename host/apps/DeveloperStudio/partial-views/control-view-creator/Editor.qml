@@ -13,7 +13,7 @@ Item {
         let file = fileModel.get(index);
 
         if (file.open === false) {
-            file.setOpen(true);
+            file.open = true
         }
         for (let i = 0; i < fileModel.count; i++) {
             fileModel.setVisible(i, index === i)
