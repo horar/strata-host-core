@@ -104,7 +104,6 @@ Item {
                 }
 
                 headerSourceComponent: {
-                    console.info("DIRNAME", model.dirname, "PREVIOUSDIRNAME", sortModel.previousDirname(model.index))
                     if (model.dirname !== sortModel.previousDirname(model.index)) {
                         return sectionDelegateComponent
                     }
