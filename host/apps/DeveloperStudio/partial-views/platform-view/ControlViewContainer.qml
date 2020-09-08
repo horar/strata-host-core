@@ -2,6 +2,7 @@ import QtQuick 2.0
 
 import "qrc:/js/uuid_map.js" as UuidMap
 import "qrc:/js/navigation_control.js" as NavigationControl
+import tech.strata.ResourceLoader 1.0
 
 Item {
     id: root
@@ -22,23 +23,6 @@ Item {
         // Only update the control view version if we are requesting an update.
         if (children.length === 0 && updateVersion !== "" && updateVersionPath !== "") {
             updateControl()
-        }
-    }
-
-    Component.onDestruction: {
-        if (removeOldVersionTimer.running) {
-            removeOldVersionTimer.stop()
-            deleteViewResources();
-        }
-    }
-
-    Timer {
-        id: removeOldVersionTimer
-        interval: 5000
-        repeat: false
-
-        onTriggered: {
-            deleteViewResources();
         }
     }
 
@@ -82,7 +66,7 @@ Item {
             }
             usingLocalView = false;
             sdsModel.resourceLoader.registerControlViewResources(platformStack.class_id, updateVersionPath, updateVersion);
-            removeOldVersionTimer.start();
+            deleteViewResources()
         }
     }
 
@@ -90,17 +74,13 @@ Item {
       This function deletes all registered controlViewResources
     */
     function deleteViewResources() {
-        for (let i = 0; i < versionsToRemoveFromUpdate.length; i++) {
-            let success = sdsModel.resourceLoader.deleteViewResource(platformStack.class_id, versionsToRemoveFromUpdate[i].filepath, versionsToRemoveFromUpdate[i].version, root);
-            if (success) {
-                console.info("Successfully deleted control view version", platformStack.controlViewList.version(i), "for platform", platformStack.class_id);
-            } else {
-                console.error("Could not delete control view version", platformStack.controlViewList.version(i), "for platform", platformStack.class_id);
-            }
-        }
-
+        // Check to see if local view is registered
         let name = UuidMap.uuid_map[platformStack.class_id];
-        sdsModel.resourceLoader.deleteStaticViewResource(platformStack.class_id, name, root);
+        sdsModel.resourceLoader.requestDeleteViewResource(ResourceLoader.LOCAL_VIEW, platformStack.class_id, name, "", root);
+
+        for (let i = 0; i < versionsToRemoveFromUpdate.length; i++) {
+            sdsModel.resourceLoader.requestDeleteViewResource(ResourceLoader.OTA_VIEW, platformStack.class_id, versionsToRemoveFromUpdate[i].filepath, versionsToRemoveFromUpdate[i].version, root);
+        }
 
         updateVersion = ""
         updateVersionPath = ""

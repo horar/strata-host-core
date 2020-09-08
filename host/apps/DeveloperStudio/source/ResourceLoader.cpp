@@ -6,6 +6,7 @@
 #include <QDirIterator>
 #include <QResource>
 #include <QFileInfo>
+#include <QTimer>
 
 ResourceLoader::ResourceLoader(QObject *parent) : QObject(parent)
 {
@@ -21,20 +22,32 @@ ResourceLoader::~ResourceLoader()
     }
 }
 
+void ResourceLoader::requestDeleteViewResource(const ControlViewType type, const QString &class_id, const QString &path, const QString &version, QObject *loader) {
+    if (type == LOCAL_VIEW) {
+        qDebug(logCategoryResourceLoader) << "Requesting deletion of local view" << class_id;
+        QTimer::singleShot(1000, this, [this, class_id, path, loader]{ deleteStaticViewResource(class_id, path, loader); });
+    } else if (type == OTA_VIEW) {
+        qDebug(logCategoryResourceLoader) << "Requesting deletion of OTA view" << class_id;
+        QTimer::singleShot(1000, this, [this, class_id, path, version, loader]{ deleteViewResource(class_id, path, version, loader); });
+    }
+}
+
 bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &path, const QString &version, QObject *loader) {
     if (path.isEmpty()) {
         return false;
     }
 
     QQmlEngine *eng = qmlEngine(loader);
-    eng->trimComponentCache();
     eng->collectGarbage();
+    eng->trimComponentCache();
 
     QFile resourceInfo(path);
 
     if (resourceInfo.exists()) {
         if (QResource::unregisterResource(resourceInfo.fileName(), getQResourcePrefix(class_id, version)) == false) {
-            qCWarning(logCategoryResourceLoader) << "Unable to unregister resource. Resource " << resourceInfo.fileName() << " still in use for class id: " << class_id;
+            qCWarning(logCategoryResourceLoader) << "Unable to unregister resource. Resource " << resourceInfo.fileName() << " either wasn't registered or is still in use for class id: " << class_id;
+        } else {
+            qCDebug(logCategoryResourceLoader) << "Successfully unregistered resource version " << version << " for " << resourceInfo.fileName();
         }
         if (resourceInfo.remove() == false) {
             qCCritical(logCategoryResourceLoader) << "Could not delete the resource " << resourceInfo.fileName();
@@ -46,6 +59,8 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
     }
 
     QHash<QString, ResourceItem*>::iterator itr = viewsRegistered_.find(class_id);
+    // Only reset this view in viewsRegistered if we have not already registered a different version
+    // This most likely will be the case because we first register the new view's version under a different mapRoot and then asynchronously delete the old one. In this case, the viewsRegistered_[class_id] will already contain the updated version
     if (itr != viewsRegistered_.end() && itr.value()->filepath == resourceInfo.fileName()) {
         ResourceItem *info = itr.value();
         info->filepath = "";

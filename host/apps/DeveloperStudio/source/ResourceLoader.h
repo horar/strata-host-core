@@ -12,7 +12,8 @@
 struct ResourceItem {
     ResourceItem(
             const QString &filepath,
-            const QString &version)
+            const QString &version
+            )
     {
         this->filepath = filepath;
         this->version = version;
@@ -31,24 +32,13 @@ public:
     ResourceLoader(QObject *parent=nullptr);
     virtual ~ResourceLoader();
 
-    /**
-     * @brief deleteViewResource Deletes a resource from disk and unregisters it from qrc.
-     * @param class_id The class id of the platform.
-     * @param path The path the .rcc file was downloaded to
-     * @param version The version of the rcc file
-     * @param loader The QML Loader object
-     * @return True if successful, false if unable to delete resource.
-     */
-    Q_INVOKABLE bool deleteViewResource(const QString &class_id, const QString &path, const QString &version, QObject *loader);
+    static enum ControlViewType {
+        LOCAL_VIEW,
+        OTA_VIEW
+    };
+    Q_ENUM(ControlViewType)
 
-    /**
-     * @brief deleteStaticViewResource Deletes a static view from the bin directory and unregisters it.
-     * @param class_id The class id of the platform.
-     * @param displayName The name of the platform.
-     * @param loader The QML Loader object
-     * @return True if successful, false if unable to delete resource.
-     */
-    Q_INVOKABLE bool deleteStaticViewResource(const QString &class_id, const QString &displayName, QObject *loader);
+    Q_INVOKABLE void requestDeleteViewResource(const ControlViewType type, const QString &class_id, const QString &path, const QString &version, QObject *loader);
 
     /**
      * @brief registerControlViewResources Registers a control view's resource file.
@@ -102,6 +92,26 @@ signals:
      * @param class_id The class id of the resource file.
      */
     void resourceRegisterFailed(const QString &class_id);
+
+private slots:
+    /**
+     * @brief deleteViewResource Deletes a resource from disk and unregisters it from qrc.
+     * @param class_id The class id of the platform.
+     * @param path The path the .rcc file was downloaded to
+     * @param version The version of the rcc file
+     * @param loader The QML Loader object
+     * @return True if successful, false if unable to delete resource.
+     */
+    bool deleteViewResource(const QString &class_id, const QString &path, const QString &version, QObject *loader);
+
+    /**
+     * @brief deleteStaticViewResource Deletes a static view from the bin directory and unregisters it.
+     * @param class_id The class id of the platform.
+     * @param displayName The name of the platform.
+     * @param loader The QML Loader object
+     * @return True if successful, false if unable to delete resource.
+     */
+    bool deleteStaticViewResource(const QString &class_id, const QString &displayName, QObject *loader);
 
 private:
     void loadCoreResources();
