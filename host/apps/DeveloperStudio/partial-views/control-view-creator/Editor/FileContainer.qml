@@ -10,7 +10,7 @@ Rectangle {
     color: Qt.rgba(Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, Math.random()*0.5 + 0.25, 1) // randomish color
 
     property int modelIndex: index
-    property string file: model.file
+    property string file: model.filename
 
     SGText {
         anchors {

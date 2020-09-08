@@ -12,15 +12,15 @@
 class QrcItem : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString filename READ filename WRITE setFilename NOTIFY filenameChanged)
-    Q_PROPERTY(QUrl filepath READ filepath WRITE setFilepath NOTIFY filepathChanged)
-    Q_PROPERTY(QStringList relativePath READ relativePath NOTIFY relativePathChanged)
-    Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY visibleChanged)
-    Q_PROPERTY(bool open READ open WRITE setOpen NOTIFY openChanged)
+    Q_PROPERTY(QString filename READ filename WRITE setFilename NOTIFY dataChanged)
+    Q_PROPERTY(QUrl filepath READ filepath WRITE setFilepath NOTIFY dataChanged)
+    Q_PROPERTY(QStringList relativePath READ relativePath NOTIFY dataChanged)
+    Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY dataChanged)
+    Q_PROPERTY(bool open READ open WRITE setOpen NOTIFY dataChanged)
 
 public:
     explicit QrcItem(QObject *parent = nullptr);
-    QrcItem(QString filename, QUrl path, QObject *parent = nullptr);
+    QrcItem(QString filename, QUrl path, int index, QObject *parent = nullptr);
 
     QString filename() const;
     QUrl filepath() const;
@@ -35,17 +35,15 @@ public:
     void setOpen(bool open);
 
 signals:
-    void filenameChanged();
-    void filepathChanged();
-    void relativePathChanged();
-    void visibleChanged();
-    void openChanged();
+    void dataChanged(int index);
+
 private:
     QString filename_;
     QUrl filepath_;
     QStringList relativePath_;
     bool visible_;
     bool open_;
+    int index_;
 };
 
 Q_DECLARE_METATYPE(QrcItem*)
@@ -81,6 +79,9 @@ public:
 signals:
     void countChanged();
     void urlChanged();
+
+public slots:
+    void childrenChanged(int index);
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;

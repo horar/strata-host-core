@@ -4,12 +4,13 @@
 #include <QDir>
 #include <QXmlStreamReader>
 #include <QDebug>
+#include <QQmlEngine>
 
 QrcItem::QrcItem(QObject *parent) : QObject(parent)
 {
 }
 
-QrcItem::QrcItem(QString filename, QUrl path, QObject *parent) : QObject(parent)
+QrcItem::QrcItem(QString filename, QUrl path, int index, QObject *parent) : QObject(parent)
 {
     QFileInfo file(filename);
     QDir fileDir(file.dir());
@@ -20,6 +21,7 @@ QrcItem::QrcItem(QString filename, QUrl path, QObject *parent) : QObject(parent)
     filename_ = file.fileName();
     visible_ = false;
     open_ = false;
+    index_ = index;
 
     QFileInfo qrcFile(QDir::toNativeSeparators(path.toLocalFile()));
     filepath_.setScheme("file");
@@ -54,33 +56,33 @@ bool QrcItem::open() const
 void QrcItem::setFilename(QString filename) {
     if (filename_ != filename) {
         filename_ = filename;
-        emit filenameChanged();
+        emit dataChanged(index_);
     }
 }
 
 void QrcItem::setFilepath(QUrl filepath) {
     if (filepath_ != filepath) {
         filepath_ = filepath;
-        emit filepathChanged();
+        emit dataChanged(index_);
     }
 }
 
 void QrcItem::setRelativePath(QStringList relativePath) {
     relativePath_ = relativePath;
-    emit relativePathChanged();
+    emit dataChanged(index_);
 }
 
 void QrcItem::setVisible(bool visible) {
     if (visible_ != visible) {
         visible_ = visible;
-        emit visibleChanged();
+        emit dataChanged(index_);
     }
 }
 
 void QrcItem::setOpen(bool open) {
     if (open_ != open) {
         open_ = open;
-        emit openChanged();
+        emit dataChanged(index_);
     }
 }
 
@@ -124,7 +126,10 @@ void SGQrcListModel::readQrcFile()
                 }
                 while (reader.readNextStartElement()) {
                     if (reader.name() == "file") {
-                        data_.push_back(new QrcItem(reader.readElementText(), url_));
+                        QrcItem* item = new QrcItem(reader.readElementText(), url_, data_.size(), this);
+                        QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+                        connect(item, &QrcItem::dataChanged, this, &SGQrcListModel::childrenChanged);
+                        data_.push_back(item);
                     } else {
                         reader.skipCurrentElement();
                     }
@@ -249,4 +254,10 @@ QHash<int, QByteArray> SGQrcListModel::roleNames() const {
     roles[VisibleRole] = "visible";
     roles[OpenRole] = "open";
     return roles;
+}
+
+void SGQrcListModel::childrenChanged(int index) {
+    if (index >= 0 && index < data_.size()) {
+        emit dataChanged(QAbstractListModel::index(index), QAbstractListModel::index(index));
+    }
 }
