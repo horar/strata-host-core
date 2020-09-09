@@ -1,6 +1,7 @@
 #include "CommandValidator.h"
 
-#include <iostream>
+#include "logging/LoggingQtCategories.h"
+
 #include <rapidjson/writer.h>
 #include <rapidjson/error/en.h>
 
@@ -279,14 +280,13 @@ const std::map<const CommandValidator::JsonType, const char*> CommandValidator::
     {JsonType::flashBootloaderNotif, "flash_bootloader"},
 };
 
-rapidjson::SchemaDocument CommandValidator::parseSchema(const std::string &schema, bool *isOk) {
+rapidjson::SchemaDocument CommandValidator::parseSchema(const QByteArray &schema, bool *isOk) {
     bool ok = true;
     rapidjson::Document sd;
-    rapidjson::ParseResult result = sd.Parse(schema.c_str());
+    rapidjson::ParseResult result = sd.Parse(schema.data());
     if (result.IsError()) {
-        // TODO: use logger from CS-440
-        std::cerr << "JSON parse error at offset " << result.Offset() << ": " << rapidjson::GetParseError_En(result.Code())
-                  << " Invalid JSON schema: '" << schema << "'" << std::endl;
+        qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON parse error at offset " << result.Offset() << ": "
+            << rapidjson::GetParseError_En(result.Code()) << " Invalid JSON schema: '" << schema << "'";
         ok = false;
     }
 
@@ -304,21 +304,21 @@ bool CommandValidator::validateJsonWithSchema(const rapidjson::SchemaDocument &s
         rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 
         json.Accept(writer);
-        std::string text = buffer.GetString();
+        QByteArray text(buffer.GetString(), buffer.GetSize());
 
         buffer.Clear();
         writer.Reset(buffer);
 
         validator.GetError().Accept(writer);
-        // TODO: use logger from CS-440
-        std::cerr << "JSON '" << text << "' is not valid by required schema: " << buffer.GetString() << std::endl;
+
+        qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON '" << text << "' is not valid by required schema: '" << buffer.GetString() << "'";
         return false;
     }
 
     return true;
 }
 
-bool CommandValidator::validate(const std::string &command, const JsonType type, rapidjson::Document &doc) {
+bool CommandValidator::validate(const QByteArray &command, const JsonType type, rapidjson::Document &doc) {
     if (parseJsonCommand(command, doc) == false) {
         return false;
     }
@@ -326,7 +326,7 @@ bool CommandValidator::validate(const std::string &command, const JsonType type,
     return validate(type, doc);
 }
 
-bool CommandValidator::validate(const std::string &command, const std::string& schema, rapidjson::Document &doc) {
+bool CommandValidator::validate(const QByteArray &command, const QByteArray& schema, rapidjson::Document &doc) {
     if (parseJsonCommand(command, doc) == false) {
         return false;
     }
@@ -343,8 +343,7 @@ bool CommandValidator::validate(const std::string &command, const std::string& s
 bool CommandValidator::validate(const JsonType type, const rapidjson::Document &doc) {
   const auto it = schemas_.find(type);
   if (it == schemas_.end()) {
-      // TODO: use logger from CS-440
-      std::cerr << "Unknown schema (" << static_cast<int>(type) << ")." << std::endl;
+      qCCritical(logCategoryCommandValidator).nospace() << "Unknown schema (" << static_cast<int>(type) << ").";
       return false;
   }
 
@@ -355,8 +354,7 @@ bool CommandValidator::validateNotification(const JsonType type, const rapidjson
     const auto notifIt = notifications_.find(type);
     const auto schemaIt = schemas_.find(type);
     if (notifIt == notifications_.end() || schemaIt == schemas_.end()) {
-        // TODO: use logger from CS-440
-        std::cerr << "Unknown notification (" << static_cast<int>(type) << ")." << std::endl;
+        qCCritical(logCategoryCommandValidator).nospace() << "Unknown notification (" << static_cast<int>(type) << ").";
         return false;
     }
 
@@ -374,23 +372,21 @@ bool CommandValidator::validateNotification(const JsonType type, const rapidjson
     return validateJsonWithSchema(schemaIt->second, payload);
 }
 
-bool CommandValidator::isValidJson(const std::string &command) {
-    return (rapidjson::Document().Parse(command.c_str()).HasParseError() == false);
+bool CommandValidator::isValidJson(const QByteArray &command) {
+    return (rapidjson::Document().Parse(command.data()).HasParseError() == false);
 }
 
-bool CommandValidator::parseJsonCommand(const std::string &command, rapidjson::Document &doc) {
-    rapidjson::ParseResult result = doc.Parse(command.c_str());
+bool CommandValidator::parseJsonCommand(const QByteArray &command, rapidjson::Document &doc) {
+    rapidjson::ParseResult result = doc.Parse(command.data());
     if (result.IsError()) {
-        // TODO: use logger from CS-440
-        std::cerr << "JSON parse error at offset " << result.Offset() << ": " << rapidjson::GetParseError_En(result.Code())
-                  << " Invalid JSON: '" << command << "'" << std::endl;
+        qCCritical(logCategoryCommandValidator).nospace().noquote() << "JSON parse error at offset " << result.Offset() << ": "
+            << rapidjson::GetParseError_En(result.Code()) << " Invalid JSON: '" << command << "'";
         return false;
     }
     if (doc.IsObject() == false) {
         // JSON can contain only a value (e.g. "abc").
         // We require object as a JSON content (Strata JSON commands starts with '{' and ends with '}')
-        std::cerr << "Content of JSON is not an object: '" << command << "'." << std::endl;
-        // TODO: use logger from CS-440
+        qCCritical(logCategoryCommandValidator).nospace().noquote() << "Content of JSON is not an object: '" << command << "'.";
         return false;
     }
     return true;

@@ -1,8 +1,10 @@
 #ifndef COMMANDVALIDATOR_H
 #define COMMANDVALIDATOR_H
 
-#include <string>
+#include <QByteArray>
+
 #include <map>
+
 #include <rapidjson/schema.h>
 #include <rapidjson/document.h>
 
@@ -45,7 +47,7 @@ private:
     static const std::map<const JsonType, const rapidjson::SchemaDocument&> schemas_;
     static const std::map<const JsonType, const char*> notifications_;
 
-    static rapidjson::SchemaDocument parseSchema(const std::string &schema, bool *isOk = nullptr);
+    static rapidjson::SchemaDocument parseSchema(const QByteArray &schema, bool *isOk = nullptr);
 
 public:
     /**
@@ -56,7 +58,7 @@ public:
      * @param doc[out] The rapidjson::Document where command will be parsed.
      * @return True if the the command is valid, False otherwise.
      */
-    static bool validate(const std::string &command, const JsonType type, rapidjson::Document &doc);
+    static bool validate(const QByteArray &command, const JsonType type, rapidjson::Document &doc);
 
     /**
      * Validate the command.
@@ -66,7 +68,7 @@ public:
      * @param doc[out] The rapidjson::Document where command will be parsed.
      * @return True if the the command is valid, False otherwise.
      */
-    static bool validate(const std::string &command, const std::string& schema, rapidjson::Document &doc);
+    static bool validate(const QByteArray &command, const QByteArray& schema, rapidjson::Document &doc);
 
     /**
      * Validate the command.
@@ -89,7 +91,7 @@ public:
      * @param command[in] The string containing JSON command.
      * @return true if the the command is valid, false otherwise.
      */
-    static bool isValidJson(const std::string &command);
+    static bool isValidJson(const QByteArray &command);
 
     /**
      * Parse the command to JSON document.
@@ -98,7 +100,7 @@ public:
      * @param doc[out] The rapidjson::Document where command will be parsed.
      * @return true if the the command is valid JSON, false otherwise.
      */
-    static bool parseJsonCommand(const std::string &command, rapidjson::Document &doc);
+    static bool parseJsonCommand(const QByteArray &command, rapidjson::Document &doc);
 
 
 private:
