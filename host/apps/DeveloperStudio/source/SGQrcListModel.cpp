@@ -86,7 +86,17 @@ void QrcItem::setOpen(bool open) {
     }
 }
 
+void QrcItem::setIndex(int index)
+{
+    if (index_ != index) {
+        index_ = index;
+        emit dataChanged(index_);
+    }
+}
 
+/* ********************************
+ *  class SGQrcListModel
+ * ********************************/
 SGQrcListModel::SGQrcListModel(QObject *parent) : QAbstractListModel(parent)
 {
     connect(this, &SGQrcListModel::urlChanged, this, &SGQrcListModel::readQrcFile);
@@ -94,6 +104,7 @@ SGQrcListModel::SGQrcListModel(QObject *parent) : QAbstractListModel(parent)
 
 SGQrcListModel::~SGQrcListModel()
 {
+    qDeleteAll(data_);
     clear();
 }
 
@@ -126,7 +137,7 @@ void SGQrcListModel::readQrcFile()
                 }
                 while (reader.readNextStartElement()) {
                     if (reader.name() == "file") {
-                        QrcItem* item = new QrcItem(reader.readElementText(), url_, data_.size(), this);
+                        QrcItem* item = new QrcItem(reader.readElementText(), url_, data_.count(), this);
                         QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
                         connect(item, &QrcItem::dataChanged, this, &SGQrcListModel::childrenChanged);
                         data_.push_back(item);
@@ -148,6 +159,7 @@ void SGQrcListModel::readQrcFile()
 
     endResetModel();
     emit countChanged();
+    emit dataChanged(QAbstractListModel::index(data_.count() - 1), QAbstractListModel::index(data_.count() - 1));
 }
 
 QrcItem* SGQrcListModel::get(int index) const
@@ -158,6 +170,19 @@ QrcItem* SGQrcListModel::get(int index) const
 
     QrcItem* item = data_.at(index);
     return item;
+}
+
+void SGQrcListModel::append(const QUrl &filepath) {
+    beginInsertRows(QModelIndex(), data_.count(), data_.count());
+
+    QFileInfo file(QDir::toNativeSeparators(filepath.toLocalFile()));
+    QrcItem* item = new QrcItem(file.fileName(), filepath, data_.count(), this);
+    QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+    data_.append(item);
+
+    endInsertRows();
+
+    emit countChanged();
 }
 
 QVariant SGQrcListModel::data(const QModelIndex &index, int role) const
@@ -211,7 +236,7 @@ int SGQrcListModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
 
-    return data_.length();
+    return data_.count();
 }
 
 void SGQrcListModel::populateModel(const QList<QrcItem *> &list)
@@ -229,13 +254,82 @@ void SGQrcListModel::populateModel(const QList<QrcItem *> &list)
     emit countChanged();
 }
 
+bool SGQrcListModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    if (row < 0 || row >= data_.count()) {
+        return false;
+    } else if (row + count - 1 < 0 || row + count - 1 >= data_.count()) {
+        return false;
+    }
+
+    beginRemoveRows(parent, row, row + count - 1);
+    for (int i = row + count - 1; i >= row; i++) {
+        delete data_[i];
+        data_[i] = nullptr;
+        data_.removeAt(i);
+    }
+    endRemoveRows();
+
+    // Update the indices of the rows after the deleted ones
+    for (int j = row; j < data_.count(); j++) {
+        data_[j]->setIndex(j);
+    }
+
+    emit countChanged();
+    return true;
+}
+
+Qt::ItemFlags SGQrcListModel::flags(const QModelIndex &index) const
+{
+    Q_UNUSED(index);
+    return Qt::ItemIsEditable;
+}
+
+bool SGQrcListModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    int row = index.row();
+    if (row < 0 || row >= data_.count()) {
+        return false;
+    }
+
+    QrcItem* item = data_[row];
+
+    switch (role) {
+    case FilenameRole:
+        item->setFilename(value.toString());
+    case FilepathRole:
+        item->setFilepath(value.toUrl());
+    case VisibleRole:
+        item->setVisible(value.toBool());
+    case OpenRole:
+        item->setOpen(value.toBool());
+    }
+
+    return true;
+}
+
+bool SGQrcListModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+    if (row < 0 || row > data_.count()) {
+        return false;
+    }
+
+    beginInsertRows(parent, row, row + count - 1);
+    for (int i = row; i < count; i++) {
+        data_.insert(i, nullptr);
+    }
+    endInsertRows();
+    emit countChanged();
+    return true;
+}
+
 void SGQrcListModel::clear(bool emitSignals)
 {
     if (emitSignals) {
         beginResetModel();
     }
 
-    for (int i = 0; i < data_.length(); i++) {
+    for (int i = 0; i < data_.count(); i++) {
         delete data_[i];
     }
     data_.clear();
@@ -257,7 +351,7 @@ QHash<int, QByteArray> SGQrcListModel::roleNames() const {
 }
 
 void SGQrcListModel::childrenChanged(int index) {
-    if (index >= 0 && index < data_.size()) {
+    if (index >= 0 && index < data_.count()) {
         emit dataChanged(QAbstractListModel::index(index), QAbstractListModel::index(index));
     }
 }

@@ -33,6 +33,7 @@ public:
     void setRelativePath(QStringList relativePath);
     void setVisible(bool visible);
     void setOpen(bool open);
+    void setIndex(int index);
 
 signals:
     void dataChanged(int index);
@@ -67,15 +68,21 @@ public:
     virtual ~SGQrcListModel() override;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    void populateModel(const QList<QrcItem*> &list);
-    void readQrcFile();
     void clear(bool emitSignals=true);
+    void populateModel(const QList<QrcItem*> &list);
+    bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
+    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+
+    int count() const;
+    void readQrcFile();
     QUrl url() const;
     void setUrl(QUrl url);
 
+    Q_INVOKABLE bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     Q_INVOKABLE QrcItem* get(int index) const;
+    Q_INVOKABLE void append(const QUrl &filepath);
 signals:
     void countChanged();
     void urlChanged();
