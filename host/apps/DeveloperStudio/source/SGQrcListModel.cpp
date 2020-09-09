@@ -6,6 +6,9 @@
 #include <QQmlEngine>
 #include <QDomNodeList>
 
+/**********************************************************************************
+ *  class QrcItem
+ **********************************************************************************/
 QrcItem::QrcItem(QObject *parent) : QObject(parent)
 {
 }
@@ -94,9 +97,10 @@ void QrcItem::setIndex(int index)
     }
 }
 
-/* ********************************
+
+/**********************************************************************************
  *  class SGQrcListModel
- * ********************************/
+ **********************************************************************************/
 
 SGQrcListModel::SGQrcListModel(QObject *parent) : QAbstractListModel(parent)
 {
@@ -184,6 +188,8 @@ void SGQrcListModel::append(const QUrl &filepath) {
             if (!outputFileLocation.exists()) {
                 break;
             }
+
+            // Output file location is already taken, add "-{i}" to the end of the filename and try again
             outputFileLocation.setFile(SGUtilsCpp::joinFilePath(dir.path(), filenameWithoutExt + "-" + QString::number(i) + "." + ext));
         }
 

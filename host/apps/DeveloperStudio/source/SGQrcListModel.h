@@ -11,6 +11,10 @@
 #include <QDomDocument>
 #include <QFile>
 
+
+/**
+ * @brief QrcItem This class is used as an element in the SGQrcListModel
+ */
 class QrcItem : public QObject
 {
     Q_OBJECT
@@ -24,17 +28,70 @@ public:
     explicit QrcItem(QObject *parent = nullptr);
     QrcItem(QString filename, QUrl path, int index, QObject *parent = nullptr);
 
+    /**
+     * @brief filename
+     * @return Returns the `filename`
+     */
     QString filename() const;
+
+    /**
+     * @brief filepath
+     * @return Returns the `filepath`
+     */
     QUrl filepath() const;
+
+    /**
+     * @brief relativePath
+     * @return Returns the `relativePath`
+     */
     QStringList relativePath() const;
+
+    /**
+     * @brief visible
+     * @return Returns `visible`
+     */
     bool visible() const;
+
+    /**
+     * @brief open
+     * @return Returns `open`
+     */
     bool open() const;
 
+    /**
+     * @brief setFilename Sets the `filename` property
+     * @param filename The filename to set
+     */
     void setFilename(QString filename);
+
+    /**
+     * @brief setFilepath Sets the `filepath` property
+     * @param filepath The filepath to set
+     */
     void setFilepath(QUrl filepath);
+
+    /**
+     * @brief setRelativePath Sets the `relativePath` property
+     * @param relativePath The relativePath to set
+     */
     void setRelativePath(QStringList relativePath);
+
+    /**
+     * @brief setVisible Sets the `visible` property
+     * @param visible The value to set `visible` to
+     */
     void setVisible(bool visible);
+
+    /**
+     * @brief setOpen Sets the `open` property
+     * @param open The value to set `open` to
+     */
     void setOpen(bool open);
+
+    /**
+     * @brief setIndex Sets the `index` property
+     * @param index The index to set
+     */
     void setIndex(int index);
 
 signals:
@@ -51,6 +108,9 @@ private:
 
 Q_DECLARE_METATYPE(QrcItem*)
 
+/**
+ * @brief SGQrcListModel Implements a model used in managing .qrc files and their contents
+ */
 class SGQrcListModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -69,19 +129,86 @@ public:
     explicit SGQrcListModel(QObject *parent = nullptr);
     virtual ~SGQrcListModel() override;
 
+    /**
+     * @brief data An override for QAbstractListModel that returns an element's property
+     * @param index The index to get
+     * @param role The property role to get
+     * @return Returns a QVariant of the object's property
+     */
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+    /**
+     * @brief rowCount An override for QAbstractListModel that returns the list's count
+     * @param parent UNUSED
+     * @return Returns the element count of `data_`
+     */
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+
+    /**
+     * @brief clear Clears the `data_` list
+     * @param emitSignals Setting this to true will emit the countChanged() signal. Default is true
+     */
     void clear(bool emitSignals=true);
-    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
+
+    /**
+     * @brief removeRows Removes `count` amount of rows starting from `row`
+     * @param row The starting index to remove
+     * @param count The number of rows to remove starting from `row`
+     * @param parent UNUSED
+     * @return Returns true if rows were removed, otherwise returns false
+     */
+    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
+
+    /**
+     * @brief flags An override from QAbstractListModel that returns the Qt::ItemIsEditable flag
+     * @param index The index of the item
+     * @return Returns Qt::ItemIsEditable
+     */
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
+    /**
+     * @brief count Used from QML to return the count of `data_`
+     * @return Returns data_.count()
+     */
     int count() const;
+
+    /**
+     * @brief readQrcFile Reads a .qrc file and populates the model
+     */
     void readQrcFile();
+
+    /**
+     * @brief url Returns the url to the .qrc file
+     * @return The url to the .qrc file
+     */
     QUrl url() const;
+
+    /**
+     * @brief setUrl Sets the url of the .qrc file
+     * @param url The url to set
+     */
     void setUrl(QUrl url);
 
-    Q_INVOKABLE bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    /**
+     * @brief setData An override to allow data to be modifiable from delegates
+     * @param index Index to modify
+     * @param value Value to set
+     * @param role Role to change
+     * @return Returns true if successful, false otherwise
+     */
+    Q_INVOKABLE bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+
+    /**
+     * @brief get Gets the QrcItem* at index `index`
+     * @param index The index to get
+     * @return Returns the QrcItem* at index `index`
+     */
     Q_INVOKABLE QrcItem* get(int index) const;
+
+    /**
+     * @brief append Appends a new QrcItem* to data_ and writes the change to disk
+     * @param filepath The filepath of the new file
+     */
     Q_INVOKABLE void append(const QUrl &filepath);
 signals:
     void countChanged();
