@@ -104,7 +104,6 @@ SGQrcListModel::SGQrcListModel(QObject *parent) : QAbstractListModel(parent)
 
 SGQrcListModel::~SGQrcListModel()
 {
-    qDeleteAll(data_);
     clear();
 }
 
