@@ -9,7 +9,7 @@ CmdStartApplication::CmdStartApplication(const device::DevicePtr& device) :
     BaseDeviceCommand(device, QStringLiteral("start_application")) { }
 
 QByteArray CmdStartApplication::message() {
-    return QByteArray("{\"cmd\":\"start_application\"}");
+    return QByteArray("{\"cmd\":\"start_application\",\"payload\":{}}");
 }
 
 bool CmdStartApplication::processNotification(rapidjson::Document& doc) {

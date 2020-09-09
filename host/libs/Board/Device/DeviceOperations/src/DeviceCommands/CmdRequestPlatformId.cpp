@@ -11,7 +11,7 @@ CmdRequestPlatformId::CmdRequestPlatformId(const device::DevicePtr& device, uint
     BaseDeviceCommand(device, QStringLiteral("request_platform_id")), maxRetries_(maxRetries), retriesCount_(0) { }
 
 QByteArray CmdRequestPlatformId::message() {
-    return QByteArray("{\"cmd\":\"request_platform_id\"}");
+    return QByteArray("{\"cmd\":\"request_platform_id\",\"payload\":{}}");
 }
 
 bool CmdRequestPlatformId::processNotification(rapidjson::Document& doc) {

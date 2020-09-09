@@ -27,6 +27,12 @@ SGWidgets.SGMainWindow {
 
     signal initialized()
 
+    function resetWindowSize()
+    {
+        mainWindow.width = 1200
+        mainWindow.height = 900
+    }
+
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")
         NavigationControl.init(statusBarContainer, stackContainer)

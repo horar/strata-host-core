@@ -86,7 +86,7 @@ Item {
             top: controlContainer.top
             margins: 20
         }
-        source: "control-views/question-circle-solid.svg"
+        source: "qrc:/sgimages/question-circle.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
         height: 40
         width: 40
