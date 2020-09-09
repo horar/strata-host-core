@@ -20,7 +20,8 @@
 HostControllerService::HostControllerService(QObject* parent)
     : QObject(parent),
       downloadManager_(&networkManager_),
-      storageManager_(&downloadManager_)
+      storageManager_(&downloadManager_),
+      dispatcher_{std::make_shared<HCS_Dispatcher>()}
 {
     //handlers for 'cmd'
     clientCmdHandler_.insert( { std::string("request_hcs_status"), std::bind(&HostControllerService::onCmdHCSStatus, this, std::placeholders::_1) });
@@ -44,7 +45,7 @@ bool HostControllerService::initialize(const QString& config)
         return false;
     }
 
-    dispatcher_.setMsgHandler(std::bind(&HostControllerService::handleMessage, this, std::placeholders::_1) );
+    dispatcher_->setMsgHandler(std::bind(&HostControllerService::handleMessage, this, std::placeholders::_1) );
 
     QString baseFolder{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
     if (config_.HasMember("stage")) {
@@ -124,7 +125,7 @@ bool HostControllerService::initialize(const QString& config)
 
     rapidjson::Value& hcs_cfg = config_["host_controller_service"];
 
-    clients_.initialize(&dispatcher_, hcs_cfg);
+    clients_.initialize(dispatcher_, hcs_cfg);
     return true;
 }
 
@@ -134,18 +135,20 @@ void HostControllerService::start()
         return;
     }
 
-    dispatcherThread_ = std::thread(&HCS_Dispatcher::dispatch, &dispatcher_);
+    dispatcherThread_ = std::thread(&HCS_Dispatcher::dispatch, dispatcher_.get());
 
     qCInfo(logCategoryHcs) << "Host controller service started.";
 }
 
 void HostControllerService::stop()
 {
+    clients_.stop();    // first stop clients controller, then dispatcher (it receives data from clients controller)
+
     if (dispatcherThread_.get_id() == std::thread::id()) {
         return;
     }
 
-    dispatcher_.stop();
+    dispatcher_->stop();
 
     dispatcherThread_.join();
     qCInfo(logCategoryHcs) << "Host controller service stoped.";

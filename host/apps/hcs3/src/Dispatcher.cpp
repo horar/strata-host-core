@@ -28,12 +28,14 @@ void HCS_Dispatcher::setMsgHandler(std::function<void(const PlatformMessage& )> 
 
 void HCS_Dispatcher::addMessage(const PlatformMessage& msg)
 {
-    {
-        std::lock_guard<std::mutex> lock(event_list_mutex_);
-        events_list_.push_back(msg);
-    }
+    if(stop_ == false) {
+        {
+            std::lock_guard<std::mutex> lock(event_list_mutex_);
+            events_list_.push_back(msg);
+        }
 
-    event_list_cv_.notify_all();
+        event_list_cv_.notify_all();
+    }
 }
 
 void HCS_Dispatcher::dispatch()
