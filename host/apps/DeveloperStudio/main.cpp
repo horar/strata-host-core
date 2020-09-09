@@ -24,7 +24,7 @@
 #include "SDSModel.h"
 #include "DocumentManager.h"
 #include "ResourceLoader.h"
-
+#include "SGQrcListModel.h"
 #include "HcsNode.h"
 
 #include "AppUi.h"
@@ -101,7 +101,8 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<DownloadDocumentListModel>("tech.strata.DownloadDocumentListModel", 1, 0, "DownloadDocumentListModel", "You can't instantiate DownloadDocumentListModel in QML");
     qmlRegisterUncreatableType<DocumentListModel>("tech.strata.DocumentListModel", 1, 0, "DocumentListModel", "You can't instantiate DocumentListModel in QML");
     qmlRegisterUncreatableType<ClassDocuments>("tech.strata.ClassDocuments", 1, 0, "ClassDocuments", "You can't instantiate ClassDocuments in QML");
-
+    qmlRegisterUncreatableType<QrcItem>("tech.strata.QrcItem",1,0,"QrcItem", "You can't instantiate QrcItem in QML");
+    qmlRegisterType<SGQrcListModel>("tech.strata.SGQrcListModel", 1, 0, "SGQrcListModel");
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
 
     std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>()};

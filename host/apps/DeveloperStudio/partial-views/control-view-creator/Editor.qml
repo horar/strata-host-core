@@ -10,11 +10,13 @@ Item {
     id: editorRoot
 
     function setVisible (index) {
-        if (fileModel.get(index).open === false) {
-            fileModel.get(index).open = true
+        let file = fileModel.get(index);
+
+        if (file.open === false) {
+            file.open = true
         }
         for (let i = 0; i < fileModel.count; i++) {
-            fileModel.get(i).visible = (index === i)
+            fileModel.get(i).visible = (i === index)
         }
         fileStack.currentIndex = index
     }
@@ -95,7 +97,7 @@ Item {
                                 // TODO: create more appropriate tab delegate with closer
                                 checkable: true
                                 checked: model.visible
-                                text: model.file
+                                text: model.filename
 
                                 property int modelIndex: index
 
