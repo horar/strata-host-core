@@ -12,8 +12,14 @@ Rectangle {
         id: fileModel
 
         onParsingFinished: {
-            //find control.qml
-            //set visible / open to true
+            for (let i = 0; i < fileModel.count; i++) {
+                if (fileModel.get(i).filename.toLowerCase() === "control.qml") {
+                    let item = fileModel.get(i);
+                    item.open = true;
+                    item.visible = true;
+                    break;
+                }
+            }
         }
     }
 
