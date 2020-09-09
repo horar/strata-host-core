@@ -160,7 +160,7 @@ private:
     StorageManager storageManager_;
     FirmwareUpdateController updateController_;
 
-    HCS_Dispatcher dispatcher_;
+    std::shared_ptr<HCS_Dispatcher> dispatcher_;
     std::thread dispatcherThread_;
 
     typedef std::function<void(const rapidjson::Value* )> NotificationHandler;
