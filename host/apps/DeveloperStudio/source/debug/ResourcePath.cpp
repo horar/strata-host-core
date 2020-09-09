@@ -4,7 +4,6 @@
 
 #include <QCoreApplication>
 #include <QDir>
-#include <QStandardPaths>
 
 QString ResourcePath::coreResourcePath_ = QString();
 QString ResourcePath::viewsResourcePath_ = QString();
