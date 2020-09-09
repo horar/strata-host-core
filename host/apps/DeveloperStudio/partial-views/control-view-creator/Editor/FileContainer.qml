@@ -39,7 +39,7 @@ Item {
     }
 
     ScrollView  {
-        id: flickable
+        id: textEditorView
         anchors.fill: parent
         TextArea {
             id: textArea
