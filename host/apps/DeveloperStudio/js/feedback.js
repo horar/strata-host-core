@@ -3,12 +3,12 @@
 .import "restclient.js" as Rest
 .import "utilities.js" as Utility
 .import tech.strata.logger 1.0 as LoggerModule
+.import tech.strata.signals 1.0 as SignalsModule
 
 /*
   Send Feedback information to server
 */
 
-var signals = Utility.createObject("qrc:/partial-views/general/Signals.qml", null)
 function feedbackInfo(feedback_info){
     let headers = {
         "app": "strata",
@@ -16,20 +16,20 @@ function feedbackInfo(feedback_info){
     }
 
     var data = {"email": feedback_info.email, "name": feedback_info.name, "comment" : feedback_info.comment };
-    Rest.xhr("post", "feedbacks", data, feedback_result,feedback_error, signals, headers);
+    Rest.xhr("post", "feedbacks", data, feedback_result,feedback_error, SignalsModule.Signals, headers);
 }
 
 
 function feedback_result(response) {
     console.log(LoggerModule.Logger.devStudioFeedbackCategory, "Feedback successfully sent")
-        signals.feedbackResult("Feedback successfully sent")
+        SignalsModule.Signals.feedbackResult("Feedback successfully sent")
 }
 
 function feedback_error(response) {
     console.log(LoggerModule.Logger.devStudioFeedbackCategory, "Feedback failed to send")
     if(response.message === 'No connection'){
-        signals.feedbackResult("No Connection")
+        SignalsModule.Signals.feedbackResult("No Connection")
     } else {
-        signals.feedbackResult("Feedback service error")
+        SignalsModule.Signals.feedbackResult("Feedback service error")
     }
 }

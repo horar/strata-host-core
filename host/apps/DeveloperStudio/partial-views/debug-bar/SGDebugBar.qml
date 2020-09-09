@@ -4,11 +4,12 @@ import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
 import Qt.labs.folderlistmodel 2.12
 import Qt.labs.settings 1.1 as QtLabsSettings
-import tech.strata.commoncpp 1.0
 
+import tech.strata.commoncpp 1.0
+import tech.strata.signals 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/restclient.js" as Rest
-import "qrc:/js/login_utilities.js" as Authenticator
+import "qrc:/js/uuid_map.js" as UuidMap
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/uuid_map.js" as UuidMap
@@ -197,7 +198,7 @@ Item {
                     } else {
                         Rest.url = root.testAuthServer
                     }
-                    Authenticator.signals.serverChanged()
+                    Signals.serverChanged()
                 }
 
                 Component.onCompleted: {
@@ -213,7 +214,7 @@ Item {
                 }
 
                 Connections {
-                    target: Authenticator.signals
+                    target: Signals
                     onServerChanged: {
                         serverChange.setButtonText()
                     }
