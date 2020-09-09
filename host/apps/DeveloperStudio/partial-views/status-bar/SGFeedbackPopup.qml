@@ -3,12 +3,13 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import "qrc:/partial-views"
 import "qrc:/partial-views/general/"
-import "qrc:/js/feedback.js" as Feedback
 import "qrc:/js/navigation_control.js" as NavigationControl
+import "qrc:/js/feedback.js" as Feedback
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.signals 1.0
 
 SGStrataPopup {
     id: root
@@ -299,11 +300,11 @@ SGStrataPopup {
                     }
                 }
             }
+
         }
     }
-
     Connections {
-        target: Feedback.signals
+        target: Signals
 
         onFeedbackResult: {
             feedbackStatus.text = ""
@@ -327,4 +328,5 @@ SGStrataPopup {
         textEdit.text = ""
         feedbackTypeListView.currentIndex = -1
     }
+
 }

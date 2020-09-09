@@ -119,7 +119,7 @@ function loadViewVersion(filePath)
     request.onreadystatechange = function onVersionRequestFinished() {
         if (request.readyState === XMLHttpRequest.DONE) {
             if (request.status !== 200) {
-                console.error(LoggerModule.Logger.devStudioNavigationControlCategory, "can't load version info: " + request.statusText + " [" + request.status + "]")
+                console.error(LoggerModule.Logger.devStudioNavigationControlCategory, `can't load version info: ${request.statusText} [${request.status}]`)
                 return
             }
             var response = JSON.parse(request.responseText)
