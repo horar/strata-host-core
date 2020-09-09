@@ -12,7 +12,6 @@ import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/uuid_map.js" as UuidMap
 import "qrc:/js/constants.js" as Constants
 import "qrc:/js/platform_selection.js" as PlatformSelection
-import "qrc:/js/uuid_map.js" as UuidMap
 
 Item {
     id: root

@@ -142,17 +142,6 @@ void ResourceLoader::loadCoreResources()
     }
 }
 
-void ResourceLoader::loadViewResources()
-{
-    QDirIterator it(ResourcePath::viewsResourcePath(), {QStringLiteral("views-*.rcc")},
-                    QDir::Files);
-    while (it.hasNext()) {
-        const QString resourceFile(it.next());
-        qCDebug(logCategoryStrataDevStudio(), "Loading '%s: %d': ", qUtf8Printable(resourceFile),
-                QResource::registerResource(resourceFile));
-    }
-}
-
 QUrl ResourceLoader::getStaticResourcesUrl() {
     QUrl url;
     url.setScheme("file");

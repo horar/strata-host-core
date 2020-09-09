@@ -32,7 +32,7 @@ public:
     ResourceLoader(QObject *parent=nullptr);
     virtual ~ResourceLoader();
 
-    static enum ControlViewType {
+    enum ControlViewType {
         LOCAL_VIEW,
         OTA_VIEW
     };
@@ -115,7 +115,6 @@ private slots:
 
 private:
     void loadCoreResources();
-    void loadViewResources();
     QString getQResourcePrefix(const QString &class_id, const QString &version);
 
     QHash<QString, ResourceItem*> viewsRegistered_;
