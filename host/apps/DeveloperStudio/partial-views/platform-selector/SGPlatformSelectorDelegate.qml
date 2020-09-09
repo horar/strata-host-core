@@ -209,9 +209,11 @@ Item {
                     family: Fonts.franklinGothicBold
                 }
                 Layout.fillWidth: true
+                elide: Text.ElideRight
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
                 textFormat: Text.StyledText
+                maximumLineCount: 2
             }
 
             Text {
@@ -236,6 +238,7 @@ Item {
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
                 textFormat: Text.StyledText
+                maximumLineCount: 1
             }
 
             Text {
