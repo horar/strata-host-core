@@ -184,9 +184,10 @@ void SGQrcListModel::append(const QUrl &filepath) {
             if (!outputFileLocation.exists()) {
                 break;
             }
-            outputFileLocation.setFile(SGUtilsCpp::joinFilePath(dir.path(), filenameWithoutExt + "-" + i + ext));
+            outputFileLocation.setFile(SGUtilsCpp::joinFilePath(dir.path(), filenameWithoutExt + "-" + QString::number(i) + "." + ext));
         }
 
+        // Copy the file to the base directory under the new name
         QFile::copy(file.filePath(), outputFileLocation.filePath());
         file.setFile(outputFileLocation.filePath());
     }
