@@ -101,7 +101,7 @@ Item {
 
                                 property int modelIndex: index
 
-                                onCheckedChanged: {
+                                onClicked: {
                                     if (checked) {
                                         editorRoot.setVisible(modelIndex)
                                     }
