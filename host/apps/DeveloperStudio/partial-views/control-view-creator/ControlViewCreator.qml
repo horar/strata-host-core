@@ -2,36 +2,25 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.SGQrcListModel 1.0
 
 Rectangle {
     id: controlViewCreatorRoot
     objectName: "ControlViewCreator"
 
-    ListModel {
+    SGQrcListModel {
         id: fileModel
-    }
 
-    Component.onCompleted: {
-        // todo: append files in project from QRC to fileModel
-
-        // example files
-        fileModel.append({
-                             "file":"Control.qml",
-                             "path":"file:///Users/zbd8dm/Desktop/sample/Control.qml",
-                             "open":true,
-                             "visible": true
-                         })
-        fileModel.append({
-                             "file":"PlatformInterface.qml",
-                             "path":"file:///Users/zbd8dm/Desktop/sample/PlatformInterface.qml",
-                             "open":false,
-                             "visible": false
-                         })
-        // example files
-//        fileModel.append({"file":"filename1.txt", "open":true, "visible": true})
-//        fileModel.append({"file":"filename2.txt", "open":false, "visible": false})
-//        fileModel.append({"file":"filename3.txt", "open":false, "visible": false})
-//        fileModel.append({"file":"filename4.txt", "open":false, "visible": false})
+        onParsingFinished: {
+            for (let i = 0; i < fileModel.count; i++) {
+                if (fileModel.get(i).filename.toLowerCase() === "control.qml") {
+                    let item = fileModel.get(i);
+                    item.open = true;
+                    item.visible = true;
+                    break;
+                }
+            }
+        }
     }
 
     ColumnLayout {

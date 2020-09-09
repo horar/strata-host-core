@@ -36,8 +36,8 @@ Rectangle {
                 Layout.fillWidth: true
                 checkable: true
                 checked: model.visible
-                text: model.file
                 ButtonGroup.group: buttonGroup
+                text: model.filename
 
                 property int modelIndex: index
 

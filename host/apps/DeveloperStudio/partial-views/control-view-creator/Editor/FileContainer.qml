@@ -12,9 +12,8 @@ Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
 
-
     property int modelIndex: index
-    property string file: model.file
+    property string file: model.filename
 
     function openFile(fileUrl) {
         var request = new XMLHttpRequest();
@@ -24,36 +23,19 @@ Item {
     }
 
     function saveFile(fileUrl, text) {
-        console.log(fileUrl)
-        console.log(text)
         var request = new XMLHttpRequest();
         request.open("PUT", fileUrl, false);
         request.send(text);
         return request.status;
     }
 
+    Component.onCompleted: {
+        textArea.text = openFile(model.filepath)
+    }
 
     Connections{
         target: saveButton
-        onClicked: {
-            console.log(model.path)
-            console.log(textArea.text)
-
-            saveFile(model.path,textArea.text)
-        }
-    }
-
-    FileDialog {
-        id: openFileDialog
-        nameFilters: ["QML files (*.qml)", "All files (*)"]
-        onAccepted: {
-            console.info(openFileDialog.fileUrl)
-        }
-    }
-
-
-    Component.onCompleted: {
-        textArea.text = openFile(model.path)
+        onClicked: saveFile(model.filepath,textArea.text)
     }
 
     ScrollView  {
@@ -62,14 +44,12 @@ Item {
         TextArea {
             id: textArea
             selectByMouse: true
-            background: null
             font: Fonts.inconsolata
+
+            //selection text is set to gray
             selectionColor: Qt.rgba(0.0, 0.0, 0.0, 0.15)
             selectedTextColor: color
-
         }
     }
-
-
 }
 

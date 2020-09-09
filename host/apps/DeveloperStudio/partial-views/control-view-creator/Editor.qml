@@ -11,21 +11,19 @@ Item {
     id: editorRoot
 
     function setVisible (index) {
-        if (fileModel.get(index).open === false) {
-            fileModel.get(index).open = true
+        let file = fileModel.get(index);
+
+        if (file.open === false) {
+            file.open = true
         }
         for (let i = 0; i < fileModel.count; i++) {
-            fileModel.get(i).visible = (index === i)
+            fileModel.get(i).visible = (i === index)
         }
         fileStack.currentIndex = index
     }
 
-
-
     ColumnLayout {
-        anchors {
-            fill: parent
-        }
+        anchors.fill: parent
 
         spacing: 0
 
@@ -98,10 +96,9 @@ Item {
                             }
                             delegate: SGButton {
                                 // TODO: create more appropriate tab delegate with closer
-                                //checkable: true
                                 checked: model.visible
-                                text: model.file
                                 ButtonGroup.group: buttonGroup
+                                text: model.filename
 
                                 property int modelIndex: index
 

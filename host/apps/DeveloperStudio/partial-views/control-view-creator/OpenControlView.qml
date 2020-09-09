@@ -1,10 +1,15 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
+import QtQml.Models 2.12
+import QtQuick.Dialogs 1.2
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.SGQrcListModel 1.0
 
 Rectangle {
     id: openProjectContainer
+
+    property alias fileUrl: filePath.text
     color: "#ccc"
 
     ColumnLayout {
@@ -39,6 +44,20 @@ Rectangle {
 
                 SGButton {
                     text: "Select"
+                    onClicked: {
+                        fileDialog.open()
+                    }
+                }
+
+                FileDialog {
+                    id: fileDialog
+                    nameFilters: ["*.qrc"]
+                    selectMultiple: false
+                    selectFolder: false
+
+                    onAccepted: {
+                        filePath.text = fileDialog.fileUrl
+                    }
                 }
 
                 Rectangle {
@@ -49,12 +68,13 @@ Rectangle {
                     border.width: 1
 
                     TextInput {
+                        id: filePath
                         anchors {
                             verticalCenter: parent.verticalCenter
                             left: parent.left
                             leftMargin: 10
                         }
-                        text: "/Users/zbgzzh/Desktop"
+                        text: "Select a .qrc file"
                         color: "#333"
                     }
                 }
@@ -70,8 +90,11 @@ Rectangle {
                 text: "Open Project"
 
                 onClicked: {
-                    viewStack.currentIndex = editUseStrip.offset
-                    editUseStrip.checkedIndices = 1
+                    if (fileDialog.fileUrl.toString() !== "") {
+                        fileModel.url = fileDialog.fileUrl
+                        viewStack.currentIndex = editUseStrip.offset
+                        editUseStrip.checkedIndices = 1
+                    }
                 }
             }
 
@@ -88,5 +111,9 @@ Rectangle {
             // space filler
             Layout.fillHeight: true
         }
+
+
     }
+
+
 }
