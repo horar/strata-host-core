@@ -95,10 +95,6 @@ Rectangle {
                 id: openProjectContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-
-                onFileUrlChanged: {
-                    fileModel.url = fileUrl
-                }
             }
 
             NewControlView {

@@ -90,8 +90,11 @@ Rectangle {
                 text: "Open Project"
 
                 onClicked: {
-                    viewStack.currentIndex = editUseStrip.offset
-                    editUseStrip.checkedIndices = 1
+                    if (fileDialog.fileUrl.toString() !== "") {
+                        fileModel.url = fileDialog.fileUrl
+                        viewStack.currentIndex = editUseStrip.offset
+                        editUseStrip.checkedIndices = 1
+                    }
                 }
             }
 
