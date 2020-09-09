@@ -8,6 +8,8 @@
 #include <QUrl>
 #include <QList>
 #include <QVariantMap>
+#include <QDomDocument>
+#include <QFile>
 
 class QrcItem : public QObject
 {
@@ -36,7 +38,7 @@ public:
     void setIndex(int index);
 
 signals:
-    void dataChanged(int index);
+    void dataChanged(int index, int role = Qt::UserRole);
 
 private:
     QString filename_;
@@ -70,8 +72,6 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     void clear(bool emitSignals=true);
-    void populateModel(const QList<QrcItem*> &list);
-    bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
@@ -89,11 +89,12 @@ signals:
     void parsingFinished();
 
 public slots:
-    void childrenChanged(int index);
+    void childrenChanged(int index, int role);
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 private:
     QList<QrcItem*> data_;
     QUrl url_;
+    QDomDocument qrcDoc_;
 };

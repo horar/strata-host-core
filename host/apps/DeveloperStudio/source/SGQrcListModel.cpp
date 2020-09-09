@@ -1,10 +1,10 @@
 #include "SGQrcListModel.h"
+#include "SGUtilsCpp.h"
 
-#include <QFile>
 #include <QDir>
-#include <QXmlStreamReader>
 #include <QDebug>
 #include <QQmlEngine>
+#include <QDomNodeList>
 
 QrcItem::QrcItem(QObject *parent) : QObject(parent)
 {
@@ -56,33 +56,33 @@ bool QrcItem::open() const
 void QrcItem::setFilename(QString filename) {
     if (filename_ != filename) {
         filename_ = filename;
-        emit dataChanged(index_);
+        emit dataChanged(index_, SGQrcListModel::FilenameRole);
     }
 }
 
 void QrcItem::setFilepath(QUrl filepath) {
     if (filepath_ != filepath) {
         filepath_ = filepath;
-        emit dataChanged(index_);
+        emit dataChanged(index_, SGQrcListModel::FilepathRole);
     }
 }
 
 void QrcItem::setRelativePath(QStringList relativePath) {
     relativePath_ = relativePath;
-    emit dataChanged(index_);
+    emit dataChanged(index_, SGQrcListModel::RelativePathRole);
 }
 
 void QrcItem::setVisible(bool visible) {
     if (visible_ != visible) {
         visible_ = visible;
-        emit dataChanged(index_);
+        emit dataChanged(index_, SGQrcListModel::VisibleRole);
     }
 }
 
 void QrcItem::setOpen(bool open) {
     if (open_ != open) {
         open_ = open;
-        emit dataChanged(index_);
+        emit dataChanged(index_, SGQrcListModel::OpenRole);
     }
 }
 
@@ -97,6 +97,7 @@ void QrcItem::setIndex(int index)
 /* ********************************
  *  class SGQrcListModel
  * ********************************/
+
 SGQrcListModel::SGQrcListModel(QObject *parent) : QAbstractListModel(parent)
 {
     connect(this, &SGQrcListModel::urlChanged, this, &SGQrcListModel::readQrcFile);
@@ -111,52 +112,41 @@ void SGQrcListModel::readQrcFile()
 {
     beginResetModel();
     clear(false);
-    QFile qrcIn(QDir::toNativeSeparators(url_.toLocalFile()));
 
-    if (!qrcIn.exists()) {
-        qCritical() << "QRC file does not exist." << qrcIn.fileName();
-        return;
+    QFile qrcFile(SGUtilsCpp::urlToLocalFile(url_));
+
+    if (!qrcDoc_.isNull()) {
+        qrcDoc_.clear();
     }
 
-    if (!qrcIn.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!qrcFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qCritical() << "Failed to open qrc file";
         return;
     }
 
-    QXmlStreamReader reader(&qrcIn);
-    while (reader.readNextStartElement() && !reader.hasError()) {
-        // Start of XML element
-        if (reader.name() == "RCC" || reader.name() == "rcc") {
-            if (reader.readNextStartElement()) {
-                if (reader.name() == "qresource" && reader.attributes().hasAttribute("prefix")) {
-                    if (reader.attributes().value("prefix").toString() != "/") {
-                        reader.raiseError("Unexpected prefix for qresource");
-                        break;
-                    }
-                }
-                while (reader.readNextStartElement()) {
-                    if (reader.name() == "file") {
-                        QrcItem* item = new QrcItem(reader.readElementText(), url_, data_.count(), this);
-                        QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
-                        connect(item, &QrcItem::dataChanged, this, &SGQrcListModel::childrenChanged);
-                        data_.push_back(item);
-                    } else {
-                        reader.skipCurrentElement();
-                    }
-                }
-            }
-        }
+    if (!qrcDoc_.setContent(&qrcFile)) {
+        qCritical() << "Failed to parse qrc file";
     }
 
-    if (reader.hasError()) {
-        qCritical() << "Error parsing qrc file:" << reader.errorString();
-    } else {
-        qDebug() << "Successfully parsed qrc file";
+    QDomNode qresource = qrcDoc_.elementsByTagName("qresource").at(0);
+    if (qresource.hasAttributes() && qresource.attributes().contains("prefix") && qresource.attributes().namedItem("prefix").nodeValue() != "/" ) {
+        qCritical() << "Unexpected prefix for qresource";
+        return;
     }
-    reader.clear();
-    qrcIn.close();
 
+    QDomNodeList files = qrcDoc_.elementsByTagName("file");
+    for (int i = 0; i < files.count(); i++) {
+        QDomElement element = files.at(i).toElement();
+        QrcItem* item = new QrcItem(element.text(), url_, data_.count(), this);
+        QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+        connect(item, &QrcItem::dataChanged, this, &SGQrcListModel::childrenChanged);
+        data_.append(item);
+    }
+
+    qDebug() << "Successfully parsed qrc file";
     endResetModel();
+
+    qrcFile.close();
     if (data_.count() > 0) {
         emit countChanged();
     }
@@ -174,15 +164,53 @@ QrcItem* SGQrcListModel::get(int index) const
 }
 
 void SGQrcListModel::append(const QUrl &filepath) {
+    QFile qrcFile(SGUtilsCpp::urlToLocalFile(url_));
+    if (!qrcFile.open(QIODevice::Truncate | QIODevice::WriteOnly | QIODevice::Text)) {
+        qCritical() << "Could not open" << url_;
+        return;
+    }
+
+    // If the file that we are adding is not a child of the .qrc file, then move it to the directory.
+    // below gets the base directory for the qrc file
+    QDir dir(QFileInfo(SGUtilsCpp::urlToLocalFile(url_)).dir());
+    QFileInfo file(SGUtilsCpp::urlToLocalFile(filepath));
+
+    if (SGUtilsCpp::fileIsChildOfDir(file.filePath(), dir.path()) == false) {
+        QFileInfo outputFileLocation(SGUtilsCpp::joinFilePath(dir.path(), file.fileName()));
+        QString ext = outputFileLocation.suffix();
+        QString filenameWithoutExt = outputFileLocation.fileName().split(".", QString::SkipEmptyParts)[0];
+
+        for (int i = 1; ;i++) {
+            if (!outputFileLocation.exists()) {
+                break;
+            }
+            outputFileLocation.setFile(SGUtilsCpp::joinFilePath(dir.path(), filenameWithoutExt + "-" + i + ext));
+        }
+
+        QFile::copy(file.filePath(), outputFileLocation.filePath());
+        file.setFile(outputFileLocation.filePath());
+    }
+
     beginInsertRows(QModelIndex(), data_.count(), data_.count());
 
-    QFileInfo file(QDir::toNativeSeparators(filepath.toLocalFile()));
-    QrcItem* item = new QrcItem(file.fileName(), filepath, data_.count(), this);
+    QrcItem* item = new QrcItem(dir.relativeFilePath(file.filePath()), file.filePath(), data_.count(), this);
+    connect(item, &QrcItem::dataChanged, this, &SGQrcListModel::childrenChanged);
     QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
     data_.append(item);
 
     endInsertRows();
 
+    // Add the QDomElement to qrcDoc_
+    QDomElement fileElement = qrcDoc_.createElement("file");
+    QDomElement qresources = qrcDoc_.elementsByTagName("qresource").at(0).toElement();
+    QDomText text = qrcDoc_.createTextNode(dir.relativeFilePath(file.filePath()));
+    fileElement.appendChild(text);
+    qresources.appendChild(fileElement);
+
+    // Write the change to disk
+    QTextStream stream(&qrcFile);
+    stream << qrcDoc_.toString();
+    qrcFile.close();
     emit countChanged();
 }
 
@@ -240,21 +268,6 @@ int SGQrcListModel::rowCount(const QModelIndex &parent) const
     return data_.count();
 }
 
-void SGQrcListModel::populateModel(const QList<QrcItem *> &list)
-{
-    beginResetModel();
-    clear(false);
-
-    for (int i = 0; i < list.length(); ++i) {
-        QrcItem *item = list.at(i);
-        data_.append(item);
-    }
-
-    endResetModel();
-
-    emit countChanged();
-}
-
 bool SGQrcListModel::removeRows(int row, int count, const QModelIndex &parent)
 {
     if (row < 0 || row >= data_.count()) {
@@ -309,21 +322,6 @@ bool SGQrcListModel::setData(const QModelIndex &index, const QVariant &value, in
     return true;
 }
 
-bool SGQrcListModel::insertRows(int row, int count, const QModelIndex &parent)
-{
-    if (row < 0 || row > data_.count()) {
-        return false;
-    }
-
-    beginInsertRows(parent, row, row + count - 1);
-    for (int i = row; i < count; i++) {
-        data_.insert(i, nullptr);
-    }
-    endInsertRows();
-    emit countChanged();
-    return true;
-}
-
 void SGQrcListModel::clear(bool emitSignals)
 {
     if (emitSignals) {
@@ -354,8 +352,13 @@ QHash<int, QByteArray> SGQrcListModel::roleNames() const {
     return roles;
 }
 
-void SGQrcListModel::childrenChanged(int index) {
+void SGQrcListModel::childrenChanged(int index, int role) {
     if (index >= 0 && index < data_.count()) {
-        emit dataChanged(QAbstractListModel::index(index), QAbstractListModel::index(index));
+        if (role != Qt::UserRole) {
+            QVector<int> roleChanged = { role };
+            emit dataChanged(QAbstractListModel::index(index), QAbstractListModel::index(index), roleChanged);
+        } else {
+            emit dataChanged(QAbstractListModel::index(index), QAbstractListModel::index(index));
+        }
     }
 }
