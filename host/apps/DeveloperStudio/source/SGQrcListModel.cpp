@@ -217,21 +217,6 @@ int SGQrcListModel::rowCount(const QModelIndex &parent) const
     return data_.length();
 }
 
-void SGQrcListModel::populateModel(const QList<QrcItem *> &list)
-{
-    beginResetModel();
-    clear(false);
-
-    for (int i = 0; i < list.length(); ++i) {
-        QrcItem *item = list.at(i);
-        data_.append(item);
-    }
-
-    endResetModel();
-
-    emit countChanged();
-}
-
 void SGQrcListModel::clear(bool emitSignals)
 {
     if (emitSignals) {

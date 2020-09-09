@@ -69,7 +69,6 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     int count() const;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-    void populateModel(const QList<QrcItem*> &list);
     void readQrcFile();
     void clear(bool emitSignals=true);
     QUrl url() const;
