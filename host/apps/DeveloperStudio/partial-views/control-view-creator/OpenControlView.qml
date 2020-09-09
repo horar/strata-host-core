@@ -74,7 +74,7 @@ Rectangle {
                             left: parent.left
                             leftMargin: 10
                         }
-                        text: "Select a .qrc file"
+                        text: fileDialog.fileUrl.toString() === "" ? "Select a .qrc file" : fileDialog.fileUrl.toString()
                         color: "#333"
                     }
                 }

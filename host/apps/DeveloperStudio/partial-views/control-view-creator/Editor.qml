@@ -15,10 +15,11 @@ Item {
         if (file.open === false) {
             file.open = true
         }
+
         for (let i = 0; i < fileModel.count; i++) {
             fileModel.get(i).visible = (i === index)
         }
-        fileStack.currentIndex = index
+        fileStack.currentIndex = openFileModel.mapIndexFromSource(index)
     }
 
     ColumnLayout {
@@ -79,19 +80,7 @@ Item {
 
                         Repeater {
                             id: fileTabRepeater
-                            model: SGSortFilterProxyModel {
-                                sourceModel: fileModel
-                                invokeCustomFilter: true
-
-                                function filterAcceptsRow(index) {
-                                    let listElement = sourceModel.get(index)
-                                    return file_open(listElement)
-                                }
-
-                                function file_open(listElement) {
-                                    return listElement.open
-                                }
-                            }
+                            model: openFileModel
 
                             delegate: SGButton {
                                 // TODO: create more appropriate tab delegate with closer
@@ -103,7 +92,7 @@ Item {
 
                                 onClicked: {
                                     if (checked) {
-                                        editorRoot.setVisible(modelIndex)
+                                        editorRoot.setVisible(openFileModel.mapIndexToSource(modelIndex))
                                     }
                                 }
                             }
@@ -118,24 +107,27 @@ Item {
 
                     Repeater {
                         id: fileEditorRepeater
-                        model: SGSortFilterProxyModel {
-                            sourceModel: fileModel
-                            invokeCustomFilter: true
-
-                            function filterAcceptsRow(index) {
-                                let listElement = sourceModel.get(index)
-                                return file_open(listElement)
-                            }
-
-                            function file_open(listElement) {
-                                return listElement.open
-                            }
-                        }
+                        model: openFileModel
 
                         delegate: FileContainer {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                         }
+                    }
+                }
+
+                SGSortFilterProxyModel {
+                    id: openFileModel
+                    sourceModel: fileModel
+                    invokeCustomFilter: true
+
+                    function filterAcceptsRow(index) {
+                        let listElement = sourceModel.get(index)
+                        return file_open(listElement)
+                    }
+
+                    function file_open(listElement) {
+                        return listElement.open
                     }
                 }
             }

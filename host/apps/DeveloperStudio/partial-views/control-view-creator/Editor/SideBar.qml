@@ -40,7 +40,7 @@ Rectangle {
 
                 property int modelIndex: index
 
-                onCheckedChanged: {
+                onClicked: {
                     if (checked) {
                         editorRoot.setVisible(modelIndex)
                     }
@@ -54,8 +54,7 @@ Rectangle {
             text: "New file..."
 
             onClicked: {
-                fileDialog.selectExisting = false
-                fileDialog.open()
+                newFileDialog.open()
             }
         }
 
@@ -64,20 +63,30 @@ Rectangle {
             Layout.topMargin: 20
             text: "Add existing file to QRC..."
             onClicked: {
-                fileDialog.selectExisting = true
-                fileDialog.selectMultiple = true
-                fileDialog.open()
+                existingFileDialog.open()
             }
         }
 
         FileDialog {
-            id: fileDialog
+            id: existingFileDialog
             nameFilters: ["*.qml *.js"]
+            selectExisting: true
+            selectMultiple: true
 
             onAccepted: {
                 for (let i = 0; i < fileUrls.length; i++) {
                     fileModel.append(fileUrls[i])
                 }
+            }
+        }
+
+        FileDialog {
+            id: newFileDialog
+            nameFilters: ["*.qml *.js"]
+            selectExisting: false
+
+            onAccepted: {
+                fileModel.append(fileUrl);
             }
         }
     }
