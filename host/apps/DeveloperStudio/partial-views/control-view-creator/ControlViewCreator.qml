@@ -10,6 +10,11 @@ Rectangle {
 
     SGQrcListModel {
         id: fileModel
+
+        onParsingFinished: {
+            //find control.qml
+            //set visible / open to true
+        }
     }
 
     ColumnLayout {

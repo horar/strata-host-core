@@ -79,6 +79,7 @@ public:
 signals:
     void countChanged();
     void urlChanged();
+    void parsingFinished();
 
 public slots:
     void childrenChanged(int index);

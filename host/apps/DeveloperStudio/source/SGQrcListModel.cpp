@@ -147,7 +147,10 @@ void SGQrcListModel::readQrcFile()
     qrcIn.close();
 
     endResetModel();
-    emit countChanged();
+    if (data_.count() > 0) {
+        emit countChanged();
+    }
+    emit parsingFinished();
 }
 
 QrcItem* SGQrcListModel::get(int index) const
@@ -235,14 +238,17 @@ void SGQrcListModel::clear(bool emitSignals)
         beginResetModel();
     }
 
-    for (int i = 0; i < data_.length(); i++) {
+    int i = 0;
+    for (; i < data_.length(); i++) {
         delete data_[i];
     }
     data_.clear();
 
     if (emitSignals) {
         endResetModel();
-        emit countChanged();
+        if (i > 0) {
+            emit countChanged();
+        }
     }
 }
 
