@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
+import QtQuick.Dialogs 1.2
 
 import tech.strata.sgwidgets 1.0
 
@@ -18,8 +19,10 @@ Rectangle {
         }
 
         SGText {
+            Layout.fillWidth: true
             Layout.leftMargin: 5
             Layout.rightMargin: 5
+            id: qrcFilesText
             text:"QRC Files:"
             fontSizeMultiplier: 1.5
             color: "white"
@@ -49,12 +52,33 @@ Rectangle {
             Layout.fillWidth: true
             Layout.topMargin: 20
             text: "New file..."
+
+            onClicked: {
+                fileDialog.selectExisting = false
+                fileDialog.open()
+            }
         }
 
         SGButton {
             Layout.fillWidth: true
             Layout.topMargin: 20
             text: "Add existing file to QRC..."
+            onClicked: {
+                fileDialog.selectExisting = true
+                fileDialog.selectMultiple = true
+                fileDialog.open()
+            }
+        }
+
+        FileDialog {
+            id: fileDialog
+            nameFilters: ["*.qml *.js"]
+
+            onAccepted: {
+                for (let i = 0; i < fileUrls.length; i++) {
+                    fileModel.append(fileUrls[i])
+                }
+            }
         }
     }
 }
