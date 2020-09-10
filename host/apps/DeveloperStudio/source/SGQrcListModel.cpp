@@ -194,7 +194,7 @@ void SGQrcListModel::append(const QUrl &filepath) {
 
     beginInsertRows(QModelIndex(), data_.count(), data_.count());
 
-    QrcItem* item = new QrcItem(dir.relativeFilePath(file.filePath()), file.filePath(), data_.count(), this);
+    QrcItem* item = new QrcItem(dir.relativeFilePath(file.filePath()), url_, data_.count(), this);
     connect(item, &QrcItem::dataChanged, this, &SGQrcListModel::childrenChanged);
     QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
     data_.append(item);
