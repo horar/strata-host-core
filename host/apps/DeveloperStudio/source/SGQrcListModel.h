@@ -11,7 +11,6 @@
 #include <QDomDocument>
 #include <QFile>
 
-
 /**
  * @brief QrcItem This class is used as an element in the SGQrcListModel
  */
@@ -224,4 +223,9 @@ private:
     QList<QrcItem*> data_;
     QUrl url_;
     QDomDocument qrcDoc_;
+
+    /**
+     * @brief save Saves the qrcDoc_ to disk
+     */
+    void save();
 };

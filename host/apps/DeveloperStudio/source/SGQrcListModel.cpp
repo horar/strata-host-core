@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QQmlEngine>
 #include <QDomNodeList>
-
+#include <QThread>
 /**********************************************************************************
  *  class QrcItem
  **********************************************************************************/
@@ -168,12 +168,6 @@ QrcItem* SGQrcListModel::get(int index) const
 }
 
 void SGQrcListModel::append(const QUrl &filepath) {
-    QFile qrcFile(SGUtilsCpp::urlToLocalFile(url_));
-    if (!qrcFile.open(QIODevice::Truncate | QIODevice::WriteOnly | QIODevice::Text)) {
-        qCritical() << "Could not open" << url_;
-        return;
-    }
-
     // If the file that we are adding is not a child of the .qrc file, then move it to the directory.
     // below gets the base directory for the qrc file
     QDir dir(QFileInfo(SGUtilsCpp::urlToLocalFile(url_)).dir());
@@ -214,11 +208,29 @@ void SGQrcListModel::append(const QUrl &filepath) {
     fileElement.appendChild(text);
     qresources.appendChild(fileElement);
 
+    emit countChanged();
+
+    // Create a thread to write data to disk
+    QThread *thread = QThread::create(std::bind(&SGQrcListModel::save, this));
+    thread->setObjectName("SGQrcListModel - FileIO Thread");
+    // Delete the thread when it is finished saving
+    connect(thread, &QThread::finished, thread, &QObject::deleteLater);
+    thread->setParent(this);
+    thread->start();
+}
+
+void SGQrcListModel::save()
+{
+    QFile qrcFile(SGUtilsCpp::urlToLocalFile(url_));
+    if (!qrcFile.open(QIODevice::Truncate | QIODevice::WriteOnly | QIODevice::Text)) {
+        qCritical() << "Could not open" << url_;
+        return;
+    }
+
     // Write the change to disk
     QTextStream stream(&qrcFile);
     stream << qrcDoc_.toString();
     qrcFile.close();
-    emit countChanged();
 }
 
 QVariant SGQrcListModel::data(const QModelIndex &index, int role) const
@@ -336,7 +348,7 @@ void SGQrcListModel::clear(bool emitSignals)
     }
 
     int i = 0;
-    for (; i < data_.length(); i++) {
+    for (; i < data_.count(); i++) {
         delete data_[i];
     }
     data_.clear();
