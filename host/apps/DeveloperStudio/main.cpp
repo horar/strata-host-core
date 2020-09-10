@@ -127,6 +127,15 @@ int main(int argc, char *argv[])
         &ui, &AppUi::uiFails, &app, []() { QCoreApplication::exit(EXIT_FAILURE); },
         Qt::QueuedConnection);
 
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings,
+                     [&sdsModel](const QList<QQmlError> &warnings) {
+                         QStringList msg;
+                         foreach (const QQmlError &error, warnings) {
+                             msg << error.toString();
+                         }
+                         emit sdsModel->notifyQmlError(msg.join(QStringLiteral("\n")));
+                     });
+
     // Starting services this build?
     // [prasanth] : Important note: Start HCS before launching the UI
     // So the service callback works properly

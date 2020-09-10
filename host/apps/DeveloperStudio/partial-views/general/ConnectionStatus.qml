@@ -2,13 +2,12 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.12
 import tech.strata.fonts 1.0
-import "qrc:/js/login_utilities.js" as Authenticator
+import tech.strata.signals 1.0
 
 ColumnLayout {
     spacing: 5
     property alias text: connectionStatus.text
     property alias headerText: searchingText.text
-
     Text {
         id: searchingText
         color: "#888"
@@ -45,7 +44,7 @@ ColumnLayout {
     }
 
     Connections {
-        target: Authenticator.signals
+        target: Signals
 
         onConnectionStatus: {
             switch(status) {

@@ -4,11 +4,13 @@ import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import Qt.labs.settings 1.0
 import "qrc:/partial-views/login/"
+import "qrc:/partial-views/general/"
 import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/js/navigation_control.js" as NavigationControl
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0 as LoggerModule
+import tech.strata.signals 1.0
 import tech.strata.sgwidgets 1.0
 
 Item {
@@ -50,7 +52,7 @@ Item {
     }
 
     Connections {
-        target: Authenticator.signals
+        target: Signals
 
         onLoginResult: {
             var resultObject = JSON.parse(result)
