@@ -23,7 +23,7 @@ class PasswordResetTest(unittest.TestCase):
         ui = StrataUI()
         ui.PressButton(Common.RESET_PASSWORD_CLOSE_BUTTON)
 
-    def doTest(self, username):
+    def doTest(self, username, alertName):
         ui = StrataUI()
         self.assertTrue(ui.OnForgotPassword())
 
@@ -31,11 +31,11 @@ class PasswordResetTest(unittest.TestCase):
 
         ui.PressButton(Common.RESET_PASSWORD_SUBMIT_BUTTON)
 
-        self.assertTrue(ui.AlertExists(Common.RESET_PASSWORD_ALERT))
+        self.assertTrue(ui.AlertExists(alertName))
 
     def test_passwordResetInvalid(self):
-        self.doTest(INVALID_USER)
+        self.doTest(INVALID_USER, Common.forgotPasswordInvalidAlert(INVALID_USER))
 
     def test_passwordResetValid(self):
         args = Common.getCommandLineArguments(sys.argv)
-        self.doTest(args.username)
+        self.doTest(args.username, Common.forgotPasswordValidAlert(args.username))

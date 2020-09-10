@@ -2,7 +2,7 @@ import _ctypes
 import unittest
 from functools import reduce
 
-from uiautomation import WindowControl, Control, PropertyId, ControlType, ButtonControl, ToggleState, CheckBoxControl
+from uiautomation import WindowControl, Control, PropertyId, ControlType, ButtonControl, ToggleState, CheckBoxControl, PatternId
 
 from Common import STRATA_WINDOW, PASSWORD_EDIT, FIRST_NAME_EDIT, USER_ICON_BUTTON, FEEDBACK_SUCCESS_TEXT, LOGIN_TAB, \
     REGISTER_TAB, REMEMBER_ME_CHECKBOX, PLATFORM_CONTROLS_BUTTON, USERNAME_EDIT, EMAIL_EDIT, CONFIRM_PASSWORD_EDIT, \
@@ -36,12 +36,15 @@ class StrataUI:
             child = child.GetNextSiblingControl()
         return matching
 
-    def __existsCatchComError(self, control, maxSearchSeconds = 7):
+    def __existsCatchComError(self, control, maxSearchSeconds = 7, maxAttempts = 2):
         #Transitioning screens while checking for existance sometimes throws a COMError.
-        try:
-            return control.Exists(maxSearchSeconds=maxSearchSeconds)
-        except _ctypes.COMError:
-            return False
+        for attempt in range(maxAttempts):
+            try:
+                return control.Exists(maxSearchSeconds=maxSearchSeconds)
+            except _ctypes.COMError:
+                pass
+        return False
+
 
 
     def FindAll(self, condition):
@@ -85,13 +88,13 @@ class StrataUI:
 
         return self.__existsCatchComError(firstNameEdit)
 
-    def OnPlatformView(self):
+    def OnPlatformView(self, maxSearchSeconds = 7):
         '''
         True if on platform view
         '''
         userIcon = self.app.ButtonControl(Compare=self.__hasProperty(PropertyId.NameProperty, USER_ICON_BUTTON))
 
-        return self.__existsCatchComError(userIcon)
+        return self.__existsCatchComError(userIcon, maxSearchSeconds)
 
     def OnFeedback(self):
         '''
@@ -136,14 +139,14 @@ class StrataUI:
         Press the login submit button on the login view
         '''
         button: ButtonControl = self.findButtonByHeight(LOGIN_TAB, lambda c, l: c < l)
-        button.GetInvokePattern().Invoke()
+        button.GetPattern(PatternId.InvokePattern).Invoke()
 
     def PressRegisterButton(self):
         '''
         Press the register submit button on the register view
         '''
         button: ButtonControl = self.findButtonByHeight(REGISTER_TAB, lambda c, l: c < l)
-        button.GetInvokePattern().Invoke()
+        button.GetPattern(PatternId.InvokePattern).Invoke()
 
     def SetCheckbox(self, checkbox, setTicked):
         state = checkbox.GetTogglePattern().ToggleState
@@ -156,7 +159,10 @@ class StrataUI:
         '''
         Set the confirm checkbox on the register view to ticked or unticked
         '''
-        confirm: CheckBoxControl = self.app.CheckBoxControl()
+        def registerCheckboxCompare(control:Control, depth):
+            return control.GetPropertyValue(PropertyId.NameProperty) != REGISTER_TAB
+
+        confirm: CheckBoxControl = self.app.CheckBoxControl(Compare=registerCheckboxCompare)
         self.SetCheckbox(confirm, setTicked)
 
     def PressRememberMeCheckbox(self, setTicked=True):
@@ -176,14 +182,18 @@ class StrataUI:
         Set to the register tab in the login/register view.
         '''
         button = self.findButtonByHeight(REGISTER_TAB, lambda c, l: c > l)
-        button.GetInvokePattern().Invoke()
+
+        #Button can be a checkbox or button due to qt wierdness
+        button.GetPattern(PatternId.InvokePattern).Invoke()
 
     def SetToLoginTab(self):
         '''
         Set to the login tab in the login/register view.
         '''
         button = self.findButtonByHeight(LOGIN_TAB, lambda c, l: c > l)
-        button.GetInvokePattern().Invoke()
+
+        #Button can be a checkbox or button due to qt wierdness
+        button.GetPattern(PatternId.InvokePattern).Invoke()
 
     def AlertExists(self, identifier, property=PropertyId.NameProperty, maxSearchSeconds = 7):
         '''
@@ -241,7 +251,7 @@ def Register(ui: StrataUI, username, password, firstName, lastName, company, tit
     setText(LAST_NAME_EDIT, lastName)
     setText(COMPANY_EDIT, company)
     setText(TITLE_EDIT, title)
-    ui.PressRegisterConfirmCheckbox()
+    ui.PressRegisterConfirmCheckbox(True)
     ui.PressRegisterButton()
 
 

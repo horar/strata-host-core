@@ -220,6 +220,10 @@ Item {
                     registerButton.clicked()
                 }
 
+                Accessible.onPressAction: {
+                    registerButton.clicked()
+                }
+
                 onClicked: {
                     alertRect.hide()
                     fieldGrid.visible = false

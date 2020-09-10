@@ -24,7 +24,7 @@ class LoginInvalidTest(unittest.TestCase):
         self.assertTrue(ui.OnLoginScreen())
 
         Login(ui, "badusername", "badpassword", self)
-        self.assertTrue(ui.AlertExists(Common.LOGIN_ALERT))
+        self.assertTrue(ui.AlertExists(Common.LOGIN_INVALID_ALERT))
 
 
 class RegisterExisting(unittest.TestCase):

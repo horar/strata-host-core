@@ -34,9 +34,20 @@ EMAIL_EDIT = "Email"
 REGISTER_PASSWORD_EDIT = "Password"
 CONFIRM_PASSWORD_EDIT = "Confirm Password"
 
-REGISTER_ALERT = "RegisterError"
-LOGIN_ALERT = "LoginError"
-RESET_PASSWORD_ALERT = "ResetPasswordAlert"
+REGISTER_ALERT = "Account already exists for this email address"
+LOGIN_INVALID_ALERT = "Username and/or password is incorrect"
+FEEDBACK_SUBMIT_SUCCESS_ALERT = "Feedback successfully submitted!"
+NO_NETWORK_LOGIN_ALERT = "Connection to authentication server failed"
+NO_NETWORK_REGISTER_ALERT = "Connection to registration server failed"
+
+def forgotPasswordValidAlert(name):
+    return "Email with password reset instructions is being sent to " + name
+
+def forgotPasswordInvalidAlert(name):
+    return "No user found with email " + name
+
+def registerSuccessAlert(name):
+    return "Account successfully registered to " + name + "!"
 
 RESET_PASSWORD_OPEN_BUTTON = "Forgot Password"
 RESET_PASSWORD_CLOSE_BUTTON = "ClosePopup"
@@ -47,9 +58,6 @@ PLATFORM_CONTROLS_BUTTON = "Open Platform Controls"
 
 STRATA_PROCESS = "Strata Developer Studio.exe"
 LOGIC_GATE_CLASS_ID = "201"
-
-
-
 
 def randomUsername():
     return str(uuid.uuid4()) + "@onsemi.com"

@@ -30,7 +30,7 @@ class NoNetworkLogin(unittest.TestCase):
 
         Login(ui, args.username, args.password, self)
 
-        self.assertTrue(ui.AlertExists(Common.LOGIN_ALERT, maxSearchSeconds=20))
+        self.assertTrue(ui.AlertExists(Common.NO_NETWORK_LOGIN_ALERT, maxSearchSeconds=20))
 
 
 class NoNetworkRegister(unittest.TestCase):
@@ -51,4 +51,4 @@ class NoNetworkRegister(unittest.TestCase):
                  self)
 
         ui.PressRegisterButton()
-        self.assertTrue(ui.AlertExists(Common.REGISTER_ALERT, maxSearchSeconds=20))
+        self.assertTrue(ui.AlertExists(Common.NO_NETWORK_REGISTER_ALERT, maxSearchSeconds=20))

@@ -259,6 +259,9 @@ SGStrataPopup {
                                 }
                                 KeyNavigation.tab: submitButton
                                 KeyNavigation.priority: KeyNavigation.BeforeItem
+
+                                Accessible.role: Accessible.EditableText
+                                Accessible.name: "FeedbackEdit"
                             }
                         }
                     }
@@ -288,6 +291,9 @@ SGStrataPopup {
                         }
 
                         Keys.onReturnPressed:{
+                            submitButton.clicked()
+                        }
+                        Accessible.onPressAction: {
                             submitButton.clicked()
                         }
 

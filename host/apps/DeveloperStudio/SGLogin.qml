@@ -130,6 +130,7 @@ Item {
                                         loginControls.visible = true
                                         registerControls.visible = false
                                     }
+                                    Accessible.role: Accessible.Button
                                 }
 
                                 SelectionButton {
@@ -138,6 +139,7 @@ Item {
                                         loginControls.visible = false
                                         registerControls.visible = true
                                     }
+                                    Accessible.role: Accessible.Button
                                 }
                             }
 

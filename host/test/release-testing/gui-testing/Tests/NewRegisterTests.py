@@ -41,7 +41,7 @@ class RegisterNew(unittest.TestCase):
         newUsername = Common.randomUsername()
         Register(ui, newUsername, NEW_PASSWORD, NEW_FIRST_NAME, NEW_LAST_NAME, NEW_TITLE, NEW_COMPANY, self)
 
-        self.assertTrue(ui.AlertExists(Common.REGISTER_ALERT, maxSearchSeconds=20))
+        self.assertTrue(ui.AlertExists(Common.registerSuccessAlert(newUsername), maxSearchSeconds=20))
 
         ui.SetToLoginTab()
         Login(ui, newUsername, NEW_PASSWORD, self)

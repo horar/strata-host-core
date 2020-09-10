@@ -7,7 +7,6 @@ import StrataInterface as strata
 import sys
 from GUIInterface.StrataUI import *
 
-
 class LoginValidNoBoard(unittest.TestCase):
     '''
     Test logging in without a board attached.
@@ -52,7 +51,6 @@ class LoginValidWithBoard(unittest.TestCase):
         self.assertTrue(ui.OnLoginScreen())
 
         Login(ui, args.username, args.password, self)
-
         self.assertTrue(ui.OnPlatformView())
 
         strata.initPlatformList()

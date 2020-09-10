@@ -36,6 +36,5 @@ class Feedback(unittest.TestCase):
 
         ui.PressButton(Common.FEEDBACK_SUBMIT_BUTTON)
 
-        self.assertTrue(ui.OnFeedbackSuccess())
+        self.assertTrue(ui.AlertExists(Common.FEEDBACK_SUBMIT_SUCCESS_ALERT))
 
-        ui.PressButton(Common.FEEDBACK_SUCCESS_OK_BUTTON)

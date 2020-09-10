@@ -107,6 +107,9 @@ SGStrataPopup {
                     Keys.onReturnPressed:{
                         submitButton.clicked()
                     }
+                    Accessible.onPressAction: {
+                        submitButton.clicked()
+                    }
 
                     onClicked: {
                         var reset_info = {username:emailField.text}

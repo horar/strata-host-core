@@ -40,7 +40,7 @@ Button {
             }
         }
     }
-    //Accessible.role: Accessible.Button
+    Accessible.role: Accessible.Button
     Accessible.onPressAction: function() {
         clicked()
     }

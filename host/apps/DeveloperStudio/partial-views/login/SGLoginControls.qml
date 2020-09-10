@@ -167,6 +167,12 @@ Item {
                         forgotPopup.visible = true
                     }
                 }
+                Accessible.name: forgotLink.text
+                Accessible.role: Accessible.Button
+                Accessible.onPressAction: {
+                    forgotPopup.visible = true
+                }
+
             }
         }
 
@@ -182,7 +188,6 @@ Item {
                 text:"Login"
                 activeFocusOnTab: true
                 enabled: passwordField.text !== "" && usernameField.text !== ""
-
                 background: Rectangle {
                     color: !loginButton.enabled ? "#dbdbdb" : loginButton.down ? "#666" : "#545960"
 
@@ -226,6 +231,7 @@ Item {
                     var login_info = { user: usernameField.text, password: passwordField.text, timezone: timezone }
                     Authenticator.login(login_info)
                 }
+                Accessible.onPressAction: submit()
 
                 function submit() {
                     if (loginButton.enabled) {
@@ -239,6 +245,7 @@ Item {
                     onPressed:  mouse.accepted = false
                     cursorShape: Qt.PointingHandCursor
                 }
+
 
                 ToolTip {
                     text: {

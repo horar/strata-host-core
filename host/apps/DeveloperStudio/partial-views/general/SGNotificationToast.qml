@@ -13,6 +13,8 @@ Rectangle {
     property alias text: alertText.text
     property bool running: alertAnimation.running || hideAlertAnimation.running
     property alias interval: closeAlertTimer.interval
+    Accessible.name: text
+    Accessible.role: Accessible.AlertMessage
 
     SGIcon {
         id: alertIcon

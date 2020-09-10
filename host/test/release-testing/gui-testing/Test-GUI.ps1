@@ -24,6 +24,7 @@ StrataPath: The path to the Strata executable.
 Version:        1.0
 Creation Date:  07/10/2020
 #>
+. "C:\Users\SEC\Dev2\spyglass\host\test\release-testing\LoadIndependent.ps1"
 function Test-Gui()
 {
     Write-Separator
@@ -107,3 +108,4 @@ function Test-Gui()
     return $result
 
 }
+Test-Gui
