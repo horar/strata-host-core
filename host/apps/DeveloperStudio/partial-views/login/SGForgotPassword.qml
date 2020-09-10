@@ -103,13 +103,13 @@ SGStrataPopup {
                             family: Fonts.franklinGothicBold
                         }
                     }
+                    function pressAction() {
+                        submitButton.clicked()
 
-                    Keys.onReturnPressed:{
-                        submitButton.clicked()
                     }
-                    Accessible.onPressAction: {
-                        submitButton.clicked()
-                    }
+
+                    Keys.onReturnPressed: pressAction()
+                    Accessible.onPressAction: pressAction()
 
                     onClicked: {
                         var reset_info = {username:emailField.text}

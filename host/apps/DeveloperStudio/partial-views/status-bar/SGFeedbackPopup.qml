@@ -289,13 +289,13 @@ SGStrataPopup {
                                 family: Fonts.franklinGothicBold
                             }
                         }
+                        function pressSubmitButton() {
+                            submitButton.clicked()
 
-                        Keys.onReturnPressed:{
-                            submitButton.clicked()
                         }
-                        Accessible.onPressAction: {
-                            submitButton.clicked()
-                        }
+
+                        Keys.onReturnPressed: pressSubmitButton()
+                        Accessible.onPressAction: pressSubmitButton()
 
                         onClicked: {
                             var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: textEdit.text, type: feedbackTypeListView.currentItem.typeValue }
