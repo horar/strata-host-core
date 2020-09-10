@@ -22,6 +22,7 @@ QrcItem::QrcItem(QString filename, QUrl path, int index, QObject *parent) : QObj
         fileDir.cdUp();
     }
     filename_ = file.fileName();
+    filetype_ = file.suffix();
     visible_ = false;
     open_ = false;
     index_ = index;
@@ -39,6 +40,11 @@ QString QrcItem::filename() const
 QUrl QrcItem::filepath() const
 {
     return filepath_;
+}
+
+QString QrcItem::filetype() const
+{
+    return filetype_;
 }
 
 QStringList QrcItem::relativePath() const
@@ -94,6 +100,14 @@ void QrcItem::setIndex(int index)
     if (index_ != index) {
         index_ = index;
         emit dataChanged(index_);
+    }
+}
+
+void QrcItem::setFiletype(QString filetype)
+{
+    if (filetype_ != filetype) {
+        filetype_ = filetype;
+        emit dataChanged(index_, SGQrcListModel::FiletypeRole);
     }
 }
 
@@ -194,7 +208,7 @@ void SGQrcListModel::append(const QUrl &filepath) {
 
     beginInsertRows(QModelIndex(), data_.count(), data_.count());
 
-    QrcItem* item = new QrcItem(dir.relativeFilePath(file.filePath()), file.filePath(), data_.count(), this);
+    QrcItem* item = new QrcItem(dir.relativeFilePath(file.filePath()), url_, data_.count(), this);
     connect(item, &QrcItem::dataChanged, this, &SGQrcListModel::childrenChanged);
     QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
     data_.append(item);
@@ -251,6 +265,8 @@ QVariant SGQrcListModel::data(const QModelIndex &index, int role) const
         return item->filename();
     case FilepathRole:
         return item->filepath();
+    case FiletypeRole:
+        return item->filetype();
     case RelativePathRole:
         return item->relativePath();
     case VisibleRole:
@@ -365,6 +381,7 @@ QHash<int, QByteArray> SGQrcListModel::roleNames() const {
     QHash<int, QByteArray> roles;
     roles[FilenameRole] = "filename";
     roles[FilepathRole] = "filepath";
+    roles[FiletypeRole] = "filetype";
     roles[RelativePathRole] = "relativePath";
     roles[VisibleRole] = "visible";
     roles[OpenRole] = "open";
