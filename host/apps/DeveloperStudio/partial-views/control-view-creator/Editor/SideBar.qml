@@ -73,7 +73,7 @@ Rectangle {
 
         FileDialog {
             id: existingFileDialog
-            nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt)"]
+            nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt *.gif *.html *.csv)"]
             selectExisting: true
             selectMultiple: true
 
@@ -86,7 +86,7 @@ Rectangle {
 
         FileDialog {
             id: newFileDialog
-            nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt)"]
+            nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt *.html *.csv)"]
             selectExisting: false
 
             onAccepted: {
