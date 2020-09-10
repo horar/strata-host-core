@@ -84,11 +84,15 @@ bool EvEventsMgr::startInThread()
     return true;
 }
 
+bool EvEventsMgr::isRunning()
+{
+    return (eventsThread_.get_id() != std::thread::id());
+}
+
 void EvEventsMgr::stop()
 {
-    if (eventsThread_.get_id() == std::thread::id()) {
+    if (!isRunning())
         return;
-    }
 
     stopThread_ = true;
 

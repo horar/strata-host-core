@@ -29,14 +29,15 @@ constexpr const char* const JSON_NAME = "name";
 constexpr const char* const JSON_PLATFORM_ID = "platform_id";
 constexpr const char* const JSON_CLASS_ID = "class_id";
 constexpr const char* const JSON_CHUNK = "chunk";
+constexpr const char* const JSON_CHUNKS = "chunks";
 constexpr const char* const JSON_NUMBER = "number";
-constexpr const char* const JSON_TOTAL = "total";
 constexpr const char* const JSON_SIZE = "size";
 constexpr const char* const JSON_CRC = "crc";
 constexpr const char* const JSON_DATA = "data";
 constexpr const char* const JSON_STATUS = "status";
 constexpr const char* const JSON_OK = "ok";
 constexpr const char* const JSON_RESEND_CHUNK = "resend_chunk";
+constexpr const char* const JSON_MD5 = "md5";
 
 const QString QSTR_BOOTLOADER("Bootloader");
 
