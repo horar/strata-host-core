@@ -189,8 +189,8 @@ void SGQrcListModel::append(const QUrl &filepath) {
 
     if (SGUtilsCpp::fileIsChildOfDir(file.filePath(), dir.path()) == false) {
         QFileInfo outputFileLocation(SGUtilsCpp::joinFilePath(dir.path(), file.fileName()));
-        QString ext = outputFileLocation.suffix();
-        QString filenameWithoutExt = outputFileLocation.fileName().split(".", QString::SkipEmptyParts)[0];
+        QString ext = outputFileLocation.completeSuffix();
+        QString filenameWithoutExt = outputFileLocation.baseName();
 
         for (int i = 1; ;i++) {
             if (!outputFileLocation.exists()) {
