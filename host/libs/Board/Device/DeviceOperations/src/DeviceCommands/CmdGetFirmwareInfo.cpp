@@ -13,7 +13,7 @@ QByteArray CmdGetFirmwareInfo::message() {
 }
 
 bool CmdGetFirmwareInfo::processNotification(rapidjson::Document& doc) {
-    if (CommandValidator::validate(CommandValidator::JsonType::getFirmwareInfoRes, doc)) {
+    if (CommandValidator::validateNotification(CommandValidator::JsonType::getFirmwareInfoNotif, doc)) {
         const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
         const rapidjson::Value& bootloader = payload[JSON_BOOTLOADER];
         const rapidjson::Value& application = payload[JSON_APPLICATION];
