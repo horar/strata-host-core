@@ -49,6 +49,8 @@ StackLayout {
     }
 
     Component.onDestruction: {
+        sdsModel.resourceLoader.resourceRegistered.disconnect(resourceRegistered);
+        sdsModel.resourceLoader.resourceRegisterFailed.disconnect(resourceRegisterFailed);
         controlContainer.removeControl()
     }
 
