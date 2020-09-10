@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.2
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
@@ -22,9 +23,7 @@ Item {
     }
 
     ColumnLayout {
-        anchors {
-            fill: parent
-        }
+        anchors.fill: parent
 
         spacing: 0
 
@@ -39,6 +38,7 @@ Item {
                 height: parent.height
 
                 SGButton {
+                    id: saveButton
                     text: "Save file"
                 }
 
@@ -77,6 +77,8 @@ Item {
                         height: parent.height
                         x:2.5
 
+                        ButtonGroup { id: buttonGroup }
+
                         Repeater {
                             id: fileTabRepeater
                             model: SGSortFilterProxyModel {
@@ -92,11 +94,10 @@ Item {
                                     return listElement.open
                                 }
                             }
-
                             delegate: SGButton {
                                 // TODO: create more appropriate tab delegate with closer
-                                checkable: true
                                 checked: model.visible
+                                ButtonGroup.group: buttonGroup
                                 text: model.filename
 
                                 property int modelIndex: index
@@ -135,6 +136,7 @@ Item {
                         delegate: FileContainer {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+
                         }
                     }
                 }
