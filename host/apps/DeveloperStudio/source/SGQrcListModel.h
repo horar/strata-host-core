@@ -25,7 +25,15 @@ class QrcItem : public QObject
 
 public:
     explicit QrcItem(QObject *parent = nullptr);
-    QrcItem(QString filename, QUrl path, int index, QObject *parent = nullptr);
+
+    /**
+     * @brief QrcItem Constructor used to populate QrcItem
+     * @param filename The name of the file. Note* this should be as-is in the .qrc file. Ex) "control-views/view.qml" is valid
+     * @param rootDirectoryPath The QUrl of the projects root directory
+     * @param index Index of the item
+     * @param parent Parent object
+     */
+    QrcItem(QString filename, QUrl rootDirectoryPath, int index, QObject *parent = nullptr);
 
     /**
      * @brief filename
@@ -115,6 +123,7 @@ class SGQrcListModel : public QAbstractListModel
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
+    Q_PROPERTY(QUrl projectDirectory READ projectDirectory NOTIFY projectDirectoryChanged)
 
 public:
     enum QrcRoles {
@@ -183,6 +192,12 @@ public:
     QUrl url() const;
 
     /**
+     * @brief projectDirectory Returns the url to the project root directory
+     * @return The url to the project root directory
+     */
+    QUrl projectDirectory() const;
+
+    /**
      * @brief setUrl Sets the url of the .qrc file
      * @param url The url to set
      */
@@ -212,6 +227,7 @@ public:
 signals:
     void countChanged();
     void urlChanged();
+    void projectDirectoryChanged();
     void parsingFinished();
 
 public slots:
@@ -221,7 +237,16 @@ protected:
     virtual QHash<int, QByteArray> roleNames() const override;
 private:
     QList<QrcItem*> data_;
+    /**
+     * @brief url_ The QUrl of the .qrc file
+     */
     QUrl url_;
+
+    /**
+     * @brief projectDir_ The QUrl of the project's root directory
+     */
+    QUrl projectDir_;
+
     QDomDocument qrcDoc_;
 
     /**

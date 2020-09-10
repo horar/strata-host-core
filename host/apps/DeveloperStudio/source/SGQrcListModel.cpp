@@ -13,7 +13,7 @@ QrcItem::QrcItem(QObject *parent) : QObject(parent)
 {
 }
 
-QrcItem::QrcItem(QString filename, QUrl path, int index, QObject *parent) : QObject(parent)
+QrcItem::QrcItem(QString filename, QUrl rootDirectoryPath, int index, QObject *parent) : QObject(parent)
 {
     QFileInfo file(filename);
     QDir fileDir(file.dir());
@@ -26,9 +26,9 @@ QrcItem::QrcItem(QString filename, QUrl path, int index, QObject *parent) : QObj
     open_ = false;
     index_ = index;
 
-    QFileInfo qrcFile(QDir::toNativeSeparators(path.toLocalFile()));
+    QDir root(SGUtilsCpp::urlToLocalFile(rootDirectoryPath));
     filepath_.setScheme("file");
-    filepath_.setPath(qrcFile.dir().filePath(filename));
+    filepath_.setPath(root.filePath(filename));
 }
 
 QString QrcItem::filename() const
@@ -141,7 +141,7 @@ void SGQrcListModel::readQrcFile()
     QDomNodeList files = qrcDoc_.elementsByTagName("file");
     for (int i = 0; i < files.count(); i++) {
         QDomElement element = files.at(i).toElement();
-        QrcItem* item = new QrcItem(element.text(), url_, data_.count(), this);
+        QrcItem* item = new QrcItem(element.text(), projectDir_, data_.count(), this);
         QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
         connect(item, &QrcItem::dataChanged, this, &SGQrcListModel::childrenChanged);
         data_.append(item);
@@ -169,8 +169,7 @@ QrcItem* SGQrcListModel::get(int index) const
 
 void SGQrcListModel::append(const QUrl &filepath) {
     // If the file that we are adding is not a child of the .qrc file, then move it to the directory.
-    // below gets the base directory for the qrc file
-    QDir dir(QFileInfo(SGUtilsCpp::urlToLocalFile(url_)).dir());
+    QDir dir(SGUtilsCpp::urlToLocalFile(projectDir_));
     QFileInfo file(SGUtilsCpp::urlToLocalFile(filepath));
 
     if (SGUtilsCpp::fileIsChildOfDir(file.filePath(), dir.path()) == false) {
@@ -194,7 +193,7 @@ void SGQrcListModel::append(const QUrl &filepath) {
 
     beginInsertRows(QModelIndex(), data_.count(), data_.count());
 
-    QrcItem* item = new QrcItem(dir.relativeFilePath(file.filePath()), url_, data_.count(), this);
+    QrcItem* item = new QrcItem(dir.relativeFilePath(file.filePath()), projectDir_, data_.count(), this);
     connect(item, &QrcItem::dataChanged, this, &SGQrcListModel::childrenChanged);
     QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
     data_.append(item);
@@ -272,11 +271,19 @@ QUrl SGQrcListModel::url() const
     return url_;
 }
 
+QUrl SGQrcListModel::projectDirectory() const
+{
+    return projectDir_;
+}
+
 void SGQrcListModel::setUrl(QUrl url)
 {
     if (url_ != url) {
         url_ = url;
+        QDir dir(QFileInfo(SGUtilsCpp::urlToLocalFile(url)).dir());
+        projectDir_ = SGUtilsCpp::pathToUrl(dir.path());
         emit urlChanged();
+        emit projectDirectoryChanged();
     }
 }
 
