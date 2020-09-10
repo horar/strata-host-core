@@ -10,6 +10,8 @@ import "Editor/"
 Item {
     id: editorRoot
 
+    property var imageFormats: new Set(["svg", "jpg", "jpeg", "png", "gif"])
+
     function setVisible (index) {
         let file = fileModel.get(index);
 
