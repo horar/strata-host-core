@@ -312,7 +312,19 @@ bool SGQrcListModel::removeRows(int row, int count, const QModelIndex &parent)
     }
 
     beginRemoveRows(parent, row, row + count - 1);
+    QDir baseDir(QFileInfo(SGUtilsCpp::urlToLocalFile(url_)).dir());
     for (int i = row + count - 1; i >= row; i++) {
+        QDomNodeList files = qrcDoc_.elementsByTagName("file");
+        // find the child node
+        for (int j = 0; j < files.count(); j++) {
+            QString accurateFilename = baseDir.relativeFilePath(SGUtilsCpp::urlToLocalFile(data_[i]->filepath()));
+
+            // remove the child from the QDomDocument
+            if (files.at(j).toElement().text() == accurateFilename) {
+                files.at(j).parentNode().removeChild(files.at(j));
+                break;
+            }
+        }
         delete data_[i];
         data_[i] = nullptr;
         data_.removeAt(i);
@@ -325,6 +337,15 @@ bool SGQrcListModel::removeRows(int row, int count, const QModelIndex &parent)
     }
 
     emit countChanged();
+
+    // Create a thread to write data to disk
+    QThread *thread = QThread::create(std::bind(&SGQrcListModel::save, this));
+    thread->setObjectName("SGQrcListModel - FileIO Thread");
+    // Delete the thread when it is finished saving
+    connect(thread, &QThread::finished, thread, &QObject::deleteLater);
+    thread->setParent(this);
+    thread->start();
+
     return true;
 }
 
