@@ -41,7 +41,7 @@ TEST_F(SGUtilsCppTest, testFileIO)
 {
     QTemporaryFile tempFile("test.txt");
     if (!tempFile.open()) {
-        exit(EXIT_FAILURE);
+        throw "Unable to open file";
     }
     QTextStream out(&tempFile);
     out << lorumIpsumText;
