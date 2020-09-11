@@ -7,6 +7,7 @@ import "qrc:/partial-views/general/"
 import "qrc:/js/login_utilities.js" as Registration
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.signals 1.0
 
 Item {
     id: root
@@ -312,7 +313,7 @@ Item {
 
 
     Connections {
-        target: Registration.signals
+        target: Signals
         onRegistrationResult: {
             registrationStatus.text = ""
             fieldGrid.visible = true

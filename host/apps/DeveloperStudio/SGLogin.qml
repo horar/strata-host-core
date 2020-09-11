@@ -12,7 +12,7 @@ import "qrc:/js/constants.js" as Constants
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
-
+import tech.strata.signals 1.0
 Item {
     id: root
     clip: true
@@ -227,7 +227,7 @@ Item {
         visible: Rest.url !== Constants.PRODUCTION_AUTH_SERVER
 
         Connections {
-            target: Authenticator.signals
+            target: Signals
             onServerChanged: {
                 testServerWarningContainer.visible = ( Rest.url !== Constants.PRODUCTION_AUTH_SERVER )
             }

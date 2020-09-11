@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import Qt.labs.settings 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.signals 1.0
 
 import 'qrc:/partial-views'
 import 'qrc:/partial-views/login/registration'
@@ -522,7 +523,7 @@ SGStrataPopup {
                 }
             }
             Connections {
-                target: LoginUtil.signals
+                target: Signals
 
                 onLoginResult: {
                     let resultObject = JSON.parse(result)

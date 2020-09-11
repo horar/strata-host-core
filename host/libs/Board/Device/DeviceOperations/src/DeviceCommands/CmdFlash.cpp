@@ -60,9 +60,9 @@ QByteArray CmdFlash::message() {
 
 bool CmdFlash::processNotification(rapidjson::Document& doc) {
     CommandValidator::JsonType jsonType = (flashFirmware_)
-                                          ? CommandValidator::JsonType::flashFirmwareRes
-                                          : CommandValidator::JsonType::flashBootloaderRes;
-    if (CommandValidator::validate(jsonType, doc)) {
+                                          ? CommandValidator::JsonType::flashFirmwareNotif
+                                          : CommandValidator::JsonType::flashBootloaderNotif;
+    if (CommandValidator::validateNotification(jsonType, doc)) {
         const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
         if (status == JSON_OK) {
             result_ = (chunkNumber_ == (chunkCount_ - 1)) ? CommandResult::Done : CommandResult::Repeat;
