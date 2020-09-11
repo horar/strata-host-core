@@ -13,6 +13,7 @@ import "qrc:/partial-views/"
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.signals 1.0
 
 Item {
     id: root
@@ -275,7 +276,7 @@ Item {
     }
 
     Connections {
-        target: Authenticator.signals
+        target: Signals
         onLoginResult: {
             var resultObject = JSON.parse(result)
             //console.log(Logger.devStudioCategory, "Login result received")

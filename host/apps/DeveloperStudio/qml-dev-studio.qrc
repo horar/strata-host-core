@@ -92,7 +92,6 @@
         <file>partial-views/login/LoginSettings.qml</file>
         <file>js/utilities.js</file>
         <file>partial-views/general/ConnectionStatus.qml</file>
-        <file>partial-views/general/Signals.qml</file>
         <file>partial-views/general/SGNotificationToast.qml</file>
     </qresource>
 </RCC>
