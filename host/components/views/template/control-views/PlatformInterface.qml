@@ -1,9 +1,15 @@
 import QtQuick 2.12
 
-import "qrc:/js/core_platform_interface.js" as CorePlatformInterface
+import tech.strata.common 1.0
 
-Item {
+PlatformInterface {
     id: platformInterface
+
+    // PlatformInterface contains the following built-in functions:
+    //    send(command) // sends JSON command to the platform
+    //    show(command) // console logs JSON command
+    //    injectDebugNotification(notification) // injects a fake JSON notification as though it came from a connected platform
+    //                                             (for debugging; see usage in DebugMenu.qml)
 
     // -------------------------------------------------------------------
     // UI Control States
@@ -89,32 +95,19 @@ Item {
     // @description: sends motor running command to platform
     //
     property var motor_running_command : ({
-            "cmd" : "motor_running",
-            "payload": {
-                "running": false // default value
-            },
+        "cmd" : "motor_running",
+        "payload": {
+            "running": false // default value
+        },
 
-            update: function (running) {
-                this.set(running)
-                this.send(this)
-            },
-            set: function (running) {
-                this.payload.running = running
-            },
-            send: function () { CorePlatformInterface.send(this) },
-            show: function () { CorePlatformInterface.show(this) }
-        })
-
-
-
-    // -------------------------------------------------------------------
-    // Listens to message notifications coming from CoreInterface.cpp
-    // Forward messages to core_platform_interface.js to process
-
-    Connections {
-        target: coreInterface
-        onNotification: {
-            CorePlatformInterface.data_source_handler(payload)
-        }
-    }
+        update: function (running) {
+            this.set(running)
+            this.send(this)
+        },
+        set: function (running) {
+            this.payload.running = running
+        },
+        send: function () { platformInterface.send(this) },
+        show: function () { platformInterface.show(this) }
+    })
 }

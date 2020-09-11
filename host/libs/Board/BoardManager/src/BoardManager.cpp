@@ -221,14 +221,15 @@ bool BoardManager::openDevice(const int deviceId, const DevicePtr device) {
 
 // mutex_ must be locked before calling this function (due to modification deviceOperations_)
 void BoardManager::startDeviceOperations(const int deviceId, const DevicePtr device) {
-    // QSharedPointer because QScopedPointer does not have custom deleter.
-    // We need deleteLater() because DeviceOperations object is deleted in slot connected to signal
-    // from it.
-    auto operation =
-        QSharedPointer<DeviceOperations>(new DeviceOperations(device), &QObject::deleteLater);
+    // shared_ptr because QHash::insert() calls copy constructor (unique_ptr has deleted copy constructor)
+    // We need deleteLater() because DeviceOperations object is deleted
+    // in slot connected to signal from it (BoardManager::handleOperationFinished).
+    std::shared_ptr<DeviceOperations> operation (
+        new DeviceOperations(device),
+        [](DeviceOperations* devOp) { devOp->deleteLater(); }
+    );
 
-    connect(operation.get(), &DeviceOperations::finished, this,
-            &BoardManager::handleOperationFinished);
+    connect(operation.get(), &DeviceOperations::finished, this, &BoardManager::handleOperationFinished);
     connect(operation.get(), &DeviceOperations::error, this, &BoardManager::handleOperationError);
 
     operation->identify(reqFwInfoResp_);
@@ -295,7 +296,8 @@ void BoardManager::handleDeviceError(Device::ErrorCode errCode, QString errStr) 
         int deviceId = device->deviceId();
         qCWarning(logCategoryBoardManager).nospace() << "Interrupted connection with device 0x" << hex << static_cast<uint>(deviceId);
         // Device cannot be removed in this slot (this slot is connected to signal emitted by device).
-        // Remove it after return to main loop (when signal handling is done) - this is why is used single shot timer.
+        // Remove it (and emit 'disconnected' signal) after return to main loop (when signal handling
+        // is done and other slots connected to this signal are also done) - this is why is used single shot timer.
         QTimer::singleShot(0, this, [this, deviceId](){
             bool removed = false;
             {

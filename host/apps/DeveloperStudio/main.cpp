@@ -13,10 +13,10 @@
 #include <QSysInfo>
 #include <QSslSocket>
 
+#include <PlatformInterface/core/CoreInterface.h>
+
 #include "Version.h"
 #include "StrataDeveloperStudioTimestamp.h"
-
-#include <PlatformInterface/core/CoreInterface.h>
 
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
@@ -26,6 +26,8 @@
 #include "ResourceLoader.h"
 
 #include "HcsNode.h"
+
+#include "AppUi.h"
 
 
 void addImportPaths(QQmlApplicationEngine *engine)
@@ -73,7 +75,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/resources/icons/app/on-logo.png"));
 
-    const QtLoggerSetup loggerInitialization(app);
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 13, 0))
     QtWebEngine::initialize();
@@ -102,43 +104,50 @@ int main(int argc, char *argv[])
 
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
 
-    SDSModel *sdsModel = new SDSModel();
-    sdsModel->init(app.applicationDirPath(), QStringLiteral(HCS_CONFIG));
+    std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>()};
+    sdsModel->init(app.applicationDirPath());
 
     // [LC] QTBUG-85137 - doesn't reconnect on Linux; fixed in further 5.12/5.15 releases
     QObject::connect(&app, &QGuiApplication::lastWindowClosed,
-                     sdsModel, &SDSModel::shutdownService/*, Qt::QueuedConnection*/);
+                     sdsModel.get(), &SDSModel::shutdownService/*, Qt::QueuedConnection*/);
 
     QQmlApplicationEngine engine;
     QQmlFileSelector selector(&engine);
 
     addImportPaths(&engine);
 
-    engine.rootContext()->setContextProperty ("sdsModel", sdsModel);
+    engine.rootContext()->setContextProperty ("sdsModel", sdsModel.get());
 
     /* deprecated context property, use sdsModel.coreInterface instead */
     engine.rootContext()->setContextProperty ("coreInterface", sdsModel->coreInterface());
 
+    AppUi ui(engine, QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
+    QObject::connect(
+        &ui, &AppUi::uiFails, &app, []() { QCoreApplication::exit(EXIT_FAILURE); },
+        Qt::QueuedConnection);
 
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-    if (engine.rootObjects().isEmpty()) {
-        qCCritical(logCategoryStrataDevStudio) << "engine failed to load 'main' qml file; quitting...";
-        engine.load(QUrl(QStringLiteral("qrc:/ErrorDialog.qml")));
-        if (engine.rootObjects().isEmpty()) {
-            qCCritical(logCategoryStrataDevStudio) << "hell froze - engine fails to load error dialog; aborting...";
-            return -1;
-        }
-
-        return app.exec();
-    }
+    QObject::connect(&engine, &QQmlApplicationEngine::warnings,
+                     [&sdsModel](const QList<QQmlError> &warnings) {
+                         QStringList msg;
+                         foreach (const QQmlError &error, warnings) {
+                             msg << error.toString();
+                         }
+                         emit sdsModel->notifyQmlError(msg.join(QStringLiteral("\n")));
+                     });
 
     // Starting services this build?
     // [prasanth] : Important note: Start HCS before launching the UI
     // So the service callback works properly
 #ifdef START_SERVICES
-    bool started = sdsModel->startHcs();
-    qCDebug(logCategoryStrataDevStudio) << "hcs started=" << started;
+    QObject::connect(
+        &ui, &AppUi::uiLoaded, &app,
+        [&sdsModel]() {
+            bool started = sdsModel->startHcs();
+            qCDebug(logCategoryHcs) << "hcs started =" << started;
+        },
+        Qt::QueuedConnection);
 #endif
+    ui.loadUrl(QUrl(QStringLiteral("qrc:/main.qml")));
 
     int appResult = app.exec();
     // LC: process remaining events i.e. submit remaining events (created by external close request)
@@ -150,10 +159,8 @@ int main(int argc, char *argv[])
     sdsModel->killHcsSilently = true;
 
     bool killed = sdsModel->killHcs();
-    qCDebug(logCategoryStrataDevStudio) << "hcs killed=" << killed;
+    qCDebug(logCategoryHcs) << "hcs killed =" << killed;
 #endif
-
-    delete sdsModel;
 
     return appResult;
 }

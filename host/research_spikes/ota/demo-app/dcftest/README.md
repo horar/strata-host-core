@@ -34,8 +34,8 @@ Connecting Strata:
 1. run ```host/build/bin/hcs -c``` to clear CB cache
 2. set up ```./documents/``` and ```./files/``` as needed
 3. run ```./start.sh``` and wait for CB to start
-4. (if running only HCS) run HCS with configuration in ```./conf/hcs_local_cloud.config```, i.e. ```<BUILD_DIR>/bin/hcs -f <PATH_TO_CONFIG>/hcs_local.config```
-5. (if running the whole Strata) compile Strata with the configuration in ./conf/hcs_local_cloud.config
+4. (if running only HCS) run HCS with configuration in ```<PROJECT_ROOT>/host/assets/config/hcs/hcs_docker.config```, i.e. ```<BUILD_DIR>/bin/hcs -f <PATH_TO_CONFIG>/hcs_docker.config```
+5. (if running the Developer Studio) compile strata source code with CMake option APPS_CORESW_HCS_CONFIG=hcs_docker.config option setup.
 
 CB server is running at:
 

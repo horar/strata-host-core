@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 import QtQuick.Window 2.3 // for debug window, can be cut out for release
 import QtGraphicalEffects 1.0
+
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
@@ -12,6 +13,7 @@ import "qrc:/partial-views"
 import "qrc:/partial-views/status-bar"
 import "qrc:/partial-views/help-tour"
 import "qrc:/partial-views/about-popup"
+import "qrc:/partial-views/profile-popup"
 import "qrc:/js/help_layout_manager.js" as Help
 
 import tech.strata.fonts 1.0
@@ -177,6 +179,34 @@ Rectangle {
             }
         }
 
+        Rectangle {
+            id: alertIconContainer
+            visible: false
+
+            anchors {
+                top: parent.top
+                horizontalCenter: parent.left
+                topMargin: 5
+            }
+
+            height: 12
+            width: height
+            radius: height / 2
+            color: "#00b842"
+
+            SGIcon {
+                id: alertIcon
+                height: 15
+                width: height
+                anchors {
+                    centerIn: parent
+                }
+
+                source: "qrc:/sgimages/exclamation-circle.svg"
+                iconColor : "white"
+            }
+        }
+
         MouseArea {
             id: profileIconHover
             hoverEnabled: true
@@ -241,6 +271,15 @@ Rectangle {
                     width: profileMenu.width
                 }
 
+                SGMenuItem {
+                    text: qsTr("Profile")
+                    onClicked: {
+                        profileMenu.close()
+                        profilePopup.open()
+                    }
+                    width: profileMenu.width
+                }
+
                 Rectangle {
                     id: menuDivider
                     color: "white"
@@ -272,8 +311,15 @@ Rectangle {
     SGFeedbackPopup {
         id: feedbackPopup
         width: Math.max(container.width * 0.8, 600)
+        height: Math.max(container.height * 0.8, 600)
         x: container.width/2 - feedbackPopup.width/2
         y: container.parent.windowHeight/2 - feedbackPopup.height/2
+    }
+
+    SGProfilePopup {
+        id: profilePopup
+        x: container.width/2 - profilePopup.width/2
+        y: container.parent.windowHeight/2 - profilePopup.height/2
     }
 
     function showAboutWindow() {

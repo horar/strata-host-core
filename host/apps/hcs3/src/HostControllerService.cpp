@@ -1,5 +1,5 @@
 #include "HostControllerService.h"
-#include "HCS_Client.h"
+#include "Client.h"
 #include "ReplicatorCredentials.h"
 #include "logging/LoggingQtCategories.h"
 
@@ -19,16 +19,14 @@
 
 HostControllerService::HostControllerService(QObject* parent)
     : QObject(parent),
-      dbLogAdapter_("strata.hcs.database"),
-      clientsLogAdapter_("strata.hcs.clients"),
-      db_(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString()),
       downloadManager_(&networkManager_),
-      storageManager_(&downloadManager_)
+      storageManager_(&downloadManager_),
+      dispatcher_{std::make_shared<HCS_Dispatcher>()}
 {
     //handlers for 'cmd'
     clientCmdHandler_.insert( { std::string("request_hcs_status"), std::bind(&HostControllerService::onCmdHCSStatus, this, std::placeholders::_1) });
     clientCmdHandler_.insert( { std::string("unregister"), std::bind(&HostControllerService::onCmdUnregisterClient, this, std::placeholders::_1) } );
-    clientCmdHandler_.insert( { std::string("platform_select"), std::bind(&HostControllerService::onCmdPlatformSelect, this, std::placeholders::_1) } );
+    clientCmdHandler_.insert( { std::string("load_documents"), std::bind(&HostControllerService::onCmdLoadDocuments, this, std::placeholders::_1) } );
 
     hostCmdHandler_.insert( { std::string("download_files"), std::bind(&HostControllerService::onCmdHostDownloadFiles, this, std::placeholders::_1) });
     hostCmdHandler_.insert( { std::string("dynamic_platform_list"), std::bind(&HostControllerService::onCmdDynamicPlatformList, this, std::placeholders::_1) } );
@@ -47,14 +45,28 @@ bool HostControllerService::initialize(const QString& config)
         return false;
     }
 
-    db_.setLogAdapter(&dbLogAdapter_);
-    clients_.setLogAdapter(&clientsLogAdapter_);
+    dispatcher_->setMsgHandler(std::bind(&HostControllerService::handleMessage, this, std::placeholders::_1) );
 
-    dispatcher_.setMsgHandler(std::bind(&HostControllerService::handleMessage, this, std::placeholders::_1) );
+    QString baseFolder{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
+    if (config_.HasMember("stage")) {
+        rapidjson::Value &devStage = config_["stage"];
+        if (devStage.IsString()) {
+            std::string stage{devStage.GetString()};
+            std::transform(stage.begin(), stage.end(), stage.begin(), ::toupper);
+            qCInfo(logCategoryHcs, "Running in %s setup", qUtf8Printable(stage.data()));
+            baseFolder += QString("/%1").arg(qUtf8Printable(stage.data()));
+            QDir baseFolderDir{baseFolder};
+            if (baseFolderDir.exists() == false) {
+                qCDebug(logCategoryHcs) << "Creating base folder" << baseFolder << "-" << baseFolderDir.mkpath(baseFolder);
+            }
+        }
+    }
+
+    storageManager_.setBaseFolder(baseFolder);
 
     rapidjson::Value& db_cfg = config_["database"];
 
-    if (!db_.open("strata_db")) {
+    if (db_.open(baseFolder.toStdString(), "strata_db") == false) {
         qCCritical(logCategoryHcs) << "Failed to open database.";
         return false;
     }
@@ -112,7 +124,7 @@ bool HostControllerService::initialize(const QString& config)
 
     rapidjson::Value& hcs_cfg = config_["host_controller_service"];
 
-    clients_.initialize(&dispatcher_, hcs_cfg);
+    clients_.initialize(dispatcher_, hcs_cfg);
     return true;
 }
 
@@ -122,18 +134,20 @@ void HostControllerService::start()
         return;
     }
 
-    dispatcherThread_ = std::thread(&HCS_Dispatcher::dispatch, &dispatcher_);
+    dispatcherThread_ = std::thread(&HCS_Dispatcher::dispatch, dispatcher_.get());
 
     qCInfo(logCategoryHcs) << "Host controller service started.";
 }
 
 void HostControllerService::stop()
 {
+    clients_.stop();    // first stop clients controller, then dispatcher (it receives data from clients controller)
+
     if (dispatcherThread_.get_id() == std::thread::id()) {
         return;
     }
 
-    dispatcher_.stop();
+    dispatcher_->stop();
 
     dispatcherThread_.join();
     qCInfo(logCategoryHcs) << "Host controller service stoped.";
@@ -386,7 +400,7 @@ void HostControllerService::platformDisconnected(const int deviceId)
 void HostControllerService::sendMessageToClients(const QString &platformId, const QString &message)
 {
     Q_UNUSED(platformId)
-    HCS_Client* client = getSenderClient();
+    Client* client = getSenderClient();
     if (client != nullptr) {
         clients_.sendMessage(client->getClientId(), message);
     }
@@ -395,7 +409,7 @@ void HostControllerService::sendMessageToClients(const QString &platformId, cons
 // clients handler...
 void HostControllerService::onCmdHCSStatus(const rapidjson::Value* )
 {
-    HCS_Client* client = getSenderClient();
+    Client* client = getSenderClient();
     Q_ASSERT(client);
 
     rapidjson::Document doc;
@@ -416,16 +430,16 @@ void HostControllerService::onCmdDynamicPlatformList(const rapidjson::Value * )
 
 void HostControllerService::onCmdUnregisterClient(const rapidjson::Value* )
 {
-    HCS_Client* client = getSenderClient();
+    Client* client = getSenderClient();
     Q_ASSERT(client);
 
     qCWarning(logCategoryHcs) << "Deprecated command: \"cmd\":\"unregister\", use \"hcs::cmd\":\"unregister\" instead.";
     onCmdHostUnregister(nullptr);
 }
 
-void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
+void HostControllerService::onCmdLoadDocuments(const rapidjson::Value* payload)
 {
-    HCS_Client* client = getSenderClient();
+    Client* client = getSenderClient();
     if (client == nullptr) {
         qCCritical(logCategoryHcs) << "sender client is missing";
         return;
@@ -448,7 +462,7 @@ void HostControllerService::onCmdPlatformSelect(const rapidjson::Value* payload)
 
 void HostControllerService::onCmdHostUnregister(const rapidjson::Value* )
 {
-    HCS_Client* client = getSenderClient();
+    Client* client = getSenderClient();
     Q_ASSERT(client);
 
     QByteArray clientId = client->getClientId();
@@ -531,10 +545,10 @@ void HostControllerService::onCmdDownloadControlView(const rapidjson::Value* pay
     emit downloadControlViewRequested(clientId, partialUri, md5);
 }
 
-HCS_Client* HostControllerService::getClientById(const QByteArray& client_id)
+Client* HostControllerService::getClientById(const QByteArray& client_id)
 {
     auto findIt = std::find_if(clientList_.begin(), clientList_.end(),
-                               [&](HCS_Client* val) { return client_id == val->getClientId(); }  );
+                               [&](Client* val) { return client_id == val->getClientId(); }  );
 
     return (findIt != clientList_.end()) ? *findIt : nullptr;
 }
@@ -544,11 +558,11 @@ void HostControllerService::handleClientMsg(const PlatformMessage& msg)
     QByteArray clientId = msg.from_client;
 
     //check the client's ID (dealer_id) is in list
-    HCS_Client* client = getClientById(clientId);
+    Client* client = getClientById(clientId);
     if (client == nullptr) {
         qCInfo(logCategoryHcs) << "new Client:" << clientId.toHex();
 
-        client = new HCS_Client(clientId);
+        client = new Client(clientId);
         clientList_.push_back(client);
     }
 

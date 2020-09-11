@@ -26,6 +26,12 @@ SGWidgets.SGMainWindow {
 
     signal initialized()
 
+    function resetWindowSize()
+    {
+        mainWindow.width = 1200
+        mainWindow.height = 900
+    }
+
     Component.onCompleted: {
         console.log(Logger.devStudioCategory, "Initializing")
         NavigationControl.init(statusBarContainer, stackContainer)
@@ -46,6 +52,10 @@ SGWidgets.SGMainWindow {
         NavigationControl.removeView(statusBarContainer)
         NavigationControl.removeView(mainContainer)
         platformViewModel.clear()
+
+        if (SessionUtils.settings.rememberMe === false) {
+            SessionUtils.settings.clear()
+        }
     }
 
     Connections {

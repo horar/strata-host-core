@@ -16,7 +16,6 @@
 #include "Dispatcher.h"
 #include "ClientsController.h"
 #include "Database.h"
-#include "LoggingAdapter.h"
 #include "BoardController.h"
 #include "FirmwareUpdateController.h"
 #include "StorageManager.h"
@@ -26,7 +25,7 @@
 
 struct PlatformMessage;
 
-class HCS_Client;
+class Client;
 class StorageManager;
 
 namespace strata {
@@ -127,7 +126,7 @@ private:
     //handlers for client (UI)
     void onCmdHCSStatus(const rapidjson::Value* );
     void onCmdUnregisterClient(const rapidjson::Value* );
-    void onCmdPlatformSelect(const rapidjson::Value* );
+    void onCmdLoadDocuments(const rapidjson::Value* );
 
     //handlers for hcs::cmd
     void onCmdHostUnregister(const rapidjson::Value* );
@@ -139,14 +138,11 @@ private:
     void platformConnected(const int deviceId, const QString &classId);
     void platformDisconnected(const int deviceId);
 
-    HCS_Client* getSenderClient() const { return current_client_; }     //TODO: only one client
+    Client* getSenderClient() const { return current_client_; }     //TODO: only one client
 
-    HCS_Client* getClientById(const QByteArray& client_id);
+    Client* getClientById(const QByteArray& client_id);
 
     bool parseConfig(const QString& config);
-
-    LoggingAdapter dbLogAdapter_;       // should be first, so it will be destroyed last (so we can use logs in destructor)
-    LoggingAdapter clientsLogAdapter_;  // should be first, so it will be destroyed last (so we can use logs in destructor)
 
     BoardController boardsController_;
     ClientsController clients_;     //UI or other clients
@@ -156,7 +152,7 @@ private:
     StorageManager storageManager_;
     FirmwareUpdateController updateController_;
 
-    HCS_Dispatcher dispatcher_;
+    std::shared_ptr<HCS_Dispatcher> dispatcher_;
     std::thread dispatcherThread_;
 
     typedef std::function<void(const rapidjson::Value* )> NotificationHandler;
@@ -164,8 +160,8 @@ private:
     std::map<std::string, NotificationHandler> clientCmdHandler_;
     std::map<std::string, NotificationHandler> hostCmdHandler_;
 
-    std::list<HCS_Client*> clientList_;
-    HCS_Client* current_client_;
+    std::list<Client*> clientList_;
+    Client* current_client_;
 
     rapidjson::Document config_;
 };

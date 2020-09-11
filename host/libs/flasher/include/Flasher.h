@@ -38,9 +38,16 @@ class Flasher : public QObject
         /*!
          * Flasher constructor.
          * \param device device which will be used by Flasher
-         * \param firmwareFilename path to firmware file
+         * \param fileName path to firmware (or bootloader) file
          */
-        Flasher(const device::DevicePtr& device, const QString& firmwareFilename);
+        Flasher(const device::DevicePtr& device, const QString& fileName);
+        /*!
+         * Flasher constructor.
+         * \param device device which will be used by Flasher
+         * \param fileName path to firmware (or bootloader) file
+         * \param fileMD5 MD5 checksum of file which will be flashed
+         */
+        Flasher(const device::DevicePtr& device, const QString& fileName, const QString& fileMD5);
 
         /*!
          * Flasher destructor.
@@ -51,13 +58,19 @@ class Flasher : public QObject
          * Flash firmware.
          * \param startApplication if set to true start application after flashing
          */
-        void flash(bool startApplication = true);
+        void flashFirmware(bool startApplication = true);
 
         /*!
          * Backup firmware.
          * \param startApplication if set to true start application after backup
          */
-        void backup(bool startApplication = true);
+        void backupFirmware(bool startApplication = true);
+
+        /*!
+         * Flash bootloader.
+         * \param startApplication if set to true start application after flashing
+         */
+        void flashBootloader(bool startApplication = true);
 
         /*!
          * Cancel flash firmware operation.
@@ -86,17 +99,24 @@ class Flasher : public QObject
 
         /*!
          * This signal is emitted during firmware flashing.
-         * \param chunk chunk number which was flashed
-         * \param total total count of firmware chunks
+         * \param chunk chunk number which was flashed (1 - N)
+         * \param total total count of firmware chunks (N)
          */
-        void flashProgress(int chunk, int total);
+        void flashFirmwareProgress(int chunk, int total);
 
         /*!
          * This signal is emitted during firmware backup.
-         * \param chunk chunk number which was backed up
-         * \param total total count of firmware chunks
+         * \param chunk chunk number which was backed up (1 - N)
+         * \param total total count of firmware chunks (N)
          */
-        void backupProgress(int chunk, int total);
+        void backupFirmwareProgress(int chunk, int total);
+
+        /*!
+         * This signal is emitted during bootloader flashing.
+         * \param chunk chunk number which was flashed (1 - N)
+         * \param total total count of bootloader chunks (N)
+         */
+        void flashBootloaderProgress(int chunk, int total);
 
         /*!
          * This signal is emitted when device properties are changed (e.g. board switched to/from bootloader).
@@ -108,13 +128,17 @@ class Flasher : public QObject
         void handleOperationError(QString errStr);
 
     private:
-        void handleFlashFirmware(int lastFlashedChunk);
-        void handleBackupFirmware(int chunkNumber);
+        void flash(bool flashFirmware, bool startApplication);
+        void startFlash();
+        void manageFlash(int lastFlashedChunk);
+        void startBackup();
+        void manageBackup(int chunkNumber);
         void finish(Result result);
 
         device::DevicePtr device_;
 
-        QFile fwFile_;
+        QFile binaryFile_;
+        QString fileMD5_;
 
         std::unique_ptr<device::DeviceOperations> operation_;
 
@@ -123,8 +147,9 @@ class Flasher : public QObject
         int chunkProgress_;
 
         enum class Action {
-            Flash,
-            Backup
+            FlashFirmware,
+            FlashBootloader,
+            BackupFirmware
         };
         Action action_;
 

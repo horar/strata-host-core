@@ -1,8 +1,9 @@
-#ifndef ZmqSubscriberConnector_H
-#define ZmqSubscriberConnector_H
+#pragma once
 
 #include "ZmqConnector.h"
 
+namespace strata::connector
+{
 class ZmqSubscriberConnector : public ZmqConnector
 {
 public:
@@ -19,4 +20,4 @@ public:
     bool blockingRead(std::string& message) override;
 };
 
-#endif  // ZmqPublisherConnector_H
+}  // namespace strata::connector

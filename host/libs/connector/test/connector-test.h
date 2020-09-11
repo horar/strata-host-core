@@ -2,30 +2,29 @@
 
 #include "Connector.h"
 
-#include <string>
-#include <atomic>
 #include <gtest/gtest.h>
-
+#include <atomic>
+#include <string>
 
 class ConnectorTest : public testing::Test
 {
 public:
+    bool nonBlockingReadPolling(std::unique_ptr<strata::connector::Connector>& connector,
+                                std::string& message);
 
-    bool nonBlockingReadPolling(std::unique_ptr<Connector> &connector, std::string &message);
+    void dealerMain(const std::string& identity, strata::connector::ReadMode read_mode);
 
-    void dealerMain(const std::string& identity, ReadMode read_mode);
+    void routerMain(strata::connector::ReadMode read_mode);
 
-    void routerMain(ReadMode read_mode);
+    void subscriberMain(const std::string& identity, strata::connector::ReadMode read_mode);
 
-    void subscriberMain(const std::string& identity, ReadMode read_mode);
-
-    void subscriberEmptyMain(const int32_t identities, ReadMode read_mode);
+    void subscriberEmptyMain(const int32_t identities, strata::connector::ReadMode read_mode);
 
     void publisherMain(const std::vector<std::string>& identities);
 
-    void responseMain(ReadMode read_mode);
+    void responseMain(strata::connector::ReadMode read_mode);
 
-    void requestMain(ReadMode read_mode);
+    void requestMain(strata::connector::ReadMode read_mode);
 
     void stop();
 

@@ -1,21 +1,21 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
+import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
 import Qt.labs.folderlistmodel 2.12
 import Qt.labs.settings 1.1 as QtLabsSettings
-import tech.strata.commoncpp 1.0
 
+import tech.strata.commoncpp 1.0
+import tech.strata.signals 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/restclient.js" as Rest
-import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/js/uuid_map.js" as UuidMap
 import "qrc:/js/constants.js" as Constants
 
 Item {
     id: root
 
-    property string testAuthServer: "http://3.12.71.66/"
+    property string testAuthServer: "http://18.191.108.5/"
 
     Rectangle {
         id: commandBar
@@ -85,7 +85,7 @@ Item {
 
                             onClicked: {
                                 if (NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
-                                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                                    NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                                 }
                                 const uuids = Object.keys(UuidMap.uuid_map)
                                 for (const uuid of uuids) {
@@ -94,6 +94,7 @@ Item {
                                             "class_id": uuid,
                                             "name": model.fileName,
                                             "device_id": Constants.DEBUG_DEVICE_ID,
+                                            "firmware_version": "",
                                             "view": "control",
                                             "connected": true,
                                             "available": {
@@ -129,17 +130,14 @@ Item {
 
             Button {
                 text: "Reset Window Size"
-                onClicked: {
-                    mainWindow.height = 900
-                    mainWindow.width = 1200
-                }
+                onClicked: mainWindow.resetWindowSize()
             }
 
             Button {
                 text: "Login as Guest"
                 onClicked: {
                     if (NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
-                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                     }
                 }
             }
@@ -149,7 +147,7 @@ Item {
                 text: "Always Login as Guest"
                 onCheckedChanged: {
                     if (checked && NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE && sdsModel.hcsConnected) {
-                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                        NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                     }
                 }
 
@@ -164,7 +162,7 @@ Item {
                     onHcsConnectedChanged: {
                         if (sdsModel.hcsConnected && alwaysLogin.checked) {
                             NavigationControl.updateState(NavigationControl.events.CONNECTION_ESTABLISHED_EVENT)
-                            NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": "Guest", "first_name": "First", "last_name": "Last" } )
+                            NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                         }
                     }
                 }
@@ -173,12 +171,12 @@ Item {
             Button {
                 id: serverChange
                 onClicked: {
-                    if (Rest.url !== Rest.productionAuthServer) {
-                        Rest.url = Rest.productionAuthServer
+                    if (Rest.url !== Constants.PRODUCTION_AUTH_SERVER) {
+                        Rest.url = Constants.PRODUCTION_AUTH_SERVER
                     } else {
                         Rest.url = root.testAuthServer
                     }
-                    Authenticator.signals.serverChanged()
+                    Signals.serverChanged()
                 }
 
                 Component.onCompleted: {
@@ -186,7 +184,7 @@ Item {
                 }
 
                 function setButtonText () {
-                    if (Rest.url !== Rest.productionAuthServer) {
+                    if (Rest.url !== Constants.PRODUCTION_AUTH_SERVER) {
                         text = "Switch to Prod Auth Server"
                     } else {
                         text = "Switch to Test Auth Server"
@@ -194,7 +192,7 @@ Item {
                 }
 
                 Connections {
-                    target: Authenticator.signals
+                    target: Signals
                     onServerChanged: {
                         serverChange.setButtonText()
                     }
@@ -253,5 +251,50 @@ Item {
         onClicked: {
             commandBar.visible = true
         }
+    }
+
+    SGQmlErrorListButton {
+        id: qmlErrorListButton
+
+        visible: qmlErrorModel.count !== 0
+        text: qsTr("%1 QML warnings").arg(qmlErrorModel.count)
+
+        onCheckedChanged: {
+            if (checked) {
+                qmlErrorListPopUp.open()
+                stopAnimation()
+            } else {
+                qmlErrorListPopUp.close()
+                startAnimation()
+            }
+        }
+
+        ListModel {
+            id: qmlErrorModel
+        }
+
+        Connections {
+            target: sdsModel
+            onNotifyQmlError: {
+                qmlErrorModel.append({"data" : notifyQmlError})
+            }
+        }
+    }
+
+    SGQmlErrorListPopUp {
+        id: qmlErrorListPopUp
+
+        topMargin: 32
+        leftMargin: 32
+        topPadding: errorListDetailsChecked ? undefined : 1
+        bottomPadding: errorListDetailsChecked ? undefined : 1
+
+        anchors.centerIn: errorListDetailsChecked ? ApplicationWindow.overlay : undefined
+        opacity: errorListDetailsChecked ? 0.9 : 0.7
+
+        title: qmlErrorListButton.text
+
+
+        qmlErrorListModel: qmlErrorModel
     }
 }

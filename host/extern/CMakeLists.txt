@@ -21,6 +21,19 @@ else()
 endif()
 
 
+# update common CMake flags that will be forwarded to external projects
+list(APPEND CMAKE_ARGS "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE_EXTERNAL_PROJECT}")
+list(APPEND CMAKE_ARGS "-DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}")
+list(APPEND CMAKE_ARGS "-DCMAKE_VERBOSE_MAKEFILE:BOOL=${CMAKE_VERBOSE_MAKEFILE}")
+if(APPLE)
+    list(APPEND CMAKE_ARGS "-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+endif()
+list(APPEND CMAKE_ARGS "-DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}")
+list(APPEND CMAKE_ARGS "-DCMAKE_CXX_STANDARD:STRING=17")
+list(APPEND CMAKE_ARGS "-DCMAKE_CXX_STANDARD_REQUIRED:BOOL=ON")
+list(APPEND CMAKE_ARGS "-DCMAKE_CXX_EXTENSIONS:BOOL=OFF")
+
+
 #
 # rapidjson
 #
@@ -28,10 +41,7 @@ ExternalProject_Add(rapidjson
     INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
     SOURCE_DIR ${SOURCE_DIR_EXTERN}/rapidjson
     EXCLUDE_FROM_ALL ON
-    CMAKE_ARGS ${CMAKE_ARGS}
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE_EXTERNAL_PROJECT}
-        -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
-        -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
+    CMAKE_ARGS "${CMAKE_ARGS}"
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
         -DRAPIDJSON_BUILD_DOC=off
         -DRAPIDJSON_BUILD_EXAMPLES=off
@@ -51,12 +61,9 @@ ExternalProject_Add(spdlog
     INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
     SOURCE_DIR ${SOURCE_DIR_EXTERN}/spdlog
     EXCLUDE_FROM_ALL ON
-    CMAKE_ARGS ${CMAKE_ARGS}
-        -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE_EXTERNAL_PROJECT}
-        -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
-        -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
+    CMAKE_ARGS "${CMAKE_ARGS}"
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+        -DSPDLOG_BUILD_SHARED=off
         -DSPDLOG_BUILD_BENCH=off
         -DSPDLOG_BUILD_EXAMPLE=off
         -DSPDLOG_BUILD_TESTS=off
@@ -138,11 +145,8 @@ if(BUILD_TESTING)
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/googletest
         EXCLUDE_FROM_ALL ON
-        CMAKE_ARGS ${CMAKE_ARGS}
+        CMAKE_ARGS "${CMAKE_ARGS}"
             -Dgtest_force_shared_crt=YES
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE_EXTERNAL_PROJECT}
-            -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
-            -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     )
 
@@ -214,11 +218,7 @@ if(NOT WIN32)
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
         EXCLUDE_FROM_ALL ON
-        CMAKE_ARGS ${CMAKE_ARGS}
-            -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE_EXTERNAL_PROJECT}
-            -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
-            -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
+        CMAKE_ARGS "${CMAKE_ARGS}"
             -DBUILD_EXAMPLES=${BUILD_EXAMPLES}
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DSSL_LIB="${SSL_LIB_PATH_MACOS}/libssl.1.1.dylib"
@@ -241,10 +241,7 @@ else()
         INSTALL_DIR ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
         EXCLUDE_FROM_ALL ON
-        CMAKE_ARGS ${CMAKE_ARGS}
-            -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE_EXTERNAL_PROJECT}
-            -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
+        CMAKE_ARGS "${CMAKE_ARGS}"
             -DBUILD_EXAMPLES=${BUILD_EXAMPLES}
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DSSL_LIB="libssl-1_1-x64.dll"
@@ -451,7 +448,7 @@ else()
 
     if(PERL_FOUND)
         get_filename_component(PERL_PATH "${PERL_EXECUTABLE}" PATH)
-        
+
         # Create a cmd command to append Perl's path to the environment PATH
         string(REPLACE ";" "$<SEMICOLON>" MODIFIED_PATH "$ENV{PATH}")
         separate_arguments(APPEND_PERL_TO_PATH WINDOWS_COMMAND "SET PATH=${MODIFIED_PATH}$<SEMICOLON>${PERL_PATH}")
@@ -508,11 +505,7 @@ if(NOT WIN32)
         PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/.. && git submodule --quiet update --force --recursive extern/couchbase-lite-C
         COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-c.patch ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-core.patch
 
-        CMAKE_ARGS ${CMAKE_ARGS}
-            -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE_EXTERNAL_PROJECT}
-            -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
-            -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
+        CMAKE_ARGS "${CMAKE_ARGS}"
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 
         INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
@@ -522,7 +515,7 @@ if(NOT WIN32)
 
         # LiteCore
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreStatic-O${CMAKE_STATIC_LIBRARY_SUFFIX}
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/${CMAKE_STATIC_LIBRARY_PREFIX}Support${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Support-O${CMAKE_STATIC_LIBRARY_SUFFIX}
+
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreWebSocket${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreWebSocket-O${CMAKE_STATIC_LIBRARY_SUFFIX}
 
         # BLIP
@@ -536,8 +529,11 @@ if(NOT WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/vendor/mbedtls/library/${CMAKE_STATIC_LIBRARY_PREFIX}mbedx509${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}mbedx509-O${CMAKE_STATIC_LIBRARY_SUFFIX}
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/vendor/mbedtls/crypto/library/${CMAKE_STATIC_LIBRARY_PREFIX}mbedcrypto${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}mbedcrypto-O${CMAKE_STATIC_LIBRARY_SUFFIX}
 
-        # SQLite
+        # SQLite3_Unicode
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/vendor/sqlite3-unicodesn/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN-O${CMAKE_STATIC_LIBRARY_SUFFIX}
+
+        # CouchbaseSqlite3
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/${CMAKE_STATIC_LIBRARY_PREFIX}CouchbaseSqlite3${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}CouchbaseSqlite3-O${CMAKE_STATIC_LIBRARY_SUFFIX}
 
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${SOURCE_DIR_EXTERN}/couchbase-lite-C/include/cbl++ <INSTALL_DIR>/include-CBL-official-API/couchbase-lite-C
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${SOURCE_DIR_EXTERN}/couchbase-lite-C/include/cbl <INSTALL_DIR>/include-CBL-official-API/couchbase-lite-C
@@ -557,11 +553,7 @@ else()
         PATCH_COMMAND cd ${SOURCE_DIR_EXTERN}/.. && git submodule --quiet update --force --recursive extern/couchbase-lite-C
         COMMAND cd ${SOURCE_DIR_EXTERN}/couchbase-lite-C && git apply -v ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-c.patch ${CMAKE_SOURCE_DIR}/extern/patches/couchbase-lite-c/cb-lite-core.patch
 
-        CMAKE_ARGS ${CMAKE_ARGS}
-            -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE_EXTERNAL_PROJECT}
-            -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
-            -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
+        CMAKE_ARGS "${CMAKE_ARGS}"
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 
         INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
@@ -571,7 +563,7 @@ else()
 
         # LiteCore
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreStatic-O${CMAKE_STATIC_LIBRARY_SUFFIX}
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/${CMAKE_STATIC_LIBRARY_PREFIX}Support${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Support-O${CMAKE_STATIC_LIBRARY_SUFFIX}
+
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreWebSocket${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreWebSocket-O${CMAKE_STATIC_LIBRARY_SUFFIX}
 
         # BLIP
@@ -585,8 +577,11 @@ else()
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/vendor/mbedtls/library/${CMAKE_STATIC_LIBRARY_PREFIX}mbedx509${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}mbedx509-O${CMAKE_STATIC_LIBRARY_SUFFIX}
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/vendor/mbedtls/crypto/library/${CMAKE_STATIC_LIBRARY_PREFIX}mbedcrypto${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}mbedcrypto-O${CMAKE_STATIC_LIBRARY_SUFFIX}
 
-        # SQLite
+        # SQLite3_Unicode
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/vendor/sqlite3-unicodesn/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN-O${CMAKE_STATIC_LIBRARY_SUFFIX}
+
+        # CouchbaseSqlite3
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/${CMAKE_STATIC_LIBRARY_PREFIX}CouchbaseSqlite3${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}CouchbaseSqlite3-O${CMAKE_STATIC_LIBRARY_SUFFIX}
 
         # zlib
         COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/vendor/couchbase-lite-core/Networking/BLIP/vendor/zlib/${CMAKE_STATIC_LIBRARY_PREFIX}zlibstatic$<$<CONFIG:Debug>:d>${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/${CMAKE_STATIC_LIBRARY_PREFIX}zlibstatic-O${CMAKE_STATIC_LIBRARY_SUFFIX}
@@ -613,6 +608,13 @@ set_target_properties(cb-lite-c::LiteCore PROPERTIES
 )
 add_dependencies(cb-lite-c::LiteCore DEPENDS strata::Couchbase-Lite-C)
 
+add_library(cb-lite-c::CouchbaseSqlite3 STATIC IMPORTED GLOBAL)
+set_target_properties(cb-lite-c::CouchbaseSqlite3 PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include-CBL-official-API"
+    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}CouchbaseSqlite3-O${CMAKE_STATIC_LIBRARY_SUFFIX}"
+)
+add_dependencies(cb-lite-c::CouchbaseSqlite3 DEPENDS strata::Couchbase-Lite-C)
+
 add_library(cb-lite-c::Fleece STATIC IMPORTED GLOBAL)
 set_target_properties(cb-lite-c::Fleece PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include-CBL-official-API"
@@ -630,12 +632,6 @@ add_library(cb-lite-c::SQLite3_unicode STATIC IMPORTED GLOBAL)
 set_target_properties(cb-lite-c::SQLite3_unicode PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include-CBL-official-API"
     IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN-O${CMAKE_STATIC_LIBRARY_SUFFIX}"
-)
-
-add_library(cb-lite-c::support STATIC IMPORTED GLOBAL)
-set_target_properties(cb-lite-c::support PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/include-CBL-official-API"
-    IMPORTED_LOCATION  "${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Support-O${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
 
 add_library(cb-lite-c::mbedcrypto STATIC IMPORTED GLOBAL)
@@ -687,11 +683,11 @@ target_link_libraries(strata::Couchbase-Lite-C
         cb-lite-c::Fleece
         cb-lite-c::BLIP
         cb-lite-c::SQLite3_unicode
-        cb-lite-c::support
         cb-lite-c::mbedcrypto
         cb-lite-c::mbedtls
         cb-lite-c::mbedx509
         cb-lite-c::LiteCoreWebSocket
+        cb-lite-c::CouchbaseSqlite3
 )
 
 if(APPLE)

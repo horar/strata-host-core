@@ -13,14 +13,16 @@ namespace strata::device {
 using command::BaseDeviceCommand;
 using command::CmdGetFirmwareInfo;
 using command::CmdRequestPlatformId;
-using command::CmdUpdateFirmware;
-using command::CmdFlashFirmware;
+using command::CmdStartBootloader;
+using command::CmdStartFlash;
+using command::CmdFlash;
+using command::CmdStartBackupFirmware;
 using command::CmdBackupFirmware;
 using command::CmdStartApplication;
 using command::CommandResult;
 
 DeviceOperations::DeviceOperations(const DevicePtr& device) :
-    device_(device), responseTimer_(this), operation_(DeviceOperation::None)
+    operation_(DeviceOperation::None), device_(device), responseTimer_(this)
 {
     deviceId_ = static_cast<uint>(device_->deviceId());
 
@@ -57,7 +59,7 @@ void DeviceOperations::switchToBootloader() {
         // If board is already in bootloader mode, CmdUpdateFirmware is skipped
         // and whole operation ends. Finished() signal will be sent with data set to 1 then.
         commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
-        commandList_.emplace_back(std::make_unique<CmdUpdateFirmware>(device_));
+        commandList_.emplace_back(std::make_unique<CmdStartBootloader>(device_));
         commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));
         commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, false));
         currentCommand_ = commandList_.begin();
@@ -65,26 +67,64 @@ void DeviceOperations::switchToBootloader() {
     }
 }
 
-void DeviceOperations::flashFirmwareChunk(const QVector<quint8>& chunk, int chunkNumber) {
-    if (startOperation(DeviceOperation::FlashFirmwareChunk)) {
+void DeviceOperations::startFlash(uint size, uint chunks, const QString &md5, bool flashFirmware) {
+    DeviceOperation operation = (flashFirmware) ?
+                                DeviceOperation::StartFlashFirmware :
+                                DeviceOperation::StartFlashBootloader;
+    if (startOperation(operation)) {
+        commandList_.emplace_back(std::make_unique<CmdStartFlash>(device_, size, chunks, md5, flashFirmware));
+        currentCommand_ = commandList_.begin();
+        emit sendCommand(QPrivateSignal());
+    }
+}
+
+void DeviceOperations::startFlashFirmware(uint size, uint chunks, const QString &md5) {
+    startFlash(size, chunks, md5, true);
+}
+
+void DeviceOperations::startFlashBootloader(uint size, uint chunks, const QString &md5) {
+    startFlash(size, chunks, md5, false);
+}
+
+void DeviceOperations::flashChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount, bool flashFirmware) {
+    DeviceOperation operation = (flashFirmware) ?
+                                DeviceOperation::FlashFirmwareChunk :
+                                DeviceOperation::FlashBootloaderChunk;
+    if (startOperation(operation)) {
         if (commandList_.empty()) {
-            commandList_.emplace_back(std::make_unique<CmdFlashFirmware>(device_));
+            commandList_.emplace_back(std::make_unique<CmdFlash>(device_, flashFirmware));
             currentCommand_ = commandList_.begin();
         }
         if (currentCommand_ != commandList_.end()) {
-            CmdFlashFirmware *cmdFlash = dynamic_cast<CmdFlashFirmware*>(currentCommand_->get());
+            CmdFlash *cmdFlash = dynamic_cast<CmdFlash*>(currentCommand_->get());
             if (cmdFlash != nullptr) {
-                cmdFlash->setChunk(chunk, chunkNumber);
+                cmdFlash->setChunk(chunk, chunkNumber, chunkCount);
                 emit sendCommand(QPrivateSignal());
             }
         }
     }
 }
 
-void DeviceOperations::backupFirmwareChunk() {
+void DeviceOperations::flashFirmwareChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount) {
+    flashChunk(chunk, chunkNumber, chunkCount, true);
+}
+
+void DeviceOperations::flashBootloaderChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount) {
+    flashChunk(chunk, chunkNumber, chunkCount, false);
+}
+
+void DeviceOperations::startBackupFirmware() {
+    if (startOperation(DeviceOperation::StartBackupFirmware)) {
+        commandList_.emplace_back(std::make_unique<CmdStartBackupFirmware>(device_));
+        currentCommand_ = commandList_.begin();
+        emit sendCommand(QPrivateSignal());
+    }
+}
+
+void DeviceOperations::backupFirmwareChunk(int chunkCount) {
     if (startOperation(DeviceOperation::BackupFirmwareChunk)) {
         if (commandList_.empty()) {
-            commandList_.emplace_back(std::make_unique<CmdBackupFirmware>(device_, backupChunk_, backupChunksCount_));
+            commandList_.emplace_back(std::make_unique<CmdBackupFirmware>(device_, backupChunk_, chunkCount));
             currentCommand_ = commandList_.begin();
         }
         if (currentCommand_ != commandList_.end()) {
@@ -118,6 +158,11 @@ QVector<quint8> DeviceOperations::recentBackupChunk() const {
 
 int DeviceOperations::backupChunksCount() const {
     return backupChunksCount_;
+}
+
+void DeviceOperations::setFlashInfo(qint64 fileSize, const QString& fileMD5) {
+    fileSize_ = fileSize;
+    fileMD5_ = fileMD5;
 }
 
 void DeviceOperations::handleSendCommand() {
@@ -155,15 +200,8 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
 
     rapidjson::Document doc;
 
-    if (CommandValidator::parseJson(data.toStdString(), doc) == false) {
+    if (CommandValidator::parseJsonCommand(data, doc) == false) {
         qCWarning(logCategoryDeviceOperations) << device_ << "Cannot parse JSON: '" << data << "'.";
-        return;
-    }
-
-    if (doc.IsObject() == false) {
-        // JSON can contain only a value (e.g. "abc").
-        // We require object as a JSON content (JSON starts with '{' and ends with '}')
-        qCWarning(logCategoryDeviceOperations) << device_ << "Content of JSON response is not an object: '" << data << "'.";
         return;
     }
 
@@ -173,11 +211,22 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
         if (CommandValidator::validate(CommandValidator::JsonType::ack, doc)) {
             const QString ackStr = doc[JSON_ACK].GetString();
             qCDebug(logCategoryDeviceOperations) << device_ << "Received '" << ackStr << "' ACK.";
+            const rapidjson::Value& payload = doc[JSON_PAYLOAD];
+            const bool ackOk = payload[JSON_RETURN_VALUE].GetBool();
+
             BaseDeviceCommand *command = currentCommand_->get();
             if (ackStr == command->name()) {
-                command->setAckReceived();
+                if (ackOk) {
+                    command->setAckReceived();
+                } else {
+                    const QString ackError = payload[JSON_RETURN_STRING].GetString();
+                    qCWarning(logCategoryDeviceOperations) << device_ << "ACK for '" << command->name() << "' command is not OK: '" << ackError << "'.";
+                }
             } else {
                 qCWarning(logCategoryDeviceOperations) << device_ << "Received wrong ACK. Expected '" << command->name() << "', got '" << ackStr << "'.";
+                if (ackOk == false) {
+                    qCWarning(logCategoryDeviceOperations) << device_ << "ACK is not OK: '" << payload[JSON_RETURN_STRING].GetString() << "'.";
+                }
             }
             ok = true;
         }
@@ -234,8 +283,13 @@ bool DeviceOperations::startOperation(DeviceOperation operation) {
     if (operation_ == DeviceOperation::None) {
         commandList_.clear();
     } else {  // another operation is runing
-        // flash or backup firmware chunk is a special case
-        if (operation_ != operation || (operation != DeviceOperation::FlashFirmwareChunk && operation != DeviceOperation::BackupFirmwareChunk)) {
+        // flash or backup firmware (or bootloader) chunk is a special case
+        if (operation_ != operation ||
+                (operation != DeviceOperation::FlashFirmwareChunk &&
+                 operation != DeviceOperation::BackupFirmwareChunk &&
+                 operation != DeviceOperation::FlashBootloaderChunk)
+           )
+        {
             QString errMsg(QStringLiteral("Cannot start operation, because another operation is running."));
             qCWarning(logCategoryDeviceOperations) << device_ << errMsg;
             emit error(errMsg);

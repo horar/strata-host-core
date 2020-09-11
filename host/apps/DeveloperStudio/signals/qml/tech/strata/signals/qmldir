@@ -1,0 +1,4 @@
+module tech.strata.signals
+typeinfo plugins.qmltypes
+
+singleton Signals 1.0 Signals.qml

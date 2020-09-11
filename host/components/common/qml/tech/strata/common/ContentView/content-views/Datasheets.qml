@@ -1,12 +1,13 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
+import tech.strata.commoncpp 1.0
 import tech.strata.sgwidgets 1.0 as SGWidgets
 
 Item {
     height: wrapper.height + 20
     width: parent.width
 
-    property alias model: repeater.model
+    property alias model: sortModel.sourceModel
 
     Column {
         id: wrapper
@@ -15,8 +16,33 @@ Item {
             horizontalCenter: parent.horizontalCenter
         }
 
+        SGSortFilterProxyModel {
+            id: sortModel
+
+            sortEnabled: true
+            invokeCustomLessThan: true
+
+            function lessThan(index1, index2) {
+                // sort list according to category
+                var item1 = sourceModel.dirname(index1)
+                var item2 = sourceModel.dirname(index2)
+
+                return item1.toLowerCase().localeCompare(item2.toLowerCase()) < 0
+            }
+
+            function previousDirname(index) {
+                if (index - 1 < 0)
+                    return undefined;
+
+                index = mapIndexToSource(index - 1);
+                return sourceModel.dirname(index)
+            }
+        }
+
         Repeater {
             id: repeater
+
+            model: sortModel
 
             delegate: BaseDocDelegate {
                 id: delegate
@@ -46,7 +72,17 @@ Item {
                             right: chevronImage.left
                         }
 
-                        text: model.prettyName
+                        text: {
+                            /*
+                                the first regexp is looking for HTML RichText
+                                the second regexp is looking for spaces after string
+                                the third regexp is looking for spaces before string
+                                the fourth regexp is looking for tabs throughout the string
+                            */
+                            const htmlTags = /(<([^>]+)>)|\s*$|^\s*|\t/ig;
+                            return model.prettyName.replace(htmlTags,"");
+                        }
+                        textFormat: Text.PlainText
                         alternativeColorEnabled: delegate.checked === false
                         wrapMode: Text.Wrap
                         font.bold: delegate.checked ? false : true
@@ -68,8 +104,7 @@ Item {
                 }
 
                 headerSourceComponent: {
-                    if (model.dirname !== model.previousDirname) {
-
+                    if (model.dirname !== sortModel.previousDirname(model.index)) {
                         return sectionDelegateComponent
                     }
 

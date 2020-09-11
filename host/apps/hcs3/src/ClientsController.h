@@ -11,8 +11,10 @@
 #include <rapidjson/document.h>
 
 class HCS_Dispatcher;
+namespace strata::connector
+{
 class Connector;
-class LoggingAdapter;
+}
 
 class ClientsController final
 {
@@ -21,18 +23,12 @@ public:
     ~ClientsController();
 
     /**
-     * Setup logging adapter
-     * @param adapter
-     */
-    void setLogAdapter(LoggingAdapter* adapter);
-
-    /**
      * Initializes clients controller
      * @param dispatcher
      * @param config
      * @return returns true when succceeded otherwise false
      */
-    bool initialize(HCS_Dispatcher* dispatcher, rapidjson::Value& config);
+    bool initialize(std::shared_ptr<HCS_Dispatcher> dispatcher, rapidjson::Value& config);
 
     /**
      * Sends message to client by given clientId
@@ -42,14 +38,18 @@ public:
      */
     bool sendMessage(const QByteArray& clientId, const QString& message);
 
+    /**
+     * Stops the clients controller
+     */
+    void stop();
+
 private:
     void onDescriptorHandle(strata::events_mgr::EvEventBase*, int);
 
 private:
-    HCS_Dispatcher* dispatcher_{nullptr};
-    LoggingAdapter* logAdapter_{nullptr};
+    std::shared_ptr<HCS_Dispatcher> dispatcher_;
 
-    std::unique_ptr<Connector> client_connector_ ;  //router
+    std::unique_ptr<strata::connector::Connector> client_connector_ ;  //router
 
     strata::events_mgr::EvEventsMgr events_manager_;
     strata::events_mgr::EvEvent client_event_;
