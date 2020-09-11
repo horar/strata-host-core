@@ -83,29 +83,22 @@ function init(status_bar_container, stack_container)
 }
 
 /*
-    Retrieve the qml file in the templated file structure
+    Retrieve the qml file in the RCC templated file structure
 */
-var PREFIX = "qrc:/"
-function getQMLFile(class_id, viewName, filename, localResource, version = "") {
-    //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, class_id + "-" + filename + "qml file requested.")
+function getQMLFile(filename, class_id, version = "") {
+    // Build the file name - ./<class_id>/<version>/filename.qml
 
-    // Build the file name - ./view/<class_id>/filename.qml
     if (filename.search(".qml") < 0){
-        //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "adding extension to filename: ", filename)
         filename = filename + ".qml"
     }
-    var qml_file_name = "";
-    if (localResource === true) {
-        qml_file_name = PREFIX + (class_id === "" ? class_id : class_id + "/") + "static/" + filename;
-    } else {
-        qml_file_name = PREFIX + (class_id === "" ? class_id : class_id + "/") + (version === "" ? version : version + "/") + filename
-    }
+    let prefix = "qrc:/" + (class_id === "" ? class_id : class_id + "/") + (version === "" ? version : version + "/")
+    var rcc_filepath = prefix + filename;
 
-    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Locating at ", qml_file_name)
+    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Locating at ", rcc_filepath)
 
-    loadViewVersion(PREFIX + viewName)
+    loadViewVersion(prefix)
 
-    return qml_file_name
+    return rcc_filepath
 }
 
 /*
@@ -114,7 +107,7 @@ function getQMLFile(class_id, viewName, filename, localResource, version = "") {
 function loadViewVersion(filePath)
 {
     var request = new XMLHttpRequest();
-    var version_file_name = filePath + "/version.json"
+    var version_file_name = filePath + "version.json"
     console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "view version file: " + version_file_name)
     request.open("GET", version_file_name);
     request.onreadystatechange = function onVersionRequestFinished() {

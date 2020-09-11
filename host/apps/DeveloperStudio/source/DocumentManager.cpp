@@ -65,8 +65,6 @@ void DocumentManager::updateLoadingProgress(QJsonObject data)
 
 void DocumentManager::populateModels(QJsonObject data)
 {
-    qCDebug(logCategoryDocumentManager) << "data" << data;
-
     QString classId = data["class_id"].toString();
 
     if (classes_.contains(classId)) {

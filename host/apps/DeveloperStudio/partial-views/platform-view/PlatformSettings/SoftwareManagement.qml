@@ -12,7 +12,6 @@ ColumnLayout {
     id: software
 
     property bool upToDate
-    property int index
     property var activeVersion: null
     property var latestVersion: ({})
     property string downloadFilepath: ""
@@ -25,23 +24,29 @@ ColumnLayout {
         onDownloadViewFinished: {
             if (payload.url === activeDownloadUri) {
                 activeDownloadUri = ""
+                progressUpdateText.percent = 1.0
+
                 if (payload.error_string.length > 0) {
                     downloadError = true
                     progressBar.color = "red"
-                    progressUpdateText.percent = 1.0
-                    setUpToDateTimer.start()
+                    upToDate = false
                 } else {
                     downloadError = false;
                     downloadFilepath = payload.filepath;
                     progressBar.color = "#57d445"
-                    progressUpdateText.percent = 1.0
-                    setUpToDateTimer.start()
+                    upToDate = true
+                    platformStack.controlViewContainer.startControlUpdate(latestVersion.version, downloadFilepath)
+                    activeVersion = latestVersion
                 }
+                downloadFilepath = ""
+                downloadButtonMouseArea.enabled = true
+                downloadIcon.opacity = 1
+                downloadButtonMouseArea.cursorShape = Qt.PointingHandCursor
             }
         }
 
         onDownloadControlViewProgress: {
-            if (platformStack.currentIndex === 2 && payload.url === activeDownloadUri) {
+            if (platformStack.currentIndex === settingsContainer.stackIndex && payload.url === activeDownloadUri) {
                 progressUpdateText.percent = payload.bytes_received / payload.bytes_total
             }
         }
@@ -51,34 +56,34 @@ ColumnLayout {
         target: platformStack
 
         onConnectedChanged: {
-            if (platformStack.connected) {
+            if (platformStack.connected){
                 matchVersion()
             }
         }
 
         onCurrentIndexChanged: {
-            // when the active view is this view, then match the version
-            if (platformStack.currentIndex === 2) {
-                matchVersion()
-            }
+            matchVersion()
         }
     }
 
     function matchVersion() {
-        let activeIdx = platformStack.controlViewList.getInstalledVersion()
+        // when the active view is this view, then match the version
+        if (platformStack.currentIndex === settingsContainer.stackIndex) {
+            let activeIdx = platformStack.controlViewContainer.controlViewList.getInstalledVersion()
 
-        if (activeIdx >= 0) {
-            activeVersion = platformStack.controlViewList.get(activeIdx)
-            upToDate = isUpToDate()
-            return
-        }
+            if (activeIdx >= 0) {
+                activeVersion = platformStack.controlViewContainer.controlViewList.get(activeIdx)
+                upToDate = isUpToDate()
+                return
+            }
 
-        upToDate = false
-        let latestVersionIdx = platformStack.controlViewList.getLatestVersion();
-        latestVersion = platformStack.controlViewList.get(latestVersionIdx);
+            upToDate = false
+            let latestVersionIdx = platformStack.controlViewContainer.controlViewList.getLatestVersion();
+            latestVersion = platformStack.controlViewContainer.controlViewList.get(latestVersionIdx);
 
-        if (objectIsEmpty(latestVersion)) {
-            console.error("Could not find any control views on server for class id:", platformStack.class_id)
+            if (objectIsEmpty(latestVersion)) {
+                console.error("Could not find any control views on server for class id:", platformStack.class_id)
+            }
         }
     }
 
@@ -87,37 +92,16 @@ ColumnLayout {
     }
 
     function isUpToDate() {
-        for (let i = 0; i < platformStack.controlViewListCount; i++) {
-            let version = platformStack.controlViewList.version(i)
+        for (let i = 0; i < platformStack.controlViewContainer.controlViewListCount; i++) {
+            let version = platformStack.controlViewContainer.controlViewList.version(i)
             if (version !== activeVersion.version && SGVersionUtils.greaterThan(version, activeVersion.version)) {
                 // if the version is greater, then set the latestVersion here
-                latestVersion = platformStack.controlViewList.get(i);
+                latestVersion = platformStack.controlViewContainer.controlViewList.get(i);
                 return false;
             }
         }
         latestVersion = activeVersion;
         return true;
-    }
-
-    Timer {
-        id: setUpToDateTimer
-        interval: 1000
-        repeat: false
-
-        onTriggered: {
-            if (downloadError) {
-                upToDate = false
-                downloadFilepath = ""
-            } else {
-                upToDate = true
-                platformStack.controlContainer.startControlUpdate(latestVersion.version, downloadFilepath)
-                activeVersion = latestVersion
-                downloadFilepath = ""
-            }
-            downloadButtonMouseArea.enabled = true
-            downloadIcon.opacity = 1
-            downloadButtonMouseArea.cursorShape = Qt.PointingHandCursor
-        }
     }
 
     Text {
@@ -192,7 +176,7 @@ ColumnLayout {
         Layout.topMargin: 15
         color: "#eee"
         visible: {
-            return !software.upToDate && !objectIsEmpty(latestVersion) && platformStack.controlContainer.activeDownloadUri === ""
+            return !software.upToDate && !objectIsEmpty(latestVersion) && platformStack.controlViewContainer.activeDownloadUri === ""
         }
 
         ColumnLayout {
