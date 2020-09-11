@@ -1,27 +1,16 @@
 #include "SGUtilsCpp-test.h"
 
-#include <QFile>
+#include <QTemporaryFile>
 #include <QIODevice>
 #include <QTextStream>
 #include <QDateTime>
 
 void SGUtilsCppTest::SetUp()
 {
-    QFile tempFile("test.txt");
-    if (!tempFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        exit(EXIT_FAILURE);
-    }
-
-    QTextStream out(&tempFile);
-    out << lorumIpsumText;
-
-    tempFile.close();
 }
 
 void SGUtilsCppTest::TearDown()
 {
-    QFile tempFile("test.txt");
-    tempFile.remove();
 }
 
 TEST_F(SGUtilsCppTest, testFileUtils)
@@ -36,27 +25,37 @@ TEST_F(SGUtilsCppTest, testFileUtils)
 
     EXPECT_EQ(utils.joinFilePath("/prepend/path", "append-me.txt"), "/prepend/path/append-me.txt");
 
-    QFile exeFile("test.exe");
-    if (!exeFile.open(QIODevice::WriteOnly)) {
+    // Text executable file utils
+    QTemporaryFile exeFile("test.exe");
+    if (!exeFile.open()) {
         throw "Unable to open executable";
     }
     exeFile.setPermissions(QFile::Permission::ExeUser);
     QString testText = "test";
     exeFile.write(testText.toUtf8());
-    exeFile.close();
-    EXPECT_TRUE(utils.isExecutable("test.exe"));
-    exeFile.remove();
+    EXPECT_TRUE(utils.isExecutable(exeFile.fileName()));
     EXPECT_FALSE(utils.isExecutable("test.txt"));
 }
 
 TEST_F(SGUtilsCppTest, testFileIO)
 {
+    QTemporaryFile tempFile("test.txt");
+    if (!tempFile.open()) {
+        exit(EXIT_FAILURE);
+    }
+    QTextStream out(&tempFile);
+    out << lorumIpsumText;
+
+    // Go back to the beginning of file and make sure data is written to disk
+    out.flush();
+    tempFile.seek(0);
+
     // Read from file
-    EXPECT_EQ(utils.readTextFileContent("test.txt"), lorumIpsumText);
+    EXPECT_EQ(utils.readTextFileContent(tempFile.fileName()), lorumIpsumText);
 
     // Write to file
-    EXPECT_TRUE(utils.atomicWrite("test.txt", "hello world"));
-    EXPECT_EQ(utils.readTextFileContent("test.txt"), "hello world");
+    EXPECT_TRUE(utils.atomicWrite(tempFile.fileName(), "hello world"));
+    EXPECT_EQ(utils.readTextFileContent(tempFile.fileName()), "hello world");
 }
 
 TEST_F(SGUtilsCppTest, testRandomUtils)
