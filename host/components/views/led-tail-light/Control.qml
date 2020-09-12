@@ -410,8 +410,12 @@ Item {
                 powerControl.visible = false
                 sAMOPTControl.visible = false
                 miscControl.visible = false
+
                 if(alertViewBadge.opacity  != 1.0)
                     alertViewBadge.opacity = 0.0
+
+                if(miscViewBadge.opacity  != 1.0)
+                    miscViewBadge.opacity = 0.0
             }
         }
 
@@ -427,8 +431,10 @@ Item {
                 powerControl.visible = false
                 sAMOPTControl.visible = false
                 miscControl.visible = false
+
                 if(alertViewBadge.opacity  != 1.0)
                     alertViewBadge.opacity = 0.0
+
                 if(miscViewBadge.opacity  != 1.0)
                     miscViewBadge.opacity = 0.0
             }
@@ -448,6 +454,7 @@ Item {
                 sAMOPTControl.visible = false
                 miscControl.visible = false
                 alertViewBadge.opacity = 0.0
+
                 if(miscViewBadge.opacity  != 1.0)
                     miscViewBadge.opacity = 0.0
             }
@@ -471,8 +478,10 @@ Item {
                 powerControl.visible = false
                 sAMOPTControl.visible = true
                 miscControl.visible = false
+
                 if(alertViewBadge.opacity  != 1.0)
                     alertViewBadge.opacity = 0.0
+
                 if(miscViewBadge.opacity  != 1.0)
                     miscViewBadge.opacity = 0.0
             }
@@ -491,6 +500,7 @@ Item {
                 sAMOPTControl.visible = false
                 miscControl.visible = true
                 miscViewBadge.opacity = 0.0
+
                 if(alertViewBadge.opacity  != 1.0)
                     alertViewBadge.opacity = 0.0
             }
