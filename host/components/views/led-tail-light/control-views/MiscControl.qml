@@ -158,28 +158,27 @@ Item {
                                 id: oddChannelError
                                 width : 40
 
+
                             }
 
                             property var misc_odd_ch_error: platformInterface.misc_odd_ch_error
                             onMisc_odd_ch_errorChanged: {
                                 oddChannelErrorLabel.text = misc_odd_ch_error.caption
                                 setStatesForControls(oddChannelError,misc_odd_ch_error.states[0])
-                                //                                if(misc_odd_ch_error.state === "enabled"){
-                                //                                    oddChannelError.opacity = 1.0
-                                //                                    oddChannelError.enabled = true
-                                //                                }
-                                //                                else if (misc_odd_ch_error.state === "disabled") {
-                                //                                    oddChannelError.opacity = 1.0
-                                //                                    oddChannelError.enabled = false
-                                //                                }
-                                //                                else {
-                                //                                    oddChannelError.opacity = 0.5
-                                //                                    oddChannelError.enabled = false
-                                //                                }
+
                                 if(misc_odd_ch_error.value === true){
+                                    if(!miscControl.visible){
+                                        alertViewBadge.opacity = 1.0
+                                    }
+
                                     oddChannelError.status = SGStatusLight.Red
                                 }
-                                else oddChannelError.status = SGStatusLight.Off
+                                else {
+                                    if(!miscControl.visible){
+                                        alertViewBadge.opacity = 0.0
+                                    }
+                                    oddChannelError.status = SGStatusLight.Off
+                                }
                             }
 
                             property var misc_odd_ch_error_caption: platformInterface.misc_odd_ch_error_caption.caption
@@ -290,9 +289,17 @@ Item {
                                 evenChannelErrorLabel.text = misc_even_ch_error.caption
                                 setStatesForControls(evenChannelError,misc_even_ch_error.states[0])
                                 if(misc_even_ch_error.value === true){
+                                    if(!miscControl.visible){
+                                        alertViewBadge.opacity = 1.0
+                                    }
                                     evenChannelError.status = SGStatusLight.Red
                                 }
-                                else evenChannelError.status = SGStatusLight.Off
+                                else {
+                                    if(!miscControl.visible){
+                                        alertViewBadge.opacity = 0.0
+                                    }
+                                    evenChannelError.status = SGStatusLight.Off
+                                }
 
                             }
 
