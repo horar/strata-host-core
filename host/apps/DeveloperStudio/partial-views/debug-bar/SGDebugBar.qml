@@ -1,14 +1,14 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import QtQuick.Layouts 1.3
+import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
 import Qt.labs.folderlistmodel 2.12
 import Qt.labs.settings 1.1 as QtLabsSettings
-import tech.strata.commoncpp 1.0
 
+import tech.strata.commoncpp 1.0
+import tech.strata.signals 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/restclient.js" as Rest
-import "qrc:/js/login_utilities.js" as Authenticator
 import "qrc:/js/uuid_map.js" as UuidMap
 import "qrc:/js/constants.js" as Constants
 
@@ -130,10 +130,7 @@ Item {
 
             Button {
                 text: "Reset Window Size"
-                onClicked: {
-                    mainWindow.height = 900
-                    mainWindow.width = 1200
-                }
+                onClicked: mainWindow.resetWindowSize()
             }
 
             Button {
@@ -179,7 +176,7 @@ Item {
                     } else {
                         Rest.url = root.testAuthServer
                     }
-                    Authenticator.signals.serverChanged()
+                    Signals.serverChanged()
                 }
 
                 Component.onCompleted: {
@@ -195,7 +192,7 @@ Item {
                 }
 
                 Connections {
-                    target: Authenticator.signals
+                    target: Signals
                     onServerChanged: {
                         serverChange.setButtonText()
                     }
@@ -254,5 +251,50 @@ Item {
         onClicked: {
             commandBar.visible = true
         }
+    }
+
+    SGQmlErrorListButton {
+        id: qmlErrorListButton
+
+        visible: qmlErrorModel.count !== 0
+        text: qsTr("%1 QML warnings").arg(qmlErrorModel.count)
+
+        onCheckedChanged: {
+            if (checked) {
+                qmlErrorListPopUp.open()
+                stopAnimation()
+            } else {
+                qmlErrorListPopUp.close()
+                startAnimation()
+            }
+        }
+
+        ListModel {
+            id: qmlErrorModel
+        }
+
+        Connections {
+            target: sdsModel
+            onNotifyQmlError: {
+                qmlErrorModel.append({"data" : notifyQmlError})
+            }
+        }
+    }
+
+    SGQmlErrorListPopUp {
+        id: qmlErrorListPopUp
+
+        topMargin: 32
+        leftMargin: 32
+        topPadding: errorListDetailsChecked ? undefined : 1
+        bottomPadding: errorListDetailsChecked ? undefined : 1
+
+        anchors.centerIn: errorListDetailsChecked ? ApplicationWindow.overlay : undefined
+        opacity: errorListDetailsChecked ? 0.9 : 0.7
+
+        title: qmlErrorListButton.text
+
+
+        qmlErrorListModel: qmlErrorModel
     }
 }

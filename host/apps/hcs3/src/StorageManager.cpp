@@ -358,6 +358,13 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
         QJsonObject jsonPlatform(value.toObject());
         jsonPlatform.insert("image", url.toString());
 
+        QJsonArray parts_list;
+
+        for (PlatformDatasheetItem i : platDoc->getDatasheetList()) {
+            parts_list.append(i.opn);
+        }
+
+        jsonPlatform.insert("parts_list", parts_list);
         jsonPlatformListResponse.append(jsonPlatform);
     }
 

@@ -34,7 +34,7 @@ Item {
                 if (index - 1 < 0)
                     return undefined;
 
-                index = mapIndexFromSource(index - 1);
+                index = mapIndexToSource(index - 1);
                 return sourceModel.dirname(index)
             }
         }

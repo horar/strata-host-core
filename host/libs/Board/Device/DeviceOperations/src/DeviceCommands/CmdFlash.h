@@ -15,11 +15,12 @@ public:
     bool logSendMessage() const override;
     void prepareRepeat() override;
     int dataForFinish() const override;
-    void setChunk(const QVector<quint8>& chunk, int chunkNumber);
+    void setChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount);
 private:
     const bool flashFirmware_;  // true = flash firmware, false = flash bootloader
     QVector<quint8> chunk_;
     int chunkNumber_;
+    int chunkCount_;
     const uint maxRetries_;
     uint retriesCount_;
 };
