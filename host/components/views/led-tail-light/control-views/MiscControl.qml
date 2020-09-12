@@ -168,14 +168,13 @@ Item {
 
                                 if(misc_odd_ch_error.value === true){
                                     if(!miscControl.visible){
-                                        alertViewBadge.opacity = 1.0
+                                        miscViewBadge.opacity = 1.0
                                     }
-
                                     oddChannelError.status = SGStatusLight.Red
                                 }
                                 else {
                                     if(!miscControl.visible){
-                                        alertViewBadge.opacity = 0.0
+                                        miscViewBadge.opacity = 0.0
                                     }
                                     oddChannelError.status = SGStatusLight.Off
                                 }
@@ -194,9 +193,17 @@ Item {
                             property var misc_odd_ch_error_value: platformInterface.misc_odd_ch_error_value.value
                             onMisc_odd_ch_error_valueChanged: {
                                 if(misc_odd_ch_error_value === true){
+                                    if(!miscControl.visible){
+                                        miscViewBadge.opacity = 1.0
+                                    }
                                     oddChannelError.status = SGStatusLight.Red
                                 }
-                                else oddChannelError.status = SGStatusLight.Off
+                                else {
+                                    if(!miscControl.visible){
+                                        miscViewBadge.opacity = 0.0
+                                    }
+                                    oddChannelError.status = SGStatusLight.Off
+                                }
                             }
 
                         }
@@ -290,13 +297,13 @@ Item {
                                 setStatesForControls(evenChannelError,misc_even_ch_error.states[0])
                                 if(misc_even_ch_error.value === true){
                                     if(!miscControl.visible){
-                                        alertViewBadge.opacity = 1.0
+                                        miscViewBadge.opacity = 1.0
                                     }
                                     evenChannelError.status = SGStatusLight.Red
                                 }
                                 else {
                                     if(!miscControl.visible){
-                                        alertViewBadge.opacity = 0.0
+                                        miscViewBadge.opacity = 0.0
                                     }
                                     evenChannelError.status = SGStatusLight.Off
                                 }
@@ -316,9 +323,17 @@ Item {
                             property var misc_even_ch_error_value: platformInterface.misc_even_ch_error_value.value
                             onMisc_even_ch_error_valueChanged: {
                                 if(misc_even_ch_error_value === true){
+                                    if(!miscControl.visible){
+                                        miscViewBadge.opacity = 1.0
+                                    }
                                     evenChannelError.status = SGStatusLight.Red
                                 }
-                                else evenChannelError.status = SGStatusLight.Off
+                                else {
+                                    if(!miscControl.visible){
+                                        miscViewBadge.opacity = 0.0
+                                    }
+                                    evenChannelError.status = SGStatusLight.Off
+                                }
                             }
 
                         }

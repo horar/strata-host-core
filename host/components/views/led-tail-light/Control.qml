@@ -429,7 +429,10 @@ Item {
                 miscControl.visible = false
                 if(alertViewBadge.opacity  != 1.0)
                     alertViewBadge.opacity = 0.0
+                if(miscViewBadge.opacity  != 1.0)
+                    miscViewBadge.opacity = 0.0
             }
+
         }
 
         TabButton {
@@ -445,6 +448,8 @@ Item {
                 sAMOPTControl.visible = false
                 miscControl.visible = false
                 alertViewBadge.opacity = 0.0
+                if(miscViewBadge.opacity  != 1.0)
+                    miscViewBadge.opacity = 0.0
             }
             NotificationBadge{
                 id: alertViewBadge
@@ -468,6 +473,8 @@ Item {
                 miscControl.visible = false
                 if(alertViewBadge.opacity  != 1.0)
                     alertViewBadge.opacity = 0.0
+                if(miscViewBadge.opacity  != 1.0)
+                    miscViewBadge.opacity = 0.0
             }
         }
 
@@ -483,8 +490,15 @@ Item {
                 powerControl.visible = false
                 sAMOPTControl.visible = false
                 miscControl.visible = true
+                miscViewBadge.opacity = 0.0
                 if(alertViewBadge.opacity  != 1.0)
                     alertViewBadge.opacity = 0.0
+            }
+            NotificationBadge{
+                id: miscViewBadge
+                anchors.right: parent.right
+                anchors.top: parent.top
+                opacity: 0
             }
         }
     }
