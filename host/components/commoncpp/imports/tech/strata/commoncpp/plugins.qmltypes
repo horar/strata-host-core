@@ -119,6 +119,8 @@ Module {
         Property { name: "xMax"; type: "double" }
         Property { name: "yMin"; type: "double" }
         Property { name: "yMax"; type: "double" }
+        Property { name: "yRightMin"; type: "double" }
+        Property { name: "yRightMax"; type: "double" }
         Property { name: "xTitle"; type: "string" }
         Property { name: "xTitlePixelSize"; type: "int" }
         Property { name: "yTitle"; type: "string" }
@@ -134,6 +136,7 @@ Module {
         Property { name: "xGrid"; type: "bool"}
         Property { name: "yGrid"; type: "bool"}
         Property { name: "gridColor"; type: "QColor"}
+        Property { name: "yRight"; type: "bool"}
         Method { name: "initialize" }
         Method { name: "update" }
         Method {
