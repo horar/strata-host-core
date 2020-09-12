@@ -19,9 +19,9 @@ QByteArray CmdStartFlash::message() {
 
 bool CmdStartFlash::processNotification(rapidjson::Document& doc) {
     CommandValidator::JsonType jsonType = (flashFirmware_)
-                                          ? CommandValidator::JsonType::startFlashFirmwareRes
-                                          : CommandValidator::JsonType::startFlashBootloaderRes;
-    if (CommandValidator::validate(jsonType, doc)) {
+                                          ? CommandValidator::JsonType::startFlashFirmwareNotif
+                                          : CommandValidator::JsonType::startFlashBootloaderNotif;
+    if (CommandValidator::validateNotification(jsonType, doc)) {
         const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
         result_ = (status == JSON_OK) ? CommandResult::Done : CommandResult::Failure;
         return true;

@@ -1,10 +1,10 @@
 add_executable(${PROJECT_NAME}-test
     main.cpp
-    SGUserSettings-test.cpp
+    SGUtilsCpp-test.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}-test
-    PRIVATE SGUserSettings
+    PRIVATE SGUtilsCpp
     PRIVATE gtest::gtest
 )
 

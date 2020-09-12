@@ -101,8 +101,5 @@ private:
 
     QHash<QString, ResourceItem*> viewsRegistered_;
 
-    static inline QStringList coreResources_{
-        QStringLiteral("component-fonts.rcc"), QStringLiteral("component-theme.rcc"),
-        QStringLiteral("component-pdfjs.rcc"), QStringLiteral("component-common.rcc"),
-        QStringLiteral("component-sgwidgets.rcc")};
+    static const QStringList coreResources_;
 };

@@ -8,6 +8,12 @@
 #include <QFileInfo>
 #include <QTimer>
 
+const QStringList ResourceLoader::coreResources_{
+    QStringLiteral("component-fonts.rcc"), QStringLiteral("component-theme.rcc"),
+    QStringLiteral("component-pdfjs.rcc"), QStringLiteral("component-common.rcc"),
+    QStringLiteral("component-sgwidgets.rcc")
+};
+
 ResourceLoader::ResourceLoader(QObject *parent) : QObject(parent)
 {
     loadCoreResources();

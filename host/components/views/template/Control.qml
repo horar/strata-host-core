@@ -32,6 +32,8 @@ Item {
 
         TabButton {
             id: basicButton
+            KeyNavigation.right: this
+            KeyNavigation.left: this
             text: qsTr("Basic")
             onClicked: {
                 controlContainer.currentIndex = 0
@@ -40,6 +42,8 @@ Item {
 
         TabButton {
             id: advancedButton
+            KeyNavigation.right: this
+            KeyNavigation.left: this
             text: qsTr("Advanced")
             onClicked: {
                 controlContainer.currentIndex = 1
@@ -48,6 +52,8 @@ Item {
 
         TabButton {
             id: userSettingsButton
+            KeyNavigation.right: this
+            KeyNavigation.left: this
             text: qsTr("User Settings")
             onClicked: {
                 controlContainer.currentIndex = 2
