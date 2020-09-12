@@ -1592,7 +1592,7 @@ Item {
     }
 
     property var misc_odd_ch_error_value: {
-        "value": true
+        "value": false
     }
 
     property var misc_even_ch_error: {
