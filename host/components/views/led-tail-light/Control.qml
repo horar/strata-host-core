@@ -401,6 +401,8 @@ Item {
         TabButton {
             id: carDemoButton
             text: qsTr("Car Demo Mode")
+            KeyNavigation.right: this
+            KeyNavigation.left: this
             onClicked: {
                 platformInterface.set_mode.update("Car Demo")
                 carDemoMode.visible = true
@@ -416,6 +418,8 @@ Item {
         TabButton {
             id: ledControlButton
             text: qsTr("LED Control")
+            KeyNavigation.right: this
+            KeyNavigation.left: this
             onClicked: {
                 platformInterface.set_mode.update("LED Driver")
                 carDemoMode.visible = false
@@ -431,6 +435,8 @@ Item {
         TabButton {
             id: powerControlButton
             text: qsTr("Power")
+            KeyNavigation.right: this
+            KeyNavigation.left: this
             onClicked: {
                 platformInterface.set_mode.update("Power")
                 carDemoMode.visible = false
@@ -451,6 +457,8 @@ Item {
         TabButton {
             id: samOptControlButton
             text: qsTr("SAM, OTP, and CRC")
+            KeyNavigation.right: this
+            KeyNavigation.left: this
             onClicked: {
                 platformInterface.set_mode.update("LED Driver")
                 carDemoMode.visible = false
@@ -466,6 +474,8 @@ Item {
         TabButton {
             id: miscControlButton
             text: qsTr("Miscellaneous")
+            KeyNavigation.right: this
+            KeyNavigation.left: this
             onClicked: {
                 platformInterface.set_mode.update("LED Driver")
                 carDemoMode.visible = false
