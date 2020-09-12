@@ -22,26 +22,21 @@ ResourceLoader::~ResourceLoader()
     }
 }
 
-void ResourceLoader::requestDeleteViewResource(const ControlViewType type, const QString &class_id, const QString &path, const QString &version, QObject *loader) {
-    if (type == LOCAL_VIEW) {
-        qDebug(logCategoryResourceLoader) << "Requesting deletion of local view" << class_id;
-        QTimer::singleShot(1000, this, [this, class_id, path, loader]{ deleteStaticViewResource(class_id, path, loader); });
-    } else if (type == OTA_VIEW) {
-        qDebug(logCategoryResourceLoader) << "Requesting deletion of OTA view" << class_id;
-        QTimer::singleShot(1000, this, [this, class_id, path, version, loader]{ deleteViewResource(class_id, path, version, loader); });
-    }
+void ResourceLoader::requestDeleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent) {
+    qDebug(logCategoryResourceLoader) << "Requesting unregistration and deletion of RCC:" << rccPath;
+    QTimer::singleShot(4000, this, [this, class_id, rccPath, version, parent]{ deleteViewResource(class_id, rccPath, version, parent); });
 }
 
-bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &path, const QString &version, QObject *loader) {
-    if (path.isEmpty()) {
+bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent) {
+    if (rccPath.isEmpty() || class_id.isEmpty() || version.isEmpty()) {
         return false;
     }
 
-    QQmlEngine *eng = qmlEngine(loader);
+    QQmlEngine *eng = qmlEngine(parent);
     eng->collectGarbage();
     eng->trimComponentCache();
 
-    QFile resourceInfo(path);
+    QFile resourceInfo(rccPath);
 
     if (resourceInfo.exists()) {
         if (QResource::unregisterResource(resourceInfo.fileName(), getQResourcePrefix(class_id, version)) == false) {
@@ -60,7 +55,8 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
 
     QHash<QString, ResourceItem*>::iterator itr = viewsRegistered_.find(class_id);
     // Only reset this view in viewsRegistered if we have not already registered a different version
-    // This most likely will be the case because we first register the new view's version under a different mapRoot and then asynchronously delete the old one. In this case, the viewsRegistered_[class_id] will already contain the updated version
+    // This most likely will be the case because we first register the new view's version under a different mapRoot and then asynchronously delete the old one.
+    // In this case, the viewsRegistered_[class_id] will already contain the updated version
     if (itr != viewsRegistered_.end() && itr.value()->filepath == resourceInfo.fileName()) {
         ResourceItem *info = itr.value();
         info->filepath = "";
@@ -69,59 +65,39 @@ bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &
     return true;
 }
 
-bool ResourceLoader::deleteStaticViewResource(const QString &class_id, const QString &displayName, QObject *loader) {
-    QDir staticViewsDir(ResourcePath::viewsResourcePath());
-    QFileInfo rccFile(staticViewsDir.filePath("views-" + displayName + ".rcc"));
-    if (rccFile.exists()) {
-        qCDebug(logCategoryResourceLoader) << "Deleting static resource" << displayName;
-        return deleteViewResource(class_id, rccFile.filePath(), "static", loader);
-    } else {
-        return false;
-    }
-}
-
-void ResourceLoader::registerControlViewResources(const QString &class_id, const QString &path, const QString &version) {
+bool ResourceLoader::registerResource(const QString &path, const QString &prefix) {
     QFileInfo viewFileInfo(path);
 
     if (viewFileInfo.exists()) {
-        qCDebug(logCategoryResourceLoader) << "Loading resource " << viewFileInfo.filePath() << " for class id: " << class_id;
+        qCDebug(logCategoryResourceLoader) << "Loading resource " << viewFileInfo.filePath() << " into virtual directory: " << prefix;
 
         /*********
-         * We are currently using the class id and version to avoid conflicts when registering resources
-         * Ex) version = 1.15.0 -> qrc:/<class_id>/1.15.0/Control.qml
+         * Virtual directory prefix avoids conflicts when registering resources with same internal names or structure
+         * Ex: qrc:/<prefix>/Control.qml
          *********/
-        if (QResource::registerResource(viewFileInfo.filePath(), getQResourcePrefix(class_id, version)) == false) {
-            qCCritical(logCategoryResourceLoader) << "Failed to register resource " << viewFileInfo.fileName() << " for class id: " << class_id;
-            emit resourceRegisterFailed(class_id);
-            return;
+        if (QResource::registerResource(viewFileInfo.filePath(), prefix) == false) {
+            qCCritical(logCategoryResourceLoader) << "Failed to register resource " << viewFileInfo.fileName();
+            return false;
         } else {
-            qCDebug(logCategoryResourceLoader) << "Successfully registered resource for class id: " << class_id;
-            ResourceItem *info = new ResourceItem(viewFileInfo.filePath(), version);
-            viewsRegistered_.insert(class_id, info);
-            emit resourceRegistered(class_id);
+            qCDebug(logCategoryResourceLoader) << "Successfully registered resource.";
+            return true;
         }
     } else {
         qCCritical(logCategoryResourceLoader) << "Could not find resource file. Looked in " << viewFileInfo.filePath();
-        emit resourceRegisterFailed(class_id);
+        return false;
     }
 }
 
-bool ResourceLoader::registerStaticControlViewResources(const QString &class_id, const QString &displayName) {
-    if (displayName.isEmpty()) {
+bool ResourceLoader::registerControlViewResource(const QString &rccPath, const QString &class_id, const QString &version) {
+    if (rccPath.isEmpty() || class_id.isEmpty() || version.isEmpty()) {
         return false;
     }
 
-    QDir staticViewsDir(ResourcePath::viewsResourcePath());
-    QFileInfo resourceInfo(staticViewsDir.filePath("views-" + displayName + ".rcc"));
-
-    if (resourceInfo.exists()) {
-        qCDebug(logCategoryResourceLoader) << "Found static resource file, attempting to load resource " << resourceInfo.filePath() << " for class id: " << class_id;
-        bool registerResult = QResource::registerResource(resourceInfo.filePath(), getQResourcePrefix(class_id, "static"));
-        ResourceItem *info = new ResourceItem(resourceInfo.filePath(), "");
+    if (registerResource(rccPath, getQResourcePrefix(class_id, version))) {
+        ResourceItem *info = new ResourceItem(rccPath, version);
         viewsRegistered_.insert(class_id, info);
-        return registerResult;
+        return true;
     } else {
-        qCDebug(logCategoryResourceLoader) << "Did not find static resource file " << resourceInfo.filePath();
         return false;
     }
 }
@@ -140,6 +116,10 @@ void ResourceLoader::loadCoreResources()
         qCDebug(logCategoryStrataDevStudio(), "Loading '%s: %d': ", qUtf8Printable(resourceFile),
                 QResource::registerResource(resourceFile));
     }
+}
+
+QString ResourceLoader::getStaticResourcesString() {
+    return ResourcePath::viewsResourcePath();
 }
 
 QUrl ResourceLoader::getStaticResourcesUrl() {

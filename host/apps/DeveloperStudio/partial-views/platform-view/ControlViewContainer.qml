@@ -11,15 +11,14 @@ import tech.strata.sgwidgets 1.0
 Item {
     id: controlViewContainer
 
-    property bool usingLocalView: true
-    property string updateVersion: ""
-    property string updateVersionPath: ""
-    property string activeVersion: ""
+    property bool usingStaticView: true
     property string activeDownloadUri: ""
-    property var versionsToRemoveFromUpdate: []
+    property var otaVersionsToRemove: []
     property var controlViewList: sdsModel.documentManager.getClassDocuments(platformStack.class_id).controlViewListModel
     property int controlViewListCount: controlViewList.count
     property bool controlLoaded: false
+
+    readonly property string staticVersion: "static"
 
     Rectangle {
         id: loadingBarContainer
@@ -48,12 +47,6 @@ Item {
                 width: loadingBar.visualPosition * parent.width
                 radius: 5
             }
-
-            onValueChanged: {
-                if (loadingBar.value === 1.0) {
-                    loadControl()
-                }
-            }
         }
 
         SGText {
@@ -62,7 +55,7 @@ Item {
                 bottom: loadingBar.top
                 bottomMargin: 10
             }
-            text: "Loading..."
+            text: loadingBar.value === 1.0 ? "Loading Control View..." : "Downloading Control View..."
             fontSizeMultiplier: 2
             color: "#666"
         }
@@ -73,6 +66,8 @@ Item {
         anchors {
             fill: parent
         }
+
+        // Control views are dynamically placed inside this container
     }
 
     DisconnectedOverlay {
@@ -80,55 +75,173 @@ Item {
     }
 
     function initialize() {
-        // When we reconnect the board, the view has already been registered, so we can immediately load the control
-        if (sdsModel.resourceLoader.isViewRegistered(platformStack.class_id)) {
-            if (sdsModel.resourceLoader.getVersionRegistered(platformStack.class_id) !== "") {
-                usingLocalView = false;
+        if (controlLoaded === false){
+            // When we reconnect the board, the view has already been registered, so we can immediately load the control
+            if (sdsModel.resourceLoader.isViewRegistered(platformStack.class_id)) {
+                if (sdsModel.resourceLoader.getVersionRegistered(platformStack.class_id) !== controlViewContainer.staticVersion) {
+                    usingStaticView = false;
+                }
+                loadControl()
+            } else {
+                loadingBarContainer.visible = true;
+                loadingBar.value = 0.01;
+
+                // Try to load static resource, otherwise move to OTA logic
+                if (getStaticResource() === false) {
+                    usingStaticView = false;
+                    getOTAResource();
+                }
             }
-            loadControl()
-        } else {
-            loadingBarContainer.visible = true;
-            loadingBar.value = 0.01;
-            checkForResources()
         }
     }
 
+    /*
+      Loads Control.qml from the installed resource file into controlContainer
+    */
     function loadControl () {
-        if (controlLoaded === false){
-
-            let version = "";
-            if (usingLocalView === false) {
-                let idx = controlViewList.getInstalledVersion();
-                if (idx >= 0) {
-                    version = controlViewList.version(idx);
-                } else {
-                    console.error("No resource version found for", platformStack.class_id)
-                }
-            } else {
-                version = "static"
-            }
-
-            let control_filepath = NavigationControl.getQMLFile("Control", platformStack.class_id, version)
-
-            // Set up context for creation
-            Help.setClassId(platformStack.device_id)
-            NavigationControl.context.class_id = platformStack.class_id
-            NavigationControl.context.device_id = platformStack.device_id
-
-            let control_obj = sdsModel.resourceLoader.createViewObject(control_filepath, controlContainer);
-
-            // Tear Down creation context
-            delete NavigationControl.context.class_id
-            delete NavigationControl.context.device_id
-
-            if (control_obj === null) {
-                createErrorScreen("Could not load file: " + control_filepath)
-            } else {
-                controlLoaded = true
-            }
-            loadingBarContainer.visible = false;
-            loadingBar.value = 0.0;
+        let version = controlViewContainer.staticVersion
+        if (usingStaticView === false) {
+            let installedVersionIndex = controlViewList.getInstalledVersion();
+            version = controlViewList.version(installedVersionIndex);
         }
+
+        let control_filepath = NavigationControl.getQMLFile("Control", platformStack.class_id, version)
+
+        // Set up context for control object creation
+        Help.setClassId(platformStack.device_id)
+        NavigationControl.context.class_id = platformStack.class_id
+        NavigationControl.context.device_id = platformStack.device_id
+
+        let control_obj = sdsModel.resourceLoader.createViewObject(control_filepath, controlContainer);
+
+        // Tear Down creation context
+        delete NavigationControl.context.class_id
+        delete NavigationControl.context.device_id
+
+        if (control_obj === null) {
+            createErrorScreen("Could not load file: " + control_filepath)
+        } else {
+            controlLoaded = true
+        }
+        loadingBarContainer.visible = false;
+        loadingBar.value = 0.0;
+    }
+
+    /*
+        Try to find/register a static resource file
+        Todo: remove this when fully OTA
+    */
+    function getStaticResource() {
+        if (UuidMap.uuid_map.hasOwnProperty(platformStack.class_id)){
+            let name = UuidMap.uuid_map[platformStack.class_id];
+            let RCCpath = sdsModel.resourceLoader.getStaticResourcesString() + "/views-" + name + ".rcc"
+
+            usingStaticView = true
+            if (registerResource(RCCpath, controlViewContainer.staticVersion)) {
+                return true;
+            } else {
+                removeControl() // registerResource() failing creates an error screen, kill it to show OTA progress bar
+                usingStaticView = false
+            }
+        }
+        return false
+    }
+
+    /*
+        Try to find an installed OTA resource file and load it, otherwise download newest version
+    */
+    function getOTAResource() {
+        // Find index of any installed version
+        let installedVersionIndex = controlViewList.getInstalledVersion();
+
+        if (installedVersionIndex >= 0) {
+            registerResource(controlViewList.filepath(installedVersionIndex), controlViewList.version(installedVersionIndex))
+        } else {
+            let latestVersionindex = controlViewList.getLatestVersion();
+
+            if (controlViewList.uri(latestVersionindex) === "" || controlViewList.md5(latestVersionindex) === "") {
+                createErrorScreen("Found no local control view and none for download.")
+                return
+            }
+
+            let downloadCommand = {
+                "hcs::cmd": "download_view",
+                "payload": {
+                    "url": controlViewList.uri(latestVersionindex),
+                    "md5": controlViewList.md5(latestVersionindex),
+                    "class_id": platformStack.class_id
+                }
+            };
+
+            activeDownloadUri = controlViewList.uri(latestVersionindex)
+
+            coreInterface.sendCommand(JSON.stringify(downloadCommand));
+        }
+    }
+
+    /*
+      Installs new resource file and loads it, cleans up old versions
+    */
+    function installResource(newVersion, newPath) {
+        removeControl();
+
+        if (newVersion !== "") {
+            for (let i = 0; i < controlViewListCount; i++) {
+                if (controlViewList.version(i) === newVersion) {
+                    controlViewList.setInstalled(i, true);
+                    controlViewList.setFilepath(i, newPath);
+                } else if (controlViewList.version(i) !== newVersion && controlViewList.installed(i) === true) {
+                    controlViewList.setInstalled(i, false);
+                    let versionToRemove = {
+                        "version": controlViewList.version(i),
+                        "filepath": controlViewList.filepath(i)
+                    }
+                    otaVersionsToRemove.push(versionToRemove);
+                }
+            }
+            usingStaticView = false;
+
+            if (platformStack.connected) {
+                // Can update from software mgmt while not connected, but don't want to create control view
+                registerResource(newPath, newVersion);
+            }
+
+            cleanUpResources()
+        } else {
+            createErrorScreen("No version number found for install")
+        }
+    }
+
+    /*
+      Unregister and delete all resources that are not the new installed one
+    */
+    function cleanUpResources() {
+        // Remove any static resources if available
+        if (UuidMap.uuid_map.hasOwnProperty(platformStack.class_id)) {
+            let name = UuidMap.uuid_map[platformStack.class_id];
+            let RCCpath = sdsModel.resourceLoader.getStaticResourcesString() + "/views-" + name + ".rcc"
+            sdsModel.resourceLoader.requestDeleteViewResource(platformStack.class_id, RCCpath, controlViewContainer.staticVersion, controlContainer);
+        }
+
+        for (let i = 0; i < otaVersionsToRemove.length; i++) {
+            sdsModel.resourceLoader.requestDeleteViewResource(platformStack.class_id, otaVersionsToRemove[i].filepath, otaVersionsToRemove[i].version, controlContainer);
+        }
+
+        otaVersionsToRemove = []
+    }
+
+    /*
+      Removes the control view from controlContainer
+    */
+    function registerResource (filepath, version) {
+        let success = sdsModel.resourceLoader.registerControlViewResource(filepath, platformStack.class_id, version);
+        if (success) {
+            loadingBar.value = 1.0
+            loadControl()
+        } else {
+            createErrorScreen("Failed to find or load control view resource file: " + filepath)
+        }
+        return success
     }
 
     /*
@@ -144,166 +257,13 @@ Item {
     }
 
     /*
-      Starts to update a control view to a new version
+      Populates controlContainer with an error string
     */
-    function startControlUpdate(newVersion, newVersionPath) {
-        updateVersion = newVersion;
-        updateVersionPath = newVersionPath;
-        removeControl();
-        updateControl();
-    }
-
-    /*
-      This function should only be called after the previous view is completely destroyed
-    */
-    function updateControl() {
-        if (updateVersion !== "") {
-            for (let i = 0; i < controlViewListCount; i++) {
-                if (controlViewList.version(i) === updateVersion) {
-                    controlViewList.setInstalled(i, true);
-                    controlViewList.setFilepath(i, updateVersionPath);
-                } else if (controlViewList.version(i) !== updateVersion && controlViewList.installed(i) === true) {
-                    controlViewList.setInstalled(i, false);
-                    versionsToRemoveFromUpdate.push({
-                                                        "version": controlViewList.version(i),
-                                                        "filepath": controlViewList.filepath(i)
-                                                    });
-                }
-            }
-            usingLocalView = false;
-            sdsModel.resourceLoader.registerControlViewResources(platformStack.class_id, updateVersionPath, updateVersion);
-            deleteViewResources()
-        }
-    }
-
-    /*
-      This function deletes all registered controlViewResources
-    */
-    function deleteViewResources() {
-        // Check to see if local view is registered
-        if (UuidMap.uuid_map.hasOwnProperty(platformStack.class_id)) {
-            let name = UuidMap.uuid_map[platformStack.class_id];
-            sdsModel.resourceLoader.requestDeleteViewResource(ResourceLoader.LOCAL_VIEW, platformStack.class_id, name, "", controlContainer);
-        }
-
-        for (let i = 0; i < versionsToRemoveFromUpdate.length; i++) {
-            sdsModel.resourceLoader.requestDeleteViewResource(ResourceLoader.OTA_VIEW, platformStack.class_id, versionsToRemoveFromUpdate[i].filepath, versionsToRemoveFromUpdate[i].version, controlContainer);
-        }
-
-        updateVersion = ""
-        updateVersionPath = ""
-        versionsToRemoveFromUpdate = []
-    }
-
-    /* The Order of Operations here is as follows:
-        1. Call checkForResources()
-        2. Check if static (local) control view exists, if so, register it
-        3. else, call loadResource()
-        4. If OTA versions are installed, register the installed version, else download latest version
-    */
-    function checkForResources() {
-        if (controlLoaded === false) {
-            /* First check if the view is already registered.
-              If it is not, then try to first register a static (local) control view for this class_id.
-              If that doesn't work then try to load an OTA control view
-            */
-            if (sdsModel.resourceLoader.isViewRegistered(platformStack.class_id)) {
-                loadingBar.value = 1.0
-                return;
-            }
-
-            let name = UuidMap.uuid_map[platformStack.class_id];
-            if (sdsModel.resourceLoader.registerStaticControlViewResources(platformStack.class_id, name)) {
-                usingLocalView = true;
-                loadingBar.value = 1.0;
-                return;
-            } else {
-                usingLocalView = false;
-                loadResource();
-            }
-        }
-    }
-
-    /*
-        Helper function for downloading/registering a control view
-    */
-    function loadResource() {
-        // get installed index instead of latest version
-        let index = controlViewList.getInstalledVersion();
-
-        if (index < 0) {
-            console.info("No control view installed for", platformStack.class_id)
-            index = controlViewList.getLatestVersion();
-
-            if (controlViewList.uri(index) === "" || controlViewList.md5(index) === "") {
-                let obj = sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlContainer, {"error_message": "Could not find view"});
-                controlLoaded = true
-            }
-
-            let downloadCommand = {
-                "hcs::cmd": "download_view",
-                "payload": {
-                    "url": controlViewList.uri(index),
-                    "md5": controlViewList.md5(index),
-                    "class_id": platformStack.class_id
-                }
-            };
-
-            activeDownloadUri = controlViewList.uri(index)
-
-            coreInterface.sendCommand(JSON.stringify(downloadCommand));
-        } else {
-            if (sdsModel.resourceLoader.isViewRegistered(platformStack.class_id)) {
-                resourceRegistered();
-            } else {
-                sdsModel.resourceLoader.registerControlViewResources(platformStack.class_id,
-                                                                     controlViewList.filepath(index),
-                                                                     controlViewList.version(index));
-            }
-        }
-    }
-
     function createErrorScreen(errorString) {
-        let obj = sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlContainer, {"error_message": errorString});
+        removeControl();
+        sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlContainer, {"error_message": errorString});
         controlLoaded = true
     }
-
-    /*
-      Slot for the sdsModel.resourceLoader.resourceRegistered signal
-    */
-    function resourceRegistered () {
-        loadingBar.value = 1.0;
-    }
-
-    /*
-      Slot for the sdsModel.resourceLoader.resourceRegisteredFailed signal
-    */
-    function resourceRegisterFailed () {
-        controlContainer.removeControl()
-        createErrorScreen("Failed to find or load control view resource file")
-    }
-
-
-    Connections {
-        target: sdsModel.resourceLoader
-
-        Component.onCompleted: {
-            platformStack.resourceLoaderConnectionInitialized = true
-        }
-
-        onResourceRegistered: {
-            if (class_id === platformStack.class_id) {
-                controlViewContainer.resourceRegistered()
-            }
-        }
-
-        onResourceRegisterFailed: {
-            if (class_id === platformStack.class_id) {
-                controlViewContainer.resourceRegisterFailed()
-            }
-        }
-    }
-
 
     Connections {
         id: coreInterfaceConnections
@@ -312,27 +272,15 @@ Item {
         onDownloadViewFinished: {
             if (payload.url === activeDownloadUri) {
                 activeDownloadUri = ""
+
                 if (payload.error_string.length > 0) {
-                    removeControl()
                     controlViewContainer.createErrorScreen(payload.error_string);
                     return
                 }
 
                 for (let i = 0; i < controlViewContainer.controlViewListCount; i++) {
                     if (controlViewContainer.controlViewList.uri(i) === payload.url) {
-                        controlViewContainer.controlViewList.setInstalled(i, true);
-                        controlViewContainer.controlViewList.setFilepath(i, payload.filepath);
-                        for (let j = 0; j < controlViewContainer.controlViewListCount; j++) {
-                            if (j !== i && controlViewContainer.controlViewList.installed(j) === true) {
-                                controlViewContainer.controlViewListCount.setInstalled(j, false);
-                            }
-                        }
-                        platformSettings.softwareManagement.matchVersion()
-                        if (sdsModel.resourceLoader.isViewRegistered(platformStack.class_id)) {
-                            controlViewContainer.resourceRegistered();
-                        } else {
-                            sdsModel.resourceLoader.registerControlViewResources(platformStack.class_id, payload.filepath, controlViewContainer.controlViewList.version(i));
-                        }
+                        installResource(controlViewContainer.controlViewList.version(i), payload.filepath)
                         break;
                     }
                 }

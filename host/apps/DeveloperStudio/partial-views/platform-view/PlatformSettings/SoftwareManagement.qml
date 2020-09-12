@@ -35,7 +35,7 @@ ColumnLayout {
                     downloadFilepath = payload.filepath;
                     progressBar.color = "#57d445"
                     upToDate = true
-                    platformStack.controlViewContainer.startControlUpdate(latestVersion.version, downloadFilepath)
+                    platformStack.controlViewContainer.installResource(latestVersion.version, downloadFilepath)
                     activeVersion = latestVersion
                 }
                 downloadFilepath = ""
@@ -126,7 +126,7 @@ ColumnLayout {
 
     Text {
         text: {
-            if (platformStack.usingLocalView) {
+            if (platformStack.controlViewContainer.usingStaticView) {
                 return "Original version installed";
             }
 

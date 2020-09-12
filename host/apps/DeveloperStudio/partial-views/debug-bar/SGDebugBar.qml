@@ -128,9 +128,10 @@ Item {
                                     },
                                     "firmware_version": ""
                                 }
-
+                                let repeaterCount = platformViewRepeater.count
                                 PlatformSelection.openPlatformView(data)
                                 viewCombobox.currentIndex = index
+                                platformViewRepeater.itemAt(repeaterCount).platformDocumentsInitialized = true
                             }
                         }
                     }
