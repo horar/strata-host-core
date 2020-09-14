@@ -15,7 +15,7 @@ QByteArray CmdRequestPlatformId::message() {
 }
 
 bool CmdRequestPlatformId::processNotification(rapidjson::Document& doc) {
-    if (CommandValidator::validate(CommandValidator::JsonType::reqPlatIdRes, doc)) {
+    if (CommandValidator::validateNotification(CommandValidator::JsonType::reqPlatformIdNotif, doc)) {
         const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
         const char *name = payload[JSON_NAME].GetString();
         const char *platformId = payload[JSON_PLATFORM_ID].GetString();

@@ -19,7 +19,7 @@ QByteArray CmdStartBackupFirmware::message() {
 }
 
 bool CmdStartBackupFirmware::processNotification(rapidjson::Document& doc) {
-    if (CommandValidator::validate(CommandValidator::JsonType::startBackupFirmwareRes, doc)) {
+    if (CommandValidator::validateNotification(CommandValidator::JsonType::startBackupFirmwareNotif, doc)) {
         const rapidjson::Value& payload = doc[JSON_NOTIFICATION][JSON_PAYLOAD];
         if (payload.HasMember(JSON_STATUS)) {
             const char* status = payload[JSON_STATUS].GetString();

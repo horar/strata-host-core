@@ -10,6 +10,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0 as LoggerModule
+import tech.strata.signals 1.0
 import tech.strata.sgwidgets 1.0
 
 Item {
@@ -51,7 +52,7 @@ Item {
     }
 
     Connections {
-        target: Authenticator.signals
+        target: Signals
 
         onLoginResult: {
             var resultObject = JSON.parse(result)

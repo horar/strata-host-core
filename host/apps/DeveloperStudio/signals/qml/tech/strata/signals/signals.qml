@@ -1,14 +1,14 @@
-import QtQuick 2.0
+pragma Singleton
 
+import QtQml 2.8
 /*
   Global container for emitting signals in Javascript
 */
-Item {
-    id: signals
-
+QtObject {
     /*
       General connection signals
     */
+
     signal connectionStatus(int status)
 
     /*
