@@ -69,32 +69,88 @@ Item {
                 Layout.fillWidth: true
                 spacing: 0
 
-                Rectangle {
-                    Layout.fillWidth: true
+                ScrollView {
                     Layout.preferredHeight: 45
-                    color: "#777"
+                    Layout.fillWidth: true
+                    x:2.5
+                    clip: true
+                    ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
-                    RowLayout {
-                        height: parent.height
-                        x:2.5
+                    background: Rectangle {
+                        color: "#777"
+                    }
 
-                        ButtonGroup { id: buttonGroup }
+                    ListView {
+                        id: fileTabRepeater
+                        model: openFileModel
+                        orientation: ListView.Horizontal
+                        layoutDirection: Qt.LeftToRight
+                        spacing: 3
 
-                        Repeater {
-                            id: fileTabRepeater
-                            model: openFileModel
+                        delegate: SGButton {
+                            id: fileTab
+                            checked: model.visible
+                            hoverEnabled: true
 
-                            delegate: SGButton {
-                                // TODO: create more appropriate tab delegate with closer
-                                checked: model.visible
-                                ButtonGroup.group: buttonGroup
-                                text: model.filename
+                            property int modelIndex: index
 
-                                property int modelIndex: index
+                            onClicked: {
+                                if (checked) {
+                                    editorRoot.setVisible(openFileModel.mapIndexToSource(modelIndex))
+                                }
+                            }
 
-                                onClicked: {
-                                    if (checked) {
-                                        editorRoot.setVisible(openFileModel.mapIndexToSource(modelIndex))
+                            contentItem: Item {
+                                implicitWidth: tabText.paintedWidth + tabText.anchors.leftMargin + 3 + closeFileIcon.implicitWidth + closeFileIcon.anchors.rightMargin
+                                anchors.verticalCenter: parent.verticalCenter
+
+                                SGText {
+                                    id: tabText
+                                    text: model.filename
+                                    color: "white"
+                                    anchors {
+                                        left: parent.left
+                                        verticalCenter: parent.verticalCenter
+                                        leftMargin: 5
+                                    }
+                                    verticalAlignment: Text.AlignVCenter
+                                    elide: Text.ElideRight
+                                }
+
+                                SGIcon {
+                                    id: closeFileIcon
+                                    source: "qrc:/sgimages/times-circle.svg"
+                                    height: tabText.paintedHeight
+                                    width: height
+                                    implicitWidth: height
+                                    visible: fileTab.hovered
+                                    anchors {
+                                        left: tabText.right
+                                        leftMargin: 4
+                                        right: parent.right
+                                        verticalCenter: parent.verticalCenter
+                                        rightMargin: 2
+                                    }
+                                    verticalAlignment: Qt.AlignVCenter
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        onEntered: {
+                                            cursorShape = Qt.PointingHandCursor
+                                        }
+
+                                        onClicked: {
+                                            let sourceIndex = openFileModel.mapIndexToSource(fileTab.modelIndex)
+                                            let item = fileModel.get(sourceIndex)
+                                            item.visible = false
+                                            item.open = false
+
+                                            // Make the last tab visible
+                                            if (fileTabRepeater.count > 0) {
+                                                setVisible(openFileModel.mapIndexToSource(fileTabRepeater.count - 1))
+                                            }
+                                        }
                                     }
                                 }
                             }
