@@ -12,11 +12,11 @@ CmdStartBootloader::CmdStartBootloader(const device::DevicePtr& device) :
     BaseDeviceCommand(device, QStringLiteral("start_bootloader")) { }
 
 QByteArray CmdStartBootloader::message() {
-    return QByteArray("{\"cmd\":\"start_bootloader\"}");
+    return QByteArray("{\"cmd\":\"start_bootloader\",\"payload\":{}}");
 }
 
 bool CmdStartBootloader::processNotification(rapidjson::Document& doc) {
-    if (CommandValidator::validate(CommandValidator::JsonType::startBootloaderRes, doc)) {
+    if (CommandValidator::validateNotification(CommandValidator::JsonType::startBootloaderNotif, doc)) {
         const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
         result_ = (status == JSON_OK) ? CommandResult::Done : CommandResult::Failure;
         return true;

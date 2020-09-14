@@ -1,10 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>SGLogin.qml</file>
-        <file>partial-views/login/LoginSignals.qml</file>
         <file>SGStatusBar.qml</file>
         <file>SGPlatformSelector.qml</file>
-        <file>include/Modules/CircleBadge.qml</file>
         <file>js/core_platform_interface.js</file>
         <file>js/feedback.js</file>
         <file>js/help_layout_manager.js</file>
@@ -31,7 +29,6 @@
         <file>partial-views/SGStrataPopup.qml</file>
         <file>partial-views/login/SGRegistrationControls.qml</file>
         <file>partial-views/login/ValidationField.qml</file>
-        <file>partial-views/login/ConnectionStatus.qml</file>
         <file>partial-views/login/SGForgotPassword.qml</file>
         <file>partial-views/login/LoginComboBox.qml</file>
         <file>partial-views/status-bar/SGFeedbackPopup.qml</file>
@@ -93,5 +90,8 @@
         <file>partial-views/distribution-portal/images/arrow-circle-right.svg</file>
         <file>partial-views/distribution-portal/SGBaseDistributionItem.qml</file>
         <file>partial-views/login/LoginSettings.qml</file>
+        <file>js/utilities.js</file>
+        <file>partial-views/general/ConnectionStatus.qml</file>
+        <file>partial-views/general/SGNotificationToast.qml</file>
     </qresource>
 </RCC>

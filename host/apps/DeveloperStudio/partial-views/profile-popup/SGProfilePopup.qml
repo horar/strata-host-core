@@ -4,9 +4,11 @@ import QtQuick.Layouts 1.3
 import Qt.labs.settings 1.0
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
+import tech.strata.signals 1.0
 
 import 'qrc:/partial-views'
 import 'qrc:/partial-views/login/registration'
+import "qrc:/partial-views/general/"
 import 'qrc:/partial-views/login'
 import 'qrc:/js/login_utilities.js' as LoginUtil
 import 'qrc:/js/navigation_control.js' as NavigationControl
@@ -62,6 +64,7 @@ SGStrataPopup {
     onLastNameChanged: lastNameColumn.plainText.text = lastName
     onCompanyChanged: companyColumn.plainText.text = company
     onJobTitleChanged: jobTitleColumn.plainText.text = jobTitle
+
 
     contentItem: Column {
         id: wrapperContainer
@@ -156,89 +159,18 @@ SGStrataPopup {
                 }
             }
 
-            Timer {
-                id: closeAlertTimer
+            SGNotificationToast {
+                 id: alertRect
 
-                interval: 3000
-                repeat: false
-
-                onTriggered: {
-                    hideAlertAnimation.start()
-                }
-            }
-
-            NumberAnimation{
-                id: alertAnimation
-                target: alertRect
-                property: "Layout.preferredHeight"
-                to: firstNameColumn.textField.height + 10
-                duration: 100
-                onFinished: {
-                    closeAlertTimer.start()
-                }
-            }
-
-            NumberAnimation{
-                id: hideAlertAnimation
-                target: alertRect
-                property: "Layout.preferredHeight"
-                to: 0
-                duration: 100
-                onStarted: alertText.text = ""
-            }
-
-            Rectangle {
-                id: alertRect
-
-                color: "red"
-                visible: Layout.preferredHeight > 0
-                clip: true
-
-                Layout.alignment: Qt.AlignHCenter
-                Layout.fillWidth: true
-                Layout.preferredHeight: 0
-                Layout.columnSpan: 3
-
-                SGIcon {
-                    id: alertIcon
-
-                    height: 30
-                    width: 30
-                    anchors {
-                        left: alertRect.left
-                        verticalCenter: alertRect.verticalCenter
-                        leftMargin: alertRect.height/2 - height/2
-                    }
-
-                    source: Qt.colorEqual(alertRect.color, "red") ? "qrc:/sgimages/exclamation-circle.svg" : "qrc:/sgimages/check-circle.svg"
-                    iconColor: "white"
-                }
-
-                Text {
-                    id: alertText
-
-                    anchors {
-                        left: alertIcon.right
-                        right: alertRect.right
-                        rightMargin: 5
-                        verticalCenter: alertRect.verticalCenter
-                    }
-
-                    wrapMode: Label.WordWrap
-                    horizontalAlignment:Text.AlignHCenter
-                    text: ""
-                    color: "white"
-                    font {
-                        pixelSize: 10
-                        family: Fonts.franklinGothicBold
-                    }
-
-                }
+                 Layout.fillWidth: true
+                 Layout.preferredHeight: 0
+                 Layout.columnSpan: 3
             }
 
             ProfileSectionHeader {
                 text: "Basic Information"
             }
+
 
             ProfileControlContainer {
                 id: basicInfoControls
@@ -247,6 +179,9 @@ SGStrataPopup {
                 animationTargets: guestUser === true ? [] : [firstNameColumn, lastNameColumn]
                 expandHeight: firstNameColumn.textField.height
                 hideHeight: firstNameColumn.plainText.height
+                onEditingChanged: {
+                    if(alertRect.visible) alertRect.hide();
+                }
 
                 onSaved: {
                     let data = {
@@ -254,6 +189,8 @@ SGStrataPopup {
                         "lastname": lastNameColumn.textField.text
                     };
                     spinnerDialog.open()
+                    firstNameColumn.editable = false;
+                    lastNameColumn.editable = false;
                     LoginUtil.update_profile(NavigationControl.context.user_id, data)
                 }
                 onCanceled: {
@@ -273,6 +210,7 @@ SGStrataPopup {
 
                 plainText.text: root.firstName
                 placeHolderText: "First Name"
+
             }
 
             SubSectionLabel {
@@ -297,12 +235,17 @@ SGStrataPopup {
                 animationTargets: guestUser === true ? [] : [jobTitleColumn]
                 expandHeight: companyColumn.textField.height
                 hideHeight: companyColumn.plainText.height
+                onEditingChanged: {
+                    if(alertRect.visible) alertRect.hide();
+                }
 
                 onSaved: {
                     let data = {
                         "title": jobTitleColumn.textField.text
                     };
                     spinnerDialog.open()
+                    companyColumn.editable = false
+                    jobTitleColumn.editable = false
                     LoginUtil.update_profile(NavigationControl.context.user_id, data)
                 }
                 onCanceled: {
@@ -363,6 +306,10 @@ SGStrataPopup {
                 animationTargets: guestUser === true ? [] : [currentPasswordRow,newPasswordRow]
                 expandHeight: passwordField.height
 
+                onEditingChanged: {
+                    if(alertRect.visible) alertRect.hide();
+                }
+
                 onSaved: {
                     let timezone = -(new Date(new Date().getFullYear(), 0, 1)).getTimezoneOffset()/60
                     // API currently accepts an int, round towards zero:
@@ -373,6 +320,8 @@ SGStrataPopup {
                     }
                     var login_info = { user: NavigationControl.context.user_id, password: currentPasswordField.text, timezone: timezone }
                     LoginUtil.login(login_info)
+                    currentPasswordRow.editable = false
+                    newPasswordRow.editable = false
                     spinnerDialog.open()
                 }
                 onCanceled: {
@@ -485,6 +434,7 @@ SGStrataPopup {
                             anchors.fill: showPasswordIcon
                             hoverEnabled: true
                             onClicked: {
+                                if(alertRect.visible) alertRect.hide();
                                 if (passwordField.echoMode === TextInput.Password) {
                                     passwordField.echoMode = confirmPasswordField.echoMode = TextInput.Normal
                                 } else {
@@ -573,7 +523,7 @@ SGStrataPopup {
                 }
             }
             Connections {
-                target: LoginUtil.signals
+                target: Signals
 
                 onLoginResult: {
                     let resultObject = JSON.parse(result)
@@ -588,31 +538,31 @@ SGStrataPopup {
                         passwordControls.editing = true
                         alertRect.color = "red"
                         if (resultObject.response === "No Connection") {
-                            alertText.text = "Connection to authentication server failed";
+                            alertRect.text = "Connection to authentication server failed";
                         } else {
-                            alertText.text = "Password is incorrect. Please try again."
+                            alertRect.text = "Password is incorrect. Please try again."
                         }
                         spinnerDialog.close()
-                        alertAnimation.start()
+                        alertRect.show()
                     }
                 }
 
                 onChangePasswordResult: {
                     if (result === "Success") {
-                        alertText.text = "Successfully changed your password!"
+                        alertRect.text = "Successfully changed your password!"
                         alertRect.color = "#57d445"
                         resetFields()
                     } else {
                         console.error(result)
                         if (result === "No connection") {
-                            alertText.text = "Connection to registration server failed"
+                            alertRect.text = "Connection to registration server failed"
                         } else {
-                            alertText.text = "Unable to update password. Please try again."
+                            alertRect.text = "Unable to update password. Please try again."
                         }
                         alertRect.color = "red"
                     }
                     spinnerDialog.close()
-                    alertAnimation.start()
+                    alertRect.show()
                 }
 
                 onProfileUpdateResult: {
@@ -620,17 +570,17 @@ SGStrataPopup {
                         // Get the user's new profile
                         LoginUtil.get_profile(NavigationControl.context.user_id)
 
-                        alertText.text = "Successfully updated your account information!"
+                        alertRect.text = "Successfully updated your account information!"
                         alertRect.color = "#57d445"
 
                         resetFields()
                     } else {
                         console.error("Unable to change profile information")
-                        alertText.text = "Unable to update profile. Try again later."
+                        alertRect.text = "Unable to update profile. Try again later."
                         alertRect.color = "red"
                     }
                     spinnerDialog.close()
-                    alertAnimation.start()
+                    alertRect.show()
                 }
 
                 onCloseAccountResult: {
@@ -650,17 +600,17 @@ SGStrataPopup {
                         NavigationControl.updateState(NavigationControl.events.LOGOUT_EVENT)
                     } else {
                         if (result === "No connection") {
-                            alertText.text = "Connection to registration server failed"
+                            alertRect.text = "Connection to registration server failed"
                         } else if (result === "Invalid authentication token") {
-                            alertText.text = "Unable to close account. Please try to log out and back in."
+                            alertRect.text = "Unable to close account. Please try to log out and back in."
                         } else {
-                            alertText.text = "Unable to close account. Please try again later."
+                            alertRect.text = "Unable to close account. Please try again later."
                         }
 
                         alertRect.color = "red"
                     }
                     spinnerDialog.close()
-                    alertAnimation.start()
+                    alertRect.show()
                 }
 
                 onGetProfileResult: {
