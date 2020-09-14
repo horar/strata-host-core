@@ -160,7 +160,7 @@ class StrataUI:
         Set the confirm checkbox on the register view to ticked or unticked
         '''
         def registerCheckboxCompare(control:Control, depth):
-            return control.GetPropertyValue(PropertyId.NameProperty) != REGISTER_TAB
+            return control.GetPropertyValue(PropertyId.NameProperty) == ""
 
         confirm: CheckBoxControl = self.app.CheckBoxControl(Compare=registerCheckboxCompare)
         self.SetCheckbox(confirm, setTicked)
@@ -216,12 +216,12 @@ class StrataUI:
         return len(platforms)
 
 
-def SetAndVerifyEdit(ui, editFullDescription, text, test):
+def SetAndVerifyEdit(ui, editFullDescription, text, test, property=PropertyId.FullDescriptionProperty):
     '''
     Set edit text and assert that the text has been set.
     '''
-    ui.SetEditText(editFullDescription, text)
-    test.assertEqual(ui.GetEditText(editFullDescription), text)
+    ui.SetEditText(editFullDescription, text, property=property)
+    test.assertEqual(ui.GetEditText(editFullDescription, property=property), text)
 
 
 def Login(ui: StrataUI, username, password, test: unittest.TestCase = None):
@@ -261,3 +261,7 @@ def Logout(ui: StrataUI):
     '''
     ui.PressButton(USER_ICON_BUTTON)
     ui.PressButton(LOGOUT_BUTTON)
+
+def LogoutIfNeeded(ui):
+    if ui.OnPlatformView():
+        Logout(ui)

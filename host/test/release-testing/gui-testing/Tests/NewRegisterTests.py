@@ -29,7 +29,6 @@ class RegisterNew(unittest.TestCase):
         if ui.OnPlatformView():
             args = Common.getCommandLineArguments(sys.argv)
             cleanup.closeAccount(args.strataIni)
-
             Logout(ui)
 
     def test_registernew(self):

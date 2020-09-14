@@ -14,7 +14,7 @@ class Feedback(unittest.TestCase):
 
     def tearDown(self) -> None:
         ui = StrataUI()
-        Logout(ui)
+        LogoutIfNeeded(ui)
 
     def test_feedback(self):
         args = Common.getCommandLineArguments(sys.argv)
@@ -32,7 +32,7 @@ class Feedback(unittest.TestCase):
         self.assertTrue(ui.OnFeedback())
 
         ui.PressButton(Common.FEEDBACK_BUG_BUTTON)
-        ui.SetEditText(Common.FEEDBACK_EDIT, "this is a cool product", property=PropertyId.NameProperty)
+        SetAndVerifyEdit(ui, Common.FEEDBACK_EDIT, "this is a cool product", self, property=PropertyId.NameProperty)
 
         ui.PressButton(Common.FEEDBACK_SUBMIT_BUTTON)
 

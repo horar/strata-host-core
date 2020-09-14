@@ -12,7 +12,7 @@ class StrataLoginPostRestartTest(unittest.TestCase):
 
     def tearDown(self) -> None:
         ui = StrataUI()
-        Logout(ui)
+        LogoutIfNeeded(ui)
 
     def test_loginPostRestart(self):
         ui = StrataUI()

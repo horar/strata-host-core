@@ -27,7 +27,7 @@ class PasswordResetTest(unittest.TestCase):
         ui = StrataUI()
         self.assertTrue(ui.OnForgotPassword())
 
-        ui.SetEditText(Common.RESET_PASSWORD_EDIT, username)
+        SetAndVerifyEdit(ui, Common.RESET_PASSWORD_EDIT, username, self)
 
         ui.PressButton(Common.RESET_PASSWORD_SUBMIT_BUTTON)
 

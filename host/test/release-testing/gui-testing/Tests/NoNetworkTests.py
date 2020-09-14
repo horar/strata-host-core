@@ -18,10 +18,7 @@ class NoNetworkLogin(unittest.TestCase):
 
     def tearDown(self) -> None:
         ui = StrataUI()
-        # If the network failed to disable the user might be logged in.
-        if ui.OnPlatformView():
-            Logout(ui)
-
+        LogoutIfNeeded(ui)
     def test_no_network_login(self):
         args = Common.getCommandLineArguments(sys.argv)
         ui = StrataUI()

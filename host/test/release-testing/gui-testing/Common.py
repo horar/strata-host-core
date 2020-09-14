@@ -5,7 +5,6 @@ import argparse
 import os
 import time
 import uuid
-
 import psutil
 
 STRATA_WINDOW = "ON Semiconductor: Strata Developer Studio"
@@ -86,6 +85,7 @@ def writeResults(totalFails, totalTests, path):
     newSuccesses = (totalTests - totalFails) + prevSuccesses
     with open(path, "w") as resultsFile:
         resultsFile.write(str(newSuccesses) + "," + str(newTotal))
+
 
 
 def getCommandLineArguments(argv):

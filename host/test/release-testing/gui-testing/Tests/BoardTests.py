@@ -42,7 +42,7 @@ class LoginValidWithBoard(unittest.TestCase):
 
     def tearDown(self) -> None:
         ui = StrataUI()
-        Logout(ui)
+        LogoutIfNeeded(ui)
 
     def test_login_with_board_and_disconnect(self):
         args = Common.getCommandLineArguments(sys.argv)
