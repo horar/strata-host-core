@@ -81,6 +81,15 @@ bool SGUtilsCpp::atomicWrite(const QString &path, const QString &content)
     return file.commit();
 }
 
+bool SGUtilsCpp::fileIsChildOfDir(const QString &filePath, const QString &dirPath)
+{
+    if (filePath.startsWith(dirPath)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 QString SGUtilsCpp::readTextFileContent(const QString &path)
 {
     QFile file(path);

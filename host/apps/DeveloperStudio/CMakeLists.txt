@@ -11,7 +11,7 @@ set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Gui Widgets Quick Qml WebEngine Charts RemoteObjects Svg
+    COMPONENTS Core Gui Widgets Quick Qml Xml WebEngine Charts RemoteObjects Svg
     REQUIRED
 )
 
@@ -63,6 +63,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Gui
     Qt5::Widgets
     Qt5::Qml
+    Qt5::Xml
     Qt5::WebEngine
     Qt5::RemoteObjects
     Qt5::Svg
@@ -70,6 +71,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::connector
     strata::HostControllerClient
     strata::PlatformInterface
+    strata::SGUtilsCpp
 
     strata::QtLogger
 )

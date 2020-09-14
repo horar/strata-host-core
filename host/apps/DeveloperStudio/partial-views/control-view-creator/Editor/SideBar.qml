@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
+import QtQuick.Dialogs 1.2
 import QtQuick.Controls 2.2
 
 import tech.strata.sgwidgets 1.0
@@ -19,8 +20,10 @@ Rectangle {
         }
 
         SGText {
+            Layout.fillWidth: true
             Layout.leftMargin: 5
             Layout.rightMargin: 5
+            id: qrcFilesText
             text:"QRC Files:"
             fontSizeMultiplier: 1.5
             color: "white"
@@ -41,7 +44,7 @@ Rectangle {
 
                 property int modelIndex: index
 
-                onCheckedChanged: {
+                onClicked: {
                     if (checked) {
                         editorRoot.setVisible(modelIndex)
                     }
@@ -53,12 +56,50 @@ Rectangle {
             Layout.fillWidth: true
             Layout.topMargin: 20
             text: "New file..."
+
+            onClicked: {
+                newFileDialog.open()
+            }
         }
 
         SGButton {
             Layout.fillWidth: true
             Layout.topMargin: 20
             text: "Add existing file to QRC..."
+            onClicked: {
+                existingFileDialog.open()
+            }
+        }
+
+        FileDialog {
+            id: existingFileDialog
+            nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt *.gif *.html *.csv)"]
+            selectExisting: true
+            selectMultiple: true
+            folder: fileModel.projectDirectory
+
+            onAccepted: {
+                for (let i = 0; i < fileUrls.length; i++) {
+                    fileModel.append(fileUrls[i])
+                }
+            }
+        }
+
+        FileDialog {
+            id: newFileDialog
+            nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt *.gif *.html *.csv)"]
+            selectExisting: false
+            folder: fileModel.projectDirectory
+
+            onAccepted: {
+                fileModel.append(fileUrl);
+                // Handle the case where user adds a new file to a different directory
+                folder = fileModel.projectDirectory
+            }
+
+            onRejected: {
+                folder = fileModel.projectDirectory
+            }
         }
     }
 }
