@@ -5,7 +5,7 @@ Opens and tests Strata's GUI. Do not touch the mouse or keyboard while this test
 This is part of the automated test script for the master test plan
 https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/775848204/Master+test+plan+checklist
 
-This tests consists of:
+These tests consist of:
 * Logging in with a board connected
 * Logging in with a board disconnected
 * Sending user feedback

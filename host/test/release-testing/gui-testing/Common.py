@@ -89,6 +89,18 @@ def writeResults(totalFails, totalTests, path):
 
 
 def getCommandLineArguments(argv):
+    '''
+    Get arguments from argv.
+    Arguments are:
+    testNames: A list of tests in the format Tests.<test module>.[test class].[test function]
+    username: valid username
+    password: valid password
+    hcsAddress: HCS tcp address
+    strataPath: Path to strata executable
+    strataIni: Path to strata ini file
+    resultsPath: Path to a results file
+    appendResults: If resultsPath is set, append results to that file rather than creating a new file
+    '''
     parser = argparse.ArgumentParser(description="Run a test or tests.")
     parser.add_argument("testNames", nargs='*', type=str, help="Unittest modules or test classes")
     parser.add_argument("--username", action="store", type=str, help="Valid username", metavar="username")

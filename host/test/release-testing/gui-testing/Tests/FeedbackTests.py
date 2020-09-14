@@ -28,7 +28,7 @@ class Feedback(unittest.TestCase):
         ui.PressButton(Common.USER_ICON_BUTTON)
         ui.PressButton(Common.FEEDBACK_BUTTON)
 
-        # Feedback should open and have submit disabled because nothing has been inputted.
+        # Feedback should open
         self.assertTrue(ui.OnFeedback())
 
         ui.PressButton(Common.FEEDBACK_BUG_BUTTON)
