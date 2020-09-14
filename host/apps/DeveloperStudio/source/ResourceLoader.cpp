@@ -30,7 +30,7 @@ ResourceLoader::~ResourceLoader()
 
 void ResourceLoader::requestDeleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent) {
     qDebug(logCategoryResourceLoader) << "Requesting unregistration and deletion of RCC:" << rccPath;
-    QTimer::singleShot(4000, this, [this, class_id, rccPath, version, parent]{ deleteViewResource(class_id, rccPath, version, parent); });
+    QTimer::singleShot(100, this, [this, class_id, rccPath, version, parent]{ deleteViewResource(class_id, rccPath, version, parent); });
 }
 
 bool ResourceLoader::deleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent) {
