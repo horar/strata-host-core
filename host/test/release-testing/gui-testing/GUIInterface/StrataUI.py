@@ -88,13 +88,13 @@ class StrataUI:
 
         return self.__existsCatchComError(firstNameEdit)
 
-    def OnPlatformView(self, maxSearchSeconds = 7):
+    def OnPlatformView(self):
         '''
         True if on platform view
         '''
         userIcon = self.app.ButtonControl(Compare=self.__hasProperty(PropertyId.NameProperty, USER_ICON_BUTTON))
 
-        return self.__existsCatchComError(userIcon, maxSearchSeconds)
+        return self.__existsCatchComError(userIcon)
 
     def OnFeedback(self):
         '''

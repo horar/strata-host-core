@@ -26,7 +26,7 @@ class RegisterNew(unittest.TestCase):
     def tearDown(self) -> None:
         ui = StrataUI()
 
-        if ui.OnPlatformView:
+        if ui.OnPlatformView():
             args = Common.getCommandLineArguments(sys.argv)
             cleanup.closeAccount(args.strataIni)
 
