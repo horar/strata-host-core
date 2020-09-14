@@ -200,7 +200,7 @@ void DeviceOperations::handleDeviceResponse(const QByteArray& data) {
 
     rapidjson::Document doc;
 
-    if (CommandValidator::parseJsonCommand(data.toStdString(), doc) == false) {
+    if (CommandValidator::parseJsonCommand(data, doc) == false) {
         qCWarning(logCategoryDeviceOperations) << device_ << "Cannot parse JSON: '" << data << "'.";
         return;
     }
