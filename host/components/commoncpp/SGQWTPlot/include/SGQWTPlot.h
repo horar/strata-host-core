@@ -30,10 +30,6 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(double xMax READ xMax WRITE setXMax NOTIFY xMaxChanged)
     Q_PROPERTY(double yMin READ yMin WRITE setYMin NOTIFY yMinChanged)
     Q_PROPERTY(double yMax READ yMax WRITE setYMax NOTIFY yMaxChanged)
-
-    Q_PROPERTY(double yRightMin READ yRightMin WRITE setYRightMin NOTIFY yRightMinChanged)
-    Q_PROPERTY(double yRightMax READ yRightMax WRITE setYRightMax NOTIFY yRightMaxChanged)
-
     Q_PROPERTY(QString xTitle READ xTitle WRITE setXTitle NOTIFY xTitleChanged)
     Q_PROPERTY(int xTitlePixelSize READ xTitlePixelSize WRITE setXTitlePixelSize NOTIFY xTitlePixelSizeChanged)
     Q_PROPERTY(QString yTitle READ yTitle WRITE setYTitle NOTIFY yTitleChanged)
@@ -49,8 +45,11 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(bool xGrid READ xGrid WRITE setXGrid NOTIFY xGridChanged)
     Q_PROPERTY(bool yGrid READ yGrid WRITE setYGrid NOTIFY yGridChanged)
     Q_PROPERTY(QColor gridColor MEMBER gridColor_ WRITE setGridColor NOTIFY gridColorChanged)
-
-    Q_PROPERTY(bool yRight READ yRight WRITE setYRight NOTIFY yRightChanged)
+    Q_PROPERTY(bool yAxisRightVisible READ yAxisRightVisible WRITE setyAxisRightVisible NOTIFY yAxisRightVisibleChanged)
+    Q_PROPERTY(double yRightMin READ yRightMin WRITE setYRightMin NOTIFY yRightMinChanged)
+    Q_PROPERTY(double yRightMax READ yRightMax WRITE setYRightMax NOTIFY yRightMaxChanged)
+    Q_PROPERTY(QString yRightTitle READ  yRightTitle WRITE setYRightTitle NOTIFY yRightTitleChanged)
+    Q_PROPERTY(int yRightTitlePixelSize READ yRightTitlePixelSize WRITE setYRightTitlePixelSize NOTIFY yRightTitlePixelSizeChanged)
 
 
 public:
@@ -91,6 +90,12 @@ public:
     void setYTitle(QString title);
     void setYTitlePixelSize(int pixelSize);
     int yTitlePixelSize();
+
+    QString yRightTitle();
+    void setYRightTitle(QString title);
+    void setYRightTitlePixelSize(int pixelSize);
+    int yRightTitlePixelSize();
+
     QString title();
     void setTitle(QString title);
     void setTitlePixelSize(int pixelSize);
@@ -105,8 +110,8 @@ public:
     void setYGrid(bool showGrid);
     bool yGrid();
     void setGridColor(QColor newColor);
-    void setYRight(bool showYRightAxis);
-    bool yRight();
+    void setyAxisRightVisible(bool showYRightAxis);
+    bool yAxisRightVisible();
 
 
 
@@ -114,17 +119,18 @@ protected:
     QwtPlot* qwtPlot = nullptr;
     void updateCurveList();
 
+
 signals:
     void xMinChanged();
     void xMaxChanged();
     void yMinChanged();
     void yMaxChanged();
-    void yRightMinChanged();
-    void yRightMaxChanged();
     void xTitleChanged();
     void xTitlePixelSizeChanged();
     void yTitleChanged();
     void yTitlePixelSizeChanged();
+    void yRightTitleChanged();
+    void yRightTitlePixelSizeChanged();
     void titleChanged();
     void titlePixelSizeChanged();
     void xLogarithmicChanged();
@@ -136,7 +142,9 @@ signals:
     void xGridChanged();
     void yGridChanged();
     void gridColorChanged();
-    void yRightChanged();
+    void yAxisRightVisibleChanged();
+    void yRightMinChanged();
+    void yRightMaxChanged();
 
 private:
     friend class SGQWTPlotCurve;
@@ -151,7 +159,8 @@ private:
     bool xGrid_ = false;
     bool yGrid_ = false;
     QColor gridColor_;
-    bool yRight_ = false;
+    bool yAxisRightVisible_ = false;
+
 
 
 private slots:
@@ -169,6 +178,7 @@ class SGQWTPlotCurve : public QObject
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(bool autoUpdate MEMBER autoUpdate_ NOTIFY autoUpdateChanged)
+    Q_PROPERTY(bool yAxisLeft READ yAxisLeft WRITE setYAxisLeft NOTIFY yAxisLeftChanged)
 
 public:
     SGQWTPlotCurve(QString name = "", QObject* parent = nullptr);
@@ -186,12 +196,16 @@ public:
 protected:
     void setGraph(SGQWTPlot* graph);
     void unsetGraph();
+    void setYAxisLeft(bool yleftAxis);
+    bool yAxisLeft();
+    bool yAxisLeft_ = true;
 
 signals:
     void graphChanged();
     void colorChanged();
     void nameChanged();
     void autoUpdateChanged();
+    void yAxisLeftChanged();
 
 private:
     friend class SGQWTPlot;
@@ -207,6 +221,7 @@ private:
     QColor color();
     void setName(QString name);
     QString name();
+
 };
 
 

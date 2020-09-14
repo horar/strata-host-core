@@ -125,6 +125,8 @@ Module {
         Property { name: "xTitlePixelSize"; type: "int" }
         Property { name: "yTitle"; type: "string" }
         Property { name: "yTitlePixelSize"; type: "int" }
+        Property { name: "yRightTitle"; type: "string" }
+        Property { name: "yRightTitlePixelSize"; type: "int" }
         Property { name: "title"; type: "string" }
         Property { name: "titlePixelSize"; type: "int" }
         Property { name: "xLogarithmic"; type: "bool" }
@@ -136,7 +138,8 @@ Module {
         Property { name: "xGrid"; type: "bool"}
         Property { name: "yGrid"; type: "bool"}
         Property { name: "gridColor"; type: "QColor"}
-        Property { name: "yRight"; type: "bool"}
+        Property { name: "yAxisRightVisible"; type: "bool"}
+        Property { name: "yAxisLeft"; type: "bool"}
         Method { name: "initialize" }
         Method { name: "update" }
         Method {

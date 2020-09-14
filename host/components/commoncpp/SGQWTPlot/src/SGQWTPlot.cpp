@@ -15,8 +15,6 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     setBackgroundColor("white");
     setForegroundColor("black");
 
-
-
     qwtGrid_->attach(qwtPlot);
     //Setting the default values for x,y axises and color of grid lines.
     qwtGrid_->enableX(xGrid_);
@@ -78,6 +76,7 @@ void SGQWTPlot::shiftYAxis(double offset)
 
     double yMinRight = this->yRightMin() + offset;
     double yMaxRight = this->yRightMax() + offset;
+
     qwtPlot->setAxisScale(qwtPlot->yRight, yMinRight, yMaxRight);
     qwtPlot->setAxisScale(qwtPlot->yLeft, yMin, yMax);
 
@@ -87,18 +86,18 @@ void SGQWTPlot::shiftYAxis(double offset)
 }
 
 // set yright axis
-bool SGQWTPlot :: yRight()
+bool SGQWTPlot :: yAxisRightVisible()
 {
-    return yRight_;
+    return yAxisRightVisible_;
 }
 
-void SGQWTPlot :: setYRight(bool showYRightAxis)
+void SGQWTPlot :: setyAxisRightVisible(bool showYRightAxis)
 {
-    if(yRight_ != showYRightAxis) {
-        yRight_ = showYRightAxis;
+    if(yAxisRightVisible_ != showYRightAxis) {
+        yAxisRightVisible_ = showYRightAxis;
         qwtPlot->enableAxis(qwtPlot->yRight,showYRightAxis);
 
-        emit yRightChanged();
+        emit yAxisRightVisibleChanged();
         if (autoUpdate_) {
             update();
         }
@@ -118,8 +117,10 @@ void SGQWTPlot::autoScaleXAxis()
 
 void SGQWTPlot::autoScaleYAxis()
 {
-    if(yRight_){
+    if(yAxisRightVisible_){
         qwtPlot->setAxisAutoScale(qwtPlot->yRight);
+        emit yRightMinChanged();
+        emit yRightMaxChanged();
     }
     qwtPlot->setAxisAutoScale(qwtPlot->yLeft);
     emit yMinChanged();
@@ -250,7 +251,6 @@ double SGQWTPlot::xMax()
 
 void SGQWTPlot::setYMin(double value)
 {
-    qwtPlot->setAxisScale(qwtPlot->yRight, value, yMax());
     qwtPlot->setAxisScale(qwtPlot->yLeft, value, yMax());
     emit yMinChanged();
     if (autoUpdate_) {
@@ -272,7 +272,7 @@ double SGQWTPlot::yRightMin()
 
 void SGQWTPlot::setYRightMin(double value)
 {
-    qwtPlot->setAxisScale( qwtPlot->yRight, value, yRightMin());
+    qwtPlot->setAxisScale(qwtPlot->yRight, value, yRightMin());
     emit yRightMinChanged();
     if (autoUpdate_) {
         update();
@@ -284,7 +284,7 @@ void SGQWTPlot::setYRightMin(double value)
 
 void SGQWTPlot::setYMax(double value)
 {
-    qwtPlot->setAxisScale(qwtPlot->yRight, yMin(), value);
+
     qwtPlot->setAxisScale(qwtPlot->yLeft, yMin(), value);
     emit yMaxChanged();
     if (autoUpdate_) {
@@ -300,16 +300,10 @@ double SGQWTPlot::yMax()
 }
 
 
-double SGQWTPlot::yRightMax()
-{
-    return qwtPlot->axisScaleDiv(qwtPlot->yRight).upperBound();
-}
-
 
 void SGQWTPlot::setYRightMax(double value)
 {
-
-    qwtPlot->setAxisScale(qwtPlot->yRight, yRightMax(), value);
+    qwtPlot->setAxisScale(qwtPlot->yRight,value, yRightMax());
     emit yRightMaxChanged();
     if (autoUpdate_) {
         update();
@@ -319,6 +313,11 @@ void SGQWTPlot::setYRightMax(double value)
 }
 
 
+
+double SGQWTPlot::yRightMax()
+{
+    return qwtPlot->axisScaleDiv(qwtPlot->yRight).upperBound();
+}
 
 
 
@@ -361,7 +360,7 @@ int SGQWTPlot::xTitlePixelSize()
 
 QString SGQWTPlot::yTitle()
 {
-    return qwtPlot->axisTitle(qwtPlot->yRight).text();
+    return qwtPlot->axisTitle(qwtPlot->yLeft).text();
 }
 
 void SGQWTPlot::setYTitle(QString title)
@@ -394,6 +393,43 @@ void SGQWTPlot::setYTitlePixelSize(int pixelSize)
 int SGQWTPlot::yTitlePixelSize()
 {
     return qwtPlot->axisTitle(qwtPlot->yLeft).font().pixelSize();
+}
+
+QString SGQWTPlot::yRightTitle()
+{
+    return qwtPlot->axisTitle(qwtPlot->yRight).text();
+}
+
+void SGQWTPlot::setYRightTitle(QString title)
+{
+    if (title != yRightTitle()){
+        qwtPlot->setAxisTitle(qwtPlot->yRight, title);
+        emit yRightTitleChanged();
+        if (autoUpdate_) {
+            update();
+        }
+    }
+}
+
+void SGQWTPlot::setYRightTitlePixelSize(int pixelSize)
+{
+    if (pixelSize != this->yRightTitlePixelSize()){
+        QwtText title = qwtPlot->axisTitle(qwtPlot->yRight);
+        QFont titleFont = title.font();
+        titleFont.setPixelSize(pixelSize);
+        title.setFont(titleFont);
+        qwtPlot->setAxisTitle(qwtPlot->yRight, title);
+        emit yRightTitlePixelSizeChanged();
+
+        if (autoUpdate_) {
+            update();
+        }
+    }
+}
+
+int SGQWTPlot::yRightTitlePixelSize()
+{
+    return qwtPlot->axisTitle(qwtPlot->yRight).font().pixelSize();
 }
 
 QString SGQWTPlot::title()
@@ -535,12 +571,10 @@ QPointF SGQWTPlot::mapToValue(QPointF point)
 {
     qwtPlot->updateLayout();
     QwtScaleMap xMap = qwtPlot->canvasMap(qwtPlot->xBottom);
-    QwtScaleMap yMap = qwtPlot->canvasMap(qwtPlot->yRight);
-    QwtScaleMap y2Map = qwtPlot->canvasMap(qwtPlot->yLeft);
+    QwtScaleMap yMap = qwtPlot->canvasMap(qwtPlot->yLeft);
     QRectF canvasRect = qwtPlot->plotLayout()->canvasRect();
     double xValue = xMap.invTransform(point.x() - canvasRect.x());
     double yValue = yMap.invTransform(point.y() - canvasRect.y());
-
     return QPointF(xValue, yValue);
 }
 
@@ -548,7 +582,7 @@ QPointF SGQWTPlot::mapToPosition(QPointF point)
 {
     qwtPlot->updateLayout();
     QwtScaleMap xMap = qwtPlot->canvasMap(qwtPlot->xBottom);
-    QwtScaleMap yMap = qwtPlot->canvasMap(qwtPlot->yRight);
+    QwtScaleMap yMap = qwtPlot->canvasMap(qwtPlot->yLeft);
     QRectF canvasRect = qwtPlot->plotLayout()->canvasRect();
     double xPos = xMap.transform(point.x()) + canvasRect.x();
     double yPos = yMap.transform(point.y()) + canvasRect.y();
@@ -589,7 +623,6 @@ void SGQWTPlotCurve::setGraph(SGQWTPlot *graph)
         graph_ = graph;
         plot_ = graph_->qwtPlot;
         curve_->attach(plot_);
-        curve_->setAxes(QwtPlot::xBottom, QwtPlot::yRight);
 
         if (autoUpdate_) {
             update();
@@ -644,6 +677,25 @@ void SGQWTPlotCurve::setColor(QColor color)
 QColor SGQWTPlotCurve::color()
 {
     return curve_->pen().color();
+}
+
+void SGQWTPlotCurve::setYAxisLeft(bool yleftAxis)
+{
+    if (yAxisLeft_ != yleftAxis){
+        yAxisLeft_ = yleftAxis;
+        if(!yleftAxis){
+            curve_->setAxes(QwtPlot::xBottom, QwtPlot::yRight);
+        }
+        if (autoUpdate_) {
+            update();
+        }
+        emit yAxisLeftChanged();
+    }
+}
+
+bool SGQWTPlotCurve::yAxisLeft()
+{
+    return yAxisLeft_;
 }
 
 void SGQWTPlotCurve::update()
