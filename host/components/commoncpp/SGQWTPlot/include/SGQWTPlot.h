@@ -30,8 +30,10 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(double xMax READ xMax WRITE setXMax NOTIFY xMaxChanged)
     Q_PROPERTY(double yMin READ yMin WRITE setYMin NOTIFY yMinChanged)
     Q_PROPERTY(double yMax READ yMax WRITE setYMax NOTIFY yMaxChanged)
+
     Q_PROPERTY(double yRightMin READ yRightMin WRITE setYRightMin NOTIFY yRightMinChanged)
     Q_PROPERTY(double yRightMax READ yRightMax WRITE setYRightMax NOTIFY yRightMaxChanged)
+
     Q_PROPERTY(QString xTitle READ xTitle WRITE setXTitle NOTIFY xTitleChanged)
     Q_PROPERTY(int xTitlePixelSize READ xTitlePixelSize WRITE setXTitlePixelSize NOTIFY xTitlePixelSizeChanged)
     Q_PROPERTY(QString yTitle READ yTitle WRITE setYTitle NOTIFY yTitleChanged)

@@ -75,7 +75,10 @@ void SGQWTPlot::shiftYAxis(double offset)
 {
     double yMin = this->yMin() + offset;
     double yMax = this->yMax() + offset;
-    qwtPlot->setAxisScale(qwtPlot->yRight, yMin, yMax);
+
+    double yMinRight = this->yRightMin() + offset;
+    double yMaxRight = this->yRightMax() + offset;
+    qwtPlot->setAxisScale(qwtPlot->yRight, yMinRight, yMaxRight);
     qwtPlot->setAxisScale(qwtPlot->yLeft, yMin, yMax);
 
     if (autoUpdate_) {
@@ -129,6 +132,7 @@ void SGQWTPlot::autoScaleYAxis()
 SGQWTPlotCurve* SGQWTPlot::createCurve(QString name)
 {
     SGQWTPlotCurve* curve = new SGQWTPlotCurve(name);
+
     curve->setGraph(this);
     return curve;
 }
@@ -246,7 +250,8 @@ double SGQWTPlot::xMax()
 
 void SGQWTPlot::setYMin(double value)
 {
-    qwtPlot->setAxisScale( qwtPlot->yLeft, value, yMax());
+    qwtPlot->setAxisScale(qwtPlot->yRight, value, yMax());
+    qwtPlot->setAxisScale(qwtPlot->yLeft, value, yMax());
     emit yMinChanged();
     if (autoUpdate_) {
         update();
@@ -277,10 +282,10 @@ void SGQWTPlot::setYRightMin(double value)
 }
 
 
-
 void SGQWTPlot::setYMax(double value)
 {
-    qwtPlot->setAxisScale( qwtPlot->yLeft, yMin(), value);
+    qwtPlot->setAxisScale(qwtPlot->yRight, yMin(), value);
+    qwtPlot->setAxisScale(qwtPlot->yLeft, yMin(), value);
     emit yMaxChanged();
     if (autoUpdate_) {
         update();
@@ -362,7 +367,7 @@ QString SGQWTPlot::yTitle()
 void SGQWTPlot::setYTitle(QString title)
 {
     if (title != yTitle()){
-        qwtPlot->setAxisTitle(qwtPlot->yRight, title);
+        qwtPlot->setAxisTitle(qwtPlot->yLeft, title);
         emit yTitleChanged();
         if (autoUpdate_) {
             update();
@@ -373,11 +378,11 @@ void SGQWTPlot::setYTitle(QString title)
 void SGQWTPlot::setYTitlePixelSize(int pixelSize)
 {
     if (pixelSize != this->yTitlePixelSize()){
-        QwtText title = qwtPlot->axisTitle(qwtPlot->yRight);
+        QwtText title = qwtPlot->axisTitle(qwtPlot->yLeft);
         QFont titleFont = title.font();
         titleFont.setPixelSize(pixelSize);
         title.setFont(titleFont);
-        qwtPlot->setAxisTitle(qwtPlot->yRight, title);
+        qwtPlot->setAxisTitle(qwtPlot->yLeft, title);
         emit yTitlePixelSizeChanged();
 
         if (autoUpdate_) {
@@ -388,7 +393,7 @@ void SGQWTPlot::setYTitlePixelSize(int pixelSize)
 
 int SGQWTPlot::yTitlePixelSize()
 {
-    return qwtPlot->axisTitle(qwtPlot->yRight).font().pixelSize();
+    return qwtPlot->axisTitle(qwtPlot->yLeft).font().pixelSize();
 }
 
 QString SGQWTPlot::title()
@@ -563,6 +568,7 @@ SGQWTPlotCurve::SGQWTPlotCurve(QString name, QObject* parent) : QObject(parent)
     curve_->setData(new SGQWTPlotCurveData(&curveData_));
     curve_->setPaintAttribute( QwtPlotCurve::FilterPoints , true );
     curve_->setItemAttribute(QwtPlotItem::AutoScale, true);
+
 }
 
 SGQWTPlotCurve::~SGQWTPlotCurve()
@@ -583,6 +589,7 @@ void SGQWTPlotCurve::setGraph(SGQWTPlot *graph)
         graph_ = graph;
         plot_ = graph_->qwtPlot;
         curve_->attach(plot_);
+        curve_->setAxes(QwtPlot::xBottom, QwtPlot::yRight);
 
         if (autoUpdate_) {
             update();

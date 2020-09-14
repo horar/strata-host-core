@@ -28,6 +28,9 @@ Item {
                 xGrid: false
                 yGrid: true
                 gridColor: "red"
+                yRight: true
+                yRightMin: -5
+                //yRightMax: 5
             }
 
             Column {
@@ -42,9 +45,11 @@ Item {
                         let curve = basicGraph.createCurve("graphCurve" + basicGraph.count)
                         curve.color = sgGraphExample.randomColor()
                         let dataArray = []
-                        for (let i = 0; i <= 1000; i++) {
-                            dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
+                        for (let i = 0; i <= 5; i++) {
+                            dataArray.push({"x":i/5, "y":sgGraphExample.yourDataValueHere()})
                         }
+                        console.info(JSON.stringify(dataArray))
+
                         curve.appendList(dataArray)
                     }
                 }
