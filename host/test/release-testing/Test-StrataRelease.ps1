@@ -111,14 +111,13 @@ Assert-PythonScripts
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
-Write-Host "Starting tests...`n"
+Write-Host "`nStarting tests...`n"
 
 # Run Test-SDSInstaller
 $SDSInstallerResults = Test-SDSInstaller -SDSInstallerPath $SDSInstallerPath
 
 # Search for SDS and HCS
 Assert-StrataAndHCS
-
 
 # Run Test-Database (HCS database testing)
 $DatabaseResults = Test-Database
