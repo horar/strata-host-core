@@ -12,10 +12,8 @@ SGQWTPlot {
 
     property bool panXEnabled: true
     property bool panYEnabled: true
-    property bool panYRightEnabled: true
     property bool zoomXEnabled: true
     property bool zoomYEnabled: true
-    property bool zoomYRightAxisEnabled: true
     property real fontSizeMultiplier: 1.0
     property alias mouseArea: mouseArea
 
@@ -26,7 +24,7 @@ SGQWTPlot {
     MouseArea {
         id: mouseArea
         anchors.fill: parent
-        enabled: (sgGraph.panXEnabled || sgGraph.panYEnabled || sgGraph.panYRightEnabled || sgGraph.zoomXEnabled || sgGraph.zoomYEnabled || sgGraph.zoomYRightAxisEnabled) && !(sgGraph.xLogarithmic || sgGraph.yLogarithmic)
+        enabled: (sgGraph.panXEnabled || sgGraph.panYEnabled || sgGraph.zoomXEnabled || sgGraph.zoomYEnabled) && !(sgGraph.xLogarithmic || sgGraph.yLogarithmic)
         preventStealing: true
         hoverEnabled: true
 
@@ -34,13 +32,13 @@ SGQWTPlot {
         property int wheelChoke: 0 // chokes output of high resolution trackpads on mac
 
         onPressed: {
-            if (sgGraph.panXEnabled || sgGraph.panYEnabled || sgGraph.panYRightEnabled) {
+            if (sgGraph.panXEnabled || sgGraph.panYEnabled) {
                 mousePosition = Qt.point(mouse.x, mouse.y)
             }
         }
 
         onPositionChanged: {
-            if ((sgGraph.panXEnabled || sgGraph.panYEnabled || sgGraph.panYRightEnabled) && pressed) {
+            if ((sgGraph.panXEnabled || sgGraph.panYEnabled) && pressed) {
                 let originToPosition = sgGraph.mapToPosition(Qt.point(0,0))
                 originToPosition.x += (mouse.x - mousePosition.x)
                 originToPosition.y += (mouse.y - mousePosition.y)
@@ -56,7 +54,6 @@ SGQWTPlot {
 
                 sgGraph.autoUpdate = true
                 sgGraph.update()
-
                 mousePosition = Qt.point(mouse.x, mouse.y)
 
             }
@@ -71,17 +68,13 @@ SGQWTPlot {
 
                     var scaledChartWidth = (sgGraph.xMax - sgGraph.xMin) / scale
                     var scaledChartHeight = (sgGraph.yMax - sgGraph.yMin) / scale
-
-                    var scaledChartHeight2 = (sgGraph.yRightMax - sgGraph.yRightMin) / scale
-
+                    var scaledChartHeightYAxisRight = (sgGraph.yRightMax - sgGraph.yRightMin) / scale
 
                     var chartCenter = Qt.point((sgGraph.xMin + sgGraph.xMax) / 2, (sgGraph.yMin + sgGraph.yMax) / 2)
-                    var chartCenter2 = Qt.point((sgGraph.xMin + sgGraph.xMax) / 2, (sgGraph.yRightMax + sgGraph.yRightMin) / 2)
+                    var chartCenterYAxisRight = Qt.point((sgGraph.xMin + sgGraph.xMax) / 2, (sgGraph.yRightMax + sgGraph.yRightMin) / 2)
                     var chartWheelPosition = mapToValue(Qt.point(wheel.x, wheel.y))
                     var chartOffset = Qt.point((chartCenter.x - chartWheelPosition.x) * (1 - scale), (chartCenter.y - chartWheelPosition.y) * (1 - scale))
-
-                    var chartOffset2 = Qt.point((chartCenter2.x - chartWheelPosition.x) * (1 - scale), (chartCenter2.y - chartWheelPosition.y) * (1 - scale))
-
+                    var chartOffsetYAxisRight = Qt.point((chartCenterYAxisRight.x - chartWheelPosition.x) * (1 - scale), (chartCenterYAxisRight.y - chartWheelPosition.y) * (1 - scale))
 
                     sgGraph.autoUpdate = false
 
@@ -92,10 +85,8 @@ SGQWTPlot {
                     if (sgGraph.zoomYEnabled) {
                         sgGraph.yMin = (chartCenter.y - (scaledChartHeight / 2)) + chartOffset.y
                         sgGraph.yMax = (chartCenter.y + (scaledChartHeight / 2)) + chartOffset.y
-                    }
-                    if(sgGraph.zoomYRightAxisEnabled){
-                        sgGraph.yRightMin = (chartCenter2.y - (scaledChartHeight2 / 2)) + chartOffset.y
-                        sgGraph.yRightMax = (chartCenter2.y + (scaledChartHeight2 / 2)) + chartOffset.y
+                        sgGraph.yRightMin = (chartOffsetYAxisRight.y - (scaledChartHeightYAxisRight / 2)) + chartOffsetYAxisRight.y
+                        sgGraph.yRightMax = (chartOffsetYAxisRight.y + (scaledChartHeightYAxisRight / 2)) + chartOffsetYAxisRight.y
                     }
 
                     sgGraph.autoUpdate = true

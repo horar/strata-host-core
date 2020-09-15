@@ -138,7 +138,7 @@ Module {
         Property { name: "xGrid"; type: "bool"}
         Property { name: "yGrid"; type: "bool"}
         Property { name: "gridColor"; type: "QColor"}
-        Property { name: "yAxisRightVisible"; type: "bool"}
+        Property { name: "yRightVisible"; type: "bool"}
         Property { name: "yAxisLeft"; type: "bool"}
         Method { name: "initialize" }
         Method { name: "update" }

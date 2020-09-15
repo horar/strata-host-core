@@ -31,10 +31,7 @@ Item {
                 xGrid: false
                 yGrid: true
                 gridColor: "red"
-                yAxisRightVisible: true
-
-                foregroundColor: "green"
-
+                yRightVisible: true
             }
 
             Column {
@@ -51,7 +48,7 @@ Item {
                         curve.yAxisLeft = false
                         let dataArray = []
                         for (let i = 0; i <= 1000; i++) {
-                            dataArray.push({"x":i/100, "y":sgGraphExample.yourDataValueHere()})
+                            dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
                         }
                         curve.appendList(dataArray)
                     }
@@ -88,16 +85,14 @@ Item {
                 title: "Basic Graph - AutoScale Example"
                 panXEnabled: false
                 panYEnabled: false
-                panYRightEnabled: false
                 zoomXEnabled: false
                 zoomYEnabled: false
-                zoomYRightAxisEnabled: false
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
                 xGrid: true
                 yGrid: false
                 gridColor: "green"
-                yAxisRightVisible: true
+                yRightVisible: true
 
             }
 
@@ -120,7 +115,6 @@ Item {
                         curve.yAxisLeft = false
                         curve.color = sgGraphExample.randomColor()
                         let dataArray = []
-
                         for (let i = 0; i <= 1000; i++) {
                             dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
                         }
@@ -174,8 +168,7 @@ Item {
                 autoUpdate: false
                 xGrid: true
                 yGrid: true
-                yAxisRightVisible: true
-
+                yRightVisible: true
                 Component.onCompleted: {
                     let movingCurve = createCurve("movingCurve")
                     movingCurve.color = "turquoise"
@@ -187,9 +180,7 @@ Item {
                     interval: 60
                     running: false
                     repeat: true
-
                     property real lastTime
-
                     onRunningChanged: {
                         if (running){
                             timedGraphPoints.curve(0).clear()

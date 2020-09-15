@@ -85,17 +85,17 @@ void SGQWTPlot::shiftYAxis(double offset)
     }
 }
 
-bool SGQWTPlot :: yAxisRightVisible()
+bool SGQWTPlot :: yRightVisible()
 {
-    return yAxisRightVisible_;
+    return yRightVisible_;
 }
 
-void SGQWTPlot :: setyAxisRightVisible(bool showYRightAxis)
+void SGQWTPlot :: setyRightVisible(bool showYRightAxis)
 {
-    if(yAxisRightVisible_ != showYRightAxis) {
-        yAxisRightVisible_ = showYRightAxis;
+    if(yRightVisible_ != showYRightAxis) {
+        yRightVisible_ = showYRightAxis;
         qwtPlot->enableAxis(qwtPlot->yRight,showYRightAxis);
-        emit yAxisRightVisibleChanged();
+        emit yRightVisibleChanged();
         if (autoUpdate_) {
             update();
         }

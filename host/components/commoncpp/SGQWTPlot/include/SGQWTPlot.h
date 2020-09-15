@@ -45,7 +45,7 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(bool xGrid READ xGrid WRITE setXGrid NOTIFY xGridChanged)
     Q_PROPERTY(bool yGrid READ yGrid WRITE setYGrid NOTIFY yGridChanged)
     Q_PROPERTY(QColor gridColor MEMBER gridColor_ WRITE setGridColor NOTIFY gridColorChanged)
-    Q_PROPERTY(bool yAxisRightVisible READ yAxisRightVisible WRITE setyAxisRightVisible NOTIFY yAxisRightVisibleChanged)
+    Q_PROPERTY(bool yRightVisible READ yRightVisible WRITE setyRightVisible NOTIFY yRightVisibleChanged)
     Q_PROPERTY(double yRightMin READ yRightMin WRITE setYRightMin NOTIFY yRightMinChanged)
     Q_PROPERTY(double yRightMax READ yRightMax WRITE setYRightMax NOTIFY yRightMaxChanged)
     Q_PROPERTY(QString yRightTitle READ  yRightTitle WRITE setYRightTitle NOTIFY yRightTitleChanged)
@@ -108,8 +108,8 @@ public:
     void setYGrid(bool showGrid);
     bool yGrid();
     void setGridColor(QColor newColor);
-    void setyAxisRightVisible(bool showYRightAxis);
-    bool yAxisRightVisible();
+    void setyRightVisible(bool showYRightAxis);
+    bool yRightVisible();
 
 
 
@@ -140,7 +140,7 @@ signals:
     void xGridChanged();
     void yGridChanged();
     void gridColorChanged();
-    void yAxisRightVisibleChanged();
+    void yRightVisibleChanged();
     void yRightMinChanged();
     void yRightMaxChanged();
 
@@ -157,7 +157,7 @@ private:
     bool xGrid_ = false;
     bool yGrid_ = false;
     QColor gridColor_;
-    bool yAxisRightVisible_ = false;
+    bool yRightVisible_ = false;
 
 
 
