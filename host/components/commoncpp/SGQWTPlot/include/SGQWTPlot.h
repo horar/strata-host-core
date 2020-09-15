@@ -90,12 +90,10 @@ public:
     void setYTitle(QString title);
     void setYTitlePixelSize(int pixelSize);
     int yTitlePixelSize();
-
     QString yRightTitle();
     void setYRightTitle(QString title);
     void setYRightTitlePixelSize(int pixelSize);
     int yRightTitlePixelSize();
-
     QString title();
     void setTitle(QString title);
     void setTitlePixelSize(int pixelSize);
@@ -197,8 +195,7 @@ protected:
     void setGraph(SGQWTPlot* graph);
     void unsetGraph();
     void setYAxisLeft(bool yleftAxis);
-    bool yAxisLeft();
-    bool yAxisLeft_ = true;
+
 
 signals:
     void graphChanged();
@@ -221,6 +218,8 @@ private:
     QColor color();
     void setName(QString name);
     QString name();
+    bool yAxisLeft();
+    bool yAxisLeft_ = true;
 
 };
 

@@ -23,14 +23,18 @@ Item {
                 xMax: 1
                 yMin: 0
                 yMax: 1
+                yRightMin: 0
+                yRightMax: 10
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
+                yRightTitle: "Y1 Axis"
                 xGrid: false
                 yGrid: true
                 gridColor: "red"
-                yRight: true
-                yRightMin: -5
-                //yRightMax: 5
+                yAxisRightVisible: true
+
+                foregroundColor: "green"
+
             }
 
             Column {
@@ -44,12 +48,11 @@ Item {
                     onClicked: {
                         let curve = basicGraph.createCurve("graphCurve" + basicGraph.count)
                         curve.color = sgGraphExample.randomColor()
+                        curve.yAxisLeft = false
                         let dataArray = []
-                        for (let i = 0; i <= 5; i++) {
-                            dataArray.push({"x":i/5, "y":sgGraphExample.yourDataValueHere()})
+                        for (let i = 0; i <= 1000; i++) {
+                            dataArray.push({"x":i/100, "y":sgGraphExample.yourDataValueHere()})
                         }
-                        console.info(JSON.stringify(dataArray))
-
                         curve.appendList(dataArray)
                     }
                 }
@@ -85,13 +88,17 @@ Item {
                 title: "Basic Graph - AutoScale Example"
                 panXEnabled: false
                 panYEnabled: false
+                panYRightEnabled: false
                 zoomXEnabled: false
                 zoomYEnabled: false
+                zoomYRightAxisEnabled: false
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
                 xGrid: true
                 yGrid: false
                 gridColor: "green"
+                yAxisRightVisible: true
+
             }
 
             Column {
@@ -110,8 +117,10 @@ Item {
                     text: "Add curve to graph, populate with points, and autoscale axes"
                     onClicked: {
                         let curve = autoScaleGraph.createCurve("graphCurve" + autoScaleGraph.count)
+                        curve.yAxisLeft = false
                         curve.color = sgGraphExample.randomColor()
                         let dataArray = []
+
                         for (let i = 0; i <= 1000; i++) {
                             dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
                         }
@@ -126,6 +135,9 @@ Item {
                         autoScaleGraph.xMin = 0
                         autoScaleGraph.yMin = 0
                         autoScaleGraph.yMax = 10
+                        autoScaleGraph.yRightMin = 0
+                        autoScaleGraph.yRightMax = 10
+
                     }
                 }
 
@@ -150,8 +162,11 @@ Item {
                 yMax: 1
                 xMin: 5
                 xMax: 0
+                yRightMin: 0
+                yRightMax: 50
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
+                yRightTitle: "Y1 Axis"
                 panXEnabled: false
                 panYEnabled: false
                 zoomXEnabled: false
@@ -159,6 +174,7 @@ Item {
                 autoUpdate: false
                 xGrid: true
                 yGrid: true
+                yAxisRightVisible: true
 
                 Component.onCompleted: {
                     let movingCurve = createCurve("movingCurve")
