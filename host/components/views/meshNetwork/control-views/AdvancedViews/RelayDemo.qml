@@ -250,7 +250,7 @@ Rectangle {
         anchors.right:nodeRectangle2.left
         anchors.rightMargin: 10
         anchors.verticalCenter: parent.verticalCenter
-        source: "qrc:/views/meshNetwork/images/rightArrow.svg"
+        source: "../../images/rightArrow.svg"
         height:12
         //sourceSize: Qt.size(width, height)
         fillMode: Image.PreserveAspectFit
@@ -420,7 +420,7 @@ Rectangle {
         anchors.left:nodeRectangle2.right
         anchors.right:bulbNodeRectangle.left
         anchors.verticalCenter: parent.verticalCenter
-        source: "qrc:/views/meshNetwork/images/rightArrow.svg"
+        source: "../../images/rightArrow.svg"
         height:12
         //sourceSize: Qt.size(width, height)
         fillMode: Image.PreserveAspectFit
