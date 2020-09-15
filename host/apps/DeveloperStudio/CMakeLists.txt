@@ -93,6 +93,39 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>
 )
 
+include(ExternalProject)
+
+# Add monaco-editor npm package
+if (APPLE)
+    set(MONACO_EDITOR_TAG v0.20.0)
+
+    find_program(NPM_EXE npm)
+    mark_as_advanced(NPM_EXE)
+    if(NOT NPM_EXE)
+        message(FATAL_ERROR "'npm' program not found; check monaco-editor documentation")
+    endif()
+
+    find_program(NODE_JS node)
+    mark_as_advanced(NODE_JS)
+    if(NOT NODE_JS)
+        message(FATAL_ERROR "'node.js' program not found; check monaco-editor documentation")
+    endif()
+
+    ExternalProject_Add(monaco-editor-${MONACO_EDITOR_TAG}
+        EXCLUDE_FROM_ALL ON
+
+        BUILD_IN_SOURCE ON
+        BUILD_ALWAYS ON
+
+        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/partial-views/control-view-creator
+
+        DOWNLOAD_COMMAND ${NPM_EXE} install
+
+        INSTALL_COMMAND ${CMAKE_COMMAND} -E echo monaco-editor was downloaded to <SOURCE_DIR>
+    )
+
+endif()
+
 if(WIN32)
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
