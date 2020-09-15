@@ -195,3 +195,72 @@ QString ResourceLoader::getQResourcePrefix(const QString &class_id, const QStrin
         return "/" + class_id + (version.isEmpty() ? "" : "/" + version);
     }
 }
+
+QString ResourceLoader::recompileControlViewQrc(/*const QString &rccExecutablePath,*/ QString qrcFilePath, const double &prefix)
+{
+    // Hard-coded for now
+    // Mac OS: "/Users/***/Qt/5.12.2/clang_64/bin/rcc"
+    const QString rccExecutablePath = "/Users/zbh8jv/Qt/5.12.2/clang_64/bin/rcc";
+
+    qrcFilePath.replace("file://", "");
+
+    QFile rccExecutable(rccExecutablePath);
+    QFile qrcFile(qrcFilePath);
+
+    if (!rccExecutable.exists()) {
+        qCWarning(logCategoryStrataDevStudio) << "Could not find RCC executable at " << rccExecutablePath;
+        return QString();
+    }
+
+    if (!qrcFile.exists()) {
+        qCWarning(logCategoryStrataDevStudio) << "Could not find QRC file at " << rccExecutablePath;
+        return QString();
+    }
+
+    QString timestampPrefix = QString::number(prefix, 'f', 0);
+
+    QDir applicationDir(QCoreApplication::applicationDirPath());
+
+#ifdef Q_OS_MACOS
+    applicationDir.cdUp();
+    applicationDir.cdUp();
+    applicationDir.cdUp();
+#endif
+
+    QString compiledRccFile = applicationDir.path() + QDir::separator() + "DEV-CONTROLVIEW" + QDir::separator();
+
+    // Make timestampPrefix directory for compiled RCC file
+    QDir().mkdir(compiledRccFile);
+    QDir().mkdir(compiledRccFile + timestampPrefix);
+
+    // Split qrcFilePath for filename
+    QFileInfo fileInfo(qrcFile.fileName());
+    QString qrcFileName(fileInfo.fileName());
+
+    // Retrieve 'views-*' substring if possible
+    // Maybe no longer needed
+    // qrcFileName.replace("qml-", "");
+    // qrcFileName.replace(".qrc", "");
+
+    // Add timestampPrefix directory to binary object path
+    compiledRccFile += timestampPrefix;
+    compiledRccFile += QDir::separator();
+    compiledRccFile += qrcFileName;
+
+    const auto arguments = (QList<QString>() << "-binary" << qrcFilePath << "-o" << compiledRccFile);
+
+    rccCompilerProcess_.setProgram(rccExecutablePath);
+    rccCompilerProcess_.setArguments(arguments);
+
+    connect(&rccCompilerProcess_, SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()));
+
+    rccCompilerProcess_.start();
+    rccCompilerProcess_.waitForFinished();
+
+    qCDebug(logCategoryResourceLoader) << "Wrote compiled resource file to " << compiledRccFile;
+    return compiledRccFile;
+}
+
+void ResourceLoader::onOutputRead() {
+    qDebug() << rccCompilerProcess_.readAllStandardError();
+}

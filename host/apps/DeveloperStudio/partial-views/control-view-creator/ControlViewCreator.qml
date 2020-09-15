@@ -4,9 +4,15 @@ import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.SGQrcListModel 1.0
 
+import tech.strata.ResourceLoader 1.0
+
 Rectangle {
     id: controlViewCreatorRoot
     objectName: "ControlViewCreator"
+
+    ResourceLoader {
+        id: resourceLoader
+    }
 
     SGQrcListModel {
         id: fileModel
@@ -70,6 +76,17 @@ Rectangle {
 
                 SGButton {
                     text: "Recompile/Reload Control View"
+
+                    onClicked: {
+                        let timestampPrefix = new Date().getTime().valueOf()
+                        // let platformName = resourceLoader.getPlatformFromFilename(root.qrcFilePath)
+
+                        // let compiledRccFile = resourceLoader.recompileControlViewQrc(/*root.rccExecPath, */root.qrcFilePath, timestampPrefix)
+                        let compiledRccFile = resourceLoader.recompileControlViewQrc(/*root.rccExecPath, */openProjectContainer.fileUrl, timestampPrefix)
+
+                        // stackContainer.currentIndex = stackContainer.count - 1
+                        loadDebugView(compiledRccFile, timestampPrefix) //, platformName)
+                    }
                 }
             }
         }
@@ -124,6 +141,23 @@ Rectangle {
                     opacity: .25
                 }
             }
+        }
+    }
+
+    function loadDebugView(compiledRccFile, timestampPrefix, platformName) {
+        let prefix = "/" + timestampPrefix
+
+        // Register debug control view object
+        if (!sdsModel.resourceLoader.registerResource(compiledRccFile, prefix)) {
+            console.error("Failed to register resource")
+            return
+        }
+
+        let qml_control = "qrc:/" + timestampPrefix + "/views/" + platformName + "/Control.qml"
+        // let obj = sdsModel.resourceLoader.createViewObject(qml_control, root.debugContainer);
+        let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlViewContainer);
+        if (obj === null) {
+            console.error("Could not load view.")
         }
     }
 }
