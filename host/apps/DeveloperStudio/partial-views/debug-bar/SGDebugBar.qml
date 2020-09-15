@@ -11,6 +11,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 import "qrc:/js/restclient.js" as Rest
 import "qrc:/js/uuid_map.js" as UuidMap
 import "qrc:/js/constants.js" as Constants
+import "qrc:/js/platform_selection.js" as PlatformSelection
 
 Item {
     id: root
@@ -52,11 +53,24 @@ Item {
                     model: viewFolderModel
                     textRole: "fileName"
 
+                    onCurrentIndexChanged: {
+                        // Here we remove the "views-" portion from the filename and also removes the .rcc from the filename
+                        if (currentText === "") {
+                            let fileName = viewFolderModel.get(currentIndex, "fileName");
+                            if (fileName !== undefined) {
+                                displayText = viewFolderModel.get(currentIndex, "fileName").replace("views-", "").slice(0, -4)
+                            }
+                        } else {
+                            displayText = currentText.replace("views-", "").slice(0, -4)
+                        }
+                    }
+
                     FolderListModel {
                         id: viewFolderModel
-                        showDirs: true
-                        showFiles: false
-                        folder: "qrc:///views/"
+                        showDirs: false
+                        showFiles: true
+                        nameFilters: "views-*.rcc"
+                        folder: sdsModel.resourceLoader.getStaticResourcesUrl()
 
                         onCountChanged: {
                             viewCombobox.currentIndex = viewFolderModel.count - 1
@@ -66,7 +80,7 @@ Item {
                             if (viewFolderModel.status === FolderListModel.Ready) {
                                 // [LC] - this FolderListModel is from Lab; a side effects in 5.12
                                 //      - if 'folder' url doesn't exists the it loads app folder content
-                                comboboxRow.visible = (viewFolderModel.folder.toString() === "qrc:///views/")
+                                comboboxRow.visible = (viewFolderModel.folder.toString() === sdsModel.resourceLoader.getStaticResourcesUrl().toString())
                             }
                         }
                     }
@@ -75,9 +89,11 @@ Item {
                         id: viewButtonDelegate
 
                         Button {
+                            id: selectButton
                             width: viewCombobox.width
                             height: 20
-                            text: model.fileName
+                            // The below line gets the substring that is between "views-" and ".rcc". Ex) "views-template.rcc" = "template"
+                            text: model.fileName.substring(6, model.fileName.indexOf(".rcc"))
                             hoverEnabled: true
                             background: Rectangle {
                                 color: hovered ? "white" : "lightgrey"
@@ -87,29 +103,35 @@ Item {
                                 if (NavigationControl.navigation_state_ !== NavigationControl.states.CONTROL_STATE) {
                                     NavigationControl.updateState(NavigationControl.events.LOGIN_SUCCESSFUL_EVENT, { "user_id": Constants.GUEST_USER_ID, "first_name": Constants.GUEST_FIRST_NAME, "last_name": Constants.GUEST_LAST_NAME } )
                                 }
-                                const uuids = Object.keys(UuidMap.uuid_map)
-                                for (const uuid of uuids) {
-                                    if (UuidMap.uuid_map[uuid] === model.fileName) {
-                                        let data = {
-                                            "class_id": uuid,
-                                            "name": model.fileName,
-                                            "device_id": Constants.DEBUG_DEVICE_ID,
-                                            "firmware_version": "",
-                                            "view": "control",
-                                            "connected": true,
-                                            "available": {
-                                                "control": true,
-                                                "documents": true,
-                                                "unlisted": false,
-                                                "order": false
-                                            }
-                                        }
 
-                                        NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT, data)
-                                                    viewCombobox.currentIndex = index
-                                        break
+                                let name = selectButton.text;
+                                let class_id;
+                                for (let key of Object.keys(UuidMap.uuid_map)) {
+                                    if (UuidMap.uuid_map[key] === name) {
+                                        class_id = key;
+                                        break;
                                     }
                                 }
+
+                                let data = {
+                                    "device_id": Constants.DEBUG_DEVICE_ID,
+                                    "class_id": class_id,
+                                    "name": name,
+                                    "index": null,
+                                    "view": "control",
+                                    "connected": true,
+                                    "available": {
+                                        "control": true,
+                                        "documents": true,
+                                        "unlisted": false,
+                                        "order": false
+                                    },
+                                    "firmware_version": ""
+                                }
+                                let repeaterCount = platformViewRepeater.count
+                                PlatformSelection.openPlatformView(data)
+                                viewCombobox.currentIndex = index
+                                platformViewRepeater.itemAt(repeaterCount).platformDocumentsInitialized = true
                             }
                         }
                     }
