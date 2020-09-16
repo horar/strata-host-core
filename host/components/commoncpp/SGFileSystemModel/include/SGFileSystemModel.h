@@ -22,7 +22,8 @@ public:
     enum Roles {
         FileSizeRole = Qt::UserRole + 4,
         FileInfoRole = Qt::UserRole + 5,
-        FileTypeRole = Qt::UserRole + 6
+        FileTypeRole = Qt::UserRole + 6,
+        IsDirRole = Qt::UserRole + 7
     };
     Q_ENUM(Roles)
 
@@ -31,6 +32,7 @@ public:
     QString rootDirectory() const;
     QModelIndex rootIndex() const;
 
+    QVariant get(int row, int column);
     void setRootDirectory(QString root);
 
 signals:

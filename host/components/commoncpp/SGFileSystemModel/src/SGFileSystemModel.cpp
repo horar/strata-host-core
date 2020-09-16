@@ -21,6 +21,8 @@ QVariant SGFileSystemModel::data(const QModelIndex &index, int role) const
             return QVariant::fromValue(fi);
         } else if (role == FileTypeRole) {
             return QVariant(QFileSystemModel::fileInfo(index).suffix());
+        } else if (role == IsDirRole) {
+            return QVariant(QFileSystemModel::fileInfo(index).isDir());
         } else {
             return QFileSystemModel::data(index, role);
         }
@@ -40,6 +42,7 @@ QHash<int, QByteArray> SGFileSystemModel::roleNames() const
      result.insert(FileSizeRole, QByteArrayLiteral("size"));
      result.insert(FileInfoRole, QByteArrayLiteral("fileInfo"));
      result.insert(FileTypeRole, QByteArrayLiteral("fileType"));
+     result.insert(IsDirRole, QByteArrayLiteral("isDir"));
      return result;
 }
 

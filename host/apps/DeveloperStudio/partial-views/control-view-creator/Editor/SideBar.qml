@@ -5,6 +5,7 @@ import QtQuick.Controls 2.2
 import Qt.labs.folderlistmodel 2.12
 import tech.strata.commoncpp 1.0
 import QtQuick.Controls 1.4
+import QtQml.Models 2.12
 
 import tech.strata.sgwidgets 1.0
 
@@ -39,23 +40,58 @@ Rectangle {
             clip: true
 
             SGFileSystemModel {
-                id: fileTreeView
+                id: fileSystemModel
                 rootDirectory: SGUtilsCpp.urlToLocalFile(fileModel.projectDirectory)
             }
 
             TreeView {
+                id: treeView
                 anchors.fill: parent
-                rootIndex: fileTreeView.rootIndex
-                model: fileTreeView
+                rootIndex: fileSystemModel.rootIndex
+                model: fileSystemModel
                 alternatingRowColors: false
                 backgroundVisible: false
+
+                selection: ItemSelectionModel {
+                    model: fileSystemModel
+                }
+
+                rowDelegate: Rectangle {
+                    color: styleData.selected ? "lightblue" : "transparent"
+                }
 
                 itemDelegate: Item {
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        color: "black"
+                        color: {
+                            if (model) {
+                                if (model.isDir || fileModel.has(model.filePath)) {
+                                    return "black";
+                                }
+                            }
+                            return "grey"
+                        }
                         elide: Text.ElideRight
                         text: styleData.value
+                        font.pixelSize: 10
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+
+                        onEntered: {
+                            cursorShape = Qt.PointingHandCursor
+                        }
+
+                        onClicked: {
+                            if (!treeView.selection.isSelected(styleData.index)) {
+                                treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.ClearAndSelect)
+                            } else {
+                                treeView.selection.clearSelection()
+                                treeView.selection.clearCurrentIndex()
+                            }
+                        }
                     }
                 }
 
