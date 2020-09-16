@@ -1,11 +1,13 @@
-#include <VersionedListModel.h>
+#include "VersionedListModel.h"
+#include "logging/LoggingQtCategories.h"
+#include "SGVersionUtils.h"
+
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFileInfo>
 #include <QDir>
 #include <QVector>
 #include <QDebug>
-#include "logging/LoggingQtCategories.h"
 
 VersionedListModel::VersionedListModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -44,6 +46,8 @@ QVariant VersionedListModel::data(const QModelIndex &index, int role) const
         return item->version;
     case InstalledRole:
         return item->installed;
+    case FilepathRole:
+        return item->filepath;
     }
 
     return QVariant();
@@ -98,6 +102,36 @@ QString VersionedListModel::version(int index)
     return data(VersionedListModel::index(index, 0), VersionRole).toString();
 }
 
+QString VersionedListModel::uri(int index)
+{
+    return data(VersionedListModel::index(index, 0), UriRole).toString();
+}
+
+QString VersionedListModel::md5(int index)
+{
+    return data(VersionedListModel::index(index, 0), Md5Role).toString();
+}
+
+QString VersionedListModel::name(int index)
+{
+    return data(VersionedListModel::index(index, 0), NameRole).toString();
+}
+
+QString VersionedListModel::timestamp(int index)
+{
+    return data(VersionedListModel::index(index, 0), TimestampRole).toString();
+}
+
+bool VersionedListModel::installed(int index)
+{
+    return data(VersionedListModel::index(index, 0), InstalledRole).toBool();
+}
+
+QString VersionedListModel::filepath(int index)
+{
+    return data(VersionedListModel::index(index, 0), FilepathRole).toString();
+}
+
 void VersionedListModel::setInstalled(int index, bool installed)
 {
     if (index < 0 || index >= data_.count()) {
@@ -116,6 +150,43 @@ void VersionedListModel::setInstalled(int index, bool installed)
                 QVector<int>() << InstalledRole);
 }
 
+void VersionedListModel::setFilepath(int index, QString path)
+{
+    if (index < 0 || index >= data_.count()) {
+        return;
+    }
+
+    VersionedItem *item = data_.at(index);
+    if (item->filepath == path) {
+        return;
+    }
+
+    item->filepath = path;
+    emit dataChanged(
+                createIndex(index, 0),
+                createIndex(index, 0),
+                QVector<int>() << FilepathRole);
+}
+
+QVariantMap VersionedListModel::get(int index)
+{
+    if (index < 0 || index >= data_.count()) {
+        return QVariantMap();
+    }
+
+    VersionedItem *item = data_.at(index);
+    QVariantMap map;
+    map.insert("uri", item->uri);
+    map.insert("md5", item->md5);
+    map.insert("name", item->name);
+    map.insert("timestamp", item->timestamp);
+    map.insert("version", item->version);
+    map.insert("filepath", item->filepath);
+    map.insert("installed", item->installed);
+    return map;
+}
+
+
 QHash<int, QByteArray> VersionedListModel::roleNames() const
 {
     QHash<int, QByteArray> names;
@@ -125,6 +196,30 @@ QHash<int, QByteArray> VersionedListModel::roleNames() const
     names[TimestampRole] = "timestamp";
     names[Md5Role] = "md5";
     names[InstalledRole] = "installed";
+    names[FilepathRole] = "filepath";
 
     return names;
 }
+
+int VersionedListModel::getLatestVersion() {
+    QStringList versions;
+    for (VersionedItem *versionItem : data_) {
+        versions.append(versionItem->version);
+    }
+
+    int latestVersionIndex = SGVersionUtils::getGreatestVersion(versions);
+
+    return latestVersionIndex;
+}
+
+int VersionedListModel::getInstalledVersion() {
+    int oldestInstalledIndex = -1;
+
+    for (int i = 0; i < data_.count(); i++) {
+        if (data_[i]->installed && (oldestInstalledIndex == -1 || SGVersionUtils::greaterThan(data_[oldestInstalledIndex]->version, data_[i]->version))) {
+            oldestInstalledIndex = i;
+        }
+    }
+    return oldestInstalledIndex;
+}
+

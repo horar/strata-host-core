@@ -66,7 +66,8 @@ public slots:
     void requestDownloadControlView(
             const QByteArray &clientId,
             const QString &partialUri,
-            const QString &md5);
+            const QString &md5,
+            const QString &class_id);
 
     void requestCancelAllDownloads(const QByteArray &clientId);
 
@@ -82,6 +83,7 @@ signals:
     void downloadPlatformSingleFileProgress(QByteArray clientId, QString filePath, qint64 bytesReceived, qint64 bytesTotal);
     void downloadPlatformSingleFileFinished(QByteArray clientId, QString filePath, QString errorString);
     void downloadPlatformDocumentsProgress(QByteArray clientId, QString classId, int filesCompleted, int filesTotal);
+    void downloadControlViewProgress(QByteArray clientId, QString partialUri, QString classId, qint64 bytesReceived, qint64 bytesTotal);
     void downloadPlatformFilesFinished(QByteArray clientId, QString errorString);
     void downloadControlViewFinished(QByteArray clientId, QString partialUri, QString filePath, QString errorString);
 
