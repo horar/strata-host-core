@@ -100,7 +100,7 @@ Component.prototype.installationOrUpdateFinished = function()
             installer.setValue("RunProgram", "");
 
         installer.setValue("RunProgramArguments", "");
-        installer.setValue("RunProgramDescription", "Launch Strata Developer Studio");
+        installer.setValue("RunProgramDescription", "Launch %1 Developer Studio"); // QTIFW bug, will report warning if we are missing the %1, where the productName() is placed
     } else {
         installer.setValue("RunProgram", "");
         installer.setValue("RunProgramArguments", "");
