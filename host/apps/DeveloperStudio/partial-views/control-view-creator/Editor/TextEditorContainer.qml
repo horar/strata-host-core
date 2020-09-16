@@ -30,13 +30,8 @@ Item {
     }
 
     Component.onCompleted: {
-        if (editorRoot.imageFormats.has(model.filetype)) {
-            textEditorView.visible = false
-            imageView.source = model.filepath
-        } else {
-            textArea.visible = true
-            textArea.text = openFile(model.filepath)
-        }
+        textArea.visible = true
+        textArea.text = openFile(model.filepath)
     }
 
     Connections{
@@ -58,24 +53,6 @@ Item {
             selectionColor: Qt.rgba(0.0, 0.0, 0.0, 0.15)
             selectedTextColor: color
         }
-    }
-
-    Image {
-        id: imageView
-
-        anchors.fill: parent
-        visible: !textEditorView.visible
-        horizontalAlignment: Image.AlignHCenter
-        verticalAlignment: Image.AlignVCenter
-
-        asynchronous: true
-        cache: true
-        /**
-         * Fillmode is set as follows:
-         * If the image is larger than the parent container in either width or height, then resize it to fit, while keeping aspect ratio.
-         * Otherwise, keep the original size
-         */
-        fillMode: sourceSize.width > parent.width || sourceSize.height > parent.height ? Image.PreserveAspectFit : Image.Pad
     }
 }
 
