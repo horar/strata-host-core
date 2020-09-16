@@ -82,7 +82,7 @@ Item {
                 id: autoScaleGraph
                 width: 400
                 height: 300
-                title: "Basic Graph - AutoScale Example with Y Right Axis Enabled"
+                title: "Basic Graph - AutoScale Example With Y Right Axis Enabled"
                 panXEnabled: false
                 panYEnabled: false
                 zoomXEnabled: false
