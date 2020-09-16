@@ -18,7 +18,7 @@ Item {
                 id: basicGraph
                 width: 400
                 height: 300
-                title: "Basic Graph - Pan/Zoom Enabled - Y Right Axis Enabled"
+                title: "Basic Graph - Pan/Zoom Enabled"
                 xMin: 0
                 xMax: 1
                 yMin: 0
@@ -77,7 +77,7 @@ Item {
                 id: autoScaleGraph
                 width: 400
                 height: 300
-                title: "Basic Graph - AutoScale Example With Y Right Axis Enabled"
+                title: "Basic Graph - AutoScale Example"
                 panXEnabled: false
                 panYEnabled: false
                 zoomXEnabled: false
@@ -139,7 +139,7 @@ Item {
         Row {
             spacing: 5
             SGWidgets.SGGraph {
-                id: yrightAxisGraph
+                id: yRightAxisGraph
                 width: 400
                 height: 300
                 title: "Basic Graph - Y Right Axis Enabled"
@@ -167,7 +167,7 @@ Item {
                 Button {
                     text: "Add curve to graph and populate with points"
                     onClicked: {
-                        let curve = yrightAxisGraph.createCurve("graphCurve" + yrightAxisGraph.count)
+                        let curve = yRightAxisGraph.createCurve("graphCurve" + yRightAxisGraph.count)
                         curve.color = sgGraphExample.randomColor()
                         curve.yAxisLeft = false // YRight axis is enabled to plot the given curve. Default yAxisLeft = true
                         let dataArray = []
@@ -180,17 +180,17 @@ Item {
 
                 Button {
                     text: "Remove first curve from graph"
-                    enabled: yrightAxisGraph.count > 0
+                    enabled: yRightAxisGraph.count > 0
                     onClicked: {
-                        yrightAxisGraph.removeCurve(0);
+                        yRightAxisGraph.removeCurve(0);
                     }
                 }
 
                 Button {
                     text: "Iterate and log points in first curve"
-                    enabled: yrightAxisGraph.count > 0
+                    enabled: yRightAxisGraph.count > 0
                     onClicked: {
-                        let curve = yrightAxisGraph.curve(0)
+                        let curve = yRightAxisGraph.curve(0)
                         for (let i = 0; i < curve.count(); i++) {
                             console.log(curve.at(i))
                         }
