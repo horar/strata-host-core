@@ -121,8 +121,6 @@ Item {
                         autoScaleGraph.xMin = 0
                         autoScaleGraph.yMin = 0
                         autoScaleGraph.yMax = 10
-                        autoScaleGraph.yRightMin = 0
-                        autoScaleGraph.yRightMax = 10
                     }
                 }
 
