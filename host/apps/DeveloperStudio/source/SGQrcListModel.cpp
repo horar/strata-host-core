@@ -147,10 +147,13 @@ void SGQrcListModel::readQrcFile()
     for (int i = 0; i < files.count(); i++) {
         QDomElement element = files.at(i).toElement();
         QString absolutePath = SGUtilsCpp::joinFilePath(SGUtilsCpp::urlToLocalFile(projectDir_), element.text());
-        QrcItem* item = new QrcItem(absolutePath, projectDir_, data_.count(), this);
-        QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
-        connect(item, &QrcItem::dataChanged, this, &SGQrcListModel::childrenChanged);
-        data_.append(item);
+        if (!has(absolutePath)) {
+            QrcItem* item = new QrcItem(absolutePath, projectDir_, data_.count(), this);
+            QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
+            connect(item, &QrcItem::dataChanged, this, &SGQrcListModel::childrenChanged);
+            data_.append(item);
+            qrcItemsSet_.insert(absolutePath);
+        }
     }
 
     qDebug() << "Successfully parsed qrc file";
@@ -197,12 +200,18 @@ void SGQrcListModel::append(const QUrl &filepath) {
         file.setFile(outputFileLocation.filePath());
     }
 
+    // If we already have this file in the qrc, don't append it
+    if (has(file.filePath())) {
+        return;
+    }
+
     beginInsertRows(QModelIndex(), data_.count(), data_.count());
 
     QrcItem* item = new QrcItem(file.filePath(), projectDir_, data_.count(), this);
     connect(item, &QrcItem::dataChanged, this, &SGQrcListModel::childrenChanged);
     QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
     data_.append(item);
+    qrcItemsSet_.insert(file.filePath());
 
     endInsertRows();
 
@@ -222,6 +231,11 @@ void SGQrcListModel::append(const QUrl &filepath) {
     connect(thread, &QThread::finished, thread, &QObject::deleteLater);
     thread->setParent(this);
     thread->start();
+}
+
+bool SGQrcListModel::has(const QString &filePath)
+{
+    return qrcItemsSet_.contains(filePath);
 }
 
 void SGQrcListModel::save()

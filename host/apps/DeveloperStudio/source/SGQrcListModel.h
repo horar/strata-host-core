@@ -3,6 +3,7 @@
 #include <QAbstractListModel>
 #include <QObject>
 #include <QHash>
+#include <QSet>
 #include <QByteArray>
 #include <QString>
 #include <QUrl>
@@ -224,6 +225,14 @@ public:
      * @param filepath The filepath of the new file
      */
     Q_INVOKABLE void append(const QUrl &filepath);
+
+    /**
+     * @brief has Checks if this model has the given filepath
+     * @param filePath The filepath to look for
+     * @return Returns true if this model has the given filepath, else false
+     */
+    Q_INVOKABLE bool has(const QString &filePath);
+
 signals:
     void countChanged();
     void urlChanged();
@@ -235,8 +244,10 @@ public slots:
 
 protected:
     virtual QHash<int, QByteArray> roleNames() const override;
+
 private:
     QList<QrcItem*> data_;
+    QSet<QString> qrcItemsSet_;
     /**
      * @brief url_ The QUrl of the .qrc file
      */
