@@ -608,7 +608,6 @@ QPointF SGQWTPlot::mapToPositionYRight(QPointF point)
     SGQWTPlotCurve Class
 ------------------------*/
 
-
 SGQWTPlotCurve::SGQWTPlotCurve(QString name, QObject* parent) : QObject(parent)
 {
     curve_ = new QwtPlotCurve(name);
@@ -784,9 +783,8 @@ void SGQWTPlotCurve::shiftPoints(double offsetX, double offsetY)
 
 
 /*-----------------------
-    SGQWTPlotCurve Class
+    SGQWTPlotCurveData Class
 ------------------------*/
-
 
 SGQWTPlotCurveData::SGQWTPlotCurveData(const QVector<QPointF> *container) :
     container_(container)
