@@ -1,5 +1,5 @@
 import QtQuick 2.9
-import "qrc:/views/usb-pd/sgwidgets"
+import "../../sgwidgets"
 
 Rectangle {
     id: root

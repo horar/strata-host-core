@@ -14,8 +14,6 @@ Item {
         fill: parent
     }
 
-    property var sgUserSettings
-
     PlatformInterface {
         id: platformInterface
     }
