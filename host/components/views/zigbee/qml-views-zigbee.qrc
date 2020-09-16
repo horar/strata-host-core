@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/views/zigbee">
+    <qresource prefix="/">
         <file>Control.qml</file>
         <file>control-views/AdvancedControl.qml</file>
         <file>control-views/BasicControl.qml</file>

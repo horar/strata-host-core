@@ -1,7 +1,7 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
-import "qrc:/views/usb-pd/sgwidgets"
-import "qrc:/views/usb-pd/views/basic-partial-views"
+import "../sgwidgets"
+import "../views/basic-partial-views"
 
 Item {
     id: root
