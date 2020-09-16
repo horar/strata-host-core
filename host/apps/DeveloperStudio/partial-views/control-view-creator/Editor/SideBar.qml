@@ -2,6 +2,9 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
 import QtQuick.Controls 2.2
+import Qt.labs.folderlistmodel 2.12
+import tech.strata.commoncpp 1.0
+import QtQuick.Controls 1.4
 
 import tech.strata.sgwidgets 1.0
 
@@ -29,25 +32,37 @@ Rectangle {
             color: "white"
         }
 
-        ButtonGroup { id: buttonGroup }
+        Rectangle {
+            id: scrollView
+            Layout.fillWidth: true
+            Layout.preferredHeight: 600
+            clip: true
 
-        Repeater {
-            id: fileSelectorRepeater
-            model: fileModel
-            delegate: SGButton {
-                // TODO: create file tree view or at least more sensible list of QRC/project files
-                Layout.fillWidth: true
-                checkable: true
-                checked: model.visible
-                ButtonGroup.group: buttonGroup
-                text: model.filename
+            SGFileSystemModel {
+                id: fileTreeView
+                rootDirectory: SGUtilsCpp.urlToLocalFile(fileModel.projectDirectory)
+            }
 
-                property int modelIndex: index
+            TreeView {
+                anchors.fill: parent
+                rootIndex: fileTreeView.rootIndex
+                model: fileTreeView
+                alternatingRowColors: false
+                backgroundVisible: false
 
-                onClicked: {
-                    if (checked) {
-                        editorRoot.setVisible(modelIndex)
+                itemDelegate: Item {
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: "black"
+                        elide: Text.ElideRight
+                        text: styleData.value
                     }
+                }
+
+                TableViewColumn {
+                    title: "Name"
+                    role: "fileName"
+                    width: 200
                 }
             }
         }
