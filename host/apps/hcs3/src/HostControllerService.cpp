@@ -82,6 +82,7 @@ bool HostControllerService::initialize(const QString& config)
     connect(&storageManager_, &StorageManager::downloadPlatformDocumentsProgress, this, &HostControllerService::sendPlatformDocumentsProgressMessage);
     connect(&storageManager_, &StorageManager::platformDocumentsResponseRequested, this, &HostControllerService::sendPlatformDocumentsMessage);
     connect(&storageManager_, &StorageManager::downloadControlViewFinished, this, &HostControllerService::sendDownloadControlViewFinishedMessage);
+    connect(&storageManager_, &StorageManager::downloadControlViewProgress, this, &HostControllerService::sendControlViewDownloadProgressMessage);
 
     /* We dont want to call these StorageManager methods directly
      * as they should be executed in the main thread. Not in dispatcher's thread. */
@@ -271,6 +272,30 @@ void HostControllerService::sendPlatformDocumentsProgressMessage(
     payload.insert("files_total", filesTotal);
 
     message.insert("cloud::notification", payload);
+    doc.setObject(message);
+
+    clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
+}
+
+void HostControllerService::sendControlViewDownloadProgressMessage(
+        const QByteArray &clientId,
+        const QString &partialUri,
+        const QString &filePath,
+        qint64 bytesReceived,
+        qint64 bytesTotal)
+{
+    QJsonDocument doc;
+    QJsonObject message;
+    QJsonObject payload;
+
+    payload.insert("type", "control_view_download_progress");
+    payload.insert("url", partialUri);
+    payload.insert("filepath", filePath);
+    payload.insert("bytes_received", bytesReceived);
+    payload.insert("bytes_total", bytesTotal);
+
+    message.insert("hcs::notification", payload);
+
     doc.setObject(message);
 
     clients_.sendMessage(clientId, doc.toJson(QJsonDocument::Compact));
@@ -542,7 +567,12 @@ void HostControllerService::onCmdDownloadControlView(const rapidjson::Value* pay
         return;
     }
 
-    emit downloadControlViewRequested(clientId, partialUri, md5);
+    QString class_id = QString::fromStdString((*payload)["class_id"].GetString());
+    if (class_id.isEmpty()) {
+        qCWarning(logCategoryHcs) << "class_id attribute is empty";
+    }
+
+    emit downloadControlViewRequested(clientId, partialUri, md5, class_id);
 }
 
 Client* HostControllerService::getClientById(const QByteArray& client_id)

@@ -451,11 +451,11 @@ Item {
 
         Button {
             id: select
-            text: model.view_open ? "Return to Platform Tab" : (model.connected && model.ui_exists && model.available.control ) ? "Open Platform Controls" : "Browse Documentation"
+            text: model.view_open ? "Return to Platform Tab" : (model.connected && model.available.control ) ? "Open Platform Controls" : "Browse Documentation"
             anchors {
                 horizontalCenter: buttonColumn.horizontalCenter
             }
-            visible: model.connected && model.ui_exists && model.available.control ? model.available.control : model.available.documents
+            visible: model.connected && model.available.control ? model.available.control : model.available.documents
 
             contentItem: Text {
                 text: select.text
@@ -479,10 +479,12 @@ Item {
                 let data = {
                     "device_id": model.device_id,
                     "class_id": model.class_id,
+                    "name": model.verbose_name,
                     "index": filteredPlatformSelectorModel.mapIndexToSource(model.index),
                     "available": model.available,
                     "firmware_version": model.firmware_version
                 }
+
                 PlatformSelection.openPlatformView(data)
             }
 

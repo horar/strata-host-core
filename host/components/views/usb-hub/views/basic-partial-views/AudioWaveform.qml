@@ -1,7 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
-import "qrc:/views/usb-hub/sgwidgets"
+import "../../sgwidgets"
 
 Item {
 

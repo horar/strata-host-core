@@ -76,6 +76,7 @@ Rectangle {
             nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt *.gif *.html *.csv)"]
             selectExisting: true
             selectMultiple: true
+            folder: fileModel.projectDirectory
 
             onAccepted: {
                 for (let i = 0; i < fileUrls.length; i++) {
@@ -86,11 +87,18 @@ Rectangle {
 
         FileDialog {
             id: newFileDialog
-            nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt *.html *.csv)"]
+            nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt *.gif *.html *.csv)"]
             selectExisting: false
+            folder: fileModel.projectDirectory
 
             onAccepted: {
                 fileModel.append(fileUrl);
+                // Handle the case where user adds a new file to a different directory
+                folder = fileModel.projectDirectory
+            }
+
+            onRejected: {
+                folder = fileModel.projectDirectory
             }
         }
     }

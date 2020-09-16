@@ -193,7 +193,7 @@ Rectangle {
                WebEngineView {
                     id: webView
                     anchors.fill: parent
-                    url: "qrc:/views/meshNetwork/images/HTML/mesh_help.html"
+                    url: "../images/HTML/mesh_help.html"
                    }
            }
 
