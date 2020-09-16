@@ -95,7 +95,7 @@ Controller.prototype.IntroductionPageCallback = function()
                                         + "  1) Strata Developer Studio\n"
                                         + "  2) Host Controller Service\n\n"
                                         + "It is recommended that you close all other applications before continuing.\n\n"
-                                        + "Click Next to continue, or Quit to exit Setup."
+                                        + "Click Next to continue."
                                         );
             }
         } else {
