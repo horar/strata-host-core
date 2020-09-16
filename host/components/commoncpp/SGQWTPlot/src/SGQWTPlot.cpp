@@ -62,7 +62,7 @@ void SGQWTPlot::shiftXAxis(double offset)
 {
     double xMin = this->xMin() + offset;
     double xMax = this->xMax() + offset;
-    qwtPlot->setAxisScale(qwtPlot->xBottom, xMin, xMax);
+    qwtPlot->setAxisScale( qwtPlot->xBottom, xMin, xMax);
 
     if (autoUpdate_) {
         update();
