@@ -28,12 +28,12 @@ public:
 
     /**
      * @brief QrcItem Constructor used to populate QrcItem
-     * @param filename The name of the file. Note* this should be as-is in the .qrc file. Ex) "control-views/view.qml" is valid
+     * @param filename The full path to the file
      * @param rootDirectoryPath The QUrl of the projects root directory
      * @param index Index of the item
      * @param parent Parent object
      */
-    QrcItem(QString filename, QUrl rootDirectoryPath, int index, QObject *parent = nullptr);
+    QrcItem(QString filepath, QUrl rootDirectoryPath, int index, QObject *parent = nullptr);
 
     /**
      * @brief filename

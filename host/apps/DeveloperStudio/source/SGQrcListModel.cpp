@@ -13,22 +13,27 @@ QrcItem::QrcItem(QObject *parent) : QObject(parent)
 {
 }
 
-QrcItem::QrcItem(QString filename, QUrl rootDirectoryPath, int index, QObject *parent) : QObject(parent)
+QrcItem::QrcItem(QString filepath, QUrl rootDirectoryPath, int index, QObject *parent) : QObject(parent)
 {
-    QFileInfo file(filename);
+    QFileInfo file(filepath);
+    QString rootPath = SGUtilsCpp::urlToLocalFile(rootDirectoryPath);
     QDir fileDir(file.dir());
-    while (fileDir.dirName() != ".") {
+    while (fileDir.path() != rootPath) {
         relativePath_.append(fileDir.dirName());
         fileDir.cdUp();
+
+        if (fileDir.path().length() < rootPath.length()) {
+            qCritical() << "QrcItem is not a part of its parent's directory";
+            break;
+        }
     }
     filename_ = file.fileName();
     visible_ = false;
     open_ = false;
     index_ = index;
 
-    QDir root(SGUtilsCpp::urlToLocalFile(rootDirectoryPath));
     filepath_.setScheme("file");
-    filepath_.setPath(root.filePath(filename));
+    filepath_.setPath(filepath);
 }
 
 QString QrcItem::filename() const
@@ -141,7 +146,8 @@ void SGQrcListModel::readQrcFile()
     QDomNodeList files = qrcDoc_.elementsByTagName("file");
     for (int i = 0; i < files.count(); i++) {
         QDomElement element = files.at(i).toElement();
-        QrcItem* item = new QrcItem(element.text(), projectDir_, data_.count(), this);
+        QString absolutePath = SGUtilsCpp::joinFilePath(SGUtilsCpp::urlToLocalFile(projectDir_), element.text());
+        QrcItem* item = new QrcItem(absolutePath, projectDir_, data_.count(), this);
         QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
         connect(item, &QrcItem::dataChanged, this, &SGQrcListModel::childrenChanged);
         data_.append(item);
@@ -193,7 +199,7 @@ void SGQrcListModel::append(const QUrl &filepath) {
 
     beginInsertRows(QModelIndex(), data_.count(), data_.count());
 
-    QrcItem* item = new QrcItem(dir.relativeFilePath(file.filePath()), projectDir_, data_.count(), this);
+    QrcItem* item = new QrcItem(file.filePath(), projectDir_, data_.count(), this);
     connect(item, &QrcItem::dataChanged, this, &SGQrcListModel::childrenChanged);
     QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
     data_.append(item);
