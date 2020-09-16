@@ -583,7 +583,6 @@ SGQWTPlotCurve::SGQWTPlotCurve(QString name, QObject* parent) : QObject(parent)
     curve_->setData(new SGQWTPlotCurveData(&curveData_));
     curve_->setPaintAttribute( QwtPlotCurve::FilterPoints , true );
     curve_->setItemAttribute(QwtPlotItem::AutoScale, true);
-
 }
 
 SGQWTPlotCurve::~SGQWTPlotCurve()

@@ -52,6 +52,7 @@ SGQWTPlot {
                 }
                 sgGraph.autoUpdate = true
                 sgGraph.update()
+
                 mousePosition = Qt.point(mouse.x, mouse.y)
 
             }

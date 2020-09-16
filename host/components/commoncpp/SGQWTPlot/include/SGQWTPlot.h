@@ -156,8 +156,6 @@ private:
     QColor gridColor_;
     bool yRightVisible_ = false;
 
-
-
 private slots:
     void updatePlotSize();
 };

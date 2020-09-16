@@ -180,7 +180,6 @@ Module {
             type: "QPointF"
             Parameter { name: "point"; type: "QPointF" }
         }
-
     }
     Component {
         name: "SGQWTPlotCurve"
