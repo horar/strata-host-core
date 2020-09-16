@@ -1,5 +1,5 @@
 '''
-Python script to run a test module. See Common.getCommandLineArguments for
+Python script to run a test module. See Common.getCommandLineArguments for arguments.
 Examples:
     Run all board tests:
         python runtest.py Tests.BoardTests --username "test@test.com" --password "Strata12345" --strataPath "(path to strata)" --hcsAddress "tcp://127.0.0.1:5563"

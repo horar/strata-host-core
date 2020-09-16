@@ -158,21 +158,20 @@ Item {
                 text: "Forgot Password"
                 color: forgotLink.pressed ? "#ddd" : "#545960"
                 font.underline: forgotMouse.containsMouse
+                function onClick() {
+                    forgotPopup.visible = true
 
+                }
                 MouseArea {
                     id: forgotMouse
                     anchors.fill: forgotLink
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
-                    onClicked: {
-                        forgotPopup.visible = true
-                    }
+                    onClicked: forgotLink.onClick()
                 }
                 Accessible.name: forgotLink.text
                 Accessible.role: Accessible.Button
-                Accessible.onPressAction: {
-                    forgotPopup.visible = true
-                }
+                Accessible.onPressAction: onClick()
 
             }
         }
@@ -246,7 +245,6 @@ Item {
                     onPressed:  mouse.accepted = false
                     cursorShape: Qt.PointingHandCursor
                 }
-
 
                 ToolTip {
                     text: {

@@ -25,6 +25,9 @@ Component {
                 family: Fonts.franklinGothicBook
             }
         }
+        function onClick() {
+            feedbackTypeListView.currentIndex = index
+        }
 
         MouseArea {
             id: buttonMouseArea
@@ -32,14 +35,10 @@ Component {
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
 
-            onClicked: {
-                feedbackTypeListView.currentIndex = index
-            }
+            onClicked: label.onClick()
         }
         Accessible.role: Accessible.Button
         Accessible.name: content.text
-        Accessible.onPressAction: function() {
-            feedbackTypeListView.currentIndex = index
-        }
+        Accessible.onPressAction: onClick()
     }
 }

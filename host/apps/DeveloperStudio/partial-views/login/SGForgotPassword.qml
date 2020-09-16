@@ -104,9 +104,9 @@ SGStrataPopup {
                             family: Fonts.franklinGothicBold
                         }
                     }
+
                     function pressAction() {
                         submitButton.clicked()
-
                     }
 
                     Keys.onReturnPressed: pressAction()
