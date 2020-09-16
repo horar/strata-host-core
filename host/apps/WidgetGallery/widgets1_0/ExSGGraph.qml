@@ -18,7 +18,7 @@ Item {
                 id: basicGraph
                 width: 400
                 height: 300
-                title: "Basic Graph - Pan/Zoom Enabled"
+                title: "Basic Graph - Pan/Zoom Enabled - Y Right Axis Enabled"
                 xMin: 0
                 xMax: 1
                 yMin: 0
@@ -82,7 +82,7 @@ Item {
                 id: autoScaleGraph
                 width: 400
                 height: 300
-                title: "Basic Graph - AutoScale Example"
+                title: "Basic Graph - AutoScale Example with Y Right Axis Enabled"
                 panXEnabled: false
                 panYEnabled: false
                 zoomXEnabled: false
@@ -93,7 +93,6 @@ Item {
                 yGrid: false
                 gridColor: "green"
                 yRightVisible: true
-
             }
 
             Column {
@@ -131,7 +130,6 @@ Item {
                         autoScaleGraph.yMax = 10
                         autoScaleGraph.yRightMin = 0
                         autoScaleGraph.yRightMax = 10
-
                     }
                 }
 
@@ -156,11 +154,8 @@ Item {
                 yMax: 1
                 xMin: 5
                 xMax: 0
-                yRightMin: 0
-                yRightMax: 50
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
-                yRightTitle: "Y1 Axis"
                 panXEnabled: false
                 panYEnabled: false
                 zoomXEnabled: false
@@ -168,7 +163,7 @@ Item {
                 autoUpdate: false
                 xGrid: true
                 yGrid: true
-                yRightVisible: true
+
                 Component.onCompleted: {
                     let movingCurve = createCurve("movingCurve")
                     movingCurve.color = "turquoise"
@@ -180,7 +175,9 @@ Item {
                     interval: 60
                     running: false
                     repeat: true
+
                     property real lastTime
+
                     onRunningChanged: {
                         if (running){
                             timedGraphPoints.curve(0).clear()

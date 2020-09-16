@@ -44,14 +44,12 @@ SGQWTPlot {
                 originToPosition.y += (mouse.y - mousePosition.y)
                 let deltaLocation = sgGraph.mapToValue(originToPosition)
                 sgGraph.autoUpdate = false
-
                 if (sgGraph.panXEnabled) {
                     sgGraph.shiftXAxis(-deltaLocation.x)
                 }
                 if (sgGraph.panYEnabled) {
                     sgGraph.shiftYAxis(-deltaLocation.y)
                 }
-
                 sgGraph.autoUpdate = true
                 sgGraph.update()
                 mousePosition = Qt.point(mouse.x, mouse.y)

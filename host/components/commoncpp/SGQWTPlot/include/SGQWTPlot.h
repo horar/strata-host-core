@@ -30,10 +30,14 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(double xMax READ xMax WRITE setXMax NOTIFY xMaxChanged)
     Q_PROPERTY(double yMin READ yMin WRITE setYMin NOTIFY yMinChanged)
     Q_PROPERTY(double yMax READ yMax WRITE setYMax NOTIFY yMaxChanged)
+    Q_PROPERTY(double yRightMin READ yRightMin WRITE setYRightMin NOTIFY yRightMinChanged)
+    Q_PROPERTY(double yRightMax READ yRightMax WRITE setYRightMax NOTIFY yRightMaxChanged)
     Q_PROPERTY(QString xTitle READ xTitle WRITE setXTitle NOTIFY xTitleChanged)
     Q_PROPERTY(int xTitlePixelSize READ xTitlePixelSize WRITE setXTitlePixelSize NOTIFY xTitlePixelSizeChanged)
     Q_PROPERTY(QString yTitle READ yTitle WRITE setYTitle NOTIFY yTitleChanged)
     Q_PROPERTY(int yTitlePixelSize READ yTitlePixelSize WRITE setYTitlePixelSize NOTIFY yTitlePixelSizeChanged)
+    Q_PROPERTY(QString yRightTitle READ  yRightTitle WRITE setYRightTitle NOTIFY yRightTitleChanged)
+    Q_PROPERTY(int yRightTitlePixelSize READ yRightTitlePixelSize WRITE setYRightTitlePixelSize NOTIFY yRightTitlePixelSizeChanged)
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
     Q_PROPERTY(int titlePixelSize READ titlePixelSize WRITE setTitlePixelSize NOTIFY titlePixelSizeChanged)
     Q_PROPERTY(bool xLogarithmic MEMBER xLogarithmic_ WRITE setXLogarithmic NOTIFY xLogarithmicChanged)
@@ -46,10 +50,6 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(bool yGrid READ yGrid WRITE setYGrid NOTIFY yGridChanged)
     Q_PROPERTY(QColor gridColor MEMBER gridColor_ WRITE setGridColor NOTIFY gridColorChanged)
     Q_PROPERTY(bool yRightVisible READ yRightVisible WRITE setyRightVisible NOTIFY yRightVisibleChanged)
-    Q_PROPERTY(double yRightMin READ yRightMin WRITE setYRightMin NOTIFY yRightMinChanged)
-    Q_PROPERTY(double yRightMax READ yRightMax WRITE setYRightMax NOTIFY yRightMaxChanged)
-    Q_PROPERTY(QString yRightTitle READ  yRightTitle WRITE setYRightTitle NOTIFY yRightTitleChanged)
-    Q_PROPERTY(int yRightTitlePixelSize READ yRightTitlePixelSize WRITE setYRightTitlePixelSize NOTIFY yRightTitlePixelSizeChanged)
 
 
 public:
@@ -76,10 +76,10 @@ public:
     double xMax();
     void setYMin(double value);
     double yMin();
-    void setYRightMin(double value);
-    double yRightMin();
     void setYMax(double value);
     double yMax();
+    void setYRightMin(double value);
+    double yRightMin();
     void setYRightMax(double value);
     double yRightMax();
     QString xTitle();
@@ -111,12 +111,9 @@ public:
     void setyRightVisible(bool showYRightAxis);
     bool yRightVisible();
 
-
-
 protected:
     QwtPlot* qwtPlot = nullptr;
     void updateCurveList();
-
 
 signals:
     void xMinChanged();
@@ -191,11 +188,11 @@ public:
     Q_INVOKABLE void shiftPoints(double offsetX, double offsetY);
     Q_INVOKABLE void update();
 
+    void setYAxisLeft(bool yleftAxis);
+
 protected:
     void setGraph(SGQWTPlot* graph);
     void unsetGraph();
-    void setYAxisLeft(bool yleftAxis);
-
 
 signals:
     void graphChanged();
@@ -220,7 +217,6 @@ private:
     QString name();
     bool yAxisLeft();
     bool yAxisLeft_ = true;
-
 };
 
 
