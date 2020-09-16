@@ -196,11 +196,11 @@ QString ResourceLoader::getQResourcePrefix(const QString &class_id, const QStrin
     }
 }
 
-QString ResourceLoader::recompileControlViewQrc(/*const QString &rccExecutablePath,*/ QString qrcFilePath, const double &prefix)
+QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath, const double &prefix)
 {
     // Hard-coded for now
     // Mac OS: "/Users/***/Qt/5.12.2/clang_64/bin/rcc"
-    const QString rccExecutablePath = "/Users/zbh8jv/Qt/5.12.2/clang_64/bin/rcc";
+    const QString rccExecutablePath = "";
 
     qrcFilePath.replace("file://", "");
 
@@ -213,21 +213,23 @@ QString ResourceLoader::recompileControlViewQrc(/*const QString &rccExecutablePa
     }
 
     if (!qrcFile.exists()) {
-        qCWarning(logCategoryStrataDevStudio) << "Could not find QRC file at " << rccExecutablePath;
+        qCWarning(logCategoryStrataDevStudio) << "Could not find QRC file at " << qrcFilePath;
         return QString();
     }
 
+    QFileInfo qrcFileInfo = QFileInfo(qrcFile);
+    QDir qrcFileParent = qrcFileInfo.dir();
+    QString compiledRccFile = qrcFileParent.path() + QDir::separator() + "DEV-CONTROLVIEW" + QDir::separator();
+    QDir qrcDevControlView(compiledRccFile);
+
+    if (qrcDevControlView.exists()) {
+        if (!qrcDevControlView.removeRecursively()) {
+            qCWarning(logCategoryStrataDevStudio) << "Could not delete directory " << compiledRccFile;
+            return QString();
+        }
+    }
+
     QString timestampPrefix = QString::number(prefix, 'f', 0);
-
-    QDir applicationDir(QCoreApplication::applicationDirPath());
-
-#ifdef Q_OS_MACOS
-    applicationDir.cdUp();
-    applicationDir.cdUp();
-    applicationDir.cdUp();
-#endif
-
-    QString compiledRccFile = applicationDir.path() + QDir::separator() + "DEV-CONTROLVIEW" + QDir::separator();
 
     // Make timestampPrefix directory for compiled RCC file
     QDir().mkdir(compiledRccFile);
@@ -236,11 +238,6 @@ QString ResourceLoader::recompileControlViewQrc(/*const QString &rccExecutablePa
     // Split qrcFilePath for filename
     QFileInfo fileInfo(qrcFile.fileName());
     QString qrcFileName(fileInfo.fileName());
-
-    // Retrieve 'views-*' substring if possible
-    // Maybe no longer needed
-    // qrcFileName.replace("qml-", "");
-    // qrcFileName.replace(".qrc", "");
 
     // Add timestampPrefix directory to binary object path
     compiledRccFile += timestampPrefix;

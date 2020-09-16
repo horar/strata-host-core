@@ -4,15 +4,13 @@ import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.SGQrcListModel 1.0
 
-import tech.strata.ResourceLoader 1.0
+import "qrc:/js/navigation_control.js" as NavigationControl
 
 Rectangle {
     id: controlViewCreatorRoot
     objectName: "ControlViewCreator"
 
-    ResourceLoader {
-        id: resourceLoader
-    }
+    property bool initControlViewLoaded: false
 
     SGQrcListModel {
         id: fileModel
@@ -68,6 +66,10 @@ Rectangle {
                     model: ["Edit", "Use Control View"]
                     checkedIndices: 0
                     onClicked: {
+                        if (!initControlViewLoaded) {
+                            recompileControlViewQrc()
+                            initControlViewLoaded = true
+                        }
                         viewStack.currentIndex = index + offset
                     }
 
@@ -78,14 +80,7 @@ Rectangle {
                     text: "Recompile/Reload Control View"
 
                     onClicked: {
-                        let timestampPrefix = new Date().getTime().valueOf()
-                        // let platformName = resourceLoader.getPlatformFromFilename(root.qrcFilePath)
-
-                        // let compiledRccFile = resourceLoader.recompileControlViewQrc(/*root.rccExecPath, */root.qrcFilePath, timestampPrefix)
-                        let compiledRccFile = resourceLoader.recompileControlViewQrc(/*root.rccExecPath, */openProjectContainer.fileUrl, timestampPrefix)
-
-                        // stackContainer.currentIndex = stackContainer.count - 1
-                        loadDebugView(compiledRccFile, timestampPrefix) //, platformName)
+                        recompileControlViewQrc()
                     }
                 }
             }
@@ -130,7 +125,7 @@ Rectangle {
                 id: controlViewContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                color: "lightcyan"
+                color: "white"
 
                 SGText {
                     anchors {
@@ -144,17 +139,27 @@ Rectangle {
         }
     }
 
-    function loadDebugView(compiledRccFile, timestampPrefix, platformName) {
-        let prefix = "/" + timestampPrefix
+    function recompileControlViewQrc () {
+        let timestampPrefix = new Date().getTime().valueOf()
+        if (openProjectContainer.fileUrl != '') {
+            let compiledRccFile = sdsModel.resourceLoader.recompileControlViewQrc(openProjectContainer.fileUrl, timestampPrefix)
+            if (compiledRccFile != '') {
+                loadDebugView(compiledRccFile, timestampPrefix)
+            }
+        }
+    }
 
+    function loadDebugView (compiledRccFile, timestampPrefix) {
+        NavigationControl.removeView(controlViewContainer)
+
+        let prefix = "/" + timestampPrefix
         // Register debug control view object
         if (!sdsModel.resourceLoader.registerResource(compiledRccFile, prefix)) {
             console.error("Failed to register resource")
             return
         }
 
-        let qml_control = "qrc:/" + timestampPrefix + "/views/" + platformName + "/Control.qml"
-        // let obj = sdsModel.resourceLoader.createViewObject(qml_control, root.debugContainer);
+        let qml_control = "qrc:/" + timestampPrefix + "/Control.qml"
         let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlViewContainer);
         if (obj === null) {
             console.error("Could not load view.")
