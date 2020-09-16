@@ -73,10 +73,17 @@ void SGQWTPlot::shiftYAxis(double offset)
 {
     double yMin = this->yMin() + offset;
     double yMax = this->yMax() + offset;
+    qwtPlot->setAxisScale(qwtPlot->yLeft, yMin, yMax);
+    if (autoUpdate_) {
+        update();
+    }
+}
+
+void SGQWTPlot::shiftYAxisYRight(double offset)
+{
     double yMinRight = this->yRightMin() + offset;
     double yMaxRight = this->yRightMax() + offset;
     qwtPlot->setAxisScale(qwtPlot->yRight, yMinRight, yMaxRight);
-    qwtPlot->setAxisScale(qwtPlot->yLeft, yMin, yMax);
     if (autoUpdate_) {
         update();
     }
@@ -563,6 +570,17 @@ QPointF SGQWTPlot::mapToValue(QPointF point)
     return QPointF(xValue, yValue);
 }
 
+QPointF SGQWTPlot::mapToValueYRight(QPointF point)
+{
+    qwtPlot->updateLayout();
+    QwtScaleMap xMap = qwtPlot->canvasMap(qwtPlot->xBottom);
+    QwtScaleMap yMap = qwtPlot->canvasMap(qwtPlot->yRight);
+    QRectF canvasRect = qwtPlot->plotLayout()->canvasRect();
+    double xValue = xMap.invTransform(point.x() - canvasRect.x());
+    double yValue = yMap.invTransform(point.y() - canvasRect.y());
+    return QPointF(xValue, yValue);
+}
+
 QPointF SGQWTPlot::mapToPosition(QPointF point)
 {
     qwtPlot->updateLayout();
@@ -573,6 +591,23 @@ QPointF SGQWTPlot::mapToPosition(QPointF point)
     double yPos = yMap.transform(point.y()) + canvasRect.y();
     return QPointF(xPos, yPos);
 }
+
+QPointF SGQWTPlot::mapToPositionYRight(QPointF point)
+{
+    qwtPlot->updateLayout();
+    QwtScaleMap xMap = qwtPlot->canvasMap(qwtPlot->xBottom);
+    QwtScaleMap yMap = qwtPlot->canvasMap(qwtPlot->yRight);
+    QRectF canvasRect = qwtPlot->plotLayout()->canvasRect();
+    double xPos = xMap.transform(point.x()) + canvasRect.x();
+    double yPos = yMap.transform(point.y()) + canvasRect.y();
+    return QPointF(xPos, yPos);
+}
+
+
+/*-----------------------
+    SGQWTPlotCurve Class
+------------------------*/
+
 
 SGQWTPlotCurve::SGQWTPlotCurve(QString name, QObject* parent) : QObject(parent)
 {
@@ -746,6 +781,12 @@ void SGQWTPlotCurve::shiftPoints(double offsetX, double offsetY)
         update();
     }
 }
+
+
+/*-----------------------
+    SGQWTPlotCurve Class
+------------------------*/
+
 
 SGQWTPlotCurveData::SGQWTPlotCurveData(const QVector<QPointF> *container) :
     container_(container)

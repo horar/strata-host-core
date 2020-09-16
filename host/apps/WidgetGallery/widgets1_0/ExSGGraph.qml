@@ -23,15 +23,11 @@ Item {
                 xMax: 1
                 yMin: 0
                 yMax: 1
-                yRightMin: 0
-                yRightMax: 10
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
-                yRightTitle: "Y1 Axis"
                 xGrid: false
                 yGrid: true
                 gridColor: "red"
-                yRightVisible: true
             }
 
             Column {
@@ -45,7 +41,6 @@ Item {
                     onClicked: {
                         let curve = basicGraph.createCurve("graphCurve" + basicGraph.count)
                         curve.color = sgGraphExample.randomColor()
-                        curve.yAxisLeft = false // YRight axis is enabled to plot the given curve. Default yAxisLeft = true
                         let dataArray = []
                         for (let i = 0; i <= 1000; i++) {
                             dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
@@ -92,7 +87,6 @@ Item {
                 xGrid: true
                 yGrid: false
                 gridColor: "green"
-                yRightVisible: true
             }
 
             Column {
@@ -111,7 +105,6 @@ Item {
                     text: "Add curve to graph, populate with points, and autoscale axes"
                     onClicked: {
                         let curve = autoScaleGraph.createCurve("graphCurve" + autoScaleGraph.count)
-                        curve.yAxisLeft = false
                         curve.color = sgGraphExample.randomColor()
                         let dataArray = []
                         for (let i = 0; i <= 1000; i++) {
@@ -138,6 +131,69 @@ Item {
                     onClicked: {
                         autoScaleGraph.autoScaleXAxis()
                         autoScaleGraph.autoScaleYAxis()
+                    }
+                }
+            }
+        }
+
+        Row {
+            spacing: 5
+            SGWidgets.SGGraph {
+                id: yrightAxisGraph
+                width: 400
+                height: 300
+                title: "Basic Graph - Y Right Axis Enabled"
+                xMin: 0
+                xMax: 1
+                yMin: 0
+                yMax: 1
+                yRightMin: 0
+                yRightMax: 10
+                xTitle: "X Axis"
+                yTitle: "Y Axis"
+                yRightTitle: "Y1 Axis"
+                xGrid: true
+                yGrid: true
+                gridColor: "green"
+                yRightVisible: true
+            }
+
+            Column {
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                }
+                spacing: 5
+
+                Button {
+                    text: "Add curve to graph and populate with points"
+                    onClicked: {
+                        let curve = yrightAxisGraph.createCurve("graphCurve" + yrightAxisGraph.count)
+                        curve.color = sgGraphExample.randomColor()
+                        curve.yAxisLeft = false // YRight axis is enabled to plot the given curve. Default yAxisLeft = true
+                        let dataArray = []
+                        for (let i = 0; i <= 1000; i++) {
+                            dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
+                        }
+                        curve.appendList(dataArray)
+                    }
+                }
+
+                Button {
+                    text: "Remove first curve from graph"
+                    enabled: yrightAxisGraph.count > 0
+                    onClicked: {
+                        yrightAxisGraph.removeCurve(0);
+                    }
+                }
+
+                Button {
+                    text: "Iterate and log points in first curve"
+                    enabled: yrightAxisGraph.count > 0
+                    onClicked: {
+                        let curve = yrightAxisGraph.curve(0)
+                        for (let i = 0; i < curve.count(); i++) {
+                            console.log(curve.at(i))
+                        }
                     }
                 }
             }

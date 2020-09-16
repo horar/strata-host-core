@@ -150,6 +150,10 @@ Module {
             name: "shiftYAxis"
             Parameter { name: "offset"; type: "double" }
         }
+        Method {
+            name: "shiftYAxisYRight"
+            Parameter { name: "offset"; type: "double" }
+        }
         Method { name: "autoScaleXAxis" }
         Method { name: "autoScaleYAxis" }
         Method {
@@ -176,7 +180,17 @@ Module {
             Parameter { name: "point"; type: "QPointF" }
         }
         Method {
+            name: "mapToValueYRight"
+            type: "QPointF"
+            Parameter { name: "point"; type: "QPointF" }
+        }
+        Method {
             name: "mapToPosition"
+            type: "QPointF"
+            Parameter { name: "point"; type: "QPointF" }
+        }
+        Method {
+            name: "mapToPositionYRight"
             type: "QPointF"
             Parameter { name: "point"; type: "QPointF" }
         }

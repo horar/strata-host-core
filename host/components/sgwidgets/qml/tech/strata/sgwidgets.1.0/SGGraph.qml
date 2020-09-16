@@ -43,13 +43,22 @@ SGQWTPlot {
                 originToPosition.x += (mouse.x - mousePosition.x)
                 originToPosition.y += (mouse.y - mousePosition.y)
                 let deltaLocation = sgGraph.mapToValue(originToPosition)
+
+                let originToPositionYAxisRight = sgGraph.mapToPositionYRight(Qt.point(0,0))
+                originToPositionYAxisRight.x += (mouse.x - mousePosition.x)
+                originToPositionYAxisRight.y += (mouse.y - mousePosition.y)
+                let deltaLocationYAxisRight = sgGraph.mapToValueYRight(originToPositionYAxisRight)
+
                 sgGraph.autoUpdate = false
+
                 if (sgGraph.panXEnabled) {
                     sgGraph.shiftXAxis(-deltaLocation.x)
                 }
                 if (sgGraph.panYEnabled) {
                     sgGraph.shiftYAxis(-deltaLocation.y)
+                    sgGraph.shiftYAxisYRight(-deltaLocationYAxisRight.y)
                 }
+
                 sgGraph.autoUpdate = true
                 sgGraph.update()
 

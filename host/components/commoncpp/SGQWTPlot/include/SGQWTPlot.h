@@ -60,6 +60,7 @@ public:
     Q_INVOKABLE void update();
     Q_INVOKABLE void shiftXAxis(double offset);
     Q_INVOKABLE void shiftYAxis(double offset);
+    Q_INVOKABLE void shiftYAxisYRight(double offset);
     Q_INVOKABLE void autoScaleXAxis();
     Q_INVOKABLE void autoScaleYAxis();
     Q_INVOKABLE SGQWTPlotCurve* createCurve(QString name);
@@ -67,7 +68,9 @@ public:
     Q_INVOKABLE void removeCurve(SGQWTPlotCurve* curve);
     Q_INVOKABLE void removeCurve(int index);
     Q_INVOKABLE QPointF mapToValue(QPointF point);
+    Q_INVOKABLE QPointF mapToValueYRight(QPointF point);
     Q_INVOKABLE QPointF mapToPosition(QPointF point);
+    Q_INVOKABLE QPointF mapToPositionYRight(QPointF point);
 
     void paint(QPainter* painter);
     void setXMin(double value);
@@ -156,6 +159,7 @@ private:
     QColor gridColor_;
     bool yRightVisible_ = false;
 
+
 private slots:
     void updatePlotSize();
 };
@@ -186,7 +190,7 @@ public:
     Q_INVOKABLE void shiftPoints(double offsetX, double offsetY);
     Q_INVOKABLE void update();
 
-    void setYAxisLeft(bool yleftAxis);
+
 
 protected:
     void setGraph(SGQWTPlot* graph);
@@ -207,6 +211,7 @@ private:
     SGQWTPlot* graph_ = nullptr;
     QwtPlot* plot_ = nullptr;
     bool autoUpdate_ = true;
+    bool yAxisLeft_ = true;
 
     SGQWTPlot* graph();
     void setColor(QColor color);
@@ -214,7 +219,8 @@ private:
     void setName(QString name);
     QString name();
     bool yAxisLeft();
-    bool yAxisLeft_ = true;
+    void setYAxisLeft(bool yleftAxis);
+
 };
 
 
