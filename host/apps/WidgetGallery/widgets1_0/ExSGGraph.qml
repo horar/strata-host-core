@@ -45,7 +45,7 @@ Item {
                     onClicked: {
                         let curve = basicGraph.createCurve("graphCurve" + basicGraph.count)
                         curve.color = sgGraphExample.randomColor()
-                        curve.yAxisLeft = false
+                        curve.yAxisLeft = false // YRight axis is enabled to plot the given curve. Default yAxisLeft = true
                         let dataArray = []
                         for (let i = 0; i <= 1000; i++) {
                             dataArray.push({"x":i/1000, "y":sgGraphExample.yourDataValueHere()})
