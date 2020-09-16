@@ -6,6 +6,30 @@ import os
 import time
 import uuid
 import psutil
+import logging
+import sys
+
+class TestLogger:
+    def __enter__(self):
+
+        self.logger = logging.getLogger(COMMON_LOGGER)
+
+        #Unittest replaces sys.stdout after initializing, so re-add it to the logger
+        self.streamHandler = logging.StreamHandler(sys.stdout)
+
+        formatter = logging.Formatter('\t%(message)s')
+        self.streamHandler.setFormatter(formatter)
+
+        self.logger.addHandler(self.streamHandler)
+
+        return self.logger
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.logger.removeHandler(self.streamHandler)
+
+
+#Key for logger object
+COMMON_LOGGER = "unittestlogger"
 
 STRATA_WINDOW = "ON Semiconductor: Strata Developer Studio"
 LOGIN_TAB = "Login"
@@ -100,6 +124,7 @@ def getCommandLineArguments(argv):
     strataIni: Path to strata ini file
     resultsPath: Path to a results file
     appendResults: If resultsPath is set, append results to that file rather than creating a new file
+    verbose: If verbose is set, output extra logging messages to stdout.
     '''
     parser = argparse.ArgumentParser(description="Run a test or tests.")
     parser.add_argument("testNames", nargs='*', type=str, help="Unittest modules or test classes")
@@ -112,6 +137,7 @@ def getCommandLineArguments(argv):
     parser.add_argument("--strataIni", action="store", type=str, help="Path to Strata ini", metavar="strata ini path")
     parser.add_argument("--resultsPath", action="store", type=str, help="Specify that a results file should be written to with the given path", metavar="results file path")
     parser.add_argument("--appendResults", action="store_true", help = "Append results to result file instead of making a new one.")
+    parser.add_argument("--verbose", action="store_true", help= "Output logging messages to stdout")
     return parser.parse_args(argv[1:])
 
 def processRunning(name):

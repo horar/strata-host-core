@@ -56,30 +56,31 @@ function Test-Gui()
 
     #run basic tests
     Start-SDSAndWait
-
-    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $BasicTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`"" -NoNewWindow -Wait
+    Write-Host "Starting test suite"
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $BasicTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
 
     Stop-SDS
     Stop-HCS
 
     Write-Host "`n`nTEST GROUP 2: No Network Strata Tests"
 
-    Write-Host "Disabling network for Strata..."
+    Write-Host "`nDisabling network for Strata..."
 
+    Write-Host "`nStarting test suite"
     #Run tests without network
     #Block Strata from making outbound requests
     (New-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network" -Direction Outbound -Program $SDSExecFile -Action Block) | Out-Null
 
     Start-SDSAndWait
 
-    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $NoNetworkTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --appendResults --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`"" -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $NoNetworkTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --appendResults --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
 
 #    Stop-Process -Name "Strata Developer Studio" -Force
 #    Stop-Process -Name "hcs" -Force
     Stop-SDS
     Stop-HCS
 
-    Write-Host "Enabling network for Strata..."
+    Write-Host "`nEnabling network for Strata..."
     Remove-NetFirewallRule -DisplayName "TEMP_Disable_SDS_Network"
 
 
@@ -94,9 +95,9 @@ function Test-Gui()
     Stop-HCS
 
     #Test for Strata automatically going to the platform view
+    Write-Host "Starting test suite"
     Start-SDSAndWait
-
-    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $StrataRestartTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --appendResults --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`"" -NoNewWindow -Wait
+    Start-Process $PythonExec -ArgumentList "$PythonGUIMain $StrataRestartTests --username $Username --password $Password --hcsAddress $HCSTCPEndpoint --resultsPath $ResultsFile --appendResults --strataIni `"$StrataDeveloperStudioIniDir\Strata Developer Studio.ini`" --verbose" -NoNewWindow -Wait
 
     Stop-SDS
     Stop-HCS

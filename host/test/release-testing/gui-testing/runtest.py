@@ -12,9 +12,14 @@ import StrataInterface as strata
 import unittest
 
 import Common
+from GUITestResult import GUITestResult
 
 if __name__ == "__main__":
+
     args = Common.getCommandLineArguments(sys.argv)
+    if args.verbose:
+        with Common.TestLogger() as logger:
+            logger.setLevel("INFO")
 
     if args.strataPath:
         subprocess.Popen(args.strataPath)
@@ -25,7 +30,7 @@ if __name__ == "__main__":
     Common.awaitStrata()
 
     tests = unittest.defaultTestLoader.loadTestsFromNames(args.testNames)
-    runner = unittest.TextTestRunner(verbosity=2)
+    runner = unittest.TextTestRunner(verbosity=2, descriptions=True, resultclass= GUITestResult)
     result = runner.run(tests)
 
     if args.resultsPath:

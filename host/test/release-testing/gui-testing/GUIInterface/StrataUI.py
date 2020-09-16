@@ -1,13 +1,13 @@
 import _ctypes
 import unittest
+
 from functools import reduce
 
 from uiautomation import WindowControl, Control, PropertyId, ControlType, ButtonControl, ToggleState, CheckBoxControl, PatternId
 
 from Common import STRATA_WINDOW, PASSWORD_EDIT, FIRST_NAME_EDIT, USER_ICON_BUTTON, FEEDBACK_SUCCESS_TEXT, LOGIN_TAB, \
     REGISTER_TAB, REMEMBER_ME_CHECKBOX, PLATFORM_CONTROLS_BUTTON, USERNAME_EDIT, EMAIL_EDIT, CONFIRM_PASSWORD_EDIT, \
-    LAST_NAME_EDIT, COMPANY_EDIT, TITLE_EDIT, LOGOUT_BUTTON
-
+    LAST_NAME_EDIT, COMPANY_EDIT, TITLE_EDIT, LOGOUT_BUTTON, TestLogger
 
 class StrataUI:
     '''
@@ -74,6 +74,9 @@ class StrataUI:
         '''
         True if on login screen
         '''
+        with TestLogger() as logger:
+            logger.info("Locating login screen")
+
         passwordEdit = self.app.EditControl(
             Compare=self.__hasProperty(PropertyId.FullDescriptionProperty, PASSWORD_EDIT))
 
@@ -83,6 +86,9 @@ class StrataUI:
         '''
         True if on register screen
         '''
+        with TestLogger() as logger:
+            logger.info("Locating register screen")
+
         firstNameEdit = self.app.EditControl(
             Compare=self.__hasProperty(PropertyId.FullDescriptionProperty, FIRST_NAME_EDIT))
 
@@ -92,6 +98,9 @@ class StrataUI:
         '''
         True if on platform view
         '''
+        with TestLogger() as logger:
+            logger.info("Locating platform view")
+
         userIcon = self.app.ButtonControl(Compare=self.__hasProperty(PropertyId.NameProperty, USER_ICON_BUTTON))
 
         return self.__existsCatchComError(userIcon)
@@ -100,7 +109,8 @@ class StrataUI:
         '''
         True if feedback window open
         '''
-
+        with TestLogger() as logger:
+            logger.info("Locating feedback")
         # find inner window
         feedbackWindow = self.app.WindowControl()
 
@@ -110,6 +120,9 @@ class StrataUI:
         '''
         True if feedback success dialog open
         '''
+        with TestLogger() as logger:
+            logger.info("Locating feedback success dialog")
+
         successText = self.app.TextControl(Compare=self.__hasProperty(PropertyId.NameProperty, FEEDBACK_SUCCESS_TEXT))
 
         return self.__existsCatchComError(successText)
@@ -117,6 +130,8 @@ class StrataUI:
         '''
         True if forgot password dialog open
         '''
+        with TestLogger() as logger:
+            logger.info("Locating forgot password dialog")
         resetPasswordWindow = self.app.WindowControl()
         return self.__existsCatchComError(resetPasswordWindow)
 
@@ -124,6 +139,9 @@ class StrataUI:
         '''
         Find an edit by a specific property and set its text
         '''
+        with TestLogger() as logger:
+            logger.info("Setting edit with identifier '" + str(editIdentifier) + "'" + " to " + "'" + text + "'")
+
         edit = self.app.EditControl(Compare=self.__hasProperty(property, editIdentifier))
         edit.GetValuePattern().SetValue(text)
 
@@ -131,6 +149,9 @@ class StrataUI:
         '''
         Find an edit by a specific property and get its text
         '''
+        with TestLogger() as logger:
+            logger.info("Getting text from edit with identifier '" + str(editIdentifier) + "'")
+
         edit = self.app.EditControl(Compare=self.__hasProperty(property, editIdentifier))
         return edit.GetValuePattern().Value
 
@@ -138,6 +159,8 @@ class StrataUI:
         '''
         Press the login submit button on the login view
         '''
+        with TestLogger() as logger:
+            logger.info("Pressing login button")
         button: ButtonControl = self.findButtonByHeight(LOGIN_TAB, lambda c, l: c < l)
         button.GetPattern(PatternId.InvokePattern).Invoke()
 
@@ -145,10 +168,14 @@ class StrataUI:
         '''
         Press the register submit button on the register view
         '''
+        with TestLogger() as logger:
+            logger.info("Pressing register button")
+
         button: ButtonControl = self.findButtonByHeight(REGISTER_TAB, lambda c, l: c < l)
         button.GetPattern(PatternId.InvokePattern).Invoke()
 
     def SetCheckbox(self, checkbox, setTicked):
+
         state = checkbox.GetTogglePattern().ToggleState
         if state == ToggleState.On and not setTicked:
             checkbox.GetTogglePattern().Toggle()
@@ -159,6 +186,9 @@ class StrataUI:
         '''
         Set the confirm checkbox on the register view to ticked or unticked
         '''
+        with TestLogger() as logger:
+            logger.info("Setting register checkbox to " + str(setTicked))
+
         def registerCheckboxCompare(control:Control, depth):
             return control.GetPropertyValue(PropertyId.NameProperty) == ""
 
@@ -166,6 +196,10 @@ class StrataUI:
         self.SetCheckbox(confirm, setTicked)
 
     def PressRememberMeCheckbox(self, setTicked=True):
+
+        with TestLogger() as logger:
+            logger.info("Setting remember me checkbox to " + str(setTicked))
+
         rememberMe: CheckBoxControl = self.app.CheckBoxControl(
             Compare=self.__hasProperty(PropertyId.NameProperty, REMEMBER_ME_CHECKBOX))
         self.SetCheckbox(rememberMe, setTicked)
@@ -174,6 +208,8 @@ class StrataUI:
         '''
         Find a button by a specific property and press it.
         '''
+        with TestLogger() as logger:
+            logger.info("Pressing button with identifier '" + identifier + "'")
         button = self.app.ButtonControl(Compare=self.__hasProperty(property, identifier))
         button.GetInvokePattern().Invoke()
 
@@ -181,6 +217,8 @@ class StrataUI:
         '''
         Set to the register tab in the login/register view.
         '''
+        with TestLogger() as logger:
+            logger.info("Setting to register tab")
         button = self.findButtonByHeight(REGISTER_TAB, lambda c, l: c > l)
 
         #Button can be a checkbox or button due to qt wierdness
@@ -190,6 +228,8 @@ class StrataUI:
         '''
         Set to the login tab in the login/register view.
         '''
+        with TestLogger() as logger:
+            logger.info("Setting to login tab")
         button = self.findButtonByHeight(LOGIN_TAB, lambda c, l: c > l)
 
         #Button can be a checkbox or button due to qt wierdness
@@ -199,6 +239,8 @@ class StrataUI:
         '''
         Determine if an alert exists by a specific property
         '''
+        with TestLogger() as logger:
+            logger.info("Locating alert with identifier '" + str(identifier) + "'")
         alert = self.app.CustomControl(Compare=self.__hasProperty(PropertyId.NameProperty, identifier))
         return self.__existsCatchComError(alert, maxSearchSeconds)
 
@@ -206,6 +248,8 @@ class StrataUI:
         '''
         Get the number of platforms connected in the platform view. (only works on platform view).
         '''
+        with TestLogger() as logger:
+            logger.info("Finding number of connected platforms")
 
         def isPlatform(control: Control):
             return control.GetPropertyValue(

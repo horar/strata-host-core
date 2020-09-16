@@ -3,8 +3,8 @@ Functions to interface with auth server and ini files.
 '''
 import configparser
 import json
-import logging
 import os
+import Common
 
 import requests
 
@@ -35,14 +35,16 @@ def removeLoginInfo(iniPath):
             config[USERNAME_SECTION][USERNAME_OPTION] = "[]"
             config[USERNAME_SECTION][USERNAME_INDEX_OPTION] = "0"
         else:
-            logging.warning("Could not find config section: " + USERNAME_SECTION)
+            with Common.TestLogger() as logging:
+                logging.warning("Could not find config section: " + USERNAME_SECTION)
         if LOGIN_SECTION in config:
             config[LOGIN_SECTION][USER_OPTION] = ""
             config[LOGIN_SECTION][TOKEN_OPTION] = ""
             config[LOGIN_SECTION][FIRST_NAME_OPTION] = ""
             config[LOGIN_SECTION][LAST_NAME_OPTION] = ""
         else:
-            logging.warning("Could not find config section: " + LOGIN_SECTION)
+            with Common.TestLogger() as logging:
+                logging.warning("Could not find config section: " + LOGIN_SECTION)
 
         with open(iniPath, 'w') as configfile:
             config.write(configfile)
@@ -68,16 +70,17 @@ def closeAccount(iniPath):
     Close the currently logged in user's account
     :return:
     '''
-    token, username, authUrl = getCloseAccountInfo(iniPath)
-    if token != '' and username != '' and authUrl != '':
-        result = requests.post(authUrl + "closeAccount", data=json.dumps({"username": username}),
-                               headers={"Content-Type": "application/json", "x-access-token": token})
-        if result.status_code == 200:
-            logging.info("Closed account for " + username)
+    with Common.TestLogger() as logging:
+        token, username, authUrl = getCloseAccountInfo(iniPath)
+        if token != '' and username != '' and authUrl != '':
+            result = requests.post(authUrl + "closeAccount", data=json.dumps({"username": username}),
+                                   headers={"Content-Type": "application/json", "x-access-token": token})
+            if result.status_code == 200:
+                logging.info("Closed account for " + username)
+            else:
+                logging.warning("Could not close account for " + username + " (status code: " + result.status_code + ")")
         else:
-            logging.warning("Could not close account for " + username + " (status code: " + result.status_code + ")")
-    else:
-        logging.warning("Token, username, or authorization server url is empty")
+            logging.warning("Token, username, or authorization server url is empty")
 
 
 def deleteLoggedInUser(iniPath):
