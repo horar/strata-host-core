@@ -1,6 +1,5 @@
 .pragma library
 .import QtQuick 2.0 as QtQuickModule
-.import "uuid_map.js" as UuidMap
 .import "constants.js" as Constants
 .import "utilities.js" as Utility
 
@@ -53,7 +52,7 @@ var events = {
     SWITCH_VIEW_EVENT:              8,
     CONNECTION_LOST_EVENT:          9,
     CONNECTION_ESTABLISHED_EVENT:   10,
-    PROMPT_SPLASH_SCREEN_EVENT:     11,
+    PROMPT_SPLASH_SCREEN_EVENT:     11
 }
 
 /*
@@ -84,27 +83,22 @@ function init(status_bar_container, stack_container)
 }
 
 /*
-    Retrieve the qml file in the templated file structure
+    Retrieve the qml file in the RCC templated file structure
 */
-var PREFIX = "qrc:/views/"
-function getQMLFile(class_id, filename) {
+function getQMLFile(filename, class_id, version = "") {
+    // Build the file name - ./<class_id>/<version>/filename.qml
 
-    // eventually dirname should === class_id and this UUIDmap will be unnecessary
-    var dir_name = UuidMap.uuid_map[class_id]
-    //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, class_id + "-" + filename + "qml file requested.")
-
-    // Build the file name - ./view/<class_id>/filename.qml
     if (filename.search(".qml") < 0){
-        //console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "adding extension to filename: ", filename)
         filename = filename + ".qml"
     }
+    let prefix = "qrc:/" + (class_id === "" ? class_id : class_id + "/") + (version === "" ? version : version + "/")
+    var rcc_filepath = prefix + filename;
 
-    var qml_file_name = PREFIX + dir_name + "/" + filename
-    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Locating at ", qml_file_name)
+    console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "Locating at ", rcc_filepath)
 
-    loadViewVersion(PREFIX + dir_name)
+    loadViewVersion(prefix)
 
-    return qml_file_name
+    return rcc_filepath
 }
 
 /*
@@ -113,7 +107,7 @@ function getQMLFile(class_id, filename) {
 function loadViewVersion(filePath)
 {
     var request = new XMLHttpRequest();
-    var version_file_name = filePath + "/version.json"
+    var version_file_name = filePath + "version.json"
     console.log(LoggerModule.Logger.devStudioNavigationControlCategory, "view version file: " + version_file_name)
     request.open("GET", version_file_name);
     request.onreadystatechange = function onVersionRequestFinished() {
