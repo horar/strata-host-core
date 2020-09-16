@@ -87,17 +87,24 @@ Item {
                         layoutDirection: Qt.LeftToRight
                         spacing: 3
 
-                        delegate: SGButton {
+                        delegate: Button {
                             id: fileTab
                             checked: model.visible
                             hoverEnabled: true
 
+                            property color color: "#aaaaaa"
                             property int modelIndex: index
 
                             onClicked: {
                                 if (checked) {
                                     editorRoot.setVisible(openFileModel.mapIndexToSource(modelIndex))
                                 }
+                            }
+
+                            background: Rectangle {
+                                implicitHeight: 40
+                                color: fileTab.checked ? Qt.darker(fileTab.color, 1.3) : fileTab.color
+                                radius: 4
                             }
 
                             contentItem: Item {
@@ -107,7 +114,7 @@ Item {
                                 SGText {
                                     id: tabText
                                     text: model.filename
-                                    color: "white"
+                                    color: fileTab.checked ? "white" : "black"
                                     anchors {
                                         left: parent.left
                                         verticalCenter: parent.verticalCenter
@@ -143,12 +150,21 @@ Item {
                                         onClicked: {
                                             let sourceIndex = openFileModel.mapIndexToSource(fileTab.modelIndex)
                                             let item = fileModel.get(sourceIndex)
-                                            item.visible = false
-                                            item.open = false
 
-                                            // Make the last tab visible
-                                            if (fileTabRepeater.count > 0) {
-                                                setVisible(openFileModel.mapIndexToSource(fileTabRepeater.count - 1))
+                                            // If the item isn't visible then just remove it
+                                            if (!item.visible) {
+                                                if (fileStack.currentIndex > fileTab.modelIndex) {
+                                                    fileStack.currentIndex--;
+                                                }
+                                                item.open = false
+                                            } else {
+                                                item.visible = false
+                                                item.open = false
+                                                if (fileTab.modelIndex - 1 >= 0) {
+                                                    setVisible(openFileModel.mapIndexToSource(fileTab.modelIndex - 1))
+                                                } else {
+                                                    setVisible(openFileModel.mapIndexToSource(0))
+                                                }
                                             }
                                         }
                                     }
