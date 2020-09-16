@@ -69,32 +69,104 @@ Item {
                 Layout.fillWidth: true
                 spacing: 0
 
-                Rectangle {
-                    Layout.fillWidth: true
+                ScrollView {
                     Layout.preferredHeight: 45
-                    color: "#777"
+                    Layout.fillWidth: true
+                    x:2.5
+                    clip: true
+                    ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
-                    RowLayout {
-                        height: parent.height
-                        x:2.5
+                    background: Rectangle {
+                        color: "#777"
+                    }
 
-                        ButtonGroup { id: buttonGroup }
+                    ListView {
+                        id: fileTabRepeater
+                        model: openFileModel
+                        orientation: ListView.Horizontal
+                        layoutDirection: Qt.LeftToRight
+                        spacing: 3
 
-                        Repeater {
-                            id: fileTabRepeater
-                            model: openFileModel
+                        delegate: Button {
+                            id: fileTab
+                            checked: model.visible
+                            hoverEnabled: true
 
-                            delegate: SGButton {
-                                // TODO: create more appropriate tab delegate with closer
-                                checked: model.visible
-                                ButtonGroup.group: buttonGroup
-                                text: model.filename
+                            property color color: "#aaaaaa"
+                            property int modelIndex: index
 
-                                property int modelIndex: index
+                            onClicked: {
+                                if (checked) {
+                                    editorRoot.setVisible(openFileModel.mapIndexToSource(modelIndex))
+                                }
+                            }
 
-                                onClicked: {
-                                    if (checked) {
-                                        editorRoot.setVisible(openFileModel.mapIndexToSource(modelIndex))
+                            background: Rectangle {
+                                implicitHeight: 40
+                                color: fileTab.checked ? Qt.darker(fileTab.color, 1.3) : fileTab.color
+                                radius: 4
+                            }
+
+                            contentItem: Item {
+                                implicitWidth: tabText.paintedWidth + tabText.anchors.leftMargin + 3 + closeFileIcon.implicitWidth + closeFileIcon.anchors.rightMargin
+                                anchors.verticalCenter: parent.verticalCenter
+
+                                SGText {
+                                    id: tabText
+                                    text: model.filename
+                                    color: fileTab.checked ? "white" : "black"
+                                    anchors {
+                                        left: parent.left
+                                        verticalCenter: parent.verticalCenter
+                                        leftMargin: 5
+                                    }
+                                    verticalAlignment: Text.AlignVCenter
+                                    elide: Text.ElideRight
+                                }
+
+                                SGIcon {
+                                    id: closeFileIcon
+                                    source: "qrc:/sgimages/times-circle.svg"
+                                    height: tabText.paintedHeight
+                                    width: height
+                                    implicitWidth: height
+                                    visible: fileTab.hovered
+                                    anchors {
+                                        left: tabText.right
+                                        leftMargin: 4
+                                        right: parent.right
+                                        verticalCenter: parent.verticalCenter
+                                        rightMargin: 2
+                                    }
+                                    verticalAlignment: Qt.AlignVCenter
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        onEntered: {
+                                            cursorShape = Qt.PointingHandCursor
+                                        }
+
+                                        onClicked: {
+                                            let sourceIndex = openFileModel.mapIndexToSource(fileTab.modelIndex)
+                                            let item = fileModel.get(sourceIndex)
+
+                                            // If the item isn't visible then just remove it
+                                            if (!item.visible) {
+                                                if (fileStack.currentIndex > fileTab.modelIndex) {
+                                                    fileStack.currentIndex--;
+                                                }
+                                                item.open = false
+                                            } else {
+                                                item.visible = false
+                                                item.open = false
+                                                if (fileTab.modelIndex - 1 >= 0) {
+                                                    setVisible(openFileModel.mapIndexToSource(fileTab.modelIndex - 1))
+                                                } else {
+                                                    setVisible(openFileModel.mapIndexToSource(0))
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
