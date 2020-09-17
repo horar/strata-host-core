@@ -49,7 +49,7 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(bool xGrid READ xGrid WRITE setXGrid NOTIFY xGridChanged)
     Q_PROPERTY(bool yGrid READ yGrid WRITE setYGrid NOTIFY yGridChanged)
     Q_PROPERTY(QColor gridColor MEMBER gridColor_ WRITE setGridColor NOTIFY gridColorChanged)
-    Q_PROPERTY(bool yRightVisible READ yRightVisible WRITE setyRightVisible NOTIFY yRightVisibleChanged)
+    Q_PROPERTY(bool yRightVisible READ yRightVisible WRITE setYRightVisible NOTIFY yRightVisibleChanged)
 
 
 public:
@@ -60,7 +60,7 @@ public:
     Q_INVOKABLE void update();
     Q_INVOKABLE void shiftXAxis(double offset);
     Q_INVOKABLE void shiftYAxis(double offset);
-    Q_INVOKABLE void shiftYAxisYRight(double offset);
+    Q_INVOKABLE void shiftYAxisRight(double offset);
     Q_INVOKABLE void autoScaleXAxis();
     Q_INVOKABLE void autoScaleYAxis();
     Q_INVOKABLE SGQWTPlotCurve* createCurve(QString name);
@@ -111,7 +111,7 @@ public:
     void setYGrid(bool showGrid);
     bool yGrid();
     void setGridColor(QColor newColor);
-    void setyRightVisible(bool showYRightAxis);
+    void setYRightVisible(bool showYRightAxis);
     bool yRightVisible();
 
 protected:

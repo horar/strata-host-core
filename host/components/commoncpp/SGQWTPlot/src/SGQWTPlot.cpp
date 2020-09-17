@@ -79,7 +79,7 @@ void SGQWTPlot::shiftYAxis(double offset)
     }
 }
 
-void SGQWTPlot::shiftYAxisYRight(double offset)
+void SGQWTPlot::shiftYAxisRight(double offset)
 {
     double yMinRight = this->yRightMin() + offset;
     double yMaxRight = this->yRightMax() + offset;
@@ -94,7 +94,7 @@ bool SGQWTPlot :: yRightVisible()
     return yRightVisible_;
 }
 
-void SGQWTPlot :: setyRightVisible(bool showYRightAxis)
+void SGQWTPlot :: setYRightVisible(bool showYRightAxis)
 {
     if(yRightVisible_ != showYRightAxis) {
         yRightVisible_ = showYRightAxis;

@@ -151,7 +151,7 @@ Module {
             Parameter { name: "offset"; type: "double" }
         }
         Method {
-            name: "shiftYAxisYRight"
+            name: "shiftYAxisRight"
             Parameter { name: "offset"; type: "double" }
         }
         Method { name: "autoScaleXAxis" }

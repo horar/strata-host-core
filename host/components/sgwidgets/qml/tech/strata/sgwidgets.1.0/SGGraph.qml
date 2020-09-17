@@ -56,7 +56,7 @@ SGQWTPlot {
                 }
                 if (sgGraph.panYEnabled) {
                     sgGraph.shiftYAxis(-deltaLocation.y)
-                    sgGraph.shiftYAxisYRight(-deltaLocationYAxisRight.y)
+                    sgGraph.shiftYAxisRight(-deltaLocationYAxisRight.y)
                 }
 
                 sgGraph.autoUpdate = true
