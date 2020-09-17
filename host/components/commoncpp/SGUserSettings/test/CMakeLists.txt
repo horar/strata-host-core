@@ -1,14 +1,13 @@
-# TODO [Carter] - to be implemented in CS-1001
-# add_executable(${PROJECT_NAME}-test
-#     main.cpp
-#     SGUserSettings-test.cpp
-# )
+add_executable(${PROJECT_NAME}-test
+    main.cpp
+    SGUserSettings-test.cpp
+)
 
-# target_link_libraries(${PROJECT_NAME}-test
-#     PRIVATE SGUserSettings
-#     PRIVATE gtest::gtest
-# )
+target_link_libraries(${PROJECT_NAME}-test
+    PRIVATE SGUserSettings
+    PRIVATE gtest::gtest
+)
 
-# add_test(NAME ${PROJECT_NAME}-test
-#     COMMAND ${PROJECT_NAME}-test
-# )
+add_test(NAME ${PROJECT_NAME}-test
+    COMMAND ${PROJECT_NAME}-test
+)

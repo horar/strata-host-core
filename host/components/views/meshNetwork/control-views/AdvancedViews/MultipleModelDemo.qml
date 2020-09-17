@@ -125,7 +125,7 @@ Rectangle {
                 id:arrowImage
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-                source: "qrc:/views/meshNetwork/images/rightArrow.svg"
+                source: "../../images/rightArrow.svg"
                 height:25
                 fillMode: Image.PreserveAspectFit
                 mipmap:true
@@ -141,7 +141,7 @@ Rectangle {
                 id:arrowImage2
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-                source: "qrc:/views/meshNetwork/images/rightArrow.svg"
+                source: "../../images/rightArrow.svg"
                 height:25
                 fillMode: Image.PreserveAspectFit
                 mipmap:true
@@ -188,7 +188,7 @@ Rectangle {
                 id:bellImage
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-                source: "qrc:/views/meshNetwork/images/Bell.svg"
+                source: "../../images/Bell.svg"
                 height:200
                 fillMode: Image.PreserveAspectFit
                 mipmap:true
