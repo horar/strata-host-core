@@ -216,13 +216,14 @@ Item {
                         family: Fonts.franklinGothicBook
                     }
                 }
+
+                Keys.onReturnPressed: pressRegisterButton()
+                Accessible.onPressAction: pressRegisterButton()
+
                 function pressRegisterButton() {
                     registerButton.clicked()
 
                 }
-
-                Keys.onReturnPressed: pressRegisterButton()
-                Accessible.onPressAction: pressRegisterButton()
 
                 onClicked: {
                     alertRect.hide()

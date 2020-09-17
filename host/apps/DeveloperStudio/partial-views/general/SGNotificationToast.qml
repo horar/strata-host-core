@@ -10,11 +10,12 @@ Rectangle {
     color: "red"
     visible: Layout.preferredHeight > 0
     clip: true
+    Accessible.name: text
+    Accessible.role: Accessible.AlertMessage
+
     property alias text: alertText.text
     property bool running: alertAnimation.running || hideAlertAnimation.running
     property alias interval: closeAlertTimer.interval
-    Accessible.name: text
-    Accessible.role: Accessible.AlertMessage
 
     SGIcon {
         id: alertIcon

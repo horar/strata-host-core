@@ -5,6 +5,10 @@ Button {
     id: root
     checkable: true
     opacity: checked ? 1.0 : 0.3
+    Accessible.role: Accessible.Button
+    Accessible.onPressAction: function() {
+        clicked()
+    }
 
     MouseArea {
         id: mouseArea
@@ -39,9 +43,5 @@ Button {
                 bottom: parent.bottom
             }
         }
-    }
-    Accessible.role: Accessible.Button
-    Accessible.onPressAction: function() {
-        clicked()
     }
 }

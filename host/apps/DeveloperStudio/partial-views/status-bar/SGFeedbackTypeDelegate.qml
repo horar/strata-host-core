@@ -5,16 +5,22 @@ import tech.strata.fonts 1.0
 Component {
     Rectangle {
         id: label
-
-        property alias containsMouse: buttonMouseArea.containsMouse
-        property string typeValue: type
-
         color: containsMouse ? hoverColor : baseColor
         implicitWidth: content.width + 15
         implicitHeight: 30
         radius: 5
         border.width: feedbackTypeListView.currentIndex === index ? 2 : 0
         border.color: "black"
+        Accessible.role: Accessible.Button
+        Accessible.name: content.text
+        Accessible.onPressAction: onClick()
+
+        property alias containsMouse: buttonMouseArea.containsMouse
+        property string typeValue: type
+
+        function onClick() {
+            feedbackTypeListView.currentIndex = index
+        }
 
         Text {
             id: content
@@ -25,9 +31,6 @@ Component {
                 family: Fonts.franklinGothicBook
             }
         }
-        function onClick() {
-            feedbackTypeListView.currentIndex = index
-        }
 
         MouseArea {
             id: buttonMouseArea
@@ -37,8 +40,5 @@ Component {
 
             onClicked: label.onClick()
         }
-        Accessible.role: Accessible.Button
-        Accessible.name: content.text
-        Accessible.onPressAction: onClick()
     }
 }

@@ -139,6 +139,10 @@ Popup {
                         root.close()
                     }
 
+                    Accessible.onPressAction: function() {
+                        clicked()
+                    }
+
                     MouseArea {
                         id: acceptBtnCursor
 
@@ -155,10 +159,6 @@ Popup {
                             acceptBtnBg.color = acceptButtonColor
                         }
                     }
-                    Accessible.onPressAction: function() {
-                        clicked()
-                    }
-
                 }
 
                 Button {
@@ -187,6 +187,10 @@ Popup {
                         root.close()
                     }
 
+                    Accessible.onPressAction: function() {
+                        clicked()
+                    }
+
                     MouseArea {
                         id: cancelBtnCursor
 
@@ -202,9 +206,6 @@ Popup {
                         onExited: {
                             cancelBtnBg.color = cancelButtonColor
                         }
-                    }
-                    Accessible.onPressAction: function() {
-                        clicked()
                     }
                 }
             }

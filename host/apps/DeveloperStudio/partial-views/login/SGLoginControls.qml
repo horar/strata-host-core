@@ -158,10 +158,14 @@ Item {
                 text: "Forgot Password"
                 color: forgotLink.pressed ? "#ddd" : "#545960"
                 font.underline: forgotMouse.containsMouse
+                Accessible.name: forgotLink.text
+                Accessible.role: Accessible.Button
+                Accessible.onPressAction: onClick()
+
                 function onClick() {
                     forgotPopup.visible = true
-
                 }
+
                 MouseArea {
                     id: forgotMouse
                     anchors.fill: forgotLink
@@ -169,10 +173,6 @@ Item {
                     hoverEnabled: true
                     onClicked: forgotLink.onClick()
                 }
-                Accessible.name: forgotLink.text
-                Accessible.role: Accessible.Button
-                Accessible.onPressAction: onClick()
-
             }
         }
 
@@ -188,6 +188,7 @@ Item {
                 text:"Login"
                 activeFocusOnTab: true
                 enabled: passwordField.text !== "" && usernameField.text !== ""
+
                 background: Rectangle {
                     color: !loginButton.enabled ? "#dbdbdb" : loginButton.down ? "#666" : "#545960"
 
@@ -215,10 +216,6 @@ Item {
                     }
                 }
 
-                Keys.onReturnPressed:{
-                    loginButton.submit()
-                }
-
                 onClicked: {
                     loginControls.visible = false
                     var timezone = -(new Date(new Date().getFullYear(), 0, 1)).getTimezoneOffset()/60
@@ -230,6 +227,10 @@ Item {
                     }
                     var login_info = { user: usernameField.text, password: passwordField.text, timezone: timezone }
                     Authenticator.login(login_info)
+                }
+
+                Keys.onReturnPressed:{
+                    loginButton.submit()
                 }
                 Accessible.onPressAction: submit()
 

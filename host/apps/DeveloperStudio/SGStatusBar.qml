@@ -177,8 +177,6 @@ Rectangle {
                     pixelSize: profileIconHover.containsMouse ? 24 : 20
                 }
             }
-
-
         }
 
         Rectangle {
@@ -216,15 +214,15 @@ Rectangle {
                 fill: profileIconContainer
             }
             cursorShape: Qt.PointingHandCursor
-            function pressAction() {
-                profileMenu.open()
-            }
-
             Accessible.role: Accessible.Button
             Accessible.name: "User Icon"
             Accessible.description: "User menu button."
             Accessible.onPressAction: pressAction()
             onPressed: pressAction()
+
+            function pressAction() {
+                profileMenu.open()
+            }
         }
 
         Popup {
