@@ -28,6 +28,8 @@ function Controller()
 
     console.log("Is isSilent set: " + isSilent);
     console.log("Is startSDS set: " + startSDS);
+    
+    installer.uninstallationFinished.connect(Controller.prototype.UninstallationFinished);
 
     if (isSilent) {
         installer.installationFinished.connect(Controller.prototype.InstallationPerformed);
@@ -189,6 +191,44 @@ Controller.prototype.InstallationPerformed = function ()
             gui.clickButton(buttons.NextButton, 2000);    // timer to avoid double clicking
         }
     }
+}
+
+Controller.prototype.UninstallationFinished = function()
+{
+    console.log("UninstallationFinished entered");
+    
+    var target_dir = installer.value("TargetDir");
+    if(systemInfo.productType == "windows")
+        target_dir += "\\";
+    else
+        target_dir += "/";
+    
+    if(installer.fileExists(target_dir + installer.value("MaintenanceToolName") + ".ini"))
+        installer.performOperation("Delete", target_dir + installer.value("MaintenanceToolName") + ".ini");
+
+    if(installer.fileExists(target_dir + installer.value("MaintenanceToolName") + ".dat"))
+        installer.performOperation("Delete", target_dir + installer.value("MaintenanceToolName") + ".dat");
+
+    if(installer.fileExists(target_dir + "network.xml"))
+        installer.performOperation("Delete", target_dir + "network.xml");
+
+    if(installer.fileExists(target_dir + "installer.dat"))
+        installer.performOperation("Delete", target_dir + "installer.dat");
+
+    if(installer.fileExists(target_dir + "InstallationLog.txt"))
+        installer.performOperation("Delete", target_dir + "InstallationLog.txt");
+
+    if(installer.fileExists(target_dir + "installerResources"))
+        installer.performOperation("Rmdir", target_dir + "installerResources");
+
+	if((systemInfo.productType == "windows") && installer.fileExists(target_dir + "desktop.ini"))
+        installer.performOperation("Delete", target_dir + "desktop.ini");
+
+    if((systemInfo.productType == "osx") && installer.fileExists(target_dir + ".DS_Store"))
+        installer.performOperation("Delete", target_dir + ".DS_Store");
+
+    if(installer.fileExists(installer.value("TargetDir")))
+        installer.performOperation("Rmdir", installer.value("TargetDir"));
 }
 
 function isComponentInstalled(component_name)

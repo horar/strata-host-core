@@ -8,6 +8,7 @@
     <SortingPriority>50</SortingPriority>
     <Script>installscript.js</Script>
     <ReleaseDate>2019-07-19</ReleaseDate>
+    <Virtual>True</Virtual>
     <Licenses>
         <License name="Microsoft VS 2017 Tools, Add-ONs and Extensions License Agreement" file="vcredist_license.html" />
     </Licenses>
