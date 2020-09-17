@@ -10,7 +10,54 @@ Rectangle {
     id: openProjectContainer
 
     property alias fileUrl: filePath.text
+    property string configFileName: "previousProjects.json"
+    property var previousFileURL: { "projects" : [] }
+    property var projectsList : ""
     color: "#ccc"
+
+
+    Component.onCompleted:  {
+        loadSettings()
+
+        for (var i = 0; i < previousFileURL.projects.length; ++i) {
+            listModel.append ({ name: previousFileURL.projects[i] })
+        }
+
+    }
+
+
+
+
+    function saveSettings() {
+        console.info(previousFileURL,JSON.stringify(previousFileURL))
+        sgUserSettings.writeFile(configFileName, previousFileURL);
+    }
+
+    function loadSettings() {
+        let config = sgUserSettings.readFile(configFileName)
+        projectsList  = JSON.parse(JSON.stringify(config))
+        if(projectsList.projects.length !== undefined) {
+            for (var i = 0; i < projectsList.projects.length; ++i) {
+                previousFileURL.projects.push(projectsList.projects[i])
+            }
+        }
+    }
+
+    function addToTheProjectList (fileUrl) {
+        for (var i = 0; i < previousFileURL.projects.length; ++i) {
+            if(previousFileURL.projects[i] === fileUrl) {
+                console.info("it's the same")
+                return
+            }
+        }
+        return previousFileURL.projects.push(fileUrl)
+
+    }
+
+    Component.onDestruction: {
+        saveSettings()
+    }
+
 
     ColumnLayout {
         anchors {
@@ -31,6 +78,34 @@ Rectangle {
             Layout.preferredHeight: 1
             Layout.fillWidth: true
         }
+
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: parent.height/7
+            color: "transparent"
+            ListView{
+                id: data
+                anchors.fill: parent
+                orientation: ListView.Vertical
+                model: ListModel{
+                    id: listModel
+                }
+                delegate:
+                    SGText{
+                    text: model.name
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            console.info(model.name)
+                        }
+                    }
+                }
+
+            }
+
+        }
+
 
         SGAlignedLabel {
             Layout.topMargin: 20
@@ -94,6 +169,8 @@ Rectangle {
                         fileModel.url = fileDialog.fileUrl
                         viewStack.currentIndex = editUseStrip.offset
                         editUseStrip.checkedIndices = 1
+                        addToTheProjectList(fileUrl)
+                        // previousFileURL.projects.push(fileUrl)
                     }
                 }
             }

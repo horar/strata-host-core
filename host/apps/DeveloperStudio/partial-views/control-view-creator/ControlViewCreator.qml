@@ -3,10 +3,19 @@ import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.SGQrcListModel 1.0
+import tech.strata.commoncpp 1.0
+import "qrc:/js/navigation_control.js" as NavigationControl
 
 Rectangle {
     id: controlViewCreatorRoot
     objectName: "ControlViewCreator"
+
+
+    SGUserSettings {
+        id: sgUserSettings
+        classId: "controlViewCreator"
+        user: NavigationControl.context.user_id
+    }
 
     SGQrcListModel {
         id: fileModel
