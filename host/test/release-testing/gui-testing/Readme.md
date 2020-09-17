@@ -1,7 +1,7 @@
-#GUI Test Suite
+# GUI Test Suite
 This test suite verifies gui functionality on a pre-built Strata executable. It may be ran standalone using runtest.py or as part of the release testing suite using Test-GUI.ps1.
 
-#Standalone Testing
+# Standalone Testing
 The tests contained in the Tests folder may be ran using the command `python runtest.py`. 
 ```
 usage: runtest.py 
@@ -39,8 +39,8 @@ optional arguments:
 ```   
 
 
-#Test Development
-##Overview
+# Test Development
+## Overview
 This is a step-by-step guide for creating a GUI test for a new QML element. More information on test development using UI Automation may be found [here](https://ons-sec.atlassian.net/wiki/spaces/SPYG/pages/1173749769/Automated+GUI+Testing+Using+Windows+UI+Automation+Framework).
 
 ## Enable Accessibility for the QML Element
