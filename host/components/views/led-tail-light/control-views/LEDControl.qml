@@ -134,7 +134,7 @@ Item {
         Help.registerTarget(tw,"Thermal warning that is set when junction temperature is above the Tjwar_on threshold (140°C typical) and reset on register read and when temperature is below Tjwar_on minus Tjsd_hys threshold (127.5°C typical).",19,"ledDriverHelp")
         Help.registerTarget(tsd,"Thermal shutdown set when junction temperature is above the TSD threshold (170°C typical) and reset on register read and when temperature is below TSD minus Tjsd_hys threshold (157.5°C typical).",20,"ledDriverHelp")
         Help.registerTarget(diagerr,"Set when the DIAG pin is forced low externally after 10µs and resets 10µs after short is removed.",21,"ledDriverHelp")
-        Help.registerTarget(ol,"Set when at least one LED channel is in an open load after 10µs and resets 10µs after load is applied. Disabled unless I2C/SAM Open Load Diagnostic control set to 'Diagnostic Only' or 'Auto Retry' and diagRange indicator is green (VLED above DIAGEN threshold).",22,"ledDriverHelp")
+        Help.registerTarget(ol,"Set when at least one LED channel is in an open load after 10µs and resets 10µs after load is applied. Disabled unless I2C/SAM Open Load Diagnostic control set to 'Diagnostic Only' or 'Auto Retry' and diagRange indicator is green (VLED above DIAGEN threshold). The OL indicator may flicker when open load is detected in 'Diagnostic Only' because the OL register bit is repetitively reset by the LED driver.",22,"ledDriverHelp")
     }
 
     function setStateForPWMDuty(pwmDutyid,index)
