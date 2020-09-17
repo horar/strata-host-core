@@ -7,8 +7,8 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as Widget09
 import QtWebEngine 1.0
 import "AdvancedViews"
-
 import "qrc:/js/help_layout_manager.js" as Help
+
 Rectangle{
     id: root
 
@@ -72,7 +72,7 @@ Rectangle{
                     text:"One-to-One"
                     fontSizeMultiplier:1.5
                     color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/oneToOneDemo.png"
+                    icon.source: "../images/oneToOneDemo.png"
                     iconSize:100
                     display: Button.TextUnderIcon
                     checkable:true
@@ -92,7 +92,7 @@ Rectangle{
                     text:"One-to-Many"
                     fontSizeMultiplier:1.5
                     color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/oneToManyDemo.png"
+                    icon.source: "../images/oneToManyDemo.png"
                     iconSize:100
                     display: Button.TextUnderIcon
                     checkable:true
@@ -110,7 +110,7 @@ Rectangle{
                     text:"Relay"
                     fontSizeMultiplier:1.5
                     color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/relayDemo.png"
+                    icon.source: "../images/relayDemo.png"
                     iconSize:100
                     display: Button.TextUnderIcon
                     checkable:true
@@ -128,7 +128,7 @@ Rectangle{
 //                    text:"Multiple Model"
 //                    fontSizeMultiplier:1.5
 //                    color:"white"
-//                    icon.source: "qrc:/views/meshNetwork/images/multipleModelsDemo.png"
+//                    icon.source: "../images/multipleModelsDemo.png"
 //                    iconSize:100
 //                    display: Button.TextUnderIcon
 //                    checkable:true
@@ -146,7 +146,7 @@ Rectangle{
                     text:"Sensor"
                     fontSizeMultiplier:1.5
                     color:"white"
-                    icon.source: "qrc:/views/meshNetwork/images/sensorIconFullBar.svg"
+                    icon.source: "../images/sensorIconFullBar.svg"
                     iconSize:50
                     display: Button.TextUnderIcon
                     checkable:true
@@ -164,7 +164,7 @@ Rectangle{
 //                    text:"cloud"
 //                    fontSizeMultiplier:1.5
 //                    color:"white"
-//                    icon.source: "qrc:/views/meshNetwork/images/cloud.png"
+//                    icon.source: "../images/cloud.png"
 //                    iconSize:75
 //                    display: Button.TextUnderIcon
 //                    checkable:true
@@ -294,7 +294,7 @@ Rectangle{
                     anchors.centerIn: parent
                     height:25
                     width:25
-                    source: helpSegmentedButton.checked ? "qrc:/views/meshNetwork/images/question-circle-white.svg" : "qrc:/sgimages/question-circle.svg"
+                    source: helpSegmentedButton.checked ? "../images/question-circle-white.svg" : "qrc:/sgimages/question-circle.svg"
                     fillMode: Image.PreserveAspectFit
                     mipmap:true
                     opacity:helpSegmentedButton.checked ? .8 : .3
@@ -319,7 +319,7 @@ Rectangle{
         WebEngineView {
              id: webView
              anchors.fill: parent
-             url: "qrc:/views/meshNetwork/images/HTML/mesh_help.html"
+             url: "../images/HTML/mesh_help.html"
             }
     }
 

@@ -54,6 +54,11 @@ bool ClassDocuments::loading() const
     return loading_;
 }
 
+bool ClassDocuments::initialized() const
+{
+    return initialized_;
+}
+
 int ClassDocuments::loadingProgressPercentage() const
 {
     return loadingProgressPercentage_;
@@ -180,9 +185,6 @@ void ClassDocuments::populateModels(QJsonObject data)
             continue;
         }
 
-        QJsonDocument doc(documentObject);
-        QString strJson(doc.toJson(QJsonDocument::Compact));
-
         QString uri = documentObject["uri"].toString();
         QString name = documentObject["name"].toString();
         QString md5 = documentObject["md5"].toString();
@@ -208,9 +210,6 @@ void ClassDocuments::populateModels(QJsonObject data)
             continue;
         }
 
-        QJsonDocument doc(documentObject);
-        QString strJson(doc.toJson(QJsonDocument::Compact));
-
         QString uri = documentObject["uri"].toString();
         QString name = documentObject["name"].toString();
         QString md5 = documentObject["md5"].toString();
@@ -229,6 +228,7 @@ void ClassDocuments::populateModels(QJsonObject data)
     controlViewModel_.populateModel(controlViewList);
 
     setLoading(false);
+    setInitialized(true);
 }
 
 void ClassDocuments::clearDocuments()
@@ -251,6 +251,14 @@ void ClassDocuments::setLoading(bool loading)
     if (loading_ != loading) {
         loading_ = loading;
         emit loadingChanged();
+    }
+}
+
+void ClassDocuments::setInitialized(bool initialized)
+{
+    if (initialized_ != initialized) {
+        initialized_ = initialized;
+        emit initializedChanged();
     }
 }
 
