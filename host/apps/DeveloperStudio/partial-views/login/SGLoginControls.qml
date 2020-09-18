@@ -158,15 +158,20 @@ Item {
                 text: "Forgot Password"
                 color: forgotLink.pressed ? "#ddd" : "#545960"
                 font.underline: forgotMouse.containsMouse
+                Accessible.name: forgotLink.text
+                Accessible.role: Accessible.Button
+                Accessible.onPressAction: onClick()
+
+                function onClick() {
+                    forgotPopup.visible = true
+                }
 
                 MouseArea {
                     id: forgotMouse
                     anchors.fill: forgotLink
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
-                    onClicked: {
-                        forgotPopup.visible = true
-                    }
+                    onClicked: forgotLink.onClick()
                 }
             }
         }
@@ -211,10 +216,6 @@ Item {
                     }
                 }
 
-                Keys.onReturnPressed:{
-                    loginButton.submit()
-                }
-
                 onClicked: {
                     loginControls.visible = false
                     var timezone = -(new Date(new Date().getFullYear(), 0, 1)).getTimezoneOffset()/60
@@ -227,6 +228,11 @@ Item {
                     var login_info = { user: usernameField.text, password: passwordField.text, timezone: timezone }
                     Authenticator.login(login_info)
                 }
+
+                Keys.onReturnPressed:{
+                    loginButton.submit()
+                }
+                Accessible.onPressAction: submit()
 
                 function submit() {
                     if (loginButton.enabled) {
