@@ -25,16 +25,6 @@ bool CmdStartBootloader::processNotification(rapidjson::Document& doc) {
     }
 }
 
-bool CmdStartBootloader::skip() {
-    if (device_->property(device::DeviceProperties::verboseName) == QSTR_BOOTLOADER) {
-        qCInfo(logCategoryDeviceOperations) << device_ << "Platform already in bootloader mode. Ready for firmware operations.";
-        result_ = CommandResult::FinaliseOperation;
-        return true;
-    } else {
-        return false;
-    }
-}
-
 std::chrono::milliseconds CmdStartBootloader::waitBeforeNextCommand() const {
     // Bootloader takes 5 seconds to start (known issue related to clock source).
     // Platform and bootloader uses the same setting for clock source.
@@ -42,11 +32,6 @@ std::chrono::milliseconds CmdStartBootloader::waitBeforeNextCommand() const {
     // it will have a hardware fault which requires board to be reset.
     qCInfo(logCategoryDeviceOperations) << device_ << "Waiting 5 seconds for bootloader to start.";
     return std::chrono::milliseconds(5500);
-}
-
-int CmdStartBootloader::dataForFinish() const {
-    // If this command was skipped, return OPERATION_ALREADY_IN_BOOTLOADER (1) instead of default value OPERATION_DEFAULT_DATA (INT_MIN).
-    return (result_ == CommandResult::FinaliseOperation) ? OPERATION_ALREADY_IN_BOOTLOADER : OPERATION_DEFAULT_DATA;
 }
 
 }  // namespace

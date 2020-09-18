@@ -13,9 +13,11 @@
 
 namespace strata::device::command {
 
-CmdFlash::CmdFlash(const device::DevicePtr& device, bool flashFirmware) :
+CmdFlash::CmdFlash(const device::DevicePtr& device, int chunkCount, bool flashFirmware) :
     BaseDeviceCommand(device, (flashFirmware) ? QStringLiteral("flash_firmware") : QStringLiteral("flash_bootloader")),
-    flashFirmware_(flashFirmware), chunkNumber_(0), maxRetries_(MAX_CHUNK_RETRIES), retriesCount_(0) { }
+    flashFirmware_(flashFirmware), chunkNumber_(0), chunkCount_(chunkCount),
+    maxRetries_(MAX_CHUNK_RETRIES), retriesCount_(0)
+{ }
 
 QByteArray CmdFlash::message() {
     rapidjson::StringBuffer sb;
@@ -65,7 +67,7 @@ bool CmdFlash::processNotification(rapidjson::Document& doc) {
     if (CommandValidator::validateNotification(jsonType, doc)) {
         const rapidjson::Value& status = doc[JSON_NOTIFICATION][JSON_PAYLOAD][JSON_STATUS];
         if (status == JSON_OK) {
-            result_ = (chunkNumber_ == (chunkCount_ - 1)) ? CommandResult::Done : CommandResult::Repeat;
+            result_ = (chunkNumber_ == (chunkCount_ - 1)) ? CommandResult::Done : CommandResult::Partial;
         } else {
             result_ = CommandResult::Failure;
             if (status == JSON_RESEND_CHUNK) {
@@ -90,19 +92,15 @@ bool CmdFlash::logSendMessage() const {
     return (chunkNumber_ == 0);
 }
 
-void CmdFlash::prepareRepeat() {
-    retriesCount_ = 0;
-}
-
 int CmdFlash::dataForFinish() const {
     // flashed chunk number is used as data for finished() signal
     return chunkNumber_;
 }
 
-void CmdFlash::setChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount) {
+void CmdFlash::setNewChunk(const QVector<quint8>& chunk, int chunkNumber) {
     chunk_ = chunk;
     chunkNumber_ = chunkNumber;
-    chunkCount_ = chunkCount;
+    retriesCount_ = 0;  // reset retries count before next run
 }
 
 }  // namespace

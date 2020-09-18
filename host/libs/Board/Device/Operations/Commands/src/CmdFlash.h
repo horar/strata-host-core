@@ -9,13 +9,12 @@ namespace strata::device::command {
 
 class CmdFlash : public BaseDeviceCommand {
 public:
-    CmdFlash(const device::DevicePtr& device, bool flashFirmware);
+    CmdFlash(const device::DevicePtr& device, int chunkCount, bool flashFirmware);
     QByteArray message() override;
     bool processNotification(rapidjson::Document& doc) override;
     bool logSendMessage() const override;
-    void prepareRepeat() override;
     int dataForFinish() const override;
-    void setChunk(const QVector<quint8>& chunk, int chunkNumber, int chunkCount);
+    void setNewChunk(const QVector<quint8>& chunk, int chunkNumber);
 private:
     const bool flashFirmware_;  // true = flash firmware, false = flash bootloader
     QVector<quint8> chunk_;

@@ -19,7 +19,12 @@ CmdBackupFirmware::CmdBackupFirmware(const device::DevicePtr& device, QVector<qu
 QByteArray CmdBackupFirmware::message() {
     QByteArray status;
     if (retriesCount_ == 0) {
-        status = (firstBackupChunk_) ? "init" : "ok";
+        if (firstBackupChunk_) {
+            status = "init";
+            firstBackupChunk_ = false;
+        } else {
+            status = "ok";
+        }
     } else {
         status = "resend_chunk";
     }
@@ -56,7 +61,8 @@ bool CmdBackupFirmware::processNotification(rapidjson::Document& doc) {
             }
 
             if (ok) {
-                result_ = ((chunkNumber_ + 1) == totalChunks_) ? CommandResult::Done : CommandResult::Repeat;
+                result_ = ((chunkNumber_ + 1) == totalChunks_) ? CommandResult::Done : CommandResult::Partial;
+                retriesCount_ = 0;  // reset retries count before next run
             } else {
                 if (retriesCount_ < maxRetries_) {
                     ++retriesCount_;
@@ -80,11 +86,6 @@ bool CmdBackupFirmware::processNotification(rapidjson::Document& doc) {
 
 bool CmdBackupFirmware::logSendMessage() const {
     return firstBackupChunk_;
-}
-
-void CmdBackupFirmware::prepareRepeat() {
-    firstBackupChunk_ = false;
-    retriesCount_ = 0;
 }
 
 int CmdBackupFirmware::dataForFinish() const {

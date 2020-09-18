@@ -12,10 +12,10 @@
 
 namespace strata::device::command {
 
-enum class CommandResult {
+enum class CommandResult : int {
     InProgress,        // waiting for proper response from device
     Done,              // successfully done (received device response is OK)
-    Repeat,            // repeat - send command again again with new data, e.g. when flashing firmware
+    Partial,           // successfully done (received device response is OK), another command is expected to follow
     Retry,             // retry - send command again with same data
     Failure,           // response to command is not successful
     FinaliseOperation  // finish operation (there is no point in continuing)
@@ -71,12 +71,6 @@ public:
     virtual void onTimeout();
 
     /*!
-     * Checks if command should be sent or skipped.
-     * \return true if command should be skipped, otherwise false
-     */
-    virtual bool skip();
-
-    /*!
      * Checks if information about sent message should be logged.
      * \return true if information about sent message should be logged, otherwise false
      */
@@ -87,11 +81,6 @@ public:
      * \return number of milliseconds
      */
     virtual std::chrono::milliseconds waitBeforeNextCommand() const;
-
-    /*!
-     * Prepare command for repeat (sending again).
-     */
-    virtual void prepareRepeat();
 
     /*!
      * Returns specific data for finished() signal (e.g. chunk number).

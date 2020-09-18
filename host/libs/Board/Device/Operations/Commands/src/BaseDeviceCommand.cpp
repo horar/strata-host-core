@@ -21,10 +21,6 @@ void BaseDeviceCommand::onTimeout() {
     result_ = CommandResult::InProgress;
 }
 
-bool BaseDeviceCommand::skip() {
-    return false;
-}
-
 bool BaseDeviceCommand::logSendMessage() const {
     return true;
 }
@@ -33,10 +29,8 @@ std::chrono::milliseconds BaseDeviceCommand::waitBeforeNextCommand() const {
     return std::chrono::milliseconds(0);
 }
 
-void BaseDeviceCommand::prepareRepeat() { }
-
 int BaseDeviceCommand::dataForFinish() const {
-    return OPERATION_DEFAULT_DATA;  // default value for finished() signal
+    return operation::DEFAULT_DATA;  // default value for finished() signal
 }
 
 const QString BaseDeviceCommand::name() const {
