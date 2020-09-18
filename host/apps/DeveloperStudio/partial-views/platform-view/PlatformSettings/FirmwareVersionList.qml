@@ -289,7 +289,7 @@ ColumnLayout {
                                     statusText.text = "Restoration failed: " + payload.restore_error
                                     break;
                                 }
-                                break;
+                               break;
                             case "finished":
                                 switch (payload.status) {
                                 case "unsuccess":

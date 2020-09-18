@@ -18,13 +18,16 @@ Rectangle {
 
     Component.onCompleted:  {
         loadSettings()
-
-        for (var i = 0; i < previousFileURL.projects.length; ++i) {
-            listModel.append ({ name: previousFileURL.projects[i] })
+        if(previousFileURL.projects.length) {
+            console.info("test")
+            recentProjText.visible = true
+            for (var i = 0; i < previousFileURL.projects.length; ++i) {
+                console.info(listModel.count)
+                listModel.append({ url: previousFileURL.projects[i] })
+            }
         }
 
     }
-
 
 
 
@@ -36,7 +39,7 @@ Rectangle {
     function loadSettings() {
         let config = sgUserSettings.readFile(configFileName)
         projectsList  = JSON.parse(JSON.stringify(config))
-        if(projectsList.projects.length !== undefined) {
+        if(projectsList.projects) {
             for (var i = 0; i < projectsList.projects.length; ++i) {
                 previousFileURL.projects.push(projectsList.projects[i])
             }
@@ -79,46 +82,55 @@ Rectangle {
             Layout.fillWidth: true
         }
 
+        SGText {
+            id: recentProjText
+            color: "#666"
+            fontSizeMultiplier: 1.25
+            text: "Recent Projects:"
+            visible: false
+        }
 
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: parent.height/7
-            color: "transparent"
-            ListView{
-                id: data
-                anchors.fill: parent
-                orientation: ListView.Vertical
-                model: ListModel{
-                    id: listModel
-                }
-                delegate:  SGText{
-                    text: model.name
-                    textFormat: Text.RichText
-                    // color: mouseArea.focus ? "#17a81a" : "#21be2b"
+        ListView {
+            id: data
 
-                    MouseArea {
-                        id: mouseArea
-                        anchors.fill: parent
-                        onReleased: {
-                            if (containsMouse)
-                                console.info("Hovering");
-                            else console.info("ll");
-                        }
+            implicitWidth: contentItem.childrenRect.width
+            implicitHeight: contentItem.childrenRect.height
+            orientation: ListView.Vertical
+            model:ListModel{ id: listModel  }
+            highlightFollowsCurrentItem: true
+            spacing: 10
+            delegate:  Rectangle {
+                id: rectangle
+                color: "white"
+                width: openProjectContainer.width - 40
+                height: 40
+                RowLayout {
+                    anchors {
+                        fill: rectangle
+                        margins: 5
+                    }
+                    SGIcon {
+                        Layout.preferredHeight: rectangle.height*.5
+                        Layout.preferredWidth: Layout.preferredHeight
+                        source: "qrc:/sgimages/file-blank.svg"
+                    }
 
-                        onClicked: {
-                            console.info(model.name)
-                            fileModel.url = model.name
-                            viewStack.currentIndex = editUseStrip.offset
-                            editUseStrip.checkedIndices = 1
-                        }
+                    SGText {
+                        Layout.fillWidth:true
+                        elide: Text.ElideLeft
+                        text: model.url
+                        wrapMode: Text.WrapAnywhere
+                        maximumLineCount: 1
                     }
                 }
             }
-
         }
 
 
+
+
         SGAlignedLabel {
+            id: selectTitle
             Layout.topMargin: 20
             color: "#666"
             fontSizeMultiplier: 1.25
