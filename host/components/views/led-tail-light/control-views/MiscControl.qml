@@ -20,7 +20,7 @@ Item {
     Component.onCompleted: {
         Help.registerTarget(idVers1, "ON Semiconductor device identifier for the LED driver. The value is 0x43 for both NCV7684 and NCV7685.", 0, "miscHelp")
         Help.registerTarget(idVers2, "Version identifier for the LED driver. The values are 0x02 for the NCV7684 and 0x04 for the NCV7685.", 1, "miscHelp")
-        Help.registerTarget(filterHelpContainer1, "Indicates an error with the external NCV47822 load switches being shorted to ground or over current event.", 2, "miscHelp")
+        Help.registerTarget(filterHelpContainer1, "Indicates an error with either odd or even LED channels. The NCV47822 load switches are being shorted to ground or experiencing an over current event.", 2, "miscHelp")
     }
 
     Item {
