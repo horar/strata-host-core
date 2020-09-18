@@ -1091,9 +1091,9 @@ Item {
 
                                 }
 
-                                property var power_led_driver_temp_top_value: platformInterface.power_led_driver_temp_top_value.value
-                                onPower_led_driver_temp_top_valueChanged: {
-                                    ledDriverTempBottom.value = power_led_driver_temp_top_value
+                                property var power_led_driver_temp_bottom_value: platformInterface.power_led_driver_temp_bottom_value.value
+                                onPower_led_driver_temp_bottom_valueChanged: {
+                                    ledDriverTempBottom.value = power_led_driver_temp_bottom_value
                                 }
                             }
 
