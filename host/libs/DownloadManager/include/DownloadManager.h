@@ -20,7 +20,7 @@ class InternalDownloadRequest: public QObject {
     Q_DISABLE_COPY(InternalDownloadRequest)
 
 public:
-    InternalDownloadRequest(QObject* parent = nullptr);
+    explicit InternalDownloadRequest(QObject* parent = nullptr);
 
     enum class DownloadState {
         Pending,
