@@ -91,17 +91,28 @@ Rectangle {
                 model: ListModel{
                     id: listModel
                 }
-                delegate:
-                    SGText{
+                delegate:  SGText{
                     text: model.name
+                    textFormat: Text.RichText
+                    // color: mouseArea.focus ? "#17a81a" : "#21be2b"
+
                     MouseArea {
+                        id: mouseArea
                         anchors.fill: parent
+                        onReleased: {
+                            if (containsMouse)
+                                console.info("Hovering");
+                            else console.info("ll");
+                        }
+
                         onClicked: {
                             console.info(model.name)
+                            fileModel.url = model.name
+                            viewStack.currentIndex = editUseStrip.offset
+                            editUseStrip.checkedIndices = 1
                         }
                     }
                 }
-
             }
 
         }
@@ -170,7 +181,6 @@ Rectangle {
                         viewStack.currentIndex = editUseStrip.offset
                         editUseStrip.checkedIndices = 1
                         addToTheProjectList(fileUrl)
-                        // previousFileURL.projects.push(fileUrl)
                     }
                 }
             }
