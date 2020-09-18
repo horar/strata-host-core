@@ -49,7 +49,7 @@ Set-Variable "StrataDeveloperStudioIniDir" "$Env:AppData\ON Semiconductor\"
 Set-Variable "HCSConfigFile" "$Env:ProgramData\ON Semiconductor\Strata Developer Studio\HCS\hcs.config"
 Set-Variable "HCSExecFile"   "$SDSRootDir\hcs.exe"
 Set-Variable "SDSExecFile"   "$SDSRootDir\Strata Developer Studio.exe"
-Set-Variable "HCSDbFile"     "$HCSAppDataDir\db\strata_db\db.sqlite3"
+Set-Variable "HCSDbFile"     "$HCSAppDataDir\PROD\db\strata_db\db.sqlite3"
 Set-Variable "TestRoot"      $PSScriptRoot
 Set-Variable "JLinkExePath"  "${Env:ProgramFiles(x86)}\SEGGER\JLink\JLink.exe"
 Set-Variable "RequirementsFile" "$TestRoot\requirements.txt"
