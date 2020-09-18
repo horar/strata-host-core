@@ -196,17 +196,6 @@ Item {
                         yAxisGraph.removeCurve(0);
                     }
                 }
-
-                Button {
-                    text: "Iterate and log points in first curve"
-                    enabled: yAxisGraph.count > 0
-                    onClicked: {
-                        let curve = yAxisGraph.curve(0)
-                        for (let i = 0; i < curve.count(); i++) {
-                            console.log(curve.at(i))
-                        }
-                    }
-                }
             }
         }
 
