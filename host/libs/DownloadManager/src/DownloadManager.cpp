@@ -12,11 +12,6 @@
 
 namespace strata {
 
-InternalDownloadRequest::InternalDownloadRequest(QObject *parent)
-    : QObject(parent)
-{
-}
-
 DownloadManager::DownloadManager(QNetworkAccessManager *manager, QObject *parent)
     : QObject(parent),
       networkManager_(manager)
