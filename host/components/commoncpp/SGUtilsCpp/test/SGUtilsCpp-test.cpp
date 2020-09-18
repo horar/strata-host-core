@@ -15,7 +15,12 @@ void SGUtilsCppTest::TearDown()
 
 TEST_F(SGUtilsCppTest, testFileUtils)
 {
-    EXPECT_TRUE(utils.isFile("test.txt"));
+    QTemporaryFile tempFile("test.txt");
+    if (!tempFile.open()) {
+        throw "Unable to open file";
+    }
+    EXPECT_TRUE(utils.isFile(tempFile.fileName()));
+    EXPECT_FALSE(utils.isFile("non-existent-file.xyz"));
     EXPECT_EQ(utils.fileName("/path/to/test.txt").toStdString(), "test.txt");
     EXPECT_EQ(utils.dirName("/this/is/a/test"), "test");
     QUrl url("/path/to/something/on/disk/test.html");
