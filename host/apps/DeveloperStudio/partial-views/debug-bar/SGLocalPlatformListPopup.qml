@@ -9,11 +9,12 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
+import "qrc:/js/constants.js" as Constants
 
 Window {
     id: root
     width: 600
-    height: 420
+    height: mainColumn.implicitHeight + 20
     maximumWidth: width
     maximumHeight: height
     minimumWidth: width
@@ -21,9 +22,9 @@ Window {
     title: "Local platform list manipulation"
 
     ColumnLayout {
-        anchors.centerIn: parent
         id: mainColumn
         spacing: 5
+        anchors.centerIn: parent
 
         Rectangle {
             id: alertRect
@@ -112,8 +113,9 @@ Window {
                 family: Fonts.franklinGothicBook
             }
         }
+
         ColumnLayout {
-            Layout.alignment: Qt.AlignLeft
+            Layout.alignment: Qt.AlignHCenter
 
             Row {
                 id: loadRow
@@ -242,13 +244,15 @@ Window {
             text: `Manipulate "available" flags`
             fontSizeMultiplier: 1.6
             Layout.alignment: Qt.AlignLeft
+            Layout.topMargin: 20
             font {
                 family: Fonts.franklinGothicBook
             }
         }
 
         ColumnLayout {
-            Layout.alignment: Qt.AlignLeft
+            Layout.alignment: Qt.AlignHCenter
+
             Repeater {
                 id: repeat
                 model: ['documents', 'order', 'control', 'unlisted']
@@ -283,6 +287,39 @@ Window {
 
                     reset.enabled = false
                     PlatformSelection.getPlatformList()
+                }
+            }
+        }
+
+        SGAlignedLabel {
+            text: "Inject connected class_id:"
+            Layout.topMargin: 20
+            fontSizeMultiplier: 1.5
+            target: injectPlatform
+
+            RowLayout {
+
+                Button {
+                    text: "Inject"
+                    onClicked: {
+                        let list = {
+                            "list": [
+                                {
+                                    "class_id": class_id.text,
+                                    "device_id": Constants.DEBUG_DEVICE_ID,
+                                    "firmware_version":"1.0.1"
+                                }
+                            ],
+                            "type":"connected_platforms"
+                        }
+
+                        PlatformSelection.parseConnectedPlatforms(JSON.stringify(list))
+                    }
+                }
+
+                TextField {
+                    id: class_id
+                    Layout.preferredWidth: 400
                 }
             }
         }
