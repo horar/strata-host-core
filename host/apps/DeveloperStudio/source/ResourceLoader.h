@@ -85,7 +85,7 @@ public:
 
     Q_INVOKABLE QUrl getStaticResourcesUrl();
 
-    Q_INVOKABLE QString recompileControlViewQrc(QString qrcFilePath, const double &prefix);
+    Q_INVOKABLE QString recompileControlViewQrc(QString qrcFilePath);
 
 private slots:
     /**

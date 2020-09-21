@@ -196,11 +196,18 @@ QString ResourceLoader::getQResourcePrefix(const QString &class_id, const QStrin
     }
 }
 
-QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath, const double &prefix)
-{
-    // Hard-coded for now
-    // Mac OS: "/Users/***/Qt/5.12.2/clang_64/bin/rcc"
-    const QString rccExecutablePath = "";
+QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
+#ifdef QT_RCC_EXECUTABLE
+    const QString rccExecutablePath = QT_RCC_EXECUTABLE;
+#else
+    QDir applicationDir(QCoreApplication::applicationDirPath());
+    #ifdef Q_OS_MACOS
+        applicationDir.cdUp();
+        applicationDir.cdUp();
+        applicationDir.cdUp();
+    #endif
+    const QString rccExecutablePath = applicationDir.filePath("rcc");
+#endif
 
     qrcFilePath.replace("file://", "");
 
@@ -224,24 +231,17 @@ QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath, const doubl
 
     if (qrcDevControlView.exists()) {
         if (!qrcDevControlView.removeRecursively()) {
-            qCWarning(logCategoryStrataDevStudio) << "Could not delete directory " << compiledRccFile;
+            qCWarning(logCategoryStrataDevStudio) << "Could not delete directory at " << compiledRccFile;
             return QString();
         }
     }
 
-    QString timestampPrefix = QString::number(prefix, 'f', 0);
-
-    // Make timestampPrefix directory for compiled RCC file
+    // Make directory for compiled RCC files
     QDir().mkdir(compiledRccFile);
-    QDir().mkdir(compiledRccFile + timestampPrefix);
 
     // Split qrcFilePath for filename
     QFileInfo fileInfo(qrcFile.fileName());
     QString qrcFileName(fileInfo.fileName());
-
-    // Add timestampPrefix directory to binary object path
-    compiledRccFile += timestampPrefix;
-    compiledRccFile += QDir::separator();
     compiledRccFile += qrcFileName;
 
     const auto arguments = (QList<QString>() << "-binary" << qrcFilePath << "-o" << compiledRccFile);

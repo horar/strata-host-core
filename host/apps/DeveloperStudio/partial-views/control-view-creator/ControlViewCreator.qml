@@ -140,9 +140,8 @@ Rectangle {
     }
 
     function recompileControlViewQrc () {
-        let timestampPrefix = new Date().getTime().valueOf()
         if (openProjectContainer.fileUrl != '') {
-            let compiledRccFile = sdsModel.resourceLoader.recompileControlViewQrc(openProjectContainer.fileUrl, timestampPrefix)
+            let compiledRccFile = sdsModel.resourceLoader.recompileControlViewQrc(openProjectContainer.fileUrl)
             if (compiledRccFile != '') {
                 loadDebugView(compiledRccFile, timestampPrefix)
             }
