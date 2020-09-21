@@ -124,10 +124,10 @@ Item {
         Help.registerTarget(filterHelpContainer2, "Toggles each LED to use either onboard LEDs or externally connected LEDs through 24 pin header at the top of the PCB.", 9, "ledDriverHelp")
         Help.registerTarget(filterHelpContainer3, "Toggles PWM for each LED channel on or off. If PWM is disabled, these controls will also be disabled." , 10, "ledDriverHelp")
         Help.registerTarget(filterHelpContainer4, "Indicates fault on each LED channel. Disabled unless I2C/SAM Open Load Diagnostic control set to 'Diagnostic Only' or 'Auto Retry' and diagRange indicator is green (VLED above DIAGEN threshold)." , 11, "ledDriverHelp")
-        Help.registerTarget(filterHelpContainer5, "Sets the duty cycle of the PWM for each LED channel with 128 step resolution. Maximum and minimum duty cycles will switch LED fully on and off respectively. If PWM is disabled, these controls will also be disabled. The duty cycles are always locked together for the NCV7684 because it does not have this capability. The duty cycles for the NCV7685 can be individually controlled or locked together using the Lock PWM Duty Together control.", 12, "ledDriverHelp")        
+        Help.registerTarget(filterHelpContainer5, "Sets the duty cycle of the PWM for each LED channel with 128 step resolution. Maximum and minimum duty cycles will switch LED fully on and off respectively. If PWM is disabled, these controls will also be disabled. The duty cycles are always locked together for the NCV7684 because it does not have this capability. The duty cycles for the NCV7685 can be individually controlled or locked together using the Lock PWM Duty Together control.", 12, "ledDriverHelp")
         Help.registerTarget(diag,"Generic diagnostic error when any LED channel is in an error mode or when I2C Status Registers contain error.",13,"ledDriverHelp")
         Help.registerTarget(openLoadDiagnostic,"Sets the diagnostic state of the LED driver in I2C mode. This control will be disabled unless diagRange is on.\n\nNo Diagnostic = No open load detection is performed\n\nAuto Retry = During open load fault, 1) DIAG pin is pulled low, 2) low current is imposed on faulty channel only, 3) other channels turned off. If fault is recovered DIAG is released and normal operation continues.\n\nDiagnostic Only = During open load fault, the DIAG pin is pulled low with no change to current regulation. DIAG is released when the fault is recovered.",14,"ledDriverHelp")
-        Help.registerTarget(scIset,"Set when the ISET pin is short-circuited to ground. A minimum 0mA set value in Global Current Set (ISET) control may create this error.",15,"ledDriverHelp")    
+        Help.registerTarget(scIset,"Set when the ISET pin is short-circuited to ground. A minimum 0mA set value in Global Current Set (ISET) control may create this error.",15,"ledDriverHelp")
         Help.registerTarget(i2Cerr,"Set if an error has been detected during the I2C communication. Reset on register read.",16,"ledDriverHelp")
         Help.registerTarget(uv,"Set if under voltage condition when VS is below VSUV (4.1V typical). All channels will be turned off.",17,"ledDriverHelp")
         Help.registerTarget(diagRange,"Set when divided voltage is above the VDiagenTH threshold and reset when below. Default voltage threshold is fixed on this PCB to 7.5V. User can adjust this threshold with the onboard potentiometer by removing lower divider resistor and shorting jumper.",18,"ledDriverHelp")
@@ -771,6 +771,7 @@ Item {
 
     property var led_pwm_duty: platformInterface.led_pwm_duty
     onLed_pwm_dutyChanged: {
+        console.log("tanya",led_pwm_duty.values[0])
         out0duty.value = led_pwm_duty.values[0]
         out1duty.value = led_pwm_duty.values[1]
         out2duty.value = led_pwm_duty.values[2]
@@ -802,7 +803,6 @@ Item {
 
         out0duty.from = led_pwm_duty.scales[1]
         out0duty.to = led_pwm_duty.scales[0]
-        out0duty.value = led_pwm_duty.scales[2]
 
         setStateForPWMDuty(out0duty,led_pwm_duty.states[0])
         setStateForPWMDuty(out1duty,led_pwm_duty.states[1])
@@ -1017,7 +1017,7 @@ Item {
                             SGAlignedLabel {
                                 id: gobalCurrentSetLabel
                                 target: gobalCurrentSetSlider
-                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
+                                fontSizeMultiplier: ratioCalc * 1.2
                                 font.bold : true
                                 alignment: SGAlignedLabel.SideTopLeft
                                 anchors.verticalCenter: parent.verticalCenter
@@ -1025,16 +1025,18 @@ Item {
                                 //text: "Gobal Current Set (ISET)"
                                 SGSlider {
                                     id: gobalCurrentSetSlider
-                                    width: gobalCurrentSetContainer.width - 20
+                                    width: gobalCurrentSetContainer.width/1.2
                                     live: false
-                                    fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
-                                    showInputBox: false
+                                    fontSizeMultiplier: ratioCalc * 1.2
+                                    inputBox.validator: DoubleValidator {
+                                        top: gobalCurrentSetSlider.to
+                                        bottom: gobalCurrentSetSlider.from
+                                    }
+                                    inputBoxWidth: gobalCurrentSetContainer.width - gobalCurrentSetSlider.width
                                     onUserSet: {
                                         platformInterface.set_led_iset.update(value)
                                     }
-
                                 }
-
 
                                 property var led_iset: platformInterface.led_iset
                                 onLed_isetChanged:{
@@ -1352,9 +1354,14 @@ Item {
                                         pwmLinearLog.checkedLabel = led_linear_log.values[0]
                                         pwmLinearLog.uncheckedLabel = led_linear_log.values[1]
 
-                                        if(led_linear_log.value === "Linear")
+                                        if(led_linear_log.value === "Linear") {
                                             pwmLinearLog.checked = true
-                                        else  pwmLinearLog.checked = false
+                                            platformInterface.pwm_lin_state = true
+                                        }
+                                        else {
+                                            pwmLinearLog.checked = false
+                                            platformInterface.pwm_lin_state = false
+                                        }
                                     }
 
 
@@ -1763,7 +1770,7 @@ Item {
                                             SGText {
                                                 id: externalLED
                                                 //text: "Internal \n External LED"
-                                                horizontalAlignment: Text.AlignHCenter
+                                                //horizontalAlignment: Text.AlignHCenter
                                                 font.bold: true
                                                 fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc * 1.2
                                                 anchors.left: parent.left

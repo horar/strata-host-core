@@ -20,8 +20,14 @@ Item {
         Help.registerTarget(boostOCP, "Indicates the VLED input voltage source has faulted.\n\nBoost = the boost converter may have reached its maximum input current of 400mA - this is a limitation of the current provided from the USB cable. The maximum ILED current will be less than 400mA and depends on the set boost output voltage and efficiency of the boost regulator. Use Buck or Bypass VLED Input Voltage Type with external power supply for higher current applications\n\nBuck = the buck converter may have reached its 1A current limit. Remove the load and the buck converter will restart automatically\n\nBypass = the bypass load switch may have reached its 1A current limit. Remove the load and the bypass load switch will restart automatically.", 2, "powerControlHelp")
         Help.registerTarget(voltageSet, "Sets the output voltage for the Buck or Boost power supply configured in the VLED Input Voltage Type control. Bypass option will disable this control.",1, "powerControlHelp")
         Help.registerTarget(vddPowerFault, "Indicates a power fault on the VDD load switch's FLAGB pin. This is likely due to an over current event on VDD. Remove the load and the load switch will restart automatically. Using the user interface with a VDD Power Fault will cause unknown behavior.",3, "powerControlHelp")
-        Help.registerTarget(filterHelpContainer1, "Indicates the board temperature near the center of the onboard LEDs and near the LED driver on both top and bottom of the PCB. The LED driver temperature gauge does not reflect the junction temperature of the LED driver and does not correlate directly to TW and TSD temperature trip thresholds.", 4, "powerControlHelp")
-        Help.registerTarget(powerLossContainer, "Indicates the total power consumption by the LED driver, LEDs, and other power sinks connected to the VLED input supply.", 5, "powerControlHelp")
+
+        Help.registerTarget(twPowerFault,"Thermal warning that is set when junction temperature is above the Tjwar_on threshold (140°C typical) and reset on register read and when temperature is below Tjwar_on minus Tjsd_hys threshold (127.5°C typical).",4,"powerControlHelp")
+        Help.registerTarget(tsdPowerFault,"Thermal shutdown set when junction temperature is above the TSD threshold (170°C typical) and reset on register read and when temperature is below TSD minus Tjsd_hys threshold (157.5°C typical).",5,"powerControlHelp")
+        Help.registerTarget(filterHelpContainer1, "Indicates the board temperature near the center of the onboard LEDs and near the LED driver on both top and bottom of the PCB. The LED driver temperature gauge does not reflect the junction temperature of the LED driver and does not correlate directly to TW and TSD temperature trip thresholds.", 6, "powerControlHelp")
+        Help.registerTarget(powerLossContainer, "Indicates the total power consumption by the LED driver, LEDs, and other power sinks connected to the VLED input supply.", 7, "powerControlHelp")
+
+
+
     }
 
 
@@ -29,12 +35,12 @@ Item {
         id: filterHelpContainer1
         property point topLeft
         property point bottomRight
-        width:  (ledDriverTempTopContainer.width) * 3
+        width:  (ledDriverTempBottomContainer.width) * 2
         height: (bottomRight.y - topLeft.y)
         x: topLeft.x
         y: topLeft.y
         function update() {
-            topLeft = ledDriverTempTopContainer.mapToItem(root, 0,  0)
+            topLeft = ledDriverTempBottomContainer.mapToItem(root, 0,  0)
             bottomRight = tempGaugeContainer.mapToItem(root, tempGaugeContainer.width, tempGaugeContainer.height)
         }
     }
@@ -192,89 +198,33 @@ Item {
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
+                            SGButton {
+                                id:  i2cAddressButton
+                                text: qsTr("Reset VLED")
+                                anchors {
+                                    top:parent.top
+                                    topMargin: 20
+                                    left: parent.left
+                                    leftMargin: 20
+                                }
+                                fontSizeMultiplier: ratioCalc === 0 ? 1.0 : ratioCalc
+                                color: checked ? "#353637" : pressed ? "#cfcfcf": hovered ? "#eee" : "#e0e0e0"
+                                hoverEnabled: true
+                                height: parent.height/2.5
+                                width: parent.width/2.2
+                                MouseArea {
+                                    hoverEnabled: true
+                                    anchors.fill: parent
+                                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                    onClicked: {
+                                        platformInterface.set_power_vled_type.update(vedInputVoltageType.currentText)
+
+
+                                    }
+                                }
+                            }
+
                         }
-                        //                        Rectangle {
-                        //                            Layout.fillHeight: true
-                        //                            Layout.fillWidth: true
-                        //                            SGAlignedLabel {
-                        //                                id: vsVoltageSelectLabel
-                        //                                target: vsVoltageSelect
-                        //                                //text: "VS Voltage Select"
-                        //                                alignment: SGAlignedLabel.SideTopLeft
-
-                        //                                anchors {
-                        //                                    top:parent.top
-                        //                                    left: parent.left
-                        //                                    verticalCenter: parent.verticalCenter
-                        //                                    leftMargin: 20
-                        //                                }
-
-                        //                                fontSizeMultiplier: ratioCalc * 1.2
-                        //                                font.bold : true
-
-                        //                                SGSwitch {
-                        //                                    id: vsVoltageSelect
-                        //                                    labelsInside: true
-                        //                                    //checkedLabel: "VLED"
-                        //                                    //uncheckedLabel: "5V"
-                        //                                    textColor: "black"              // Default: "black"
-                        //                                    handleColor: "white"            // Default: "white"
-                        //                                    grooveColor: "#ccc"             // Default: "#ccc"
-                        //                                    grooveFillColor: "#0cf"         // Default: "#0cf"
-                        //                                    fontSizeMultiplier: ratioCalc * 1.2
-                        //                                    checked: false
-
-                        //                                    onToggled: {
-                        //                                        if(checked)
-                        //                                            platformInterface.set_power_vs_select.update("5V_USB")
-                        //                                        else
-                        //                                            platformInterface.set_power_vs_select.update("VLED")
-
-                        //                                    }
-                        //                                }
-
-                        //                                property var power_vs_select: platformInterface.power_vs_select
-                        //                                onPower_vs_selectChanged: {
-                        //                                    vsVoltageSelectLabel.text = power_vs_select.caption
-                        //                                    setStatesForControls(vsVoltageSelect,power_vs_select.states[0])
-
-
-                        //                                    vsVoltageSelect.checkedLabel = power_vs_select.values[0]
-                        //                                    vsVoltageSelect.uncheckedLabel = power_vs_select.values[1]
-
-                        //                                    if(power_vs_select.value === power_vs_select.values[0])
-                        //                                        vsVoltageSelect.checked = true
-                        //                                    else  vsVoltageSelect.checked = false
-                        //                                }
-
-                        //                                property var power_vs_select_caption: platformInterface.power_vs_select_caption.caption
-                        //                                onPower_vs_select_captionChanged: {
-                        //                                    vsVoltageSelectLabel.text = power_vs_select_caption
-                        //                                }
-
-                        //                                property var power_vs_select_state: platformInterface.power_vs_select_states.states
-                        //                                onPower_vs_select_stateChanged: {
-                        //                                    setStatesForControls(vsVoltageSelect,power_vs_select_state[0])
-                        //                                }
-
-                        //                                property var power_vs_select_values: platformInterface.power_vs_select_values.values
-                        //                                onPower_vs_select_valuesChanged: {
-                        //                                    vsVoltageSelect.checkedLabel = power_vs_select_values[0]
-                        //                                    vsVoltageSelect.uncheckedLabel = power_vs_select_values[1]
-                        //                                }
-
-                        //                                property var power_vs_select_value: platformInterface.power_vs_select_value.value
-                        //                                onPower_vs_select_valueChanged: {
-                        //                                    var valuesOfswitch =  platformInterface.power_vs_select_values.values
-                        //                                    console.log(valuesOfswitch,power_vs_select_value)
-                        //                                    if(power_vs_select_value === valuesOfswitch[0])
-                        //                                        vsVoltageSelect.checked = true
-                        //                                    else  vsVoltageSelect.checked = false
-                        //                                }
-                        //                            }
-                        //                        }
-
-
                     }
                 }
                 Rectangle {
@@ -410,61 +360,7 @@ Item {
                                 }
                             }
                         }
-                        //                        Rectangle {
-                        //                            Layout.fillHeight: true
-                        //                            Layout.fillWidth: true
-                        //                            SGAlignedLabel {
-                        //                                id:vsPowerFaultLabel
-                        //                                target: vsPowerFault
-                        //                                fontSizeMultiplier: ratioCalc * 1.2
-                        //                                font.bold: true
-                        //                                alignment: SGAlignedLabel.SideTopCenter
-                        //                                anchors {
-                        //                                    top:parent.top
-                        //                                    left: parent.left
-                        //                                    verticalCenter: parent.verticalCenter
-                        //                                    leftMargin: 20
-                        //                                }
 
-                        //                                SGStatusLight {
-                        //                                    id: vsPowerFault
-                        //                                    width : 40
-
-                        //                                    property var power_fault_vs: platformInterface.power_fault_vs
-                        //                                    onPower_fault_vsChanged: {
-                        //                                        vsPowerFaultLabel.text = power_fault_vs.caption
-                        //                                        setStatesForControls(vsPowerFault,power_fault_vs.states[0])
-                        //                                        if(power_fault_vs.value === true)
-                        //                                            vsPowerFault.status = SGStatusLight.Red
-                        //                                        else vsPowerFault.status = SGStatusLight.Off
-                        //                                    }
-
-                        //                                    property var power_fault_vs_caption: platformInterface.power_fault_vs_caption.caption
-                        //                                    onPower_fault_vs_captionChanged: {
-                        //                                        vsPowerFaultLabel.text = power_fault_vs_caption
-                        //                                    }
-
-                        //                                    property var power_fault_vs_states: platformInterface.power_fault_vs_states.states
-                        //                                    onPower_fault_vs_statesChanged: {
-                        //                                        setStatesForControls(vsPowerFault,power_fault_vs_states[0])
-                        //                                    }
-
-                        //                                    property var power_fault_vs_value: platformInterface.power_fault_vs_value.value
-                        //                                    onPower_fault_vs_valueChanged:{
-                        //                                        if(power_fault_vs_value === true) {
-                        //                                            if(!powerControl.visible) {
-                        //                                                alertViewBadge.opacity = 1.0
-                        //                                            }
-                        //                                            vsPowerFault.status = SGStatusLight.Red
-                        //                                        }
-                        //                                        else {
-                        //                                            vsPowerFault.status = SGStatusLight.Off
-                        //                                        }
-                        //                                    }
-
-                        //                                }
-                        //                            }
-                        //                        }
                         Rectangle {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
@@ -522,12 +418,133 @@ Item {
                                 }
                             }
                         }
+                    }
+                }
+
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    RowLayout{
+
+                        anchors.fill: parent
+
+                        Rectangle {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+                            SGAlignedLabel {
+                                id:twPowerFaultLabel
+                                target: twPowerFault
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold: true
+                                alignment: SGAlignedLabel.SideTopCenter
+                                anchors {
+                                    //top:parent.top
+                                    left: parent.left
+                                    verticalCenter: parent.verticalCenter
+                                    leftMargin: 40
+                                }
+
+                                SGStatusLight {
+                                    id: twPowerFault
+                                    width : 40
+
+                                    property var power_tw: platformInterface.power_tw
+                                    onPower_twChanged: {
+                                        twPowerFaultLabel.text = power_tw.caption
+                                        setStatesForControls(twPowerFault,power_tw.states[0])
+                                        if(power_tw.value === true)
+                                            twPowerFault.status = SGStatusLight.Red
+                                        else twPowerFault.status = SGStatusLight.Off
+                                    }
+
+                                    property var power_tw_caption: platformInterface.power_tw_caption.caption
+                                    onPower_tw_captionChanged: {
+                                        twPowerFaultLabel.text = power_tw_caption
+                                    }
+
+                                    property var power_tw_states: platformInterface.power_tw_states.states
+                                    onPower_tw_statesChanged: {
+                                        setStatesForControls(twPowerFault,power_tw_states[0])
+                                    }
+
+                                    property var power_tw_value: platformInterface.power_tw_value.value
+                                    onPower_tw_valueChanged:{
+                                        if(power_tw_value === true) {
+                                            //                                            if(!powerControl.visible) {
+                                            //                                                alertViewBadge.opacity = 1.0
+                                            //                                            }
+                                            twPowerFault.status = SGStatusLight.Red
+                                        }
+                                        else {
+                                            twPowerFault.status = SGStatusLight.Off
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+
+                        Rectangle{
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            color: "transparent"
+
+                            SGAlignedLabel {
+                                id:tsdPowerFaultLabel
+                                target: tsdPowerFault
+                                fontSizeMultiplier: ratioCalc * 1.2
+                                font.bold: true
+                                alignment: SGAlignedLabel.SideTopCenter
+                                anchors {
+
+                                    left: parent.left
+                                    verticalCenter: parent.verticalCenter
+                                    leftMargin: 40
+                                }
+                                SGStatusLight {
+                                    id: tsdPowerFault
+                                    width : 40
+
+                                    property var power_tsd: platformInterface.power_tsd
+                                    onPower_tsdChanged: {
+                                        tsdPowerFaultLabel.text = power_tsd.caption
+                                        setStatesForControls(tsdPowerFault,power_tsd.states[0])
+                                        if(power_tsd.value === true)
+                                            tsdPowerFault.status = SGStatusLight.Red
+                                        else tsdPowerFault.status = SGStatusLight.Off
+                                    }
+
+                                    property var power_tsd_caption: platformInterface.power_tsd_caption.caption
+                                    onPower_tsd_captionChanged: {
+                                        tsdPowerFaultLabel.text = power_tsd_caption
+                                    }
+
+                                    property var power_tsd_states: platformInterface.power_tsd_states.states
+                                    onPower_tsd_statesChanged: {
+                                        setStatesForControls(tsdPowerFault,power_tsd_states[0])
+                                    }
+
+                                    property var power_tsd_value: platformInterface.power_tsd_value.value
+                                    onPower_tsd_valueChanged:{
+                                        if(power_tsd_value === true) {
+                                            //                                            if(!powerControl.visible) {
+                                            //                                                alertViewBadge.opacity = 1.0
+                                            //                                            }
+                                            tsdPowerFault.status = SGStatusLight.Red
+                                        }
+                                        else {
+                                            tsdPowerFault.status = SGStatusLight.Off
+                                        }
+                                    }
+                                }
+                            }
+                        }
 
 
                     }
-
-
                 }
+
 
             }
         }
@@ -944,83 +961,83 @@ Item {
                     RowLayout {
                         anchors.fill: parent
 
-                        Rectangle{
-                            id: ledDriverTempTopContainer
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
-                            SGAlignedLabel {
-                                id: ledDriverTempTopLabel
-                                target: ledDriverTempTop
-                                //text: "LED Driver Temp Top \n (°C)"
-                                anchors.centerIn: parent
-                                alignment: SGAlignedLabel.SideBottomCenter
-                                fontSizeMultiplier: ratioCalc * 1.2
-                                font.bold : true
-                                horizontalAlignment: Text.AlignHCenter
+//                        Rectangle{
+//                            id: ledDriverTempTopContainer
+//                            Layout.fillHeight: true
+//                            Layout.fillWidth: true
+//                            SGAlignedLabel {
+//                                id: ledDriverTempTopLabel
+//                                target: ledDriverTempTop
+//                                //text: "LED Driver Temp Top \n (°C)"
+//                                anchors.centerIn: parent
+//                                alignment: SGAlignedLabel.SideBottomCenter
+//                                fontSizeMultiplier: ratioCalc * 1.2
+//                                font.bold : true
+//                                horizontalAlignment: Text.AlignHCenter
 
-                                SGCircularGauge {
-                                    id: ledDriverTempTop
-                                    width: ledDriverTempTopContainer.width
-                                    height: ledDriverTempTopContainer.height - ledDriverTempTopLabel.contentHeight
-                                    //tickmarkStepSize: 10
-                                    //  minimumValue: 0
-                                    //  maximumValue: 150
-                                    gaugeFillColor1: "blue"
-                                    gaugeFillColor2: "red"
-                                    unitText: "°C"
-                                    unitTextFontSizeMultiplier: ratioCalc * 2.5
-                                    //valueDecimalPlaces: 2
-                                    function lerpColor (color1, color2, x){
-                                        if (Qt.colorEqual(color1, color2)){
-                                            return color1;
-                                        } else {
-                                            return Qt.rgba(
-                                                        color1.r * (1 - x) + color2.r * x,
-                                                        color1.g * (1 - x) + color2.g * x,
-                                                        color1.b * (1 - x) + color2.b * x, 1
-                                                        );
-                                        }
-                                    }
-                                }
+//                                SGCircularGauge {
+//                                    id: ledDriverTempTop
+//                                    width: ledDriverTempTopContainer.width
+//                                    height: ledDriverTempTopContainer.height - ledDriverTempTopLabel.contentHeight
+//                                    //tickmarkStepSize: 10
+//                                    //  minimumValue: 0
+//                                    //  maximumValue: 150
+//                                    gaugeFillColor1: "blue"
+//                                    gaugeFillColor2: "red"
+//                                    unitText: "°C"
+//                                    unitTextFontSizeMultiplier: ratioCalc * 2.5
+//                                    //valueDecimalPlaces: 2
+//                                    function lerpColor (color1, color2, x){
+//                                        if (Qt.colorEqual(color1, color2)){
+//                                            return color1;
+//                                        } else {
+//                                            return Qt.rgba(
+//                                                        color1.r * (1 - x) + color2.r * x,
+//                                                        color1.g * (1 - x) + color2.g * x,
+//                                                        color1.b * (1 - x) + color2.b * x, 1
+//                                                        );
+//                                        }
+//                                    }
+//                                }
 
-                                property var power_led_driver_temp_top: platformInterface.power_led_driver_temp_top
-                                onPower_led_driver_temp_topChanged: {
-                                    ledDriverTempTopLabel.text = power_led_driver_temp_top.caption
-                                    setStatesForControls(ledDriverTempTop,power_led_driver_temp_top.states[0])
+//                                property var power_led_driver_temp_top: platformInterface.power_led_driver_temp_top
+//                                onPower_led_driver_temp_topChanged: {
+//                                    ledDriverTempTopLabel.text = power_led_driver_temp_top.caption
+//                                    setStatesForControls(ledDriverTempTop,power_led_driver_temp_top.states[0])
 
-                                    ledDriverTempTop.maximumValue = power_led_driver_temp_top.scales[0]
-                                    ledDriverTempTop.minimumValue = power_led_driver_temp_top.scales[1]
-                                    ledDriverTempTop.tickmarkStepSize = power_led_driver_temp_top.scales[2]
+//                                    ledDriverTempTop.maximumValue = power_led_driver_temp_top.scales[0]
+//                                    ledDriverTempTop.minimumValue = power_led_driver_temp_top.scales[1]
+//                                    ledDriverTempTop.tickmarkStepSize = power_led_driver_temp_top.scales[2]
 
-                                    ledDriverTempTop.value = power_led_driver_temp_top.value
+//                                    ledDriverTempTop.value = power_led_driver_temp_top.value
 
-                                }
+//                                }
 
-                                property var power_led_driver_temp_top_caption: platformInterface.power_led_driver_temp_top_caption.caption
-                                onPower_led_driver_temp_top_captionChanged: {
-                                    ledDriverTempTopLabel.text = power_led_driver_temp_top_caption
-                                }
+//                                property var power_led_driver_temp_top_caption: platformInterface.power_led_driver_temp_top_caption.caption
+//                                onPower_led_driver_temp_top_captionChanged: {
+//                                    ledDriverTempTopLabel.text = power_led_driver_temp_top_caption
+//                                }
 
-                                property var power_led_driver_temp_top_state: platformInterface.power_led_driver_temp_top_states.states
-                                onPower_led_driver_temp_top_stateChanged: {
-                                    setStatesForControls(ledDriverTempTop,power_led_driver_temp_top_state[0])
-                                }
+//                                property var power_led_driver_temp_top_state: platformInterface.power_led_driver_temp_top_states.states
+//                                onPower_led_driver_temp_top_stateChanged: {
+//                                    setStatesForControls(ledDriverTempTop,power_led_driver_temp_top_state[0])
+//                                }
 
-                                property var power_led_driver_temp_top_scales: platformInterface.power_led_driver_temp_top_scales.scales
-                                onPower_led_driver_temp_top_scalesChanged: {
-                                    ledDriverTempTop.maximumValue = power_led_driver_temp_top_scales[0]
-                                    ledDriverTempTop.minimumValue = power_led_driver_temp_top_scales[1]
-                                    ledDriverTempTop.tickmarkStepSize = power_led_driver_temp_top_scales[2]
+//                                property var power_led_driver_temp_top_scales: platformInterface.power_led_driver_temp_top_scales.scales
+//                                onPower_led_driver_temp_top_scalesChanged: {
+//                                    ledDriverTempTop.maximumValue = power_led_driver_temp_top_scales[0]
+//                                    ledDriverTempTop.minimumValue = power_led_driver_temp_top_scales[1]
+//                                    ledDriverTempTop.tickmarkStepSize = power_led_driver_temp_top_scales[2]
 
-                                }
+//                                }
 
-                                property var power_led_driver_temp_top_value: platformInterface.power_led_driver_temp_top_value.value
-                                onPower_led_driver_temp_top_valueChanged: {
-                                    ledDriverTempTop.value = power_led_driver_temp_top_value
-                                }
-                            }
+//                                property var power_led_driver_temp_top_value: platformInterface.power_led_driver_temp_top_value.value
+//                                onPower_led_driver_temp_top_valueChanged: {
+//                                    ledDriverTempTop.value = power_led_driver_temp_top_value
+//                                }
+//                            }
 
-                        }
+//                        }
 
                         Rectangle{
                             id: ledDriverTempBottomContainer
