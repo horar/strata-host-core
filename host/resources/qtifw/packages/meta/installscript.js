@@ -113,16 +113,17 @@ Component.prototype.installationOrUpdateFinished = function()
 
     // erase StrataUtils folder
     var strataUtilsFolder = installer.value("TargetDir") + "\\StrataUtils";
+    strataUtilsFolder = strataUtilsFolder.split("/").join("\\");
     if((systemInfo.productType == "windows") && (installer.fileExists(strataUtilsFolder))) {
         try {
             console.log("erasing StrataUtils folder: " + strataUtilsFolder);
-            if(installer.gainAdminRights()) {    // needed when it is in Program Files directory on Win10
-                console.log("gained admin rights, executing cmd in admin mode");
-                installer.execute("cmd", ["/c", "rd", "/s", "/q", strataUtilsFolder]);
-                installer.dropAdminRights();
-            } else {
-                console.log("failed to gain admin rights, executing cmd in user mode");
-                installer.execute("cmd", ["/c", "rd", "/s", "/q", strataUtilsFolder]);
+            installer.execute("cmd", ["/c", "rd", "/s", "/q", strataUtilsFolder]);
+            if(installer.fileExists(strataUtilsFolder)) {
+                if(installer.gainAdminRights()) {    // needed when it is in Program Files directory on Win10
+                    console.log("gained admin rights, executing cmd in admin mode");
+                    installer.execute("cmd", ["/c", "rd", "/s", "/q", strataUtilsFolder]);
+                    installer.dropAdminRights();
+                }
             }
         } catch(e) {
             console.log(e);

@@ -16,7 +16,7 @@
     <TargetDir>@ApplicationsDirX64@/ON Semiconductor/Strata</TargetDir>
     <RepositorySettingsPageVisible>false</RepositorySettingsPageVisible>
     <MaintenanceToolName>Strata Maintenance Tool</MaintenanceToolName>
-    <RemoveTargetDir>false</RemoveTargetDir>
+    <RemoveTargetDir>true</RemoveTargetDir>
     <AllowNonAsciiCharacters>true</AllowNonAsciiCharacters>
     <CreateLocalRepository>false</CreateLocalRepository>
     <InstallActionColumnVisible>true</InstallActionColumnVisible>

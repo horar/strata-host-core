@@ -148,7 +148,7 @@ Component.prototype.isVCRedistInstalled = function()
                     up_to_date = true;
                     console.log("program is the same version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
                 } else {
-                    console.log("program is older, will replace with new version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
+                    console.log("program is older, will replace with new version if newer is not available, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
                     
                     // do not uninstall vcredist, it might cause issue, just let the updater do its job and hope it works correctly
                     //console.log("executing VCRedist uninstall command: '" + uninstall_string[i] + "'");

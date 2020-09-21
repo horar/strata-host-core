@@ -163,7 +163,7 @@ Component.prototype.isFTDIInstalled = function()
                     up_to_date = true;
                     console.log("program is the same version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
                 } else {
-                    console.log("program is older, will replace with new version, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
+                    console.log("program is older, will replace with new version if newer is not available, DisplayVersion: '" + display_version[i] + "', MyVersion: '" + component.value("Version") + "'");
                     console.log("executing FTDI uninstall command: '" + uninstall_string[i] + "'");
                     var e = installer.execute(uninstall_string[i], ["/SW"]);
                     console.log(e);
