@@ -14,8 +14,6 @@ Item {
         fill: parent
     }
 
-    property var sgUserSettings
-
     PlatformInterface {
         id: platformInterface
     }
@@ -34,6 +32,8 @@ Item {
 
         TabButton {
             id: basicButton
+            KeyNavigation.right: this
+            KeyNavigation.left: this
             text: qsTr("Basic")
             onClicked: {
                 controlContainer.currentIndex = 0
@@ -42,6 +42,8 @@ Item {
 
         TabButton {
             id: advancedButton
+            KeyNavigation.right: this
+            KeyNavigation.left: this
             text: qsTr("Advanced")
             onClicked: {
                 controlContainer.currentIndex = 1
@@ -50,6 +52,8 @@ Item {
 
         TabButton {
             id: userSettingsButton
+            KeyNavigation.right: this
+            KeyNavigation.left: this
             text: qsTr("User Settings")
             onClicked: {
                 controlContainer.currentIndex = 2
@@ -86,7 +90,7 @@ Item {
             top: controlContainer.top
             margins: 20
         }
-        source: "control-views/question-circle-solid.svg"
+        source: "qrc:/sgimages/question-circle.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
         height: 40
         width: 40

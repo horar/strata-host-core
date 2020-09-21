@@ -118,7 +118,7 @@ void FirmwareUpdater::handleFlashFirmware()
         return;
     }
 
-    flasherConnector_ = new FlasherConnector(device_, firmwareFile_.fileName() , this);
+    flasherConnector_ = new FlasherConnector(device_, firmwareFile_.fileName(), firmwareMD5_, this);
 
     connect(flasherConnector_, &FlasherConnector::finished, this, &FirmwareUpdater::handleFlasherFinished);
     connect(flasherConnector_, &FlasherConnector::flashProgress, this, &FirmwareUpdater::handleFlashProgress);

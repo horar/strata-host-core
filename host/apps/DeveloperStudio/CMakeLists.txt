@@ -31,6 +31,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
 
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
+    signals/qml/tech/strata/signals/qml.qrc
 
     qml-dev-studio.qrc
     qml-dev-studio-minimal.qrc
@@ -68,6 +69,7 @@ target_link_libraries(${PROJECT_NAME}
     strata::connector
     strata::HostControllerClient
     strata::PlatformInterface
+    strata::SGVersionUtils
 
     strata::QtLogger
 )
@@ -130,3 +132,4 @@ set_source_files_properties(main.cpp source/SDSModel.cpp PROPERTIES
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/logging/qml")
+add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/signals/qml")

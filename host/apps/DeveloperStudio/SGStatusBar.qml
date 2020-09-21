@@ -214,8 +214,13 @@ Rectangle {
                 fill: profileIconContainer
             }
             cursorShape: Qt.PointingHandCursor
+            Accessible.role: Accessible.Button
+            Accessible.name: "User Icon"
+            Accessible.description: "User menu button."
+            Accessible.onPressAction: pressAction()
+            onPressed: pressAction()
 
-            onPressed: {
+            function pressAction() {
                 profileMenu.open()
             }
         }
@@ -311,6 +316,7 @@ Rectangle {
     SGFeedbackPopup {
         id: feedbackPopup
         width: Math.max(container.width * 0.8, 600)
+        height: Math.max(container.height * 0.8, 600)
         x: container.width/2 - feedbackPopup.width/2
         y: container.parent.windowHeight/2 - feedbackPopup.height/2
     }

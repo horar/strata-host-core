@@ -76,13 +76,43 @@ Item {
         }
 
         function contains_text(item) {
-            if (filteringText){
-                var keywords = item.description + " " + item.opn + " " + item.verbose_name
-                if(keywords.toLowerCase().includes(filter.lowerCaseText)) {
-                    return true
-                } else {
-                    return false
+            if (filteringText && (searchCategoryText.checked || searchCategoryPartsList.checked)){
+                let found = false
+
+                if (searchCategoryText.checked === true) {
+                    let replaceIdx = item.description.toLowerCase().indexOf(filter.lowerCaseText)
+                    if (replaceIdx > -1) {
+                        found = true;
+                    }
+
+                    item.desc_matching_index = replaceIdx
+
+                    replaceIdx = item.opn.toLowerCase().indexOf(filter.lowerCaseText)
+                    if (replaceIdx > -1) {
+                        found = true
+                    }
+                    item.opn_matching_index = replaceIdx
+
+                    replaceIdx = item.verbose_name.toLowerCase().indexOf(filter.lowerCaseText)
+                    if (replaceIdx > -1) {
+                        found = true
+                    }
+                    item.name_matching_index = replaceIdx
                 }
+
+                if (searchCategoryPartsList.checked === true) {
+                    for (let i = 0; i < item.parts_list.count; i++) {
+                        let idxMatched = item.parts_list.get(i).opn.toLowerCase().indexOf(filter.lowerCaseText);
+                        if (idxMatched !== -1) {
+                            found = true
+                        }
+                        item.parts_list.set(i, {
+                            opn: item.parts_list.get(i).opn,
+                            matchingIndex: idxMatched
+                        });
+                    }
+                }
+                return found
             } else {
                 return true
             }
@@ -160,13 +190,26 @@ Item {
                 width: 577
                 clip: true
 
+                SGIcon {
+                    id: searchIcon
+                    source: "qrc:/sgimages/zoom.svg"
+                    height: filter.height * .75
+                    width: height
+                    iconColor: "#666"
+                    anchors {
+                        left: textFilterContainer.left
+                        leftMargin: 10
+                        verticalCenter: textFilterContainer.verticalCenter
+                    }
+                }
+
                 TextInput {
                     id: filter
                     text: ""
                     anchors {
                         verticalCenter: textFilterContainer.verticalCenter
-                        left: textFilterContainer.left
-                        leftMargin: 10
+                        left: searchIcon.right
+                        leftMargin: 5
                         right: textFilterContainer.right
                         rightMargin: 10
                     }
@@ -179,6 +222,7 @@ Item {
 
                     onLowerCaseTextChanged: {
                         Filters.keywordFilter = lowerCaseText
+                        searchCategoriesDropdown.close()
                         if (lowerCaseText === "") {
                             filteredPlatformSelectorModel.filteringText = false
                         } else {
@@ -187,9 +231,10 @@ Item {
                         filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
                     }
 
+
                     Text {
                         id: placeholderText
-                        text: "Filter By Keyword..."
+                        text: "Search..."
                         color: filter.enabled? "#666" : "#ddd"
                         visible: filter.text === ""
                         anchors {
@@ -201,18 +246,22 @@ Item {
                     MouseArea {
                         id: mouseArea
                         anchors.fill: parent
-                        onPressed: mouse.accepted = false
+                        onClicked: {
+                            searchCategoriesDropdown.close()
+                            filter.focus = true
+                        }
                         cursorShape: Qt.IBeamCursor
                     }
                 }
 
                 SGIcon {
+                    id: clearIcon
                     source: "qrc:/sgimages/times-circle.svg"
                     height: parent.height * .75
                     width: height
                     anchors {
                         verticalCenter: textFilterContainer.verticalCenter
-                        right: textFilterContainer.right
+                        right: cogIcon.left
                         rightMargin: (textFilterContainer.height - height) / 2
                     }
                     iconColor: textFilterClearMouse.containsMouse ?  "#bbb" : "#999"
@@ -226,6 +275,74 @@ Item {
                         }
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
+                    }
+                }
+
+                SGIcon {
+                    id: cogIcon
+                    source: "qrc:/sgimages/cog.svg"
+                    height: parent.height * .75
+                    width: height
+                    anchors {
+                        verticalCenter: textFilterContainer.verticalCenter
+                        right: textFilterContainer.right
+                        rightMargin: (textFilterContainer.height - height) / 2
+                    }
+                    iconColor: cogMouse.containsMouse || searchCategoriesDropdown.opened ?  "#bbb" : "#999"
+
+                    MouseArea {
+                        id: cogMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+
+                        onClicked: {
+                            searchCategoriesDropdown.opened ? searchCategoriesDropdown.close() : searchCategoriesDropdown.open()
+                        }
+                    }
+                }
+
+                Popup {
+                    id: searchCategoriesDropdown
+
+                    y: textFilterContainer.height-1
+                    width: textFilterContainer.width+1
+                    topPadding: 0
+                    bottomPadding: 0
+                    leftPadding: 5
+
+                    closePolicy: Popup.CloseOnReleaseOutsideParent
+
+                    background: Rectangle {
+                        border {
+                            width: 1
+                            color: "#DDD"
+                        }
+                    }
+
+                    contentItem: Column {
+                        id: checkboxCol
+                        anchors.fill: parent
+
+                        CheckBox {
+                            id: searchCategoryText
+                            text: qsTr("Platform Titles and Descriptions")
+                            checked: true
+
+                            onCheckedChanged: {
+                                filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                            }
+                        }
+
+                        CheckBox {
+                            id: searchCategoryPartsList
+                            text: qsTr("Part Numbers in Bill of Materials")
+                            checked: true
+
+                            onCheckedChanged: {
+                                filteredPlatformSelectorModel.invalidate() //re-triggers filterAcceptsRow check
+                            }
+                        }
                     }
                 }
             }

@@ -1,6 +1,5 @@
 .pragma library
 .import "navigation_control.js" as NavigationControl
-.import "uuid_map.js" as UuidMap
 .import "qrc:/js/platform_filters.js" as PlatformFilters
 .import "constants.js" as Constants
 
@@ -118,15 +117,6 @@ function emptyListRetry() {
 */
 function generatePlatform (platform) {
     let class_id_string = String(platform.class_id)
-    let ui_location = ""
-    if (UuidMap.uuid_map.hasOwnProperty(class_id_string)) {
-        ui_location = UuidMap.uuid_map[class_id_string]   // fetch directory name used to bring up the UI
-    } else {
-        if (platform.available.control){
-            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Control 'available' flag set but no mapped UI for this class_id; overriding to deny access");
-            platform.available.control = false
-        }
-    }
 
     // Parse list of text filters and gather complete filter info from PlatformFilters
     if (platform.hasOwnProperty("filters")) {
@@ -135,17 +125,25 @@ function generatePlatform (platform) {
         platform.filters = []
     }
 
+    if (platform.hasOwnProperty("parts_list")) {
+        platform.parts_list = platform.parts_list.map(part => { return { opn: part, matchingIndex: -1 }})
+    } else {
+        platform.parts_list = []
+    }
+
+    platform.desc_matching_index = -1
+    platform.opn_matching_index = -1
+    platform.name_matching_index = -1
+
     platform.error = false
     platform.connected = false  // != device_id, as device may be bound but not connected (i.e. view_open)
     platform.device_id = Constants.NULL_DEVICE_ID
     platform.visible = true
     platform.view_open = false
-    platform.ui_exists = (ui_location !== "")
     platform.firmware_version = ""
 
     // Create entry in classMap
     classMap[class_id_string] = {
-        "ui_location": ui_location,
         "original_listing": platform,
         "selector_listings": [platformSelectorModel.count]
     }
@@ -237,7 +235,7 @@ function addConnectedPlatform(platform) {
 
     if (classMap.hasOwnProperty(class_id_string)) {
         connectListing(class_id_string, platform.device_id, platform.firmware_version)
-    } else if (class_id_string !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id_string)) {
+    } else if (class_id_string !== "undefined") {
         // unlisted platform connected: no entry in DP platform list, but UI found in UuidMap
         console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unlisted platform connected:", class_id_string);
         insertUnlistedListing(platform)
@@ -300,26 +298,30 @@ function connectListing(class_id_string, device_id, firmware_version) {
 }
 
 function openPlatformView(platform) {
-    let selector_listing = platformSelectorModel.get(platform.index)
-    selector_listing.view_open = true
+    let selector_listing = null;
+    if (platform.index) {
+        selector_listing = platformSelectorModel.get(platform.index)
+        selector_listing.view_open = true
+    }
 
     let data = {
         "class_id": platform.class_id,
         "device_id": platform.device_id,
-        "name": selector_listing.verbose_name,
+        "name": selector_listing ? selector_listing.verbose_name : platform.name,
         "view": "control",
         "connected": true,
         "available": platform.available,
         "firmware_version": platform.firmware_version
     }
 
-    if (selector_listing.connected === false || selector_listing.ui_exists === false || platform.device_id === Constants.NULL_DEVICE_ID || platform.available.control === false) {
+    if (selector_listing && selector_listing.connected === false || platform.device_id === Constants.NULL_DEVICE_ID || platform.available.control === false) {
         data.view = "collateral"
         data.connected = false
     }
 
     NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT,data)
 }
+
 
 /*
     Disconnect listing, reset completely if no related PlatformView is open
@@ -408,7 +410,6 @@ function insertUnknownListing (platform) {
 function insertUnlistedListing (platform) {
     let platform_info = generateErrorListing(platform)
 
-    platform_info.ui_exists = true
     platform_info.available.control = true
     platform_info.description = "No information to display."
 
@@ -434,7 +435,6 @@ function generateErrorListing (platform) {
         "error": true,
         "visible": true,
         "view_open": false,
-        "ui_exists": false,
         "firmware_version": platform.firmware_version
     }
     return error
@@ -447,13 +447,8 @@ function insertErrorListing (platform) {
 
     // create entry in classMap
     classMap[platform.class_id] = {
-        "ui_location": "",
         "original_listing": platform,
         "selector_listings": [index]
-    }
-
-    if (platform.ui_exists) {
-        classMap[platform.class_id].ui_location =  UuidMap.uuid_map[platform.class_id]
     }
 
     return index

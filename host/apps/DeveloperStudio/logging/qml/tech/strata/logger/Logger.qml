@@ -28,6 +28,9 @@ QtObject {
     property LoggingCategory devStudioCorePlatformInterfaceCategory: LoggingCategory {
         name: "strata.devstudio.platIf.core"
     }
+    property LoggingCategory devStudioUtilityCategory: LoggingCategory {
+        name: "strata.devstudio.utility"
+    }
     property LoggingCategory devStudioRestClientCategory: LoggingCategory {
         name: "strata.devstudio.restClient"
     }

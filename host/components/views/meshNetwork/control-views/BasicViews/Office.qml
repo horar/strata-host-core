@@ -216,7 +216,7 @@ Rectangle {
 
     Image{
         id:mainImage
-        source:"qrc:/views/meshNetwork/images/office.jpg"
+        source:"../../images/office.jpg"
         height:parent.height*.60
         anchors.centerIn: parent
         anchors.verticalCenterOffset: 20
@@ -234,7 +234,7 @@ Rectangle {
             }
             else{
                 alarmTimer.stop()
-                mainImage.source = "qrc:/views/meshNetwork/images/office.jpg"
+                mainImage.source = "../../images/office.jpg"
             }
         }
 
@@ -250,10 +250,10 @@ Rectangle {
 
             onTriggered:{
                 if (redLightOn){
-                    mainImage.source = "qrc:/views/meshNetwork/images/office_doorOpen.jpg"
+                    mainImage.source = "../../images/office_doorOpen.jpg"
                 }
                 else{
-                    mainImage.source = "qrc:/views/meshNetwork/images/office_alarmOn.jpg"
+                    mainImage.source = "../../images/office_alarmOn.jpg"
                 }
                 redLightOn = !redLightOn;
             }
@@ -261,29 +261,6 @@ Rectangle {
             onRunningChanged:{
                 if (!running){
                     redLightOn = true;
-                }
-            }
-        }
-
-
-
-        NodeConnector{
-            id:nodeConnector
-            anchors.left:dragTargetContainer.left
-            anchors.right:dragTargetContainer.right
-            anchors.top:dragTargetContainer.top
-            height: dragTargetContainer.height
-            visible:false
-
-            dragObjects: dragTargets
-
-            Connections{
-                target: sensorRow
-                onShowMesh:{
-                    nodeConnector.visible = true
-                }
-                onHideMesh:{
-                    nodeConnector.visible = false
                 }
             }
         }
