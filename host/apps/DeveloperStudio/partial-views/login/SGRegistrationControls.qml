@@ -217,8 +217,12 @@ Item {
                     }
                 }
 
-                Keys.onReturnPressed:{
+                Keys.onReturnPressed: pressRegisterButton()
+                Accessible.onPressAction: pressRegisterButton()
+
+                function pressRegisterButton() {
                     registerButton.clicked()
+
                 }
 
                 onClicked: {
