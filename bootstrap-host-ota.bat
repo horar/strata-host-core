@@ -171,6 +171,10 @@ echo git submodule update --init --recursive
 echo "-----------------------------------------------------------------------------"
 echo " Create a build folder.."
 echo "-----------------------------------------------------------------------------"
+
+REM in case not called from where is the script located, change working directory
+cd %~dp0
+
 REM if exist %BUILD_DIR% rd /s /q %BUILD_DIR%
 if not exist %BUILD_DIR% md %BUILD_DIR%
 
