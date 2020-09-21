@@ -92,6 +92,36 @@ Item {
 
         url: "qrc:///partial-views/control-view-creator/editor.html"
 
+        Rectangle {
+            id: barContainer
+            color: "white"
+            anchors {
+                fill: webEngine
+            }
+            visible: progressBar.value !== 100
+
+            ProgressBar {
+                id: progressBar
+                anchors {
+                    centerIn: barContainer
+                    verticalCenterOffset: 10
+                }
+                height: 10
+                width: webEngine.width/2
+                from: 0
+                to: 100
+                value: webEngine.loadProgress
+
+                Text {
+                    text: qsTr("Loading...")
+                    anchors {
+                        bottom: progressBar.top
+                        bottomMargin: 10
+                        horizontalCenter: progressBar.horizontalCenter
+                    }
+                }
+            }
+        }
     }
 }
 
