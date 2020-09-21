@@ -29,8 +29,6 @@ Rectangle {
 
     }
 
-
-
     function saveSettings() {
         console.info(previousFileURL,JSON.stringify(previousFileURL))
         sgUserSettings.writeFile(configFileName, previousFileURL);
@@ -117,10 +115,22 @@ Rectangle {
 
                     SGText {
                         Layout.fillWidth:true
-                        elide: Text.ElideLeft
                         text: model.url
-                        wrapMode: Text.WrapAnywhere
+                        elide:Text.ElideRight
+                        horizontalAlignment: Text.AlignVCenter
+                        wrapMode: Text.Wrap
                         maximumLineCount: 1
+                        color:  urlMouseArea.containsMouse ?  "#bbb" : "black"
+                    }
+                }
+                MouseArea {
+                    id: urlMouseArea
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        fileModel.url = model.url
+                        viewStack.currentIndex = editUseStrip.offset
+                        editUseStrip.checkedIndices = 1
                     }
                 }
             }
