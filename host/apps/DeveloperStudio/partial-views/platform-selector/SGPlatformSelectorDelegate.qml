@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.3
+import QtQuick.Layouts 1.12
 import QtQuick.Shapes 1.0
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
@@ -12,8 +13,6 @@ import tech.strata.commoncpp 1.0
 
 Item {
     id: root
-    implicitWidth: 950
-    implicitHeight: 160
 
     property bool isCurrentItem: false
 
@@ -178,73 +177,129 @@ Item {
         }
     }
 
-
-
-    Item {
+    ColumnLayout {
         id: infoColumn
         anchors {
             left: imageContainer.right
             leftMargin: 20
-            top: root.top
-            topMargin: 20
-            bottom: root.bottom
-            bottomMargin: 20
+            verticalCenter: parent.verticalCenter
         }
+        height: parent.height - 40 // 20 each top/bottom margin
         width: 350
 
-        Text {
-            id: name
-            text: model.verbose_name
-            font {
-                pixelSize: 16
-                family: Fonts.franklinGothicBold
-            }
-            width: infoColumn.width
-            anchors {
-                horizontalCenter: infoColumn.horizontalCenter
-                top: infoColumn.top
-            }
-            wrapMode: Text.Wrap
-            horizontalAlignment: Text.AlignHCenter
-        }
+        ColumnLayout {
+            spacing: 12
+            Layout.maximumHeight: parent.height
+            Layout.fillHeight: false
 
-        Text {
-            id: productId
-            text: model.opn
-            anchors {
-                horizontalCenter: infoColumn.horizontalCenter
-                top: name.bottom
-                topMargin: 12
-            }
-            width: infoColumn.width
-            font {
-                pixelSize: 13
-                family: Fonts.franklinGothicBold
-            }
-            color: "#333"
-            font.italic: true
-            wrapMode: Text.Wrap
-            horizontalAlignment: Text.AlignHCenter
-        }
+            Text {
+                id: name
+                text: {
+                    if (searchCategoryText.checked === false || model.name_matching_index === -1) {
+                        return model.verbose_name
+                    } else {
+                        let txt = model.verbose_name
+                        let idx = model.name_matching_index
+                        return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                    }
+                }
 
-        Text {
-            id: info
-            text: model.description
-            anchors {
-                horizontalCenter: infoColumn.horizontalCenter
-                top: productId.bottom
-                topMargin: 12
-                bottom: infoColumn.bottom
+                font {
+                    pixelSize: 16
+                    family: Fonts.franklinGothicBold
+                }
+                Layout.fillWidth: true
+                elide: Text.ElideRight
+                wrapMode: Text.Wrap
+                horizontalAlignment: Text.AlignHCenter
+                textFormat: Text.StyledText
+                maximumLineCount: 2
             }
-            width: infoColumn.width
-            font {
-                pixelSize: 12
-                family: Fonts.franklinGothicBook
+
+            Text {
+                id: productId
+                text: {
+                    if (searchCategoryText.checked === false || model.opn_matching_index === -1) {
+                        return model.opn
+                    } else {
+                        let txt = model.opn
+                        let idx = model.opn_matching_index
+                        return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                    }
+                }
+
+                Layout.fillWidth: true
+                font {
+                    pixelSize: 13
+                    family: Fonts.franklinGothicBook
+                }
+                color: "#333"
+                font.italic: true
+                wrapMode: Text.Wrap
+                horizontalAlignment: Text.AlignHCenter
+                textFormat: Text.StyledText
+                maximumLineCount: 1
             }
-            color: "#666"
-            wrapMode: Text.Wrap
-            elide: Text.ElideRight
-            horizontalAlignment: Text.AlignHCenter
+
+            Text {
+                id: info
+                text: {
+                    if (searchCategoryText.checked === false || model.desc_matching_index === -1) {
+                        return model.description
+                    } else {
+                        let txt = model.description
+                        let idx = model.desc_matching_index
+                        return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                    }
+                }
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                font {
+                    pixelSize: 12
+                    family: Fonts.franklinGothicBook
+                }
+                color: "#666"
+                wrapMode: Text.Wrap
+                elide: Text.ElideRight
+                horizontalAlignment: Text.AlignHCenter
+                textFormat: Text.StyledText
+            }
+
+            Text {
+                id: parts
+                text: {
+                    if (searchCategoryPartsList.checked === true) {
+                        let str = "Matching Part OPNs: ";
+                        if (model.parts_list !== undefined) {
+                            for (let i = 0; i < model.parts_list.count; i++) {
+                                if (model.parts_list.get(i).matchingIndex > -1) {
+                                    let idx = model.parts_list.get(i).matchingIndex
+                                    let part = model.parts_list.get(i).opn
+                                    if (str !== "Matching Part OPNs: ") {
+                                        str += ", "
+                                    }
+                                    str += part.substring(0, idx) + "<font color=\"green\">" + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + "</font>" + part.substring(idx + PlatformFilters.keywordFilter.length)
+                                } else {
+                                    continue
+                                }
+                            }
+                        }
+                        return str
+                    } else {
+                        return ""
+                    }
+                }
+                visible: searchCategoryPartsList.checked === true && PlatformFilters.keywordFilter !== "" && text !== "Matching Part OPNs: "
+                Layout.fillWidth: true
+                font {
+                    pixelSize: 12
+                    family: Fonts.franklinGothicBook
+                }
+                color: "#666"
+                textFormat: Text.StyledText
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideRight
+            }
         }
     }
 
@@ -397,11 +452,11 @@ Item {
 
         Button {
             id: select
-            text: model.view_open ? "Return to Platform Tab" : (model.connected && model.ui_exists && model.available.control ) ? "Open Platform Controls" : "Browse Documentation"
+            text: model.view_open ? "Return to Platform Tab" : (model.connected && model.available.control ) ? "Open Platform Controls" : "Browse Documentation"
             anchors {
                 horizontalCenter: buttonColumn.horizontalCenter
             }
-            visible: model.connected && model.ui_exists && model.available.control ? model.available.control : model.available.documents
+            visible: model.connected && model.available.control ? model.available.control : model.available.documents
 
             contentItem: Text {
                 text: select.text
@@ -425,10 +480,12 @@ Item {
                 let data = {
                     "device_id": model.device_id,
                     "class_id": model.class_id,
+                    "name": model.verbose_name,
                     "index": filteredPlatformSelectorModel.mapIndexToSource(model.index),
                     "available": model.available,
                     "firmware_version": model.firmware_version
                 }
+
                 PlatformSelection.openPlatformView(data)
             }
 

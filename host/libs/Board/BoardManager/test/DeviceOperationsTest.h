@@ -3,8 +3,12 @@
 #include <rapidjson/document.h>
 #include <QObject>
 #include "DeviceMock.h"
-#include "DeviceOperationsDerivate.h"
 #include "QtTest.h"
+
+namespace strata::device::operation {
+class BaseDeviceOperation;
+enum class Type : int;
+}
 
 class DeviceOperationsTest : public QObject
 {
@@ -24,16 +28,17 @@ private slots:
     void cancelOperationTest();
 
 protected slots:
-    void handleOperationFinished(strata::device::DeviceOperation operation, int data);
+    void handleOperationFinished(strata::device::operation::Type opType, int data);
     void handleOperationError(QString message);
 
 private:
     static void printJsonDoc(rapidjson::Document &doc);
     static void verifyMessage(const QByteArray &msg, const QByteArray &expectedJson);
 
+    void connectHandlers(strata::device::operation::BaseDeviceOperation* operation);
+
     std::shared_ptr<DeviceMock> device_;
-    QSharedPointer<DeviceOperationsDerivate> deviceOperations_;
+    QSharedPointer<strata::device::operation::BaseDeviceOperation> deviceOperation_;
     int operationErrorCount_ = 0;
     int operationFinishedCount_ = 0;
-    strata::device::DeviceOperation lastFinishedOperation_ = strata::device::DeviceOperation::None;
 };

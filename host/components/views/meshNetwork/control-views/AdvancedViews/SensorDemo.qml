@@ -216,7 +216,7 @@ Rectangle {
         anchors.right:bulbNodeRectangle.left
         anchors.rightMargin: 10
         anchors.verticalCenter: parent.verticalCenter
-        source: "qrc:/views/meshNetwork/images/rightArrow.svg"
+        source: "../../images/rightArrow.svg"
         height:25
         //sourceSize: Qt.size(width, height)
         fillMode: Image.PreserveAspectFit
@@ -243,7 +243,7 @@ Rectangle {
         anchors.top:rightArrowImage.bottom
         anchors.topMargin: 10
         anchors.horizontalCenter : rightArrowImage.horizontalCenter
-        source: "qrc:/views/meshNetwork/images/leftArrow.svg"
+        source: "../../images/leftArrow.svg"
         height:25
         sourceSize: Qt.size(width, height)
         fillMode: Image.PreserveAspectFit
@@ -378,7 +378,7 @@ Rectangle {
         anchors.right:parent.right
         anchors.rightMargin:parent.width*.1
         anchors.verticalCenter: parent.verticalCenter
-        source: "qrc:/views/meshNetwork/images/sensorIcon.svg"
+        source: "../../images/sensorIcon.svg"
         fillMode: Image.PreserveAspectFit
         mipmap:true
     }
