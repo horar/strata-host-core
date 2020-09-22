@@ -128,7 +128,7 @@ Qt::ItemFlags SGQrcTreeModel::flags(const QModelIndex &index) const
 
 QList<SGQrcTreeNode*> SGQrcTreeModel::childNodes()
 {
-    return root_->childNodes();
+    return root_->children();
 }
 
 SGQrcTreeNode* SGQrcTreeModel::root() const

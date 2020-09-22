@@ -4,6 +4,7 @@
 #include <QUrl>
 #include <QList>
 #include <QFileInfo>
+#include <QQmlListProperty>
 
 class SGQrcTreeNode : public QObject
 {
@@ -18,7 +19,7 @@ class SGQrcTreeNode : public QObject
     Q_PROPERTY(int depth READ depth WRITE setDepth NOTIFY depthChanged)
     Q_PROPERTY(SGQrcTreeNode* parent READ parent NOTIFY parentChanged)
     Q_PROPERTY(bool expanded READ expanded WRITE setExpanded NOTIFY expandedChanged)
-    Q_PROPERTY(QList<SGQrcTreeNode*> childNodes READ childNodes)
+    Q_PROPERTY(QList<SGQrcTreeNode*> childNodes READ children NOTIFY childNodesChanged)
 public:
     explicit SGQrcTreeNode(QObject *parent = nullptr);
     SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isDir, bool inQrc, QObject *parent = nullptr);
@@ -30,12 +31,29 @@ public:
     Q_INVOKABLE int childCount() const;
     Q_INVOKABLE bool insertChild(SGQrcTreeNode *child, int position);
     Q_INVOKABLE bool removeChildren(int position, int count);
+    QList<SGQrcTreeNode*> children();
 
     /**
      * @brief  Gets the children for the node
      * @return Returns the list of children
      */
-    QList<SGQrcTreeNode*> childNodes();
+    QQmlListProperty<SGQrcTreeNode> childNodes();
+    static int qmlCount(QQmlListProperty<SGQrcTreeNode> *property) {
+        SGQrcTreeNode *node = qobject_cast<SGQrcTreeNode*>(property->object);
+        return node->childCount();
+    }
+    static SGQrcTreeNode* qmlAt(QQmlListProperty<SGQrcTreeNode> *property, int index) {
+        SGQrcTreeNode *node = qobject_cast<SGQrcTreeNode*>(property->object);
+        return node->children_[index];
+    }
+    static void qmlAppend(QQmlListProperty<SGQrcTreeNode> *property, SGQrcTreeNode* item) {
+        SGQrcTreeNode *parent = qobject_cast<SGQrcTreeNode*>(property->object);
+        parent->children_.append(item);
+    }
+    static void qmlClear(QQmlListProperty<SGQrcTreeNode> *property) {
+        SGQrcTreeNode *node = qobject_cast<SGQrcTreeNode*>(property->object);
+        return node->clear();
+    }
 
     /**
      * @brief filename
@@ -150,6 +168,7 @@ signals:
     void parentChanged();
     void expandedChanged();
     void depthChanged();
+    void childNodesChanged();
 
 private:
     QList<SGQrcTreeNode*> children_;

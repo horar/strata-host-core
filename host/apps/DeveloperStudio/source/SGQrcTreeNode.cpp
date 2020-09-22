@@ -90,8 +90,12 @@ bool SGQrcTreeNode::removeChildren(int position, int count)
     return true;
 }
 
-QList<SGQrcTreeNode*> SGQrcTreeNode::childNodes()
+QQmlListProperty<SGQrcTreeNode> SGQrcTreeNode::childNodes()
 {
+    return QQmlListProperty<SGQrcTreeNode>(this, nullptr, &SGQrcTreeNode::qmlAppend, &SGQrcTreeNode::qmlCount, &SGQrcTreeNode::qmlAt, &SGQrcTreeNode::qmlClear);
+}
+
+QList<SGQrcTreeNode*> SGQrcTreeNode::children() {
     return children_;
 }
 

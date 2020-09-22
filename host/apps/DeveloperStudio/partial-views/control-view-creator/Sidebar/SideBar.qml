@@ -7,90 +7,25 @@ import tech.strata.commoncpp 1.0
 import QtQuick.Controls 1.4
 import QtQml.Models 2.12
 
+import tech.strata.SGQrcTreeModel 1.0
 import tech.strata.sgwidgets 1.0
 
 Rectangle {
     id: sideBarRoot
     color: "#777"
 
-    ColumnLayout {
-        anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
-            topMargin: 5
-            leftMargin: 5
-            rightMargin: 5
-        }
+    SGQrcTreeModel {
+        id: treeModel
+        url: openProjectContainer.url
+    }
 
-        Rectangle {
-            id: treeViewContainer
+    ColumnLayout {
+        anchors.fill: parent
+
+        SGTreeView {
             Layout.fillWidth: true
             Layout.preferredHeight: 600
-            clip: true
-
-            SGFileSystemModel {
-                id: fileSystemModel
-                rootDirectory: fileModel.projectDirectory
-            }
-
-            TreeView {
-                id: treeView
-                anchors.fill: parent
-                rootIndex: fileSystemModel.rootIndex
-                model: fileSystemModel
-                alternatingRowColors: false
-                backgroundVisible: false
-
-                selection: ItemSelectionModel {
-                    model: fileSystemModel
-                }
-
-                rowDelegate: Rectangle {
-                    color: styleData.selected ? "lightblue" : "transparent"
-                }
-
-                itemDelegate: Item {
-                    Text {
-                        width: parent.width
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: "black"/*model && (model.isDir || model.inQrc) ? "black" : "grey"*/
-                        elide: Text.ElideRight
-                        text: styleData.value
-                        font.pixelSize: 10
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        hoverEnabled: true
-
-                        onEntered: {
-                            cursorShape = Qt.PointingHandCursor
-                        }
-
-                        onClicked: {
-                            if (!treeView.selection.isSelected(styleData.index)) {
-                                treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.ClearAndSelect)
-                                let item = fileModel.get(model.filePath);
-                                if (item !== null) {
-                                    setVisible(item.index);
-                                }
-
-                            } else {
-                                treeView.selection.clearSelection()
-                                treeView.selection.clearCurrentIndex()
-                            }
-                        }
-                    }
-                }
-
-                TableViewColumn {
-                    title: "Project Files"
-                    role: "filename"
-                    width: sideBar.width - 10
-                }
-            }
-
+            model: treeModel
         }
 
         SGButton {
@@ -114,35 +49,35 @@ Rectangle {
             }
         }
 
-        FileDialog {
-            id: existingFileDialog
-            nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt *.gif *.html *.csv)"]
-            selectExisting: true
-            selectMultiple: true
-            folder: fileModel.projectDirectory
+//        FileDialog {
+//            id: existingFileDialog
+//            nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt *.gif *.html *.csv)"]
+//            selectExisting: true
+//            selectMultiple: true
+//            folder: fileModel.projectDirectory
 
-            onAccepted: {
-                for (let i = 0; i < fileUrls.length; i++) {
-                    fileModel.append(fileUrls[i])
-                }
-            }
-        }
+//            onAccepted: {
+//                for (let i = 0; i < fileUrls.length; i++) {
+//                    fileModel.append(fileUrls[i])
+//                }
+//            }
+//        }
 
-        FileDialog {
-            id: newFileDialog
-            nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt *.gif *.html *.csv)"]
-            selectExisting: false
-            folder: fileModel.projectDirectory
+//        FileDialog {
+//            id: newFileDialog
+//            nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt *.gif *.html *.csv)"]
+//            selectExisting: false
+//            folder: fileModel.projectDirectory
 
-            onAccepted: {
-                fileModel.append(fileUrl);
-                // Handle the case where user adds a new file to a different directory
-                folder = fileModel.projectDirectory
-            }
+//            onAccepted: {
+//                fileModel.append(fileUrl);
+//                // Handle the case where user adds a new file to a different directory
+//                folder = fileModel.projectDirectory
+//            }
 
-            onRejected: {
-                folder = fileModel.projectDirectory
-            }
-        }
+//            onRejected: {
+//                folder = fileModel.projectDirectory
+//            }
+//        }
     }
 }
