@@ -98,6 +98,7 @@ void ClassDocuments::populateModels(QJsonObject data)
         clearDocuments();
         setErrorString(data["error"].toString());
         setLoading(false);
+        setInitialized(true);
         return;
     }
 
