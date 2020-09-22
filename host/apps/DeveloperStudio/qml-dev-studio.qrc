@@ -92,7 +92,6 @@
         <file>partial-views/control-view-creator/ControlViewCreator.qml</file>
         <file>partial-views/control-view-creator/Editor.qml</file>
         <file>partial-views/control-view-creator/Editor/SideBar.qml</file>
-        <file>partial-views/control-view-creator/Editor/FileContainer.qml</file>
         <file>partial-views/control-view-creator/NewControlView.qml</file>
         <file>partial-views/control-view-creator/OpenControlView.qml</file>
         <file>partial-views/control-view-creator/Start.qml</file>
@@ -145,5 +144,10 @@
         <file>partial-views/control-view-creator/node_modules/monaco-editor/min-maps/vs/editor/editor.main.nls.zh-tw.js.map</file>
         <file>partial-views/control-view-creator/node_modules/monaco-editor/min-maps/vs/loader.js.map</file>
         <file>partial-views/control-view-creator/node_modules/monaco-editor/monaco.d.ts</file>
+        <file>js/template_data.js</file>
+        <file>partial-views/control-view-creator/ImageLoadError.svg</file>
+        <file>partial-views/control-view-creator/Editor/TextEditorContainer.qml</file>
+        <file>partial-views/control-view-creator/Editor/ImageContainer.qml</file>
+        <file>partial-views/control-view-creator/Editor/UnsupportedFileType.qml</file>
     </qresource>
 </RCC>
