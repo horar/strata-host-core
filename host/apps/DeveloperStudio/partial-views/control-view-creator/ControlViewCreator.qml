@@ -7,21 +7,21 @@ import tech.strata.SGQrcListModel 1.0
 Rectangle {
     id: controlViewCreatorRoot
     objectName: "ControlViewCreator"
+    property alias openProjectContainer: openProjectContainer
+//    SGQrcListModel {
+//        id: fileModel
 
-    SGQrcListModel {
-        id: fileModel
-
-        onParsingFinished: {
-            for (let i = 0; i < fileModel.count; i++) {
-                if (fileModel.get(i).filename.toLowerCase() === "control.qml") {
-                    let item = fileModel.get(i);
-                    item.open = true;
-                    item.visible = true;
-                    break;
-                }
-            }
-        }
-    }
+//        onParsingFinished: {
+//            for (let i = 0; i < fileModel.count; i++) {
+//                if (fileModel.get(i).filename.toLowerCase() === "control.qml") {
+//                    let item = fileModel.get(i);
+//                    item.open = true;
+//                    item.visible = true;
+//                    break;
+//                }
+//            }
+//        }
+//    }
 
     ColumnLayout {
         anchors {

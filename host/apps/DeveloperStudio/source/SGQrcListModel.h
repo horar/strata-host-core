@@ -23,6 +23,7 @@ class QrcItem : public QObject
     Q_PROPERTY(QStringList relativePath READ relativePath NOTIFY dataChanged)
     Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY dataChanged)
     Q_PROPERTY(bool open READ open WRITE setOpen NOTIFY dataChanged)
+    Q_PROPERTY(int index READ index NOTIFY dataChanged)
 
 public:
     explicit QrcItem(QObject *parent = nullptr);
@@ -65,6 +66,12 @@ public:
      * @return Returns `open`
      */
     bool open() const;
+
+    /**
+     * @brief index
+     * @return Returns the index
+     */
+    int index() const;
 
     /**
      * @brief setFilename Sets the `filename` property
@@ -221,6 +228,13 @@ public:
     Q_INVOKABLE QrcItem* get(int index) const;
 
     /**
+     * @brief get Gets the QrcItem* with the filepath `filepath`
+     * @param filepath The filepath to look for
+     * @return Returns the QrcItem* with filepath `filepath`
+     */
+    Q_INVOKABLE QrcItem* get(QString filepath);
+
+    /**
      * @brief append Appends a new QrcItem* to data_ and writes the change to disk
      * @param filepath The filepath of the new file
      */
@@ -247,7 +261,7 @@ protected:
 
 private:
     QList<QrcItem*> data_;
-    QSet<QString> qrcItemsSet_;
+    QHash<QString, QrcItem*> qrcItemsDict_;
     /**
      * @brief url_ The QUrl of the .qrc file
      */

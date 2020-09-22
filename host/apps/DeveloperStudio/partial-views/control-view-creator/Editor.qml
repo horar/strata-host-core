@@ -6,6 +6,7 @@ import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 
 import "Editor/"
+import "Sidebar/"
 
 Item {
     id: editorRoot
@@ -193,7 +194,7 @@ Item {
 
                 SGSortFilterProxyModel {
                     id: openFileModel
-                    sourceModel: fileModel
+                    sourceModel: []
                     invokeCustomFilter: true
 
                     function filterAcceptsRow(index) {

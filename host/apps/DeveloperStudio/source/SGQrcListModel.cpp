@@ -61,6 +61,11 @@ bool QrcItem::open() const
     return open_;
 }
 
+int QrcItem::index() const
+{
+    return index_;
+}
+
 void QrcItem::setFilename(QString filename) {
     if (filename_ != filename) {
         filename_ = filename;
@@ -152,7 +157,7 @@ void SGQrcListModel::readQrcFile()
             QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
             connect(item, &QrcItem::dataChanged, this, &SGQrcListModel::childrenChanged);
             data_.append(item);
-            qrcItemsSet_.insert(absolutePath);
+            qrcItemsDict_.insert(absolutePath, item);
         }
     }
 
@@ -175,6 +180,17 @@ QrcItem* SGQrcListModel::get(int index) const
     QrcItem* item = data_.at(index);
     return item;
 }
+
+QrcItem* SGQrcListModel::get(QString filePath)
+{
+    if (!has(filePath)) {
+        return nullptr;
+    }
+
+    QrcItem* item = qrcItemsDict_.find(filePath).value();
+    return item;
+}
+
 
 void SGQrcListModel::append(const QUrl &filepath) {
     // If the file that we are adding is not a child of the .qrc file, then move it to the directory.
@@ -211,7 +227,7 @@ void SGQrcListModel::append(const QUrl &filepath) {
     connect(item, &QrcItem::dataChanged, this, &SGQrcListModel::childrenChanged);
     QQmlEngine::setObjectOwnership(item, QQmlEngine::CppOwnership);
     data_.append(item);
-    qrcItemsSet_.insert(file.filePath());
+    qrcItemsDict_.insert(file.filePath(), item);
 
     endInsertRows();
 
@@ -235,8 +251,14 @@ void SGQrcListModel::append(const QUrl &filepath) {
 
 bool SGQrcListModel::has(const QString &filePath)
 {
-    return qrcItemsSet_.contains(filePath);
+    QHash<QString, QrcItem*>::iterator itr = qrcItemsDict_.find(filePath);
+    if (itr != qrcItemsDict_.end()) {
+        return true;
+    } else {
+        return false;
+    }
 }
+
 
 void SGQrcListModel::save()
 {

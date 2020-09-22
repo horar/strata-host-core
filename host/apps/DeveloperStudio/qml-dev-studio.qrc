@@ -91,7 +91,6 @@
         <file>partial-views/login/LoginSettings.qml</file>
         <file>partial-views/control-view-creator/ControlViewCreator.qml</file>
         <file>partial-views/control-view-creator/Editor.qml</file>
-        <file>partial-views/control-view-creator/Editor/SideBar.qml</file>
         <file>partial-views/control-view-creator/Editor/FileContainer.qml</file>
         <file>partial-views/control-view-creator/NewControlView.qml</file>
         <file>partial-views/control-view-creator/OpenControlView.qml</file>
@@ -101,5 +100,8 @@
         <file>js/utilities.js</file>
         <file>partial-views/general/ConnectionStatus.qml</file>
         <file>partial-views/general/SGNotificationToast.qml</file>
+        <file>partial-views/control-view-creator/Sidebar/SideBar.qml</file>
+        <file>partial-views/control-view-creator/Sidebar/SGTreeView.qml</file>
+        <file>partial-views/control-view-creator/Sidebar/Triangle.qml</file>
     </qresource>
 </RCC>

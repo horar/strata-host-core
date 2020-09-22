@@ -10,6 +10,7 @@ Rectangle {
     id: openProjectContainer
 
     property alias fileUrl: filePath.text
+    property url url
     color: "#ccc"
 
     ColumnLayout {
@@ -91,7 +92,8 @@ Rectangle {
 
                 onClicked: {
                     if (fileDialog.fileUrl.toString() !== "") {
-                        fileModel.url = fileDialog.fileUrl
+                        openProjectContainer.url = fileDialog.fileUrl
+//                        fileModel.url = fileDialog.fileUrl
                         viewStack.currentIndex = editUseStrip.offset
                         editUseStrip.checkedIndices = 1
                     }
