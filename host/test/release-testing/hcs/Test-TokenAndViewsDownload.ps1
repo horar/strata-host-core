@@ -61,7 +61,7 @@ function Test-TokenAndViewsDownload {
 
     # Format new token string using obtained token
     $server_response_Json = ConvertFrom-Json $server_response.Content
-    $token_string = "[Login]`ntoken=$($server_response_Json.token)`nfirst_name=$($server_response_Json.firstname)`nlast_name=$($server_response_Json.lastname)`nuser=$($server_response_Json.user)`nauthentication_server=$SDSServer"
+    $token_string = "[Login]`nrememberMe=true`ntoken=$($server_response_Json.token)`nfirst_name=$($server_response_Json.firstname)`nlast_name=$($server_response_Json.lastname)`nuser=$($server_response_Json.user)`nauthentication_server=$SDSServer"
 
     # Write to "Strata Developer Studio.ini"
     Set-Content "$StrataDeveloperStudioIniDir\Strata Developer Studio.ini" $token_string
