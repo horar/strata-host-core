@@ -298,6 +298,7 @@ Window {
             target: injectPlatform
 
             RowLayout {
+                id: injectPlatform
 
                 Button {
                     text: "Inject"
