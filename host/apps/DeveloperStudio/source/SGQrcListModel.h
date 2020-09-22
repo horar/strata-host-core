@@ -19,6 +19,7 @@ class QrcItem : public QObject
     Q_OBJECT
     Q_PROPERTY(QString filename READ filename WRITE setFilename NOTIFY dataChanged)
     Q_PROPERTY(QUrl filepath READ filepath WRITE setFilepath NOTIFY dataChanged)
+    Q_PROPERTY(QString filetype READ filetype NOTIFY dataChanged)
     Q_PROPERTY(QStringList relativePath READ relativePath NOTIFY dataChanged)
     Q_PROPERTY(bool visible READ visible WRITE setVisible NOTIFY dataChanged)
     Q_PROPERTY(bool open READ open WRITE setOpen NOTIFY dataChanged)
@@ -46,6 +47,12 @@ public:
      * @return Returns the `filepath`
      */
     QUrl filepath() const;
+
+    /**
+     * @brief filetype
+     * @return Returns the `filetype`
+     */
+    QString filetype() const;
 
     /**
      * @brief relativePath
@@ -101,12 +108,19 @@ public:
      */
     void setIndex(int index);
 
+    /**
+     * @brief setFiletype Sets the `filetype` property
+     * @param filetype The filetype to set
+     */
+    void setFiletype(QString filetype);
+
 signals:
     void dataChanged(int index, int role = Qt::UserRole);
 
 private:
     QString filename_;
     QUrl filepath_;
+    QString filetype_;
     QStringList relativePath_;
     bool visible_;
     bool open_;
@@ -129,6 +143,7 @@ public:
     enum QrcRoles {
         FilenameRole = Qt::UserRole + 1,
         FilepathRole,
+        FiletypeRole,
         RelativePathRole,
         VisibleRole,
         OpenRole

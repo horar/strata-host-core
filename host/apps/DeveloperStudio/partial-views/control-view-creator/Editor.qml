@@ -183,10 +183,28 @@ Item {
                         id: fileEditorRepeater
                         model: openFileModel
 
-                        delegate: FileContainer {
-                            Layout.fillHeight: true
-                            Layout.fillWidth: true
+                        delegate: Component {
+                            Loader {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
 
+                                source: switch(model.filetype) {
+                                    case "svg":
+                                    case "jpg":
+                                    case "jpeg":
+                                    case "png":
+                                    case "gif":
+                                        return "./Editor/ImageContainer.qml"
+                                    case "qml":
+                                    case "csv":
+                                    case "html":
+                                    case "txt":
+                                    case "json":
+                                        return "./Editor/TextEditorContainer.qml"
+                                    default:
+                                        return "./Editor/UnsupportedFileType.qml"
+                                }
+                            }
                         }
                     }
                 }
