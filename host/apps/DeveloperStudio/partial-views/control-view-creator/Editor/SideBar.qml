@@ -24,35 +24,44 @@ Rectangle {
             Layout.leftMargin: 5
             Layout.rightMargin: 5
             id: qrcFilesText
-            text:"QRC Files:"
+            text: "QRC Files:"
             fontSizeMultiplier: 1.5
             color: "white"
         }
 
-        ButtonGroup { id: buttonGroup }
+        ScrollView {
+            Layout.preferredHeight: 600
+            Layout.fillWidth: true
+            clip: true
 
-        Repeater {
-            id: fileSelectorRepeater
-            model: fileModel
-            delegate: SGButton {
-                // TODO: create file tree view or at least more sensible list of QRC/project files
-                Layout.fillWidth: true
-                checkable: true
-                checked: model.visible
-                ButtonGroup.group: buttonGroup
-                text: model.filename
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-                property int modelIndex: index
+            ListView {
+                id: fileSelectorRepeater
+                model: fileModel
+                orientation: ListView.Vertical
+                spacing: 3
+                delegate: SGButton {
+                    // TODO: create file tree view or at least more sensible list of QRC/project files
+                    width: parent.width
+                    checkable: true
+                    checked: model.visible
+                    text: model.filename
 
-                onClicked: {
-                    if (checked) {
-                        editorRoot.setVisible(modelIndex)
+                    property int modelIndex: index
+
+                    onClicked: {
+                        if (checked) {
+                            editorRoot.setVisible(modelIndex)
+                        }
                     }
                 }
             }
+
         }
 
         SGButton {
+            id: newFileButton
             Layout.fillWidth: true
             Layout.topMargin: 20
             text: "New file..."
@@ -63,6 +72,7 @@ Rectangle {
         }
 
         SGButton {
+            id: existingFileButton
             Layout.fillWidth: true
             Layout.topMargin: 20
             text: "Add existing file to QRC..."
