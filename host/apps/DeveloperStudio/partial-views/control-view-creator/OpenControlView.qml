@@ -29,7 +29,8 @@ Rectangle {
     function loadSettings() {
         let config = sgUserSettings.readFile(configFileName)
         var projectsList  = JSON.parse(JSON.stringify(config))
-        if(projectsList.projects) {
+        if(projectsList.projects && projectsList.projects.length > 0) {
+            recentProjText.visible = true
             for (var i = 0; i < projectsList.projects.length; ++i) {
                 previousFileURL.projects.push(projectsList.projects[i])
                 listModelForUrl.append({ url: previousFileURL.projects[i] })
