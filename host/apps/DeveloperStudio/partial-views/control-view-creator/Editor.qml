@@ -4,6 +4,7 @@ import QtQuick.Controls 2.2
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
+import tech.strata.SGQrcTreeModel 1.0
 
 import "Editor/"
 import "Sidebar/"
@@ -11,17 +12,25 @@ import "Sidebar/"
 Item {
     id: editorRoot
 
-    function setVisible (index) {
-        let file = fileModel.get(index);
-
+    function setVisible(index) {
+        let file = openFilesModel.get(index);
         if (file.open === false) {
             file.open = true
         }
 
-        for (let i = 0; i < fileModel.count; i++) {
-            fileModel.get(i).visible = (i === index)
+        for (let i = 0; i < treeModel.openFiles.count; i++) {
+            treeModel.openFiles[index].visible = (i === index)
         }
-        fileStack.currentIndex = openFileModel.mapIndexFromSource(index)
+        fileStack.currentIndex = index;
+    }
+
+    SGQrcTreeModel {
+        id: treeModel
+        url: openProjectContainer.url
+    }
+
+    ListModel {
+        id: openFilesModel
     }
 
     ColumnLayout {
@@ -83,10 +92,21 @@ Item {
 
                     ListView {
                         id: fileTabRepeater
-                        model: openFileModel
+                        model: openFilesModel
                         orientation: ListView.Horizontal
                         layoutDirection: Qt.LeftToRight
                         spacing: 3
+
+                        Connections {
+                            target: treeModel
+
+                            onAddedOpenFile: {
+                                openFilesModel.append(item);
+                            }
+                            onRemovedOpenFile: {
+                                openFilesModel.remove(index, 1)
+                            }
+                        }
 
                         delegate: Button {
                             id: fileTab
@@ -98,7 +118,7 @@ Item {
 
                             onClicked: {
                                 if (checked) {
-                                    editorRoot.setVisible(openFileModel.mapIndexToSource(modelIndex))
+                                    editorRoot.setVisible(index)
                                 }
                             }
 
@@ -149,22 +169,21 @@ Item {
                                         }
 
                                         onClicked: {
-                                            let sourceIndex = openFileModel.mapIndexToSource(fileTab.modelIndex)
-                                            let item = fileModel.get(sourceIndex)
+                                            let item = treeModel.get(model.uid);
 
                                             // If the item isn't visible then just remove it
                                             if (!item.visible) {
                                                 if (fileStack.currentIndex > fileTab.modelIndex) {
                                                     fileStack.currentIndex--;
                                                 }
-                                                item.open = false
+                                                treeModel.removeOpenFile(item);
                                             } else {
                                                 item.visible = false
                                                 item.open = false
-                                                if (fileTab.modelIndex - 1 >= 0) {
-                                                    setVisible(openFileModel.mapIndexToSource(fileTab.modelIndex - 1))
+                                                if (index - 1 >= 0) {
+                                                    setVisible(index - 1)
                                                 } else {
-                                                    setVisible(openFileModel.mapIndexToSource(0))
+                                                    setVisible(index)
                                                 }
                                             }
                                         }
@@ -189,21 +208,6 @@ Item {
                             Layout.fillWidth: true
 
                         }
-                    }
-                }
-
-                SGSortFilterProxyModel {
-                    id: openFileModel
-                    sourceModel: []
-                    invokeCustomFilter: true
-
-                    function filterAcceptsRow(index) {
-                        let listElement = sourceModel.get(index)
-                        return file_open(listElement)
-                    }
-
-                    function file_open(listElement) {
-                        return listElement.open
                     }
                 }
             }

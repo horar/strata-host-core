@@ -14,14 +14,14 @@ SGQrcTreeNode::SGQrcTreeNode(QObject *parent) : QObject(parent)
     inQrc_ = false;
     parent_ = nullptr;
     children_ = QList<SGQrcTreeNode*>();
-    depth_ = 0;
 }
 
-SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isDir, bool inQrc, QObject *parent) :
+SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isDir, bool inQrc, int uid, QObject *parent) :
     QObject(parent),
     parent_(parentNode),
     isDir_(isDir),
-    inQrc_(inQrc)
+    inQrc_(inQrc),
+    uid_(uid)
 {
     open_ = false;
     visible_ = false;
@@ -31,7 +31,6 @@ SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isD
     filepath_.setScheme("file");
     filepath_.setPath(info.filePath());
     children_ = QList<SGQrcTreeNode*>();
-    depth_ = parent_ ? parent_->depth() + 1 : 0;
 }
 
 SGQrcTreeNode::~SGQrcTreeNode()
@@ -74,7 +73,6 @@ bool SGQrcTreeNode::insertChild(SGQrcTreeNode *child, int position)
     } else {
         children_.insert(position, child);
     }
-
     return true;
 }
 
@@ -90,12 +88,9 @@ bool SGQrcTreeNode::removeChildren(int position, int count)
     return true;
 }
 
-QQmlListProperty<SGQrcTreeNode> SGQrcTreeNode::childNodes()
-{
-    return QQmlListProperty<SGQrcTreeNode>(this, nullptr, &SGQrcTreeNode::qmlAppend, &SGQrcTreeNode::qmlCount, &SGQrcTreeNode::qmlAt, &SGQrcTreeNode::qmlClear);
-}
-
 QList<SGQrcTreeNode*> SGQrcTreeNode::children() {
+    qDebug() << "Children requested";
+    qDebug() << children_.count();
     return children_;
 }
 
@@ -139,25 +134,20 @@ bool SGQrcTreeNode::inQrc() const
     return inQrc_;
 }
 
-int SGQrcTreeNode::depth() const
-{
-    return depth_;
-}
-
-bool SGQrcTreeNode::expanded() const
-{
-    return expanded_;
-}
-
 SGQrcTreeNode* SGQrcTreeNode::parent() const
 {
     return parent_;
 }
 
+int SGQrcTreeNode::uid() const
+{
+    return uid_;
+}
+
 bool SGQrcTreeNode::setFilename(QString filename) {
     if (filename_ != filename) {
         filename_ = filename;
-        emit filenameChanged();
+        emit dataChanged(index_, SGQrcTreeModel::FilenameRole);
         return true;
     }
     return false;
@@ -166,7 +156,7 @@ bool SGQrcTreeNode::setFilename(QString filename) {
 bool SGQrcTreeNode::setFilepath(QUrl filepath) {
     if (filepath_ != filepath) {
         filepath_ = filepath;
-        emit filepathChanged();
+        emit dataChanged(index_, SGQrcTreeModel::FilepathRole);
         return true;
     }
     return false;
@@ -175,7 +165,7 @@ bool SGQrcTreeNode::setFilepath(QUrl filepath) {
 bool SGQrcTreeNode::setFiletype(QString filetype) {
     if (filetype_ != filetype) {
         filetype_ = filetype;
-        emit filetypeChanged();
+        emit dataChanged(index_, SGQrcTreeModel::FileTypeRole);
         return true;
     }
     return false;
@@ -184,7 +174,7 @@ bool SGQrcTreeNode::setFiletype(QString filetype) {
 bool SGQrcTreeNode::setVisible(bool visible) {
     if (visible_ != visible) {
         visible_ = visible;
-        emit visibleChanged();
+        emit dataChanged(index_, SGQrcTreeModel::VisibleRole);
         return true;
     }
     return false;
@@ -193,7 +183,7 @@ bool SGQrcTreeNode::setVisible(bool visible) {
 bool SGQrcTreeNode::setOpen(bool open) {
     if (open_ != open) {
         open_ = open;
-        emit openChanged();
+        emit dataChanged(index_, SGQrcTreeModel::OpenRole);
         return true;
     }
     return false;
@@ -202,7 +192,7 @@ bool SGQrcTreeNode::setOpen(bool open) {
 bool SGQrcTreeNode::setIsDir(bool isDir) {
     if (isDir_ != isDir) {
         isDir_ = isDir;
-        emit isDirChanged();
+        emit dataChanged(index_, SGQrcTreeModel::IsDirRole);
         return true;
     }
     return false;
@@ -211,29 +201,20 @@ bool SGQrcTreeNode::setIsDir(bool isDir) {
 bool SGQrcTreeNode::setInQrc(bool inQrc) {
     if (inQrc_ != inQrc) {
         inQrc_ = inQrc;
-        emit inQrcChanged();
+        emit dataChanged(index_, SGQrcTreeModel::InQrcRole);
         return true;
     }
     return false;
 }
 
-void SGQrcTreeNode::setDepth(int depth) {
-    if (depth_ != depth) {
-        depth_ = depth;
-        emit depthChanged();
-    }
-}
-
-void SGQrcTreeNode::setExpanded(bool expanded) {
-    if (expanded_ != expanded) {
-        expanded_ = expanded;
-        emit expandedChanged();
-    }
-}
-
 void SGQrcTreeNode::setParentNode(SGQrcTreeNode* parent)
 {
     parent_ = parent;
+}
+
+void SGQrcTreeNode::setIndex(const QModelIndex &index)
+{
+    index_ = index;
 }
 
 void SGQrcTreeNode::clear()

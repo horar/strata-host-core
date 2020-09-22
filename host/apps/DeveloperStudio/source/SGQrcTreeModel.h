@@ -10,6 +10,7 @@
 #include <QSet>
 #include <QFileInfo>
 #include <QQmlListProperty>
+#include <QSortFilterProxyModel>
 
 class SGQrcTreeModel : public QAbstractItemModel
 {
@@ -18,6 +19,7 @@ class SGQrcTreeModel : public QAbstractItemModel
     Q_PROPERTY(SGQrcTreeNode* root READ root NOTIFY rootChanged)
     Q_PROPERTY(QUrl projectDirectory READ projectDirectory NOTIFY projectDirectoryChanged)
     Q_PROPERTY(QList<SGQrcTreeNode*> childNodes READ childNodes)
+    Q_PROPERTY(QList<SGQrcTreeNode*> openFiles READ openFiles)
 public:
     explicit SGQrcTreeModel(QObject *parent = nullptr);
     ~SGQrcTreeModel();
@@ -32,9 +34,9 @@ public:
         IsDirRole = Qt::UserRole + 7,
         ChildrenRole = Qt::UserRole + 8,
         ParentRole = Qt::UserRole + 9,
-        ExpandedRole = Qt::UserRole + 10,
-        DepthRole = Qt::UserRole + 11
+        UniqueIdRole = Qt::UserRole + 10
     };
+    Q_ENUM(RoleNames);
 
     // OVERRIDES
     QHash<int, QByteArray> roleNames() const override;
@@ -42,14 +44,15 @@ public:
     Q_INVOKABLE bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     Q_INVOKABLE int rowCount(const QModelIndex &index = QModelIndex()) const override;
-    Q_INVOKABLE int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-    Q_INVOKABLE bool removeRows(int row, int count = 1, const QModelIndex &parent = QModelIndex()) override;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    bool removeRows(int row, int count = 1, const QModelIndex &parent = QModelIndex()) override;
     Q_INVOKABLE QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
     Q_INVOKABLE QModelIndex parent(const QModelIndex &child) const override;
     Q_INVOKABLE bool hasChildren(const QModelIndex &parent = QModelIndex()) const override;
 
-    Q_INVOKABLE bool insertChild(SGQrcTreeNode *child, const QModelIndex &parent = QModelIndex(), int position = -1);
+    bool insertChild(SGQrcTreeNode *child, const QModelIndex &parent = QModelIndex(), int position = -1);
     QList<SGQrcTreeNode*> childNodes();
+    Q_INVOKABLE SGQrcTreeNode* get(int uid) const;
 
     /**
      * @brief readQrcFile Reads a .qrc file and populates the model
@@ -74,8 +77,11 @@ public:
      */
     void setUrl(QUrl url);
 
-    SGQrcTreeNode* root() const;
+    QList<SGQrcTreeNode *> openFiles() const;
+    Q_INVOKABLE void addOpenFile(SGQrcTreeNode* item);
+    Q_INVOKABLE void removeOpenFile(SGQrcTreeNode* item);
 
+    SGQrcTreeNode* root() const;
     Q_INVOKABLE SGQrcTreeNode* getNode(const QModelIndex &index) const;
 
 signals:
@@ -83,9 +89,11 @@ signals:
     void projectDirectoryChanged();
     void rootChanged();
     void dataReady();
+    void addedOpenFile(SGQrcTreeNode* item);
+    void removedOpenFile(int index);
 
 public slots:
-    void childrenChanged(int row, int col, int role);
+    void childrenChanged(const QModelIndex &index, int role);
 
 private:
     void clear(bool emitSignals = true);
@@ -96,4 +104,6 @@ private:
     QUrl url_;
     QUrl projectDir_;
     QDomDocument qrcDoc_;
+    QVector<SGQrcTreeNode*> uidMap_;
+    QList<SGQrcTreeNode*> openFiles_;
 };

@@ -101,7 +101,6 @@
         <file>partial-views/general/ConnectionStatus.qml</file>
         <file>partial-views/general/SGNotificationToast.qml</file>
         <file>partial-views/control-view-creator/Sidebar/SideBar.qml</file>
-        <file>partial-views/control-view-creator/Sidebar/SGTreeView.qml</file>
         <file>partial-views/control-view-creator/Sidebar/Triangle.qml</file>
     </qresource>
 </RCC>

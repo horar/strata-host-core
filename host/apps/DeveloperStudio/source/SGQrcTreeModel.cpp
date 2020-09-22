@@ -35,8 +35,7 @@ QHash<int, QByteArray> SGQrcTreeModel::roleNames() const
     roles[IsDirRole] = QByteArray("isDir");
     roles[ChildrenRole] = QByteArray("childNodes");
     roles[ParentRole] = QByteArray("parent");
-    roles[ExpandedRole] = QByteArray("expanded");
-    roles[DepthRole] = QByteArray("depth");
+    roles[UniqueIdRole] = QByteArray("uid");
     return roles;
 }
 
@@ -62,17 +61,20 @@ QVariant SGQrcTreeModel::data(const QModelIndex &index, int role) const
         return QVariant(node->inQrc());
     case IsDirRole:
         return QVariant(node->isDir());
-    case ChildrenRole:
-        return QVariant::fromValue(node->children());
     case ParentRole:
         return QVariant::fromValue(node->parentNode());
-    case ExpandedRole:
-        return QVariant(node->expanded());
-    case DepthRole:
-        return QVariant(node->depth());
-    default:
-        return false;
+    case UniqueIdRole:
+        return QVariant(node->uid());
     }
+
+    if (role == ChildrenRole) {
+        QVariantList list;
+        for (SGQrcTreeNode* child : node->children()) {
+            list.append(QVariant::fromValue(child));
+        }
+        return list;
+    }
+    return QVariant();
 }
 
 
@@ -82,35 +84,32 @@ bool SGQrcTreeModel::setData(const QModelIndex &index, const QVariant &value, in
         return false;
     }
 
+    qDebug() << "MODEL" << index.row() << index.column();
+
     SGQrcTreeNode *node = getNode(index);
+    bool changed;
 
     switch (role) {
     case FilenameRole:
-        node->setFilename(value.toString());
+        changed = node->setFilename(value.toString());
         break;
     case FilepathRole:
-        node->setFilepath(value.toUrl());
+        changed = node->setFilepath(value.toUrl());
         break;
     case FileTypeRole:
-        node->setFiletype(value.toString());
+        changed = node->setFiletype(value.toString());
         break;
     case VisibleRole:
-        node->setVisible(value.toBool());
+        changed = node->setVisible(value.toBool());
         break;
     case OpenRole:
-        node->setOpen(value.toBool());
+        changed = node->setOpen(value.toBool());
         break;
     case InQrcRole:
-        node->setInQrc(value.toBool());
+        changed = node->setInQrc(value.toBool());
         break;
     case IsDirRole:
-        node->setIsDir(value.toBool());
-        break;
-    case ExpandedRole:
-        node->setExpanded(value.toBool());
-        break;
-    case DepthRole:
-        node->setDepth(value.toInt());
+        changed = node->setIsDir(value.toBool());
         break;
     default:
         return false;
@@ -129,6 +128,14 @@ Qt::ItemFlags SGQrcTreeModel::flags(const QModelIndex &index) const
 QList<SGQrcTreeNode*> SGQrcTreeModel::childNodes()
 {
     return root_->children();
+}
+
+SGQrcTreeNode* SGQrcTreeModel::get(int uid) const
+{
+    if (uid >= uidMap_.size() || uid < 0) {
+        return nullptr;
+    }
+    return uidMap_.at(uid);
 }
 
 SGQrcTreeNode* SGQrcTreeModel::root() const
@@ -189,13 +196,16 @@ QModelIndex SGQrcTreeModel::index(int row, int column, const QModelIndex &parent
 
     SGQrcTreeNode *parentNode = getNode(parent);
     if (!parentNode) {
+        root_->setIndex(QModelIndex());
         return QModelIndex();
     }
 
     SGQrcTreeNode *child = parentNode->childNode(row);
 
     if (child) {
-        return createIndex(row, column, child);
+        QModelIndex index = createIndex(row, column, child);
+        child->setIndex(index);
+        return index;
     }
 
     return QModelIndex();
@@ -249,15 +259,37 @@ void SGQrcTreeModel::setUrl(QUrl url)
     }
 }
 
-void SGQrcTreeModel::childrenChanged(int row, int col, int role) {
-    QModelIndex idx = index(row, col);
-    if (idx.isValid()) {
-        if (role != Qt::UserRole) {
-            QVector<int> roleChanged = { role };
-            emit dataChanged(index(row, col), index(row, col), roleChanged);
-        } else {
-            emit dataChanged(index(row, col), index(row, col));
+void SGQrcTreeModel::childrenChanged(const QModelIndex &index, int role) {
+    if (index.isValid()) {
+        emit dataChanged(index, index, {role});
+    } else {
+        qWarning() << "Index is not valid";
+    }
+}
+
+QList<SGQrcTreeNode *> SGQrcTreeModel::openFiles() const
+{
+    return openFiles_;
+}
+
+void SGQrcTreeModel::addOpenFile(SGQrcTreeNode *item)
+{
+    openFiles_.append(item);
+    emit addedOpenFile(item);
+}
+
+void SGQrcTreeModel::removeOpenFile(SGQrcTreeNode *item)
+{
+    int i = 0;
+    for (; i < openFiles_.size(); ++i) {
+        if (openFiles_.at(i)->uid() == item->uid()) {
+            break;
         }
+    }
+    if (i < openFiles_.size()) {
+        openFiles_.at(i)->setOpen(false);
+        openFiles_.removeAt(i);
+        emit removedOpenFile(i);
     }
 }
 
@@ -335,42 +367,35 @@ void SGQrcTreeModel::createModel()
     QFileInfo rootFi(SGUtilsCpp::urlToLocalFile(url_));
     beginResetModel();
     clear(false);
-    root_ = new SGQrcTreeNode(nullptr, rootFi, true, false);
+    root_ = new SGQrcTreeNode(nullptr, rootFi, true, false, 0);
+    connect(root_, &SGQrcTreeNode::dataChanged, this, &SGQrcTreeModel::childrenChanged);
+    uidMap_.append(root_);
     QQmlEngine::setObjectOwnership(root_, QQmlEngine::CppOwnership);
 
     QSet<QString> qrcItems;
     readQrcFile(qrcItems);
 
     recursiveDirSearch(root_, QDir(SGUtilsCpp::urlToLocalFile(projectDir_)), qrcItems, 0);
-    qDebug() << root_->childCount();
     endResetModel();
     emit dataReady();
 }
 
 void SGQrcTreeModel::recursiveDirSearch(SGQrcTreeNode* parentNode, QDir currentDir, QSet<QString> qrcItems, int depth)
 {
-    QString indent;
-    for (int i = 0; i < depth; i++) {
-        indent.append(' ');
-    }
-    indent += parentNode->filename();
-    qDebug() << indent;
     for (QFileInfo info : currentDir.entryInfoList(QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::Files | QDir::Dirs)) {
         if (info.isDir()) {
-            SGQrcTreeNode *dirNode = new SGQrcTreeNode(parentNode, info, true, false);
+            SGQrcTreeNode *dirNode = new SGQrcTreeNode(parentNode, info, true, false, uidMap_.size());
+            connect(dirNode, &SGQrcTreeNode::dataChanged, this, &SGQrcTreeModel::childrenChanged);
             QQmlEngine::setObjectOwnership(dirNode, QQmlEngine::CppOwnership);
             parentNode->insertChild(dirNode, parentNode->childCount());
+            uidMap_.append(dirNode);
             recursiveDirSearch(dirNode, QDir(info.filePath()), qrcItems, depth + 1);
         } else {
-            SGQrcTreeNode *node = new SGQrcTreeNode(parentNode, info, false, qrcItems.contains(info.filePath()));
-            QString dbg;
-            for (int i = 0; i < depth * 2; i++) {
-                dbg.append(' ');
-            }
-            dbg += node->filename();
-            qDebug() << dbg;
+            SGQrcTreeNode *node = new SGQrcTreeNode(parentNode, info, false, qrcItems.contains(info.filePath()), uidMap_.size());
+            connect(node, &SGQrcTreeNode::dataChanged, this, &SGQrcTreeModel::childrenChanged);
             QQmlEngine::setObjectOwnership(node, QQmlEngine::CppOwnership);
             parentNode->insertChild(node, parentNode->childCount());
+            uidMap_.append(node);
         }
     }
 }
