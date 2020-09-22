@@ -22,10 +22,6 @@ Item {
         channel.registerObject("valueLink", channelObject)
     }
 
-    Component.onDestruction: {
-        saveFile(model.filename, fileText)
-    }
-
     function openFile(fileUrl) {
         var request = new XMLHttpRequest();
         request.open("GET", fileUrl, false);
