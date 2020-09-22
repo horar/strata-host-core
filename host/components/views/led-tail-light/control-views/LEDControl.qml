@@ -1388,7 +1388,6 @@ Item {
                                             platformInterface.pwm_lin_state = true
                                         }
                                         else  {
-
                                             pwmLinearLog.checked = false
                                             platformInterface.pwm_lin_state = false
                                         }
