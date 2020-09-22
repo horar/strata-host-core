@@ -105,6 +105,7 @@ private:
         QString id;
         Settings settings;
         QString errorString;
+        bool aborted = false;
     };
 
     QPointer<QNetworkAccessManager> networkManager_;

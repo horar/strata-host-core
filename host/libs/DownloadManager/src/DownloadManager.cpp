@@ -135,7 +135,17 @@ QList<DownloadManager::DownloadResponseItem> DownloadManager::getResponseList(co
 
 void DownloadManager::abortAll(const QString &groupId)
 {
-    qCDebug(logCategoryDownloadManager) << groupId;
+    DownloadGroup *group = groupHash_.value(groupId, nullptr);
+    if (group == nullptr) {
+        qCCritical(logCategoryDownloadManager) << "cannot find groupId" << groupId;
+        return;
+    }
+
+    if (group->aborted) {
+        return;
+    }
+
+    group->aborted = true;
 
     //stops pending requests
     for (auto item : internalRequestList_) {
@@ -162,7 +172,9 @@ void DownloadManager::abortAll(const QString &groupId)
 
         internalRequest->errorString = "All downloads in group aborted";
 
+        if (reply->isRunning()) {
             abortReply(reply);
+        }
     }
 }
 
@@ -486,14 +498,16 @@ void DownloadManager::prepareResponse(InternalDownloadRequest *internalRequest, 
         emit groupDownloadProgress(internalRequest->groupId, filesCompleted, filesTotal);
     }
 
+    if (internalRequest->state == InternalDownloadRequest::DownloadState::FinishedWithError
+            && group->settings.oneFailsAllFail)
+    {
+        abortAll(internalRequest->groupId);
+    }
+
     if (filesCompleted == filesTotal) {
         emit groupDownloadFinished(internalRequest->groupId, group->errorString);
 
         clearData(internalRequest->groupId);
-    } else if (internalRequest->state == InternalDownloadRequest::DownloadState::FinishedWithError
-               && group->settings.oneFailsAllFail)
-    {
-        abortAll(internalRequest->groupId);
     }
 }
 
