@@ -26,8 +26,6 @@ Item {
         Help.registerTarget(filterHelpContainer1, "Indicates the board temperature near the center of the onboard LEDs and near the LED driver on both top and bottom of the PCB. The LED driver temperature gauge does not reflect the junction temperature of the LED driver and does not correlate directly to TW and TSD temperature trip thresholds.", 7, "powerControlHelp")
         Help.registerTarget(powerLossContainer, "Indicates the total power consumption by the LED driver, LEDs, and other power sinks connected to the VLED input supply.", 8, "powerControlHelp")
 
-
-
     }
 
 
@@ -58,7 +56,6 @@ Item {
             filterHelpContainer1.update()
         }
     }
-
 
 
     function setStatesForControls (theId, index){
@@ -958,84 +955,6 @@ Item {
                     RowLayout {
                         anchors.fill: parent
 
-                        //                        Rectangle{
-                        //                            id: ledDriverTempTopContainer
-                        //                            Layout.fillHeight: true
-                        //                            Layout.fillWidth: true
-                        //                            SGAlignedLabel {
-                        //                                id: ledDriverTempTopLabel
-                        //                                target: ledDriverTempTop
-                        //                                //text: "LED Driver Temp Top \n (°C)"
-                        //                                anchors.centerIn: parent
-                        //                                alignment: SGAlignedLabel.SideBottomCenter
-                        //                                fontSizeMultiplier: ratioCalc * 1.2
-                        //                                font.bold : true
-                        //                                horizontalAlignment: Text.AlignHCenter
-
-                        //                                SGCircularGauge {
-                        //                                    id: ledDriverTempTop
-                        //                                    width: ledDriverTempTopContainer.width
-                        //                                    height: ledDriverTempTopContainer.height - ledDriverTempTopLabel.contentHeight
-                        //                                    //tickmarkStepSize: 10
-                        //                                    //  minimumValue: 0
-                        //                                    //  maximumValue: 150
-                        //                                    gaugeFillColor1: "blue"
-                        //                                    gaugeFillColor2: "red"
-                        //                                    unitText: "°C"
-                        //                                    unitTextFontSizeMultiplier: ratioCalc * 2.5
-                        //                                    //valueDecimalPlaces: 2
-                        //                                    function lerpColor (color1, color2, x){
-                        //                                        if (Qt.colorEqual(color1, color2)){
-                        //                                            return color1;
-                        //                                        } else {
-                        //                                            return Qt.rgba(
-                        //                                                        color1.r * (1 - x) + color2.r * x,
-                        //                                                        color1.g * (1 - x) + color2.g * x,
-                        //                                                        color1.b * (1 - x) + color2.b * x, 1
-                        //                                                        );
-                        //                                        }
-                        //                                    }
-                        //                                }
-
-                        //                                property var power_led_driver_temp_top: platformInterface.power_led_driver_temp_top
-                        //                                onPower_led_driver_temp_topChanged: {
-                        //                                    ledDriverTempTopLabel.text = power_led_driver_temp_top.caption
-                        //                                    setStatesForControls(ledDriverTempTop,power_led_driver_temp_top.states[0])
-
-                        //                                    ledDriverTempTop.maximumValue = power_led_driver_temp_top.scales[0]
-                        //                                    ledDriverTempTop.minimumValue = power_led_driver_temp_top.scales[1]
-                        //                                    ledDriverTempTop.tickmarkStepSize = power_led_driver_temp_top.scales[2]
-
-                        //                                    ledDriverTempTop.value = power_led_driver_temp_top.value
-
-                        //                                }
-
-                        //                                property var power_led_driver_temp_top_caption: platformInterface.power_led_driver_temp_top_caption.caption
-                        //                                onPower_led_driver_temp_top_captionChanged: {
-                        //                                    ledDriverTempTopLabel.text = power_led_driver_temp_top_caption
-                        //                                }
-
-                        //                                property var power_led_driver_temp_top_state: platformInterface.power_led_driver_temp_top_states.states
-                        //                                onPower_led_driver_temp_top_stateChanged: {
-                        //                                    setStatesForControls(ledDriverTempTop,power_led_driver_temp_top_state[0])
-                        //                                }
-
-                        //                                property var power_led_driver_temp_top_scales: platformInterface.power_led_driver_temp_top_scales.scales
-                        //                                onPower_led_driver_temp_top_scalesChanged: {
-                        //                                    ledDriverTempTop.maximumValue = power_led_driver_temp_top_scales[0]
-                        //                                    ledDriverTempTop.minimumValue = power_led_driver_temp_top_scales[1]
-                        //                                    ledDriverTempTop.tickmarkStepSize = power_led_driver_temp_top_scales[2]
-
-                        //                                }
-
-                        //                                property var power_led_driver_temp_top_value: platformInterface.power_led_driver_temp_top_value.value
-                        //                                onPower_led_driver_temp_top_valueChanged: {
-                        //                                    ledDriverTempTop.value = power_led_driver_temp_top_value
-                        //                                }
-                        //                            }
-
-                        //                        }
-
                         Rectangle{
                             id: ledDriverTempBottomContainer
                             Layout.fillHeight: true
@@ -1152,18 +1071,6 @@ Item {
                                     onPower_led_tempChanged: {
                                         tempGaugeLabel.text = power_led_temp.caption
                                         setStatesForControls(tempGauge,power_led_temp.states[0])
-                                        //                                        if(power_led_temp.state === "enabled") {
-                                        //                                            tempGauge.opacity = 1.0
-                                        //                                            tempGauge.enabled = true
-                                        //                                        }
-                                        //                                        else if (power_led_temp.state === "disabled") {
-                                        //                                            tempGauge.opacity = 1.0
-                                        //                                            tempGauge.enabled = false
-                                        //                                        }
-                                        //                                        else  {
-                                        //                                            tempGauge.opacity = 0.5
-                                        //                                            tempGauge.enabled = false
-                                        //                                        }
 
                                         tempGauge.maximumValue = power_led_temp.scales[0]
                                         tempGauge.minimumValue = power_led_temp.scales[1]
@@ -1218,9 +1125,6 @@ Item {
                                     id: powerLoss
                                     width: powerLossContainer.width
                                     height: powerLossContainer.height - powerLossGaugeLabel.contentHeight
-                                    //tickmarkStepSize: 0.5
-                                    //                                    minimumValue: 0
-                                    //                                    maximumValue: 5
                                     gaugeFillColor1: "blue"
                                     gaugeFillColor2: "red"
                                     unitText: "W"
@@ -1277,8 +1181,6 @@ Item {
                                         powerLoss.maximumValue = power_total_power_scales[0]
                                         powerLoss.minimumValue = power_total_power_scales[1]
                                         powerLoss.tickmarkStepSize = power_total_power_scales[2]
-
-
                                     }
 
                                     property var power_total_power_value: platformInterface.power_total_power_value.value
@@ -1292,10 +1194,6 @@ Item {
                     }
 
                 }
-
-
-
-
             }
         }
     }

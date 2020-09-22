@@ -670,16 +670,9 @@ Item {
                     }
 
                 }
-
-
-
-
             }
         }
     }
-
-
-
 
     ColumnLayout {
         width: parent.width/1.1
@@ -756,7 +749,6 @@ Item {
                             grooveColor: "#ccc"             // Default: "#ccc"
                             grooveFillColor: "#0cf"         // Default: "#0cf"
 
-                            //fontSizeMultiplier: Math.max(1.2,(parent.width/parent.height > 77/24 ? parent.height/24 : parent.width/77))
                             Component.onCompleted: {
                                 fontSizeMultiplier = Qt.binding(function(){ return (ratioCalc * 1.2).toFixed(2)})
                             }
@@ -966,7 +958,6 @@ Item {
 
                     }
 
-
                 }
                 Rectangle {
                     id: applyContainer
@@ -1123,18 +1114,6 @@ Item {
                                 onSoc_modeChanged: {
                                     i2cStandaloneLabel.text = soc_mode.caption
                                     setStatesForControls(i2cStandalone,soc_mode.states[0])
-                                    //                                    if(soc_mode.state === "enabled"){
-                                    //                                        i2cStandalone.enabled = true
-                                    //                                        i2cStandalone.opacity = 1.0
-                                    //                                    }
-                                    //                                    else if (soc_mode.state === "disabled") {
-                                    //                                        i2cStandalone.enabled = false
-                                    //                                        i2cStandalone.opacity = 1.0
-                                    //                                    }
-                                    //                                    else {
-                                    //                                        i2cStandalone.enabled = false
-                                    //                                        i2cStandalone.opacity = 0.5
-                                    //                                    }
                                     i2cStandalone.checkedLabel = soc_mode.values[0]
                                     i2cStandalone.uncheckedLabel = soc_mode.values[1]
                                     if(soc_mode.value === "I2C")
@@ -1209,18 +1188,6 @@ Item {
                                     onSoc_confChanged: {
                                         samConfigLabel.text = soc_conf.caption
                                         setStatesForControls(samConfig,soc_conf.states[0])
-                                        //                                        if(soc_conf.state === "enabled"){
-                                        //                                            samConfig.enabled = true
-                                        //                                            samConfig.opacity = 1.0
-                                        //                                        }
-                                        //                                        else if (soc_conf.state === "disabled") {
-                                        //                                            samConfig.enabled = false
-                                        //                                            samConfig.opacity = 1.0
-                                        //                                        }
-                                        //                                        else {
-                                        //                                            samConfig.enabled = false
-                                        //                                            samConfig.opacity = 0.5
-                                        //                                        }
 
                                         samConfig.checkedLabel = soc_conf.values[0]
                                         samConfig.uncheckedLabel = soc_conf.values[1]
@@ -1253,8 +1220,6 @@ Item {
                                         }
                                         else  samConfig.checked = false
                                     }
-
-
 
                                 }
                             }
@@ -1298,9 +1263,6 @@ Item {
 
                         }
 
-
-
-
                     }
                 }
 
@@ -1327,8 +1289,6 @@ Item {
                                     text = soc_sam_conf_1_caption
                                 }
                             }
-
-
                         }
 
                         Rectangle {
@@ -2928,8 +2888,6 @@ Item {
                         }
                     }
                 }
-
-
             }
         }
     }
