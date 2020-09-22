@@ -211,6 +211,10 @@ QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
 
     qrcFilePath.replace("file://", "");
 
+    if (qrcFilePath.at(0) == "/" && qrcFilePath.at(0) != QDir::separator()) {
+        qrcFilePath.remove(0, 1);
+    }
+
     QFile rccExecutable(rccExecutablePath);
     QFile qrcFile(qrcFilePath);
 

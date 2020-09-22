@@ -143,22 +143,24 @@ Rectangle {
         if (openProjectContainer.fileUrl != '') {
             let compiledRccFile = sdsModel.resourceLoader.recompileControlViewQrc(openProjectContainer.fileUrl)
             if (compiledRccFile != '') {
-                loadDebugView(compiledRccFile, timestampPrefix)
+                loadDebugView(compiledRccFile)
             }
         }
     }
 
-    function loadDebugView (compiledRccFile, timestampPrefix) {
+    function loadDebugView (compiledRccFile) {
         NavigationControl.removeView(controlViewContainer)
 
-        let prefix = "/" + timestampPrefix
+        let uniquePrefix = new Date().getTime().valueOf()
+        uniquePrefix = "/" + uniquePrefix
+
         // Register debug control view object
-        if (!sdsModel.resourceLoader.registerResource(compiledRccFile, prefix)) {
+        if (!sdsModel.resourceLoader.registerResource(compiledRccFile, uniquePrefix)) {
             console.error("Failed to register resource")
             return
         }
 
-        let qml_control = "qrc:/" + timestampPrefix + "/Control.qml"
+        let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
         let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlViewContainer);
         if (obj === null) {
             console.error("Could not load view.")
