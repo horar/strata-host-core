@@ -18,12 +18,13 @@ Rectangle {
         loadSettings()
     }
 
-    Component.onDestruction: {
-        saveSettings()
-    }
+    //    Component.onDestruction: {
+    //        saveSettings()
+    //    }
 
     function saveSettings() {
         sgUserSettings.writeFile(configFileName, previousFileURL);
+
     }
 
     function loadSettings() {
@@ -38,16 +39,21 @@ Rectangle {
     }
 
     function addToTheProjectList (fileUrl) {
-        if(previousFileURL.projects.length > 5)
-            return
-        else {
-            for (var i = 0; i < previousFileURL.projects.length; ++i) {
-                if(previousFileURL.projects[i] === fileUrl) {
-                    return
-                }
+
+        for (var i = 0; i < previousFileURL.projects.length; ++i) {
+            if(previousFileURL.projects[i] === fileUrl) {
+                return
             }
-            return previousFileURL.projects.push(fileUrl)
         }
+        console.log("outside of the equal check")
+        if(previousFileURL.projects.length > 5) {
+            previousFileURL.projects.pop()
+            listModelForUrl.remove(listModelForUrl.count - 1)
+        }
+
+        previousFileURL.projects.unshift(fileUrl)
+        listModelForUrl.insert(0,{ url: fileUrl })
+        saveSettings()
     }
 
     ColumnLayout {
@@ -82,7 +88,9 @@ Rectangle {
             implicitWidth: contentItem.childrenRect.width
             implicitHeight: contentItem.childrenRect.height
             orientation: ListView.Vertical
-            model:ListModel{ id: listModelForUrl  }
+            model:ListModel{
+                id: listModelForUrl
+            }
             highlightFollowsCurrentItem: true
             spacing: 10
             delegate:  Rectangle {
@@ -189,6 +197,7 @@ Rectangle {
                         editUseStrip.checkedIndices = 1
                         addToTheProjectList(fileUrl)
                     }
+                    filePath.text = "Select a .qrc file"
                 }
             }
 
