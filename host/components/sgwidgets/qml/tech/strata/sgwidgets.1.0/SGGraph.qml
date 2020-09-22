@@ -43,13 +43,22 @@ SGQWTPlot {
                 originToPosition.x += (mouse.x - mousePosition.x)
                 originToPosition.y += (mouse.y - mousePosition.y)
                 let deltaLocation = sgGraph.mapToValue(originToPosition)
+
+                let originToPositionYAxisRight = sgGraph.mapToPositionYRight(Qt.point(0,0))
+                originToPositionYAxisRight.x += (mouse.x - mousePosition.x)
+                originToPositionYAxisRight.y += (mouse.y - mousePosition.y)
+                let deltaLocationYAxisRight = sgGraph.mapToValueYRight(originToPositionYAxisRight)
+
                 sgGraph.autoUpdate = false
+
                 if (sgGraph.panXEnabled) {
                     sgGraph.shiftXAxis(-deltaLocation.x)
                 }
                 if (sgGraph.panYEnabled) {
                     sgGraph.shiftYAxis(-deltaLocation.y)
+                    sgGraph.shiftYAxisRight(-deltaLocationYAxisRight.y)
                 }
+
                 sgGraph.autoUpdate = true
                 sgGraph.update()
 
@@ -66,11 +75,18 @@ SGQWTPlot {
                     var scale = Math.pow(1.5, wheelChoke * 0.001)
 
                     var scaledChartWidth = (sgGraph.xMax - sgGraph.xMin) / scale
+
                     var scaledChartHeight = (sgGraph.yMax - sgGraph.yMin) / scale
+                    var scaledChartHeightYAxisRight = (sgGraph.yRightMax - sgGraph.yRightMin) / scale
 
                     var chartCenter = Qt.point((sgGraph.xMin + sgGraph.xMax) / 2, (sgGraph.yMin + sgGraph.yMax) / 2)
+                    var chartCenterYAxisRight = Qt.point((sgGraph.xMin + sgGraph.xMax) / 2, (sgGraph.yRightMin + sgGraph.yRightMax) / 2)
+
                     var chartWheelPosition = mapToValue(Qt.point(wheel.x, wheel.y))
+                    var chartWheelPositionYAxisRight = mapToValueYRight(Qt.point(wheel.x, wheel.y))
+
                     var chartOffset = Qt.point((chartCenter.x - chartWheelPosition.x) * (1 - scale), (chartCenter.y - chartWheelPosition.y) * (1 - scale))
+                    var chartOffsetYAxisRight = Qt.point((chartCenterYAxisRight.x - chartWheelPositionYAxisRight.x) * (1 - scale), (chartCenterYAxisRight.y - chartWheelPositionYAxisRight.y) * (1 - scale))
 
                     sgGraph.autoUpdate = false
 
@@ -81,6 +97,8 @@ SGQWTPlot {
                     if (sgGraph.zoomYEnabled) {
                         sgGraph.yMin = (chartCenter.y - (scaledChartHeight / 2)) + chartOffset.y
                         sgGraph.yMax = (chartCenter.y + (scaledChartHeight / 2)) + chartOffset.y
+                        sgGraph.yRightMin = (chartCenterYAxisRight.y - (scaledChartHeightYAxisRight / 2)) + chartOffsetYAxisRight.y
+                        sgGraph.yRightMax = (chartCenterYAxisRight.y + (scaledChartHeightYAxisRight / 2)) + chartOffsetYAxisRight.y
                     }
 
                     sgGraph.autoUpdate = true
