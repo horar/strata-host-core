@@ -162,7 +162,7 @@ void DownloadManager::abortAll(const QString &groupId)
 
         internalRequest->errorString = "All downloads in group aborted";
 
-        reply->abort();
+            abortReply(reply);
     }
 }
 
@@ -535,6 +535,15 @@ void DownloadManager::clearData(const QString groupId)
     }
 
     groupHash_.remove(groupId);
+}
+
+void DownloadManager::abortReply(QNetworkReply *reply)
+{
+    //disconnect all except finished signal
+    disconnect(reply, &QNetworkReply::readyRead, nullptr, nullptr);
+    disconnect(reply, &QNetworkReply::downloadProgress, nullptr, nullptr);
+
+    reply->abort();
 }
 
 

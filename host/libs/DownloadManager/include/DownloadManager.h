@@ -134,6 +134,7 @@ private:
             int &filesTotal);
 
     void clearData(const QString groupId);
+    void abortReply(QNetworkReply *reply);
 };
 
 
