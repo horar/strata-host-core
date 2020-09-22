@@ -10,7 +10,6 @@ Rectangle {
     id: controlViewCreatorRoot
     objectName: "ControlViewCreator"
 
-
     SGUserSettings {
         id: sgUserSettings
         classId: "controlViewCreator"

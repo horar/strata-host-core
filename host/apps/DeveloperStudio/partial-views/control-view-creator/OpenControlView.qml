@@ -12,53 +12,43 @@ Rectangle {
     property alias fileUrl: filePath.text
     property string configFileName: "previousProjects.json"
     property var previousFileURL: { "projects" : [] }
-    property var projectsList : ""
     color: "#ccc"
-
 
     Component.onCompleted:  {
         loadSettings()
-        if(previousFileURL.projects.length) {
-            console.info("test")
-            recentProjText.visible = true
-            for (var i = 0; i < previousFileURL.projects.length; ++i) {
-                console.info(listModel.count)
-                listModel.append({ url: previousFileURL.projects[i] })
-            }
-        }
-
-    }
-
-    function saveSettings() {
-        console.info(previousFileURL,JSON.stringify(previousFileURL))
-        sgUserSettings.writeFile(configFileName, previousFileURL);
-    }
-
-    function loadSettings() {
-        let config = sgUserSettings.readFile(configFileName)
-        projectsList  = JSON.parse(JSON.stringify(config))
-        if(projectsList.projects) {
-            for (var i = 0; i < projectsList.projects.length; ++i) {
-                previousFileURL.projects.push(projectsList.projects[i])
-            }
-        }
-    }
-
-    function addToTheProjectList (fileUrl) {
-        for (var i = 0; i < previousFileURL.projects.length; ++i) {
-            if(previousFileURL.projects[i] === fileUrl) {
-                console.info("it's the same")
-                return
-            }
-        }
-        return previousFileURL.projects.push(fileUrl)
-
     }
 
     Component.onDestruction: {
         saveSettings()
     }
 
+    function saveSettings() {
+        sgUserSettings.writeFile(configFileName, previousFileURL);
+    }
+
+    function loadSettings() {
+        let config = sgUserSettings.readFile(configFileName)
+        var projectsList  = JSON.parse(JSON.stringify(config))
+        if(projectsList.projects) {
+            for (var i = 0; i < projectsList.projects.length; ++i) {
+                previousFileURL.projects.push(projectsList.projects[i])
+                listModelForUrl.append({ url: previousFileURL.projects[i] })
+            }
+        }
+    }
+
+    function addToTheProjectList (fileUrl) {
+        if(previousFileURL.projects.length > 5)
+            return
+        else {
+            for (var i = 0; i < previousFileURL.projects.length; ++i) {
+                if(previousFileURL.projects[i] === fileUrl) {
+                    return
+                }
+            }
+            return previousFileURL.projects.push(fileUrl)
+        }
+    }
 
     ColumnLayout {
         anchors {
@@ -89,12 +79,10 @@ Rectangle {
         }
 
         ListView {
-            id: data
-
             implicitWidth: contentItem.childrenRect.width
             implicitHeight: contentItem.childrenRect.height
             orientation: ListView.Vertical
-            model:ListModel{ id: listModel  }
+            model:ListModel{ id: listModelForUrl  }
             highlightFollowsCurrentItem: true
             spacing: 10
             delegate:  Rectangle {
@@ -137,8 +125,6 @@ Rectangle {
         }
 
 
-
-
         SGAlignedLabel {
             id: selectTitle
             Layout.topMargin: 20
@@ -162,7 +148,6 @@ Rectangle {
                     nameFilters: ["*.qrc"]
                     selectMultiple: false
                     selectFolder: false
-
                     onAccepted: {
                         filePath.text = fileDialog.fileUrl
                     }
@@ -220,9 +205,5 @@ Rectangle {
             // space filler
             Layout.fillHeight: true
         }
-
-
     }
-
-
 }
