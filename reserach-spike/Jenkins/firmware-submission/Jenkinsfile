@@ -1,0 +1,99 @@
+import groovy.json.JsonSlurper 
+def newFirmwareFileList = []
+FW_DEPLOYMENT_DIRECTORY = "releasedFirmware"
+
+pipeline {
+    agent {
+        node {
+            label 'master'
+        }
+    }
+    stages {
+        stage('Looking for new firmware') {
+            steps {
+                echo 'Checking for new .bin files...'
+                script {
+                    def jsonObj = readJSON text: env.BITBUCKET_PAYLOAD
+
+                    def sourceCommitHash = jsonObj.pullrequest.source.commit.hash
+                    def destinationCommitHash = jsonObj.pullrequest.destination.commit.hash
+
+                    def gitDiffOutput = sh(encoding: 'UTF-8', \
+                                        script: """ git diff --name-only --diff-filter=AMR \
+                                                    ${destinationCommitHash}..${sourceCommitHash} \
+                                                    -- '${env.workspace}/${FW_DEPLOYMENT_DIRECTORY}' \
+                                                    | grep "\\.bin\$"
+                                                """, \
+                                        returnStdout: true)
+                    tempFilesList = gitDiffOutput.split("\n")
+                    // We need to validate the paths.
+                    for (firmwareFile in tempFilesList) {
+                        println "file ${firmwareFile}"
+                        if (validateFirmwareFilePath(firmwareFile)) {
+                            println("Valid firmware.")
+                            newFirmwareFileList.add(firmwareFile)
+                        }
+                        else {
+                            println("Invalid firmware.")
+                            
+                        }
+                    }
+
+                    if (newFirmwareFileList.isEmpty()) {
+                        println "No Valid Firmware files were found."
+                        return
+                    }
+
+                    for (firmwareFile in newFirmwareFileList) {
+                        println "file ${firmwareFile}"
+                    }
+                }
+            }
+        }
+        stage('Deploying firmware') {
+            steps {
+                echo 'deploying firmware...'
+                script {
+                    for (firmwareFile in newFirmwareFileList) {
+                        println "Deploying ${env.workspace}/${firmwareFile}..."
+                        sh(
+                            """
+                            python '${env.workspace}/deploy.py' --firmware '${env.workspace}/${firmwareFile}'
+                            """
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Method to validate the directory structure of firmware files.
+def validateFirmwareFilePath(firmwareFilePath) {
+    filePathSplit = firmwareFilePath.split("/")
+
+    // Check length
+    if ( filePathSplit.size() != 4 ) {
+        println ("Invalid path structure.")
+        return false
+    }
+
+    // Check firmware deployment directory name
+    if ( filePathSplit[0] != FW_DEPLOYMENT_DIRECTORY ) {
+        println ("Invalid firmware deployment directory name.")
+        return false
+    }
+
+    // Check file extension
+    if ( !filePathSplit[3].endsWith(".bin") ) {
+        println ("Invalid firmware file extension.")
+        return false
+    }
+
+    // Check version format
+    if ( (filePathSplit[2] ==~ /(\d+)\.(\d+)\.(\d+)/) == false ) {
+        println ("Invalid version format.")
+        return false
+    }
+    return true
+}

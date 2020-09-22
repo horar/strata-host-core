@@ -547,7 +547,7 @@ Item {
             model: filteredPlatformSelectorModel
             maximumFlickVelocity: 1200 // Limit scroll speed on Windows trackpads: https://bugreports.qt.io/browse/QTBUG-56075
 
-            property real delegateHeight: 190
+            property real delegateHeight: 160
             property real delegateWidth: 950
 
             Component.onCompleted: {

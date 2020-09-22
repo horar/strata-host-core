@@ -214,8 +214,13 @@ Rectangle {
                 fill: profileIconContainer
             }
             cursorShape: Qt.PointingHandCursor
+            Accessible.role: Accessible.Button
+            Accessible.name: "User Icon"
+            Accessible.description: "User menu button."
+            Accessible.onPressAction: pressAction()
+            onPressed: pressAction()
 
-            onPressed: {
+            function pressAction() {
                 profileMenu.open()
             }
         }
