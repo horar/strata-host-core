@@ -18,10 +18,6 @@ Rectangle {
         loadSettings()
     }
 
-    //    Component.onDestruction: {
-    //        saveSettings()
-    //    }
-
     function saveSettings() {
         sgUserSettings.writeFile(configFileName, previousFileURL);
 
@@ -45,7 +41,6 @@ Rectangle {
                 return
             }
         }
-        console.log("outside of the equal check")
         if(previousFileURL.projects.length > 5) {
             previousFileURL.projects.pop()
             listModelForUrl.remove(listModelForUrl.count - 1)
@@ -134,7 +129,6 @@ Rectangle {
 
 
         SGAlignedLabel {
-            id: selectTitle
             Layout.topMargin: 20
             color: "#666"
             fontSizeMultiplier: 1.25
