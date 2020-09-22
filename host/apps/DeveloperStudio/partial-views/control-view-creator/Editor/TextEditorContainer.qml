@@ -3,6 +3,8 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.3
 import QtQuick.Window 2.0
 import QtQuick.Dialogs 1.3
+import QtWebEngine 1.8
+import QtWebChannel 1.0
 
 import tech.strata.sgwidgets 1.0
 import tech.strata.fonts 1.0
@@ -14,6 +16,11 @@ Item {
 
     property int modelIndex: index
     property string file: model.filename
+    property string fileText
+
+    Component.onCompleted: {
+        channel.registerObject("valueLink", channelObject)
+    }
 
     function openFile(fileUrl) {
         var request = new XMLHttpRequest();
@@ -29,29 +36,87 @@ Item {
         return request.status;
     }
 
-    Component.onCompleted: {
-        textArea.visible = true
-        textArea.text = openFile(model.filepath)
-    }
-
     Connections{
         target: saveButton
-        onClicked: saveFile(model.filepath,textArea.text)
+        onClicked: saveFile(model.filepath,fileText)
     }
 
-    ScrollView  {
-        id: textEditorView
+    WebChannel {
+        id: channel
+    }
+
+    QtObject {
+        id: channelObject
+        objectName: "fileChannel"
+
+        signal setValue(string value);
+
+        function setHtml(value) {
+            setValue(value)
+        }
+
+        function setFileText(value) {
+            fileText = value;
+        }
+    }
+
+    WebEngineView {
+        id: webEngine
+
+        webChannel: channel
+        settings.localContentCanAccessRemoteUrls: false
+        settings.localContentCanAccessFileUrls: true
+        settings.localStorageEnabled: true
+
+        settings.errorPageEnabled: false
+        settings.javascriptCanOpenWindows: false
+        settings.javascriptEnabled: true
+        settings.javascriptCanAccessClipboard: true
+        settings.pluginsEnabled: true
+
         anchors.fill: parent
 
-        visible: true
-        TextArea {
-            id: textArea
-            selectByMouse: true
-            font: Fonts.inconsolata
+        onLoadingChanged: {
+            if (loadRequest.status === WebEngineLoadRequest.LoadSucceededStatus) {
+                webEngine.runJavaScript("setContainerHeight(%1)".replace("%1", parent.height), function result(result) {
+                    console.info(result)
+                });
+                fileText = openFile(model.filepath)
+                channelObject.setHtml(fileText)
+            }
+        }
 
-            //selection text is set to gray
-            selectionColor: Qt.rgba(0.0, 0.0, 0.0, 0.15)
-            selectedTextColor: color
+        url: "qrc:///partial-views/control-view-creator/editor.html"
+
+        Rectangle {
+            id: barContainer
+            color: "white"
+            anchors {
+                fill: webEngine
+            }
+            visible: progressBar.value !== 100
+
+            ProgressBar {
+                id: progressBar
+                anchors {
+                    centerIn: barContainer
+                    verticalCenterOffset: 10
+                }
+                height: 10
+                width: webEngine.width/2
+                from: 0
+                to: 100
+                value: webEngine.loadProgress
+
+                Text {
+                    text: qsTr("Loading...")
+                    anchors {
+                        bottom: progressBar.top
+                        bottomMargin: 10
+                        horizontalCenter: progressBar.horizontalCenter
+                    }
+                }
+            }
         }
     }
 }

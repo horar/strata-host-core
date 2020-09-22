@@ -65,6 +65,13 @@ Dialog {
                 Layout.preferredWidth: closer.height * 1.5
                 Layout.preferredHeight: Layout.preferredWidth
                 Layout.rightMargin: 5
+                Accessible.role: Accessible.Button
+                Accessible.name: "ClosePopup"
+                Accessible.onPressAction: pressAction()
+
+                function pressAction() {
+                    dialog.close()
+                }
 
                 SGIcon {
                     id: closer
@@ -80,7 +87,7 @@ Dialog {
                 MouseArea {
                     id: mouseClose
                     anchors.fill: closerBackground
-                    onClicked: dialog.close()
+                    onClicked: closerBackground.pressAction()
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                 }

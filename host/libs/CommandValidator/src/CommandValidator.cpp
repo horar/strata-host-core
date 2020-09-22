@@ -92,17 +92,20 @@ const rapidjson::SchemaDocument CommandValidator::reqPlatformId_nps_(
 			"properties": {
 				"name":                { "type": "string" },
 				"verbose_name":        { "type": "string" },
+				"controller_type":     { "type": "integer" },
 				"platform_id":         { "type": "string" },
 				"class_id":            { "type": "string" },
 				"count":               { "type": [ "string", "integer" ] },
+				"board_count":         { "type": "integer" },
 				"platform_id_version": { "type": "string" }
 			},
-			"required": [
-				"name",
-				"platform_id",
-				"class_id",
-				"count",
-				"platform_id_version"
+			"oneOf": [
+				{
+					"required": [ "name", "platform_id", "class_id", "count", "platform_id_version" ]
+				},
+				{
+					"required": [ "name", "controller_type", "platform_id", "class_id", "board_count" ]
+				}
 			]
 		})"
     )
@@ -304,7 +307,7 @@ bool CommandValidator::validateJsonWithSchema(const rapidjson::SchemaDocument &s
         rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 
         json.Accept(writer);
-        QByteArray text(buffer.GetString(), buffer.GetSize());
+        QByteArray text(buffer.GetString(), static_cast<int>(buffer.GetSize()));
 
         buffer.Clear();
         writer.Reset(buffer);
