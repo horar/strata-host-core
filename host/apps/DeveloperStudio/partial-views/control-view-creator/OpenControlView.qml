@@ -29,8 +29,7 @@ Rectangle {
     function loadSettings() {
         let config = sgUserSettings.readFile(configFileName)
         var projectsList  = JSON.parse(JSON.stringify(config))
-        if(projectsList.projects && projectsList.projects.length > 0) {
-            recentProjText.visible = true
+        if(projectsList.projects) {
             for (var i = 0; i < projectsList.projects.length; ++i) {
                 previousFileURL.projects.push(projectsList.projects[i])
                 listModelForUrl.append({ url: previousFileURL.projects[i] })
@@ -76,7 +75,7 @@ Rectangle {
             color: "#666"
             fontSizeMultiplier: 1.25
             text: "Recent Projects:"
-            visible: false
+            visible: (listModelForUrl.count > 0) ? true : false
         }
 
         ListView {
