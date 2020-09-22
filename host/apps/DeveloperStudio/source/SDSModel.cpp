@@ -1,6 +1,7 @@
 #include "SDSModel.h"
 #include "DocumentManager.h"
 #include "ResourceLoader.h"
+#include "SGNewControlView.h"
 #include "HcsNode.h"
 #include <PlatformInterface/core/CoreInterface.h>
 
@@ -21,6 +22,7 @@ SDSModel::SDSModel(QObject *parent)
 {
     resourceLoader_ = new ResourceLoader(this);
     coreInterface_ = new CoreInterface(this);
+    newControlView_ = new SGNewControlView(this);
     documentManager_ = new DocumentManager(coreInterface_, this);
 }
 
@@ -29,6 +31,7 @@ SDSModel::~SDSModel()
     delete documentManager_;
     delete coreInterface_;
     delete resourceLoader_;
+    delete newControlView_;
 }
 
 void SDSModel::init(const QString &appDirPath)
@@ -39,7 +42,6 @@ void SDSModel::init(const QString &appDirPath)
 
     connect(remoteHcsNode_, &HcsNode::hcsConnectedChanged,
             this, &SDSModel::setHcsConnected);
-
 }
 
 bool SDSModel::startHcs()
@@ -166,6 +168,11 @@ CoreInterface *SDSModel::coreInterface() const
 ResourceLoader *SDSModel::resourceLoader() const
 {
     return resourceLoader_;
+}
+
+SGNewControlView *SDSModel::newControlView() const
+{
+    return newControlView_;
 }
 
 void SDSModel::shutdownService()
