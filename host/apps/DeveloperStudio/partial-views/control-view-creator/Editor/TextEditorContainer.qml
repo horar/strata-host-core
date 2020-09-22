@@ -30,6 +30,7 @@ Item {
     }
 
     Component.onCompleted: {
+        textArea.visible = true
         textArea.text = openFile(model.filepath)
     }
 
@@ -41,6 +42,8 @@ Item {
     ScrollView  {
         id: textEditorView
         anchors.fill: parent
+
+        visible: true
         TextArea {
             id: textArea
             selectByMouse: true
