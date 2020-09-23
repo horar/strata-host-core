@@ -130,7 +130,7 @@ Rectangle {
                 id: controlViewContainer
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                color: "white"
+                color: "lightcyan"
 
                 SGText {
                     anchors {
