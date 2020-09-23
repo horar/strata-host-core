@@ -133,6 +133,8 @@ void PrtModel::programDevice()
 
 void PrtModel::downloadBinaries(int platformIndex)
 {
+    Q_UNUSED(platformIndex)
+
     QTimer::singleShot(2500, this, [this](){
 
         bool ok = false;//fakeDownloadBinaries(
@@ -288,6 +290,7 @@ void PrtModel::downloadBinaries(
     strata::DownloadManager::Settings settings;
     settings.oneFailsAllFail = true;
     settings.keepOriginalName = true;
+    settings.removeCorruptedFile = false;
 
     qCDebug(logCategoryPrt) << "download bootloader" << bootloaderItem.url.toString()
                             << "into" << bootloaderItem.filePath;

@@ -479,6 +479,24 @@ TEST_F(CommandValidatorTest, requestPlatorfmIdResponseTest)
     EXPECT_TRUE(CommandValidator::parseJsonCommand(QByteArray::fromStdString(testCommand), doc));
     EXPECT_TRUE(CommandValidator::validateNotification(CommandValidator::JsonType::reqPlatformIdNotif, doc));
 
+    // API v2
+    testCommand = R"(
+        {
+            "notification":{
+                "value":"platform_id",
+                "payload":{
+                    "name":"PlatformId API version 2.0",
+                    "controller_type":1,
+                    "platform_id":"00000000-0000-0000-0000-000000000000",
+                    "class_id":"00000000-0000-0000-0000-000000000000",
+                    "board_count":1
+                }
+            }
+        }
+    )";
+    EXPECT_TRUE(CommandValidator::parseJsonCommand(QByteArray::fromStdString(testCommand), doc));
+    EXPECT_TRUE(CommandValidator::validateNotification(CommandValidator::JsonType::reqPlatformIdNotif, doc));
+
     // Invalid test command
     testCommand = R"(
         {

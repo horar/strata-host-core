@@ -21,10 +21,13 @@ SGStrataPopup {
 
     headerText: NavigationControl.context.first_name[0].toUpperCase() + NavigationControl.context.first_name.slice(1) + "'s Profile"
     modal: true
+    visible: true
     closePolicy: Popup.CloseOnEscape
     focus: true
     horizontalPadding: 20
     bottomPadding: 20
+    x: container.width/2 - root.width/2
+    y: container.parent.windowHeight/2 - root.height/2
 
     property string firstName: NavigationControl.context.first_name
     property string lastName: NavigationControl.context.last_name
@@ -58,6 +61,7 @@ SGStrataPopup {
         currentPasswordRow.editable = false
         passReqsPopup.close()
         resetFields()
+        parent.active = false
     }
 
     onFirstNameChanged: firstNameColumn.plainText.text = firstName
