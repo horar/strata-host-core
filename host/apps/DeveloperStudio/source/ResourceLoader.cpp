@@ -147,8 +147,13 @@ QQuickItem* ResourceLoader::createViewObject(const QString &path, QQuickItem *pa
     QQmlEngine *e = qmlEngine(parent);
     if (e) {
         QQmlComponent component = QQmlComponent(e, path, QQmlComponent::CompilationMode::PreferSynchronous, parent);
+        clearLastLoggedError();
         if (component.errors().count() > 0) {
-            qCCritical(logCategoryResourceLoader) << component.errors();
+            QString error_str;
+            for (const auto &this_error : component.errors()) {
+                error_str += this_error.toString() + "\n";
+            }
+            setLastLoggedError(error_str);
             return NULL;
         }
         QQmlContext *context = qmlContext(parent);
@@ -264,4 +269,16 @@ QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
 
 void ResourceLoader::onOutputRead() {
     qDebug() << rccCompilerProcess_.readAllStandardError();
+}
+
+void ResourceLoader::clearLastLoggedError() {
+    lastLoggedError = "";
+}
+
+void ResourceLoader::setLastLoggedError(QString &error_str) {
+    lastLoggedError = error_str;
+}
+
+QString ResourceLoader::getLastLoggedError() {
+    return lastLoggedError;
 }

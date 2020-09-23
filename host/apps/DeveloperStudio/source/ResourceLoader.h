@@ -87,6 +87,8 @@ public:
 
     Q_INVOKABLE QString recompileControlViewQrc(QString qrcFilePath);
 
+    Q_INVOKABLE QString getLastLoggedError();
+
 private slots:
     /**
      * @brief deleteViewResource Deletes a resource from disk and unregisters it from qrc.
@@ -109,4 +111,8 @@ private:
     static const QStringList coreResources_;
 
     QProcess rccCompilerProcess_;
+
+    QString lastLoggedError = "";
+    void clearLastLoggedError();
+    void setLastLoggedError(QString &error_str);
 };

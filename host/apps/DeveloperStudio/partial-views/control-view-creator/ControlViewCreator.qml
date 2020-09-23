@@ -10,7 +10,7 @@ Rectangle {
     id: controlViewCreatorRoot
     objectName: "ControlViewCreator"
 
-    property bool initControlViewLoaded: false
+    property string currentFileUrl: ""
 
     SGQrcListModel {
         id: fileModel
@@ -66,9 +66,9 @@ Rectangle {
                     model: ["Edit", "Use Control View"]
                     checkedIndices: 0
                     onClicked: {
-                        if (!initControlViewLoaded) {
+                        if (currentFileUrl !== openProjectContainer.fileUrl) {
                             recompileControlViewQrc()
-                            initControlViewLoaded = true
+                            currentFileUrl = openProjectContainer.fileUrl
                         }
                         viewStack.currentIndex = index + offset
                     }
@@ -163,7 +163,9 @@ Rectangle {
         let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
         let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlViewContainer);
         if (obj === null) {
-            console.error("Could not load view.")
+            let error_str = sdsModel.resourceLoader.getLastLoggedError()
+            sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewContainer, {"error_message": error_str});
+            console.error("Could not load view: " + error_str)
         }
     }
 }
