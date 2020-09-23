@@ -9,7 +9,6 @@ import tech.strata.SGQrcListModel 1.0
 Rectangle {
     id: openProjectContainer
 
-    property alias fileUrl: filePath.text
     property string configFileName: "previousProjects.json"
     property var previousFileURL: { "projects" : [] }
     color: "#ccc"
@@ -20,7 +19,6 @@ Rectangle {
 
     function saveSettings() {
         sgUserSettings.writeFile(configFileName, previousFileURL);
-
     }
 
     function loadSettings() {
@@ -35,7 +33,6 @@ Rectangle {
     }
 
     function addToTheProjectList (fileUrl) {
-
         for (var i = 0; i < previousFileURL.projects.length; ++i) {
             if(previousFileURL.projects[i] === fileUrl) {
                 return
@@ -93,11 +90,13 @@ Rectangle {
                 color: "white"
                 width: openProjectContainer.width - 40
                 height: 40
+
                 RowLayout {
                     anchors {
                         fill: rectangle
                         margins: 5
                     }
+
                     SGIcon {
                         Layout.preferredHeight: rectangle.height*.5
                         Layout.preferredWidth: Layout.preferredHeight
@@ -114,6 +113,7 @@ Rectangle {
                         color:  urlMouseArea.containsMouse ?  "#bbb" : "black"
                     }
                 }
+
                 MouseArea {
                     id: urlMouseArea
                     anchors.fill: parent
@@ -169,7 +169,7 @@ Rectangle {
                             left: parent.left
                             leftMargin: 10
                         }
-                        text: fileDialog.fileUrl.toString() === "" ? "Select a .QRC file..." : fileDialog.fileUrl.toString()
+                        text: "Select a .QRC file..."
                         color: "#333"
                     }
                 }
@@ -189,9 +189,9 @@ Rectangle {
                         fileModel.url = fileDialog.fileUrl
                         viewStack.currentIndex = editUseStrip.offset
                         editUseStrip.checkedIndices = 1
-                        addToTheProjectList(fileUrl)
+                        addToTheProjectList(fileDialog.fileUrl.toString())
+                        filePath.text = "Select a .QRC file..."
                     }
-                    filePath.text = "Select a .QRC file..."
                 }
             }
 
