@@ -169,7 +169,7 @@ Rectangle {
                             left: parent.left
                             leftMargin: 10
                         }
-                        text: fileDialog.fileUrl.toString() === "" ? "Select control view project .QRC file:" : fileDialog.fileUrl.toString()
+                        text: fileDialog.fileUrl.toString() === "" ? "Select a .QRC file..." : fileDialog.fileUrl.toString()
                         color: "#333"
                     }
                 }
@@ -191,7 +191,7 @@ Rectangle {
                         editUseStrip.checkedIndices = 1
                         addToTheProjectList(fileUrl)
                     }
-                    filePath.text = "Select control view project .QRC file:"
+                    filePath.text = "Select a .QRC file..."
                 }
             }
 
