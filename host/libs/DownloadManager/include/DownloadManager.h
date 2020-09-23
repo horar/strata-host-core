@@ -1,8 +1,5 @@
 #pragma once
 
-#include "../src/InternalDownloadRequest.h"
-#include "../src/ReplyTimeout.h"
-
 #include <QObject>
 #include <QString>
 #include <QNetworkAccessManager>
@@ -14,6 +11,8 @@
 #include <QFile>
 
 namespace strata {
+
+class InternalDownloadRequest;
 
 class DownloadManager : public QObject
 {

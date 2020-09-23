@@ -1,6 +1,8 @@
 
 #include "DownloadManager.h"
 #include "logging/LoggingQtCategories.h"
+#include "InternalDownloadRequest.h"
+#include "ReplyTimeout.h"
 
 #include <QFile>
 #include <QUuid>
