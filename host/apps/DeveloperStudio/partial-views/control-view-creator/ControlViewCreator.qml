@@ -6,8 +6,6 @@ import tech.strata.SGQrcListModel 1.0
 import tech.strata.commoncpp 1.0
 import "qrc:/js/navigation_control.js" as NavigationControl
 
-import "qrc:/js/navigation_control.js" as NavigationControl
-
 Rectangle {
     id: controlViewCreatorRoot
     objectName: "ControlViewCreator"
@@ -73,9 +71,9 @@ Rectangle {
                     model: ["Edit", "Use Control View"]
                     checkedIndices: 0
                     onClicked: {
-                        if (currentFileUrl !== openProjectContainer.fileUrl) {
+                        if (currentFileUrl != fileModel.url) {
                             recompileControlViewQrc()
-                            currentFileUrl = openProjectContainer.fileUrl
+                            currentFileUrl = fileModel.url
                         }
                         viewStack.currentIndex = index + offset
                     }
@@ -147,8 +145,8 @@ Rectangle {
     }
 
     function recompileControlViewQrc () {
-        if (openProjectContainer.fileUrl != '') {
-            let compiledRccFile = sdsModel.resourceLoader.recompileControlViewQrc(openProjectContainer.fileUrl)
+        if (fileModel.url != '') {
+            let compiledRccFile = sdsModel.resourceLoader.recompileControlViewQrc(fileModel.url)
             if (compiledRccFile != '') {
                 loadDebugView(compiledRccFile)
             }

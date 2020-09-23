@@ -204,7 +204,8 @@ QString ResourceLoader::getQResourcePrefix(const QString &class_id, const QStrin
 QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
 #ifdef QT_RCC_EXECUTABLE
     const QString rccExecutablePath = QT_RCC_EXECUTABLE;
-#else
+#else // Triggers if Release build -- in Release builds, for now this will not work unless RCC compiler executable is manually placed in the application directory
+// Will be completed in CS-1093
     QDir applicationDir(QCoreApplication::applicationDirPath());
     #ifdef Q_OS_MACOS
         applicationDir.cdUp();
@@ -215,7 +216,6 @@ QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
 #endif
 
     qrcFilePath.replace("file://", "");
-
     if (qrcFilePath.at(0) == "/" && qrcFilePath.at(0) != QDir::separator()) {
         qrcFilePath.remove(0, 1);
     }
