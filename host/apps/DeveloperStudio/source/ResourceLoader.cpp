@@ -149,6 +149,7 @@ QQuickItem* ResourceLoader::createViewObject(const QString &path, QQuickItem *pa
         QQmlComponent component = QQmlComponent(e, path, QQmlComponent::CompilationMode::PreferSynchronous, parent);
         clearLastLoggedError();
         if (component.errors().count() > 0) {
+            qCCritical(logCategoryResourceLoader) << component.errors();
             QString error_str;
             for (const auto &this_error : component.errors()) {
                 error_str += this_error.toString() + "\n";
