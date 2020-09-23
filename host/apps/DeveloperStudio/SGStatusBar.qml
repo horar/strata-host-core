@@ -201,7 +201,6 @@ Rectangle {
                 anchors {
                     centerIn: parent
                 }
-
                 source: "qrc:/sgimages/exclamation-circle.svg"
                 iconColor : "white"
             }
@@ -271,7 +270,7 @@ Rectangle {
                     text: qsTr("Feedback")
                     onClicked: {
                         profileMenu.close()
-                        feedbackPopup.open();
+                        feedLoader.active = true
                     }
                     width: profileMenu.width
                 }
@@ -280,7 +279,7 @@ Rectangle {
                     text: qsTr("Profile")
                     onClicked: {
                         profileMenu.close()
-                        profilePopup.open()
+                        profileLoader.active = true
                     }
                     width: profileMenu.width
                 }
@@ -313,21 +312,19 @@ Rectangle {
         }
     }
 
-    SGFeedbackPopup {
-        id: feedbackPopup
-        width: Math.max(container.width * 0.8, 600)
-        height: Math.max(container.height * 0.8, 600)
-        x: container.width/2 - feedbackPopup.width/2
-        y: container.parent.windowHeight/2 - feedbackPopup.height/2
+    Loader {
+        id: feedLoader
+        source: "qrc:/partial-views/status-bar/SGFeedbackPopup.qml"
+        active: false
     }
 
-    SGProfilePopup {
-        id: profilePopup
-        x: container.width/2 - profilePopup.width/2
-        y: container.parent.windowHeight/2 - profilePopup.height/2
+    Loader {
+        id: profileLoader
+        source: "qrc:/partial-views/profile-popup/SGProfilePopup.qml"
+        active: false
     }
 
-    function showAboutWindow() {
+    function showAboutWindow(){
         SGDialogJS.createDialog(container, "qrc:partial-views/about-popup/DevStudioAboutWindow.qml")
     }
 }
