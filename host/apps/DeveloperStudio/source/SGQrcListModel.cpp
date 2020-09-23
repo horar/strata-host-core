@@ -28,6 +28,7 @@ QrcItem::QrcItem(QString filepath, QUrl rootDirectoryPath, int index, QObject *p
         }
     }
     filename_ = file.fileName();
+    filetype_ = file.suffix();
     visible_ = false;
     open_ = false;
     index_ = index;
@@ -44,6 +45,11 @@ QString QrcItem::filename() const
 QUrl QrcItem::filepath() const
 {
     return filepath_;
+}
+
+QString QrcItem::filetype() const
+{
+    return filetype_;
 }
 
 QStringList QrcItem::relativePath() const
@@ -99,6 +105,14 @@ void QrcItem::setIndex(int index)
     if (index_ != index) {
         index_ = index;
         emit dataChanged(index_);
+    }
+}
+
+void QrcItem::setFiletype(QString filetype)
+{
+    if (filetype_ != filetype) {
+        filetype_ = filetype;
+        emit dataChanged(index_, SGQrcListModel::FiletypeRole);
     }
 }
 
@@ -180,8 +194,8 @@ void SGQrcListModel::append(const QUrl &filepath) {
 
     if (SGUtilsCpp::fileIsChildOfDir(file.filePath(), dir.path()) == false) {
         QFileInfo outputFileLocation(SGUtilsCpp::joinFilePath(dir.path(), file.fileName()));
-        QString ext = outputFileLocation.suffix();
-        QString filenameWithoutExt = outputFileLocation.fileName().split(".", QString::SkipEmptyParts)[0];
+        QString ext = outputFileLocation.completeSuffix();
+        QString filenameWithoutExt = outputFileLocation.baseName();
 
         for (int i = 1; ;i++) {
             if (!outputFileLocation.exists()) {
@@ -256,6 +270,8 @@ QVariant SGQrcListModel::data(const QModelIndex &index, int role) const
         return item->filename();
     case FilepathRole:
         return item->filepath();
+    case FiletypeRole:
+        return item->filetype();
     case RelativePathRole:
         return item->relativePath();
     case VisibleRole:
@@ -399,6 +415,7 @@ QHash<int, QByteArray> SGQrcListModel::roleNames() const {
     QHash<int, QByteArray> roles;
     roles[FilenameRole] = "filename";
     roles[FilepathRole] = "filepath";
+    roles[FiletypeRole] = "filetype";
     roles[RelativePathRole] = "relativePath";
     roles[VisibleRole] = "visible";
     roles[OpenRole] = "open";

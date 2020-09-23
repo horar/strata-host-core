@@ -105,7 +105,10 @@ SGStrataPopup {
                         }
                     }
 
-                    Keys.onReturnPressed:{
+                    Keys.onReturnPressed: pressAction()
+                    Accessible.onPressAction: pressAction()
+
+                    function pressAction() {
                         submitButton.clicked()
                     }
 
