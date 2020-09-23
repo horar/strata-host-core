@@ -46,6 +46,15 @@ Rectangle{
             }
         }
 
+        Connections {
+            target: Help.utility
+            onInternal_tour_indexChanged: {
+                if(Help.current_tour_targets[index]["target"] === carContainer) {
+                    Help.current_tour_targets[index]["helpObject"].toolTipPopup.contentItem.width = 800
+                }
+            }
+        }
+
         Item {
             id: carContainer
             width: parent.width/1.2
