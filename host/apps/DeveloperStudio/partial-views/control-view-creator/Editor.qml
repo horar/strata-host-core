@@ -5,6 +5,7 @@ import QtQuick.Controls 2.2
 import tech.strata.sgwidgets 1.0
 import tech.strata.commoncpp 1.0
 import tech.strata.SGQrcTreeModel 1.0
+import tech.strata.SGFileTabModel 1.0
 
 import "Editor/"
 import "Sidebar/"
@@ -12,24 +13,12 @@ import "Sidebar/"
 Item {
     id: editorRoot
 
-    function setVisible(index) {
-        let file = openFilesModel.get(index);
-        if (file.open === false) {
-            file.open = true
-        }
-
-        for (let i = 0; i < treeModel.openFiles.count; i++) {
-            treeModel.openFiles[index].visible = (i === index)
-        }
-        fileStack.currentIndex = index;
-    }
-
     SGQrcTreeModel {
         id: treeModel
         url: openProjectContainer.url
     }
 
-    ListModel {
+    SGFileTabModel {
         id: openFilesModel
     }
 
@@ -97,20 +86,9 @@ Item {
                         layoutDirection: Qt.LeftToRight
                         spacing: 3
 
-                        Connections {
-                            target: treeModel
-
-                            onAddedOpenFile: {
-                                openFilesModel.append(item);
-                            }
-                            onRemovedOpenFile: {
-                                openFilesModel.remove(index, 1)
-                            }
-                        }
-
                         delegate: Button {
                             id: fileTab
-                            checked: model.visible
+                            checked: index === openFilesModel.currentIndex
                             hoverEnabled: true
 
                             property color color: "#aaaaaa"
@@ -118,7 +96,7 @@ Item {
 
                             onClicked: {
                                 if (checked) {
-                                    editorRoot.setVisible(index)
+                                    openFilesModel.currentIndex = index
                                 }
                             }
 
@@ -169,23 +147,7 @@ Item {
                                         }
 
                                         onClicked: {
-                                            let item = treeModel.get(model.uid);
-
-                                            // If the item isn't visible then just remove it
-                                            if (!item.visible) {
-                                                if (fileStack.currentIndex > fileTab.modelIndex) {
-                                                    fileStack.currentIndex--;
-                                                }
-                                                treeModel.removeOpenFile(item);
-                                            } else {
-                                                item.visible = false
-                                                item.open = false
-                                                if (index - 1 >= 0) {
-                                                    setVisible(index - 1)
-                                                } else {
-                                                    setVisible(index)
-                                                }
-                                            }
+                                            openFilesModel.closeTabAt(index);
                                         }
                                     }
                                 }
@@ -198,15 +160,15 @@ Item {
                     id: fileStack
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    currentIndex: openFilesModel.currentIndex
 
                     Repeater {
                         id: fileEditorRepeater
-                        model: openFileModel
+                        model: openFilesModel
 
                         delegate: FileContainer {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-
                         }
                     }
                 }

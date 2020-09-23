@@ -276,6 +276,7 @@ void SGQrcTreeModel::addOpenFile(SGQrcTreeNode *item)
 {
     openFiles_.append(item);
     emit addedOpenFile(item);
+    emit openFilesChanged();
 }
 
 void SGQrcTreeModel::removeOpenFile(SGQrcTreeNode *item)
@@ -290,6 +291,22 @@ void SGQrcTreeModel::removeOpenFile(SGQrcTreeNode *item)
         openFiles_.at(i)->setOpen(false);
         openFiles_.removeAt(i);
         emit removedOpenFile(i);
+        emit openFilesChanged();
+    }
+}
+
+int SGQrcTreeModel::findOpenFile(int uid)
+{
+    int i = 0;
+    for (; i < openFiles_.size(); i++) {
+        if (openFiles_.at(i)->uid() == uid) {
+            break;
+        }
+    }
+    if (i < openFiles_.size()) {
+        return i;
+    } else {
+        return -1;
     }
 }
 

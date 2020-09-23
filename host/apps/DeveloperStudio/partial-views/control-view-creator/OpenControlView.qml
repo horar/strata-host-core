@@ -4,7 +4,6 @@ import QtQml.Models 2.12
 import QtQuick.Dialogs 1.2
 
 import tech.strata.sgwidgets 1.0
-import tech.strata.SGQrcListModel 1.0
 
 Rectangle {
     id: openProjectContainer
@@ -93,7 +92,6 @@ Rectangle {
                 onClicked: {
                     if (fileDialog.fileUrl.toString() !== "") {
                         openProjectContainer.url = fileDialog.fileUrl
-//                        fileModel.url = fileDialog.fileUrl
                         viewStack.currentIndex = editUseStrip.offset
                         editUseStrip.checkedIndices = 1
                     }

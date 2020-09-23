@@ -19,7 +19,7 @@ class SGQrcTreeModel : public QAbstractItemModel
     Q_PROPERTY(SGQrcTreeNode* root READ root NOTIFY rootChanged)
     Q_PROPERTY(QUrl projectDirectory READ projectDirectory NOTIFY projectDirectoryChanged)
     Q_PROPERTY(QList<SGQrcTreeNode*> childNodes READ childNodes)
-    Q_PROPERTY(QList<SGQrcTreeNode*> openFiles READ openFiles)
+    Q_PROPERTY(QList<SGQrcTreeNode*> openFiles READ openFiles NOTIFY openFilesChanged)
 public:
     explicit SGQrcTreeModel(QObject *parent = nullptr);
     ~SGQrcTreeModel();
@@ -80,6 +80,7 @@ public:
     QList<SGQrcTreeNode *> openFiles() const;
     Q_INVOKABLE void addOpenFile(SGQrcTreeNode* item);
     Q_INVOKABLE void removeOpenFile(SGQrcTreeNode* item);
+    Q_INVOKABLE int findOpenFile(int uid);
 
     SGQrcTreeNode* root() const;
     Q_INVOKABLE SGQrcTreeNode* getNode(const QModelIndex &index) const;
@@ -91,6 +92,7 @@ signals:
     void dataReady();
     void addedOpenFile(SGQrcTreeNode* item);
     void removedOpenFile(int index);
+    void openFilesChanged();
 
 public slots:
     void childrenChanged(const QModelIndex &index, int role);

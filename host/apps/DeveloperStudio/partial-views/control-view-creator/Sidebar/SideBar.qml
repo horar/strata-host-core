@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
 import QtQuick.Controls 2.2
+import QtQuick.Controls.Styles 1.4
 import Qt.labs.folderlistmodel 2.12
 import tech.strata.commoncpp 1.0
 import QtQuick.Controls 1.4
@@ -14,18 +15,75 @@ Rectangle {
     id: sideBarRoot
     color: "#777"
 
-    SGQrcTreeModel {
-        id: treeModel
-        url: openProjectContainer.url
-    }
-
     ColumnLayout {
         anchors.fill: parent
 
-        SGTreeView {
+        Rectangle {
+            id: treeViewContainer
             Layout.fillWidth: true
             Layout.preferredHeight: 600
-            model: treeModel
+            color: "white"
+
+            TreeView {
+                id: treeView
+                model: treeModel
+                backgroundVisible: false
+                alternatingRowColors: false
+                width: parent.width
+                height: parent.height
+
+                rowDelegate: Rectangle {
+                    height: 25
+                    color: (visible && openFilesModel.currentId === model.uid) ? "#CCCCCC" : "transparent"
+                }
+
+                itemDelegate: Item {
+                    Text {
+                        id: itemText
+                        width: parent.width - 22
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: styleData.value
+                        elide: Text.ElideRight
+                        font.pointSize: 10
+                        color: "black"
+                    }
+
+                    SGIcon {
+                        height: 15
+                        width: 15
+                        visible: model && !model.isDir
+
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            right: parent.right
+                            rightMargin: 5
+                        }
+
+                        iconColor: model && model.inQrc ? "green" : "red"
+                        source: model && model.inQrc ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+
+                        onClicked: {
+                            if (!model.isDir) {
+                                if (openFilesModel.hasTab(model.uid)) {
+                                    openFilesModel.currentId = model.uid
+                                } else {
+                                    openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                TableViewColumn {
+                    title: "Project Files"
+                    role: "filename"
+                    width: 250
+                }
+            }
         }
 
         SGButton {
