@@ -28,7 +28,6 @@ Item {
 
     }
 
-
     Item {
         id: filterHelpContainer1
         property point topLeft
@@ -45,15 +44,26 @@ Item {
 
     onWidthChanged: {
         filterHelpContainer1.update()
+
     }
     onHeightChanged: {
         filterHelpContainer1.update()
+
     }
 
     Connections {
         target: Help.utility
         onTour_runningChanged:{
             filterHelpContainer1.update()
+        }
+        onInternal_tour_indexChanged: {
+            if(Help.current_tour_targets[index]["target"] === vedInputVoltageType) {
+                Help.current_tour_targets[index]["helpObject"].toolTipPopup.contentItem.width = 800
+                Help.current_tour_targets[index]["helpObject"].toolTipPopup.onHeightChanged.connect(function () {
+                    Help.refreshView(index)
+                })
+
+            }
         }
     }
 
@@ -121,6 +131,7 @@ Item {
                         anchors.fill: parent
 
                         Rectangle {
+                            id: vedInputVoltageTypeContainer
                             Layout.fillHeight: true
                             Layout.fillWidth: true
 
@@ -142,7 +153,6 @@ Item {
                                 SGComboBox {
                                     id: vedInputVoltageType
                                     fontSizeMultiplier: ratioCalc
-
                                     onActivated: {
                                         platformInterface.set_power_vled_type.update(currentText)
                                     }

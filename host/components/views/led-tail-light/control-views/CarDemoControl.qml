@@ -20,7 +20,7 @@ Rectangle{
 
         Component.onCompleted: {
             blinkerContainer.enabled = false
-            Help.registerTarget(controlContainer, "Use these clickable controls to simulate common tail lights on a passenger vehicle: brake, hazard, reverse, and turn signals. The hazard signals are enabled by default and must be disabled to use individual left and right turn signals.", 0, "carDemoHelp")
+            Help.registerTarget(controlContainerForHelp, "Use these clickable controls to simulate common tail lights on a passenger vehicle: brake, hazard, reverse, and turn signals. The hazard signals are enabled by default and must be disabled to use individual left and right turn signals.", 0, "carDemoHelp")
             Help.registerTarget(carContainer, "The LEDs on the PCB are updated and then subsequently updated here in the user interface from the hardware. The background behind the vehicle is correlated to an onboard ambient light sensor to simulate brighter or darker conditions. Automatic rear running lights (and front headlights in UI only) will be enabled during darker conditions. Hover your hand over the light sensor near the bottom right of the PCB to simulate darker conditions. Expose the light sensor to a brighter light, such as a cell phone flashlight, for brighter background conditions. An initial ambient light value is measured during each Car Demo Mode session – this value is considered 50% brightness and may not correlate directly with actual ambient light conditions. Starting Car Demo Mode in low light conditions will have adverse effects on demonstration.", 1, "carDemoHelp")
         }
 
@@ -45,24 +45,34 @@ Rectangle{
                 runningLight.visible = false
             }
         }
-
         Connections {
             target: Help.utility
             onInternal_tour_indexChanged: {
                 if(Help.current_tour_targets[index]["target"] === carContainer) {
                     Help.current_tour_targets[index]["helpObject"].toolTipPopup.contentItem.width = 800
                 }
+                if(Help.current_tour_targets[index]["target"] === controlContainerForHelp) {
+                    Help.current_tour_targets[index]["helpObject"].toolTipPopup.contentItem.width = 650
+                }
             }
         }
 
         Item {
             id: carContainer
-            width: parent.width/1.2
-            height: parent.height/1.8
+            width: parent.width/2.8
+            height: parent.height/6.8
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.horizontalCenterOffset: -100
+            anchors.horizontalCenterOffset: 80
 
+        }
+        Item {
+            id: controlContainerForHelp
+            width: parent.width/8
+            height: parent.height/1.8
+            anchors.right: parent.right
+            anchors.rightMargin: 20
+            anchors.verticalCenter: parent.verticalCenter
         }
 
         RowLayout {
@@ -151,8 +161,8 @@ Rectangle{
 
             }
 
-            Rectangle {
 
+            Rectangle {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 color: "lightgray"
