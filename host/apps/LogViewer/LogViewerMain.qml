@@ -23,6 +23,7 @@ FocusScope {
     property int fontMaxSize: 24
     property string lastOpenedFolder: ""
     property int buttonPadding: 6
+    property bool indexColumnVisible: true
     property bool timestampColumnVisible: true
     property bool pidColumnVisible: true
     property bool tidColumnVisible: true
@@ -40,6 +41,8 @@ FocusScope {
     property string timestampFormat: "yyyy-MM-dd hh:mm:ss.zzz t"
     property string simpleTimestampFormat: "hh:mm:ss.zzz"
     property bool showDropAreaIndicator: false
+    property bool showMarks: false
+    property string markColor: SGWidgets.SGColorsJS.TANGO_CHAMELEON3
 
     LogViewModels.LogModel {
         id: logModel
@@ -76,6 +79,7 @@ FocusScope {
 
         property alias lastOpenedFolder: logViewerMain.lastOpenedFolder
         property alias messageWrapEnabled: logViewerMain.messageWrapEnabled
+        property alias indexColumnVisible: checkBoxIndex.checked
         property alias timestampColumnVisible: checkBoxTs.checked
         property alias pidColumnVisible: checkBoxPid.checked
         property alias tidColumnVisible: checkBoxTid.checked
@@ -167,11 +171,19 @@ FocusScope {
 
     CommonCPP.SGSortFilterProxyModel {
         id: logModelProxy
-        sourceModel: logModel
+        sourceModel: showMarks ? markedModel : logModel
         filterPattern: searchInput.text
         filterPatternSyntax: regExpButton.checked ? CommonCPP.SGSortFilterProxyModel.RegExp : CommonCPP.SGSortFilterProxyModel.FixedString
         caseSensitive: caseSensButton.checked ? true : false
         filterRole: "message"
+        sortEnabled: false
+    }
+
+    CommonCPP.SGSortFilterProxyModel{
+        id: markedModel
+        sourceModel: logModel
+        filterRole: "mark"
+        filterPattern: "true"
         sortEnabled: false
     }
 
@@ -373,6 +385,23 @@ FocusScope {
             padding: buttonPadding/2
             hintText: "Regular expression"
         }
+
+        SGWidgets.SGIconButton {
+            id: showMarksButton
+            anchors.verticalCenter: parent.verticalCenter
+            icon.source: "qrc:/sgimages/bookmark.svg"
+            iconSize: defaultIconSize/1.2
+            backgroundOnlyOnHovered: false
+            checkable: true
+            enabled: fileLoaded
+            padding: buttonPadding/2
+            hintText: "Filter marks"
+            iconColor: markColor
+
+            onClicked: {
+                showMarks = !showMarks
+            }
+        }
     }
 
     Rectangle {
@@ -476,6 +505,13 @@ FocusScope {
                 Column {
                     id: columnFilterMenu
                     padding: 5
+
+                    SGWidgets.SGCheckBox {
+                        id: checkBoxIndex
+                        text: qsTr("Index")
+                        font.family: "monospace"
+                        checked: indexColumnVisible
+                    }
 
                     SGWidgets.SGCheckBox {
                         id: checkBoxTs
@@ -654,7 +690,6 @@ FocusScope {
                                     anchors.leftMargin: 5
                                     anchors.right: rightFileWrapper.left
                                     anchors.verticalCenter: cellSide.verticalCenter
-                                    //font.family: "monospace"
                                     text: model.filename
                                     elide: Text.ElideRight
                                 }
@@ -698,6 +733,145 @@ FocusScope {
                         }
                     }
                 }
+
+                Item {
+                    id: markedLogsButton
+                    width: parent.width + 10
+                    height: columnFilterLabel.height
+
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "black"
+                        opacity: 0.4
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            markedLogs.visible = !markedLogs.visible
+                        }
+                    }
+
+                    Row {
+                        id: markedLogsLabel
+                        spacing: 6
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+
+                        SGWidgets.SGIcon {
+                            width: height - 6
+                            height: label.contentHeight + cellHeightSpacer
+                            source: markedLogs.visible ? "qrc:/sgimages/chevron-down.svg" : "qrc:/sgimages/chevron-right.svg"
+                        }
+
+                        SGWidgets.SGText {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: qsTr("Marks")
+                        }
+                    }
+                }
+
+                Column {
+                    id: markedLogs
+                    padding: 5
+
+                    ListView {
+                        id: listViewMarks
+                        width: sidePanel.width
+                        height: contentHeight
+                        model: markedModel
+                        interactive: false
+                        clip: true
+
+                        delegate: Item {
+                            id: markDelegate
+                            width: parent.width
+                            height: mark.height + horizontalDividerMark.height
+
+                            MouseArea {
+                                id: markDelegateMouseArea
+                                anchors.fill: markDelegate
+                                hoverEnabled: true
+
+                                function positionView(view, index) {
+                                    view.positionViewAtIndex(index, ListView.Center)
+                                    view.currentIndex = index
+                                }
+
+                                onClicked: {
+                                    var sourceIndex = markedModel.mapIndexToSource(index)
+                                    positionView(primaryLogView, sourceIndex)
+                                }
+
+                                onEntered: {
+                                    cellMark.color = "darkgray"
+                                }
+
+                                onExited: {
+                                    cellMark.color = "#eeeeee"
+                                }
+
+                                Rectangle {
+                                    id: cellMark
+                                    height: mark.height
+                                    width: parent.width - 5
+                                    color: "#eeeeee"
+                                }
+
+                                SGWidgets.SGIcon {
+                                    id: markIcon
+                                    source: "qrc:/sgimages/bookmark.svg"
+                                    height: cellMark.height - 5
+                                    width: height - 5
+                                    anchors.left: cellMark.left
+                                    anchors.verticalCenter: cellMark.verticalCenter
+                                    anchors.leftMargin: 3
+                                    iconColor: markColor
+                                }
+
+                                SGWidgets.SGText {
+                                    id: mark
+                                    topPadding: 5
+                                    bottomPadding: 5
+                                    anchors.left: markIcon.right
+                                    anchors.leftMargin: 5
+                                    anchors.verticalCenter: cellMark.verticalCenter
+                                    text: {
+                                        var hackVariable = markedModel.sourceModel.count
+                                        return markedModel.mapIndexToSource(model.index) + 1
+                                    }
+                                    elide: Text.ElideRight
+                                }
+
+                                SGWidgets.SGText {
+                                    id: markTimestamp
+                                    topPadding: 5
+                                    bottomPadding: 5
+                                    anchors.left: mark.right
+                                    anchors.leftMargin: 15
+                                    anchors.right: cellMark.right
+                                    anchors.verticalCenter: cellMark.verticalCenter
+                                    text: {
+                                            if (timestampSimpleFormat == false) {
+                                                return CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(model.timestamp, timestampFormat)
+                                            } else {
+                                                return Qt.formatDateTime(model.timestamp, simpleTimestampFormat)
+                                            }
+                                    }
+                                    elide: Text.ElideRight
+                                }
+
+                                Rectangle {
+                                    id: horizontalDividerMark
+                                    anchors.top: cellMark.bottom
+                                    width: cellMark.width
+                                    height: 1
+                                    color: "lightgray"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -718,9 +892,10 @@ FocusScope {
                     Layout.minimumHeight: parent.height/2
                     Layout.fillHeight: true
                     model: logModel
-                    visible: fileLoaded
+                    visible: fileLoaded && showMarks === false
                     focus: true
 
+                    indexColumnVisible: checkBoxIndex.checked
                     timestampColumnVisible: checkBoxTs.checked
                     pidColumnVisible: checkBoxPid.checked
                     tidColumnVisible: checkBoxTid.checked
@@ -734,6 +909,8 @@ FocusScope {
                     startAnimation: secondaryLogView.activeFocus
                     timestampSimpleFormat: logViewerMain.timestampSimpleFormat
                     automaticScroll: logViewerMain.automaticScroll
+                    markIconVisible: true
+                    markColor: logViewerMain.markColor
 
                     KeyNavigation.tab: searchInput
                     KeyNavigation.backtab: secondaryLogView
@@ -747,7 +924,7 @@ FocusScope {
                     Layout.minimumHeight: parent.height/4
                     border.color: TangoTheme.palette.butter1
                     border.width: 2
-                    visible: searchingMode
+                    visible: searchingMode || showMarks
 
                     LogListView {
                         id: secondaryLogView
@@ -755,6 +932,7 @@ FocusScope {
                         anchors.margins: 2
                         model: logModelProxy
 
+                        indexColumnVisible: checkBoxIndex.checked
                         timestampColumnVisible: checkBoxTs.checked
                         pidColumnVisible: checkBoxPid.checked
                         tidColumnVisible: checkBoxTid.checked
@@ -765,18 +943,27 @@ FocusScope {
                         sidePanelWidth: logViewerMain.sidePanelWidth
                         searchTagShown: true
                         highlightColor: searchInput.palette.highlight
+                        markColor: logViewerMain.markColor
                         timestampSimpleFormat: timestampSimpleFormatButton.checked
                         automaticScroll: logViewerMain.automaticScroll
+                        markIconVisible: false
+                        showMarks: logViewerMain.showMarks
+                        searchingMode: logViewerMain.searchingMode
 
                         onCurrentIndexChanged: {
-                            var sourceIndex = logModelProxy.mapIndexToSource(currentIndex)
-                            primaryLogView.positionViewAtIndex(sourceIndex, ListView.Center)
-                            primaryLogView.currentIndex = sourceIndex
+                            if (currentIndex >= 0 && secondaryLogView.activeFocus) {
+                                var sourceIndex = showMarks ? markedModel.mapIndexToSource(logModelProxy.mapIndexToSource(currentIndex)) : logModelProxy.mapIndexToSource(currentIndex)
+                                primaryLogView.positionViewAtIndex(sourceIndex, ListView.Center)
+                                primaryLogView.currentIndex = sourceIndex
+                            }
                         }
 
                         onActiveFocusChanged: {
                             if (secondaryLogView.activeFocus) {
-                                primaryLogView.currentIndex = logModelProxy.mapIndexToSource(currentIndex)
+                                if (currentIndex > markedModel.count) {
+                                    currentIndex = 0 //resets the currentIndex of the secondaryLogView to zero if it previously had more items shown
+                                }
+                                currentIndexChanged() //re-evaluates the currentIndex for primaryLogView once clicked on item/changed focus using TAB key
                             }
                         }
 
