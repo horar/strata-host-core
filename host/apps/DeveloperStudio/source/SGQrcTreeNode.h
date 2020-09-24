@@ -16,14 +16,14 @@ class SGQrcTreeNode : public QObject
     Q_PROPERTY(bool inQrc READ inQrc WRITE setInQrc NOTIFY dataChanged)
     Q_PROPERTY(bool isDir READ isDir NOTIFY dataChanged)
     Q_PROPERTY(SGQrcTreeNode* parentNode READ parentNode WRITE setParentNode NOTIFY dataChanged)
-    Q_PROPERTY(int uid READ uid)
+    Q_PROPERTY(QString uid READ uid)
     Q_PROPERTY(QList<SGQrcTreeNode*> childNodes READ children NOTIFY dataChanged)
     Q_PROPERTY(QModelIndex index READ index NOTIFY indexChanged)
     Q_PROPERTY(bool editing READ editing WRITE setEditing NOTIFY dataChanged)
 public:
     explicit SGQrcTreeNode(QObject *parent = nullptr);
-    SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isDir, bool inQrc, int uid, QObject *parent = nullptr);
-    SGQrcTreeNode(SGQrcTreeNode *parentNode, bool isDir, int uid, QObject *parent = nullptr);
+    SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isDir, bool inQrc, QString uid, QObject *parent = nullptr);
+    SGQrcTreeNode(SGQrcTreeNode *parentNode, bool isDir, QString uid, QObject *parent = nullptr);
     ~SGQrcTreeNode();
 
     /***
@@ -78,7 +78,7 @@ public:
      * @brief uid Gets the unique id of the node
      * @return Returns the unique id of the node
      */
-    int uid() const;
+    QString uid() const;
 
     /**
      * @brief parent Gets the parent node
@@ -207,7 +207,7 @@ private:
     QString filetype_;
     bool isDir_;
     bool inQrc_;
-    int uid_;
+    QString uid_;
     QModelIndex index_;
     bool editing_;
 };

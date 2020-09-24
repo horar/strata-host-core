@@ -7,6 +7,7 @@
 #include <QThread>
 #include <QStack>
 #include <QQmlEngine>
+#include <QUuid>
 
 /**************************************************************
  * Class SGQrcTreeModel
@@ -227,12 +228,12 @@ QList<SGQrcTreeNode*> SGQrcTreeModel::childNodes()
     return root_->children();
 }
 
-SGQrcTreeNode* SGQrcTreeModel::get(int uid) const
+SGQrcTreeNode* SGQrcTreeModel::get(const QString &uid) const
 {
-    if (uid >= uidMap_.size() || uid < 0) {
+    if (!uidMap_.contains(uid)) {
         return nullptr;
     }
-    return uidMap_.at(uid);
+    return uidMap_.find(uid).value();
 }
 
 SGQrcTreeNode* SGQrcTreeModel::getNode(const QModelIndex &index) const
@@ -265,9 +266,10 @@ bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position, const QModel
 
     beginInsertRows(parent, position, position);
     QFileInfo fi(SGUtilsCpp::urlToLocalFile(fileUrl));
-    SGQrcTreeNode *child = new SGQrcTreeNode(parentNode, fi, fi.isDir(), false, uidMap_.size());
+    QString uid = QUuid::createUuid().toString();
+    SGQrcTreeNode *child = new SGQrcTreeNode(parentNode, fi, fi.isDir(), false, uid);
     bool success = parentNode->insertChild(child, position);
-    uidMap_.append(child);
+    uidMap_.insert(uid, child);
     endInsertRows();
     return success;
 }
@@ -283,9 +285,10 @@ bool SGQrcTreeModel::insertChild(bool isDir, int position, const QModelIndex &pa
     }
 
     beginInsertRows(parent, position, position);
-    SGQrcTreeNode *child = new SGQrcTreeNode(parentNode, isDir, uidMap_.size());
+    QString uid = QUuid::createUuid().toString();
+    SGQrcTreeNode *child = new SGQrcTreeNode(parentNode, isDir, uid);
     bool success = parentNode->insertChild(child, position);
-    uidMap_.append(child);
+    uidMap_.insert(uid, child);
     endInsertRows();
     return success;
 }
@@ -463,10 +466,11 @@ void SGQrcTreeModel::createModel()
     beginResetModel();
     QFileInfo rootFi(SGUtilsCpp::urlToLocalFile(url_));
     clear(false);
-    root_ = new SGQrcTreeNode(nullptr, rootFi, false, false, 0);
+    QString uid = QUuid::createUuid().toString();
+    root_ = new SGQrcTreeNode(nullptr, rootFi, false, false, uid);
     emit rootChanged();
 //    connect(root_, &SGQrcTreeNode::dataChanged, this, &SGQrcTreeModel::childrenChanged);
-    uidMap_.append(root_);
+    uidMap_.insert(uid, root_);
     QQmlEngine::setObjectOwnership(root_, QQmlEngine::CppOwnership);
 
     readQrcFile();
@@ -478,22 +482,23 @@ void SGQrcTreeModel::createModel()
 void SGQrcTreeModel::recursiveDirSearch(SGQrcTreeNode* parentNode, QDir currentDir, QSet<QString> qrcItems, int depth)
 {
     for (QFileInfo info : currentDir.entryInfoList(QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::Files | QDir::Dirs)) {
+        QString uid = QUuid::createUuid().toString();
         if (info.isDir()) {
-            SGQrcTreeNode *dirNode = new SGQrcTreeNode(parentNode, info, true, false, uidMap_.size());
+            SGQrcTreeNode *dirNode = new SGQrcTreeNode(parentNode, info, true, false, uid);
 //            connect(dirNode, &SGQrcTreeNode::dataChanged, this, &SGQrcTreeModel::childrenChanged);
             QQmlEngine::setObjectOwnership(dirNode, QQmlEngine::CppOwnership);
             parentNode->insertChild(dirNode, parentNode->childCount());
-            uidMap_.append(dirNode);
+            uidMap_.insert(uid, dirNode);
             recursiveDirSearch(dirNode, QDir(info.filePath()), qrcItems, depth + 1);
         } else {
             if (SGUtilsCpp::pathToUrl(info.filePath()) == url_) {
                 continue;
             }
-            SGQrcTreeNode *node = new SGQrcTreeNode(parentNode, info, false, qrcItems.contains(info.filePath()), uidMap_.size());
+            SGQrcTreeNode *node = new SGQrcTreeNode(parentNode, info, false, qrcItems.contains(info.filePath()), uid);
 //            connect(node, &SGQrcTreeNode::dataChanged, this, &SGQrcTreeModel::childrenChanged);
             QQmlEngine::setObjectOwnership(node, QQmlEngine::CppOwnership);
             parentNode->insertChild(node, parentNode->childCount());
-            uidMap_.append(node);
+            uidMap_.insert(uid, node);
         }
     }
 }

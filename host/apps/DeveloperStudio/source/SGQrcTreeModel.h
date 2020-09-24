@@ -74,7 +74,7 @@ public:
      * @param uid The unique id of the node
      * @return Returns the SGQrcTreeNode* that contains the uid
      */
-    Q_INVOKABLE SGQrcTreeNode* get(int uid) const;
+    Q_INVOKABLE SGQrcTreeNode* get(const QString &uid) const;
 
     /**
      * @brief getNode Gets a node using the QModelIndex
@@ -174,6 +174,6 @@ private:
     QUrl url_;
     QUrl projectDir_;
     QDomDocument qrcDoc_;
-    QList<SGQrcTreeNode*> uidMap_;
+    QHash<QString, SGQrcTreeNode*> uidMap_;
     QSet<QString> qrcItems_;
 };

@@ -15,7 +15,7 @@ SGQrcTreeNode::SGQrcTreeNode(QObject *parent) : QObject(parent)
     children_ = QList<SGQrcTreeNode*>();
 }
 
-SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isDir, bool inQrc, int uid, QObject *parent) :
+SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isDir, bool inQrc, QString uid, QObject *parent) :
     QObject(parent),
     parent_(parentNode),
     isDir_(isDir),
@@ -31,7 +31,7 @@ SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isD
     editing_ = false;
 }
 
-SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, bool isDir, int uid, QObject *parent) : QObject(parent), parent_(parentNode), isDir_(isDir), uid_(uid)
+SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, bool isDir, QString uid, QObject *parent) : QObject(parent), parent_(parentNode), isDir_(isDir), uid_(uid)
 {
     inQrc_ = false;
     children_ = QList<SGQrcTreeNode*>();
@@ -105,7 +105,7 @@ bool SGQrcTreeNode::editing() const
     return editing_;
 }
 
-int SGQrcTreeNode::uid() const
+QString SGQrcTreeNode::uid() const
 {
     return uid_;
 }

@@ -4,7 +4,7 @@
  * class SGFileTabItem
  ******************************************************************/
 
-SGFileTabItem::SGFileTabItem(const QString &filename, const QUrl &filepath, const QString &filetype, const int id) :
+SGFileTabItem::SGFileTabItem(const QString &filename, const QUrl &filepath, const QString &filetype, const QString id) :
     id_(id),
     filename_(filename),
     filepath_(filepath),
@@ -27,7 +27,7 @@ QString SGFileTabItem::filetype() const
     return filetype_;
 }
 
-int SGFileTabItem::id() const
+QString SGFileTabItem::id() const
 {
     return id_;
 }
@@ -163,7 +163,7 @@ Qt::ItemFlags SGFileTabModel::flags(const QModelIndex &index) const
 
 // CUSTOM FUNCTIONS BEGIN
 
-bool SGFileTabModel::addTab(const QString &filename, const QUrl &filepath, const QString &filetype, const int id)
+bool SGFileTabModel::addTab(const QString &filename, const QUrl &filepath, const QString &filetype, const QString &id)
 {
     if (hasTab(id)) {
         setCurrentId(id);
@@ -180,7 +180,7 @@ bool SGFileTabModel::addTab(const QString &filename, const QUrl &filepath, const
     return true;
 }
 
-bool SGFileTabModel::closeTab(const int id)
+bool SGFileTabModel::closeTab(const QString &id)
 {
     if (!hasTab(id)) {
         return false;
@@ -202,7 +202,7 @@ bool SGFileTabModel::closeTabAt(const int index)
         return false;
     }
 
-    int id = data_[index]->id();
+    const QString id = data_[index]->id();
     beginRemoveRows(QModelIndex(), index, index);
     delete data_[index];
     data_.removeAt(index);
@@ -232,7 +232,7 @@ bool SGFileTabModel::closeTabAt(const int index)
 }
 
 
-bool SGFileTabModel::hasTab(const int id) const
+bool SGFileTabModel::hasTab(const QString &id) const
 {
     return tabIds_.contains(id);
 }
@@ -261,7 +261,7 @@ int SGFileTabModel::currentIndex() const
     return currentIndex_;
 }
 
-int SGFileTabModel::currentId() const
+QString SGFileTabModel::currentId() const
 {
     return currentId_;
 }
@@ -284,7 +284,7 @@ void SGFileTabModel::setCurrentIndex(const int index)
     }
 }
 
-void SGFileTabModel::setCurrentId(const int id)
+void SGFileTabModel::setCurrentId(const QString &id)
 {
     if (currentId_ != id) {
         int i = 0;
