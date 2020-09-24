@@ -120,7 +120,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        fileModel.url = model.url
+                        openProjectContainer.url = model.url
                         viewStack.currentIndex = editUseStrip.offset
                         editUseStrip.checkedIndices = 1
                     }

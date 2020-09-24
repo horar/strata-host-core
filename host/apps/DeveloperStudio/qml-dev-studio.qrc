@@ -91,7 +91,6 @@
         <file>partial-views/login/LoginSettings.qml</file>
         <file>partial-views/control-view-creator/ControlViewCreator.qml</file>
         <file>partial-views/control-view-creator/Editor.qml</file>
-        <file>partial-views/control-view-creator/Editor/FileContainer.qml</file>
         <file>partial-views/control-view-creator/NewControlView.qml</file>
         <file>partial-views/control-view-creator/OpenControlView.qml</file>
         <file>partial-views/control-view-creator/Start.qml</file>

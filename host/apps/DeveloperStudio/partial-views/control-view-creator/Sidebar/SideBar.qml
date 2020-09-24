@@ -106,7 +106,13 @@ Rectangle {
                         autoScroll: activeFocus
                         readOnly: false
 
-                        onAccepted: {
+                        onEditingFinished: {
+                            // If a new file was created, and its filename is still empty
+                            if (text === "" && model.filename === "") {
+                                treeModel.removeRows(model.row, 1, styleData.index.parent);
+                                return;
+                            }
+
                             let path;
                             // Below handles the case where the parentNode is the .qrc file
                             if (!model.parentNode.isDir) {
