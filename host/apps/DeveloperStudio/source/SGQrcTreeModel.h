@@ -19,7 +19,6 @@ class SGQrcTreeModel : public QAbstractItemModel
     Q_PROPERTY(SGQrcTreeNode* root READ root NOTIFY rootChanged)
     Q_PROPERTY(QUrl projectDirectory READ projectDirectory NOTIFY projectDirectoryChanged)
     Q_PROPERTY(QList<SGQrcTreeNode*> childNodes READ childNodes)
-    Q_PROPERTY(QList<SGQrcTreeNode*> openFiles READ openFiles NOTIFY openFilesChanged)
 public:
     explicit SGQrcTreeModel(QObject *parent = nullptr);
     ~SGQrcTreeModel();
@@ -28,36 +27,91 @@ public:
         FilenameRole = Qt::UserRole + 1,
         FilepathRole = Qt::UserRole + 2,
         FileTypeRole = Qt::UserRole + 3,
-        VisibleRole = Qt::UserRole + 4,
-        OpenRole = Qt::UserRole + 5,
-        InQrcRole = Qt::UserRole + 6,
-        IsDirRole = Qt::UserRole + 7,
-        ChildrenRole = Qt::UserRole + 8,
-        ParentRole = Qt::UserRole + 9,
-        UniqueIdRole = Qt::UserRole + 10
+        InQrcRole = Qt::UserRole + 4,
+        IsDirRole = Qt::UserRole + 5,
+        ChildrenRole = Qt::UserRole + 6,
+        ParentRole = Qt::UserRole + 7,
+        UniqueIdRole = Qt::UserRole + 8,
+        RowRole = Qt::UserRole + 9,
+        EditingRole = Qt::UserRole + 10
     };
     Q_ENUM(RoleNames);
 
-    // OVERRIDES
+    /***
+     * OVERRIDES
+     ***/
     QHash<int, QByteArray> roleNames() const override;
-    Q_INVOKABLE QVariant data(const QModelIndex &index, int role = Qt::UserRole) const override;
-    Q_INVOKABLE bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+    QVariant data(const QModelIndex &index, int role = Qt::UserRole) const override;
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
-    Q_INVOKABLE int rowCount(const QModelIndex &index = QModelIndex()) const override;
+    int rowCount(const QModelIndex &index = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-    bool removeRows(int row, int count = 1, const QModelIndex &parent = QModelIndex()) override;
-    Q_INVOKABLE QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
+    Q_INVOKABLE bool removeRows(int row, int count = 1, const QModelIndex &parent = QModelIndex()) override;
+    QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
     Q_INVOKABLE QModelIndex parent(const QModelIndex &child) const override;
     Q_INVOKABLE bool hasChildren(const QModelIndex &parent = QModelIndex()) const override;
 
-    bool insertChild(SGQrcTreeNode *child, const QModelIndex &parent = QModelIndex(), int position = -1);
+    /***
+     * CUSTOM FUNCTIONS
+     ***/
+
+    // Node Operations
+
+    /**
+     * @brief root Gets the root node
+     * @return Returns the root node
+     */
+    SGQrcTreeNode* root() const;
+
+    /**
+     * @brief childNodes Gets the children for the root node
+     * @return QList<SGQrcTreeNode*> containing the children of the root node
+     */
     QList<SGQrcTreeNode*> childNodes();
+
+    /**
+     * @brief get Get a node by its unique id
+     * @param uid The unique id of the node
+     * @return Returns the SGQrcTreeNode* that contains the uid
+     */
     Q_INVOKABLE SGQrcTreeNode* get(int uid) const;
 
     /**
-     * @brief readQrcFile Reads a .qrc file and populates the model
+     * @brief getNode Gets a node using the QModelIndex
+     * @param index
+     * @return
      */
-    void readQrcFile(QSet<QString> &qrcItems);
+    Q_INVOKABLE SGQrcTreeNode* getNode(const QModelIndex &index) const;
+
+    /**
+     * @brief getNodeByUrl Gets a node by its url
+     * @param url The url to look for
+     * @return Returns the node if it finds it, otherwise returns a nullptr
+     */
+    Q_INVOKABLE SGQrcTreeNode* getNodeByUrl(const QUrl &url) const;
+
+    // Tree Operations
+
+    /**
+     * @brief insertChild Inserts a child node into the parent
+     * @param fileUrl The url of the file/dir to insert
+     * @param parent Parent index to insert the child into
+     * @param position Position in the parent's child array to insert (-1 is to append)
+     * @return true if successful, otherwise false
+     */
+    Q_INVOKABLE bool insertChild(const QUrl &fileUrl, int position = -1, const QModelIndex &parent = QModelIndex());
+
+    /**
+     * @brief insertChild Inserts a blank child node into the parent
+     * @param isDir If the node is a directory or a file
+     * @param position The position to insert the child at
+     * @param parent The parent to insert the node into
+     * @return Returns true if sucessful otherwise false
+     */
+    Q_INVOKABLE bool insertChild(bool isDir, int position = -1, const QModelIndex &parent = QModelIndex());
+
+
+    // Model Utilities
 
     /**
      * @brief url Returns the url to the .qrc file
@@ -66,33 +120,43 @@ public:
     QUrl url() const;
 
     /**
+     * @brief setUrl Sets the url of the .qrc file
+     * @param url The url to set
+     */
+    void setUrl(QUrl url);
+
+    /**
      * @brief projectDirectory Returns the url to the project root directory
      * @return The url to the project root directory
      */
     QUrl projectDirectory() const;
 
     /**
-     * @brief setUrl Sets the url of the .qrc file
-     * @param url The url to set
+     * @brief addToQrc Adds an item to the qrc file
+     * @param index The node to add to the qrc
+     * @param save If the changes should be saved or not. Default is true
      */
-    void setUrl(QUrl url);
+    Q_INVOKABLE bool addToQrc(const QModelIndex &index, bool save = true);
 
-    QList<SGQrcTreeNode *> openFiles() const;
-    Q_INVOKABLE void addOpenFile(SGQrcTreeNode* item);
-    Q_INVOKABLE void removeOpenFile(SGQrcTreeNode* item);
-    Q_INVOKABLE int findOpenFile(int uid);
+    /**
+     * @brief removeFromQrc Removes an item from the qrc file
+     * @param index The node to remove from the qrc
+     * @param save If the changes should be saved or not. Default is true
+     */
+    Q_INVOKABLE bool removeFromQrc(const QModelIndex &index, bool save = true);
 
-    SGQrcTreeNode* root() const;
-    Q_INVOKABLE SGQrcTreeNode* getNode(const QModelIndex &index) const;
+    /**
+     * @brief deleteFile Deletes a file from the local filesystem and removes it from the qrc
+     * @param row Row in parent
+     * @param parent QModelIndex of the parent
+     * @return Returns true if successful, false otherwise
+     */
+    Q_INVOKABLE bool deleteFile(const int row, const QModelIndex &parent = QModelIndex());
 
 signals:
     void urlChanged();
     void projectDirectoryChanged();
     void rootChanged();
-    void dataReady();
-    void addedOpenFile(SGQrcTreeNode* item);
-    void removedOpenFile(int index);
-    void openFilesChanged();
 
 public slots:
     void childrenChanged(const QModelIndex &index, int role);
@@ -100,12 +164,16 @@ public slots:
 private:
     void clear(bool emitSignals = true);
     void setupModelData();
+    void readQrcFile();
     void createModel();
     void recursiveDirSearch(SGQrcTreeNode *parentNode, QDir currentDir, QSet<QString> qrcItems, int depth);
+    void startSave();
+    void save();
+
     SGQrcTreeNode *root_;
     QUrl url_;
     QUrl projectDir_;
     QDomDocument qrcDoc_;
-    QVector<SGQrcTreeNode*> uidMap_;
-    QList<SGQrcTreeNode*> openFiles_;
+    QList<SGQrcTreeNode*> uidMap_;
+    QSet<QString> qrcItems_;
 };

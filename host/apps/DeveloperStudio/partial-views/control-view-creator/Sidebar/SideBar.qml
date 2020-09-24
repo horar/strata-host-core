@@ -1,11 +1,11 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.2
-import QtQuick.Controls 2.2
+import QtQuick.Controls 2.12
 import QtQuick.Controls.Styles 1.4
 import Qt.labs.folderlistmodel 2.12
 import tech.strata.commoncpp 1.0
-import QtQuick.Controls 1.4
+import QtQuick.Controls 1.4 as QtQC1
 import QtQml.Models 2.12
 
 import tech.strata.SGQrcTreeModel 1.0
@@ -21,10 +21,10 @@ Rectangle {
         Rectangle {
             id: treeViewContainer
             Layout.fillWidth: true
-            Layout.preferredHeight: 600
+            Layout.fillHeight: true
             color: "white"
 
-            TreeView {
+            QtQC1.TreeView {
                 id: treeView
                 model: treeModel
                 backgroundVisible: false
@@ -32,26 +32,121 @@ Rectangle {
                 width: parent.width
                 height: parent.height
 
+                Connections {
+                    target: treeModel
+
+                    // When a row is inserted, we want to focus on that row
+                    onRowsInserted: {
+                        treeView.selection.clearCurrentIndex();
+                        let index = treeModel.index(first, 0, parent);
+                        treeView.selection.select(index, ItemSelectionModel.Rows);
+                        treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
+                        treeModel.setData(index, true, SGQrcTreeModel.EditingRole);
+                    }
+                }
+
+                selection: ItemSelectionModel {
+                    model: treeModel
+                }
+
                 rowDelegate: Rectangle {
                     height: 25
-                    color: (visible && openFilesModel.currentId === model.uid) ? "#CCCCCC" : "transparent"
+                    color: styleData.selected ? "#CCCCCC" : "transparent"
                 }
 
                 itemDelegate: Item {
+                    Component.onCompleted: {
+                        if (model.filename === "Control.qml") {
+                            openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
+                            treeView.selection.clearCurrentIndex();
+                            treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
+                            treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
+                        }
+                    }
+
+                    Connections {
+                        target: openFilesModel
+
+                        onCurrentIndexChanged: {
+                            if (visible && openFilesModel.currentId === model.uid) {
+                                treeView.selection.clearCurrentIndex();
+                                treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
+                                treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
+                            }
+                        }
+                    }
+
                     Text {
-                        id: itemText
-                        width: parent.width - 22
-                        anchors.verticalCenter: parent.verticalCenter
+                        id: itemFilename
                         text: styleData.value
-                        elide: Text.ElideRight
+                        width: inQrcIcon.x - x - 10
+                        height: 15
+                        visible: model && !model.editing
+                        anchors.verticalCenter: parent.verticalCenter
                         font.pointSize: 10
                         color: "black"
+                        elide: Text.ElideRight
+                    }
+
+                    TextInput {
+                        id: itemFilenameEdit
+                        width: inQrcIcon.x - x - 10
+                        height: 15
+                        visible: model && model.editing
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.pointSize: 10
+                        color: "black"
+                        text: styleData.value
+                        focus: visible
+                        clip: true
+                        autoScroll: activeFocus
+                        readOnly: false
+
+                        onAccepted: {
+                            let path;
+                            // Below handles the case where the parentNode is the .qrc file
+                            if (!model.parentNode.isDir) {
+                                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory), displayText);
+                            } else {
+                                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(model.parentNode.filepath), displayText);
+
+                            }
+                            let success = SGUtilsCpp.createFile(path);
+                            if (success) {
+                                model.filename = displayText
+                                model.filepath = SGUtilsCpp.pathToUrl(path);
+                                if (!model.isDir) {
+                                    model.filetype = SGUtilsCpp.fileSuffix(displayText)
+                                    if (!model.inQrc) {
+                                        treeModel.addToQrc(styleData.index);
+                                    }
+                                    openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
+                                }
+                                model.editing = false
+                            } else {
+                                //handle error
+                                console.error("Could not create file:", path)
+                            }
+                        }
+
+                        onFocusChanged: {
+                            if (focus) {
+                                forceActiveFocus();
+                            } else {
+                                forceActiveFocus(mouseArea);
+                            }
+                        }
+
+                        onActiveFocusChanged: {
+                            cursorPosition = activeFocus ? length : 0
+                        }
                     }
 
                     SGIcon {
+                        id: inQrcIcon
                         height: 15
                         width: 15
-                        visible: model && !model.isDir
+                        visible: model && !model.isDir && model.filepath !== treeModel.root.filepath
 
                         anchors {
                             verticalCenter: parent.verticalCenter
@@ -63,79 +158,130 @@ Rectangle {
                         source: model && model.inQrc ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
                     }
 
-                    MouseArea {
-                        anchors.fill: parent
 
-                        onClicked: {
-                            if (!model.isDir) {
-                                if (openFilesModel.hasTab(model.uid)) {
-                                    openFilesModel.currentId = model.uid
-                                } else {
-                                    openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
-                                }
+                    Menu {
+                        id: fileContextMenu
+
+                        MenuItem {
+                            text: "Add to Qrc"
+                            onTriggered: {
+                                treeModel.addToQrc(styleData.index);
+                            }
+                        }
+
+                        MenuItem {
+                            text: "Remove from Qrc"
+                            onTriggered: {
+                                treeModel.removeFromQrc(styleData.index);
+                            }
+                        }
+
+                        MenuItem {
+                            text: "Delete File"
+                            onTriggered: {
+                                openFilesModel.closeTab(model.uid)
+                                treeModel.deleteFile(model.row, styleData.index.parent)
+                            }
+                        }
+
+                        MenuSeparator {}
+
+                        MenuItem {
+                            text: "Add New File to Qrc"
+                            onTriggered: {
+                                treeModel.insertChild(false, -1, styleData.index.parent)
+                            }
+                        }
+
+                        MenuItem {
+                            text: "Add Existing File to Qrc"
+                            onTriggered: {
+                                existingFileDialog.callerIndex = styleData.index.parent
+                                existingFileDialog.open();
                             }
                         }
                     }
+
+                    Menu {
+                        id: folderContextMenu
+
+                        MenuItem {
+                            text: "Add New File to Qrc"
+                            onTriggered: {
+                                if (!styleData.isExpanded) {
+                                    treeView.expand(styleData.index)
+                                }
+
+                                treeModel.insertChild(false, -1, styleData.index)
+                            }
+                        }
+
+                        MenuItem {
+                            text: "Add Existing File to Qrc"
+                            onTriggered: {
+                                if (!styleData.isExpanded) {
+                                    treeView.expand(styleData.index)
+                                }
+
+                                existingFileDialog.callerIndex = styleData.index
+                                existingFileDialog.open();
+                            }
+                        }
+                    }
+
+                    MouseArea {
+                        id: mouseArea
+                        anchors.fill: parent
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+                        onClicked: {
+                            if (model.filename !== "") {
+                                if (mouse.button === Qt.RightButton) {
+                                    if (model.isDir) {
+                                        folderContextMenu.popup();
+                                    } else {
+                                        fileContextMenu.popup();
+                                    }
+                                } else if (mouse.button === Qt.LeftButton) {
+                                    if (!model.isDir) {
+                                        treeView.selection.clearCurrentIndex();
+                                        treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
+                                        treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
+                                        if (openFilesModel.hasTab(model.uid)) {
+                                            openFilesModel.currentId = model.uid
+                                        } else {
+                                            openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
+                                        }
+                                    }
+                                    forceActiveFocus()
+                                }
+                            }
+                        }
+
+                    }
                 }
 
-                TableViewColumn {
-                    title: "Project Files"
+                QtQC1.TableViewColumn {
+                    title: treeModel.root ? treeModel.root.filename : "Project Files"
                     role: "filename"
                     width: 250
                 }
             }
         }
 
-        SGButton {
-            id: newFileButton
-            Layout.fillWidth: true
-            Layout.topMargin: 20
-            text: "New file..."
+        FileDialog {
+            id: existingFileDialog
 
-            onClicked: {
-                newFileDialog.open()
+            nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt *.gif *.html *.csv)"]
+            selectExisting: true
+            selectMultiple: false
+            folder: treeModel.projectDirectory
+
+            property variant callerIndex
+
+            onAccepted: {
+                treeModel.insertChild(fileUrl, -1, callerIndex)
             }
         }
-
-        SGButton {
-            id: existingFileButton
-            Layout.fillWidth: true
-            Layout.topMargin: 20
-            text: "Add existing file to QRC..."
-            onClicked: {
-                existingFileDialog.open()
-            }
-        }
-
-//        FileDialog {
-//            id: existingFileDialog
-//            nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt *.gif *.html *.csv)"]
-//            selectExisting: true
-//            selectMultiple: true
-//            folder: fileModel.projectDirectory
-
-//            onAccepted: {
-//                for (let i = 0; i < fileUrls.length; i++) {
-//                    fileModel.append(fileUrls[i])
-//                }
-//            }
-//        }
-
-//        FileDialog {
-//            id: newFileDialog
-//            nameFilters: ["Qrc Item (*.qml *.js *.png *.jpg *.jpeg *.svg *.json *.txt *.gif *.html *.csv)"]
-//            selectExisting: false
-//            folder: fileModel.projectDirectory
-
-//            onAccepted: {
-//                fileModel.append(fileUrl);
-//                // Handle the case where user adds a new file to a different directory
-//                folder = fileModel.projectDirectory
-//            }
-
-//            onRejected: {
-//                folder = fileModel.projectDirectory
-//            }
-//        }
     }
 }

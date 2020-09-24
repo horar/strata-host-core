@@ -8,11 +8,10 @@
 
 SGQrcTreeNode::SGQrcTreeNode(QObject *parent) : QObject(parent)
 {
-    open_ = false;
-    visible_ = false;
     isDir_ = false;
     inQrc_ = false;
     parent_ = nullptr;
+    editing_ = false;
     children_ = QList<SGQrcTreeNode*>();
 }
 
@@ -23,28 +22,31 @@ SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isD
     inQrc_(inQrc),
     uid_(uid)
 {
-    open_ = false;
-    visible_ = false;
     filename_ = info.fileName();
     filetype_ = info.suffix();
 
     filepath_.setScheme("file");
     filepath_.setPath(info.filePath());
     children_ = QList<SGQrcTreeNode*>();
+    editing_ = false;
+}
+
+SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, bool isDir, int uid, QObject *parent) : QObject(parent), parent_(parentNode), isDir_(isDir), uid_(uid)
+{
+    inQrc_ = false;
+    children_ = QList<SGQrcTreeNode*>();
 }
 
 SGQrcTreeNode::~SGQrcTreeNode()
 {
-    qDeleteAll(children_);
+    clear();
 }
 
-SGQrcTreeNode* SGQrcTreeNode::childNode(int index)
-{
-    if (index < 0 || index >= children_.size()) {
-        return nullptr;
-    }
-    return children_.at(index);
-}
+/***
+ * NODE PROPERTIES
+ ***/
+
+// GETTERS
 
 int SGQrcTreeNode::row() const
 {
@@ -58,45 +60,9 @@ int SGQrcTreeNode::row() const
     return 0;
 }
 
-int SGQrcTreeNode::childCount() const
+QList<SGQrcTreeNode*> SGQrcTreeNode::children() const
 {
-    return children_.count();
-}
-
-bool SGQrcTreeNode::insertChild(SGQrcTreeNode *child, int position)
-{
-    if (position < 0 || position > children_.size()) {
-        return false;
-    }    
-    if (position == children_.count()) {
-        children_.append(child);
-    } else {
-        children_.insert(position, child);
-    }
-    return true;
-}
-
-bool SGQrcTreeNode::removeChildren(int position, int count)
-{
-    if (position < 0 || position + count > children_.size()) {
-        return false;
-    }
-
-    for (int row = 0; row < count; row++) {
-        delete children_.takeAt(position);
-    }
-    return true;
-}
-
-QList<SGQrcTreeNode*> SGQrcTreeNode::children() {
-    qDebug() << "Children requested";
-    qDebug() << children_.count();
     return children_;
-}
-
-SGQrcTreeNode* SGQrcTreeNode::parentNode()
-{
-    return parent_;
 }
 
 QString SGQrcTreeNode::filename() const
@@ -114,16 +80,6 @@ QString SGQrcTreeNode::filetype() const
     return filetype_;
 }
 
-bool SGQrcTreeNode::visible() const
-{
-    return visible_;
-}
-
-bool SGQrcTreeNode::open() const
-{
-    return open_;
-}
-
 bool SGQrcTreeNode::isDir() const
 {
     return isDir_;
@@ -134,15 +90,27 @@ bool SGQrcTreeNode::inQrc() const
     return inQrc_;
 }
 
-SGQrcTreeNode* SGQrcTreeNode::parent() const
+SGQrcTreeNode* SGQrcTreeNode::parentNode() const
 {
     return parent_;
+}
+
+QModelIndex SGQrcTreeNode::index() const
+{
+    return index_;
+}
+
+bool SGQrcTreeNode::editing() const
+{
+    return editing_;
 }
 
 int SGQrcTreeNode::uid() const
 {
     return uid_;
 }
+
+// SETTERS
 
 bool SGQrcTreeNode::setFilename(QString filename) {
     if (filename_ != filename) {
@@ -166,24 +134,6 @@ bool SGQrcTreeNode::setFiletype(QString filetype) {
     if (filetype_ != filetype) {
         filetype_ = filetype;
         emit dataChanged(index_, SGQrcTreeModel::FileTypeRole);
-        return true;
-    }
-    return false;
-}
-
-bool SGQrcTreeNode::setVisible(bool visible) {
-    if (visible_ != visible) {
-        visible_ = visible;
-        emit dataChanged(index_, SGQrcTreeModel::VisibleRole);
-        return true;
-    }
-    return false;
-}
-
-bool SGQrcTreeNode::setOpen(bool open) {
-    if (open_ != open) {
-        open_ = open;
-        emit dataChanged(index_, SGQrcTreeModel::OpenRole);
         return true;
     }
     return false;
@@ -215,6 +165,74 @@ void SGQrcTreeNode::setParentNode(SGQrcTreeNode* parent)
 void SGQrcTreeNode::setIndex(const QModelIndex &index)
 {
     index_ = index;
+}
+
+bool SGQrcTreeNode::setEditing(bool editing)
+{
+    if (editing_ != editing) {
+        editing_ = editing;
+        emit dataChanged(index_, SGQrcTreeModel::EditingRole);
+        return true;
+    }
+    return false;
+}
+
+
+/***
+ * NODE UTILITIES
+ ***/
+
+SGQrcTreeNode* SGQrcTreeNode::childNode(int index)
+{
+    if (index < 0 || index >= children_.size()) {
+        return nullptr;
+    }
+    return children_.at(index);
+}
+
+int SGQrcTreeNode::childCount() const
+{
+    return children_.count();
+}
+
+bool SGQrcTreeNode::insertChild(SGQrcTreeNode *child, int position)
+{
+    if (position < 0 || position > children_.size()) {
+        return false;
+    }    
+    if (position == children_.count()) {
+        children_.append(child);
+    } else {
+        children_.insert(position, child);
+    }
+    return true;
+}
+
+bool SGQrcTreeNode::insertChildren(int position, int count)
+{
+    if (position < 0 || position > children_.size()) {
+        return false;
+    }
+
+    for (int row = 0; row < count; row++) {
+        SGQrcTreeNode* emptyNode = new SGQrcTreeNode();
+        emptyNode->parent_ = this;
+        children_.insert(position, emptyNode);
+    }
+    return true;
+}
+
+
+bool SGQrcTreeNode::removeChildren(int position, int count)
+{
+    if (position < 0 || position + count > children_.size()) {
+        return false;
+    }
+
+    for (int row = 0; row < count; row++) {
+        delete children_.takeAt(position);
+    }
+    return true;
 }
 
 void SGQrcTreeNode::clear()

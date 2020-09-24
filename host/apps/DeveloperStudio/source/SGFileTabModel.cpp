@@ -166,6 +166,7 @@ Qt::ItemFlags SGFileTabModel::flags(const QModelIndex &index) const
 bool SGFileTabModel::addTab(const QString &filename, const QUrl &filepath, const QString &filetype, const int id)
 {
     if (hasTab(id)) {
+        setCurrentId(id);
         return false;
     }
 
