@@ -126,6 +126,8 @@ Item {
                                 SelectionButton {
                                     checked: true
                                     text: "Login"
+                                    Accessible.role: Accessible.Button
+
                                     onClicked: {
                                         loginControls.visible = true
                                         registerControls.visible = false
@@ -134,6 +136,8 @@ Item {
 
                                 SelectionButton {
                                     text: "Register"
+                                    Accessible.role: Accessible.Button
+
                                     onClicked: {
                                         loginControls.visible = false
                                         registerControls.visible = true

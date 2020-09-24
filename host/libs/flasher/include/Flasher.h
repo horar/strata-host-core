@@ -8,10 +8,10 @@
 
 #include <Device/Device.h>
 
-namespace strata::device {
+namespace strata::device::operation {
 
-class DeviceOperations;
-enum class DeviceOperation: int;
+class BaseDeviceOperation;
+enum class Type : int;
 
 }
 
@@ -124,7 +124,7 @@ class Flasher : public QObject
         void devicePropertiesChanged();
 
     private slots:
-        void handleOperationFinished(device::DeviceOperation operation, int data);
+        void handleOperationFinished(device::operation::Type opType, int data);
         void handleOperationError(QString errStr);
 
     private:
@@ -134,13 +134,14 @@ class Flasher : public QObject
         void startBackup();
         void manageBackup(int chunkNumber);
         void finish(Result result);
+        void connectHandlers(device::operation::BaseDeviceOperation* operation);
 
         device::DevicePtr device_;
 
         QFile binaryFile_;
         QString fileMD5_;
 
-        std::unique_ptr<device::DeviceOperations> operation_;
+        std::unique_ptr<device::operation::BaseDeviceOperation> operation_;
 
         int chunkNumber_;
         int chunkCount_;

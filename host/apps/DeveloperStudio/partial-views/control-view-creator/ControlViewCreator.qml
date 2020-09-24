@@ -2,11 +2,19 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
+import "qrc:/js/navigation_control.js" as NavigationControl
 
 Rectangle {
     id: controlViewCreatorRoot
     objectName: "ControlViewCreator"
     property alias openProjectContainer: openProjectContainer
+
+    SGUserSettings {
+        id: sgUserSettings
+        classId: "controlViewCreator"
+        user: NavigationControl.context.user_id
+    }
 
     ColumnLayout {
         anchors {

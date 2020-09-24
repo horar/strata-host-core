@@ -27,6 +27,7 @@
 #include "SGQrcTreeModel.h"
 #include "SGQrcTreeNode.h"
 #include "SGFileTabModel.h"
+#include "SGNewControlView.h"
 #include "HcsNode.h"
 
 #include "AppUi.h"
@@ -105,6 +106,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<SGFileTabModel>("tech.strata.SGFileTabModel", 1, 0, "SGFileTabModel");
     qmlRegisterUncreatableType<SGQrcTreeNode, 1>("tech.strata.SGQrcTreeModel",1,0,"SGTreeNode", "You can't instantiate SGTreeNode in QML");
     qmlRegisterType<SGQrcTreeModel>("tech.strata.SGQrcTreeModel", 1, 0, "SGQrcTreeModel");
+    qmlRegisterUncreatableType<SGNewControlView>("tech.strata.SGNewControlView",1,0,"SGNewControlView", "You can't instantiate SGNewControlView in QML");
     qmlRegisterUncreatableType<SDSModel>("tech.strata.SDSModel", 1, 0, "SDSModel", "You can't instantiate SDSModel in QML");
 
     std::unique_ptr<SDSModel> sdsModel{std::make_unique<SDSModel>()};

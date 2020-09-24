@@ -171,13 +171,23 @@ function Start-HCSAndWait {
     Set-Location $TestRoot
 }
 
+function Backup-Strata_INI {
+     # If it exists, delete "Strata Developer Studio_BACKUP.ini"
+     If (Test-Path "$StrataDeveloperStudioIniDir\Strata Developer Studio_BACKUP.ini" -PathType Leaf) {
+        Remove-Item -Path "$StrataDeveloperStudioIniDir\Strata Developer Studio_BACKUP.ini" -Force
+    }
+
+    # If it exists, rename current "Strata Developer Studio.ini"
+    If (Test-Path "$StrataDeveloperStudioIniDir\Strata Developer Studio.ini" -PathType Leaf) {
+        Rename-Item "$StrataDeveloperStudioIniDir\Strata Developer Studio.ini" "$StrataDeveloperStudioIniDir\Strata Developer Studio_BACKUP.ini"
+    }
+}
 function Restore-Strata_INI {
     # Delete temporary .ini file and restore original
-    Set-Variable "AppData_OnSemi_dir" (Split-Path -Path $HCSAppDataDir)
-    If (Test-Path -Path "$AppData_OnSemi_dir\Strata Developer Studio.ini") {
-        Remove-Item -Path "$AppData_OnSemi_dir\Strata Developer Studio.ini"
-        If (Test-Path "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini") {
-            Rename-Item "$AppData_OnSemi_dir\Strata Developer Studio_BACKUP.ini" "$AppData_OnSemi_dir\Strata Developer Studio.ini"
+    If (Test-Path -Path "$StrataDeveloperStudioIniDir\Strata Developer Studio.ini") {
+        Remove-Item -Path "$StrataDeveloperStudioIniDir\Strata Developer Studio.ini"
+        If (Test-Path "$StrataDeveloperStudioIniDir\Strata Developer Studio_BACKUP.ini") {
+            Rename-Item "$StrataDeveloperStudioIniDir\Strata Developer Studio_BACKUP.ini" "$StrataDeveloperStudioIniDir\Strata Developer Studio.ini"
         }
     }
 }
@@ -213,6 +223,8 @@ function Show-TestSummary {
     Show-TestResult -TestName "Test-TokenAndViewsDownload" -TestResults $TokenAndViewsDownloadResults
 
     Show-TestResult -TestName "Test-CollateralDownload" -TestResults $CollateralDownloadResults
+
+    Show-TestResult -TestName "Test-GUI" -TestResults $GUIResults
 
     If ($EnablePlatformIdentificationTest -eq $true) { 
         Show-TestResult -TestName "Test-PlatformIdentification" -TestResults $PlatformIdentificationResults

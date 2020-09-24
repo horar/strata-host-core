@@ -30,11 +30,13 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/SGQrcTreeModel.cpp
     source/SGQrcTreeNode.cpp
     source/SGFileTabModel.cpp
+    source/SGNewControlView.cpp
     $<IF:$<CONFIG:Release>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
 
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
     signals/qml/tech/strata/signals/qml.qrc
+    partial-views/control-view-creator/template-views.qrc
 
     qml-dev-studio.qrc
     qml-dev-studio-minimal.qrc

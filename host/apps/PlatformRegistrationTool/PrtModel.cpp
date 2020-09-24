@@ -133,6 +133,8 @@ void PrtModel::programDevice()
 
 void PrtModel::downloadBinaries(int platformIndex)
 {
+    Q_UNUSED(platformIndex)
+
     QTimer::singleShot(2500, this, [this](){
 
         bool ok = false;//fakeDownloadBinaries(

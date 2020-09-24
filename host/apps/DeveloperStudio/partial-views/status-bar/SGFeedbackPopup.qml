@@ -18,7 +18,6 @@ SGStrataPopup {
     glowColor: "#666"
     closePolicy: Popup.CloseOnEscape
 
-
     onVisibleChanged: {
         if (visible) {
             nameField.forceActiveFocus()
@@ -241,8 +240,14 @@ SGStrataPopup {
                                 enabled: !feedbackStatus.visible
                                 // Text Length Limiter
                                 readOnly: feedbackStatus.visible
+                                KeyNavigation.tab: submitButton
+                                KeyNavigation.priority: KeyNavigation.BeforeItem
+                                Accessible.role: Accessible.EditableText
+                                Accessible.name: "FeedbackEdit"
+
                                 property int maximumLength: 1000
                                 property string previousText: text
+
                                 onTextChanged: {
                                     if(alertToast.visible) alertToast.hide();
 
@@ -256,10 +261,7 @@ SGStrataPopup {
                                         }
                                     }
                                     previousText = text
-
                                 }
-                                KeyNavigation.tab: submitButton
-                                KeyNavigation.priority: KeyNavigation.BeforeItem
                             }
                         }
                     }
@@ -288,14 +290,17 @@ SGStrataPopup {
                             }
                         }
 
-                        Keys.onReturnPressed:{
-                            submitButton.clicked()
-                        }
+                        Keys.onReturnPressed: pressSubmitButton()
+                        Accessible.onPressAction: pressSubmitButton()
 
                         onClicked: {
                             var feedbackInfo = { email: emailField.text, name: nameField.text,  comment: textEdit.text, type: feedbackTypeListView.currentItem.typeValue }
                             Feedback.feedbackInfo(feedbackInfo)
                             feedbackWrapperColumn.visible = false
+                        }
+
+                        function pressSubmitButton() {
+                            submitButton.clicked()
                         }
                     }
                 }
@@ -303,6 +308,7 @@ SGStrataPopup {
 
         }
     }
+
     Connections {
         target: Signals
 
@@ -328,5 +334,4 @@ SGStrataPopup {
         textEdit.text = ""
         feedbackTypeListView.currentIndex = -1
     }
-
 }

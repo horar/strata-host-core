@@ -266,29 +266,6 @@ Rectangle {
         }
 
 
-
-        NodeConnector{
-            id:nodeConnector
-            anchors.left:dragTargetContainer.left
-            anchors.right:dragTargetContainer.right
-            anchors.top:dragTargetContainer.top
-            height: dragTargetContainer.height
-            visible:false
-
-            dragObjects: dragTargets
-
-            Connections{
-                target: sensorRow
-                onShowMesh:{
-                    nodeConnector.visible = true
-                }
-                onHideMesh:{
-                    nodeConnector.visible = false
-                }
-            }
-        }
-
-
         Rectangle{
             id:dragTargetContainer
             anchors.fill:mainImage
