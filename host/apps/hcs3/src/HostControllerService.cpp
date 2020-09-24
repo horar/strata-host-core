@@ -143,7 +143,8 @@ void HostControllerService::start()
 
 void HostControllerService::stop()
 {
-    clients_.stop();    // first stop clients controller, then dispatcher (it receives data from clients controller)
+    db_.stop();
+    clients_.stop();    // first stop "clients controller" and then stop "dispatcher" (dispatcher receives data from clients controller)
 
     if (dispatcherThread_.get_id() == std::thread::id()) {
         return;
