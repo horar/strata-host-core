@@ -41,7 +41,11 @@ Rectangle {
                         let index = treeModel.index(first, 0, parent);
                         treeView.selection.select(index, ItemSelectionModel.Rows);
                         treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
-                        treeModel.setData(index, true, SGQrcTreeModel.EditingRole);
+
+                        // Only set editing to true if we have created a new file and the filename is empty
+                        if (treeModel.getNode(index).filename === "") {
+                            treeModel.setData(index, true, SGQrcTreeModel.EditingRole);
+                        }
                     }
                 }
 
@@ -277,10 +281,13 @@ Rectangle {
             selectMultiple: false
             folder: treeModel.projectDirectory
 
-            property variant callerIndex
+            property variant callerIndex: null
 
             onAccepted: {
-                treeModel.insertChild(fileUrl, -1, callerIndex)
+                if (callerIndex) {
+                    treeModel.insertChild(fileUrl, -1, callerIndex)
+                    callerIndex = null;
+                }
             }
         }
     }

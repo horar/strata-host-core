@@ -264,10 +264,40 @@ bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position, const QModel
         position = parentNode->childCount();
     }
 
+
+    // This handles the case where parentNode is the .qrc file.
+    QString parentDir = parentNode->isDir() ? SGUtilsCpp::urlToLocalFile(parentNode->filepath()) : SGUtilsCpp::urlToLocalFile(projectDir_);
+    QFileInfo fileInfo(SGUtilsCpp::urlToLocalFile(fileUrl));
+
+    // If the file is not a child of the parent node, then we want to copy the file to the project's location
+    if (! SGUtilsCpp::fileIsChildOfDir(fileInfo.filePath(), parentDir)) {
+        QFileInfo outputFileLocation(SGUtilsCpp::joinFilePath(parentDir, fileInfo.fileName()));
+        QString ext = outputFileLocation.completeSuffix();
+        QString filenameWithoutExt = outputFileLocation.baseName();
+
+        for (int i = 1; ;i++) {
+            if (!outputFileLocation.exists()) {
+                break;
+            }
+
+            // Output file location is already taken, add "-{i}" to the end of the filename and try again
+            outputFileLocation.setFile(SGUtilsCpp::joinFilePath(parentDir, filenameWithoutExt + "-" + QString::number(i) + "." + ext));
+        }
+
+        // Copy the file to the base directory under the new name
+        QFile::copy(fileInfo.filePath(), outputFileLocation.filePath());
+        fileInfo.setFile(outputFileLocation.filePath());
+    } else {
+        // File is a child of the parent directory it will be inserted into
+        // Don't let them add a file that already exists
+        if (QFileInfo::exists(SGUtilsCpp::joinFilePath(parentDir, fileInfo.fileName()))) {
+            return false;
+        }
+    }
+
     beginInsertRows(parent, position, position);
-    QFileInfo fi(SGUtilsCpp::urlToLocalFile(fileUrl));
     QString uid = QUuid::createUuid().toString();
-    SGQrcTreeNode *child = new SGQrcTreeNode(parentNode, fi, fi.isDir(), false, uid);
+    SGQrcTreeNode *child = new SGQrcTreeNode(parentNode, fileInfo, fileInfo.isDir(), true, uid);
     bool success = parentNode->insertChild(child, position);
     uidMap_.insert(uid, child);
     endInsertRows();
