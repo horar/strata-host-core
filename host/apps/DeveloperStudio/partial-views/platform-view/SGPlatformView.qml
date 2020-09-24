@@ -20,7 +20,7 @@ StackLayout {
         }
     }
 
-    property int device_id: model.device_id
+    property var device_id: model.device_id // var type so Constants.DEVICE_IDs are not coerced to 32 bit signed ints
     property string class_id: model.class_id
     property string firmware_version: model.firmware_version
     property bool connected: model.connected
