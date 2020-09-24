@@ -7,63 +7,79 @@ if(APPLE AND NOT CMAKE_OSX_DEPLOYMENT_TARGET)
 endif()
 
 project(host
+    DESCRIPTION "Strata"
+    HOMEPAGE_URL "https://www.onsemi.com/strata"
     LANGUAGES CXX
 )
 
+set(VERSION_QT5 5.12)
+
+# defaults; override in sub-projects if necessary
 set(PROJECT_COMPANY "ON Semiconductor")
+set(PROJECT_WIN32_ICO ${PROJECT_SOURCE_DIR}/resources/icons/app/on.ico)
+set(PROJECT_BUNDLE_ID com.onsemi.strata)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(VERSION_QT5 5.12)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules")
 
+option(BUILD_TESTING "Build the testing tree." ON)
+enable_testing()
+
+include(SetupConfigurations)
 include(FeatureSummary)
-include(CTest)
+include(CMakeDependentOption)
 include(SetupCompileOptions)
 
 include(GitVersionMacro)
+include(TimestampMacro)
 include(AddQmlImportPathMacro)
 
-if(APPLE)
-    find_program(BREW_PROGRAM brew)
-    mark_as_advanced(BREW_PROGRAM)
+# common for 'apps' and 'components' that use resource files
+add_qml_import_path(PATH ":/")
 
-    if(BREW_PROGRAM)
-        find_program(SED_PROGRAM sed)
-        mark_as_advanced(SED_PROGRAM)
-
-        find_program(BASH_PROGRAM bash)
-        mark_as_advanced(BASH_PROGRAM)
-
-        if(BASH_PROGRAM AND SED_PROGRAM)
-            execute_process(COMMAND "${BASH_PROGRAM}" "-c" "${BREW_PROGRAM} config | ${SED_PROGRAM} -n -E 's/^HOMEBREW_PREFIX: (.+)$$/\\1/p'" OUTPUT_VARIABLE HOMEBREW_PREFIX)
-            string( STRIP "${HOMEBREW_PREFIX}" HOMEBREW_PREFIX )
-
-            if(EXISTS "${HOMEBREW_PREFIX}/opt/qt")
-                list(APPEND CMAKE_PREFIX_PATH "${HOMEBREW_PREFIX}/opt/qt")
-            endif()
-        endif()
-    endif()
+if (CMAKE_BUILD_TYPE STREQUAL "OTA")
+    add_custom_target(${PROJECT_NAME})
+    generate_ifw_version(GITTAG_PREFIX "ifw_")
 endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-add_subdirectory(libs)
-add_subdirectory(apps)
-#add_subdirectory(test)
+option(BUILD_TESTING "Build the testing tree" ON)
+add_feature_info(BUILD_TESTING BUILD_TESTING "Build the tsting tree.")
+enable_testing()
+if(BUILD_TESTING)
+    add_subdirectory(test)
+    add_subdirectory(samples)
+endif()
 add_subdirectory(extern)
 option(BUILD_EXAMPLES "Build project examples" OFF)
 add_feature_info(BUILD_EXAMPLES BUILD_EXAMPLES "Build project examples")
-option(BUILD_UTILS "Build project suplementary utils" ON)
-add_feature_info(BUILD_UTILS BUILD_UTILS "Build project suplementary utils")
-if(BUILD_UTILS)
-    add_subdirectory(utils)
+option(APPS_UTILS "Build project suplementary utils" ON)
+add_feature_info(APPS_UTILS APPS_UTILS "Build project suplementary utils")
+add_subdirectory(utils)
+option(BUILD_RS "Build research spikes" OFF)
+add_feature_info(BUILD_RS BUILD_RS "Build research spikes")
+if(BUILD_RS)
+    add_subdirectory(research_spikes)
 endif()
 add_subdirectory(components)
-add_subdirectory(research_spikes)
+add_subdirectory(apps)
+add_subdirectory(libs)
 
+message(STATUS "=============================================================================")
+message(STATUS "QML import paths:")
+foreach(QML_PATH IN LISTS QML_IMPORT_PATH)
+    message(STATUS "\t${QML_PATH}")
+endforeach()
+message(STATUS "Project generator: ${CMAKE_GENERATOR}")
+if(CMAKE_EXTRA_GENERATOR)
+    message(STATUS "Project extra generator: ${CMAKE_EXTRA_GENERATOR}")
+endif()
 message(STATUS "=============================================================================")
 feature_summary(WHAT ALL)

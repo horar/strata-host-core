@@ -1,291 +1,32 @@
 .pragma library
 .import "navigation_control.js" as NavigationControl
-.import "uuid_map.js" as UuidMap
 .import "qrc:/js/platform_filters.js" as PlatformFilters
+.import "constants.js" as Constants
 
 .import tech.strata.logger 1.0 as LoggerModule
+.import tech.strata.commoncpp 1.0 as CommonCpp
 
 var isInitialized = false
-var autoConnectEnabled = true
+var coreInterface
 var listError = {
     "retry_count": 0,
-    "retry_timer": Qt.createQmlObject("import QtQuick 2.12; Timer {interval: 10000; repeat: false; running: false;}",Qt.application,"TimeOut")
+    "retry_timer": Qt.createQmlObject("import QtQuick 2.12; Timer {interval: 3000; repeat: false; running: false;}",Qt.application,"TimeOut")
 }
-var platformListModel
-var coreInterface
-var documentManager
-var platformListModified = false
+var platformSelectorModel
+var classMap = {} // contains metadata for platformSelectorModel for faster lookups
+var previouslyConnected = []
+var localPlatformListSettings = Qt.createQmlObject("import Qt.labs.settings 1.1; Settings {category: \"LocalPlatformList\";}", Qt.application)
+var localPlatformList = []
 
-function initialize (newCoreInterface, newDocumentManager) {
-    platformListModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string selectedClass_id: ''; property string selectedName: ''; property string selectedConnection: ''; property string platformListStatus: 'loading'}",Qt.application,"PlatformListModel")
+function initialize (newCoreInterface) {
+    platformSelectorModel = Qt.createQmlObject("import QtQuick 2.12; ListModel {property int currentIndex: 0; property string platformListStatus: 'loading'}",Qt.application,"PlatformSelectorModel")
     coreInterface = newCoreInterface
-    documentManager = newDocumentManager
     listError.retry_timer.triggered.connect(function () { getPlatformList() });
     isInitialized = true
 }
 
-function populatePlatforms(platform_list_json) {
-    platformListModel.clear()
-    platformListModel.currentIndex = 0
-
-    // Parse JSON
-    try {
-        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "populatePlatforms: ", platform_list_json)
-        var platform_list = JSON.parse(platform_list_json)
-
-        if (platform_list.list.length < 1) {
-            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Received empty platform list from HCS, will retry in 10 seconds")
-            if (listError.retry_count<6) {
-                listError.retry_count++
-                listError.retry_timer.start()
-            } else {
-                console.log("HCS failed to supply valid list, displaying error.")
-                platformListModel.platformListStatus = "error"
-            }
-        } else {
-            listError.retry_count = 0
-            platformListModel.platformListStatus = "loaded"
-        }
-
-        PlatformFilters.initialize()
-
-        for (var platform of platform_list.list){
-            var platform_info
-
-            console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Getting platform information for:", platform.class_id);
-
-            // Extract platform information
-            platform_info = {
-                "verbose_name" : platform.verbose_name,
-                "connection" : platform.connection,
-                "class_id" : platform.class_id,
-                "opn": platform.opn,
-                "description": platform.description,
-                "image": "file:/" + platform.image,
-                "available": platform.available,
-                "filters": [],
-            }
-
-            var class_id_String = String(platform.class_id)
-
-            if (platform.class_id !== undefined && UuidMap.uuid_map.hasOwnProperty(class_id_String)) {
-                platform_info.name = UuidMap.uuid_map[class_id_String]   // fetch directory name used to bring up the UI
-            } else {
-                // [TODO]: call HCS to check remote databases for class_id not found in local map for download
-                if (platform_info.available.control || platform_info.available.documents){
-                    console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "'Available' flags are set but no mapped UI for this class_id; overriding to deny access");
-                    platform_info.available.control = false
-                    platform_info.available.documents = false
-                }
-            }
-
-            // Support both intermediate and planned Deployment Portal API
-            if (platform.hasOwnProperty("filters")) {
-                // platform matches new API
-                for (let filter of platform.filters) {
-                    let filterJSON = PlatformFilters.findFilter(filter)
-                    if (filterJSON) {
-                        platform_info.filters.push(filterJSON)
-                    } else {
-                        // filter from Deployment Portal unknown to UI; update Strata
-                    }
-                }
-            } else {
-                // platform matches old API - TODO [Faller]: remove once deployment portal supports new API, also remove oldNewMap from platformFilters
-                for (var application_icon of platform.application_icons) {
-                    if (PlatformFilters.oldNewMap.hasOwnProperty(application_icon)){
-                        let filter = PlatformFilters.oldNewMap[application_icon]
-                        let filterJSON = PlatformFilters.findFilter(filter)
-                        if (filterJSON) {
-                            platform_info.filters.push(filterJSON)
-                        }
-                    } else {
-                        // icon is not a valid filter or unknown icon
-                    }
-                }
-                for (var product_icon of platform.product_icons) {
-                    if (PlatformFilters.oldNewMap.hasOwnProperty(product_icon)){
-                        let filter = PlatformFilters.oldNewMap[product_icon]
-                        let filterJSON = PlatformFilters.findFilter(filter)
-                        if (filterJSON) {
-                            platform_info.filters.push(filterJSON)
-                        }
-                    } else {
-                        // icon is not a valid filter or unknown icon
-                    }
-                }
-            }
-
-            // console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, JSON.stringify(platform_info));
-
-            // Add to the model
-            platformListModel.append(platform_info)
-            // If the previously selected platform is still available, focus on it in platformSelector
-            if (platformListModel.selectedClass_id === platform_info.class_id) {
-                platformListModel.currentIndex = (platformListModel.count - 1)
-            }
-        }
-
-        // Move connected plat listing to top of list
-        if (platformListModel.currentIndex !==0) {
-            platformListModel.move(platformListModel.currentIndex, 0, 1)
-            platformListModel.currentIndex = 0
-        }
-
-        platformListModified = false
-
-        parseConnectedPlatforms(coreInterface.connected_platform_list_)
-    }
-    catch(err) {
-        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, err.toString())
-        appendErrorListing()
-    }
-}
-
-function parseConnectedPlatforms (connected_platform_list_json) {
-    try {
-        var connected_platform_list = JSON.parse(connected_platform_list_json)
-
-        if (connected_platform_list.list.length > 0) {
-            // for every connected platform (currently should only be 1), check platformListModel for match, and update the model entry to connected state
-            // if not found, generate a listing for unlisted or unknown platforms.
-            platformListModel.currentIndex = 0
-            for (var platform of connected_platform_list.list){
-                var class_id = String(platform.class_id);
-                if (class_id !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id)) {
-                    for (var j = 0; j < platformListModel.count; j ++) {
-                        if (platform.class_id === platformListModel.get(j).class_id ) {
-
-                            platformListModel.get(j).connection = "connected"
-                            platformListModel.get(j).available = {
-                                "documents": true,
-                                "control": true
-                            }
-                            platformListModel.move(j, 0, 1)
-                            if (autoConnectEnabled) {
-                                selectPlatform(0)
-                            }
-                            platformListModified = true
-                            break
-                        }
-                    }
-                    if (platformListModified === false) {
-                        // recognized class_id in UuidMap, but no matching listing found in platformListModel
-                        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "unlisted platform connected");
-                        var platform_info = {
-                            "verbose_name" : "Unlisted Platform Connected: " + platform.verbose_name,
-                            "connection" : "connected",
-                            "class_id" : platform.class_id,
-                            "opn": "Class id: " + platform.class_id,
-                            "description": "No information to display.",
-                            "image": "images/platform-images/notFound.png",
-                            "available": { "control": false, "documents": false },  // Don't allow control or docs for unknown board
-                            "cachedDocuments": false,
-                            "cachedControl": false,
-                            "cachedConnection": "view",
-                            "icons":[]
-                        }
-                        platformListModel.insert(0, platform_info)
-                        if (autoConnectEnabled) {
-                            selectPlatform(0)
-                        }
-                        platformListModified = true
-                    }
-                    break
-                } else {
-                    // class_id of connected platform not listed in UuidMap
-                    console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "unknown platform connected");
-                    var platform_info = {
-                        "verbose_name" : "Unknown Platform Connected: " + platform.verbose_name,
-                        "connection" : "view",
-                        "class_id" : platform.class_id,
-                        "opn": "Class id: " + platform.class_id,
-                        "description": "Strata does not recognize this class_id. Updating Strata may fix this problem.",
-                        "image": "images/platform-images/notFound.png",
-                        "available": { "control": false, "documents": false },  // Don't allow control or docs for unknown board
-                        "cachedDocuments": false,
-                        "cachedControl": false,
-                        "cachedConnection": "view"
-                    }
-                    platformListModel.insert(0, platform_info)
-                    platformListModified = true
-                }
-            }
-        } else {
-            // no platforms connected, reset platformListModel to original state
-            console.log("ParseConnectedPlatforms: no platforms connected")
-            if (platformListModified) {
-                populatePlatforms(coreInterface.platform_list_)
-                if (platformListModel.selectedClass_id !== "") {
-                    deselectPlatform()
-                }
-            }
-        }
-    } catch(err) {
-        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "ParseConnectedPlatforms error:", err.toString())
-        appendErrorListing()
-    }
-}
-
-function sendSelection () {
-    // Run this disconnection code only if nav_control believes something is connected, otherwise createView() needlessly gets called
-    if (NavigationControl.context["platform_connected"] || NavigationControl.context["offline_mode"] || NavigationControl.context["class_id"] !== "") {
-        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Disconnecting platform from navigation control")
-        NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, null)
-    }
-
-    console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Disconnecting platform from core interface")
-    coreInterface.disconnectPlatform()
-
-    // Clear all documents for contents
-    documentManager.clearDocumentSets();
-
-    /*
-        Determine action depending on what type of 'connection' is used
-    */
-    if (platformListModel.selectedConnection === ""){
-        setControlView()
-
-    } else {
-        var data = { class_id: platformListModel.selectedClass_id }
-        coreInterface.sendSelectedPlatform(platformListModel.selectedClass_id, platformListModel.selectedConnection)
-
-        if (platformListModel.selectedConnection === "view") {
-            NavigationControl.updateState(NavigationControl.events.OFFLINE_MODE_EVENT, data)
-            setContentView()
-
-        } else { // selectedConnection is "remote" or "connected"
-            NavigationControl.updateState(NavigationControl.events.NEW_PLATFORM_CONNECTED_EVENT,data)
-            setControlView()
-        }
-    }
-}
-
-function setControlView(){
-    NavigationControl.updateState(NavigationControl.events.SHOW_CONTROL)
-}
-
-function setContentView(){
-    NavigationControl.updateState(NavigationControl.events.SHOW_CONTENT)
-}
-
-function selectPlatform(index){
-    if (index >= 0) {
-        platformListModel.currentIndex = index
-        platformListModel.selectedClass_id = platformListModel.get(index).class_id
-        platformListModel.selectedConnection = platformListModel.get(index).connection
-    }
-    sendSelection()
-}
-
-function deselectPlatform () {
-    platformListModel.selectedClass_id = ""
-    platformListModel.selectedConnection = ""
-    sendSelection()
-}
-
 function getPlatformList () {
-    platformListModel.platformListStatus = "loading"
+    platformSelectorModel.platformListStatus = "loading"
     const get_dynamic_plat_list = {
         "hcs::cmd": "dynamic_platform_list",
         "payload": {}
@@ -293,17 +34,474 @@ function getPlatformList () {
     coreInterface.sendCommand(JSON.stringify(get_dynamic_plat_list));
 }
 
-function appendErrorListing () {
-    platformListModel.clear()
-    platformListModel.append({
-                                 "verbose_name": "Platform List Unavailable",
-                                 "description": "There was a problem loading the platform list",
-                                 "image": "images/platform-images/notFound.png",
-                                 "available": { "control": false, "documents": false },
-                                 "error": true,
-                                 "opn": "",
-                                 "icons":[],
-                                 "class_id": "",
-                                 "connection": "view"
-                             })
+/*
+    Generate platform selector ListModel from incoming JSON platform list
+*/
+function generatePlatformSelectorModel(platform_list_json) {
+    platformSelectorModel.clear()
+    classMap = {}
+    let platform_list
+
+    // Parse JSON
+    try {
+        platform_list = JSON.parse(platform_list_json).list
+    } catch(err) {
+        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Error parsing platform list:", err.toString())
+        platformSelectorModel.platformListStatus = "error"
+    }
+
+    if (platform_list.length < 1) {
+        // empty list received from HCS, retry getPlatformList() query
+        emptyListRetry()
+        return
+    }
+    listError.retry_count = 0
+
+    PlatformFilters.initialize()
+
+    console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Processing platform list");
+
+    // Check to see if the user has a local platform list that they want to add
+    if (localPlatformListSettings.value("path", "") !== "") {
+        const localPlatforms = getLocalPlatformList(localPlatformListSettings.value("path"));
+        console.info(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Found cached local platform list.")
+
+        if (localPlatforms.length > 0) {
+            const mode = localPlatformListSettings.value("mode", "append");
+            localPlatformList = localPlatforms;
+
+            if (mode === "replace") {
+                console.info(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Replacing dynamic platform list with cached local platform list.")
+                platform_list = localPlatformList;
+            } else if (mode === "append") {
+                console.info(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Appending cached local platform list to dynamic platform list")
+                platform_list = platform_list.concat(localPlatformList);
+            }
+        }
+    }
+
+    for (let platform of platform_list){
+        if (platform.class_id === undefined || platform.hasOwnProperty("available") === false) {
+            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Platform has undefined or missing fields, skipping");
+            continue
+        }
+
+        generatePlatform(platform)
+    }
+
+    parseConnectedPlatforms(coreInterface.connected_platform_list_)
+    platformSelectorModel.platformListStatus = "loaded"
+}
+
+/*
+    Retry and manage timeout when HCS responds with an empty platform list
+*/
+function emptyListRetry() {
+    if (listError.retry_count < 3) {
+        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Received empty platform list from HCS, will retry in 3 seconds")
+        listError.retry_count++
+        listError.retry_timer.start()
+    } else if (listError.retry_count < 8) {
+        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Received empty platform list from HCS, will retry in 10 seconds")
+        listError.retry_timer.interval = 10000
+        listError.retry_count++
+        listError.retry_timer.start()
+    } else {
+        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "HCS failed to supply valid list, displaying error.")
+        platformSelectorModel.platformListStatus = "error"
+    }
+}
+
+/*
+    Generate ListElemtent from platform JSON and append to selector model
+*/
+function generatePlatform (platform) {
+    let class_id_string = String(platform.class_id)
+
+    // Parse list of text filters and gather complete filter info from PlatformFilters
+    if (platform.hasOwnProperty("filters")) {
+        platform.filters = PlatformFilters.getFilterList(platform.filters)
+    } else {
+        platform.filters = []
+    }
+
+    if (platform.hasOwnProperty("parts_list")) {
+        platform.parts_list = platform.parts_list.map(part => { return { opn: part, matchingIndex: -1 }})
+    } else {
+        platform.parts_list = []
+    }
+
+    platform.desc_matching_index = -1
+    platform.opn_matching_index = -1
+    platform.name_matching_index = -1
+
+    platform.error = false
+    platform.connected = false  // != device_id, as device may be bound but not connected (i.e. view_open)
+    platform.device_id = Constants.NULL_DEVICE_ID
+    platform.visible = true
+    platform.view_open = false
+    platform.firmware_version = ""
+
+    // Create entry in classMap
+    classMap[class_id_string] = {
+        "original_listing": platform,
+        "selector_listings": [platformSelectorModel.count]
+    }
+
+    // Add to the model
+    platformSelectorModel.append(platform)
+}
+
+/*
+    Determine platform connection changes and update model accordingly.
+    Generate listings for duplicate/unlisted/unknown platforms.
+*/
+function parseConnectedPlatforms (connected_platform_list_json) {
+    let currentlyConnected
+    try {
+        currentlyConnected = JSON.parse(connected_platform_list_json).list
+    } catch(err) {
+        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Error parsing connected platforms list:", err.toString())
+        return
+    }
+
+    for (let platform of currentlyConnected) {
+        if (platform.class_id === undefined || platform.device_id === undefined) {
+            console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Connected platform has undefined class_id or device_id, skipping")
+            continue
+        }
+
+        if (devicePreviouslyConnected(platform.device_id)) {
+            refreshFirmwareVersion(platform)
+            continue
+        } else {
+            addConnectedPlatform(platform)
+        }
+    }
+
+    // Clean up disconnected platforms remaining in previouslyConnected, restore model state
+    for (let disconnected_platform of previouslyConnected) {
+        disconnectPlatform(disconnected_platform)
+    }
+
+    previouslyConnected = currentlyConnected
+}
+
+/*
+    Upon successful firmware flash, connected platform list resent, check for version changes
+*/
+function refreshFirmwareVersion(platform) {
+    let class_id_string = String(platform.class_id);
+
+    if (classMap.hasOwnProperty(class_id_string)) {
+        for (let index of classMap[class_id_string].selector_listings) {
+            let selector_listing = platformSelectorModel.get(index)
+            if (selector_listing.device_id === platform.device_id) {
+                if (selector_listing.firmware_version !== platform.firmware_version) {
+                    selector_listing.firmware_version = platform.firmware_version
+                    for (let i = 0; i < NavigationControl.platform_view_model_.count; i++) {
+                        let open_view = NavigationControl.platform_view_model_.get(i)
+                        if (open_view.class_id === class_id_string && open_view.device_id === platform.device_id) {
+                            open_view.firmware_version = platform.firmware_version
+                            break
+                        }
+                    }
+                } // else firmware version has not changed
+                break
+            }
+        }
+    }
+}
+
+/*
+    Determine if device was already connected (present in most recent connected_platform_list_json)
+*/
+function devicePreviouslyConnected(device_id) {
+    for (let i = 0; i < previouslyConnected.length; i++) {
+        if (previouslyConnected[i].device_id === device_id) {
+            // device previously connected: keep status, remove from previouslyConnected list
+            previouslyConnected.splice(i, 1);
+            return true
+        }
+    }
+    return false
+}
+
+/*
+    Determine if connected platform exists in model or if unlisted/unrecognized
+*/
+function addConnectedPlatform(platform) {
+    let class_id_string = String(platform.class_id);
+
+    if (classMap.hasOwnProperty(class_id_string)) {
+        connectListing(class_id_string, platform.device_id, platform.firmware_version)
+    } else if (class_id_string !== "undefined") {
+        // unlisted platform connected: no entry in DP platform list, but UI found in UuidMap
+        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unlisted platform connected:", class_id_string);
+        insertUnlistedListing(platform)
+    } else {
+        // connected platform class_id not listed in UuidMap or DP platform list, or undefined
+        console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unknown platform connected:", class_id_string);
+        insertUnknownListing(platform)
+    }
+
+    let data = {
+        "device_id": platform.device_id,
+        "class_id": class_id_string,
+        "firmware_version": platform.firmware_version
+    }
+    NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
+}
+
+/*
+    Update existing listing's 'connected' state
+    OR add duplicate listing when 2 boards with same class_id connected
+*/
+function connectListing(class_id_string, device_id, firmware_version) {
+    let found_visible = false
+    let selector_listing
+    let selector_index = -1
+
+    // Do one of the following (by priority):
+    //    1) find listing already bound to this device_id
+    //    2) find any visible unbound listing for re-use
+    //    3) find any unbound listing for re-use
+    //    4) generate new listing
+    for (let index of classMap[class_id_string].selector_listings) {
+        selector_listing = platformSelectorModel.get(index)
+        if (selector_listing.device_id === device_id) {
+            selector_index = index
+            break
+        } else if (selector_listing.device_id === Constants.NULL_DEVICE_ID && found_visible === false) {
+            selector_index = index
+            if (selector_listing.visible) {
+                found_visible = true
+            }
+        }
+    }
+
+    if (selector_index === -1) {
+        selector_index = platformSelectorModel.count
+        classMap[class_id_string].selector_listings.push(selector_index)
+        let selectorCopy = copyObject(classMap[class_id_string].original_listing)
+        platformSelectorModel.append(selectorCopy)
+    }
+
+    selector_listing = platformSelectorModel.get(selector_index)
+    selector_listing.connected = true
+    selector_listing.firmware_version = firmware_version
+    selector_listing.device_id = device_id
+    selector_listing.visible = true
+    let available = copyObject(copyObject(selector_listing.available))
+    available.unlisted = false // override unlisted to show hidden listing when physical board present
+    selector_listing.available = available
+}
+
+function openPlatformView(platform) {
+    let selector_listing = null;
+    if (platform.index) {
+        selector_listing = platformSelectorModel.get(platform.index)
+        selector_listing.view_open = true
+    }
+
+    let data = {
+        "class_id": platform.class_id,
+        "device_id": platform.device_id,
+        "name": selector_listing ? selector_listing.verbose_name : platform.name,
+        "view": "control",
+        "connected": true,
+        "available": platform.available,
+        "firmware_version": platform.firmware_version
+    }
+
+    if (selector_listing && selector_listing.connected === false || platform.device_id === Constants.NULL_DEVICE_ID || platform.available.control === false) {
+        data.view = "collateral"
+        data.connected = false
+    }
+
+    NavigationControl.updateState(NavigationControl.events.OPEN_PLATFORM_VIEW_EVENT,data)
+}
+
+
+/*
+    Disconnect listing, reset completely if no related PlatformView is open
+*/
+function disconnectPlatform(platform) {
+    let class_id_string = String(platform.class_id)
+    let selector_listing = getDeviceListing(class_id_string, platform.device_id)
+
+    selector_listing.connected = false
+
+    if (selector_listing.view_open === false) {
+        resetListing(selector_listing)
+    }
+
+    let data = {
+        "device_id": platform.device_id,
+        "class_id": class_id_string
+    }
+    NavigationControl.updateState(NavigationControl.events.PLATFORM_DISCONNECTED_EVENT, data)
+}
+
+/*
+    Reset listing to original disconnected state, unbind any device_id
+    Remove duplicate listings, leaving last listing visible
+*/
+function resetListing(selector_listing) {
+    selector_listing.device_id = Constants.NULL_DEVICE_ID
+    selector_listing.available = copyObject(classMap[selector_listing.class_id].original_listing.available)
+
+    if (selector_listing.error) {
+        // remove error listings that are not connected and no view_open
+        selector_listing.visible = false
+    } else {
+        // last listing out needs to stay visible in list
+        for (let index of classMap[selector_listing.class_id].selector_listings) {
+            let other_listing = platformSelectorModel.get(index)
+            if (other_listing !== selector_listing && other_listing.visible) {
+                // if at least one other listing is still visible, this one can be made invisible
+                selector_listing.visible = false
+                break
+            }
+        }
+    }
+}
+
+/*
+    Find platform listing in model for a given device_id
+*/
+function getDeviceListing(class_id_string, device_id) {
+    if (classMap[class_id_string]) {
+        for (let index of classMap[class_id_string].selector_listings) {
+            if (platformSelectorModel.get(index).device_id === device_id) {
+                return platformSelectorModel.get(index)
+            }
+        }
+    }
+    return null
+}
+
+/*
+    Set view_open state to false, unbind device_id and reset listing if no longer connected
+*/
+function closePlatformView (platform) {
+    let selector_listing = getDeviceListing(String(platform.class_id), platform.device_id)
+
+    if (selector_listing !== null) {
+        selector_listing.view_open = false
+
+        if (selector_listing.connected === false) {
+            resetListing(selector_listing)
+        }
+    }
+}
+
+/*
+    Insert listing for platform that is not in DB platform_list and does not have a UI
+*/
+function insertUnknownListing (platform) {
+    let platform_info = generateErrorListing(platform)
+    insertErrorListing(platform_info)
+}
+
+/*
+    Insert listing for platform that is not in DB platform_list but does have a UI
+*/
+function insertUnlistedListing (platform) {
+    let platform_info = generateErrorListing(platform)
+
+    platform_info.available.control = true
+    platform_info.description = "No information to display."
+
+    let index = insertErrorListing(platform_info)
+}
+
+function generateErrorListing (platform) {
+    let error = {
+        "verbose_name" : "Unknown Platform",
+        "connected" : true,
+        "class_id" :  String(platform.class_id),
+        "device_id":  platform.device_id,
+        "opn": "Class id: " +  String(platform.class_id),
+        "description": "Strata does not recognize this class_id. Updating Strata may fix this problem.",
+        "image": "", // Assigns 'not found' image
+        "available": {
+            "control": false,
+            "documents": false,
+            "unlisted": false,
+            "order": false
+        },
+        "filters":[],
+        "error": true,
+        "visible": true,
+        "view_open": false,
+        "firmware_version": platform.firmware_version
+    }
+    return error
+}
+
+function insertErrorListing (platform) {
+    platformSelectorModel.append(platform)
+
+    let index = platformSelectorModel.count - 1
+
+    // create entry in classMap
+    classMap[platform.class_id] = {
+        "original_listing": platform,
+        "selector_listings": [index]
+    }
+
+    return index
+}
+
+/*
+  Sets the localPlatformList array and adds it to the platformSelectorModel
+*/
+function setLocalPlatformList(list) {
+    // Remove the previous local platforms if they exist
+    if (localPlatformList.length > 0) {
+        let idx = platformSelectorModel.count - localPlatformList.length
+
+        if (idx >= 0) {
+            platformSelectorModel.remove(idx, localPlatformList.length)
+        }
+    }
+
+    localPlatformList = list;
+
+    for (let platform of localPlatformList) {
+        generatePlatform(platform)
+    }
+}
+
+/*
+  Reads the localPlatformList JSON file and returns its contents.
+  If the JSON file has an error, it returns an empty array
+*/
+
+function getLocalPlatformList(path) {
+    let contents = CommonCpp.SGUtilsCpp.readTextFileContent(path)
+
+    if (contents !== "") {
+        try {
+            let localPlatforms = JSON.parse(contents);
+            localPlatformListSettings.setValue("path", path);
+
+            return localPlatforms;
+        } catch (err) {
+            console.error("Development platform list file has invalid JSON: ", path);
+            return [];
+        }
+    }
+}
+
+function logout() {
+    platformSelectorModel.platformListStatus = "loading"
+    platformSelectorModel.clear()
+    classMap = {}
+    previouslyConnected = []
+}
+
+function copyObject(object){
+    return JSON.parse(JSON.stringify(object))
 }

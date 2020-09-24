@@ -1,20 +1,16 @@
 <RCC>
     <qresource prefix="/">
-        <file>SGContentContainer.qml</file>
-        <file>SGControlContainer.qml</file>
         <file>SGLogin.qml</file>
-        <file>partial-views/login/LoginSignals.qml</file>
         <file>SGStatusBar.qml</file>
-        <file>SGWelcome.qml</file>
-        <file>include/Modules/CircleBadge.qml</file>
+        <file>SGPlatformSelector.qml</file>
         <file>js/core_platform_interface.js</file>
         <file>js/feedback.js</file>
         <file>js/help_layout_manager.js</file>
         <file>js/navigation_control.js</file>
         <file>js/platform_selection.js</file>
         <file>js/restclient.js</file>
-        <file>js/uuid_map.js</file>
         <file>main.qml</file>
+        <file>SplashScreen.qml</file>
         <file>partial-views/SGPrivacyPolicyPopUp.qml</file>
         <file>partial-views/help-tour/SGPeekThroughOverlay.qml</file>
         <file>partial-views/help-tour/SGTourControl.qml</file>
@@ -32,20 +28,12 @@
         <file>partial-views/SGStrataPopup.qml</file>
         <file>partial-views/login/SGRegistrationControls.qml</file>
         <file>partial-views/login/ValidationField.qml</file>
-        <file>partial-views/login/ConnectionStatus.qml</file>
         <file>partial-views/login/SGForgotPassword.qml</file>
         <file>partial-views/login/LoginComboBox.qml</file>
-        <file>partial-views/status-bar/SGConfirmationPopup.qml</file>
         <file>partial-views/status-bar/SGFeedbackPopup.qml</file>
-        <file>partial-views/status-bar/SGGreenButton.qml</file>
         <file>partial-views/status-bar/SGMenuItem.qml</file>
-        <file>partial-views/status-bar/SGProfilePopup.qml</file>
-        <file>partial-views/status-bar/SGProfileUpdate.qml</file>
         <file>partial-views/status-bar/SGSubmitInfoBox.qml</file>
-        <file>partial-views/status-bar/SGSwitch.qml</file>
-        <file>partial-views/status-bar/SGTabButton.qml</file>
         <file>partial-views/status-bar/SGToolButton.qml</file>
-        <file>partial-views/status-bar/SGRemoteSupportPopup.qml</file>
         <file>partial-views/login/registration/PasswordRequirements.qml</file>
         <file>partial-views/login/SGLoginControls.qml</file>
         <file>partial-views/login/SelectionButton.qml</file>
@@ -55,7 +43,6 @@
         <file>partial-views/platform-selector/images/icons/filter-icons/amplifiers_and_comparators.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/analog_to_digital_converters.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/connectivity.svg</file>
-        <file>partial-views/platform-selector/images/icons/filter-icons/dc_dc_controllers_converters_and_regulators.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/discretes_and_drivers.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/isolation_and_protection.svg</file>
         <file>partial-views/platform-selector/images/icons/filter-icons/led.svg</file>
@@ -73,5 +60,39 @@
         <file>partial-views/platform-selector/images/icons/segment-icons/segment-iot.svg</file>
         <file>partial-views/platform-selector/SegmentFilterDelegate.qml</file>
         <file>js/platform_filters.js</file>
+        <file>partial-views/platform-selector/images/icons/placeholder.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/ac_dc.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/battery.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/dc_dc.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/memory.svg</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/interfaces.svg</file>
+        <file>partial-views/SGLoadError.qml</file>
+        <file>partial-views/platform-view/SGPlatformView.qml</file>
+        <file>partial-views/status-bar/SGPlatformTab.qml</file>
+        <file>partial-views/platform-view/DisconnectedOverlay.qml</file>
+        <file>partial-views/platform-selector/images/icons/filter-icons/usb_type_c.svg</file>
+        <file>partial-views/profile-popup/SGProfilePopup.qml</file>
+        <file>partial-views/SGConfirmationPopup.qml</file>
+        <file>partial-views/profile-popup/SGTextValidationSwitch.qml</file>
+        <file>partial-views/profile-popup/ProfileSectionHeader.qml</file>
+        <file>partial-views/profile-popup/ProfileControlContainer.qml</file>
+        <file>partial-views/profile-popup/ProfileSectionDivider.qml</file>
+        <file>partial-views/profile-popup/SubSectionLabel.qml</file>
+        <file>partial-views/platform-view/PlatformSettings.qml</file>
+        <file>partial-views/platform-view/PlatformSettings/SoftwareManagement.qml</file>
+        <file>partial-views/platform-view/PlatformSettings/FirmwareManagement.qml</file>
+        <file>partial-views/platform-view/PlatformSettings/FirmwareVersionList.qml</file>
+        <file>js/constants.js</file>
+        <file>partial-views/status-bar/SGFeedbackTypeModel.qml</file>
+        <file>partial-views/status-bar/SGFeedbackTypeDelegate.qml</file>
+        <file>partial-views/distribution-portal/SGBaseDistributionButton.qml</file>
+        <file>partial-views/distribution-portal/images/arrow-circle-right.svg</file>
+        <file>partial-views/distribution-portal/SGBaseDistributionItem.qml</file>
+        <file>partial-views/login/LoginSettings.qml</file>
+        <file>js/uuid_map.js</file>
+        <file>partial-views/platform-view/ControlViewContainer.qml</file>
+        <file>js/utilities.js</file>
+        <file>partial-views/general/ConnectionStatus.qml</file>
+        <file>partial-views/general/SGNotificationToast.qml</file>
     </qresource>
 </RCC>

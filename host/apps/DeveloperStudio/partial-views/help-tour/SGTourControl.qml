@@ -12,13 +12,40 @@ Item {
 
     property int index: 0
     property alias description: description.text
+    property real fontSizeMultiplier: 1
 
     signal close()
     onClose: Help.closeTour()
 
+    onVisibleChanged: {
+        if (visible) {
+            forceActiveFocus(); // focus on this to catch Keys below
+        } else if (focus){
+            focus = false
+        }
+    }
+
+    Keys.onLeftPressed: {
+        if (root.index > 0) {
+            Help.prev(root.index)
+        }
+    }
+
+    Keys.onRightPressed: {
+        Help.next(root.index)
+    }
+
+    Keys.onEscapePressed: {
+        root.close()
+    }
+
+    // Capture tab/backtab to retain focus
+    Keys.onTabPressed: {}
+    Keys.onBacktabPressed: {}
+
     SGIcon {
         id: closer
-        source: "qrc:/images/icons/times.svg"
+        source: "qrc:/sgimages/times.svg"
         anchors {
             top: root.top
             right: root.right
@@ -35,6 +62,7 @@ Item {
             }
             onClicked: root.close()
             hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
         }
     }
 
@@ -42,12 +70,10 @@ Item {
         id: column
         width: root.width
 
-        Text {
+        SGText {
             id: helpText
             color:"grey"
-            font {
-                pixelSize: 20
-            }
+            fontSizeMultiplier: 1.25 //* root.fontSizeMultiplier
             text: " "
             anchors {
                 horizontalCenter: column.horizontalCenter
@@ -78,7 +104,7 @@ Item {
             width: 15
         }
 
-        TextEdit {
+        SGTextEdit {
             id: description
             text: "Placeholder Text"
             width: root.width - 20
@@ -88,6 +114,7 @@ Item {
             }
             readOnly: true
             wrapMode: TextEdit.Wrap
+            fontSizeMultiplier: root.fontSizeMultiplier
         }
 
         Item {
@@ -101,11 +128,42 @@ Item {
             }
 
             Button {
+                id: prevButton
                 text: "Prev"
                 onClicked: {
                     Help.prev(root.index)
                 }
                 enabled: root.index !== 0
+
+                property bool showToolTip: false
+
+                onHoveredChanged: {
+                    if (prevButton.enabled){
+                        if (hovered) {
+                            prevButtonTimer.start()
+                        } else {
+                            prevButton.showToolTip = false; prevButtonTimer.stop();
+                        }
+                    }
+                }
+
+                Timer {
+                    id: prevButtonTimer
+                    interval: 500
+                    onTriggered: prevButton.showToolTip = true;
+                }
+
+                ToolTip {
+                    text: "Hotkey: ←"
+                    visible: prevButton.showToolTip
+                }
+
+                MouseArea {
+                    id: buttonCursor
+                    anchors.fill: parent
+                    onPressed:  mouse.accepted = false
+                    cursorShape: Qt.PointingHandCursor
+                }
             }
 
             Item {
@@ -114,14 +172,45 @@ Item {
             }
 
             Button {
+                id: nextButton
                 text: "Next"
-                onClicked: {
-                    Help.next(root.index)
-                }
+
+                property bool showToolTip: false
+
                 onVisibleChanged: {
                     if (visible) {
                         text = (root.index + 1) === Help.tour_count ? "End Tour" : "Next"
                     }
+                }
+
+                onClicked: {
+                    Help.next(root.index)
+                }
+
+                onHoveredChanged: {
+                    if (hovered) {
+                        nextButtonTimer.start()
+                    } else {
+                        nextButton.showToolTip = false; nextButtonTimer.stop();
+                    }
+                }
+
+                Timer {
+                    id: nextButtonTimer
+                    interval: 500
+                    onTriggered: nextButton.showToolTip = true;
+                }
+
+                ToolTip {
+                    text: "Hotkey: →"
+                    visible: nextButton.showToolTip
+                }
+
+                MouseArea {
+                    id: buttonCursor1
+                    anchors.fill: parent
+                    onPressed:  mouse.accepted = false
+                    cursorShape: Qt.PointingHandCursor
                 }
             }
         }

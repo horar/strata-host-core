@@ -6,7 +6,7 @@ project(CommandDocCreator
 set(PROJECT_WIN32_ICO resources/icons/app/cdc-logo.ico)
 set(PROJECT_MACOS_ICNS cdc-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.cdc)
-set(PROJECT_COPYRIGHT "Copyright (C) 2019 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2019-2020 ${PROJECT_COMPANY}")
 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -42,7 +42,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Quick
     Qt5::WebEngine
 
-    QtLogger
+    strata::QtLogger
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -54,7 +54,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
-    QT_DEPRECATED_WARNINGS
     QT_DISABLE_DEPRECATED_BEFORE=0x060000
     $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )

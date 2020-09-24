@@ -1,5 +1,4 @@
-#ifndef COREINTERFACE_H
-#define COREINTERFACE_H
+#pragma once
 
 //----
 // Core Framework
@@ -9,7 +8,6 @@
 //  Platform Implementation is done in PlatformInterface/platforms/<type>/PlatformInterface.h/cpp
 //
 //
-
 
 #include <QObject>
 #include <iterator>
@@ -29,8 +27,8 @@
 #include <string>
 #include <HostControllerClient.hpp>
 
-typedef std::function<void(QJsonObject)> NotificationHandler; // notification handler
-typedef std::function<void(QJsonObject)> DataSourceHandler; // data source handler accepting QJsonObject
+using NotificationHandler = std::function<void(QJsonObject)>; // notification handler
+using DataSourceHandler = std::function<void(QJsonObject)>; // data source handler accepting QJsonObject
 
 class CoreInterface : public QObject
 {
@@ -39,48 +37,37 @@ class CoreInterface : public QObject
     //----
     // Core Framework Properties
     //
-    Q_PROPERTY(QString platform_id_ READ platformID NOTIFY platformIDChanged)                   // update platformID to switch control interface
-    Q_PROPERTY(bool platform_state_ READ platformState NOTIFY platformStateChanged)  // TODO [ian] define core framework platform states
     Q_PROPERTY(QString platform_list_ READ platformList NOTIFY platformListChanged)
     Q_PROPERTY(QString connected_platform_list_ READ connectedPlatformList NOTIFY connectedPlatformListChanged)
     Q_PROPERTY(QString hcs_token_ READ hcsToken NOTIFY hcsTokenChanged)
-    Q_PROPERTY(QString remote_user_activity_ READ remoteActivity NOTIFY remoteActivityChanged)
-    Q_PROPERTY(QString remote_user_ READ remoteUser NOTIFY remoteUserAdded)
-    Q_PROPERTY(QString remote_user_ READ remoteUser NOTIFY remoteUserRemoved)
-    Q_PROPERTY(bool remote_connection_result READ remoteConnectionResult NOTIFY remoteConnectionChanged)
 
 public:
-    explicit CoreInterface(QObject *parent = nullptr);
+    explicit CoreInterface(QObject* parent = nullptr,
+                           const std::string& hcsInAddress = "tcp://127.0.0.1:5563");
     virtual ~CoreInterface();
 
     // ---
     // Core Framework: Q_PROPERTY read methods
-    QString platformID() { return platform_id_; }
-    bool platformState() { return platform_state_; }
     QString platformList() { return platform_list_; }
     QString connectedPlatformList() { return connected_platform_list_; }
     QString hcsToken() { return hcs_token_; }
-    QString remoteActivity() { return remote_user_activity_; }
-    bool remoteConnectionResult() { return remote_connection_result_; }
-    QString remoteUser() { return remote_user_; }
 
     bool registerNotificationHandler(std::string notification, NotificationHandler handler);
     bool registerDataSourceHandler(std::string source, DataSourceHandler handler);
 
-    Spyglass::HostControllerClient *hcc;
+    std::unique_ptr<strata::hcc::HostControllerClient> hcc;
     std::thread notification_thread_;
     void notificationsThread();
 
     // Invokables
     //To send the selected platform and its connection status
-    Q_INVOKABLE void sendSelectedPlatform(QString verbose, QString connection_status);
-    Q_INVOKABLE void registerClient();
+    Q_INVOKABLE void loadDocuments(QString class_id);
     Q_INVOKABLE void unregisterClient();
     Q_INVOKABLE void sendCommand(QString cmd);
-    Q_INVOKABLE void disconnectPlatform();
-    
-signals:
 
+    void setNotificationThreadRunning(bool running);
+
+signals:
     // ---
     // Core Framework Signals
     bool platformIDChanged(QString id);
@@ -88,30 +75,27 @@ signals:
     bool platformListChanged(QString list);
     bool connectedPlatformListChanged(QString list);
     bool hcsTokenChanged(QString token);
-    bool remoteActivityChanged(QString remote_activity);
-    bool remoteUserAdded(QString user_name);
-    bool remoteUserRemoved(QString user_disconnected);
-    bool remoteConnectionChanged(bool result);
+
+    void downloadPlatformFilepathChanged(QJsonObject payload);
+    void downloadPlatformSingleFileProgress(QJsonObject payload);
+    void downloadPlatformSingleFileFinished(QJsonObject payload);
+    void downloadPlatformFilesFinished(QJsonObject payload);
+
+    void firmwareProgress(QJsonObject payload);
+    void downloadViewFinished(QJsonObject payload);
+    void downloadControlViewProgress(QJsonObject payload);
 
     // Platform Framework Signals
     void notification(QString payload);
-
-    // Sends notifications to analytics log to populate with fake data
-    void pretendMetrics(QString message);  // TODO: remove this when metrics.js is fully functioning.
 
 private:
 
     // ---
     // Core Framework
-    QString platform_id_;
-    bool platform_state_;         // TODO [ian] change variable name to platform_connected_state
     QString platform_list_{"{ \"list\":[]}"};
     QString connected_platform_list_{"{ \"list\":[]}"};
     QString hcs_token_;
-    QString remote_user_activity_;
-    bool remote_connection_result_;
-    QString remote_user_;
-    bool notification_thread_running_;
+    std::atomic_bool notification_thread_running_;
 
     // ---
     // notification handling
@@ -122,14 +106,8 @@ private:
     void cloudNotificationHandler(QJsonObject notification);
 
     // Core Framework Notificaion Handlers
-    void platformIDNotificationHandler(QJsonObject payload);
-    void connectionChangeNotificationHandler(QJsonObject payload);
     void hcsNotificationHandler(QJsonObject payload);
-    void remoteSetupHandler(QJsonObject payload);
 
     // attached Data Source subscribers
     std::map<std::string, DataSourceHandler > data_source_handlers_;
-
 };
-
-#endif // COREINTERFACE_H

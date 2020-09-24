@@ -1,5 +1,5 @@
 diff --git a/web/viewer.css b/web/viewer.css
-index 45385ec8..8fd097c1 100644
+index 281e1f53..04f7f938 100644
 --- a/web/viewer.css
 +++ b/web/viewer.css
 @@ -843,27 +843,48 @@ html[dir='rtl'] .toolbarButton.pageDown::before {
@@ -51,7 +51,18 @@ index 45385ec8..8fd097c1 100644
  }
  .secondaryToolbarButton.bookmark {
    padding-top: 5px;
-@@ -1656,21 +1677,41 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
+@@ -1000,6 +1021,10 @@ html[dir="rtl"] .secondaryToolbarButton > span {
+   content: url(images/secondaryToolbarButton-documentProperties.png);
+ }
+ 
++.secondaryToolbarButton.documentProperties {
++  display: none !important;
++}
++
+ .verticalToolbarSeparator {
+   display: block;
+   padding: 8px 0;
+@@ -1661,21 +1686,41 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
      content: url(images/toolbarButton-presentationMode@2x.png);
    }
  
@@ -93,6 +104,14 @@ index 45385ec8..8fd097c1 100644
    .toolbarButton.bookmark::before,
    .secondaryToolbarButton.bookmark::before {
      content: url(images/toolbarButton-bookmark@2x.png);
--- 
-2.20.1
-
+@@ -1752,6 +1797,10 @@ html[dir='rtl'] #documentPropertiesOverlay .row > * {
+     content: url(images/secondaryToolbarButton-documentProperties@2x.png);
+   }
+ 
++  .secondaryToolbarButton.documentProperties {
++    display: none !important;
++  }
++
+   .outlineItemToggler::before {
+     transform: scale(0.5);
+     top: -1px;

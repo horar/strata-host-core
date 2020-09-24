@@ -2,7 +2,7 @@ import QtQuick 2.9
 import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.1
-import "qrc:/views/usb-hub/sgwidgets"
+import "../sgwidgets"
 
 Item {
     id: systemControls

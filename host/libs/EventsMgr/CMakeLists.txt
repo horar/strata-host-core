@@ -12,31 +12,38 @@ if (APPLE)
 endif()
 
 add_library(${PROJECT_NAME}
-	src/EvEventBase.cpp
-	src/EvEvent.cpp
-	src/EvEventsMgr.cpp
+    src/EvEventBase.cpp
+    src/EvEvent.cpp
+    src/EvEventsMgr.cpp
 )
+add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 if(WIN32)
-    target_sources(${PROJECT_NAME}
-        PRIVATE src/win32/EvCommEvent.cpp
-        PRIVATE src/win32/EvCommWaitManager.cpp
-        PRIVATE src/win32/EvTimerEvent.cpp
+    target_sources(${PROJECT_NAME} PRIVATE
+        src/win32/EvCommEvent.cpp
+        src/win32/EvCommWaitManager.cpp
+        src/win32/EvTimerEvent.cpp
+        src/win32/EvEventsMgrInstance.cpp
     )
 endif()
 
 target_link_libraries(${PROJECT_NAME}
-        PUBLIC ${LIBEVENT2_LIBRARIES}
-        PUBLIC ${LIBEVENT2_PTHREAD_LIBRARIES}
-        Threads::Threads
-        )
+    PUBLIC ${LIBEVENT2_LIBRARIES}
+    PUBLIC ${LIBEVENT2_PTHREAD_LIBRARIES}
+    Threads::Threads
+)
 
 if (APPLE)
-    target_link_libraries(${PROJECT_NAME} PUBLIC ${IOKIT_LIBRARY} ${FOUNDATION_LIBRARY})
+    target_link_libraries(${PROJECT_NAME} PUBLIC
+        ${IOKIT_LIBRARY}
+        ${FOUNDATION_LIBRARY}
+    )
 endif()
 
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC Ws2_32.lib)
+    target_link_libraries(${PROJECT_NAME} PUBLIC
+        Ws2_32.lib
+    )
 endif()
 
 target_include_directories(${PROJECT_NAME}

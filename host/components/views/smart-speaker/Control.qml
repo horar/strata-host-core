@@ -1,8 +1,8 @@
-import QtQuick 2.9
-import QtQuick.Window 2.2
-import QtQuick.Controls 2.3
-//import "qrc:/views/smart-speaker/sgwidgets"
-import "qrc:/views/smart-speaker/views"
+import QtQuick 2.12
+//import QtQuick.Window 2.2
+import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.12
+import "views"
 
 Item {
     id: controlView
@@ -13,29 +13,51 @@ Item {
         id: platformInterface
     }
 
-    property bool basicControlIsVisible: true
-    property bool advancedControlIsVisible: false
+    TabBar {
+        id: navTabs
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
+        }
 
+        TabButton {
+            id: basicButton
+            text: qsTr("Basic")
+            onClicked: {
+                controlContainer.currentIndex = 0
+            }
+        }
 
-    Item {
+        TabButton {
+            id: advancedButton
+            text: qsTr("Advanced")
+            onClicked: {
+                controlContainer.currentIndex = 1
+            }
+        }
+    }
+
+    StackLayout {
         id: controlContainer
         anchors {
-            top: controlView.top
+            top: navTabs.bottom
             bottom: controlView.bottom
             right: controlView.right
             left: controlView.left
         }
 
         BasicControl {
-            id: basicControl
-            visible: true
-            property real initialAspectRatio
+            id: basic
         }
 
+        AdvancedControl {
+            id: advanced
+        }
     }
 
+
     Component.onCompleted: {
-        basicControl.initialAspectRatio = controlContainer.width / controlContainer.height
 
         console.log("Requesting platform Refresh")
         platformInterface.refresh.send() //ask the platform for all the current values
@@ -44,4 +66,14 @@ Item {
         platformInterface.enable_power_telemetry.update(true);
 
     }
+
+        DebugMenu {
+            // See description in control-views/DebugMenu.qml
+            anchors {
+                right: controlContainer.right
+                bottom: controlContainer.bottom
+            }
+        }
+
+
 }

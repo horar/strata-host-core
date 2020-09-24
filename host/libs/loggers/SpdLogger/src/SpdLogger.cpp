@@ -2,26 +2,17 @@
 
 #include <spdlog/spdlog.h>
 
+namespace strata::loggers
+{
 SpdLogger::SpdLogger()
-    :
-#if defined(_WIN32)
-      console_sink_
-{
-    std::make_shared<spdlog::sinks::msvc_sink_mt>()
-}
-#else
-      console_sink_
-{
-    std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>(spdlog::color_mode::always)
-}
-#endif
-
+    : console_sink_{
+          std::make_shared<spdlog::sinks::stdout_color_sink_mt>(spdlog::color_mode::always)}
 {
 }
 
 SpdLogger::~SpdLogger()
 {
-    spdlog::info("{}: SpdLogger::~SpdLogger - ...spdlog logging finished", logCategory_);
+    spdlog::debug("{}: SpdLogger::~SpdLogger - ...spdlog logging finished", logCategory_);
     spdlog::shutdown();
 }
 
@@ -47,14 +38,16 @@ void SpdLogger::setup(const std::string& fileName, const std::string& logPattern
     spdlog::flush_every(std::chrono::seconds(5));
     spdlog::set_level(spdlog::level::from_str(logLevel));
 
-    spdlog::info("{}: SpdLogger::setup - logging initiated... (spdlog v{}.{}.{})", logCategory_,
-                 SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
-    spdlog::info("{}: SpdLogger::setup - spdlog logging initiated...", logCategory_);
-    spdlog::info("{}: SpdLogger::setup - Logger setup:", logCategory_);
-    spdlog::info("{}: SpdLogger::setup - \tfile: {}", logCategory_, fileName);
-    spdlog::info("{}: SpdLogger::setup - \tlevel: {}", logCategory_, logLevel);
+    spdlog::debug("{}: SpdLogger::setup - logging initiated... (spdlog v{}.{}.{})", logCategory_,
+                  SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
+    spdlog::debug("{}: SpdLogger::setup - spdlog logging initiated...", logCategory_);
+    spdlog::debug("{}: SpdLogger::setup - Logger setup:", logCategory_);
+    spdlog::debug("{}: SpdLogger::setup - \tfile: {}", logCategory_, fileName);
+    spdlog::debug("{}: SpdLogger::setup - \tlevel: {}", logCategory_, logLevel);
     spdlog::debug("{}: SpdLogger::setup - \tlogPattern: {}", logCategory_, logPattern);
     spdlog::debug("{}: SpdLogger::setup - \tlogFilePattern: {}", logCategory_, logFilePattern);
     spdlog::debug("{}: SpdLogger::setup - \tmaxFileSize: {}", logCategory_, maxFileSize);
     spdlog::debug("{}: SpdLogger::setup - \tmaxNoFiles: {}", logCategory_, maxNoFiles);
 }
+
+}  // namespace strata::loggers::spdlog

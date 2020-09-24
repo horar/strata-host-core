@@ -1,8 +1,9 @@
 #ifndef SCIMODEL_H
 #define SCIMODEL_H
 
-#include <BoardsController.h>
+#include <BoardManager.h>
 #include "SciDatabaseConnector.h"
+#include "SciPlatformModel.h"
 
 #include <QObject>
 
@@ -11,19 +12,22 @@ class SciModel : public QObject
     Q_OBJECT
     Q_DISABLE_COPY(SciModel)
 
-    Q_PROPERTY(BoardsController* boardController READ boardController CONSTANT)
+    Q_PROPERTY(strata::BoardManager* boardManager READ boardManager CONSTANT)
     Q_PROPERTY(SciDatabaseConnector* databaseConnector READ databaseConnector CONSTANT)
+    Q_PROPERTY(SciPlatformModel* platformModel READ platformModel CONSTANT)
 
 public:
     explicit SciModel(QObject *parent = nullptr);
     virtual ~SciModel();
 
-    BoardsController* boardController();
+    strata::BoardManager* boardManager();
     SciDatabaseConnector* databaseConnector();
+    SciPlatformModel* platformModel();
 
 private:
-    BoardsController boardController_;
+    strata::BoardManager boardManager_;
     SciDatabaseConnector db_;
+    SciPlatformModel platformModel_;
 };
 
 #endif  // SCIMODEL_H

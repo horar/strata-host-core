@@ -4,12 +4,15 @@ import QtQuick.Controls 2.12
 import QtGraphicalEffects 1.12
 import "qrc:/partial-views/login/"
 import "qrc:/partial-views/"
-import "qrc:/js/login_utilities.js" as LoginUtilities
+import "qrc:/js/utilities.js" as Utility
+import "qrc:/js/restclient.js" as Rest
+import "qrc:/js/login_utilities.js" as Authenticator
+import "qrc:/js/constants.js" as Constants
 
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
-
+import tech.strata.signals 1.0
 Item {
     id: root
     clip: true
@@ -123,6 +126,8 @@ Item {
                                 SelectionButton {
                                     checked: true
                                     text: "Login"
+                                    Accessible.role: Accessible.Button
+
                                     onClicked: {
                                         loginControls.visible = true
                                         registerControls.visible = false
@@ -131,6 +136,8 @@ Item {
 
                                 SelectionButton {
                                     text: "Register"
+                                    Accessible.role: Accessible.Button
+
                                     onClicked: {
                                         loginControls.visible = false
                                         registerControls.visible = true
@@ -202,12 +209,54 @@ Item {
         id: privacyPolicy
 
         function open() {
-            var privacyPolicyPopup = LoginUtilities.createObject("qrc:/partial-views/SGPrivacyPolicyPopUp.qml", privacyPolicy)
+            var privacyPolicyPopup = Utility.createObject("qrc:/partial-views/SGPrivacyPolicyPopUp.qml", privacyPolicy)
             privacyPolicyPopup.width = root.width * .8
             privacyPolicyPopup.webContainerHeight = root.height *.75
             privacyPolicyPopup.x = root.width/2 - privacyPolicyPopup.width/2
             privacyPolicyPopup.y = root.height/2 - privacyPolicyPopup.height/2
             privacyPolicyPopup.open()
+        }
+    }
+
+    Rectangle {
+        id: testServerWarningContainer
+        color: "red"
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: parent.top
+            margins: 30
+        }
+        height: testServerWarning.height + 30
+        visible: Rest.url !== Constants.PRODUCTION_AUTH_SERVER
+
+        Connections {
+            target: Signals
+            onServerChanged: {
+                testServerWarningContainer.visible = ( Rest.url !== Constants.PRODUCTION_AUTH_SERVER )
+            }
+        }
+
+        Text {
+            id: testServerWarning
+            color: "white"
+            font.bold: true
+            anchors {
+                centerIn: parent
+            }
+            text: "NON-DEFAULT / TEST AUTHENTICATION SERVER ENABLED, POTENTIALLY UNSECURED, ONLY USE TEST CREDENTIALS"
+        }
+
+        SGIcon {
+            source: "qrc:/sgimages/exclamation-circle.svg"
+            height: 30
+            width: height
+            iconColor: "white"
+            anchors {
+                left: parent.left
+                verticalCenter: parent.verticalCenter
+                leftMargin: 10
+            }
         }
     }
 

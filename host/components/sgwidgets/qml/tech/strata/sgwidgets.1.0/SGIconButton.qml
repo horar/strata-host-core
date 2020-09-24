@@ -10,10 +10,14 @@ Item {
 
     property alias text: textItem.text
     property alias spacing: wrapper.spacing
-
     property color implicitIconColor: "black"
     property color alternativeIconColor: "white"
     property bool alternativeColorEnabled: false
+
+    /* This is useful when you want to change text dynamically,
+     * but dont want overall button width to be affected by text change.
+     */
+    property alias minimumWidthText: dummyText.text
 
     signal clicked()
 
@@ -28,6 +32,15 @@ Item {
     property alias padding: buttonItem.padding
     property alias checkable: buttonItem.checkable
     property alias checked: buttonItem.checked
+    property alias pressed: buttonItem.pressed
+
+
+    //cannot use TextMetrics as it provides wrong boundingRect.width for some font sizes (as of Qt 5.12.7)
+    SGWidgets.SGText {
+        id: dummyText
+        visible: false
+        font: textItem.font
+    }
 
     Column {
         id: wrapper
@@ -46,11 +59,17 @@ Item {
             onClicked: control.clicked()
         }
 
-        SGWidgets.SGText {
-            id: textItem
+        Item {
             anchors.horizontalCenter: parent.horizontalCenter
-            alternativeColorEnabled: control.alternativeColorEnabled
-            horizontalAlignment: Text.AlignHCenter
+            height: textItem.contentHeight
+            width: Math.max(dummyText.contentWidth, textItem.contentWidth)
+
+            SGWidgets.SGText {
+                id: textItem
+                anchors.horizontalCenter: parent.horizontalCenter
+                alternativeColorEnabled: control.alternativeColorEnabled
+                horizontalAlignment: Text.AlignHCenter
+            }
         }
     }
 }

@@ -4,5 +4,7 @@
 
 Q_DECLARE_LOGGING_CATEGORY(logCategoryStrataDevStudio)
 Q_DECLARE_LOGGING_CATEGORY(logCategoryDocumentManager)
+Q_DECLARE_LOGGING_CATEGORY(logCategoryStrataDevStudioNode)
+Q_DECLARE_LOGGING_CATEGORY(logCategoryResourceLoader)
 
 Q_DECLARE_LOGGING_CATEGORY(logCategoryHcs)

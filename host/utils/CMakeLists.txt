@@ -1,10 +1,14 @@
-add_subdirectory(serial_test)
-add_subdirectory(hcc_test)
-add_subdirectory(platform_mgr_test)
+if(APPS_UTILS)
+    # TODO (LC): why here??
+    add_subdirectory(hcc_test)
+    # temporarily disabled
+    #add_subdirectory(platform_mgr_test)
+endif()
 
-option(UTILS_RCC "Build 'RCC files utility'" ON)
-add_feature_info(UTILS_RCC UTILS_RCC "RCC files utility")
+cmake_dependent_option(APPS_UTILS_RCC "Build 'RCC files utility'" ON
+    "APPS_UTILS" OFF)
+add_feature_info(APPS_UTILS_RCC APPS_UTILS_RCC "RCC files utility")
 
-if (UTILS_RCC)
+if (APPS_UTILS_RCC)
     add_subdirectory(rcc-util)
 endif()

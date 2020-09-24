@@ -4,6 +4,7 @@
 
 #include <string>
 #include <set>
+#include <QObject>
 
 namespace Strata {
     class SGDatabase;
@@ -16,31 +17,31 @@ namespace Strata {
 };
 
 class HCS_Dispatcher;
-class LoggingAdapter;
 
-class Database final
+class Database final: public QObject
 {
-public:
-    Database(const std::string dbPath);
-    ~Database();
+    Q_OBJECT
+    Q_DISABLE_COPY(Database)
 
-    void setDispatcher(HCS_Dispatcher* dispatcher);
-    void setLogAdapter(LoggingAdapter* adapter);
+public:
+    Database(QObject *parent = nullptr);
+    ~Database();
 
     /**
      * Opens the database
+     * @param db_path
      * @param db_name
      * @return returns true when succeeded, otherwise false
      * NOTE: add a path to the DB.
      */
-    bool open(const std::string& db_name);
+    bool open(std::string_view db_path, const std::string &db_name);
 
     /**
      * Initializes and starts the DB replicator
      * @param replUrl replicator URL to connect to
      * @return returns true when succeeded otherwise false
      */
-    bool initReplicator(const std::string& replUrl);
+    bool initReplicator(const std::string& replUrl, const std::string& username, const std::string& password);
 
     /**
      * Adds a channel to the replication
@@ -66,6 +67,9 @@ public:
      */
     bool getDocument(const std::string& doc_id, std::string& result);
 
+signals:
+    void documentUpdated(QString documentId);
+
 private:
     void onDocumentEnd(bool pushing, std::string doc_id, std::string error_message, bool is_error, bool error_is_transient);
 
@@ -84,9 +88,6 @@ private:
     const unsigned int REPLICATOR_RECONNECTION_INTERVAL = 15;
 
     Strata::SGBasicAuthenticator *basic_authenticator_{nullptr};
-
-    HCS_Dispatcher* dispatcher_{nullptr};
-    LoggingAdapter* logAdapter_{nullptr};
 
     std::set<std::string> channels_;
 };

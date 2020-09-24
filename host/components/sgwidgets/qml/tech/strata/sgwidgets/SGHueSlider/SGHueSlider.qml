@@ -15,11 +15,13 @@ Item {
     property color textColor : "black"
     property real sliderHeight: 28
     property var rgbArray: [0,0,0]
+
     property alias overrideLabelWidth: labelText.width
     property bool powerSave: false
 
     implicitHeight: labelLeft ? Math.max(labelText.height, sliderHeight) : labelText.height + sliderHeight + hueSlider.anchors.topMargin
     implicitWidth: 450
+    layer.enabled: true
 
     Text {
         id: labelText

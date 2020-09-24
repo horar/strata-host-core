@@ -1,52 +1,121 @@
-#include "HostControllerServiceVersion.h"
+#include "HostControllerService.h"
+
+#include "Version.h"
+#include "HostControllerServiceTimestamp.h"
+#include "RunGuard.h"
+
+#include "HostControllerServiceNode.h"
+
+#include "logging/LoggingQtCategories.h"
+
+#include <QtLoggerSetup.h>
+
+#include <CbLoggerSetup.h>
 
 #include <QCoreApplication>
 #include <QCommandLineParser>
 #include <QSettings>
+#include <QStandardPaths>
+#include <QDir>
 
-#include <EvEventsMgr.h>    //for EvEventsMgrInstance (windows WSA)
+#if defined(Q_OS_WIN)
+#include <EventsMgr/win32/EvEventsMgrInstance.h> // Windows WSA
+#endif
 
-#include "HostControllerService.h"
-
-#include <QtLoggerSetup.h>
-#include "logging/LoggingQtCategories.h"
+#if !defined(Q_OS_WIN)
+#include "unix/SignalHandlers.h"
+#endif
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
-    QCoreApplication::setApplicationName(QStringLiteral("hcs"));
-    QCoreApplication::setApplicationVersion(version);
     QSettings::setDefaultFormat(QSettings::IniFormat);
+    QCoreApplication::setApplicationName(QStringLiteral("Host Controller Service"));
+    QCoreApplication::setApplicationVersion(AppInfo::version.data());
+    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
 
-    QCoreApplication theApp(argc, argv);
+    QCoreApplication app(argc, argv);
 
     QCommandLineParser parser;
     parser.setApplicationDescription("Strata Host Controller Service");
     parser.addOption({
         {QStringLiteral("f")},
-         QObject::tr("optional configuration <filename> (default: AppConfigLocation)"),
-         QObject::tr("filename")
+        QObject::tr("Optional configuration <filename> (default: AppConfigLocation)."),
+        QObject::tr("filename")
+    });
+    parser.addOption({
+        {QStringLiteral("c")},
+        QObject::tr("Clear cache data of Host Controller Service for <stage>."),
+        QObject::tr("stage")
     });
     parser.addVersionOption();
     parser.addHelpOption();
-    parser.process(theApp);
+    parser.process(app);
 
-    const QtLoggerSetup loggerInitialization(theApp);
+    RunGuard appGuard{"tech.strata.hcs"};
+
+    if (parser.isSet(QStringLiteral("c"))) {
+        if (appGuard.tryToRun() == false) {
+            qCritical() << QStringLiteral("Host Controller Service is already running - can't clear the cache data!!");
+            return EXIT_FAILURE;
+        }
+
+        QString cacheDir{QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
+        if (cacheDir.isEmpty()) {
+            qWarning() << "Folder with application cached data either not accessible or not found!!";
+            return EXIT_FAILURE;
+        }
+        cacheDir.append(QString("/%1").arg(parser.value(QStringLiteral("c"))).toUpper());
+        qDebug() << "Cache location:" << cacheDir;
+
+        for (const auto& folder : {QStringLiteral("db"), QStringLiteral("documents")}) {
+            QDir dir(QString("%1/%2").arg(cacheDir).arg(folder));
+            qInfo() << "Removing" << dir.path() << ":" << dir.removeRecursively();
+        }
+
+        return EXIT_SUCCESS;
+    }
+
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
+    strata::loggers::cbLoggerSetup(loggerInitialization.getQtLogCallback());
+
+    qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
     qCInfo(logCategoryHcs) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    qCInfo(logCategoryHcs) << QStringLiteral("Build on %1 at %2").arg(Timestamp::buildTimestamp.data(), Timestamp::buildOnHost.data());
+    qCInfo(logCategoryHcs) << QStringLiteral("--------------------------------------------------------------------------------");
+    qCInfo(logCategoryHcs) << QStringLiteral("Powered by Qt %1 (based on Qt %2)").arg(QString(qVersion()), qUtf8Printable(QT_VERSION_STR));
+    qCInfo(logCategoryHcs) << QStringLiteral("Running on %1").arg(QSysInfo::prettyProductName());
+    qCInfo(logCategoryHcs) << QStringLiteral("[arch: %1; kernel: %2 (%3); locale: %4]").arg(QSysInfo::currentCpuArchitecture(), QSysInfo::kernelType(), QSysInfo::kernelVersion(), QLocale::system().name());
+    qCInfo(logCategoryHcs) << QStringLiteral("================================================================================");
 
-    spyglass::EvEventsMgrInstance instance;
+    if (appGuard.tryToRun() == false) {
+        qCCritical(logCategoryHcs) << QStringLiteral("Another instance of Host Controller Service is already running.");
+        return EXIT_FAILURE + 1; // LC: todo..
+    }
 
-    QScopedPointer<HostControllerService> hcs(new HostControllerService);
+#if defined(Q_OS_WIN)
+    strata::events_mgr::EvEventsMgrInstance instance;
+#endif
+
+    HostControllerServiceNode hcsNode;
+    hcsNode.start(QUrl(QStringLiteral("local:hcs3")));
+    QObject::connect(qApp, &QCoreApplication::aboutToQuit,
+                     &hcsNode, &HostControllerServiceNode::stop);
+
+#if !defined(Q_OS_WIN)
+    SignalHandlers sh(&app);
+#endif
+
+    std::unique_ptr<HostControllerService> hcs{std::make_unique<HostControllerService>()};
 
     const QString config{parser.value(QStringLiteral("f"))};
     if (hcs->initialize(config) == false) {
-        return 1;
+        return EXIT_FAILURE;
     }
 
-    QObject::connect(&theApp, &QCoreApplication::aboutToQuit, hcs.get(), &HostControllerService::onAboutToQuit);
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, hcs.get(), &HostControllerService::onAboutToQuit);
 
     hcs->start();
 
-    return theApp.exec();
+    return app.exec();
 }
 

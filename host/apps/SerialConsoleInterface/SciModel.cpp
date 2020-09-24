@@ -2,9 +2,10 @@
 #include "logging/LoggingQtCategories.h"
 
 SciModel::SciModel(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      platformModel_(&boardManager_)
 {
-    boardController_.initialize();
+    boardManager_.init();
 
 //disabled until remote db is ready
 //    bool result = db_.open("sci_db");
@@ -24,12 +25,17 @@ SciModel::~SciModel()
 {
 }
 
-BoardsController *SciModel::boardController()
+strata::BoardManager *SciModel::boardManager()
 {
-    return &boardController_;
+    return &boardManager_;
 }
 
 SciDatabaseConnector *SciModel::databaseConnector()
 {
     return &db_;
+}
+
+SciPlatformModel *SciModel::platformModel()
+{
+    return &platformModel_;
 }

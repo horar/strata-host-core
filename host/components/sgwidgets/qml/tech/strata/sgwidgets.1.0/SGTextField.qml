@@ -12,6 +12,9 @@ TextField {
     property bool isValidAffectsBackground: false
     property alias leftIconColor: leftIconItem.iconColor
     property alias leftIconSource: leftIconItem.source
+    property bool darkMode: false
+    property bool showCursorPosition: false
+    property bool passwordMode: false
 
     /* properties for suggestion list */
     property variant suggestionListModel
@@ -23,9 +26,17 @@ TextField {
     property bool suggestionOpenWithAnyKey: true
     property int suggestionMaxHeight: 120
     property bool suggestionDelegateNumbering: false
+    property bool suggestionDelegateRemovable: false
     property alias suggestionPopup: suggestionPopupLoader.item
 
     signal suggestionDelegateSelected(int index)
+    signal suggestionDelegateRemoveRequested(int index)
+
+    /*private*/
+    property bool hasRightIcons: cursorInfoLoader.status === Loader.Ready
+                                 || revelPasswordLoader.status ===  Loader.Ready
+
+    property bool revealPassword: false
 
     placeholderText: "Input..."
     selectByMouse: true
@@ -34,6 +45,17 @@ TextField {
     Keys.priority: Keys.BeforeItem
     font.pixelSize: SGWidgets.SGSettings.fontPixelSize
     leftPadding: leftIconSource.toString() ? leftIconItem.height + 16 : 10
+    rightPadding: hasRightIcons ? rightIcons.width + 16 : 10
+    color: darkMode ? "white" : control.palette.text
+    opacity: control.darkMode && control.enabled === false ? 0.5 : 1
+
+    echoMode: {
+        if (passwordMode && revealPassword === false) {
+            return TextField.Password
+        }
+
+        return TextField.Normal
+    }
 
     Keys.onPressed: {
         if (suggestionOpenWithAnyKey && suggestionPopupLoader.status === Loader.Ready) {
@@ -65,14 +87,14 @@ TextField {
                 return Qt.lighter(SGWidgets.SGColorsJS.ERROR_COLOR, 1.9)
             }
 
-            return control.palette.base
+            return darkMode ? "#5e5e5e" : control.palette.base
         }
         border.width: control.activeFocus ? 2 : 1
         border.color: {
             if (control.activeFocus) {
                 return control.palette.highlight
             } else if (isValid) {
-                return control.palette.mid
+                return darkMode ? "black" : control.palette.mid
             } else {
                 return SGWidgets.SGColorsJS.ERROR_COLOR
             }
@@ -86,6 +108,29 @@ TextField {
             width: height
             height: parent.height - 2*10
             iconColor: "darkgray"
+        }
+
+        Row {
+            id: rightIcons
+            anchors {
+                right: parent.right
+                rightMargin: 10
+                verticalCenter: parent.verticalCenter
+            }
+
+            spacing: 4
+
+            Loader {
+                id: cursorInfoLoader
+                anchors.verticalCenter: parent.verticalCenter
+                sourceComponent: showCursorPosition ? cursorInfoComponent : undefined
+            }
+
+            Loader {
+                id: revelPasswordLoader
+                anchors.verticalCenter: parent.verticalCenter
+                sourceComponent: passwordMode ? revealPasswordComponent : undefined
+            }
         }
     }
 
@@ -108,9 +153,43 @@ TextField {
             closeOnDown: suggestionCloseOnDown
             maxHeight: suggestionMaxHeight
             delegateNumbering: suggestionDelegateNumbering
+            delegateRemovable: suggestionDelegateRemovable
 
             onDelegateSelected: {
                 control.suggestionDelegateSelected(index)
+            }
+
+            onRemoveRequested: {
+                suggestionDelegateRemoveRequested(index)
+            }
+        }
+    }
+
+    Component {
+        id: cursorInfoComponent
+
+        SGWidgets.SGTag {
+            text: control.cursorPosition
+            color: Qt.rgba(0, 0, 0, 0.3)
+            textColor: "white"
+            horizontalPadding: 2
+            verticalPadding: 2
+            font: control.font
+        }
+    }
+
+    Component {
+        id: revealPasswordComponent
+
+        SGWidgets.SGIconButton {
+            iconColor: control.palette.text
+            backgroundOnlyOnHovered: false
+            highlightImplicitColor: "transparent"
+            iconSize: control.background.height - 16
+            icon.source: pressed ? "qrc:/sgimages/eye.svg" : "qrc:/sgimages/eye-slash.svg"
+            onClicked: control.forceActiveFocus()
+            onPressedChanged: {
+                revealPassword = pressed
             }
         }
     }

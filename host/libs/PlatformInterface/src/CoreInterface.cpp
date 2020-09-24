@@ -11,20 +11,16 @@
 
 #include "LoggingQtCategories.h"
 
-using namespace std;
-using namespace Spyglass;
+using std::string;
+using strata::hcc::HostControllerClient;
 
-const char* HOST_CONTROLLER_SERVICE_IN_ADDRESS = "tcp://127.0.0.1:5563";
-
-CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
+CoreInterface::CoreInterface(QObject* parent, const std::string& hcsInAddress)
+    : QObject(parent), hcc{std::make_unique<HostControllerClient>(hcsInAddress)}
 {
-    //qCDebug(logCategoryCoreInterface) << "CoreInterface::CoreInterfaceQObject *parent) : QObject(parent) CTOR\n";
+    // qCDebug(logCategoryCoreInterface) << "CoreInterface::CoreInterfaceQObject *parent) :
+    // QObject(parent) CTOR\n";
 
-    hcc = new HostControllerClient(HOST_CONTROLLER_SERVICE_IN_ADDRESS);
-
-    // [TODO] [prasanth] : need to be added in a better place
-    // json command to ask the list of available platforms from hcs
-    registerClient();
+    qCDebug(logCategoryCoreInterface) << QStringLiteral("HCS incomming address set to: %1").arg(QString::fromStdString(hcsInAddress));
 
     // --------------------
     // Core Framework
@@ -36,41 +32,31 @@ CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
     //
     // from platform TODO [ian] make namespaced platform::notification
     registerNotificationHandler("notification",
-                                bind(&CoreInterface::platformNotificationHandler,
-                                     this, placeholders::_1));
+                                std::bind(&CoreInterface::platformNotificationHandler,
+                                     this, std::placeholders::_1));
 
     registerNotificationHandler("hcs::notification",
-                                bind(&CoreInterface::hcsNotificationHandler,
-                                     this, placeholders::_1));
-
-    registerNotificationHandler("remote::notification",
-                                bind(&CoreInterface::remoteSetupHandler,
-                                     this, placeholders::_1));
+                                std::bind(&CoreInterface::hcsNotificationHandler,
+                                     this, std::placeholders::_1));
 
     registerNotificationHandler("cloud::notification",
-                                bind(&CoreInterface::cloudNotificationHandler,
-                                     this, placeholders::_1));
+                                std::bind(&CoreInterface::cloudNotificationHandler,
+                                     this, std::placeholders::_1));
 
-    registerNotificationHandler("platform_id",
-                                bind(&CoreInterface::platformIDNotificationHandler,
-                                     this, placeholders::_1));
-
-    registerNotificationHandler("platform_connection_change_notification",
-                                bind(&CoreInterface::connectionChangeNotificationHandler,
-                                     this, placeholders::_1));
-
-    platform_state_ = false;
-    notification_thread_running_ = false;
+    notification_thread_running_.store(false);
     notification_thread_= std::thread(&CoreInterface::notificationsThread,this);
-
 }
 
 CoreInterface::~CoreInterface()
 {
-    //qCDebug(logCategoryCoreInterface) << "CoreInterface::~CoreInterface() DTOR\n";
+    setNotificationThreadRunning(false);
+    bool closed = hcc->closeContext();
 
-    delete(hcc);
-    notification_thread_.detach();
+    if (closed && notification_thread_.joinable()) {
+        notification_thread_.join();
+    } else {
+        notification_thread_.detach();
+    }
 }
 
 // @f notificationsThreadHandle
@@ -80,17 +66,15 @@ CoreInterface::~CoreInterface()
 void CoreInterface::notificationsThread()
 {
     //qDebug () << "CoreInterface::notificationsThread - notification handling.";
-    notification_thread_running_ = true;
+    notification_thread_running_.store(true);
 
-    while(notification_thread_running_) {
+    while(notification_thread_running_.load()) {
         // Notification Message Architecture
         //
         //    {
         //        "notification": {
-        //            "value": "platform_connection_change_notification",
-        //            "payload": {
-        //                "status": "disconnected"
-        //            }
+        //            "device_id": -1088988335,
+        //            "message":"{\"notification\":{\"value\":\"sensor_value\",\"payload\":{\"value\":\"touch\"}}}"
         //        }
         //    }
         //
@@ -110,15 +94,17 @@ void CoreInterface::notificationsThread()
         // TODO [ian] need to error check/validate json messages
         string message = hcc->receiveNotification();  // Host Controller Service
 
+        if (message.empty()) {
+            continue;
+        }
+
         QString n(message.c_str());
 
         // Debug; Some messages are too long to print (ex: cloud images)
         if (n.length() < 500) {
           qCDebug(logCategoryCoreInterface) <<"[recv]" << n;
-          emit pretendMetrics(n); // TODO: remove this (see pretendMetrics in CoreInterface.H)
         } else {
           qCDebug(logCategoryCoreInterface) <<"[recv]" << n.left(500) << "... (message over 500 chars truncated)";
-          emit pretendMetrics("Cloud file download, over 500 chars"); // TODO: remove this (see pretendMetrics in CoreInterface.H)
         }
 
         QJsonDocument doc = QJsonDocument::fromJson(n.toUtf8());
@@ -156,84 +142,31 @@ void CoreInterface::notificationsThread()
         // dispatch handler for notification
         handler->second(notification_json[notification].toObject());
     }
+
+    hcc->close();
 }
 
 // ---
 // Core Framework Infrastructure Notification Handlers
 //
-void CoreInterface::platformIDNotificationHandler(QJsonObject payload)
-{
-    if (payload.contains("platform_id")) {
-        QString platform_id = payload["platform_id"].toString();
-        //qCDebug(logCategoryCoreInterface) << "Received platform_id = " << platform_id;
-
-        if(platform_id_ != platform_id ) {
-            platform_id_ = platform_id;
-            emit platformIDChanged(platform_id_);
-
-            // also update platform connected state
-            platform_state_ = true;
-            emit platformStateChanged(platform_state_);
-        }
-    }
-}
-
-void CoreInterface::connectionChangeNotificationHandler(QJsonObject payload)
-{
-    QString state = payload["status"].toString();
-    //qCDebug(logCategoryCoreInterface) << "platform_state = " << state;
-
-    if( state == "connected" ) {
-        platform_state_ = true;
-        emit platformStateChanged(platform_state_);
-    }
-    else {
-        platform_state_ = false;
-        platform_list_ = "{ \"list\":[]}";
-        emit platformStateChanged(platform_state_);
-    }
-}
 
 // @f platformNotificationHandler
-// @b handle platform notifications
+// @b forward platform notifications to UI
 //
 //  TODO [ian] change "value" to "name" of notification message
 //    {
 //        "notification": {
-//            "value": "platform_connection_change_notification",
-//            "payload": {
-//                "status": "disconnected"
-//            }
+//            "device_id": -1088988335,
+//            "message":"{\"notification\":{\"value\":\"sensor_value\",\"payload\":{\"value\":\"touch\"}}}"
 //        }
 //    }
 
 void CoreInterface::platformNotificationHandler(QJsonObject payload)
 {
-    //qDebug("ImplementationInterfaceBinding::platformmNotificationHandler: CALLED");
+    //qCDebug(logCategoryCoreInterface) << "CoreInterface::platformNotificationHandler: CALLED";
 
-    if( payload.contains("value") == false ) {
-        qCritical("CoreInterface::platformNotificationHandler()"
-                  " ERROR: no name for notification!!");
-        return;
-    }
-
-    if( payload.contains("payload") == false ) {
-        qCritical("CoreInterface::platformNotificationHandler()"
-                  " ERROR: no payload for notification!!");
-        return;
-    }
-
-    QString value = payload["value"].toString();
-    auto handler = notification_handlers_.find(value.toStdString());
-    if( handler == notification_handlers_.end()) {
-        QJsonDocument doc(payload);
-        emit notification( doc.toJson(QJsonDocument::Compact));
-        return;
-    }
-
-    handler->second(payload["payload"].toObject());
     QJsonDocument doc(payload);
-    emit notification( doc.toJson(QJsonDocument::Compact));
+    emit notification(doc.toJson(QJsonDocument::Compact));
 }
 
 // @f initialHandshakeHandler
@@ -265,82 +198,35 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
             platform_list_ = strJson_payload;
         }
         emit platformListChanged(platform_list_);
+    } else if (type == "download_platform_filepath_changed") {
+        emit downloadPlatformFilepathChanged(payload);
+    } else if (type == "download_platform_single_file_progress") {
+        emit downloadPlatformSingleFileProgress(payload);
+    } else if (type == "download_platform_single_file_finished") {
+        emit downloadPlatformSingleFileFinished(payload);
+    } else if (type == "download_platform_files_finished") {
+        emit downloadPlatformFilesFinished(payload);
+    } else if (type == "firmware_update") {
+        emit firmwareProgress(payload);
+    } else if (type == "download_view_finished") {
+        emit downloadViewFinished(payload);
+    } else if (type == "control_view_download_progress") {
+        emit downloadControlViewProgress(payload);
+    } else {
+        qCCritical(logCategoryCoreInterface) << "unknown message type" << type;
     }
 }
 
-// @f remoteSetupHandler
-// @b handles the messages required for remote connection
-// advertise_platforms - gets the hcs token required for connection
-// get_platforms - TO indicate if the hcs token entered is valid
-void CoreInterface::remoteSetupHandler(QJsonObject payload)
-{
-    if( payload.contains("value") == false ) {
-        qCritical("CoreInterface::platformNotificationHandler()"
-                  " ERROR: no name for notification!!");
-        return;
-    }
-
-    if( payload.contains("payload") == false ) {
-        qCritical("CoreInterface::platformNotificationHandler()"
-                  " ERROR: no payload for notification!!");
-        return;
-    }
-    if(payload["value"].toString()=="advertise_platforms") {
-        //qDebug("Parse success");
-        bool status = payload["payload"].toObject()["status"].toBool();
-        if(status) {
-            hcs_token_ = payload["payload"].toObject()["hcs_id"].toString();
-            //qDebug()<<hcs_token_;
-        }
-        else {
-            hcs_token_ = "";
-        }
-        emit hcsTokenChanged(hcs_token_);
-    }
-    else if(payload["value"].toString()=="get_platforms") {
-        //qDebug("Parse success");
-        bool status = payload["payload"].toObject()["status"].toBool();
-        if(status) {
-            //qDebug("Remote response: token valid");
-        }
-        else {
-            //qDebug("Remote response: token invalid");
-        }
-        emit remoteConnectionChanged(status);
-    }
-    else if(payload["value"].toString()=="remote_activity") {
-        //qDebug("parse success");
-        remote_user_activity_ = payload["payload"].toObject()["user_name"].toString();
-        emit remoteActivityChanged(remote_user_activity_);
-        //qDebug()<<remote_user_activity_;
-    }
-    else if(payload["value"].toString()=="remote_user_added") {
-        //qDebug("parse success");
-        remote_user_ = payload["payload"].toObject()["user_name"].toString();
-        emit remoteUserAdded(remote_user_);
-        //qDebug()<<remote_user_;
-    }
-    else if(payload["value"].toString()=="remote_user_removed") {
-        //qDebug("parse success");
-        remote_user_ = payload["payload"].toObject()["user_name"].toString();
-        emit remoteUserRemoved(remote_user_);
-        //qDebug()<<remote_user_;
-    }
-    //qDebug()<< payload;
-}
-
-// @f sendSelectedPlatform
+// @f loadDocuments
 // @b send the user selected platform to HCS to create the mapping
 //
-// TOOD connect is a better name
-void CoreInterface::sendSelectedPlatform(QString verbose, QString connection_status)
+void CoreInterface::loadDocuments(QString class_id)
 {
     QJsonObject cmdPayloadObject;
-    cmdPayloadObject.insert("platform_uuid",verbose);
-    cmdPayloadObject.insert("remote",connection_status);
+    cmdPayloadObject.insert("class_id",class_id);
 
     QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("cmd", "platform_select");
+    cmdMessageObject.insert("cmd", "load_documents");
     cmdMessageObject.insert("payload", cmdPayloadObject);
 
     QJsonDocument doc(cmdMessageObject);
@@ -357,28 +243,9 @@ void CoreInterface::sendCommand(QString cmd)
     hcc->sendCmd(cmd.toStdString());
 }
 
-// @f disconnectPlatform
-// @b send disconnect command to HCS
-//
-void CoreInterface::disconnectPlatform()
+void CoreInterface::setNotificationThreadRunning(bool running)
 {
-    std::string cmd= "{\"hcs::cmd\":\"disconnect_platform\",\"payload\":{}}";
-    hcc->sendCmd(cmd);
-}
-
-// @f registerClient
-// @b send initial handshake to receive platform list
-//
-void CoreInterface::registerClient()
-{
-    QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("cmd", "register_client");
-    cmdMessageObject.insert("payload", QJsonObject());
-
-    QJsonDocument doc(cmdMessageObject);
-    QString strJson(doc.toJson(QJsonDocument::Compact));
-    //qDebug()<<"parse to send"<<strJson;
-    hcc->sendCmd(strJson.toStdString());
+    notification_thread_running_.store(running);
 }
 
 // @f unregisterClient
@@ -387,7 +254,7 @@ void CoreInterface::registerClient()
 void CoreInterface::unregisterClient()
 {
     QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("cmd", "unregister");
+    cmdMessageObject.insert("hcs::cmd", "unregister");
     cmdMessageObject.insert("payload", QJsonObject());
 
     QJsonDocument doc(cmdMessageObject);

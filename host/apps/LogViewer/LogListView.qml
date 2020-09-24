@@ -1,7 +1,8 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import tech.strata.sgwidgets 1.0 as SGWidgets
-import tech.strata.fonts 1.0 as StrataFonts
+import tech.strata.commoncpp 1.0 as CommonCPP
+import tech.strata.logviewer.models 1.0 as LogViewModels
 
 Item {
     id: logViewWrapper
@@ -26,12 +27,19 @@ Item {
     property var highlightColor
     property int requestedWidth: 1
     property alias contentX: logListView.contentX
+    property int animationDuration: 500
+    property bool automaticScroll: true
+    property bool timestampSimpleFormat: false
 
     signal newWidthRequested()
     signal currentItemChanged(int index)
 
     function positionViewAtIndex(index, param) {
         logListView.positionViewAtIndex(index, param)
+    }
+
+    function positionViewAtEnd() {
+        logListView.positionViewAtEnd();
     }
 
     function resetRequestedWith() {
@@ -42,7 +50,13 @@ Item {
     TextMetrics {
         id: textMetricsTs
         font: timestampHeaderText.font
-        text: "9999-99-99 99:99.99.999 XXX+99:9999"
+        text: "9999-99-99 99:99.99.999 +UTC99:99"
+    }
+
+    TextMetrics {
+        id: textMetricsTsTime
+        font: timestampHeaderText.font
+        text: "99:99.99.999"
     }
 
     TextMetrics {
@@ -58,15 +72,15 @@ Item {
     }
 
     TextMetrics {
-        id: textMetricsLevel
+        id: textMetricsLevelTag
         font: timestampHeaderText.font
-        text: "[ 99 ]"
+        text: "DEBUG"
     }
 
     TextMetrics {
         id: textMetricsSidePanel
         font: timestampHeaderText.font
-        text: " Timestamp "
+        text: "Timestamp"
     }
 
     Item {
@@ -80,6 +94,13 @@ Item {
         height: headerContent.height + 8
         x: -logViewWrapper.contentX
 
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                logViewWrapper.forceActiveFocus();
+            }
+        }
+
         Rectangle {
             id: headerBg
             anchors.fill: parent
@@ -91,12 +112,15 @@ Item {
             anchors {
                 verticalCenter: parent.verticalCenter
             }
+            height: messageHeaderText.contentHeight
             leftPadding: handleSpacer
+            spacing: 8
 
             Item {
                 id: tsHeader
+                anchors.verticalCenter: parent.verticalCenter
                 height: timestampHeaderText.contentHeight + cellHeightSpacer
-                width: textMetricsTs.boundingRect.width + cellWidthSpacer
+                width: timestampSimpleFormat ? textMetricsTsTime.boundingRect.width + cellWidthSpacer : textMetricsTs.boundingRect.width + cellWidthSpacer
                 visible: timestampColumnVisible
 
                 SGWidgets.SGText {
@@ -105,13 +129,18 @@ Item {
                         left: tsHeader.left
                         verticalCenter: parent.verticalCenter
                     }
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: qsTr("Timestamp")
                 }
             }
 
+            Divider {
+                visible: timestampColumnVisible
+            }
+
             Item {
                 id: pidHeader
+                anchors.verticalCenter: parent.verticalCenter
                 height: pidHeaderText.contentHeight + cellHeightSpacer
                 width: textMetricsPid.boundingRect.width + cellWidthSpacer
                 visible: pidColumnVisible
@@ -122,13 +151,18 @@ Item {
                         left: pidHeader.left
                         verticalCenter: parent.verticalCenter
                     }
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: qsTr("PID")
                 }
             }
 
+            Divider {
+                visible: pidColumnVisible
+            }
+
             Item {
                 id: tidHeader
+                anchors.verticalCenter: parent.verticalCenter
                 height: tidHeaderText.contentHeight + cellHeightSpacer
                 width: textMetricsTid.boundingRect.width + cellWidthSpacer
                 visible: tidColumnVisible
@@ -139,30 +173,40 @@ Item {
                         left: tidHeader.left
                         verticalCenter: parent.verticalCenter
                     }
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: qsTr("TID")
                 }
             }
 
+            Divider {
+                visible: tidColumnVisible
+            }
+
             Item {
                 id: levelHeader
+                anchors.verticalCenter: parent.verticalCenter
                 height: levelHeaderText.contentHeight + cellHeightSpacer
-                width: textMetricsLevel.boundingRect.width + cellWidthSpacer
+                width: textMetricsLevelTag.boundingRect.width + cellWidthSpacer
                 visible: levelColumnVisible
 
                 SGWidgets.SGText {
                     id: levelHeaderText
                     anchors {
                         left: levelHeader.left
-                        verticalCenter: parent.verticalCenter
+                        centerIn: parent
                     }
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: qsTr("Level")
                 }
             }
 
+            Divider {
+                visible: levelColumnVisible
+            }
+
             Item {
                 id: msgHeader
+                anchors.verticalCenter: parent.verticalCenter
                 height: messageHeaderText.contentHeight + cellHeightSpacer
                 width: messageHeaderText.contentWidth + cellWidthSpacer
                 visible: messageColumnVisible
@@ -173,14 +217,11 @@ Item {
                         left: msgHeader.left
                         verticalCenter: parent.verticalCenter
                     }
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: qsTr("Message")
 
-                    onFontChanged: {
+                    onFontInfoChanged: {
                         logViewWrapper.contentX = 0
-                        if(visible === false) {
-                            return
-                        }
                         requestNewWidthTimer.start()
                     }
                 }
@@ -221,7 +262,6 @@ Item {
         highlightMoveDuration: 0
         highlightMoveVelocity: -1
         clip: true
-        headerPositioning: ListView.OverlayHeader
 
         ScrollBar.vertical: ScrollBar {
             minimumSize: 0.1
@@ -231,7 +271,15 @@ Item {
         ScrollBar.horizontal: ScrollBar {
             visible: !messageWrapEnabled
             minimumSize: 0.1
-            policy: ScrollBar.AlwaysOn
+            policy: ScrollBar.AsNeeded
+        }
+
+        onContentYChanged: {
+            if (logListView.atYEnd) {
+                logViewerMain.automaticScroll = true
+            } else {
+                logViewerMain.automaticScroll = false
+            }
         }
 
         delegate: FocusScope {
@@ -274,30 +322,33 @@ Item {
                         property: "color"
                         from: "white"
                         to: highlightColor
-                        duration: 400
+                        duration: animationDuration
                     }
                     ColorAnimation {
                         target: cell
                         property: "color"
                         from: highlightColor
-                        to: "white"
-                        duration: 400
+                        to: "darkgray"
+                        duration: animationDuration
                     }
                 }
                 SequentialAnimation {
-                    ColorAnimation {
-                        targets: [ts,pid,tid,level,msg]
-                        properties: "color"
-                        from: "black"
-                        to: "white"
-                        duration: 400
-                    }
-                    ColorAnimation {
-                        targets: [ts,pid,tid,level,msg]
-                        properties: "color"
-                        from: "white"
-                        to: "black"
-                        duration: 400
+                    ParallelAnimation {
+                        ColorAnimation {
+                            targets: [ts,pid,tid,msg]
+                            properties: "color"
+                            from: "black"
+                            to: "white"
+                            duration: animationDuration
+                        }
+
+                        ColorAnimation {
+                            target: level
+                            property: "color"
+                            from: level.color
+                            to: "white"
+                            duration: animationDuration
+                        }
                     }
                 }
             }
@@ -317,8 +368,12 @@ Item {
                         } else {
                             return "darkgray"
                         }
-                    } else
+                    }
+                    if (index % 2) {
+                        return "#f2f0f0"
+                    } else {
                         return "white"
+                    }
                 }
 
                 MouseArea {
@@ -334,13 +389,24 @@ Item {
             Row {
                 id: row
                 leftPadding: handleSpacer
+                spacing: 18
 
                 SGWidgets.SGText {
                     id: ts
                     width: tsHeader.width
                     color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: StrataFonts.Fonts.inconsolata
-                    text: visible ? model.timestamp : ""
+                    font.family: "monospace"
+                    text: {
+                        if (visible) {
+                            if (timestampSimpleFormat == false) {
+                                return CommonCPP.SGUtilsCpp.formatDateTimeWithOffsetFromUtc(model.timestamp, timestampFormat)
+                            } else {
+                                return Qt.formatDateTime(model.timestamp, simpleTimestampFormat)
+                            }
+                        } else {
+                            return ""
+                        }
+                    }
                     visible: timestampColumnVisible
                 }
 
@@ -348,7 +414,7 @@ Item {
                     id: pid
                     width: pidHeader.width
                     color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: visible ? model.pid : ""
                     visible: pidColumnVisible
                 }
@@ -357,25 +423,69 @@ Item {
                     id: tid
                     width: tidHeader.width
                     color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: visible ? model.tid : ""
                     visible: tidColumnVisible
                 }
 
-                SGWidgets.SGText {
-                    id: level
+                Rectangle {
+                    id: levelTag
+                    anchors.top: parent.top
+                    anchors.topMargin: 1
+                    height: level.height - 2
                     width: levelHeader.width
-                    color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: StrataFonts.Fonts.inconsolata
-                    text: visible ? model.level : ""
+                    radius: 4
+                    z: -1
+                    color: {
+                        if (model.level === LogViewModels.LogModel.LevelWarning) {
+                            return SGWidgets.SGColorsJS.WARNING_COLOR
+                        }
+                        if (model.level === LogViewModels.LogModel.LevelError) {
+                            return SGWidgets.SGColorsJS.ERROR_COLOR
+                        } else {
+                            return cell.color
+                        }
+                    }
                     visible: levelColumnVisible
+
+                    SGWidgets.SGText {
+                        id: level
+                        anchors.centerIn: parent
+                        color: {
+                            if (delegate.ListView.isCurrentItem
+                                    || (model.level === LogViewModels.LogModel.LevelWarning
+                                        || model.level === LogViewModels.LogModel.LevelError)) {
+                                return "white"
+                            } else {
+                                return "black"
+                            }
+                        }
+                        font.family: "monospace"
+                        text: {
+                            if (visible) {
+                                switch (model.level) {
+                                case LogViewModels.LogModel.LevelDebug:
+                                    return "DEBUG"
+                                case LogViewModels.LogModel.LevelInfo:
+                                    return "INFO"
+                                case LogViewModels.LogModel.LevelWarning:
+                                    return "WARN"
+                                case LogViewModels.LogModel.LevelError:
+                                    return "ERROR"
+                                }
+                                return ""
+                            } else {
+                                return ""
+                            }
+                        }
+                    }
                 }
 
                 SGWidgets.SGText {
                     id: msg
                     width: messageWrapEnabled ? (logListView.width - msg.x) : msg.contentWidth
                     color: delegate.ListView.isCurrentItem ? "white" : "black"
-                    font.family: StrataFonts.Fonts.inconsolata
+                    font.family: "monospace"
                     text: visible ? model.message : ""
                     visible: messageColumnVisible
                     wrapMode: messageWrapEnabled ? Text.WrapAtWordBoundaryOrAnywhere : Text.NoWrap
@@ -388,10 +498,27 @@ Item {
         if (event.key === Qt.Key_Up && currentIndex > 0){
             currentIndex = currentIndex - 1
             currentItemChanged(currentIndex)
-        }
-        else if (event.key === Qt.Key_Down && currentIndex < (searchResultCount - 1)) {
+        } else if (event.key === Qt.Key_Down && currentIndex < (searchResultCount - 1)) {
             currentIndex = currentIndex + 1
             currentItemChanged(currentIndex)
+        }
+        else if (event.key === Qt.Key_Left) {
+            logListView.contentX = logListView.contentX - logListView.width
+        }
+        else if (event.key === Qt.Key_Right) {
+            logListView.contentX = logListView.contentX + logListView.width
+        }
+        else if (event.key === Qt.Key_PageDown) {
+            logListView.contentY = logListView.contentY + logListView.height
+        }
+        else if (event.key === Qt.Key_PageUp) {
+            logListView.contentY = logListView.contentY - logListView.height
+        }
+        else if (event.key === Qt.Key_Home) {
+            logListView.positionViewAtBeginning()
+        }
+        else if (event.key === Qt.Key_End) {
+            logListView.positionViewAtEnd()
         }
     }
 }

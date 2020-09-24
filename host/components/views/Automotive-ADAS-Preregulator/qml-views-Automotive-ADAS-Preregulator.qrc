@@ -1,8 +1,7 @@
 <RCC>
-    <qresource prefix="/views/Automotive-ADAS-Preregulator">
+    <qresource prefix="/">
         <file>AdvancedControl.qml</file>
         <file>BasicControl.qml</file>
-        <file>Content.qml</file>
         <file>Control.qml</file>
         <file>Diagnotics.qml</file>
         <file>PlatformInterface.qml</file>

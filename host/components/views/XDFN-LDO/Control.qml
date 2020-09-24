@@ -5,7 +5,7 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/views/XDFN-LDO/sgwidgets"
+import "sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
 
 import tech.strata.fonts 1.0
@@ -18,6 +18,8 @@ Rectangle {
     anchors {
         fill: parent
     }
+
+    property alias class_id: multiplePlatform.class_id // passed in when created by SGPlatformView
 
     PlatformInterface {
         id: platformInterface

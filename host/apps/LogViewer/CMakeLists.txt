@@ -6,7 +6,7 @@ project(LogViewer
 set(PROJECT_WIN32_ICO resources/icons/app/lv-logo.ico)
 set(PROJECT_MACOS_ICNS lv-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.logviewer)
-set(PROJECT_COPYRIGHT "Copyright (C) 2019 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2019-2020 ${PROJECT_COMPANY}")
 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -20,6 +20,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE)
 target_sources(${PROJECT_NAME} PRIVATE
     main.cpp
     LogModel.cpp
+    FileModel.cpp
     logging/LoggingQtCategories.cpp
 
     images/images.qrc
@@ -58,7 +59,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Qml
     Qt5::Quick
 
-    QtLogger
+    strata::QtLogger
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -74,7 +75,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
-    QT_DEPRECATED_WARNINGS
     QT_DISABLE_DEPRECATED_BEFORE=0x060000
     $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )

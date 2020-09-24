@@ -1,8 +1,7 @@
 <RCC>
-    <qresource prefix="/views/motor-vortex">
+    <qresource prefix="/">
         <file>AdvancedControl.qml</file>
         <file>BasicControl.qml</file>
-        <file>Content.qml</file>
         <file>Control.qml</file>
         <file>FAEControl.qml</file>
         <file>PlatformInterface.qml</file>
@@ -19,26 +18,6 @@
         <file>images/icons/showMoreIcon.svg</file>
         <file>images/icons/temperatureIcon.svg</file>
         <file>images/icons/voltageIcon.svg</file>
-        <file>images/system_content/BatteryProtectionSchematic.png</file>
-        <file>images/system_content/DC-DCPowerIcon.png</file>
-        <file>images/system_content/NCV81599_test_report.png</file>
-        <file>images/system_content/ONSEC-17-014_schematic.png</file>
-        <file>images/system_content/PowerStageSchematic.png</file>
-        <file>images/system_content/ProtectionIcon.png</file>
-        <file>images/system_content/SensorsIcon.png</file>
-        <file>images/system_content/TempSensorSchematic.png</file>
-        <file>images/system_content/ThreeVoltRailSchematic.png</file>
-        <file>images/system_content/USB-PD_blockDiagram_BatteryProtectionHighlighted.png</file>
-        <file>images/system_content/USB-PD_blockDiagram_PowerStage1Highlighted.png</file>
-        <file>images/system_content/USB-PD_blockDiagram_PowerStage2Highlighted.png</file>
-        <file>images/system_content/USB-PD_blockDiagram_TempSensorHighlighted.png</file>
-        <file>images/system_content/USB-PD_blockDiagram_ThreeVoltHighlighted.png</file>
-        <file>images/system_content/USB-PD_blockDiagram_USB-C1Highlighted.png</file>
-        <file>images/system_content/USB-PD_blockDiagram_USB-C2Highlighted.png</file>
-        <file>images/system_content/USBCInterfaceSchematic1.png</file>
-        <file>images/system_content/USBCInterfaceSchematic2.png</file>
-        <file>images/system_content/USBInterfaceIcon.png</file>
-        <file>images/system_content/dialogBorder.svg</file>
         <file>sgwidgets/SGCircularGauge.qml</file>
         <file>sgwidgets/SGComboBox.qml</file>
         <file>sgwidgets/SGGraph.qml</file>

@@ -1,4 +1,5 @@
 #include "LogModel.h"
+#include "FileModel.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -63,12 +64,13 @@ int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/images/lv-logo.png"));
 
-    const QtLoggerSetup loggerInitialization(app);
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
     qCInfo(logCategoryLogViewer) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     QQmlApplicationEngine engine;
 
     qmlRegisterType<LogModel>("tech.strata.logviewer.models", 1, 0, "LogModel");
+    qmlRegisterType<FileModel>("tech.strata.logviewer.models", 1, 0, "FileModel");
     loadResources();
     addImportPaths(&engine);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));

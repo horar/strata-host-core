@@ -28,6 +28,14 @@ RowLayout {
     property alias acceptableInput: infoText.acceptableInput
     property alias boxFont: infoText.font
     property alias unitFont: unit.font
+    property alias unitHorizontalAlignment: unit.horizontalAlignment
+    property alias unitOverrideWidth: unit.overrideWidth
+
+    property alias boxObject: box
+    property alias infoTextObject: infoText
+    property alias mouseAreaObject: mouseArea
+    property alias placeholderObject: placeholder
+    property alias unitObject: unit
 
     signal accepted(string text)
     signal editingFinished(string text)
@@ -42,7 +50,7 @@ RowLayout {
         id: box
         Layout.preferredHeight: 26 * fontSizeMultiplier
         Layout.fillHeight: true
-        Layout.preferredWidth: Math.max(unit.contentWidth, 10)
+        Layout.preferredWidth: Math.max(unit.Layout.preferredWidth, 10)
         Layout.fillWidth: true
         color: infoText.readOnly ? "#F2F2F2" : "white"
         radius: 2
@@ -77,6 +85,7 @@ RowLayout {
             onEditingFinished: root.editingFinished(infoText.text)
 
             MouseArea {
+                id: mouseArea
                 anchors {
                     fill: infoText
                 }
@@ -109,11 +118,18 @@ RowLayout {
         height: text === "" ? 0 : contentHeight
         fontSizeMultiplier: root.fontSizeMultiplier
         implicitColor: root.textColor
-        Layout.fillWidth: true
-        Layout.maximumWidth: contentWidth
+        Layout.fillWidth: unit.overrideWidth === -1
+        Layout.preferredWidth: unit.overrideWidth === -1 ? contentWidth : unit.overrideWidth
+        Layout.maximumWidth: Layout.preferredWidth
+
+        property real overrideWidth: -1
     }
 
     function forceActiveFocus() {
         infoText.forceActiveFocus()
+    }
+
+    function selectAll() {
+        infoText.selectAll()
     }
 }

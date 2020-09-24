@@ -3,15 +3,13 @@ project(connector
     LANGUAGES CXX
 )
 
-find_package(SerialPort REQUIRED)
 find_package(ZeroMQ REQUIRED)
 find_package(Threads REQUIRED)
 
 set(EXT_LIBS_PATH ${CMAKE_SOURCE_DIR}/ext_libs)
 
-add_library(connector
+add_library(${PROJECT_NAME}
     src/Connector.cpp
-    src/SerialConnector.cpp
     src/ZmqConnector.cpp
     src/ZmqRouterConnector.cpp
     src/ZmqDealerConnector.cpp
@@ -20,6 +18,7 @@ add_library(connector
     src/ZmqRequestConnector.cpp
     src/ZmqResponseConnector.cpp
 )
+add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME}
       PUBLIC ${SERIALPORT_LIBRARIES}

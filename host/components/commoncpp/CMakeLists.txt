@@ -3,8 +3,12 @@ project(component-commoncpp
     LANGUAGES CXX
 )
 
+include(SubdirList)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 find_package(Qt5 ${VERSION_QT5}
-    COMPONENTS Core Quick
+    COMPONENTS Core Qml
     REQUIRED
 )
 
@@ -13,10 +17,8 @@ add_library(${PROJECT_NAME} MODULE)
 target_sources(${PROJECT_NAME}
     PRIVATE
     CommonCppPlugin.cpp
-    SGUtilsCpp.cpp
-    SGJLinkConnector.cpp
-    SGSortFilterProxyModel.cpp
-    logging/LoggingQtCategories.cpp
+    mqtt/SGMqttClient.cpp
+    mqtt/SGSslConfiguration.cpp
 
     imports/tech/strata/commoncpp/qmldir
     imports/tech/strata/commoncpp/plugins.qmltypes
@@ -25,16 +27,20 @@ target_sources(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
     Qt5::Core
-    Qt5::Quick
     Qt5::Qml
-
-    QtLogger
-    )
+    strata::SGUserSettings
+    strata::SGUtilsCpp
+    strata::SGQWTPlot
+    strata::SGSortFilterProxyModel
+    strata::SGVersionUtils
+    strata::SGJLinkConnector
+    mqtt::mqtt
+)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     AUTOMOC ON
     AUTORCC ON
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/imports/tech/strata/commoncpp
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<IF:$<CONFIG:OTA>,packages/${PROJECT_BUNDLE_ID}/data,bin>/imports/tech/strata/commoncpp
 )
 
 # Copy 'qmldir' and 'qmltypes' file next to plugin lib
@@ -50,5 +56,13 @@ add_custom_command(
         ${CMAKE_CURRENT_LIST_DIR}/imports/tech/strata/commoncpp/plugins.qmltypes
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/
 )
+
+SUBDIRLIST(SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
+
+foreach(SUBDIR ${SUBDIRS})
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${SUBDIR}/CMakeLists.txt")
+        add_subdirectory(${SUBDIR})
+    endif()
+endforeach()
 
 add_qml_import_path(PATH "${CMAKE_CURRENT_SOURCE_DIR}/imports")

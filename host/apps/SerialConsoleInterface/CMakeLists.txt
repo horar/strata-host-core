@@ -6,7 +6,7 @@ project(SerialConsoleInterface
 set(PROJECT_WIN32_ICO resources/icons/app/sci-logo.ico)
 set(PROJECT_MACOS_ICNS sci-logo.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.sci)
-set(PROJECT_COPYRIGHT "Copyright (C) 2018-2019 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
 
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -20,6 +20,11 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     main.cpp
     SciModel.cpp
     SciDatabaseConnector.cpp
+    SciPlatformModel.cpp
+    SciPlatform.cpp
+    SciScrollbackModel.cpp
+    SciCommandHistoryModel.cpp
+    SciPlatformSettings.cpp
     qml.qrc
     images/images.qrc
 
@@ -43,10 +48,10 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Quick
     Qt5::WebEngine
-    BoardsController
+    strata::BoardManager
+    strata::FlasherConnector
     strata::CouchbaseLiteCPP
-
-    QtLogger
+    strata::QtLogger
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -58,7 +63,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
-    QT_DEPRECATED_WARNINGS
     QT_DISABLE_DEPRECATED_BEFORE=0x060000
     $<$<CONFIG:Debug>:QT_QML_DEBUG>
 )

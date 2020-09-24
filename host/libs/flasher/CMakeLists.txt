@@ -1,4 +1,4 @@
-project(flasher
+project(Flasher
     VERSION 1.0
     LANGUAGES CXX
 )
@@ -8,32 +8,51 @@ find_package(Qt5 ${VERSION_QT5}
     REQUIRED
 )
 
+set(CONNECTOR_SUFFIX "Connector")
+
+# Flasher
+
 add_library(${PROJECT_NAME}
     src/Flasher.cpp
-)
-
-add_library(${PROJECT_NAME}Connector
-    src/FlasherConnector.cpp
+    src/logging/LoggingQtCategories.cpp
     #AUTOMOC wont find header if it is in different directory
-    include/FlasherConnector.h
+    include/Flasher.h
 )
+add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_include_directories(${PROJECT_NAME}Connector
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC Qt5::Core
+    PUBLIC strata::QtLogger
+    PUBLIC strata::Device
+    PRIVATE strata::DeviceOperations
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    AUTOMOC ON
+)
+
+# FlasherConnector
+
+add_library(${PROJECT_NAME}${CONNECTOR_SUFFIX}
+    src/FlasherConnector.cpp
+    #AUTOMOC wont find header if it is in different directory
+    include/FlasherConnector.h
+)
+add_library(strata::${PROJECT_NAME}${CONNECTOR_SUFFIX} ALIAS ${PROJECT_NAME}${CONNECTOR_SUFFIX})
+
+target_include_directories(${PROJECT_NAME}${CONNECTOR_SUFFIX}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_link_libraries(${PROJECT_NAME}
-    PUBLIC PlatformManager base64 crc16
+target_link_libraries(${PROJECT_NAME}${CONNECTOR_SUFFIX}
+    PUBLIC Qt5::Core
+    PUBLIC strata::${PROJECT_NAME}
 )
 
-target_link_libraries(${PROJECT_NAME}Connector
-    PUBLIC Qt5::Core ${PROJECT_NAME}
-)
-
-set_target_properties(${PROJECT_NAME}Connector PROPERTIES
+set_target_properties(${PROJECT_NAME}${CONNECTOR_SUFFIX} PROPERTIES
     AUTOMOC ON
 )

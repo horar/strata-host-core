@@ -1,6 +1,7 @@
-#include <BoardsController.h>
+#include <BoardManager.h>
 #include "SciModel.h"
 #include "SciDatabaseConnector.h"
+#include "Version.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -17,9 +18,8 @@ void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
 
     const auto resources = {
-        QStringLiteral("component-fonts.rcc"),
-        QStringLiteral("component-common.rcc"),
-        QStringLiteral("component-sgwidgets.rcc")};
+        QStringLiteral("component-sgwidgets.rcc")
+    };
 
 #ifdef Q_OS_MACOS
     applicationDir.cdUp();
@@ -62,20 +62,31 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QGuiApplication::setApplicationVersion(AppInfo::version.data());
 
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/images/sci-logo.svg"));
 
     QtWebEngine::initialize();
 
-    const QtLoggerSetup loggerInitialization(app);
-    qCInfo(logCategorySci) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
+    qCInfo(logCategorySci) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
-    qmlRegisterUncreatableType<SciModel>("tech.strata.sci", 1, 0, "SciModel", "can not instantiate SciModel in qml");
-    qmlRegisterUncreatableType<BoardsController>("tech.strata.sci", 1, 0, "BoardsController", "can not instantiate BoardsController in qml");
+    qmlRegisterUncreatableType<SciModel>("tech.strata.sci", 1, 0, "SciModel", "cannot instantiate SciModel in qml");
+    qmlRegisterUncreatableType<SciPlatformModel>("tech.strata.sci", 1, 0, "SciPlatformModel", "cannot instantiate SciPlatformModel in qml");
+    qmlRegisterUncreatableType<SciPlatform>("tech.strata.sci", 1, 0, "SciPlatform", "cannot instantiate SciPlatform in qml");
+    qmlRegisterUncreatableType<SciScrollbackModel>("tech.strata.sci", 1, 0, "SciScrollbackModel", "cannot instantiate SciScrollbackModel in qml");
+    qmlRegisterUncreatableType<SciCommandHistoryModel>("tech.strata.sci", 1, 0, "SciCommandHistoryModel", "cannot instantiate SciCommandHistoryModel in qml");
+
+    qmlRegisterUncreatableType<strata::BoardManager>("tech.strata.sci", 1, 0, "BoardManager", "can not instantiate BoardManager in qml");
     qmlRegisterUncreatableType<SciDatabaseConnector>("tech.strata.sci", 1, 0, "DatabaseConnector", "can not instantiate DatabaseConnector in qml");
 
     qmlRegisterSingletonType(QUrl("qrc:/SciSettings.qml"), "tech.strata.sci", 1, 0, "Settings");
+
+    qmlRegisterUncreatableType<strata::FlasherConnector>("tech.strata.flasherConnector", 1, 0, "FlasherConnector", "can not instantiate FlasherConnector in qml");
+    qRegisterMetaType<strata::FlasherConnector::Operation>();
+    qRegisterMetaType<strata::FlasherConnector::State>();
+    qRegisterMetaType<strata::FlasherConnector::Result>();
 
     loadResources();
 

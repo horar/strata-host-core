@@ -1,6 +1,7 @@
 import QtQuick 2.9
 import QtGraphicalEffects 1.0
 import QtQuick.Controls 2.3
+import QtQuick.Layouts 1.12
 import QtQuick.Shapes 1.0
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/platform_filters.js" as PlatformFilters
@@ -12,17 +13,41 @@ import tech.strata.commoncpp 1.0
 
 Item {
     id: root
-    implicitWidth: 950
-    implicitHeight: 160
+
     property bool isCurrentItem: false
+
+    Rectangle {
+        width: 50
+        color: "#29e335"//"#33b13b"
+        opacity: 1
+        height: parent.height-1
+        visible: model.connected
+    }
 
     MouseArea{
         anchors{
             fill: parent
         }
         onClicked: {
-            PlatformSelection.platformListModel.currentIndex = index
+            PlatformSelection.platformSelectorModel.currentIndex = index
         }
+    }
+
+    DropShadow {
+        id: dropShadow
+        anchors {
+            centerIn: imageContainer
+        }
+        width: imageContainer.width
+        height: imageContainer.height
+        horizontalOffset: 1
+        verticalOffset: 3
+        radius: 15.0
+        samples: radius*2
+        color: "#cc000000"
+        source: imageContainer
+//        z: -1
+        cached: true
     }
 
     Rectangle {
@@ -40,20 +65,33 @@ Item {
             sourceSize.height: imageContainer.height
             sourceSize.width: imageContainer.width
             anchors.fill: imageContainer
-            source: {
-                if (model.image === "file:/") {
+            visible: model.image !== undefined && status == Image.Ready
+
+            property string modelSource: model.image
+
+            onModelSourceChanged: {
+                initialize()
+            }
+
+            Component.onCompleted: {
+                initialize()
+            }
+
+            function initialize() {
+                if (model.image.length === 0) {
                     console.error(Logger.devStudioCategory, "Platform Selector Delegate: No image source supplied by platform list")
-                    return "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
+                    source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
+                } else if (SGUtilsCpp.isFile(SGUtilsCpp.urlToLocalFile(model.image))) {
+                    source = model.image
                 } else {
-                    return model.image
+                    imageCheck.start()
                 }
             }
-            visible: model.image !== undefined && status == Image.Ready
 
             onStatusChanged: {
                 if (image.status == Image.Error){
-                    source = ""
-                    imageCheck.start()
+                    console.error(Logger.devStudioCategory, "Platform Selector Delegate: Image failed to load - corrupt or does not exist:", model.image)
+                    source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
                 }
             }
 
@@ -62,17 +100,21 @@ Item {
                 interval: 1000
                 running: false
                 repeat: false
+
                 onTriggered: {
-                    if (count < 30) {
-                        image.source = model.image
-                        count++;
+                    interval += interval
+                    if (interval < 32000) {
+                        if (SGUtilsCpp.isFile(SGUtilsCpp.urlToLocalFile(model.image))){
+                            image.source = model.image
+                            return
+                        }
+                        imageCheck.start()
                     } else {
-                        // stop trying to load after 30 seconds
+                        // stop trying to load after 31 seconds (interval doubles every triggered)
+                        console.error(Logger.devStudioCategory, "Platform Selector Delegate: Image loading timed out:", model.image)
                         image.source = "qrc:/partial-views/platform-selector/images/platform-images/notFound.png"
                     }
                 }
-
-                property int count: 0
             }
 
             Image {
@@ -80,8 +122,10 @@ Item {
                 sourceSize.height: image.sourceSize.height
                 fillMode: Image.PreserveAspectFit
                 source: "images/platform-images/comingsoon.png"
-                visible: !model.available.documents && !model.available.control && !model.error
+                visible: !model.available.documents && !model.available.order && !model.error
             }
+
+
         }
 
         AnimatedImage {
@@ -102,7 +146,7 @@ Item {
             id: loadingText
             anchors {
                 top: loaderImage.bottom
-                topMargin: 15
+                topMargin: 10
                 horizontalCenter: loaderImage.horizontalCenter
             }
             visible: loaderImage.visible
@@ -110,89 +154,152 @@ Item {
             text: "Loading..."
             font.family: Fonts.franklinGothicBold
         }
-    }
 
-    DropShadow {
-        anchors {
-            centerIn: imageContainer
+        Rectangle {
+            color: "#33b13b"
+            width: image.width
+            anchors {
+                bottom: image.bottom
+            }
+            height: 25
+            visible: model.connected
+            clip: true
+
+            SGText {
+                color: "white"
+                anchors {
+                    centerIn: parent
+                }
+                text: "CONNECTED"
+                font.bold: true
+                fontSizeMultiplier: 1.4
+            }
         }
-        width: imageContainer.width
-        height: imageContainer.height
-        horizontalOffset: 1
-        verticalOffset: 3
-        radius: 15.0
-        samples: radius*2
-        color: "#cc000000"
-        source: imageContainer
-        z: -1
-        cached: true
     }
 
-    Item {
+    ColumnLayout {
         id: infoColumn
         anchors {
             left: imageContainer.right
             leftMargin: 20
-            top: root.top
-            topMargin: 20
-            bottom: root.bottom
-            bottomMargin: 20
+            verticalCenter: parent.verticalCenter
         }
+        height: parent.height - 40 // 20 each top/bottom margin
         width: 350
 
-        Text {
-            id: name
-            text: model.verbose_name
-            font {
-                pixelSize: 16
-                family: Fonts.franklinGothicBold
-            }
-            width: infoColumn.width
-            anchors {
-                horizontalCenter: infoColumn.horizontalCenter
-                top: infoColumn.top
-            }
-            wrapMode: Text.Wrap
-            horizontalAlignment: Text.AlignHCenter
-        }
+        ColumnLayout {
+            spacing: 12
+            Layout.maximumHeight: parent.height
+            Layout.fillHeight: false
 
-        Text {
-            id: productId
-            text: model.opn
-            anchors {
-                horizontalCenter: infoColumn.horizontalCenter
-                top: name.bottom
-                topMargin: 12
-            }
-            width: infoColumn.width
-            font {
-                pixelSize: 13
-                family: Fonts.franklinGothicBold
-            }
-            color: "#333"
-            font.italic: true
-            wrapMode: Text.Wrap
-            horizontalAlignment: Text.AlignHCenter
-        }
+            Text {
+                id: name
+                text: {
+                    if (searchCategoryText.checked === false || model.name_matching_index === -1) {
+                        return model.verbose_name
+                    } else {
+                        let txt = model.verbose_name
+                        let idx = model.name_matching_index
+                        return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                    }
+                }
 
-        Text {
-            id: info
-            text: model.description
-            anchors {
-                horizontalCenter: infoColumn.horizontalCenter
-                top: productId.bottom
-                topMargin: 12
-                bottom: infoColumn.bottom
+                font {
+                    pixelSize: 16
+                    family: Fonts.franklinGothicBold
+                }
+                Layout.fillWidth: true
+                elide: Text.ElideRight
+                wrapMode: Text.Wrap
+                horizontalAlignment: Text.AlignHCenter
+                textFormat: Text.StyledText
+                maximumLineCount: 2
             }
-            width: infoColumn.width
-            font {
-                pixelSize: 12
-                family: Fonts.franklinGothicBook
+
+            Text {
+                id: productId
+                text: {
+                    if (searchCategoryText.checked === false || model.opn_matching_index === -1) {
+                        return model.opn
+                    } else {
+                        let txt = model.opn
+                        let idx = model.opn_matching_index
+                        return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                    }
+                }
+
+                Layout.fillWidth: true
+                font {
+                    pixelSize: 13
+                    family: Fonts.franklinGothicBook
+                }
+                color: "#333"
+                font.italic: true
+                wrapMode: Text.Wrap
+                horizontalAlignment: Text.AlignHCenter
+                textFormat: Text.StyledText
+                maximumLineCount: 1
             }
-            color: "#666"
-            wrapMode: Text.Wrap
-            elide: Text.ElideRight
-            horizontalAlignment: Text.AlignHCenter
+
+            Text {
+                id: info
+                text: {
+                    if (searchCategoryText.checked === false || model.desc_matching_index === -1) {
+                        return model.description
+                    } else {
+                        let txt = model.description
+                        let idx = model.desc_matching_index
+                        return txt.substring(0, idx) + "<font color=\"green\">" + txt.substring(idx, idx + PlatformFilters.keywordFilter.length) + "</font>" + txt.substring(idx + PlatformFilters.keywordFilter.length);
+                    }
+                }
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                font {
+                    pixelSize: 12
+                    family: Fonts.franklinGothicBook
+                }
+                color: "#666"
+                wrapMode: Text.Wrap
+                elide: Text.ElideRight
+                horizontalAlignment: Text.AlignHCenter
+                textFormat: Text.StyledText
+            }
+
+            Text {
+                id: parts
+                text: {
+                    if (searchCategoryPartsList.checked === true) {
+                        let str = "Matching Part OPNs: ";
+                        if (model.parts_list !== undefined) {
+                            for (let i = 0; i < model.parts_list.count; i++) {
+                                if (model.parts_list.get(i).matchingIndex > -1) {
+                                    let idx = model.parts_list.get(i).matchingIndex
+                                    let part = model.parts_list.get(i).opn
+                                    if (str !== "Matching Part OPNs: ") {
+                                        str += ", "
+                                    }
+                                    str += part.substring(0, idx) + "<font color=\"green\">" + part.substring(idx, PlatformFilters.keywordFilter.length + idx) + "</font>" + part.substring(idx + PlatformFilters.keywordFilter.length)
+                                } else {
+                                    continue
+                                }
+                            }
+                        }
+                        return str
+                    } else {
+                        return ""
+                    }
+                }
+                visible: searchCategoryPartsList.checked === true && PlatformFilters.keywordFilter !== "" && text !== "Matching Part OPNs: "
+                Layout.fillWidth: true
+                font {
+                    pixelSize: 12
+                    family: Fonts.franklinGothicBook
+                }
+                color: "#666"
+                textFormat: Text.StyledText
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideRight
+            }
         }
     }
 
@@ -225,7 +332,7 @@ Item {
                 }
 
                 function is_segment_filter (item){
-                    return item.filterMapping.startsWith("segment-")
+                    return item.filterName.startsWith("segment-")
                 }
             }
             pathItemCount: 3
@@ -257,12 +364,12 @@ Item {
                     height: iconPathview.delegateHeight
                     width: iconPathview.delegateWidth
                     mipmap: true
-                    source: model.iconSource
+                    source: model.iconSource ? model.iconSource : ""
                 }
 
                 SGText {
                     id: iconText
-                    text: model.text
+                    text: model.text ? model.text : ""
                     anchors {
                         top: icon.bottom
                         topMargin: 5
@@ -333,7 +440,7 @@ Item {
         Text {
             id: comingSoonWarn
             text: "This platform is coming soon!"
-            visible: !model.available.documents && !model.available.control && !model.error
+            visible: !model.available.documents && !model.available.order && !model.error && (!model.connected || !model.available.control)//&& !model.available.control
             width: buttonColumn.width
             font.pixelSize: 16
             font.family: Fonts.franklinGothicBold
@@ -345,11 +452,11 @@ Item {
 
         Button {
             id: select
-            text: model.connection === "connected" ? "Connect to Board" : "Browse Documentation"
+            text: model.view_open ? "Return to Platform Tab" : (model.connected && model.available.control ) ? "Open Platform Controls" : "Browse Documentation"
             anchors {
                 horizontalCenter: buttonColumn.horizontalCenter
             }
-            visible: model.connection === "connected" ? model.available.control : model.available.documents
+            visible: model.connected && model.available.control ? model.available.control : model.available.documents
 
             contentItem: Text {
                 text: select.text
@@ -370,8 +477,23 @@ Item {
             }
 
             onClicked: {
-                // Selects proxy index mapped to platformListModel to ignore any active filters
-                PlatformSelection.selectPlatform(filteredPlatformListModel.mapIndexToSource(index))
+                let data = {
+                    "device_id": model.device_id,
+                    "class_id": model.class_id,
+                    "name": model.verbose_name,
+                    "index": filteredPlatformSelectorModel.mapIndexToSource(model.index),
+                    "available": model.available,
+                    "firmware_version": model.firmware_version
+                }
+
+                PlatformSelection.openPlatformView(data)
+            }
+
+            MouseArea {
+                id: buttonCursor
+                anchors.fill: parent
+                onPressed:  mouse.accepted = false
+                cursorShape: Qt.PointingHandCursor
             }
         }
 
@@ -381,7 +503,7 @@ Item {
             anchors {
                 horizontalCenter: buttonColumn.horizontalCenter
             }
-            visible: model.available.documents || model.available.control
+            visible: model.available.order
 
             contentItem: Text {
                 text: order.text
@@ -403,6 +525,13 @@ Item {
 
             onClicked: {
                 orderPopup.open()
+            }
+
+            MouseArea {
+                id: buttonCursor1
+                anchors.fill: parent
+                onPressed:  mouse.accepted = false
+                cursorShape: Qt.PointingHandCursor
             }
         }
     }

@@ -1,422 +1,407 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.3
-import QtQuick.Dialogs 1.3
+import Qt.labs.platform 1.1
 
 import Qt.labs.settings 1.0 as QtLabsSettings
+import Qt.labs.platform 1.1 as QtLabsPlatform
+import tech.strata.sgwidgets 1.0 as SGWidgets
+import tech.strata.commoncpp 1.0 as CommonCpp
+import tech.strata.DownloadDocumentListModel 1.0
 
-import tech.strata.sgwidgets 0.9
-import tech.strata.fonts 1.0
+Item {
+    id: downloadSection
 
-Rectangle {
-    id: root
-    implicitHeight: downloadControlsContainer.height + downloadControlsContainer.anchors.topMargin
-    implicitWidth: parent.width
-    color: Qt.darker("#666")
+    height: wrapper.y + wrapper.height + 20
+    width: parent.width
 
-    function resetModel(model) {
-        buttons.radioButtons.model = model
+    property alias model: repeater.model
+    property string savePath: defaultSavePath
+    property string defaultSavePath: CommonCpp.SGUtilsCpp.urlToLocalFile(
+                                         QtLabsPlatform.StandardPaths.writableLocation(
+                                             QtLabsPlatform.StandardPaths.DocumentsLocation))
+
+    QtLabsSettings.Settings {
+        category: "Strata.Download"
+
+        property alias savePath: downloadSection.savePath
     }
 
-    MouseArea {
-        // Blocks clickthroughs
-        anchors { fill: root }
-        hoverEnabled: true
-        preventStealing: true
-        propagateComposedEvents: false
+    ButtonGroup {
+        id: downloadButtonGroup
+        exclusive: false
+        checkState: selectAllRadioButton.checkState
     }
 
-    Item {
-        id: downloadControlsContainer
-        width: root.width - 20
-        height: contentColumn.height
+    Column {
+        id: wrapper
+        width: parent.width - 20
         anchors {
-            top: root.top
-            topMargin: 20
-            horizontalCenter: root.horizontalCenter
+            top: parent.top
+            topMargin: 10
+            horizontalCenter: parent.horizontalCenter
+        }
+
+        SGWidgets.SGText {
+            text: "Select files for download:"
+            font.bold: true
+            fontSizeMultiplier: 1.2
+            alternativeColorEnabled: true
+        }
+
+        DocumentCheckBox {
+            id: selectAllRadioButton
+            text: "Select All"
+            checkState: downloadButtonGroup.checkState
+            enabled: repeater.model.downloadInProgress === false
+            leftPadding: 0
         }
 
         Column {
-            id: contentColumn
-            anchors {
-                horizontalCenter: downloadControlsContainer.horizontalCenter
-            }
-            width: downloadControlsContainer.width
-            spacing: 20
+            width: parent.width
 
-            Text {
-                id: title
-                text: "<b>Select files for download:</b>"
-                color: "white"
-                font {
-                    pixelSize: 16
-                }
-            }
+            Repeater {
+                id: repeater
 
-            Item {
-                id: radioButtonIndent
-                height: buttons.height
-                width: buttons.width
+                delegate: BaseDocDelegate {
+                    id: delegate
+                    width: wrapper.width
 
-                SGRadioButtonContainer {
-                    id: buttons
+                    pressable: repeater.model.downloadInProgress === false
+                    uncheckable: true
+                    whiteBgWhenSelected: false
+                    headerSourceComponent: {
+                        if (model.dirname !== model.previousDirname) {
+                            return sectionDelegateComponent
+                        }
 
-                    textColor: "white"      // Default: "#000000"  (black)
-                    radioColor: "white"     // Default: "#000000"  (black)
-                    exclusive: false         // Default: true
+                        return undefined
+                    }
 
-                    radioGroup: Column {
-                        id: column
-                        spacing: contentColumn.spacing
+                    onCheckedChanged: {
+                        repeater.model.setSelected(index, checked)
+                    }
 
-                        property alias selectAll: selectAll
-                        property alias downloadListView: downloadListView
-                        property alias model: downloadListView.model
+                    Binding {
+                        target: delegate
+                        property: "checked"
+                        value: model.status === DownloadDocumentListModel.Selected
+                               || model.status === DownloadDocumentListModel.Waiting
+                               || model.status === DownloadDocumentListModel.InProgress
+                    }
 
-                        property bool anythingChecked: false  // represents both if nothing or >0 things are checked
-                        property bool allChecked: false
+                    contentSourceComponent: Item {
+                        id: contentComponent
 
-                        SGRadioButton {
-                            id: selectAll
-                            text: "Select All"
-                            checked: allChecked
-                            onCheckedChanged: {
-                                if (checked) {
-                                    for (var i = 0; i < downloadListView.contentItem.children.length; i++){
-                                        if (downloadListView.contentItem.children[i].objectName === "radioButton"){
-                                            downloadListView.contentItem.children[i].checked = true;
-                                        }
-                                    }
-                                } else if ( allChecked ) {
-                                    for (var j = 0; j < downloadListView.contentItem.children.length; j++){
-                                        if (downloadListView.contentItem.children[j].objectName === "radioButton"){
-                                            downloadListView.contentItem.children[j].checked = false;
-                                        }
-                                    }
+                        height: Math.ceil(textMetrics.boundingRect.height) + progressBar.height + infoItem.contentHeight + 4*spacing
+
+
+                        property int spacing: 2
+                        TextMetrics {
+                            id: textMetrics
+                            font: textItem.font
+                            text: "The One"
+                        }
+
+                        Item {
+                            id: checkboxWrapper
+                            width: checkbox.width + 6
+                            anchors {
+                                left: parent.left
+                                leftMargin: 4
+                                top: parent.top
+                                bottom: parent.bottom
+                            }
+
+                            DocumentCheckBox {
+                                id: checkbox
+                                anchors.centerIn: parent
+
+                                fakeEnabled: delegate.pressable
+                                enabled: false
+                                padding: 0
+                                onCheckedChanged: {
+                                    delegate.checked = checked
                                 }
+
+                                Binding {
+                                    target: checkbox
+                                    property: "checked"
+                                    value: delegate.checked
+                                }
+
+                                ButtonGroup.group: downloadButtonGroup
+                            }
+                        }
+
+                        states: State {
+
+                            AnchorChanges {
+                                target: textItem
+                                anchors.top: contentComponent.top
+                                anchors.verticalCenter: undefined
+                            }
+
+                            PropertyChanges {
+                                target: textItem
+                                wrapMode: Text.NoWrap
+                                elide: Text.ElideMiddle
+                            }
+
+                            when: model.status === DownloadDocumentListModel.Waiting
+                                  || model.status === DownloadDocumentListModel.InProgress
+                                  || model.status === DownloadDocumentListModel.Finished
+                                  || model.status === DownloadDocumentListModel.FinishedWithError
+                        }
+
+                        SGWidgets.SGText {
+                            id: textItem
+
+                            anchors {
+                                verticalCenter: parent.verticalCenter
+                                topMargin: spacing
+                                left: checkboxWrapper.right
+                                leftMargin: 6
+                                right: parent.right
+                                rightMargin: 4
+                            }
+
+                            text: {
+                                /*
+                                    the first regexp is looking for HTML RichText
+                                    the second regexp is looking for spaces after string
+                                    the third regexp is looking for spaces before string
+                                    the fourth regexp is looking for tabs throughout the string
+                                */
+                                const htmlTags = /(<([^>]+)>)|\s*$|^\s*|\t/ig;
+                                if (model.status === DownloadDocumentListModel.Selected
+                                        || model.status === DownloadDocumentListModel.NotSelected)
+                                {
+                                    return model.prettyName.replace(htmlTags, "");
+                                }
+
+                                return model.downloadFilename.replace(htmlTags, "");
+                            }
+                            alternativeColorEnabled: true
+                            fontSizeMultiplier: delegate.enlarge ? 1.1 : 1.0
+                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                            elide: Text.ElideNone
+                            textFormat: Text.PlainText
+                            maximumLineCount: 2
+                        }
+
+                        Rectangle {
+                            id: progressBar
+                            height: 6
+                            anchors {
+                                top: textItem.bottom
+                                topMargin: spacing
+                                left: textItem.left
+                                right: textItem.right
+                            }
+
+                            visible: model.status === DownloadDocumentListModel.Waiting
+                                     || model.status === DownloadDocumentListModel.InProgress
+                                     || model.status === DownloadDocumentListModel.Finished
+
+                            color: "#44ffffff"
+
+                            Rectangle {
+                                width: Math.floor((parent.width - 0) * model.progress)
+                                anchors {
+                                    left: parent.left
+                                    top: parent.top
+                                    bottom: parent.bottom
+                                }
+
+                                color: SGWidgets.SGColorsJS.STRATA_GREEN
                             }
                         }
 
                         Rectangle {
-                            id: listViewContainer
-                            border {
-                                width: 1
-                                color: "#ccc"
+                            anchors {
+                                verticalCenter: infoItem.verticalCenter
+                                left: infoItem.left
+                                margins: -1
                             }
-                            color: "transparent"
-                            height: downloadListView.height + 20
-                            width: contentColumn.width
-                            clip: true
 
-                            ListView {
-                                id: downloadListView
-                                anchors {
-                                    centerIn: listViewContainer
-                                }
-                                ScrollBar.vertical: ScrollBar {
-                                    policy: ScrollBar.AlwaysOn
-                                }
-                                height: Math.min(600, contentItem.childrenRect.height)
-                                width: listViewContainer.width - 20
+                            width: infoItem.contentWidth + 2
+                            height: infoItem.contentHeight + 2
 
-                                section {
-                                    property: "dirname"
-                                    delegate: Item {
-                                        id: sectionContainer
-                                        width: downloadListView.width - 20
-                                        height: delegateText.height + 10
-
-                                        Item {
-                                            id: sectionBackground
-                                            anchors {
-                                                topMargin: 5
-                                                fill: parent
-                                                bottomMargin: 1
-                                            }
-
-                                            Rectangle {
-                                                id: underline
-                                                color: "#33b13b"
-                                                height: 1
-                                                width: sectionBackground.width
-                                                anchors {
-                                                    bottom: sectionBackground.bottom
-                                                }
-                                            }
-                                        }
-
-                                        Text {
-                                            id: delegateText
-                                            text: "<b>" + section + "</b>"
-                                            color: "white"
-                                            anchors {
-                                                verticalCenter: sectionContainer.verticalCenter
-                                                right: sectionContainer.right
-                                            }
-                                            width: sectionContainer.width - 5
-                                            wrapMode: Text.Wrap
-                                            font.capitalization: Font.Capitalize
-                                        }
-                                    }
-                                }
-
-                                delegate:  Item {
-                                    id: delegateContainer
-                                    height: Math.max(delegateRadio.height+10, delegateText.height + 10)
-                                    width: downloadListView.width - 20
-                                    property alias checked: delegateRadio.checked
-                                    property alias text: delegateText.text
-                                    property string uri: model.uri
-                                    objectName: "radioButton"
-
-                                    Rectangle {
-                                        anchors {
-                                            fill: delegateContainer
-                                            bottomMargin: 1
-                                        }
-
-                                        color: mouseArea.pressed ? "#888": mouseArea.containsMouse ? "#666" : "#444"
-                                    }
-
-                                    SGRadioButton {
-                                        id: delegateRadio
-                                        text: ""
-                                        onCheckedChanged: {
-                                            whichChecked ()
-                                        }
-                                        anchors {
-                                            left: delegateContainer.left
-                                            leftMargin: 5
-                                            verticalCenter: delegateContainer.verticalCenter
-                                        }
-                                        ButtonGroup.group: buttonGroup
-                                    }
-
-                                    Text {
-                                        id: delegateText
-                                        text: model.filename
-                                        color: "white"
-                                        anchors {
-                                            verticalCenter: delegateRadio.verticalCenter
-                                            left: delegateRadio.right
-                                            leftMargin: 10
-                                            right: delegateContainer.right
-                                            rightMargin: 5
-                                        }
-                                        wrapMode: Text.Wrap
-                                    }
-
-                                    MouseArea {
-                                        id: mouseArea
-                                        anchors {
-                                            fill: delegateText
-                                        }
-                                        hoverEnabled: true
-                                        onClicked: {
-                                            delegateRadio.checked = !delegateRadio.checked
-                                        }
-                                        acceptedButtons: Qt.LeftButton | Qt.RightButton
-                                    }
-                                }
-
-                                ButtonGroup {
-                                    id: buttonGroup
-                                    exclusive: false
-                                }
-                            }
+                            radius: 2
+                            color: SGWidgets.SGColorsJS.ERROR_COLOR
+                            visible: model.status === DownloadDocumentListModel.FinishedWithError
                         }
 
-                        function whichChecked() { // This functionality is integrated in QT 5.11 in buttonGroup.checkState, but for now, have to manually do it in 5.10
-                            var all = true
-                            var none = true
-                            var anything = false
-                            for (var i = 0; i < downloadListView.contentItem.children.length; i++){
-                                if (downloadListView.contentItem.children[i].objectName === "radioButton" && downloadListView.contentItem.children[i].checked === false) {
-                                    all = false
-                                } else if (downloadListView.contentItem.children[i].objectName === "radioButton" && downloadListView.contentItem.children[i].checked === true) {
-                                    anything = true;
-                                    none = false
+                        SGWidgets.SGText {
+                            id: infoItem
+                            anchors {
+                                top: model.status === DownloadDocumentListModel.FinishedWithError ? textItem.bottom : progressBar.bottom
+                                topMargin: spacing
+                                left: progressBar.left
+                                right: textItem.right
+                            }
+
+                            opacity: model.status === DownloadDocumentListModel.FinishedWithError ? 1 : 0.8
+                            elide: Text.ElideRight
+                            alternativeColorEnabled: true
+                            font.family: "Monospace"
+                            text: {
+                                if (model.status === DownloadDocumentListModel.Waiting) {
+                                    return "Preparing to download"
+                                } else if (model.status === DownloadDocumentListModel.InProgress) {
+                                    var received = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesReceived)
+                                    var total = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesTotal)
+                                    return received + " of " + total
+                                } else if (model.status === DownloadDocumentListModel.Finished) {
+                                    var total = CommonCpp.SGUtilsCpp.formattedDataSize(model.bytesTotal)
+                                    return "Done " + total
+                                } else if (model.status === DownloadDocumentListModel.FinishedWithError) {
+                                    return model.errorString
                                 }
+                                return ""
                             }
-                            if (none) {
-                                anythingChecked = false
-                                allChecked = false
-                            } else if (all) {
-                                anythingChecked = true
-                                allChecked = true
-                            } else if (anything) {
-                                anythingChecked = true
-                                allChecked = false
-                            }
+                        }
+                    }
+
+                    Component {
+                        id: sectionDelegateComponent
+
+                        SectionDelegate {
+                            text: model.dirname
+                            isFirst: model.index === 0
                         }
                     }
                 }
             }
+        }
 
-            Button {
-                id: fileDialogButton
-                text: "Select Where to Download"
-                onClicked: fileDialog.open()
+        Item {
+            width: 1
+            height: 20
+        }
+
+        Item {
+            id: savePathWrapper
+            width: parent.width
+            height: savePathField.y + savePathField.height
+
+            enabled: repeater.model.downloadInProgress === false
+
+            SGWidgets.SGText {
+                id: savePathLabel
                 anchors {
-                    horizontalCenter: contentColumn.horizontalCenter
+                    top: parent.top
                 }
-            }
 
-            TextEdit {
-                id: selectedDir
-                text: "No Download Directory Selected"
+                text: "Save folder"
                 color: "white"
-                wrapMode: TextEdit.Wrap
-                width: downloadControlsContainer.width
+            }
+
+            SGWidgets.SGTextField {
+                id: savePathField
+                anchors {
+                    top: savePathLabel.bottom
+                    left: parent.left
+                    right: savePathButton.left
+                    rightMargin: 4
+                }
+
+                darkMode: true
+                text: savePath
+                onTextChanged: {
+                    savePath = text
+                }
+
+                Binding {
+                    target: savePathField
+                    property: "text"
+                    value: savePath
+                }
             }
 
             Button {
-                id: download
-                enabled: buttons.radioButtons.anythingChecked && fileDialog.fileUrl != ""
+                id: savePathButton
+                height: savePathField.height - 2
+                width: height
                 anchors {
-                    horizontalCenter: contentColumn.horizontalCenter
-                }
-                opacity: enabled ? 1 : .2
-
-                contentItem: Text {
-                    color: "white"
-                    text: "Download"
-                    opacity: 1
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignHCenter
+                    verticalCenter: savePathField.verticalCenter
+                    right: parent.right
                 }
 
-                background: Rectangle {
-                    color: "#33b13b"
-                    implicitWidth: 100
-                    implicitHeight: 40
-                }
-
+                icon.source: "qrc:/sgimages/folder-open.svg"
                 onClicked: {
-                    downloadActiveCoverup.visible = true
-                    progressBarFake.start()
-
-                    var download_json = {
-                        "hcs::cmd":"download_files",
-                        "payload": []
+                    if (savePath.length === 0) {
+                        fileDialog.folder = CommonCpp.SGUtilsCpp.pathToUrl(defaultSavePath)
+                    } else {
+                        fileDialog.folder = CommonCpp.SGUtilsCpp.pathToUrl(savePath)
                     }
 
-                    for (var i = 0; i < buttons.radioButtons.downloadListView.contentItem.children.length; i++){
-                        if (buttons.radioButtons.downloadListView.contentItem.children[i].objectName === "radioButton" && buttons.radioButtons.downloadListView.contentItem.children[i].checked) {
-                            download_json.payload.push({
-                                                           "file":buttons.radioButtons.downloadListView.contentItem.children[i].uri,
-                                                           "path":fileDialog.fileUrl.toString(),
-                                                           "name":buttons.radioButtons.downloadListView.contentItem.children[i].text
-                                                       })
-                        }
-                    }
-
-                    console.log("sending the jwt json to hcs",JSON.stringify(download_json))
-                    coreInterface.sendCommand(JSON.stringify(download_json))
+                    fileDialog.open()
                 }
-            }
 
-            Item {
-                id: spacer7
-                height: 1
-                width: contentColumn.width
-            }
-        }
-    }
-
-    Rectangle {
-        id: downloadActiveCoverup
-        color: Qt.darker("#666")
-        visible: false
-        anchors {
-            fill: downloadControlsContainer
-        }
-
-        MouseArea {
-            id: mouseDisabler
-            anchors {
-                fill: downloadActiveCoverup
-            }
-        }
-
-        Rectangle {
-            id: progressBarContainer
-            height: 30
-            border {
-                width: 1
-                color: "white"
-            }
-            color: "transparent"
-            width: downloadActiveCoverup.width
-            anchors {
-                centerIn: downloadActiveCoverup
-            }
-
-            Rectangle {
-                id: progressBar
-                color: "#33b13b"
-                height: progressBarContainer.height - 6
-                anchors {
-                    verticalCenter: progressBarContainer.verticalCenter
-                    left: progressBarContainer.left
-                    leftMargin: 3
-                }
-                width: 1
-
-                PropertyAnimation {
-                    id: progressBarFake
-                    target: progressBar
-                    property: "width"
-                    from: 1
-                    to: progressBarContainer.width - 6
-                    duration: 2000
+                MouseArea {
+                    id: buttonCursor
+                    anchors.fill: parent
+                    onPressed:  mouse.accepted = false
+                    cursorShape: Qt.PointingHandCursor
                 }
             }
         }
 
-        Text {
-            id: progressStatus
-            text: "" + (100 * progressBar.width / (progressBarContainer.width - 6)).toFixed(0) + "% complete"
-            color: "white"
-            anchors {
-                bottom: progressBarContainer.top
-                right: progressBarContainer.right
-                bottomMargin: 3
-            }
+        Item {
+            width: 1
+            height: 10
         }
 
         Button {
-            id: progressButton
             anchors {
-                top: progressBarContainer.bottom
-                topMargin: 30
-                horizontalCenter: progressBarContainer.horizontalCenter
+                horizontalCenter: wrapper.horizontalCenter
             }
-            text: "Back"
-            onClicked: downloadActiveCoverup.visible = false
+
+            opacity: enabled ? 1 : 0.2
+            enabled: {
+                if (downloadButtonGroup.checkState === Qt.Unchecked
+                        || repeater.model.downloadInProgress
+                        || savePath.length === 0 )
+                {
+                    return false
+                }
+
+                return true
+            }
+
+            contentItem: SGWidgets.SGText {
+                text: "Download"
+                alternativeColorEnabled: true
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            background: Rectangle {
+                color: "#33b13b"
+                implicitWidth: 100
+                implicitHeight: 40
+            }
+
+            onClicked: {
+                var url = CommonCpp.SGUtilsCpp.pathToUrl(savePath)
+                repeater.model.downloadSelectedFiles(url)
+            }
+
+            MouseArea {
+                id: buttonCursor1
+                anchors.fill: parent
+                onPressed:  mouse.accepted = false
+                cursorShape: Qt.PointingHandCursor
+            }
         }
     }
 
-
-    FileDialog {
+    FolderDialog {
         id: fileDialog
-
         title: qsTr("Please choose a file")
-        folder: shortcuts.documents
-        selectFolder: true
-        selectMultiple: false
-
         onAccepted: {
-            selectedDir.text = "Files will be downloaded to: " + fileDialog.fileUrl
-            //            console.log("You chose: " + fileDialog.fileUrl)
+            savePath = CommonCpp.SGUtilsCpp.urlToLocalFile(fileDialog.folder)
         }
-        onRejected: {
-            //            console.log("Canceled")
-        }
-    }
-
-    QtLabsSettings.Settings {
-        category: "QQControlsFileDialog"
-
-        property alias lastDownloadFolder: fileDialog.folder
     }
 }

@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.12
 import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as Widget09
 import "qrc:/js/help_layout_manager.js" as Help
+import QtQuick.Extras 1.4               //for circular gauge
+import QtQuick.Controls.Styles 1.4      //for circular gauge
 
 Widget09.SGResponsiveScrollView {
     id: root
@@ -11,8 +13,9 @@ Widget09.SGResponsiveScrollView {
     minimumHeight: 800
     minimumWidth: 1000
 
-    property int leftMargin: 50
+    property int leftMargin: 75
     property int labelFontSize: 36
+    property int labelUnitFontSize: 24
     property int leftTextWidth: 200
 
 
@@ -43,12 +46,54 @@ Widget09.SGResponsiveScrollView {
 
 
 
+        Rectangle{
+            height:100
+            width:parent.width
+            Text {
+                id: targetSpeedLabel
+                text: "Target speed:"
+                width:parent.width/2
+                horizontalAlignment: Text.AlignRight
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -10
+                font {
+                    pixelSize: labelFontSize
+                }
+            }
+
+
+            SGSlider {
+                id: targetSpeedSlider
+                width: parent.width * .95
+                from: 0
+                to: 2000
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: targetSpeedLabel.right
+                anchors.leftMargin: 10
+                inputBox.unit:"rpm"
+                //I wish I could change the color of this text
+                //inputBox.unit.implicitColor: "lightgrey" CS-250
+                inputBox.fontSizeMultiplier: 2.5
+                inputBoxWidth: 150
+                handleSize: 20
+                inputBox.boxFont.family: "helvetica"
+                stepSize: 1
+                live:false
+
+                value: platformInterface.target_speed.rpm
+
+                onUserSet:{
+                    platformInterface.set_target_speed.update(value)
+                }
+            }
+        }
 
         SGAlignedLabel {
-            id: targetSpeedLabel
-            target: targetSpeedSlider
-            text: "Target speed:"
-            width:parent.width
+            id: directionLabel
+            target: directionRow
+            text: "Direction:"
+            overrideLabelWidth:leftTextWidth
             horizontalAlignment: Text.AlignRight
             font {
                 pixelSize: labelFontSize
@@ -56,26 +101,50 @@ Widget09.SGResponsiveScrollView {
 
             alignment: SGAlignedLabel.SideLeftCenter
 
-            SGSlider {
-                id: targetSpeedSlider
-                width: 350
-                from: 100
-                to: 2000
-                anchors.top:parent.top
-                anchors.topMargin:20
-                inputBox.unit:"rpm"
-                //I wish I could change the color of this text
-                //inputBox.unit.implicitColor: "lightgrey"
-                inputBox.fontSizeMultiplier: 2.5
-                handleSize: 20
-                inputBox.boxFont.family: "helvetica"
-                stepSize: 1
+            Row{
+                id:directionRow
+                spacing: 20
+
+                Image {
+                    id: clockwiseicon
+                    height:30
+                    anchors.verticalCenter: parent.verticalCenter
+                    fillMode: Image.PreserveAspectFit
+                    mipmap:true
+
+                    source:"../images/icon-clockwise-darkGrey.svg"
+                }
+
+                SGSwitch{
+                    id:directionSwitch
+                    width:50
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked: (platformInterface.direction.direction === "anti-clockwise") ? true : false
+                    grooveFillColor: "#21be2b"
+                    onToggled:{
+                        var value = "clockwise";
+                        if (checked)
+                            value = "anti-clockwise"
+
+                        platformInterface.set_direction.update(value);
+                    }
+                }
+
+                Image {
+                    id: counterClockwiseicon
+                    height:30
+                    anchors.verticalCenter: parent.verticalCenter
+                    fillMode: Image.PreserveAspectFit
+                    mipmap:true
+
+                    source:"../images/icon-counterClockwise-darkGrey.svg"
+                }
             }
         }
 
         SGAlignedLabel {
             id: actualspeedLabel
-            target: actualSpeedText
+            target: actualSpeedRow
             text: "Actual speed:"
             overrideLabelWidth:leftTextWidth
             horizontalAlignment: Text.AlignRight
@@ -85,19 +154,24 @@ Widget09.SGResponsiveScrollView {
 
             alignment: SGAlignedLabel.SideLeftCenter
 
-            SGInfoBox {
-                id: actualSpeedText
-                width: 150
-                text:"1350"
-                readOnly: true
-                unit: "rpm"
-                fontSizeMultiplier: 2.5
-                boxColor:"transparent"
-                boxBorderColor: "transparent"
-                boxFont.family: "helvetica"
-                unitFont.family: "helvetica"
-                textPadding: 0
+            Row{
+                id:actualSpeedRow
+                Text {
+                    id: actualSpeedText
+                    width: 90
+                    text:platformInterface.speed.rpm
+                    font.pixelSize: labelFontSize
+                }
 
+                Text {
+                    id: actualSpeedUnitText
+                    width: 150
+                    text:" rpm"
+                    color:"lightgrey"
+                    horizontalAlignment: Text.AlignLeft
+                    anchors.bottom:parent.bottom
+                    font.pixelSize: labelUnitFontSize
+                }
             }
         }
 
@@ -116,8 +190,9 @@ Widget09.SGResponsiveScrollView {
             Text{
                 id: stateText
                 width: 150
-                text:" ramping"
-                font.pixelSize: 36
+                text:platformInterface.state.M_state
+                font.pixelSize: labelFontSize
+                color: platformInterface.state.Statecolor
             }
 
 
@@ -125,7 +200,7 @@ Widget09.SGResponsiveScrollView {
 
         SGAlignedLabel {
             id: dcLinkLabel
-            target: dcLinkText
+            target: dcLinkRow
             text: "DC Link:"
             overrideLabelWidth:leftTextWidth
             horizontalAlignment: Text.AlignRight
@@ -135,24 +210,31 @@ Widget09.SGResponsiveScrollView {
 
             alignment: SGAlignedLabel.SideLeftCenter
 
-            SGInfoBox {
-                id: dcLinkText
-                width: 100
-                text:"123"
-                readOnly: true
-                unit: "V"
-                fontSizeMultiplier: 2.5
-                boxColor:"transparent"
-                boxBorderColor: "transparent"
-                boxFont.family: "helvetica"
-                unitFont.family: "helvetica"
+            Row{
+                id:dcLinkRow
 
+                Text {
+                    id: dcLinkText
+                    width: 65
+                    text:platformInterface.link_voltage.link_v
+                    font.pixelSize: labelFontSize
+
+                }
+                Text {
+                    id: dcLinkUnitText
+                    width: 100
+                    text:" V"
+                    color:"lightgrey"
+                    horizontalAlignment: Text.AlignLeft
+                    anchors.bottom:parent.bottom
+                    font.pixelSize: labelUnitFontSize
+                }
             }
         }
 
         SGAlignedLabel {
             id: phaseCurrentLabel
-            target: phaseCurrentText
+            target: phaseCurrentRow
             text: "Phase current:"
             overrideLabelWidth:leftTextWidth
             horizontalAlignment: Text.AlignRight
@@ -162,17 +244,66 @@ Widget09.SGResponsiveScrollView {
 
             alignment: SGAlignedLabel.SideLeftCenter
 
-            SGInfoBox {
-                id: phaseCurrentText
-                width: 100
-                text:"3.2"
-                readOnly: true
-                unit: "A"
-                boxFont.family: "helvetica"
-                unitFont.family: "helvetica"
-                fontSizeMultiplier: 2.5
-                boxColor:"transparent"
-                boxBorderColor: "transparent"
+            Row{
+                id:phaseCurrentRow
+                Text {
+                    id: phaseCurrentText
+                    width: 50
+                    text:platformInterface.phase_current.p_current
+                    font.pixelSize: labelFontSize
+                }
+                Text {
+                    id: phaseCurrentUnitText
+                    width: 100
+                    text:" A"
+                    color:"lightgrey"
+                    horizontalAlignment: Text.AlignLeft
+                    anchors.bottom:parent.bottom
+                    font.pixelSize: labelUnitFontSize
+                }
+            }
+        }
+
+        Rectangle{
+            height:100
+            width:parent.width
+            Text {
+                id: poleLabel
+                text: "Number of poles:"
+                width:parent.width/2
+                horizontalAlignment: Text.AlignRight
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: -10
+                font {
+                    pixelSize: labelFontSize
+                }
+                color: platformInterface.state.M_state === "Halted" ? "black" : "lightgrey"
+            }
+
+
+            SGSlider {
+                id: poleSlider
+                width: parent.width*.95
+                from: 4
+                to: 48
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: poleLabel.right
+                anchors.leftMargin: 10
+                inputBox.unit:""
+                inputBox.fontSizeMultiplier: 2.5
+                inputBoxWidth: 60
+                handleSize: 20
+                inputBox.boxFont.family: "helvetica"
+                stepSize: 2
+                live:false
+                enabled:platformInterface.state.M_state === "Halted" ? true : false
+
+                value: platformInterface.poles.poles
+
+                onUserSet:{
+                    platformInterface.set_poles.update(value)
+                }
             }
         }
     }
@@ -214,24 +345,29 @@ Widget09.SGResponsiveScrollView {
                 columnSpacing: 2
                 rowSpacing: 2
 
-                Widget09.SGSegmentedButton{
+
+                MCSegmentedButton{
                     text: qsTr("Graph")
                     activeColor: "dimgrey"
                     inactiveColor: "gainsboro"
-                    textColor: "black"
-                    textActiveColor: "white"
+                    textColor: "white"
+                    textActiveColor: "black"
+                    textSize:labelFontSize
                     checked: true
+                    hoverEnabled: false
                     onClicked: {
                         graphTachometerContainerRect.showGraph();
                     }
                 }
 
-                Widget09.SGSegmentedButton{
+                MCSegmentedButton{
                     text: qsTr("Tachometer")
                     activeColor: "dimgrey"
                     inactiveColor: "gainsboro"
-                    textColor: "black"
-                    textActiveColor: "white"
+                    textColor: "white"
+                    textActiveColor: "black"
+                    textSize:labelFontSize
+                    hoverEnabled: false
                     onClicked: {
                         graphTachometerContainerRect.showTachometer();
                     }
@@ -298,21 +434,79 @@ Widget09.SGResponsiveScrollView {
                 id:rpmGraph
                 height:400
                 width:500
+                title: "Graph"                  // Default: empty
+                xAxisTitle: "Seconds"           // Default: empty
+                yAxisTitle: "rpm"          // Default: empty
+                showYGrids: true                // Default: false
+                // showXGrids: false               // Default: false
+                reverseDirection: true          // Default: false - Reverses the direction of graph motion
+                autoAdjustMaxMin: true          // Default: false - If inputData is greater than maxYValue or less than minYValue, these limits are adjusted to encompass that point.
+                maxYValue: 2000                  // Default: 10
+                maxXValue: 10
+                repeatOldData: false            //testing to see if this will help "pause" the graph
+
                 opacity:1
                 anchors.centerIn: parent
 
+                property bool paused: false
+                inputData: {
+                    if (paused)
+                        return inputData;
+                      else
+                        return platformInterface.speed.rpm
+                }
 
             }
 
-            SGCircularGauge {
+            CircularGauge {
                 id: speedGauge
                 anchors.centerIn: parent
+                value: platformInterface.speed.rpm
                 height: 300
                 width: 300
+                maximumValue: 2000
+                minimumValue: 0
+
                 opacity:0
 
-                //value: platformInterface._motor_speed
+                style: CircularGaugeStyle {
+                    needle: Rectangle {
+                        y: outerRadius * 0.15
+                        implicitWidth: outerRadius * 0.03
+                        implicitHeight: outerRadius * 0.9
+                        antialiasing: true
+                        color: Qt.rgba(0.66, 0.3, 0, 1)
+                    }
+                    tickmark: Rectangle {
+                         implicitWidth: outerRadius * 0.02
+                         antialiasing: true
+                         implicitHeight: outerRadius * 0.06
+                         color: "black"
+                         }
+                    minorTickmark: Rectangle {
+                         implicitWidth: outerRadius * 0.02
+                         antialiasing: true
+                         implicitHeight: outerRadius * 0.04
+                         color: "black"
+                         }
+                    tickmarkLabel: Text{
+                        color:"black"
+                        text: styleData.value
+                    }
+
+                    tickmarkStepSize: 200
+                }
             }
+
+//            SGCircularGauge {
+//                id: speedGauge
+//                anchors.centerIn: parent
+//                height: 300
+//                width: 300
+//                opacity:0
+
+//                value: platformInterface.speed.rpm
+//            }
         }
 
 
@@ -321,71 +515,54 @@ Widget09.SGResponsiveScrollView {
     Row{
         id:buttonRow
         anchors.bottom:root.bottom
-        anchors.bottomMargin: root.leftMargin
+        anchors.bottomMargin: 30
         anchors.horizontalCenter: parent.horizontalCenter
         spacing:50
 
         SGButton{
+            property bool isRunning: false
+
             id:startButton
-            text:"start"
-            contentItem: Text {
-                text: startButton.text
-                font.pixelSize: 32
-                color:"black"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
-            }
+            text:isRunning ? "stop" : "start"
+            fontSizeMultiplier:2.4
+
 
             background: Rectangle {
                 implicitWidth: 150
                 implicitHeight: 40
                 opacity: enabled ? 1 : 0.3
                 //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-                color:startButton.down ? "dimgrey" : "lightgrey"
+                color: startButton.isRunning ? "red" :"#21be2b"
                 border.width: 1
                 radius: 10
+            }
+
+            onClicked: {
+                //send something to the platform
+                if (startButton.isRunning)
+                    platformInterface.stop_motor.update();
+                  else
+                    platformInterface.start_motor.update();
+
+                startButton.isRunning = !startButton.isRunning
+            }
+
+            property var motorState: platformInterface.state.M_state
+            onMotorStateChanged:{
+                if (platformInterface.state.M_state === "Halted")
+                    startButton.isRunning = false
             }
 
 
         }
 
-        SGButton{
-            id:haltButton
-            text:"halt"
-            contentItem: Text {
-                text: haltButton.text
-                font.pixelSize: 32
-                color:"black"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
-            }
 
-            background: Rectangle {
-                implicitWidth: 150
-                implicitHeight: 40
-                opacity: enabled ? 1 : 0.3
-                //border.color: motor1standbyButton.down ? "grey" : "dimgrey"
-                color:haltButton.down ? "dimgrey" : "lightgrey"
-                border.width: 1
-                radius: 10
-            }
-
-        }
         SGButton{
             id:pauseButton
             text:"pause"
             checkable: true
 
-            contentItem: Text {
-                text: pauseButton.text
-                font.pixelSize: 32
-                color:"black"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
-            }
+            fontSizeMultiplier:2.4
 
             background: Rectangle {
                 implicitWidth: 150
@@ -394,6 +571,13 @@ Widget09.SGResponsiveScrollView {
                 color:pauseButton.checked ? "dimgrey" : "lightgrey"
                 border.width: 1
                 radius: 10
+            }
+
+            onClicked: {
+                if (checked)
+                    rpmGraph.paused = true;
+                  else
+                    rpmGraph.paused = false;
             }
 
         }

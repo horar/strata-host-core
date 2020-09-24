@@ -1,12 +1,12 @@
 project(CouchbaseBrowser
-    DESCRIPTION "CouchbaseBrowser"
+    DESCRIPTION "Couchbase Browser"
     LANGUAGES CXX
 )
 
 set(PROJECT_WIN32_ICO resources/icons/app/app.ico)
 set(PROJECT_MACOS_ICNS app.icns)
 set(PROJECT_BUNDLE_ID com.onsemi.strata.cbb)
-set(PROJECT_COPYRIGHT "Copyright (C) 2019 ${PROJECT_COMPANY}")
+set(PROJECT_COPYRIGHT "Copyright (C) 2019-2020 ${PROJECT_COMPANY}")
 
 
 find_package(Qt5 ${VERSION_QT5}
@@ -26,8 +26,8 @@ target_link_libraries("${PROJECT_NAME}Library"
     Qt5::Core
     Qt5::Qml
 
-    strata::CouchbaseLiteCPP
-    QtLogger
+    strata::Couchbase-Lite-C
+    strata::QtLogger
 )
 
 target_include_directories("${PROJECT_NAME}Library"
@@ -49,17 +49,6 @@ target_link_libraries(${PROJECT_NAME}
 
     "${PROJECT_NAME}Library"
 )
-
-if(APPLE)
-    find_library(FOUNDATION_LIB Foundation REQUIRED)
-    if (NOT FOUNDATION_LIB)
-        message(FATAL_ERROR "Foundation framework not found")
-    endif()
-
-    target_link_libraries(${PROJECT_NAME}
-        ${FOUNDATION_LIB}
-    )
-endif()
 
 if(APPLE)
     target_sources(${PROJECT_NAME} PRIVATE

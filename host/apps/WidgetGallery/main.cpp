@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QtWidgets/QApplication>
 #include <QQmlContext>
 #include <QSettings>
 #include <QResource>
@@ -7,6 +8,7 @@
 #include <QIcon>
 #include <QtLoggerSetup.h>
 #include "logging/LoggingQtCategories.h"
+#include "Version.h"
 
 void loadResources() {
     QDir applicationDir(QCoreApplication::applicationDirPath());
@@ -14,7 +16,10 @@ void loadResources() {
     const auto resources = {
         QStringLiteral("component-fonts.rcc"),
         QStringLiteral("component-common.rcc"),
-        QStringLiteral("component-sgwidgets.rcc")};
+        QStringLiteral("component-sgwidgets.rcc"),
+        QStringLiteral("component-theme.rcc")
+    };
+
 
 #ifdef Q_OS_MACOS
     applicationDir.cdUp();
@@ -57,12 +62,13 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QGuiApplication::setApplicationVersion(AppInfo::version.data());
 
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
     app.setWindowIcon(QIcon(":/images/wg-logo.svg"));
 
-    const QtLoggerSetup loggerInitialization(app);
-    qCInfo(logCategoryWg) << QStringLiteral("%1 v%2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
+    const strata::loggers::QtLoggerSetup loggerInitialization(app);
+    qCInfo(logCategoryWg) << QStringLiteral("%1 %2").arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion());
 
     loadResources();
 

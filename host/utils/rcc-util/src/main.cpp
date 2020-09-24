@@ -2,9 +2,17 @@
 #include <QDebug>
 #include <QDirIterator>
 #include <QResource>
+#include <QSettings>
+
+#include "Version.h"
 
 int main(int argc, char* argv[])
 {
+
+    QCoreApplication::setOrganizationName(QStringLiteral("ON Semiconductor"));
+    QCoreApplication::setApplicationName(QStringLiteral("rcc-util"));
+    QCoreApplication::setApplicationVersion(AppInfo::version.data());
+    QSettings::setDefaultFormat(QSettings::IniFormat);
     QCoreApplication app(argc, argv);
 
     QCommandLineParser parser;

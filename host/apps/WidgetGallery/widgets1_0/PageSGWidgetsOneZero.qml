@@ -8,6 +8,16 @@ FocusScope {
         id: widgetModel
 
         ListElement {
+            name: "SGAlignedLabel"
+            page: "ExSGAlignedLabel.qml"
+        }
+
+        ListElement {
+            name: "SGAccordion"
+            page: "ExSGAccordion.qml"
+        }
+
+        ListElement {
             name: "SGButton"
             page: "ExSGButton.qml"
         }
@@ -18,14 +28,80 @@ FocusScope {
         }
 
         ListElement {
+            name: "SGComboBox"
+            page: "ExSGComboBox.qml"
+        }
+
+        ListElement {
+            name: "SGCircularGauge"
+            page: "ExSGCircularGauge.qml"
+        }
+
+        ListElement {
+            name: "SGDialogs"
+            page: "ExDialogs.qml"
+        }
+
+        ListElement {
+            name: "SGGraph"
+            page: "ExSGGraph.qml"
+        }
+
+        ListElement {
+            name: "SGHueSlider"
+            page: "ExSGHueSlider.qml"
+        }
+
+        ListElement {
+            name: "SGInfoBox"
+            page: "ExSGInfoBox.qml"
+        }
+
+        ListElement {
+            name: "SGMqttClient"
+            page: "ExSGMqttClient.qml"
+        }
+
+        ListElement {
+            name: "SGRadioButton"
+            page: "ExSGRadioButton.qml"
+        }
+
+        ListElement {
+            name: "SGRGBSlider"
+            page: "ExSGRGBSlider.qml"
+        }
+
+        ListElement {
+            name: "SGSwitch"
+            page: "ExSGSwitch.qml"
+        }
+
+        ListElement {
+            name: "SGSlider"
+            page: "ExSGSlider.qml"
+        }
+
+        ListElement {
+            name: "SGStatusLight"
+            page: "ExSGStatusLight.qml"
+        }
+
+        ListElement {
+            name: "SGSubmitInfoBox"
+            page: "ExSGSubmitInfoBox.qml"
+        }
+
+        ListElement {
+            name: "SGStatusLogBox"
+            page: "ExSGStatusLogBox.qml"
+        }
+
+        ListElement {
             name: "SGTextField"
             page: "ExSGTextField.qml"
         }
 
-        ListElement {
-            name: "Dialogs"
-            page: "ExDialogs.qml"
-        }
     }
 
     Component.onCompleted: {
@@ -110,11 +186,13 @@ FocusScope {
                 color: "white"
             }
         }
+
+
     }
 
     FocusScope {
         id: sidePane
-         width: flick.width
+        width: flick.width
         anchors {
             top: header.bottom
             bottom: parent.bottom
@@ -142,6 +220,13 @@ FocusScope {
             contentWidth: widgetList.width
             contentHeight: widgetList.height
             boundsBehavior: Flickable.StopAtBounds
+            ScrollBar.vertical: ScrollBar {
+                policy: ScrollBar.AlwaysOn
+                visible: flick.height < flick.contentHeight
+            }
+
+
+
             clip: true
 
             Column {

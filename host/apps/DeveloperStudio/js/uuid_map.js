@@ -29,7 +29,7 @@ var uuid_map = {
     "acf" : "ACF",
 
     /*****
-        CES HACK (class_id)
+        CES HACK or temporary Class ID for development purposes(class_id)
     *****/
     "101": "logic-gate",
     "201": "logic-gate",
@@ -43,7 +43,7 @@ var uuid_map = {
     "210": "XDFN-LDO",
     "211": "XDFN-LDO",
     "212": "XDFN-LDO",
-    "213": "",             // empty listing for sensors platform, hack for proper display in static platform list
+    "213": "sensor",
     "214": "XDFN-LDO",
     "215": "5A-switcher",
     "216": "5A-switcher-NCV6357",
@@ -51,6 +51,7 @@ var uuid_map = {
     "218": "usb-hub",
     "219": "15A-switcher",
     "220": "15A-switcher",
+    "221": "usb-pd-pps",
     "222": "subGHz",
     "225": "smart-speaker",
     "224": "pixel",
@@ -62,11 +63,30 @@ var uuid_map = {
     "231": "ACF-PSU", // change this to actual AC - DC UUID which is 231
     "232": "subGHz2",
     "233": "sar-adc",
+    "234" : "Adj-LDO",
+    "235" : "Adj-LDO",
+    "236" : "Adj-LDO",
+    "237" : "Adj-LDO",
     "238": "ecoSWITCH",
     "239": "1A-LED",
     "240": "ldo-cp",
     "243": "Automotive-ADAS-Preregulator",
     "244": "motorController",
-    "245": "bldcMotorController",
-    "246": "meshNetwork"
+    "245": "bldcMotorControl",
+    "246": "meshNetwork",
+    "265": "zigbee",
+
+    /*****
+        Real UUID generated from interaction with Deployment Portal (class_id)
+    *****/
+    "72ddcc10-2d18-4316-8170-5223162e54cf": "sensor",
+    "87054646-955d-42ed-aa82-8927b6a70286": "motorController",
+    "b8a53467-4155-4104-905e-8d23bb5664a3": "Adj-LDO",
+    "8da4158e-caa7-469d-8e4c-949d7a7e9858": "Adj-LDO",
+    "d0cc3eb2-f822-4955-afa4-b975957aed38": "Adj-LDO",
+    "0570d932-6a3f-4a34-8442-cd9914518241": "current-sense",
+    "76a518b4-37bc-4fee-ad5b-92c381dea0c2": "zigbee",
+    "0d674fd9-3770-4ee7-ab0c-1f5f5de710fc": "usb-pd-pps",
+    "bcd30065-a324-4a2c-8b55-05752c4eb76a": "FuelGauge-Monitor"
+
 }

@@ -8,28 +8,25 @@
 #include <atomic>
 #include <functional>
 
+#include <QByteArray>
+
 #include <rapidjson/document.h>
 
 struct PlatformMessage
 {
     enum MessageType {
         eMsgUnknown = 0,
-        eMsgPlatformConnected,
-        eMsgPlatformDisconnected,
-        eMsgPlatformMessage,
-        
-        eMsgClientMessage,
-        eMsgDynamicPlatformListResponse,
-        eMsgCouchbaseMessage,
 
-        eMsgStorageRequest,     //from StorageManager / Downloader
-        eMsgStorageResponse,
+        eMsgClientMessage,
     };
 
     MessageType msg_type;
-    std::string from_client;
+    QByteArray from_client;
     std::string message;
     rapidjson::Document* msg_document;
+
+    // constructor
+    PlatformMessage();
 };
 
 

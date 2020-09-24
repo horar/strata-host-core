@@ -35,7 +35,7 @@ Rectangle {
                 height: 40
 
                 Text {
-                    text: "Debug (inject fake platform notifications):"
+                    text: "Debug"
                     anchors {
                         verticalCenter: header.verticalCenter
                         left: header.left
@@ -56,38 +56,94 @@ Rectangle {
 
             Button {
                 id: motorRunningTrue
-                text: "Send motor_running_notification, 'running': true"
+                text: "update periodic values"
                 onClicked: {
+                    var direction = ((Math.random() * 2) >= 1 ? "clockwise" : "anti-clockwise");
+                    var current = ((Math.random() *100) +1).toFixed(0) ;
+                    var voltage = ((Math.random() *100) +1).toFixed(0) ;
+                    var rpm = (Math.random()*2000).toFixed(0);
+
+                    console.log("current=",current);
+                    console.log("voltage=",voltage);
+
+
+                    function randomState(){
+                        if (Math.random() >= .2)
+                            return "Halted";
+                          else if (Math.random() >= .4)
+                            return "Ramping up";
+                          else if (Math.random() >= .6)
+                            return "Ramping down";
+                          else if (Math.random() >= .4)
+                            return "Running";
+                          else
+                            return "Stopped";
+                    }
+
+                    function randomColor(){
+                        if (Math.random() >= .2)
+                            return "red";
+                          else if (Math.random() >= .4)
+                            return "blue";
+                          else if (Math.random() >= .6)
+                            return "green";
+                          else if (Math.random() >= .4)
+                            return "gold";
+                          else
+                            return "purple";
+                    }
+
+                    var theState = randomState();
+                    console.log("state=",theState);
+
                     CorePlatformInterface.data_source_handler('{
-                                "value":"motor_running_notification",
+                                "value":"link_voltage",
                                 "payload":{
-                                         "running": true
+                                         "link_v": ' +voltage+ '
+                                }
+                        }')
+
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"phase_current",
+                                "payload":{
+                                         "p_current": '+current+ '
+                                }
+                        }')
+
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"target_speed",
+                                "payload":{
+                                         "rpm": ' + rpm + '
+                                }
+                        }')
+
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"direction",
+                                "payload":{
+                                         "direction": "' + direction + '"
+                                }
+                        }')
+
+                    CorePlatformInterface.data_source_handler('{
+                                "value":"state",
+                                "payload":{
+                                         "M_state": "' + randomState() + '",
+                                        "Statecolor":"' + randomColor() + '"
                                 }
                         }')
                 }
             }
 
-            Button {
-                id: motorRunningFalse
-                text: "Send motor_running_notification, 'running': false"
-                onClicked: {
-                    CorePlatformInterface.data_source_handler('{
-                                "value":"motor_running_notification",
-                                "payload":{
-                                         "running": false
-                                }
-                        }')
-                }
-            }
+
 
             Button {
                 id: motorSpeed
-                text: "Send motor_speed_notification, 'speed': random"
+                text: "motor speed"
                 onClicked: {
                     CorePlatformInterface.data_source_handler('{
-                                "value":"motor_speed_notification",
+                                "value":"speed",
                                 "payload":{
-                                         "speed": ' + (Math.random()*100).toFixed(2) + '
+                                         "rpm": ' + (Math.random()*2000).toFixed(0) + '
                                 }
                         }')
                 }

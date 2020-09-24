@@ -1,32 +1,35 @@
 project(flasher-cli
-    VERSION 1.0.0
+    DESCRIPTION "Flasher CLI"
     LANGUAGES CXX
 )
 
-if(APPLE)
-    find_library(IOKIT_LIB IOKit REQUIRED)
-    if (NOT IOKIT_LIB)
-        message(FATAL_ERROR "IOKit framework not found")
-    endif()
-    find_library(FOUNDATION_LIB Foundation REQUIRED)
-    if (NOT FOUNDATION_LIB)
-        message(FATAL_ERROR "Foundation framework not found")
-    endif()
-endif()
+set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+find_package(Qt5 ${VERSION_QT5}
+    COMPONENTS Core SerialPort
+    REQUIRED
+)
 
 add_executable(${PROJECT_NAME}
     src/main.cpp
+    src/Commands.cpp
+    src/CliParser.cpp
+    src/SerialPortList.cpp
+    src/logging/LoggingQtCategories.cpp
 )
+
+generate_app_version(GITTAG_PREFIX "${PROJECT_NAME}_" MACBUNDLE OFF)
 
 target_link_libraries(${PROJECT_NAME}
-    flasher
-    PlatformManager
-    StrataSerialPort
+    Qt5::Core
+    Qt5::SerialPort
+    strata::QtLogger
+    strata::Flasher
+    strata::Device
 )
 
-if (APPLE)
-    target_link_libraries(${PROJECT_NAME}
-        ${IOKIT_LIB}
-        ${FOUNDATION_LIB}
-    )
-endif()
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    AUTOMOC ON
+)

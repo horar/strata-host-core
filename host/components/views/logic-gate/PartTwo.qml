@@ -1,7 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 1.4
-import "qrc:/views/logic-gate/sgwidgets"
+import "sgwidgets"
 
 
 
@@ -21,7 +21,7 @@ GridLayout {
     property int currentIndex: 0
     //Reset view for the nl7sz58 tab
     function resetToIndex0(){
-        gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/nand.png"
+        gateImageSource = "./images/nl7sz58/nand.png"
         inputAToggleContainer.anchors.topMargin = 10
         inputBToggleContainer.anchors.topMargin = 10
         inputBToggleContainer.anchors.leftMargin = 0
@@ -167,7 +167,7 @@ GridLayout {
                     text: qsTr("NAND")
                     checked: true  // Sets default checked button when exclusive
                     onClicked: {
-                        gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/nand.png"
+                        gateImageSource = "./images/nl7sz58/nand.png"
                         inputAToggleContainer.anchors.topMargin = 10
                         inputBToggleContainer.anchors.topMargin = 10
                         inputBToggleContainer.anchors.top = inputAToggleContainer.bottom
@@ -187,7 +187,7 @@ GridLayout {
                 SGSegmentedButton{  //nl7sz58 AND NOT B
                     text: qsTr("AND NOTB")
                     onClicked: {
-                        gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/nand_nb.png"
+                        gateImageSource = "./images/nl7sz58/nand_nb.png"
                         inputAToggleContainer.anchors.topMargin = 10
                         inputBToggleContainer.anchors.topMargin = 10
                         inputBToggleContainer.anchors.top = inputAToggleContainer.bottom
@@ -206,7 +206,7 @@ GridLayout {
                 SGSegmentedButton{  //nl7sz58 AND NOT C
                     text: qsTr("AND NOTC")
                     onClicked: {
-                        gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/and_nc.png"
+                        gateImageSource = "./images/nl7sz58/and_nc.png"
                         inputAToggleContainer.anchors.topMargin = 10
                         inputBToggleContainer.anchors.topMargin = 10
                         inputBToggleContainer.anchors.top = inputAToggleContainer.bottom
@@ -225,7 +225,7 @@ GridLayout {
                 SGSegmentedButton{  //nl7sz58 OR
                     text: qsTr("OR")
                     onClicked: {
-                        gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/or.png"
+                        gateImageSource = "./images/nl7sz58/or.png"
                         inputAToggleContainer.anchors.topMargin = 10
                         inputBToggleContainer.anchors.topMargin = 20
                         inputBToggleContainer.anchors.top = inputAToggleContainer.bottom
@@ -244,7 +244,7 @@ GridLayout {
                 SGSegmentedButton{  //nl7sz58 XOR
                     text: qsTr("XOR")
                     onClicked: {
-                        gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/xor.png"
+                        gateImageSource = "./images/nl7sz58/xor.png"
                         inputAToggleContainer.anchors.topMargin = 10
                         inputBToggleContainer.anchors.topMargin = 20
                         inputBToggleContainer.anchors.top = inputAToggleContainer.bottom
@@ -263,7 +263,7 @@ GridLayout {
                 SGSegmentedButton{  //nl7sz58 Inverter
                     text: qsTr("Inverter")
                     onClicked: {
-                        gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/inverter.png"
+                        gateImageSource = "./images/nl7sz58/inverter.png"
                         inputAToggleContainer.anchors.topMargin = 70
                         inputBToggleContainer.anchors.topMargin = 70
                         inputBToggleContainer.anchors.rightMargin = -150
@@ -280,7 +280,7 @@ GridLayout {
                 SGSegmentedButton{  //nl7sz58 Buffer
                     text: qsTr("Buffer")
                     onClicked: {
-                        gateImageSource = "qrc:/views/logic-gate/images/nl7sz58/buffer.png"
+                        gateImageSource = "./images/nl7sz58/buffer.png"
                         inputAToggleContainer.anchors.topMargin = 70
                         inputBToggleContainer.anchors.topMargin = 70
                         inputBToggleContainer.anchors.rightMargin = -150

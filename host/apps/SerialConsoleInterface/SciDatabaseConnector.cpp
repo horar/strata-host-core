@@ -31,7 +31,7 @@ bool SciDatabaseConnector::open(const QString &dbName)
 
     Strata::SGDatabaseReturnStatus ret = database_->open();
     if (ret != Strata::SGDatabaseReturnStatus::kNoError) {
-        qCWarning(logCategorySci) << "Failed to open database error" << static_cast<int>(ret);
+        qCCritical(logCategorySci) << "Failed to open database error" << static_cast<int>(ret);
         return false;
     }
 
@@ -48,7 +48,7 @@ bool SciDatabaseConnector::initReplicator(const QString &replUrl, const QStringL
                 new Strata::SGURLEndpoint(replUrl.toStdString()));
 
     if (urlEndpoint_->init() == false) {
-        qCWarning(logCategorySci) << "Replicator endpoint URL is failed";
+        qCCritical(logCategorySci) << "Replicator endpoint URL is failed";
         return false;
     }
 
@@ -71,7 +71,7 @@ bool SciDatabaseConnector::initReplicator(const QString &replUrl, const QStringL
 
     const auto result = replicator_->start();
     if (result != Strata::SGReplicatorReturnStatus::kNoError) {
-        qCWarning(logCategorySci) << "Replicator start failed" << static_cast<int>(result);
+        qCCritical(logCategorySci) << "Replicator start failed" << static_cast<int>(result);
 
         replicator_.reset();
         replicatorConfiguration_.reset();

@@ -1,8 +1,6 @@
+#include "EventsMgr/EvEventsMgr.h"
+#include "EventsMgr/EvEvent.h"
 
-#include "EvEventsMgr.h"
-#include "EvEvent.h"
-
-// libevent library
 #include <event.h>
 #include <event2/event.h>
 #include <event2/thread.h>
@@ -11,10 +9,7 @@
 #include <iostream>
 
 
-/////////////////////////////////////////////////////////////////////////////////
-
-namespace spyglass
-{
+namespace strata::events_mgr {
 
 EvEventsMgr::EvEventsMgr() : event_base_(nullptr)
 {
@@ -53,7 +48,7 @@ bool EvEventsMgr::registerEvent(EvEventBase* event)
     return true;
 }
 
-void EvEventsMgr::unregisterEvent(spyglass::EvEventBase *event)
+void EvEventsMgr::unregisterEvent(EvEventBase *event)
 {
     if (event->getType() != EvEventBase::EvType::eEvTypeHandle &&
         event->getType() != EvEventBase::EvType::eEvTypeTimer) {
@@ -89,11 +84,15 @@ bool EvEventsMgr::startInThread()
     return true;
 }
 
+bool EvEventsMgr::isRunning()
+{
+    return (eventsThread_.get_id() != std::thread::id());
+}
+
 void EvEventsMgr::stop()
 {
-    if (eventsThread_.get_id() == std::thread::id()) {
+    if (!isRunning())
         return;
-    }
 
     stopThread_ = true;
 
@@ -116,34 +115,5 @@ void EvEventsMgr::threadMain()
 
     //TODO: put this in log:  std::cout << "Stop thread." << std::endl;
 }
-
-//////////////////////////////////////////////////////////
-
-bool EvEventsMgrInstance::wsa_init_done = false;
-
-EvEventsMgrInstance::EvEventsMgrInstance()
-{
-#if defined(_WIN32)
-    if (wsa_init_done == false)
-    {
-        WSADATA wsaData;
-        if (WSAStartup( MAKEWORD(2,0), &wsaData ) != 0) {
-            throw std::runtime_error("WSAStartup failed!");
-        }
-
-        wsa_init_done = true;
-    }
-#endif
-}
-
-EvEventsMgrInstance::~EvEventsMgrInstance()
-{
-#if defined(_WIN32)
-    if (wsa_init_done) {
-        WSACleanup();
-    }
-#endif
-}
-
 
 } //end of namespace

@@ -10,6 +10,8 @@
         <file>SGCheckBox.qml</file>
         <file>SGCircularGauge.qml</file>
         <file>SGComboBox.qml</file>
+        <file>SGFileSelector.qml</file>
+        <file>SGGraph.qml</file>
         <file>SGHueSlider.qml</file>
         <file>SGIcon.qml</file>
         <file>SGIconButton.qml</file>
@@ -23,7 +25,7 @@
         <file>SGPage.qml</file>
         <file>SGRadioButton.qml</file>
         <file>SGRadioButtonContainer.qml</file>
-        <file>SGResponsiveSCrollView.qml</file>
+        <file>SGResponsiveScrollView.qml</file>
         <file>SGRGBSlider.qml</file>
         <file>SGSettings.qml</file>
         <file>SGSlider.qml</file>
@@ -52,4 +54,3 @@
         <file>dialogs/SGMessageDialog.qml</file>
     </qresource>
 </RCC>
-

@@ -1,52 +1,16 @@
-#ifndef FLASHERCONNECTOR_H
-#define FLASHERCONNECTOR_H
+#ifndef FLASHER_CONNECTOR_H_
+#define FLASHER_CONNECTOR_H_
+
+#include <memory>
 
 #include <QObject>
-#include <QMutex>
-#include <QWaitCondition>
-#include <QMap>
+#include <QString>
+#include <QTemporaryFile>
 
+#include <Device/Device.h>
 #include <Flasher.h>
-#include <PlatformConnection.h>
 
-class FlasherWorker : public QObject
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(FlasherWorker)
-
-public:
-    FlasherWorker(spyglass::PlatformConnectionShPtr connection, const QString &firmwarePath, QObject *parent = nullptr);
-    ~FlasherWorker() = default;
-
-    /**
-     * Stop request, must be called from other thread
-     */
-    void stop();
-
-public slots:
-    void process();
-
-signals:
-    void taskDone(QString connectionId, bool status);
-    void notify(QString connectionId, QString message);
-    void finished();
-
-private:
-
-    /**
-     * Cancel check callback method
-     * @return returns true when cancel was requested otherwise false
-     */
-    bool isCancelRequested();
-
-private:
-    spyglass::PlatformConnectionShPtr connection_;
-    QString firmwarePath_;
-
-    QAtomicInt stopFlag_;
-};
-
-//////////////////////////////////////////////////////////////////////////////////////
+namespace strata {
 
 class FlasherConnector : public QObject
 {
@@ -54,37 +18,155 @@ class FlasherConnector : public QObject
     Q_DISABLE_COPY(FlasherConnector)
 
 public:
-    FlasherConnector(QObject *parent = nullptr);
+    /*!
+     * FlasherConnector constructor.
+     * \param device device which will be used by FlasherConnector
+     * \param firmwarePath path to firmware file
+     */
+    FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, QObject* parent = nullptr);
+
+    /*!
+     * FlasherConnector constructor.
+     * \param device device which will be used by FlasherConnector
+     * \param firmwarePath path to firmware file
+     * \param firmwareMD5 MD5 checksum of firmware
+     */
+    FlasherConnector(const device::DevicePtr& device, const QString& firmwarePath, const QString& firmwareMD5, QObject* parent = nullptr);
+
+    /*!
+     * FlasherConnector destructor.
+     */
     ~FlasherConnector();
 
-    /**
-     * Starts flashing task in the background
-     * @param connection
-     * @param firmwarePath
+    /*!
+     * Flash firmware.
+     * \param backupBeforeFlash if set to true backup old firmware before flashing new one and if flash process fails flash old firmware
+     * \return true if flash process has started, otherwise false
      */
-    bool start(spyglass::PlatformConnectionShPtr connection, const QString &firmwarePath);
+    bool flash(bool backupBeforeFlash = true);
 
-    /**
-     * Stops flashing of given connection id and waits for finish
+    /*!
+     * Backup firmware.
+     * \return true if backup process has started, otherwise false
      */
-    void stop(const QString& connectionId);
+    bool backup();
 
-    /**
-     * Stops all flashing and waits for finish
+    /*!
+     * Stop flash/backup firmware operation.
      */
-    void stopAll();
+    void stop();
+
+    /*!
+     * Set path to firmware file.
+     * \param firmwarePath path to firmware file
+     */
+    void setFirmwarePath(const QString& firmwarePath);
+
+    /*!
+     * The Result enum for finished() signal.
+     */
+    enum class Result {
+        Success,   /*!< Firmware is flashed (or backed up) successfully. */
+        Unsuccess, /*!< Something went wrong, new firmware was not flashed, but original firmware is avaialble (board can be in bootloader mode). */
+        Failure    /*!< Failure, neither new nor original firmware is flashed correctly. */
+    };
+    Q_ENUM(Result)
+
+    /*!
+     * The Operation enum for operationStateChanged() signal.
+     */
+    enum class Operation {
+        Preparation,
+        Flash,
+        Backup,
+        BackupBeforeFlash,
+        RestoreFromBackup
+    };
+    Q_ENUM(Operation)
+
+    /*!
+     * The State enum for operationStateChanged() signal.
+     */
+    enum class State {
+        Started,
+        Finished,
+        Cancelled,
+        Failed
+    };
+    Q_ENUM(State)
 
 signals:
-    void taskDone(QString connectionId, bool status);
-    void notify(QString connectionId, QString message);
+    /*!
+     * This signal is emitted only once when FlasherConnector finishes.
+     * \param result result of FlasherConnector operation
+     */
+    void finished(Result result);
+
+    /*!
+     * This signal is emitted during flashing new firmware.
+     * \param chunk number of firmware chunks which was flashed
+     * \param total total count of firmware chunks
+     */
+    void flashProgress(int chunk, int total);
+
+    /*!
+     * This signal is emitted during firmware backup.
+     * \param chunk chunk number which was backed up
+     * \param total total count of firmware chunks
+     */
+    void backupProgress(int chunk, int total);
+
+    /*!
+     * This signal is emitted during flashing backed up firmware.
+     * \param chunk number of firmware chunks which was flashed
+     * \param total total count of firmware chunks
+     */
+    void restoreProgress(int chunk, int total);
+
+    /*!
+     * This signal is emitted when state of FlasherConnector is changed.
+     * \param operation FlasherConnector operation
+     * \param state state of operation
+     * \param errorString error description (if state is 'Failed', otherwise null string)
+     */
+    void operationStateChanged(Operation operation, State state, QString errorString = QString());
+
+    /*!
+     * This signal is emitted when device properties are changed (when device is switched to/from bootloader mode).
+     */
+    void devicePropertiesChanged();
 
 private slots:
-    void onTaskDone(QString connectionId, bool status);
+    void handleFlasherFinished(Flasher::Result flasherResult);
+    void handleFlasherError(QString errorString);
+    void handleSwitchToBootloader(bool done);
 
 private:
-    QMutex connectionToWorkerMutex_;
-    QMap<QString, FlasherWorker*> connectionToWorker_;
+    void flashFirmware(bool flashOld);
+    void backupFirmware(bool backupOld);
+    void startOperation();
+    void processStartupError(const QString& errorString);
 
+    device::DevicePtr device_;
+    std::unique_ptr<Flasher> flasher_;
+    QString filePath_;
+    const QString newFirmwareMD5_;
+    QTemporaryFile tmpBackupFile_;
+    QString errorString_;
+
+    enum class Action {
+        None,
+        Flash,      // only flash firmware (without backup)
+        Backup,     // only backup firmware
+        BackupOld,  // backup old firmware
+        FlashNew,   // flash new firmware
+        FlashOld    // flash backed up (old) firmware
+    };
+    Action action_;
+
+    Operation operation_;
 };
 
-#endif // FLASHERCONNECTOR_H
+}  // namespace
+
+#endif

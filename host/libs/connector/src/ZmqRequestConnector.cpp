@@ -1,6 +1,8 @@
-
 #include "ZmqRequestConnector.h"
 #include <zmq.hpp>
+
+namespace strata::connector
+{
 
 ZmqRequestConnector::ZmqRequestConnector() : ZmqConnector(ZMQ_REQ)
 {
@@ -28,3 +30,5 @@ bool ZmqRequestConnector::open(const std::string& ip_address)
 
     return false;
 }
+
+}  // namespace strata::connector

@@ -1,11 +1,17 @@
 // WARNING! Generated file.
 // All changes made in this file will be lost!!
 
-#include "@PROJECT_NAME@Version.h"
+#include "Version.h"
+
+using namespace std::literals::string_view_literals;
 
 
-const char* const version = "@PROJECT_VERSION@";
-const char* const versionMajor = "@VERSION_MAJOR@";
-const char* const versionMinor = "@VERSION_MINOR@";
-const char* const versionPatch = "@VERSION_PATCH@";
-const char* const versionTweak = "@VERSION_TWEAK@";
+const std::string_view AppInfo::version{"@PROJECT_VERSION@"sv};
+const std::string_view AppInfo::versionMajor{"@VERSION_MAJOR@"sv};
+const std::string_view AppInfo::versionMinor{"@VERSION_MINOR@"sv};
+const std::string_view AppInfo::versionPatch{"@VERSION_PATCH@"sv};
+
+const std::string_view AppInfo::buildId{"@BUILD_ID@"sv};
+const std::string_view AppInfo::gitRevision{"@GIT_REVISION@"sv};
+const std::string_view AppInfo::stageOfDevelopment{"@STAGE_OF_DEVELOPMENT@"sv};
+
