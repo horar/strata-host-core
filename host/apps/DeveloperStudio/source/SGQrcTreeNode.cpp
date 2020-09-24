@@ -12,7 +12,7 @@ SGQrcTreeNode::SGQrcTreeNode(QObject *parent) : QObject(parent)
     inQrc_ = false;
     parent_ = nullptr;
     editing_ = false;
-    children_ = QList<SGQrcTreeNode*>();
+    children_ = QVector<SGQrcTreeNode*>();
 }
 
 SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isDir, bool inQrc, QString uid, QObject *parent) :
@@ -27,14 +27,14 @@ SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isD
 
     filepath_.setScheme("file");
     filepath_.setPath(info.filePath());
-    children_ = QList<SGQrcTreeNode*>();
+    children_ = QVector<SGQrcTreeNode*>();
     editing_ = false;
 }
 
 SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, bool isDir, QString uid, QObject *parent) : QObject(parent), parent_(parentNode), isDir_(isDir), uid_(uid)
 {
     inQrc_ = false;
-    children_ = QList<SGQrcTreeNode*>();
+    children_ = QVector<SGQrcTreeNode*>();
 }
 
 SGQrcTreeNode::~SGQrcTreeNode()
@@ -60,7 +60,7 @@ int SGQrcTreeNode::row() const
     return 0;
 }
 
-QList<SGQrcTreeNode*> SGQrcTreeNode::children() const
+QVector<SGQrcTreeNode*> SGQrcTreeNode::children() const
 {
     return children_;
 }
@@ -95,11 +95,6 @@ SGQrcTreeNode* SGQrcTreeNode::parentNode() const
     return parent_;
 }
 
-QModelIndex SGQrcTreeNode::index() const
-{
-    return index_;
-}
-
 bool SGQrcTreeNode::editing() const
 {
     return editing_;
@@ -115,7 +110,7 @@ QString SGQrcTreeNode::uid() const
 bool SGQrcTreeNode::setFilename(QString filename) {
     if (filename_ != filename) {
         filename_ = filename;
-        emit dataChanged(index_, SGQrcTreeModel::FilenameRole);
+        emit filenameChanged();
         return true;
     }
     return false;
@@ -124,7 +119,6 @@ bool SGQrcTreeNode::setFilename(QString filename) {
 bool SGQrcTreeNode::setFilepath(QUrl filepath) {
     if (filepath_ != filepath) {
         filepath_ = filepath;
-        emit dataChanged(index_, SGQrcTreeModel::FilepathRole);
         return true;
     }
     return false;
@@ -133,7 +127,6 @@ bool SGQrcTreeNode::setFilepath(QUrl filepath) {
 bool SGQrcTreeNode::setFiletype(QString filetype) {
     if (filetype_ != filetype) {
         filetype_ = filetype;
-        emit dataChanged(index_, SGQrcTreeModel::FileTypeRole);
         return true;
     }
     return false;
@@ -142,7 +135,6 @@ bool SGQrcTreeNode::setFiletype(QString filetype) {
 bool SGQrcTreeNode::setIsDir(bool isDir) {
     if (isDir_ != isDir) {
         isDir_ = isDir;
-        emit dataChanged(index_, SGQrcTreeModel::IsDirRole);
         return true;
     }
     return false;
@@ -151,7 +143,6 @@ bool SGQrcTreeNode::setIsDir(bool isDir) {
 bool SGQrcTreeNode::setInQrc(bool inQrc) {
     if (inQrc_ != inQrc) {
         inQrc_ = inQrc;
-        emit dataChanged(index_, SGQrcTreeModel::InQrcRole);
         return true;
     }
     return false;
@@ -162,16 +153,10 @@ void SGQrcTreeNode::setParentNode(SGQrcTreeNode* parent)
     parent_ = parent;
 }
 
-void SGQrcTreeNode::setIndex(const QModelIndex &index)
-{
-    index_ = index;
-}
-
 bool SGQrcTreeNode::setEditing(bool editing)
 {
     if (editing_ != editing) {
         editing_ = editing;
-        emit dataChanged(index_, SGQrcTreeModel::EditingRole);
         return true;
     }
     return false;

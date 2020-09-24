@@ -10,16 +10,15 @@
 class SGQrcTreeNode : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString filename READ filename WRITE setFilename NOTIFY dataChanged)
-    Q_PROPERTY(QUrl filepath READ filepath WRITE setFilepath NOTIFY dataChanged)
-    Q_PROPERTY(QString filetype READ filetype NOTIFY dataChanged)
-    Q_PROPERTY(bool inQrc READ inQrc WRITE setInQrc NOTIFY dataChanged)
-    Q_PROPERTY(bool isDir READ isDir NOTIFY dataChanged)
-    Q_PROPERTY(SGQrcTreeNode* parentNode READ parentNode WRITE setParentNode NOTIFY dataChanged)
+    Q_PROPERTY(QString filename READ filename NOTIFY filenameChanged)
+    Q_PROPERTY(QUrl filepath READ filepath)
+    Q_PROPERTY(QString filetype READ filetype)
+    Q_PROPERTY(bool inQrc READ inQrc)
+    Q_PROPERTY(bool isDir READ isDir)
+    Q_PROPERTY(SGQrcTreeNode* parentNode READ parentNode)
     Q_PROPERTY(QString uid READ uid)
-    Q_PROPERTY(QList<SGQrcTreeNode*> childNodes READ children NOTIFY dataChanged)
-    Q_PROPERTY(QModelIndex index READ index NOTIFY indexChanged)
-    Q_PROPERTY(bool editing READ editing WRITE setEditing NOTIFY dataChanged)
+    Q_PROPERTY(QVector<SGQrcTreeNode*> childNodes READ children)
+    Q_PROPERTY(bool editing READ editing)
 public:
     explicit SGQrcTreeNode(QObject *parent = nullptr);
     SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isDir, bool inQrc, QString uid, QObject *parent = nullptr);
@@ -42,7 +41,7 @@ public:
      * @brief  Gets the children for the node
      * @return Returns the list of children
      */
-    QList<SGQrcTreeNode*> children() const;
+    QVector<SGQrcTreeNode*> children() const;
 
     /**
      * @brief filename
@@ -87,12 +86,6 @@ public:
     SGQrcTreeNode* parentNode() const;
 
     /**
-     * @brief index Gets the index in the treeView
-     * @return Returns the QModelIndex that this node exists
-     */
-    QModelIndex index() const;
-
-    /**
      * @brief editing Returns the `editing` property
      * @return Returns true if the node is being edited, else false
      */
@@ -135,12 +128,6 @@ public:
      * @param parent The parent node to set
      */
     void setParentNode(SGQrcTreeNode* parent);
-
-    /**
-     * @brief setIndex Sets the current index of the node
-     * @param index The new index of the node
-     */
-    void setIndex(const QModelIndex &index);
 
     /**
      * @brief setEditing Sets if the node is currently being edited
@@ -196,11 +183,10 @@ public:
     void clear();
 
 signals:
-    void dataChanged(QModelIndex index, int role);
-    void indexChanged();
+    void filenameChanged();
 
 private:
-    QList<SGQrcTreeNode*> children_;
+    QVector<SGQrcTreeNode*> children_;
     SGQrcTreeNode *parent_;
     QString filename_;
     QUrl filepath_;
@@ -208,7 +194,6 @@ private:
     bool isDir_;
     bool inQrc_;
     QString uid_;
-    QModelIndex index_;
     bool editing_;
 };
 

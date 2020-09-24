@@ -243,7 +243,7 @@ void SGFileTabModel::clear(bool emitSignals)
         beginResetModel();
     }
 
-    qDeleteAll(data_);
+    qDeleteAll(data_.begin(), data_.end());
     data_.clear();
 
     if (emitSignals) {

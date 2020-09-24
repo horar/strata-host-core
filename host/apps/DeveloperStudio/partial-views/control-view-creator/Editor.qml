@@ -16,6 +16,10 @@ Item {
     SGQrcTreeModel {
         id: treeModel
         url: openProjectContainer.url
+
+        onModelAboutToBeReset: {
+            openFilesModel.clear()
+        }
     }
 
     SGFileTabModel {

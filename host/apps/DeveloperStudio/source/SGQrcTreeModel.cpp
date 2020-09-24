@@ -16,7 +16,7 @@
 SGQrcTreeModel::SGQrcTreeModel(QObject *parent) : QAbstractItemModel(parent)
 {
     QQmlEngine::setObjectOwnership(root_, QQmlEngine::CppOwnership);
-    connect(this, &SGQrcTreeModel::urlChanged, this, &SGQrcTreeModel::setupModelData);
+    connect(this, &SGQrcTreeModel::urlChanged, this, &SGQrcTreeModel::createModel);
 }
 
 SGQrcTreeModel::~SGQrcTreeModel()
@@ -168,7 +168,6 @@ QModelIndex SGQrcTreeModel::index(int row, int column, const QModelIndex &parent
 
     SGQrcTreeNode *parentNode = getNode(parent);
     if (!parentNode) {
-        root_->setIndex(QModelIndex());
         return QModelIndex();
     }
 
@@ -176,7 +175,6 @@ QModelIndex SGQrcTreeModel::index(int row, int column, const QModelIndex &parent
 
     if (child) {
         QModelIndex index = createIndex(row, column, child);
-        child->setIndex(index);
         return index;
     }
 
@@ -223,7 +221,7 @@ SGQrcTreeNode* SGQrcTreeModel::root() const
     return root_;
 }
 
-QList<SGQrcTreeNode*> SGQrcTreeModel::childNodes()
+QVector<SGQrcTreeNode*> SGQrcTreeModel::childNodes()
 {
     return root_->children();
 }
@@ -442,9 +440,9 @@ void SGQrcTreeModel::clear(bool emitSignals)
         beginResetModel();
     }
 
-    delete root_;
-    qDeleteAll(uidMap_);
     uidMap_.clear();
+    qrcItems_.clear();
+    delete root_;
 
     if (emitSignals) {
         endResetModel();
@@ -486,11 +484,6 @@ void SGQrcTreeModel::readQrcFile()
     qrcFile.close();
 }
 
-void SGQrcTreeModel::setupModelData()
-{
-    createModel();
-}
-
 void SGQrcTreeModel::createModel()
 {
     beginResetModel();
@@ -498,8 +491,6 @@ void SGQrcTreeModel::createModel()
     clear(false);
     QString uid = QUuid::createUuid().toString();
     root_ = new SGQrcTreeNode(nullptr, rootFi, false, false, uid);
-    emit rootChanged();
-//    connect(root_, &SGQrcTreeNode::dataChanged, this, &SGQrcTreeModel::childrenChanged);
     uidMap_.insert(uid, root_);
     QQmlEngine::setObjectOwnership(root_, QQmlEngine::CppOwnership);
 
@@ -507,6 +498,7 @@ void SGQrcTreeModel::createModel()
 
     recursiveDirSearch(root_, QDir(SGUtilsCpp::urlToLocalFile(projectDir_)), qrcItems_, 0);
     endResetModel();
+    emit rootChanged();
 }
 
 void SGQrcTreeModel::recursiveDirSearch(SGQrcTreeNode* parentNode, QDir currentDir, QSet<QString> qrcItems, int depth)
@@ -515,7 +507,6 @@ void SGQrcTreeModel::recursiveDirSearch(SGQrcTreeNode* parentNode, QDir currentD
         QString uid = QUuid::createUuid().toString();
         if (info.isDir()) {
             SGQrcTreeNode *dirNode = new SGQrcTreeNode(parentNode, info, true, false, uid);
-//            connect(dirNode, &SGQrcTreeNode::dataChanged, this, &SGQrcTreeModel::childrenChanged);
             QQmlEngine::setObjectOwnership(dirNode, QQmlEngine::CppOwnership);
             parentNode->insertChild(dirNode, parentNode->childCount());
             uidMap_.insert(uid, dirNode);
@@ -525,7 +516,6 @@ void SGQrcTreeModel::recursiveDirSearch(SGQrcTreeNode* parentNode, QDir currentD
                 continue;
             }
             SGQrcTreeNode *node = new SGQrcTreeNode(parentNode, info, false, qrcItems.contains(info.filePath()), uid);
-//            connect(node, &SGQrcTreeNode::dataChanged, this, &SGQrcTreeModel::childrenChanged);
             QQmlEngine::setObjectOwnership(node, QQmlEngine::CppOwnership);
             parentNode->insertChild(node, parentNode->childCount());
             uidMap_.insert(uid, node);

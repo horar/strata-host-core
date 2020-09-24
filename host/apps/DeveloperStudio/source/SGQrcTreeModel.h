@@ -18,7 +18,7 @@ class SGQrcTreeModel : public QAbstractItemModel
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
     Q_PROPERTY(SGQrcTreeNode* root READ root NOTIFY rootChanged)
     Q_PROPERTY(QUrl projectDirectory READ projectDirectory NOTIFY projectDirectoryChanged)
-    Q_PROPERTY(QList<SGQrcTreeNode*> childNodes READ childNodes)
+    Q_PROPERTY(QVector<SGQrcTreeNode*> childNodes READ childNodes)
 public:
     explicit SGQrcTreeModel(QObject *parent = nullptr);
     ~SGQrcTreeModel();
@@ -47,7 +47,7 @@ public:
     int rowCount(const QModelIndex &index = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     Q_INVOKABLE bool removeRows(int row, int count = 1, const QModelIndex &parent = QModelIndex()) override;
-    QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
+    Q_INVOKABLE QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
     Q_INVOKABLE QModelIndex parent(const QModelIndex &child) const override;
     Q_INVOKABLE bool hasChildren(const QModelIndex &parent = QModelIndex()) const override;
 
@@ -67,7 +67,7 @@ public:
      * @brief childNodes Gets the children for the root node
      * @return QList<SGQrcTreeNode*> containing the children of the root node
      */
-    QList<SGQrcTreeNode*> childNodes();
+    QVector<SGQrcTreeNode*> childNodes();
 
     /**
      * @brief get Get a node by its unique id
@@ -163,7 +163,6 @@ public slots:
 
 private:
     void clear(bool emitSignals = true);
-    void setupModelData();
     void readQrcFile();
     void createModel();
     void recursiveDirSearch(SGQrcTreeNode *parentNode, QDir currentDir, QSet<QString> qrcItems, int depth);

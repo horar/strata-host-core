@@ -150,7 +150,7 @@ Rectangle {
                         id: inQrcIcon
                         height: 15
                         width: 15
-                        visible: model && !model.isDir && model.filepath !== treeModel.root.filepath
+                        visible: model && !model.isDir
 
                         anchors {
                             verticalCenter: parent.verticalCenter
