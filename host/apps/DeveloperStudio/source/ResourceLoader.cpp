@@ -224,13 +224,19 @@ QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
     QFile rccExecutable(rccExecutablePath);
     QFile qrcFile(qrcFilePath);
 
+    clearLastLoggedError();
+
     if (!rccExecutable.exists()) {
-        qCWarning(logCategoryStrataDevStudio) << "Could not find RCC executable at " << rccExecutablePath;
+        QString error_str = "Could not find RCC executable at " + rccExecutablePath;
+        qCWarning(logCategoryStrataDevStudio) << error_str;
+        setLastLoggedError(error_str);
         return QString();
     }
 
     if (!qrcFile.exists()) {
-        qCWarning(logCategoryStrataDevStudio) << "Could not find QRC file at " << qrcFilePath;
+        QString error_str = "Could not find QRC file at " + qrcFilePath;
+        qCWarning(logCategoryStrataDevStudio) << error_str;
+        setLastLoggedError(error_str);
         return QString();
     }
 
@@ -241,7 +247,9 @@ QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
 
     if (qrcDevControlView.exists()) {
         if (!qrcDevControlView.removeRecursively()) {
-            qCWarning(logCategoryStrataDevStudio) << "Could not delete directory at " << compiledRccFile;
+            QString error_str = "Could not delete directory at " + compiledRccFile;
+            qCWarning(logCategoryStrataDevStudio) << error_str;
+            setLastLoggedError(error_str);
             return QString();
         }
     }
@@ -249,18 +257,14 @@ QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
     // Make directory for compiled RCC files
     QDir().mkdir(compiledRccFile);
 
-    // Split qrcFilePath for filename
-    QFileInfo fileInfo(qrcFile.fileName());
-    QString qrcFileName(fileInfo.fileName());
-    compiledRccFile += qrcFileName;
+    // Split qrcFile base name and add ".rcc" extension
+    compiledRccFile += qrcFileInfo.baseName() + ".rcc";
 
+    // Set and launch rcc compiler process
     const auto arguments = (QList<QString>() << "-binary" << qrcFilePath << "-o" << compiledRccFile);
-
     rccCompilerProcess_.setProgram(rccExecutablePath);
     rccCompilerProcess_.setArguments(arguments);
-
     connect(&rccCompilerProcess_, SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()));
-
     rccCompilerProcess_.start();
     rccCompilerProcess_.waitForFinished();
 

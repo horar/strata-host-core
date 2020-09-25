@@ -149,6 +149,10 @@ Rectangle {
             let compiledRccFile = sdsModel.resourceLoader.recompileControlViewQrc(fileModel.url)
             if (compiledRccFile != '') {
                 loadDebugView(compiledRccFile)
+            } else {
+                NavigationControl.removeView(controlViewContainer)
+                let error_str = sdsModel.resourceLoader.getLastLoggedError()
+                sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewContainer, {"error_message": error_str});
             }
         }
     }
