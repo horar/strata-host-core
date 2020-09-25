@@ -65,7 +65,7 @@ Component.prototype.createOperations = function()
             if(strata_ds_shortcut_dst2.indexOf("\\\\Mac") == 0) {
                 console.log("MAC shortcut detected on Windows: " + strata_ds_shortcut_dst2 + ", correcting..");
                 try {
-                    var desktopFolder = installer.execute("cmd", ["/c", "echo", "%UserProfile%\\Desktop"]);
+                    var desktopFolder = installer.execute("cmd", ["/c", "echo", "%Public%\\Desktop"]);
                     // the output of command is the first item, and the return code is the second
                     if((desktopFolder != undefined) && (desktopFolder != null) && (desktopFolder[0] != undefined) && (desktopFolder[0] != null) && (desktopFolder[0] != "")) {
                         strata_ds_shortcut_dst2 = desktopFolder[0].trim() + "\\Strata Developer Studio.lnk";
