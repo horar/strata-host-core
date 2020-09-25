@@ -116,6 +116,10 @@ void Database::updateChannels()
 
 bool Database::getDocument(const std::string& doc_id, std::string& result)
 {
+    if (sg_database_ == nullptr) {
+        return false;
+    }
+
     SGDocument doc(sg_database_, doc_id);
     if (!doc.exist()) {
         return false;
@@ -130,7 +134,7 @@ void Database::stop()
     if(sg_replicator_ != nullptr) {
         delete sg_replicator_;      // destructor will call stop and join
         sg_replicator_ = nullptr;
-        qCInfo(logCategoryHcsDb) << "Replicator stoped.";
+        qCDebug(logCategoryHcsDb) << "Replicator stoped.";
     }
 
     // delete also these in case we would like to reinit replication through initReplicator()
@@ -141,7 +145,7 @@ void Database::stop()
 
     if(sg_database_ != nullptr) {
         delete sg_database_; sg_database_ = nullptr;
-        qCInfo(logCategoryHcsDb) << "Database closed.";
+        qCDebug(logCategoryHcsDb) << "Database closed.";
     }
 }
 
