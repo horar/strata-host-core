@@ -264,16 +264,22 @@ QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
     const auto arguments = (QList<QString>() << "-binary" << qrcFilePath << "-o" << compiledRccFile);
     rccCompilerProcess_.setProgram(rccExecutablePath);
     rccCompilerProcess_.setArguments(arguments);
-    connect(&rccCompilerProcess_, SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()));
+    connect(&rccCompilerProcess_, SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()), Qt::UniqueConnection);
     rccCompilerProcess_.start();
     rccCompilerProcess_.waitForFinished();
+
+    if (lastLoggedError != "") {
+        return QString();
+    }
 
     qCDebug(logCategoryResourceLoader) << "Wrote compiled resource file to " << compiledRccFile;
     return compiledRccFile;
 }
 
 void ResourceLoader::onOutputRead() {
-    qDebug() << rccCompilerProcess_.readAllStandardError();
+    QString error_str = rccCompilerProcess_.readAllStandardError();
+    qCCritical(logCategoryStrataDevStudio) << error_str;
+    setLastLoggedError(error_str);
 }
 
 void ResourceLoader::clearLastLoggedError() {
