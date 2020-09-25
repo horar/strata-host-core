@@ -37,15 +37,23 @@ TEST_F(SGUtilsCppTest, testFileUtils)
 
     // Text executable file utils
     // Commented because these fail on Windows. See CS-1070
-//    QTemporaryFile exeFile("test.exe");
-//    if (!exeFile.open()) {
-//        throw "Unable to open executable";
-//    }
-//    exeFile.setPermissions(QFile::Permission::ExeUser);
-//    QString testText = "test";
-//    exeFile.write(testText.toUtf8());
-//    EXPECT_TRUE(utils.isExecutable(exeFile.fileName()));
-    EXPECT_FALSE(utils.isExecutable("test.txt"));
+    QTemporaryFile exeFile("test.exe");
+    if (!exeFile.open()) {
+        throw "Unable to open executable";
+    }
+    exeFile.setPermissions(QFile::Permission::ExeUser);
+    QString testText = "test";
+    exeFile.write(testText.toUtf8());
+    EXPECT_TRUE(utils.isExecutable(exeFile.fileName()));
+    exeFile.close();
+
+    QTemporaryFile nonExeFile("test.txt");
+    if (!nonExeFile.open()) {
+        throw "Unable to open non executable";
+    }
+    nonExeFile.write(testText.toUtf8());
+    EXPECT_FALSE(utils.isExecutable(nonExeFile.fileName()));
+    nonExeFile.close();
 }
 
 TEST_F(SGUtilsCppTest, testFileIO)
@@ -66,8 +74,9 @@ TEST_F(SGUtilsCppTest, testFileIO)
 
     // Write to file
     // Commented because these fail on Windows. See CS-1070
-//    EXPECT_TRUE(utils.atomicWrite(tempFile.fileName(), "hello world"));
-//    EXPECT_EQ(utils.readTextFileContent(tempFile.fileName()), "hello world");
+    EXPECT_TRUE(utils.atomicWrite(tempFile.fileName(), "hello world"));
+    tempFile.seek(0);
+    EXPECT_EQ(utils.readTextFileContent(tempFile.fileName()), "hello world");
 }
 
 TEST_F(SGUtilsCppTest, testRandomUtils)
