@@ -106,11 +106,28 @@ GridLayout {
 
         property real lastValue
 
+        property bool keyReleased:false
+
+        Keys.onPressed: {
+            if (!event.isAutoRepeat){
+                keyReleased = true
+            }
+        }
+        Keys.onReleased: {
+            if (!event.isAutoRepeat){
+                keyReleased = false
+            }
+        }
+
         onPressedChanged: {
-            if (!live && !pressed) {
+            if (!live && !pressed && !keyReleased) {
                 if (value !== lastValue){
+                    lastValue = value
                     userSet(value)
                 }
+                else if(value === to || value === from)
+                    userSet(value)
+
             } else {
                 lastValue = value
             }

@@ -132,7 +132,7 @@ CustomControl {
                 target: sgslider
                 text:"<b>" + qsTr("Sensitivity (%)") + "</b>"
                 fontSizeMultiplier: factor
-                SGSlider {
+                CustomSlider {
                     id: sgslider
                     width: content.parent.maximumWidth * 0.5
                     textColor: "black"

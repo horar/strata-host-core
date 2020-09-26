@@ -15,5 +15,6 @@
         <file>control-views/Images/thumbnail-view-icon.svg</file>
         <file>control-views/Images/helpImage_interrupt.png</file>
         <file>control-views/Images/helpImage_potentiometer.png</file>
+        <file>control-views/CustomSlider.qml</file>
     </qresource>
 </RCC>

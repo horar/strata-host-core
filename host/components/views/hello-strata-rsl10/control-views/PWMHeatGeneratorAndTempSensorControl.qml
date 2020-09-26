@@ -64,7 +64,7 @@ CustomControl {
                 target: pwmslider
                 text:"<b>" + qsTr("PWM Positive Duty Cycle (%)") + "</b>"
                 fontSizeMultiplier: factor
-                SGSlider {
+                CustomSlider {
                     id: pwmslider
                     width: (content.parent.maximumWidth - 10 * factor) * 0.5
                     live: false
