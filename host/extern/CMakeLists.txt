@@ -54,17 +54,18 @@ execute_process(
 
 if(${RAPIDJSON_GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/rapidjson/${RAPIDJSON_GIT_HASH})
     ExternalProject_Add(rapidjson
-        INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/rapidjson/${RAPIDJSON_GIT_HASH}
+        INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/rapidjson/${RAPIDJSON_GIT_HASH}/include
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/rapidjson
         EXCLUDE_FROM_ALL ON
+        BUILD_COMMAND
         INSTALL_COMMAND
-        COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include/rapidjson <INSTALL_DIR>/include
+        COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include/rapidjson <INSTALL_DIR>
     )
 else()
     if(NOT ${RAPIDJSON_GIT_HASH_RESULT} EQUAL 0)
         message(FATAL_ERROR "RAPIDJSON_GIT_HASH_RESULT is: ${RAPIDJSON_GIT_HASH_RESULT}")
     else()
-        message(STATUS "Rapidjson 3rd party library is already installed at ${CMAKE_SOURCE_DIR}/3rd_party/rapidjson/${RAPIDJSON_GIT_HASH}")
+        message(STATUS "Rapidjson 3rd party library is already installed at ${EXTERN_INSTALL_DIR_PATH}/rapidjson/${RAPIDJSON_GIT_HASH}")
     endif()       
 endif()
 
