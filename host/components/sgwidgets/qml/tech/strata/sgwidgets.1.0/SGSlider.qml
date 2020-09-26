@@ -122,8 +122,12 @@ GridLayout {
         onPressedChanged: {
             if (!live && !pressed && !keyReleased) {
                 if (value !== lastValue){
+                    lastValue = value
                     userSet(value)
                 }
+                else if(value === to || value === from)
+                    userSet(value)
+
             } else {
                 lastValue = value
             }
