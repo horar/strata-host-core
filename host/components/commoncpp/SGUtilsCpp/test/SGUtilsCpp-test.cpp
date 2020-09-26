@@ -38,8 +38,6 @@ TEST_F(SGUtilsCppTest, testFileUtils)
 
     EXPECT_EQ(utils.joinFilePath("/prepend/path", "append-me.txt"), "/prepend/path/append-me.txt");
 
-    // Text executable file utils
-    // Commented because these fail on Windows. See CS-1070
     QTemporaryFile exeFile;
     exeFile.setFileName("text.exe");
 
@@ -85,7 +83,6 @@ TEST_F(SGUtilsCppTest, testFileIO)
     EXPECT_EQ(utils.readTextFileContent(tempFile.fileName()).toStdString(), lorumIpsumText.toStdString());
 
     // Write to file
-    // Commented because these fail on Windows. See CS-1070
     QTemporaryFile writingTestFile;
     writingTestFile.setFileName("writingTest.txt");
     EXPECT_TRUE(utils.atomicWrite(writingTestFile.fileName(), "hello world"));
