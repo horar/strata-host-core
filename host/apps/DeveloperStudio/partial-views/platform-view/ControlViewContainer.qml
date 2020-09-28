@@ -86,7 +86,14 @@ Item {
                 loadingBarContainer.visible = true;
                 loadingBar.value = 0.01;
 
-                // Try to load static resource, otherwise move to OTA logic
+                // Try to load a previously installed OTA resource
+                if (controlViewList.getInstalledVersion() > -1) {
+                    usingStaticView = false;
+                    getOTAResource();
+                    return
+                }
+
+                // Try to load static resource, otherwise download/install a new OTA resource
                 if (getStaticResource() === false) {
                     usingStaticView = false;
                     getOTAResource();
