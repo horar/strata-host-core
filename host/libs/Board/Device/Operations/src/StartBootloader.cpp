@@ -21,6 +21,8 @@ StartBootloader::StartBootloader(const device::DevicePtr& device) :
     commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_));       // 3
     commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, false));  // 4
 
+    currentCommand_ = commandList_.end();
+
     // Before calling 'start_bootloader' command, we need to check if board is already
     // in bootloader mode. If so, we skip rest of commands in command list and set
     // data for 'finished' signal to ALREADY_IN_BOOTLOADER. This is done by modifications

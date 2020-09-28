@@ -15,6 +15,8 @@ StartApplication::StartApplication(const device::DevicePtr& device) :
     commandList_.emplace_back(std::make_unique<CmdStartApplication>(device_));
     commandList_.emplace_back(std::make_unique<CmdRequestPlatformId>(device_, MAX_PLATFORM_ID_RETRIES));
     commandList_.emplace_back(std::make_unique<CmdGetFirmwareInfo>(device_, false));
+
+    currentCommand_ = commandList_.end();
 }
 
 }  // namespace
