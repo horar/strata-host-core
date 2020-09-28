@@ -14,6 +14,8 @@ Flash::Flash(const device::DevicePtr& device, int size, int chunks, const QStrin
 {
     // BaseDeviceOperation member device_ must be used as a parameter for commands!
     commandList_.emplace_back(std::make_unique<CmdStartFlash>(device_, size, chunkCount_, md5, flashFirmware_));
+
+    currentCommand_ = commandList_.end();
 }
 
 void Flash::flashChunk(const QVector<quint8>& chunk, int chunkNumber)
