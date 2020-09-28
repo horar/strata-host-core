@@ -115,9 +115,6 @@ CustomControl {
         }
     }
 
-
-
-
     contentItem: RowLayout {
         id: content
         anchors.fill:parent
@@ -139,20 +136,17 @@ CustomControl {
                     id: sgslider
                     width: content.parent.maximumWidth * 0.5
                     textColor: "black"
-                    stepSize: 1
-                    from: 1
-                    to: 62
+                    stepSize: 0.1
+                    from: 66.7
+                    to: 150
                     live: false
                     fromText.text: "66.7%"
                     toText.text: "150%"
                     inputBox.validator: DoubleValidator { top: 150; bottom: 66.7 }
-                    property real sens: (valueAt(position) < 32) ? ((2*valueAt(position)*100)/((2*valueAt(position))+1)) : ((2*(63-valueAt(position))+1)*100/(2*(63-valueAt(position))))
-                    inputBox.text : (sens.toFixed(1)).toString()
-                    toolTip.text: (sens.toFixed(1)).toString()
-
                     fontSizeMultiplier: factor
                     onUserSet: {
-                        platformInterface.i2c_light_set_sensitivity.update(sens.toFixed(1))
+                        platformInterface.i2c_light_ui_sensitivity = value
+                        platformInterface.i2c_light_set_sensitivity.update(value)
                     }
                 }
             }
