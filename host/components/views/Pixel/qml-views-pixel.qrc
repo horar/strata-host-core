@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/views/pixel">
+    <qresource prefix="/">
         <file>Content.qml</file>
         <file>Control.qml</file>
         <file>control-views/SetupControl.qml</file>
