@@ -42,7 +42,7 @@ CustomControl {
     Component.onCompleted: {
         if (hideHeader) {
             Help.registerTarget(comboBoxGrid, "These comboboxes change the state of the respective LEDs in the grid.", 0, "helloStrata_LEDDriver_Help")
-            Help.registerTarget(blinkSetting, "These controls will set the Blink0 register. Frequency and duty cycle can be set. Click 'Enter' or 'Tab' to set the register. The valid frequency range is from 1 to 152Hz and the value be coerced based on the CAT9532’s frequency prescaler.", 1, "helloStrata_LEDDriver_Help")
+            Help.registerTarget(blinkSetting, "These controls will set the Blink0 register. Frequency and duty cycle can be set. Click 'Enter' or 'Tab' to set the register. The valid frequency range is from 1 to 152Hz and the value is coerced based on the CAT9532’s frequency prescaler.", 1, "helloStrata_LEDDriver_Help")
             Help.registerTarget(resetbtn, "This will reset the registers in the part to its default state. The GPIO that control the PWM Motor Control circuit will be reset but reconfigured to enable motor after reset.", 2, "helloStrata_LEDDriver_Help")
         }
     }
