@@ -295,6 +295,7 @@ Item {
                 zoomYEnabled: false
                 autoUpdate: false
 
+
                 Component.onCompleted: {
                     let movingCurve = createCurve("movingCurve")
                     movingCurve.color = "lime"
@@ -357,6 +358,77 @@ Item {
         Row {
             spacing: 5
             SGWidgets.SGGraph {
+                // Note: Zoom/Pan mouse actions are disabled for log graph axes
+                id: gridLogGraph
+                width: 400
+                height: 300
+                title: "Graph to toggle major,minor grid and "
+                xMin: 1
+                xMax: 50
+                yMin: 1
+                yMax: 50
+                xTitle: "X Axis"
+                yTitle: "Y Axis"
+                gridColor: "black"
+            }
+
+            Column {
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                }
+                spacing: 5
+                Button {
+                    text: "Toggle Major Grid"
+                    onClicked: {
+                        if(gridLogGraph.xGrid && gridLogGraph.yGrid) {
+                            gridLogGraph.xGrid = false
+                            gridLogGraph.yGrid = false
+                        }
+                        else  {
+                            gridLogGraph.xGrid = true
+                            gridLogGraph.yGrid = true
+                        }
+                    }
+                }
+                Button {
+                    text: "Toggle Minor Grid"
+                    onClicked: {
+                        if(gridLogGraph.xMinorGrid && gridLogGraph.yMinorGrid) {
+                            gridLogGraph.xGrid = false
+                            gridLogGraph.yGrid = false
+                            gridLogGraph.xMinorGrid = false
+                            gridLogGraph.yMinorGrid = false
+                        }
+                        else {
+                            gridLogGraph.xGrid = true
+                            gridLogGraph.yGrid = true
+                            gridLogGraph.xMinorGrid = true
+                            gridLogGraph.yMinorGrid = true
+                        }
+                    }
+                }
+                Button {
+                    text: "Toggle x/y Logarithmic"
+                    onClicked: {
+                        if(gridLogGraph.xLogarithmic && gridLogGraph.yLogarithmic) {
+                            gridLogGraph.xLogarithmic = false
+                            gridLogGraph.yLogarithmic = false
+                        }
+                        else {
+                            gridLogGraph.xLogarithmic = true
+                            gridLogGraph.yLogarithmic = true
+                        }
+                    }
+                }
+
+
+
+            }
+        }
+
+        Row {
+            spacing: 5
+            SGWidgets.SGGraph {
                 id: coloredGraph
                 width: 400
                 height: 300
@@ -407,10 +479,7 @@ Item {
                 yLogarithmic: true
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
-                xGrid: true
-                yGrid: true
-                xMinorGrid: true
-                yMinorGrid: true
+                gridColor: "black"
             }
         }
 

@@ -191,7 +191,6 @@ void SGQWTPlot :: setYGrid(bool showGrid)
 {
     if(yGrid_ != showGrid) {
         yGrid_ = showGrid;
-        setXGrid(showGrid);
         qwtGrid_->enableY(yGrid_);
         emit yGridChanged();
         if (autoUpdate_) {
@@ -226,7 +225,9 @@ void SGQWTPlot :: setYMinorGrid(bool showGrid)
 {
     if(yMinorGrid_ != showGrid) {
         yMinorGrid_ = showGrid;
-        setYGrid(showGrid);
+        if(!yGrid_) {
+            setYGrid(showGrid);
+        }
         qwtGrid_->enableYMin(yMinorGrid_);
         emit yMinorGridChanged();
         if (autoUpdate_) {
@@ -560,6 +561,8 @@ void SGQWTPlot::setXLogarithmic(bool logarithmic)
             qwtPlot->setAxisMaxMajor(qwtPlot->xBottom,10);
         } else {
             qwtPlot->setAxisScaleEngine(qwtPlot->xBottom, new QwtLinearScaleEngine(10));
+            qwtPlot->setAxisMaxMinor(qwtPlot->xBottom,5);
+            qwtPlot->setAxisMaxMajor(qwtPlot->xBottom,5);
         }
         emit xLogarithmicChanged();
         if (autoUpdate_) {
@@ -580,6 +583,8 @@ void SGQWTPlot::setYLogarithmic(bool logarithmic)
         } else {
             qwtPlot->setAxisScaleEngine(qwtPlot->yRight, new QwtLinearScaleEngine(10));
             qwtPlot->setAxisScaleEngine(qwtPlot->yLeft, new QwtLinearScaleEngine(10));
+            qwtPlot->setAxisMaxMinor(qwtPlot->yLeft,5);
+            qwtPlot->setAxisMaxMajor(qwtPlot->yLeft,5);
         }
         emit yLogarithmicChanged();
         if (autoUpdate_) {
