@@ -53,13 +53,16 @@ execute_process(
 )
 
 if(${RAPIDJSON_GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/rapidjson/${RAPIDJSON_GIT_HASH})
+    file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/rapidjson/${RAPIDJSON_GIT_HASH}/include)
     ExternalProject_Add(rapidjson
-        INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/rapidjson/${RAPIDJSON_GIT_HASH}/include
+        INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/rapidjson/${RAPIDJSON_GIT_HASH}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/rapidjson
         EXCLUDE_FROM_ALL ON
-        BUILD_COMMAND
-        INSTALL_COMMAND
-        COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include/rapidjson <INSTALL_DIR>
+        CMAKE_ARGS "${CMAKE_ARGS}"
+            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+            -DRAPIDJSON_BUILD_DOC=off
+            -DRAPIDJSON_BUILD_EXAMPLES=off
+            -DRAPIDJSON_BUILD_TESTS=off
     )
 else()
     if(NOT ${RAPIDJSON_GIT_HASH_RESULT} EQUAL 0)
