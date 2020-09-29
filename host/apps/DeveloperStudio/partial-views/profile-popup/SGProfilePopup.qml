@@ -467,6 +467,28 @@ SGStrataPopup {
                 }
             }
 
+            ProfileSectionHeader{
+                text: "Settings"
+            }
+
+            ProfileSectionDivider {}
+
+            SGText {
+                id: settingsText
+                text: "Go to Settings"
+                Layout.columnSpan: 3
+                font.underline: true
+                font.bold: true
+
+                MouseArea {
+                    anchors.fill: settingsText
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        settingsPop.open()
+                    }
+                }
+            }
+
             ProfileSectionHeader {
                 text: "Close Account"
             }
@@ -676,5 +698,9 @@ SGStrataPopup {
             passwordField.text = ""
             confirmPasswordField.text = ""
         }
+    }
+
+    SGSettingsPopup {
+        id: settingsPop
     }
 }
