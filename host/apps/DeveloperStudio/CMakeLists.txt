@@ -28,6 +28,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/VersionedListModel.cpp
     source/ClassDocuments.cpp
     $<IF:$<OR:$<CONFIG:Release>,$<CONFIG:OTA>>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
+    source/RunGuard.cpp
 
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc

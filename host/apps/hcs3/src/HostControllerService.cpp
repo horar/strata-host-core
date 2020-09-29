@@ -143,16 +143,18 @@ void HostControllerService::start()
 
 void HostControllerService::stop()
 {
-    clients_.stop();    // first stop clients controller, then dispatcher (it receives data from clients controller)
+    clients_.stop();        // first stop "clients controller" and then stop "dispatcher" (dispatcher receives data from clients controller)
 
-    if (dispatcherThread_.get_id() == std::thread::id()) {
-        return;
+    bool stop_dispatcher = (dispatcherThread_.get_id() != std::thread::id());
+    if (stop_dispatcher) {
+        dispatcher_->stop();
+        dispatcherThread_.join();
     }
 
-    dispatcher_->stop();
+    db_.stop();             // db should be stopped last for it receives requests from dispatcher
 
-    dispatcherThread_.join();
-    qCInfo(logCategoryHcs) << "Host controller service stoped.";
+    if (stop_dispatcher)    // log only once and at the very end
+        qCInfo(logCategoryHcs) << "Host controller service stoped.";
 }
 
 void HostControllerService::onAboutToQuit()
