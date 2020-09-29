@@ -397,7 +397,7 @@ Item {
                 // Note: Zoom/Pan mouse actions are disabled for log graph axes
                 id: logGraph
                 width: 400
-                height: 150
+                height: 300
                 title: "Graph with Logarithmic Axes"
                 xMin: 1
                 xMax: 1000
@@ -407,6 +407,10 @@ Item {
                 yLogarithmic: true
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
+                xGrid: true
+                yGrid: true
+                xMinorGrid: true
+                yMinorGrid: true
             }
         }
 
