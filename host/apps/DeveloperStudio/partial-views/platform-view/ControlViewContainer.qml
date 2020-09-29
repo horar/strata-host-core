@@ -119,7 +119,7 @@ Item {
         NavigationControl.context.class_id = platformStack.class_id
         NavigationControl.context.device_id = platformStack.device_id
 
-        let control_obj = sdsModel.resourceLoader.createViewObject(control_filepath, controlContainer);
+        let control_obj = sdsModel.resourceLoader.createViewObject(control_filepath, controlContainer, NavigationControl.context);
 
         // Tear Down creation context
         delete NavigationControl.context.class_id
