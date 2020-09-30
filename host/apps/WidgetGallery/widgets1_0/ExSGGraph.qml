@@ -362,7 +362,7 @@ Item {
                 id: gridLogGraph
                 width: 400
                 height: 300
-                title: "Graph to toggle major,minor grid and "
+                title: "Graph to Toggle major, minor grid and x/y Logarithmic"
                 xMin: 1
                 xMax: 50
                 yMin: 1
@@ -378,47 +378,52 @@ Item {
                 }
                 spacing: 5
                 Button {
-                    text: "Toggle Major Grid"
-                    onClicked: {
-                        if(gridLogGraph.xGrid && gridLogGraph.yGrid) {
-                            gridLogGraph.xGrid = false
-                            gridLogGraph.yGrid = false
-                        }
-                        else  {
-                            gridLogGraph.xGrid = true
-                            gridLogGraph.yGrid = true
-                        }
-                    }
-                }
-                Button {
-                    text: "Toggle Minor Grid"
+                    text: "Add Major Gridline"
                     onClicked: {
                         if(gridLogGraph.xMinorGrid && gridLogGraph.yMinorGrid) {
                             gridLogGraph.xMinorGrid = false
                             gridLogGraph.yMinorGrid = false
                         }
-                        else {
-                            gridLogGraph.xMinorGrid = true
-                            gridLogGraph.yMinorGrid = true
-                        }
+                        gridLogGraph.xGrid = true
+                        gridLogGraph.yGrid = true
+                    }
+
+                }
+
+                Button {
+                    text: "Add Minor Gridline"
+                    onClicked: {
+                        gridLogGraph.xMinorGrid = true
+                        gridLogGraph.yMinorGrid = true
                     }
                 }
+
                 Button {
-                    text: "Toggle x/y Logarithmic"
+                    text: "Add X/Y Logarithmic Axes"
                     onClicked: {
                         if(gridLogGraph.xLogarithmic && gridLogGraph.yLogarithmic) {
                             gridLogGraph.xLogarithmic = false
                             gridLogGraph.yLogarithmic = false
+                            text = "Add X/Y Logarithmic Axes"
                         }
                         else {
                             gridLogGraph.xLogarithmic = true
                             gridLogGraph.yLogarithmic = true
+                            text = "Add X/Y Linear Axes"
                         }
                     }
                 }
 
 
-
+                Button {
+                    text: "Clear GridLine"
+                    onClicked: {
+                        gridLogGraph.xGrid = false
+                        gridLogGraph.yGrid = false
+                        gridLogGraph.xMinorGrid = false
+                        gridLogGraph.yMinorGrid = false
+                    }
+                }
             }
         }
 
@@ -465,7 +470,7 @@ Item {
                 // Note: Zoom/Pan mouse actions are disabled for log graph axes
                 id: logGraph
                 width: 400
-                height: 300
+                height: 150
                 title: "Graph with Logarithmic Axes"
                 xMin: 1
                 xMax: 1000
