@@ -10,7 +10,7 @@ if(EXTERN_INSTALL_DIR_PATH)
     string(APPEND EXTERN_INSTALL_DIR_PATH "/${EXTERN_INSTALL_DIR_NAME}")
     message(STATUS "EXTERN_INSTALL_DIR_PATH is : ${EXTERN_INSTALL_DIR_PATH}")
 else()
-    set(EXTERN_INSTALL_DIR_PATH ${CMAKE_SOURCE_DIR}/${EXTERN_INSTALL_DIR_NAME})
+    set(EXTERN_INSTALL_DIR_PATH ${CMAKE_BINARY_DIR}/${EXTERN_INSTALL_DIR_NAME})
     message(STATUS "EXTERN_INSTALL_DIR_PATH is : ${EXTERN_INSTALL_DIR_PATH}")
 endif()
 
@@ -45,17 +45,17 @@ list(APPEND CMAKE_ARGS "-DCMAKE_CXX_EXTENSIONS:BOOL=OFF")
 # rapidjson
 #
 execute_process(
-    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+    COMMAND ${GIT_EXECUTABLE} rev-parse --short=5 HEAD
     WORKING_DIRECTORY ${SOURCE_DIR_EXTERN}/rapidjson
     OUTPUT_VARIABLE RAPIDJSON_GIT_HASH
     RESULTS_VARIABLE RAPIDJSON_GIT_HASH_RESULT
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-if(${RAPIDJSON_GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/rapidjson/${RAPIDJSON_GIT_HASH})
-    file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/rapidjson/${RAPIDJSON_GIT_HASH}/include)
+if(${RAPIDJSON_GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/rapidjson-${RAPIDJSON_GIT_HASH})
+    file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/rapidjson-${RAPIDJSON_GIT_HASH}/include)
     ExternalProject_Add(rapidjson
-        INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/rapidjson/${RAPIDJSON_GIT_HASH}
+        INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/rapidjson-${RAPIDJSON_GIT_HASH}
         SOURCE_DIR ${SOURCE_DIR_EXTERN}/rapidjson
         EXCLUDE_FROM_ALL ON
         CMAKE_ARGS "${CMAKE_ARGS}"
@@ -68,35 +68,52 @@ else()
     if(NOT ${RAPIDJSON_GIT_HASH_RESULT} EQUAL 0)
         message(FATAL_ERROR "RAPIDJSON_GIT_HASH_RESULT is: ${RAPIDJSON_GIT_HASH_RESULT}")
     else()
-        message(STATUS "Rapidjson 3rd party library is already installed at ${EXTERN_INSTALL_DIR_PATH}/rapidjson/${RAPIDJSON_GIT_HASH}")
+        message(STATUS "Rapidjson 3rd party library is already installed at ${EXTERN_INSTALL_DIR_PATH}/rapidjson-${RAPIDJSON_GIT_HASH}")
     endif()       
 endif()
 
 add_library(rapidjson::rapidjson INTERFACE IMPORTED GLOBAL)
 set_target_properties(rapidjson::rapidjson PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/rapidjson/${RAPIDJSON_GIT_HASH}/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/rapidjson-${RAPIDJSON_GIT_HASH}/include"
 )
 add_dependencies(rapidjson::rapidjson DEPENDS rapidjson)
 
 #
 # spdlog
 #
-ExternalProject_Add(spdlog
-    INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}
-    SOURCE_DIR ${SOURCE_DIR_EXTERN}/spdlog
-    EXCLUDE_FROM_ALL ON
-    CMAKE_ARGS "${CMAKE_ARGS}"
-        -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-        -DSPDLOG_BUILD_SHARED=off
-        -DSPDLOG_BUILD_BENCH=off
-        -DSPDLOG_BUILD_EXAMPLE=off
-        -DSPDLOG_BUILD_TESTS=off
-        -DSPDLOG_NO_EXCEPTIONS=on
+execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-parse --short=5 HEAD
+    WORKING_DIRECTORY ${SOURCE_DIR_EXTERN}/spdlog
+    OUTPUT_VARIABLE SPDLOG_GIT_HASH
+    RESULTS_VARIABLE SPDLOG_GIT_HASH_RESULT
+    OUTPUT_STRIP_TRAILING_WHITESPACE
 )
+if(${SPDLOG_GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/spdlog-${SPDLOG_GIT_HASH})
+    file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/spdlog-${SPDLOG_GIT_HASH}/include)
+    file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/spdlog-${SPDLOG_GIT_HASH}/lib)
+    ExternalProject_Add(spdlog
+        INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/spdlog-${SPGLOG_GIT_HASH}
+        SOURCE_DIR ${SOURCE_DIR_EXTERN}/spdlog
+        EXCLUDE_FROM_ALL ON
+        CMAKE_ARGS "${CMAKE_ARGS}"
+            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+            -DSPDLOG_BUILD_SHARED=off
+            -DSPDLOG_BUILD_BENCH=off
+            -DSPDLOG_BUILD_EXAMPLE=off
+            -DSPDLOG_BUILD_TESTS=off
+            -DSPDLOG_NO_EXCEPTIONS=on
+    )
+else()
+    if(NOT ${SPDLOG_GIT_HASH_RESULT} EQUAL 0)
+        message(FATAL_ERROR "SPDLOG_GIT_HASH_RESULT is: ${SPDLOG_GIT_HASH_RESULT}")
+    else()
+        message(STATUS "Spdlog 3rd party library is already installed at ${EXTERN_INSTALL_DIR_PATH}/spdlog-${RAPIDJSON_GIT_HASH}")
+    endif()       
+endif()
 
 add_library(spdlog::spdlog INTERFACE IMPORTED GLOBAL)
 set_target_properties(spdlog::spdlog PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/spdlog-${SPDLOG_GIT_HASH}/include"
 )
 add_dependencies(spdlog::spdlog DEPENDS spdlog)
 
@@ -165,29 +182,46 @@ endif()
 # googletest
 #
 if(BUILD_TESTING)
-    ExternalProject_Add(gtest
-        INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}
-        SOURCE_DIR ${SOURCE_DIR_EXTERN}/googletest
-        EXCLUDE_FROM_ALL ON
-        CMAKE_ARGS "${CMAKE_ARGS}"
-            -Dgtest_force_shared_crt=YES
-            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} rev-parse --short=5 HEAD
+        WORKING_DIRECTORY ${SOURCE_DIR_EXTERN}/googletest
+        OUTPUT_VARIABLE GTEST_GIT_HASH
+        RESULTS_VARIABLE GTEST_GIT_HASH_RESULT
+        OUTPUT_STRIP_TRAILING_WHITESPACE
     )
+    if(${GTEST_GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/${GTEST_GIT_HASH})
+        file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/gtest-${GTEST_GIT_HASH}/include)
+        file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/gtest-${GTEST_GIT_HASH}/lib)
+        ExternalProject_Add(gtest
+            INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/gtest-${GTEST_GIT_HASH}
+            SOURCE_DIR ${SOURCE_DIR_EXTERN}/googletest
+            EXCLUDE_FROM_ALL ON
+            CMAKE_ARGS "${CMAKE_ARGS}"
+                -Dgtest_force_shared_crt=YES
+                -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+        )
+    else()
+        if(NOT ${GTEST_GIT_HASH_RESULT} EQUAL 0)
+            message(FATAL_ERROR "GTEST_GIT_HASH_RESULT is: ${GTEST_GIT_HASH_RESULT}")
+        else()
+            message(STATUS "GoogleTest 3rd party library is already installed at ${EXTERN_INSTALL_DIR_PATH}/gtest-${GTEST_GIT_HASH}")
+        endif()       
+    endif() 
 
     add_library(gtest::gtest STATIC IMPORTED GLOBAL)
     set_target_properties(gtest::gtest PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/include"
-        IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}"
-        IMPORTED_LOCATION_DEBUG  "${EXTERN_INSTALL_DIR_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtestd${CMAKE_STATIC_LIBRARY_SUFFIX}"
+        INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/gtest-${GTEST_GIT_HASH}/include"
+        IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/gtest-${GTEST_GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}"
+        IMPORTED_LOCATION_DEBUG  "${EXTERN_INSTALL_DIR_PATH}/gtest-${GTEST_GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtestd${CMAKE_STATIC_LIBRARY_SUFFIX}"
     )
 
     add_dependencies(gtest::gtest DEPENDS gtest)
 
     add_library(gtest::gmock STATIC IMPORTED GLOBAL)
     set_target_properties(gtest::gmock PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/include"
-        IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gmock${CMAKE_STATIC_LIBRARY_SUFFIX}"
-        IMPORTED_LOCATION_DEBUG  "${EXTERN_INSTALL_DIR_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gmockd${CMAKE_STATIC_LIBRARY_SUFFIX}"
+        INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/gtest-${GTEST_GIT_HASH}/include"
+        IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/gtest-${GTEST_GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gmock${CMAKE_STATIC_LIBRARY_SUFFIX}"
+        IMPORTED_LOCATION_DEBUG  "${EXTERN_INSTALL_DIR_PATH}/gtest-${GTEST_GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gmockd${CMAKE_STATIC_LIBRARY_SUFFIX}"
     )
 
     add_dependencies(gtest::gmock DEPENDS gtest)
@@ -237,117 +271,134 @@ endif()
 #
 # couchbaselitecpp and couchbase litecore
 #
-if(NOT WIN32)
-    ExternalProject_Add(cblitecpp
-        INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}
-        SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
-        EXCLUDE_FROM_ALL ON
-        CMAKE_ARGS "${CMAKE_ARGS}"
-            -DBUILD_EXAMPLES=${BUILD_EXAMPLES}
-            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-            -DSSL_LIB="${SSL_LIB_PATH_MACOS}/libssl.1.1.dylib"
-            -DCRYPTO_LIB="${SSL_LIB_PATH_MACOS}/libcrypto.1.1.dylib"
+execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-parse --short=5 HEAD
+    WORKING_DIRECTORY ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
+    OUTPUT_VARIABLE CBLITECPP_GIT_HASH
+    RESULTS_VARIABLE CBLITECPP_GIT_HASH_RESULT
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+if(${CBLITECPP_GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/${CBLITECPP_GIT_HASH})
+    file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/cblitecpp-${CBLITECPP_GIT_HASH}/include)
+    file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/cblitecpp-${CBLITECPP_GIT_HASH}/lib)
+    if(NOT WIN32)
+        ExternalProject_Add(cblitecpp
+            INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}
+            SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
+            EXCLUDE_FROM_ALL ON
+            CMAKE_ARGS "${CMAKE_ARGS}"
+                -DBUILD_EXAMPLES=${BUILD_EXAMPLES}
+                -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+                -DSSL_LIB="${SSL_LIB_PATH_MACOS}/libssl.1.1.dylib"
+                -DCRYPTO_LIB="${SSL_LIB_PATH_MACOS}/libcrypto.1.1.dylib"
 
-        INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Support${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}FleeceStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}BLIPStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}CivetWeb${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreREST_Static${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+            INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Support${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}FleeceStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}BLIPStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}CivetWeb${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreREST_Static${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
 
-        COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/3rd_party/include/litecore <INSTALL_DIR>/include/litecore
-        COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/3rd_party/include/fleece <INSTALL_DIR>/include/fleece
-    )
+            COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/3rd_party/include/litecore <INSTALL_DIR>/include/litecore
+            COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/3rd_party/include/fleece <INSTALL_DIR>/include/fleece
+        )   
+    else()
+        ExternalProject_Add(cblitecpp
+            INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}
+            SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
+            EXCLUDE_FROM_ALL ON
+            CMAKE_ARGS "${CMAKE_ARGS}"
+                -DBUILD_EXAMPLES=${BUILD_EXAMPLES}
+                -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+                -DSSL_LIB="libssl-1_1-x64.dll"
+                -DCRYPTO_LIB="libcrypto-1_1-x64.dll"
+
+            INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Support${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}FleeceStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}BLIPStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}CivetWeb${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreREST_Static${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}zlibstatic$<$<CONFIG:Debug>:d>${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}mbedcrypto${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+
+            COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/3rd_party/include/litecore <INSTALL_DIR>/include/litecore
+            COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/3rd_party/include/fleece <INSTALL_DIR>/include/fleece
+        )
+    endif()
 else()
-    ExternalProject_Add(cblitecpp
-        INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}
-        SOURCE_DIR ${SOURCE_DIR_EXTERN}/couchbase-lite-cpp
-        EXCLUDE_FROM_ALL ON
-        CMAKE_ARGS "${CMAKE_ARGS}"
-            -DBUILD_EXAMPLES=${BUILD_EXAMPLES}
-            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-            -DSSL_LIB="libssl-1_1-x64.dll"
-            -DCRYPTO_LIB="libcrypto-1_1-x64.dll"
-
-        INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Support${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}FleeceStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}BLIPStatic${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}CivetWeb${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreREST_Static${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}zlibstatic$<$<CONFIG:Debug>:d>${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/3rd_party/lib/${CMAKE_STATIC_LIBRARY_PREFIX}mbedcrypto${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
-
-        COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/3rd_party/include/litecore <INSTALL_DIR>/include/litecore
-        COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/3rd_party/include/fleece <INSTALL_DIR>/include/fleece
-    )
-endif()
+    if(NOT ${CBLITECPP_GIT_HASH_RESULT} EQUAL 0)
+        message(FATAL_ERROR "CBLITECPP_GIT_HASH_RESULT is: ${CBLITECPP_GIT_HASH_RESULT}")
+    else()
+        message(STATUS "CouchBase Lite CPP 3rd party library is already installed at ${EXTERN_INSTALL_DIR_PATH}/spdlog-${RAPIDJSON_GIT_HASH}")
+    endif()       
+endif()     
 
 add_library(strata::CouchbaseLiteCPP STATIC IMPORTED GLOBAL)
 set_target_properties(strata::CouchbaseLiteCPP PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/include"
-    IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}couchbaselitecpp${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/include"
+    IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}couchbaselitecpp${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
 add_dependencies(strata::CouchbaseLiteCPP DEPENDS cblitecpp)
 
 add_library(cblitecore::LiteCore STATIC IMPORTED GLOBAL)
 set_target_properties(cblitecore::LiteCore PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/include"
-    IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreStatic${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/include"
+    IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}LiteCoreStatic${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
 add_dependencies(cblitecore::LiteCore DEPENDS cblitecpp)
 
 add_library(cblitecore::Fleece STATIC IMPORTED GLOBAL)
 set_target_properties(cblitecore::Fleece PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/include"
-    IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}FleeceStatic${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/include"
+    IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}FleeceStatic${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
 add_dependencies(cblitecore::Fleece DEPENDS cblitecpp)
 
 add_library(cblitecore::CivetWeb STATIC IMPORTED GLOBAL)
 set_target_properties(cblitecore::CivetWeb PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/include"
-    IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}CivetWeb${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/include"
+    IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}CivetWeb${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
 add_dependencies(cblitecore::CivetWeb DEPENDS cblitecpp)
 
 add_library(cblitecore::BLIP STATIC IMPORTED GLOBAL)
 set_target_properties(cblitecore::BLIP PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/include"
-    IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}BLIPStatic${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/include"
+    IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}BLIPStatic${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
 add_dependencies(cblitecore::BLIP DEPENDS cblitecpp)
 
 add_library(cblitecore::support STATIC IMPORTED GLOBAL)
 set_target_properties(cblitecore::support PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/include"
-    IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Support${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/include"
+    IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}Support${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
 
 add_library(cblitecore::SQLite3_unicode STATIC IMPORTED GLOBAL)
 set_target_properties(cblitecore::SQLite3_unicode PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/include"
-    IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/include"
+    IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}SQLite3_UnicodeSN${CMAKE_STATIC_LIBRARY_SUFFIX}"
     )
     add_dependencies(cblitecore::SQLite3_unicode DEPENDS cblitecpp)
 
 if(WIN32)
     add_library(cblitecore::zlib STATIC IMPORTED GLOBAL)
     set_target_properties(cblitecore::zlib PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/include"
-        IMPORTED_LOCATION       "${EXTERN_INSTALL_DIR_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}zlibstatic${CMAKE_STATIC_LIBRARY_SUFFIX}"
-        IMPORTED_LOCATION_DEBUG "${EXTERN_INSTALL_DIR_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}zlibstaticd${CMAKE_STATIC_LIBRARY_SUFFIX}"
+        INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/include"
+        IMPORTED_LOCATION       "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}zlibstatic${CMAKE_STATIC_LIBRARY_SUFFIX}"
+        IMPORTED_LOCATION_DEBUG "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}zlibstaticd${CMAKE_STATIC_LIBRARY_SUFFIX}"
     )
     add_dependencies(cblitecore::zlib DEPENDS cblitecpp)
 
     add_library(cblitecore::mbedtls STATIC IMPORTED GLOBAL)
     set_target_properties(cblitecore::mbedtls PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/include"
-        IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}mbedcrypto${CMAKE_STATIC_LIBRARY_SUFFIX}"
+        INTERFACE_INCLUDE_DIRECTORIES "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/include"
+        IMPORTED_LOCATION  "${EXTERN_INSTALL_DIR_PATH}/cblitecpp-{CBLITECPP_GIT_HASH}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}mbedcrypto${CMAKE_STATIC_LIBRARY_SUFFIX}"
     )
     add_dependencies(cblitecore::mbedtls DEPENDS cblitecpp)
 endif()
