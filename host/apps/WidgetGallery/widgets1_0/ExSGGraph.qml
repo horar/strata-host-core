@@ -295,7 +295,6 @@ Item {
                 zoomYEnabled: false
                 autoUpdate: false
 
-
                 Component.onCompleted: {
                     let movingCurve = createCurve("movingCurve")
                     movingCurve.color = "lime"
@@ -480,7 +479,6 @@ Item {
                 yLogarithmic: true
                 xTitle: "X Axis"
                 yTitle: "Y Axis"
-                gridColor: "black"
             }
         }
 

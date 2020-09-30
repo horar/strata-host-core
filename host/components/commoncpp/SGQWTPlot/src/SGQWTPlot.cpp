@@ -174,6 +174,7 @@ void SGQWTPlot :: setXGrid(bool showGrid)
     if(xGrid_ != showGrid) {
         xGrid_ = showGrid;
         qwtGrid_->enableX(xGrid_);
+
         emit xGridChanged();
         if (autoUpdate_) {
             update();
@@ -191,6 +192,7 @@ void SGQWTPlot :: setYGrid(bool showGrid)
     if(yGrid_ != showGrid) {
         yGrid_ = showGrid;
         qwtGrid_->enableY(yGrid_);
+
         emit yGridChanged();
         if (autoUpdate_) {
             update();
@@ -209,6 +211,7 @@ void SGQWTPlot :: setXMinorGrid(bool showGrid)
         xMinorGrid_ = showGrid;
         setXGrid(xMinorGrid_);
         qwtGrid_->enableXMin(xMinorGrid_);
+
         emit xMinorGridChanged();
         if (autoUpdate_) {
             update();
@@ -228,6 +231,7 @@ void SGQWTPlot :: setYMinorGrid(bool showGrid)
         setYGrid(yMinorGrid_);
         qwtGrid_->enableYMin(yMinorGrid_);
         emit yMinorGridChanged();
+
         if (autoUpdate_) {
             update();
         }
