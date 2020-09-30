@@ -138,9 +138,6 @@ Rectangle {
                             clip: true
                             autoScroll: activeFocus
                             readOnly: false
-                            // TODO: add a proper validator for editing
-                            validator: RegExpValidator { regExp: /^.+$/ }
-
 
                             onEditingFinished: {
                                 if (!model.editing) {

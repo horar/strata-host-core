@@ -59,7 +59,7 @@ int SGQrcTreeNode::row() const
 {
     if (parent_) {
         for (int i = 0; i < parent_->childCount(); i++) {
-            if (parent_->childNode(i)->filepath() == this->filepath()) {
+            if (parent_->childNode(i) == this) {
                 return i;
             }
         }
