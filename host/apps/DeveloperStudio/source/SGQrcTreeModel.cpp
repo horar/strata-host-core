@@ -9,6 +9,8 @@
 #include <QStack>
 #include <QQmlEngine>
 #include <QUuid>
+#include <QDateTime>
+#include <QCryptographicHash>
 
 /**************************************************************
  * Class SGQrcTreeModel
@@ -18,6 +20,8 @@ SGQrcTreeModel::SGQrcTreeModel(QObject *parent) : QAbstractItemModel(parent)
 {
     QQmlEngine::setObjectOwnership(root_, QQmlEngine::CppOwnership);
     connect(this, &SGQrcTreeModel::urlChanged, this, &SGQrcTreeModel::createModel);
+    connect(&fsWatcher_, &QFileSystemWatcher::directoryChanged, this, &SGQrcTreeModel::projectFilesAdded);
+    connect(&fsWatcher_, &QFileSystemWatcher::fileChanged, this, &SGQrcTreeModel::projectFilesModified);
 }
 
 SGQrcTreeModel::~SGQrcTreeModel()
@@ -42,6 +46,7 @@ QHash<int, QByteArray> SGQrcTreeModel::roleNames() const
     roles[UniqueIdRole] = QByteArray("uid");
     roles[RowRole] = QByteArray("row");
     roles[EditingRole] = QByteArray("editing");
+    roles[Md5Role] = QByteArray("md5");
     return roles;
 }
 
@@ -72,6 +77,8 @@ QVariant SGQrcTreeModel::data(const QModelIndex &index, int role) const
         return QVariant(node->row());
     case EditingRole:
         return QVariant(node->editing());
+    case Md5Role:
+        return QVariant(node->md5());
     }
 
     if (role == ChildrenRole) {
@@ -113,6 +120,9 @@ bool SGQrcTreeModel::setData(const QModelIndex &index, const QVariant &value, in
     case EditingRole:
         changed = node->setEditing(value.toBool());
         break;
+    case Md5Role:
+        changed = node->setMd5(value.toByteArray());
+        break;
     default:
         return false;
     }
@@ -152,7 +162,18 @@ bool SGQrcTreeModel::removeRows(int row, int count, const QModelIndex &parent)
     if (!parentItem)
         return false;
 
+    // Remove children first
+    for (int i = 0; i < count; ++i) {
+        if (parentItem->childNode(row + i)->isDir()) {
+            SGQrcTreeNode *node = parentItem->childNode(row + i);
+            removeRows(0, node->childCount(), index(row + i, 0, parent));
+        }
+    }
+
     beginRemoveRows(parent, row, row + count - 1);
+    for (int i = 0; i < count; ++i) {
+        uidMap_.remove(parentItem->childNode(row + i)->uid());
+    }
     const bool success = parentItem->removeChildren(row, count);
     endRemoveRows();
 
@@ -210,10 +231,6 @@ bool SGQrcTreeModel::hasChildren(const QModelIndex &parent) const
 }
 
 /***
- * END OVERRIDES
- ***/
-
-/***
  * BEGIN CUSTOM FUNCTIONS
  ***/
 
@@ -256,13 +273,13 @@ SGQrcTreeNode* SGQrcTreeModel::getNodeByUrl(const QUrl &url) const
 bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position,  const bool inQrc, const QModelIndex &parent)
 {
     SGQrcTreeNode *parentNode = getNode(parent);
+
     if (position > parentNode->childCount()) {
         return false;
     }
     if (position < 0) {
         position = parentNode->childCount();
     }
-
 
     // This handles the case where parentNode is the .qrc file.
     QString parentDir = parentNode->isDir() ? SGUtilsCpp::urlToLocalFile(parentNode->filepath()) : SGUtilsCpp::urlToLocalFile(projectDir_);
@@ -286,25 +303,28 @@ bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position,  const bool 
         // Copy the file to the base directory under the new name
         QFile::copy(fileInfo.filePath(), outputFileLocation.filePath());
         fileInfo.setFile(outputFileLocation.filePath());
-    } else {
-        // File is a child of the parent directory it will be inserted into
-        // Don't let them add a file that already exists
-        if (QFileInfo::exists(SGUtilsCpp::joinFilePath(parentDir, fileInfo.fileName()))) {
-            return false;
-        }
     }
 
     beginInsertRows(parent, position, position);
     QString uid = QUuid::createUuid().toString();
-    SGQrcTreeNode *child = new SGQrcTreeNode(parentNode, fileInfo, fileInfo.isDir(), inQrc, uid);
-    QQmlEngine::setObjectOwnership(child, QQmlEngine::CppOwnership);
-
+    SGQrcTreeNode *child = new SGQrcTreeNode(parentNode, fileInfo, fileInfo.isDir(), true, uid);
+    if (!fileInfo.isDir()) {
+        child->setMd5(getMd5(fileInfo.filePath()));
+    }
     bool success = parentNode->insertChild(child, position);
     uidMap_.insert(uid, child);
     endInsertRows();
 
-    if (inQrc) {
-        addToQrc(index(position, 0, parent));
+    if (fileInfo.isDir()) {
+        QDirIterator subItr(fileInfo.filePath(), QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+        while (subItr.hasNext()) {
+            subItr.next();
+            QFileInfo subFi(subItr.fileInfo());
+            if (!fsWatcher_.files().contains(subFi.filePath())) {
+                fsWatcher_.addPath(subFi.filePath());
+                insertChild(SGUtilsCpp::pathToUrl(subFi.filePath()), -1, index(position, 0, parent));
+            }
+        }
     }
     return success;
 }
@@ -312,6 +332,7 @@ bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position,  const bool 
 bool SGQrcTreeModel::insertChild(bool isDir, int position, const QModelIndex &parent)
 {
     SGQrcTreeNode *parentNode = getNode(parent);
+
     if (position > parentNode->childCount()) {
         return false;
     }
@@ -329,8 +350,6 @@ bool SGQrcTreeModel::insertChild(bool isDir, int position, const QModelIndex &pa
     endInsertRows();
     return success;
 }
-
-
 
 QUrl SGQrcTreeModel::url() const
 {
@@ -423,7 +442,22 @@ bool SGQrcTreeModel::deleteFile(const int row, const QModelIndex &parent)
         return false;
     }
 
-    const bool success = SGUtilsCpp::removeFile(SGUtilsCpp::urlToLocalFile(child->filepath()));
+    fsWatcher_.removePath(SGUtilsCpp::urlToLocalFile(child->filepath()));
+
+    bool success = false;
+    if (child->isDir()) {
+        QDirIterator itr(SGUtilsCpp::urlToLocalFile(child->filepath()), QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::Files, QDirIterator::Subdirectories);
+        while (itr.hasNext()) {
+            itr.next();
+            if (fsWatcher_.files().contains(itr.filePath())) {
+                fsWatcher_.removePath(itr.filePath());
+            }
+        }
+        success = QDir(SGUtilsCpp::urlToLocalFile(child->filepath())).removeRecursively();
+    } else {
+        success = SGUtilsCpp::removeFile(SGUtilsCpp::urlToLocalFile(child->filepath()));
+    }
+
     if (success) {
         removeFromQrc(index(row, 0, parent));
         removeRows(row, 1, parent);
@@ -431,17 +465,55 @@ bool SGQrcTreeModel::deleteFile(const int row, const QModelIndex &parent)
     return success;
 }
 
+bool SGQrcTreeModel::handleExternalRename(const QModelIndex &index, const QUrl &oldPath, const QUrl &newPath)
+{
+    if (oldPath == newPath) {
+        return false;
+    }
+
+    SGQrcTreeNode *node = getNode(index);
+    QFileInfo fi(SGUtilsCpp::urlToLocalFile(newPath));
+    node->setFilename(fi.fileName());
+    node->setFilepath(newPath);
+    emit dataChanged(index, index, {FilenameRole, FilepathRole});
+
+    // Now update qrc
+    if (qrcItems_.contains(SGUtilsCpp::urlToLocalFile(oldPath))) {
+        QString oldRelativePath = QDir(SGUtilsCpp::urlToLocalFile(projectDir_)).relativeFilePath(SGUtilsCpp::urlToLocalFile(oldPath));
+        QString newRelativePath = QDir(SGUtilsCpp::urlToLocalFile(projectDir_)).relativeFilePath(fi.filePath());
+        QDomElement qresource = qrcDoc_.elementsByTagName("qresource").at(0).toElement();
+
+        QDomNodeList children = qresource.childNodes();
+        for (int i = 0; i < children.count(); i++) {
+            if (children.at(i).firstChild().nodeValue() == oldRelativePath) {
+                children.at(i).firstChild().setNodeValue(newRelativePath);
+                break;
+            }
+        }
+
+        qrcItems_.remove(SGUtilsCpp::urlToLocalFile(oldPath));
+        qrcItems_.insert(SGUtilsCpp::urlToLocalFile(newPath));
+    }
+
+    startSave();
+    return true;
+}
+
+QByteArray SGQrcTreeModel::getMd5(const QString &filepath)
+{
+    QFile f(filepath);
+    if (f.open(QFile::ReadOnly)) {
+        QCryptographicHash hash(QCryptographicHash::Md5);
+        if (hash.addData(&f)) {
+            return hash.result();
+        }
+    }
+    return QByteArray();
+}
+
 /***
  * PRIVATE FUNCTIONS
  ***/
-
-void SGQrcTreeModel::childrenChanged(const QModelIndex &index, int role) {
-    if (index.isValid()) {
-        emit dataChanged(index, index, {role});
-    } else {
-        qWarning() << "Index is not valid";
-    }
-}
 
 void SGQrcTreeModel::clear(bool emitSignals)
 {
@@ -513,8 +585,18 @@ bool SGQrcTreeModel::readQrcFile()
 void SGQrcTreeModel::createModel()
 {
     beginResetModel();
-
+    QFileInfo rootFi(SGUtilsCpp::urlToLocalFile(url_));
+    if (fsWatcher_.files().count() > 0) {
+        fsWatcher_.removePaths(fsWatcher_.files());
+    }
     clear(false);
+    fsWatcher_.addPath(SGUtilsCpp::urlToLocalFile(projectDir_));
+    fsWatcher_.addPath(SGUtilsCpp::urlToLocalFile(url_));
+
+    QString uid = QUuid::createUuid().toString();
+    root_ = new SGQrcTreeNode(nullptr, rootFi, false, false, uid);
+    uidMap_.insert(uid, root_);
+    QQmlEngine::setObjectOwnership(root_, QQmlEngine::CppOwnership);
 
     if (url_.toString().length() > 0 && readQrcFile()) {
         QFileInfo rootFi(SGUtilsCpp::urlToLocalFile(url_));
@@ -538,15 +620,18 @@ void SGQrcTreeModel::recursiveDirSearch(SGQrcTreeNode* parentNode, QDir currentD
             QQmlEngine::setObjectOwnership(dirNode, QQmlEngine::CppOwnership);
             parentNode->insertChild(dirNode, parentNode->childCount());
             uidMap_.insert(uid, dirNode);
+            fsWatcher_.addPath(info.filePath());
             recursiveDirSearch(dirNode, QDir(info.filePath()), qrcItems, depth + 1);
         } else {
             if (SGUtilsCpp::pathToUrl(info.filePath()) == url_) {
                 continue;
             }
             SGQrcTreeNode *node = new SGQrcTreeNode(parentNode, info, false, qrcItems.contains(info.filePath()), uid);
+            node->setMd5(getMd5(info.filePath()));
             QQmlEngine::setObjectOwnership(node, QQmlEngine::CppOwnership);
             parentNode->insertChild(node, parentNode->childCount());
             uidMap_.insert(uid, node);
+            fsWatcher_.addPath(info.filePath());
         }
     }
 }
@@ -576,4 +661,124 @@ void SGQrcTreeModel::save()
     qrcFile.close();
 }
 
+
+/***
+ * PUBLIC SLOTS
+ ***/
+void SGQrcTreeModel::childrenChanged(const QModelIndex &index, int role) {
+    if (index.isValid()) {
+        emit dataChanged(index, index, {role});
+    } else {
+        qWarning() << "Index is not valid";
+    }
+}
+
+
+/***
+ * PRIVATE SLOTS
+ ***/
+void SGQrcTreeModel::projectFilesModified(const QString &path)
+{
+    const QUrl url = SGUtilsCpp::pathToUrl(path);
+    QHashIterator<QString, SGQrcTreeNode*> itr(uidMap_);
+    SGQrcTreeNode *deletedNode = nullptr;
+
+    while (itr.hasNext()) {
+        SGQrcTreeNode *node = itr.next().value();
+
+        if (node->filepath() == url) {
+            // If the file still exists, then it has been modified, else it has been deleted
+            if (QFileInfo::exists(path)) {
+                emit fileChanged(url);
+                return;
+            } else {
+                deletedNode = node;
+                break;
+            }
+        }
+    }
+
+    QFileInfo deletedInfo(SGUtilsCpp::urlToLocalFile(deletedNode->filepath()));
+    if (deletedInfo.isDir()) {
+        emit fileDeleted(deletedNode->uid());
+        return;
+    }
+
+    QDirIterator dirItr(deletedInfo.dir().absolutePath(), QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::Files);
+
+    while (dirItr.hasNext()) {
+        dirItr.next();
+        QByteArray md5 = getMd5(dirItr.filePath());
+        if (md5 == deletedNode->md5()) {
+            // We have found a renamed file
+            fsWatcher_.addPath(dirItr.filePath());
+            emit fileRenamed(deletedNode->filepath(), SGUtilsCpp::pathToUrl(dirItr.filePath()));
+            return;
+        }
+    }
+
+    emit fileDeleted(deletedNode->uid());
+}
+
+void SGQrcTreeModel::projectFilesAdded(const QString &path)
+{
+    QHashIterator<QString, SGQrcTreeNode*> hashItr(uidMap_);
+    QDirIterator dirItr(path, QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::Files | QDir::Dirs);
+    SGQrcTreeNode *parentNode = nullptr;
+    QSet<QByteArray> childMd5s;
+    QSet<QUrl> childFilePaths;
+    const QUrl dirUrl = SGUtilsCpp::pathToUrl(path);
+
+    if (!parentNode && dirUrl == projectDir_) {
+        parentNode = root_;
+    } else {
+        // Find the parentNode that `path` corresponds to
+        while (hashItr.hasNext()) {
+            SGQrcTreeNode *node = hashItr.next().value();
+            if (node->filepath() == dirUrl) {
+                parentNode = node;
+                break;
+            }
+        }
+    }
+
+    if (parentNode) {
+        QVector<SGQrcTreeNode*> nodesDeleted;
+
+        for (SGQrcTreeNode *node : parentNode->children()) {
+            if (!QFileInfo::exists(SGUtilsCpp::urlToLocalFile(node->filepath()))) {
+                nodesDeleted.append(node);
+                continue;
+            }
+            childMd5s.insert(node->md5());
+            childFilePaths.insert(node->filepath());
+        }
+
+        for (int i = 0; i < nodesDeleted.count(); ++i) {
+            SGQrcTreeNode *node = nodesDeleted.at(i);
+            emit fileDeleted(node->uid());
+        }
+    }
+
+    while (dirItr.hasNext()) {
+        dirItr.next();
+
+        QFileInfo fi(dirItr.fileInfo());
+        QUrl parentUrl = SGUtilsCpp::pathToUrl(fi.dir().absolutePath());
+        QUrl fileUrl = SGUtilsCpp::pathToUrl(fi.filePath());
+        QByteArray md5 = getMd5(dirItr.filePath());
+
+        if (fileUrl == root_->filepath()) {
+            continue;
+        }
+
+        if (!childFilePaths.contains(fileUrl) && (fi.isDir() || !childMd5s.contains(md5))) {
+            // File has been added and NOT renamed
+            if (!fsWatcher_.files().contains(fi.filePath())) {
+                fsWatcher_.addPath(fi.filePath());
+                emit fileAdded(fileUrl, parentUrl);
+            }
+        }
+    }
+}
 

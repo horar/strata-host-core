@@ -9,8 +9,8 @@
 #include <QDomDocument>
 #include <QSet>
 #include <QFileInfo>
-#include <QQmlListProperty>
-#include <QSortFilterProxyModel>
+#include <QFileSystemWatcher>
+#include <QPair>
 
 class SGQrcTreeModel : public QAbstractItemModel
 {
@@ -33,7 +33,8 @@ public:
         ParentRole = Qt::UserRole + 7,
         UniqueIdRole = Qt::UserRole + 8,
         RowRole = Qt::UserRole + 9,
-        EditingRole = Qt::UserRole + 10
+        EditingRole = Qt::UserRole + 10,
+        Md5Role = Qt::UserRole + 11
     };
     Q_ENUM(RoleNames);
 
@@ -154,14 +155,47 @@ public:
      */
     Q_INVOKABLE bool deleteFile(const int row, const QModelIndex &parent = QModelIndex());
 
+    /**
+     * @brief handleExternalRenamed Used for when a file is renamed on the file system. Changes the filepath, filename, and updates the qrc.
+     * @param index The index of the file in the tree
+     * @param oldPath The old filepath
+     * @param newPath The new filepath
+     * @return Returns true if successful, false otherwise.
+     */
+    Q_INVOKABLE bool handleExternalRename(const QModelIndex &index, const QUrl &oldPath, const QUrl &newPath);
+
+    /**
+     * @brief getMd5 Gets the md5 checksum for a file
+     * @param filepath The filepath to the file
+     * @return Returns the md5 QByteArray
+     */
+    Q_INVOKABLE QByteArray getMd5(const QString &filepath);
+
+
 signals:
     void urlChanged();
     void projectDirectoryChanged();
     void rootChanged();
     void errorParsing(const QString error);
 
+    // This signal is emitted when the file at the specified path is modified
+    void fileChanged(const QUrl path);
+    // This signal is emitted when the file with the specified uid is deleted
+    void fileDeleted(const QString uid);
+    // This signal is emitted when a file is added to the project.
+    void fileAdded(const QUrl path, const QUrl parentPath);
+    // This signal is emitted when a file is renamed
+    void fileRenamed(const QUrl oldPath, const QUrl newPath);
+
 public slots:
     void childrenChanged(const QModelIndex &index, int role);
+
+//private signals:
+//    void fileAddedOrRenamed(const QUrl &path);
+
+private slots:
+    void projectFilesModified(const QString &path);
+    void projectFilesAdded(const QString &path);
 
 private:
     void clear(bool emitSignals = true);
@@ -177,4 +211,5 @@ private:
     QDomDocument qrcDoc_;
     QHash<QString, SGQrcTreeNode*> uidMap_;
     QSet<QString> qrcItems_;
+    QFileSystemWatcher fsWatcher_;
 };

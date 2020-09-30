@@ -49,6 +49,19 @@ Rectangle {
                             openFilesModel.addTab(node.filename, node.filepath, node.filetype, node.uid)
                         }
                     }
+
+                    onFileAdded: {
+                        if (parentPath === treeModel.projectDirectory) {
+                            for (let i = 0; i < treeModel.root.childNodes.count; i++) {
+                                if (treeModel.root.childNodes[i].filepath === path) {
+                                    // Don't add the file because it already exists
+                                    return;
+                                }
+                            }
+                            console.info("File added", path)
+                            treeModel.insertChild(path, -1, treeView.rootIndex);
+                        }
+                    }
                 }
 
                 selection: ItemSelectionModel {
@@ -96,6 +109,61 @@ Rectangle {
                         }
                     }
 
+                    Connections {
+                        target: openFilesModel
+
+                        onCurrentIndexChanged: {
+                            if (visible && openFilesModel.currentId === model.uid) {
+                                treeView.selection.clearCurrentIndex();
+                                treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
+                                treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
+                            }
+                        }
+                    }
+
+                    Connections {
+                        target: treeModel
+
+                        onFileChanged: {
+                            if (model && model.filepath === path) {
+                                // Refresh text editor if it is open
+                                console.info("File changed!")
+                                model.md5 = treeModel.getMd5(SGUtilsCpp.urlToLocalFile(path))
+                            }
+                        }
+
+                        onFileDeleted: {
+                            if (model && model.uid === uid) {
+                                console.info("File deleted!")
+
+                                openFilesModel.closeTab(model.uid)
+                                treeModel.removeFromQrc(styleData.index)
+                                treeModel.removeRows(model.row, 1, styleData.index.parent)
+                            }
+                        }
+
+                        onFileAdded: {
+                            if (model && model.filepath === parentPath) {
+                                console.info("File added!", path)
+
+                                for (let i = 0; i < model.childNodes.count; i++) {
+                                    if (model.childNodes[i].filepath === path) {
+                                        // Don't add the file because it already exists
+                                        return;
+                                    }
+                                }
+                                treeModel.insertChild(path, -1, styleData.index);
+                            }
+                        }
+
+                        onFileRenamed: {
+                            if (model && model.filepath === oldPath) {
+                                console.info("File renamed!");
+                                treeModel.handleExternalRename(styleData.index, oldPath, newPath);
+                            }
+                        }
+                    }
+
                     Text {
                         id: itemFilename
                         text: styleData.value
@@ -129,11 +197,6 @@ Rectangle {
                                 return;
                             }
 
-                            // Handle the case where a forward slash is in the filename
-                            if (text.indexOf('/') >= 0) {
-                                text = model.filename
-                            }
-
                             // If a new file was created, and its filename is still empty
                             if (text === "" && model.filename === "") {
                                 treeModel.removeRows(model.row, 1, styleData.index.parent);
@@ -142,27 +205,26 @@ Rectangle {
 
                             let path;
                             // Below handles the case where the parentNode is the .qrc file
-                            if (model && !model.parentNode.isDir) {
-                                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory), text);
+                            if (model.parentNode && !model.parentNode.isDir) {
+                                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory), displayText);
                             } else {
                                 path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(model.parentNode.filepath), text);
 
                             }
-
-                            model.filename = text
+                            model.filename = displayText
                             model.filepath = SGUtilsCpp.pathToUrl(path);
                             if (!model.isDir) {
-                                model.filetype = SGUtilsCpp.fileSuffix(text)
+                                model.filetype = SGUtilsCpp.fileSuffix(displayText)
+                                model.md5 = treeModel.getMd5(path);
                                 if (!model.inQrc) {
                                     treeModel.addToQrc(styleData.index);
                                 }
+                                openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
                             }
+                            model.editing = false
 
                             let success = SGUtilsCpp.createFile(path);
-                            if (success) {
-                                model.editing = false
-                                openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
-                            } else {
+                            if (!success) {
                                 //handle error
                                 console.error("Could not create file:", path)
                                 treeModel.removeRows(model.row, 1, styleData.index.parent)
@@ -262,6 +324,13 @@ Rectangle {
 
                                 existingFileDialog.callerIndex = styleData.index
                                 existingFileDialog.open();
+                            }
+                        }
+
+                        MenuItem {
+                            text: "Delete Folder"
+                            onTriggered: {
+                                treeModel.deleteFile(model.row, styleData.index.parent)
                             }
                         }
                     }
