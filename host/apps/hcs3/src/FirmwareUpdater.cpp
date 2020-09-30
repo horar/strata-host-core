@@ -59,6 +59,9 @@ void FirmwareUpdater::downloadFirmware()
         return;
     }
 
+    //file is created on disk, no need to keep descriptor open
+    firmwareFile_.close();
+
     QList<DownloadManager::DownloadRequestItem> downloadRequestList;
 
     DownloadManager::DownloadRequestItem firmwareItem;
