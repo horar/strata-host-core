@@ -755,9 +755,6 @@ void SGQrcTreeModel::directoryStructureChanged(const QString &path)
             SGQrcTreeNode *node = nodesDeleted.at(i);
             emit fileDeleted(node->uid());
         }
-    } else {
-        qCritical() << "Could not find a parent node";
-        return;
     }
 
     while (dirItr.hasNext()) {

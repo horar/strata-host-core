@@ -31,32 +31,40 @@ Rectangle {
                 width: treeViewContainer.width
                 height: treeViewContainer.height
                 focus: true
+                QtQC1.TreeView {
+                    id: treeView
+                    model: treeModel
+                    backgroundVisible: false
+                    alternatingRowColors: false
+                    width: treeViewContainer.width
+                    height: treeViewContainer.height
+                    focus: true
 
-                Connections {
-                    target: treeModel
+                    Connections {
+                        target: treeModel
 
-                    // When a row is inserted, we want to focus on that row
-                    onRowsInserted: {
-                        console.info("Row inserted", first, parent)
-                        let index = treeModel.index(first, 0, parent);
-                        treeView.selection.clearCurrentIndex();
-                        treeView.selection.select(index, ItemSelectionModel.Rows);
-                        treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
-                        // Only set editing to true if we have created a new file and the filename is empty
-                        if (treeModel.getNode(index).filename === "") {
-                            treeModel.setData(index, true, SGQrcTreeModel.EditingRole)
-                        }
-                    }
-
-                    onFileAdded: {
-                        if (parentPath === treeModel.projectDirectory) {
-                            for (let i = 0; i < treeModel.root.childNodes.count; i++) {
-                                if (treeModel.root.childNodes[i].filepath === path) {
-                                    // Don't add the file because it already exists
-                                    return;
-                                }
+                        // When a row is inserted, we want to focus on that row
+                        onRowsInserted: {
+                            let index = treeModel.index(first, 0, parent);
+                            treeView.selection.clearCurrentIndex();
+                            treeView.selection.select(index, ItemSelectionModel.Rows);
+                            treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
+                            // Only set editing to true if we have created a new file and the filename is empty
+                            if (treeModel.getNode(index).filename === "") {
+                                treeModel.setData(index, true, SGQrcTreeModel.EditingRole)
                             }
-                            treeModel.insertChild(path, -1, treeView.rootIndex);
+                        }
+
+                        onFileAdded: {
+                            if (parentPath === treeModel.projectDirectory) {
+                                for (let i = 0; i < treeModel.root.childNodes.count; i++) {
+                                    if (treeModel.root.childNodes[i].filepath === path) {
+                                        // Don't add the file because it already exists
+                                        return;
+                                    }
+                                }
+                                treeModel.insertChild(path, -1, treeView.rootIndex);
+                            }
                         }
                     }
                 }
@@ -121,6 +129,7 @@ Rectangle {
                             height: 15
                             visible: !itemFilenameEdit.visible
                             anchors.verticalCenter: parent.verticalCenter
+                            verticalAlignment: Text.AlignVCenter
                             font.pointSize: 10
                             color: "black"
                             elide: Text.ElideRight
@@ -132,6 +141,7 @@ Rectangle {
                             height: 15
                             visible: styleData.selected && model.editing
                             anchors.verticalCenter: parent.verticalCenter
+                            verticalAlignment: TextInput.AlignVCenter
                             font.pointSize: 10
                             color: "black"
                             text: styleData.value
@@ -239,7 +249,6 @@ Rectangle {
                             Action {
                                 text: "Add New File to Qrc"
                                 onTriggered: {
-                                    console.info("Adding new file")
                                     treeModel.insertChild(false, -1, styleData.index.parent)
                                     fileContextMenu.dismiss()
                                 }
