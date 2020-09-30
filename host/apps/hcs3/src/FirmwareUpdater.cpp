@@ -71,6 +71,7 @@ void FirmwareUpdater::downloadFirmware()
     settings.notifySingleDownloadProgress = true;
     settings.keepOriginalName = true;
     settings.oneFailsAllFail = true;
+    settings.removeCorruptedFile = false;
 
     connect(downloadManager_, &DownloadManager::groupDownloadFinished, this, &FirmwareUpdater::handleDownloadFinished);
     connect(downloadManager_, &DownloadManager::singleDownloadProgress, this, &FirmwareUpdater::handleSingleDownloadProgress);
