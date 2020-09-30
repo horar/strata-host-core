@@ -67,6 +67,7 @@ var platform_view_repeater_ = null
 var platform_view_model_ = null
 var stack_container_ = null
 var platform_list = {}
+var userSettings = {}
 
 /*
   Navigation initialized with parent containers
@@ -332,12 +333,19 @@ function updateState(event, data)
                     }
                 }
 
-                if (view_index !== -1) {
-                    connected_view = platform_view_model_.get(view_index)
-                    connected_view.device_id = data.device_id
-                    connected_view.firmware_version = data.firmware_version
-                    connected_view.connected = true
-                }
+                if(userSettings.autoOpenView){
+                        //TODO: autoOpenConnect
+                } else {
+                        connected_view = platform_view_model_.get(view_index)
+                        connected_view.device_id = data.device_id
+                        connected_view.firmware_version = data.firmware_version
+                        connected_view.connected = true
+                    }
+
+                    if(userSettings.switchToActive){
+                        //TODO: switch to the active platform
+                    }
+
                 break;
 
             case events.PLATFORM_DISCONNECTED_EVENT:

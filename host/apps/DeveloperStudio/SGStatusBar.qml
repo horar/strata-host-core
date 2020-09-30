@@ -19,6 +19,7 @@ import "qrc:/js/help_layout_manager.js" as Help
 import tech.strata.fonts 1.0
 import tech.strata.logger 1.0
 import tech.strata.sgwidgets 1.0
+import tech.strata.commoncpp 1.0
 
 Rectangle {
     id: container
@@ -38,6 +39,12 @@ Rectangle {
         // Initialize main help tour- NavigationControl loads this before PlatformSelector
         Help.setClassId("strataMain")
         Help.registerTarget(helpTab, "When a platform has been selected, this button will allow you to navigate between its control and content views.", 2, "selectorHelp")
+        NavigationControl.userSettings = sgUserSettings
+        const settings = NavigationControl.userSettings.readFile("settings.json")
+        NavigationControl.userSettings.autoOpenView = settings.autoOpenView
+        NavigationControl.userSettings.switchToActive = settings.switchToActive
+        NavigationControl.userSettings.notifyOnFirmwareUpdate = settings.notifyOnFirmwareUpdate
+
     }
 
     // Navigation_control calls this after login when statusbar AND platformSelector are all complete
@@ -322,6 +329,16 @@ Rectangle {
         id: profileLoader
         source: "qrc:/partial-views/profile-popup/SGProfilePopup.qml"
         active: false
+    }
+
+    SGUserSettings {
+        id: sgUserSettings
+        classId: "general-settings"
+        user: NavigationControl.context.user_id
+
+        property bool autoOpenView: false
+        property bool switchToActive: false
+        property bool notifyOnFirmwareUpdate: false
     }
 
     function showAboutWindow(){
