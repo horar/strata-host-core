@@ -28,25 +28,23 @@ Rectangle {
                 model: treeModel
                 backgroundVisible: false
                 alternatingRowColors: false
-                width: parent.width
-                height: parent.height
+                width: treeViewContainer.width
+                height: treeViewContainer.height
+                focus: true
 
                 Connections {
                     target: treeModel
 
                     // When a row is inserted, we want to focus on that row
                     onRowsInserted: {
+                        console.info("Row inserted", first, parent)
                         let index = treeModel.index(first, 0, parent);
                         treeView.selection.clearCurrentIndex();
                         treeView.selection.select(index, ItemSelectionModel.Rows);
                         treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
-
                         // Only set editing to true if we have created a new file and the filename is empty
-                        let node = treeModel.getNode(index);
-                        if (node.filename === "") {
-                            treeModel.setData(index, true, SGQrcTreeModel.EditingRole);
-                        } else {
-                            openFilesModel.addTab(node.filename, node.filepath, node.filetype, node.uid)
+                        if (treeModel.getNode(index).filename === "") {
+                            treeModel.setData(index, true, SGQrcTreeModel.EditingRole)
                         }
                     }
 
@@ -58,14 +56,9 @@ Rectangle {
                                     return;
                                 }
                             }
-                            console.info("File added", path)
                             treeModel.insertChild(path, -1, treeView.rootIndex);
                         }
                     }
-                }
-
-                selection: ItemSelectionModel {
-                    model: treeModel
                 }
 
                 headerDelegate: Rectangle {
@@ -95,295 +88,305 @@ Rectangle {
                     onFocusChanged: {
                         forceActiveFocus();
                     }
-                }
 
-                itemDelegate: Item {
-                    anchors.verticalCenter: parent.verticalCenter
+                    rowDelegate: Rectangle {
+                        height: 25
+                        color: styleData.selected ? "#CCCCCC" : "transparent"
+                        focus: styleData.selected
 
-                    Component.onCompleted: {
-                        if (model.filename === "Control.qml") {
-                            openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
-                            treeView.selection.clearCurrentIndex();
-                            treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
-                            treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
+                        onFocusChanged: {
+                            forceActiveFocus()
                         }
                     }
 
-                    Connections {
-                        target: openFilesModel
+                    itemDelegate: Item {
+                        id: itemContainer
+                        anchors.verticalCenter: parent.verticalCenter
 
-                        onCurrentIndexChanged: {
-                            if (visible && openFilesModel.currentId === model.uid) {
+                        Component.onCompleted: {
+                            if (model.filename === "Control.qml") {
+                                openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
                                 treeView.selection.clearCurrentIndex();
                                 treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
                                 treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
                             }
                         }
-                    }
 
-                    Connections {
-                        target: treeModel
 
-                        onFileChanged: {
-                            if (model && model.filepath === path) {
-                                // Refresh text editor if it is open
-                                console.info("File changed!")
-                                model.md5 = treeModel.getMd5(SGUtilsCpp.urlToLocalFile(path))
-                            }
+
+                        Text {
+                            id: itemFilename
+                            text: styleData.value
+                            width: inQrcIcon.x - x - 10
+                            height: 15
+                            visible: !itemFilenameEdit.visible
+                            anchors.verticalCenter: parent.verticalCenter
+                            font.pointSize: 10
+                            color: "black"
+                            elide: Text.ElideRight
                         }
 
-                        onFileDeleted: {
-                            if (model && model.uid === uid) {
-                                console.info("File deleted!")
+                        TextInput {
+                            id: itemFilenameEdit
+                            width: inQrcIcon.x - x - 10
+                            height: 15
+                            visible: styleData.selected && model.editing
+                            anchors.verticalCenter: parent.verticalCenter
+                            font.pointSize: 10
+                            color: "black"
+                            text: styleData.value
+                            clip: true
+                            autoScroll: activeFocus
+                            readOnly: false
+                            // TODO: add a proper validator for editing
+                            validator: RegExpValidator { regExp: /^.+$/ }
 
-                                openFilesModel.closeTab(model.uid)
-                                treeModel.removeFromQrc(styleData.index)
-                                treeModel.removeRows(model.row, 1, styleData.index.parent)
-                            }
-                        }
 
-                        onFileAdded: {
-                            if (model && model.filepath === parentPath) {
-                                console.info("File added!", path)
+                            onEditingFinished: {
+                                if (!model.editing) {
+                                    return;
+                                }
 
-                                for (let i = 0; i < model.childNodes.count; i++) {
-                                    if (model.childNodes[i].filepath === path) {
-                                        // Don't add the file because it already exists
-                                        return;
+                                // If a new file was created, and its filename is still empty
+                                if (text === "" && model.filename === "") {
+                                    treeModel.removeRows(model.row, 1, styleData.index.parent);
+                                    return;
+                                }
+
+                                let path;
+                                // Below handles the case where the parentNode is the .qrc file
+                                if (model.parentNode && !model.parentNode.isDir) {
+                                    path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory), displayText);
+                                } else {
+                                    path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(model.parentNode.filepath), displayText);
+
+                                }
+                                model.filename = displayText
+                                model.filepath = SGUtilsCpp.pathToUrl(path);
+                                if (!model.isDir) {
+                                    model.filetype = SGUtilsCpp.fileSuffix(displayText)
+                                    model.md5 = treeModel.getMd5(path);
+                                    if (!model.inQrc) {
+                                        treeModel.addToQrc(styleData.index);
                                     }
                                 }
-                                treeModel.insertChild(path, -1, styleData.index);
+                                model.editing = false
+
+                                let success = SGUtilsCpp.createFile(path);
+                                if (!success) {
+                                    //handle error
+                                    console.error("Could not create file:", path)
+                                } else {
+                                    openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
+                                }
+                            }
+
+                            onVisibleChanged: {
+                                if (visible) {
+                                    forceActiveFocus();
+                                }
+                            }
+
+                            onActiveFocusChanged: {
+                                cursorPosition = activeFocus ? length : 0
                             }
                         }
 
-                        onFileRenamed: {
-                            if (model && model.filepath === oldPath) {
-                                console.info("File renamed!");
-                                treeModel.handleExternalRename(styleData.index, oldPath, newPath);
+                        SGIcon {
+                            id: inQrcIcon
+                            height: 15
+                            width: 15
+                            visible: model && !model.isDir
+
+                            anchors {
+                                verticalCenter: parent.verticalCenter
+                                right: parent.right
+                                rightMargin: 5
                             }
+
+                            iconColor: model && model.inQrc ? "green" : "red"
+                            source: model && model.inQrc ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
                         }
-                    }
 
-                    Text {
-                        id: itemFilename
-                        text: styleData.value
-                        width: inQrcIcon.x - x - 10
-                        height: 15
-                        visible: !itemFilenameEdit.visible
-                        anchors.verticalCenter: parent.verticalCenter
-                        verticalAlignment: Text.AlignVCenter
-                        font.pointSize: 10
-                        color: "black"
-                        elide: Text.ElideRight
-                    }
 
-                    TextInput {
-                        id: itemFilenameEdit
-                        width: inQrcIcon.x - x - 10
-                        height: 15
-                        visible: styleData.selected && model.editing
-                        anchors.verticalCenter: parent.verticalCenter
-                        verticalAlignment: Text.AlignVCenter
-                        font.pointSize: 10
-                        color: "black"
-                        text: styleData.value
-                        focus: visible
-                        clip: true
-                        autoScroll: activeFocus
-                        readOnly: false
+                        Menu {
+                            id: fileContextMenu
 
-                        onEditingFinished: {
-                            if (!model.editing) {
-                                return;
-                            }
-
-                            // If a new file was created, and its filename is still empty
-                            if (text === "" && model.filename === "") {
-                                treeModel.removeRows(model.row, 1, styleData.index.parent);
-                                return;
-                            }
-
-                            let path;
-                            // Below handles the case where the parentNode is the .qrc file
-                            if (model.parentNode && !model.parentNode.isDir) {
-                                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory), displayText);
-                            } else {
-                                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(model.parentNode.filepath), text);
-
-                            }
-                            model.filename = displayText
-                            model.filepath = SGUtilsCpp.pathToUrl(path);
-                            if (!model.isDir) {
-                                model.filetype = SGUtilsCpp.fileSuffix(displayText)
-                                model.md5 = treeModel.getMd5(path);
-                                if (!model.inQrc) {
+                            Action {
+                                text: "Add to Qrc"
+                                onTriggered: {
                                     treeModel.addToQrc(styleData.index);
+                                    fileContextMenu.dismiss()
                                 }
-                                openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
                             }
-                            model.editing = false
 
-                            let success = SGUtilsCpp.createFile(path);
-                            if (!success) {
-                                //handle error
-                                console.error("Could not create file:", path)
-                                treeModel.removeRows(model.row, 1, styleData.index.parent)
-                            }
-                        }
-
-                        onVisibleChanged: {
-                            if (visible) {
-                                forceActiveFocus();
-                            }
-                        }
-
-                        onActiveFocusChanged: {
-                            cursorPosition = activeFocus ? length : 0
-                        }
-                    }
-
-                    SGIcon {
-                        id: inQrcIcon
-                        height: 15
-                        width: 15
-                        visible: model && !model.isDir && model.inQrc
-
-                        anchors {
-                            verticalCenter: parent.verticalCenter
-                            right: parent.right
-                            rightMargin: 5
-                        }
-
-                        iconColor: "green"
-                        source: "qrc:/sgimages/check-circle.svg"
-                    }
-
-                    Menu {
-                        id: fileContextMenu
-
-                        MenuItem {
-                            text: "Add to Qrc"
-                            onTriggered: {
-                                treeModel.addToQrc(styleData.index);
-                            }
-                        }
-
-                        MenuItem {
-                            text: "Remove from Qrc"
-                            onTriggered: {
-                                treeModel.removeFromQrc(styleData.index);
-                            }
-                        }
-
-                        MenuItem {
-                            text: "Delete File"
-                            onTriggered: {
-                                openFilesModel.closeTab(model.uid)
-                                treeModel.deleteFile(model.row, styleData.index.parent)
-                            }
-                        }
-
-                        MenuSeparator {}
-
-                        MenuItem {
-                            text: "Add New File to Qrc"
-                            onTriggered: {
-                                treeModel.insertChild(false, -1, styleData.index.parent)
-                            }
-                        }
-
-                        MenuItem {
-                            text: "Add Existing File to Qrc"
-                            onTriggered: {
-                                existingFileDialog.callerIndex = styleData.index.parent
-                                existingFileDialog.open();
-                            }
-                        }
-                    }
-
-                    Menu {
-                        id: folderContextMenu
-
-                        MenuItem {
-                            text: "Add New File to Qrc"
-                            onTriggered: {
-                                if (!styleData.isExpanded) {
-                                    treeView.expand(styleData.index)
+                            Action {
+                                text: "Remove from Qrc"
+                                onTriggered: {
+                                    treeModel.removeFromQrc(styleData.index);
+                                    fileContextMenu.dismiss()
                                 }
-
-                                treeModel.insertChild(false, -1, styleData.index)
                             }
-                        }
 
-                        MenuItem {
-                            text: "Add Existing File to Qrc"
-                            onTriggered: {
-                                if (!styleData.isExpanded) {
-                                    treeView.expand(styleData.index)
+                            Action {
+                                text: "Delete File"
+                                onTriggered: {
+                                    openFilesModel.closeTab(model.uid)
+                                    treeModel.deleteFile(model.row, styleData.index.parent)
+                                    fileContextMenu.dismiss()
                                 }
+                            }
 
-                                existingFileDialog.callerIndex = styleData.index
-                                existingFileDialog.open();
+                            MenuSeparator {}
+
+                            Action {
+                                text: "Add New File to Qrc"
+                                onTriggered: {
+                                    console.info("Adding new file")
+                                    treeModel.insertChild(false, -1, styleData.index.parent)
+                                    fileContextMenu.dismiss()
+                                }
+                            }
+
+                            Action {
+                                text: "Add Existing File to Qrc"
+                                onTriggered: {
+                                    existingFileDialog.callerIndex = styleData.index.parent
+                                    existingFileDialog.open();
+                                    fileContextMenu.dismiss()
+                                }
                             }
                         }
 
-                        MenuItem {
-                            text: "Delete Folder"
-                            onTriggered: {
-                                treeModel.deleteFile(model.row, styleData.index.parent)
-                            }
-                        }
-                    }
+                        Menu {
+                            id: folderContextMenu
 
-                    MouseArea {
-                        id: mouseArea
-                        anchors.fill: parent
-                        acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-                        onClicked: {
-                            if (model.filename !== "") {
-                                if (mouse.button === Qt.RightButton) {
-                                    if (model.isDir) {
-                                        folderContextMenu.popup();
-                                    } else {
-                                        fileContextMenu.popup();
+                            MenuItem {
+                                text: "Add New File to Qrc"
+                                onTriggered: {
+                                    if (!styleData.isExpanded) {
+                                        treeView.expand(styleData.index)
                                     }
-                                } else if (mouse.button === Qt.LeftButton) {
-                                    if (!model.isDir) {
-                                        treeView.selection.clearCurrentIndex();
-                                        treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
-                                        treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
-                                        if (openFilesModel.hasTab(model.uid)) {
-                                            openFilesModel.currentId = model.uid
+
+                                    treeModel.insertChild(false, -1, styleData.index)
+                                    fileContextMenu.dismiss()
+                                }
+                            }
+
+                            MenuItem {
+                                text: "Add Existing File to Qrc"
+                                onTriggered: {
+                                    if (!styleData.isExpanded) {
+                                        treeView.expand(styleData.index)
+                                    }
+
+                                    existingFileDialog.callerIndex = styleData.index
+                                    existingFileDialog.open();
+                                    fileContextMenu.dismiss()
+                                }
+                            }
+
+                            MenuItem {
+                                text: "Delete Folder"
+                                onTriggered: {
+                                    treeModel.deleteFile(model.row, styleData.index.parent)
+                                    fileContextMenu.dismiss()
+                                }
+                            }
+                        }
+
+                        MouseArea {
+                            id: mouseArea
+                            anchors.fill: parent
+                            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+                            onClicked: {
+                                if (model.filename !== "") {
+                                    if (mouse.button === Qt.RightButton) {
+                                        if (model.isDir) {
+                                            folderContextMenu.popup();
                                         } else {
-                                            openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
+                                            fileContextMenu.popup();
+                                        }
+                                    } else if (mouse.button === Qt.LeftButton) {
+                                        if (!model.isDir) {
+                                            treeView.selection.clearCurrentIndex();
+                                            treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
+                                            treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
+                                            if (openFilesModel.hasTab(model.uid)) {
+                                                openFilesModel.currentId = model.uid
+                                            } else {
+                                                openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
+                                            }
                                         }
                                     }
                                 }
                             }
+
                         }
 
-                    }
 
-                    Connections {
-                        target: openFilesModel
+                        Connections {
+                            target: openFilesModel
 
-                        onCurrentIndexChanged: {
-                            if (visible && openFilesModel.currentId === model.uid) {
-                                treeView.selection.clearCurrentIndex();
-                                treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
-                                treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
+                            onCurrentIndexChanged: {
+                                if (visible && openFilesModel.currentId === model.uid) {
+                                    treeView.selection.clearCurrentIndex();
+                                    treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
+                                    treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
+                                }
                             }
                         }
+
+                        Connections {
+                            target: treeModel
+
+                            onFileChanged: {
+                                if (model && model.filepath === path) {
+                                    // Refresh text editor if it is open
+                                    model.md5 = treeModel.getMd5(SGUtilsCpp.urlToLocalFile(path))
+                                }
+                            }
+
+                            onFileDeleted: {
+                                if (model && model.uid === uid) {
+                                    openFilesModel.closeTab(model.uid)
+                                    treeModel.removeFromQrc(styleData.index)
+                                    treeModel.removeRows(model.row, 1, styleData.index.parent)
+                                }
+                            }
+
+                            onFileAdded: {
+                                if (model && model.filepath === parentPath) {
+                                    for (let i = 0; i < model.childNodes.count; i++) {
+                                        if (model.childNodes[i].filepath === path) {
+                                            // Don't add the file because it already exists
+                                            return;
+                                        }
+                                    }
+                                    treeModel.insertChild(path, -1, styleData.index);
+                                }
+                            }
+
+                            onFileRenamed: {
+                                if (model && model.filepath === oldPath) {
+                                    treeModel.handleExternalRename(styleData.index, oldPath, newPath);
+                                }
+                            }
+                        }
+
+
+                    }
+
+                    QtQC1.TableViewColumn {
+                        title: treeModel.root ? treeModel.root.filename : "Project Files"
+                        role: "filename"
+                        width: 250
                     }
                 }
 
-                QtQC1.TableViewColumn {
-                    title: treeModel.root ? treeModel.root.filename : "Project Files"
-                    role: "filename"
-                    width: treeView.width
-                }
             }
+
         }
 
         FileDialog {

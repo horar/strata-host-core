@@ -20,7 +20,7 @@ SGQrcTreeModel::SGQrcTreeModel(QObject *parent) : QAbstractItemModel(parent)
 {
     QQmlEngine::setObjectOwnership(root_, QQmlEngine::CppOwnership);
     connect(this, &SGQrcTreeModel::urlChanged, this, &SGQrcTreeModel::createModel);
-    connect(&fsWatcher_, &QFileSystemWatcher::directoryChanged, this, &SGQrcTreeModel::projectFilesAdded);
+    connect(&fsWatcher_, &QFileSystemWatcher::directoryChanged, this, &SGQrcTreeModel::directoryStructureChanged);
     connect(&fsWatcher_, &QFileSystemWatcher::fileChanged, this, &SGQrcTreeModel::projectFilesModified);
 }
 
@@ -687,7 +687,7 @@ void SGQrcTreeModel::projectFilesModified(const QString &path)
         SGQrcTreeNode *node = itr.next().value();
 
         if (node->filepath() == url) {
-            // If the file still exists, then it has been modified, else it has been deleted
+            // If the file still exists, then it has been modified, else it has been deleted or renamed
             if (QFileInfo::exists(path)) {
                 emit fileChanged(url);
                 return;
@@ -698,29 +698,26 @@ void SGQrcTreeModel::projectFilesModified(const QString &path)
         }
     }
 
-    QFileInfo deletedInfo(SGUtilsCpp::urlToLocalFile(deletedNode->filepath()));
-    if (deletedInfo.isDir()) {
-        emit fileDeleted(deletedNode->uid());
-        return;
-    }
+    if (deletedNode) {
+        QFileInfo deletedInfo(SGUtilsCpp::urlToLocalFile(deletedNode->filepath()));
+        QDirIterator dirItr(deletedInfo.dir().absolutePath(), QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::Files);
 
-    QDirIterator dirItr(deletedInfo.dir().absolutePath(), QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::Files);
-
-    while (dirItr.hasNext()) {
-        dirItr.next();
-        QByteArray md5 = getMd5(dirItr.filePath());
-        if (md5 == deletedNode->md5()) {
-            // We have found a renamed file
-            fsWatcher_.addPath(dirItr.filePath());
-            emit fileRenamed(deletedNode->filepath(), SGUtilsCpp::pathToUrl(dirItr.filePath()));
-            return;
+        while (dirItr.hasNext()) {
+            dirItr.next();
+            QByteArray md5 = getMd5(dirItr.filePath());
+            if (md5 == deletedNode->md5()) {
+                // We have found a renamed file
+                fsWatcher_.addPath(dirItr.filePath());
+                emit fileRenamed(deletedNode->filepath(), SGUtilsCpp::pathToUrl(dirItr.filePath()));
+                return;
+            }
         }
-    }
 
-    emit fileDeleted(deletedNode->uid());
+        emit fileDeleted(deletedNode->uid());
+    }
 }
 
-void SGQrcTreeModel::projectFilesAdded(const QString &path)
+void SGQrcTreeModel::directoryStructureChanged(const QString &path)
 {
     QHashIterator<QString, SGQrcTreeNode*> hashItr(uidMap_);
     QDirIterator dirItr(path, QDir::NoDotAndDotDot | QDir::NoSymLinks | QDir::Files | QDir::Dirs);
@@ -758,6 +755,9 @@ void SGQrcTreeModel::projectFilesAdded(const QString &path)
             SGQrcTreeNode *node = nodesDeleted.at(i);
             emit fileDeleted(node->uid());
         }
+    } else {
+        qCritical() << "Could not find a parent node";
+        return;
     }
 
     while (dirItr.hasNext()) {

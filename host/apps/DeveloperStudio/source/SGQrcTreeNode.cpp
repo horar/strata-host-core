@@ -14,6 +14,8 @@ SGQrcTreeNode::SGQrcTreeNode(QObject *parent) : QObject(parent)
     editing_ = false;
     children_ = QVector<SGQrcTreeNode*>();
     md5_ = QByteArray();
+    filename_ = QString();
+    filepath_ = QUrl();
 }
 
 SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, QFileInfo info, bool isDir, bool inQrc, QString uid, QObject *parent) :
@@ -38,6 +40,8 @@ SGQrcTreeNode::SGQrcTreeNode(SGQrcTreeNode *parentNode, bool isDir, QString uid,
     inQrc_ = false;
     children_ = QVector<SGQrcTreeNode*>();
     md5_ = QByteArray();
+    filename_ = QString();
+    filepath_ = QUrl();
 }
 
 SGQrcTreeNode::~SGQrcTreeNode()

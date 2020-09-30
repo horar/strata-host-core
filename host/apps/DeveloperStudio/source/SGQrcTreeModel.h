@@ -172,6 +172,9 @@ public:
     Q_INVOKABLE QByteArray getMd5(const QString &filepath);
 
 
+    /***
+     * SIGNALS
+     ***/
 signals:
     void urlChanged();
     void projectDirectoryChanged();
@@ -187,16 +190,34 @@ signals:
     // This signal is emitted when a file is renamed
     void fileRenamed(const QUrl oldPath, const QUrl newPath);
 
+
+    /***
+     * SLOTS
+     ***/
 public slots:
     void childrenChanged(const QModelIndex &index, int role);
 
-//private signals:
-//    void fileAddedOrRenamed(const QUrl &path);
-
 private slots:
+    /**
+     * @brief projectFilesModified This slot is connected to the QFileSystemWatcher::fileChanged signal
+     * @details This slot only deals with files (not directories). It handles individual files
+     * being deleted, renamed or modified.
+     * @param path The path of the file modified.
+     */
     void projectFilesModified(const QString &path);
-    void projectFilesAdded(const QString &path);
 
+    /**
+     * @brief directoryStructureChanged This slot is connected to the QFileSystemWatcher::directoryChanged signal
+     * @details This slot deals with changes to directories that are being tracked. For example,
+     * it handles directories being deleted, files being added to tracked directories and directories being added to directories.
+     * @param path The path of the directory that changed.
+     */
+    void directoryStructureChanged(const QString &path);
+
+
+    /***
+     * PRIVATE MEMBERS
+     ***/
 private:
     void clear(bool emitSignals = true);
     bool readQrcFile();
