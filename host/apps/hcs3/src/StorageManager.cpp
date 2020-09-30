@@ -40,6 +40,14 @@ void StorageManager::setDatabase(Database* db)
     connect(db_, &Database::documentUpdated, this, &StorageManager::updatePlatformDoc);
 }
 
+void StorageManager::setBaseFolder(const QString& baseFolder)
+{
+    baseFolder_ = baseFolder;
+
+    StorageInfo info(nullptr, baseFolder_);
+    info.calculateSize();
+}
+
 void StorageManager::setBaseUrl(const QUrl &url)
 {
     if (baseUrl_.isEmpty() == false) {
@@ -52,12 +60,6 @@ void StorageManager::setBaseUrl(const QUrl &url)
     }
 
     baseUrl_ = url;
-
-    baseFolder_ = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    Q_ASSERT(baseFolder_.isEmpty() == false);
-
-    StorageInfo info(nullptr, baseFolder_);
-    info.calculateSize();
 
     connect(downloadManager_, &DownloadManager::filePathChanged, this, &StorageManager::filePathChangedHandler);
     connect(downloadManager_, &DownloadManager::singleDownloadProgress, this, &StorageManager::singleDownloadProgressHandler);
@@ -99,6 +101,8 @@ void StorageManager::singleDownloadProgressHandler(const QString &groupId, const
 
     if (request->type == RequestType::FileDownload) {
         emit downloadPlatformSingleFileProgress(request->clientId, filePath, bytesReceived, bytesTotal);
+    } else if (request->type == RequestType::ControlViewDownload) {
+        emit downloadControlViewProgress(request->clientId, downloadControlViewUris_[groupId], filePath, bytesReceived, bytesTotal);
     }
 }
 
@@ -246,10 +250,11 @@ void StorageManager::handlePlatformDocumentsResponse(StorageManager::DownloadReq
         //control views
         QList<VersionedFileItem> controlViewItems = platDoc->getControlViewList();
         for (const auto &item : controlViewItems) {
-            QString filePath = createFilePathFromItem(item.partialUri, "documents/control_views");
+            QString filePath = createFilePathFromItem(item.partialUri, "documents/control_views" + (requestItem->classId.isEmpty() ? "" : "/" + requestItem->classId));
             if (downloadManager_->verifyFileChecksum(filePath, item.md5) == false) {
                 filePath.clear();
             }
+
             QJsonObject object {
                 {"uri", item.partialUri},
                 {"md5", item.md5},
@@ -326,8 +331,7 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
     QJsonArray jsonPlatformListResponse;
     QList<DownloadManager::DownloadRequestItem> downloadList;
 
-    QString pathPrefix = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    pathPrefix.append("/documents/platform_selector/");
+    const QString pathPrefix{QString("%1/documents/platform_selector/").arg(baseFolder_)};
 
     for (const QJsonValueRef value : jsonPlatformList) {
         QString classId = value.toObject().value("class_id").toString();
@@ -357,6 +361,13 @@ void StorageManager::requestPlatformList(const QByteArray &clientId)
         QJsonObject jsonPlatform(value.toObject());
         jsonPlatform.insert("image", url.toString());
 
+        QJsonArray parts_list;
+
+        for (PlatformDatasheetItem i : platDoc->getDatasheetList()) {
+            parts_list.append(i.opn);
+        }
+
+        jsonPlatform.insert("parts_list", parts_list);
         jsonPlatformListResponse.append(jsonPlatform);
     }
 
@@ -476,11 +487,15 @@ void StorageManager::requestDownloadPlatformFiles(
     downloadRequests_.insert(request->groupId, request);
 }
 
-void StorageManager::requestDownloadControlView(const QByteArray &clientId, const QString &partialUri, const QString &md5)
+void StorageManager::requestDownloadControlView(const QByteArray &clientId, const QString &partialUri, const QString &md5, const QString &class_id)
 {
     DownloadManager::DownloadRequestItem item;
     item.url = baseUrl_.resolved(partialUri);
-    item.filePath = createFilePathFromItem(partialUri, "documents/control_views");
+    QString prefix = "documents/control_views";
+    if (!class_id.isEmpty()) {
+        prefix += "/" + class_id;
+    }
+    item.filePath = createFilePathFromItem(partialUri, prefix);
     item.md5 = md5;
 
     QList<DownloadManager::DownloadRequestItem> downloadList({item});
@@ -490,6 +505,7 @@ void StorageManager::requestDownloadControlView(const QByteArray &clientId, cons
     request->type = RequestType::ControlViewDownload;
 
     DownloadManager::Settings settings;
+    settings.notifySingleDownloadProgress = true;
     settings.keepOriginalName = true;
 
     request->groupId = downloadManager_->download(downloadList, settings);

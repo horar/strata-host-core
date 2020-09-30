@@ -2,34 +2,7 @@
 <RCC version="1.0">
     <qresource prefix="/images/">
         <file>prt-logo.svg</file>
-        <file>tag_icons/ac.svg</file>
-        <file>tag_icons/analog.svg</file>
-        <file>tag_icons/audio.svg</file>
-        <file>tag_icons/connectivity.svg</file>
-        <file>tag_icons/dc.svg</file>
-        <file>tag_icons/digital.svg</file>
-        <file>tag_icons/discrete.svg</file>
-        <file>tag_icons/esd.svg</file>
-        <file>tag_icons/imagesensors.svg</file>
-        <file>tag_icons/infrared.svg</file>
-        <file>tag_icons/led.svg</file>
-        <file>tag_icons/mcu.svg</file>
-        <file>tag_icons/memory.svg</file>
-        <file>tag_icons/optoisolator.svg</file>
-        <file>tag_icons/pm.svg</file>
-        <file>tag_icons/sensor.svg</file>
-        <file>tag_icons/video.svg</file>
-        <file>tag_icons/automotive.svg</file>
-        <file>tag_icons/computing.svg</file>
-        <file>tag_icons/consumer.svg</file>
-        <file>tag_icons/industrial.svg</file>
-        <file>tag_icons/ledlighting.svg</file>
-        <file>tag_icons/medical.svg</file>
-        <file>tag_icons/militaryaerospace.svg</file>
-        <file>tag_icons/motorcontrol.svg</file>
-        <file>tag_icons/networkingtelecom.svg</file>
-        <file>tag_icons/powersupply.svg</file>
-        <file>tag_icons/whitegoods.svg</file>
-        <file>tag_icons/wirelessiot.svg</file>
+        <file>download-shrinked.svg</file>
+        <file>letter-r.svg</file>
     </qresource>
 </RCC>

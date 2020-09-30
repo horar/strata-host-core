@@ -14,6 +14,8 @@
 
 #include <spdlog/spdlog.h>
 
+namespace strata::loggers
+{
 void qtLogCallback(const QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
     const QString formattedMsg{qFormatLogMessage(type, context, msg)};
@@ -172,3 +174,5 @@ void QtLoggerSetup::setupQtLog()
     qCDebug(logCategoryQtLogger) << "\tlogging category filte rules:" << filterRules;
     qCDebug(logCategoryQtLogger) << "\tlogger message pattern:" << messagePattern;
 }
+
+}  // namespace starta::loggers

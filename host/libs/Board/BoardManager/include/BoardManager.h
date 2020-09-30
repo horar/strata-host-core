@@ -10,16 +10,13 @@
 #include <QHash>
 #include <QVariantMap>
 #include <QVector>
-#include <QSharedPointer>
 #include <QMutex>
 
 #include <Device/Device.h>
 
-namespace strata::device {
-
-    class DeviceOperations;
-    enum class DeviceOperation: int;
-
+namespace strata::device::operation {
+    class BaseDeviceOperation;
+    enum class Type: int;
 }
 
 namespace strata {
@@ -107,7 +104,7 @@ namespace strata {
 
     protected slots:
         virtual void checkNewSerialDevices();
-        virtual void handleOperationFinished(device::DeviceOperation operation, int);
+        virtual void handleOperationFinished(device::operation::Type opType, int);
         virtual void handleOperationError(QString message);
         virtual void handleDeviceError(device::Device::ErrorCode errCode, QString errStr);
 
@@ -131,7 +128,7 @@ namespace strata {
         QHash<int, QString> serialIdToName_;
         QHash<int, device::DevicePtr> openedDevices_;
 
-        QHash<int, QSharedPointer<device::DeviceOperations>> deviceOperations_;
+        QHash<int, std::shared_ptr<device::operation::BaseDeviceOperation>> deviceOperations_;
 
         // flag if require response to get_firmware_info command
         bool reqFwInfoResp_;

@@ -15,15 +15,18 @@ SGQWTPlot {
     property bool zoomXEnabled: true
     property bool zoomYEnabled: true
     property real fontSizeMultiplier: 1.0
+    property alias mouseArea: mouseArea
 
     titlePixelSize: SGWidgets.SGSettings.fontPixelSize * fontSizeMultiplier * 1.1667
     xTitlePixelSize: SGWidgets.SGSettings.fontPixelSize * fontSizeMultiplier
     yTitlePixelSize: SGWidgets.SGSettings.fontPixelSize * fontSizeMultiplier
 
     MouseArea {
+        id: mouseArea
         anchors.fill: parent
         enabled: (sgGraph.panXEnabled || sgGraph.panYEnabled || sgGraph.zoomXEnabled || sgGraph.zoomYEnabled) && !(sgGraph.xLogarithmic || sgGraph.yLogarithmic)
         preventStealing: true
+        hoverEnabled: true
 
         property point mousePosition: "0,0"
         property int wheelChoke: 0 // chokes output of high resolution trackpads on mac
@@ -35,7 +38,7 @@ SGQWTPlot {
         }
 
         onPositionChanged: {
-            if (sgGraph.panXEnabled || sgGraph.panYEnabled) {
+            if ((sgGraph.panXEnabled || sgGraph.panYEnabled) && pressed) {
                 let originToPosition = sgGraph.mapToPosition(Qt.point(0,0))
                 originToPosition.x += (mouse.x - mousePosition.x)
                 originToPosition.y += (mouse.y - mousePosition.y)

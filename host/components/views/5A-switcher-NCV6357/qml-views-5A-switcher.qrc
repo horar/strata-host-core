@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/views/5A-switcher-NCV6357">
+    <qresource prefix="/">
         <file>AdvancedControl.qml</file>
         <file>BasicControl.qml</file>
         <file>Control.qml</file>

@@ -6,9 +6,12 @@
 #include <QString>
 
 #include <litecore/c4Base.h>
+#include <fleece/slice.hh>
 
 using std::string;
 
+namespace strata::loggers
+{
 QtMessageHandler g_qtLogCallback = nullptr;
 
 void c4LogCallback(C4LogDomain domain, C4LogLevel level, const char *fmt, va_list args)
@@ -39,5 +42,20 @@ void c4LogCallback(C4LogDomain domain, C4LogLevel level, const char *fmt, va_lis
 void cbLoggerSetup(QtMessageHandler qtLogCallback)
 {
     g_qtLogCallback = qtLogCallback;
+
+    // TODO: [LC] this could be probably related to our Qt log levels in config file
+    c4log_setLevel(kC4DefaultLog, kC4LogDebug);
+    c4log_setLevel(kC4DatabaseLog, kC4LogDebug);
+    c4log_setLevel(kC4QueryLog, kC4LogDebug);
+    c4log_setLevel(kC4SyncLog, kC4LogDebug);
+    c4log_setLevel(kC4WebSocketLog, kC4LogDebug);
+
     c4log_writeToCallback(kC4LogDebug, &c4LogCallback, false);
+
+    fleece::alloc_slice buildInfo = c4_getBuildInfo();
+    C4Debug("loging initiated... (LiteCore %.*s)",
+            (int)buildInfo.size, (char *)buildInfo.buf);  // LC: note: define of SPLAT(S)
+    C4Debug("LiteCore logging callback registered...");
 }
+
+}  // namespace strata::loggers

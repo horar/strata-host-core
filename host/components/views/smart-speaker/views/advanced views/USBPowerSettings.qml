@@ -181,7 +181,7 @@ Rectangle {
                 property double voltage:0;
 
                 onClicked: {
-                    platformInterface.set_audio_amp_voltage.update(setting1.voltage,0,"usb")
+                    platformInterface.set_audio_amp_voltage.update(setting1.voltage,"usb")
                 }
             }
 
@@ -194,7 +194,7 @@ Rectangle {
                 property double voltage:0;
 
                 onClicked: {
-                    platformInterface.set_audio_amp_voltage.update(setting2.voltage,0,"usb")
+                    platformInterface.set_audio_amp_voltage.update(setting2.voltage,"usb")
                 }
             }
 
@@ -207,7 +207,7 @@ Rectangle {
                 property double voltage:0;
 
                 onClicked: {
-                    platformInterface.set_audio_amp_voltage.update(setting3.voltage,0,"usb")
+                    platformInterface.set_audio_amp_voltage.update(setting3.voltage,"usb")
                 }
             }
 
@@ -220,7 +220,7 @@ Rectangle {
                 property double voltage:0;
 
                 onClicked: {
-                    platformInterface.set_audio_amp_voltage.update(setting4.voltage,0,"usb")
+                    platformInterface.set_audio_amp_voltage.update(setting4.voltage,"usb")
                 }
             }
 
@@ -233,7 +233,7 @@ Rectangle {
                 property double voltage:0;
 
                 onClicked: {
-                    platformInterface.set_audio_amp_voltage.update(setting5.voltage,0,"usb")
+                    platformInterface.set_audio_amp_voltage.update(setting5.voltage,"usb")
                 }
             }
 
@@ -246,7 +246,7 @@ Rectangle {
                 property double voltage:0;
 
                 onClicked: {
-                    platformInterface.set_audio_amp_voltage.update(setting6.voltage,0,"usb")
+                    platformInterface.set_audio_amp_voltage.update(setting6.voltage,"usb")
                 }
             }
 
@@ -259,7 +259,7 @@ Rectangle {
                 property double voltage:0;
 
                 onClicked: {
-                    platformInterface.set_audio_amp_voltage.update(setting7.voltage,0,"usb")
+                    platformInterface.set_audio_amp_voltage.update(setting7.voltage,"usb")
                 }
             }
         }

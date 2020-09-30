@@ -16,6 +16,7 @@ add_library(${PROJECT_NAME}
     src/EvEvent.cpp
     src/EvEventsMgr.cpp
 )
+add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 if(WIN32)
     target_sources(${PROJECT_NAME} PRIVATE

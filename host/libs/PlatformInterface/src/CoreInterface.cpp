@@ -14,13 +14,13 @@
 using std::string;
 using strata::hcc::HostControllerClient;
 
-const char* HOST_CONTROLLER_SERVICE_IN_ADDRESS = "tcp://127.0.0.1:5563";
-
-CoreInterface::CoreInterface(QObject *parent) : QObject(parent)
+CoreInterface::CoreInterface(QObject* parent, const std::string& hcsInAddress)
+    : QObject(parent), hcc{std::make_unique<HostControllerClient>(hcsInAddress)}
 {
-    //qCDebug(logCategoryCoreInterface) << "CoreInterface::CoreInterfaceQObject *parent) : QObject(parent) CTOR\n";
+    // qCDebug(logCategoryCoreInterface) << "CoreInterface::CoreInterfaceQObject *parent) :
+    // QObject(parent) CTOR\n";
 
-    hcc = new HostControllerClient(HOST_CONTROLLER_SERVICE_IN_ADDRESS);
+    qCDebug(logCategoryCoreInterface) << QStringLiteral("HCS incomming address set to: %1").arg(QString::fromStdString(hcsInAddress));
 
     // --------------------
     // Core Framework
@@ -57,8 +57,6 @@ CoreInterface::~CoreInterface()
     } else {
         notification_thread_.detach();
     }
-
-    delete hcc;
 }
 
 // @f notificationsThreadHandle
@@ -208,21 +206,27 @@ void CoreInterface::hcsNotificationHandler(QJsonObject payload)
         emit downloadPlatformSingleFileFinished(payload);
     } else if (type == "download_platform_files_finished") {
         emit downloadPlatformFilesFinished(payload);
+    } else if (type == "firmware_update") {
+        emit firmwareProgress(payload);
+    } else if (type == "download_view_finished") {
+        emit downloadViewFinished(payload);
+    } else if (type == "control_view_download_progress") {
+        emit downloadControlViewProgress(payload);
     } else {
         qCCritical(logCategoryCoreInterface) << "unknown message type" << type;
     }
 }
 
-// @f connectToPlatform
+// @f loadDocuments
 // @b send the user selected platform to HCS to create the mapping
 //
-void CoreInterface::connectToPlatform(QString class_id)
+void CoreInterface::loadDocuments(QString class_id)
 {
     QJsonObject cmdPayloadObject;
     cmdPayloadObject.insert("class_id",class_id);
 
     QJsonObject cmdMessageObject;
-    cmdMessageObject.insert("cmd", "platform_select");
+    cmdMessageObject.insert("cmd", "load_documents");
     cmdMessageObject.insert("payload", cmdPayloadObject);
 
     QJsonDocument doc(cmdMessageObject);

@@ -6,9 +6,10 @@ project(HostControllerClient
 add_library(${PROJECT_NAME}
     src/HostControllerClient.cpp
 )
+add_library(strata::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME}
-    PUBLIC connector
+    PUBLIC strata::connector
 )
 
 target_include_directories(${PROJECT_NAME}

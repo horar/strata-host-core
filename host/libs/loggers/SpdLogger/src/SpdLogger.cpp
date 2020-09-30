@@ -2,6 +2,8 @@
 
 #include <spdlog/spdlog.h>
 
+namespace strata::loggers
+{
 SpdLogger::SpdLogger()
     : console_sink_{
           std::make_shared<spdlog::sinks::stdout_color_sink_mt>(spdlog::color_mode::always)}
@@ -37,7 +39,7 @@ void SpdLogger::setup(const std::string& fileName, const std::string& logPattern
     spdlog::set_level(spdlog::level::from_str(logLevel));
 
     spdlog::debug("{}: SpdLogger::setup - logging initiated... (spdlog v{}.{}.{})", logCategory_,
-                 SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
+                  SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
     spdlog::debug("{}: SpdLogger::setup - spdlog logging initiated...", logCategory_);
     spdlog::debug("{}: SpdLogger::setup - Logger setup:", logCategory_);
     spdlog::debug("{}: SpdLogger::setup - \tfile: {}", logCategory_, fileName);
@@ -47,3 +49,5 @@ void SpdLogger::setup(const std::string& fileName, const std::string& logPattern
     spdlog::debug("{}: SpdLogger::setup - \tmaxFileSize: {}", logCategory_, maxFileSize);
     spdlog::debug("{}: SpdLogger::setup - \tmaxNoFiles: {}", logCategory_, maxNoFiles);
 }
+
+}  // namespace strata::loggers::spdlog

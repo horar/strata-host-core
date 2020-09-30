@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/views/usb-pd-pps">
+    <qresource prefix="/">
         <file>Control.qml</file>
         <file>PlatformInterface.qml</file>
         <file>sgwidgets/SGAccordion.qml</file>
