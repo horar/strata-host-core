@@ -25,6 +25,7 @@ Item {
         anchors {
             fill: parent
         }
+        visible: false
 
         ProgressBar {
             id: loadingBar
@@ -83,20 +84,21 @@ Item {
                 }
                 loadControl()
             } else {
-                loadingBarContainer.visible = true;
-                loadingBar.value = 0.01;
+                // Commented out to remove OTA features from release v2.5.0
+//                loadingBarContainer.visible = true;
+//                loadingBar.value = 0.01;
 
                 // Try to load a previously installed OTA resource
-                if (controlViewList.getInstalledVersion() > -1) {
-                    usingStaticView = false;
-                    getOTAResource();
-                    return
-                }
+//                if (controlViewList.getInstalledVersion() > -1) {
+//                    usingStaticView = false;
+//                    getOTAResource();
+//                    return
+//                }
 
                 // Try to load static resource, otherwise download/install a new OTA resource
                 if (getStaticResource() === false) {
-                    usingStaticView = false;
-                    getOTAResource();
+//                    usingStaticView = false;
+//                    getOTAResource();
                 }
             }
         }
@@ -147,8 +149,9 @@ Item {
             if (registerResource(RCCpath, controlViewContainer.staticVersion)) {
                 return true;
             } else {
-                removeControl() // registerResource() failing creates an error screen, kill it to show OTA progress bar
-                usingStaticView = false
+                // Commented out to remove OTA features from release v2.5.0
+//                removeControl() // registerResource() failing creates an error screen, kill it to show OTA progress bar
+//                usingStaticView = false
             }
         }
         return false
