@@ -43,8 +43,11 @@ Rectangle {
                         treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
 
                         // Only set editing to true if we have created a new file and the filename is empty
-                        if (treeModel.getNode(index).filename === "") {
+                        let node = treeModel.getNode(index);
+                        if (node.filename === "") {
                             treeModel.setData(index, true, SGQrcTreeModel.EditingRole);
+                        } else {
+                            openFilesModel.addTab(node.filename, node.filepath, node.filetype, node.uid)
                         }
                     }
                 }
