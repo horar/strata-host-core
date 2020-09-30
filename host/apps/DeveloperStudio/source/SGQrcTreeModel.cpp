@@ -544,7 +544,7 @@ void SGQrcTreeModel::save()
 
     // Write the change to disk
     QTextStream stream(&qrcFile);
-    stream << qrcDoc_.toString();
+    stream << qrcDoc_.toString(4);
     qrcFile.close();
 }
 
