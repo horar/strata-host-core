@@ -319,6 +319,7 @@ function updateState(event, data)
                 let view_index = -1
                 let connected_view
 
+
                 // Find view bound to this device, set connected
                 // OR if none found, find view matching class_id, bind to it, set connected
                 for (let j = 0; j < platform_view_model_.count; j++) {
@@ -333,17 +334,31 @@ function updateState(event, data)
                     }
                 }
 
+                if(view_index !== -1){
+                    connected_view = platform_view_model_.get(view_index)
+                    connected_view.device_id = data.device_id
+                    connected_view.firmware_version = data.firmware_version
+                    connected_view.connected = true
+                }
+
                 if(userSettings.autoOpenView){
                         //TODO: autoOpenConnect
-                } else {
-                        connected_view = platform_view_model_.get(view_index)
-                        connected_view.device_id = data.device_id
-                        connected_view.firmware_version = data.firmware_version
-                        connected_view.connected = true
+                        console.log(JSON.stringify(connected_view))
+                    const open_view = {
+                                "class_id": connected_view.class_id,
+                                "device_id": connected_view.device_id,
+                                "name": connected_view.name,
+                                "view": "control",
+                                "connected": connected_view.connected,
+                                "available": connected_view.available,
+                                "firmware_version": connected_view.firmware_version
                     }
+                        updateState(events.OPEN_PLATFORM_VIEW_EVENT, open_view)
+                }
 
                     if(userSettings.switchToActive){
                         //TODO: switch to the active platform
+                        updateState(events.SWITCH_VIEW_EVENT, {"index": view_index})
                     }
 
                 break;
