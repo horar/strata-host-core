@@ -162,6 +162,10 @@ bool SGQrcTreeModel::removeRows(int row, int count, const QModelIndex &parent)
     if (!parentItem)
         return false;
 
+    if (row < 0 || row + count > parentItem->childCount()) {
+        return false;
+    }
+
     // Remove children first
     for (int i = 0; i < count; ++i) {
         if (parentItem->childNode(row + i)->isDir()) {
@@ -172,7 +176,9 @@ bool SGQrcTreeModel::removeRows(int row, int count, const QModelIndex &parent)
 
     beginRemoveRows(parent, row, row + count - 1);
     for (int i = 0; i < count; ++i) {
-        uidMap_.remove(parentItem->childNode(row + i)->uid());
+        if (parentItem->childNode(row + i)) {
+            uidMap_.remove(parentItem->childNode(row + i)->uid());
+        }
     }
     const bool success = parentItem->removeChildren(row, count);
     endRemoveRows();
