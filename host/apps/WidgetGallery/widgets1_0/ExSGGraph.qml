@@ -394,14 +394,10 @@ Item {
                     text: "Toggle Minor Grid"
                     onClicked: {
                         if(gridLogGraph.xMinorGrid && gridLogGraph.yMinorGrid) {
-                            gridLogGraph.xGrid = false
-                            gridLogGraph.yGrid = false
                             gridLogGraph.xMinorGrid = false
                             gridLogGraph.yMinorGrid = false
                         }
                         else {
-                            gridLogGraph.xGrid = true
-                            gridLogGraph.yGrid = true
                             gridLogGraph.xMinorGrid = true
                             gridLogGraph.yMinorGrid = true
                         }
