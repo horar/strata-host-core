@@ -48,7 +48,11 @@ var xhr = function(method, endpoint, data, callback, errorCallback, signals, hea
                 } catch (error) {
                     console.error(LoggerModule.Logger.devStudioRestClientCategory, "Error; response not json: " + error)
                 }
-                callback(response);
+                if (callback.length > 1) {
+                    callback(response, data)
+                } else {
+                    callback(response);
+                }
                 timeOut.destroy()
             }
             else if (xhr.readyState === 4 && xhr.status >= 300) {
