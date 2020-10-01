@@ -69,12 +69,22 @@ ColumnLayout {
     function matchVersion() {
         // when the active view is this view, then match the version
         if (platformStack.currentIndex === settingsContainer.stackIndex) {
-            let activeIdx = platformStack.controlViewContainer.controlViewList.getInstalledVersion()
+            let installedVersion = controlViewContainer.getInstalledVersion(NavigationControl.context.user_id);
 
-            if (activeIdx >= 0) {
-                activeVersion = platformStack.controlViewContainer.controlViewList.get(activeIdx)
-                upToDate = isUpToDate()
-                return
+            if (installedVersion) {
+                activeVersion = {
+                    "version": installedVersion.version
+                }
+                upToDate = isUpToDate();
+                return;
+            } else {
+                const activeIdx = controlViewContainer.controlViewList.getInstalledVersion()
+
+                if (activeIdx >= 0) {
+                    activeVersion = controlViewContainer.controlViewList.get(activeIdx)
+                    upToDate = isUpToDate()
+                    return
+                }
             }
 
             upToDate = false
