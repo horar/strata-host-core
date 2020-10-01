@@ -95,11 +95,12 @@ public:
     /**
      * @brief insertChild Inserts a child node into the parent
      * @param fileUrl The url of the file/dir to insert
-     * @param parent Parent index to insert the child into
      * @param position Position in the parent's child array to insert (-1 is to append)
+     * @param inQrc Boolean dictating whether or not to add the file to the qrc. True by default.
+     * @param parent Parent index to insert the child into
      * @return true if successful, otherwise false
      */
-    Q_INVOKABLE bool insertChild(const QUrl &fileUrl, int position = -1, const QModelIndex &parent = QModelIndex());
+    Q_INVOKABLE bool insertChild(const QUrl &fileUrl, int position = -1, const bool inQrc = true, const QModelIndex &parent = QModelIndex());
 
     /**
      * @brief insertChild Inserts a blank child node into the parent

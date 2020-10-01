@@ -294,7 +294,7 @@ Rectangle {
 
             onAccepted: {
                 if (callerIndex) {
-                    treeModel.insertChild(fileUrl, -1, callerIndex)
+                    treeModel.insertChild(fileUrl, -1, true, callerIndex)
                     callerIndex = null;
                 }
             }
