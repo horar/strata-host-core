@@ -456,6 +456,7 @@ void SGQrcTreeModel::clear(bool emitSignals)
 void SGQrcTreeModel::readQrcFile()
 {
     QFile qrcFile(SGUtilsCpp::urlToLocalFile(url_));
+    const QString baseQrc = "<RCC><qresource prefix=\"/\"></qresource></RCC>";
 
     if (!qrcDoc_.isNull()) {
         qrcDoc_.clear();
@@ -468,12 +469,21 @@ void SGQrcTreeModel::readQrcFile()
 
     if (!qrcDoc_.setContent(&qrcFile)) {
         qCritical() << "Failed to parse qrc file";
+        qrcDoc_.setContent(baseQrc);
+    }
+
+    // If the qrc is empty, then set it to the base qrc file
+    if (!qrcDoc_.hasChildNodes()) {
+        qrcDoc_.setContent(baseQrc);
     }
 
     QDomNode qresource = qrcDoc_.elementsByTagName("qresource").at(0);
     if (qresource.hasAttributes() && qresource.attributes().contains("prefix") && qresource.attributes().namedItem("prefix").nodeValue() != "/" ) {
         qCritical() << "Unexpected prefix for qresource";
-        return;
+        qInfo() << "Setting prefix to \"/\"";
+        QDomElement e = qresource.toElement();
+        QDomAttr prefix = e.attributeNode("prefix");
+        prefix.setValue("/");
     }
 
     QDomNodeList files = qrcDoc_.elementsByTagName("file");
