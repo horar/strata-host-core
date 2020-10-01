@@ -147,8 +147,14 @@ QQuickItem* ResourceLoader::createViewObject(const QString &path, QQuickItem *pa
     QQmlEngine *e = qmlEngine(parent);
     if (e) {
         QQmlComponent component = QQmlComponent(e, path, QQmlComponent::CompilationMode::PreferSynchronous, parent);
+        clearLastLoggedError();
         if (component.errors().count() > 0) {
             qCCritical(logCategoryResourceLoader) << component.errors();
+            QString error_str;
+            for (const auto &this_error : component.errors()) {
+                error_str += this_error.toString() + "\n";
+            }
+            setLastLoggedError(error_str);
             return NULL;
         }
         QQmlContext *context = qmlContext(parent);
@@ -194,4 +200,96 @@ QString ResourceLoader::getQResourcePrefix(const QString &class_id, const QStrin
     } else {
         return "/" + class_id + (version.isEmpty() ? "" : "/" + version);
     }
+}
+
+QString ResourceLoader::recompileControlViewQrc(QString qrcFilePath) {
+#ifdef QT_RCC_EXECUTABLE
+    const QString rccExecutablePath = QT_RCC_EXECUTABLE;
+#else // Triggers if Release build -- in Release builds, for now this will not work unless RCC compiler executable is manually placed in the application directory
+// Will be completed in CS-1093
+    QDir applicationDir(QCoreApplication::applicationDirPath());
+    #ifdef Q_OS_MACOS
+        applicationDir.cdUp();
+        applicationDir.cdUp();
+        applicationDir.cdUp();
+    #endif
+    const QString rccExecutablePath = applicationDir.filePath("rcc");
+#endif
+
+    qrcFilePath.replace("file://", "");
+    if (qrcFilePath.at(0) == "/" && qrcFilePath.at(0) != QDir::separator()) {
+        qrcFilePath.remove(0, 1);
+    }
+
+    QFile rccExecutable(rccExecutablePath);
+    QFile qrcFile(qrcFilePath);
+
+    clearLastLoggedError();
+
+    if (!rccExecutable.exists()) {
+        QString error_str = "Could not find RCC executable at " + rccExecutablePath;
+        qCWarning(logCategoryStrataDevStudio) << error_str;
+        setLastLoggedError(error_str);
+        return QString();
+    }
+
+    if (!qrcFile.exists()) {
+        QString error_str = "Could not find QRC file at " + qrcFilePath;
+        qCWarning(logCategoryStrataDevStudio) << error_str;
+        setLastLoggedError(error_str);
+        return QString();
+    }
+
+    QFileInfo qrcFileInfo = QFileInfo(qrcFile);
+    QDir qrcFileParent = qrcFileInfo.dir();
+    QString compiledRccFile = qrcFileParent.path() + QDir::separator() + "DEV-CONTROLVIEW" + QDir::separator();
+    QDir qrcDevControlView(compiledRccFile);
+
+    if (qrcDevControlView.exists()) {
+        if (!qrcDevControlView.removeRecursively()) {
+            QString error_str = "Could not delete directory at " + compiledRccFile;
+            qCWarning(logCategoryStrataDevStudio) << error_str;
+            setLastLoggedError(error_str);
+            return QString();
+        }
+    }
+
+    // Make directory for compiled RCC files
+    QDir().mkdir(compiledRccFile);
+
+    // Split qrcFile base name and add ".rcc" extension
+    compiledRccFile += qrcFileInfo.baseName() + ".rcc";
+
+    // Set and launch rcc compiler process
+    const auto arguments = (QList<QString>() << "-binary" << qrcFilePath << "-o" << compiledRccFile);
+    rccCompilerProcess_.setProgram(rccExecutablePath);
+    rccCompilerProcess_.setArguments(arguments);
+    connect(&rccCompilerProcess_, SIGNAL(readyReadStandardError()), this, SLOT(onOutputRead()), Qt::UniqueConnection);
+    rccCompilerProcess_.start();
+    rccCompilerProcess_.waitForFinished();
+
+    if (lastLoggedError != "") {
+        return QString();
+    }
+
+    qCDebug(logCategoryResourceLoader) << "Wrote compiled resource file to " << compiledRccFile;
+    return compiledRccFile;
+}
+
+void ResourceLoader::onOutputRead() {
+    QString error_str = rccCompilerProcess_.readAllStandardError();
+    qCCritical(logCategoryStrataDevStudio) << error_str;
+    setLastLoggedError(error_str);
+}
+
+void ResourceLoader::clearLastLoggedError() {
+    lastLoggedError = "";
+}
+
+void ResourceLoader::setLastLoggedError(QString &error_str) {
+    lastLoggedError = error_str;
+}
+
+QString ResourceLoader::getLastLoggedError() {
+    return lastLoggedError;
 }
