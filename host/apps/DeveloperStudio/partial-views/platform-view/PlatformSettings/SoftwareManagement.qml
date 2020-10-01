@@ -89,7 +89,7 @@ ColumnLayout {
     }
 
     function isUpToDate() {
-        let latestVersionIdx = platformStack.controlViewContainer.controlViewList.getLatestVersion();
+        const latestVersionIdx = platformStack.controlViewContainer.controlViewList.getLatestVersion();
         latestVersion = platformStack.controlViewContainer.controlViewList.get(latestVersionIdx);
 
         if (objectIsEmpty(latestVersion)) {
