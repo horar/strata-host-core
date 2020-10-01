@@ -20,6 +20,13 @@ Item {
 
     readonly property string staticVersion: "static"
 
+    SGText {
+        anchors.centerIn: parent
+        text: "Loading Control View..."
+        fontSizeMultiplier: 2
+        color: "#666"
+    }
+
     Rectangle {
         id: loadingBarContainer
         anchors {
