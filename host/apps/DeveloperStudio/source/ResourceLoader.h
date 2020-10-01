@@ -8,6 +8,7 @@
 #include <QUrl>
 #include <QQmlEngine>
 #include <QQuickItem>
+#include <QProcess>
 
 struct ResourceItem {
     ResourceItem(
@@ -84,6 +85,10 @@ public:
 
     Q_INVOKABLE QUrl getStaticResourcesUrl();
 
+    Q_INVOKABLE QString recompileControlViewQrc(QString qrcFilePath);
+
+    Q_INVOKABLE QString getLastLoggedError();
+
 private slots:
     /**
      * @brief deleteViewResource Deletes a resource from disk and unregisters it from qrc.
@@ -95,6 +100,8 @@ private slots:
      */
     bool deleteViewResource(const QString &class_id, const QString &rccPath, const QString &version, QObject *parent);
 
+    void onOutputRead();
+
 private:
     void loadCoreResources();
     QString getQResourcePrefix(const QString &class_id, const QString &version);
@@ -102,4 +109,10 @@ private:
     QHash<QString, ResourceItem*> viewsRegistered_;
 
     static const QStringList coreResources_;
+
+    QProcess rccCompilerProcess_;
+
+    QString lastLoggedError = "";
+    void clearLastLoggedError();
+    void setLastLoggedError(QString &error_str);
 };

@@ -9,6 +9,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 Rectangle {
     id: controlViewCreatorRoot
     objectName: "ControlViewCreator"
+    property string currentFileUrl: ""
 
     SGUserSettings {
         id: sgUserSettings
@@ -70,6 +71,10 @@ Rectangle {
                     model: ["Edit", "Use Control View"]
                     checkedIndices: 0
                     onClicked: {
+                        if (currentFileUrl != fileModel.url) {
+                            recompileControlViewQrc()
+                            currentFileUrl = fileModel.url
+                        }
                         viewStack.currentIndex = index + offset
                     }
 
@@ -78,6 +83,10 @@ Rectangle {
 
                 SGButton {
                     text: "Recompile/Reload Control View"
+
+                    onClicked: {
+                        recompileControlViewQrc()
+                    }
                 }
             }
         }
@@ -132,6 +141,40 @@ Rectangle {
                     opacity: .25
                 }
             }
+        }
+    }
+
+    function recompileControlViewQrc () {
+        if (fileModel.url != '') {
+            let compiledRccFile = sdsModel.resourceLoader.recompileControlViewQrc(fileModel.url)
+            if (compiledRccFile != '') {
+                loadDebugView(compiledRccFile)
+            } else {
+                NavigationControl.removeView(controlViewContainer)
+                let error_str = sdsModel.resourceLoader.getLastLoggedError()
+                sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewContainer, {"error_message": error_str});
+            }
+        }
+    }
+
+    function loadDebugView (compiledRccFile) {
+        NavigationControl.removeView(controlViewContainer)
+
+        let uniquePrefix = new Date().getTime().valueOf()
+        uniquePrefix = "/" + uniquePrefix
+
+        // Register debug control view object
+        if (!sdsModel.resourceLoader.registerResource(compiledRccFile, uniquePrefix)) {
+            console.error("Failed to register resource")
+            return
+        }
+
+        let qml_control = "qrc:" + uniquePrefix + "/Control.qml"
+        let obj = sdsModel.resourceLoader.createViewObject(qml_control, controlViewContainer);
+        if (obj === null) {
+            let error_str = sdsModel.resourceLoader.getLastLoggedError()
+            sdsModel.resourceLoader.createViewObject(NavigationControl.screens.LOAD_ERROR, controlViewContainer, {"error_message": error_str});
+            console.error("Could not load view: " + error_str)
         }
     }
 }
