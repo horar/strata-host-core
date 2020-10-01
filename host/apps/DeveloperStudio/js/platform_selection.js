@@ -246,8 +246,12 @@ function addConnectedPlatform(platform) {
     }
 
     let data = {
+        "class_id": platform.class_id,
         "device_id": platform.device_id,
-        "class_id": class_id_string,
+        "name": platform.name,
+        "view": "control",
+        "connected": true,
+        "available": platform.available,
         "firmware_version": platform.firmware_version
     }
     NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)

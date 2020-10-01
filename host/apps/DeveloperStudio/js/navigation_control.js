@@ -343,17 +343,8 @@ function updateState(event, data)
 
                 if(userSettings.autoOpenView){
                         //TODO: autoOpenConnect
-                        console.log(JSON.stringify(connected_view))
-                    const open_view = {
-                                "class_id": connected_view.class_id,
-                                "device_id": connected_view.device_id,
-                                "name": connected_view.name,
-                                "view": "control",
-                                "connected": connected_view.connected,
-                                "available": connected_view.available,
-                                "firmware_version": connected_view.firmware_version
-                    }
-                        updateState(events.OPEN_PLATFORM_VIEW_EVENT, open_view)
+                        console.log("HIT "+JSON.stringify(data))
+                        updateState(events.OPEN_PLATFORM_VIEW_EVENT, data)
                 }
 
                     if(userSettings.switchToActive){
