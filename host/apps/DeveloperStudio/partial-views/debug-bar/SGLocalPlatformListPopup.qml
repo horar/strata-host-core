@@ -10,6 +10,7 @@ import tech.strata.fonts 1.0
 
 import "qrc:/js/platform_selection.js" as PlatformSelection
 import "qrc:/js/constants.js" as Constants
+import "qrc:/js/uuid_map.js" as Uuid
 
 Window {
     id: root
@@ -308,6 +309,10 @@ Window {
                                 {
                                     "class_id": class_id.text,
                                     "device_id": Constants.DEBUG_DEVICE_ID,
+                                    "name": "Unknown Platform",
+                                    "view": "control",
+                                    "connected": true,
+                                    "available": {'documents': false, 'order': true, 'control': true, 'unlisted': false},
                                     "firmware_version":"1.0.1"
                                 }
                             ],

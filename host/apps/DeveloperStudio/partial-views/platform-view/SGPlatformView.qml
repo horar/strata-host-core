@@ -44,7 +44,6 @@ StackLayout {
 
     Component.onCompleted: {
         platformStackInitialized = true
-        NavigationControl.userSettings = sgUserSettings
     }
 
     Component.onDestruction: {
