@@ -30,6 +30,7 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
     source/SGNewControlView.cpp
     source/SGQrcListModel.cpp
     $<IF:$<CONFIG:Release>, source/release/ResourcePath.cpp, source/debug/ResourcePath.cpp>
+    source/RunGuard.cpp
 
     logging/LoggingQtCategories.cpp
     logging/qml/tech/strata/logger/qml.qrc
