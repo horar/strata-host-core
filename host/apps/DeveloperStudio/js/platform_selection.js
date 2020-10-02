@@ -2,6 +2,7 @@
 .import "navigation_control.js" as NavigationControl
 .import "qrc:/js/platform_filters.js" as PlatformFilters
 .import "constants.js" as Constants
+.import "uuid_map.js" as UuidMap
 
 .import tech.strata.logger 1.0 as LoggerModule
 .import tech.strata.commoncpp 1.0 as CommonCpp
@@ -117,6 +118,11 @@ function emptyListRetry() {
 */
 function generatePlatform (platform) {
     let class_id_string = String(platform.class_id)
+    // Enforce uuidMap presence due to removal of OTA features in v2.5.0
+    if (UuidMap.uuid_map.hasOwnProperty(class_id_string) === false && platform.available.control){
+        console.error(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Control 'available' flag set but no mapped UI for this class_id; overriding to deny access");
+        platform.available.control = false
+    }
 
     // Parse list of text filters and gather complete filter info from PlatformFilters
     if (platform.hasOwnProperty("filters")) {
@@ -235,7 +241,7 @@ function addConnectedPlatform(platform) {
 
     if (classMap.hasOwnProperty(class_id_string)) {
         connectListing(class_id_string, platform.device_id, platform.firmware_version)
-    } else if (class_id_string !== "undefined") {
+    } else if (class_id_string !== "undefined" && UuidMap.uuid_map.hasOwnProperty(class_id_string)) {
         // unlisted platform connected: no entry in DP platform list, but UI found in UuidMap
         console.log(LoggerModule.Logger.devStudioPlatformSelectionCategory, "Unlisted platform connected:", class_id_string);
         insertUnlistedListing(platform)
