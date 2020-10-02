@@ -53,11 +53,7 @@ Rectangle {
             id: basicButton
             text: qsTr("Basic")
             onClicked: {
-                basicControl.visible = true
-                advancedControl.visible = false
-                trendControl.visible = false
-                loadTransientControl.visible = false
-                coreControl.visible = false
+                loader.sourceComponent = basicComponent
             }
         }
 
@@ -65,11 +61,7 @@ Rectangle {
             id: advancedButton
             text: qsTr("Advanced")
             onClicked: {
-                basicControl.visible = false
-                advancedControl.visible = true
-                trendControl.visible = false
-                loadTransientControl.visible = false
-                coreControl.visible = false
+                loader.sourceComponent = advComponent
             }
         }
 
@@ -77,11 +69,7 @@ Rectangle {
             id: trendButton
             text: qsTr("Real-time Trend Analysis")
             onClicked: {
-                basicControl.visible = false
-                advancedControl.visible = false
-                trendControl.visible = true
-                loadTransientControl.visible = false
-                coreControl.visible = false
+                loader.sourceComponent = trendComponent
             }
         }
 
@@ -89,11 +77,7 @@ Rectangle {
             id: loadTransientButton
             text: qsTr("Load Transient")
             onClicked: {
-                basicControl.visible = false
-                advancedControl.visible = false
-                trendControl.visible = false
-                loadTransientControl.visible = true
-                coreControl.visible = false
+                loader.sourceComponent = loadComponent
             }
         }
 
@@ -101,93 +85,65 @@ Rectangle {
             id: messagesButton
             text: qsTr("Core Messages")
             onClicked: {
-                basicControl.visible = false
-                advancedControl.visible = false
-                trendControl.visible = false
-                loadTransientControl.visible = false
-                coreControl.visible = true
+                loader.sourceComponent = coreComponent
             }
         }
     }
 
-    StackLayout {
-        id: controlContainer
+    Item {
         anchors {
             top: navTabs.bottom
             bottom: controlNavigation.bottom
             right: controlNavigation.right
             left: controlNavigation.left
-
         }
 
-        currentIndex: navTabs.currentIndex
-
-        Rectangle {
+        Loader {
+            id: loader
             width: parent.width
             height: parent.height
-
-            BasicControl {
-                id: basicControl
-                visible: true
-                width: parent.width
-                height: parent.height
-            }
+            sourceComponent: basicComponent
         }
+    }
 
-        Rectangle {
-            width: parent.width
-            height: parent.height
-            color: "light gray"
+    Component {
+        id: basicComponent
 
-            AdvancedControl {
-                id: advancedControl
-                visible: false
-                width: parent.width
-                height: parent.height
-
-            }
+        BasicControl {
+            id: basicControl
+            visible: true
         }
+    }
 
-        Rectangle {
-            width: parent.width
-            height: parent.height
-            color: "light gray"
+    Component {
+        id: advComponent
 
-            TrendControl {
-                id: trendControl
-                visible: false
-                width: parent.width
-                height: parent.height
-
-            }
+        AdvancedControl {
+            id: advancedControl
         }
+    }
 
-        Rectangle {
-            width: parent.width
-            height: parent.height
-            color: "light gray"
+    Component {
+        id: trendComponent
 
-            LoadTransientControl {
-                id: loadTransientControl
-                visible: false
-                width: parent.width
-                height: parent.height
-
-            }
+        TrendControl {
+            id: trendControl
         }
+    }
 
-        Rectangle {
-            width: parent.width
-            height: parent.height
-            color: "light gray"
+    Component {
+        id: loadComponent
 
-            CoreControl {
-                id: coreControl
-                visible: false
-                width: parent.width
-                height: parent.height
+        LoadTransientControl {
+            id: loadTransientControl
+        }
+    }
 
-            }
+    Component {
+        id: coreComponent
+
+        CoreControl {
+            id: coreControl
         }
     }
 
@@ -211,21 +167,19 @@ Rectangle {
                 fill: helpIcon
             }
             onClicked: {
-
-                if(basicControl.visible === true) {
+                if(loader.sourceComponent === basicComponent) {
                     Help.startHelpTour("basicHelp")
                 }
-
-                else if(advancedControl.visible === true) {
+                else if(loader.sourceComponent === advComponent) {
                     Help.startHelpTour("advanceHelp")
                 }
-                else if(trendControl.visible === true) {
+                else if(loader.sourceComponent === trendComponent) {
                     Help.startHelpTour("trendHelp")
                 }
-                else if(loadTransientControl.visible === true) {
+                else if(loader.sourceComponent === loadComponent) {
                     Help.startHelpTour("loadTransientHelp")
                 }
-                else if(coreControl.visible === true) {
+                else if(loader.sourceComponent === coreComponent) {
                     Help.startHelpTour("coreControlHelp")
                 }
                 else console.log("help not available")
