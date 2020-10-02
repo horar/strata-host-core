@@ -534,10 +534,9 @@ else()
     if(NOT ${GIT_HASH_RESULT} EQUAL 0)
         message(FATAL_ERROR "QtMQTT GIT_HASH_RESULT is: ${GIT_HASH_RESULT}")
     else()
-        file(COPY 
+        file(COPY ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-${GIT_HASH}/Qt5Mqttd.dll
         ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-${GIT_HASH}/Qt5Mqttd.dll
-        ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-${GIT_HASH}/Qt5Mqttd.dll
-        {CMAKE_BINARY_DIR}/bin
+        DESTINATION {CMAKE_BINARY_DIR}/bin
         )
         message(STATUS "QtMQTT 3rd party library is already installed at ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-${GIT_HASH}")
     endif() 
