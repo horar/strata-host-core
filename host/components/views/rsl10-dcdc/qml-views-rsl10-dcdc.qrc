@@ -61,5 +61,6 @@
         <file>images/LV_DCDC_Ecosystem_3D.gif</file>
         <file>images/led_3d.gif</file>
         <file>images/transient.gif</file>
+        <file>sgwidgets/GraphConverter.qml</file>
     </qresource>
 </RCC>
