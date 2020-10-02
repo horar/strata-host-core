@@ -398,24 +398,7 @@ Item {
                 }
 
                 Button {
-                    text: "Add X/Y Logarithmic Axes"
-                    onClicked: {
-                        if(gridLogGraph.xLogarithmic && gridLogGraph.yLogarithmic) {
-                            gridLogGraph.xLogarithmic = false
-                            gridLogGraph.yLogarithmic = false
-                            text = "Add X/Y Logarithmic Axes"
-                        }
-                        else {
-                            gridLogGraph.xLogarithmic = true
-                            gridLogGraph.yLogarithmic = true
-                            text = "Add X/Y Linear Axes"
-                        }
-                    }
-                }
-
-
-                Button {
-                    text: "Clear GridLine"
+                    text: "Clear Gridline"
                     onClicked: {
                         gridLogGraph.xGrid = false
                         gridLogGraph.yGrid = false
@@ -423,6 +406,25 @@ Item {
                         gridLogGraph.yMinorGrid = false
                     }
                 }
+
+                Button {
+                    text: "Toggle X/Y Logarithmic Axes"
+                    onClicked: {
+                        if(gridLogGraph.xLogarithmic && gridLogGraph.yLogarithmic) {
+                            gridLogGraph.xLogarithmic = false
+                            gridLogGraph.yLogarithmic = false
+                            text = "Toggle X/Y Logarithmic Axes"
+                        }
+                        else {
+                            gridLogGraph.xLogarithmic = true
+                            gridLogGraph.yLogarithmic = true
+                            text = "Toggle X/Y Linear Axes"
+                        }
+                    }
+                }
+
+
+
             }
         }
 
