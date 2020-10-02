@@ -19,6 +19,8 @@ Rectangle {
         fill: parent
     }
 
+    property alias class_id: multiplePlatform.class_id
+
     PlatformInterface {
         id: platformInterface
     }

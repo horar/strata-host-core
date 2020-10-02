@@ -3,7 +3,7 @@ import "qrc:/js/navigation_control.js" as NavigationControl
 
 Item{
 
-    property string class_id: NavigationControl.context.class_id
+    property string class_id
 
     property string eeprom_ID: "cce0f32e-ee1e-44aa-81a3-0801a71048ce"
     property string partNumber: "<b> NCV6922 </b>"
