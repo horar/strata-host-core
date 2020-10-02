@@ -295,7 +295,7 @@ Item {
                         anchors {
                             left: parent.left
                             leftMargin: -50
-                            top: 20
+                            top: parent.top + 20
                         }
                         showOptions: false
                         autoAdjustMaxMin: false
