@@ -296,6 +296,8 @@ bool SGQrcTreeModel::insertChild(const QUrl &fileUrl, int position,  const bool 
     beginInsertRows(parent, position, position);
     QString uid = QUuid::createUuid().toString();
     SGQrcTreeNode *child = new SGQrcTreeNode(parentNode, fileInfo, fileInfo.isDir(), inQrc, uid);
+    QQmlEngine::setObjectOwnership(child, QQmlEngine::CppOwnership);
+
     bool success = parentNode->insertChild(child, position);
     uidMap_.insert(uid, child);
     endInsertRows();
@@ -319,6 +321,8 @@ bool SGQrcTreeModel::insertChild(bool isDir, int position, const QModelIndex &pa
     beginInsertRows(parent, position, position);
     QString uid = QUuid::createUuid().toString();
     SGQrcTreeNode *child = new SGQrcTreeNode(parentNode, isDir, uid);
+    QQmlEngine::setObjectOwnership(child, QQmlEngine::CppOwnership);
+
     bool success = parentNode->insertChild(child, position);
     uidMap_.insert(uid, child);
     endInsertRows();
