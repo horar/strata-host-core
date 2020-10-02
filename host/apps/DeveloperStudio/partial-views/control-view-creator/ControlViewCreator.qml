@@ -55,9 +55,9 @@ Rectangle {
                     model: ["Edit", "Use Control View"]
                     checkedIndices: 0
                     onClicked: {
-                        if (currentFileUrl != fileModel.url) {
+                        if (currentFileUrl !== editor.treeModel.url) {
                             recompileControlViewQrc()
-                            currentFileUrl = fileModel.url
+                            currentFileUrl = editor.treeModel.url
                         }
                         viewStack.currentIndex = index + offset
                     }
@@ -129,9 +129,9 @@ Rectangle {
     }
 
     function recompileControlViewQrc () {
-        if (fileModel.url != '') {
-            let compiledRccFile = sdsModel.resourceLoader.recompileControlViewQrc(fileModel.url)
-            if (compiledRccFile != '') {
+        if (editor.treeModel.url !== '') {
+            let compiledRccFile = sdsModel.resourceLoader.recompileControlViewQrc(editor.treeModel.url)
+            if (compiledRccFile !== '') {
                 loadDebugView(compiledRccFile)
             } else {
                 NavigationControl.removeView(controlViewContainer)
