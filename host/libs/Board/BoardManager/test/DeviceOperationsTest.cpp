@@ -177,14 +177,14 @@ void DeviceOperationsTest::switchToBootloaderAndBackTest()
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 8);
-    verifyMessage(recordedMessages[0], test_commands::request_platform_id_request);
-    verifyMessage(recordedMessages[1], test_commands::get_firmware_info_request);
+    verifyMessage(recordedMessages[0], test_commands::get_firmware_info_request);
+    verifyMessage(recordedMessages[1], test_commands::request_platform_id_request);
     verifyMessage(recordedMessages[2], test_commands::start_bootloader_request);
-    verifyMessage(recordedMessages[3], test_commands::request_platform_id_request);
-    verifyMessage(recordedMessages[4], test_commands::get_firmware_info_request);
+    verifyMessage(recordedMessages[3], test_commands::get_firmware_info_request);
+    verifyMessage(recordedMessages[4], test_commands::request_platform_id_request);
     verifyMessage(recordedMessages[5], test_commands::start_application_request);
-    verifyMessage(recordedMessages[6], test_commands::request_platform_id_request);
-    verifyMessage(recordedMessages[7], test_commands::get_firmware_info_request);
+    verifyMessage(recordedMessages[6], test_commands::get_firmware_info_request);
+    verifyMessage(recordedMessages[7], test_commands::request_platform_id_request);
 }
 
 void DeviceOperationsTest::cancelOperationTest()
@@ -202,7 +202,7 @@ void DeviceOperationsTest::cancelOperationTest()
 
     std::vector<QByteArray> recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 1);
-    verifyMessage(recordedMessages[0], test_commands::request_platform_id_request);
+    verifyMessage(recordedMessages[0], test_commands::get_firmware_info_request);
 
     deviceOperation_->cancelOperation();
 
@@ -210,7 +210,7 @@ void DeviceOperationsTest::cancelOperationTest()
 
     recordedMessages = device_->mockGetRecordedMessages();
     QCOMPARE(recordedMessages.size(), 1);
-    verifyMessage(recordedMessages[0], test_commands::request_platform_id_request);
+    verifyMessage(recordedMessages[0], test_commands::get_firmware_info_request);
 }
 
 // TODO tests for DeviceOperations:

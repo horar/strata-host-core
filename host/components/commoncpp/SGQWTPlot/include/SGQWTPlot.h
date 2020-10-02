@@ -48,6 +48,8 @@ class SGQWTPlot : public QQuickPaintedItem
     Q_PROPERTY(int count READ getCount NOTIFY countChanged)
     Q_PROPERTY(bool xGrid READ xGrid WRITE setXGrid NOTIFY xGridChanged)
     Q_PROPERTY(bool yGrid READ yGrid WRITE setYGrid NOTIFY yGridChanged)
+    Q_PROPERTY(bool xMinorGrid READ xMinorGrid WRITE setXMinorGrid NOTIFY xMinorGridChanged)
+    Q_PROPERTY(bool yMinorGrid READ yMinorGrid WRITE setYMinorGrid NOTIFY yMinorGridChanged)
     Q_PROPERTY(QColor gridColor MEMBER gridColor_ WRITE setGridColor NOTIFY gridColorChanged)
     Q_PROPERTY(bool yRightVisible READ yRightVisible WRITE setYRightVisible NOTIFY yRightVisibleChanged)
 
@@ -110,6 +112,10 @@ public:
     bool xGrid();
     void setYGrid(bool showGrid);
     bool yGrid();
+    void setXMinorGrid(bool showGrid);
+    bool xMinorGrid();
+    void setYMinorGrid(bool showGrid);
+    bool yMinorGrid();
     void setGridColor(QColor newColor);
     void setYRightVisible(bool showYRightAxis);
     bool yRightVisible();
@@ -139,6 +145,8 @@ signals:
     void countChanged();
     void xGridChanged();
     void yGridChanged();
+    void xMinorGridChanged();
+    void yMinorGridChanged();
     void gridColorChanged();
     void yRightVisibleChanged();
     void yRightMinChanged();
@@ -156,6 +164,8 @@ private:
     bool autoUpdate_ = true;
     bool xGrid_ = false;
     bool yGrid_ = false;
+    bool xMinorGrid_ = false;
+    bool yMinorGrid_ = false;
     QColor gridColor_;
     bool yRightVisible_ = false;
 

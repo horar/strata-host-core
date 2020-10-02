@@ -10,6 +10,8 @@ find_package(Qt5 ${VERSION_QT5}
 
 add_library(${PROJECT_NAME}
     src/DownloadManager.cpp
+    src/InternalDownloadRequest.cpp
+    src/ReplyTimeout.cpp
     src/logging/LoggingQtCategories.cpp
 
     #AUTOMOC wont find header if it is in different directory
