@@ -41,7 +41,7 @@ QtObject {
     /*
       Update Profile Signals
     */
-    signal profileUpdateResult(string result)
+    signal profileUpdateResult(string result, var updatedProperties)
 
     /*
       Change Password Signals

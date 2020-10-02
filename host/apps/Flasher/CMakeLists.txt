@@ -3,6 +3,7 @@ project(flasher-cli
     LANGUAGES CXX
 )
 
+set(PROJECT_WIN32_ICO resources/icons/app/flasher-logo.ico)
 set(PROJECT_COPYRIGHT "Copyright (C) 2018-2020 ${PROJECT_COMPANY}")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
