@@ -13,6 +13,8 @@ import "Sidebar/"
 Item {
     id: editorRoot
 
+    property alias treeModel: treeModel
+
     SGQrcTreeModel {
         id: treeModel
         url: openProjectContainer.url
