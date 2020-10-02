@@ -288,7 +288,7 @@ Item {
                         leftMargin : 50
                     }
 
-                    SGGraphTimed{
+                    GraphConverter{
                         id: vinGraph
                         width: parent.width/6
                         height: parent.height/1.2
@@ -383,7 +383,7 @@ Item {
                         }
                     }
 
-                    SGGraphTimed{
+                    GraphConverter{
                         id: iinGraph
                         width: parent.width/6
                         height: parent.height/1.2
@@ -480,7 +480,7 @@ Item {
                         }
                     }
 
-                    SGGraphTimed{
+                    GraphConverter{
                         id: pdissGraph
                         width: parent.width/6
                         height: parent.height/1.2
@@ -517,7 +517,7 @@ Item {
                         reverseDirection: true
                     }
 
-                    SGGraphTimed{
+                    GraphConverter{
                         id: poutGraph
                         width: parent.width/6
                         height: parent.height/1.2
@@ -552,7 +552,7 @@ Item {
                         reverseDirection: true
                     }
 
-                    SGGraphTimed{
+                    GraphConverter{
                         id: voutGraph
                         width: parent.width/6
                         height: parent.height/1.2
@@ -610,7 +610,7 @@ Item {
                         }
                     }
 
-                    SGGraphTimed{
+                    GraphConverter{
                         id: ioutGraph
                         width: parent.width/6
                         height: parent.height/1.2

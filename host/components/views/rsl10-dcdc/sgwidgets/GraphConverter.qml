@@ -6,16 +6,35 @@ import tech.strata.sgwidgets 1.0
 SGGraph {
     id: graphConverter
 
-    property alias xAxisTitle: xTitle
-    property alias yAxisTitle: yTitle
-    property alias maxYValue: yMax
-    property alias minYValue: yMin
-    property alias maxXValue: xMax
-    property alias minXValue: xMin
-    property alias showYGrids: xGrid
-    property alias showXGrids: yGrid
-    property alias textColor: foregroundColor
-    property alias gridLineColor: gridColor
+    property string xAxisTitle
+    xTitle: xAxisTitle
+
+    property string yAxisTitle
+    yTitle: yAxisTitle
+
+    property real maxYValue
+    yMax: maxYValue
+
+    property real minYValue
+    yMin: minYValue
+
+    property real maxXValue
+    xMax: maxXValue
+
+    property real minXValue
+    xMin: minXValue
+
+    property bool showYGrids
+    yGrid: showYGrids
+
+    property bool showXGrids
+    xGrid: showXGrids
+
+    property color textColor
+    foregroundColor: textColor
+
+    property color gridLineColor
+    gridColor: gridLineColor
 
     property bool autoAdjustMaxMin: false
     property real inputData
@@ -53,32 +72,32 @@ SGGraph {
     Timer {
         id: graphTimerPoints
         interval: 60
-        running: false
+        running: true
         repeat: true
 
         property real lastTime
 
         onRunningChanged: {
             if (running){
-                timedGraphPoints.curve(0).clear()
+                graphConverter.curve(0).clear()
                 lastTime = Date.now()
             }
         }
 
         onTriggered: {
             let currentTime = Date.now()
-            let curve = timedGraphPoints.curve(0)
+            let curve = graphConverter.curve(0)
             curve.shiftPoints((currentTime - lastTime)/1000, 0)
             curve.append(0, inputData)
             removeOutOfViewPoints()
-            timedGraphPoints.update()
+            graphConverter.update()
             lastTime = currentTime
         }
 
         function removeOutOfViewPoints() {
             // recursively clean up points that have moved out of view
-            if (timedGraphPoints.curve(0).at(0).x > timedGraphPoints.xMin) {
-                timedGraphPoints.curve(0).remove(0)
+            if (graphConverter.curve(0).at(0).x > graphConverter.xMin) {
+                graphConverter.curve(0).remove(0)
                 removeOutOfViewPoints()
             }
         }
