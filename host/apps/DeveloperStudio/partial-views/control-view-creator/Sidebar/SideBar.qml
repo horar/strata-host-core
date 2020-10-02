@@ -37,9 +37,8 @@ Rectangle {
 
                     // When a row is inserted, we want to focus on that row
                     onRowsInserted: {
-                        treeView.selection.clearCurrentIndex();
-                        console.info(parent)
                         let index = treeModel.index(first, 0, parent);
+                        treeView.selection.clearCurrentIndex();
                         treeView.selection.select(index, ItemSelectionModel.Rows);
                         treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
 
@@ -60,9 +59,15 @@ Rectangle {
                 rowDelegate: Rectangle {
                     height: 25
                     color: styleData.selected ? "#CCCCCC" : "transparent"
+                    focus: styleData.selected
+                    onFocusChanged: {
+                        forceActiveFocus();
+                    }
                 }
 
                 itemDelegate: Item {
+                    anchors.verticalCenter: parent.verticalCenter
+
                     Component.onCompleted: {
                         if (model.filename === "Control.qml") {
                             openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
@@ -72,25 +77,14 @@ Rectangle {
                         }
                     }
 
-                    Connections {
-                        target: openFilesModel
-
-                        onCurrentIndexChanged: {
-                            if (visible && openFilesModel.currentId === model.uid) {
-                                treeView.selection.clearCurrentIndex();
-                                treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
-                                treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
-                            }
-                        }
-                    }
-
                     Text {
                         id: itemFilename
                         text: styleData.value
                         width: inQrcIcon.x - x - 10
                         height: 15
-                        visible: model && !model.editing
+                        visible: !itemFilenameEdit.visible
                         anchors.verticalCenter: parent.verticalCenter
+                        verticalAlignment: Text.AlignVCenter
                         font.pointSize: 10
                         color: "black"
                         elide: Text.ElideRight
@@ -100,8 +94,9 @@ Rectangle {
                         id: itemFilenameEdit
                         width: inQrcIcon.x - x - 10
                         height: 15
-                        visible: model && model.editing
+                        visible: styleData.selected && model.editing
                         anchors.verticalCenter: parent.verticalCenter
+                        verticalAlignment: Text.AlignVCenter
                         font.pointSize: 10
                         color: "black"
                         text: styleData.value
@@ -115,6 +110,11 @@ Rectangle {
                                 return;
                             }
 
+                            // Handle the case where a forward slash is in the filename
+                            if (text.indexOf('/') >= 0) {
+                                text = model.filename
+                            }
+
                             // If a new file was created, and its filename is still empty
                             if (text === "" && model.filename === "") {
                                 treeModel.removeRows(model.row, 1, styleData.index.parent);
@@ -124,24 +124,25 @@ Rectangle {
                             let path;
                             // Below handles the case where the parentNode is the .qrc file
                             if (model && !model.parentNode.isDir) {
-                                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory), displayText);
+                                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory), text);
                             } else {
-                                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(model.parentNode.filepath), displayText);
+                                path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(model.parentNode.filepath), text);
 
+                            }
+
+                            model.filename = text
+                            model.filepath = SGUtilsCpp.pathToUrl(path);
+                            if (!model.isDir) {
+                                model.filetype = SGUtilsCpp.fileSuffix(text)
+                                if (!model.inQrc) {
+                                    treeModel.addToQrc(styleData.index);
+                                }
                             }
 
                             let success = SGUtilsCpp.createFile(path);
                             if (success) {
-                                model.filename = displayText
-                                model.filepath = SGUtilsCpp.pathToUrl(path);
-                                if (!model.isDir) {
-                                    model.filetype = SGUtilsCpp.fileSuffix(displayText)
-                                    if (!model.inQrc) {
-                                        treeModel.addToQrc(styleData.index);
-                                    }
-                                    openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
-                                }
                                 model.editing = false
+                                openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
                             } else {
                                 //handle error
                                 console.error("Could not create file:", path)
@@ -149,11 +150,9 @@ Rectangle {
                             }
                         }
 
-                        onFocusChanged: {
-                            if (focus) {
+                        onVisibleChanged: {
+                            if (visible) {
                                 forceActiveFocus();
-                            } else {
-                                forceActiveFocus(mouseArea);
                             }
                         }
 
@@ -273,11 +272,22 @@ Rectangle {
                                             openFilesModel.addTab(model.filename, model.filepath, model.filetype, model.uid)
                                         }
                                     }
-                                    forceActiveFocus()
                                 }
                             }
                         }
 
+                    }
+
+                    Connections {
+                        target: openFilesModel
+
+                        onCurrentIndexChanged: {
+                            if (visible && openFilesModel.currentId === model.uid) {
+                                treeView.selection.clearCurrentIndex();
+                                treeView.selection.select(styleData.index, ItemSelectionModel.Rows);
+                                treeView.selection.setCurrentIndex(styleData.index, ItemSelectionModel.Current);
+                            }
+                        }
                     }
                 }
 
