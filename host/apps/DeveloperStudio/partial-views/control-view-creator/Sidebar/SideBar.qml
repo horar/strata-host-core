@@ -294,7 +294,7 @@ Rectangle {
                 QtQC1.TableViewColumn {
                     title: treeModel.root ? treeModel.root.filename : "Project Files"
                     role: "filename"
-                    width: 250
+                    width: treeView.width
                 }
             }
         }
