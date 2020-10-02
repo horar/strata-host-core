@@ -335,6 +335,7 @@ function updateState(event, data)
                 }
 
                 if(view_index !== -1){
+                    console.log("HIT");
                     connected_view = platform_view_model_.get(view_index)
                     connected_view.device_id = data.device_id
                     connected_view.firmware_version = data.firmware_version
@@ -342,15 +343,16 @@ function updateState(event, data)
                 }
 
                 if(userSettings.autoOpenView){
-                        //TODO: autoOpenConnect
-                        console.log("HIT "+JSON.stringify(data))
-                        updateState(events.OPEN_PLATFORM_VIEW_EVENT, data)
+                    console.log(JSON.stringify(platform_view_model_))
+                    connected_view = platform_view_model_.get(0)
+                    connected_view.device_id = data.device_id
+                    connected_view.firmware_version = data.firmware_version
+                    connected_view.connected = data.connected
+                    connected_view.name = data.name
+                    connected_view.available = data.available
+                    connected_view.view_open = true
+                    updateState(events.OPEN_PLATFORM_VIEW_EVENT, connected_view)
                 }
-
-                    if(userSettings.switchToActive){
-                        //TODO: switch to the active platform
-                        updateState(events.SWITCH_VIEW_EVENT, {"index": view_index})
-                    }
 
                 break;
 

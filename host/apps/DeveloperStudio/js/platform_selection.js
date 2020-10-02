@@ -254,6 +254,7 @@ function addConnectedPlatform(platform) {
         "available": platform.available,
         "firmware_version": platform.firmware_version
     }
+    
     NavigationControl.updateState(NavigationControl.events.PLATFORM_CONNECTED_EVENT, data)
 }
 
