@@ -525,7 +525,7 @@ if(${GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-$
             INSTALL_COMMAND
 
             COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/src/mqtt/ <INSTALL_DIR>/include/QtMqtt
-            COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/bin <INSTALL_DIR>
+            COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/bin <INSTALL_DIR>/bin
             COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/bin/Qt5Mqtt.dll <BINARY_DIR>/bin/Qt5Mqttd.dll ${CMAKE_BINARY_DIR}/bin
             COMMAND ${CMAKE_COMMAND} -E copy_if_different <BINARY_DIR>/lib/Qt5Mqtt.lib <BINARY_DIR>/lib/Qt5Mqttd.lib <BINARY_DIR>/lib/Qt5Mqttd.pdb <INSTALL_DIR>/lib
         )
@@ -534,9 +534,9 @@ else()
     if(NOT ${GIT_HASH_RESULT} EQUAL 0)
         message(FATAL_ERROR "QtMQTT GIT_HASH_RESULT is: ${GIT_HASH_RESULT}")
     else()
-        file(COPY ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-${GIT_HASH}/Qt5Mqttd.dll
-        ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-${GIT_HASH}/Qt5Mqttd.dll
-        DESTINATION {CMAKE_BINARY_DIR}/bin
+        file(COPY ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-${GIT_HASH}/bin/Qt5Mqttd.dll
+        ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-${GIT_HASH}/bin/Qt5Mqtt.dll
+        DESTINATION ${CMAKE_BINARY_DIR}/bin
         )
         message(STATUS "QtMQTT 3rd party library is already installed at ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-${GIT_HASH}")
     endif() 
