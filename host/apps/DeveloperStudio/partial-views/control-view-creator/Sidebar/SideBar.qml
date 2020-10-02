@@ -60,8 +60,18 @@ Rectangle {
                     treeView.selection.select(index, ItemSelectionModel.Rows);
                     treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
                     // Only set editing to true if we have created a new file and the filename is empty
-                    if (treeModel.getNode(index).filename === "") {
-                        treeModel.setData(index, true, SGQrcTreeModel.EditingRole)
+                    let node = treeModel.getNode(index);
+                    if (node.filename === "") {
+                        treeModel.setData(index, true, SGQrcTreeModel.EditingRole);
+                    } else {
+                        if (!node.isDir) {
+                            if (treeView.isExpanded(parent)) {
+                                openFilesModel.addTab(node.filename,
+                                                      node.filepath,
+                                                      node.filetype,
+                                                      node.uid);
+                            }
+                        }
                     }
                 }
 
@@ -73,7 +83,7 @@ Rectangle {
                                 return;
                             }
                         }
-                        treeModel.insertChild(path, -1, treeView.rootIndex);
+                        treeModel.insertChild(path, -1, true, treeView.rootIndex);
                     }
                 }
             }

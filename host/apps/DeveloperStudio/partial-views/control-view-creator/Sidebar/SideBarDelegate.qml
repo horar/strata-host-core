@@ -102,7 +102,7 @@ Item {
         id: inQrcIcon
         height: 15
         width: 15
-        visible: model && !model.isDir
+        visible: model && !model.isDir && model.inQrc
 
         anchors {
             verticalCenter: parent.verticalCenter
@@ -110,8 +110,8 @@ Item {
             rightMargin: 5
         }
 
-        iconColor: model && model.inQrc ? "green" : "red"
-        source: model && model.inQrc ? "qrc:/sgimages/check-circle.svg" : "qrc:/sgimages/times-circle.svg"
+        iconColor: "green"
+        source: "qrc:/sgimages/check-circle.svg"
     }
 
     Loader {
@@ -191,7 +191,7 @@ Item {
                         return;
                     }
                 }
-                treeModel.insertChild(path, -1, styleData.index);
+                treeModel.insertChild(path, -1, true, styleData.index);
             }
         }
 
