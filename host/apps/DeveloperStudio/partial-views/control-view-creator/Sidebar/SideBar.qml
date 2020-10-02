@@ -38,6 +38,7 @@ Rectangle {
                     // When a row is inserted, we want to focus on that row
                     onRowsInserted: {
                         treeView.selection.clearCurrentIndex();
+                        console.info(parent)
                         let index = treeModel.index(first, 0, parent);
                         treeView.selection.select(index, ItemSelectionModel.Rows);
                         treeView.selection.setCurrentIndex(index, ItemSelectionModel.Current);
@@ -110,6 +111,10 @@ Rectangle {
                         readOnly: false
 
                         onEditingFinished: {
+                            if (!model.editing) {
+                                return;
+                            }
+
                             // If a new file was created, and its filename is still empty
                             if (text === "" && model.filename === "") {
                                 treeModel.removeRows(model.row, 1, styleData.index.parent);
@@ -118,12 +123,13 @@ Rectangle {
 
                             let path;
                             // Below handles the case where the parentNode is the .qrc file
-                            if (!model.parentNode.isDir) {
+                            if (model && !model.parentNode.isDir) {
                                 path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(treeModel.projectDirectory), displayText);
                             } else {
                                 path = SGUtilsCpp.joinFilePath(SGUtilsCpp.urlToLocalFile(model.parentNode.filepath), displayText);
 
                             }
+
                             let success = SGUtilsCpp.createFile(path);
                             if (success) {
                                 model.filename = displayText
@@ -139,6 +145,7 @@ Rectangle {
                             } else {
                                 //handle error
                                 console.error("Could not create file:", path)
+                                treeModel.removeRows(model.row, 1, styleData.index.parent)
                             }
                         }
 
