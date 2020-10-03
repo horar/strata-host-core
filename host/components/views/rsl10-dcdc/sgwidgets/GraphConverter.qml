@@ -39,6 +39,7 @@ SGGraph {
     property bool autoAdjustMaxMin: false
     property real inputData
     property color dataLineColor: "black"
+    property int pointCount: 50
 
     // PROPERTIES THAT DO NOTHING - no equivalent in SGGraph 1.0
     property real xAxisTickCount: 0
@@ -49,7 +50,6 @@ SGGraph {
     property color axesColor
     property bool showOptions
     property bool repeatOldData
-    property int pointCount /// not sure about this one
     ////
 
     panXEnabled: false
@@ -71,7 +71,7 @@ SGGraph {
 
     Timer {
         id: graphTimerPoints
-        interval: 60
+        interval: ((xMax-xMin)/pointCount)*1000 // like SGGraphTimed, plots a point every (1/pointCount) of the min/max X time interval
         running: true
         repeat: true
 
@@ -96,7 +96,7 @@ SGGraph {
 
         function removeOutOfViewPoints() {
             // recursively clean up points that have moved out of view
-            if (graphConverter.curve(0).at(0).x > graphConverter.xMin) {
+            if (graphConverter.curve(0).at(0).x > graphConverter.xMax) {
                 graphConverter.curve(0).remove(0)
                 removeOutOfViewPoints()
             }
