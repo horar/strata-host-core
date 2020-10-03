@@ -226,206 +226,217 @@ Rectangle {
                 infoBoxWidth: 80
             }
 
-            SGRadioButtonContainer {
-                id: operationModeControl
+            Rectangle {
                 anchors {
-                    top: dutyControl.bottom
-                    topMargin: 30
-                    left: dutyControl.left
-                    leftMargin: 10
+                    top : dutyControl.bottom
+                    topMargin: 10
+
                 }
 
-                label: "<b>Operation Mode:</b>"
-                labelLeft: false
-                exclusive: true
-
-                radioGroup: GridLayout {
-                    columnSpacing: 10
-                    rowSpacing: 10
-                    // Optional properties to access specific buttons cleanly from outside
-                    property alias manual : manual
-                    property alias automatic: automatic
-
-                    SGRadioButton {
-                        id: manual
-                        text: "Normal Operation"
-                        checked: platformInterface.systemMode
-                        onCheckedChanged: {
-                            if (checked) {
-                                console.log("manual")
-                                platformInterface.systemMode = true
-                                //platformInterface.frequency = 0
-                                //platformInterface.duty = 0
-                                frequencyControl.sliderEnable = false
-                                frequencyControl.opacity = 0.5
-                                dutyControl.sliderEnable = false
-                                dutyControl.opacity = 0.5
+                width: parent.width
+                height: parent.height/1.5
+                RowLayout {
+                    anchors.fill: parent
+                    Rectangle{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        SGRadioButtonContainer {
+                            id: operationModeControl
+                            anchors {
+                                top: parent.top
+                                topMargin: 30
+                                left: parent.left
+                                leftMargin: 5
                             }
-                            else {
-                                console.log("automatic")
-                                platformInterface.systemMode = false
-                                platformInterface.frequency = 0
-                                platformInterface.duty = 0
-                                frequencyControl.sliderEnable = true
-                                frequencyControl.opacity = 1.0
-                                dutyControl.sliderEnable = true
-                                dutyControl.opacity = 1.0
+
+                            label: "<b>Operation Mode:</b>"
+                            labelLeft: false
+                            exclusive: true
+
+                            radioGroup: GridLayout {
+                                columnSpacing: 5
+                                rowSpacing: 5
+                                // Optional properties to access specific buttons cleanly from outside
+                                property alias manual : manual
+                                property alias automatic: automatic
+
+                                SGRadioButton {
+                                    id: manual
+                                    text: "Normal Operation"
+                                    checked: platformInterface.systemMode
+                                    onCheckedChanged: {
+                                        if (checked) {
+                                            console.log("manual")
+                                            platformInterface.systemMode = true
+                                            //platformInterface.frequency = 0
+                                            //platformInterface.duty = 0
+                                            frequencyControl.sliderEnable = false
+                                            frequencyControl.opacity = 0.5
+                                            dutyControl.sliderEnable = false
+                                            dutyControl.opacity = 0.5
+                                        }
+                                        else {
+                                            console.log("automatic")
+                                            platformInterface.systemMode = false
+                                            platformInterface.frequency = 0
+                                            platformInterface.duty = 0
+                                            frequencyControl.sliderEnable = true
+                                            frequencyControl.opacity = 1.0
+                                            dutyControl.sliderEnable = true
+                                            dutyControl.opacity = 1.0
+                                        }
+                                    }
+                                }
+
+                                SGRadioButton {
+                                    id: automatic
+                                    text: "Load Transient"
+                                    checked : !manual.checked
+                                }
                             }
                         }
+
+                        SGCircularGauge {
+                            id: powerInputGauge
+                            anchors {
+                                centerIn: parent
+                            }
+                            width: parent.width
+                            height: parent.height/2
+                            gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
+                            gaugeFrontColor2: Qt.rgba(1,0,0,1)
+                            minimumValue: 0
+                            maximumValue: multiplePlatform.poutScale
+                            tickmarkStepSize: multiplePlatform.poutStep
+                            outerColor: "#999"
+                            unitLabel: if(multiplePlatform.pdiss === "mW") {"mW"}
+                                       else{"W"}
+                            gaugeTitle: "Input Power"
+                            value: if(multiplePlatform.pdiss === "mW") {((platformInterface.status_voltage_current.vin) * ((platformInterface.status_voltage_current.iin)))/1000}
+                                   else{(((platformInterface.status_voltage_current.vin) * ((platformInterface.status_voltage_current.iin)))/1000000).toFixed(3)}
+                            Behavior on value { NumberAnimation { duration: 300 } }
+                        }
+
                     }
+                    Rectangle{
+                        Layout.preferredWidth: parent.width/2.2
+                        Layout.fillHeight: true
 
-                    SGRadioButton {
-                        id: automatic
-                        text: "Load Transient"
-                        checked : !manual.checked
+                        GraphConverter{
+                            id: voutGraph
+                            width: parent.width/2
+                            height: parent.height/2
+                            anchors {
+                                left: parent.left
+                                top: parent.top
+
+
+                            }
+                            showOptions: false
+                            autoAdjustMaxMin: false
+                            //repeatOldData: visible
+                            dataLineColor: "blue"
+                            textColor: "black"
+                            axesColor: "black"
+                            gridLineColor: "lightgrey"
+                            underDataColor: "transparent"
+                            backgroundColor: "transparent"
+                            xAxisTickCount: 11
+                            yAxisTickCount: 6
+                            throttlePlotting: true
+                            pointCount: 30
+                            title: "<b>Output Voltage</b>"
+                            xAxisTitle: "<b>50 µs / div<b>"
+                            yAxisTitle: "Output Voltage (V)"
+                            inputData: {((platformInterface.status_voltage_current.vout)/1000)}
+                            maxYValue: multiplePlatform.voutScale
+                            showYGrids: true
+                            showXGrids: true
+                            minXValue: 0
+                            maxXValue: 5
+                            reverseDirection: true
+                        }
+
+                        GraphConverter {
+                            id: ioutGraph
+                            width: parent.width/2
+                            height: parent.height/2
+                            anchors {
+                                left: parent.left
+                                top: voutGraph.bottom
+                                topMargin: 5
+                            }
+                            showOptions: false
+                            autoAdjustMaxMin: false
+                            //repeatOldData: visible
+                            dataLineColor: "lightgreen"
+                            textColor: "black"
+                            axesColor: "black"
+                            gridLineColor: "lightgrey"
+                            underDataColor: "transparent"
+                            backgroundColor: "transparent"
+                            xAxisTickCount: 11
+                            yAxisTickCount: 6
+                            throttlePlotting: true
+                            pointCount: 30
+                            title: "<b>Output Current</b>"
+                            xAxisTitle: "<b>50 µs / div<b>"
+                            yAxisTitle: if(multiplePlatform.current === "mA") {"Output Current (mA)"}
+                                        else{"Output Current (A)"}
+                            inputData: if(multiplePlatform.current === "mA") {((platformInterface.status_voltage_current.iout))}
+                                       else{(((platformInterface.status_voltage_current.iout))/1000).toFixed(3)}
+                            maxYValue: if(multiplePlatform.current === "mA") {multiplePlatform.ioutScale * 1000}
+                                       else{multiplePlatform.ioutScale}
+                            showYGrids: true
+                            showXGrids: true
+                            minXValue: 0
+                            maxXValue: 5
+                            reverseDirection: true
+                        }
+
+                        Image {
+                            id:basicImageLT
+                            Layout.preferredHeight: parent.height
+                            Layout.preferredWidth: parent.width
+                            source:"images/transient.gif"
+                            width: parent.width/2
+                            height: parent.height
+                            anchors {
+                                left: ioutGraph.right
+                                verticalCenter: parent.verticalCenter
+                            }
+                            // fillMode: Image.PreserveAspectFit
+                            mipmap: true
+                            opacity: 1
+                        }
+
+                    }
+                    Rectangle{
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        SGCircularGauge {
+                            id: powerOutputGauge
+                            anchors {
+                                centerIn: parent
+                            }
+                            width: parent.width
+                            height: parent.height/2
+                            gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
+                            gaugeFrontColor2: Qt.rgba(1,0,0,1)
+                            minimumValue: 0
+                            maximumValue: multiplePlatform.poutScale
+                            tickmarkStepSize: multiplePlatform.poutStep
+                            outerColor: "#999"
+                            unitLabel: if(multiplePlatform.pdiss === "mW") {"mW"}
+                                       else{"W"}
+                            gaugeTitle: "Output Power"
+                            value: if(multiplePlatform.pdiss === "W") {(((platformInterface.status_voltage_current.vout) * ((platformInterface.status_voltage_current.iout)))/1000000).toFixed(0)}
+                                   else{(((platformInterface.status_voltage_current.vout) * ((platformInterface.status_voltage_current.iout)))/1000).toFixed(0)}
+                            Behavior on value { NumberAnimation { duration: 300 } }
+                        }
                     }
                 }
             }
-
-            SGCircularGauge {
-                id: powerInputGauge
-                anchors {
-                    left: parent.left
-                    leftMargin: 20
-                    top: operationModeControl.bottom
-                    topMargin: 15
-                    horizontalCenter: operationModeControl.horizontalCenter
-                }
-                width: basicImageLT.width/2
-                height: basicImageLT.height/2
-                gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
-                gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                minimumValue: 0
-                maximumValue: multiplePlatform.poutScale
-                tickmarkStepSize: multiplePlatform.poutStep
-                outerColor: "#999"
-                unitLabel: if(multiplePlatform.pdiss === "mW") {"mW"}
-                           else{"W"}
-                gaugeTitle: "Input Power"
-                value: if(multiplePlatform.pdiss === "mW") {((platformInterface.status_voltage_current.vin) * ((platformInterface.status_voltage_current.iin)))/1000}
-                       else{(((platformInterface.status_voltage_current.vin) * ((platformInterface.status_voltage_current.iin)))/1000000).toFixed(3)}
-                Behavior on value { NumberAnimation { duration: 300 } }
-            }
-
-            GraphConverter{
-                id: voutGraph
-                width: controlPage.width/3
-                height: controlPage.height/3.3
-                anchors {
-                    left: operationModeControl.right
-                    leftMargin: 20
-                    top: dutyControl.bottom
-                    topMargin: 0
-                }
-                showOptions: false
-                autoAdjustMaxMin: false
-                //repeatOldData: visible
-                dataLineColor: "blue"
-                textColor: "black"
-                axesColor: "black"
-                gridLineColor: "lightgrey"
-                underDataColor: "transparent"
-                backgroundColor: "transparent"
-                xAxisTickCount: 11
-                yAxisTickCount: 6
-                throttlePlotting: true
-                pointCount: 30
-                title: "<b>Output Voltage</b>"
-                xAxisTitle: "<b>50 µs / div<b>"
-                yAxisTitle: "Output Voltage (V)"
-                inputData: {((platformInterface.status_voltage_current.vout)/1000)}
-                maxYValue: multiplePlatform.voutScale
-                showYGrids: true
-                showXGrids: true
-                minXValue: 0
-                maxXValue: 5
-                reverseDirection: true
-            }
-
-            GraphConverter {
-                id: ioutGraph
-                width: controlPage.width/3
-                height: controlPage.height/3.3
-                anchors {
-                    left: operationModeControl.right
-                    leftMargin: 20
-                    top: voutGraph.bottom
-                    topMargin: 5
-                }
-                showOptions: false
-                autoAdjustMaxMin: false
-                //repeatOldData: visible
-                dataLineColor: "lightgreen"
-                textColor: "black"
-                axesColor: "black"
-                gridLineColor: "lightgrey"
-                underDataColor: "transparent"
-                backgroundColor: "transparent"
-                xAxisTickCount: 11
-                yAxisTickCount: 6
-                throttlePlotting: true
-                pointCount: 30
-                title: "<b>Output Current</b>"
-                xAxisTitle: "<b>50 µs / div<b>"
-                yAxisTitle: if(multiplePlatform.current === "mA") {"Output Current (mA)"}
-                            else{"Output Current (A)"}
-                inputData: if(multiplePlatform.current === "mA") {((platformInterface.status_voltage_current.iout))}
-                           else{(((platformInterface.status_voltage_current.iout))/1000).toFixed(3)}
-                maxYValue: if(multiplePlatform.current === "mA") {multiplePlatform.ioutScale * 1000}
-                           else{multiplePlatform.ioutScale}
-                showYGrids: true
-                showXGrids: true
-                minXValue: 0
-                maxXValue: 5
-                reverseDirection: true
-            }
-
-            Image {
-                id:basicImageLT
-                Layout.preferredHeight: parent.height
-                Layout.preferredWidth: parent.width
-                source:"images/transient.gif"
-                width: ioutGraph.width/2
-                height: ioutGraph.height*2.1
-
-                anchors {
-                    horizontalCenter: ioutGraph.right
-                    horizontalCenterOffset: ioutGraph.width/3
-                    verticalCenter: ioutGraph.top
-                }
-                // fillMode: Image.PreserveAspectFit
-                mipmap: true
-                opacity: 1
-            }
-
-
-
-            SGCircularGauge {
-                id: powerOutputGauge
-                anchors {
-                    left: basicImageLT.right
-                    right: parent.right
-                    verticalCenter: basicImageLT.verticalCenter
-
-                }
-                width: basicImageLT.width/2
-                height: basicImageLT.height/2
-                gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
-                gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                minimumValue: 0
-                maximumValue: multiplePlatform.poutScale
-                tickmarkStepSize: multiplePlatform.poutStep
-                outerColor: "#999"
-                unitLabel: if(multiplePlatform.pdiss === "mW") {"mW"}
-                           else{"W"}
-                gaugeTitle: "Output Power"
-                value: if(multiplePlatform.pdiss === "W") {(((platformInterface.status_voltage_current.vout) * ((platformInterface.status_voltage_current.iout)))/1000000).toFixed(0)}
-                       else{(((platformInterface.status_voltage_current.vout) * ((platformInterface.status_voltage_current.iout)))/1000).toFixed(0)}
-                Behavior on value { NumberAnimation { duration: 300 } }
-            }
-
-
-
         }
 
     } // end Control Section Rectangle

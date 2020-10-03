@@ -428,7 +428,7 @@ Item {
                     Layout.preferredWidth: parent.width
                     source: "images/led_3d.gif"
                     width: parent.width - parent.width/20
-                    height: parent.height + (parent.height/6)
+                    height: parent.height - 20
                     anchors.centerIn: parent
                     //fillMode: Image.PreserveAspectFit
                     mipmap:true
@@ -440,8 +440,7 @@ Item {
                     id: dimmensionalModeSpace
                     anchors {
                         top: basicImage.bottom
-                        topMargin: -parent.height/40
-                        left: basicImage.center
+                        topMargin: -50
                     }
 
                     //label: ""
