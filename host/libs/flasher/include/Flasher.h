@@ -68,9 +68,8 @@ class Flasher : public QObject
 
         /*!
          * Flash bootloader.
-         * \param startApplication if set to true start application after flashing
          */
-        void flashBootloader(bool startApplication = true);
+        void flashBootloader();
 
         /*!
          * Cancel flash firmware operation.

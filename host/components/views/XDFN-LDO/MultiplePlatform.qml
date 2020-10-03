@@ -66,7 +66,7 @@ Item{
             ecoVisible = true
             partNumber = "<b> NCP171 </b>"
             title = "<b> Low Iq Dual Power Mode Linear Regulator </b>"
-            warningVinLable = "2.25V"
+            warningVinLable = "1.7V"
             showDecimal = true
             maxValue = 300
             stepValue = 30

@@ -84,9 +84,10 @@ StackLayout {
 
         property int stackIndex: 2 // must be updated if platformStack order is modified
 
-        PlatformSettings {
-            id: platformSettings
-        }
+        // Commented out to remove OTA features from release v2.5.0
+//        PlatformSettings {
+//            id: platformSettings
+//        }
     }
 
     SGUserSettings {
