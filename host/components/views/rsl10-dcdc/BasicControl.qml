@@ -372,6 +372,49 @@ Item {
                         horizontalCenter: parent.horizontalCenter
                     }
                 }
+
+                SGRadioButtonContainer {
+                    id: dimmensionalModeSpace
+                    anchors {
+                        top: inputCurrent.bottom
+                        topMargin: 10
+                        horizontalCenter: inputCurrent.horizontalCenter
+                    }
+
+                    //label: ""
+                    labelLeft: false
+                    exclusive: true
+
+                    radioGroup: GridLayout {
+                        columnSpacing: 10
+                        rowSpacing: 10
+                        // Optional properties to access specific buttons cleanly from outside
+                        property alias twoDimmensional : twoDimmensional
+                        property alias threeDimmensional: threeDimmensional
+
+                        SGRadioButton {
+                            id: threeDimmensional
+                            text: "3D"
+                            checked: platformInterface.dimmensionalMode
+                            onCheckedChanged: {
+                                if (checked) {
+                                    console.log("3D")
+                                    platformInterface.dimmensionalMode = true
+                                }
+                                else {
+                                    console.log("Top")
+                                    platformInterface.dimmensionalMode = false
+                                }
+                            }
+                        }
+
+                        SGRadioButton {
+                            id: twoDimmensional
+                            text: "Top"
+                            checked : !threeDimmensional.checked
+                        }
+                    }
+                }
             }
 
             Rectangle {
@@ -434,48 +477,6 @@ Item {
                     mipmap:true
                     visible: platformInterface.pause_periodic === false && platformInterface.dimmensionalMode === true ? true : false
 
-                }
-
-                SGRadioButtonContainer {
-                    id: dimmensionalModeSpace
-                    anchors {
-                        top: basicImage.bottom
-                        topMargin: -50
-                    }
-
-                    //label: ""
-                    labelLeft: false
-                    exclusive: true
-
-                    radioGroup: GridLayout {
-                        columnSpacing: 10
-                        rowSpacing: 10
-                        // Optional properties to access specific buttons cleanly from outside
-                        property alias twoDimmensional : twoDimmensional
-                        property alias threeDimmensional: threeDimmensional
-
-                        SGRadioButton {
-                            id: threeDimmensional
-                            text: "3D"
-                            checked: platformInterface.dimmensionalMode
-                            onCheckedChanged: {
-                                if (checked) {
-                                    console.log("3D")
-                                    platformInterface.dimmensionalMode = true
-                                }
-                                else {
-                                    console.log("Top")
-                                    platformInterface.dimmensionalMode = false
-                                }
-                            }
-                        }
-
-                        SGRadioButton {
-                            id: twoDimmensional
-                            text: "Top"
-                            checked : !threeDimmensional.checked
-                        }
-                    }
                 }
             }
 
@@ -566,71 +567,76 @@ Item {
 
                 SGToolTipPopup {
                     id: dio12SgToolTipPopupEN
-                    height: parent.height/20
+                    height: parent.height/10
                     showOn: if(multiplePlatform.dio12 === true && multiplePlatform.jumperDIO12 === false) {!dio12Switch.checked} else {false}
                     anchors {
                         bottom: dio12Switch.top
                         horizontalCenter: dio12Switch.right
                     }
                     content: Text {
-                        text: qsTr("For EN place a jumper in header EN/IO2")
+                        text: "For EN place a jumper \n in header EN/IO2"
                         color: "white"
+                        horizontalAlignment: Text.AlignHCenter
                     }
                 }
 
                 SGToolTipPopup {
                     id: dio12SgToolTipPopupENIO2
-                    height: parent.height/20
+                    height: parent.height/10
                     showOn: if(multiplePlatform.dio12 === true && multiplePlatform.jumperDIO12 === true) {!dio12Switch.checked} else {false}
                     anchors {
                         bottom: dio12Switch.top
                         horizontalCenter: dio12Switch.right
                     }
                     content: Text {
-                        text: qsTr("Select EN or IO2 by a jumper in header EN/IO2")
+                        text: "Select EN or IO2 by a jumper \n in header EN/IO2"
                         color: "white"
+                        horizontalAlignment: Text.AlignHCenter
                     }
                 }
 
                 SGToolTipPopup {
                     id: dio12SgToolTipPopupEN1EN3
-                    height: parent.height/20
+                    height: parent.height/10
                     showOn: if(multiplePlatform.dio12 === false && multiplePlatform.jumperDIO12 === true) {!dio12Switch.checked} else {false}
                     anchors {
                         bottom: dio12Switch.top
                         horizontalCenter: dio12Switch.right
                     }
                     content: Text {
-                        text: qsTr("For EN1 place a jumper in header EN/IO2")
+                        text: "For EN1 place a jumper \n in header EN/IO2"
                         color: "white"
+                        horizontalAlignment: Text.AlignHCenter
                     }
                 }
 
                 SGToolTipPopup {
                     id: dio12SgToolTipPopupEN3EN1
-                    height: parent.height/20
+                    height: parent.height/10
                     showOn: if(multiplePlatform.dio12 && multiplePlatform.jumperDIO12 === true) {dio12Switch.checked} else {false}
                     anchors {
                         bottom: dio12Switch.top
                         horizontalCenter: dio12Switch.right
                     }
                     content: Text {
-                        text: qsTr("For EN3 remove the jumper in header EN/IO2")
+                        text: "For EN3 remove the jumper \n in header EN/IO2"
                         color: "white"
+                        horizontalAlignment: Text.AlignHCenter
                     }
                 }
 
                 SGToolTipPopup {
                     id: dio12SgToolTipPopupEN1
-                    height: parent.height/20
+                    height: parent.height/10
                     showOn: if(multiplePlatform.dio12 === false && multiplePlatform.jumperDIO12 === false) {!dio12Switch.checked} else {false}
                     anchors {
                         bottom: dio12Switch.top
                         horizontalCenter: dio12Switch.right
                     }
                     content: Text {
-                        text: qsTr("For EN1 place a jumper in header EN/IO2")
+                        text: "For EN1 place a jumper \n in header EN/IO2"
                         color: "white"
+                        horizontalAlignment: Text.AlignHCenter
                     }
                 }
 
@@ -815,6 +821,8 @@ Item {
                     }
 
                 }
+
+
             }
 
         }

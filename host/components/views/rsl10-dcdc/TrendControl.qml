@@ -70,7 +70,7 @@ Item{
                     axesColor: "black"
                     gridLineColor: "lightgrey"
                     underDataColor: "transparent"
-                    backgroundColor: "transparent"
+                    backgroundColor: "white"
                     xAxisTickCount: 51
                     yAxisTickCount: 11
                     throttlePlotting: true

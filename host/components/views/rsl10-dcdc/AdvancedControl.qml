@@ -237,40 +237,34 @@ Item {
                         leftMargin: 20
                         top: parent.top
                         topMargin: 5
+                        right:parent.right
+                        rightMargin: 5
                     }
+                    autoAdjustMaxMin: false
+                    //repeatOldData: visible
+                    dataLineColor: "purple"
+                    textColor: "black"
+                    axesColor: "black"
+                    gridLineColor: "lightgrey"
+                    underDataColor: "transparent"
+                    backgroundColor: "white"
+                    xAxisTickCount: 11
+                    yAxisTickCount: 11
+                    throttlePlotting: true
+                    pointCount: if (platformInterface.systemMode === false) {1} else {50}
                     title: "<b>Efficiency</b>"
-                    xTitle: "<b>50 µs / div<b>"
-                    yTitle: "<b>η [%]</b>"
-                    xMin: 0
-                    xMax: 5
-                    yMin: 0
-                    yMax: 100
-                    xGrid: true
-                    yGrid: true
-                    gridColor: "lightgrey"
-                    Component.onCompleted: {
-                        let movingCurve = createCurve("movingCurve")
-                        movingCurve.color = "turquoise"
-                        movingCurve.autoUpdate = false
-                        graphTimerPoints.start()
-                    }
+                    xAxisTitle: "<b>50 Âµs / div<b>"
+                    yAxisTitle: "<b>Î· [%]</b>"
+                    inputData: effi_calc
+                    maxYValue: 100
+                    minYValue: 0
+                    showYGrids: true
+                    showXGrids: true
+                    minXValue: 0
+                    maxXValue:5
+                    reverseDirection: true
 
-                    Timer {
-                        id: graphTimerPoints
-                        interval: 60
-                        running: false
-                        repeat: true
 
-                        property real lastTime
-
-                        onTriggered: {
-                            console.info("graph")
-                            let curve = efficiencyGraph.curve("graphCurve")
-                            curve.append(0,effi_calc)
-                            efficiencyGraph.update()
-
-                        }
-                    }
                 }
             } // end of left control
 
@@ -303,7 +297,7 @@ Item {
                     GraphConverter{
                         id: vinGraph
                         width: parent.width/6
-                        height: parent.height/1.2
+                        height: parent.height/1.5
                         anchors {
                             left: parent.left
                             leftMargin: -50
@@ -318,7 +312,7 @@ Item {
                         axesColor: "black"
                         gridLineColor: "lightgrey"
                         underDataColor: "transparent"
-                        backgroundColor: "transparent"
+                        backgroundColor: "white"
                         xAxisTickCount: 6
                         yAxisTickCount: 11
                         throttlePlotting: true
@@ -340,7 +334,7 @@ Item {
                         label: "VIN Ready < "+ multiplePlatform.minVin +"V"
                         anchors {
                             top : vinGraph.bottom
-                            topMargin : -20
+                            topMargin : 5
                             horizontalCenter: vinGraph.horizontalCenter
                             horizontalCenterOffset:  0
                         }
@@ -389,7 +383,7 @@ Item {
                         fontSize :  (vinGraph.width + vinGraph.height)/37
                         unitSize: (vinGraph.width + vinGraph.height)/35
                         anchors {
-                            top : vinGraph.bottom
+                            top : ledLight.bottom
                             topMargin : 20
                             horizontalCenter: vinGraph.horizontalCenter
                             horizontalCenterOffset:  10
@@ -399,7 +393,7 @@ Item {
                     GraphConverter{
                         id: iinGraph
                         width: parent.width/6
-                        height: parent.height/1.2
+                        height: parent.height/1.5
                         anchors {
                             left: vinGraph.right
                             leftMargin: 0
@@ -414,7 +408,7 @@ Item {
                         axesColor: "black"
                         gridLineColor: "lightgrey"
                         underDataColor: "transparent"
-                        backgroundColor: "transparent"
+                        backgroundColor: "white"
                         xAxisTickCount: 6
                         yAxisTickCount: 11
                         throttlePlotting: true
@@ -456,7 +450,7 @@ Item {
                         unitSize: (iinGraph.width + iinGraph.height)/35
                         anchors {
                             top : iinGraph.bottom
-                            topMargin : 20
+                            topMargin : 40
                             horizontalCenter: iinGraph.horizontalCenter
                             horizontalCenterOffset:  10
                         }
@@ -472,7 +466,7 @@ Item {
                         thresholdExceeded: true
                         anchors {
                             top : iinGraph.bottom
-                            topMargin : -15
+                            topMargin : 20
                             horizontalCenter: parent.horizontalCenter
                         }
                         gaugeElements: Row {
@@ -497,7 +491,7 @@ Item {
                     GraphConverter{
                         id: pdissGraph
                         width: parent.width/6
-                        height: parent.height/1.2
+                        height: parent.height/1.5
                         anchors {
                             left: iinGraph.right
                             leftMargin: 0
@@ -512,7 +506,7 @@ Item {
                         axesColor: "black"
                         gridLineColor: "lightgrey"
                         underDataColor: "transparent"
-                        backgroundColor: "transparent"
+                        backgroundColor: "white"
                         xAxisTickCount: 6
                         yAxisTickCount: 11
                         throttlePlotting: true
@@ -535,7 +529,7 @@ Item {
                     GraphConverter{
                         id: poutGraph
                         width: parent.width/6
-                        height: parent.height/1.2
+                        height: parent.height/1.5
                         anchors {
                             left: pdissGraph.right
                             leftMargin: 0
@@ -550,7 +544,7 @@ Item {
                         axesColor: "black"
                         gridLineColor: "lightgrey"
                         underDataColor: "transparent"
-                        backgroundColor: "transparent"
+                        backgroundColor: "white"
                         xAxisTickCount: 6
                         yAxisTickCount: 11
                         throttlePlotting: true
@@ -571,7 +565,7 @@ Item {
                     GraphConverter{
                         id: voutGraph
                         width: parent.width/6
-                        height: parent.height/1.2
+                        height: parent.height/1.5
                         anchors {
                             left: poutGraph.right
                             leftMargin: 0
@@ -586,7 +580,7 @@ Item {
                         axesColor: "black"
                         gridLineColor: "lightgrey"
                         underDataColor: "transparent"
-                        backgroundColor: "transparent"
+                        backgroundColor: "white"
                         xAxisTickCount: 6
                         yAxisTickCount: 11
                         throttlePlotting: true
@@ -621,7 +615,7 @@ Item {
                         unitSize: (voutGraph.width + voutGraph.height)/35
                         anchors {
                             top : voutGraph.bottom
-                            topMargin : 20
+                            topMargin : 40
                             horizontalCenter: voutGraph.horizontalCenter
                             horizontalCenterOffset:  10
                         }
@@ -630,7 +624,7 @@ Item {
                     GraphConverter{
                         id: ioutGraph
                         width: parent.width/6
-                        height: parent.height/1.2
+                        height: parent.height/1.5
                         anchors {
                             left: voutGraph.right
                             leftMargin: 0
@@ -645,7 +639,7 @@ Item {
                         axesColor: "black"
                         gridLineColor: "lightgrey"
                         underDataColor: "transparent"
-                        backgroundColor: "transparent"
+                        backgroundColor: "white"
                         xAxisTickCount: 6
                         yAxisTickCount: 11
                         throttlePlotting: true
@@ -686,7 +680,7 @@ Item {
                         unitSize: (ioutGraph.width + ioutGraph.height)/35
                         anchors {
                             top : ioutGraph.bottom
-                            topMargin : 20
+                            topMargin : 40
                             horizontalCenter: ioutGraph.horizontalCenter
                             horizontalCenterOffset:  10
                         }

@@ -340,7 +340,7 @@ Rectangle {
                             axesColor: "black"
                             gridLineColor: "lightgrey"
                             underDataColor: "transparent"
-                            backgroundColor: "transparent"
+                            backgroundColor: "white"
                             xAxisTickCount: 11
                             yAxisTickCount: 6
                             throttlePlotting: true
@@ -374,7 +374,7 @@ Rectangle {
                             axesColor: "black"
                             gridLineColor: "lightgrey"
                             underDataColor: "transparent"
-                            backgroundColor: "transparent"
+                            backgroundColor: "white"
                             xAxisTickCount: 11
                             yAxisTickCount: 6
                             throttlePlotting: true
