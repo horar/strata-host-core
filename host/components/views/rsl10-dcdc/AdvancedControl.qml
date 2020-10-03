@@ -6,7 +6,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import tech.strata.sgwidgets 0.9
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/sgwidgets"
+import "sgwidgets/"
 import "qrc:/js/help_layout_manager.js" as Help
 
 
@@ -226,7 +226,7 @@ Item {
                     Behavior on value { NumberAnimation { duration: 300 } }
                 }
 
-                SGGraphTimed{
+                GraphConverter{
                     id: efficiencyGraph
                     width: parent.width/2.5
                     height: parent.height
@@ -288,7 +288,7 @@ Item {
                         leftMargin : 50
                     }
 
-                    SGGraphTimed{
+                    GraphConverter{
                         id: vinGraph
                         width: parent.width/6
                         height: parent.height/1.2
@@ -383,7 +383,7 @@ Item {
                         }
                     }
 
-                    SGGraphTimed{
+                    GraphConverter{
                         id: iinGraph
                         width: parent.width/6
                         height: parent.height/1.2
@@ -480,7 +480,7 @@ Item {
                         }
                     }
 
-                    SGGraphTimed{
+                    GraphConverter{
                         id: pdissGraph
                         width: parent.width/6
                         height: parent.height/1.2
@@ -517,7 +517,7 @@ Item {
                         reverseDirection: true
                     }
 
-                    SGGraphTimed{
+                    GraphConverter{
                         id: poutGraph
                         width: parent.width/6
                         height: parent.height/1.2
@@ -552,7 +552,7 @@ Item {
                         reverseDirection: true
                     }
 
-                    SGGraphTimed{
+                    GraphConverter{
                         id: voutGraph
                         width: parent.width/6
                         height: parent.height/1.2
@@ -610,7 +610,7 @@ Item {
                         }
                     }
 
-                    SGGraphTimed{
+                    GraphConverter{
                         id: ioutGraph
                         width: parent.width/6
                         height: parent.height/1.2
