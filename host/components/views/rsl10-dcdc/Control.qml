@@ -157,7 +157,7 @@ Rectangle {
             top: parent.top
             topMargin: 50
         }
-        source: "question-circle-solid.svg"
+        source: "qrc:/sgimages/question-circle.svg"
         iconColor: helpMouse.containsMouse ? "lightgrey" : "grey"
         height: 40
         width: 40

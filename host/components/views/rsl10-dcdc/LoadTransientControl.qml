@@ -12,9 +12,8 @@ import "qrc:/js/help_layout_manager.js" as Help
 Rectangle {
     id: controlPage
     objectName: "control"
-    width: 1200
-    height: 725
-    color: "white"
+    anchors.fill: parent
+    color: "transparent"
 
     Text {
         id: pageText
@@ -83,37 +82,26 @@ Rectangle {
     // Control Section
     Rectangle {
         id: controlSection1
-        width: 3*leftControl.width + rightControl.width + rightControl.anchors.leftMargin
-        height: controlPage.height / 2
+        width: parent.width
+        height:parent.height - pageText4.contentHeight - 10
         anchors {
-            verticalCenter: controlPage.verticalCenter
-            horizontalCenter: controlPage.horizontalCenter
+            top: pageText4.bottom
+            topMargin: 10
         }
+        color: "red"
 
-        Rectangle {
-            id: leftControl
-            anchors {
-                left: controlSection1.left
-                top: controlSection1.top
-            }
-            width: controlSection1.width/3
-            height: controlSection1.height
-        }
+
 
         Rectangle {
             id: rightControl
             anchors {
-                left: leftControl.right
-                leftMargin: 50
-                verticalCenter: controlPage.verticalCenter
+                fill: parent
             }
-            width: 1000
-            height: frequencyControl.height + operationModeControl.height + 40
-
             SGSlider {
                 id: frequencyControl
                 anchors {
                     left: rightControl.left
+                    leftMargin: 40
                     right: setFrequency.left
                     rightMargin: 10
                     top: rightControl.top
@@ -128,10 +116,10 @@ Rectangle {
                 endLabel: "10 kHz"            // Default: to
                 label: if(platformInterface.frequency == 0 ){"<b>Frequency (0): 0 Hz.<b>"}
                        else if(platformInterface.frequency == 1 ){"<b>Frequency (1): 2.5 kHz.<b>"}
-                        else if(platformInterface.frequency == 2 ){"<b>Frequency (2): 4 kHz.<b>"}
-                         else if(platformInterface.frequency == 3 ){"<b>Frequency (3): 5 kHz.<b>"}
-                          else if(platformInterface.frequency == 4 ){"<b>Frequency (4): 8 kHz.<b>"}
-                            else if(platformInterface.frequency == 5 ){"<b>Frequency (5): 10 kHz.<b>"}
+                       else if(platformInterface.frequency == 2 ){"<b>Frequency (2): 4 kHz.<b>"}
+                       else if(platformInterface.frequency == 3 ){"<b>Frequency (3): 5 kHz.<b>"}
+                       else if(platformInterface.frequency == 4 ){"<b>Frequency (4): 8 kHz.<b>"}
+                       else if(platformInterface.frequency == 5 ){"<b>Frequency (5): 10 kHz.<b>"}
                 labelLeft: false
                 value:
                 {
@@ -179,6 +167,7 @@ Rectangle {
                 id: dutyControl
                 anchors {
                     left: rightControl.left
+                    leftMargin: 40
                     right: setPWM.left
                     rightMargin: 10
                     top: rightControl.top
@@ -218,7 +207,7 @@ Rectangle {
                         platformInterface.duty = current_slider_value2
                     }
                 }
-            }          
+            }
 
             SGSubmitInfoBox {
                 id: setPWM
@@ -243,6 +232,7 @@ Rectangle {
                     top: dutyControl.bottom
                     topMargin: 30
                     left: dutyControl.left
+                    leftMargin: 10
                 }
 
                 label: "<b>Operation Mode:</b>"
@@ -292,13 +282,38 @@ Rectangle {
                 }
             }
 
-            SGGraphTimed{
+            SGCircularGauge {
+                id: powerInputGauge
+                anchors {
+                    left: parent.left
+                    leftMargin: 20
+                    top: operationModeControl.bottom
+                    topMargin: 15
+                    horizontalCenter: operationModeControl.horizontalCenter
+                }
+                width: basicImageLT.width/2
+                height: basicImageLT.height/2
+                gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
+                gaugeFrontColor2: Qt.rgba(1,0,0,1)
+                minimumValue: 0
+                maximumValue: multiplePlatform.poutScale
+                tickmarkStepSize: multiplePlatform.poutStep
+                outerColor: "#999"
+                unitLabel: if(multiplePlatform.pdiss === "mW") {"mW"}
+                           else{"W"}
+                gaugeTitle: "Input Power"
+                value: if(multiplePlatform.pdiss === "mW") {((platformInterface.status_voltage_current.vin) * ((platformInterface.status_voltage_current.iin)))/1000}
+                       else{(((platformInterface.status_voltage_current.vin) * ((platformInterface.status_voltage_current.iin)))/1000000).toFixed(3)}
+                Behavior on value { NumberAnimation { duration: 300 } }
+            }
+
+            GraphConverter{
                 id: voutGraph
-                width: controlPage.width/2.5
+                width: controlPage.width/3
                 height: controlPage.height/3.3
                 anchors {
                     left: operationModeControl.right
-                    leftMargin: 30
+                    leftMargin: 20
                     top: dutyControl.bottom
                     topMargin: 0
                 }
@@ -327,15 +342,15 @@ Rectangle {
                 reverseDirection: true
             }
 
-            SGGraphTimed {
+            GraphConverter {
                 id: ioutGraph
-                width: controlPage.width/2.46
+                width: controlPage.width/3
                 height: controlPage.height/3.3
                 anchors {
                     left: operationModeControl.right
-                    leftMargin: 23
-                    top: dutyControl.bottom
-                    topMargin: voutGraph.height -20
+                    leftMargin: 20
+                    top: voutGraph.bottom
+                    topMargin: 5
                 }
                 showOptions: false
                 autoAdjustMaxMin: false
@@ -370,7 +385,7 @@ Rectangle {
                 Layout.preferredHeight: parent.height
                 Layout.preferredWidth: parent.width
                 source:"images/transient.gif"
-                width: ioutGraph.width/1.5
+                width: ioutGraph.width/2
                 height: ioutGraph.height*2.1
 
                 anchors {
@@ -378,19 +393,23 @@ Rectangle {
                     horizontalCenterOffset: ioutGraph.width/3
                     verticalCenter: ioutGraph.top
                 }
-                //fillMode: Image.PreserveAspectFit
+                // fillMode: Image.PreserveAspectFit
                 mipmap: true
                 opacity: 1
-                }
+            }
+
+
 
             SGCircularGauge {
                 id: powerOutputGauge
                 anchors {
-                    horizontalCenter: basicImageLT.horizontalCenter
-                    verticalCenter: dutyControl.top
+                    left: basicImageLT.right
+                    right: parent.right
+                    verticalCenter: basicImageLT.verticalCenter
+
                 }
                 width: basicImageLT.width/2
-                height: basicImageLT.width/2
+                height: basicImageLT.height/2
                 gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
                 gaugeFrontColor2: Qt.rgba(1,0,0,1)
                 minimumValue: 0
@@ -405,27 +424,7 @@ Rectangle {
                 Behavior on value { NumberAnimation { duration: 300 } }
             }
 
-            SGCircularGauge {
-                id: powerInputGauge
-                anchors {
-                    horizontalCenter: operationModeControl.horizontalCenter
-                    verticalCenter: basicImageLT.verticalCenter
-                }
-                width: basicImageLT.width/2
-                height: basicImageLT.width/2
-                gaugeFrontColor1: Qt.rgba(0,0.5,1,1)
-                gaugeFrontColor2: Qt.rgba(1,0,0,1)
-                minimumValue: 0
-                maximumValue: multiplePlatform.poutScale
-                tickmarkStepSize: multiplePlatform.poutStep
-                outerColor: "#999"
-                unitLabel: if(multiplePlatform.pdiss === "mW") {"mW"}
-                           else{"W"}
-                gaugeTitle: "Input Power"
-                value: if(multiplePlatform.pdiss === "mW") {((platformInterface.status_voltage_current.vin) * ((platformInterface.status_voltage_current.iin)))/1000}
-                       else{(((platformInterface.status_voltage_current.vin) * ((platformInterface.status_voltage_current.iin)))/1000000).toFixed(3)}
-                Behavior on value { NumberAnimation { duration: 300 } }
-            }
+
 
         }
 

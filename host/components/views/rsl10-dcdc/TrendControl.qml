@@ -1,8 +1,9 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.12
-import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 0.9 as Widget09
 import "qrc:/js/help_layout_manager.js" as Help
+import "sgwidgets/"
 
 Item{
     id:mainmenu
@@ -56,7 +57,7 @@ Item{
                 anchors.fill:parent
                 anchors.centerIn: parent
 
-                SGGraphTimed {
+                GraphConverter {
                     id: graph0
                     anchors {
                         fill: parent
@@ -97,7 +98,7 @@ Item{
         anchors.top: rowright.bottom
         color: "transparent"
 
-        SGSegmentedButtonStrip {
+        Widget09.SGSegmentedButtonStrip {
             id: graphSelector
             label: "<b>Show Graphs:</b>"
             labelLeft: false
@@ -119,7 +120,7 @@ Item{
                 columnSpacing: 2
                 rowSpacing: 2
 
-                SGSegmentedButton{
+                Widget09.SGSegmentedButton{
                     text: qsTr("Vin")
                     onCheckedChanged: {
                         if (checked) {
@@ -132,7 +133,7 @@ Item{
                     }
                 }
 
-                SGSegmentedButton{
+                Widget09.SGSegmentedButton{
                     text: qsTr("Vout")
                     onCheckedChanged: {
                         if (checked) {
@@ -145,7 +146,7 @@ Item{
                     }
                 }
 
-                SGSegmentedButton{
+                Widget09.SGSegmentedButton{
                     text: qsTr("Iin")
                     onCheckedChanged: {
                         if (checked) {
@@ -158,7 +159,7 @@ Item{
                     }
                 }
 
-                SGSegmentedButton{
+                Widget09.SGSegmentedButton{
                     text: qsTr("Iout")
                     onCheckedChanged: {
                         if (checked) {
@@ -171,7 +172,7 @@ Item{
                     }
                 }
 
-                SGSegmentedButton{
+                Widget09.SGSegmentedButton{
                     text: qsTr("Pin")
                     onCheckedChanged: {
                         if (checked) {
@@ -184,7 +185,7 @@ Item{
                     }
                 }
 
-                SGSegmentedButton{
+                Widget09.SGSegmentedButton{
                     text: qsTr("Pout")
                     onCheckedChanged: {
                         if (checked) {
@@ -209,7 +210,7 @@ Item{
             }
             height:parent.height/1.1
 
-            SGGraphTimed {
+            GraphConverter {
                 id: graph1
                 title: "<b>Input Voltage</b>"
                 visible: false
@@ -244,7 +245,7 @@ Item{
                 showXGrids: true
             }
 
-            SGGraphTimed {
+            GraphConverter {
                 id: graph2
                 title: "<b>Output Voltage</b>"
                 visible: false
@@ -279,7 +280,7 @@ Item{
                 showXGrids: true
             }
 
-            SGGraphTimed {
+            GraphConverter {
                 id: graph3
                 title: "<b>Input Current</b>"
                 visible: false
@@ -317,7 +318,7 @@ Item{
                 showXGrids: true
             }
 
-            SGGraphTimed {
+            GraphConverter {
                 id: graph4
                 title: "<b>Output Current</b>"
                 visible: false
@@ -355,7 +356,7 @@ Item{
                 showXGrids: true
             }
 
-            SGGraphTimed {
+            GraphConverter {
                 id: graph5
                 title: "<b>Input Power</b>"
                 visible: false
@@ -392,7 +393,7 @@ Item{
                 showXGrids: true
             }
 
-            SGGraphTimed {
+            GraphConverter {
                 id: graph6
                 title: "<b>Output Power</b>"
                 visible: false

@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
 import tech.strata.sgwidgets 0.9
+import tech.strata.sgwidgets 1.0 as Widget10
 import "qrc:/js/navigation_control.js" as NavigationControl
 import "sgwidgets/"
 import "qrc:/js/help_layout_manager.js" as Help
@@ -26,6 +27,7 @@ Item {
     property var pin_calc: vin_calc * iin_calc * 1000
     property var pout_calc: vout_calc * iout_calc * 1000
     property var effi_calc: ((pout_calc * 100) / pin_calc).toFixed(3)
+
 
 
 
@@ -172,9 +174,9 @@ Item {
                     unitLabel: if(multiplePlatform.pdiss === "mW") {"mW"}
                                else{"W"}
                     value: if(pin_calc > pout_calc)
-                                {if(multiplePlatform.pdiss === "W") {((pin_calc - pout_calc)/1000000).toFixed(0)}
-                                 else{((pin_calc - pout_calc)/1000).toFixed(0)}}
-                            else{0}
+                           {if(multiplePlatform.pdiss === "W") {((pin_calc - pout_calc)/1000000).toFixed(0)}
+                               else{((pin_calc - pout_calc)/1000).toFixed(0)}}
+                           else{0}
 
 
                     Behavior on value { NumberAnimation { duration: 300 } }
@@ -233,39 +235,49 @@ Item {
                     anchors {
                         left: powerOutputGauge.right
                         leftMargin: 20
-                        top: parent.top + 100
+                        top: parent.top
+                        topMargin: 5
                     }
-                    showOptions: false
-                    autoAdjustMaxMin: false
-                    //repeatOldData: visible
-                    dataLineColor: "purple"
-                    textColor: "black"
-                    axesColor: "black"
-                    gridLineColor: "lightgrey"
-                    underDataColor: "transparent"
-                    backgroundColor: "transparent"
-                    xAxisTickCount: 11
-                    yAxisTickCount: 11
-                    throttlePlotting: true
-                    pointCount: if (platformInterface.systemMode === false) {1} else {50}
                     title: "<b>Efficiency</b>"
-                    xAxisTitle: "<b>50 µs / div<b>"
-                    yAxisTitle: "<b>η [%]</b>"
-                    inputData: effi_calc
-                    maxYValue: 100
-                    minYValue: 0
-                    showYGrids: true
-                    showXGrids: true
-                    minXValue: 0
-                    maxXValue:5
-                    reverseDirection: true
-                }
+                    xTitle: "<b>50 µs / div<b>"
+                    yTitle: "<b>η [%]</b>"
+                    xMin: 0
+                    xMax: 5
+                    yMin: 0
+                    yMax: 100
+                    xGrid: true
+                    yGrid: true
+                    gridColor: "lightgrey"
+                    Component.onCompleted: {
+                        let movingCurve = createCurve("movingCurve")
+                        movingCurve.color = "turquoise"
+                        movingCurve.autoUpdate = false
+                        graphTimerPoints.start()
+                    }
 
+                    Timer {
+                        id: graphTimerPoints
+                        interval: 60
+                        running: false
+                        repeat: true
+
+                        property real lastTime
+
+                        onTriggered: {
+                            console.info("graph")
+                            let curve = efficiencyGraph.curve("graphCurve")
+                            curve.append(0,effi_calc)
+                            efficiencyGraph.update()
+
+                        }
+                    }
+                }
             } // end of left control
 
             Rectangle {
                 width: parent.width
                 height: parent.height/1.7
+                color: "transparent"
 
                 anchors {
                     top : topControl.bottom
@@ -295,7 +307,8 @@ Item {
                         anchors {
                             left: parent.left
                             leftMargin: -50
-                            top: parent.top + 20
+                            top: parent.top
+                            topMargin: 20
                         }
                         showOptions: false
                         autoAdjustMaxMin: false
@@ -363,7 +376,7 @@ Item {
                         info: {
                             if(multiplePlatform.showDecimal === true) {vin_calc.toFixed(3)}
                             else {vin_calc.toFixed(0)}
-                            }
+                        }
 
                         infoBoxColor: if (multiplePlatform.nominalVin < vin_calc) {"red"}
                                       else{"lightblue"}
@@ -390,7 +403,8 @@ Item {
                         anchors {
                             left: vinGraph.right
                             leftMargin: 0
-                            top: parent.top + 20
+                            top: parent.top
+                            topMargin: 20
                         }
                         showOptions: false
                         autoAdjustMaxMin: false
@@ -409,9 +423,9 @@ Item {
                         yAxisTitle: if(multiplePlatform.current === "mA") {"Input Current (mA)"}
                                     else{"Input Current (A)"}
                         inputData: {
-                                    if(multiplePlatform.current === "A") {(iin_calc/1000).toFixed(3)}
-                                    else {iin_calc.toFixed(0)}
-                                    }
+                            if(multiplePlatform.current === "A") {(iin_calc/1000).toFixed(3)}
+                            else {iin_calc.toFixed(0)}
+                        }
                         maxYValue: if(multiplePlatform.current === "mA") {multiplePlatform.iinScale * 1000}
                                    else{multiplePlatform.iinScale}
                         showYGrids: true
@@ -428,7 +442,7 @@ Item {
                         info: {
                             if(multiplePlatform.current === "A") {(iin_calc/1000).toFixed(3)}
                             else {iin_calc.toFixed(0)}
-                            }
+                        }
 
                         infoBoxColor: "lightgreen"
                         infoBoxBorderColor: "grey"
@@ -474,8 +488,8 @@ Item {
                                 color: "orange"
                                 value: if(pin_calc > pout_calc)
                                        {if(multiplePlatform.pdiss === "W") {((pin_calc - pout_calc)/1000000).toFixed(0)}
-                                        else{((pin_calc - pout_calc)/1000).toFixed(0)}}
-                                            else{0}
+                                           else{((pin_calc - pout_calc)/1000).toFixed(0)}}
+                                       else{0}
                             }
                         }
                     }
@@ -487,7 +501,8 @@ Item {
                         anchors {
                             left: iinGraph.right
                             leftMargin: 0
-                            top: parent.top + 20
+                            top: parent.top
+                            topMargin: 20
                         }
                         showOptions: false
                         autoAdjustMaxMin: false
@@ -507,8 +522,8 @@ Item {
                                     else{"Power Dissipated (W)"}
                         inputData: if(pin_calc > pout_calc)
                                    {if(multiplePlatform.pdiss === "W") {((pin_calc - pout_calc)/1000000).toFixed(0)}
-                                    else{((pin_calc - pout_calc)/1000).toFixed(0)}}
-                                        else{0}
+                                       else{((pin_calc - pout_calc)/1000).toFixed(0)}}
+                                   else{0}
                         maxYValue: multiplePlatform.pdissScale
                         showYGrids: true
                         showXGrids: true
@@ -524,7 +539,8 @@ Item {
                         anchors {
                             left: pdissGraph.right
                             leftMargin: 0
-                            top: parent.top + 20
+                            top: parent.top
+                            topMargin: 20
                         }
                         showOptions: false
                         autoAdjustMaxMin: false
@@ -559,7 +575,8 @@ Item {
                         anchors {
                             left: poutGraph.right
                             leftMargin: 0
-                            top: parent.top + 20
+                            top: parent.top
+                            topMargin: 20
                         }
                         showOptions: false
                         autoAdjustMaxMin: false
@@ -591,7 +608,7 @@ Item {
                         info: {
                             if(multiplePlatform.showDecimal === true) {vout_calc.toFixed(3)}
                             else {vout_calc.toFixed(0)}
-                            }
+                        }
 
                         infoBoxColor: "lightblue"
                         infoBoxBorderColor: "grey"
@@ -617,7 +634,8 @@ Item {
                         anchors {
                             left: voutGraph.right
                             leftMargin: 0
-                            top: parent.top + 20
+                            top: parent.top
+                            topMargin: 20
                         }
                         showOptions: false
                         autoAdjustMaxMin: false

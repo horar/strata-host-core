@@ -5,18 +5,15 @@ import QtQuick.Controls 2.3
 import QtGraphicalEffects 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Extras 1.4
-
 import tech.strata.sgwidgets 1.0
 import tech.strata.sgwidgets 0.9 as Widget09
-
 import "qrc:/js/navigation_control.js" as NavigationControl
-import "qrc:/sgwidgets"
 import "qrc:/js/help_layout_manager.js" as Help
 
-Widget09.SGResponsiveScrollView {
+Rectangle {
     id: root
-    minimumHeight: 800
-    minimumWidth: 1000
+    anchors.fill: parent
+    property real ratioCalc: root.width / 1200
 
     // property that reads the initial notification
     property var effi_calc: (((platformInterface.status_voltage_current.vout) * ((platformInterface.status_voltage_current.iout)) * 100) / ((platformInterface.status_voltage_current.vin) * ((platformInterface.status_voltage_current.iin)))).toFixed(3)
@@ -31,19 +28,13 @@ Widget09.SGResponsiveScrollView {
 
     Rectangle {
         id: container
-        parent: root.contentItem
-        anchors {
-            fill: parent
-        }
-        color: "white"//"white"
-
+        anchors.fill: parent
+        color: "white"
 
         Text {
             id: name
             text: "<b> Message notifications coming from CoreInterface <b>"
-            font {
-                pixelSize: 60
-            }
+            font.pixelSize: ratioCalc * 25
             color:"green"
             anchors {
                 horizontalCenter: parent.horizontalCenter
@@ -60,19 +51,79 @@ Widget09.SGResponsiveScrollView {
         }
 
         Rectangle {
+            id: setttingControl
             width: parent.width
-            height: (parent.height - name.contentHeight)
+            height: parent.height/10
             anchors.left:parent.left
             anchors.leftMargin: 20
             anchors.right:parent.right
             anchors.rightMargin: 20
             anchors.top:name.bottom
-            anchors.topMargin: 50
+            anchors.topMargin: 20
+            Widget09.SGSwitch {
+                id: recording
+                anchors {
+                    top: parent.top
+                    topMargin: 10
+                    left: parent.left
+                    leftMargin: 20
+                }
+                label : "Data Acquisition"
+                switchWidth: 52
+                switchHeight: 26
+                textColor: "black"
+                handleColor: "white"
+                grooveColor: "lightblue"
+                grooveFillColor: "red"
+                fontSize: 20
+                checked: recording.checked
+                property var message_log: "(PID)    Vin(V):    "+ vin_calc +"    Iin(A):    "+ iin_calc +"    Vout(V):   "+ vout_calc +"   Iout(A):   "+ iout_calc +"   Efficy.(η)(%):     "+ effi_calc +"   Temp.(°C):      "+ temp_calc +"      Transient:      "+ !platformInterface.systemMode +".    Freq:    "+ platformInterface.frequency +".      Duty(%):   "+ platformInterface.duty +"    Pin(W):    "+ pin_calc +"   Pout(W):    "+ pout_calc +"   Pdis(W):    "+ pdis_calc +""
+                onMessage_logChanged: {
+                    console.log("debug:",message_log)
+                    if(message_log !== "" && recording.checked === true) {
+                        for(var j = 0; j < messageList.model.count; j++){messageList.model.get(j).color = "black"
+                            if (j > 998) {messageList.clear()}
+                        }
+                        messageList.append(message_log,"red")}
+                    else if(clear.checked === true && recording.checked === false) {messageList.clear()}
+                }
+            }
+
+            Widget09.SGSwitch {
+                id: clear
+                anchors {
+                    top: parent.top
+                    topMargin: 10
+                    left: recording.right
+                    leftMargin: 100
+                }
+                label : "Clear Data"
+                switchWidth: 52
+                switchHeight: 26
+                textColor: "black"
+                handleColor: "white"
+                grooveColor: "lightblue"
+                grooveFillColor: "red"
+                fontSize: 20
+                checked: clear.checked
+            }
+        }
+
+
+        Rectangle {
+            width: parent.width
+            height: (parent.height - name.contentHeight - setttingControl.height)
+            anchors.left:parent.left
+            anchors.leftMargin: 20
+            anchors.right:parent.right
+            anchors.rightMargin: 20
+            anchors.top:setttingControl.bottom
+            anchors.topMargin: 10
             anchors.bottom:parent.bottom
             anchors.bottomMargin: 50
             color: "transparent"
 
-            SGStatusLogBoxSelectableDelegates{
+            SGStatusLogBox{
                 id: messageList
                 anchors.fill: parent
                 showMessageIds: true
@@ -115,77 +166,6 @@ Widget09.SGResponsiveScrollView {
                     }
                 }
 
-
-                // Custom element selection functionality
-
-                Connections {
-                    target: listViewMouse
-                    onPressed: {
-                        listView.interactive = false
-
-                        if (!(mouse.modifiers & Qt.ShiftModifier)){
-                            // deselect previous selections unless shift held
-                            root.deselectAll()
-                        }
-
-                        var listY = mouse.y + listView.contentY
-                        root.toggleItemAtXY(mouse.x, listY)
-                    }
-
-                    onReleased: {
-                        root.resetStateChanged()
-                        listView.interactive = true
-                        root.focus = true
-                    }
-
-                    onPositionChanged: {
-                        if (listViewMouse.pressed && listViewMouse.containsMouse) {
-                            var listY = mouse.y + listView.contentY
-                            root.toggleItemAtXY(mouse.x, listY)
-                        }
-                    }
-                }
-
-                function toggleItemAtXY(x, y) {
-                    var mousedItemIndex = listView.indexAt(x, y)
-                    if (mousedItemIndex !==-1) {
-                        var mousedItem = listView.model.get(mousedItemIndex)
-                        if (!mousedItem.stateChanged) {
-                            if (!mousedItem.selected) {
-                                mousedItem.selected = true
-                                mousedItem.stateChanged = true
-                            } else {
-                                mousedItem.selected = false
-                                mousedItem.stateChanged = true
-                            }
-                        }
-                    }
-                }
-
-                function deselectAll() {
-                    for (var i = 0; i<listView.model.count; i++) {
-                        listView.model.get(i).selected = false;
-                    }
-                }
-
-                function resetStateChanged() {
-                    for (var i = 0; i<listView.model.count; i++) {
-                        listView.model.get(i).stateChanged = false;
-                    }
-                }
-
-                // Overriding copy/filter functions
-
-                function copySelectionTest(index) {
-                    return listView.model.get(index).selected
-                }
-
-                function onFilter(listElement) {
-                    if (listElement.selected) {
-                        listElement.selected = false;
-                    }
-                }
-
                 function append(message,color) {
                     listElementTemplate.message = message
                     listElementTemplate.color = color
@@ -200,70 +180,9 @@ Widget09.SGResponsiveScrollView {
                 }
             }
         }
+
     }
-
-    Rectangle {
-        width: parent.width
-        height: (parent.height - name.contentHeight)
-        anchors.left:parent.left
-        anchors.leftMargin: 20
-        anchors.right:parent.right
-        anchors.rightMargin: 20
-        anchors.top:name.bottom
-        anchors.topMargin: 50
-        anchors.bottom:parent.bottom
-        anchors.bottomMargin: 50
-        color: "transparent"
-
-    SGSwitch {
-        id: recording
-        anchors {
-            top: parent.top
-            topMargin: 110
-            left: parent.left
-            leftMargin: 20
-        }
-        label : "Data Acquisition"
-        switchWidth: 52
-        switchHeight: 26
-        textColor: "black"
-        handleColor: "white"
-        grooveColor: "lightblue"
-        grooveFillColor: "red"
-        fontSizeLabel: 20
-        checked: recording.checked
-        property var message_log: "(PID)    Vin(V):    "+ vin_calc +"    Iin(A):    "+ iin_calc +"    Vout(V):   "+ vout_calc +"   Iout(A):   "+ iout_calc +"   Efficy.(η)(%):     "+ effi_calc +"   Temp.(°C):      "+ temp_calc +"      Transient:      "+ !platformInterface.systemMode +".    Freq:    "+ platformInterface.frequency +".      Duty(%):   "+ platformInterface.duty +"    Pin(W):    "+ pin_calc +"   Pout(W):    "+ pout_calc +"   Pdis(W):    "+ pdis_calc +""
-        onMessage_logChanged: {
-                console.log("debug:",message_log)
-                if(message_log !== "" && recording.checked === true) {
-                    for(var j = 0; j < messageList.model.count; j++){messageList.model.get(j).color = "black"
-                         if (j > 998) {messageList.clear()}
-                    }
-                    messageList.append(message_log,"red")}
-                else if(clear.checked === true && recording.checked === false) {messageList.clear()}
-                }
-            }
-
-    SGSwitch {
-        id: clear
-        anchors {
-            top: parent.top
-            topMargin: 110
-            left: recording.right
-            leftMargin: 100
-        }
-        label : "Clear Data"
-        switchWidth: 52
-        switchHeight: 26
-        textColor: "black"
-        handleColor: "white"
-        grooveColor: "lightblue"
-        grooveFillColor: "red"
-        fontSizeLabel: 20
-        checked: clear.checked
-                }
-            }
-    }
+}
 
 
 

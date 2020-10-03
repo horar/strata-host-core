@@ -12,8 +12,6 @@
         <file>sgwidgets/SGRGBSlider.qml</file>
         <file>sgwidgets/SGRadioButton.qml</file>
         <file>sgwidgets/SGRadioButtonContainer.qml</file>
-        <file>sgwidgets/SGSegmentedButton.qml</file>
-        <file>sgwidgets/SGSegmentedButtonStrip.qml</file>
         <file>sgwidgets/SGSlider.qml</file>
         <file>sgwidgets/SGStatusLight.qml</file>
         <file>sgwidgets/SGStatusListBox.qml</file>
@@ -28,12 +26,8 @@
         <file>sgwidgets/images/sliderHandle.svg</file>
         <file>sgwidgets/images/sliderHandleActive.svg</file>
         <file>sgwidgets/images/sliderValue.svg</file>
-        <file>question-circle-solid.svg</file>
         <file>CoreControl.qml</file>
         <file>LoadTransientControl.qml</file>
-        <file>../hello-strata/sgwidgets/SGAlignedLabel.qml</file>
-        <file>../hello-strata/sgwidgets/SGSlider.qml</file>
-        <file>../hello-strata/sgwidgets/SGInfoBox.qml</file>
         <file>TrendControl.qml</file>
         <file>images/ncv330_2D.gif</file>
         <file>images/ncv330_3D.gif</file>

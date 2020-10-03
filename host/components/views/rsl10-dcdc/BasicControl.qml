@@ -13,10 +13,12 @@ import "qrc:/images"
 import "qrc:/js/help_layout_manager.js" as Help
 
 Item {
+    id: root
     property bool state: false
     property string warningVin: multiplePlatform.warningHVVinLable
     property string vinlable: ""
     property string labelTest: ""
+    property real ratioCalc: root.width / 1200
 
     // property that reads the initial notification
     property string read_enable_state: platformInterface.initial_status.enable_status
@@ -91,15 +93,15 @@ Item {
             if(multiplePlatform.dio13 === false) {
                 dio13Switch.enabled  = true
                 dio13Switch.opacity = 0.2
-                }
-                else if(multiplePlatform.dio04 === false && multiplePlatform.jumperDIO04 === false) {
+            }
+            else if(multiplePlatform.dio04 === false && multiplePlatform.jumperDIO04 === false) {
                 dio04Switch.enabled  = true
                 dio04Switch.opacity = 0.2
-                }
-                else if(multiplePlatform.dio14 === false) {
+            }
+            else if(multiplePlatform.dio14 === false) {
                 dio14Light.enabled  = true
                 dio14Light.opacity = 0.2
-                }
+            }
             else  {
                 dio13Switch.enabled  = true
                 dio13Switch.opacity = 1.0
@@ -107,7 +109,7 @@ Item {
                 dio04Switch.opacity = 1.0
                 dio14Light.enabled  = true
                 dio14Light.opacity = 1.0
-                }
+            }
         }
     }
 
@@ -138,6 +140,7 @@ Item {
         anchors.fill: parent
         width : parent.width
         height: parent.height
+
 
         Rectangle {
             id: pageLable
@@ -177,6 +180,11 @@ Item {
             anchors{
                 top: pageLable.bottom
                 topMargin: 100
+                left: parent.left
+                leftMargin: 20
+                right: parent.right
+                rightMargin: 20
+
             }
 
             Rectangle {
@@ -283,7 +291,7 @@ Item {
                             centerIn: warningBox2
                         }
                         text: "<b>Max. input voltage "+ multiplePlatform.nominalVin +"V</b>"
-                        font.pixelSize: (parent.width + parent.height)/15
+                        font.pixelSize: ratioCalc * 12
                         color: "white"
                     }
 
@@ -346,7 +354,7 @@ Item {
                     info: {
                         if(multiplePlatform.current === "A") {(((platformInterface.status_voltage_current.iin))/1000).toFixed(3)}
                         else {((platformInterface.status_voltage_current.iin)).toFixed(0)}
-                        }
+                    }
 
                     infoBoxColor: "lightgreen"
                     infoBoxBorderColor: "grey"
@@ -405,31 +413,28 @@ Item {
                         else if(multiplePlatform.eeprom_ID === "cce0f32e-ee1e-44aa-81a3-0801a71048ce" && platformInterface.dimmensionalMode === false) {"images/ncv6922_2D.gif"}
                         else if(multiplePlatform.eeprom_ID === "2286e1e0-4035-46b9-b197-4d729653c101" && platformInterface.dimmensionalMode === false) {"images/ncv896530_2D.gif"}
                         else if(multiplePlatform.eeprom_ID === "264" && platformInterface.dimmensionalMode === false) {"images/LV_DCDC_Ecosystem_2D.gif"}
-                        }
+                    }
                     width: parent.width - parent.width/20
                     height: parent.height + (parent.height/6)
                     anchors.centerIn: parent
                     //fillMode: Image.PreserveAspectFit
                     mipmap:true
                     opacity:1
-                    }
+                }
 
                 Image {
                     id:basicImageLed
                     Layout.preferredHeight: parent.height
                     Layout.preferredWidth: parent.width
-                    source:{
-                        if(platformInterface.pause_periodic === false && platformInterface.dimmensionalMode === true) {"images/led_3d.gif"}
-                        }
+                    source: "images/led_3d.gif"
                     width: parent.width - parent.width/20
                     height: parent.height + (parent.height/6)
                     anchors.centerIn: parent
                     //fillMode: Image.PreserveAspectFit
                     mipmap:true
-                    opacity:{
-                        if(platformInterface.pause_periodic === false && platformInterface.dimmensionalMode === true) {1} else {0}
-                        }
-                    }
+                    visible: platformInterface.pause_periodic === false && platformInterface.dimmensionalMode === true ? true : false
+
+                }
 
                 SGRadioButtonContainer {
                     id: dimmensionalModeSpace
@@ -539,8 +544,8 @@ Item {
                             else if(multiplePlatform.dio12 === true && multiplePlatform.jumperDIO12 === true) {"EN/IO2"}
                             else if(multiplePlatform.dio12 === false && multiplePlatform.jumperDIO12 === true) {"EN1/EN3"}
                             else if(multiplePlatform.dio12 === false && multiplePlatform.jumperDIO12 === false) {"EN1"}
-                    switchWidth: ioutGraph.width/4            // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: ioutGraph.height/15              // Default: 26
+                    switchWidth: parent.width/4            // Default: 52 (change for long custom checkedLabels when labelsInside)
+                    switchHeight: parent.height/15              // Default: 26
                     textColor: "black"              // Default: "black"
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
@@ -549,20 +554,20 @@ Item {
                     checked: if (multiplePlatform.vinScale > ((platformInterface.status_voltage_current.vin)/1000)) {dio12Switch.checked}
                              else{platformInterface.set_dio12.update("off")}
                     onToggled: if (multiplePlatform.vinScale > ((platformInterface.status_voltage_current.vin)/1000)) {
-                        platformInterface.dio12_enabled = checked
-                        if(checked){
-                            platformInterface.set_dio12.update("on")
-                        }
-                        else{
-                            platformInterface.set_dio12.update("off")
-                        }
-                    }
-                    else{platformInterface.set_dio12.update("off")}
+                                   platformInterface.dio12_enabled = checked
+                                   if(checked){
+                                       platformInterface.set_dio12.update("on")
+                                   }
+                                   else{
+                                       platformInterface.set_dio12.update("off")
+                                   }
+                               }
+                               else{platformInterface.set_dio12.update("off")}
                 }
 
                 SGToolTipPopup {
                     id: dio12SgToolTipPopupEN
-                    height: parent.height/23
+                    height: parent.height/20
                     showOn: if(multiplePlatform.dio12 === true && multiplePlatform.jumperDIO12 === false) {!dio12Switch.checked} else {false}
                     anchors {
                         bottom: dio12Switch.top
@@ -576,7 +581,7 @@ Item {
 
                 SGToolTipPopup {
                     id: dio12SgToolTipPopupENIO2
-                    height: parent.height/23
+                    height: parent.height/20
                     showOn: if(multiplePlatform.dio12 === true && multiplePlatform.jumperDIO12 === true) {!dio12Switch.checked} else {false}
                     anchors {
                         bottom: dio12Switch.top
@@ -590,7 +595,7 @@ Item {
 
                 SGToolTipPopup {
                     id: dio12SgToolTipPopupEN1EN3
-                    height: parent.height/23
+                    height: parent.height/20
                     showOn: if(multiplePlatform.dio12 === false && multiplePlatform.jumperDIO12 === true) {!dio12Switch.checked} else {false}
                     anchors {
                         bottom: dio12Switch.top
@@ -604,7 +609,7 @@ Item {
 
                 SGToolTipPopup {
                     id: dio12SgToolTipPopupEN3EN1
-                    height: parent.height/23
+                    height: parent.height/20
                     showOn: if(multiplePlatform.dio12 && multiplePlatform.jumperDIO12 === true) {dio12Switch.checked} else {false}
                     anchors {
                         bottom: dio12Switch.top
@@ -618,7 +623,7 @@ Item {
 
                 SGToolTipPopup {
                     id: dio12SgToolTipPopupEN1
-                    height: parent.height/23
+                    height: parent.height/20
                     showOn: if(multiplePlatform.dio12 === false && multiplePlatform.jumperDIO12 === false) {!dio12Switch.checked} else {false}
                     anchors {
                         bottom: dio12Switch.top
@@ -640,8 +645,8 @@ Item {
                     label : if(multiplePlatform.dio13 === true && multiplePlatform.jumperDIO13 === false) {"EN4"}
                             else if(multiplePlatform.dio13 === true && multiplePlatform.jumperDIO13 === true) {"INT"}
                             else if(multiplePlatform.dio13 === false) {"N/A"}
-                    switchWidth: ioutGraph.width/4            // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: ioutGraph.height/15              // Default: 26
+                    switchWidth: parent.width/4            // Default: 52 (change for long custom checkedLabels when labelsInside)
+                    switchHeight: parent.height/15              // Default: 26
                     textColor: "black"              // Default: "black"
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
@@ -650,21 +655,21 @@ Item {
                     checked: if (multiplePlatform.vinScale > ((platformInterface.status_voltage_current.vin)/1000)) {platformInterface.dio13_enabled}
                              else{platformInterface.set_dio13.update("off")}
                     onToggled: if (multiplePlatform.vinScale > ((platformInterface.status_voltage_current.vin)/1000)) {
-                        platformInterface.dio13_enabled = checked
-                        if(checked){
-                            platformInterface.set_dio13.update("on")
-                        }
-                        else{
-                            platformInterface.set_dio13.update("off")
-                        }
-                    }
-                    else{platformInterface.set_dio13.update("off")}
+                                   platformInterface.dio13_enabled = checked
+                                   if(checked){
+                                       platformInterface.set_dio13.update("on")
+                                   }
+                                   else{
+                                       platformInterface.set_dio13.update("off")
+                                   }
+                               }
+                               else{platformInterface.set_dio13.update("off")}
                 }
 
 
                 SGToolTipPopup {
                     id: dio13SgToolTipPopupEN4
-                    height: parent.height/23
+                    height: parent.height/20
                     showOn: if(multiplePlatform.dio13 === true && multiplePlatform.jumperDIO13 === false) {!dio13Switch.checked} else {false}
                     anchors {
                         bottom: dio13Switch.top
@@ -688,8 +693,8 @@ Item {
                             else if(multiplePlatform.dio04 === true && multiplePlatform.jumperDIO04 === true) {"VSEL-DISCH"}
                             else if(multiplePlatform.dio04 === false && multiplePlatform.jumperDIO04 === true) {"EN2"}
                             else if(multiplePlatform.dio04 === false && multiplePlatform.jumperDIO04 === false) {"N/A"}
-                    switchWidth: ioutGraph.width/4            // Default: 52 (change for long custom checkedLabels when labelsInside)
-                    switchHeight: ioutGraph.height/15              // Default: 26
+                    switchWidth: parent.width/4            // Default: 52 (change for long custom checkedLabels when labelsInside)
+                    switchHeight: parent.height/15              // Default: 26
                     textColor: "black"              // Default: "black"
                     handleColor: "white"            // Default: "white"
                     grooveColor: "#ccc"             // Default: "#ccc"
@@ -698,21 +703,21 @@ Item {
                     checked: if (multiplePlatform.vinScale > ((platformInterface.status_voltage_current.vin)/1000)) {platformInterface.dio04_enabled}
                              else{platformInterface.set_dio04.update("off")}
                     onToggled: if (multiplePlatform.vinScale > ((platformInterface.status_voltage_current.vin)/1000)) {
-                        platformInterface.dio04_enabled = checked
-                        if(checked){
-                            platformInterface.set_dio04.update("on")
-                        }
-                        else{
-                            platformInterface.set_dio04.update("off")
-                        }
-                    }
-                    else{platformInterface.set_dio04.update("off")}
+                                   platformInterface.dio04_enabled = checked
+                                   if(checked){
+                                       platformInterface.set_dio04.update("on")
+                                   }
+                                   else{
+                                       platformInterface.set_dio04.update("off")
+                                   }
+                               }
+                               else{platformInterface.set_dio04.update("off")}
                 }
 
 
                 SGToolTipPopup {
                     id: dio04SgToolTipPopupIO0EN2
-                    height: parent.height/23
+                    height: parent.height/20
                     showOn: if(multiplePlatform.dio04 === false && multiplePlatform.jumperDIO04 === true) {!dio04Switch.checked} else {false}
                     anchors {
                         bottom: dio04Switch.top
@@ -765,7 +770,7 @@ Item {
                     info: {
                         if(multiplePlatform.showDecimal === true) {((platformInterface.status_voltage_current.vout)/1000).toFixed(3)}
                         else {((platformInterface.status_voltage_current.vout)/1000).toFixed(0)}
-                        }
+                    }
 
                     infoBoxColor: "lightblue"
                     infoBoxBorderColor: "grey"
@@ -781,7 +786,7 @@ Item {
                         top : dio04Switch.bottom
                         topMargin : parent.height/5
                         horizontalCenter: parent.horizontalCenter
-                        horizontalCenterOffset:  (width - ouputCurrent.width)/2
+                        horizontalCenterOffset:  10
                     }
                 }
 
@@ -791,7 +796,7 @@ Item {
                     info: {
                         if(multiplePlatform.current === "A") {(((platformInterface.status_voltage_current.iout))/1000).toFixed(3)}
                         else {((platformInterface.status_voltage_current.iout)).toFixed(0)}
-                        }
+                    }
 
                     infoBoxColor: "lightgreen"
                     infoBoxBorderColor: "grey"
