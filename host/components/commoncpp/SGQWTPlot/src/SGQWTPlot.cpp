@@ -19,6 +19,8 @@ SGQWTPlot::SGQWTPlot(QQuickItem* parent) : QQuickPaintedItem(parent)
     //Setting the default values for x,y axises and color of grid lines.
     qwtGrid_->enableX(xGrid_);
     qwtGrid_->enableY(yGrid_);
+    qwtGrid_->enableXMin(xMinorGrid_);
+    qwtGrid_->enableYMin(yMinorGrid_);
     setGridColor("lightgrey");
 }
 
@@ -202,6 +204,45 @@ bool SGQWTPlot :: yGrid()
 {
     return yGrid_;
 }
+
+void SGQWTPlot :: setXMinorGrid(bool showGrid)
+{
+    if(xMinorGrid_ != showGrid) {
+        xMinorGrid_ = showGrid;
+        setXGrid(xMinorGrid_);
+        qwtGrid_->enableXMin(xMinorGrid_);
+
+        emit xMinorGridChanged();
+        if (autoUpdate_) {
+            update();
+        }
+    }
+}
+
+bool SGQWTPlot :: xMinorGrid()
+{
+    return xMinorGrid_;
+}
+
+void SGQWTPlot :: setYMinorGrid(bool showGrid)
+{
+    if(yMinorGrid_ != showGrid) {
+        yMinorGrid_ = showGrid;
+        setYGrid(yMinorGrid_);
+        qwtGrid_->enableYMin(yMinorGrid_);
+        emit yMinorGridChanged();
+
+        if (autoUpdate_) {
+            update();
+        }
+    }
+}
+
+bool SGQWTPlot :: yMinorGrid()
+{
+    return yMinorGrid_;
+}
+
 
 void SGQWTPlot :: setGridColor(QColor newColor)
 {
@@ -518,8 +559,12 @@ void SGQWTPlot::setXLogarithmic(bool logarithmic)
         xLogarithmic_ = logarithmic;
         if (xLogarithmic_){
             qwtPlot->setAxisScaleEngine(qwtPlot->xBottom, new QwtLogScaleEngine(10));
+            qwtPlot->setAxisMaxMinor(qwtPlot->xBottom,10);
+            qwtPlot->setAxisMaxMajor(qwtPlot->xBottom,10);
         } else {
             qwtPlot->setAxisScaleEngine(qwtPlot->xBottom, new QwtLinearScaleEngine(10));
+            qwtPlot->setAxisMaxMinor(qwtPlot->xBottom,5);
+            qwtPlot->setAxisMaxMajor(qwtPlot->xBottom,5);
         }
         emit xLogarithmicChanged();
         if (autoUpdate_) {
@@ -535,9 +580,13 @@ void SGQWTPlot::setYLogarithmic(bool logarithmic)
         if (yLogarithmic_){
             qwtPlot->setAxisScaleEngine(qwtPlot->yRight, new QwtLogScaleEngine(10));
             qwtPlot->setAxisScaleEngine(qwtPlot->yLeft, new QwtLogScaleEngine(10));
+            qwtPlot->setAxisMaxMinor(qwtPlot->yLeft,10);
+            qwtPlot->setAxisMaxMajor(qwtPlot->yLeft,10);
         } else {
             qwtPlot->setAxisScaleEngine(qwtPlot->yRight, new QwtLinearScaleEngine(10));
             qwtPlot->setAxisScaleEngine(qwtPlot->yLeft, new QwtLinearScaleEngine(10));
+            qwtPlot->setAxisMaxMinor(qwtPlot->yLeft,5);
+            qwtPlot->setAxisMaxMajor(qwtPlot->yLeft,5);
         }
         emit yLogarithmicChanged();
         if (autoUpdate_) {
