@@ -7,7 +7,6 @@ Rectangle {
     id: startContainer
     color: "#ccc"
 
-
     ColumnLayout {
         anchors {
             fill: parent
