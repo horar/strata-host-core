@@ -74,6 +74,7 @@ var uuid_map = {
     "245": "bldcMotorControl",
     "246": "meshNetwork",
     "265": "zigbee",
+    "led-tail-light" : "led-tail-light",
 
 
     /*****
@@ -86,9 +87,9 @@ var uuid_map = {
     "d0cc3eb2-f822-4955-afa4-b975957aed38": "Adj-LDO",
     "0570d932-6a3f-4a34-8442-cd9914518241": "current-sense",
     "76a518b4-37bc-4fee-ad5b-92c381dea0c2": "zigbee",
-    //"72ddcc10-2d18-4316-8170-5223162e54cf": "led-tail-light",
-    "led-tail-light" : "led-tail-light",
     "0d674fd9-3770-4ee7-ab0c-1f5f5de710fc": "usb-pd-pps",
-    "bcd30065-a324-4a2c-8b55-05752c4eb76a": "FuelGauge-Monitor"
+    "bcd30065-a324-4a2c-8b55-05752c4eb76a": "FuelGauge-Monitor",
+    "4a1c2e5f-d0b0-4970-8c93-70a9234d195c": "led-tail-light", // STR-NCV7685-AUTO-LED-GEVB
+    "ecd43c02-3e7c-4d5e-9231-aabc149c8772": "led-tail-light"  // STR-NCV7684-AUTO-LED-GEVB
 
 }
