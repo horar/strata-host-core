@@ -86,12 +86,9 @@ Rectangle {
         height:parent.height - pageText4.contentHeight - 10
         anchors {
             top: pageText4.bottom
-            topMargin: 10
+            bottom: parent.bottom
+            bottomMargin: 10
         }
-        color: "red"
-
-
-
         Rectangle {
             id: rightControl
             anchors {
@@ -229,12 +226,11 @@ Rectangle {
             Rectangle {
                 anchors {
                     top : dutyControl.bottom
-                    topMargin: 10
-
+                    topMargin: 5
                 }
 
                 width: parent.width
-                height: parent.height/1.5
+                height: parent.height/1.3
                 RowLayout {
                     anchors.fill: parent
                     Rectangle{
@@ -321,7 +317,6 @@ Rectangle {
                     Rectangle{
                         Layout.preferredWidth: parent.width/2.2
                         Layout.fillHeight: true
-
                         GraphConverter{
                             id: voutGraph
                             width: parent.width/2
@@ -329,8 +324,6 @@ Rectangle {
                             anchors {
                                 left: parent.left
                                 top: parent.top
-
-
                             }
                             showOptions: false
                             autoAdjustMaxMin: false
@@ -364,7 +357,8 @@ Rectangle {
                             anchors {
                                 left: parent.left
                                 top: voutGraph.bottom
-                                topMargin: 5
+                                topMargin: 2
+                                bottom: parent.bottom
                             }
                             showOptions: false
                             autoAdjustMaxMin: false

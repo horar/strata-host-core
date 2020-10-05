@@ -373,48 +373,7 @@ Item {
                     }
                 }
 
-                SGRadioButtonContainer {
-                    id: dimmensionalModeSpace
-                    anchors {
-                        top: inputCurrent.bottom
-                        topMargin: 10
-                        horizontalCenter: inputCurrent.horizontalCenter
-                    }
 
-                    //label: ""
-                    labelLeft: false
-                    exclusive: true
-
-                    radioGroup: GridLayout {
-                        columnSpacing: 10
-                        rowSpacing: 10
-                        // Optional properties to access specific buttons cleanly from outside
-                        property alias twoDimmensional : twoDimmensional
-                        property alias threeDimmensional: threeDimmensional
-
-                        SGRadioButton {
-                            id: threeDimmensional
-                            text: "3D"
-                            checked: platformInterface.dimmensionalMode
-                            onCheckedChanged: {
-                                if (checked) {
-                                    console.log("3D")
-                                    platformInterface.dimmensionalMode = true
-                                }
-                                else {
-                                    console.log("Top")
-                                    platformInterface.dimmensionalMode = false
-                                }
-                            }
-                        }
-
-                        SGRadioButton {
-                            id: twoDimmensional
-                            text: "Top"
-                            checked : !threeDimmensional.checked
-                        }
-                    }
-                }
             }
 
             Rectangle {
@@ -477,6 +436,46 @@ Item {
                     mipmap:true
                     visible: platformInterface.pause_periodic === false && platformInterface.dimmensionalMode === true ? true : false
 
+                }
+                SGRadioButtonContainer {
+                    id: dimmensionalModeSpace
+                    anchors {
+                        top: basicImageLed.bottom
+                        topMargin: 10
+
+                    }
+                    labelLeft: false
+                    exclusive: true
+
+                    radioGroup: GridLayout {
+                        columnSpacing: 10
+                        rowSpacing: 10
+                        // Optional properties to access specific buttons cleanly from outside
+                        property alias twoDimmensional : twoDimmensional
+                        property alias threeDimmensional: threeDimmensional
+
+                        SGRadioButton {
+                            id: threeDimmensional
+                            text: "3D"
+                            checked: platformInterface.dimmensionalMode
+                            onCheckedChanged: {
+                                if (checked) {
+                                    console.log("3D")
+                                    platformInterface.dimmensionalMode = true
+                                }
+                                else {
+                                    console.log("Top")
+                                    platformInterface.dimmensionalMode = false
+                                }
+                            }
+                        }
+
+                        SGRadioButton {
+                            id: twoDimmensional
+                            text: "Top"
+                            checked : !threeDimmensional.checked
+                        }
+                    }
                 }
             }
 

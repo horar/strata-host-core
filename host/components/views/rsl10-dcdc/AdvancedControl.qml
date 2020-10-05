@@ -384,7 +384,7 @@ Item {
                         unitSize: (vinGraph.width + vinGraph.height)/35
                         anchors {
                             top : ledLight.bottom
-                            topMargin : 20
+                            topMargin : 17
                             horizontalCenter: vinGraph.horizontalCenter
                             horizontalCenterOffset:  10
                         }
@@ -450,7 +450,7 @@ Item {
                         unitSize: (iinGraph.width + iinGraph.height)/35
                         anchors {
                             top : iinGraph.bottom
-                            topMargin : 40
+                            topMargin : 45
                             horizontalCenter: iinGraph.horizontalCenter
                             horizontalCenterOffset:  10
                         }
@@ -615,7 +615,7 @@ Item {
                         unitSize: (voutGraph.width + voutGraph.height)/35
                         anchors {
                             top : voutGraph.bottom
-                            topMargin : 40
+                            topMargin : 50
                             horizontalCenter: voutGraph.horizontalCenter
                             horizontalCenterOffset:  10
                         }
@@ -680,7 +680,7 @@ Item {
                         unitSize: (ioutGraph.width + ioutGraph.height)/35
                         anchors {
                             top : ioutGraph.bottom
-                            topMargin : 40
+                            topMargin : 50
                             horizontalCenter: ioutGraph.horizontalCenter
                             horizontalCenterOffset:  10
                         }
