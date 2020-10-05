@@ -1,7 +1,6 @@
 var isSilent = false;
 var startSDS = false;
 var delayStart = 0;
-var requires_admin_rights = false;
 
 function isValueSet(val)
 {
@@ -201,6 +200,10 @@ Controller.prototype.UninstallationFinished = function()
     if(installer.status != QInstaller.Success)
         return;
 
+    if(installer.fileExists(installer.value("TargetDir")) == false)
+        return;
+
+    var requires_admin_rights = false;
     var target_dir = installer.value("TargetDir") + "/";
     var delete_dir_cmd = "rd";
     var delete_file_cmd = "del";
@@ -218,8 +221,10 @@ Controller.prototype.UninstallationFinished = function()
         console.log(installer.execute("cmd", ["/c", "del", tempFile]));
     } else {
         console.log("tempFile not created: " + tempFile + ", elevating with admin rights");
-        requires_admin_rights = true;
-        installer.gainAdminRights();
+        if(systemInfo.productType == "windows") {
+            requires_admin_rights = true;
+            installer.gainAdminRights();
+        }
     }
 
     if(installer.fileExists(target_dir + installer.value("MaintenanceToolName") + ".ini"))

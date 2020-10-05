@@ -163,7 +163,6 @@ if [ ! -d $PACKAGES_DIR ] ; then mkdir -pv $PACKAGES_DIR; fi
 
 cmake \
     -DCMAKE_BUILD_TYPE=OTA \
-    -DCMAKE_BUILD_TYPE=OTA \
     -DAPPS_TOOLBOX=off \
     -DAPPS_UTILS=off \
     -DBUILD_TESTING=off \
