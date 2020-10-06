@@ -9,6 +9,7 @@ import tech.strata.SGFileTabModel 1.0
 
 import "Editor/"
 import "Sidebar/"
+import "../"
 
 Item {
     id: editorRoot
@@ -128,7 +129,13 @@ Item {
                                     }
 
                                     onClicked: {
-                                        openFilesModel.closeTabAt(index);
+                                        if (model.unsavedChanges) {
+                                            confirmClosePopup.filename = model.filename
+                                            confirmClosePopup.index = index
+                                            confirmClosePopup.open()
+                                        } else {
+                                            openFilesModel.closeTabAt(index);
+                                        }
                                     }
                                 }
                             }
@@ -177,6 +184,32 @@ Item {
                     text: "Error: " + parsingErrorRect.errorMessage
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
+                }
+            }
+            
+            SGConfirmationPopup {
+                id: confirmClosePopup
+                x: fileTabRepeater.width / 2 - width / 2
+                y: fileTabRepeater.y + height
+
+                titleText: "Do you want to save the changes made to " + filename + "?"
+                popupText: "Your changes will be lost if you choose to not save them."
+                acceptButtonText: "Save"
+                cancelButtonText: "Don't save"
+                acceptButtonColor: SGColorsJS.STRATA_GREEN
+                acceptButtonHoverColor: Qt.darker(SGColorsJS.STRATA_GREEN, 1.25)
+                closePolicy: Popup.NoAutoClose
+
+                property string filename: ""
+                property int index
+
+                onCancelled: {
+                    openFilesModel.closeTabAt(index)
+                }
+
+                onAccepted: {
+                    openFilesModel.saveFileAt(index)
+                    openFilesModel.closeTabAt(index)
                 }
             }
 

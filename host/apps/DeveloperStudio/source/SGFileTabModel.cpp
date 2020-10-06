@@ -252,6 +252,14 @@ bool SGFileTabModel::closeTabAt(const int index)
     return true;
 }
 
+void SGFileTabModel::saveFileAt(const int index)
+{
+    if (index < 0 || index >= data_.count()) {
+        return;
+    }
+
+    emit saveRequested(index);
+}
 
 bool SGFileTabModel::hasTab(const QString &id) const
 {

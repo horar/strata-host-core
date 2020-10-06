@@ -43,6 +43,16 @@ Item {
         }
     }
 
+    Connections {
+        target: openFilesModel
+
+        onSaveRequested: {
+            if (index === fileContainerRoot.modelIndex) {
+                saveFile();
+            }
+        }
+    }
+
     WebChannel {
         id: channel
         registeredObjects: [channelObject]
