@@ -3,7 +3,7 @@ add_feature_info(BUILD_DONT_CLEAN_EXTERNAL BUILD_DONT_CLEAN_EXTERNAL "Don't clea
 set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM ${BUILD_DONT_CLEAN_EXTERNAL})
 
 include(ExternalProject)
-include(GitHash)
+include(GitHashAndInstallationStatus)
 
 # root of all 3rd party installed project
 set(EXTERN_INSTALL_DIR_NAME 3p)
@@ -43,8 +43,8 @@ list(APPEND CMAKE_ARGS "-DCMAKE_CXX_EXTENSIONS:BOOL=OFF")
 #
 # rapidjson
 #
-get_git_hash("${SOURCE_DIR_EXTERN}/rapidjson")
-if(${GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/rapidjson-${GIT_HASH})
+get_git_hash_and_installation_status("${SOURCE_DIR_EXTERN}/rapidjson" "${EXTERN_INSTALL_DIR_PATH}/rapidjson")
+if(NOT LIB_INSTALLED)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/rapidjson-${GIT_HASH}/include)
     ExternalProject_Add(rapidjson
         INSTALL_DIR ${EXTERN_INSTALL_DIR_PATH}/rapidjson-${GIT_HASH}
@@ -55,13 +55,7 @@ if(${GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/rapidjso
             -DRAPIDJSON_BUILD_DOC=off
             -DRAPIDJSON_BUILD_EXAMPLES=off
             -DRAPIDJSON_BUILD_TESTS=off
-    )
-else()
-    if(NOT ${GIT_HASH_RESULT} EQUAL 0)
-        message(FATAL_ERROR "Rapidjson GIT_HASH_RESULT is: ${GIT_HASH_RESULT}")
-    else()
-        message(STATUS "Rapidjson 3rd party library is already installed at ${EXTERN_INSTALL_DIR_PATH}/rapidjson-${GIT_HASH}")
-    endif()       
+    )    
 endif()
 
 add_library(rapidjson::rapidjson INTERFACE IMPORTED GLOBAL)
@@ -73,8 +67,8 @@ add_dependencies(rapidjson::rapidjson DEPENDS rapidjson)
 #
 # spdlog
 #
-get_git_hash("${SOURCE_DIR_EXTERN}/spdlog")
-if(${GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/spdlog-${GIT_HASH})
+get_git_hash_and_installation_status("${SOURCE_DIR_EXTERN}/spdlog" "${EXTERN_INSTALL_DIR_PATH}/spdlog")
+if(NOT LIB_INSTALLED)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/spdlog-${GIT_HASH}/include)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/spdlog-${GIT_HASH}/lib)
     ExternalProject_Add(spdlog
@@ -88,13 +82,7 @@ if(${GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/spdlog-$
             -DSPDLOG_BUILD_EXAMPLE=off
             -DSPDLOG_BUILD_TESTS=off
             -DSPDLOG_NO_EXCEPTIONS=on
-    )
-else()
-    if(NOT ${GIT_HASH_RESULT} EQUAL 0)
-        message(FATAL_ERROR "Spdlog GIT_HASH_RESULT is: ${GIT_HASH_RESULT}")
-    else()
-        message(STATUS "Spdlog 3rd party library is already installed at ${EXTERN_INSTALL_DIR_PATH}/spdlog-${GIT_HASH}")
-    endif()       
+    )  
 endif()
 
 add_library(spdlog::spdlog INTERFACE IMPORTED GLOBAL)
@@ -168,8 +156,8 @@ endif()
 # googletest
 #
 if(BUILD_TESTING)
-    get_git_hash("${SOURCE_DIR_EXTERN}/googletest")
-    if(${GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/gtest-${GIT_HASH})
+    get_git_hash_and_installation_status("${SOURCE_DIR_EXTERN}/googletest" "${EXTERN_INSTALL_DIR_PATH}/gtest")
+    if(NOT LIB_INSTALLED)
         file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/gtest-${GIT_HASH}/include)
         file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/gtest-${GIT_HASH}/lib)
         ExternalProject_Add(gtest
@@ -179,13 +167,7 @@ if(BUILD_TESTING)
             CMAKE_ARGS "${CMAKE_ARGS}"
                 -Dgtest_force_shared_crt=YES
                 -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-        )
-    else()
-        if(NOT ${GIT_HASH_RESULT} EQUAL 0)
-            message(FATAL_ERROR "GoogleTest GIT_HASH_RESULT is: ${GIT_HASH_RESULT}")
-        else()
-            message(STATUS "GoogleTest 3rd party library is already installed at ${EXTERN_INSTALL_DIR_PATH}/gtest-${GIT_HASH}")
-        endif()       
+        )     
     endif() 
 
     add_library(gtest::gtest STATIC IMPORTED GLOBAL)
@@ -251,8 +233,8 @@ endif()
 #
 # couchbaselitecpp and couchbase litecore
 #
-get_git_hash("${SOURCE_DIR_EXTERN}/couchbase-lite-cpp")
-if(${GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/cblitecpp-${GIT_HASH})
+get_git_hash_and_installation_status("${SOURCE_DIR_EXTERN}/couchbase-lite-cpp" "${EXTERN_INSTALL_DIR_PATH}/cblitecpp")
+if(NOT LIB_INSTALLED)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/cblitecpp-${GIT_HASH}/include)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/cblitecpp-${GIT_HASH}/lib)
     if(NOT WIN32)
@@ -303,13 +285,7 @@ if(${GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/cblitecp
             COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/3rd_party/include/litecore <INSTALL_DIR>/include/litecore
             COMMAND ${CMAKE_COMMAND} -E copy_directory <BINARY_DIR>/3rd_party/include/fleece <INSTALL_DIR>/include/fleece
         )
-    endif()
-else()
-    if(NOT ${GIT_HASH_RESULT} EQUAL 0)
-        message(FATAL_ERROR "Couchbase Lite CPP GIT_HASH_RESULT is: ${GIT_HASH_RESULT}")
-    else()
-        message(STATUS "Couchbase Lite CPP 3rd party library is already installed at ${EXTERN_INSTALL_DIR_PATH}/cblitecpp-${GIT_HASH}")
-    endif()       
+    endif()    
 endif()     
 
 add_library(strata::CouchbaseLiteCPP STATIC IMPORTED GLOBAL)
@@ -433,7 +409,8 @@ if(NOT DEFINED QT_QMAKE_EXECUTABLE OR QT_QMAKE_EXECUTABLE STREQUAL "")
 endif()
 
 set(QWT_VERSION 6.1.4)
-if(NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/qwt-${QWT_VERSION})
+file(GLOB_RECURSE LIB_INSTALLED ${EXTERN_INSTALL_DIR_PATH}/qwt-${QWT_VERSION}/*.h)
+if(NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/qwt-${QWT_VERSION} AND NOT LIB_INSTALLED)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/qwt-${QWT_VERSION}/include)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/qwt-${QWT_VERSION}/lib)
     ExternalProject_Add(qwt
@@ -446,8 +423,6 @@ if(NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/qwt-${QWT_VERSION})
         PATCH_COMMAND git apply --verbose --ignore-whitespace ${CMAKE_CURRENT_SOURCE_DIR}/patches/qwt/qwtconfig.patch
         CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} QWT_INSTALL_PREFIX=<INSTALL_DIR> ${SOURCE_DIR_EXTERN}/qwt/qwt.pro
     )
-else()
-    message(STATUS "QWT 3rd party library is already installed at ${EXTERN_INSTALL_DIR_PATH}/qwt-${QWT_VERSION}")
 endif()
 
 add_library(qwt::qwt STATIC IMPORTED GLOBAL)
@@ -471,8 +446,8 @@ add_dependencies(qwt::qwt DEPENDS qwt)
 
 # to get Qt version for git checkout command
 find_package(Qt5 COMPONENTS Core)
-get_git_hash("${SOURCE_DIR_EXTERN}/qtmqtt" "${Qt5Core_VERSION_STRING}")
-if(${GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-${GIT_HASH})
+get_git_hash_and_installation_status("${SOURCE_DIR_EXTERN}/qtmqtt" "${EXTERN_INSTALL_DIR_PATH}/qtmqtt" "${Qt5Core_VERSION_STRING}")
+if(NOT LIB_INSTALLED)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-${GIT_HASH}/include)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-${GIT_HASH}/lib)
     if(NOT WIN32)
@@ -533,15 +508,11 @@ if(${GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-$
         )
     endif()
 else()
-    if(NOT ${GIT_HASH_RESULT} EQUAL 0)
-        message(FATAL_ERROR "QtMQTT GIT_HASH_RESULT is: ${GIT_HASH_RESULT}")
-    else()
+    if(WIN32)
         file(COPY ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-${GIT_HASH}/bin/Qt5Mqttd.dll
         ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-${GIT_HASH}/bin/Qt5Mqtt.dll
-        DESTINATION ${CMAKE_BINARY_DIR}/bin
-        )
-        message(STATUS "QtMQTT 3rd party library is already installed at ${EXTERN_INSTALL_DIR_PATH}/qtmqtt-${GIT_HASH}")
-    endif() 
+        DESTINATION ${CMAKE_BINARY_DIR}/bin)
+    endif()
 endif()
 
 add_library(mqtt::mqtt STATIC IMPORTED GLOBAL)
@@ -565,8 +536,8 @@ add_dependencies(mqtt::mqtt DEPENDS mqtt)
 #
 # Couchbase-Lite-C (official API)
 #
-get_git_hash("${SOURCE_DIR_EXTERN}/couchbase-lite-C")
-if(${GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/cbl-official-api-${GIT_HASH})
+get_git_hash_and_installation_status("${SOURCE_DIR_EXTERN}/couchbase-lite-C" "${EXTERN_INSTALL_DIR_PATH}/cbl-official-api")
+if(NOT LIB_INSTALLED)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/cbl-official-api-${GIT_HASH}/include)
     file(MAKE_DIRECTORY ${EXTERN_INSTALL_DIR_PATH}/cbl-official-api-${GIT_HASH}/lib)
     if(NOT WIN32)
@@ -669,12 +640,6 @@ if(${GIT_HASH_RESULT} EQUAL 0 AND NOT EXISTS ${EXTERN_INSTALL_DIR_PATH}/cbl-offi
             COMMAND ${CMAKE_COMMAND} -E copy_directory ${SOURCE_DIR_EXTERN}/couchbase-lite-C/vendor/couchbase-lite-core/vendor/fleece/Fleece/Support <INSTALL_DIR>/include/fleece
         )
     endif()
-else()
-    if(NOT ${GIT_HASH_RESULT} EQUAL 0)
-        message(FATAL_ERROR "Couchbase Lite C official API GIT_HASH_RESULT is: ${GIT_HASH_RESULT}")
-    else()
-        message(STATUS "Couchbase Lite C official API  3rd party library is already installed at ${EXTERN_INSTALL_DIR_PATH}/cbl-official-api-${GIT_HASH}")
-    endif() 
 endif()
 
 add_library(strata::Couchbase-Lite-C STATIC IMPORTED GLOBAL)
